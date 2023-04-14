@@ -15,7 +15,7 @@ pub struct ParseOutput {
 
 #[napi]
 impl ParseOutput {
-    #[napi(ts_return_type = "RuleNode | null")]
+    #[napi(ts_return_type = "RuleNode | TokenNode | null")]
     pub fn parse_tree(&self, env: Env) -> Option<napi::JsObject> {
         self.parse_tree.clone().map(|n| n.to_js(&env))
     }

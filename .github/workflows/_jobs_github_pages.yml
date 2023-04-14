@@ -1,0 +1,68 @@
+on:
+  # Run when invoked from other workflows:
+  workflow_call: {}
+
+jobs:
+  run:
+    runs-on: "ubuntu-22.04"
+
+    permissions:
+      pages: "write" # to deploy to Pages
+      id-token: "write" # to verify the deployment originates from an appropriate source
+
+    environment:
+      name: "github-pages"
+      url: "${{ steps.deployment.outputs.page_url }}"
+
+    steps:
+      #
+      # _DEVCONTAINER_PREPARATION_STEPS_ (keep in sync)
+      #
+
+      - name: "Clone repository"
+        uses: "actions/checkout@v3.4.0"
+
+      - name: "Restore hermit cache"
+        uses: "actions/cache@v3.3.1"
+        with:
+          path: ".hermit/"
+          key: "hermit-cache-${{ hashFiles('**/Cargo.lock', '**/package-lock.json', '**/Pipfile.lock') }}"
+          fail-on-cache-miss: true
+
+      - name: "Restore build cache"
+        uses: "actions/cache@v3.3.1"
+        with:
+          path: "target/"
+          key: "build-cache-${{ hashFiles('**/Cargo.lock', '**/package-lock.json', '**/Pipfile.lock') }}"
+          fail-on-cache-miss: true
+
+      - name: "Build devcontainer"
+        uses: "./.devcontainer"
+        with:
+          entrypoint: "echo"
+
+      - name: "Install Dependencies"
+        uses: "./.devcontainer"
+        with:
+          entrypoint: "scripts/setup/all.sh"
+
+      #
+      # Deploy to GitHub Pages:
+      #
+
+      - name: "Build documentation"
+        uses: "./.devcontainer"
+        with:
+          entrypoint: "scripts/mkdocs/build.sh"
+
+      - name: "Configure GitHub Pages"
+        uses: "actions/configure-pages@v3.0.5"
+
+      - name: "Upload artifacts"
+        uses: "actions/upload-pages-artifact@v1.0.7"
+        with:
+          path: "target/documentation"
+
+      - name: "Deploy to GitHub Pages"
+        id: "deployment"
+        uses: "actions/deploy-pages@v2.0.0"

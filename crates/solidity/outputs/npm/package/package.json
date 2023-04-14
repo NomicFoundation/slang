@@ -1,0 +1,88 @@
+{
+  "name": "@slang/solidity",
+  "version": "0.1.0",
+  "description": "A modular set of compiler APIs empowering the next generation of Solidity code analysis and developer tooling. Written in Rust and distributed in multiple languages.",
+  "homepage": "https://nomicfoundation.github.io/slang/",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/NomicFoundation/slang.git"
+  },
+  "bugs": "https://github.com/NomicFoundation/slang/issues/",
+  "contributors": [
+    {
+      "name": "Nomic Foundation",
+      "email": "packages@nomic.foundation"
+    },
+    {
+      "name": "Antony Blakey",
+      "email": "antony@nomic.foundation"
+    },
+    {
+      "name": "Omar Tawfik",
+      "email": "omar@nomic.foundation"
+    }
+  ],
+  "main": "src/generated/index.js",
+  "types": "src/generated/index.d.ts",
+  "files": [
+    "src/generated/index.d.ts",
+    "src/generated/index.js",
+    "CHANGELOG.md",
+    "LICENSE",
+    "README.md"
+  ],
+  "devDependencies": {
+    "@napi-rs/cli": "2.15.2",
+    "prettier": "2.8.6"
+  },
+  "optionalDependencies": {
+    "@slang/solidity-darwin-arm64": "0.1.0",
+    "@slang/solidity-win32-arm64-msvc": "0.1.0",
+    "@slang/solidity-linux-arm64-gnu": "0.1.0",
+    "@slang/solidity-linux-arm64-musl": "0.1.0",
+    "@slang/solidity-win32-ia32-msvc": "0.1.0",
+    "@slang/solidity-darwin-x64": "0.1.0",
+    "@slang/solidity-win32-x64-msvc": "0.1.0",
+    "@slang/solidity-linux-x64-gnu": "0.1.0",
+    "@slang/solidity-linux-x64-musl": "0.1.0"
+  },
+  "napi": {
+    "triples": {
+      "defaults": false,
+      "additional": [
+        "aarch64-apple-darwin",
+        "aarch64-pc-windows-msvc",
+        "aarch64-unknown-linux-gnu",
+        "aarch64-unknown-linux-musl",
+        "i686-pc-windows-msvc",
+        "x86_64-apple-darwin",
+        "x86_64-pc-windows-msvc",
+        "x86_64-unknown-linux-gnu",
+        "x86_64-unknown-linux-musl"
+      ]
+    }
+  },
+  "engines": {
+    "node": ">= 10"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  },
+  "keywords": [
+    "blockchain",
+    "compilers",
+    "dapps",
+    "ethereum",
+    "parsing",
+    "smart-contracts",
+    "solidity",
+    "tooling"
+  ],
+  "scripts": {
+    "slang-bump-version": "$REPO_ROOT/scripts/npm/napi/bump-version.sh",
+    "slang-build": "$REPO_ROOT/scripts/npm/napi/build.sh",
+    "slang-publish": "$REPO_ROOT/scripts/npm/napi/publish.sh"
+  }
+}

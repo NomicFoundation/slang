@@ -9,9 +9,9 @@ source "$(dirname "${BASH_SOURCE[0]}")/../../_common.sh"
   cd "$REPO_ROOT"
 
   if [[ "${CI:-}" ]]; then
-    npm install --ci
+    _group_output npm install --ci
   else
-    npm install
+    _group_output npm install
   fi
 
   printf "\n\n✅ NPM Packages Installed ✅\n\n\n"

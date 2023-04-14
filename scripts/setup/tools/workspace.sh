@@ -15,17 +15,3 @@ if [[ "${CI:-}" && "${GITHUB_WORKSPACE:-}" ]]; then
     printf "\n\n✅ GitHub Workspace Configured ✅\n\n\n"
   )
 fi
-
-# Warm up language server binaries and fetch any remote dependencies:
-if [[ ! "${CI:-}" ]]; then
-  (
-    printf "\n\n📦 Installing Rust Analyzer 📦\n\n\n"
-
-    cd "$REPO_ROOT"
-    "$REPO_ROOT/bin/rust-analyzer" --version
-    "$REPO_ROOT/bin/rust-src" --version
-
-    printf "\n\n✅ Rust Analyzer Installed ✅\n\n\n"
-
-  )
-fi

@@ -6,7 +6,7 @@
   },
   "postAttachCommand": "/bin/bash scripts/setup/all.sh",
   "portsAttributes": {
-    // Same port is used in documentation serve command
+    // Keep in-sync with the port number defined in "$REPO_ROOT/scripts/mkdocs/watch.sh":
     "5353": {
       "label": "mkdocs",
       "onAutoForward": "openPreview"

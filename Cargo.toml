@@ -8,18 +8,19 @@ members = [
     "crates/codegen/testing",
     "crates/codegen/utils",
     "crates/solidity/inputs/schema",
-    "crates/solidity/outputs/rust/build",
-    "crates/solidity/outputs/rust/slang_solidity",
-    "crates/solidity/outputs/rust/tests",
+    "crates/solidity/outputs/cargo/build",
+    "crates/solidity/outputs/cargo/crate",
+    "crates/solidity/outputs/cargo/tests",
+    "crates/solidity/outputs/npm/build",
+    "crates/solidity/outputs/npm/crate",
     "crates/solidity/outputs/spec",
-    "crates/solidity/outputs/typescript/lib",
     "crates/solidity/testing/smoke",
     "crates/solidity/testing/utils",
 ]
 
 [workspace.package]
 version = "0.1.0"
-rust-version = "1.64.0" # Keep this version in sync with the hermit binary at "REPO_ROOT/bin/.rust-VERSION.pkg"
+rust-version = "1.64.0" # Keep this version in sync with "$RUST_VERSION" in "$REPO_ROOT/bin/hermit.hcl"
 edition = "2021"
 publish = false
 
@@ -50,8 +51,9 @@ serde = { version = "1.0.158", features = ["derive", "rc"] }
 serde_json = { version = "1.0.94", features = ["preserve_order"] }
 serde_yaml = { version = "0.9.19" }
 similar-asserts = { version = "1.4.2" }
-slang_solidity = { path = "crates/solidity/outputs/rust/slang_solidity" }
-solidity_rust_build = { path = "crates/solidity/outputs/rust/build" }
+slang_solidity = { path = "crates/solidity/outputs/cargo/crate" }
+solidity_cargo_build = { path = "crates/solidity/outputs/cargo/build" }
+solidity_npm_build = { path = "crates/solidity/outputs/npm/build" }
 solidity_schema = { path = "crates/solidity/inputs/schema" }
 solidity_testing_utils = { path = "crates/solidity/testing/utils" }
 strum = { version = "0.24" }

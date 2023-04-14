@@ -1,0 +1,33 @@
+on:
+  # Run when invoked from other workflows:
+  workflow_call: {}
+
+jobs:
+  run:
+    runs-on: "ubuntu-22.04"
+
+    permissions:
+      contents: "write" # to create new branches
+      pull-requests: "write" # to create new pull requests
+
+    steps:
+      - name: "Clone repository"
+        uses: "actions/checkout@v3.4.0"
+
+      - name: "Install Dependencies"
+        run: "scripts/setup/tools/npm.sh"
+
+      - name: "Run Changesets"
+        id: "changesets"
+        uses: "changesets/action@v1.4.1"
+        with:
+          title: "Bump Slang Version"
+          commit: "Bump Slang Version"
+          createGithubReleases: true
+          version: "scripts/changelog/bump-version.sh"
+          publish: "echo 'Publishing is delegated to the workflow that invoked this one.'"
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+
+    outputs:
+      publish: "${{ steps.changesets.outputs.published }}"

@@ -12,12 +12,12 @@ source "$(dirname "${BASH_SOURCE[0]}")/../../_common.sh"
   echo "Using pipenv version: $PIPENV_VERSION"
 
   cd "$REPO_ROOT"
-  pip3 install "pipenv==$PIPENV_VERSION"
+  _group_output pip3 install "pipenv==$PIPENV_VERSION"
 
   printf "\n\n✅ Pipenv Installed ✅\n\n\n"
 )
 
-PIP_FILES=$(_list_source_files '**/Pipfile')
+PIP_FILES=$(_list_source_files "$REPO_ROOT" "**/Pipfile")
 
 (
   printf "\n\n📦 Installing Pipenv Packages 📦\n\n"
@@ -28,9 +28,9 @@ PIP_FILES=$(_list_source_files '**/Pipfile')
     cd "$(dirname "$file")"
 
     if [[ "${CI:-}" ]]; then
-      python3 -m pipenv install --deploy
+      _group_output python3 -m pipenv install --deploy
     else
-      python3 -m pipenv install
+      _group_output python3 -m pipenv install
     fi
   done
 

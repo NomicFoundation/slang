@@ -1,6 +1,10 @@
-# Slang
+# slang
+
+<!-- _PRODUCT_README_ (keep in sync) -->
 
 ## Solidity compiler tooling by [@NomicFoundation](https://github.com/NomicFoundation)
+
+<br/>
 
 🔗 [Announcement Post](https://medium.com/nomic-foundation-blog/slang-rethnet-2ad465fd7880)
 

@@ -6,7 +6,6 @@ site_name: "Slang"
 
 repo_url: "https://github.com/NomicFoundation/slang"
 repo_name: "NomicFoundation/slang"
-edit_uri: "blob/main/documentation/docs/"
 
 docs_dir: "./public"
 site_dir: "../target/documentation"
