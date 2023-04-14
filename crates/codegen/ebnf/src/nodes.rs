@@ -1,8 +1,9 @@
+#[derive(Clone)]
 pub enum EbnfNode {
-    Alternatives {
-        alternatives: Vec<EbnfNode>,
-    },
     BaseProduction,
+    Choices {
+        choices: Vec<EbnfNode>,
+    },
     Difference {
         minuend: Box<EbnfNode>,
         subtrahend: Box<EbnfNode>,
@@ -16,15 +17,12 @@ pub enum EbnfNode {
     Optional {
         body: Box<EbnfNode>,
     },
-    Parenthesis {
-        body: Box<EbnfNode>,
+    ProductionRef {
+        name: String,
     },
     Range {
         from: char,
         to: char,
-    },
-    Reference {
-        name: String,
     },
     Repeat {
         min: usize,
@@ -34,8 +32,9 @@ pub enum EbnfNode {
     Sequence {
         elements: Vec<EbnfNode>,
     },
-    Statement {
+    SubStatement {
         name: String,
+        comment: Option<String>,
         body: Box<EbnfNode>,
     },
     Terminal {
@@ -47,8 +46,8 @@ pub enum EbnfNode {
 }
 
 impl EbnfNode {
-    pub fn alternatives(alternatives: Vec<EbnfNode>) -> Self {
-        Self::Alternatives { alternatives }
+    pub fn choices(choices: Vec<EbnfNode>) -> Self {
+        Self::Choices { choices }
     }
 
     pub fn difference(minuend: EbnfNode, subtrahend: EbnfNode) -> Self {
@@ -76,18 +75,12 @@ impl EbnfNode {
         }
     }
 
-    pub fn parenthesis(body: EbnfNode) -> Self {
-        Self::Parenthesis {
-            body: Box::new(body),
-        }
+    pub fn production_ref(name: String) -> Self {
+        Self::ProductionRef { name }
     }
 
     pub fn range(from: char, to: char) -> Self {
         Self::Range { from, to }
-    }
-
-    pub fn reference(name: String) -> Self {
-        Self::Reference { name }
     }
 
     pub fn repeat(min: usize, max: usize, body: EbnfNode) -> Self {
@@ -102,9 +95,10 @@ impl EbnfNode {
         Self::Sequence { elements }
     }
 
-    pub fn statement(name: String, body: EbnfNode) -> Self {
-        Self::Statement {
+    pub fn sub_statement(name: String, comment: Option<String>, body: EbnfNode) -> Self {
+        Self::SubStatement {
             name,
+            comment,
             body: Box::new(body),
         }
     }

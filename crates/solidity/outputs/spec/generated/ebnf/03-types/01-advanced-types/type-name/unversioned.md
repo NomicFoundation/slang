@@ -2,5 +2,5 @@
 
 ```{ .ebnf .slang-ebnf #TypeName }
 TypeName = ArrayTypeName | FunctionType | MappingType | ElementaryType | IdentifierPath;
-ArrayTypeName = TypeName («OpenBracket» [Expression] «CloseBracket»);
+ArrayTypeName = TypeName «OpenBracket» Expression? «CloseBracket»;
 ```

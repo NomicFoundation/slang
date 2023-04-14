@@ -244,7 +244,7 @@ impl Language {
         self.scan_address_keyword_0_4_11(stream)
     }
 
-    // «Ampersand» = '&';
+    // «Ampersand» = "&";
 
     #[allow(unused_assignments, unused_parens)]
     fn scan_ampersand_0_4_11(&self, stream: &mut Stream) -> bool {
@@ -324,7 +324,14 @@ impl Language {
         self.scan_as_keyword_0_4_11(stream)
     }
 
-    // «AsciiEscape» = 'n' | 'r' | 't' | "\'" | '"' | '\\' | '\u{a}' | '\u{d}';
+    // «AsciiEscape» = "n"
+    //               | "r"
+    //               | "t"
+    //               | "'"
+    //               | '"'
+    //               | "\\"
+    //               | "\n"
+    //               | "\r";
 
     #[allow(unused_assignments, unused_parens)]
     fn scan_ascii_escape_0_4_11(&self, stream: &mut Stream) -> bool {
@@ -379,7 +386,7 @@ impl Language {
         self.scan_assembly_keyword_0_4_11(stream)
     }
 
-    // «Bang» = '!';
+    // «Bang» = "!";
 
     #[allow(unused_assignments, unused_parens)]
     fn scan_bang_0_4_11(&self, stream: &mut Stream) -> bool {
@@ -403,7 +410,7 @@ impl Language {
         self.scan_bang_equal_0_4_11(stream)
     }
 
-    // «Bar» = '|';
+    // «Bar» = "|";
 
     #[allow(unused_assignments, unused_parens)]
     fn scan_bar_0_4_11(&self, stream: &mut Stream) -> bool {
@@ -553,7 +560,7 @@ impl Language {
             .expect("Validation should have checked that references are valid between versions")
     }
 
-    // «Caret» = '^';
+    // «Caret» = "^";
 
     #[allow(unused_assignments, unused_parens)]
     fn scan_caret_0_4_11(&self, stream: &mut Stream) -> bool {
@@ -632,7 +639,7 @@ impl Language {
             .expect("Validation should have checked that references are valid between versions")
     }
 
-    // «CloseBrace» = '}';
+    // «CloseBrace» = "}";
 
     #[allow(unused_assignments, unused_parens)]
     fn scan_close_brace_0_4_11(&self, stream: &mut Stream) -> bool {
@@ -644,7 +651,7 @@ impl Language {
         self.scan_close_brace_0_4_11(stream)
     }
 
-    // «CloseBracket» = ']';
+    // «CloseBracket» = "]";
 
     #[allow(unused_assignments, unused_parens)]
     fn scan_close_bracket_0_4_11(&self, stream: &mut Stream) -> bool {
@@ -656,7 +663,7 @@ impl Language {
         self.scan_close_bracket_0_4_11(stream)
     }
 
-    // «CloseParen» = ')';
+    // «CloseParen» = ")";
 
     #[allow(unused_assignments, unused_parens)]
     fn scan_close_paren_0_4_11(&self, stream: &mut Stream) -> bool {
@@ -668,7 +675,7 @@ impl Language {
         self.scan_close_paren_0_4_11(stream)
     }
 
-    // «Colon» = ':';
+    // «Colon» = ":";
 
     #[allow(unused_assignments, unused_parens)]
     fn scan_colon_0_4_11(&self, stream: &mut Stream) -> bool {
@@ -692,7 +699,7 @@ impl Language {
         self.scan_colon_equal_0_4_11(stream)
     }
 
-    // «Comma» = ',';
+    // «Comma» = ",";
 
     #[allow(unused_assignments, unused_parens)]
     fn scan_comma_0_4_11(&self, stream: &mut Stream) -> bool {
@@ -819,7 +826,7 @@ impl Language {
         self.scan_days_keyword_0_4_11(stream)
     }
 
-    // «DecimalExponent» = ('e' | 'E') ['-'] «DecimalNumber»;
+    // «DecimalExponent» = ("e" | "E") "-"? «DecimalNumber»;
 
     #[allow(unused_assignments, unused_parens)]
     fn scan_decimal_exponent_0_4_11(&self, stream: &mut Stream) -> bool {
@@ -836,7 +843,7 @@ impl Language {
     }
 
     // (* v0.4.11 *)
-    // «DecimalLiteral» = («DecimalNumber» ['.' [«DecimalNumber»]] | '.' «DecimalNumber») [«DecimalExponent»];
+    // «DecimalLiteral» = ((«DecimalNumber» ("." «DecimalNumber»?)?) | ("." «DecimalNumber»)) «DecimalExponent»?;
 
     #[allow(unused_assignments, unused_parens)]
     fn scan_decimal_literal_0_4_11(&self, stream: &mut Stream) -> bool {
@@ -860,7 +867,7 @@ impl Language {
     }
 
     // (* v0.5.0 *)
-    // «DecimalLiteral» = («DecimalNumber» ['.' «DecimalNumber»] | '.' «DecimalNumber») [«DecimalExponent»];
+    // «DecimalLiteral» = ((«DecimalNumber» ("." «DecimalNumber»)?) | ("." «DecimalNumber»)) «DecimalExponent»?;
 
     #[allow(unused_assignments, unused_parens)]
     fn scan_decimal_literal_0_5_0(&self, stream: &mut Stream) -> bool {
@@ -893,7 +900,7 @@ impl Language {
         self.dispatch_scan_decimal_literal(stream)
     }
 
-    // «DecimalNumber» = 1…{'0'…'9'} {'_' 1…{'0'…'9'}};
+    // «DecimalNumber» = ("0"…"9")+ ("_" ("0"…"9")+)*;
 
     #[allow(unused_assignments, unused_parens)]
     fn scan_decimal_number_0_4_11(&self, stream: &mut Stream) -> bool {
@@ -974,7 +981,7 @@ impl Language {
         self.scan_do_keyword_0_4_11(stream)
     }
 
-    // «DoubleQuotedAsciiStringLiteral» = '"' {«EscapeSequence» | '\u{20}'…'~' - ('"' | '\\')} '"';
+    // «DoubleQuotedAsciiStringLiteral» = '"' («EscapeSequence» | ((" "…"~") - ('"' | "\\")))* '"';
 
     #[allow(unused_assignments, unused_parens)]
     fn scan_double_quoted_ascii_string_literal_0_4_11(&self, stream: &mut Stream) -> bool {
@@ -999,7 +1006,7 @@ impl Language {
         self.scan_double_quoted_ascii_string_literal_0_4_11(stream)
     }
 
-    // «DoubleQuotedUnicodeStringLiteral» = 'unicode"' {«EscapeSequence» | ¬('"' | '\\' | '\u{a}' | '\u{d}')} '"';
+    // «DoubleQuotedUnicodeStringLiteral» = 'unicode"' («EscapeSequence» | !('"' | "\\" | "\n" | "\r"))* '"';
 
     #[allow(unused_assignments, unused_parens)]
     fn scan_double_quoted_unicode_string_literal_0_4_11(&self, stream: &mut Stream) -> bool {
@@ -1077,7 +1084,7 @@ impl Language {
             .expect("Validation should have checked that references are valid between versions")
     }
 
-    // «EndOfLine» = ['\u{d}'] '\u{a}';
+    // «EndOfLine» = "\r"? "\n";
 
     #[allow(unused_assignments, unused_parens)]
     fn scan_end_of_line_0_4_11(&self, stream: &mut Stream) -> bool {
@@ -1112,7 +1119,7 @@ impl Language {
         self.scan_enum_keyword_0_4_11(stream)
     }
 
-    // «Equal» = '=';
+    // «Equal» = "=";
 
     #[allow(unused_assignments, unused_parens)]
     fn scan_equal_0_4_11(&self, stream: &mut Stream) -> bool {
@@ -1172,7 +1179,7 @@ impl Language {
         self.scan_error_keyword_0_4_11(stream)
     }
 
-    // «EscapeSequence» = '\\' («AsciiEscape» | «HexByteEscape» | «UnicodeEscape»);
+    // «EscapeSequence» = "\\" («AsciiEscape» | «HexByteEscape» | «UnicodeEscape»);
 
     #[allow(unused_assignments, unused_parens)]
     fn scan_escape_sequence_0_4_11(&self, stream: &mut Stream) -> bool {
@@ -1374,7 +1381,7 @@ impl Language {
             .expect("Validation should have checked that references are valid between versions")
     }
 
-    // «FixedBytesType» = "bytes" ('1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | "10" | "11" | "12" | "13" | "14" | "15" | "16" | "17" | "18" | "19" | "20" | "21" | "22" | "23" | "24" | "25" | "26" | "27" | "28" | "29" | "30" | "31" | "32");
+    // «FixedBytesType» = "bytes" ("1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" | "10" | "11" | "12" | "13" | "14" | "15" | "16" | "17" | "18" | "19" | "20" | "21" | "22" | "23" | "24" | "25" | "26" | "27" | "28" | "29" | "30" | "31" | "32");
 
     #[allow(unused_assignments, unused_parens)]
     fn scan_fixed_bytes_type_0_4_11(&self, stream: &mut Stream) -> bool {
@@ -1491,7 +1498,7 @@ impl Language {
         self.scan_global_keyword_0_4_11(stream)
     }
 
-    // «GreaterThan» = '>';
+    // «GreaterThan» = ">";
 
     #[allow(unused_assignments, unused_parens)]
     fn scan_greater_than_0_4_11(&self, stream: &mut Stream) -> bool {
@@ -1616,7 +1623,7 @@ impl Language {
             .expect("Validation should have checked that references are valid between versions")
     }
 
-    // «HexByteEscape» = 'x' 2…2{«HexCharacter»};
+    // «HexByteEscape» = "x" «HexCharacter»{2,2};
 
     #[allow(unused_assignments, unused_parens)]
     fn scan_hex_byte_escape_0_4_11(&self, stream: &mut Stream) -> bool {
@@ -1638,7 +1645,7 @@ impl Language {
         self.scan_hex_byte_escape_0_4_11(stream)
     }
 
-    // «HexCharacter» = '0'…'9' | 'a'…'f' | 'A'…'F';
+    // «HexCharacter» = ("0"…"9") | ("a"…"f") | ("A"…"F");
 
     #[allow(unused_assignments, unused_parens)]
     fn scan_hex_character_0_4_11(&self, stream: &mut Stream) -> bool {
@@ -1653,7 +1660,7 @@ impl Language {
     }
 
     // (* v0.4.11 *)
-    // «HexLiteral» = '0' ('x' | 'X') 1…{«HexCharacter»} {'_' 1…{«HexCharacter»}};
+    // «HexLiteral» = "0" ("x" | "X") «HexCharacter»+ ("_" «HexCharacter»+)*;
 
     #[allow(unused_assignments, unused_parens)]
     fn scan_hex_literal_0_4_11(&self, stream: &mut Stream) -> bool {
@@ -1682,7 +1689,7 @@ impl Language {
     }
 
     // (* v0.5.0 *)
-    // «HexLiteral» = "0x" 1…{«HexCharacter»} {'_' 1…{«HexCharacter»}};
+    // «HexLiteral» = "0x" «HexCharacter»+ ("_" «HexCharacter»+)*;
 
     #[allow(unused_assignments, unused_parens)]
     fn scan_hex_literal_0_5_0(&self, stream: &mut Stream) -> bool {
@@ -1722,7 +1729,7 @@ impl Language {
         self.dispatch_scan_hex_literal(stream)
     }
 
-    // «HexStringLiteral» = "hex" ('"' [«PossiblySeparatedPairsOfHexDigits»] '"' | "\'" [«PossiblySeparatedPairsOfHexDigits»] "\'");
+    // «HexStringLiteral» = "hex" (('"' «PossiblySeparatedPairsOfHexDigits»? '"') | ("'" «PossiblySeparatedPairsOfHexDigits»? "'"));
 
     #[allow(unused_assignments, unused_parens)]
     fn scan_hex_string_literal_0_4_11(&self, stream: &mut Stream) -> bool {
@@ -1972,7 +1979,7 @@ impl Language {
         self.scan_identifier_0_4_11(stream)
     }
 
-    // «IdentifierPart» = «IdentifierStart» | '0'…'9';
+    // «IdentifierPart» = «IdentifierStart» | ("0"…"9");
 
     #[allow(unused_assignments, unused_parens)]
     fn scan_identifier_part_0_4_11(&self, stream: &mut Stream) -> bool {
@@ -1988,7 +1995,7 @@ impl Language {
         self.scan_identifier_part_0_4_11(stream)
     }
 
-    // «IdentifierStart» = '_' | '$' | 'a'…'z' | 'A'…'Z';
+    // «IdentifierStart» = "_" | "$" | ("a"…"z") | ("A"…"Z");
 
     #[allow(unused_assignments, unused_parens)]
     fn scan_identifier_start_0_4_11(&self, stream: &mut Stream) -> bool {
@@ -2178,7 +2185,7 @@ impl Language {
         self.scan_leave_keyword_0_4_11(stream)
     }
 
-    // «LessThan» = '<';
+    // «LessThan» = "<";
 
     #[allow(unused_assignments, unused_parens)]
     fn scan_less_than_0_4_11(&self, stream: &mut Stream) -> bool {
@@ -2314,7 +2321,7 @@ impl Language {
         self.scan_memory_keyword_0_4_11(stream)
     }
 
-    // «Minus» = '-';
+    // «Minus» = "-";
 
     #[allow(unused_assignments, unused_parens)]
     fn scan_minus_0_4_11(&self, stream: &mut Stream) -> bool {
@@ -2406,7 +2413,7 @@ impl Language {
         self.scan_modifier_keyword_0_4_11(stream)
     }
 
-    // «MultilineComment» = "/*" {¬'*' | '*' ¬'/'} "*/";
+    // «MultilineComment» = "/*" (!"*" | ("*" !"/"))* "*/";
 
     #[allow(unused_assignments, unused_parens)]
     fn scan_multiline_comment_0_4_11(&self, stream: &mut Stream) -> bool {
@@ -2452,7 +2459,79 @@ impl Language {
         self.scan_new_keyword_0_4_11(stream)
     }
 
-    // «NotAnIdentifierInAnyVersion» = "abstract" | "address" | "after" | "anonymous" | "as" | "assembly" | "bool" | "break" | "byte" | "case" | "catch" | "constant" | "continue" | "contract" | "days" | "default" | "delete" | "do" | "else" | "enum" | "ether" | "event" | "external" | "false" | "final" | "for" | "function" | "hex" | "hours" | "if" | "import" | "in" | "indexed" | "inline" | "interface" | "internal" | "is" | "let" | "library" | "mapping" | "match" | "memory" | "minutes" | "modifier" | "new" | "null" | "of" | "payable" | "pragma" | "private" | "public" | "pure" | "relocatable" | "return" | "returns" | "seconds" | "static" | "storage" | "string" | "struct" | "switch" | "throw" | "true" | "try" | "type" | "typeof" | "using" | "var" | "view" | "weeks" | "wei" | "while" | "years";
+    // «NotAnIdentifierInAnyVersion» = "abstract"
+    //                               | "address"
+    //                               | "after"
+    //                               | "anonymous"
+    //                               | "as"
+    //                               | "assembly"
+    //                               | "bool"
+    //                               | "break"
+    //                               | "byte"
+    //                               | "case"
+    //                               | "catch"
+    //                               | "constant"
+    //                               | "continue"
+    //                               | "contract"
+    //                               | "days"
+    //                               | "default"
+    //                               | "delete"
+    //                               | "do"
+    //                               | "else"
+    //                               | "enum"
+    //                               | "ether"
+    //                               | "event"
+    //                               | "external"
+    //                               | "false"
+    //                               | "final"
+    //                               | "for"
+    //                               | "function"
+    //                               | "hex"
+    //                               | "hours"
+    //                               | "if"
+    //                               | "import"
+    //                               | "in"
+    //                               | "indexed"
+    //                               | "inline"
+    //                               | "interface"
+    //                               | "internal"
+    //                               | "is"
+    //                               | "let"
+    //                               | "library"
+    //                               | "mapping"
+    //                               | "match"
+    //                               | "memory"
+    //                               | "minutes"
+    //                               | "modifier"
+    //                               | "new"
+    //                               | "null"
+    //                               | "of"
+    //                               | "payable"
+    //                               | "pragma"
+    //                               | "private"
+    //                               | "public"
+    //                               | "pure"
+    //                               | "relocatable"
+    //                               | "return"
+    //                               | "returns"
+    //                               | "seconds"
+    //                               | "static"
+    //                               | "storage"
+    //                               | "string"
+    //                               | "struct"
+    //                               | "switch"
+    //                               | "throw"
+    //                               | "true"
+    //                               | "try"
+    //                               | "type"
+    //                               | "typeof"
+    //                               | "using"
+    //                               | "var"
+    //                               | "view"
+    //                               | "weeks"
+    //                               | "wei"
+    //                               | "while"
+    //                               | "years";
 
     #[allow(unused_assignments, unused_parens)]
     fn scan_not_an_identifier_in_any_version_0_4_11(&self, stream: &mut Stream) -> bool {
@@ -2649,7 +2728,29 @@ impl Language {
     }
 
     // (* v0.5.0 *)
-    // «NotAnIdentifierInSomeVersions» = "finney" | "szabo" | "alias" | "apply" | "auto" | "calldata" | "constructor" | "copyof" | "define" | "emit" | "immutable" | "implements" | "macro" | "mutable" | "override" | "partial" | "promise" | "reference" | "sealed" | "sizeof" | "supports" | "typedef" | "unchecked";
+    // «NotAnIdentifierInSomeVersions» = "finney"
+    //                                 | "szabo"
+    //                                 | "alias"
+    //                                 | "apply"
+    //                                 | "auto"
+    //                                 | "calldata"
+    //                                 | "constructor"
+    //                                 | "copyof"
+    //                                 | "define"
+    //                                 | "emit"
+    //                                 | "immutable"
+    //                                 | "implements"
+    //                                 | "macro"
+    //                                 | "mutable"
+    //                                 | "override"
+    //                                 | "partial"
+    //                                 | "promise"
+    //                                 | "reference"
+    //                                 | "sealed"
+    //                                 | "sizeof"
+    //                                 | "supports"
+    //                                 | "typedef"
+    //                                 | "unchecked";
 
     #[allow(unused_assignments, unused_parens)]
     fn scan_not_an_identifier_in_some_versions_0_5_0(&self, stream: &mut Stream) -> bool {
@@ -2706,7 +2807,32 @@ impl Language {
     }
 
     // (* v0.6.0 *)
-    // «NotAnIdentifierInSomeVersions» = "finney" | "szabo" | "alias" | "apply" | "auto" | "calldata" | "constructor" | "copyof" | "define" | "emit" | "immutable" | "implements" | "macro" | "mutable" | "override" | "partial" | "promise" | "reference" | "sealed" | "sizeof" | "supports" | "typedef" | "unchecked" | "fallback" | "receive" | "virtual";
+    // «NotAnIdentifierInSomeVersions» = "finney"
+    //                                 | "szabo"
+    //                                 | "alias"
+    //                                 | "apply"
+    //                                 | "auto"
+    //                                 | "calldata"
+    //                                 | "constructor"
+    //                                 | "copyof"
+    //                                 | "define"
+    //                                 | "emit"
+    //                                 | "immutable"
+    //                                 | "implements"
+    //                                 | "macro"
+    //                                 | "mutable"
+    //                                 | "override"
+    //                                 | "partial"
+    //                                 | "promise"
+    //                                 | "reference"
+    //                                 | "sealed"
+    //                                 | "sizeof"
+    //                                 | "supports"
+    //                                 | "typedef"
+    //                                 | "unchecked"
+    //                                 | "fallback"
+    //                                 | "receive"
+    //                                 | "virtual";
 
     #[allow(unused_assignments, unused_parens)]
     fn scan_not_an_identifier_in_some_versions_0_6_0(&self, stream: &mut Stream) -> bool {
@@ -2775,7 +2901,31 @@ impl Language {
     }
 
     // (* v0.7.0 *)
-    // «NotAnIdentifierInSomeVersions» = "alias" | "apply" | "auto" | "calldata" | "constructor" | "copyof" | "define" | "emit" | "immutable" | "implements" | "macro" | "mutable" | "override" | "partial" | "promise" | "reference" | "sealed" | "sizeof" | "supports" | "typedef" | "unchecked" | "fallback" | "receive" | "virtual" | "gwei";
+    // «NotAnIdentifierInSomeVersions» = "alias"
+    //                                 | "apply"
+    //                                 | "auto"
+    //                                 | "calldata"
+    //                                 | "constructor"
+    //                                 | "copyof"
+    //                                 | "define"
+    //                                 | "emit"
+    //                                 | "immutable"
+    //                                 | "implements"
+    //                                 | "macro"
+    //                                 | "mutable"
+    //                                 | "override"
+    //                                 | "partial"
+    //                                 | "promise"
+    //                                 | "reference"
+    //                                 | "sealed"
+    //                                 | "sizeof"
+    //                                 | "supports"
+    //                                 | "typedef"
+    //                                 | "unchecked"
+    //                                 | "fallback"
+    //                                 | "receive"
+    //                                 | "virtual"
+    //                                 | "gwei";
 
     #[allow(unused_assignments, unused_parens)]
     fn scan_not_an_identifier_in_some_versions_0_7_0(&self, stream: &mut Stream) -> bool {
@@ -2856,7 +3006,7 @@ impl Language {
         self.dispatch_scan_not_an_identifier_in_some_versions(stream)
     }
 
-    // «OpenBrace» = '{';
+    // «OpenBrace» = "{";
 
     #[allow(unused_assignments, unused_parens)]
     fn scan_open_brace_0_4_11(&self, stream: &mut Stream) -> bool {
@@ -2868,7 +3018,7 @@ impl Language {
         self.scan_open_brace_0_4_11(stream)
     }
 
-    // «OpenBracket» = '[';
+    // «OpenBracket» = "[";
 
     #[allow(unused_assignments, unused_parens)]
     fn scan_open_bracket_0_4_11(&self, stream: &mut Stream) -> bool {
@@ -2880,7 +3030,7 @@ impl Language {
         self.scan_open_bracket_0_4_11(stream)
     }
 
-    // «OpenParen» = '(';
+    // «OpenParen» = "(";
 
     #[allow(unused_assignments, unused_parens)]
     fn scan_open_paren_0_4_11(&self, stream: &mut Stream) -> bool {
@@ -2932,7 +3082,7 @@ impl Language {
         self.scan_payable_keyword_0_4_11(stream)
     }
 
-    // «Percent» = '%';
+    // «Percent» = "%";
 
     #[allow(unused_assignments, unused_parens)]
     fn scan_percent_0_4_11(&self, stream: &mut Stream) -> bool {
@@ -2956,7 +3106,7 @@ impl Language {
         self.scan_percent_equal_0_4_11(stream)
     }
 
-    // «Period» = '.';
+    // «Period» = ".";
 
     #[allow(unused_assignments, unused_parens)]
     fn scan_period_0_4_11(&self, stream: &mut Stream) -> bool {
@@ -2968,7 +3118,7 @@ impl Language {
         self.scan_period_0_4_11(stream)
     }
 
-    // «Plus» = '+';
+    // «Plus» = "+";
 
     #[allow(unused_assignments, unused_parens)]
     fn scan_plus_0_4_11(&self, stream: &mut Stream) -> bool {
@@ -3008,7 +3158,7 @@ impl Language {
         self.scan_plus_plus_0_4_11(stream)
     }
 
-    // «PossiblySeparatedPairsOfHexDigits» = 2…2{«HexCharacter»} {['_'] 2…2{«HexCharacter»}};
+    // «PossiblySeparatedPairsOfHexDigits» = «HexCharacter»{2,2} ("_"? «HexCharacter»{2,2})*;
 
     #[allow(unused_assignments, unused_parens)]
     fn scan_possibly_separated_pairs_of_hex_digits_0_4_11(&self, stream: &mut Stream) -> bool {
@@ -3123,7 +3273,7 @@ impl Language {
         self.scan_pure_keyword_0_4_11(stream)
     }
 
-    // «QuestionMark» = '?';
+    // «QuestionMark» = "?";
 
     #[allow(unused_assignments, unused_parens)]
     fn scan_question_mark_0_4_11(&self, stream: &mut Stream) -> bool {
@@ -3135,7 +3285,7 @@ impl Language {
         self.scan_question_mark_0_4_11(stream)
     }
 
-    // «RawIdentifier» = «IdentifierStart» {«IdentifierPart»};
+    // «RawIdentifier» = «IdentifierStart» «IdentifierPart»*;
 
     #[allow(unused_assignments, unused_parens)]
     fn scan_raw_identifier_0_4_11(&self, stream: &mut Stream) -> bool {
@@ -3275,7 +3425,7 @@ impl Language {
         self.scan_seconds_keyword_0_4_11(stream)
     }
 
-    // «Semicolon» = ';';
+    // «Semicolon» = ";";
 
     #[allow(unused_assignments, unused_parens)]
     fn scan_semicolon_0_4_11(&self, stream: &mut Stream) -> bool {
@@ -3287,7 +3437,7 @@ impl Language {
         self.scan_semicolon_0_4_11(stream)
     }
 
-    // «SignedFixedType» = "fixed" [1…{'0'…'9'} 'x' 1…{'0'…'9'}];
+    // «SignedFixedType» = "fixed" (("0"…"9")+ "x" ("0"…"9")+)?;
 
     #[allow(unused_assignments, unused_parens)]
     fn scan_signed_fixed_type_0_4_11(&self, stream: &mut Stream) -> bool {
@@ -3323,7 +3473,7 @@ impl Language {
         self.scan_signed_fixed_type_0_4_11(stream)
     }
 
-    // «SignedIntegerType» = "int" ['8' | "16" | "24" | "32" | "40" | "48" | "56" | "64" | "72" | "80" | "88" | "96" | "104" | "112" | "120" | "128" | "136" | "144" | "152" | "160" | "168" | "176" | "184" | "192" | "200" | "208" | "216" | "224" | "232" | "240" | "248" | "256"];
+    // «SignedIntegerType» = "int" ("8" | "16" | "24" | "32" | "40" | "48" | "56" | "64" | "72" | "80" | "88" | "96" | "104" | "112" | "120" | "128" | "136" | "144" | "152" | "160" | "168" | "176" | "184" | "192" | "200" | "208" | "216" | "224" | "232" | "240" | "248" | "256")?;
 
     #[allow(unused_assignments, unused_parens)]
     fn scan_signed_integer_type_0_4_11(&self, stream: &mut Stream) -> bool {
@@ -3380,7 +3530,7 @@ impl Language {
         self.scan_signed_integer_type_0_4_11(stream)
     }
 
-    // «SingleLineComment» = "//" {¬('\u{d}' | '\u{a}')};
+    // «SingleLineComment» = "//" (!("\r" | "\n"))*;
 
     #[allow(unused_assignments, unused_parens)]
     fn scan_single_line_comment_0_4_11(&self, stream: &mut Stream) -> bool {
@@ -3395,7 +3545,7 @@ impl Language {
         self.scan_single_line_comment_0_4_11(stream)
     }
 
-    // «SingleQuotedAsciiStringLiteral» = "\'" {«EscapeSequence» | '\u{20}'…'~' - ("\'" | '\\')} "\'";
+    // «SingleQuotedAsciiStringLiteral» = "'" («EscapeSequence» | ((" "…"~") - ("'" | "\\")))* "'";
 
     #[allow(unused_assignments, unused_parens)]
     fn scan_single_quoted_ascii_string_literal_0_4_11(&self, stream: &mut Stream) -> bool {
@@ -3420,7 +3570,7 @@ impl Language {
         self.scan_single_quoted_ascii_string_literal_0_4_11(stream)
     }
 
-    // «SingleQuotedUnicodeStringLiteral» = "unicode\'" {«EscapeSequence» | ¬("\'" | '\\' | '\u{a}' | '\u{d}')} "\'";
+    // «SingleQuotedUnicodeStringLiteral» = "unicode'" («EscapeSequence» | !("'" | "\\" | "\n" | "\r"))* "'";
 
     #[allow(unused_assignments, unused_parens)]
     fn scan_single_quoted_unicode_string_literal_0_4_11(&self, stream: &mut Stream) -> bool {
@@ -3443,7 +3593,7 @@ impl Language {
         self.scan_single_quoted_unicode_string_literal_0_4_11(stream)
     }
 
-    // «Slash» = '/';
+    // «Slash» = "/";
 
     #[allow(unused_assignments, unused_parens)]
     fn scan_slash_0_4_11(&self, stream: &mut Stream) -> bool {
@@ -3487,7 +3637,7 @@ impl Language {
         self.scan_solidity_keyword_0_4_11(stream)
     }
 
-    // «Star» = '*';
+    // «Star» = "*";
 
     #[allow(unused_assignments, unused_parens)]
     fn scan_star_0_4_11(&self, stream: &mut Stream) -> bool {
@@ -3662,7 +3812,7 @@ impl Language {
         self.scan_throw_keyword_0_4_11(stream)
     }
 
-    // «Tilde» = '~';
+    // «Tilde» = "~";
 
     #[allow(unused_assignments, unused_parens)]
     fn scan_tilde_0_4_11(&self, stream: &mut Stream) -> bool {
@@ -3799,7 +3949,7 @@ impl Language {
             .expect("Validation should have checked that references are valid between versions")
     }
 
-    // «UnicodeEscape» = 'u' 4…4{«HexCharacter»};
+    // «UnicodeEscape» = "u" «HexCharacter»{4,4};
 
     #[allow(unused_assignments, unused_parens)]
     fn scan_unicode_escape_0_4_11(&self, stream: &mut Stream) -> bool {
@@ -3837,7 +3987,7 @@ impl Language {
         self.scan_unicode_string_literal_0_4_11(stream)
     }
 
-    // «UnsignedFixedType» = 'u' «SignedFixedType»;
+    // «UnsignedFixedType» = "u" «SignedFixedType»;
 
     #[allow(unused_assignments, unused_parens)]
     fn scan_unsigned_fixed_type_0_4_11(&self, stream: &mut Stream) -> bool {
@@ -3852,7 +4002,7 @@ impl Language {
         self.scan_unsigned_fixed_type_0_4_11(stream)
     }
 
-    // «UnsignedIntegerType» = 'u' «SignedIntegerType»;
+    // «UnsignedIntegerType» = "u" «SignedIntegerType»;
 
     #[allow(unused_assignments, unused_parens)]
     fn scan_unsigned_integer_type_0_4_11(&self, stream: &mut Stream) -> bool {
@@ -3887,7 +4037,7 @@ impl Language {
         self.scan_using_keyword_0_4_11(stream)
     }
 
-    // «VersionPragmaValue» = 1…{'0'…'9' | 'x' | 'X' | '*'};
+    // «VersionPragmaValue» = (("0"…"9") | "x" | "X" | "*")+;
 
     #[allow(unused_assignments, unused_parens)]
     fn scan_version_pragma_value_0_4_11(&self, stream: &mut Stream) -> bool {
@@ -4020,7 +4170,7 @@ impl Language {
         self.scan_while_keyword_0_4_11(stream)
     }
 
-    // «Whitespace» = 1…{'\u{20}' | '\u{9}'};
+    // «Whitespace» = (" " | "\t")+;
 
     #[allow(unused_assignments, unused_parens)]
     fn scan_whitespace_0_4_11(&self, stream: &mut Stream) -> bool {
@@ -4052,7 +4202,7 @@ impl Language {
         self.scan_years_keyword_0_4_11(stream)
     }
 
-    // «YulDecimalLiteral» = '0' | '1'…'9' {'0'…'9'};
+    // «YulDecimalLiteral» = "0" | (("1"…"9") ("0"…"9")*);
 
     #[allow(unused_assignments, unused_parens)]
     fn scan_yul_decimal_literal_0_4_11(&self, stream: &mut Stream) -> bool {
@@ -4071,7 +4221,7 @@ impl Language {
         self.scan_yul_decimal_literal_0_4_11(stream)
     }
 
-    // «YulHexLiteral» = "0x" 1…{«HexCharacter»};
+    // «YulHexLiteral» = "0x" «HexCharacter»+;
 
     #[allow(unused_assignments, unused_parens)]
     fn scan_yul_hex_literal_0_4_11(&self, stream: &mut Stream) -> bool {
@@ -4112,7 +4262,17 @@ impl Language {
     }
 
     // (* v0.4.11 *)
-    // «YulKeyword» = «BreakKeyword» | «CaseKeyword» | «ContinueKeyword» | «DefaultKeyword» | «FalseKeyword» | «ForKeyword» | «FunctionKeyword» | «IfKeyword» | «LetKeyword» | «SwitchKeyword» | «TrueKeyword»;
+    // «YulKeyword» = «BreakKeyword»
+    //              | «CaseKeyword»
+    //              | «ContinueKeyword»
+    //              | «DefaultKeyword»
+    //              | «FalseKeyword»
+    //              | «ForKeyword»
+    //              | «FunctionKeyword»
+    //              | «IfKeyword»
+    //              | «LetKeyword»
+    //              | «SwitchKeyword»
+    //              | «TrueKeyword»;
 
     #[allow(unused_assignments, unused_parens)]
     fn scan_yul_keyword_0_4_11(&self, stream: &mut Stream) -> bool {
@@ -4133,7 +4293,18 @@ impl Language {
     }
 
     // (* v0.6.0 *)
-    // «YulKeyword» = «BreakKeyword» | «CaseKeyword» | «ContinueKeyword» | «DefaultKeyword» | «FalseKeyword» | «ForKeyword» | «FunctionKeyword» | «IfKeyword» | «LeaveKeyword» | «LetKeyword» | «SwitchKeyword» | «TrueKeyword»;
+    // «YulKeyword» = «BreakKeyword»
+    //              | «CaseKeyword»
+    //              | «ContinueKeyword»
+    //              | «DefaultKeyword»
+    //              | «FalseKeyword»
+    //              | «ForKeyword»
+    //              | «FunctionKeyword»
+    //              | «IfKeyword»
+    //              | «LeaveKeyword»
+    //              | «LetKeyword»
+    //              | «SwitchKeyword»
+    //              | «TrueKeyword»;
 
     #[allow(unused_assignments, unused_parens)]
     fn scan_yul_keyword_0_6_0(&self, stream: &mut Stream) -> bool {
