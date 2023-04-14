@@ -1,0 +1,39 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ solidity ^1.0.0 || 2.0.0-3.0.0                                                   │ 0..30
+
+Errors: []
+
+Tree:
+  - VersionPragma (Rule): # 0..30 "solidity ^1.0.0 || 2.0.0-3.0.0"
+      - SolidityKeyword (Token): "solidity" # 0..8
+      - _REPEATED (Rule): # 8..30 " ^1.0.0 || 2.0.0-3.0.0"
+          - VersionPragmaExpression (Rule): # 8..30 " ^1.0.0 || 2.0.0-3.0.0"
+              - VersionPragmaAlternatives (Rule): # 8..30 " ^1.0.0 || 2.0.0-3.0.0"
+                  - VersionPragmaComparator (Rule): # 8..15 " ^1.0.0"
+                      - Caret (Token): "^" # 9..10
+                      - VersionPragmaSpecifier (Rule): # 10..15 "1.0.0"
+                          - _SEPARATEDBY (Rule): # 10..15 "1.0.0"
+                              - VersionPragmaValue (Token): "1" # 10..11
+                              - Period (Token): "." # 11..12
+                              - VersionPragmaValue (Token): "0" # 12..13
+                              - Period (Token): "." # 13..14
+                              - VersionPragmaValue (Token): "0" # 14..15
+                  - BarBar (Token): "||" # 16..18
+                  - VersionPragmaRange (Rule): # 18..30 " 2.0.0-3.0.0"
+                      - VersionPragmaSpecifier (Rule): # 18..24 " 2.0.0"
+                          - _SEPARATEDBY (Rule): # 18..24 " 2.0.0"
+                              - VersionPragmaValue (Token): "2" # 19..20
+                              - Period (Token): "." # 20..21
+                              - VersionPragmaValue (Token): "0" # 21..22
+                              - Period (Token): "." # 22..23
+                              - VersionPragmaValue (Token): "0" # 23..24
+                      - Minus (Token): "-" # 24..25
+                      - VersionPragmaSpecifier (Rule): # 25..30 "3.0.0"
+                          - _SEPARATEDBY (Rule): # 25..30 "3.0.0"
+                              - VersionPragmaValue (Token): "3" # 25..26
+                              - Period (Token): "." # 26..27
+                              - VersionPragmaValue (Token): "0" # 27..28
+                              - Period (Token): "." # 28..29
+                              - VersionPragmaValue (Token): "0" # 29..30

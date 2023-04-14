@@ -9,10 +9,11 @@ Tree:
   - VersionPragma (Rule): # 0..14 "solidity 0.8.0"
       - SolidityKeyword (Token): "solidity" # 0..8
       - _REPEATED (Rule): # 8..14 " 0.8.0"
-          - VersionPragmaSpecifier (Rule): # 8..14 " 0.8.0"
-              - _SEPARATEDBY (Rule): # 8..14 " 0.8.0"
-                  - VersionPragmaValue (Token): "0" # 9..10
-                  - Period (Token): "." # 10..11
-                  - VersionPragmaValue (Token): "8" # 11..12
-                  - Period (Token): "." # 12..13
-                  - VersionPragmaValue (Token): "0" # 13..14
+          - VersionPragmaExpression (Rule): # 8..14 " 0.8.0"
+              - VersionPragmaSpecifier (Rule): # 8..14 " 0.8.0"
+                  - _SEPARATEDBY (Rule): # 8..14 " 0.8.0"
+                      - VersionPragmaValue (Token): "0" # 9..10
+                      - Period (Token): "." # 10..11
+                      - VersionPragmaValue (Token): "8" # 11..12
+                      - Period (Token): "." # 12..13
+                      - VersionPragmaValue (Token): "0" # 13..14

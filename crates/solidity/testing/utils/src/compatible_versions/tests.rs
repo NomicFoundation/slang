@@ -16,7 +16,7 @@ fn exact_single_version() -> Result<()> {
 }
 
 #[test]
-fn version_range() -> Result<()> {
+fn multiple_versions() -> Result<()> {
     return test_aux(
         &[
             "0.7.0", "0.7.1", "0.7.2", "0.7.3", "0.7.4", "0.7.5", "0.7.6",
@@ -40,6 +40,48 @@ fn multiple_version_pragmas() -> Result<()> {
             pragma solidity <0.8.7;
         ",
         &["0.8.3", "0.8.4", "0.8.5", "0.8.6"],
+    );
+}
+
+#[test]
+fn version_alternatives() -> Result<()> {
+    return test_aux(
+        &[
+            "0.8.0", "0.8.1", "0.8.2", "0.8.3", "0.8.4", "0.8.5", "0.8.6", "0.8.7", "0.8.8",
+            "0.8.9",
+        ],
+        "
+            pragma solidity 0.8.3 || 0.8.7;
+        ",
+        &["0.8.3", "0.8.7"],
+    );
+}
+
+#[test]
+fn version_range() -> Result<()> {
+    return test_aux(
+        &[
+            "0.8.0", "0.8.1", "0.8.2", "0.8.3", "0.8.4", "0.8.5", "0.8.6", "0.8.7", "0.8.8",
+            "0.8.9",
+        ],
+        "
+            pragma solidity 0.8.3 - 0.8.7;
+        ",
+        &["0.8.3", "0.8.4", "0.8.5", "0.8.6", "0.8.7"],
+    );
+}
+
+#[test]
+fn nested_expressions() -> Result<()> {
+    return test_aux(
+        &[
+            "0.8.0", "0.8.1", "0.8.2", "0.8.3", "0.8.4", "0.8.5", "0.8.6", "0.8.7", "0.8.8",
+            "0.8.9",
+        ],
+        "
+            pragma solidity 0.8.1 || 0.8.4 - 0.8.6;
+        ",
+        &["0.8.1", "0.8.4", "0.8.5", "0.8.6"],
     );
 }
 

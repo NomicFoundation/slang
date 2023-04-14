@@ -4,6 +4,11 @@ use crate::cst_output::runner::run;
 use anyhow::Result;
 
 #[test]
+fn alternatives() -> Result<()> {
+    return run("VersionPragma", "alternatives");
+}
+
+#[test]
 fn equal_operator() -> Result<()> {
     return run("VersionPragma", "equal_operator");
 }
@@ -21,6 +26,16 @@ fn less_than_operator() -> Result<()> {
 #[test]
 fn multiple_exact_versions() -> Result<()> {
     return run("VersionPragma", "multiple_exact_versions");
+}
+
+#[test]
+fn nested_expressions() -> Result<()> {
+    return run("VersionPragma", "nested_expressions");
+}
+
+#[test]
+fn ranges() -> Result<()> {
+    return run("VersionPragma", "ranges");
 }
 
 #[test]
