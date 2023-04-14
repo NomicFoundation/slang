@@ -20,31 +20,40 @@
     sequence:
       - reference: "SolidityKeyword"
       - oneOrMore:
-          reference: "VersionPragmaSpecifier"
+          reference: "VersionPragmaExpression"
+
+- name: "VersionPragmaExpression"
+  kind: "PrecedenceParser"
+  unversioned:
+    operators:
+      - name: "VersionPragmaAlternatives"
+        model: "BinaryLeftAssociative"
+        reference: "BarBar"
+      - name: "VersionPragmaRange"
+        model: "BinaryLeftAssociative"
+        reference: "Minus"
+      - name: "VersionPragmaComparator"
+        model: "UnaryPrefix"
+        choice:
+          - reference: "Caret"
+          - reference: "Tilde"
+          - reference: "Equal"
+          - reference: "LessThan"
+          - reference: "GreaterThan"
+          - reference: "LessThanEqual"
+          - reference: "GreaterThanEqual"
+
+    primaryExpression:
+      reference: "VersionPragmaSpecifier"
 
 - name: "VersionPragmaSpecifier"
   kind: "Parser"
   unversioned:
-    sequence:
-      - optional:
-          reference: "VersionPragmaOperator"
-      - separatedBy:
-          separator:
-            reference: "Period"
-          expression:
-            reference: "VersionPragmaValue"
-
-- name: "VersionPragmaOperator"
-  kind: "Parser"
-  unversioned:
-    choice:
-      - reference: "Caret"
-      - reference: "Tilde"
-      - reference: "Equal"
-      - reference: "LessThan"
-      - reference: "GreaterThan"
-      - reference: "LessThanEqual"
-      - reference: "GreaterThanEqual"
+    separatedBy:
+      expression:
+        reference: "VersionPragmaValue"
+      separator:
+        reference: "Period"
 
 - name: "VersionPragmaValue"
   kind: "Scanner"

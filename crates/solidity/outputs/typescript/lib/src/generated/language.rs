@@ -1780,8 +1780,8 @@ impl Language {
             ProductionKind::VersionPragma => {
                 call_parser(self, input, Language::parse_version_pragma)
             }
-            ProductionKind::VersionPragmaOperator => {
-                call_parser(self, input, Language::parse_version_pragma_operator)
+            ProductionKind::VersionPragmaExpression => {
+                call_parser(self, input, Language::parse_version_pragma_expression)
             }
             ProductionKind::VersionPragmaSpecifier => {
                 call_parser(self, input, Language::parse_version_pragma_specifier)
