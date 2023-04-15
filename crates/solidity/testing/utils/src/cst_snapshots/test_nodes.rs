@@ -154,25 +154,24 @@ impl TestNode {
     }
 
     pub fn render_preview(&self, source: &str, range: &Range<usize>) -> Result<String> {
-        let mut contents = source
-            .chars()
-            .skip(range.start)
-            .take(range.end - range.start)
-            .collect::<String>();
+        let max_length = 50;
+        let length = range.end - range.start;
 
         // Trim long values:
-        let max_length = 50;
-        if contents.len() > max_length {
-            let separator = "...";
-            contents = contents
-                .chars()
-                .take(max_length)
-                .chain(separator.chars())
-                .collect();
+        let contents = source
+            .bytes()
+            .skip(range.start)
+            .take(length.clamp(0, max_length))
+            .collect();
+
+        // Add terminator if trimmed:
+        let mut contents = String::from_utf8(contents)?;
+        if length > max_length {
+            contents.push_str("...");
         }
 
         // Escape line breaks:
-        contents = contents
+        let contents = contents
             .replace("\t", "\\t")
             .replace("\r", "\\r")
             .replace("\n", "\\n");

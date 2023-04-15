@@ -12,11 +12,13 @@ impl NodeExtensions for Node {
         match self {
             Node::Token { range, .. } => {
                 let range = range;
-                return source
-                    .chars()
+                let result = source
+                    .bytes()
                     .skip(range.start)
                     .take(range.end - range.start)
                     .collect();
+
+                return String::from_utf8(result).unwrap();
             }
             Node::Rule { children, .. } => {
                 return children
