@@ -1,10 +1,7 @@
 mod datasets;
 mod reporting;
 
-use std::{
-    collections::{BTreeMap, BTreeSet},
-    path::PathBuf,
-};
+use std::{collections::HashSet, path::PathBuf};
 
 use anyhow::Result;
 use codegen_schema::types::grammar::Grammar;
@@ -12,7 +9,7 @@ use rayon::prelude::{IntoParallelRefIterator, ParallelIterator};
 use semver::Version;
 use slang_solidity::syntax::parser::{Language, ProductionKind};
 use solidity_schema::SolidityGrammarExtensions;
-use solidity_testing_utils::compatible_versions::filter_compatible_versions;
+use solidity_testing_utils::version_pragmas::extract_version_pragmas;
 
 use crate::{
     datasets::{get_all_datasets, Dataset},
@@ -77,45 +74,37 @@ fn process_source_file(
     let source_id = file_path.to_str().unwrap();
     let source = &std::fs::read_to_string(file_path)?;
 
-    let latest_version = all_versions.last().expect("No versions found.");
-    let output =
-        &Language::new(latest_version.to_owned())?.parse(ProductionKind::SourceUnit, source);
-
-    reporter.report_test_result(source_id, source, latest_version, output);
-
-    let parse_tree = if let Some(parse_tree) = output.parse_tree() {
-        parse_tree
+    let latest_version = all_versions.iter().max().unwrap();
+    let pragmas = if let Ok(pragmas) = extract_version_pragmas(source, latest_version) {
+        pragmas
     } else {
         // Skip this file if we failed to filter compatible versions.
         return Ok(());
     };
 
-    let compatible_versions = filter_compatible_versions(all_versions, &parse_tree, source).expect(
-        &format!("Failed to extract compatible versions from file: {source_id}"),
-    );
+    if pragmas.is_empty() {
+        // Skip if there are no pragmas in that file.
+        return Ok(());
+    }
 
-    let test_versions = filter_test_versions(compatible_versions);
+    let mut tested_versions = HashSet::new();
 
-    for version in test_versions {
-        let output = &Language::new(version.to_owned())?.parse(ProductionKind::SourceUnit, source);
+    for version in all_versions {
+        if !pragmas.iter().all(|pragma| pragma.matches(version)) {
+            continue;
+        }
 
-        reporter.report_test_result(source_id, source, &version, output);
+        // solc doesn't follow SemVer, and introduces breaking changes during minor version upgrades.
+        // Let's run against the latest release of each minor release.
+        let unique_key = version.major ^ version.minor;
+        if !tested_versions.insert(unique_key) {
+            continue;
+        }
+
+        let output = Language::new(version.to_owned())?.parse(ProductionKind::SourceUnit, source);
+
+        reporter.report_test_result(source_id, source, &version, &output);
     }
 
     return Ok(());
-}
-
-fn filter_test_versions<'a>(
-    compatible_versions: BTreeSet<&'a Version>,
-) -> impl Iterator<Item = &'a Version> {
-    // solc doesn't follow SemVer, and introduces breaking changes during minor version upgrades.
-    // Let's run against the latest release of each minor release.
-    let mut test_versions = BTreeMap::new();
-
-    for version in compatible_versions {
-        let key = version.major ^ version.minor;
-        test_versions.insert(key, version);
-    }
-
-    return test_versions.into_values();
 }

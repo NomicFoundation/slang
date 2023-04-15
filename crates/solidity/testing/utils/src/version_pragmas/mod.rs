@@ -1,43 +1,47 @@
 #[cfg(test)]
 mod tests;
 
-use std::{collections::BTreeSet, ops::Range, rc::Rc, str::FromStr};
+use std::{ops::Range, rc::Rc, str::FromStr};
 
 use anyhow::{bail, Context, Error, Result};
 use semver::{Comparator, Op, Version};
 use slang_solidity::syntax::{
     nodes::{Node, RuleKind},
+    parser::{Language, ProductionKind},
     visitors::{Visitable, Visitor, VisitorEntryResponse},
 };
 
 use crate::node_extensions::NodeExtensions;
 
-pub fn filter_compatible_versions<'a>(
-    versions: &'a Vec<Version>,
-    parse_tree: &Rc<Node>,
+pub fn extract_version_pragmas(
     source: &str,
-) -> Result<BTreeSet<&'a Version>> {
-    let mut collector = VersionSpecifierCollector {
+    latest_version: &Version,
+) -> Result<Vec<VersionPragma>> {
+    let output =
+        Language::new(latest_version.to_owned())?.parse(ProductionKind::SourceUnit, source);
+
+    let parse_tree = if let Some(parse_tree) = output.parse_tree() {
+        parse_tree
+    } else {
+        bail!("Failed to extract a parse tree.");
+    };
+
+    let mut collector = PragmaCollector {
         source,
-        expressions: vec![],
+        pragmas: vec![],
     };
 
     parse_tree.accept_visitor(&mut collector)?;
 
-    let compatible_versions = versions
-        .iter()
-        .filter(|version| collector.matches(version))
-        .collect();
-
-    return Ok(compatible_versions);
+    return Ok(collector.pragmas);
 }
 
-struct VersionSpecifierCollector<'a> {
+struct PragmaCollector<'a> {
     source: &'a str,
-    expressions: Vec<VersionPragmaExpression>,
+    pragmas: Vec<VersionPragma>,
 }
 
-impl<'a> Visitor<Error> for VersionSpecifierCollector<'a> {
+impl<'a> Visitor<Error> for PragmaCollector<'a> {
     fn enter_rule(
         &mut self,
         kind: RuleKind,
@@ -50,8 +54,8 @@ impl<'a> Visitor<Error> for VersionSpecifierCollector<'a> {
             return Ok(VisitorEntryResponse::StepIn);
         }
 
-        let expression = match &children[..] {
-            [child] => self.extract_expression(child).with_context(|| {
+        let pragma = match &children[..] {
+            [child] => self.extract_pragma(child).with_context(|| {
                 format!(
                     "Failed to extract pragma at {range:?}: '{value}'",
                     value = child.extract_non_trivia(self.source)
@@ -60,20 +64,14 @@ impl<'a> Visitor<Error> for VersionSpecifierCollector<'a> {
             _ => unreachable!("Expected single child: {node:?}"),
         };
 
-        self.expressions.push(expression);
+        self.pragmas.push(pragma);
 
         return Ok(VisitorEntryResponse::StepOver);
     }
 }
 
-impl<'a> VersionSpecifierCollector<'a> {
-    fn matches(&self, version: &Version) -> bool {
-        self.expressions
-            .iter()
-            .all(|expression| expression.matches(version))
-    }
-
-    fn extract_expression(&self, node: &Node) -> Result<VersionPragmaExpression> {
+impl<'a> PragmaCollector<'a> {
+    fn extract_pragma(&self, node: &Node) -> Result<VersionPragma> {
         let (kind, children) = match node {
             Node::Rule { kind, children, .. } => (kind, children),
             _ => panic!("Expected rule: {node:?}"),
@@ -84,10 +82,10 @@ impl<'a> VersionSpecifierCollector<'a> {
                 [left, operator, right] => {
                     assert_eq!(operator.extract_non_trivia(self.source), "||");
 
-                    let left = self.extract_expression(left)?;
-                    let right = self.extract_expression(right)?;
+                    let left = self.extract_pragma(left)?;
+                    let right = self.extract_pragma(right)?;
 
-                    return Ok(VersionPragmaExpression::Or(Box::new(left), Box::new(right)));
+                    return Ok(VersionPragma::Or(Box::new(left), Box::new(right)));
                 }
                 _ => unreachable!("Expected 3 children: {node:?}"),
             },
@@ -95,15 +93,15 @@ impl<'a> VersionSpecifierCollector<'a> {
                 [left, operator, right] => {
                     assert_eq!(operator.extract_non_trivia(self.source), "-");
 
-                    let mut left = self.extract_expression(left)?.extract_single()?;
-                    let mut right = self.extract_expression(right)?.extract_single()?;
+                    let mut left = self.extract_pragma(left)?.extract_single()?;
+                    let mut right = self.extract_pragma(right)?.extract_single()?;
 
                     // Simulate solc bug:
                     // https://github.com/ethereum/solidity/issues/13920
                     left.op = Op::GreaterEq;
                     right.op = Op::LessEq;
 
-                    return Ok(VersionPragmaExpression::And(left, right));
+                    return Ok(VersionPragma::And(left, right));
                 }
                 _ => unreachable!("Expected 3 children: {node:?}"),
             },
@@ -111,13 +109,13 @@ impl<'a> VersionSpecifierCollector<'a> {
                 let value = node.extract_non_trivia(self.source);
                 let comparator = Comparator::from_str(&value)?;
 
-                return Ok(VersionPragmaExpression::Single(comparator));
+                return Ok(VersionPragma::Single(comparator));
             }
             RuleKind::VersionPragmaSpecifier => {
                 let specifier = node.extract_non_trivia(self.source);
                 let comparator = Comparator::from_str(&format!("={specifier}"))?;
 
-                return Ok(VersionPragmaExpression::Single(comparator));
+                return Ok(VersionPragma::Single(comparator));
             }
             _ => unreachable!("Unexpected {kind:?}: {children:?}"),
         };
@@ -125,14 +123,14 @@ impl<'a> VersionSpecifierCollector<'a> {
 }
 
 #[derive(Debug)]
-enum VersionPragmaExpression {
+pub enum VersionPragma {
     Or(Box<Self>, Box<Self>),
     And(Comparator, Comparator),
     Single(Comparator),
 }
 
-impl VersionPragmaExpression {
-    fn matches(&self, version: &Version) -> bool {
+impl VersionPragma {
+    pub fn matches(&self, version: &Version) -> bool {
         match self {
             Self::Or(left, right) => {
                 return left.matches(version) || right.matches(version);
