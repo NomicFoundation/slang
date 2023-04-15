@@ -45,12 +45,27 @@ function _group_output() {
 # - It also excludes files hidden by ".gitignore".
 #
 function _list_source_files() {
-  pattern="$1"
+  parent_dir="$1"
+  pattern="$2"
 
-  cd "$REPO_ROOT"
+  cd "$parent_dir"
   rg \
     --files --sort "path" \
     --hidden --glob '!.git/**' --glob '!.hermit/**' \
     --glob "$pattern" \
     | xargs realpath --canonicalize-existing
+}
+
+#
+# Unlike our Cargo codegen utils, other build scripts don't have the
+# ability to check whether files are up to date or not when running in CI.
+# So, we make sure there are no local changes before or after the build.
+#
+function _check_local_changes() {
+  if [[ "${CI:-}" && -n "$(git status --short)" ]]; then
+    git diff
+    git diff --cached
+    printf "\n\n❌ Found local changes. Aborting. ❌\n\n\n"
+    exit 1
+  fi
 }

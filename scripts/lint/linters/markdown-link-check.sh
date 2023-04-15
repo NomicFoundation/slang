@@ -3,7 +3,7 @@ set -euo pipefail
 
 source "$(dirname "${BASH_SOURCE[0]}")/../../_common.sh"
 
-MARKDOWN_FILES=$(_list_source_files '**/*.md')
+MARKDOWN_FILES=$(_list_source_files "$REPO_ROOT" "**/*.md")
 
 (
   printf "\n\n🧪 markdown-link-check 🧪\n\n\n"

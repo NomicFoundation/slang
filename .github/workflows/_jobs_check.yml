@@ -1,0 +1,88 @@
+on:
+  # Run when invoked from other workflows:
+  workflow_call: {}
+
+jobs:
+  run:
+    runs-on: "ubuntu-22.04"
+
+    steps:
+      #
+      # _DEVCONTAINER_PREPARATION_STEPS_ (keep in sync)
+      #
+
+      - name: "Clone repository"
+        uses: "actions/checkout@v3.4.0"
+
+      - name: "Restore hermit cache"
+        uses: "actions/cache@v3.3.1"
+        with:
+          path: ".hermit/"
+          key: "hermit-cache-${{ hashFiles('**/Cargo.lock', '**/package-lock.json', '**/Pipfile.lock') }}"
+          restore-keys: "hermit-cache-"
+
+      - name: "Restore build cache"
+        uses: "actions/cache@v3.3.1"
+        with:
+          path: "target/"
+          key: "build-cache-${{ hashFiles('**/Cargo.lock', '**/package-lock.json', '**/Pipfile.lock') }}"
+          restore-keys: "build-cache-"
+
+      - name: "Build devcontainer"
+        uses: "./.devcontainer"
+        with:
+          entrypoint: "echo"
+
+      - name: "Install Dependencies"
+        uses: "./.devcontainer"
+        with:
+          entrypoint: "scripts/setup/all.sh"
+
+      #
+      # Checks:
+      # Run and report issues, even if other steps failed.
+      #
+
+      - name: "Cargo check"
+        if: "success() || failure()"
+        uses: "./.devcontainer"
+        with:
+          entrypoint: "scripts/cargo/check.sh"
+
+      - name: "Cargo test"
+        if: "success() || failure()"
+        uses: "./.devcontainer"
+        with:
+          entrypoint: "scripts/cargo/test.sh"
+
+      - name: "Run linters"
+        if: "success() || failure()"
+        uses: "./.devcontainer"
+        with:
+          entrypoint: "scripts/lint/all.sh"
+
+      - name: "NPM build"
+        if: "success() || failure()"
+        uses: "./.devcontainer"
+        with:
+          entrypoint: "scripts/npm/build.sh"
+
+      - name: "NPM test"
+        if: "success() || failure()"
+        uses: "./.devcontainer"
+        with:
+          entrypoint: "scripts/npm/test.sh"
+
+      - name: "Build documentation"
+        if: "success() || failure()"
+        uses: "./.devcontainer"
+        with:
+          entrypoint: "scripts/mkdocs/build.sh"
+
+      #
+      # Clean Up:
+      # Prepare files to be cached in post-steps.
+      #
+
+      - name: "Repossess files from devcontainer user"
+        run: "sudo chown -R $USER:$USER $GITHUB_WORKSPACE"

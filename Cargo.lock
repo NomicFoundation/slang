@@ -1002,14 +1002,14 @@ dependencies = [
  "semver",
  "serde",
  "serde_json",
- "solidity_rust_build",
+ "solidity_cargo_build",
  "strum",
  "strum_macros",
  "thiserror",
 ]
 
 [[package]]
-name = "solidity_rust_build"
+name = "solidity_cargo_build"
 version = "0.1.0"
 dependencies = [
  "anyhow",
@@ -1020,7 +1020,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "solidity_rust_tests"
+name = "solidity_cargo_tests"
 version = "0.1.0"
 dependencies = [
  "anyhow",
@@ -1031,6 +1031,30 @@ dependencies = [
  "slang_solidity",
  "solidity_schema",
  "solidity_testing_utils",
+]
+
+[[package]]
+name = "solidity_npm_build"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "codegen_schema",
+ "codegen_syntax",
+ "codegen_utils",
+ "solidity_schema",
+]
+
+[[package]]
+name = "solidity_npm_crate"
+version = "0.1.0"
+dependencies = [
+ "ariadne",
+ "napi",
+ "napi-build",
+ "napi-derive",
+ "semver",
+ "serde",
+ "solidity_npm_build",
 ]
 
 [[package]]
@@ -1078,23 +1102,6 @@ dependencies = [
  "anyhow",
  "semver",
  "slang_solidity",
-]
-
-[[package]]
-name = "solidity_typescript_lib"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "ariadne",
- "codegen_schema",
- "codegen_syntax",
- "codegen_utils",
- "napi",
- "napi-build",
- "napi-derive",
- "semver",
- "serde",
- "solidity_schema",
 ]
 
 [[package]]

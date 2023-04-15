@@ -1,0 +1,22 @@
+[package]
+name = "solidity_npm_crate"
+version.workspace = true
+rust-version.workspace = true
+edition.workspace = true
+publish = false
+
+[lib]
+crate-type = ["cdylib"]
+
+[dev-dependencies]
+solidity_npm_build = { workspace = true }
+
+[build-dependencies]
+napi-build = { workspace = true }
+
+[dependencies]
+ariadne = { workspace = true }
+napi = { workspace = true }
+napi-derive = { workspace = true }
+semver = { workspace = true }
+serde = { workspace = true }

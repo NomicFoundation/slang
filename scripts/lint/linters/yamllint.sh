@@ -3,7 +3,7 @@ set -euo pipefail
 
 source "$(dirname "${BASH_SOURCE[0]}")/../../_common.sh"
 
-YAML_FILES=$(_list_source_files '**/*.yml')
+YAML_FILES=$(_list_source_files "$REPO_ROOT" "**/*.yml")
 
 (
   printf "\n\n🧪 yamllint 🧪\n\n\n"

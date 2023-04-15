@@ -2,7 +2,8 @@
   "$schema": "https://raw.githubusercontent.com/DavidAnson/markdownlint/v0.26.2/schema/markdownlint-config-schema.json",
   "default": true,
   "code-block-style": false,
-  "first-line-h1": false,
+  "first-line-heading": false,
   "line-length": false,
+  "no-duplicate-heading": false,
   "no-inline-html": false
 }

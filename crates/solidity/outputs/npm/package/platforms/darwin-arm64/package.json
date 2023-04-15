@@ -1,0 +1,54 @@
+{
+  "name": "@slang/solidity-darwin-arm64",
+  "version": "0.1.0",
+  "description": "Platform-specific binaries for @slang/solidity.",
+  "homepage": "https://nomicfoundation.github.io/slang/",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/NomicFoundation/slang.git"
+  },
+  "bugs": "https://github.com/NomicFoundation/slang/issues/",
+  "contributors": [
+    {
+      "name": "Nomic Foundation",
+      "email": "packages@nomic.foundation"
+    },
+    {
+      "name": "Antony Blakey",
+      "email": "antony@nomic.foundation"
+    },
+    {
+      "name": "Omar Tawfik",
+      "email": "omar@nomic.foundation"
+    }
+  ],
+  "main": "index.darwin-arm64.node",
+  "files": [
+    "index.darwin-arm64.node",
+    "README.md"
+  ],
+  "os": [
+    "darwin"
+  ],
+  "cpu": [
+    "arm64"
+  ],
+  "engines": {
+    "node": ">= 10"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  },
+  "keywords": [
+    "blockchain",
+    "compilers",
+    "dapps",
+    "ethereum",
+    "parsing",
+    "smart-contracts",
+    "solidity",
+    "tooling"
+  ]
+}

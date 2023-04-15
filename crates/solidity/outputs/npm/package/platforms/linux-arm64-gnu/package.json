@@ -1,0 +1,57 @@
+{
+  "name": "@slang/solidity-linux-arm64-gnu",
+  "version": "0.1.0",
+  "description": "Platform-specific binaries for @slang/solidity.",
+  "homepage": "https://nomicfoundation.github.io/slang/",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/NomicFoundation/slang.git"
+  },
+  "bugs": "https://github.com/NomicFoundation/slang/issues/",
+  "contributors": [
+    {
+      "name": "Nomic Foundation",
+      "email": "packages@nomic.foundation"
+    },
+    {
+      "name": "Antony Blakey",
+      "email": "antony@nomic.foundation"
+    },
+    {
+      "name": "Omar Tawfik",
+      "email": "omar@nomic.foundation"
+    }
+  ],
+  "main": "index.linux-arm64-gnu.node",
+  "files": [
+    "index.linux-arm64-gnu.node",
+    "README.md"
+  ],
+  "os": [
+    "linux"
+  ],
+  "cpu": [
+    "arm64"
+  ],
+  "libc": [
+    "glibc"
+  ],
+  "engines": {
+    "node": ">= 10"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  },
+  "keywords": [
+    "blockchain",
+    "compilers",
+    "dapps",
+    "ethereum",
+    "parsing",
+    "smart-contracts",
+    "solidity",
+    "tooling"
+  ]
+}
