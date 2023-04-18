@@ -1,5 +1,5 @@
 <!-- cSpell:disable -->
 
-# @slang/solidity-darwin-arm64
+# @nomicfoundation/slang-darwin-arm64
 
-This is the **aarch64-apple-darwin** binary for `@slang/solidity`.
+This is the **aarch64-apple-darwin** binary for `@nomicfoundation/slang`.

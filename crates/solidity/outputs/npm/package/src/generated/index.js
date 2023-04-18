@@ -40,7 +40,7 @@ switch (platform) {
           if (localFileExisted) {
             nativeBinding = require("./index.android-arm64.node");
           } else {
-            nativeBinding = require("@slang/solidity-android-arm64");
+            nativeBinding = require("@nomicfoundation/slang-android-arm64");
           }
         } catch (e) {
           loadError = e;
@@ -52,7 +52,7 @@ switch (platform) {
           if (localFileExisted) {
             nativeBinding = require("./index.android-arm-eabi.node");
           } else {
-            nativeBinding = require("@slang/solidity-android-arm-eabi");
+            nativeBinding = require("@nomicfoundation/slang-android-arm-eabi");
           }
         } catch (e) {
           loadError = e;
@@ -70,7 +70,7 @@ switch (platform) {
           if (localFileExisted) {
             nativeBinding = require("./index.win32-x64-msvc.node");
           } else {
-            nativeBinding = require("@slang/solidity-win32-x64-msvc");
+            nativeBinding = require("@nomicfoundation/slang-win32-x64-msvc");
           }
         } catch (e) {
           loadError = e;
@@ -82,7 +82,7 @@ switch (platform) {
           if (localFileExisted) {
             nativeBinding = require("./index.win32-ia32-msvc.node");
           } else {
-            nativeBinding = require("@slang/solidity-win32-ia32-msvc");
+            nativeBinding = require("@nomicfoundation/slang-win32-ia32-msvc");
           }
         } catch (e) {
           loadError = e;
@@ -94,7 +94,7 @@ switch (platform) {
           if (localFileExisted) {
             nativeBinding = require("./index.win32-arm64-msvc.node");
           } else {
-            nativeBinding = require("@slang/solidity-win32-arm64-msvc");
+            nativeBinding = require("@nomicfoundation/slang-win32-arm64-msvc");
           }
         } catch (e) {
           loadError = e;
@@ -110,7 +110,7 @@ switch (platform) {
       if (localFileExisted) {
         nativeBinding = require("./index.darwin-universal.node");
       } else {
-        nativeBinding = require("@slang/solidity-darwin-universal");
+        nativeBinding = require("@nomicfoundation/slang-darwin-universal");
       }
       break;
     } catch {}
@@ -121,7 +121,7 @@ switch (platform) {
           if (localFileExisted) {
             nativeBinding = require("./index.darwin-x64.node");
           } else {
-            nativeBinding = require("@slang/solidity-darwin-x64");
+            nativeBinding = require("@nomicfoundation/slang-darwin-x64");
           }
         } catch (e) {
           loadError = e;
@@ -133,7 +133,7 @@ switch (platform) {
           if (localFileExisted) {
             nativeBinding = require("./index.darwin-arm64.node");
           } else {
-            nativeBinding = require("@slang/solidity-darwin-arm64");
+            nativeBinding = require("@nomicfoundation/slang-darwin-arm64");
           }
         } catch (e) {
           loadError = e;
@@ -152,7 +152,7 @@ switch (platform) {
       if (localFileExisted) {
         nativeBinding = require("./index.freebsd-x64.node");
       } else {
-        nativeBinding = require("@slang/solidity-freebsd-x64");
+        nativeBinding = require("@nomicfoundation/slang-freebsd-x64");
       }
     } catch (e) {
       loadError = e;
@@ -167,7 +167,7 @@ switch (platform) {
             if (localFileExisted) {
               nativeBinding = require("./index.linux-x64-musl.node");
             } else {
-              nativeBinding = require("@slang/solidity-linux-x64-musl");
+              nativeBinding = require("@nomicfoundation/slang-linux-x64-musl");
             }
           } catch (e) {
             loadError = e;
@@ -178,7 +178,7 @@ switch (platform) {
             if (localFileExisted) {
               nativeBinding = require("./index.linux-x64-gnu.node");
             } else {
-              nativeBinding = require("@slang/solidity-linux-x64-gnu");
+              nativeBinding = require("@nomicfoundation/slang-linux-x64-gnu");
             }
           } catch (e) {
             loadError = e;
@@ -192,7 +192,7 @@ switch (platform) {
             if (localFileExisted) {
               nativeBinding = require("./index.linux-arm64-musl.node");
             } else {
-              nativeBinding = require("@slang/solidity-linux-arm64-musl");
+              nativeBinding = require("@nomicfoundation/slang-linux-arm64-musl");
             }
           } catch (e) {
             loadError = e;
@@ -203,7 +203,7 @@ switch (platform) {
             if (localFileExisted) {
               nativeBinding = require("./index.linux-arm64-gnu.node");
             } else {
-              nativeBinding = require("@slang/solidity-linux-arm64-gnu");
+              nativeBinding = require("@nomicfoundation/slang-linux-arm64-gnu");
             }
           } catch (e) {
             loadError = e;
@@ -216,7 +216,7 @@ switch (platform) {
           if (localFileExisted) {
             nativeBinding = require("./index.linux-arm-gnueabihf.node");
           } else {
-            nativeBinding = require("@slang/solidity-linux-arm-gnueabihf");
+            nativeBinding = require("@nomicfoundation/slang-linux-arm-gnueabihf");
           }
         } catch (e) {
           loadError = e;

@@ -1,5 +1,5 @@
 {
-  "name": "@slang-internal/workspace",
+  "name": "@slang-private/workspace",
   "private": true,
   "workspaces": [
     "crates/solidity/outputs/npm/package",

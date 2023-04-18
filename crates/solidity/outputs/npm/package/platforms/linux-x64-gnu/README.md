@@ -1,5 +1,5 @@
 <!-- cSpell:disable -->
 
-# @slang/solidity-linux-x64-gnu
+# @nomicfoundation/slang-linux-x64-gnu
 
-This is the **x86_64-unknown-linux-gnu** binary for `@slang/solidity`.
+This is the **x86_64-unknown-linux-gnu** binary for `@nomicfoundation/slang`.

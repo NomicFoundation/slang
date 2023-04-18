@@ -1,4 +1,4 @@
-# @slang/solidity
+# @nomicfoundation/slang
 
 <!-- _PRODUCT_README_ (keep in sync) -->
 

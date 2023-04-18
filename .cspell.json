@@ -12,6 +12,7 @@
     "inheritdoc",
     "ipfs",
     "nomic",
+    "nomicfoundation",
     "struct",
     "structs",
     "ufixed"
