@@ -1,3 +1,5 @@
+name: "jobs/check"
+
 on:
   # Run when invoked from other workflows:
   workflow_call: {}
@@ -9,23 +11,27 @@ jobs:
     steps:
       #
       # _DEVCONTAINER_PREPARATION_STEPS_ (keep in sync)
+      # Cache is updated in this workflow, and reused in subsequent workflows.
+      # Note: always start with a fresh cache when running on the main branch.
       #
 
       - name: "Clone repository"
         uses: "actions/checkout@v3.4.0"
 
       - name: "Restore hermit cache"
-        uses: "actions/cache@v3.3.1"
+        if: "${{ github.ref_name != 'main' }}"
+        uses: "actions/cache/restore@v3.3.1"
         with:
           path: ".hermit/"
-          key: "hermit-cache-${{ hashFiles('**/Cargo.lock', '**/package-lock.json', '**/Pipfile.lock') }}"
+          key: "hermit-cache-${{ hashFiles('Cargo.lock', 'package-lock.json', 'Pipfile.lock') }}"
           restore-keys: "hermit-cache-"
 
       - name: "Restore build cache"
-        uses: "actions/cache@v3.3.1"
+        if: "${{ github.ref_name != 'main' }}"
+        uses: "actions/cache/restore@v3.3.1"
         with:
           path: "target/"
-          key: "build-cache-${{ hashFiles('**/Cargo.lock', '**/package-lock.json', '**/Pipfile.lock') }}"
+          key: "build-cache-${{ hashFiles('Cargo.lock', 'package-lock.json', 'Pipfile.lock') }}"
           restore-keys: "build-cache-"
 
       - name: "Build devcontainer"
@@ -80,9 +86,20 @@ jobs:
           entrypoint: "scripts/mkdocs/build.sh"
 
       #
-      # Clean Up:
-      # Prepare files to be cached in post-steps.
+      # Update cache files:
       #
 
       - name: "Repossess files from devcontainer user"
         run: "sudo chown -R $USER:$USER $GITHUB_WORKSPACE"
+
+      - name: "Save hermit cache"
+        uses: "actions/cache/save@v3.3.1"
+        with:
+          path: ".hermit/"
+          key: "hermit-cache-${{ hashFiles('Cargo.lock', 'package-lock.json', 'Pipfile.lock') }}"
+
+      - name: "Save build cache"
+        uses: "actions/cache/save@v3.3.1"
+        with:
+          path: "target/"
+          key: "build-cache-${{ hashFiles('Cargo.lock', 'package-lock.json', 'Pipfile.lock') }}"

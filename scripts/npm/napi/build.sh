@@ -42,32 +42,38 @@ function _napi_build() {
   # Navigate to where files should be generated:
   cd "$PACKAGE_DIR/src/generated"
 
+  command=(
+    napi build
+    --platform
+    --config "../../package.json"
+    --cargo-cwd "../../../crate"
+    --target "$target"
+    --no-const-enum
+  )
+
   if [[ "${SLANG_CROSS_BUILD:-}" == "true" ]]; then
-    extra_args="--release"
+    command+=(--release)
   fi
 
-  _group_output \
-    napi build --platform \
-    --config "../../package.json" \
-    --cargo-cwd "../../../crate" \
-    --target "$target" \
-    "${extra_args:-}"
+  _group_output "${command[@]}"
 }
 
-function _process_source_files() {
-  source_files=(
+function _process_generated_files() {
+  printf "\n\n📚 Processing Generated Files: 📚\n\n\n"
+
+  generated_files=(
     "$PACKAGE_DIR/src/generated/index.d.ts"
     "$PACKAGE_DIR/src/generated/index.js"
   )
 
-  # Add license headers to generated files, and format them using prettier:
-
-  for file in "${source_files[@]}"; do
+  for file in "${generated_files[@]}"; do
     contents=$(
-      printf "%s\n%s\n\n%s" \
-        "/* Slang License: https://github.com/NomicFoundation/slang/blob/main/LICENSE */" \
-        "/* NAPI-RS License: https://github.com/napi-rs/napi-rs/blob/main/LICENSE */" \
-        "$(cat "$file")"
+      echo "// Slang License: https://github.com/NomicFoundation/slang/blob/main/LICENSE"
+      echo "// NAPI-RS License: https://github.com/napi-rs/napi-rs/blob/main/LICENSE"
+      echo ""
+      echo "// @ts-nocheck"
+      echo ""
+      cat "$file"
     )
 
     echo "$contents" > "$file"
@@ -76,7 +82,9 @@ function _process_source_files() {
 }
 
 function _process_bindings() {
-  # Create and populate artifacts folder:
+  printf "\n\n📚 Processing Bindings: 📚\n\n\n"
+
+  # Populate artifacts folder with all binding files:
 
   mkdir -p "$PACKAGE_DIR/artifacts"
   artifacts="$(_list_source_files "$PACKAGE_DIR/src/generated" "*.node")"
@@ -85,7 +93,7 @@ function _process_bindings() {
     cp "$artifact" "$PACKAGE_DIR/artifacts"
   done
 
-  # Copy artifacts to platform-specific folders:
+  # Copy each binding file to its platform-specific sub-folder:
 
   cd "$PACKAGE_DIR"
   napi artifacts --dir "artifacts" --dist "platforms"
@@ -94,16 +102,11 @@ function _process_bindings() {
 (
   _check_local_changes
 
-  targets="$(_list_active_targets)"
-
-  # Then build each target in turn:
-  echo "$targets" | while read -r target; do
+  _list_active_targets | while read -r target; do
     _napi_build "$target"
   done
 
-  printf "\n\n📚 Processing Generated Files: 📚\n\n\n"
-
-  _process_source_files
+  _process_generated_files
   _process_bindings
 
   _check_local_changes

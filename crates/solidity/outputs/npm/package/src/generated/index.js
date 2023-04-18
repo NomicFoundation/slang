@@ -1,5 +1,7 @@
-/* Slang License: https://github.com/NomicFoundation/slang/blob/main/LICENSE */
-/* NAPI-RS License: https://github.com/napi-rs/napi-rs/blob/main/LICENSE */
+// Slang License: https://github.com/NomicFoundation/slang/blob/main/LICENSE
+// NAPI-RS License: https://github.com/napi-rs/napi-rs/blob/main/LICENSE
+
+// @ts-nocheck
 
 /* tslint:disable */
 /* eslint-disable */
