@@ -1,5 +1,5 @@
 <!-- cSpell:disable -->
 
-# @slang/solidity-darwin-x64
+# @nomicfoundation/slang-darwin-x64
 
-This is the **x86_64-apple-darwin** binary for `@slang/solidity`.
+This is the **x86_64-apple-darwin** binary for `@nomicfoundation/slang`.

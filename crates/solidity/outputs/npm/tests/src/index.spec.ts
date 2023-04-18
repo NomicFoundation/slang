@@ -1,6 +1,6 @@
 import test from "ava";
 
-import { Language, RuleKind, TokenKind, NodeType, RuleNode, TokenNode, ProductionKind } from "@slang/solidity";
+import { Language, RuleKind, TokenKind, NodeType, RuleNode, TokenNode, ProductionKind } from "@nomicfoundation/slang";
 
 test("parse some token", (t) => {
   const l = new Language("0.8.1");

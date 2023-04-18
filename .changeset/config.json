@@ -6,5 +6,5 @@
   "changelog": ["@changesets/changelog-github", { "repo": "NomicFoundation/slang" }],
 
   "_COMMENT_": "All packages should be ignored by default, except the single 'changelog' private package.",
-  "ignore": ["@slang/*", "@slang-internal/*"]
+  "ignore": ["@nomicfoundation/*", "@slang-private/*"]
 }

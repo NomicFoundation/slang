@@ -1,11 +1,11 @@
 {
-  "name": "@slang-internal/solidity-npm-tests",
+  "name": "@slang-private/solidity-npm-tests",
   "private": true,
   "devDependencies": {
     "@swc-node/register": "1.6.4",
     "@swc/core": "1.3.50",
     "ava": "5.2.0",
-    "@slang/solidity": "file:../package"
+    "@nomicfoundation/slang": "file:../package"
   },
   "ava": {
     "require": [

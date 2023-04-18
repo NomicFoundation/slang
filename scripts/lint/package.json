@@ -1,5 +1,5 @@
 {
-  "name": "@slang-internal/scripts-lint",
+  "name": "@slang-private/scripts-lint",
   "private": true,
   "devDependencies": {
     "@types/node": "18.15.11"

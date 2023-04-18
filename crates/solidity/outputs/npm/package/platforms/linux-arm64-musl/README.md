@@ -1,5 +1,5 @@
 <!-- cSpell:disable -->
 
-# @slang/solidity-linux-arm64-musl
+# @nomicfoundation/slang-linux-arm64-musl
 
-This is the **aarch64-unknown-linux-musl** binary for `@slang/solidity`.
+This is the **aarch64-unknown-linux-musl** binary for `@nomicfoundation/slang`.

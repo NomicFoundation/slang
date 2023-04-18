@@ -1,7 +1,7 @@
 {
-  "name": "@slang/solidity-linux-x64-gnu",
+  "name": "@nomicfoundation/slang-linux-x64-gnu",
   "version": "0.1.0",
-  "description": "Platform-specific binaries for @slang/solidity.",
+  "description": "Platform-specific binaries for @nomicfoundation/slang.",
   "homepage": "https://nomicfoundation.github.io/slang/",
   "license": "MIT",
   "repository": {
