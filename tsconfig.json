@@ -3,6 +3,7 @@
     /* All JavaScript Files */
     "**/**.js",
     "**/**.jsx",
+    "**/**.mjs",
     "**/**.ts",
     "**/**.tsx"
   ],

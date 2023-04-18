@@ -10,9 +10,11 @@ on:
     branches:
       - "main"
 
+# We publish multiple packages for each version.
+# Wait for any existing deploys to complete before starting a new one:
 concurrency:
   group: "deploy"
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   check:
@@ -22,14 +24,7 @@ jobs:
     needs: "check"
     uses: "./.github/workflows/_jobs_github_pages.yml"
 
-  changesets:
-    needs: "check"
-    uses: "./.github/workflows/_jobs_changesets.yml"
-
   publish:
-    needs: "changesets"
+    needs: "check"
     uses: "./.github/workflows/_jobs_publish.yml"
-    env:
-      # __TODO_REENABLE_PUBLISH__
-      # SLANG_PUBLISH: "${{ needs.changesets.outputs.publish }}"
-      SLANG_PUBLISH: "false"
+    secrets: "inherit"

@@ -42,16 +42,19 @@ function _napi_build() {
   # Navigate to where files should be generated:
   cd "$PACKAGE_DIR/src/generated"
 
+  command=(
+    napi build
+    --platform
+    --config "../../package.json"
+    --cargo-cwd "../../../crate"
+    --target "$target"
+  )
+
   if [[ "${SLANG_CROSS_BUILD:-}" == "true" ]]; then
-    extra_args="--release"
+    command+=(--release)
   fi
 
-  _group_output \
-    napi build --platform \
-    --config "../../package.json" \
-    --cargo-cwd "../../../crate" \
-    --target "$target" \
-    "${extra_args:-}"
+  _group_output "${command[@]}"
 }
 
 function _process_source_files() {

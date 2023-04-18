@@ -1,5 +1,11 @@
 # changelog
 
+## 0.1.1
+
+### Patch Changes
+
+- [#412](https://github.com/NomicFoundation/slang/pull/412) [`9cac1a04`](https://github.com/NomicFoundation/slang/commit/9cac1a04670fa870c15cee1bd20e0e78c1d213db) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - publish npm packages
+
 ## 0.1.0
 
 ### Minor Changes
