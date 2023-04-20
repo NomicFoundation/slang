@@ -10,12 +10,12 @@ All dependencies should have exact full versions, and we can rely on tooling to 
 
 Currently, the repository has the following projects:
 
-- `./.devcontainer`: devcontainer image that is self-contained, and has all the dependencies needed to develop, build, test, and ship the project.
-- `./crates`:
-  - `codegen/`: code generation scripts.
-  - `solidity/`: Solidity language inputs and outputs.
-- `./documentation`: used to host the language specification, and any future documentation for the project.
-- `./scripts`: self-contained bash scripts to setup, build, test, run, and release all code in this repository.
+-   `./.devcontainer`: devcontainer image that is self-contained, and has all the dependencies needed to develop, build, test, and ship the project.
+-   `./crates`:
+    -   `codegen/`: code generation scripts.
+    -   `solidity/`: Solidity language inputs and outputs.
+-   `./documentation`: used to host the language specification, and any future documentation for the project.
+-   `./scripts`: self-contained bash scripts to setup, build, test, run, and release all code in this repository.
 
 ## Dev Containers
 

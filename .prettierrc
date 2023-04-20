@@ -6,5 +6,13 @@
   "singleQuote": false,
   "trailingComma": "all",
   "tabWidth": 2,
-  "plugins": ["prettier-plugin-sh"]
+  "plugins": ["prettier-plugin-sh"],
+  "overrides": [
+    {
+      "files": "**/*.md",
+      "options": {
+        "tabWidth": 4
+      }
+    }
+  ]
 }

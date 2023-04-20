@@ -41,7 +41,7 @@ impl MarkdownWriter {
     }
 
     pub fn write_list_link(&mut self, title: &str, path: &str) {
-        writeln!(self.w, "- [{title}]({path})").unwrap();
+        writeln!(self.w, "-   [{title}]({path})").unwrap();
     }
 
     pub fn write_newline(&mut self) {
