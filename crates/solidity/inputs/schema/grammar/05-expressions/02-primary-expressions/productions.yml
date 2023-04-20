@@ -5,26 +5,26 @@
   versioned:
     0.4.11:
       choice:
-        - reference: "Identifier"
+        - reference: "NewExpression"
         - reference: "TupleExpression"
         - reference: "ArrayLiteral"
-        - reference: "StringExpression"
-        - reference: "NumericLiteral"
         - reference: "BooleanLiteral"
-        - reference: "NewExpression"
+        - reference: "NumericLiteral"
+        - reference: "StringExpression"
         - reference: "ElementaryType"
+        - reference: "Identifier"
     0.5.3:
       # added: TypeExpression
       choice:
-        - reference: "Identifier"
-        - reference: "TupleExpression"
-        - reference: "ArrayLiteral"
-        - reference: "StringExpression"
-        - reference: "NumericLiteral"
-        - reference: "BooleanLiteral"
         - reference: "NewExpression"
+        - reference: "TupleExpression"
         - reference: "TypeExpression"
+        - reference: "ArrayLiteral"
+        - reference: "BooleanLiteral"
+        - reference: "NumericLiteral"
+        - reference: "StringExpression"
         - reference: "ElementaryType"
+        - reference: "Identifier"
 
 - name: "TypeExpression"
   kind: "Parser"
