@@ -11,10 +11,17 @@
   },
   "rust-analyzer.server.path": "${workspaceFolder}/bin/rust-analyzer",
   "search.exclude": {
+    // Packages and Dependencies
     "**/.hermit/": true,
-    "**/generated/": true,
     "**/node_modules/": true,
-    "**/target/": true
+    // Generated Artifacts
+    "**/target/": true,
+    // Generated Sources
+    "**/generated/": true,
+    // Lock Files
+    "**/Cargo.lock": true,
+    "**/package-lock.json": true,
+    "**/Pipfile.lock": true
   },
   "triggerTaskOnSave.tasks": {
     "Validate Solidity Grammar": ["crates/solidity/inputs/schema/grammar/**/*.yml"]
