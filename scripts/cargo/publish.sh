@@ -23,7 +23,7 @@ source "$(dirname "${BASH_SOURCE[0]}")/../_common.sh"
 
   if [[ "$repo_version" == "$published_version" ]]; then
     echo "Skipping publish, since the repository version is already published."
-    return 0
+    exit 0
   fi
 
   command=(
