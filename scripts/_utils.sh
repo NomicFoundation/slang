@@ -69,3 +69,7 @@ function _check_local_changes() {
     exit 1
   fi
 }
+
+function _slang_repo_version() {
+  jq --raw-output '.version' "$REPO_ROOT/scripts/changelog/package.json"
+}

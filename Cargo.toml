@@ -19,7 +19,7 @@ members = [
 ]
 
 [workspace.package]
-version = "0.1.0"
+version = "0.1.1"
 rust-version = "1.64.0" # Keep this version in sync with "$RUST_VERSION" in "$REPO_ROOT/bin/hermit.hcl"
 edition = "2021"
 publish = false

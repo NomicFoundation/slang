@@ -1,12 +1,4 @@
 {
-  "include": [
-    /* All JavaScript Files */
-    "**/**.js",
-    "**/**.jsx",
-    "**/**.ts",
-    "**/**.tsx"
-  ],
-
   "exclude": [
     /* Packages and Dependencies */
     ".hermit/",

@@ -20,6 +20,11 @@ source "$(dirname "${BASH_SOURCE[0]}")/../_common.sh"
 # So we have to bump the versions over ourselves anyways.
 #
 
+if [[ ! "${GITHUB_ACTIONS:-}" ]]; then
+  printf "\n\n❌ Error: Script must be invoked by GitHub Actions in CI ❌\n\n\n"
+  exit 1
+fi
+
 (
   printf "\n\n📜 Consuming Changesets 📜\n\n\n"
 
@@ -31,8 +36,7 @@ source "$(dirname "${BASH_SOURCE[0]}")/../_common.sh"
   _group_output changeset version
 )
 
-CHANGELOG_DIR="$REPO_ROOT/scripts/changelog"
-SLANG_NEW_VERSION=$(jq --raw-output '.version' "$CHANGELOG_DIR/package.json")
+repo_version=$(_slang_repo_version)
 
 (
   printf "\n\n📜 Updating Cargo Crates 📜\n\n\n"
@@ -40,18 +44,17 @@ SLANG_NEW_VERSION=$(jq --raw-output '.version' "$CHANGELOG_DIR/package.json")
   # TODO: move "cargo-edit" to workspace dependencies, so that it is installed/upgraded with the rest of them.
   # https://github.com/rust-lang/cargo/issues/2267
   _group_output cargo install "cargo-edit" --version "0.11.9"
-  _group_output cargo set-version "$SLANG_NEW_VERSION" --workspace
+  _group_output cargo set-version "$repo_version" --workspace
 )
 
 (
   printf "\n\n📜 Updating NPM Packages 📜\n\n\n"
+  cd "$REPO_ROOT"
 
   # Update each package in the workspace:
-  SLANG_NEW_VERSION="$SLANG_NEW_VERSION" \
-    npm run "slang-bump-version" --workspaces --if-present
+  npm run "slang-bump-version" --workspaces --if-present
 
   # Update lock file:
-  cd "$REPO_ROOT"
   _group_output npm install --package-lock-only
 )
 
@@ -59,7 +62,9 @@ CHANGELOG_FILES=$(_list_source_files "$REPO_ROOT" "**/CHANGELOG.md")
 
 (
   printf "\n\n📜 Updating Changelogs 📜\n\n\n"
-  source="$CHANGELOG_DIR/CHANGELOG.md"
+
+  source="$REPO_ROOT/scripts/changelog/CHANGELOG.md"
+  prettier --write "$source"
 
   for destination in $CHANGELOG_FILES; do
     if [[ "$source" != "$destination" ]]; then
@@ -70,5 +75,5 @@ CHANGELOG_FILES=$(_list_source_files "$REPO_ROOT" "**/CHANGELOG.md")
 )
 
 (
-  printf "\n\n✅ Updated to version %s ✅\n\n\n" "$SLANG_NEW_VERSION"
+  printf "\n\n✅ Updated to version %s ✅\n\n\n" "$repo_version"
 )

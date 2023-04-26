@@ -5,11 +5,13 @@ source "$(dirname "${BASH_SOURCE[0]}")/_common.sh"
 
 (
   # Update main package:
-  main_package=$(jq '.version = "'"$SLANG_NEW_VERSION"'"' "$PACKAGE_DIR/package.json")
+  repo_version=$(_slang_repo_version)
+  main_package=$(jq '.version = "'"$repo_version"'"' "$PACKAGE_DIR/package.json")
   echo "$main_package" > "$PACKAGE_DIR/package.json"
 
-  # Update platform-specific packages:
+  # Update platform-specific packages, without actually publishing:
   cd "$PACKAGE_DIR"
+  export npm_config_dry_run=true
   _group_output napi prepublish --skip-gh-release --prefix "platforms"
 
   # Format all packages:

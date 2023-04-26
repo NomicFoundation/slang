@@ -1,3 +1,5 @@
+name: "jobs/github-pages"
+
 on:
   # Run when invoked from other workflows:
   workflow_call: {}
@@ -17,23 +19,24 @@ jobs:
     steps:
       #
       # _DEVCONTAINER_PREPARATION_STEPS_ (keep in sync)
+      # Cache is updated in the "check" workflow, then reused here.
       #
 
       - name: "Clone repository"
         uses: "actions/checkout@v3.4.0"
 
       - name: "Restore hermit cache"
-        uses: "actions/cache@v3.3.1"
+        uses: "actions/cache/restore@v3.3.1"
         with:
           path: ".hermit/"
-          key: "hermit-cache-${{ hashFiles('**/Cargo.lock', '**/package-lock.json', '**/Pipfile.lock') }}"
+          key: "hermit-cache-${{ hashFiles('Cargo.lock', 'package-lock.json', 'Pipfile.lock') }}"
           fail-on-cache-miss: true
 
       - name: "Restore build cache"
-        uses: "actions/cache@v3.3.1"
+        uses: "actions/cache/restore@v3.3.1"
         with:
           path: "target/"
-          key: "build-cache-${{ hashFiles('**/Cargo.lock', '**/package-lock.json', '**/Pipfile.lock') }}"
+          key: "build-cache-${{ hashFiles('Cargo.lock', 'package-lock.json', 'Pipfile.lock') }}"
           fail-on-cache-miss: true
 
       - name: "Build devcontainer"
