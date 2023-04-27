@@ -1,5 +1,11 @@
 # changelog
 
+## 0.1.2
+
+### Patch Changes
+
+-   [#416](https://github.com/NomicFoundation/slang/pull/416) [`fb977a5`](https://github.com/NomicFoundation/slang/commit/fb977a52b152a1ce8d8ce92db4bb00fcfb5881c1) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - fix primary expressions parser order
+
 ## 0.1.1
 
 ### Patch Changes
