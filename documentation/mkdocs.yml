@@ -3,12 +3,48 @@
 #
 
 site_name: "Slang"
+site_description: >
+  A modular set of compiler APIs empowering the next
+  generation of Solidity code analysis and developer tooling.
+  Written in Rust and distributed in multiple languages.
 
 repo_url: "https://github.com/NomicFoundation/slang"
 repo_name: "NomicFoundation/slang"
 
 docs_dir: "./public"
 site_dir: "../target/documentation"
+
+#
+# Footer:
+#
+
+copyright: >
+  Copyright (c) 2022 Nomic Foundation |
+  <b><a target="_blank" href="https://github.com/NomicFoundation/slang/blob/main/LICENSE">License</a></b> |
+  <b><a target="_blank" href="https://hardhat.org/privacy-policy.html">Privacy Policy</a></b> |
+  <b><a href="#__consent">Cookie Settings</a></b>
+
+extra:
+  analytics:
+    provider: "google"
+    property: "G-VKCEJVZ6KG"
+  consent:
+    title: "Cookie Consent"
+    description: >
+      We use cookies to recognize your visits and preferences, as well as
+      to measure the effectiveness of our documentation, and whether users
+      find what they're searching for.
+      With your consent, you're helping us to make our documentation better.
+    actions:
+      - "accept"
+      - "reject"
+  social:
+    - icon: "fontawesome/brands/github"
+      link: "https://github.com/NomicFoundation/slang/"
+    - icon: "fontawesome/brands/twitter"
+      link: "https://twitter.com/nomicfoundation/"
+    - icon: "fontawesome/solid/link"
+      link: "https://nomic.foundation/"
 
 #
 # Extensions:
