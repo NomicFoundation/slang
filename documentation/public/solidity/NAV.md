@@ -1,1 +1,1 @@
-- [Specification](./specification/)
+-   [Specification](./specification/)

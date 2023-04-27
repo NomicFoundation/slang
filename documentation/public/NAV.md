@@ -1,3 +1,3 @@
-- [Home](./index.md)
-- [Internals](./internals/)
-- [Solidity](./solidity/)
+-   [Home](./index.md)
+-   [Internals](./internals/)
+-   [Solidity](./solidity/)

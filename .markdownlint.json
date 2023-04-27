@@ -4,6 +4,10 @@
   "code-block-style": false,
   "first-line-heading": false,
   "line-length": false,
+  "list-marker-space": false,
   "no-duplicate-heading": false,
-  "no-inline-html": false
+  "no-inline-html": false,
+  "ul-indent": {
+    "indent": 4
+  }
 }

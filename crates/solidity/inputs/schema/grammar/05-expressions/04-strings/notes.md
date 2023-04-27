@@ -24,14 +24,14 @@ Hexadecimal literals behave like string literals and have the same convertibilit
 
 String literals also support the following escape characters:
 
-- `\<newline>` (escapes an actual newline)
-- `\\` (backslash)
-- `\'` (single quote)
-- `\"` (double quote)
-- `\n` (newline)break
-- `\r` (carriage return)
-- `\t` (tab)
-- `\xNN` (hex escape, takes a hex value and inserts the appropriate byte)
-- `\uNNNN` (unicode escape, takes a Unicode code point and inserts an UTF-8 sequence)
+-   `\<newline>` (escapes an actual newline)
+-   `\\` (backslash)
+-   `\'` (single quote)
+-   `\"` (double quote)
+-   `\n` (newline)break
+-   `\r` (carriage return)
+-   `\t` (tab)
+-   `\xNN` (hex escape, takes a hex value and inserts the appropriate byte)
+-   `\uNNNN` (unicode escape, takes a Unicode code point and inserts an UTF-8 sequence)
 
 Any Unicode line terminator which is not a newline (i.e. LF, VF, FF, CR, NEL, LS, PS) is considered to terminate the string literal. Newline only terminates the string literal if it is not preceded by a `\`.
