@@ -26,7 +26,7 @@ fi
     exit 0
   fi
 
-  if [[ "$changed_files" != "M  package-lock.json" ]]; then
+  if [[ "$changed_files" != " M package-lock.json" ]]; then
     echo "Unexpected changes to files:"
     echo "$changed_files"
     exit 1
@@ -44,7 +44,7 @@ fi
   _group_output git add "package-lock.json"
   _group_output git commit --message "update lock files after release"
 
-  _group_output git push --force
+  _group_output git push --force --set-upstream "origin" "$head_branch"
   _group_output gh pr create --fill --base "$base_branch" --head "$head_branch"
 
   _group_output git checkout "$base_branch"
