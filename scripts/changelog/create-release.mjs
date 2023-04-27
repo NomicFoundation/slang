@@ -15,6 +15,24 @@ async function createRelease(
   /** @type boolean */ dryRun,
 ) {
   const version = await getPackageVersion(changelogDir);
+
+  const tagName = `v${version}`;
+  console.log("Repository tag:", tagName);
+
+  const oktokit = github.getOctokit(githubToken);
+
+  const latestRelease = await oktokit.rest.repos.getLatestRelease({
+    ...github.context.repo,
+  });
+
+  const latestTagName = latestRelease.data.tag_name;
+  console.log("Latest published tag:", latestTagName);
+
+  if (tagName === latestTagName) {
+    console.log("Stopping because tag already exists...");
+    return;
+  }
+
   const changelogEntry = await getChangelogEntry(changelogDir, version);
 
   console.log();
@@ -26,9 +44,7 @@ async function createRelease(
     return;
   }
 
-  const tagName = `v${version}`;
-
-  await github.getOctokit(githubToken).rest.repos.createRelease({
+  await oktokit.rest.repos.createRelease({
     name: tagName,
     tag_name: tagName,
     body: changelogEntry,
