@@ -1,8 +1,7 @@
-use anyhow::{bail, Context, Result};
+use anyhow::{bail, Result};
 use semver::Version;
-use slang_solidity::syntax::parser::{Language, ProductionKind};
 
-use crate::compatible_versions::filter_compatible_versions;
+use crate::version_pragmas::extract_version_pragmas;
 
 #[test]
 fn exact_single_version() -> Result<()> {
@@ -91,23 +90,16 @@ fn test_aux(all_versions: &[&str], source: &str, expected: &[&str]) -> Result<()
         .map(|version| Version::parse(version))
         .collect::<Result<Vec<Version>, semver::Error>>()?;
 
-    let latest_version = all_versions.last().context("No versions provided")?;
-    let output =
-        Language::new(latest_version.to_owned())?.parse(ProductionKind::SourceUnit, source);
+    let latest_version = all_versions.iter().max().unwrap();
+    let pragmas = extract_version_pragmas(source, latest_version)?;
 
-    let parse_tree = if let Some(root_node) = output.parse_tree() {
-        root_node
-    } else {
-        let source_id = "test.sol";
-        let errors = output
-            .errors_as_strings(source_id, source, /* with_colour */ true)
-            .join("\n");
+    if pragmas.is_empty() {
+        bail!("Failed to extract version pragmas.");
+    }
 
-        bail!("Failed to produce CST using latest version {latest_version}:\n{errors}");
-    };
-
-    let actual = filter_compatible_versions(&all_versions, &parse_tree, source)?
+    let actual = all_versions
         .iter()
+        .filter(|version| pragmas.iter().all(|pragma| pragma.matches(version)))
         .map(|version| version.to_string())
         .collect::<Vec<String>>();
 
