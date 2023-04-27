@@ -17884,20 +17884,55 @@ impl Language {
     }
 
     // (* v0.4.11 *)
-    // PrimaryExpression = «Identifier»
+    // PrimaryExpression = NewExpression
     //                   | TupleExpression
     //                   | ArrayLiteral
-    //                   | StringExpression
-    //                   | NumericLiteral
     //                   | BooleanLiteral
-    //                   | NewExpression
-    //                   | ElementaryType;
+    //                   | NumericLiteral
+    //                   | StringExpression
+    //                   | ElementaryType
+    //                   | «Identifier»;
 
     #[allow(unused_assignments, unused_parens)]
     fn parse_primary_expression_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let start_position = stream.position();
             let mut furthest_error;
+            match self.parse_new_expression(stream) {
+                Fail { error } => furthest_error = error,
+                pass => break pass,
+            }
+            stream.set_position(start_position);
+            match self.parse_tuple_expression(stream) {
+                Fail { error } => furthest_error.merge_with(error),
+                pass => break pass,
+            }
+            stream.set_position(start_position);
+            match self.parse_array_literal(stream) {
+                Fail { error } => furthest_error.merge_with(error),
+                pass => break pass,
+            }
+            stream.set_position(start_position);
+            match self.parse_boolean_literal(stream) {
+                Fail { error } => furthest_error.merge_with(error),
+                pass => break pass,
+            }
+            stream.set_position(start_position);
+            match self.parse_numeric_literal(stream) {
+                Fail { error } => furthest_error.merge_with(error),
+                pass => break pass,
+            }
+            stream.set_position(start_position);
+            match self.parse_string_expression(stream) {
+                Fail { error } => furthest_error.merge_with(error),
+                pass => break pass,
+            }
+            stream.set_position(start_position);
+            match self.parse_elementary_type(stream) {
+                Fail { error } => furthest_error.merge_with(error),
+                pass => break pass,
+            }
+            stream.set_position(start_position);
             match {
                 let leading_trivia = self.optional_leading_trivia(stream);
                 let start = stream.position();
@@ -17919,41 +17954,6 @@ impl Language {
                     }
                 }
             } {
-                Fail { error } => furthest_error = error,
-                pass => break pass,
-            }
-            stream.set_position(start_position);
-            match self.parse_tuple_expression(stream) {
-                Fail { error } => furthest_error.merge_with(error),
-                pass => break pass,
-            }
-            stream.set_position(start_position);
-            match self.parse_array_literal(stream) {
-                Fail { error } => furthest_error.merge_with(error),
-                pass => break pass,
-            }
-            stream.set_position(start_position);
-            match self.parse_string_expression(stream) {
-                Fail { error } => furthest_error.merge_with(error),
-                pass => break pass,
-            }
-            stream.set_position(start_position);
-            match self.parse_numeric_literal(stream) {
-                Fail { error } => furthest_error.merge_with(error),
-                pass => break pass,
-            }
-            stream.set_position(start_position);
-            match self.parse_boolean_literal(stream) {
-                Fail { error } => furthest_error.merge_with(error),
-                pass => break pass,
-            }
-            stream.set_position(start_position);
-            match self.parse_new_expression(stream) {
-                Fail { error } => furthest_error.merge_with(error),
-                pass => break pass,
-            }
-            stream.set_position(start_position);
-            match self.parse_elementary_type(stream) {
                 Fail { error } => furthest_error.merge_with(error),
                 pass => break pass,
             }
@@ -17964,21 +17964,61 @@ impl Language {
     }
 
     // (* v0.5.3 *)
-    // PrimaryExpression = «Identifier»
+    // PrimaryExpression = NewExpression
     //                   | TupleExpression
-    //                   | ArrayLiteral
-    //                   | StringExpression
-    //                   | NumericLiteral
-    //                   | BooleanLiteral
-    //                   | NewExpression
     //                   | TypeExpression
-    //                   | ElementaryType;
+    //                   | ArrayLiteral
+    //                   | BooleanLiteral
+    //                   | NumericLiteral
+    //                   | StringExpression
+    //                   | ElementaryType
+    //                   | «Identifier»;
 
     #[allow(unused_assignments, unused_parens)]
     fn parse_primary_expression_0_5_3(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let start_position = stream.position();
             let mut furthest_error;
+            match self.parse_new_expression(stream) {
+                Fail { error } => furthest_error = error,
+                pass => break pass,
+            }
+            stream.set_position(start_position);
+            match self.parse_tuple_expression(stream) {
+                Fail { error } => furthest_error.merge_with(error),
+                pass => break pass,
+            }
+            stream.set_position(start_position);
+            match self.parse_type_expression(stream) {
+                Fail { error } => furthest_error.merge_with(error),
+                pass => break pass,
+            }
+            stream.set_position(start_position);
+            match self.parse_array_literal(stream) {
+                Fail { error } => furthest_error.merge_with(error),
+                pass => break pass,
+            }
+            stream.set_position(start_position);
+            match self.parse_boolean_literal(stream) {
+                Fail { error } => furthest_error.merge_with(error),
+                pass => break pass,
+            }
+            stream.set_position(start_position);
+            match self.parse_numeric_literal(stream) {
+                Fail { error } => furthest_error.merge_with(error),
+                pass => break pass,
+            }
+            stream.set_position(start_position);
+            match self.parse_string_expression(stream) {
+                Fail { error } => furthest_error.merge_with(error),
+                pass => break pass,
+            }
+            stream.set_position(start_position);
+            match self.parse_elementary_type(stream) {
+                Fail { error } => furthest_error.merge_with(error),
+                pass => break pass,
+            }
+            stream.set_position(start_position);
             match {
                 let leading_trivia = self.optional_leading_trivia(stream);
                 let start = stream.position();
@@ -18000,46 +18040,6 @@ impl Language {
                     }
                 }
             } {
-                Fail { error } => furthest_error = error,
-                pass => break pass,
-            }
-            stream.set_position(start_position);
-            match self.parse_tuple_expression(stream) {
-                Fail { error } => furthest_error.merge_with(error),
-                pass => break pass,
-            }
-            stream.set_position(start_position);
-            match self.parse_array_literal(stream) {
-                Fail { error } => furthest_error.merge_with(error),
-                pass => break pass,
-            }
-            stream.set_position(start_position);
-            match self.parse_string_expression(stream) {
-                Fail { error } => furthest_error.merge_with(error),
-                pass => break pass,
-            }
-            stream.set_position(start_position);
-            match self.parse_numeric_literal(stream) {
-                Fail { error } => furthest_error.merge_with(error),
-                pass => break pass,
-            }
-            stream.set_position(start_position);
-            match self.parse_boolean_literal(stream) {
-                Fail { error } => furthest_error.merge_with(error),
-                pass => break pass,
-            }
-            stream.set_position(start_position);
-            match self.parse_new_expression(stream) {
-                Fail { error } => furthest_error.merge_with(error),
-                pass => break pass,
-            }
-            stream.set_position(start_position);
-            match self.parse_type_expression(stream) {
-                Fail { error } => furthest_error.merge_with(error),
-                pass => break pass,
-            }
-            stream.set_position(start_position);
-            match self.parse_elementary_type(stream) {
                 Fail { error } => furthest_error.merge_with(error),
                 pass => break pass,
             }

@@ -165,3 +165,8 @@ fn prefix_minus() -> Result<()> {
 fn prefix_plus() -> Result<()> {
     return run("Expression", "prefix_plus");
 }
+
+#[test]
+fn unicode_string_literal() -> Result<()> {
+    return run("Expression", "unicode_string_literal");
+}
