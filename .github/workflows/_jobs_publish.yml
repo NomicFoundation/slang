@@ -98,3 +98,12 @@ jobs:
         env:
           SLANG_PUBLISH: "true"
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+
+      - name: "Update Lock Files"
+        if: "${{ steps.changesets.outputs.hasChangesets == 'false' }}"
+        uses: "./.devcontainer"
+        with:
+          entrypoint: "scripts/changelog/update-lock-files.sh"
+        env:
+          SLANG_PUBLISH: "true"
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
