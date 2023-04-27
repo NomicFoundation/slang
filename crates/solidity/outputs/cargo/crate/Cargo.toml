@@ -15,7 +15,7 @@ authors = [
 ]
 
 readme = "README.md"
-license-file = "LICENSE"
+license = "MIT"
 keywords = ["code-analysis", "parser", "sol", "solidity", "yul"]
 categories = [
   "compilers",
