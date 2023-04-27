@@ -1,3 +1,4 @@
 -   [Home](./index.md)
+-   [User Guide](./user-guide/)
+-   [Solidity Specification](./solidity-specification/)
 -   [Internals](./internals/)
--   [Solidity](./solidity/)

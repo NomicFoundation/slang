@@ -1,22 +1,22 @@
 <!-- This file is generated automatically by infrastructure scripts. Please don't edit by hand. -->
 
-# Versions
+# Supported Versions
 
 This specification compiles information from 73 publicly released versions of Solidity. Among which, 13 versions had syntax-related changes:
 
--   [v0.4.11](../v0.4.11/)
--   [v0.4.21](../v0.4.21/)
--   [v0.4.22](../v0.4.22/)
--   [v0.5.0](../v0.5.0/)
--   [v0.5.3](../v0.5.3/)
--   [v0.6.0](../v0.6.0/)
--   [v0.6.4](../v0.6.4/)
--   [v0.6.5](../v0.6.5/)
--   [v0.6.11](../v0.6.11/)
--   [v0.7.0](../v0.7.0/)
--   [v0.8.0](../v0.8.0/)
--   [v0.8.8](../v0.8.8/)
--   [v0.8.18](../v0.8.18/)
+-   [0.4.11](../grammar/v0.4.11/)
+-   [0.4.21](../grammar/v0.4.21/)
+-   [0.4.22](../grammar/v0.4.22/)
+-   [0.5.0](../grammar/v0.5.0/)
+-   [0.5.3](../grammar/v0.5.3/)
+-   [0.6.0](../grammar/v0.6.0/)
+-   [0.6.4](../grammar/v0.6.4/)
+-   [0.6.5](../grammar/v0.6.5/)
+-   [0.6.11](../grammar/v0.6.11/)
+-   [0.7.0](../grammar/v0.7.0/)
+-   [0.8.0](../grammar/v0.8.0/)
+-   [0.8.8](../grammar/v0.8.8/)
+-   [0.8.18](../grammar/v0.8.18/)
 
 Here is the full list of supported versions:
 

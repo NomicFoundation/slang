@@ -11,10 +11,12 @@
     "doxygen",
     "inheritdoc",
     "ipfs",
+    "mkdocs",
     "nomic",
     "nomicfoundation",
     "struct",
     "structs",
-    "ufixed"
+    "ufixed",
+    "usize"
   ]
 }
