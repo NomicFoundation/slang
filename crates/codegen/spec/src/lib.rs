@@ -11,7 +11,9 @@ use codegen_schema::types::grammar::Grammar;
 use codegen_utils::context::CodegenContext;
 
 use crate::{
-    grammar::generate_grammar_dir, navigation::NavigationEntry, reference::generate_reference_dir,
+    grammar::{generate_grammar_dir, generate_supported_versions_page},
+    navigation::NavigationEntry,
+    reference::generate_reference_dir,
     snippets::Snippets,
 };
 
@@ -28,6 +30,7 @@ impl GrammarSpecGeneratorExtensions for Grammar {
             title: "".to_owned(),
             path: "public".to_owned(),
             children: vec![
+                generate_supported_versions_page(self),
                 generate_grammar_dir(self, &snippets, &codegen.repo_root),
                 generate_reference_dir(self, &codegen.repo_root),
             ],
