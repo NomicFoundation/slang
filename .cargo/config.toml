@@ -1,0 +1,6 @@
+[profile.release]
+incremental = true
+lto = true
+
+[build]
+rustflags = ["--warn", "unused_crate_dependencies"]
