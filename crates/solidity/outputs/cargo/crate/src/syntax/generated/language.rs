@@ -1424,6 +1424,13 @@ impl Language {
                 TokenKind::UsingKeyword,
                 "UsingKeyword",
             ),
+            ProductionKind::VarKeyword => try_call_scanner(
+                self,
+                input,
+                Language::maybe_scan_var_keyword,
+                TokenKind::VarKeyword,
+                "VarKeyword",
+            ),
             ProductionKind::VersionPragmaValue => call_scanner(
                 self,
                 input,

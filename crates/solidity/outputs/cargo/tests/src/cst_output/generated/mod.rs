@@ -57,6 +57,8 @@ mod TupleExpression;
 #[allow(non_snake_case)]
 mod UnsignedIntegerType;
 #[allow(non_snake_case)]
+mod VariableDeclarationStatement;
+#[allow(non_snake_case)]
 mod VersionPragma;
 #[allow(non_snake_case)]
 mod YulExpression;

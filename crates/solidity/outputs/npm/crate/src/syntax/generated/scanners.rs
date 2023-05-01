@@ -4037,6 +4037,41 @@ impl Language {
         self.scan_using_keyword_0_4_11(stream)
     }
 
+    // (* v0.4.11 *)
+    // «VarKeyword» = "var";
+
+    #[allow(unused_assignments, unused_parens)]
+    fn scan_var_keyword_0_4_11(&self, stream: &mut Stream) -> bool {
+        scan_not_followed_by!(
+            stream,
+            scan_chars!(stream, 'v', 'a', 'r'),
+            scan_predicate!(stream, |c| c == '$'
+                || ('0' <= c && c <= '9')
+                || ('A' <= c && c <= 'Z')
+                || c == '_'
+                || ('a' <= c && c <= 'z'))
+        )
+    }
+
+    fn dispatch_scan_var_keyword(&self, stream: &mut Stream) -> Option<bool> {
+        if self.version_is_equal_to_or_greater_than_0_5_0 {
+            None
+        } else {
+            Some(self.scan_var_keyword_0_4_11(stream))
+        }
+    }
+
+    #[inline]
+    pub(crate) fn maybe_scan_var_keyword(&self, stream: &mut Stream) -> Option<bool> {
+        self.dispatch_scan_var_keyword(stream)
+    }
+
+    #[inline]
+    pub(crate) fn scan_var_keyword(&self, stream: &mut Stream) -> bool {
+        self.dispatch_scan_var_keyword(stream)
+            .expect("Validation should have checked that references are valid between versions")
+    }
+
     // «VersionPragmaValue» = (("0"…"9") | "x" | "X" | "*")+;
 
     #[allow(unused_assignments, unused_parens)]
