@@ -330,16 +330,13 @@
 
 ### 5.4. Strings
 
---8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/04-strings/string-expression/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/04-strings/string-expression/0.4.11.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/04-strings/hex-string-literal/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/04-strings/possibly-separated-pairs-of-hex-digits/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/04-strings/hex-character/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/04-strings/ascii-string-literal/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/04-strings/single-quoted-ascii-string-literal/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/04-strings/double-quoted-ascii-string-literal/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/04-strings/unicode-string-literal/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/04-strings/single-quoted-unicode-string-literal/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/04-strings/double-quoted-unicode-string-literal/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/04-strings/escape-sequence/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/04-strings/ascii-escape/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/04-strings/hex-byte-escape/unversioned.md"

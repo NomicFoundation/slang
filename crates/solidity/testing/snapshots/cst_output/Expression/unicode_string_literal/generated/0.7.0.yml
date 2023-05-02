@@ -1,0 +1,13 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ unicode"This Emoji: 😃"                                                        │ 0..25
+
+Errors: []
+
+Tree:
+  - Expression (Rule): # 0..25 'unicode"This Emoji: 😃"'
+      - PrimaryExpression (Rule): # 0..25 'unicode"This Emoji: 😃"'
+          - StringExpression (Rule): # 0..25 'unicode"This Emoji: 😃"'
+              - _REPEATED (Rule): # 0..25 'unicode"This Emoji: 😃"'
+                  - UnicodeStringLiteral (Token): 'unicode"This Emoji: 😃"' # 0..25

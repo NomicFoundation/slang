@@ -20274,10 +20274,110 @@ impl Language {
         }
     }
 
-    // StringExpression = «HexStringLiteral»+ | «AsciiStringLiteral»+ | «UnicodeStringLiteral»+;
+    // (* v0.4.11 *)
+    // StringExpression = «HexStringLiteral»+ | «AsciiStringLiteral»+;
 
     #[allow(unused_assignments, unused_parens)]
     fn parse_string_expression_0_4_11(&self, stream: &mut Stream) -> ParserResult {
+        loop {
+            let start_position = stream.position();
+            let mut furthest_error;
+            match {
+                let mut result = Vec::new();
+                loop {
+                    let start_position = stream.position();
+                    match {
+                        let leading_trivia = self.optional_leading_trivia(stream);
+                        let start = stream.position();
+                        if self.scan_hex_string_literal(stream) {
+                            let end = stream.position();
+                            let trailing_trivia = self.optional_trailing_trivia(stream);
+                            Pass {
+                                node: cst::Node::token(
+                                    TokenKind::HexStringLiteral,
+                                    Range { start, end },
+                                    leading_trivia,
+                                    trailing_trivia,
+                                ),
+                                error: None,
+                            }
+                        } else {
+                            Fail {
+                                error: ParseError::new(start, "HexStringLiteral"),
+                            }
+                        }
+                    } {
+                        Fail { error } => {
+                            if result.is_empty() {
+                                break Fail { error };
+                            }
+                            stream.set_position(start_position);
+                            break Pass {
+                                node: cst::Node::rule(RuleKind::_REPEATED, result),
+                                error: Some(error),
+                            };
+                        }
+                        Pass { node, .. } => result.push(node),
+                    }
+                }
+            } {
+                Fail { error } => furthest_error = error,
+                pass => break pass,
+            }
+            stream.set_position(start_position);
+            match {
+                let mut result = Vec::new();
+                loop {
+                    let start_position = stream.position();
+                    match {
+                        let leading_trivia = self.optional_leading_trivia(stream);
+                        let start = stream.position();
+                        if self.scan_ascii_string_literal(stream) {
+                            let end = stream.position();
+                            let trailing_trivia = self.optional_trailing_trivia(stream);
+                            Pass {
+                                node: cst::Node::token(
+                                    TokenKind::AsciiStringLiteral,
+                                    Range { start, end },
+                                    leading_trivia,
+                                    trailing_trivia,
+                                ),
+                                error: None,
+                            }
+                        } else {
+                            Fail {
+                                error: ParseError::new(start, "AsciiStringLiteral"),
+                            }
+                        }
+                    } {
+                        Fail { error } => {
+                            if result.is_empty() {
+                                break Fail { error };
+                            }
+                            stream.set_position(start_position);
+                            break Pass {
+                                node: cst::Node::rule(RuleKind::_REPEATED, result),
+                                error: Some(error),
+                            };
+                        }
+                        Pass { node, .. } => result.push(node),
+                    }
+                }
+            } {
+                Fail { error } => furthest_error.merge_with(error),
+                pass => break pass,
+            }
+            break Fail {
+                error: furthest_error,
+            };
+        }
+    }
+
+    // (* v0.7.0 *)
+    // StringExpression = «HexStringLiteral»+ | «AsciiStringLiteral»+ | «UnicodeStringLiteral»+;
+
+    #[allow(unused_assignments, unused_parens)]
+    fn parse_string_expression_0_7_0(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let start_position = stream.position();
             let mut furthest_error;
@@ -20415,9 +20515,17 @@ impl Language {
         }
     }
 
+    fn dispatch_parse_string_expression(&self, stream: &mut Stream) -> ParserResult {
+        if self.version_is_equal_to_or_greater_than_0_7_0 {
+            self.parse_string_expression_0_7_0(stream)
+        } else {
+            self.parse_string_expression_0_4_11(stream)
+        }
+    }
+
     #[inline]
     pub(crate) fn parse_string_expression(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_string_expression_0_4_11(stream) {
+        match self.dispatch_parse_string_expression(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::StringExpression, node),
                 error,

@@ -643,10 +643,10 @@ impl Language {
                 TokenKind::DoubleQuotedAsciiStringLiteral,
                 "DoubleQuotedAsciiStringLiteral",
             ),
-            ProductionKind::DoubleQuotedUnicodeStringLiteral => call_scanner(
+            ProductionKind::DoubleQuotedUnicodeStringLiteral => try_call_scanner(
                 self,
                 input,
-                Language::scan_double_quoted_unicode_string_literal,
+                Language::maybe_scan_double_quoted_unicode_string_literal,
                 TokenKind::DoubleQuotedUnicodeStringLiteral,
                 "DoubleQuotedUnicodeStringLiteral",
             ),
@@ -1275,10 +1275,10 @@ impl Language {
                 TokenKind::SingleQuotedAsciiStringLiteral,
                 "SingleQuotedAsciiStringLiteral",
             ),
-            ProductionKind::SingleQuotedUnicodeStringLiteral => call_scanner(
+            ProductionKind::SingleQuotedUnicodeStringLiteral => try_call_scanner(
                 self,
                 input,
-                Language::scan_single_quoted_unicode_string_literal,
+                Language::maybe_scan_single_quoted_unicode_string_literal,
                 TokenKind::SingleQuotedUnicodeStringLiteral,
                 "SingleQuotedUnicodeStringLiteral",
             ),
@@ -1396,10 +1396,10 @@ impl Language {
                 TokenKind::UnicodeEscape,
                 "UnicodeEscape",
             ),
-            ProductionKind::UnicodeStringLiteral => call_scanner(
+            ProductionKind::UnicodeStringLiteral => try_call_scanner(
                 self,
                 input,
-                Language::scan_unicode_string_literal,
+                Language::maybe_scan_unicode_string_literal,
                 TokenKind::UnicodeStringLiteral,
                 "UnicodeStringLiteral",
             ),

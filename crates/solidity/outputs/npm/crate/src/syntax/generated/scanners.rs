@@ -1006,10 +1006,11 @@ impl Language {
         self.scan_double_quoted_ascii_string_literal_0_4_11(stream)
     }
 
+    // (* v0.7.0 *)
     // «DoubleQuotedUnicodeStringLiteral» = 'unicode"' («EscapeSequence» | !('"' | "\\" | "\n" | "\r"))* '"';
 
     #[allow(unused_assignments, unused_parens)]
-    fn scan_double_quoted_unicode_string_literal_0_4_11(&self, stream: &mut Stream) -> bool {
+    fn scan_double_quoted_unicode_string_literal_0_7_0(&self, stream: &mut Stream) -> bool {
         scan_sequence!(
             scan_chars!(stream, 'u', 'n', 'i', 'c', 'o', 'd', 'e', '"'),
             scan_zero_or_more!(
@@ -1024,9 +1025,29 @@ impl Language {
         )
     }
 
+    fn dispatch_scan_double_quoted_unicode_string_literal(
+        &self,
+        stream: &mut Stream,
+    ) -> Option<bool> {
+        if self.version_is_equal_to_or_greater_than_0_7_0 {
+            Some(self.scan_double_quoted_unicode_string_literal_0_7_0(stream))
+        } else {
+            None
+        }
+    }
+
+    #[inline]
+    pub(crate) fn maybe_scan_double_quoted_unicode_string_literal(
+        &self,
+        stream: &mut Stream,
+    ) -> Option<bool> {
+        self.dispatch_scan_double_quoted_unicode_string_literal(stream)
+    }
+
     #[inline]
     pub(crate) fn scan_double_quoted_unicode_string_literal(&self, stream: &mut Stream) -> bool {
-        self.scan_double_quoted_unicode_string_literal_0_4_11(stream)
+        self.dispatch_scan_double_quoted_unicode_string_literal(stream)
+            .expect("Validation should have checked that references are valid between versions")
     }
 
     // «ElseKeyword» = "else";
@@ -3570,10 +3591,11 @@ impl Language {
         self.scan_single_quoted_ascii_string_literal_0_4_11(stream)
     }
 
+    // (* v0.7.0 *)
     // «SingleQuotedUnicodeStringLiteral» = "unicode'" («EscapeSequence» | !("'" | "\\" | "\n" | "\r"))* "'";
 
     #[allow(unused_assignments, unused_parens)]
-    fn scan_single_quoted_unicode_string_literal_0_4_11(&self, stream: &mut Stream) -> bool {
+    fn scan_single_quoted_unicode_string_literal_0_7_0(&self, stream: &mut Stream) -> bool {
         scan_sequence!(
             scan_chars!(stream, 'u', 'n', 'i', 'c', 'o', 'd', 'e', '\''),
             scan_zero_or_more!(
@@ -3588,9 +3610,29 @@ impl Language {
         )
     }
 
+    fn dispatch_scan_single_quoted_unicode_string_literal(
+        &self,
+        stream: &mut Stream,
+    ) -> Option<bool> {
+        if self.version_is_equal_to_or_greater_than_0_7_0 {
+            Some(self.scan_single_quoted_unicode_string_literal_0_7_0(stream))
+        } else {
+            None
+        }
+    }
+
+    #[inline]
+    pub(crate) fn maybe_scan_single_quoted_unicode_string_literal(
+        &self,
+        stream: &mut Stream,
+    ) -> Option<bool> {
+        self.dispatch_scan_single_quoted_unicode_string_literal(stream)
+    }
+
     #[inline]
     pub(crate) fn scan_single_quoted_unicode_string_literal(&self, stream: &mut Stream) -> bool {
-        self.scan_single_quoted_unicode_string_literal_0_4_11(stream)
+        self.dispatch_scan_single_quoted_unicode_string_literal(stream)
+            .expect("Validation should have checked that references are valid between versions")
     }
 
     // «Slash» = "/";
@@ -3971,10 +4013,11 @@ impl Language {
         self.scan_unicode_escape_0_4_11(stream)
     }
 
+    // (* v0.7.0 *)
     // «UnicodeStringLiteral» = «SingleQuotedUnicodeStringLiteral» | «DoubleQuotedUnicodeStringLiteral»;
 
     #[allow(unused_assignments, unused_parens)]
-    fn scan_unicode_string_literal_0_4_11(&self, stream: &mut Stream) -> bool {
+    fn scan_unicode_string_literal_0_7_0(&self, stream: &mut Stream) -> bool {
         scan_choice!(
             stream,
             self.scan_single_quoted_unicode_string_literal(stream),
@@ -3982,9 +4025,23 @@ impl Language {
         )
     }
 
+    fn dispatch_scan_unicode_string_literal(&self, stream: &mut Stream) -> Option<bool> {
+        if self.version_is_equal_to_or_greater_than_0_7_0 {
+            Some(self.scan_unicode_string_literal_0_7_0(stream))
+        } else {
+            None
+        }
+    }
+
+    #[inline]
+    pub(crate) fn maybe_scan_unicode_string_literal(&self, stream: &mut Stream) -> Option<bool> {
+        self.dispatch_scan_unicode_string_literal(stream)
+    }
+
     #[inline]
     pub(crate) fn scan_unicode_string_literal(&self, stream: &mut Stream) -> bool {
-        self.scan_unicode_string_literal_0_4_11(stream)
+        self.dispatch_scan_unicode_string_literal(stream)
+            .expect("Validation should have checked that references are valid between versions")
     }
 
     // «UnsignedFixedType» = "u" «SignedFixedType»;

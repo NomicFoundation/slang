@@ -3,11 +3,14 @@
 Source: >
   1  │ unicode"This Emoji: 😃"                                                        │ 0..25
 
-Errors: []
+Errors: # 1 total
+  - >
+    Error: Expected end of input.
+       ╭─[crates/solidity/testing/snapshots/cst_output/Expression/unicode_string_literal/input.sol:1:8]
+       │
+     1 │ unicode"This Emoji: 😃"
+       │        │ 
+       │        ╰─ Error occurred here.
+    ───╯
 
-Tree:
-  - Expression (Rule): # 0..25 'unicode"This Emoji: 😃"'
-      - PrimaryExpression (Rule): # 0..25 'unicode"This Emoji: 😃"'
-          - StringExpression (Rule): # 0..25 'unicode"This Emoji: 😃"'
-              - _REPEATED (Rule): # 0..25 'unicode"This Emoji: 😃"'
-                  - UnicodeStringLiteral (Token): 'unicode"This Emoji: 😃"' # 0..25
+Tree: null
