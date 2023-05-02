@@ -35,20 +35,38 @@
 
 - name: "VariableDeclarationStatement"
   kind: "Parser"
-  unversioned:
-    terminatedBy:
-      expression:
-        sequence:
-          - reference: "TypeName"
-          - optional:
-              reference: "DataLocation"
-          - reference: "Identifier"
-          - optional:
-              sequence:
-                - reference: "Equal"
-                - reference: "Expression"
-      terminator:
-        reference: "Semicolon"
+  versioned:
+    0.4.11:
+      terminatedBy:
+        expression:
+          sequence:
+            - choice:
+                - sequence:
+                    - reference: "TypeName"
+                    - optional:
+                        reference: "DataLocation"
+                - reference: "VarKeyword"
+            - reference: "Identifier"
+            - optional:
+                sequence:
+                  - reference: "Equal"
+                  - reference: "Expression"
+        terminator:
+          reference: "Semicolon"
+    0.5.0: # removed "VarKeyword"
+      terminatedBy:
+        expression:
+          sequence:
+            - reference: "TypeName"
+            - optional:
+                reference: "DataLocation"
+            - reference: "Identifier"
+            - optional:
+                sequence:
+                  - reference: "Equal"
+                  - reference: "Expression"
+        terminator:
+          reference: "Semicolon"
 
 - name: "DataLocation"
   kind: "Parser"

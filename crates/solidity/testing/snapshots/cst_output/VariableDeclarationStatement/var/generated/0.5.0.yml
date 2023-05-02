@@ -1,0 +1,16 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ var z = 0;                                                                       │ 0..10
+
+Errors: # 1 total
+  - >
+    Error: Expected AddressKeyword or BoolKeyword or ByteType or FixedBytesType or FunctionKeyword or Identifier or MappingKeyword or PayableKeyword or SignedFixedType or SignedIntegerType or StringKeyword or UnsignedFixedType or UnsignedIntegerType.
+       ╭─[crates/solidity/testing/snapshots/cst_output/VariableDeclarationStatement/var/input.sol:1:1]
+       │
+     1 │ var z = 0;
+       │ │ 
+       │ ╰─ Error occurred here.
+    ───╯
+
+Tree: null

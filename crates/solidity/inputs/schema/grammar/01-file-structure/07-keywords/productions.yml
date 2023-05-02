@@ -680,6 +680,17 @@
       notFollowedBy:
         reference: "IdentifierPart"
 
+- name: "VarKeyword"
+  kind: "Scanner"
+  versioned:
+    0.4.11:
+      trailingContext:
+        expression:
+          terminal: "var"
+        notFollowedBy:
+          reference: "IdentifierPart"
+    0.5.0: null
+
 - name: "ViewKeyword"
   kind: "Scanner"
   unversioned:
