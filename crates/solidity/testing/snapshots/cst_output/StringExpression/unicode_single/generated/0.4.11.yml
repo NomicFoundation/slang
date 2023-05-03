@@ -3,9 +3,14 @@
 Source: >
   1  │ unicode"emoji 😃"                                                              │ 0..19
 
-Errors: []
+Errors: # 1 total
+  - >
+    Error: Expected AsciiStringLiteral or HexStringLiteral.
+       ╭─[crates/solidity/testing/snapshots/cst_output/StringExpression/unicode_single/input.sol:1:1]
+       │
+     1 │ unicode"emoji 😃"
+       │ │ 
+       │ ╰─ Error occurred here.
+    ───╯
 
-Tree:
-  - StringExpression (Rule): # 0..19 'unicode"emoji 😃"'
-      - _REPEATED (Rule): # 0..19 'unicode"emoji 😃"'
-          - UnicodeStringLiteral (Token): 'unicode"emoji 😃"' # 0..19
+Tree: null

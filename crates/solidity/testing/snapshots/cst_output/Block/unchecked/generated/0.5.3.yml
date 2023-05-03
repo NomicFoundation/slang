@@ -5,7 +5,7 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Expected AddressKeyword or AsciiStringLiteral or AssemblyKeyword or BoolKeyword or BreakKeyword or ByteType or CloseBrace or ContinueKeyword or DecimalLiteral or DeleteKeyword or DoKeyword or EmitKeyword or FalseKeyword or FixedBytesType or ForKeyword or FunctionKeyword or HexStringLiteral or Identifier or IfKeyword or MappingKeyword or NewKeyword or OpenBrace or OpenBracket or OpenParen or PayableKeyword or ReturnKeyword or RevertKeyword or SignedFixedType or SignedIntegerType or StringKeyword or TrueKeyword or TypeKeyword or UnicodeStringLiteral or UnsignedFixedType or UnsignedIntegerType or WhileKeyword.
+    Error: Expected AddressKeyword or AsciiStringLiteral or AssemblyKeyword or BoolKeyword or BreakKeyword or ByteType or CloseBrace or ContinueKeyword or DecimalLiteral or DeleteKeyword or DoKeyword or EmitKeyword or FalseKeyword or FixedBytesType or ForKeyword or FunctionKeyword or HexStringLiteral or Identifier or IfKeyword or MappingKeyword or NewKeyword or OpenBrace or OpenBracket or OpenParen or PayableKeyword or ReturnKeyword or RevertKeyword or SignedFixedType or SignedIntegerType or StringKeyword or TrueKeyword or TypeKeyword or UnsignedFixedType or UnsignedIntegerType or WhileKeyword.
        ╭─[crates/solidity/testing/snapshots/cst_output/Block/unchecked/input.sol:1:3]
        │
      1 │ { unchecked { x = 1; } }

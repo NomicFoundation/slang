@@ -3,10 +3,14 @@
 Source: >
   1  │ unicode"happy 😃" unicode'sad 😔'                                            │ 0..37
 
-Errors: []
+Errors: # 1 total
+  - >
+    Error: Expected AsciiStringLiteral or HexStringLiteral.
+       ╭─[crates/solidity/testing/snapshots/cst_output/StringExpression/unicode_multiple/input.sol:1:1]
+       │
+     1 │ unicode"happy 😃" unicode'sad 😔'
+       │ │ 
+       │ ╰─ Error occurred here.
+    ───╯
 
-Tree:
-  - StringExpression (Rule): # 0..37 "unicode\"happy 😃\" unicode'sad 😔'"
-      - _REPEATED (Rule): # 0..37 "unicode\"happy 😃\" unicode'sad 😔'"
-          - UnicodeStringLiteral (Token): 'unicode"happy 😃"' # 0..19
-          - UnicodeStringLiteral (Token): "unicode'sad 😔'" # 20..37
+Tree: null
