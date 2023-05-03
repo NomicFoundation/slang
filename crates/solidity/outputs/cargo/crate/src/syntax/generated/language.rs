@@ -303,6 +303,7 @@ pub struct Language {
     pub(crate) version_is_equal_to_or_greater_than_0_5_3: bool,
     pub(crate) version_is_equal_to_or_greater_than_0_6_0: bool,
     pub(crate) version_is_equal_to_or_greater_than_0_6_11: bool,
+    pub(crate) version_is_equal_to_or_greater_than_0_6_2: bool,
     pub(crate) version_is_equal_to_or_greater_than_0_6_4: bool,
     pub(crate) version_is_equal_to_or_greater_than_0_6_5: bool,
     pub(crate) version_is_equal_to_or_greater_than_0_7_0: bool,
@@ -344,6 +345,8 @@ impl Language {
                 version_is_equal_to_or_greater_than_0_6_0: Version::parse("0.6.0").unwrap()
                     <= version,
                 version_is_equal_to_or_greater_than_0_6_11: Version::parse("0.6.11").unwrap()
+                    <= version,
+                version_is_equal_to_or_greater_than_0_6_2: Version::parse("0.6.2").unwrap()
                     <= version,
                 version_is_equal_to_or_greater_than_0_6_4: Version::parse("0.6.4").unwrap()
                     <= version,
@@ -1620,7 +1623,7 @@ impl Language {
                 call_parser(self, input, Language::parse_function_attribute)
             }
             ProductionKind::FunctionCallOptions => {
-                call_parser(self, input, Language::parse_function_call_options)
+                try_call_parser(self, input, Language::maybe_parse_function_call_options)
             }
             ProductionKind::FunctionDefinition => {
                 call_parser(self, input, Language::parse_function_definition)
