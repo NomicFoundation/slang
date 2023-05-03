@@ -308,6 +308,7 @@ pub struct Language {
     pub(crate) version_is_equal_to_or_greater_than_0_7_0: bool,
     pub(crate) version_is_equal_to_or_greater_than_0_8_0: bool,
     pub(crate) version_is_equal_to_or_greater_than_0_8_18: bool,
+    pub(crate) version_is_equal_to_or_greater_than_0_8_19: bool,
     pub(crate) version_is_equal_to_or_greater_than_0_8_8: bool,
 }
 
@@ -328,7 +329,7 @@ impl Language {
             "0.6.8", "0.6.9", "0.6.10", "0.6.11", "0.6.12", "0.7.0", "0.7.1", "0.7.2", "0.7.3",
             "0.7.4", "0.7.5", "0.7.6", "0.8.0", "0.8.1", "0.8.2", "0.8.3", "0.8.4", "0.8.5",
             "0.8.6", "0.8.7", "0.8.8", "0.8.9", "0.8.10", "0.8.11", "0.8.12", "0.8.13", "0.8.14",
-            "0.8.15", "0.8.16", "0.8.17", "0.8.18",
+            "0.8.15", "0.8.16", "0.8.17", "0.8.18", "0.8.19",
         ];
         if VERSIONS.contains(&version.to_string().as_str()) {
             Ok(Self {
@@ -353,6 +354,8 @@ impl Language {
                 version_is_equal_to_or_greater_than_0_8_0: Version::parse("0.8.0").unwrap()
                     <= version,
                 version_is_equal_to_or_greater_than_0_8_18: Version::parse("0.8.18").unwrap()
+                    <= version,
+                version_is_equal_to_or_greater_than_0_8_19: Version::parse("0.8.19").unwrap()
                     <= version,
                 version_is_equal_to_or_greater_than_0_8_8: Version::parse("0.8.8").unwrap()
                     <= version,
@@ -1772,6 +1775,9 @@ impl Language {
                 input,
                 Language::maybe_parse_unnamed_function_definition,
             ),
+            ProductionKind::UserDefinedOperator => {
+                try_call_parser(self, input, Language::maybe_parse_user_defined_operator)
+            }
             ProductionKind::UserDefinedValueTypeDefinition => try_call_parser(
                 self,
                 input,

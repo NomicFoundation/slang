@@ -1,0 +1,26 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ using {add as +} for Int global;                                                 │ 0..32
+
+Errors: []
+
+Tree:
+  - UsingDirective (Rule): # 0..32 "using {add as +} for Int global;"
+      - UsingKeyword (Token): "using" # 0..5
+      - OpenBrace (Token): "{" # 6..7
+      - _SEPARATEDBY (Rule): # 7..15 "add as +"
+          - IdentifierPath (Rule): # 7..10 "add"
+              - _SEPARATEDBY (Rule): # 7..10 "add"
+                  - Identifier (Token): "add" # 7..10
+          - AsKeyword (Token): "as" # 11..13
+          - UserDefinedOperator (Rule): # 14..15 "+"
+              - Plus (Token): "+" # 14..15
+      - CloseBrace (Token): "}" # 15..16
+      - ForKeyword (Token): "for" # 17..20
+      - TypeName (Rule): # 20..24 " Int"
+          - IdentifierPath (Rule): # 20..24 " Int"
+              - _SEPARATEDBY (Rule): # 20..24 " Int"
+                  - Identifier (Token): "Int" # 21..24
+      - GlobalKeyword (Token): "global" # 25..31
+      - Semicolon (Token): ";" # 31..32

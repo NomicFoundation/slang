@@ -57,6 +57,8 @@ mod TupleExpression;
 #[allow(non_snake_case)]
 mod UnsignedIntegerType;
 #[allow(non_snake_case)]
+mod UsingDirective;
+#[allow(non_snake_case)]
 mod VariableDeclarationStatement;
 #[allow(non_snake_case)]
 mod VersionPragma;
@@ -65,7 +67,7 @@ mod YulExpression;
 #[allow(non_snake_case)]
 mod YulStatement;
 
-pub const VERSION_BREAKS: [&str; 13] = [
+pub const VERSION_BREAKS: [&str; 14] = [
     "0.4.11", "0.4.21", "0.4.22", "0.5.0", "0.5.3", "0.6.0", "0.6.4", "0.6.5", "0.6.11", "0.7.0",
-    "0.8.0", "0.8.8", "0.8.18",
+    "0.8.0", "0.8.8", "0.8.18", "0.8.19",
 ];
