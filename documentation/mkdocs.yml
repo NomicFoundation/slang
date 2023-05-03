@@ -93,6 +93,7 @@ theme:
     - "content.code.copy"
     - "content.tabs.link"
     - "navigation.expand"
+    - "navigation.indexes"
     - "navigation.sections"
     - "navigation.tabs"
     - "navigation.top"

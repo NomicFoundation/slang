@@ -27,7 +27,7 @@ impl GrammarSpecGeneratorExtensions for Grammar {
         snippets.write_files(codegen)?;
 
         let root_entry = NavigationEntry::Directory {
-            title: "".to_owned(),
+            title: format!("{title} Specification", title = self.title),
             path: "public".to_owned(),
             children: vec![
                 generate_supported_versions_page(self),

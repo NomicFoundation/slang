@@ -23,15 +23,24 @@ impl NavigationEntry {
         let current_dir = parent_dir.join(self.path());
 
         match self {
-            NavigationEntry::Directory { children, .. } => {
+            NavigationEntry::Directory {
+                title, children, ..
+            } => {
                 let mut nav_page = MarkdownWriter::new();
+                nav_page.write_list_link(title, "./index.md");
+
+                let mut index_page = MarkdownWriter::new();
+                index_page.write_header(1, title);
+                index_page.write_newline();
 
                 for child in children {
                     child.write_files(codegen, &current_dir)?;
                     nav_page.write_list_link(child.title(), &child.nav_path());
+                    index_page.write_list_link(child.title(), &child.nav_path());
                 }
 
                 codegen.write_file(&current_dir.join("NAV.md"), &nav_page.to_string())?;
+                codegen.write_file(&current_dir.join("index.md"), &index_page.to_string())?;
             }
             NavigationEntry::Page { contents, .. } => {
                 codegen.write_file(&current_dir.join("index.md"), &contents)?;

@@ -1,6 +1,7 @@
 <!-- This file is generated automatically by infrastructure scripts. Please don't edit by hand. -->
 
--   [Reference](./index.md)
+# Reference
+
 -   [1. File Structure](./01-file-structure/)
 -   [2. Definitions](./02-definitions/)
 -   [3. Types](./03-types/)

@@ -1,6 +1,7 @@
 <!-- This file is generated automatically by infrastructure scripts. Please don't edit by hand. -->
 
--   [Grammar](./index.md)
+# Grammar
+
 -   [v0.4.11](./v0.4.11/index.md)
 -   [v0.4.21](./v0.4.21/index.md)
 -   [v0.4.22](./v0.4.22/index.md)
