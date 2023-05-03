@@ -106,8 +106,6 @@
         - name: "FunctionCallExpression"
           model: "UnaryPostfix"
           sequence:
-            - optional:
-                reference: "FunctionCallOptions"
             - reference: "ArgumentList"
 
         - name: "MemberAccessExpression"
@@ -143,7 +141,7 @@
         reference: "PrimaryExpression"
 
     0.5.0:
-      # removed: Unary +
+      # removed: "UnaryPrefixExpression -> Plus"
       operators:
         - name: "AssignmentExpression"
           model: "BinaryLeftAssociative"
@@ -245,8 +243,6 @@
         - name: "FunctionCallExpression"
           model: "UnaryPostfix"
           sequence:
-            - optional:
-                reference: "FunctionCallOptions"
             - reference: "ArgumentList"
 
         - name: "MemberAccessExpression"
@@ -283,6 +279,282 @@
 
     0.6.0:
       # changed: Exponentiation now right associative
+      operators:
+        - name: "AssignmentExpression"
+          model: "BinaryLeftAssociative"
+          choice:
+            - reference: "Equal"
+            - reference: "BarEqual"
+            - reference: "CaretEqual"
+            - reference: "AmpersandEqual"
+            - reference: "LessThanLessThanEqual"
+            - reference: "GreaterThanGreaterThanEqual"
+            - reference: "GreaterThanGreaterThanGreaterThanEqual"
+            - reference: "PlusEqual"
+            - reference: "MinusEqual"
+            - reference: "StarEqual"
+            - reference: "SlashEqual"
+            - reference: "PercentEqual"
+
+        - name: "ConditionalExpression"
+          model: "UnaryPostfix"
+          sequence:
+            - reference: "QuestionMark"
+            - reference: "Expression"
+            - reference: "Colon"
+            - reference: "Expression"
+
+        - name: "OrExpression"
+          model: "BinaryLeftAssociative"
+          reference: "BarBar"
+
+        - name: "AndExpression"
+          model: "BinaryLeftAssociative"
+          reference: "AmpersandAmpersand"
+
+        - name: "EqualityComparisonExpression"
+          model: "BinaryLeftAssociative"
+          choice:
+            - reference: "EqualEqual"
+            - reference: "BangEqual"
+
+        - name: "OrderComparisonExpression"
+          model: "BinaryLeftAssociative"
+          choice:
+            - reference: "LessThan"
+            - reference: "GreaterThan"
+            - reference: "LessThanEqual"
+            - reference: "GreaterThanEqual"
+
+        - name: "BitOrExpression"
+          model: "BinaryLeftAssociative"
+          reference: "Bar"
+
+        - name: "BitXOrExpression"
+          model: "BinaryLeftAssociative"
+          reference: "Caret"
+
+        - name: "BitAndExpression"
+          model: "BinaryLeftAssociative"
+          reference: "Ampersand"
+
+        - name: "ShiftExpression"
+          model: "BinaryLeftAssociative"
+          choice:
+            - reference: "LessThanLessThan"
+            - reference: "GreaterThanGreaterThan"
+            - reference: "GreaterThanGreaterThanGreaterThan"
+
+        - name: "AddSubExpression"
+          model: "BinaryLeftAssociative"
+          choice:
+            - reference: "Plus"
+            - reference: "Minus"
+
+        - name: "MulDivModExpression"
+          model: "BinaryLeftAssociative"
+          choice:
+            - reference: "Star"
+            - reference: "Slash"
+            - reference: "Percent"
+
+        - name: "ExponentiationExpression"
+          model: "BinaryRightAssociative"
+          reference: "StarStar"
+
+        - name: "UnaryPostfixExpression"
+          model: "UnaryPostfix"
+          choice:
+            - reference: "PlusPlus"
+            - reference: "MinusMinus"
+
+        - name: "UnaryPrefixExpression"
+          model: "UnaryPrefix"
+          choice:
+            - reference: "PlusPlus"
+            - reference: "MinusMinus"
+            - reference: "Tilde"
+            - reference: "Bang"
+            - reference: "Minus"
+
+        - name: "FunctionCallExpression"
+          model: "UnaryPostfix"
+          sequence:
+            - reference: "ArgumentList"
+
+        - name: "MemberAccessExpression"
+          model: "UnaryPostfix"
+          sequence:
+            - reference: "Period"
+            - choice:
+                - reference: "Identifier"
+                - reference: "AddressKeyword"
+
+        - name: "IndexAccessExpression"
+          model: "UnaryPostfix"
+          delimitedBy:
+            open:
+              reference: "OpenBracket"
+            expression:
+              choice:
+                - sequence:
+                    - reference: "Expression"
+                    - optional:
+                        sequence:
+                          - reference: "Colon"
+                          - optional:
+                              reference: "Expression"
+                - sequence:
+                    - reference: "Colon"
+                    - optional:
+                        reference: "Expression"
+            close:
+              reference: "CloseBracket"
+
+      primaryExpression:
+        reference: "PrimaryExpression"
+
+    0.6.2:
+      # Added zeroOrMore "FunctionCallOptions"
+      operators:
+        - name: "AssignmentExpression"
+          model: "BinaryLeftAssociative"
+          choice:
+            - reference: "Equal"
+            - reference: "BarEqual"
+            - reference: "CaretEqual"
+            - reference: "AmpersandEqual"
+            - reference: "LessThanLessThanEqual"
+            - reference: "GreaterThanGreaterThanEqual"
+            - reference: "GreaterThanGreaterThanGreaterThanEqual"
+            - reference: "PlusEqual"
+            - reference: "MinusEqual"
+            - reference: "StarEqual"
+            - reference: "SlashEqual"
+            - reference: "PercentEqual"
+
+        - name: "ConditionalExpression"
+          model: "UnaryPostfix"
+          sequence:
+            - reference: "QuestionMark"
+            - reference: "Expression"
+            - reference: "Colon"
+            - reference: "Expression"
+
+        - name: "OrExpression"
+          model: "BinaryLeftAssociative"
+          reference: "BarBar"
+
+        - name: "AndExpression"
+          model: "BinaryLeftAssociative"
+          reference: "AmpersandAmpersand"
+
+        - name: "EqualityComparisonExpression"
+          model: "BinaryLeftAssociative"
+          choice:
+            - reference: "EqualEqual"
+            - reference: "BangEqual"
+
+        - name: "OrderComparisonExpression"
+          model: "BinaryLeftAssociative"
+          choice:
+            - reference: "LessThan"
+            - reference: "GreaterThan"
+            - reference: "LessThanEqual"
+            - reference: "GreaterThanEqual"
+
+        - name: "BitOrExpression"
+          model: "BinaryLeftAssociative"
+          reference: "Bar"
+
+        - name: "BitXOrExpression"
+          model: "BinaryLeftAssociative"
+          reference: "Caret"
+
+        - name: "BitAndExpression"
+          model: "BinaryLeftAssociative"
+          reference: "Ampersand"
+
+        - name: "ShiftExpression"
+          model: "BinaryLeftAssociative"
+          choice:
+            - reference: "LessThanLessThan"
+            - reference: "GreaterThanGreaterThan"
+            - reference: "GreaterThanGreaterThanGreaterThan"
+
+        - name: "AddSubExpression"
+          model: "BinaryLeftAssociative"
+          choice:
+            - reference: "Plus"
+            - reference: "Minus"
+
+        - name: "MulDivModExpression"
+          model: "BinaryLeftAssociative"
+          choice:
+            - reference: "Star"
+            - reference: "Slash"
+            - reference: "Percent"
+
+        - name: "ExponentiationExpression"
+          model: "BinaryRightAssociative"
+          reference: "StarStar"
+
+        - name: "UnaryPostfixExpression"
+          model: "UnaryPostfix"
+          choice:
+            - reference: "PlusPlus"
+            - reference: "MinusMinus"
+
+        - name: "UnaryPrefixExpression"
+          model: "UnaryPrefix"
+          choice:
+            - reference: "PlusPlus"
+            - reference: "MinusMinus"
+            - reference: "Tilde"
+            - reference: "Bang"
+            - reference: "Minus"
+
+        - name: "FunctionCallExpression"
+          model: "UnaryPostfix"
+          sequence:
+            - zeroOrMore:
+                reference: "FunctionCallOptions"
+            - reference: "ArgumentList"
+
+        - name: "MemberAccessExpression"
+          model: "UnaryPostfix"
+          sequence:
+            - reference: "Period"
+            - choice:
+                - reference: "Identifier"
+                - reference: "AddressKeyword"
+
+        - name: "IndexAccessExpression"
+          model: "UnaryPostfix"
+          delimitedBy:
+            open:
+              reference: "OpenBracket"
+            expression:
+              choice:
+                - sequence:
+                    - reference: "Expression"
+                    - optional:
+                        sequence:
+                          - reference: "Colon"
+                          - optional:
+                              reference: "Expression"
+                - sequence:
+                    - reference: "Colon"
+                    - optional:
+                        reference: "Expression"
+            close:
+              reference: "CloseBracket"
+
+      primaryExpression:
+        reference: "PrimaryExpression"
+
+    0.8.0:
+      # "FunctionCallOptions" is now optional
       operators:
         - name: "AssignmentExpression"
           model: "BinaryLeftAssociative"

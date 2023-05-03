@@ -211,7 +211,6 @@
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/08-functions/argument-list/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/08-functions/positional-argument-list/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/08-functions/named-argument-list/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/08-functions/function-call-options/0.4.11.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/08-functions/named-argument/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/08-functions/constructor-definition/0.4.22.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/08-functions/constructor-attribute/0.4.22.md"

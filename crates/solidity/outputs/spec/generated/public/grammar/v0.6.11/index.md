@@ -220,7 +220,7 @@
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/08-functions/argument-list/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/08-functions/positional-argument-list/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/08-functions/named-argument-list/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/08-functions/function-call-options/0.4.11.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/08-functions/function-call-options/0.6.2.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/08-functions/named-argument/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/08-functions/constructor-definition/0.4.22.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/08-functions/constructor-attribute/0.4.22.md"
@@ -310,7 +310,7 @@
 
 ### 5.1. Base Expressions
 
---8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/01-base-expressions/expression/0.6.0.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/01-base-expressions/expression/0.6.2.md"
 
 ### 5.2. Primary Expressions
 
