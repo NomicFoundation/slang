@@ -70,6 +70,8 @@ markdown_extensions:
       custom_checkbox: true
   - "pymdownx.tilde"
   - "tables"
+  - "toc":
+      permalink: "#"
 
 plugins:
   - "search"
