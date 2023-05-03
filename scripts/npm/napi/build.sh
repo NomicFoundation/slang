@@ -32,13 +32,6 @@ function _napi_build() {
     _group_output cargo install "cargo-xwin" --version "0.14.2"
   fi
 
-  if [[ "$target" == *"-unknown-linux-musl" ]]; then
-    # https://github.com/rust-lang/rust/pull/40113#issuecomment-323193341
-    RUSTFLAGS="${RUSTFLAGS:-} -C target-feature=-crt-static"
-  fi
-
-  export RUSTFLAGS
-
   # Navigate to where files should be generated:
   cd "$PACKAGE_DIR/src/generated"
 

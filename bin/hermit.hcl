@@ -7,9 +7,8 @@ env = {
 
   // Rust:
   "RUST_BACKTRACE": "FULL",
-  "RUST_VERSION": "1.64.0",
-  "RUSTFLAGS": "${RUSTFLAGS} --warn unused_crate_dependencies",
+  "RUST_VERSION": "1.64.0", // Keep this version in sync with "rust-version" in "$REPO_ROOT/Cargo.toml"
 
   // TypeScript:
-  "TS_NODE_PROJECT": "${REPO_ROOT}/tsconfig.json",
+  "TS_NODE_PROJECT": "${HERMIT_ENV}/tsconfig.json",
 }

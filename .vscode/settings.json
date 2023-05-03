@@ -5,9 +5,11 @@
   "rust-analyzer.check.allTargets": true,
   "rust-analyzer.check.features": "all",
   "rust-analyzer.server.extraEnv": {
+    // Keep in sync with the CLI environment in "$REPO_ROOT/scripts/cargo/check.sh"
     "CARGO": "${workspaceFolder}/bin/cargo",
     "RUSTC": "${workspaceFolder}/bin/rustc",
-    "RUSTFMT": "${workspaceFolder}/bin/rustfmt"
+    "RUSTFMT": "${workspaceFolder}/bin/rustfmt",
+    "RUSTUP": "${workspaceFolder}/bin/rustup"
   },
   "rust-analyzer.server.path": "${workspaceFolder}/bin/rust-analyzer",
   "search.exclude": {
