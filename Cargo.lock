@@ -205,7 +205,7 @@ dependencies = [
 
 [[package]]
 name = "codegen_ebnf"
-version = "0.1.1"
+version = "0.2.0"
 dependencies = [
  "codegen_schema",
  "semver",
@@ -213,7 +213,7 @@ dependencies = [
 
 [[package]]
 name = "codegen_schema"
-version = "0.1.1"
+version = "0.2.0"
 dependencies = [
  "anyhow",
  "codegen_utils",
@@ -229,7 +229,7 @@ dependencies = [
 
 [[package]]
 name = "codegen_spec"
-version = "0.1.1"
+version = "0.2.0"
 dependencies = [
  "Inflector",
  "anyhow",
@@ -241,7 +241,7 @@ dependencies = [
 
 [[package]]
 name = "codegen_syntax"
-version = "0.1.1"
+version = "0.2.0"
 dependencies = [
  "Inflector",
  "codegen_ebnf",
@@ -256,7 +256,7 @@ dependencies = [
 
 [[package]]
 name = "codegen_syntax_templates"
-version = "0.1.1"
+version = "0.2.0"
 dependencies = [
  "ariadne",
  "napi",
@@ -270,7 +270,7 @@ dependencies = [
 
 [[package]]
 name = "codegen_testing"
-version = "0.1.1"
+version = "0.2.0"
 dependencies = [
  "anyhow",
  "codegen_schema",
@@ -280,7 +280,7 @@ dependencies = [
 
 [[package]]
 name = "codegen_utils"
-version = "0.1.1"
+version = "0.2.0"
 dependencies = [
  "anyhow",
  "ariadne",
@@ -994,7 +994,7 @@ dependencies = [
 
 [[package]]
 name = "slang_solidity"
-version = "0.1.1"
+version = "0.2.0"
 dependencies = [
  "anyhow",
  "ariadne",
@@ -1010,7 +1010,7 @@ dependencies = [
 
 [[package]]
 name = "solidity_cargo_build"
-version = "0.1.1"
+version = "0.2.0"
 dependencies = [
  "anyhow",
  "codegen_schema",
@@ -1021,7 +1021,7 @@ dependencies = [
 
 [[package]]
 name = "solidity_cargo_tests"
-version = "0.1.1"
+version = "0.2.0"
 dependencies = [
  "anyhow",
  "codegen_schema",
@@ -1035,7 +1035,7 @@ dependencies = [
 
 [[package]]
 name = "solidity_npm_build"
-version = "0.1.1"
+version = "0.2.0"
 dependencies = [
  "anyhow",
  "codegen_schema",
@@ -1046,7 +1046,7 @@ dependencies = [
 
 [[package]]
 name = "solidity_npm_crate"
-version = "0.1.1"
+version = "0.2.0"
 dependencies = [
  "ariadne",
  "napi",
@@ -1059,7 +1059,7 @@ dependencies = [
 
 [[package]]
 name = "solidity_schema"
-version = "0.1.1"
+version = "0.2.0"
 dependencies = [
  "anyhow",
  "bson",
@@ -1069,7 +1069,7 @@ dependencies = [
 
 [[package]]
 name = "solidity_smoke_testing"
-version = "0.1.1"
+version = "0.2.0"
 dependencies = [
  "anyhow",
  "codegen_schema",
@@ -1086,7 +1086,7 @@ dependencies = [
 
 [[package]]
 name = "solidity_spec"
-version = "0.1.1"
+version = "0.2.0"
 dependencies = [
  "anyhow",
  "codegen_schema",
@@ -1097,7 +1097,7 @@ dependencies = [
 
 [[package]]
 name = "solidity_testing_utils"
-version = "0.1.1"
+version = "0.2.0"
 dependencies = [
  "anyhow",
  "semver",
