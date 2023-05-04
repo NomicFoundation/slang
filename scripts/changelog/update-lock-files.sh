@@ -42,6 +42,9 @@ fi
 
   _group_output git checkout -B "$head_branch"
   _group_output git add "package-lock.json"
+
+  _group_output git config "user.name" "github-actions"
+  _group_output git config "user.email" "github-actions@users.noreply.github.com"
   _group_output git commit --message "update lock files after release"
 
   _group_output git push --force --set-upstream "origin" "$head_branch"
