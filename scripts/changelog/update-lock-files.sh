@@ -11,8 +11,6 @@ fi
 (
   printf "\n\n📜 Updating Lock Files 📜\n\n\n"
 
-  _check_local_changes
-
   base_branch=$(git branch --show-current)
 
   _group_output npm install
