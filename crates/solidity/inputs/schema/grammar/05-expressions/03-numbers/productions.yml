@@ -10,11 +10,13 @@
             - reference: "DecimalLiteral"
         - optional:
             reference: "NumberUnit"
-    0.5.0:
-      sequence:
-        - reference: "DecimalLiteral"
-        - optional:
-            reference: "NumberUnit"
+    0.5.0: # "HexLiteral" no longer allows a "NumberUnit"
+      choice:
+        - reference: "HexLiteral"
+        - sequence:
+            - reference: "DecimalLiteral"
+            - optional:
+                reference: "NumberUnit"
 
 - name: "HexLiteral"
   kind: "Scanner"

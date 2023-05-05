@@ -20877,21 +20877,22 @@ impl Language {
     }
 
     // (* v0.5.0 *)
-    // NumericLiteral = «DecimalLiteral» NumberUnit?;
+    // NumericLiteral = «HexLiteral» | («DecimalLiteral» NumberUnit?);
 
     #[allow(unused_assignments, unused_parens)]
     fn parse_numeric_literal_0_5_0(&self, stream: &mut Stream) -> ParserResult {
         loop {
-            let mut furthest_error = None;
-            let result_0 = match {
+            let start_position = stream.position();
+            let mut furthest_error;
+            match {
                 let leading_trivia = self.optional_leading_trivia(stream);
                 let start = stream.position();
-                if self.scan_decimal_literal(stream) {
+                if self.scan_hex_literal(stream) {
                     let end = stream.position();
                     let trailing_trivia = self.optional_trailing_trivia(stream);
                     Pass {
                         node: cst::Node::token(
-                            TokenKind::DecimalLiteral,
+                            TokenKind::HexLiteral,
                             Range { start, end },
                             leading_trivia,
                             trailing_trivia,
@@ -20900,45 +20901,79 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "DecimalLiteral"),
+                        error: ParseError::new(start, "HexLiteral"),
                     }
                 }
             } {
-                Pass { node, error } => {
-                    furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
-                }
-                Fail { error } => {
-                    break Fail {
-                        error: error.maybe_merge_with(furthest_error),
-                    }
-                }
-            };
-            let result_1 = match {
-                let start_position = stream.position();
-                match self.parse_number_unit(stream) {
-                    Fail { error } => {
-                        stream.set_position(start_position);
+                Fail { error } => furthest_error = error,
+                pass => break pass,
+            }
+            stream.set_position(start_position);
+            match loop {
+                let mut furthest_error = None;
+                let result_0 = match {
+                    let leading_trivia = self.optional_leading_trivia(stream);
+                    let start = stream.position();
+                    if self.scan_decimal_literal(stream) {
+                        let end = stream.position();
+                        let trailing_trivia = self.optional_trailing_trivia(stream);
                         Pass {
-                            node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
-                            error: Some(error),
+                            node: cst::Node::token(
+                                TokenKind::DecimalLiteral,
+                                Range { start, end },
+                                leading_trivia,
+                                trailing_trivia,
+                            ),
+                            error: None,
+                        }
+                    } else {
+                        Fail {
+                            error: ParseError::new(start, "DecimalLiteral"),
                         }
                     }
-                    pass => pass,
-                }
-            } {
-                Pass { node, error } => {
-                    furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
-                }
-                Fail { error } => {
-                    break Fail {
-                        error: error.maybe_merge_with(furthest_error),
+                } {
+                    Pass { node, error } => {
+                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
+                        node
                     }
-                }
-            };
-            break Pass {
-                node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1]),
+                    Fail { error } => {
+                        break Fail {
+                            error: error.maybe_merge_with(furthest_error),
+                        }
+                    }
+                };
+                let result_1 = match {
+                    let start_position = stream.position();
+                    match self.parse_number_unit(stream) {
+                        Fail { error } => {
+                            stream.set_position(start_position);
+                            Pass {
+                                node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
+                                error: Some(error),
+                            }
+                        }
+                        pass => pass,
+                    }
+                } {
+                    Pass { node, error } => {
+                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
+                        node
+                    }
+                    Fail { error } => {
+                        break Fail {
+                            error: error.maybe_merge_with(furthest_error),
+                        }
+                    }
+                };
+                break Pass {
+                    node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1]),
+                    error: furthest_error,
+                };
+            } {
+                Fail { error } => furthest_error.merge_with(error),
+                pass => break pass,
+            }
+            break Fail {
                 error: furthest_error,
             };
         }

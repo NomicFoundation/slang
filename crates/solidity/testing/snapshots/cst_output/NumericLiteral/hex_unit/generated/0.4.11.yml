@@ -1,16 +1,12 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ 0x1 gwei                                                                         │ 0..8
+  1  │ 0x1 wei                                                                          │ 0..7
 
-Errors: # 1 total
-  - >
-    Error: Expected end of input.
-       ╭─[crates/solidity/testing/snapshots/cst_output/NumericLiteral/hex_unit/input.sol:1:4]
-       │
-     1 │ 0x1 gwei
-       │    │ 
-       │    ╰─ Error occurred here.
-    ───╯
+Errors: []
 
-Tree: null
+Tree:
+  - NumericLiteral (Rule): # 0..7 "0x1 wei"
+      - HexLiteral (Token): "0x1" # 0..3
+      - NumberUnit (Rule): # 4..7 "wei"
+          - WeiKeyword (Token): "wei" # 4..7
