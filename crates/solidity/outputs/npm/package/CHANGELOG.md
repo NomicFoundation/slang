@@ -1,5 +1,11 @@
 # changelog
 
+## 0.2.1
+
+### Patch Changes
+
+-   [#444](https://github.com/NomicFoundation/slang/pull/444) [`a858e2c`](https://github.com/NomicFoundation/slang/commit/a858e2c842db3b2183821fb92ed26af6b433e823) Thanks [@AntonyBlakey](https://github.com/AntonyBlakey)! - Fix HexLiteral cannot have NumberUnit
+
 ## 0.2.0
 
 ### Minor Changes
