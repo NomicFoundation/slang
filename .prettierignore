@@ -1,3 +1,6 @@
+# Ember Templates
+documentation/overrides/**/*.html
+
 # Packages and Dependencies
 .hermit/
 node_modules/
