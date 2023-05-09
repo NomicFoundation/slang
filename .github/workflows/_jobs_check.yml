@@ -40,47 +40,48 @@ jobs:
           entrypoint: "echo"
 
       - name: "Install Dependencies"
+        id: "installDependencies"
         uses: "./.devcontainer"
         with:
           entrypoint: "scripts/setup/all.sh"
 
       #
       # Checks:
-      # Run and report issues, even if other steps failed.
+      # Run all checks and report issues found, even if other checks failed:
       #
 
       - name: "Cargo check"
-        if: "success() || failure()"
+        if: "${{ (success() || failure()) && steps.installDependencies.outcome == 'success' }}"
         uses: "./.devcontainer"
         with:
           entrypoint: "scripts/cargo/check.sh"
 
       - name: "Cargo test"
-        if: "success() || failure()"
+        if: "${{ (success() || failure()) && steps.installDependencies.outcome == 'success' }}"
         uses: "./.devcontainer"
         with:
           entrypoint: "scripts/cargo/test.sh"
 
       - name: "Run linters"
-        if: "success() || failure()"
+        if: "${{ (success() || failure()) && steps.installDependencies.outcome == 'success' }}"
         uses: "./.devcontainer"
         with:
           entrypoint: "scripts/lint/all.sh"
 
       - name: "NPM build"
-        if: "success() || failure()"
+        if: "${{ (success() || failure()) && steps.installDependencies.outcome == 'success' }}"
         uses: "./.devcontainer"
         with:
           entrypoint: "scripts/npm/build.sh"
 
       - name: "NPM test"
-        if: "success() || failure()"
+        if: "${{ (success() || failure()) && steps.installDependencies.outcome == 'success' }}"
         uses: "./.devcontainer"
         with:
           entrypoint: "scripts/npm/test.sh"
 
       - name: "Build documentation"
-        if: "success() || failure()"
+        if: "${{ (success() || failure()) && steps.installDependencies.outcome == 'success' }}"
         uses: "./.devcontainer"
         with:
           entrypoint: "scripts/mkdocs/build.sh"

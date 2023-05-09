@@ -20,19 +20,7 @@
 
 # Base Container
 
-FROM ubuntu:22.04
-RUN apt-get update
-
-# OS Packages
-
-RUN apt-get install --assume-yes \
-  "bash=5.*" \
-  "build-essential=12.*" \
-  "curl=7.*" \
-  "git=1:2.*" \
-  "libssl-dev=3.*" \
-  "pkg-config=0.*" \
-  "zsh=5.*"
+FROM mcr.microsoft.com/devcontainers/base:ubuntu-22.04
 
 # Local Scripts
 
