@@ -7,7 +7,7 @@ env = {
 
   // Rust:
   "RUST_BACKTRACE": "FULL",
-  "RUST_VERSION": "1.64.0", // Keep this version in sync with "rust-version" in "$REPO_ROOT/Cargo.toml"
+  "RUST_VERSION": "1.65.0", // Keep this version in sync with "rust-version" in "$REPO_ROOT/Cargo.toml"
 
   // TypeScript:
   "TS_NODE_PROJECT": "${HERMIT_ENV}/tsconfig.json",
