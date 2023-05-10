@@ -74,6 +74,18 @@ function _process_generated_files() {
   done
 }
 
+function _process_public_api() {
+  printf "\n\n📚 Processing Public API: 📚\n\n\n"
+
+  tsc "$PACKAGE_DIR/src/index.ts" \
+    --declaration \
+    --outDir "$PACKAGE_DIR/src"
+
+  prettier --write \
+    "$PACKAGE_DIR/src/index.d.ts" \
+    "$PACKAGE_DIR/src/index.js"
+}
+
 function _process_bindings() {
   printf "\n\n📚 Processing Bindings: 📚\n\n\n"
 
@@ -100,6 +112,7 @@ function _process_bindings() {
   done
 
   _process_generated_files
+  _process_public_api
   _process_bindings
 
   _check_local_changes

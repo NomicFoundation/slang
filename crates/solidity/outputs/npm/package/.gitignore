@@ -1,2 +1,6 @@
 # NAPI generated binaries:
 *.node
+
+# Generated Public API
+index.d.ts
+index.js

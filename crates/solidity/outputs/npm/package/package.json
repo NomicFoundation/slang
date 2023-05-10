@@ -23,9 +23,11 @@
       "email": "omar@nomic.foundation"
     }
   ],
-  "main": "src/generated/index.js",
-  "types": "src/generated/index.d.ts",
+  "main": "src/index.js",
+  "types": "src/index.d.ts",
   "files": [
+    "src/index.d.ts",
+    "src/index.js",
     "src/generated/index.d.ts",
     "src/generated/index.js",
     "CHANGELOG.md",
