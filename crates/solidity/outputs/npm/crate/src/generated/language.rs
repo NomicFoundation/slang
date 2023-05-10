@@ -5,25 +5,23 @@ pub use std::{collections::BTreeSet, ops::Range, rc::Rc};
 #[allow(deprecated, unused_imports)]
 use semver::Version;
 
-pub use super::{cst, kinds::*, parser_output::ParseOutput};
+pub use super::{
+    cst,
+    kinds::*,
+    parser_output::{ParseError, ParseOutput},
+};
 
 const DEBUG_ERROR_MERGING: bool = false;
 
-#[derive(PartialEq)]
-pub struct ParseError {
-    position: usize,
-    expected: BTreeSet<String>,
-}
-
 impl ParseError {
-    pub fn new<T: Into<String>>(position: usize, expected: T) -> Self {
+    pub(crate) fn new<T: Into<String>>(position: usize, expected: T) -> Self {
         Self {
             position,
             expected: BTreeSet::from([expected.into()]),
         }
     }
 
-    pub fn merge_with(&mut self, other: Self) {
+    pub(crate) fn merge_with(&mut self, other: Self) {
         if DEBUG_ERROR_MERGING {
             if self.position < other.position {
                 self.expected = BTreeSet::from([format!(
@@ -56,7 +54,8 @@ impl ParseError {
         }
     }
 
-    pub fn maybe_merge_with(mut self, other: Option<Self>) -> Self {
+    #[allow(dead_code)]
+    pub(crate) fn maybe_merge_with(mut self, other: Option<Self>) -> Self {
         if let Some(other) = other {
             self.merge_with(other)
         }

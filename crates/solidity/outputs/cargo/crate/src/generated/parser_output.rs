@@ -1,11 +1,8 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-use std::rc::Rc;
+use std::{collections::BTreeSet, rc::Rc};
 
-use super::{
-    cst,
-    language::{render_error_report, ParseError},
-};
+use super::{cst, language::render_error_report};
 
 #[derive(PartialEq)]
 pub struct ParseOutput {
@@ -15,27 +12,34 @@ pub struct ParseOutput {
 
 impl ParseOutput {
     pub fn parse_tree(&self) -> Option<Rc<cst::Node>> {
-        self.parse_tree.clone()
+        return self.parse_tree.clone();
     }
 
-    pub fn error_count(&self) -> usize {
-        self.errors.len()
-    }
-
-    pub fn errors_as_strings(
-        &self,
-        source_id: &str,
-        source: &str,
-        with_colour: bool,
-    ) -> Vec<String> {
-        return self
-            .errors
-            .iter()
-            .map(|error| render_error_report(error, source_id, source, with_colour))
-            .collect();
+    pub fn errors(&self) -> &Vec<ParseError> {
+        return &self.errors;
     }
 
     pub fn is_valid(&self) -> bool {
-        self.parse_tree.is_some() && self.errors.is_empty()
+        return self.parse_tree.is_some() && self.errors.is_empty();
+    }
+}
+
+#[derive(PartialEq)]
+pub struct ParseError {
+    pub(crate) position: usize,
+    pub(crate) expected: BTreeSet<String>,
+}
+
+impl ParseError {
+    pub fn position(&self) -> usize {
+        return self.position;
+    }
+
+    pub fn expected(&self) -> &BTreeSet<String> {
+        return &self.expected;
+    }
+
+    pub fn to_error_report(&self, source_id: &str, source: &str, with_colour: bool) -> String {
+        return render_error_report(self, source_id, source, with_colour);
     }
 }

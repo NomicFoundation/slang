@@ -25,7 +25,7 @@ mod public_api {
         }
 
         pub mod parser {
-            pub use crate::generated::language::{ParseOutput, ProductionKind};
+            pub use crate::generated::language::{ParseError, ParseOutput, ProductionKind};
         }
 
         pub mod visitors {

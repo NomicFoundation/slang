@@ -640,7 +640,11 @@ export class Language {
 }
 export class ParseOutput {
   parseTree(): RuleNode | TokenNode | null;
-  errorCount(): bigint;
-  errorsAsStrings(sourceId: string, source: string, withColour: boolean): Array<string>;
+  errors(): Array<ParseError>;
   isValid(): boolean;
+}
+export class ParseError {
+  get position(): bigint;
+  expected(): Array<string>;
+  toErrorReport(sourceId: string, source: string, withColour: boolean): string;
 }

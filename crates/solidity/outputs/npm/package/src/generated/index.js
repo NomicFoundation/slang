@@ -239,7 +239,8 @@ if (!nativeBinding) {
   throw new Error(`Failed to load native binding`);
 }
 
-const { NodeType, RuleNode, TokenNode, TokenKind, RuleKind, ProductionKind, Language, ParseOutput } = nativeBinding;
+const { NodeType, RuleNode, TokenNode, TokenKind, RuleKind, ProductionKind, Language, ParseOutput, ParseError } =
+  nativeBinding;
 
 module.exports.NodeType = NodeType;
 module.exports.RuleNode = RuleNode;
@@ -249,3 +250,4 @@ module.exports.RuleKind = RuleKind;
 module.exports.ProductionKind = ProductionKind;
 module.exports.Language = Language;
 module.exports.ParseOutput = ParseOutput;
+module.exports.ParseError = ParseError;

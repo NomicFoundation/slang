@@ -16,7 +16,7 @@ fn extract_non_trivia() -> Result<()> {
     let language = Language::new(Version::parse("0.8.0")?)?;
     let output = language.parse(ProductionKind::Expression, source);
 
-    assert_eq!(output.error_count(), 0);
+    assert_eq!(output.errors().len(), 0);
 
     let parse_tree = output.parse_tree().context("Expected a parse tree")?;
     let value = parse_tree.extract_non_trivia(source);

@@ -73,7 +73,7 @@ fn write_errors<W: Write>(
     source_id: &str,
     source: &str,
 ) -> Result<()> {
-    let errors = output.errors_as_strings(source_id, source, /* with_colour */ false);
+    let errors = output.errors();
 
     if errors.len() == 0 {
         writeln!(w, "Errors: []")?;
@@ -84,7 +84,8 @@ fn write_errors<W: Write>(
 
     for error in errors {
         writeln!(w, "  - >")?;
-        for line in error.lines() {
+        let report = error.to_error_report(source_id, source, /* with_colour */ false);
+        for line in report.lines() {
             writeln!(w, "    {line}")?;
         }
     }
