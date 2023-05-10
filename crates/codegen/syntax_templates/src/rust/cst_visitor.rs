@@ -24,7 +24,7 @@ pub trait Visitor<E> {
         node: &Rc<Node>,
         path: &Vec<Rc<Node>>,
     ) -> Result<VisitorExitResponse, E> {
-        Ok(VisitorExitResponse::StepIn)
+        Ok(VisitorExitResponse::Continue)
     }
 
     fn enter_token(
@@ -46,7 +46,7 @@ pub trait Visitor<E> {
         node: &Rc<Node>,
         path: &Vec<Rc<Node>>,
     ) -> Result<VisitorExitResponse, E> {
-        Ok(VisitorExitResponse::StepIn)
+        Ok(VisitorExitResponse::Continue)
     }
 }
 
@@ -58,7 +58,7 @@ pub enum VisitorEntryResponse {
 
 pub enum VisitorExitResponse {
     Quit,
-    StepIn,
+    Continue,
 }
 
 pub trait Visitable<T: Visitor<E>, E> {
@@ -93,8 +93,10 @@ fn accept_visitor_with_path<T: Visitor<E>, E>(
                                 path.pop();
                                 return Ok(VisitorExitResponse::Quit);
                             }
-                            VisitorExitResponse::StepIn => {}
-                        }
+                            VisitorExitResponse::Continue => {
+                                continue;
+                            }
+                        };
                     }
                     path.pop();
                 }
@@ -117,8 +119,10 @@ fn accept_visitor_with_path<T: Visitor<E>, E>(
                                 path.pop();
                                 return Ok(VisitorExitResponse::Quit);
                             }
-                            VisitorExitResponse::StepIn => {}
-                        }
+                            VisitorExitResponse::Continue => {
+                                continue;
+                            }
+                        };
                     }
                     path.pop();
                 }
