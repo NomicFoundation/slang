@@ -1,6 +1,6 @@
 use anyhow::{Context, Result};
 use semver::Version;
-use slang_solidity::syntax::parser::{Language, ProductionKind};
+use slang_solidity::{syntax::parser::ProductionKind, Language};
 
 use crate::node_extensions::NodeExtensions;
 

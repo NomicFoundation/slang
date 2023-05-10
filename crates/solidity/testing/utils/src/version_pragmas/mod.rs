@@ -5,10 +5,13 @@ use std::{ops::Range, rc::Rc, str::FromStr};
 
 use anyhow::{bail, Context, Error, Result};
 use semver::{Comparator, Op, Version};
-use slang_solidity::syntax::{
-    nodes::{Node, RuleKind},
-    parser::{Language, ProductionKind},
-    visitors::{Visitable, Visitor, VisitorEntryResponse},
+use slang_solidity::{
+    syntax::{
+        nodes::{Node, RuleKind},
+        parser::ProductionKind,
+        visitors::{Visitable, Visitor, VisitorEntryResponse},
+    },
+    Language,
 };
 
 use crate::node_extensions::NodeExtensions;

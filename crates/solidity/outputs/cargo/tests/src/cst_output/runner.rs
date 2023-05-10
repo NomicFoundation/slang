@@ -3,7 +3,10 @@ use std::str::FromStr;
 use anyhow::Result;
 use codegen_utils::context::CodegenContext;
 use semver::Version;
-use slang_solidity::syntax::parser::{Language, ParseOutput, ProductionKind};
+use slang_solidity::{
+    syntax::parser::{ParseOutput, ProductionKind},
+    Language,
+};
 use solidity_testing_utils::cst_snapshots::ParseOutputTestSnapshotExtensions;
 
 use crate::cst_output::generated::VERSION_BREAKS;
