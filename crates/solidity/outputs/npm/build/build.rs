@@ -10,7 +10,7 @@ fn main() -> Result<()> {
 
         let output_dir = codegen
             .repo_root
-            .join("crates/solidity/outputs/npm/crate/src/syntax/generated");
+            .join("crates/solidity/outputs/npm/crate/src/generated");
 
         grammar.generate_typescript_lib_sources(codegen, &output_dir);
 

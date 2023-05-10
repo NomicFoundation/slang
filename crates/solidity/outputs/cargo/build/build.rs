@@ -10,7 +10,7 @@ fn main() -> Result<()> {
 
         let output_dir = codegen
             .repo_root
-            .join("crates/solidity/outputs/cargo/crate/src/syntax/generated");
+            .join("crates/solidity/outputs/cargo/crate/src/generated");
 
         grammar.generate_rust_lib_sources(codegen, &output_dir);
         return Ok(());

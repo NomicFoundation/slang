@@ -3,7 +3,7 @@ use std::{fs, path::PathBuf};
 use anyhow::Result;
 use clap::{Parser as ClapParser, Subcommand};
 use semver::Version;
-use slang_solidity::syntax::parser::{Language, ProductionKind};
+use slang_solidity::{syntax::parser::ProductionKind, Language};
 
 mod _supress_library_dependencies_ {
     // Below are dependencies used by the library `lib.rs`, but not here.

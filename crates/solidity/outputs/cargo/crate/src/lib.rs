@@ -1,4 +1,4 @@
-pub mod syntax;
+mod generated;
 
 mod _supress_binary_dependencies_ {
     // Below are dependencies used by the binary `main.rs`, but not here.
@@ -11,4 +11,27 @@ mod _supress_binary_dependencies_ {
     #[cfg(test)]
     use solidity_cargo_build as _;
     use thiserror as _;
+}
+
+pub use public_api::*;
+
+mod public_api {
+    pub use crate::generated::language::Language;
+
+    pub mod syntax {
+        pub mod nodes {
+            pub use crate::generated::cst::Node;
+            pub use crate::generated::kinds::{RuleKind, TokenKind};
+        }
+
+        pub mod parser {
+            pub use crate::generated::language::{ParseOutput, ProductionKind};
+        }
+
+        pub mod visitors {
+            pub use crate::generated::cst_visitor::{
+                Visitable, Visitor, VisitorEntryResponse, VisitorExitResponse,
+            };
+        }
+    }
 }
