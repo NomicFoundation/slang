@@ -1,11 +1,9 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-use std::rc::Rc;
+use std::{collections::BTreeSet, rc::Rc};
 
 use super::{
-    cst,
-    cst_types::RcNodeExtensions as CSTRcNodeExtensions,
-    language::{render_error_report, ParseError},
+    cst, cst_types::RcNodeExtensions as CSTRcNodeExtensions, language::render_error_report,
 };
 use napi::bindgen_prelude::*;
 
@@ -19,30 +17,41 @@ pub struct ParseOutput {
 impl ParseOutput {
     #[napi(ts_return_type = "RuleNode | TokenNode | null")]
     pub fn parse_tree(&self, env: Env) -> Option<napi::JsObject> {
-        self.parse_tree.clone().map(|n| n.to_js(&env))
+        return self.parse_tree.clone().map(|n| n.to_js(&env));
     }
 
     #[napi]
-    pub fn error_count(&self) -> usize {
-        self.errors.len()
-    }
-
-    #[napi]
-    pub fn errors_as_strings(
-        &self,
-        source_id: String,
-        source: String,
-        with_colour: bool,
-    ) -> Vec<String> {
-        return self
-            .errors
-            .iter()
-            .map(|error| render_error_report(error, &source_id, &source, with_colour))
-            .collect();
+    pub fn errors(&self) -> Vec<ParseError> {
+        return self.errors.clone();
     }
 
     #[napi]
     pub fn is_valid(&self) -> bool {
-        self.parse_tree.is_some() && self.errors.is_empty()
+        return self.parse_tree.is_some() && self.errors.is_empty();
+    }
+}
+
+#[napi]
+#[derive(PartialEq, Clone)]
+pub struct ParseError {
+    pub(crate) position: usize,
+    pub(crate) expected: BTreeSet<String>,
+}
+
+#[napi]
+impl ParseError {
+    #[napi(getter)]
+    pub fn position(&self) -> usize {
+        return self.position;
+    }
+
+    #[napi]
+    pub fn expected(&self) -> Vec<String> {
+        return self.expected.iter().cloned().collect();
+    }
+
+    #[napi]
+    pub fn to_error_report(&self, source_id: String, source: String, with_colour: bool) -> String {
+        return render_error_report(self, &source_id, &source, with_colour);
     }
 }

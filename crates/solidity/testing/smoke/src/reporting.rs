@@ -60,22 +60,24 @@ impl Reporter {
     ) {
         self.total_tests.fetch_add(1, Ordering::Relaxed);
 
-        if output.error_count() == 0 {
+        let errors = output.errors();
+        if errors.len() == 0 {
             return;
         }
 
         let failures_before_update = self.failed_tests.fetch_add(1, Ordering::Relaxed);
 
         if failures_before_update < Self::MAX_PRINTED_FAILURES {
-            let errors = output.errors_as_strings(source_id, source, /* with_colour */ true);
+            let reports = errors
+                .iter()
+                .take(Self::MAX_PRINTED_FAILURES - failures_before_update)
+                .map(|error| error.to_error_report(source_id, source, /* with_colour */ true))
+                .collect::<Vec<String>>();
 
             self.progress_bar.suspend(|| {
-                for error in errors
-                    .iter()
-                    .take(Self::MAX_PRINTED_FAILURES - failures_before_update)
-                {
+                for report in reports {
                     eprintln!();
-                    eprintln!("[{version}] {error}");
+                    eprintln!("[{version}] {report}");
                 }
             });
         } else if failures_before_update == Self::MAX_PRINTED_FAILURES {

@@ -61,12 +61,16 @@ fn execute_parse_command(file_path: String, version: Version, json: bool) -> Res
     let language = Language::new(version)?;
     let output = language.parse(ProductionKind::SourceUnit, &input);
 
-    for report in &output.errors_as_strings(
-        input_file.to_str().unwrap(),
-        &input,
-        /* with_colour */ true,
-    ) {
-        eprintln!("{report}");
+    let errors = output.errors();
+    for error in errors {
+        eprintln!(
+            "{report}",
+            report = error.to_error_report(
+                input_file.to_str().unwrap(),
+                &input,
+                /* with_colour */ true,
+            )
+        );
     }
 
     if json {
@@ -76,5 +80,5 @@ fn execute_parse_command(file_path: String, version: Version, json: bool) -> Res
         }
     }
 
-    std::process::exit(output.error_count() as i32);
+    std::process::exit(errors.len() as i32);
 }

@@ -24,3 +24,26 @@ test("parse some syntax", (t) => {
     t.fail("Expected RuleNode");
   }
 });
+
+test("render some error", (t) => {
+  const l = new Language("0.8.1");
+  const source = "int256 constant";
+  const errors = l.parse(ProductionKind.SourceUnit, source).errors();
+
+  t.is(errors.length, 1);
+
+  const report = errors[0]?.toErrorReport("test.sol", source, /* withColor */ false);
+
+  t.is(
+    report,
+    `
+Error: Expected end of input.
+   ╭─[test.sol:1:1]
+   │
+ 1 │ int256 constant
+   │ │ 
+   │ ╰─ Error occurred here.
+───╯
+`.trim(),
+  );
+});
