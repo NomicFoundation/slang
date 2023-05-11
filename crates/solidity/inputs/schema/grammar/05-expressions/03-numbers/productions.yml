@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=../../../../../../../codegen/schema/generated/productions.schema.json
 
-- name: "NumericLiteral"
+- name: "NumericExpression"
   kind: "Parser"
   versioned:
     0.4.11:

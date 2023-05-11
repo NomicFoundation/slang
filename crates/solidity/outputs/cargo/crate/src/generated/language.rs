@@ -451,6 +451,27 @@ impl Language {
                 TokenKind::AssemblyKeyword,
                 "AssemblyKeyword",
             ),
+            ProductionKind::Asterisk => call_scanner(
+                self,
+                input,
+                Language::scan_asterisk,
+                TokenKind::Asterisk,
+                "Asterisk",
+            ),
+            ProductionKind::AsteriskAsterisk => call_scanner(
+                self,
+                input,
+                Language::scan_asterisk_asterisk,
+                TokenKind::AsteriskAsterisk,
+                "AsteriskAsterisk",
+            ),
+            ProductionKind::AsteriskEqual => call_scanner(
+                self,
+                input,
+                Language::scan_asterisk_equal,
+                TokenKind::AsteriskEqual,
+                "AsteriskEqual",
+            ),
             ProductionKind::Bang => {
                 call_scanner(self, input, Language::scan_bang, TokenKind::Bang, "Bang")
             }
@@ -1304,23 +1325,6 @@ impl Language {
                 TokenKind::SolidityKeyword,
                 "SolidityKeyword",
             ),
-            ProductionKind::Star => {
-                call_scanner(self, input, Language::scan_star, TokenKind::Star, "Star")
-            }
-            ProductionKind::StarEqual => call_scanner(
-                self,
-                input,
-                Language::scan_star_equal,
-                TokenKind::StarEqual,
-                "StarEqual",
-            ),
-            ProductionKind::StarStar => call_scanner(
-                self,
-                input,
-                Language::scan_star_star,
-                TokenKind::StarStar,
-                "StarStar",
-            ),
             ProductionKind::StorageKeyword => call_scanner(
                 self,
                 input,
@@ -1539,6 +1543,9 @@ impl Language {
             ProductionKind::AssemblyStatement => {
                 call_parser(self, input, Language::parse_assembly_statement)
             }
+            ProductionKind::AsteriskImport => {
+                call_parser(self, input, Language::parse_asterisk_import)
+            }
             ProductionKind::Block => call_parser(self, input, Language::parse_block),
             ProductionKind::BooleanLiteral => {
                 call_parser(self, input, Language::parse_boolean_literal)
@@ -1632,6 +1639,7 @@ impl Language {
                 call_parser(self, input, Language::parse_identifier_path)
             }
             ProductionKind::IfStatement => call_parser(self, input, Language::parse_if_statement),
+            ProductionKind::ImportAlias => call_parser(self, input, Language::parse_import_alias),
             ProductionKind::ImportDirective => {
                 call_parser(self, input, Language::parse_import_directive)
             }
@@ -1677,8 +1685,8 @@ impl Language {
                 call_parser(self, input, Language::parse_new_expression)
             }
             ProductionKind::NumberUnit => call_parser(self, input, Language::parse_number_unit),
-            ProductionKind::NumericLiteral => {
-                call_parser(self, input, Language::parse_numeric_literal)
+            ProductionKind::NumericExpression => {
+                call_parser(self, input, Language::parse_numeric_expression)
             }
             ProductionKind::OverrideSpecifier => {
                 call_parser(self, input, Language::parse_override_specifier)
@@ -1715,22 +1723,14 @@ impl Language {
             ProductionKind::RevertStatement => {
                 call_parser(self, input, Language::parse_revert_statement)
             }
-            ProductionKind::SelectedImport => {
-                call_parser(self, input, Language::parse_selected_import)
+            ProductionKind::SelectiveImport => {
+                call_parser(self, input, Language::parse_selective_import)
             }
-            ProductionKind::SelectingImportDirective => {
-                call_parser(self, input, Language::parse_selecting_import_directive)
-            }
-            ProductionKind::SimpleImportDirective => {
-                call_parser(self, input, Language::parse_simple_import_directive)
-            }
+            ProductionKind::SimpleImport => call_parser(self, input, Language::parse_simple_import),
             ProductionKind::SimpleStatement => {
                 call_parser(self, input, Language::parse_simple_statement)
             }
             ProductionKind::SourceUnit => call_parser(self, input, Language::parse_source_unit),
-            ProductionKind::StarImportDirective => {
-                call_parser(self, input, Language::parse_star_import_directive)
-            }
             ProductionKind::StateVariableAttribute => {
                 call_parser(self, input, Language::parse_state_variable_attribute)
             }

@@ -83,7 +83,7 @@
   unversioned:
     terminal: "=>"
 
-- name: "Star"
+- name: "Asterisk"
   kind: "Scanner"
   unversioned:
     trailingContext:
@@ -94,12 +94,12 @@
           - terminal: "="
           - terminal: "*"
 
-- name: "StarEqual"
+- name: "AsteriskEqual"
   kind: "Scanner"
   unversioned:
     terminal: "*="
 
-- name: "StarStar"
+- name: "AsteriskAsterisk"
   kind: "Scanner"
   unversioned:
     terminal: "**"

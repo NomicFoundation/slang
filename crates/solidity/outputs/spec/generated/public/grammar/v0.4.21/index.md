@@ -23,10 +23,10 @@
 ### 1.4. Imports
 
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/04-imports/import-directive/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/04-imports/simple-import-directive/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/04-imports/star-import-directive/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/04-imports/selecting-import-directive/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/04-imports/selected-import/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/04-imports/simple-import/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/04-imports/asterisk-import/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/04-imports/selective-import/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/04-imports/import-alias/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/04-imports/import-path/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/04-imports/using-directive/0.4.11.md"
 
@@ -129,9 +129,9 @@
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/08-punctuation/equal/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/08-punctuation/equal-equal/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/08-punctuation/equal-greater-than/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/08-punctuation/star/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/08-punctuation/star-equal/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/08-punctuation/star-star/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/08-punctuation/asterisk/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/08-punctuation/asterisk-equal/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/08-punctuation/asterisk-asterisk/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/08-punctuation/bar/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/08-punctuation/bar-equal/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/08-punctuation/bar-bar/unversioned.md"
@@ -235,28 +235,22 @@
 ### 3.1. Advanced Types
 
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/03-types/01-advanced-types/type-name/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/03-types/01-advanced-types/function-type/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/03-types/01-advanced-types/mapping-type/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/03-types/01-advanced-types/mapping-key-type/0.4.11.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/03-types/01-advanced-types/mapping-value-type/0.4.11.md"
 
-### 3.2. Function Types
+### 3.2. Elementary Types
 
---8<-- "crates/solidity/outputs/spec/generated/ebnf/03-types/02-function-types/function-type/unversioned.md"
-
-### 3.3. Mapping Types
-
---8<-- "crates/solidity/outputs/spec/generated/ebnf/03-types/03-mapping-types/mapping-type/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/03-types/03-mapping-types/mapping-key-type/0.4.11.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/03-types/03-mapping-types/mapping-value-type/0.4.11.md"
-
-### 3.4. Elementary Types
-
---8<-- "crates/solidity/outputs/spec/generated/ebnf/03-types/04-elementary-types/elementary-type/0.4.11.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/03-types/04-elementary-types/address-type/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/03-types/04-elementary-types/payable-type/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/03-types/04-elementary-types/byte-type/0.4.11.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/03-types/04-elementary-types/fixed-bytes-type/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/03-types/04-elementary-types/signed-integer-type/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/03-types/04-elementary-types/unsigned-integer-type/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/03-types/04-elementary-types/signed-fixed-type/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/03-types/04-elementary-types/unsigned-fixed-type/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/03-types/02-elementary-types/elementary-type/0.4.11.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/03-types/02-elementary-types/address-type/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/03-types/02-elementary-types/payable-type/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/03-types/02-elementary-types/byte-type/0.4.11.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/03-types/02-elementary-types/fixed-bytes-type/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/03-types/02-elementary-types/signed-integer-type/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/03-types/02-elementary-types/unsigned-integer-type/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/03-types/02-elementary-types/signed-fixed-type/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/03-types/02-elementary-types/unsigned-fixed-type/unversioned.md"
 
 ## 4. Statements
 
@@ -306,7 +300,7 @@
 
 ### 5.3. Numbers
 
---8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/03-numbers/numeric-literal/0.4.11.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/03-numbers/numeric-expression/0.4.11.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/03-numbers/hex-literal/0.4.11.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/03-numbers/decimal-literal/0.4.11.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/03-numbers/decimal-number/unversioned.md"

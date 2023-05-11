@@ -990,6 +990,117 @@ impl Language {
         }
     }
 
+    // AsteriskImport = «Asterisk» ImportAlias «FromKeyword» ImportPath;
+
+    #[allow(unused_assignments, unused_parens)]
+    fn parse_asterisk_import_0_4_11(&self, stream: &mut Stream) -> ParserResult {
+        loop {
+            let mut furthest_error = None;
+            let result_0 = match {
+                let leading_trivia = self.optional_leading_trivia(stream);
+                let start = stream.position();
+                if self.scan_asterisk(stream) {
+                    let end = stream.position();
+                    let trailing_trivia = self.optional_trailing_trivia(stream);
+                    Pass {
+                        node: cst::Node::token(
+                            TokenKind::Asterisk,
+                            Range { start, end },
+                            leading_trivia,
+                            trailing_trivia,
+                        ),
+                        error: None,
+                    }
+                } else {
+                    Fail {
+                        error: ParseError::new(start, "Asterisk"),
+                    }
+                }
+            } {
+                Pass { node, error } => {
+                    furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
+                    node
+                }
+                Fail { error } => {
+                    break Fail {
+                        error: error.maybe_merge_with(furthest_error),
+                    }
+                }
+            };
+            let result_1 = match self.parse_import_alias(stream) {
+                Pass { node, error } => {
+                    furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
+                    node
+                }
+                Fail { error } => {
+                    break Fail {
+                        error: error.maybe_merge_with(furthest_error),
+                    }
+                }
+            };
+            let result_2 = match {
+                let leading_trivia = self.optional_leading_trivia(stream);
+                let start = stream.position();
+                if self.scan_from_keyword(stream) {
+                    let end = stream.position();
+                    let trailing_trivia = self.optional_trailing_trivia(stream);
+                    Pass {
+                        node: cst::Node::token(
+                            TokenKind::FromKeyword,
+                            Range { start, end },
+                            leading_trivia,
+                            trailing_trivia,
+                        ),
+                        error: None,
+                    }
+                } else {
+                    Fail {
+                        error: ParseError::new(start, "FromKeyword"),
+                    }
+                }
+            } {
+                Pass { node, error } => {
+                    furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
+                    node
+                }
+                Fail { error } => {
+                    break Fail {
+                        error: error.maybe_merge_with(furthest_error),
+                    }
+                }
+            };
+            let result_3 = match self.parse_import_path(stream) {
+                Pass { node, error } => {
+                    furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
+                    node
+                }
+                Fail { error } => {
+                    break Fail {
+                        error: error.maybe_merge_with(furthest_error),
+                    }
+                }
+            };
+            break Pass {
+                node: cst::Node::rule(
+                    RuleKind::_SEQUENCE,
+                    vec![result_0, result_1, result_2, result_3],
+                ),
+                error: furthest_error,
+            };
+        }
+    }
+
+    #[inline]
+    pub(crate) fn parse_asterisk_import(&self, stream: &mut Stream) -> ParserResult {
+        match self.parse_asterisk_import_0_4_11(stream) {
+            Pass { node, error } => Pass {
+                node: cst::Node::top_level_rule(RuleKind::AsteriskImport, node),
+                error,
+            },
+            fail => fail,
+        }
+    }
+
     // (* v0.4.11 *)
     // Block = «OpenBrace» Statement* «CloseBrace»;
 
@@ -5374,7 +5485,7 @@ impl Language {
     //            | MemberAccessExpression
     //            | IndexAccessExpression
     //            | PrimaryExpression;
-    // AssignmentExpression = Expression («Equal» | «BarEqual» | «CaretEqual» | «AmpersandEqual» | «LessThanLessThanEqual» | «GreaterThanGreaterThanEqual» | «GreaterThanGreaterThanGreaterThanEqual» | «PlusEqual» | «MinusEqual» | «StarEqual» | «SlashEqual» | «PercentEqual») Expression;
+    // AssignmentExpression = Expression («Equal» | «BarEqual» | «CaretEqual» | «AmpersandEqual» | «LessThanLessThanEqual» | «GreaterThanGreaterThanEqual» | «GreaterThanGreaterThanGreaterThanEqual» | «PlusEqual» | «MinusEqual» | «AsteriskEqual» | «SlashEqual» | «PercentEqual») Expression;
     // ConditionalExpression = Expression «QuestionMark» Expression «Colon» Expression;
     // OrExpression = Expression «BarBar» Expression;
     // AndExpression = Expression «AmpersandAmpersand» Expression;
@@ -5385,8 +5496,8 @@ impl Language {
     // BitAndExpression = Expression «Ampersand» Expression;
     // ShiftExpression = Expression («LessThanLessThan» | «GreaterThanGreaterThan» | «GreaterThanGreaterThanGreaterThan») Expression;
     // AddSubExpression = Expression («Plus» | «Minus») Expression;
-    // MulDivModExpression = Expression («Star» | «Slash» | «Percent») Expression;
-    // ExponentiationExpression = Expression «StarStar» Expression;
+    // MulDivModExpression = Expression («Asterisk» | «Slash» | «Percent») Expression;
+    // ExponentiationExpression = Expression «AsteriskAsterisk» Expression;
     // UnaryPostfixExpression = Expression («PlusPlus» | «MinusMinus»);
     // UnaryPrefixExpression = («PlusPlus» | «MinusMinus» | «Tilde» | «Bang» | «Minus» | «Plus») Expression;
     // FunctionCallExpression = Expression ArgumentList;
@@ -6492,12 +6603,12 @@ impl Language {
                         match {
                             let leading_trivia = self.optional_leading_trivia(stream);
                             let start = stream.position();
-                            if self.scan_star_equal(stream) {
+                            if self.scan_asterisk_equal(stream) {
                                 let end = stream.position();
                                 let trailing_trivia = self.optional_trailing_trivia(stream);
                                 Pass {
                                     node: cst::Node::token(
-                                        TokenKind::StarEqual,
+                                        TokenKind::AsteriskEqual,
                                         Range { start, end },
                                         leading_trivia,
                                         trailing_trivia,
@@ -6506,7 +6617,7 @@ impl Language {
                                 }
                             } else {
                                 Fail {
-                                    error: ParseError::new(start, "StarEqual"),
+                                    error: ParseError::new(start, "AsteriskEqual"),
                                 }
                             }
                         } {
@@ -7119,12 +7230,12 @@ impl Language {
                             match {
                                 let leading_trivia = self.optional_leading_trivia(stream);
                                 let start = stream.position();
-                                if self.scan_star(stream) {
+                                if self.scan_asterisk(stream) {
                                     let end = stream.position();
                                     let trailing_trivia = self.optional_trailing_trivia(stream);
                                     Pass {
                                         node: cst::Node::token(
-                                            TokenKind::Star,
+                                            TokenKind::Asterisk,
                                             Range { start, end },
                                             leading_trivia,
                                             trailing_trivia,
@@ -7133,7 +7244,7 @@ impl Language {
                                     }
                                 } else {
                                     Fail {
-                                        error: ParseError::new(start, "Star"),
+                                        error: ParseError::new(start, "Asterisk"),
                                     }
                                 }
                             } {
@@ -7211,12 +7322,12 @@ impl Language {
                         match {
                             let leading_trivia = self.optional_leading_trivia(stream);
                             let start = stream.position();
-                            if self.scan_star_star(stream) {
+                            if self.scan_asterisk_asterisk(stream) {
                                 let end = stream.position();
                                 let trailing_trivia = self.optional_trailing_trivia(stream);
                                 Pass {
                                     node: cst::Node::token(
-                                        TokenKind::StarStar,
+                                        TokenKind::AsteriskAsterisk,
                                         Range { start, end },
                                         leading_trivia,
                                         trailing_trivia,
@@ -7225,7 +7336,7 @@ impl Language {
                                 }
                             } else {
                                 Fail {
-                                    error: ParseError::new(start, "StarStar"),
+                                    error: ParseError::new(start, "AsteriskAsterisk"),
                                 }
                             }
                         } {
@@ -7355,7 +7466,7 @@ impl Language {
     //            | MemberAccessExpression
     //            | IndexAccessExpression
     //            | PrimaryExpression;
-    // AssignmentExpression = Expression («Equal» | «BarEqual» | «CaretEqual» | «AmpersandEqual» | «LessThanLessThanEqual» | «GreaterThanGreaterThanEqual» | «GreaterThanGreaterThanGreaterThanEqual» | «PlusEqual» | «MinusEqual» | «StarEqual» | «SlashEqual» | «PercentEqual») Expression;
+    // AssignmentExpression = Expression («Equal» | «BarEqual» | «CaretEqual» | «AmpersandEqual» | «LessThanLessThanEqual» | «GreaterThanGreaterThanEqual» | «GreaterThanGreaterThanGreaterThanEqual» | «PlusEqual» | «MinusEqual» | «AsteriskEqual» | «SlashEqual» | «PercentEqual») Expression;
     // ConditionalExpression = Expression «QuestionMark» Expression «Colon» Expression;
     // OrExpression = Expression «BarBar» Expression;
     // AndExpression = Expression «AmpersandAmpersand» Expression;
@@ -7366,8 +7477,8 @@ impl Language {
     // BitAndExpression = Expression «Ampersand» Expression;
     // ShiftExpression = Expression («LessThanLessThan» | «GreaterThanGreaterThan» | «GreaterThanGreaterThanGreaterThan») Expression;
     // AddSubExpression = Expression («Plus» | «Minus») Expression;
-    // MulDivModExpression = Expression («Star» | «Slash» | «Percent») Expression;
-    // ExponentiationExpression = Expression «StarStar» Expression;
+    // MulDivModExpression = Expression («Asterisk» | «Slash» | «Percent») Expression;
+    // ExponentiationExpression = Expression «AsteriskAsterisk» Expression;
     // UnaryPostfixExpression = Expression («PlusPlus» | «MinusMinus»);
     // UnaryPrefixExpression = («PlusPlus» | «MinusMinus» | «Tilde» | «Bang» | «Minus») Expression;
     // FunctionCallExpression = Expression ArgumentList;
@@ -8448,12 +8559,12 @@ impl Language {
                         match {
                             let leading_trivia = self.optional_leading_trivia(stream);
                             let start = stream.position();
-                            if self.scan_star_equal(stream) {
+                            if self.scan_asterisk_equal(stream) {
                                 let end = stream.position();
                                 let trailing_trivia = self.optional_trailing_trivia(stream);
                                 Pass {
                                     node: cst::Node::token(
-                                        TokenKind::StarEqual,
+                                        TokenKind::AsteriskEqual,
                                         Range { start, end },
                                         leading_trivia,
                                         trailing_trivia,
@@ -8462,7 +8573,7 @@ impl Language {
                                 }
                             } else {
                                 Fail {
-                                    error: ParseError::new(start, "StarEqual"),
+                                    error: ParseError::new(start, "AsteriskEqual"),
                                 }
                             }
                         } {
@@ -9075,12 +9186,12 @@ impl Language {
                             match {
                                 let leading_trivia = self.optional_leading_trivia(stream);
                                 let start = stream.position();
-                                if self.scan_star(stream) {
+                                if self.scan_asterisk(stream) {
                                     let end = stream.position();
                                     let trailing_trivia = self.optional_trailing_trivia(stream);
                                     Pass {
                                         node: cst::Node::token(
-                                            TokenKind::Star,
+                                            TokenKind::Asterisk,
                                             Range { start, end },
                                             leading_trivia,
                                             trailing_trivia,
@@ -9089,7 +9200,7 @@ impl Language {
                                     }
                                 } else {
                                     Fail {
-                                        error: ParseError::new(start, "Star"),
+                                        error: ParseError::new(start, "Asterisk"),
                                     }
                                 }
                             } {
@@ -9167,12 +9278,12 @@ impl Language {
                         match {
                             let leading_trivia = self.optional_leading_trivia(stream);
                             let start = stream.position();
-                            if self.scan_star_star(stream) {
+                            if self.scan_asterisk_asterisk(stream) {
                                 let end = stream.position();
                                 let trailing_trivia = self.optional_trailing_trivia(stream);
                                 Pass {
                                     node: cst::Node::token(
-                                        TokenKind::StarStar,
+                                        TokenKind::AsteriskAsterisk,
                                         Range { start, end },
                                         leading_trivia,
                                         trailing_trivia,
@@ -9181,7 +9292,7 @@ impl Language {
                                 }
                             } else {
                                 Fail {
-                                    error: ParseError::new(start, "StarStar"),
+                                    error: ParseError::new(start, "AsteriskAsterisk"),
                                 }
                             }
                         } {
@@ -9311,7 +9422,7 @@ impl Language {
     //            | MemberAccessExpression
     //            | IndexAccessExpression
     //            | PrimaryExpression;
-    // AssignmentExpression = Expression («Equal» | «BarEqual» | «CaretEqual» | «AmpersandEqual» | «LessThanLessThanEqual» | «GreaterThanGreaterThanEqual» | «GreaterThanGreaterThanGreaterThanEqual» | «PlusEqual» | «MinusEqual» | «StarEqual» | «SlashEqual» | «PercentEqual») Expression;
+    // AssignmentExpression = Expression («Equal» | «BarEqual» | «CaretEqual» | «AmpersandEqual» | «LessThanLessThanEqual» | «GreaterThanGreaterThanEqual» | «GreaterThanGreaterThanGreaterThanEqual» | «PlusEqual» | «MinusEqual» | «AsteriskEqual» | «SlashEqual» | «PercentEqual») Expression;
     // ConditionalExpression = Expression «QuestionMark» Expression «Colon» Expression;
     // OrExpression = Expression «BarBar» Expression;
     // AndExpression = Expression «AmpersandAmpersand» Expression;
@@ -9322,8 +9433,8 @@ impl Language {
     // BitAndExpression = Expression «Ampersand» Expression;
     // ShiftExpression = Expression («LessThanLessThan» | «GreaterThanGreaterThan» | «GreaterThanGreaterThanGreaterThan») Expression;
     // AddSubExpression = Expression («Plus» | «Minus») Expression;
-    // MulDivModExpression = Expression («Star» | «Slash» | «Percent») Expression;
-    // ExponentiationExpression = Expression «StarStar» Expression; (* Right Associative *)
+    // MulDivModExpression = Expression («Asterisk» | «Slash» | «Percent») Expression;
+    // ExponentiationExpression = Expression «AsteriskAsterisk» Expression; (* Right Associative *)
     // UnaryPostfixExpression = Expression («PlusPlus» | «MinusMinus»);
     // UnaryPrefixExpression = («PlusPlus» | «MinusMinus» | «Tilde» | «Bang» | «Minus») Expression;
     // FunctionCallExpression = Expression ArgumentList;
@@ -10404,12 +10515,12 @@ impl Language {
                         match {
                             let leading_trivia = self.optional_leading_trivia(stream);
                             let start = stream.position();
-                            if self.scan_star_equal(stream) {
+                            if self.scan_asterisk_equal(stream) {
                                 let end = stream.position();
                                 let trailing_trivia = self.optional_trailing_trivia(stream);
                                 Pass {
                                     node: cst::Node::token(
-                                        TokenKind::StarEqual,
+                                        TokenKind::AsteriskEqual,
                                         Range { start, end },
                                         leading_trivia,
                                         trailing_trivia,
@@ -10418,7 +10529,7 @@ impl Language {
                                 }
                             } else {
                                 Fail {
-                                    error: ParseError::new(start, "StarEqual"),
+                                    error: ParseError::new(start, "AsteriskEqual"),
                                 }
                             }
                         } {
@@ -11031,12 +11142,12 @@ impl Language {
                             match {
                                 let leading_trivia = self.optional_leading_trivia(stream);
                                 let start = stream.position();
-                                if self.scan_star(stream) {
+                                if self.scan_asterisk(stream) {
                                     let end = stream.position();
                                     let trailing_trivia = self.optional_trailing_trivia(stream);
                                     Pass {
                                         node: cst::Node::token(
-                                            TokenKind::Star,
+                                            TokenKind::Asterisk,
                                             Range { start, end },
                                             leading_trivia,
                                             trailing_trivia,
@@ -11045,7 +11156,7 @@ impl Language {
                                     }
                                 } else {
                                     Fail {
-                                        error: ParseError::new(start, "Star"),
+                                        error: ParseError::new(start, "Asterisk"),
                                     }
                                 }
                             } {
@@ -11123,12 +11234,12 @@ impl Language {
                         match {
                             let leading_trivia = self.optional_leading_trivia(stream);
                             let start = stream.position();
-                            if self.scan_star_star(stream) {
+                            if self.scan_asterisk_asterisk(stream) {
                                 let end = stream.position();
                                 let trailing_trivia = self.optional_trailing_trivia(stream);
                                 Pass {
                                     node: cst::Node::token(
-                                        TokenKind::StarStar,
+                                        TokenKind::AsteriskAsterisk,
                                         Range { start, end },
                                         leading_trivia,
                                         trailing_trivia,
@@ -11137,7 +11248,7 @@ impl Language {
                                 }
                             } else {
                                 Fail {
-                                    error: ParseError::new(start, "StarStar"),
+                                    error: ParseError::new(start, "AsteriskAsterisk"),
                                 }
                             }
                         } {
@@ -11267,7 +11378,7 @@ impl Language {
     //            | MemberAccessExpression
     //            | IndexAccessExpression
     //            | PrimaryExpression;
-    // AssignmentExpression = Expression («Equal» | «BarEqual» | «CaretEqual» | «AmpersandEqual» | «LessThanLessThanEqual» | «GreaterThanGreaterThanEqual» | «GreaterThanGreaterThanGreaterThanEqual» | «PlusEqual» | «MinusEqual» | «StarEqual» | «SlashEqual» | «PercentEqual») Expression;
+    // AssignmentExpression = Expression («Equal» | «BarEqual» | «CaretEqual» | «AmpersandEqual» | «LessThanLessThanEqual» | «GreaterThanGreaterThanEqual» | «GreaterThanGreaterThanGreaterThanEqual» | «PlusEqual» | «MinusEqual» | «AsteriskEqual» | «SlashEqual» | «PercentEqual») Expression;
     // ConditionalExpression = Expression «QuestionMark» Expression «Colon» Expression;
     // OrExpression = Expression «BarBar» Expression;
     // AndExpression = Expression «AmpersandAmpersand» Expression;
@@ -11278,8 +11389,8 @@ impl Language {
     // BitAndExpression = Expression «Ampersand» Expression;
     // ShiftExpression = Expression («LessThanLessThan» | «GreaterThanGreaterThan» | «GreaterThanGreaterThanGreaterThan») Expression;
     // AddSubExpression = Expression («Plus» | «Minus») Expression;
-    // MulDivModExpression = Expression («Star» | «Slash» | «Percent») Expression;
-    // ExponentiationExpression = Expression «StarStar» Expression; (* Right Associative *)
+    // MulDivModExpression = Expression («Asterisk» | «Slash» | «Percent») Expression;
+    // ExponentiationExpression = Expression «AsteriskAsterisk» Expression; (* Right Associative *)
     // UnaryPostfixExpression = Expression («PlusPlus» | «MinusMinus»);
     // UnaryPrefixExpression = («PlusPlus» | «MinusMinus» | «Tilde» | «Bang» | «Minus») Expression;
     // FunctionCallExpression = Expression FunctionCallOptions* ArgumentList;
@@ -12393,12 +12504,12 @@ impl Language {
                         match {
                             let leading_trivia = self.optional_leading_trivia(stream);
                             let start = stream.position();
-                            if self.scan_star_equal(stream) {
+                            if self.scan_asterisk_equal(stream) {
                                 let end = stream.position();
                                 let trailing_trivia = self.optional_trailing_trivia(stream);
                                 Pass {
                                     node: cst::Node::token(
-                                        TokenKind::StarEqual,
+                                        TokenKind::AsteriskEqual,
                                         Range { start, end },
                                         leading_trivia,
                                         trailing_trivia,
@@ -12407,7 +12518,7 @@ impl Language {
                                 }
                             } else {
                                 Fail {
-                                    error: ParseError::new(start, "StarEqual"),
+                                    error: ParseError::new(start, "AsteriskEqual"),
                                 }
                             }
                         } {
@@ -13020,12 +13131,12 @@ impl Language {
                             match {
                                 let leading_trivia = self.optional_leading_trivia(stream);
                                 let start = stream.position();
-                                if self.scan_star(stream) {
+                                if self.scan_asterisk(stream) {
                                     let end = stream.position();
                                     let trailing_trivia = self.optional_trailing_trivia(stream);
                                     Pass {
                                         node: cst::Node::token(
-                                            TokenKind::Star,
+                                            TokenKind::Asterisk,
                                             Range { start, end },
                                             leading_trivia,
                                             trailing_trivia,
@@ -13034,7 +13145,7 @@ impl Language {
                                     }
                                 } else {
                                     Fail {
-                                        error: ParseError::new(start, "Star"),
+                                        error: ParseError::new(start, "Asterisk"),
                                     }
                                 }
                             } {
@@ -13112,12 +13223,12 @@ impl Language {
                         match {
                             let leading_trivia = self.optional_leading_trivia(stream);
                             let start = stream.position();
-                            if self.scan_star_star(stream) {
+                            if self.scan_asterisk_asterisk(stream) {
                                 let end = stream.position();
                                 let trailing_trivia = self.optional_trailing_trivia(stream);
                                 Pass {
                                     node: cst::Node::token(
-                                        TokenKind::StarStar,
+                                        TokenKind::AsteriskAsterisk,
                                         Range { start, end },
                                         leading_trivia,
                                         trailing_trivia,
@@ -13126,7 +13237,7 @@ impl Language {
                                 }
                             } else {
                                 Fail {
-                                    error: ParseError::new(start, "StarStar"),
+                                    error: ParseError::new(start, "AsteriskAsterisk"),
                                 }
                             }
                         } {
@@ -13256,7 +13367,7 @@ impl Language {
     //            | MemberAccessExpression
     //            | IndexAccessExpression
     //            | PrimaryExpression;
-    // AssignmentExpression = Expression («Equal» | «BarEqual» | «CaretEqual» | «AmpersandEqual» | «LessThanLessThanEqual» | «GreaterThanGreaterThanEqual» | «GreaterThanGreaterThanGreaterThanEqual» | «PlusEqual» | «MinusEqual» | «StarEqual» | «SlashEqual» | «PercentEqual») Expression;
+    // AssignmentExpression = Expression («Equal» | «BarEqual» | «CaretEqual» | «AmpersandEqual» | «LessThanLessThanEqual» | «GreaterThanGreaterThanEqual» | «GreaterThanGreaterThanGreaterThanEqual» | «PlusEqual» | «MinusEqual» | «AsteriskEqual» | «SlashEqual» | «PercentEqual») Expression;
     // ConditionalExpression = Expression «QuestionMark» Expression «Colon» Expression;
     // OrExpression = Expression «BarBar» Expression;
     // AndExpression = Expression «AmpersandAmpersand» Expression;
@@ -13267,8 +13378,8 @@ impl Language {
     // BitAndExpression = Expression «Ampersand» Expression;
     // ShiftExpression = Expression («LessThanLessThan» | «GreaterThanGreaterThan» | «GreaterThanGreaterThanGreaterThan») Expression;
     // AddSubExpression = Expression («Plus» | «Minus») Expression;
-    // MulDivModExpression = Expression («Star» | «Slash» | «Percent») Expression;
-    // ExponentiationExpression = Expression «StarStar» Expression; (* Right Associative *)
+    // MulDivModExpression = Expression («Asterisk» | «Slash» | «Percent») Expression;
+    // ExponentiationExpression = Expression «AsteriskAsterisk» Expression; (* Right Associative *)
     // UnaryPostfixExpression = Expression («PlusPlus» | «MinusMinus»);
     // UnaryPrefixExpression = («PlusPlus» | «MinusMinus» | «Tilde» | «Bang» | «Minus») Expression;
     // FunctionCallExpression = Expression FunctionCallOptions? ArgumentList;
@@ -14376,12 +14487,12 @@ impl Language {
                         match {
                             let leading_trivia = self.optional_leading_trivia(stream);
                             let start = stream.position();
-                            if self.scan_star_equal(stream) {
+                            if self.scan_asterisk_equal(stream) {
                                 let end = stream.position();
                                 let trailing_trivia = self.optional_trailing_trivia(stream);
                                 Pass {
                                     node: cst::Node::token(
-                                        TokenKind::StarEqual,
+                                        TokenKind::AsteriskEqual,
                                         Range { start, end },
                                         leading_trivia,
                                         trailing_trivia,
@@ -14390,7 +14501,7 @@ impl Language {
                                 }
                             } else {
                                 Fail {
-                                    error: ParseError::new(start, "StarEqual"),
+                                    error: ParseError::new(start, "AsteriskEqual"),
                                 }
                             }
                         } {
@@ -15003,12 +15114,12 @@ impl Language {
                             match {
                                 let leading_trivia = self.optional_leading_trivia(stream);
                                 let start = stream.position();
-                                if self.scan_star(stream) {
+                                if self.scan_asterisk(stream) {
                                     let end = stream.position();
                                     let trailing_trivia = self.optional_trailing_trivia(stream);
                                     Pass {
                                         node: cst::Node::token(
-                                            TokenKind::Star,
+                                            TokenKind::Asterisk,
                                             Range { start, end },
                                             leading_trivia,
                                             trailing_trivia,
@@ -15017,7 +15128,7 @@ impl Language {
                                     }
                                 } else {
                                     Fail {
-                                        error: ParseError::new(start, "Star"),
+                                        error: ParseError::new(start, "Asterisk"),
                                     }
                                 }
                             } {
@@ -15095,12 +15206,12 @@ impl Language {
                         match {
                             let leading_trivia = self.optional_leading_trivia(stream);
                             let start = stream.position();
-                            if self.scan_star_star(stream) {
+                            if self.scan_asterisk_asterisk(stream) {
                                 let end = stream.position();
                                 let trailing_trivia = self.optional_trailing_trivia(stream);
                                 Pass {
                                     node: cst::Node::token(
-                                        TokenKind::StarStar,
+                                        TokenKind::AsteriskAsterisk,
                                         Range { start, end },
                                         leading_trivia,
                                         trailing_trivia,
@@ -15109,7 +15220,7 @@ impl Language {
                                 }
                             } else {
                                 Fail {
-                                    error: ParseError::new(start, "StarStar"),
+                                    error: ParseError::new(start, "AsteriskAsterisk"),
                                 }
                             }
                         } {
@@ -17808,7 +17919,93 @@ impl Language {
         }
     }
 
-    // ImportDirective = «ImportKeyword» (SimpleImportDirective | StarImportDirective | SelectingImportDirective) «Semicolon»;
+    // ImportAlias = «AsKeyword» «Identifier»;
+
+    #[allow(unused_assignments, unused_parens)]
+    fn parse_import_alias_0_4_11(&self, stream: &mut Stream) -> ParserResult {
+        loop {
+            let mut furthest_error = None;
+            let result_0 = match {
+                let leading_trivia = self.optional_leading_trivia(stream);
+                let start = stream.position();
+                if self.scan_as_keyword(stream) {
+                    let end = stream.position();
+                    let trailing_trivia = self.optional_trailing_trivia(stream);
+                    Pass {
+                        node: cst::Node::token(
+                            TokenKind::AsKeyword,
+                            Range { start, end },
+                            leading_trivia,
+                            trailing_trivia,
+                        ),
+                        error: None,
+                    }
+                } else {
+                    Fail {
+                        error: ParseError::new(start, "AsKeyword"),
+                    }
+                }
+            } {
+                Pass { node, error } => {
+                    furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
+                    node
+                }
+                Fail { error } => {
+                    break Fail {
+                        error: error.maybe_merge_with(furthest_error),
+                    }
+                }
+            };
+            let result_1 = match {
+                let leading_trivia = self.optional_leading_trivia(stream);
+                let start = stream.position();
+                if self.scan_identifier(stream) {
+                    let end = stream.position();
+                    let trailing_trivia = self.optional_trailing_trivia(stream);
+                    Pass {
+                        node: cst::Node::token(
+                            TokenKind::Identifier,
+                            Range { start, end },
+                            leading_trivia,
+                            trailing_trivia,
+                        ),
+                        error: None,
+                    }
+                } else {
+                    Fail {
+                        error: ParseError::new(start, "Identifier"),
+                    }
+                }
+            } {
+                Pass { node, error } => {
+                    furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
+                    node
+                }
+                Fail { error } => {
+                    break Fail {
+                        error: error.maybe_merge_with(furthest_error),
+                    }
+                }
+            };
+            break Pass {
+                node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1]),
+                error: furthest_error,
+            };
+        }
+    }
+
+    #[inline]
+    pub(crate) fn parse_import_alias(&self, stream: &mut Stream) -> ParserResult {
+        match self.parse_import_alias_0_4_11(stream) {
+            Pass { node, error } => Pass {
+                node: cst::Node::top_level_rule(RuleKind::ImportAlias, node),
+                error,
+            },
+            fail => fail,
+        }
+    }
+
+    // ImportDirective = «ImportKeyword» (SimpleImport | AsteriskImport | SelectiveImport) «Semicolon»;
 
     #[allow(unused_assignments, unused_parens)]
     fn parse_import_directive_0_4_11(&self, stream: &mut Stream) -> ParserResult {
@@ -17849,17 +18046,17 @@ impl Language {
                 let result_1 = match loop {
                     let start_position = stream.position();
                     let mut furthest_error;
-                    match self.parse_simple_import_directive(stream) {
+                    match self.parse_simple_import(stream) {
                         Fail { error } => furthest_error = error,
                         pass => break pass,
                     }
                     stream.set_position(start_position);
-                    match self.parse_star_import_directive(stream) {
+                    match self.parse_asterisk_import(stream) {
                         Fail { error } => furthest_error.merge_with(error),
                         pass => break pass,
                     }
                     stream.set_position(start_position);
-                    match self.parse_selecting_import_directive(stream) {
+                    match self.parse_selective_import(stream) {
                         Fail { error } => furthest_error.merge_with(error),
                         pass => break pass,
                     }
@@ -20774,10 +20971,10 @@ impl Language {
     }
 
     // (* v0.4.11 *)
-    // NumericLiteral = («HexLiteral» | «DecimalLiteral») NumberUnit?;
+    // NumericExpression = («HexLiteral» | «DecimalLiteral») NumberUnit?;
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_numeric_literal_0_4_11(&self, stream: &mut Stream) -> ParserResult {
+    fn parse_numeric_expression_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
             let result_0 = match loop {
@@ -20877,10 +21074,10 @@ impl Language {
     }
 
     // (* v0.5.0 *)
-    // NumericLiteral = «HexLiteral» | («DecimalLiteral» NumberUnit?);
+    // NumericExpression = «HexLiteral» | («DecimalLiteral» NumberUnit?);
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_numeric_literal_0_5_0(&self, stream: &mut Stream) -> ParserResult {
+    fn parse_numeric_expression_0_5_0(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let start_position = stream.position();
             let mut furthest_error;
@@ -20979,19 +21176,19 @@ impl Language {
         }
     }
 
-    fn dispatch_parse_numeric_literal(&self, stream: &mut Stream) -> ParserResult {
+    fn dispatch_parse_numeric_expression(&self, stream: &mut Stream) -> ParserResult {
         if self.version_is_equal_to_or_greater_than_0_5_0 {
-            self.parse_numeric_literal_0_5_0(stream)
+            self.parse_numeric_expression_0_5_0(stream)
         } else {
-            self.parse_numeric_literal_0_4_11(stream)
+            self.parse_numeric_expression_0_4_11(stream)
         }
     }
 
     #[inline]
-    pub(crate) fn parse_numeric_literal(&self, stream: &mut Stream) -> ParserResult {
-        match self.dispatch_parse_numeric_literal(stream) {
+    pub(crate) fn parse_numeric_expression(&self, stream: &mut Stream) -> ParserResult {
+        match self.dispatch_parse_numeric_expression(stream) {
             Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::NumericLiteral, node),
+                node: cst::Node::top_level_rule(RuleKind::NumericExpression, node),
                 error,
             },
             fail => fail,
@@ -21672,7 +21869,7 @@ impl Language {
     //                   | TupleExpression
     //                   | ArrayLiteral
     //                   | BooleanLiteral
-    //                   | NumericLiteral
+    //                   | NumericExpression
     //                   | StringExpression
     //                   | ElementaryType
     //                   | «Identifier»;
@@ -21702,7 +21899,7 @@ impl Language {
                 pass => break pass,
             }
             stream.set_position(start_position);
-            match self.parse_numeric_literal(stream) {
+            match self.parse_numeric_expression(stream) {
                 Fail { error } => furthest_error.merge_with(error),
                 pass => break pass,
             }
@@ -21753,7 +21950,7 @@ impl Language {
     //                   | TypeExpression
     //                   | ArrayLiteral
     //                   | BooleanLiteral
-    //                   | NumericLiteral
+    //                   | NumericExpression
     //                   | StringExpression
     //                   | ElementaryType
     //                   | «Identifier»;
@@ -21788,7 +21985,7 @@ impl Language {
                 pass => break pass,
             }
             stream.set_position(start_position);
-            match self.parse_numeric_literal(stream) {
+            match self.parse_numeric_expression(stream) {
                 Fail { error } => furthest_error.merge_with(error),
                 pass => break pass,
             }
@@ -22402,158 +22599,10 @@ impl Language {
         }
     }
 
-    // SelectedImport = «Identifier» («AsKeyword» «Identifier»)?;
+    // SelectiveImport = «OpenBrace» «Identifier» ImportAlias? («Comma» «Identifier» ImportAlias?)* «CloseBrace» «FromKeyword» ImportPath;
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_selected_import_0_4_11(&self, stream: &mut Stream) -> ParserResult {
-        loop {
-            let mut furthest_error = None;
-            let result_0 = match {
-                let leading_trivia = self.optional_leading_trivia(stream);
-                let start = stream.position();
-                if self.scan_identifier(stream) {
-                    let end = stream.position();
-                    let trailing_trivia = self.optional_trailing_trivia(stream);
-                    Pass {
-                        node: cst::Node::token(
-                            TokenKind::Identifier,
-                            Range { start, end },
-                            leading_trivia,
-                            trailing_trivia,
-                        ),
-                        error: None,
-                    }
-                } else {
-                    Fail {
-                        error: ParseError::new(start, "Identifier"),
-                    }
-                }
-            } {
-                Pass { node, error } => {
-                    furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
-                }
-                Fail { error } => {
-                    break Fail {
-                        error: error.maybe_merge_with(furthest_error),
-                    }
-                }
-            };
-            let result_1 = match {
-                let start_position = stream.position();
-                match loop {
-                    let mut furthest_error = None;
-                    let result_0 = match {
-                        let leading_trivia = self.optional_leading_trivia(stream);
-                        let start = stream.position();
-                        if self.scan_as_keyword(stream) {
-                            let end = stream.position();
-                            let trailing_trivia = self.optional_trailing_trivia(stream);
-                            Pass {
-                                node: cst::Node::token(
-                                    TokenKind::AsKeyword,
-                                    Range { start, end },
-                                    leading_trivia,
-                                    trailing_trivia,
-                                ),
-                                error: None,
-                            }
-                        } else {
-                            Fail {
-                                error: ParseError::new(start, "AsKeyword"),
-                            }
-                        }
-                    } {
-                        Pass { node, error } => {
-                            furthest_error =
-                                error.map(|error| error.maybe_merge_with(furthest_error));
-                            node
-                        }
-                        Fail { error } => {
-                            break Fail {
-                                error: error.maybe_merge_with(furthest_error),
-                            }
-                        }
-                    };
-                    let result_1 = match {
-                        let leading_trivia = self.optional_leading_trivia(stream);
-                        let start = stream.position();
-                        if self.scan_identifier(stream) {
-                            let end = stream.position();
-                            let trailing_trivia = self.optional_trailing_trivia(stream);
-                            Pass {
-                                node: cst::Node::token(
-                                    TokenKind::Identifier,
-                                    Range { start, end },
-                                    leading_trivia,
-                                    trailing_trivia,
-                                ),
-                                error: None,
-                            }
-                        } else {
-                            Fail {
-                                error: ParseError::new(start, "Identifier"),
-                            }
-                        }
-                    } {
-                        Pass { node, error } => {
-                            furthest_error =
-                                error.map(|error| error.maybe_merge_with(furthest_error));
-                            node
-                        }
-                        Fail { error } => {
-                            break Fail {
-                                error: error.maybe_merge_with(furthest_error),
-                            }
-                        }
-                    };
-                    break Pass {
-                        node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1]),
-                        error: furthest_error,
-                    };
-                } {
-                    Fail { error } => {
-                        stream.set_position(start_position);
-                        Pass {
-                            node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
-                            error: Some(error),
-                        }
-                    }
-                    pass => pass,
-                }
-            } {
-                Pass { node, error } => {
-                    furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
-                }
-                Fail { error } => {
-                    break Fail {
-                        error: error.maybe_merge_with(furthest_error),
-                    }
-                }
-            };
-            break Pass {
-                node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1]),
-                error: furthest_error,
-            };
-        }
-    }
-
-    #[inline]
-    pub(crate) fn parse_selected_import(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_selected_import_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::SelectedImport, node),
-                error,
-            },
-            fail => fail,
-        }
-    }
-
-    // SelectingImportDirective = «OpenBrace» SelectedImport («Comma» SelectedImport)* «CloseBrace» «FromKeyword» ImportPath;
-
-    #[allow(unused_assignments, unused_parens)]
-    fn parse_selecting_import_directive_0_4_11(&self, stream: &mut Stream) -> ParserResult {
+    fn parse_selective_import_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
             let result_0 = match {
@@ -22585,7 +22634,78 @@ impl Language {
                         match {
                             let mut result = Vec::new();
                             loop {
-                                match self.parse_selected_import(stream) {
+                                match loop {
+                                    let mut furthest_error = None;
+                                    let result_0 = match {
+                                        let leading_trivia = self.optional_leading_trivia(stream);
+                                        let start = stream.position();
+                                        if self.scan_identifier(stream) {
+                                            let end = stream.position();
+                                            let trailing_trivia =
+                                                self.optional_trailing_trivia(stream);
+                                            Pass {
+                                                node: cst::Node::token(
+                                                    TokenKind::Identifier,
+                                                    Range { start, end },
+                                                    leading_trivia,
+                                                    trailing_trivia,
+                                                ),
+                                                error: None,
+                                            }
+                                        } else {
+                                            Fail {
+                                                error: ParseError::new(start, "Identifier"),
+                                            }
+                                        }
+                                    } {
+                                        Pass { node, error } => {
+                                            furthest_error = error.map(|error| {
+                                                error.maybe_merge_with(furthest_error)
+                                            });
+                                            node
+                                        }
+                                        Fail { error } => {
+                                            break Fail {
+                                                error: error.maybe_merge_with(furthest_error),
+                                            }
+                                        }
+                                    };
+                                    let result_1 = match {
+                                        let start_position = stream.position();
+                                        match self.parse_import_alias(stream) {
+                                            Fail { error } => {
+                                                stream.set_position(start_position);
+                                                Pass {
+                                                    node: cst::Node::rule(
+                                                        RuleKind::_OPTIONAL,
+                                                        vec![],
+                                                    ),
+                                                    error: Some(error),
+                                                }
+                                            }
+                                            pass => pass,
+                                        }
+                                    } {
+                                        Pass { node, error } => {
+                                            furthest_error = error.map(|error| {
+                                                error.maybe_merge_with(furthest_error)
+                                            });
+                                            node
+                                        }
+                                        Fail { error } => {
+                                            break Fail {
+                                                error: error.maybe_merge_with(furthest_error),
+                                            }
+                                        }
+                                    };
+                                    break Pass {
+                                        node: cst::Node::rule(
+                                            RuleKind::_SEQUENCE,
+                                            vec![result_0, result_1],
+                                        ),
+                                        error: furthest_error,
+                                    };
+                                } {
                                     err @ Fail { .. } => break err,
                                     Pass { node, .. } => {
                                         result.push(node);
@@ -22733,20 +22853,20 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_selecting_import_directive(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_selecting_import_directive_0_4_11(stream) {
+    pub(crate) fn parse_selective_import(&self, stream: &mut Stream) -> ParserResult {
+        match self.parse_selective_import_0_4_11(stream) {
             Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::SelectingImportDirective, node),
+                node: cst::Node::top_level_rule(RuleKind::SelectiveImport, node),
                 error,
             },
             fail => fail,
         }
     }
 
-    // SimpleImportDirective = ImportPath («AsKeyword» «Identifier»)*;
+    // SimpleImport = ImportPath ImportAlias?;
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_simple_import_directive_0_4_11(&self, stream: &mut Stream) -> ParserResult {
+    fn parse_simple_import_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
             let result_0 = match self.parse_import_path(stream) {
@@ -22761,89 +22881,16 @@ impl Language {
                 }
             };
             let result_1 = match {
-                let mut result = Vec::new();
-                loop {
-                    let start_position = stream.position();
-                    match loop {
-                        let mut furthest_error = None;
-                        let result_0 = match {
-                            let leading_trivia = self.optional_leading_trivia(stream);
-                            let start = stream.position();
-                            if self.scan_as_keyword(stream) {
-                                let end = stream.position();
-                                let trailing_trivia = self.optional_trailing_trivia(stream);
-                                Pass {
-                                    node: cst::Node::token(
-                                        TokenKind::AsKeyword,
-                                        Range { start, end },
-                                        leading_trivia,
-                                        trailing_trivia,
-                                    ),
-                                    error: None,
-                                }
-                            } else {
-                                Fail {
-                                    error: ParseError::new(start, "AsKeyword"),
-                                }
-                            }
-                        } {
-                            Pass { node, error } => {
-                                furthest_error =
-                                    error.map(|error| error.maybe_merge_with(furthest_error));
-                                node
-                            }
-                            Fail { error } => {
-                                break Fail {
-                                    error: error.maybe_merge_with(furthest_error),
-                                }
-                            }
-                        };
-                        let result_1 = match {
-                            let leading_trivia = self.optional_leading_trivia(stream);
-                            let start = stream.position();
-                            if self.scan_identifier(stream) {
-                                let end = stream.position();
-                                let trailing_trivia = self.optional_trailing_trivia(stream);
-                                Pass {
-                                    node: cst::Node::token(
-                                        TokenKind::Identifier,
-                                        Range { start, end },
-                                        leading_trivia,
-                                        trailing_trivia,
-                                    ),
-                                    error: None,
-                                }
-                            } else {
-                                Fail {
-                                    error: ParseError::new(start, "Identifier"),
-                                }
-                            }
-                        } {
-                            Pass { node, error } => {
-                                furthest_error =
-                                    error.map(|error| error.maybe_merge_with(furthest_error));
-                                node
-                            }
-                            Fail { error } => {
-                                break Fail {
-                                    error: error.maybe_merge_with(furthest_error),
-                                }
-                            }
-                        };
-                        break Pass {
-                            node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1]),
-                            error: furthest_error,
-                        };
-                    } {
-                        Fail { error } => {
-                            stream.set_position(start_position);
-                            break Pass {
-                                node: cst::Node::rule(RuleKind::_REPEATED, result),
-                                error: Some(error),
-                            };
+                let start_position = stream.position();
+                match self.parse_import_alias(stream) {
+                    Fail { error } => {
+                        stream.set_position(start_position);
+                        Pass {
+                            node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
+                            error: Some(error),
                         }
-                        Pass { node, .. } => result.push(node),
                     }
+                    pass => pass,
                 }
             } {
                 Pass { node, error } => {
@@ -22864,10 +22911,10 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_simple_import_directive(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_simple_import_directive_0_4_11(stream) {
+    pub(crate) fn parse_simple_import(&self, stream: &mut Stream) -> ParserResult {
+        match self.parse_simple_import_0_4_11(stream) {
             Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::SimpleImportDirective, node),
+                node: cst::Node::top_level_rule(RuleKind::SimpleImport, node),
                 error,
             },
             fail => fail,
@@ -22994,168 +23041,6 @@ impl Language {
         match self.parse_source_unit_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::SourceUnit, node),
-                error,
-            },
-            fail => fail,
-        }
-    }
-
-    // StarImportDirective = «Star» «AsKeyword» «Identifier» «FromKeyword» ImportPath;
-
-    #[allow(unused_assignments, unused_parens)]
-    fn parse_star_import_directive_0_4_11(&self, stream: &mut Stream) -> ParserResult {
-        loop {
-            let mut furthest_error = None;
-            let result_0 = match {
-                let leading_trivia = self.optional_leading_trivia(stream);
-                let start = stream.position();
-                if self.scan_star(stream) {
-                    let end = stream.position();
-                    let trailing_trivia = self.optional_trailing_trivia(stream);
-                    Pass {
-                        node: cst::Node::token(
-                            TokenKind::Star,
-                            Range { start, end },
-                            leading_trivia,
-                            trailing_trivia,
-                        ),
-                        error: None,
-                    }
-                } else {
-                    Fail {
-                        error: ParseError::new(start, "Star"),
-                    }
-                }
-            } {
-                Pass { node, error } => {
-                    furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
-                }
-                Fail { error } => {
-                    break Fail {
-                        error: error.maybe_merge_with(furthest_error),
-                    }
-                }
-            };
-            let result_1 = match {
-                let leading_trivia = self.optional_leading_trivia(stream);
-                let start = stream.position();
-                if self.scan_as_keyword(stream) {
-                    let end = stream.position();
-                    let trailing_trivia = self.optional_trailing_trivia(stream);
-                    Pass {
-                        node: cst::Node::token(
-                            TokenKind::AsKeyword,
-                            Range { start, end },
-                            leading_trivia,
-                            trailing_trivia,
-                        ),
-                        error: None,
-                    }
-                } else {
-                    Fail {
-                        error: ParseError::new(start, "AsKeyword"),
-                    }
-                }
-            } {
-                Pass { node, error } => {
-                    furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
-                }
-                Fail { error } => {
-                    break Fail {
-                        error: error.maybe_merge_with(furthest_error),
-                    }
-                }
-            };
-            let result_2 = match {
-                let leading_trivia = self.optional_leading_trivia(stream);
-                let start = stream.position();
-                if self.scan_identifier(stream) {
-                    let end = stream.position();
-                    let trailing_trivia = self.optional_trailing_trivia(stream);
-                    Pass {
-                        node: cst::Node::token(
-                            TokenKind::Identifier,
-                            Range { start, end },
-                            leading_trivia,
-                            trailing_trivia,
-                        ),
-                        error: None,
-                    }
-                } else {
-                    Fail {
-                        error: ParseError::new(start, "Identifier"),
-                    }
-                }
-            } {
-                Pass { node, error } => {
-                    furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
-                }
-                Fail { error } => {
-                    break Fail {
-                        error: error.maybe_merge_with(furthest_error),
-                    }
-                }
-            };
-            let result_3 = match {
-                let leading_trivia = self.optional_leading_trivia(stream);
-                let start = stream.position();
-                if self.scan_from_keyword(stream) {
-                    let end = stream.position();
-                    let trailing_trivia = self.optional_trailing_trivia(stream);
-                    Pass {
-                        node: cst::Node::token(
-                            TokenKind::FromKeyword,
-                            Range { start, end },
-                            leading_trivia,
-                            trailing_trivia,
-                        ),
-                        error: None,
-                    }
-                } else {
-                    Fail {
-                        error: ParseError::new(start, "FromKeyword"),
-                    }
-                }
-            } {
-                Pass { node, error } => {
-                    furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
-                }
-                Fail { error } => {
-                    break Fail {
-                        error: error.maybe_merge_with(furthest_error),
-                    }
-                }
-            };
-            let result_4 = match self.parse_import_path(stream) {
-                Pass { node, error } => {
-                    furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
-                }
-                Fail { error } => {
-                    break Fail {
-                        error: error.maybe_merge_with(furthest_error),
-                    }
-                }
-            };
-            break Pass {
-                node: cst::Node::rule(
-                    RuleKind::_SEQUENCE,
-                    vec![result_0, result_1, result_2, result_3, result_4],
-                ),
-                error: furthest_error,
-            };
-        }
-    }
-
-    #[inline]
-    pub(crate) fn parse_star_import_directive(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_star_import_directive_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::StarImportDirective, node),
                 error,
             },
             fail => fail,
@@ -26465,7 +26350,7 @@ impl Language {
     //                     | «Percent»
     //                     | «Plus»
     //                     | «Slash»
-    //                     | «Star»
+    //                     | «Asterisk»
     //                     | «Tilde»;
 
     #[allow(unused_assignments, unused_parens)]
@@ -26801,12 +26686,12 @@ impl Language {
             match {
                 let leading_trivia = self.optional_leading_trivia(stream);
                 let start = stream.position();
-                if self.scan_star(stream) {
+                if self.scan_asterisk(stream) {
                     let end = stream.position();
                     let trailing_trivia = self.optional_trailing_trivia(stream);
                     Pass {
                         node: cst::Node::token(
-                            TokenKind::Star,
+                            TokenKind::Asterisk,
                             Range { start, end },
                             leading_trivia,
                             trailing_trivia,
@@ -26815,7 +26700,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "Star"),
+                        error: ParseError::new(start, "Asterisk"),
                     }
                 }
             } {
@@ -27081,7 +26966,7 @@ impl Language {
     }
 
     // (* v0.4.11 *)
-    // UsingDirective = «UsingKeyword» (IdentifierPath | («OpenBrace» IdentifierPath («Comma» IdentifierPath)* «CloseBrace»)) «ForKeyword» («Star» | TypeName) «GlobalKeyword»? «Semicolon»;
+    // UsingDirective = «UsingKeyword» (IdentifierPath | («OpenBrace» IdentifierPath («Comma» IdentifierPath)* «CloseBrace»)) «ForKeyword» («Asterisk» | TypeName) «GlobalKeyword»? «Semicolon»;
 
     #[allow(unused_assignments, unused_parens)]
     fn parse_using_directive_0_4_11(&self, stream: &mut Stream) -> ParserResult {
@@ -27300,12 +27185,12 @@ impl Language {
                     match {
                         let leading_trivia = self.optional_leading_trivia(stream);
                         let start = stream.position();
-                        if self.scan_star(stream) {
+                        if self.scan_asterisk(stream) {
                             let end = stream.position();
                             let trailing_trivia = self.optional_trailing_trivia(stream);
                             Pass {
                                 node: cst::Node::token(
-                                    TokenKind::Star,
+                                    TokenKind::Asterisk,
                                     Range { start, end },
                                     leading_trivia,
                                     trailing_trivia,
@@ -27314,7 +27199,7 @@ impl Language {
                             }
                         } else {
                             Fail {
-                                error: ParseError::new(start, "Star"),
+                                error: ParseError::new(start, "Asterisk"),
                             }
                         }
                     } {
@@ -27437,7 +27322,7 @@ impl Language {
     }
 
     // (* v0.8.19 *)
-    // UsingDirective = «UsingKeyword» (IdentifierPath | («OpenBrace» IdentifierPath («AsKeyword» UserDefinedOperator)? («Comma» IdentifierPath («AsKeyword» UserDefinedOperator)?)* «CloseBrace»)) «ForKeyword» («Star» | TypeName) «GlobalKeyword»? «Semicolon»;
+    // UsingDirective = «UsingKeyword» (IdentifierPath | («OpenBrace» IdentifierPath («AsKeyword» UserDefinedOperator)? («Comma» IdentifierPath («AsKeyword» UserDefinedOperator)?)* «CloseBrace»)) «ForKeyword» («Asterisk» | TypeName) «GlobalKeyword»? «Semicolon»;
 
     #[allow(unused_assignments, unused_parens)]
     fn parse_using_directive_0_8_19(&self, stream: &mut Stream) -> ParserResult {
@@ -27779,12 +27664,12 @@ impl Language {
                     match {
                         let leading_trivia = self.optional_leading_trivia(stream);
                         let start = stream.position();
-                        if self.scan_star(stream) {
+                        if self.scan_asterisk(stream) {
                             let end = stream.position();
                             let trailing_trivia = self.optional_trailing_trivia(stream);
                             Pass {
                                 node: cst::Node::token(
-                                    TokenKind::Star,
+                                    TokenKind::Asterisk,
                                     Range { start, end },
                                     leading_trivia,
                                     trailing_trivia,
@@ -27793,7 +27678,7 @@ impl Language {
                             }
                         } else {
                             Fail {
-                                error: ParseError::new(start, "Star"),
+                                error: ParseError::new(start, "Asterisk"),
                             }
                         }
                     } {

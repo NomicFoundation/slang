@@ -1,0 +1,22 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ import { x as y } from "foo";                                                    │ 0..29
+
+Errors: []
+
+Tree:
+  - ImportDirective (Rule): # 0..29 'import { x as y } from "foo";'
+      - ImportKeyword (Token): "import" # 0..6
+      - SelectiveImport (Rule): # 6..28 ' { x as y } from "foo"'
+          - OpenBrace (Token): "{" # 7..8
+          - _SEPARATEDBY (Rule): # 8..15 " x as y"
+              - Identifier (Token): "x" # 9..10
+              - ImportAlias (Rule): # 10..15 " as y"
+                  - AsKeyword (Token): "as" # 11..13
+                  - Identifier (Token): "y" # 14..15
+          - CloseBrace (Token): "}" # 16..17
+          - FromKeyword (Token): "from" # 18..22
+          - ImportPath (Rule): # 23..28 '"foo"'
+              - AsciiStringLiteral (Token): '"foo"' # 23..28
+      - Semicolon (Token): ";" # 28..29

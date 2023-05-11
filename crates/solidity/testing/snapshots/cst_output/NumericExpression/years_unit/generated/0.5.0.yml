@@ -1,0 +1,16 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ 10 years                                                                         │ 0..8
+
+Errors: # 1 total
+  - >
+    Error: Expected end of input.
+       ╭─[crates/solidity/testing/snapshots/cst_output/NumericExpression/years_unit/input.sol:1:3]
+       │
+     1 │ 10 years
+       │   │ 
+       │   ╰─ Error occurred here.
+    ───╯
+
+Tree: null

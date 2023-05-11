@@ -386,6 +386,46 @@ impl Language {
         self.scan_assembly_keyword_0_4_11(stream)
     }
 
+    // «Asterisk» = "*";
+
+    #[allow(unused_assignments, unused_parens)]
+    fn scan_asterisk_0_4_11(&self, stream: &mut Stream) -> bool {
+        scan_not_followed_by!(
+            stream,
+            scan_chars!(stream, '*'),
+            scan_predicate!(stream, |c| c == '*' || c == '=')
+        )
+    }
+
+    #[inline]
+    pub(crate) fn scan_asterisk(&self, stream: &mut Stream) -> bool {
+        self.scan_asterisk_0_4_11(stream)
+    }
+
+    // «AsteriskAsterisk» = "**";
+
+    #[allow(unused_assignments, unused_parens)]
+    fn scan_asterisk_asterisk_0_4_11(&self, stream: &mut Stream) -> bool {
+        scan_chars!(stream, '*', '*')
+    }
+
+    #[inline]
+    pub(crate) fn scan_asterisk_asterisk(&self, stream: &mut Stream) -> bool {
+        self.scan_asterisk_asterisk_0_4_11(stream)
+    }
+
+    // «AsteriskEqual» = "*=";
+
+    #[allow(unused_assignments, unused_parens)]
+    fn scan_asterisk_equal_0_4_11(&self, stream: &mut Stream) -> bool {
+        scan_chars!(stream, '*', '=')
+    }
+
+    #[inline]
+    pub(crate) fn scan_asterisk_equal(&self, stream: &mut Stream) -> bool {
+        self.scan_asterisk_equal_0_4_11(stream)
+    }
+
     // «Bang» = "!";
 
     #[allow(unused_assignments, unused_parens)]
@@ -3677,46 +3717,6 @@ impl Language {
     #[inline]
     pub(crate) fn scan_solidity_keyword(&self, stream: &mut Stream) -> bool {
         self.scan_solidity_keyword_0_4_11(stream)
-    }
-
-    // «Star» = "*";
-
-    #[allow(unused_assignments, unused_parens)]
-    fn scan_star_0_4_11(&self, stream: &mut Stream) -> bool {
-        scan_not_followed_by!(
-            stream,
-            scan_chars!(stream, '*'),
-            scan_predicate!(stream, |c| c == '*' || c == '=')
-        )
-    }
-
-    #[inline]
-    pub(crate) fn scan_star(&self, stream: &mut Stream) -> bool {
-        self.scan_star_0_4_11(stream)
-    }
-
-    // «StarEqual» = "*=";
-
-    #[allow(unused_assignments, unused_parens)]
-    fn scan_star_equal_0_4_11(&self, stream: &mut Stream) -> bool {
-        scan_chars!(stream, '*', '=')
-    }
-
-    #[inline]
-    pub(crate) fn scan_star_equal(&self, stream: &mut Stream) -> bool {
-        self.scan_star_equal_0_4_11(stream)
-    }
-
-    // «StarStar» = "**";
-
-    #[allow(unused_assignments, unused_parens)]
-    fn scan_star_star_0_4_11(&self, stream: &mut Stream) -> bool {
-        scan_chars!(stream, '*', '*')
-    }
-
-    #[inline]
-    pub(crate) fn scan_star_star(&self, stream: &mut Stream) -> bool {
-        self.scan_star_star_0_4_11(stream)
     }
 
     // «StorageKeyword» = "storage";

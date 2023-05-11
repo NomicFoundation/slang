@@ -21,3 +21,67 @@
         - reference: "MappingType"
         - reference: "ElementaryType"
         - reference: "IdentifierPath"
+
+- name: "FunctionType"
+  kind: "Parser"
+  unversioned:
+    sequence:
+      - reference: "FunctionKeyword"
+      - reference: "ParameterList"
+      - zeroOrMore:
+          choice:
+            - reference: "InternalKeyword"
+            - reference: "ExternalKeyword"
+            - reference: "PrivateKeyword"
+            - reference: "PublicKeyword"
+            - reference: "PureKeyword"
+            - reference: "ViewKeyword"
+            - reference: "PayableKeyword"
+      - optional:
+          sequence:
+            - reference: "ReturnsKeyword"
+            - reference: "ParameterList"
+
+- name: "MappingType"
+  kind: "Parser"
+  unversioned:
+    sequence:
+      - reference: "MappingKeyword"
+      - delimitedBy:
+          open:
+            reference: "OpenParen"
+          expression:
+            sequence:
+              - reference: "MappingKeyType"
+              - reference: "EqualGreaterThan"
+              - reference: "MappingValueType"
+          close:
+            reference: "CloseParen"
+
+- name: "MappingKeyType"
+  kind: "Parser"
+  versioned:
+    0.4.11:
+      sequence:
+        - choice:
+            - reference: "ElementaryType"
+            - reference: "IdentifierPath"
+    0.8.18:
+      sequence:
+        - choice:
+            - reference: "ElementaryType"
+            - reference: "IdentifierPath"
+        - optional:
+            reference: "Identifier"
+
+- name: "MappingValueType"
+  kind: "Parser"
+  versioned:
+    0.4.11:
+      sequence:
+        - reference: "TypeName"
+    0.8.18:
+      sequence:
+        - reference: "TypeName"
+        - optional:
+            reference: "Identifier"
