@@ -21,7 +21,7 @@ Tree:
                       - Colon (Token): ":" # 9..10
                       - Expression (Rule): # 10..12 " 0"
                           - PrimaryExpression (Rule): # 10..12 " 0"
-                              - NumericLiteral (Rule): # 10..12 " 0"
+                              - NumericExpression (Rule): # 10..12 " 0"
                                   - DecimalLiteral (Token): "0" # 11..12
                   - Comma (Token): "," # 12..13
                   - NamedArgument (Rule): # 13..20 " gas: 1"
@@ -29,7 +29,7 @@ Tree:
                       - Colon (Token): ":" # 17..18
                       - Expression (Rule): # 18..20 " 1"
                           - PrimaryExpression (Rule): # 18..20 " 1"
-                              - NumericLiteral (Rule): # 18..20 " 1"
+                              - NumericExpression (Rule): # 18..20 " 1"
                                   - DecimalLiteral (Token): "1" # 19..20
               - CloseBrace (Token): "}" # 20..21
           - ArgumentList (Rule): # 21..25 '("")'

@@ -28,7 +28,7 @@ Tree:
                           - MulDivModExpression (Rule): # 19..24 "b * c"
                               - PrimaryExpression (Rule): # 19..20 "b"
                                   - Identifier (Token): "b" # 19..20
-                              - Star (Token): "*" # 21..22
+                              - Asterisk (Token): "*" # 21..22
                               - PrimaryExpression (Rule): # 23..24 "c"
                                   - Identifier (Token): "c" # 23..24
                   - Colon (Token): ":" # 25..26
@@ -41,7 +41,7 @@ Tree:
                               - MulDivModExpression (Rule): # 31..36 "b * c"
                                   - PrimaryExpression (Rule): # 31..32 "b"
                                       - Identifier (Token): "b" # 31..32
-                                  - Star (Token): "*" # 33..34
+                                  - Asterisk (Token): "*" # 33..34
                                   - PrimaryExpression (Rule): # 35..36 "c"
                                       - Identifier (Token): "c" # 35..36
                           - Plus (Token): "+" # 37..38

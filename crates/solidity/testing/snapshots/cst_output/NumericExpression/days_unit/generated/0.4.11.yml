@@ -1,0 +1,12 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ 10 days                                                                          │ 0..7
+
+Errors: []
+
+Tree:
+  - NumericExpression (Rule): # 0..7 "10 days"
+      - DecimalLiteral (Token): "10" # 0..2
+      - NumberUnit (Rule): # 3..7 "days"
+          - DaysKeyword (Token): "days" # 3..7

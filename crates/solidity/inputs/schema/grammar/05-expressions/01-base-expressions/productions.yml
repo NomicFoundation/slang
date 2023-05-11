@@ -17,7 +17,7 @@
             - reference: "GreaterThanGreaterThanGreaterThanEqual"
             - reference: "PlusEqual"
             - reference: "MinusEqual"
-            - reference: "StarEqual"
+            - reference: "AsteriskEqual"
             - reference: "SlashEqual"
             - reference: "PercentEqual"
 
@@ -79,13 +79,13 @@
         - name: "MulDivModExpression"
           model: "BinaryLeftAssociative"
           choice:
-            - reference: "Star"
+            - reference: "Asterisk"
             - reference: "Slash"
             - reference: "Percent"
 
         - name: "ExponentiationExpression"
           model: "BinaryLeftAssociative"
-          reference: "StarStar"
+          reference: "AsteriskAsterisk"
 
         - name: "UnaryPostfixExpression"
           model: "UnaryPostfix"
@@ -155,7 +155,7 @@
             - reference: "GreaterThanGreaterThanGreaterThanEqual"
             - reference: "PlusEqual"
             - reference: "MinusEqual"
-            - reference: "StarEqual"
+            - reference: "AsteriskEqual"
             - reference: "SlashEqual"
             - reference: "PercentEqual"
 
@@ -217,13 +217,13 @@
         - name: "MulDivModExpression"
           model: "BinaryLeftAssociative"
           choice:
-            - reference: "Star"
+            - reference: "Asterisk"
             - reference: "Slash"
             - reference: "Percent"
 
         - name: "ExponentiationExpression"
           model: "BinaryLeftAssociative"
-          reference: "StarStar"
+          reference: "AsteriskAsterisk"
 
         - name: "UnaryPostfixExpression"
           model: "UnaryPostfix"
@@ -292,7 +292,7 @@
             - reference: "GreaterThanGreaterThanGreaterThanEqual"
             - reference: "PlusEqual"
             - reference: "MinusEqual"
-            - reference: "StarEqual"
+            - reference: "AsteriskEqual"
             - reference: "SlashEqual"
             - reference: "PercentEqual"
 
@@ -354,13 +354,13 @@
         - name: "MulDivModExpression"
           model: "BinaryLeftAssociative"
           choice:
-            - reference: "Star"
+            - reference: "Asterisk"
             - reference: "Slash"
             - reference: "Percent"
 
         - name: "ExponentiationExpression"
           model: "BinaryRightAssociative"
-          reference: "StarStar"
+          reference: "AsteriskAsterisk"
 
         - name: "UnaryPostfixExpression"
           model: "UnaryPostfix"
@@ -429,7 +429,7 @@
             - reference: "GreaterThanGreaterThanGreaterThanEqual"
             - reference: "PlusEqual"
             - reference: "MinusEqual"
-            - reference: "StarEqual"
+            - reference: "AsteriskEqual"
             - reference: "SlashEqual"
             - reference: "PercentEqual"
 
@@ -491,13 +491,13 @@
         - name: "MulDivModExpression"
           model: "BinaryLeftAssociative"
           choice:
-            - reference: "Star"
+            - reference: "Asterisk"
             - reference: "Slash"
             - reference: "Percent"
 
         - name: "ExponentiationExpression"
           model: "BinaryRightAssociative"
-          reference: "StarStar"
+          reference: "AsteriskAsterisk"
 
         - name: "UnaryPostfixExpression"
           model: "UnaryPostfix"
@@ -568,7 +568,7 @@
             - reference: "GreaterThanGreaterThanGreaterThanEqual"
             - reference: "PlusEqual"
             - reference: "MinusEqual"
-            - reference: "StarEqual"
+            - reference: "AsteriskEqual"
             - reference: "SlashEqual"
             - reference: "PercentEqual"
 
@@ -630,13 +630,13 @@
         - name: "MulDivModExpression"
           model: "BinaryLeftAssociative"
           choice:
-            - reference: "Star"
+            - reference: "Asterisk"
             - reference: "Slash"
             - reference: "Percent"
 
         - name: "ExponentiationExpression"
           model: "BinaryRightAssociative"
-          reference: "StarStar"
+          reference: "AsteriskAsterisk"
 
         - name: "UnaryPostfixExpression"
           model: "UnaryPostfix"

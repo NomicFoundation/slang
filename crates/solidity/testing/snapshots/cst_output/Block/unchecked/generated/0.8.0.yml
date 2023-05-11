@@ -23,7 +23,7 @@ Tree:
                                               - Identifier (Token): "x" # 14..15
                                           - Equal (Token): "=" # 16..17
                                           - PrimaryExpression (Rule): # 17..19 " 1"
-                                              - NumericLiteral (Rule): # 17..19 " 1"
+                                              - NumericExpression (Rule): # 17..19 " 1"
                                                   - DecimalLiteral (Token): "1" # 18..19
                                   - Semicolon (Token): ";" # 19..20
                   - CloseBrace (Token): "}" # 21..22

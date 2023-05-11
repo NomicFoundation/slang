@@ -12,6 +12,6 @@ Tree:
       - Equal (Token): "=" # 6..7
       - Expression (Rule): # 7..9 " 0"
           - PrimaryExpression (Rule): # 7..9 " 0"
-              - NumericLiteral (Rule): # 7..9 " 0"
+              - NumericExpression (Rule): # 7..9 " 0"
                   - DecimalLiteral (Token): "0" # 8..9
       - Semicolon (Token): ";" # 9..10

@@ -3,6 +3,4 @@
 # 3. Types
 
 -   [3.1. Advanced Types](./01-advanced-types/index.md)
--   [3.2. Function Types](./02-function-types/index.md)
--   [3.3. Mapping Types](./03-mapping-types/index.md)
--   [3.4. Elementary Types](./04-elementary-types/index.md)
+-   [3.2. Elementary Types](./02-elementary-types/index.md)

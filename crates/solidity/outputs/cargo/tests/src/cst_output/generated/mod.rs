@@ -29,6 +29,8 @@ mod HexStringLiteral;
 #[allow(non_snake_case)]
 mod Identifier;
 #[allow(non_snake_case)]
+mod ImportDirective;
+#[allow(non_snake_case)]
 mod InterfaceDefinition;
 #[allow(non_snake_case)]
 mod MappingType;
@@ -37,7 +39,7 @@ mod MultilineComment;
 #[allow(non_snake_case)]
 mod NewExpression;
 #[allow(non_snake_case)]
-mod NumericLiteral;
+mod NumericExpression;
 #[allow(non_snake_case)]
 mod ReceiveFunctionDefinition;
 #[allow(non_snake_case)]

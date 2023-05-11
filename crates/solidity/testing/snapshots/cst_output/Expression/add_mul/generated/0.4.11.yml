@@ -11,13 +11,13 @@ Tree:
           - MulDivModExpression (Rule): # 0..5 "a * b"
               - PrimaryExpression (Rule): # 0..1 "a"
                   - Identifier (Token): "a" # 0..1
-              - Star (Token): "*" # 2..3
+              - Asterisk (Token): "*" # 2..3
               - PrimaryExpression (Rule): # 4..5 "b"
                   - Identifier (Token): "b" # 4..5
           - Plus (Token): "+" # 6..7
           - MulDivModExpression (Rule): # 8..13 "c * d"
               - PrimaryExpression (Rule): # 8..9 "c"
                   - Identifier (Token): "c" # 8..9
-              - Star (Token): "*" # 10..11
+              - Asterisk (Token): "*" # 10..11
               - PrimaryExpression (Rule): # 12..13 "d"
                   - Identifier (Token): "d" # 12..13

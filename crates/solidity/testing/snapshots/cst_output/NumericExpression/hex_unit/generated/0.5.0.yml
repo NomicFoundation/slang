@@ -1,0 +1,16 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ 0x1 wei                                                                          │ 0..7
+
+Errors: # 1 total
+  - >
+    Error: Expected end of input.
+       ╭─[crates/solidity/testing/snapshots/cst_output/NumericExpression/hex_unit/input.sol:1:4]
+       │
+     1 │ 0x1 wei
+       │    │ 
+       │    ╰─ Error occurred here.
+    ───╯
+
+Tree: null
