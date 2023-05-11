@@ -1,7 +1,7 @@
-use std::{ops::Range, rc::Rc};
+use std::rc::Rc;
 
 use anyhow::Result;
-use slang_solidity::syntax::nodes::{Node, RuleKind, TokenKind};
+use slang_solidity::syntax::nodes::{Node, RuleKind, TextRange, TokenKind};
 
 #[derive(Debug)]
 pub enum TestNodeKind {
@@ -13,7 +13,7 @@ pub enum TestNodeKind {
 
 pub struct TestNode {
     pub kind: TestNodeKind,
-    pub range: Option<Range<usize>>,
+    pub range: Option<TextRange>,
     pub children: Vec<TestNode>,
 }
 
@@ -47,8 +47,8 @@ impl TestNode {
 
     fn from_token(
         token_kind: &TokenKind,
-        token_range: &Range<usize>,
-        node_range: Range<usize>,
+        token_range: &TextRange,
+        node_range: TextRange,
         token_trivia: &Vec<Rc<Node>>,
     ) -> Self {
         let mut leading = vec![];
@@ -153,14 +153,14 @@ impl TestNode {
         };
     }
 
-    pub fn render_preview(&self, source: &str, range: &Range<usize>) -> Result<String> {
+    pub fn render_preview(&self, source: &str, range: &TextRange) -> Result<String> {
         let max_length = 50;
-        let length = range.end - range.start;
+        let length = range.end.byte - range.start.byte;
 
         // Trim long values:
         let contents = source
             .bytes()
-            .skip(range.start)
+            .skip(range.start.byte)
             .take(length.clamp(0, max_length))
             .collect();
 

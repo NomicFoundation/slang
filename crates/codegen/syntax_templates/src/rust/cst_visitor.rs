@@ -1,14 +1,15 @@
-use std::{ops::Range, rc::Rc};
+use std::rc::Rc;
 
 use super::cst::*;
 use super::kinds::*;
+use super::language::TextRange;
 
 #[allow(unused_variables)]
 pub trait Visitor<E> {
     fn enter_rule(
         &mut self,
         kind: RuleKind,
-        range: &Range<usize>,
+        range: &TextRange,
         children: &Vec<Rc<Node>>,
         node: &Rc<Node>,
         path: &Vec<Rc<Node>>,
@@ -19,7 +20,7 @@ pub trait Visitor<E> {
     fn exit_rule(
         &mut self,
         kind: RuleKind,
-        range: &Range<usize>,
+        range: &TextRange,
         children: &Vec<Rc<Node>>,
         node: &Rc<Node>,
         path: &Vec<Rc<Node>>,
@@ -30,7 +31,7 @@ pub trait Visitor<E> {
     fn enter_token(
         &mut self,
         kind: TokenKind,
-        range: &Range<usize>,
+        range: &TextRange,
         trivia: &Vec<Rc<Node>>,
         node: &Rc<Node>,
         path: &Vec<Rc<Node>>,
@@ -41,7 +42,7 @@ pub trait Visitor<E> {
     fn exit_token(
         &mut self,
         kind: TokenKind,
-        range: &Range<usize>,
+        range: &TextRange,
         trivia: &Vec<Rc<Node>>,
         node: &Rc<Node>,
         path: &Vec<Rc<Node>>,

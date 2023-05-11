@@ -1,13 +1,13 @@
 #[cfg(test)]
 mod tests;
 
-use std::{ops::Range, rc::Rc, str::FromStr};
+use std::{rc::Rc, str::FromStr};
 
 use anyhow::{bail, Context, Error, Result};
 use semver::{Comparator, Op, Version};
 use slang_solidity::{
     syntax::{
-        nodes::{Node, RuleKind},
+        nodes::{Node, RuleKind, TextRange},
         parser::ProductionKind,
         visitors::{Visitable, Visitor, VisitorEntryResponse},
     },
@@ -48,7 +48,7 @@ impl<'a> Visitor<Error> for PragmaCollector<'a> {
     fn enter_rule(
         &mut self,
         kind: RuleKind,
-        range: &Range<usize>,
+        range: &TextRange,
         children: &Vec<Rc<Node>>,
         node: &Rc<Node>,
         _path: &Vec<Rc<Node>>,
@@ -61,6 +61,7 @@ impl<'a> Visitor<Error> for PragmaCollector<'a> {
             [child] => self.extract_pragma(child).with_context(|| {
                 format!(
                     "Failed to extract pragma at {range:?}: '{value}'",
+                    range = range.start.byte..range.end.byte,
                     value = child.extract_non_trivia(self.source)
                 )
             })?,

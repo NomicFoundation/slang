@@ -1,6 +1,9 @@
 use std::{collections::BTreeSet, rc::Rc};
 
-use super::{cst, language::render_error_report};
+use super::{
+    cst,
+    language::{render_error_report, TextPosition},
+};
 
 #[derive(PartialEq)]
 pub struct ParseOutput {
@@ -24,13 +27,13 @@ impl ParseOutput {
 
 #[derive(PartialEq)]
 pub struct ParseError {
-    pub(crate) position: usize,
+    pub(crate) position: TextPosition,
     pub(crate) expected: BTreeSet<String>,
 }
 
 impl ParseError {
-    pub fn position(&self) -> usize {
-        return self.position;
+    pub fn position(&self) -> &TextPosition {
+        return &self.position;
     }
 
     pub fn expected(&self) -> &BTreeSet<String> {

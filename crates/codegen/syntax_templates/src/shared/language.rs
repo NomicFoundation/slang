@@ -1,7 +1,9 @@
+use std::fmt::Display;
 pub use std::{collections::BTreeSet, ops::Range, rc::Rc};
 
 #[allow(deprecated, unused_imports)]
 use semver::Version;
+use serde::Serialize;
 
 pub use super::{
     cst,
@@ -12,7 +14,7 @@ pub use super::{
 const DEBUG_ERROR_MERGING: bool = false;
 
 impl ParseError {
-    pub(crate) fn new<T: Into<String>>(position: usize, expected: T) -> Self {
+    pub(crate) fn new<T: Into<String>>(position: TextPosition, expected: T) -> Self {
         Self {
             position,
             expected: BTreeSet::from([expected.into()]),
@@ -71,10 +73,36 @@ pub enum ParserResult {
     },
 }
 
+#[derive(Default, Copy, Clone, PartialEq, Eq, Debug, Serialize)]
+pub struct TextPosition {
+    pub byte: usize,
+    pub char: usize,
+}
+
+pub type TextRange = Range<TextPosition>;
+
+impl PartialOrd for TextPosition {
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        self.char.partial_cmp(&other.char)
+    }
+}
+
+impl Ord for TextPosition {
+    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+        self.byte.cmp(&other.byte)
+    }
+}
+
+impl Display for TextPosition {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        self.char.fmt(f)
+    }
+}
+
 pub struct Stream<'s> {
     source: &'s str,
-    position: usize,
-    undo_position: usize,
+    position: TextPosition,
+    undo_position: TextPosition,
     has_undo: bool,
 }
 
@@ -82,30 +110,31 @@ impl<'s> Stream<'s> {
     pub fn new(source: &'s str) -> Self {
         Self {
             source,
-            position: 0,
-            undo_position: 0,
+            position: Default::default(),
+            undo_position: Default::default(),
             has_undo: false,
         }
     }
 
-    pub fn position(&self) -> usize {
+    pub fn position(&self) -> TextPosition {
         self.position
     }
 
-    pub fn set_position(&mut self, position: usize) {
+    pub fn set_position(&mut self, position: TextPosition) {
         self.position = position;
     }
 
     pub fn peek(&self) -> Option<char> {
-        self.source[self.position..].chars().next()
+        self.source[self.position.byte..].chars().next()
     }
 
     pub fn next(&mut self) -> Option<char> {
         self.has_undo = true;
         self.undo_position = self.position;
-        let mut chars = self.source[self.position..].chars();
+        let mut chars = self.source[self.position.byte..].chars();
         if let Some(c) = chars.next() {
-            self.position += c.len_utf8();
+            self.position.byte += c.len_utf8();
+            self.position.char += 1;
             Some(c)
         } else {
             None
@@ -146,22 +175,26 @@ pub(crate) fn render_error_report(
         );
 
         if DEBUG_ERROR_MERGING {
-            format!("{position}: {message}", position = error.position)
+            format!("{position}: {message}", position = source_start.char)
         } else {
             message
         }
     };
 
     if source.is_empty() {
-        return format!("{kind}: {message}\n   ─[{source_id}:{source_start}:{source_end}]");
+        return format!(
+            "{kind}: {message}\n   ─[{source_id}:{source_start}:{source_end}]",
+            source_start = source_start.char,
+            source_end = source_end.char
+        );
     }
 
-    let mut builder = Report::build(kind, source_id, source_start)
+    let mut builder = Report::build(kind, source_id, source_start.byte)
         .with_config(Config::default().with_color(with_color))
         .with_message(message);
 
     builder.add_label(
-        Label::new((source_id, source_start..source_end))
+        Label::new((source_id, source_start.char..source_end.char))
             .with_color(color)
             .with_message("Error occurred here.".to_string()),
     );
@@ -196,7 +229,7 @@ where
                 parse_tree: Some(cst::Node::token(
                     kind,
                     Range {
-                        start: 0,
+                        start: Default::default(),
                         end: stream.position(),
                     },
                     None,
@@ -231,7 +264,7 @@ where
                 parse_tree: Some(cst::Node::token(
                     kind,
                     Range {
-                        start: 0,
+                        start: Default::default(),
                         end: stream.position(),
                     },
                     None,
