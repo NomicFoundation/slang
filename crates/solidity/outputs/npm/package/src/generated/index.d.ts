@@ -626,7 +626,7 @@ export class RuleNode {
   get charRange(): [start: number, end: number];
   get byteRangeIncludingTrivia(): [start: number, end: number];
   get charRangeIncludingTrivia(): [start: number, end: number];
-  children(): (RuleNode | TokenNode)[];
+  get children(): (RuleNode | TokenNode)[];
 }
 export class TokenNode {
   get type(): NodeType.Token;
@@ -635,21 +635,21 @@ export class TokenNode {
   get charRange(): [start: number, end: number];
   get byteRangeIncludingTrivia(): [start: number, end: number];
   get charRangeIncludingTrivia(): [start: number, end: number];
-  trivia(): (RuleNode | TokenNode)[];
+  get trivia(): (RuleNode | TokenNode)[];
 }
 export class Language {
   constructor(version: string);
-  version(): string;
+  get version(): string;
   parse(productionKind: ProductionKind, input: string): ParseOutput;
 }
 export class ParseOutput {
-  parseTree(): RuleNode | TokenNode | null;
-  errors(): Array<ParseError>;
-  isValid(): boolean;
+  get parseTree(): RuleNode | TokenNode | null;
+  get errors(): Array<ParseError>;
+  get isValid(): boolean;
 }
 export class ParseError {
-  get bytePosition(): bigint;
-  get charPosition(): bigint;
-  expected(): Array<string>;
+  get bytePosition(): number;
+  get charPosition(): number;
+  get expected(): Array<string>;
   toErrorReport(sourceId: string, source: string, withColour: boolean): string;
 }

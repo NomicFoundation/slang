@@ -399,7 +399,7 @@ impl Language {
         }
     }
 
-    #[napi]
+    #[napi(getter)]
     pub fn version(&self) -> String {
         self.version.to_string()
     }
