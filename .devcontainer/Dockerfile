@@ -24,4 +24,4 @@ FROM mcr.microsoft.com/devcontainers/base:ubuntu-22.04
 
 # Local Scripts
 
-COPY ./scripts/ /root/
+COPY ./scripts/ /home/vscode/
