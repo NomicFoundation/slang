@@ -22,6 +22,7 @@ mod public_api {
         pub mod nodes {
             pub use crate::generated::cst::Node;
             pub use crate::generated::kinds::{RuleKind, TokenKind};
+            pub use crate::generated::language::{TextPosition, TextRange};
         }
 
         pub mod parser {

@@ -1,7 +1,9 @@
 use std::{collections::BTreeSet, rc::Rc};
 
 use super::{
-    cst, cst_types::RcNodeExtensions as CSTRcNodeExtensions, language::render_error_report,
+    cst,
+    cst_types::RcNodeExtensions as CSTRcNodeExtensions,
+    language::{render_error_report, TextPosition},
 };
 use napi::bindgen_prelude::*;
 
@@ -32,15 +34,20 @@ impl ParseOutput {
 #[napi]
 #[derive(PartialEq, Clone)]
 pub struct ParseError {
-    pub(crate) position: usize,
+    pub(crate) position: TextPosition,
     pub(crate) expected: BTreeSet<String>,
 }
 
 #[napi]
 impl ParseError {
     #[napi(getter)]
-    pub fn position(&self) -> usize {
-        return self.position;
+    pub fn byte_position(&self) -> usize {
+        return self.position.byte;
+    }
+
+    #[napi(getter)]
+    pub fn char_position(&self) -> usize {
+        return self.position.char;
     }
 
     #[napi]

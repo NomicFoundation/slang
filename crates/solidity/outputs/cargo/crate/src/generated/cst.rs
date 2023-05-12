@@ -7,31 +7,32 @@ use std::rc::Rc;
 use serde::Serialize;
 
 use super::kinds::*;
+use super::language::TextRange;
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
 pub enum Node {
     Rule {
         kind: RuleKind,
-        range: Range<usize>,
+        range: TextRange,
         children: Vec<Rc<Node>>,
     },
     Token {
         kind: TokenKind,
-        range: Range<usize>,
+        range: TextRange,
         #[serde(skip_serializing_if = "Vec::is_empty")]
         trivia: Vec<Rc<Node>>,
     },
 }
 
 impl Node {
-    pub fn range(&self) -> Range<usize> {
+    pub fn range(&self) -> TextRange {
         match self {
             Self::Rule { range, .. } => range.clone(),
             Self::Token { range, .. } => range.clone(),
         }
     }
 
-    pub fn range_including_trivia(&self) -> Range<usize> {
+    pub fn range_including_trivia(&self) -> TextRange {
         match self {
             Self::Rule { range, .. } => range.clone(),
             Self::Token { range, trivia, .. } => {
@@ -78,7 +79,7 @@ impl Node {
             }
         }
         let range = if flattened_children.is_empty() {
-            Range { start: 0, end: 0 }
+            Default::default()
         } else {
             Range {
                 start: flattened_children
@@ -103,7 +104,7 @@ impl Node {
     #[allow(dead_code)]
     pub(crate) fn token(
         kind: TokenKind,
-        range: Range<usize>,
+        range: TextRange,
         leading_trivia: Option<Rc<Self>>,
         trailing_trivia: Option<Rc<Self>>,
     ) -> Rc<Self> {

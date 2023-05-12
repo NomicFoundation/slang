@@ -35,16 +35,28 @@ impl RuleNode {
         }
     }
 
-    #[napi(getter)]
-    pub fn range(&self) -> [usize; 2] {
+    #[napi(getter, ts_return_type = "[ start: number, end: number ]")]
+    pub fn byte_range(&self) -> [usize; 2] {
         let range = self.0.range();
-        [range.start, range.end]
+        [range.start.byte, range.end.byte]
     }
 
-    #[napi(getter)]
-    pub fn range_including_trivia(&self) -> [usize; 2] {
+    #[napi(getter, ts_return_type = "[ start: number, end: number ]")]
+    pub fn char_range(&self) -> [usize; 2] {
+        let range = self.0.range();
+        [range.start.char, range.end.char]
+    }
+
+    #[napi(getter, ts_return_type = "[ start: number, end: number ]")]
+    pub fn byte_range_including_trivia(&self) -> [usize; 2] {
         let range = self.0.range_including_trivia();
-        [range.start, range.end]
+        [range.start.byte, range.end.byte]
+    }
+
+    #[napi(getter, ts_return_type = "[ start: number, end: number ]")]
+    pub fn char_range_including_trivia(&self) -> [usize; 2] {
+        let range = self.0.range_including_trivia();
+        [range.start.char, range.end.char]
     }
 
     #[napi(ts_return_type = "(RuleNode | TokenNode)[]")]
@@ -71,16 +83,28 @@ impl TokenNode {
         }
     }
 
-    #[napi(getter)]
-    pub fn range(&self) -> [usize; 2] {
+    #[napi(getter, ts_return_type = "[ start: number, end: number ]")]
+    pub fn byte_range(&self) -> [usize; 2] {
         let range = self.0.range();
-        [range.start, range.end]
+        [range.start.byte, range.end.byte]
     }
 
-    #[napi(getter)]
-    pub fn range_including_trivia(&self) -> [usize; 2] {
+    #[napi(getter, ts_return_type = "[ start: number, end: number ]")]
+    pub fn char_range(&self) -> [usize; 2] {
+        let range = self.0.range();
+        [range.start.char, range.end.char]
+    }
+
+    #[napi(getter, ts_return_type = "[ start: number, end: number ]")]
+    pub fn byte_range_including_trivia(&self) -> [usize; 2] {
         let range = self.0.range_including_trivia();
-        [range.start, range.end]
+        [range.start.byte, range.end.byte]
+    }
+
+    #[napi(getter, ts_return_type = "[ start: number, end: number ]")]
+    pub fn char_range_including_trivia(&self) -> [usize; 2] {
+        let range = self.0.range_including_trivia();
+        [range.start.char, range.end.char]
     }
 
     #[napi(ts_return_type = "(RuleNode | TokenNode)[]")]

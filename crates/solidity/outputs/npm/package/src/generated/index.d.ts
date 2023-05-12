@@ -622,15 +622,19 @@ export enum ProductionKind {
 export class RuleNode {
   get type(): NodeType.Rule;
   get kind(): RuleKind;
-  get range(): bigint[];
-  get rangeIncludingTrivia(): bigint[];
+  get byteRange(): [start: number, end: number];
+  get charRange(): [start: number, end: number];
+  get byteRangeIncludingTrivia(): [start: number, end: number];
+  get charRangeIncludingTrivia(): [start: number, end: number];
   children(): (RuleNode | TokenNode)[];
 }
 export class TokenNode {
   get type(): NodeType.Token;
   get kind(): TokenKind;
-  get range(): bigint[];
-  get rangeIncludingTrivia(): bigint[];
+  get byteRange(): [start: number, end: number];
+  get charRange(): [start: number, end: number];
+  get byteRangeIncludingTrivia(): [start: number, end: number];
+  get charRangeIncludingTrivia(): [start: number, end: number];
   trivia(): (RuleNode | TokenNode)[];
 }
 export class Language {
@@ -644,7 +648,8 @@ export class ParseOutput {
   isValid(): boolean;
 }
 export class ParseError {
-  get position(): bigint;
+  get bytePosition(): bigint;
+  get charPosition(): bigint;
   expected(): Array<string>;
   toErrorReport(sourceId: string, source: string, withColour: boolean): string;
 }

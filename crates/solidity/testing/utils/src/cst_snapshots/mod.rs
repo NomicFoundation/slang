@@ -115,9 +115,18 @@ fn write_node<W: Write>(
     let (node_value, node_comment) = if let Some(range) = &node.range {
         let preview = node.render_preview(source, range)?;
         if node.children.is_empty() {
-            (format!(" {preview}"), format!("{range:?}"))
+            (
+                format!(" {preview}"),
+                format!("{range:?}", range = range.start.byte..range.end.byte),
+            )
         } else {
-            ("".to_owned(), format!("{range:?} {preview}"))
+            (
+                "".to_owned(),
+                format!(
+                    "{range:?} {preview}",
+                    range = range.start.byte..range.end.byte
+                ),
+            )
         }
     } else {
         (" \"\"".to_owned(), "<empty>".to_owned())
