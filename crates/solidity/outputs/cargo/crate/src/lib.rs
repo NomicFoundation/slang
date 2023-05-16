@@ -16,6 +16,10 @@ mod _supress_binary_dependencies_ {
 pub use public_api::*;
 
 mod public_api {
+    /*
+     * __SLANG_PUBLIC_API_SYNC__ (please keep in sync across all other instances)
+     */
+
     pub use crate::generated::language::Language;
 
     pub mod syntax {

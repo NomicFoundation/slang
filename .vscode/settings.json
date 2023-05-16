@@ -28,5 +28,6 @@
   "triggerTaskOnSave.tasks": {
     "Validate Solidity Grammar": ["crates/solidity/inputs/schema/grammar/**/*.yml"]
   },
+  "typescript.tsdk": "node_modules/typescript/lib",
   "yaml.validate": false // Disable LSP validation for YAML files, as it is handled by our own cargo tasks
 }
