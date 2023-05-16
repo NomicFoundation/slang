@@ -1,7 +1,7 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ unicode"This Emoji: 😃"                                                        │ 0..25
+  1  │ unicode"This Emoji: 😃"                                                           │ 0..25
 
 Errors: # 1 total
   - >
