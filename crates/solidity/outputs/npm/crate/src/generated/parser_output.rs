@@ -17,17 +17,17 @@ pub struct ParseOutput {
 
 #[napi]
 impl ParseOutput {
-    #[napi(ts_return_type = "RuleNode | TokenNode | null")]
+    #[napi(getter, ts_return_type = "RuleNode | TokenNode | null")]
     pub fn parse_tree(&self, env: Env) -> Option<napi::JsObject> {
         return self.parse_tree.clone().map(|n| n.to_js(&env));
     }
 
-    #[napi]
+    #[napi(getter)]
     pub fn errors(&self) -> Vec<ParseError> {
         return self.errors.clone();
     }
 
-    #[napi]
+    #[napi(getter)]
     pub fn is_valid(&self) -> bool {
         return self.parse_tree.is_some() && self.errors.is_empty();
     }
@@ -43,16 +43,16 @@ pub struct ParseError {
 #[napi]
 impl ParseError {
     #[napi(getter)]
-    pub fn byte_position(&self) -> usize {
-        return self.position.byte;
+    pub fn byte_position(&self) -> u32 {
+        return self.position.byte as u32;
     }
 
     #[napi(getter)]
-    pub fn char_position(&self) -> usize {
-        return self.position.char;
+    pub fn char_position(&self) -> u32 {
+        return self.position.char as u32;
     }
 
-    #[napi]
+    #[napi(getter)]
     pub fn expected(&self) -> Vec<String> {
         return self.expected.iter().cloned().collect();
     }

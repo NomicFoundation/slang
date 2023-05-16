@@ -34,30 +34,30 @@ impl RuleNode {
     }
 
     #[napi(getter, ts_return_type = "[ start: number, end: number ]")]
-    pub fn byte_range(&self) -> [usize; 2] {
+    pub fn byte_range(&self) -> [u32; 2] {
         let range = self.0.range();
-        [range.start.byte, range.end.byte]
+        [range.start.byte as u32, range.end.byte as u32]
     }
 
     #[napi(getter, ts_return_type = "[ start: number, end: number ]")]
-    pub fn char_range(&self) -> [usize; 2] {
+    pub fn char_range(&self) -> [u32; 2] {
         let range = self.0.range();
-        [range.start.char, range.end.char]
+        [range.start.char as u32, range.end.char as u32]
     }
 
     #[napi(getter, ts_return_type = "[ start: number, end: number ]")]
-    pub fn byte_range_including_trivia(&self) -> [usize; 2] {
+    pub fn byte_range_including_trivia(&self) -> [u32; 2] {
         let range = self.0.range_including_trivia();
-        [range.start.byte, range.end.byte]
+        [range.start.byte as u32, range.end.byte as u32]
     }
 
     #[napi(getter, ts_return_type = "[ start: number, end: number ]")]
-    pub fn char_range_including_trivia(&self) -> [usize; 2] {
+    pub fn char_range_including_trivia(&self) -> [u32; 2] {
         let range = self.0.range_including_trivia();
-        [range.start.char, range.end.char]
+        [range.start.char as u32, range.end.char as u32]
     }
 
-    #[napi(ts_return_type = "(RuleNode | TokenNode)[]")]
+    #[napi(getter, ts_return_type = "(RuleNode | TokenNode)[]")]
     pub fn children(&self, env: Env) -> Vec<JsObject> {
         match self.0.as_ref() {
             Node::Rule { children, .. } => children.iter().map(|child| child.to_js(&env)).collect(),
@@ -82,30 +82,30 @@ impl TokenNode {
     }
 
     #[napi(getter, ts_return_type = "[ start: number, end: number ]")]
-    pub fn byte_range(&self) -> [usize; 2] {
+    pub fn byte_range(&self) -> [u32; 2] {
         let range = self.0.range();
-        [range.start.byte, range.end.byte]
+        [range.start.byte as u32, range.end.byte as u32]
     }
 
     #[napi(getter, ts_return_type = "[ start: number, end: number ]")]
-    pub fn char_range(&self) -> [usize; 2] {
+    pub fn char_range(&self) -> [u32; 2] {
         let range = self.0.range();
-        [range.start.char, range.end.char]
+        [range.start.char as u32, range.end.char as u32]
     }
 
     #[napi(getter, ts_return_type = "[ start: number, end: number ]")]
-    pub fn byte_range_including_trivia(&self) -> [usize; 2] {
+    pub fn byte_range_including_trivia(&self) -> [u32; 2] {
         let range = self.0.range_including_trivia();
-        [range.start.byte, range.end.byte]
+        [range.start.byte as u32, range.end.byte as u32]
     }
 
     #[napi(getter, ts_return_type = "[ start: number, end: number ]")]
-    pub fn char_range_including_trivia(&self) -> [usize; 2] {
+    pub fn char_range_including_trivia(&self) -> [u32; 2] {
         let range = self.0.range_including_trivia();
-        [range.start.char, range.end.char]
+        [range.start.char as u32, range.end.char as u32]
     }
 
-    #[napi(ts_return_type = "(RuleNode | TokenNode)[]")]
+    #[napi(getter, ts_return_type = "(RuleNode | TokenNode)[]")]
     pub fn trivia(&self, env: Env) -> Vec<JsObject> {
         match self.0.as_ref() {
             Node::Token { trivia, .. } => {
