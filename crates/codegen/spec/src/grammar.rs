@@ -1,20 +1,20 @@
 use std::path::PathBuf;
 
-use codegen_schema::types::grammar::Grammar;
+use codegen_schema::types::schema::Schema;
 use semver::Version;
 
 use crate::{markdown::MarkdownWriter, navigation::NavigationEntry, snippets::Snippets};
 
-pub fn generate_supported_versions_page(grammar: &Grammar) -> NavigationEntry {
-    let versions = &grammar.versions;
-    let version_breaks = grammar.collect_version_breaks();
+pub fn generate_supported_versions_page(schema: &Schema) -> NavigationEntry {
+    let versions = &schema.versions;
+    let version_breaks = schema.collect_version_breaks();
 
     let mut page = MarkdownWriter::new();
 
     page.write_header(1, "Supported Versions");
 
     page.write_newline();
-    page.write_text(&format!("This specification compiles information from {all_count} publicly released versions of {language}. Among which, {breaks_count} versions had syntax-related changes:", all_count = versions.len(), language = grammar.title, breaks_count = version_breaks.len()));
+    page.write_text(&format!("This specification compiles information from {all_count} publicly released versions of {language}. Among which, {breaks_count} versions had syntax-related changes:", all_count = versions.len(), language = schema.title, breaks_count = version_breaks.len()));
 
     page.write_newline();
     for version in version_breaks {
@@ -37,17 +37,17 @@ pub fn generate_supported_versions_page(grammar: &Grammar) -> NavigationEntry {
 }
 
 pub fn generate_grammar_dir(
-    grammar: &Grammar,
+    schema: &Schema,
     snippets: &Snippets,
     repo_root: &PathBuf,
 ) -> NavigationEntry {
     let mut pages = Vec::<NavigationEntry>::new();
 
-    for version in grammar.collect_version_breaks() {
+    for version in schema.collect_version_breaks() {
         pages.push(NavigationEntry::Page {
             title: format!("v{version}"),
             path: format!("v{version}"),
-            contents: generate_grammar_page(grammar, snippets, repo_root, &version),
+            contents: generate_grammar_page(schema, snippets, repo_root, &version),
         });
     }
 
@@ -59,7 +59,7 @@ pub fn generate_grammar_dir(
 }
 
 fn generate_grammar_page(
-    grammar: &Grammar,
+    schema: &Schema,
     snippets: &Snippets,
     repo_root: &PathBuf,
     version: &Version,
@@ -68,7 +68,7 @@ fn generate_grammar_page(
 
     page.write_header(1, "Grammar");
 
-    for section in &grammar.sections {
+    for section in &schema.sections {
         page.write_newline();
         page.write_header(2, &section.title);
 

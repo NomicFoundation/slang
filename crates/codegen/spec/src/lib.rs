@@ -7,7 +7,7 @@ mod snippets;
 use std::path::PathBuf;
 
 use anyhow::Result;
-use codegen_schema::types::grammar::Grammar;
+use codegen_schema::types::schema::Schema;
 use codegen_utils::context::CodegenContext;
 
 use crate::{
@@ -17,11 +17,11 @@ use crate::{
     snippets::Snippets,
 };
 
-pub trait GrammarSpecGeneratorExtensions {
+pub trait SpecGeneratorExtensions {
     fn generate_spec(&self, codegen: &mut CodegenContext, output_dir: &PathBuf) -> Result<()>;
 }
 
-impl GrammarSpecGeneratorExtensions for Grammar {
+impl SpecGeneratorExtensions for Schema {
     fn generate_spec(&self, codegen: &mut CodegenContext, output_dir: &PathBuf) -> Result<()> {
         let snippets = Snippets::new(self, output_dir);
         snippets.write_files(codegen)?;

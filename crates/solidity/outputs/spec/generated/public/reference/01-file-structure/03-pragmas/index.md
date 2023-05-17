@@ -2,4 +2,4 @@
 
 # 1.3. Pragmas
 
---8<-- "crates/solidity/inputs/schema/grammar/01-file-structure/03-pragmas/notes.md"
+--8<-- "crates/solidity/inputs/schema/definition/01-file-structure/03-pragmas/notes.md"

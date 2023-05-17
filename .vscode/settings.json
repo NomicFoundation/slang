@@ -26,7 +26,7 @@
     "**/Pipfile.lock": true
   },
   "triggerTaskOnSave.tasks": {
-    "Validate Solidity Grammar": ["crates/solidity/inputs/schema/grammar/**/*.yml"]
+    "Validate Solidity Schema": ["crates/solidity/inputs/schema/definition/**/*.yml"]
   },
   "typescript.tsdk": "node_modules/typescript/lib",
   "yaml.validate": false // Disable LSP validation for YAML files, as it is handled by our own cargo tasks

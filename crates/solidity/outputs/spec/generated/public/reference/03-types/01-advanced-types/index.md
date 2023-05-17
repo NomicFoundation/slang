@@ -2,4 +2,4 @@
 
 # 3.1. Advanced Types
 
---8<-- "crates/solidity/inputs/schema/grammar/03-types/01-advanced-types/notes.md"
+--8<-- "crates/solidity/inputs/schema/definition/03-types/01-advanced-types/notes.md"

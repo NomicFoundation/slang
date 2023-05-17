@@ -3,12 +3,12 @@ mod cst_output;
 use std::path::PathBuf;
 
 use anyhow::Result;
-use codegen_schema::types::grammar::Grammar;
+use codegen_schema::types::schema::Schema;
 use codegen_utils::context::CodegenContext;
 
 use crate::cst_output::generate_cst_output_tests;
 
-pub trait GrammarTestingGeneratorExtensions {
+pub trait TestingGeneratorExtensions {
     fn generate_cst_output_tests(
         &self,
         codegen: &mut CodegenContext,
@@ -17,7 +17,7 @@ pub trait GrammarTestingGeneratorExtensions {
     ) -> Result<()>;
 }
 
-impl GrammarTestingGeneratorExtensions for Grammar {
+impl TestingGeneratorExtensions for Schema {
     fn generate_cst_output_tests(
         &self,
         codegen: &mut CodegenContext,

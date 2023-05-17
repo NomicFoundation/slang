@@ -4,11 +4,11 @@ mod reporting;
 use std::{collections::HashSet, path::PathBuf};
 
 use anyhow::Result;
-use codegen_schema::types::grammar::Grammar;
+use codegen_schema::types::schema::Schema;
 use rayon::prelude::{IntoParallelRefIterator, ParallelIterator};
 use semver::Version;
 use slang_solidity::{syntax::parser::ProductionKind, Language};
-use solidity_schema::SolidityGrammarExtensions;
+use solidity_schema::SoliditySchemaExtensions;
 use solidity_testing_utils::version_pragmas::extract_version_pragmas;
 
 use crate::{
@@ -19,10 +19,10 @@ use crate::{
 fn main() {
     // Fail the parent process if a child thread panics:
     std::panic::catch_unwind(|| -> Result<()> {
-        let grammar = &Grammar::load_solidity()?;
+        let schema = &Schema::load_solidity()?;
 
         for dataset in get_all_datasets()? {
-            process_dataset(&dataset, &grammar.versions)?;
+            process_dataset(&dataset, &schema.versions)?;
         }
 
         return Ok(());

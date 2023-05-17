@@ -2,4 +2,4 @@
 
 # 2.8. Functions
 
---8<-- "crates/solidity/inputs/schema/grammar/02-definitions/08-functions/notes.md"
+--8<-- "crates/solidity/inputs/schema/definition/02-definitions/08-functions/notes.md"

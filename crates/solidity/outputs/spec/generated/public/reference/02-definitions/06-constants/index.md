@@ -2,4 +2,4 @@
 
 # 2.6. Constants
 
---8<-- "crates/solidity/inputs/schema/grammar/02-definitions/06-constants/notes.md"
+--8<-- "crates/solidity/inputs/schema/definition/02-definitions/06-constants/notes.md"

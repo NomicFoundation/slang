@@ -2,4 +2,4 @@
 
 # 5.5. Identifiers
 
---8<-- "crates/solidity/inputs/schema/grammar/05-expressions/05-identifiers/notes.md"
+--8<-- "crates/solidity/inputs/schema/definition/05-expressions/05-identifiers/notes.md"

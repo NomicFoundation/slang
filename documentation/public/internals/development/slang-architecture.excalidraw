@@ -7262,11 +7262,11 @@
       "locked": false,
       "fontSize": 20,
       "fontFamily": 2,
-      "text": "Annotated Grammar",
+      "text": "Annotated Schema",
       "textAlign": "center",
       "verticalAlign": "top",
       "containerId": null,
-      "originalText": "Annotated Grammar",
+      "originalText": "Annotated Schema",
       "lineHeight": 1.15,
       "baseline": 18
     },

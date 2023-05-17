@@ -43,6 +43,8 @@ impl CodegenContext {
     }
 
     pub fn track_input_dir(&mut self, path: &PathBuf) {
+        std::env::var("OUT_DIR").expect("This function can only be called from build scripts");
+
         // Skip if same path (or a parent) is already marked
         for input_dir in &self.input_dirs {
             if path.starts_with(input_dir) {

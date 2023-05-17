@@ -2,9 +2,9 @@ use std::collections::BTreeSet;
 
 use semver::Version;
 
-use crate::types::grammar::Grammar;
+use crate::types::schema::Schema;
 
-impl Grammar {
+impl Schema {
     pub fn collect_version_breaks<'a>(&'a self) -> BTreeSet<Version> {
         let mut version_breaks = BTreeSet::new();
         version_breaks.insert(self.versions.first().cloned().unwrap());

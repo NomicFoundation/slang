@@ -1,11 +1,11 @@
-use codegen_schema::types::grammar::Grammar;
+use codegen_schema::types::schema::Schema;
 use codegen_utils::context::CodegenContext;
 
 use super::code_generator::CodeGenerator;
 use super::combinator_context::CombinatorContext;
 use super::combinator_tree::CombinatorTree;
 
-pub trait GrammarParserGeneratorExtensions {
+pub trait SyntaxGeneratorExtensions {
     fn generate_rust_lib_sources(
         &self,
         context: &mut CodegenContext,
@@ -18,11 +18,11 @@ pub trait GrammarParserGeneratorExtensions {
     );
 }
 
-trait PrivateGrammarParserGeneratorExtensions {
+trait PrivateSyntaxGeneratorExtensions {
     fn create_code_generator(&self) -> CodeGenerator;
 }
 
-impl GrammarParserGeneratorExtensions for Grammar {
+impl SyntaxGeneratorExtensions for Schema {
     fn generate_rust_lib_sources(
         &self,
         context: &mut CodegenContext,
@@ -42,7 +42,7 @@ impl GrammarParserGeneratorExtensions for Grammar {
     }
 }
 
-impl PrivateGrammarParserGeneratorExtensions for Grammar {
+impl PrivateSyntaxGeneratorExtensions for Schema {
     fn create_code_generator(&self) -> CodeGenerator {
         let version_breaks = self.collect_version_breaks();
 
