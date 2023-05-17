@@ -39,12 +39,12 @@ pub fn extract_version_pragmas(
     return Ok(collector.pragmas);
 }
 
-struct PragmaCollector<'a> {
-    source: &'a str,
+struct PragmaCollector<'context> {
+    source: &'context str,
     pragmas: Vec<VersionPragma>,
 }
 
-impl<'a> Visitor<Error> for PragmaCollector<'a> {
+impl<'context> Visitor<Error> for PragmaCollector<'context> {
     fn enter_rule(
         &mut self,
         kind: RuleKind,
@@ -74,7 +74,7 @@ impl<'a> Visitor<Error> for PragmaCollector<'a> {
     }
 }
 
-impl<'a> PragmaCollector<'a> {
+impl<'context> PragmaCollector<'context> {
     fn extract_pragma(&self, node: &Node) -> Result<VersionPragma> {
         let (kind, children) = match node {
             Node::Rule { kind, children, .. } => (kind, children),

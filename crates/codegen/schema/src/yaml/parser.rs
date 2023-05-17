@@ -2,6 +2,7 @@ use std::{
     cmp::{max, min},
     path::PathBuf,
     str::Chars,
+    unreachable,
 };
 
 use codegen_utils::errors::{CodegenErrors, CodegenResult, Position};
@@ -12,15 +13,18 @@ use yaml_rust::{
     Event,
 };
 
-use crate::yaml::cst;
+use crate::yaml::{Node, NodeField, NodeFieldRef, NodeRef};
 
-pub struct Parser<'a> {
-    file_path: &'a PathBuf,
-    parser: YamlParser<Chars<'a>>,
+pub struct Parser<'context> {
+    file_path: &'context PathBuf,
+    parser: YamlParser<Chars<'context>>,
 }
 
-impl<'a> Parser<'a> {
-    pub fn run_parser(file_path: &'a PathBuf, source: &'a str) -> CodegenResult<cst::NodeRef> {
+impl<'context> Parser<'context> {
+    pub fn run_parser(
+        file_path: &'context PathBuf,
+        source: &'context str,
+    ) -> CodegenResult<NodeRef> {
         let mut instance = Self {
             file_path,
             parser: YamlParser::new(source.chars()),
@@ -37,7 +41,7 @@ impl<'a> Parser<'a> {
         return Ok(root);
     }
 
-    fn parse_value(&mut self) -> CodegenResult<cst::NodeRef> {
+    fn parse_value(&mut self) -> CodegenResult<NodeRef> {
         let Token {
             event: current,
             position: start,
@@ -70,7 +74,7 @@ impl<'a> Parser<'a> {
                     )
                 };
 
-                cst::Node::Value { range: start..end }
+                Node::Value { range: start..end }
             }
             Event::SequenceStart(_) => {
                 let mut items = Vec::new();
@@ -89,7 +93,7 @@ impl<'a> Parser<'a> {
                     end = max(end, items.last().unwrap().range().end);
                 }
 
-                cst::Node::Array {
+                Node::Array {
                     range: start..end,
                     items,
                 }
@@ -109,10 +113,7 @@ impl<'a> Parser<'a> {
 
                     let key = self.parse_value()?;
                     let value = self.parse_value()?;
-                    fields.insert(
-                        property_name,
-                        cst::NodeFieldRef::new(cst::NodeField { key, value }),
-                    );
+                    fields.insert(property_name, NodeFieldRef::new(NodeField { key, value }));
                 };
 
                 if !fields.is_empty() {
@@ -120,7 +121,7 @@ impl<'a> Parser<'a> {
                     end = max(end, fields.last().unwrap().1.value.range().end);
                 }
 
-                cst::Node::Object {
+                Node::Object {
                     range: start..end,
                     fields,
                 }
@@ -137,7 +138,7 @@ impl<'a> Parser<'a> {
             }
         };
 
-        return Ok(cst::NodeRef::new(value));
+        return Ok(NodeRef::new(value));
     }
 
     fn consume(&mut self) -> CodegenResult<Token> {
@@ -151,7 +152,7 @@ impl<'a> Parser<'a> {
             let position = marker_to_position(error.marker());
             let range = position..position;
 
-            return CodegenErrors::single(self.file_path, &range, Errors::Parser(error));
+            return CodegenErrors::single(self.file_path.to_owned(), range, error.to_string());
         })?;
 
         return Ok(Token {
@@ -172,10 +173,4 @@ fn marker_to_position(marker: &Marker) -> Position {
         line: marker.line(),
         column: marker.col() + 1, // parser uses 0-based columns
     };
-}
-
-#[derive(thiserror::Error, Debug)]
-enum Errors {
-    #[error("{0}")]
-    Parser(yaml_rust::ScanError),
 }

@@ -1,6 +1,6 @@
-use std::{ops::Deref, rc::Rc};
+use std::rc::Rc;
 
-use codegen_utils::errors::{Position, Range};
+use codegen_utils::errors::Range;
 use indexmap::IndexMap;
 
 pub type NodeRef = Rc<Node>;
@@ -29,7 +29,7 @@ pub struct NodeField {
 }
 
 impl Node {
-    pub fn range<'a>(&'a self) -> &'a Range {
+    pub fn range(&self) -> &Range {
         return match self {
             Node::Value { range, .. } | Node::Array { range, .. } | Node::Object { range, .. } => {
                 range
@@ -37,29 +37,24 @@ impl Node {
         };
     }
 
-    pub fn pinpoint<'a>(&'a self, position: &Position) -> Option<&'a Node> {
-        if !position.inside(&self.range()) {
-            return None;
-        }
-
+    pub fn index(&self, index: usize) -> &NodeRef {
         return match self {
-            Node::Value { .. } => None,
-            Node::Array { items, .. } => items.iter().find_map(|item| item.pinpoint(position)),
-            Node::Object { fields, .. } => fields.values().find_map(|field| {
-                field
-                    .key
-                    .pinpoint(position)
-                    .or_else(|| field.value.pinpoint(position))
-            }),
-        }
-        .or_else(|| Some(self));
+            Node::Array { items, .. } => items
+                .get(index)
+                .expect(&format!("Expected array to have index '{index}'.")),
+            _ => unreachable!("Expected an array."),
+        };
     }
-}
 
-impl Deref for NodeField {
-    type Target = NodeRef;
-
-    fn deref(&self) -> &Self::Target {
-        &self.value
+    pub fn field(&self, field: &str) -> &NodeRef {
+        return match self {
+            Node::Object { fields, .. } => {
+                &fields
+                    .get(field)
+                    .expect(&format!("Expected object to have field '{field}'."))
+                    .value
+            }
+            _ => unreachable!("Expected an object."),
+        };
     }
 }

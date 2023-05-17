@@ -1,4 +1,4 @@
-use codegen_schema::types::parser::{ParserDefinition, ParserRef};
+use codegen_schema::types::{ParserDefinition, ParserRef};
 
 use crate::{nodes::EbnfNode, serialization::GenerateEbnf};
 

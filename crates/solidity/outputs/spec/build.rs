@@ -1,5 +1,5 @@
 use anyhow::Result;
-use codegen_schema::types::schema::Schema;
+use codegen_schema::types::Schema;
 use codegen_spec::SpecGeneratorExtensions;
 use codegen_utils::context::CodegenContext;
 use solidity_schema::SoliditySchemaExtensions;

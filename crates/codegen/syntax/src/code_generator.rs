@@ -3,7 +3,7 @@ use std::{
     path::PathBuf,
 };
 
-use codegen_schema::types::schema::Schema;
+use codegen_schema::types::Schema;
 use codegen_utils::context::CodegenContext;
 use inflector::Inflector;
 use proc_macro2::{Ident, TokenStream};

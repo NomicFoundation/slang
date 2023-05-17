@@ -1,7 +1,7 @@
 use std::cell::RefCell;
 use std::collections::BTreeMap;
 
-use codegen_schema::types::schema::Schema;
+use codegen_schema::types::Schema;
 use semver::Version;
 use typed_arena::Arena;
 

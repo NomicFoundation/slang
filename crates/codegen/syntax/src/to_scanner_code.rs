@@ -1,6 +1,6 @@
 use std::collections::BTreeSet;
 
-use codegen_schema::types::production::Production;
+use codegen_schema::types::Production;
 use inflector::Inflector;
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote};

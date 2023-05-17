@@ -1,7 +1,5 @@
 use codegen_schema::types::{
-    parser::{ParserDefinition, ParserRef},
-    precedence_parser::{OperatorModel, PrecedenceParserRef},
-    scanner::{ScannerDefinition, ScannerRef},
+    OperatorModel, ParserDefinition, ParserRef, PrecedenceParserRef, ScannerDefinition, ScannerRef,
 };
 use itertools::Itertools;
 

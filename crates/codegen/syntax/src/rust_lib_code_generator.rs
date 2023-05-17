@@ -1,10 +1,10 @@
-use quote::quote;
 use std::path::PathBuf;
 
-use codegen_schema::types::schema::Schema;
+use codegen_schema::types::Schema;
 use codegen_utils::context::CodegenContext;
+use quote::quote;
 
-use super::code_generator::CodeGenerator;
+use crate::code_generator::CodeGenerator;
 
 impl CodeGenerator {
     pub fn write_rust_lib_sources(

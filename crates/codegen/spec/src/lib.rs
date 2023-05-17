@@ -7,7 +7,7 @@ mod snippets;
 use std::path::PathBuf;
 
 use anyhow::Result;
-use codegen_schema::types::schema::Schema;
+use codegen_schema::types::Schema;
 use codegen_utils::context::CodegenContext;
 
 use crate::{

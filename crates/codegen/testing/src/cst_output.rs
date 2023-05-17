@@ -4,7 +4,7 @@ use std::{
 };
 
 use anyhow::{bail, Context, Result};
-use codegen_schema::types::schema::Schema;
+use codegen_schema::types::Schema;
 use codegen_utils::context::CodegenContext;
 use walkdir::WalkDir;
 

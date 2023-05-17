@@ -18,26 +18,17 @@ impl CodegenErrors {
         return self.contents.len();
     }
 
-    pub fn single<TError: std::error::Error>(
-        file_path: &PathBuf,
-        range: &Range,
-        error: TError,
-    ) -> Self {
+    pub fn single(file_path: PathBuf, range: Range, message: String) -> Self {
         let mut errors = Self::new();
-        errors.push(file_path, range, error);
+        errors.push(file_path, range, message);
         return errors;
     }
 
-    pub fn push<TError: std::error::Error>(
-        &mut self,
-        file_path: &PathBuf,
-        range: &Range,
-        error: TError,
-    ) {
+    pub fn push(&mut self, file_path: PathBuf, range: Range, message: String) {
         self.contents.push(ErrorDescriptor {
-            file_path: file_path.to_owned(),
-            range: range.to_owned(),
-            message: error.to_string(),
+            file_path,
+            range,
+            message,
         });
     }
 
@@ -45,9 +36,9 @@ impl CodegenErrors {
         self.contents.extend(other.contents);
     }
 
-    pub fn err_or<TSuccess>(self, success: TSuccess) -> CodegenResult<TSuccess> {
+    pub fn to_result(self) -> CodegenResult<()> {
         if self.contents.is_empty() {
-            return Ok(success);
+            return Ok(());
         } else {
             return Err(self);
         }

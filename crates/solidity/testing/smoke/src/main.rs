@@ -4,7 +4,7 @@ mod reporting;
 use std::{collections::HashSet, path::PathBuf};
 
 use anyhow::Result;
-use codegen_schema::types::schema::Schema;
+use codegen_schema::types::Schema;
 use rayon::prelude::{IntoParallelRefIterator, ParallelIterator};
 use semver::Version;
 use slang_solidity::{syntax::parser::ProductionKind, Language};

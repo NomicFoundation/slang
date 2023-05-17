@@ -1,4 +1,4 @@
-use codegen_schema::types::{precedence_parser::OperatorModel, production::Production};
+use codegen_schema::types::{OperatorModel, Production};
 use inflector::Inflector;
 use proc_macro2::{Ident, TokenStream};
 use quote::{format_ident, quote};
