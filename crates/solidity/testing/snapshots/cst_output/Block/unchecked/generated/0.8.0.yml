@@ -21,7 +21,8 @@ Tree:
                                       - AssignmentExpression (Rule): # 14..19 "x = 1"
                                           - PrimaryExpression (Rule): # 14..15 "x"
                                               - Identifier (Token): "x" # 14..15
-                                          - Equal (Token): "=" # 16..17
+                                          - AssignmentOperator (Rule): # 16..17 "="
+                                              - Equal (Token): "=" # 16..17
                                           - PrimaryExpression (Rule): # 17..19 " 1"
                                               - NumericExpression (Rule): # 17..19 " 1"
                                                   - DecimalLiteral (Token): "1" # 18..19

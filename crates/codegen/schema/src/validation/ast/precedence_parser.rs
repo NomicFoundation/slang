@@ -4,7 +4,7 @@ use crate::{types, yaml::cst};
 
 use super::{
     node::Node,
-    parser::{Parser, ParserDefinition, ParserRef},
+    parser::{Parser, ParserRef},
     production::ConcreteAbstractPair,
 };
 
@@ -29,7 +29,7 @@ impl ConcreteAbstractPair for PrecedenceParser {
 }
 
 pub struct PrecedenceParserDefinition {
-    pub operators: Vec<Node<OperatorDefinition>>,
+    pub definitions: Vec<Node<OperatorDefinition>>,
     pub primary_expression: ParserRef,
 }
 
@@ -39,9 +39,9 @@ impl PrecedenceParserDefinition {
         value: types::precedence_parser::PrecedenceParserDefinition,
     ) -> Self {
         return Self {
-            operators: {
-                let cst_node = cst_node.field("operators");
-                cst_node.zip(value.operators, OperatorDefinition::new)
+            definitions: {
+                let cst_node = cst_node.field("definitions");
+                cst_node.zip(value.definitions, OperatorDefinition::new)
             },
             primary_expression: Parser::new(
                 &cst_node.value_of_field("primaryExpression"),
@@ -54,7 +54,7 @@ impl PrecedenceParserDefinition {
 pub struct OperatorDefinition {
     pub name: Node<String>,
     pub model: Node<types::precedence_parser::OperatorModel>,
-    pub definition: Node<ParserDefinition>,
+    pub operator: ParserRef,
 }
 
 impl OperatorDefinition {
@@ -67,7 +67,7 @@ impl OperatorDefinition {
             OperatorDefinition {
                 name: Node::new(cst_node.value_of_field("name"), value.name),
                 model: Node::new(cst_node.value_of_field("model"), value.model),
-                definition: ParserDefinition::new(cst_node, value.definition),
+                operator: Parser::new(&cst_node.value_of_field("operator"), value.operator),
             },
         );
     }

@@ -1,7 +1,7 @@
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
-use super::parser::{ParserDefinition, ParserRef};
+use crate::types::parser::ParserRef;
 
 #[allow(dead_code)]
 pub type PrecedenceParserRef = std::rc::Rc<PrecedenceParser>;
@@ -19,7 +19,7 @@ pub struct PrecedenceParser {
 #[serde(deny_unknown_fields, rename_all = "camelCase")]
 pub struct PrecedenceParserDefinition {
     #[schemars(title = "Operator Definitions")]
-    pub operators: Vec<OperatorDefinition>,
+    pub definitions: Vec<OperatorDefinition>,
 
     #[schemars(title = "Primary Expression")]
     pub primary_expression: ParserRef,
@@ -30,8 +30,7 @@ pub struct PrecedenceParserDefinition {
 pub struct OperatorDefinition {
     pub name: String,
     pub model: OperatorModel,
-    #[serde(flatten)]
-    pub definition: ParserDefinition,
+    pub operator: ParserRef,
 }
 
 #[derive(Clone, Copy, Debug, Deserialize, Serialize, JsonSchema, PartialEq, Eq, Hash)]

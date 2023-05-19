@@ -6,13 +6,13 @@ impl GenerateEbnf for PrecedenceParserRef {
     fn generate_ebnf(&self) -> EbnfNode {
         let mut choices = vec![];
 
-        for operator in &self.definition.operators {
+        for definition in &self.definition.definitions {
             let mut comment = None;
 
-            let operator_body = match operator.model {
+            let operator = match definition.model {
                 OperatorModel::BinaryLeftAssociative => EbnfNode::sequence(vec![
                     EbnfNode::BaseProduction,
-                    operator.definition.generate_ebnf(),
+                    definition.operator.generate_ebnf(),
                     EbnfNode::BaseProduction,
                 ]),
 
@@ -21,25 +21,25 @@ impl GenerateEbnf for PrecedenceParserRef {
 
                     EbnfNode::sequence(vec![
                         EbnfNode::BaseProduction,
-                        operator.definition.generate_ebnf(),
+                        definition.operator.generate_ebnf(),
                         EbnfNode::BaseProduction,
                     ])
                 }
                 OperatorModel::UnaryPrefix => EbnfNode::sequence(vec![
-                    operator.definition.generate_ebnf(),
+                    definition.operator.generate_ebnf(),
                     EbnfNode::BaseProduction,
                 ]),
 
                 OperatorModel::UnaryPostfix => EbnfNode::sequence(vec![
                     EbnfNode::BaseProduction,
-                    operator.definition.generate_ebnf(),
+                    definition.operator.generate_ebnf(),
                 ]),
             };
 
             choices.push(EbnfNode::sub_statement(
-                operator.name.to_owned(),
+                definition.name.to_owned(),
                 comment,
-                operator_body,
+                operator,
             ));
         }
 

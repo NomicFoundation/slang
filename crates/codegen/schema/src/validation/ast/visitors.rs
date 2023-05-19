@@ -283,8 +283,8 @@ impl Receiver for ParserDefinition {
 impl Receiver for PrecedenceParserRef {
     fn receive<V: Visitor>(&self, visitor: &mut V, reporter: &mut Reporter) {
         if visitor.visit_precedence_parser(self, reporter) == VisitorResponse::StepIn {
-            for operator in &self.definition.operators {
-                operator.value.receive(visitor, reporter);
+            for definition in &self.definition.definitions {
+                definition.value.receive(visitor, reporter);
             }
             self.definition
                 .primary_expression
@@ -296,7 +296,7 @@ impl Receiver for PrecedenceParserRef {
 impl Receiver for OperatorDefinition {
     fn receive<V: Visitor>(&self, visitor: &mut V, reporter: &mut Reporter) {
         if visitor.visit_operator_definition(self, reporter) == VisitorResponse::StepIn {
-            self.definition.value.receive(visitor, reporter)
+            self.operator.receive(visitor, reporter)
         }
     }
 }

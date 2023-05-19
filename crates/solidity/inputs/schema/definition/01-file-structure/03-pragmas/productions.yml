@@ -25,23 +25,26 @@
 - name: "VersionPragmaExpression"
   kind: "PrecedenceParser"
   unversioned:
-    operators:
+    definitions:
       - name: "VersionPragmaAlternatives"
         model: "BinaryLeftAssociative"
-        reference: "BarBar"
+        operator:
+          reference: "BarBar"
       - name: "VersionPragmaRange"
         model: "BinaryLeftAssociative"
-        reference: "Minus"
+        operator:
+          reference: "Minus"
       - name: "VersionPragmaComparator"
         model: "UnaryPrefix"
-        choice:
-          - reference: "Caret"
-          - reference: "Tilde"
-          - reference: "Equal"
-          - reference: "LessThan"
-          - reference: "GreaterThan"
-          - reference: "LessThanEqual"
-          - reference: "GreaterThanEqual"
+        operator:
+          choice:
+            - reference: "Caret"
+            - reference: "Tilde"
+            - reference: "Equal"
+            - reference: "LessThan"
+            - reference: "GreaterThan"
+            - reference: "LessThanEqual"
+            - reference: "GreaterThanEqual"
 
     primaryExpression:
       reference: "VersionPragmaSpecifier"

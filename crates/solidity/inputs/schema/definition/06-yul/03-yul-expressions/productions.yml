@@ -3,21 +3,22 @@
 - name: "YulExpression"
   kind: "PrecedenceParser"
   unversioned:
-    operators:
+    definitions:
       - name: "YulFunctionCallExpression"
         model: "UnaryPostfix"
-        delimitedBy:
-          open:
-            reference: "OpenParen"
-          expression:
-            optional:
-              separatedBy:
-                separator:
-                  reference: "Comma"
-                expression:
-                  reference: "YulExpression"
-          close:
-            reference: "CloseParen"
+        operator:
+          delimitedBy:
+            open:
+              reference: "OpenParen"
+            expression:
+              optional:
+                separatedBy:
+                  separator:
+                    reference: "Comma"
+                  expression:
+                    reference: "YulExpression"
+            close:
+              reference: "CloseParen"
 
     primaryExpression:
       choice:

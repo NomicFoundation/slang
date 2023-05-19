@@ -292,6 +292,24 @@
 ### 5.1. Base Expressions
 
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/01-base-expressions/expression/0.4.11.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/01-base-expressions/assignment-operator/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/01-base-expressions/conditional-operator/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/01-base-expressions/or-operator/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/01-base-expressions/and-operator/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/01-base-expressions/equality-comparison-operator/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/01-base-expressions/order-comparison-operator/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/01-base-expressions/bit-or-operator/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/01-base-expressions/bit-x-or-operator/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/01-base-expressions/bit-and-operator/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/01-base-expressions/shift-operator/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/01-base-expressions/add-sub-operator/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/01-base-expressions/mul-div-mod-operator/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/01-base-expressions/exponentiation-operator/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/01-base-expressions/unary-postfix-operator/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/01-base-expressions/unary-prefix-operator/0.4.11.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/01-base-expressions/function-call-operator/0.4.11.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/01-base-expressions/member-access-operator/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/01-base-expressions/index-access-operator/unversioned.md"
 
 ### 5.2. Primary Expressions
 

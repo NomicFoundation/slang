@@ -11,10 +11,12 @@ Tree:
           - MemberAccessExpression (Rule): # 0..3 "x.y"
               - PrimaryExpression (Rule): # 0..1 "x"
                   - Identifier (Token): "x" # 0..1
-              - Period (Token): "." # 1..2
-              - Identifier (Token): "y" # 2..3
-          - OpenBracket (Token): "[" # 3..4
-          - Expression (Rule): # 4..9 "index"
-              - PrimaryExpression (Rule): # 4..9 "index"
-                  - Identifier (Token): "index" # 4..9
-          - CloseBracket (Token): "]" # 9..10
+              - MemberAccessOperator (Rule): # 1..3 ".y"
+                  - Period (Token): "." # 1..2
+                  - Identifier (Token): "y" # 2..3
+          - IndexAccessOperator (Rule): # 3..10 "[index]"
+              - OpenBracket (Token): "[" # 3..4
+              - Expression (Rule): # 4..9 "index"
+                  - PrimaryExpression (Rule): # 4..9 "index"
+                      - Identifier (Token): "index" # 4..9
+              - CloseBracket (Token): "]" # 9..10

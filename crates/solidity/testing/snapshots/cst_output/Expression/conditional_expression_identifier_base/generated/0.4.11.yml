@@ -10,13 +10,14 @@ Tree:
       - ConditionalExpression (Rule): # 0..18 "foo ? true : false"
           - PrimaryExpression (Rule): # 0..3 "foo"
               - Identifier (Token): "foo" # 0..3
-          - QuestionMark (Token): "?" # 4..5
-          - Expression (Rule): # 6..10 "true"
-              - PrimaryExpression (Rule): # 6..10 "true"
-                  - BooleanLiteral (Rule): # 6..10 "true"
-                      - TrueKeyword (Token): "true" # 6..10
-          - Colon (Token): ":" # 11..12
-          - Expression (Rule): # 13..18 "false"
-              - PrimaryExpression (Rule): # 13..18 "false"
-                  - BooleanLiteral (Rule): # 13..18 "false"
-                      - FalseKeyword (Token): "false" # 13..18
+          - ConditionalOperator (Rule): # 3..18 " ? true : false"
+              - QuestionMark (Token): "?" # 4..5
+              - Expression (Rule): # 6..10 "true"
+                  - PrimaryExpression (Rule): # 6..10 "true"
+                      - BooleanLiteral (Rule): # 6..10 "true"
+                          - TrueKeyword (Token): "true" # 6..10
+              - Colon (Token): ":" # 11..12
+              - Expression (Rule): # 13..18 "false"
+                  - PrimaryExpression (Rule): # 13..18 "false"
+                      - BooleanLiteral (Rule): # 13..18 "false"
+                          - FalseKeyword (Token): "false" # 13..18
