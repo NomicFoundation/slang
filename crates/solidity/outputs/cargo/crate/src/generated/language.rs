@@ -332,7 +332,6 @@ pub struct Language {
     pub(crate) version_is_equal_to_or_greater_than_0_6_0: bool,
     pub(crate) version_is_equal_to_or_greater_than_0_6_11: bool,
     pub(crate) version_is_equal_to_or_greater_than_0_6_2: bool,
-    pub(crate) version_is_equal_to_or_greater_than_0_6_4: bool,
     pub(crate) version_is_equal_to_or_greater_than_0_6_5: bool,
     pub(crate) version_is_equal_to_or_greater_than_0_7_0: bool,
     pub(crate) version_is_equal_to_or_greater_than_0_8_0: bool,
@@ -375,8 +374,6 @@ impl Language {
                 version_is_equal_to_or_greater_than_0_6_11: Version::parse("0.6.11").unwrap()
                     <= version,
                 version_is_equal_to_or_greater_than_0_6_2: Version::parse("0.6.2").unwrap()
-                    <= version,
-                version_is_equal_to_or_greater_than_0_6_4: Version::parse("0.6.4").unwrap()
                     <= version,
                 version_is_equal_to_or_greater_than_0_6_5: Version::parse("0.6.5").unwrap()
                     <= version,
@@ -799,10 +796,10 @@ impl Language {
                 TokenKind::ExternalKeyword,
                 "ExternalKeyword",
             ),
-            ProductionKind::FallbackKeyword => try_call_scanner(
+            ProductionKind::FallbackKeyword => call_scanner(
                 self,
                 input,
-                Language::maybe_scan_fallback_keyword,
+                Language::scan_fallback_keyword,
                 TokenKind::FallbackKeyword,
                 "FallbackKeyword",
             ),
@@ -1009,10 +1006,10 @@ impl Language {
                 TokenKind::IsKeyword,
                 "IsKeyword",
             ),
-            ProductionKind::LeaveKeyword => call_scanner(
+            ProductionKind::LeaveKeyword => try_call_scanner(
                 self,
                 input,
-                Language::scan_leave_keyword,
+                Language::maybe_scan_leave_keyword,
                 TokenKind::LeaveKeyword,
                 "LeaveKeyword",
             ),
@@ -1260,10 +1257,10 @@ impl Language {
                 TokenKind::RawIdentifier,
                 "RawIdentifier",
             ),
-            ProductionKind::ReceiveKeyword => try_call_scanner(
+            ProductionKind::ReceiveKeyword => call_scanner(
                 self,
                 input,
-                Language::maybe_scan_receive_keyword,
+                Language::scan_receive_keyword,
                 TokenKind::ReceiveKeyword,
                 "ReceiveKeyword",
             ),
@@ -1389,10 +1386,10 @@ impl Language {
                 TokenKind::SzaboKeyword,
                 "SzaboKeyword",
             ),
-            ProductionKind::ThrowKeyword => call_scanner(
+            ProductionKind::ThrowKeyword => try_call_scanner(
                 self,
                 input,
-                Language::scan_throw_keyword,
+                Language::maybe_scan_throw_keyword,
                 TokenKind::ThrowKeyword,
                 "ThrowKeyword",
             ),
@@ -1518,10 +1515,10 @@ impl Language {
                 TokenKind::Whitespace,
                 "Whitespace",
             ),
-            ProductionKind::YearsKeyword => call_scanner(
+            ProductionKind::YearsKeyword => try_call_scanner(
                 self,
                 input,
-                Language::scan_years_keyword,
+                Language::maybe_scan_years_keyword,
                 TokenKind::YearsKeyword,
                 "YearsKeyword",
             ),

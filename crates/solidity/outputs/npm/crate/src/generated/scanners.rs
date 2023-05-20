@@ -1352,11 +1352,10 @@ impl Language {
         self.scan_external_keyword_0_4_11(stream)
     }
 
-    // (* v0.6.0 *)
     // «FallbackKeyword» = "fallback";
 
     #[allow(unused_assignments, unused_parens)]
-    fn scan_fallback_keyword_0_6_0(&self, stream: &mut Stream) -> bool {
+    fn scan_fallback_keyword_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
             scan_chars!(stream, 'f', 'a', 'l', 'l', 'b', 'a', 'c', 'k'),
@@ -1368,23 +1367,9 @@ impl Language {
         )
     }
 
-    fn dispatch_scan_fallback_keyword(&self, stream: &mut Stream) -> Option<bool> {
-        if self.version_is_equal_to_or_greater_than_0_6_0 {
-            Some(self.scan_fallback_keyword_0_6_0(stream))
-        } else {
-            None
-        }
-    }
-
-    #[inline]
-    pub(crate) fn maybe_scan_fallback_keyword(&self, stream: &mut Stream) -> Option<bool> {
-        self.dispatch_scan_fallback_keyword(stream)
-    }
-
     #[inline]
     pub(crate) fn scan_fallback_keyword(&self, stream: &mut Stream) -> bool {
-        self.dispatch_scan_fallback_keyword(stream)
-            .expect("Validation should have checked that references are valid between versions")
+        self.scan_fallback_keyword_0_4_11(stream)
     }
 
     // «FalseKeyword» = "false";
@@ -2091,11 +2076,11 @@ impl Language {
         self.scan_if_keyword_0_4_11(stream)
     }
 
-    // (* v0.6.4 *)
+    // (* v0.6.5 *)
     // «ImmutableKeyword» = "immutable";
 
     #[allow(unused_assignments, unused_parens)]
-    fn scan_immutable_keyword_0_6_4(&self, stream: &mut Stream) -> bool {
+    fn scan_immutable_keyword_0_6_5(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
             scan_chars!(stream, 'i', 'm', 'm', 'u', 't', 'a', 'b', 'l', 'e'),
@@ -2108,8 +2093,8 @@ impl Language {
     }
 
     fn dispatch_scan_immutable_keyword(&self, stream: &mut Stream) -> Option<bool> {
-        if self.version_is_equal_to_or_greater_than_0_6_4 {
-            Some(self.scan_immutable_keyword_0_6_4(stream))
+        if self.version_is_equal_to_or_greater_than_0_6_5 {
+            Some(self.scan_immutable_keyword_0_6_5(stream))
         } else {
             None
         }
@@ -2226,10 +2211,11 @@ impl Language {
         self.scan_is_keyword_0_4_11(stream)
     }
 
+    // (* v0.6.0 *)
     // «LeaveKeyword» = "leave";
 
     #[allow(unused_assignments, unused_parens)]
-    fn scan_leave_keyword_0_4_11(&self, stream: &mut Stream) -> bool {
+    fn scan_leave_keyword_0_6_0(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
             scan_chars!(stream, 'l', 'e', 'a', 'v', 'e'),
@@ -2241,9 +2227,23 @@ impl Language {
         )
     }
 
+    fn dispatch_scan_leave_keyword(&self, stream: &mut Stream) -> Option<bool> {
+        if self.version_is_equal_to_or_greater_than_0_6_0 {
+            Some(self.scan_leave_keyword_0_6_0(stream))
+        } else {
+            None
+        }
+    }
+
+    #[inline]
+    pub(crate) fn maybe_scan_leave_keyword(&self, stream: &mut Stream) -> Option<bool> {
+        self.dispatch_scan_leave_keyword(stream)
+    }
+
     #[inline]
     pub(crate) fn scan_leave_keyword(&self, stream: &mut Stream) -> bool {
-        self.scan_leave_keyword_0_4_11(stream)
+        self.dispatch_scan_leave_keyword(stream)
+            .expect("Validation should have checked that references are valid between versions")
     }
 
     // «LessThan» = "<";
@@ -3371,11 +3371,10 @@ impl Language {
         self.scan_raw_identifier_0_4_11(stream)
     }
 
-    // (* v0.6.0 *)
     // «ReceiveKeyword» = "receive";
 
     #[allow(unused_assignments, unused_parens)]
-    fn scan_receive_keyword_0_6_0(&self, stream: &mut Stream) -> bool {
+    fn scan_receive_keyword_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
             scan_chars!(stream, 'r', 'e', 'c', 'e', 'i', 'v', 'e'),
@@ -3387,23 +3386,9 @@ impl Language {
         )
     }
 
-    fn dispatch_scan_receive_keyword(&self, stream: &mut Stream) -> Option<bool> {
-        if self.version_is_equal_to_or_greater_than_0_6_0 {
-            Some(self.scan_receive_keyword_0_6_0(stream))
-        } else {
-            None
-        }
-    }
-
-    #[inline]
-    pub(crate) fn maybe_scan_receive_keyword(&self, stream: &mut Stream) -> Option<bool> {
-        self.dispatch_scan_receive_keyword(stream)
-    }
-
     #[inline]
     pub(crate) fn scan_receive_keyword(&self, stream: &mut Stream) -> bool {
-        self.dispatch_scan_receive_keyword(stream)
-            .expect("Validation should have checked that references are valid between versions")
+        self.scan_receive_keyword_0_4_11(stream)
     }
 
     // «ReturnKeyword» = "return";
@@ -3834,6 +3819,7 @@ impl Language {
             .expect("Validation should have checked that references are valid between versions")
     }
 
+    // (* v0.4.11 *)
     // «ThrowKeyword» = "throw";
 
     #[allow(unused_assignments, unused_parens)]
@@ -3849,9 +3835,23 @@ impl Language {
         )
     }
 
+    fn dispatch_scan_throw_keyword(&self, stream: &mut Stream) -> Option<bool> {
+        if self.version_is_equal_to_or_greater_than_0_5_0 {
+            None
+        } else {
+            Some(self.scan_throw_keyword_0_4_11(stream))
+        }
+    }
+
+    #[inline]
+    pub(crate) fn maybe_scan_throw_keyword(&self, stream: &mut Stream) -> Option<bool> {
+        self.dispatch_scan_throw_keyword(stream)
+    }
+
     #[inline]
     pub(crate) fn scan_throw_keyword(&self, stream: &mut Stream) -> bool {
-        self.scan_throw_keyword_0_4_11(stream)
+        self.dispatch_scan_throw_keyword(stream)
+            .expect("Validation should have checked that references are valid between versions")
     }
 
     // «Tilde» = "~";
@@ -4274,6 +4274,7 @@ impl Language {
         self.scan_whitespace_0_4_11(stream)
     }
 
+    // (* v0.4.11 *)
     // «YearsKeyword» = "years";
 
     #[allow(unused_assignments, unused_parens)]
@@ -4289,9 +4290,23 @@ impl Language {
         )
     }
 
+    fn dispatch_scan_years_keyword(&self, stream: &mut Stream) -> Option<bool> {
+        if self.version_is_equal_to_or_greater_than_0_5_0 {
+            None
+        } else {
+            Some(self.scan_years_keyword_0_4_11(stream))
+        }
+    }
+
+    #[inline]
+    pub(crate) fn maybe_scan_years_keyword(&self, stream: &mut Stream) -> Option<bool> {
+        self.dispatch_scan_years_keyword(stream)
+    }
+
     #[inline]
     pub(crate) fn scan_years_keyword(&self, stream: &mut Stream) -> bool {
-        self.scan_years_keyword_0_4_11(stream)
+        self.dispatch_scan_years_keyword(stream)
+            .expect("Validation should have checked that references are valid between versions")
     }
 
     // «YulDecimalLiteral» = "0" | (("1"…"9") ("0"…"9")*);

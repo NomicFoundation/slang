@@ -6,6 +6,7 @@ use crate::{
         location::{Location, LocationRef},
         receivers::Receiver,
         reporter::Reporter,
+        VersionSet,
     },
 };
 
@@ -17,6 +18,15 @@ pub trait Visitor {
     fn visit_production(
         &mut self,
         _production: &ProductionRef,
+        _location: &LocationRef,
+        _reporter: &mut Reporter,
+    ) -> bool {
+        return true;
+    }
+
+    fn visit_version(
+        &mut self,
+        _version_set: &VersionSet,
         _location: &LocationRef,
         _reporter: &mut Reporter,
     ) -> bool {

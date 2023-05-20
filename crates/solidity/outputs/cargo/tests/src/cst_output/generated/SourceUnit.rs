@@ -14,6 +14,11 @@ fn end_of_file_trivia() -> Result<()> {
 }
 
 #[test]
+fn partial_definition() -> Result<()> {
+    return run("SourceUnit", "partial_definition");
+}
+
+#[test]
 fn trailing_trivia() -> Result<()> {
     return run("SourceUnit", "trailing_trivia");
 }
