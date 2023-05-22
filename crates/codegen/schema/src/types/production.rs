@@ -36,7 +36,6 @@ pub enum Production {
 }
 
 impl Production {
-    #[allow(dead_code)]
     pub fn name(&self) -> &String {
         match self {
             Self::Scanner { name, .. }
@@ -46,7 +45,6 @@ impl Production {
         }
     }
 
-    #[allow(dead_code)]
     pub fn versions(&self) -> Option<Vec<&Version>> {
         match self {
             Production::Scanner { version_map, .. } => match version_map {
@@ -77,7 +75,6 @@ pub enum VersionMap<T> {
 }
 
 impl<T> VersionMap<T> {
-    #[allow(dead_code)]
     pub fn get_for_version(&self, version: &Version) -> Option<Rc<T>> {
         match self {
             VersionMap::Unversioned(t) => Some(t.clone()),

@@ -1,4 +1,4 @@
-# yaml-language-server: $schema=../../../../../../../codegen/schema/generated/productions.schema.json
+# yaml-language-server: $schema=../../../generated/productions.schema.json
 
 - name: "EnumDefinition"
   kind: "Parser"
