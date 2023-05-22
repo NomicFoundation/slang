@@ -19,7 +19,9 @@ This allows callers to parse entire source files (`ProductionKind.SourceUnit`), 
 methods (`ProductionKind.FunctionDefinition`), or any other syntax nodes.
 
 ```typescript
-import { Language, RuleKind, TokenKind, ProductionKind } from "@nomicfoundation/slang";
+import { Language } from "@nomicfoundation/slang";
+import { RuleKind, TokenKind } from "@nomicfoundation/slang/syntax/nodes";
+import { ProductionKind } from "@nomicfoundation/slang/syntax/parser";
 
 const language = new Language("0.8.0");
 const parseOutput = language.parse(ProductionKind.ContractDefinition, "contract Foo {}");

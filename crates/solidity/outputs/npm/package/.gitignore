@@ -1,2 +1,4 @@
 # NAPI generated binaries:
+# Unfortunately they need to be copied to each individual sub-package directory for execution or publishing.
+# Lets hide all of them.
 *.node

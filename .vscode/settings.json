@@ -5,7 +5,7 @@
   "rust-analyzer.check.allTargets": true,
   "rust-analyzer.check.features": "all",
   "rust-analyzer.server.extraEnv": {
-    // Keep in sync with the CLI environment in "$REPO_ROOT/scripts/cargo/check.sh"
+    // _CARGO_CLI_ENV_VARS_ (keep In Sync)
     "CARGO": "${workspaceFolder}/bin/cargo",
     "RUSTC": "${workspaceFolder}/bin/rustc",
     "RUSTFMT": "${workspaceFolder}/bin/rustfmt",
@@ -28,5 +28,6 @@
   "triggerTaskOnSave.tasks": {
     "Validate Solidity Grammar": ["crates/solidity/inputs/schema/grammar/**/*.yml"]
   },
+  "typescript.tsdk": "node_modules/typescript/lib",
   "yaml.validate": false // Disable LSP validation for YAML files, as it is handled by our own cargo tasks
 }
