@@ -80,5 +80,9 @@ fn execute_parse_command(file_path: String, version: Version, json: bool) -> Res
         }
     }
 
-    std::process::exit(errors.len() as i32);
+    if !errors.is_empty() {
+        std::process::exit(1);
+    }
+
+    return Ok(());
 }

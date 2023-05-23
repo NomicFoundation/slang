@@ -60,7 +60,7 @@ fn process_dataset(dataset: &impl Dataset, all_versions: &Vec<Version>) -> Resul
 
     let total_errors = reporter.finish();
     if total_errors > 0 {
-        std::process::exit(total_errors as i32);
+        std::process::exit(1);
     }
 
     return Ok(());

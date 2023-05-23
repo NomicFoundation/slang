@@ -154,7 +154,7 @@ impl CodegenContext {
         eprintln!("Found {count} validation errors. Aborting.");
 
         // `process::exit()` instead of `panic!()`. No need to pollute the output with useless stack traces:
-        std::process::exit(count);
+        std::process::exit(1);
     }
 
     fn print_cargo_markers(&self) {
