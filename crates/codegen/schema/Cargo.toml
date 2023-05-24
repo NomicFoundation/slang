@@ -5,7 +5,7 @@ rust-version.workspace = true
 edition.workspace = true
 publish = false
 
-[build-dependencies]
+[dependencies]
 anyhow = { workspace = true }
 codegen_utils = { workspace = true }
 indexmap = { workspace = true }
@@ -13,13 +13,6 @@ schemars = { workspace = true }
 semver = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
-
-[dependencies]
-codegen_utils = { workspace = true }
-indexmap = { workspace = true }
-schemars = { workspace = true }
-semver = { workspace = true }
-serde = { workspace = true }
 serde_yaml = { workspace = true }
 thiserror = { workspace = true }
 yaml-rust = { workspace = true }

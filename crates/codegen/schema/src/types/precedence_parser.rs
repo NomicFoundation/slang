@@ -3,7 +3,6 @@ use serde::{Deserialize, Serialize};
 
 use crate::types::ParserRef;
 
-#[allow(dead_code)]
 pub type PrecedenceParserRef = std::rc::Rc<PrecedenceParser>;
 
 #[derive(Clone, Debug, Deserialize, Serialize, JsonSchema, PartialEq, Eq, Hash)]

@@ -6,7 +6,6 @@ use serde::{Deserialize, Serialize};
 
 use crate::types::ProductionRef;
 
-#[allow(dead_code)]
 pub type SchemaRef = Rc<Schema>;
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
@@ -23,14 +22,12 @@ pub struct Schema {
 }
 
 impl Schema {
-    #[allow(dead_code)]
     pub fn required_productions(&self) -> IndexSet<&str> {
         return IndexSet::from([&self.root_production, "LeadingTrivia", "TrailingTrivia"]);
     }
 }
 
 impl Schema {
-    #[allow(dead_code)]
     pub const MANIFEST_FILE_NAME: &'static str = "manifest.yml";
 }
 
@@ -51,9 +48,7 @@ pub struct SchemaTopic {
 }
 
 impl SchemaTopic {
-    #[allow(dead_code)]
     pub const PRODUCTIONS_FILE_NAME: &'static str = "productions.yml";
 
-    #[allow(dead_code)]
     pub const NOTES_FILE_NAME: &'static str = "notes.md";
 }

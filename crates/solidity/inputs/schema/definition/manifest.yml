@@ -1,4 +1,4 @@
-# yaml-language-server: $schema=../../../../codegen/schema/generated/manifest.schema.json
+# yaml-language-server: $schema=../generated/manifest.schema.json
 
 title: "Solidity"
 

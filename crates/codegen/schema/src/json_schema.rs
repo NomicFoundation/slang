@@ -1,32 +1,25 @@
-#[path = "src/types/mod.rs"]
-mod types;
+use std::path::PathBuf;
 
 use anyhow::Result;
 use codegen_utils::context::CodegenContext;
 use schemars::{schema_for, JsonSchema};
 use serde_json::Value;
 
-use crate::types::{ManifestFile, ProductionsFile};
+use crate::types::{ManifestFile, ProductionsFile, Schema};
 
-fn main() -> Result<()> {
-    return CodegenContext::with_context(|codegen| {
-        write_schema_file::<ManifestFile>(
-            codegen,
-            "crates/codegen/schema/generated/manifest.schema.json",
-        )?;
+impl Schema {
+    pub fn generate_json_schema(codegen: &mut CodegenContext, output_dir: PathBuf) -> Result<()> {
+        write_schema_file::<ManifestFile>(codegen, &output_dir.join("manifest.schema.json"))?;
 
-        write_schema_file::<ProductionsFile>(
-            codegen,
-            "crates/codegen/schema/generated/productions.schema.json",
-        )?;
+        write_schema_file::<ProductionsFile>(codegen, &output_dir.join("productions.schema.json"))?;
 
         return Ok(());
-    });
+    }
 }
 
 fn write_schema_file<TSchema: JsonSchema>(
     codegen: &mut CodegenContext,
-    relative_path: &str,
+    file_path: &PathBuf,
 ) -> Result<()> {
     let schema = schema_for!(TSchema);
 
@@ -38,10 +31,7 @@ fn write_schema_file<TSchema: JsonSchema>(
         serde_json::to_string_pretty(&relaxed)?
     };
 
-    let schema_path = codegen.repo_root.join(relative_path);
-    codegen.write_file(&schema_path, &schema_json)?;
-
-    return Ok(());
+    return codegen.write_file(file_path, &schema_json);
 }
 
 fn relax_schema(value: Value) -> Value {
