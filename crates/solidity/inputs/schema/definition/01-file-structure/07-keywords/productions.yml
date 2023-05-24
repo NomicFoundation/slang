@@ -248,13 +248,12 @@
 
 - name: "FallbackKeyword"
   kind: "Scanner"
-  versioned:
-    0.6.0:
-      trailingContext:
-        expression:
-          terminal: "fallback"
-        notFollowedBy:
-          reference: "IdentifierPart"
+  unversioned:
+    trailingContext:
+      expression:
+        terminal: "fallback"
+      notFollowedBy:
+        reference: "IdentifierPart"
 
 - name: "FalseKeyword"
   kind: "Scanner"
@@ -343,7 +342,7 @@
 - name: "ImmutableKeyword"
   kind: "Scanner"
   versioned:
-    0.6.4:
+    0.6.5:
       trailingContext:
         expression:
           terminal: "immutable"
@@ -397,12 +396,13 @@
 
 - name: "LeaveKeyword"
   kind: "Scanner"
-  unversioned:
-    trailingContext:
-      expression:
-        terminal: "leave"
-      notFollowedBy:
-        reference: "IdentifierPart"
+  versioned:
+    0.6.0:
+      trailingContext:
+        expression:
+          terminal: "leave"
+        notFollowedBy:
+          reference: "IdentifierPart"
 
 - name: "LetKeyword"
   kind: "Scanner"
@@ -523,13 +523,12 @@
 
 - name: "ReceiveKeyword"
   kind: "Scanner"
-  versioned:
-    0.6.0:
-      trailingContext:
-        expression:
-          terminal: "receive"
-        notFollowedBy:
-          reference: "IdentifierPart"
+  unversioned:
+    trailingContext:
+      expression:
+        terminal: "receive"
+      notFollowedBy:
+        reference: "IdentifierPart"
 
 - name: "ReturnKeyword"
   kind: "Scanner"
@@ -625,12 +624,14 @@
 
 - name: "ThrowKeyword"
   kind: "Scanner"
-  unversioned:
-    trailingContext:
-      expression:
-        terminal: "throw"
-      notFollowedBy:
-        reference: "IdentifierPart"
+  versioned:
+    0.4.11:
+      trailingContext:
+        expression:
+          terminal: "throw"
+        notFollowedBy:
+          reference: "IdentifierPart"
+    0.5.0: null
 
 - name: "TrueKeyword"
   kind: "Scanner"
@@ -739,9 +740,11 @@
 
 - name: "YearsKeyword"
   kind: "Scanner"
-  unversioned:
-    trailingContext:
-      expression:
-        terminal: "years"
-      notFollowedBy:
-        reference: "IdentifierPart"
+  versioned:
+    0.4.11:
+      trailingContext:
+        expression:
+          terminal: "years"
+        notFollowedBy:
+          reference: "IdentifierPart"
+    0.5.0: null

@@ -1,9 +1,13 @@
+use std::rc::Rc;
+
 use crate::{
     types::{
         ParserDefinition, ParserRef, PrecedenceParserRef, Production, ProductionRef,
         ScannerDefinition, ScannerRef, SchemaRef, VersionMap,
     },
-    validation::visitors::{location::LocationRef, reporter::Reporter, visitor::Visitor},
+    validation::visitors::{
+        location::LocationRef, reporter::Reporter, visitor::Visitor, VersionSet,
+    },
 };
 
 pub trait Receiver {
@@ -29,54 +33,69 @@ impl Receiver for ProductionRef {
         }
 
         match self.as_ref() {
-            Production::Scanner { version_map, .. } => match version_map {
-                VersionMap::Unversioned(scanner) => {
-                    let location = location.field("unversioned");
-                    scanner.receive(visitor, schema, location, reporter);
-                }
-                VersionMap::Versioned(versions) => {
-                    let location = location.field("versioned");
-                    for (version, scanner) in versions {
-                        if let Some(scanner) = scanner {
-                            let location = location.field(version.to_string());
-                            scanner.receive(visitor, schema, location, reporter);
-                        }
-                    }
-                }
-            },
+            Production::Scanner { version_map, .. } => {
+                version_map.receive(visitor, schema, location, reporter);
+            }
+            Production::TriviaParser { version_map, .. } => {
+                version_map.receive(visitor, schema, location, reporter);
+            }
+            Production::Parser { version_map, .. } => {
+                version_map.receive(visitor, schema, location, reporter);
+            }
+            Production::PrecedenceParser { version_map, .. } => {
+                version_map.receive(visitor, schema, location, reporter);
+            }
+        };
+    }
+}
 
-            Production::TriviaParser { version_map, .. }
-            | Production::Parser { version_map, .. } => match version_map {
-                VersionMap::Unversioned(parser) => {
-                    let location = location.field("unversioned");
-                    parser.receive(visitor, schema, location, reporter);
-                }
-                VersionMap::Versioned(versions) => {
-                    let location = location.field("versioned");
-                    for (version, parser) in versions {
-                        if let Some(parser) = parser {
-                            let location = location.field(version.to_string());
-                            parser.receive(visitor, schema, location, reporter);
-                        }
-                    }
-                }
-            },
+impl<T> Receiver for VersionMap<T>
+where
+    Rc<T>: Receiver,
+{
+    fn receive(
+        &self,
+        visitor: &mut impl Visitor,
+        schema: &SchemaRef,
+        location: LocationRef,
+        reporter: &mut Reporter,
+    ) {
+        let max_version = VersionSet::max_version();
 
-            Production::PrecedenceParser { version_map, .. } => match version_map {
-                VersionMap::Unversioned(parser) => {
-                    let location = location.field("unversioned");
-                    parser.receive(visitor, schema, location, reporter);
+        match self {
+            VersionMap::Unversioned(instance) => {
+                let location = location.field("unversioned");
+
+                let first_version = schema.versions[0].to_owned();
+                let version_set = VersionSet::range(first_version..max_version);
+
+                if visitor.visit_version(&version_set, &location, reporter) {
+                    instance.receive(visitor, schema, location, reporter);
                 }
-                VersionMap::Versioned(versions) => {
-                    let location = location.field("versioned");
-                    for (version, parser) in versions {
-                        if let Some(parser) = parser {
-                            let location = location.field(version.to_string());
-                            parser.receive(visitor, schema, location, reporter);
+            }
+            VersionMap::Versioned(versioned) => {
+                let location = location.field("versioned");
+
+                let mut versions = versioned.keys().collect::<Vec<_>>();
+                versions.push(&max_version);
+
+                let versioned = versions
+                    .windows(2)
+                    .map(|window| window[0].to_owned()..window[1].to_owned())
+                    .zip(versioned.values());
+
+                for (range, instance) in versioned {
+                    if let Some(value) = instance {
+                        let location = location.field(range.start.to_string());
+
+                        let version_set = VersionSet::range(range);
+
+                        if visitor.visit_version(&version_set, &location, reporter) {
+                            value.receive(visitor, schema, location, reporter);
                         }
                     }
                 }
-            },
+            }
         };
     }
 }

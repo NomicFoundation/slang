@@ -1,0 +1,17 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract Sample {                                                                │ 0..17
+  2  │   function                                                                       │ 18..28
+
+Errors: # 1 total
+  - >
+    Error: Expected end of input.
+       ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/partial_definition/input.sol:1:1]
+       │
+     1 │ contract Sample {
+       │ │ 
+       │ ╰─ Error occurred here.
+    ───╯
+
+Tree: null

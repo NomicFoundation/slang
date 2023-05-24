@@ -1,3 +1,6 @@
+[profile.dev.build-override]
+debug = true
+
 [profile.release]
 incremental = true
 lto = true
