@@ -3,8 +3,7 @@ use std::path::PathBuf;
 use anyhow::Result;
 use codegen_ebnf::EbnfSerializer;
 use codegen_schema::types::{
-    production::{Production, ProductionRef, VersionMap},
-    schema::{Schema, SchemaSection, SchemaTopic},
+    Production, ProductionRef, Schema, SchemaSection, SchemaTopic, VersionMap,
 };
 use codegen_utils::context::CodegenContext;
 use inflector::Inflector;
@@ -103,8 +102,10 @@ impl<'context> Snippets<'context> {
     fn locate_production(&self, name: &str) -> (&SchemaSection, &SchemaTopic) {
         for section in &self.schema.sections {
             for topic in &section.topics {
-                if topic.productions.contains_key(name) {
-                    return (section, topic);
+                for production in &topic.productions {
+                    if name == production.name() {
+                        return (section, topic);
+                    }
                 }
             }
         }

@@ -1,10 +1,13 @@
-use std::path::PathBuf;
+use std::{path::PathBuf, rc::Rc};
 
-use indexmap::IndexMap;
+use indexmap::{IndexMap, IndexSet};
 use semver::Version;
 use serde::{Deserialize, Serialize};
 
-use super::production::ProductionRef;
+use crate::types::ProductionRef;
+
+#[allow(dead_code)]
+pub type SchemaRef = Rc<Schema>;
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 #[serde(deny_unknown_fields)]
@@ -13,8 +16,22 @@ pub struct Schema {
     pub sections: Vec<SchemaSection>,
     pub versions: Vec<Version>,
 
-    pub schema_dir: PathBuf,
+    pub root_production: String,
     pub productions: IndexMap<String, ProductionRef>,
+
+    pub schema_dir: PathBuf,
+}
+
+impl Schema {
+    #[allow(dead_code)]
+    pub fn required_productions(&self) -> IndexSet<&str> {
+        return IndexSet::from([&self.root_production, "LeadingTrivia", "TrailingTrivia"]);
+    }
+}
+
+impl Schema {
+    #[allow(dead_code)]
+    pub const MANIFEST_FILE_NAME: &'static str = "manifest.yml";
 }
 
 #[derive(Deserialize, Serialize, Clone, Debug)]
@@ -30,21 +47,13 @@ pub struct SchemaSection {
 pub struct SchemaTopic {
     pub title: String,
     pub path: String,
-    pub productions: IndexMap<String, ProductionRef>,
+    pub productions: Vec<ProductionRef>,
 }
 
 impl SchemaTopic {
-    // TODO(OmarTawfik): This method is definetely used.
-    // Need to isolate and report the bug to the rustc team.
     #[allow(dead_code)]
-    pub fn productions_file() -> String {
-        return "productions.yml".to_owned();
-    }
+    pub const PRODUCTIONS_FILE_NAME: &'static str = "productions.yml";
 
-    // TODO(OmarTawfik): This method is definetely used.
-    // Need to isolate and report the bug to the rustc team.
     #[allow(dead_code)]
-    pub fn notes_file() -> String {
-        return "notes.md".to_owned();
-    }
+    pub const NOTES_FILE_NAME: &'static str = "notes.md";
 }

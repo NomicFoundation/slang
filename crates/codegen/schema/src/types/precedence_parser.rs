@@ -1,7 +1,7 @@
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
-use crate::types::parser::ParserRef;
+use crate::types::ParserRef;
 
 #[allow(dead_code)]
 pub type PrecedenceParserRef = std::rc::Rc<PrecedenceParser>;

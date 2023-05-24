@@ -1,6 +1,6 @@
 use std::path::PathBuf;
 
-use codegen_schema::types::schema::{Schema, SchemaSection, SchemaTopic};
+use codegen_schema::types::{Schema, SchemaSection, SchemaTopic};
 
 use crate::{markdown::MarkdownWriter, navigation::NavigationEntry};
 
@@ -49,7 +49,7 @@ fn generate_topic_page(
             .schema_dir
             .join(&section.path)
             .join(&topic.path)
-            .join(SchemaTopic::notes_file()),
+            .join(SchemaTopic::NOTES_FILE_NAME),
     );
 
     return page.to_string();

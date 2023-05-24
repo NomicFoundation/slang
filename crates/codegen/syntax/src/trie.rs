@@ -1,10 +1,8 @@
-use codegen_schema::types::{
-    production::{Production, VersionMap},
-    scanner::{ScannerDefinition, ScannerRef},
-};
-
-use super::combinator_tree::CombinatorTree;
 use std::{collections::BTreeMap, fmt::Debug};
+
+use codegen_schema::types::{Production, ScannerDefinition, ScannerRef, VersionMap};
+
+use crate::combinator_tree::CombinatorTree;
 
 #[derive(Clone, Debug, Default)]
 pub struct Trie<P: Clone + Debug> {

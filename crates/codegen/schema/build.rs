@@ -6,7 +6,7 @@ use codegen_utils::context::CodegenContext;
 use schemars::{schema_for, JsonSchema};
 use serde_json::Value;
 
-use crate::types::manifest::{ManifestFile, ProductionsFile};
+use crate::types::{ManifestFile, ProductionsFile};
 
 fn main() -> Result<()> {
     return CodegenContext::with_context(|codegen| {

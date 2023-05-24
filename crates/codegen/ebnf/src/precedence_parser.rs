@@ -1,4 +1,4 @@
-use codegen_schema::types::precedence_parser::{OperatorModel, PrecedenceParserRef};
+use codegen_schema::types::{OperatorModel, PrecedenceParserRef};
 
 use crate::{nodes::EbnfNode, serialization::GenerateEbnf};
 

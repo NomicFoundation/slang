@@ -1,9 +1,6 @@
 use std::{collections::VecDeque, mem::discriminant};
 
-use codegen_schema::types::{
-    production::{Production, ProductionRef},
-    schema::Schema,
-};
+use codegen_schema::types::{Production, ProductionRef, Schema};
 use semver::Version;
 
 use crate::nodes::EbnfNode;

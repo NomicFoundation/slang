@@ -1,7 +1,7 @@
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
-use super::production::Reference;
+use crate::types::Reference;
 
 pub type ParserRef = std::rc::Rc<Parser>;
 

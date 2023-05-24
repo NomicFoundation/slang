@@ -80,7 +80,7 @@ fn generate_header(file_path: &PathBuf) -> Result<String> {
     };
 }
 
-fn get_extension<'a>(file_path: &'a PathBuf) -> Result<&'a str> {
+fn get_extension(file_path: &PathBuf) -> Result<&str> {
     return file_path
         .extension()
         .context(format!("Cannot get extension of file: {file_path:?}"))?

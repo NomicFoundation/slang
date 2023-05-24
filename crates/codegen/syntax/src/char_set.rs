@@ -3,10 +3,7 @@ use std::{
     ops::Range,
 };
 
-use codegen_schema::types::{
-    production::Production,
-    scanner::{ScannerDefinition, ScannerRef},
-};
+use codegen_schema::types::{Production, ScannerDefinition, ScannerRef};
 use proc_macro2::TokenStream;
 use quote::quote;
 

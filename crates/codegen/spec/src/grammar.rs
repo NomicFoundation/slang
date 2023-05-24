@@ -1,6 +1,6 @@
 use std::path::PathBuf;
 
-use codegen_schema::types::schema::Schema;
+use codegen_schema::types::Schema;
 use semver::Version;
 
 use crate::{markdown::MarkdownWriter, navigation::NavigationEntry, snippets::Snippets};
@@ -75,7 +75,7 @@ fn generate_grammar_page(
         for topic in &section.topics {
             let snippets: Vec<PathBuf> = topic
                 .productions
-                .values()
+                .iter()
                 .filter_map(|production| snippets.get_snippet_path(production, version))
                 .collect();
 

@@ -2,7 +2,7 @@ use schemars::JsonSchema;
 use semver::Version;
 use serde::{Deserialize, Serialize};
 
-use super::production::ProductionRef;
+use crate::types::ProductionRef;
 
 pub type ManifestFile = Manifest;
 

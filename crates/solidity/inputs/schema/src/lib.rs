@@ -1,10 +1,10 @@
 use std::path::PathBuf;
 
 use anyhow::Result;
-use codegen_schema::types::schema::Schema;
+use codegen_schema::types::{Schema, SchemaRef};
 
 pub trait SoliditySchemaExtensions {
-    fn load_solidity() -> Result<Schema>;
+    fn load_solidity() -> Result<SchemaRef>;
 }
 
 impl SoliditySchemaExtensions for Schema {
@@ -12,11 +12,11 @@ impl SoliditySchemaExtensions for Schema {
     /// This ensures that:
     /// 1. Expensive parsing and validation is done only once.
     /// 2. Errors are reported only once, instead of repeating for every crate.
-    fn load_solidity() -> Result<Schema> {
+    fn load_solidity() -> Result<SchemaRef> {
         let bin_path = PathBuf::from(env!("SLANG_SOLIDITY_INPUT_SCHEMA_BIN"));
         let buffer = std::fs::read(&bin_path)?;
         let schema: Schema = bson::from_slice(&buffer)?;
 
-        return Ok(schema);
+        return Ok(SchemaRef::new(schema));
     }
 }

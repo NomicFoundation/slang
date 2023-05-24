@@ -2,83 +2,65 @@ use std::path::PathBuf;
 
 use codegen_utils::{
     context::CodegenContext,
-    errors::{CodegenErrors, CodegenResult},
+    errors::{CodegenErrors, CodegenResult, Position},
 };
 
 use crate::{
     types::{
-        manifest::{ManifestFile, ManifestSection, ProductionsFile},
-        schema::{Schema, SchemaSection, SchemaTopic},
+        ManifestFile, ManifestSection, ManifestTopic, ProductionsFile, Schema, SchemaRef,
+        SchemaSection, SchemaTopic,
     },
-    validation::Model,
-    yaml,
+    validation::validate_schema,
+    yaml::deserialize_yaml,
 };
 
 impl Schema {
-    pub fn compile(codegen: &mut CodegenContext, schema_dir: PathBuf) -> CodegenResult<Schema> {
-        let manifest_path = schema_dir.join("manifest.yml");
-        let manifest_file = yaml::files::File::<ManifestFile>::load(codegen, manifest_path)?;
+    pub fn compile(codegen: &mut CodegenContext, schema_dir: PathBuf) -> CodegenResult<SchemaRef> {
+        let manifest_path = schema_dir.join(Schema::MANIFEST_FILE_NAME);
+        let manifest = deserialize_yaml::<ManifestFile>(codegen, &manifest_path)?;
 
-        let mut model = Model::new(&manifest_file)?;
-
-        let sections = load_sections(
-            codegen,
-            &mut model,
-            &schema_dir,
-            &manifest_file.value.sections,
-        )?;
-
-        model.validate()?;
+        let sections = load_sections(codegen, &schema_dir, &manifest.sections)?;
 
         let productions = sections
             .iter()
             .flat_map(|section| &section.topics)
             .flat_map(|topic| &topic.productions)
-            .map(|(name, production)| (name.to_owned(), production.clone()))
+            .map(|production| (production.name().to_owned(), production.clone()))
             .collect();
 
-        return Ok(Schema {
-            title: manifest_file.value.title,
-            versions: manifest_file.value.versions,
+        let schema = SchemaRef::new(Schema {
+            title: manifest.title,
             sections,
+            versions: manifest.versions,
+
+            root_production: manifest.root_production,
+            productions,
 
             schema_dir,
-            productions,
         });
+
+        validate_schema(&schema)?;
+
+        return Ok(schema);
     }
 }
 
 fn load_sections(
     codegen: &mut CodegenContext,
-    model: &mut Model,
-    schema_dir: &PathBuf,
+    manifest_dir: &PathBuf,
     sections: &Vec<ManifestSection>,
 ) -> CodegenResult<Vec<SchemaSection>> {
     let mut results = Vec::<SchemaSection>::new();
     let mut errors = CodegenErrors::new();
 
     for section in sections {
+        let section_dir = manifest_dir.join(&section.path);
         let mut topics = Vec::<SchemaTopic>::new();
 
         for topic in &section.topics {
-            let productions_path = schema_dir
-                .join(&section.path)
-                .join(&topic.path)
-                .join(SchemaTopic::productions_file());
-
-            match yaml::files::File::<ProductionsFile>::load(codegen, productions_path) {
-                Ok(productions_file) => {
-                    model.add_productions_file(&productions_file);
-
-                    topics.push(SchemaTopic {
-                        title: topic.title.to_owned(),
-                        path: topic.path.to_owned(),
-                        productions: productions_file
-                            .value
-                            .iter()
-                            .map(|production| (production.name().to_owned(), production.clone()))
-                            .collect(),
-                    });
+            match load_topic(codegen, &section_dir, topic) {
+                Ok(topic) => {
+                    topics.push(topic);
                 }
                 Err(error) => {
                     errors.extend(error);
@@ -93,5 +75,34 @@ fn load_sections(
         });
     }
 
-    return errors.err_or(results);
+    return errors.to_result().map(|_| results);
+}
+
+fn load_topic(
+    codegen: &mut CodegenContext,
+    section_dir: &PathBuf,
+    topic: &ManifestTopic,
+) -> CodegenResult<SchemaTopic> {
+    let topic_dir = section_dir.join(&topic.path);
+
+    let notes_path = topic_dir.join(SchemaTopic::NOTES_FILE_NAME);
+    let productions_path = topic_dir.join(SchemaTopic::PRODUCTIONS_FILE_NAME);
+
+    for path in [&notes_path, &productions_path] {
+        if !path.exists() {
+            let range = Position::new(0, 0, 0)..Position::new(usize::MAX, usize::MAX, usize::MAX);
+            let message = format!("Topic file not found.");
+            return Err(CodegenErrors::single(path.to_owned(), range, message));
+        }
+    }
+
+    let productions = deserialize_yaml::<ProductionsFile>(codegen, &productions_path)?;
+
+    let topic = SchemaTopic {
+        title: topic.title.to_owned(),
+        path: topic.path.to_owned(),
+        productions,
+    };
+
+    return Ok(topic);
 }

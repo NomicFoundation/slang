@@ -1,7 +1,13 @@
-pub(crate) mod manifest; // internal, used for serialization/validation only
+mod manifest;
+mod parser;
+mod precedence_parser;
+mod production;
+mod scanner;
+mod schema;
 
-pub mod parser;
-pub mod precedence_parser;
-pub mod production;
-pub mod scanner;
-pub mod schema;
+pub(crate) use manifest::*; // internal, used for serialization/validation only
+pub use parser::*;
+pub use precedence_parser::*;
+pub use production::*;
+pub use scanner::*;
+pub use schema::*;
