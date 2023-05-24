@@ -182,11 +182,7 @@ pub(crate) fn render_error_report(
     };
 
     if source.is_empty() {
-        return format!(
-            "{kind}: {message}\n   ─[{source_id}:{source_start}:{source_end}]",
-            source_start = source_start.char,
-            source_end = source_end.char
-        );
+        return format!("{kind}: {message}\n   ─[{source_id}:0:0]");
     }
 
     let mut builder = Report::build(kind, source_id, source_start.byte)

@@ -36,13 +36,13 @@ fn write_source<W: Write>(w: &mut W, source: &str) -> Result<()> {
     let line_data = source
         .lines()
         .enumerate()
-        .map(|(index, line)| (index, line, line.bytes().len()))
+        .map(|(index, line)| (index, line, line.bytes().len(), line.chars().count()))
         .collect::<Vec<_>>();
 
     let source_width = {
         let source_width = line_data
             .iter()
-            .map(|(_, _, length)| *length)
+            .map(|(_, _, _, chars)| *chars)
             .max()
             .unwrap_or(0);
 
@@ -52,13 +52,13 @@ fn write_source<W: Write>(w: &mut W, source: &str) -> Result<()> {
     writeln!(w, "Source: >")?;
 
     let mut offset = 0;
-    for (index, line, length) in line_data.iter() {
-        let range = offset..(offset + length);
+    for (index, line, bytes, chars) in line_data.iter() {
+        let range = offset..(offset + bytes);
         writeln!(
             w,
             "  {line_number: <2} │ {line}{padding} │ {range:?}",
             line_number = index + 1,
-            padding = " ".repeat(source_width - length),
+            padding = " ".repeat(source_width - chars),
         )?;
 
         offset = range.end + 1;
