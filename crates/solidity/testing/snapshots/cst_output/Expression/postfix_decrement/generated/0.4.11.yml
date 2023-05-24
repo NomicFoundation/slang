@@ -10,4 +10,5 @@ Tree:
       - UnaryPostfixExpression (Rule): # 0..5 "foo--"
           - PrimaryExpression (Rule): # 0..3 "foo"
               - Identifier (Token): "foo" # 0..3
-          - MinusMinus (Token): "--" # 3..5
+          - UnaryPostfixOperator (Rule): # 3..5 "--"
+              - MinusMinus (Token): "--" # 3..5

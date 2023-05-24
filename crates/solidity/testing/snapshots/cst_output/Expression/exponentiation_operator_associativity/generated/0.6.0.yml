@@ -10,10 +10,12 @@ Tree:
       - ExponentiationExpression (Rule): # 0..11 "x ** y ** z"
           - PrimaryExpression (Rule): # 0..1 "x"
               - Identifier (Token): "x" # 0..1
-          - AsteriskAsterisk (Token): "**" # 2..4
+          - ExponentiationOperator (Rule): # 2..4 "**"
+              - AsteriskAsterisk (Token): "**" # 2..4
           - ExponentiationExpression (Rule): # 5..11 "y ** z"
               - PrimaryExpression (Rule): # 5..6 "y"
                   - Identifier (Token): "y" # 5..6
-              - AsteriskAsterisk (Token): "**" # 7..9
+              - ExponentiationOperator (Rule): # 7..9 "**"
+                  - AsteriskAsterisk (Token): "**" # 7..9
               - PrimaryExpression (Rule): # 10..11 "z"
                   - Identifier (Token): "z" # 10..11

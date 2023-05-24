@@ -14,11 +14,13 @@ Tree:
                   - MemberAccessExpression (Rule): # 4..7 "a.b"
                       - PrimaryExpression (Rule): # 4..5 "a"
                           - Identifier (Token): "a" # 4..5
-                      - Period (Token): "." # 5..6
-                      - Identifier (Token): "b" # 6..7
-                  - ArgumentList (Rule): # 7..9 "()"
-                      - OpenParen (Token): "(" # 7..8
-                      - CloseParen (Token): ")" # 8..9
+                      - MemberAccessOperator (Rule): # 5..7 ".b"
+                          - Period (Token): "." # 5..6
+                          - Identifier (Token): "b" # 6..7
+                  - FunctionCallOperator (Rule): # 7..9 "()"
+                      - ArgumentList (Rule): # 7..9 "()"
+                          - OpenParen (Token): "(" # 7..8
+                          - CloseParen (Token): ")" # 8..9
           - Block (Rule): # 9..12 " {}"
               - OpenBrace (Token): "{" # 10..11
               - CloseBrace (Token): "}" # 11..12

@@ -10,11 +10,12 @@ Tree:
       - FunctionCallExpression (Rule): # 0..13 "x(interested)"
           - PrimaryExpression (Rule): # 0..1 "x"
               - Identifier (Token): "x" # 0..1
-          - ArgumentList (Rule): # 1..13 "(interested)"
-              - OpenParen (Token): "(" # 1..2
-              - PositionalArgumentList (Rule): # 2..12 "interested"
-                  - _SEPARATEDBY (Rule): # 2..12 "interested"
-                      - Expression (Rule): # 2..12 "interested"
-                          - PrimaryExpression (Rule): # 2..12 "interested"
-                              - Identifier (Token): "interested" # 2..12
-              - CloseParen (Token): ")" # 12..13
+          - FunctionCallOperator (Rule): # 1..13 "(interested)"
+              - ArgumentList (Rule): # 1..13 "(interested)"
+                  - OpenParen (Token): "(" # 1..2
+                  - PositionalArgumentList (Rule): # 2..12 "interested"
+                      - _SEPARATEDBY (Rule): # 2..12 "interested"
+                          - Expression (Rule): # 2..12 "interested"
+                              - PrimaryExpression (Rule): # 2..12 "interested"
+                                  - Identifier (Token): "interested" # 2..12
+                  - CloseParen (Token): ")" # 12..13

@@ -226,13 +226,13 @@ impl<'context> CombinatorNode<'context> {
         let primary_expression = Self::from_parser(tree, &parser.definition.primary_expression);
         let operators: Vec<PrecedenceRuleOperator> = parser
             .definition
-            .operators
+            .definitions
             .iter()
-            .map(|operator| -> PrecedenceRuleOperator {
+            .map(|definition| -> PrecedenceRuleOperator {
                 PrecedenceRuleOperator {
-                    name: operator.name.clone(),
-                    model: operator.model,
-                    operator: Self::from_parser_definition(tree, None, &operator.definition),
+                    name: definition.name.clone(),
+                    model: definition.model,
+                    operator: Self::from_parser(tree, &definition.operator),
                 }
             })
             .collect();

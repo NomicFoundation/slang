@@ -3,17 +3,18 @@
 - name: "TypeName"
   kind: "PrecedenceParser"
   unversioned:
-    operators:
+    definitions:
       - name: "ArrayTypeName"
         model: "UnaryPostfix"
-        delimitedBy:
-          open:
-            reference: "OpenBracket"
-          expression:
-            optional:
-              reference: "Expression"
-          close:
-            reference: "CloseBracket"
+        operator:
+          delimitedBy:
+            open:
+              reference: "OpenBracket"
+            expression:
+              optional:
+                reference: "Expression"
+            close:
+              reference: "CloseBracket"
 
     primaryExpression:
       choice:
