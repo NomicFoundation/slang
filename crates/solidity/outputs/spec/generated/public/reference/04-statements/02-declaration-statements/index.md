@@ -2,4 +2,4 @@
 
 # 4.2. Declaration Statements
 
---8<-- "crates/solidity/inputs/schema/grammar/04-statements/02-declaration-statements/notes.md"
+--8<-- "crates/solidity/inputs/schema/definition/04-statements/02-declaration-statements/notes.md"

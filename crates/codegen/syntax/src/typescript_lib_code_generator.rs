@@ -1,7 +1,7 @@
 use quote::quote;
 use std::path::PathBuf;
 
-use codegen_schema::types::grammar::Grammar;
+use codegen_schema::types::schema::Schema;
 use codegen_utils::context::CodegenContext;
 
 use super::code_generator::CodeGenerator;
@@ -9,7 +9,7 @@ use super::code_generator::CodeGenerator;
 impl CodeGenerator {
     pub fn write_typescript_lib_sources(
         &self,
-        grammar: &Grammar,
+        schema: &Schema,
         codegen: &mut CodegenContext,
         output_dir: &PathBuf,
     ) {
@@ -73,7 +73,7 @@ impl CodeGenerator {
                                 version,
                             }}
                         }} else {{
-                            panic!(\"Invalid {grammar_title} language version: {{version}}\");
+                            panic!(\"Invalid {schema_title} language version: {{version}}\");
                         }}
                     }}
 
@@ -88,7 +88,7 @@ impl CodeGenerator {
                         match production_kind {{
                             {scanner_invocations},
                             {parser_invocations},
-                        }}.expect(&format!(\"Production {{production_kind:?}} is not valid in this version of {grammar_title}\"))
+                        }}.expect(&format!(\"Production {{production_kind:?}} is not valid in this version of {schema_title}\"))
                     }}
                 }}
                 ",
@@ -101,11 +101,11 @@ impl CodeGenerator {
                     .unwrap(),
                 version_flag_declarations = self.version_flag_declarations(),
                 versions_array = {
-                    let versions = grammar.versions.iter().map(|v| v.to_string());
+                    let versions = schema.versions.iter().map(|v| v.to_string());
                     quote! { static VERSIONS: &'static [&'static str] = &[ #(#versions),* ]; }
                 },
                 version_flag_initializers = self.version_flag_initializers(),
-                grammar_title = &grammar.title,
+                schema_title = &schema.title,
                 scanner_invocations = self.scanner_invocations(),
                 parser_invocations = self.parser_invocations(),
             );

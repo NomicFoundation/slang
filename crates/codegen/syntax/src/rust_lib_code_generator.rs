@@ -1,7 +1,7 @@
 use quote::quote;
 use std::path::PathBuf;
 
-use codegen_schema::types::grammar::Grammar;
+use codegen_schema::types::schema::Schema;
 use codegen_utils::context::CodegenContext;
 
 use super::code_generator::CodeGenerator;
@@ -9,7 +9,7 @@ use super::code_generator::CodeGenerator;
 impl CodeGenerator {
     pub fn write_rust_lib_sources(
         &self,
-        grammar: &Grammar,
+        schema: &Schema,
         codegen: &mut CodegenContext,
         output_dir: &PathBuf,
     ) {
@@ -62,7 +62,7 @@ impl CodeGenerator {
 
                 #[derive(thiserror::Error, Debug)]
                 pub enum Error {{
-                    #[error(\"Invalid {grammar_title} language version '{{0}}'.\")]
+                    #[error(\"Invalid {schema_title} language version '{{0}}'.\")]
                     InvalidLanguageVersion(Version),
                 }}
 
@@ -90,7 +90,7 @@ impl CodeGenerator {
                         }};
                         
                         output.unwrap_or_else(|| {{
-                            let message = format!(\"ProductionKind {{production_kind}} is not valid in this version of {grammar_title}\");
+                            let message = format!(\"ProductionKind {{production_kind}} is not valid in this version of {schema_title}\");
                             ParseOutput {{
                                 parse_tree: None,
                                 errors: vec![ParseError::new(Default::default(), message)]
@@ -107,9 +107,9 @@ impl CodeGenerator {
                     )
                     .unwrap(),
                 version_flag_declarations = self.version_flag_declarations(),
-                grammar_title = &grammar.title,
+                schema_title = &schema.title,
                 versions_array = {
-                    let versions = grammar.versions.iter().map(|v| v.to_string());
+                    let versions = schema.versions.iter().map(|v| v.to_string());
                     quote! { static VERSIONS: &'static [&'static str] = &[ #(#versions),* ]; }
                 },
                 version_flag_initializers = self.version_flag_initializers(),

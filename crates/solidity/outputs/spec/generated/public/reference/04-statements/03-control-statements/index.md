@@ -2,4 +2,4 @@
 
 # 4.3. Control Statements
 
---8<-- "crates/solidity/inputs/schema/grammar/04-statements/03-control-statements/notes.md"
+--8<-- "crates/solidity/inputs/schema/definition/04-statements/03-control-statements/notes.md"

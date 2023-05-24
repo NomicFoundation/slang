@@ -1,8 +1,8 @@
 use std::{collections::VecDeque, mem::discriminant};
 
 use codegen_schema::types::{
-    grammar::Grammar,
     production::{Production, ProductionRef},
+    schema::Schema,
 };
 use semver::Version;
 
@@ -12,18 +12,18 @@ pub trait GenerateEbnf {
     fn generate_ebnf(&self) -> EbnfNode;
 }
 
-pub struct EbnfSerializer<'grammar> {
-    grammar: &'grammar Grammar,
-    base_production: &'grammar str,
+pub struct EbnfSerializer<'schema> {
+    schema: &'schema Schema,
+    base_production: &'schema str,
 
     buffer: String,
     queue: VecDeque<(String, Option<String>, EbnfNode)>,
 }
 
-impl<'grammar> EbnfSerializer<'grammar> {
+impl<'schema> EbnfSerializer<'schema> {
     pub fn serialize_version(
-        grammar: &'grammar Grammar,
-        production: &'grammar ProductionRef,
+        schema: &'schema Schema,
+        production: &'schema ProductionRef,
         version: &Version,
     ) -> Option<String> {
         let body = match production.as_ref() {
@@ -42,7 +42,7 @@ impl<'grammar> EbnfSerializer<'grammar> {
         };
 
         let mut instance = Self {
-            grammar,
+            schema,
             buffer: String::new(),
             base_production: production.name(),
             queue: VecDeque::new(),
@@ -186,7 +186,7 @@ impl<'grammar> EbnfSerializer<'grammar> {
     }
 
     fn display_name(&self, name: &String) -> String {
-        if let Some(production) = self.grammar.productions.get(name) {
+        if let Some(production) = self.schema.productions.get(name) {
             if matches!(production.as_ref(), Production::Scanner { .. }) {
                 return format!("«{name}»");
             }

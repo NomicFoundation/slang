@@ -2,4 +2,4 @@
 
 # 5.4. Strings
 
---8<-- "crates/solidity/inputs/schema/grammar/05-expressions/04-strings/notes.md"
+--8<-- "crates/solidity/inputs/schema/definition/05-expressions/04-strings/notes.md"

@@ -2,9 +2,9 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "Validate Solidity Grammar",
+      "label": "Validate Solidity Schema",
       "type": "shell",
-      "command": "scripts/solidity/check-grammar.sh",
+      "command": "scripts/solidity/validate-schema.sh",
       "options": {
         "env": {
           "VSCODE_PROBLEM_MATCHER": "true"

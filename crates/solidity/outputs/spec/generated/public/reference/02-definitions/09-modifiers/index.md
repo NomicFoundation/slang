@@ -2,4 +2,4 @@
 
 # 2.9. Modifiers
 
---8<-- "crates/solidity/inputs/schema/grammar/02-definitions/09-modifiers/notes.md"
+--8<-- "crates/solidity/inputs/schema/definition/02-definitions/09-modifiers/notes.md"

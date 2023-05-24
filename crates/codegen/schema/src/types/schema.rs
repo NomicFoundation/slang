@@ -1,4 +1,4 @@
-use std::{collections::HashMap, path::PathBuf};
+use std::path::PathBuf;
 
 use indexmap::IndexMap;
 use semver::Version;
@@ -8,32 +8,32 @@ use super::production::ProductionRef;
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 #[serde(deny_unknown_fields)]
-pub struct Grammar {
+pub struct Schema {
     pub title: String,
-    pub sections: Vec<GrammarSection>,
+    pub sections: Vec<SchemaSection>,
     pub versions: Vec<Version>,
 
-    pub manifest_dir: PathBuf,
-    pub productions: HashMap<String, ProductionRef>,
+    pub schema_dir: PathBuf,
+    pub productions: IndexMap<String, ProductionRef>,
 }
 
 #[derive(Deserialize, Serialize, Clone, Debug)]
 #[serde(deny_unknown_fields)]
-pub struct GrammarSection {
+pub struct SchemaSection {
     pub title: String,
     pub path: String,
-    pub topics: Vec<GrammarTopic>,
+    pub topics: Vec<SchemaTopic>,
 }
 
 #[derive(Deserialize, Serialize, Clone, Debug)]
 #[serde(deny_unknown_fields)]
-pub struct GrammarTopic {
+pub struct SchemaTopic {
     pub title: String,
     pub path: String,
     pub productions: IndexMap<String, ProductionRef>,
 }
 
-impl GrammarTopic {
+impl SchemaTopic {
     // TODO(OmarTawfik): This method is definetely used.
     // Need to isolate and report the bug to the rustc team.
     #[allow(dead_code)]

@@ -51,7 +51,7 @@ impl<'context> CombinatorTree<'context> {
     }
 
     pub fn add_to_generated_code(&self, code: &mut CodeGenerator) {
-        let first_version = self.context.grammar.versions.first().unwrap();
+        let first_version = self.context.schema.versions.first().unwrap();
         let version = &self.context.version;
         let matches_version = match self.production.versions() {
             Some(versions) => versions.contains(&version),
@@ -103,7 +103,7 @@ impl<'context> CombinatorTree<'context> {
         }
 
         if let Some(ebnf) = EbnfSerializer::serialize_version(
-            self.context.grammar,
+            self.context.schema,
             &self.production,
             &self.context.version,
         ) {

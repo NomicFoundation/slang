@@ -4,19 +4,19 @@ use std::{
 };
 
 use anyhow::{bail, Context, Result};
-use codegen_schema::types::grammar::Grammar;
+use codegen_schema::types::schema::Schema;
 use codegen_utils::context::CodegenContext;
 use walkdir::WalkDir;
 
 pub fn generate_cst_output_tests(
-    grammar: &Grammar,
+    schema: &Schema,
     codegen: &mut CodegenContext,
     data_dir: &PathBuf,
     output_dir: &PathBuf,
 ) -> Result<()> {
     let mod_file_path = output_dir.join("mod.rs");
     let parser_tests = &collect_parser_tests(codegen, data_dir)?;
-    generate_mod_file(grammar, codegen, &mod_file_path, parser_tests)?;
+    generate_mod_file(schema, codegen, &mod_file_path, parser_tests)?;
 
     for (parser_name, test_names) in parser_tests {
         generate_unit_test_file(
@@ -75,7 +75,7 @@ fn collect_parser_tests(
 }
 
 fn generate_mod_file(
-    grammar: &Grammar,
+    schema: &Schema,
     codegen: &mut CodegenContext,
     mod_file_path: &PathBuf,
     parser_tests: &BTreeMap<String, BTreeSet<String>>,
@@ -85,7 +85,7 @@ fn generate_mod_file(
         .map(|parser_name| format!("#[allow(non_snake_case)] mod {parser_name};"))
         .collect::<String>();
 
-    let version_breaks = grammar.collect_version_breaks();
+    let version_breaks = schema.collect_version_breaks();
     let version_breaks_len = version_breaks.len();
     let version_breaks_str = version_breaks
         .iter()

@@ -3,7 +3,7 @@ use std::path::PathBuf;
 use codegen_utils::errors::CodegenErrors;
 
 use crate::{
-    types::grammar::GrammarTopic,
+    types::schema::SchemaTopic,
     validation::{
         ast::{
             files::ManifestFile,
@@ -20,13 +20,13 @@ pub fn check(model: &Model, errors: &mut CodegenErrors) {
 }
 
 struct PathsChecker {
-    grammar_dir: PathBuf,
+    schema_dir: PathBuf,
 }
 
 impl PathsChecker {
     fn new(model: &Model) -> Self {
         return Self {
-            grammar_dir: model.manifest_file.path.parent().unwrap().to_owned(),
+            schema_dir: model.manifest_file.path.parent().unwrap().to_owned(),
         };
     }
 }
@@ -38,7 +38,7 @@ impl Visitor for PathsChecker {
         reporter: &mut Reporter,
     ) -> VisitorResponse {
         for section in &manifest_file.ast.value.sections {
-            let section_path = self.grammar_dir.join(&section.path.value);
+            let section_path = self.schema_dir.join(&section.path.value);
 
             if !section_path.exists() {
                 reporter.report(&section.path.cst_node, Errors::PathNotFound(section_path));
@@ -54,8 +54,8 @@ impl Visitor for PathsChecker {
                 }
 
                 for path in [
-                    topic_path.join(GrammarTopic::productions_file()),
-                    topic_path.join(GrammarTopic::notes_file()),
+                    topic_path.join(SchemaTopic::productions_file()),
+                    topic_path.join(SchemaTopic::notes_file()),
                 ] {
                     if !path.exists() {
                         reporter.report(&topic.path.cst_node, Errors::PathNotFound(path));
