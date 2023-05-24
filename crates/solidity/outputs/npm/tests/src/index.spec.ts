@@ -1,6 +1,9 @@
 import test from "ava";
 
-import { Language, RuleKind, TokenKind, NodeType, RuleNode, TokenNode, ProductionKind } from "@nomicfoundation/slang";
+import * as slang from "@nomicfoundation/slang";
+import { Language } from "@nomicfoundation/slang";
+import { NodeType, RuleKind, RuleNode, TokenKind, TokenNode } from "@nomicfoundation/slang/syntax/nodes";
+import { ProductionKind } from "@nomicfoundation/slang/syntax/parser";
 
 test("parse some token", (t) => {
   const source = "5_286_981";
@@ -68,4 +71,9 @@ Error: Expected end of input.
 ───╯
 `.trim(),
   );
+});
+
+test("use namespace import of the API", (t) => {
+  t.is(typeof slang.syntax.nodes.RuleKind, "object");
+  t.is(typeof slang.syntax.parser.ProductionKind, "object");
 });

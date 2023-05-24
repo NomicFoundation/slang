@@ -23,15 +23,20 @@
       "email": "omar@nomic.foundation"
     }
   ],
-  "main": "src/generated/index.js",
-  "types": "src/generated/index.d.ts",
   "files": [
-    "src/generated/index.d.ts",
-    "src/generated/index.js",
+    "src/**/*.d.ts",
+    "src/**/*.js",
     "CHANGELOG.md",
     "LICENSE",
     "README.md"
   ],
+  "__exports_comment__": "__SLANG_PUBLIC_API_SYNC__ (please keep in sync across all other instances)",
+  "exports": {
+    ".": "./src/index.js",
+    "./syntax": "./src/syntax/index.js",
+    "./syntax/nodes": "./src/syntax/nodes/index.js",
+    "./syntax/parser": "./src/syntax/parser/index.js"
+  },
   "devDependencies": {
     "@napi-rs/cli": "2.15.2",
     "prettier": "2.8.6"
