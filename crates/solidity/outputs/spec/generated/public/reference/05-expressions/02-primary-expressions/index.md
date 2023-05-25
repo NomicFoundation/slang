@@ -2,4 +2,4 @@
 
 # 5.2. Primary Expressions
 
---8<-- "crates/solidity/inputs/schema/definition/05-expressions/02-primary-expressions/notes.md"
+--8<-- "crates/solidity/inputs/language/definition/05-expressions/02-primary-expressions/notes.md"

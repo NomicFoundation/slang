@@ -2,4 +2,4 @@
 
 # 1.8 Punctuation
 
---8<-- "crates/solidity/inputs/schema/definition/01-file-structure/08-punctuation/notes.md"
+--8<-- "crates/solidity/inputs/language/definition/01-file-structure/08-punctuation/notes.md"

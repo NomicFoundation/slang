@@ -1,7 +1,7 @@
 use indexmap::{IndexMap, IndexSet};
 
 use crate::{
-    types::SchemaRef,
+    types::LanguageDefinitionRef,
     validation::visitors::{LocationRef, Reporter, VersionSet},
 };
 
@@ -57,10 +57,10 @@ impl Metadata {
         return version_set.difference(&reference.defined_in).is_empty();
     }
 
-    pub fn check_not_used(&self, schema: &SchemaRef, reporter: &mut Reporter) {
-        let required_productions = schema.required_productions();
+    pub fn check_not_used(&self, language: &LanguageDefinitionRef, reporter: &mut Reporter) {
+        let required_productions = language.required_productions();
 
-        for production_name in schema.productions.keys() {
+        for production_name in language.productions.keys() {
             if required_productions.contains(production_name.as_str()) {
                 continue;
             }
@@ -77,10 +77,10 @@ impl Metadata {
         }
     }
 
-    pub fn check_not_reachable(&self, schema: &SchemaRef, reporter: &mut Reporter) {
+    pub fn check_not_reachable(&self, language: &LanguageDefinitionRef, reporter: &mut Reporter) {
         let mut visited = IndexSet::new();
 
-        let mut queue = schema
+        let mut queue = language
             .required_productions()
             .into_iter()
             .collect::<Vec<_>>();
@@ -98,7 +98,7 @@ impl Metadata {
             }
         }
 
-        for production_name in schema.productions.keys() {
+        for production_name in language.productions.keys() {
             if !visited.contains(production_name) {
                 let location = &self.productions.get(production_name).unwrap().location;
                 reporter.report(location, Errors::NotReachable(production_name.to_owned()));

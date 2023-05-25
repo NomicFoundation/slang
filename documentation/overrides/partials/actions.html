@@ -23,7 +23,7 @@
 <!--
     Changes applied in this fork:
 
-    1. Redirect users to the schema definition instead of the generated files.
+    1. Redirect users to the language definition instead of the generated files.
 -->
 
 {% set edit_url = page.edit_url %}
@@ -31,8 +31,8 @@
 {% if edit_url is string %}
 
     {% if "/documentation/public/solidity-specification/" in edit_url %}
-        <!-- Redirect users to the schema definition instead of the generated files: -->
-        {% set edit_url = config.repo_url + "/edit/main/crates/solidity/inputs/schema/definition" %}
+        <!-- Redirect users to the language definition instead of the generated files: -->
+        {% set edit_url = config.repo_url + "/edit/main/crates/solidity/inputs/language/definition" %}
     {% endif %}
 
     <!-- Edit Button -->

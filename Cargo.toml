@@ -13,7 +13,7 @@ members = [
     "crates/codegen/spec",
     "crates/codegen/testing",
     "crates/codegen/utils",
-    "crates/solidity/inputs/schema",
+    "crates/solidity/inputs/language",
     "crates/solidity/outputs/cargo/build",
     "crates/solidity/outputs/cargo/crate",
     "crates/solidity/outputs/cargo/tests",
@@ -54,7 +54,7 @@ similar-asserts = { version = "1.4.2" }
 slang_solidity = { path = "crates/solidity/outputs/cargo/crate" }
 solidity_cargo_build = { path = "crates/solidity/outputs/cargo/build" }
 solidity_npm_build = { path = "crates/solidity/outputs/npm/build" }
-solidity_schema = { path = "crates/solidity/inputs/schema" }
+solidity_language = { path = "crates/solidity/inputs/language" }
 solidity_testing_utils = { path = "crates/solidity/testing/utils" }
 strum = { version = "0.24" }
 strum_macros = { version = "0.24" }

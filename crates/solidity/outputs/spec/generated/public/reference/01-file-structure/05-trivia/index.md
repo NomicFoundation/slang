@@ -2,4 +2,4 @@
 
 # 1.5. Trivia
 
---8<-- "crates/solidity/inputs/schema/definition/01-file-structure/05-trivia/notes.md"
+--8<-- "crates/solidity/inputs/language/definition/01-file-structure/05-trivia/notes.md"

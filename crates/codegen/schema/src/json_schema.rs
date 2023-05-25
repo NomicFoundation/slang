@@ -5,9 +5,9 @@ use codegen_utils::context::CodegenContext;
 use schemars::{schema_for, JsonSchema};
 use serde_json::Value;
 
-use crate::types::{ManifestFile, ProductionsFile, Schema};
+use crate::types::{LanguageDefinition, ManifestFile, ProductionsFile};
 
-impl Schema {
+impl LanguageDefinition {
     pub fn generate_json_schema(codegen: &mut CodegenContext, output_dir: PathBuf) -> Result<()> {
         write_schema_file::<ManifestFile>(codegen, &output_dir.join("manifest.schema.json"))?;
 

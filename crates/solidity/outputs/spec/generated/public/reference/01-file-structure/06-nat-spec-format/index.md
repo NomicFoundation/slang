@@ -2,4 +2,4 @@
 
 # 1.6. NatSpec Format
 
---8<-- "crates/solidity/inputs/schema/definition/01-file-structure/06-nat-spec-format/notes.md"
+--8<-- "crates/solidity/inputs/language/definition/01-file-structure/06-nat-spec-format/notes.md"

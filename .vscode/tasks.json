@@ -2,9 +2,9 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "Validate Solidity Schema",
+      "label": "Validate Solidity Definition",
       "type": "shell",
-      "command": "scripts/solidity/validate-schema.sh",
+      "command": "scripts/solidity/validate-definition.sh",
       "options": {
         "env": {
           "VSCODE_PROBLEM_MATCHER": "true"

@@ -2,4 +2,4 @@
 
 # 2.4. Structs
 
---8<-- "crates/solidity/inputs/schema/definition/02-definitions/04-structs/notes.md"
+--8<-- "crates/solidity/inputs/language/definition/02-definitions/04-structs/notes.md"

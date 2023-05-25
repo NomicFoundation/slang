@@ -2,4 +2,4 @@
 
 # 2.12. Errors
 
---8<-- "crates/solidity/inputs/schema/definition/02-definitions/12-errors/notes.md"
+--8<-- "crates/solidity/inputs/language/definition/02-definitions/12-errors/notes.md"

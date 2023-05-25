@@ -3,15 +3,15 @@ mod visitors;
 
 use codegen_utils::errors::CodegenResult;
 
-use crate::types::SchemaRef;
+use crate::types::LanguageDefinitionRef;
 
-pub fn validate_schema(schema: &SchemaRef) -> CodegenResult<()> {
+pub fn validate_language(language: &LanguageDefinitionRef) -> CodegenResult<()> {
     // Validation should stop at each step if there are any errors:
 
-    rules::language_versions::run(schema)?;
-    rules::definitions::run(schema)?;
-    rules::references::run(schema)?;
-    rules::empty_roots::run(schema)?;
+    rules::language_versions::run(language)?;
+    rules::definitions::run(language)?;
+    rules::references::run(language)?;
+    rules::empty_roots::run(language)?;
 
     return Ok(());
 }

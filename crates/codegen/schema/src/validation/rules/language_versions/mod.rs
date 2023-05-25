@@ -2,39 +2,39 @@ use codegen_utils::errors::CodegenResult;
 use semver::Version;
 
 use crate::{
-    types::{ProductionRef, SchemaRef},
+    types::{LanguageDefinitionRef, ProductionRef},
     validation::visitors::{run_visitor, LocationRef, Reporter, Visitor},
 };
 
-pub fn run(schema: &SchemaRef) -> CodegenResult<()> {
-    let mut visitor = LanguageVersions::new(schema);
+pub fn run(language: &LanguageDefinitionRef) -> CodegenResult<()> {
+    let mut visitor = LanguageVersions::new(language);
     let mut reporter = Reporter::new();
 
-    run_visitor(&mut visitor, schema, &mut reporter);
+    run_visitor(&mut visitor, language, &mut reporter);
 
     return reporter.to_result();
 }
 
 struct LanguageVersions {
-    schema: SchemaRef,
+    language: LanguageDefinitionRef,
 }
 
 impl LanguageVersions {
-    fn new(schema: &SchemaRef) -> Self {
+    fn new(language: &LanguageDefinitionRef) -> Self {
         return Self {
-            schema: schema.to_owned(),
+            language: language.to_owned(),
         };
     }
 }
 
 impl Visitor for LanguageVersions {
     fn visit_manifest(&mut self, location: &LocationRef, reporter: &mut Reporter) -> bool {
-        if self.schema.versions.is_empty() {
+        if self.language.versions.is_empty() {
             reporter.report(&location, Errors::Empty);
             return false;
         }
 
-        for window in self.schema.versions.windows(2) {
+        for window in self.language.versions.windows(2) {
             let current = &window[0];
             let next = &window[1];
 
@@ -74,7 +74,7 @@ impl Visitor for LanguageVersions {
         }
 
         for version in versions {
-            if !self.schema.versions.contains(version) {
+            if !self.language.versions.contains(version) {
                 reporter.report(location, Errors::Unknown(version.to_owned()));
             }
         }

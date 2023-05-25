@@ -2,4 +2,4 @@
 
 # 5.3. Numbers
 
---8<-- "crates/solidity/inputs/schema/definition/05-expressions/03-numbers/notes.md"
+--8<-- "crates/solidity/inputs/language/definition/05-expressions/03-numbers/notes.md"

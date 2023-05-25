@@ -2,4 +2,4 @@
 
 # 3.2. Elementary Types
 
---8<-- "crates/solidity/inputs/schema/definition/03-types/02-elementary-types/notes.md"
+--8<-- "crates/solidity/inputs/language/definition/03-types/02-elementary-types/notes.md"

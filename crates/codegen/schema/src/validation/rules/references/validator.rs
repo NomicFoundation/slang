@@ -1,7 +1,7 @@
 use crate::{
     types::{
-        ParserDefinition, ParserRef, Production, ProductionRef, ScannerDefinition, ScannerRef,
-        SchemaRef,
+        LanguageDefinitionRef, ParserDefinition, ParserRef, Production, ProductionRef,
+        ScannerDefinition, ScannerRef,
     },
     validation::{
         rules::references::metadata::Metadata,
@@ -10,16 +10,16 @@ use crate::{
 };
 
 pub struct Validator {
-    schema: SchemaRef,
+    language: LanguageDefinitionRef,
     metadata: Metadata,
     current_production: Option<ProductionRef>,
     current_version_set: Option<VersionSet>,
 }
 
 impl Validator {
-    pub fn new(schema: &SchemaRef, metadata: Metadata) -> Self {
+    pub fn new(language: &LanguageDefinitionRef, metadata: Metadata) -> Self {
         return Self {
-            schema: schema.to_owned(),
+            language: language.to_owned(),
             metadata,
             current_production: None,
             current_version_set: None,
@@ -99,7 +99,7 @@ impl Validator {
         location: &LocationRef,
         reporter: &mut Reporter,
     ) {
-        match self.schema.productions.get(reference) {
+        match self.language.productions.get(reference) {
             Some(_) => {
                 self.insert_reference(reference, location, reporter);
             }
@@ -115,7 +115,7 @@ impl Validator {
         location: &LocationRef,
         reporter: &mut Reporter,
     ) {
-        match self.schema.productions.get(reference) {
+        match self.language.productions.get(reference) {
             Some(production) => match production.as_ref() {
                 Production::Scanner { .. } => {
                     self.insert_reference(reference, location, reporter);

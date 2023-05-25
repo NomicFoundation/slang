@@ -3,7 +3,7 @@ mod cst_output;
 use std::path::PathBuf;
 
 use anyhow::Result;
-use codegen_schema::types::Schema;
+use codegen_schema::types::LanguageDefinition;
 use codegen_utils::context::CodegenContext;
 
 use crate::cst_output::generate_cst_output_tests;
@@ -17,7 +17,7 @@ pub trait TestingGeneratorExtensions {
     ) -> Result<()>;
 }
 
-impl TestingGeneratorExtensions for Schema {
+impl TestingGeneratorExtensions for LanguageDefinition {
     fn generate_cst_output_tests(
         &self,
         codegen: &mut CodegenContext,

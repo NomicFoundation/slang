@@ -1,14 +1,14 @@
 use anyhow::Result;
-use codegen_schema::types::Schema;
+use codegen_schema::types::LanguageDefinition;
 use codegen_testing::TestingGeneratorExtensions;
 use codegen_utils::context::CodegenContext;
-use solidity_schema::SoliditySchemaExtensions;
+use solidity_language::SolidityLanguageExtensions;
 
 fn main() -> Result<()> {
     return CodegenContext::with_context(|codegen| {
-        let schema = Schema::load_solidity()?;
+        let language = LanguageDefinition::load_solidity()?;
 
-        schema.generate_cst_output_tests(
+        language.generate_cst_output_tests(
             codegen,
             &codegen
                 .repo_root

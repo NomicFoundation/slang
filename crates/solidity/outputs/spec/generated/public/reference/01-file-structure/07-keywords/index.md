@@ -2,4 +2,4 @@
 
 # 1.7. Keywords
 
---8<-- "crates/solidity/inputs/schema/definition/01-file-structure/07-keywords/notes.md"
+--8<-- "crates/solidity/inputs/language/definition/01-file-structure/07-keywords/notes.md"

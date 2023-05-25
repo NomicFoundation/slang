@@ -1,6 +1,6 @@
 use std::path::PathBuf;
 
-use codegen_schema::types::Schema;
+use codegen_schema::types::LanguageDefinition;
 use codegen_utils::context::CodegenContext;
 use quote::quote;
 
@@ -9,7 +9,7 @@ use crate::code_generator::CodeGenerator;
 impl CodeGenerator {
     pub fn write_typescript_lib_sources(
         &self,
-        schema: &Schema,
+        language: &LanguageDefinition,
         codegen: &mut CodegenContext,
         output_dir: &PathBuf,
     ) {
@@ -73,7 +73,7 @@ impl CodeGenerator {
                                 version,
                             }}
                         }} else {{
-                            panic!(\"Invalid {schema_title} language version: {{version}}\");
+                            panic!(\"Invalid {language_title} language version: {{version}}\");
                         }}
                     }}
 
@@ -88,7 +88,7 @@ impl CodeGenerator {
                         match production_kind {{
                             {scanner_invocations},
                             {parser_invocations},
-                        }}.expect(&format!(\"Production {{production_kind:?}} is not valid in this version of {schema_title}\"))
+                        }}.expect(&format!(\"Production {{production_kind:?}} is not valid in this version of {language_title}\"))
                     }}
                 }}
                 ",
@@ -101,11 +101,11 @@ impl CodeGenerator {
                     .unwrap(),
                 version_flag_declarations = self.version_flag_declarations(),
                 versions_array = {
-                    let versions = schema.versions.iter().map(|v| v.to_string());
+                    let versions = language.versions.iter().map(|v| v.to_string());
                     quote! { static VERSIONS: &'static [&'static str] = &[ #(#versions),* ]; }
                 },
                 version_flag_initializers = self.version_flag_initializers(),
-                schema_title = &schema.title,
+                language_title = &language.title,
                 scanner_invocations = self.scanner_invocations(),
                 parser_invocations = self.parser_invocations(),
             );

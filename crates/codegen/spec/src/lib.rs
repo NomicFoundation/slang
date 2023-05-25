@@ -7,7 +7,7 @@ mod snippets;
 use std::path::PathBuf;
 
 use anyhow::Result;
-use codegen_schema::types::Schema;
+use codegen_schema::types::LanguageDefinition;
 use codegen_utils::context::CodegenContext;
 
 use crate::{
@@ -21,7 +21,7 @@ pub trait SpecGeneratorExtensions {
     fn generate_spec(&self, codegen: &mut CodegenContext, output_dir: &PathBuf) -> Result<()>;
 }
 
-impl SpecGeneratorExtensions for Schema {
+impl SpecGeneratorExtensions for LanguageDefinition {
     fn generate_spec(&self, codegen: &mut CodegenContext, output_dir: &PathBuf) -> Result<()> {
         let snippets = Snippets::new(self, output_dir);
         snippets.write_files(codegen)?;
