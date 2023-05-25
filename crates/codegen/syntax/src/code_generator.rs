@@ -3,7 +3,7 @@ use std::{
     path::PathBuf,
 };
 
-use codegen_schema::types::Schema;
+use codegen_schema::types::LanguageDefinition;
 use codegen_utils::context::CodegenContext;
 use inflector::Inflector;
 use proc_macro2::{Ident, TokenStream};
@@ -14,9 +14,9 @@ use semver::Version;
 pub struct VersionedFunctionBody(BTreeMap<Version, Option<(String, TokenStream)>>);
 
 impl VersionedFunctionBody {
-    fn new(first_schema_version: &Version) -> Self {
+    fn new(first_language_version: &Version) -> Self {
         let mut versions = BTreeMap::new();
-        versions.insert(first_schema_version.clone(), None);
+        versions.insert(first_language_version.clone(), None);
         Self(versions)
     }
 
@@ -128,9 +128,9 @@ pub struct CodeGenerator {
 }
 
 impl CodeGenerator {
-    pub fn new(schema: &Schema) -> Self {
+    pub fn new(language: &LanguageDefinition) -> Self {
         Self {
-            first_version: schema.versions.first().unwrap().clone(),
+            first_version: language.versions.first().unwrap().clone(),
             token_kinds: Default::default(),
             scanners: Default::default(),
             rule_kinds: Default::default(),

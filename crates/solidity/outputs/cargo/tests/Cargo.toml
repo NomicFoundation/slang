@@ -10,7 +10,7 @@ anyhow = { workspace = true }
 codegen_schema = { workspace = true }
 codegen_testing = { workspace = true }
 codegen_utils = { workspace = true }
-solidity_schema = { workspace = true }
+solidity_language = { workspace = true }
 
 [dev-dependencies]
 anyhow = { workspace = true }

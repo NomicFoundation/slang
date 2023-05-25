@@ -1,27 +1,30 @@
 use codegen_utils::errors::CodegenResult;
 
 use crate::{
-    types::{ParserDefinition, ParserRef, ProductionRef, ScannerDefinition, ScannerRef, SchemaRef},
+    types::{
+        LanguageDefinitionRef, ParserDefinition, ParserRef, ProductionRef, ScannerDefinition,
+        ScannerRef,
+    },
     validation::visitors::{run_visitor, LocationRef, Reporter, Visitor},
 };
 
-pub fn run(schema: &SchemaRef) -> CodegenResult<()> {
-    let mut visitor = EmptyRoots::new(schema);
+pub fn run(language: &LanguageDefinitionRef) -> CodegenResult<()> {
+    let mut visitor = EmptyRoots::new(language);
     let mut reporter = Reporter::new();
 
-    run_visitor(&mut visitor, schema, &mut reporter);
+    run_visitor(&mut visitor, language, &mut reporter);
 
     return reporter.to_result();
 }
 
 struct EmptyRoots {
-    schema: SchemaRef,
+    language: LanguageDefinitionRef,
 }
 
 impl EmptyRoots {
-    fn new(schema: &SchemaRef) -> Self {
+    fn new(language: &LanguageDefinitionRef) -> Self {
         return Self {
-            schema: schema.to_owned(),
+            language: language.to_owned(),
         };
     }
 }
@@ -33,7 +36,7 @@ impl Visitor for EmptyRoots {
         _location: &LocationRef,
         _reporter: &mut Reporter,
     ) -> bool {
-        if production.name() == &self.schema.root_production {
+        if production.name() == &self.language.root_production {
             // Skip, as it is allowed to be empty.
             return false;
         }

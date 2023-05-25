@@ -2,4 +2,4 @@
 
 # 2.7. State Variables
 
---8<-- "crates/solidity/inputs/schema/definition/02-definitions/07-state-variables/notes.md"
+--8<-- "crates/solidity/inputs/language/definition/02-definitions/07-state-variables/notes.md"

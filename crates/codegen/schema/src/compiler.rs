@@ -7,19 +7,22 @@ use codegen_utils::{
 
 use crate::{
     types::{
-        ManifestFile, ManifestSection, ManifestTopic, ProductionsFile, Schema, SchemaRef,
-        SchemaSection, SchemaTopic,
+        LanguageDefinition, LanguageDefinitionRef, LanguageSection, LanguageTopic, ManifestFile,
+        ManifestSection, ManifestTopic, ProductionsFile,
     },
-    validation::validate_schema,
+    validation::validate_language,
     yaml::deserialize_yaml,
 };
 
-impl Schema {
-    pub fn compile(codegen: &mut CodegenContext, schema_dir: PathBuf) -> CodegenResult<SchemaRef> {
-        let manifest_path = schema_dir.join(Schema::MANIFEST_FILE_NAME);
+impl LanguageDefinition {
+    pub fn compile(
+        codegen: &mut CodegenContext,
+        language_dir: PathBuf,
+    ) -> CodegenResult<LanguageDefinitionRef> {
+        let manifest_path = language_dir.join(LanguageDefinition::MANIFEST_FILE_NAME);
         let manifest = deserialize_yaml::<ManifestFile>(codegen, &manifest_path)?;
 
-        let sections = load_sections(codegen, &schema_dir, &manifest.sections)?;
+        let sections = load_sections(codegen, &language_dir, &manifest.sections)?;
 
         let productions = sections
             .iter()
@@ -28,7 +31,7 @@ impl Schema {
             .map(|production| (production.name().to_owned(), production.clone()))
             .collect();
 
-        let schema = SchemaRef::new(Schema {
+        let language = LanguageDefinitionRef::new(LanguageDefinition {
             title: manifest.title,
             sections,
             versions: manifest.versions,
@@ -36,12 +39,12 @@ impl Schema {
             root_production: manifest.root_production,
             productions,
 
-            schema_dir,
+            language_dir,
         });
 
-        validate_schema(&schema)?;
+        validate_language(&language)?;
 
-        return Ok(schema);
+        return Ok(language);
     }
 }
 
@@ -49,13 +52,13 @@ fn load_sections(
     codegen: &mut CodegenContext,
     manifest_dir: &PathBuf,
     sections: &Vec<ManifestSection>,
-) -> CodegenResult<Vec<SchemaSection>> {
-    let mut results = Vec::<SchemaSection>::new();
+) -> CodegenResult<Vec<LanguageSection>> {
+    let mut results = Vec::<LanguageSection>::new();
     let mut errors = CodegenErrors::new();
 
     for section in sections {
         let section_dir = manifest_dir.join(&section.path);
-        let mut topics = Vec::<SchemaTopic>::new();
+        let mut topics = Vec::<LanguageTopic>::new();
 
         for topic in &section.topics {
             match load_topic(codegen, &section_dir, topic) {
@@ -68,7 +71,7 @@ fn load_sections(
             };
         }
 
-        results.push(SchemaSection {
+        results.push(LanguageSection {
             title: section.title.to_owned(),
             path: section.path.to_owned(),
             topics,
@@ -82,11 +85,11 @@ fn load_topic(
     codegen: &mut CodegenContext,
     section_dir: &PathBuf,
     topic: &ManifestTopic,
-) -> CodegenResult<SchemaTopic> {
+) -> CodegenResult<LanguageTopic> {
     let topic_dir = section_dir.join(&topic.path);
 
-    let notes_path = topic_dir.join(SchemaTopic::NOTES_FILE_NAME);
-    let productions_path = topic_dir.join(SchemaTopic::PRODUCTIONS_FILE_NAME);
+    let notes_path = topic_dir.join(LanguageTopic::NOTES_FILE_NAME);
+    let productions_path = topic_dir.join(LanguageTopic::PRODUCTIONS_FILE_NAME);
 
     for path in [&notes_path, &productions_path] {
         if !path.exists() {
@@ -98,7 +101,7 @@ fn load_topic(
 
     let productions = deserialize_yaml::<ProductionsFile>(codegen, &productions_path)?;
 
-    let topic = SchemaTopic {
+    let topic = LanguageTopic {
         title: topic.title.to_owned(),
         path: topic.path.to_owned(),
         productions,

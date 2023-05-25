@@ -2,4 +2,4 @@
 
 # 6.1. Assembly Block
 
---8<-- "crates/solidity/inputs/schema/definition/06-yul/01-assembly-block/notes.md"
+--8<-- "crates/solidity/inputs/language/definition/06-yul/01-assembly-block/notes.md"

@@ -3,7 +3,7 @@ use std::path::PathBuf;
 use anyhow::Result;
 use codegen_ebnf::EbnfSerializer;
 use codegen_schema::types::{
-    Production, ProductionRef, Schema, SchemaSection, SchemaTopic, VersionMap,
+    LanguageDefinition, LanguageSection, LanguageTopic, Production, ProductionRef, VersionMap,
 };
 use codegen_utils::context::CodegenContext;
 use inflector::Inflector;
@@ -12,18 +12,21 @@ use semver::Version;
 use crate::markdown::MarkdownWriter;
 
 pub struct Snippets<'context> {
-    schema: &'context Schema,
+    language: &'context LanguageDefinition,
     output_dir: &'context PathBuf,
 }
 
 impl<'context> Snippets<'context> {
-    pub fn new(schema: &'context Schema, output_dir: &'context PathBuf) -> Self {
-        return Self { schema, output_dir };
+    pub fn new(language: &'context LanguageDefinition, output_dir: &'context PathBuf) -> Self {
+        return Self {
+            language,
+            output_dir,
+        };
     }
 
     pub fn write_files(&self, codegen: &mut CodegenContext) -> Result<()> {
-        let last_version = self.schema.versions.last().unwrap();
-        for production in self.schema.productions.values() {
+        let last_version = self.language.versions.last().unwrap();
+        for production in self.language.productions.values() {
             let versions = match production.versions() {
                 None => vec![last_version],
                 Some(versions) => versions,
@@ -93,14 +96,14 @@ impl<'context> Snippets<'context> {
         let class = "slang-ebnf"; // used to select code blocks via JS during runtime
         let id = production.name(); // used for navigation (generarating URL hashes)
 
-        let contents = &EbnfSerializer::serialize_version(self.schema, production, version)?;
+        let contents = &EbnfSerializer::serialize_version(self.language, production, version)?;
         snippet.write_code_block(language, class, id, contents);
 
         return Some(snippet.to_string());
     }
 
-    fn locate_production(&self, name: &str) -> (&SchemaSection, &SchemaTopic) {
-        for section in &self.schema.sections {
+    fn locate_production(&self, name: &str) -> (&LanguageSection, &LanguageTopic) {
+        for section in &self.language.sections {
             for topic in &section.topics {
                 for production in &topic.productions {
                     if name == production.name() {

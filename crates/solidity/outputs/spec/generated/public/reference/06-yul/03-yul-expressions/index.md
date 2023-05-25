@@ -2,4 +2,4 @@
 
 # 6.3. Yul Expressions
 
---8<-- "crates/solidity/inputs/schema/definition/06-yul/03-yul-expressions/notes.md"
+--8<-- "crates/solidity/inputs/language/definition/06-yul/03-yul-expressions/notes.md"

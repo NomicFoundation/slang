@@ -2,28 +2,28 @@ use codegen_utils::errors::CodegenResult;
 use indexmap::IndexSet;
 
 use crate::{
-    types::{ParserRef, PrecedenceParserRef, ProductionRef, SchemaRef},
+    types::{LanguageDefinitionRef, ParserRef, PrecedenceParserRef, ProductionRef},
     validation::visitors::{run_visitor, LocationRef, Reporter, Visitor},
 };
 
-pub fn run(schema: &SchemaRef) -> CodegenResult<()> {
-    let mut visitor = Definitions::new(schema);
+pub fn run(language: &LanguageDefinitionRef) -> CodegenResult<()> {
+    let mut visitor = Definitions::new(language);
     let mut reporter = Reporter::new();
 
-    run_visitor(&mut visitor, schema, &mut reporter);
+    run_visitor(&mut visitor, language, &mut reporter);
 
     return reporter.to_result();
 }
 
 struct Definitions {
-    schema: SchemaRef,
+    language: LanguageDefinitionRef,
     productions_so_far: IndexSet<String>,
 }
 
 impl Definitions {
-    fn new(schema: &SchemaRef) -> Self {
+    fn new(language: &LanguageDefinitionRef) -> Self {
         return Self {
-            schema: schema.to_owned(),
+            language: language.to_owned(),
             productions_so_far: IndexSet::new(),
         };
     }
@@ -31,10 +31,10 @@ impl Definitions {
 
 impl Visitor for Definitions {
     fn visit_manifest(&mut self, location: &LocationRef, reporter: &mut Reporter) -> bool {
-        let required_productions = self.schema.required_productions();
+        let required_productions = self.language.required_productions();
 
         for name in required_productions {
-            if !self.schema.productions.contains_key(name) {
+            if !self.language.productions.contains_key(name) {
                 reporter.report(&location, Errors::MissingRequired(name.to_owned()));
             }
         }
@@ -63,7 +63,7 @@ impl Visitor for Definitions {
         reporter: &mut Reporter,
     ) -> bool {
         if let Some(name) = &parser.name {
-            if self.schema.productions.contains_key(name) {
+            if self.language.productions.contains_key(name) {
                 reporter.report(
                     location,
                     Errors::ExpressionNamedAsProduction(name.to_owned()),
@@ -81,7 +81,7 @@ impl Visitor for Definitions {
         reporter: &mut Reporter,
     ) -> bool {
         if let Some(name) = &precedence_parser.name {
-            if self.schema.productions.contains_key(name) {
+            if self.language.productions.contains_key(name) {
                 reporter.report(
                     location,
                     Errors::ExpressionNamedAsProduction(name.to_owned()),

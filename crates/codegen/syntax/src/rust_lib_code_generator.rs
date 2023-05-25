@@ -1,6 +1,6 @@
 use std::path::PathBuf;
 
-use codegen_schema::types::Schema;
+use codegen_schema::types::LanguageDefinition;
 use codegen_utils::context::CodegenContext;
 use quote::quote;
 
@@ -9,7 +9,7 @@ use crate::code_generator::CodeGenerator;
 impl CodeGenerator {
     pub fn write_rust_lib_sources(
         &self,
-        schema: &Schema,
+        language: &LanguageDefinition,
         codegen: &mut CodegenContext,
         output_dir: &PathBuf,
     ) {
@@ -62,7 +62,7 @@ impl CodeGenerator {
 
                 #[derive(thiserror::Error, Debug)]
                 pub enum Error {{
-                    #[error(\"Invalid {schema_title} language version '{{0}}'.\")]
+                    #[error(\"Invalid {language_title} language version '{{0}}'.\")]
                     InvalidLanguageVersion(Version),
                 }}
 
@@ -90,7 +90,7 @@ impl CodeGenerator {
                         }};
                         
                         output.unwrap_or_else(|| {{
-                            let message = format!(\"ProductionKind {{production_kind}} is not valid in this version of {schema_title}\");
+                            let message = format!(\"ProductionKind {{production_kind}} is not valid in this version of {language_title}\");
                             ParseOutput {{
                                 parse_tree: None,
                                 errors: vec![ParseError::new(Default::default(), message)]
@@ -107,9 +107,9 @@ impl CodeGenerator {
                     )
                     .unwrap(),
                 version_flag_declarations = self.version_flag_declarations(),
-                schema_title = &schema.title,
+                language_title = &language.title,
                 versions_array = {
-                    let versions = schema.versions.iter().map(|v| v.to_string());
+                    let versions = language.versions.iter().map(|v| v.to_string());
                     quote! { static VERSIONS: &'static [&'static str] = &[ #(#versions),* ]; }
                 },
                 version_flag_initializers = self.version_flag_initializers(),

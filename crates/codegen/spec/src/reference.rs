@@ -1,20 +1,23 @@
 use std::path::PathBuf;
 
-use codegen_schema::types::{Schema, SchemaSection, SchemaTopic};
+use codegen_schema::types::{LanguageDefinition, LanguageSection, LanguageTopic};
 
 use crate::{markdown::MarkdownWriter, navigation::NavigationEntry};
 
-pub fn generate_reference_dir(schema: &Schema, repo_root: &PathBuf) -> NavigationEntry {
+pub fn generate_reference_dir(
+    language: &LanguageDefinition,
+    repo_root: &PathBuf,
+) -> NavigationEntry {
     let mut sections = Vec::<NavigationEntry>::new();
 
-    for section in &schema.sections {
+    for section in &language.sections {
         let mut topics = Vec::<NavigationEntry>::new();
 
         for topic in &section.topics {
             topics.push(NavigationEntry::Page {
                 title: topic.title.to_owned(),
                 path: topic.path.to_owned(),
-                contents: generate_topic_page(schema, section, topic, repo_root),
+                contents: generate_topic_page(language, section, topic, repo_root),
             });
         }
 
@@ -33,9 +36,9 @@ pub fn generate_reference_dir(schema: &Schema, repo_root: &PathBuf) -> Navigatio
 }
 
 fn generate_topic_page(
-    schema: &Schema,
-    section: &SchemaSection,
-    topic: &SchemaTopic,
+    language: &LanguageDefinition,
+    section: &LanguageSection,
+    topic: &LanguageTopic,
     repo_root: &PathBuf,
 ) -> String {
     let mut page = MarkdownWriter::new();
@@ -45,11 +48,11 @@ fn generate_topic_page(
     page.write_newline();
     page.write_snippet(
         repo_root,
-        &schema
-            .schema_dir
+        &language
+            .language_dir
             .join(&section.path)
             .join(&topic.path)
-            .join(SchemaTopic::NOTES_FILE_NAME),
+            .join(LanguageTopic::NOTES_FILE_NAME),
     );
 
     return page.to_string();

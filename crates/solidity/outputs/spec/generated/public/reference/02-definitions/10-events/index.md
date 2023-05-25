@@ -2,4 +2,4 @@
 
 # 2.10 Events
 
---8<-- "crates/solidity/inputs/schema/definition/02-definitions/10-events/notes.md"
+--8<-- "crates/solidity/inputs/language/definition/02-definitions/10-events/notes.md"

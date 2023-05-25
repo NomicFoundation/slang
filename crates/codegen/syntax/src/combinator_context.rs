@@ -1,7 +1,7 @@
 use std::cell::RefCell;
 use std::collections::BTreeMap;
 
-use codegen_schema::types::Schema;
+use codegen_schema::types::LanguageDefinition;
 use semver::Version;
 use typed_arena::Arena;
 
@@ -9,7 +9,7 @@ use super::combinator_node::CombinatorNode;
 use super::combinator_tree::CombinatorTree;
 
 pub struct CombinatorContext<'context> {
-    pub schema: &'context Schema,
+    pub language: &'context LanguageDefinition,
     pub version: Version,
     pub trees_by_name: RefCell<BTreeMap<String, &'context CombinatorTree<'context>>>,
     tree_arena: Arena<CombinatorTree<'context>>,
@@ -17,9 +17,9 @@ pub struct CombinatorContext<'context> {
 }
 
 impl<'context> CombinatorContext<'context> {
-    pub fn new(schema: &'context Schema, version: Version) -> Self {
+    pub fn new(language: &'context LanguageDefinition, version: Version) -> Self {
         CombinatorContext {
-            schema,
+            language,
             version,
             trees_by_name: Default::default(),
             tree_arena: Arena::new(),

@@ -2,4 +2,4 @@
 
 # 2.5. Enums
 
---8<-- "crates/solidity/inputs/schema/definition/02-definitions/05-enums/notes.md"
+--8<-- "crates/solidity/inputs/language/definition/02-definitions/05-enums/notes.md"

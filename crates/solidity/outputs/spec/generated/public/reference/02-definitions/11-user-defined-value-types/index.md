@@ -2,4 +2,4 @@
 
 # 2.11. User Defined Value Types
 
---8<-- "crates/solidity/inputs/schema/definition/02-definitions/11-user-defined-value-types/notes.md"
+--8<-- "crates/solidity/inputs/language/definition/02-definitions/11-user-defined-value-types/notes.md"

@@ -1,6 +1,7 @@
 use crate::{
     types::{
-        ParserRef, PrecedenceParserRef, ProductionRef, ScannerRef, Schema, SchemaRef, SchemaTopic,
+        LanguageDefinition, LanguageDefinitionRef, LanguageTopic, ParserRef, PrecedenceParserRef,
+        ProductionRef, ScannerRef,
     },
     validation::visitors::{
         location::{Location, LocationRef},
@@ -63,24 +64,32 @@ pub trait Visitor {
     fn finish(&mut self, _reporter: &mut Reporter) {}
 }
 
-pub fn run_visitor(visitor: &mut impl Visitor, schema: &SchemaRef, reporter: &mut Reporter) {
-    let manifest_location = Location::root(schema.schema_dir.join(Schema::MANIFEST_FILE_NAME));
+pub fn run_visitor(
+    visitor: &mut impl Visitor,
+    language: &LanguageDefinitionRef,
+    reporter: &mut Reporter,
+) {
+    let manifest_location = Location::root(
+        language
+            .language_dir
+            .join(LanguageDefinition::MANIFEST_FILE_NAME),
+    );
     if !visitor.visit_manifest(&manifest_location, reporter) {
         return;
     }
 
-    for section in &schema.sections {
+    for section in &language.sections {
         for topic in &section.topics {
-            let productions_path = schema
-                .schema_dir
+            let productions_path = language
+                .language_dir
                 .join(&section.path)
                 .join(&topic.path)
-                .join(SchemaTopic::PRODUCTIONS_FILE_NAME);
+                .join(LanguageTopic::PRODUCTIONS_FILE_NAME);
 
             let location = Location::root(productions_path);
 
             for (i, production) in topic.productions.iter().enumerate() {
-                production.receive(visitor, schema, location.index(i), reporter);
+                production.receive(visitor, language, location.index(i), reporter);
             }
         }
     }

@@ -2,4 +2,4 @@
 
 # 4.4. Error Handling
 
---8<-- "crates/solidity/inputs/schema/definition/04-statements/04-error-handling/notes.md"
+--8<-- "crates/solidity/inputs/language/definition/04-statements/04-error-handling/notes.md"

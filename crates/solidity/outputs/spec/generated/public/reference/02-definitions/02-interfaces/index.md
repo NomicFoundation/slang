@@ -2,4 +2,4 @@
 
 # 2.2. Interfaces
 
---8<-- "crates/solidity/inputs/schema/definition/02-definitions/02-interfaces/notes.md"
+--8<-- "crates/solidity/inputs/language/definition/02-definitions/02-interfaces/notes.md"
