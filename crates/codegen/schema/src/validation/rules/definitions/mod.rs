@@ -2,7 +2,7 @@ use codegen_utils::errors::CodegenResult;
 use indexmap::IndexSet;
 
 use crate::{
-    types::{LanguageDefinitionRef, ParserRef, PrecedenceParserRef, ProductionRef},
+    types::{LanguageDefinitionRef, ParserRef, ProductionRef},
     validation::visitors::{run_visitor, LocationRef, Reporter, Visitor},
 };
 
@@ -63,24 +63,6 @@ impl Visitor for Definitions {
         reporter: &mut Reporter,
     ) -> bool {
         if let Some(name) = &parser.name {
-            if self.language.productions.contains_key(name) {
-                reporter.report(
-                    location,
-                    Errors::ExpressionNamedAsProduction(name.to_owned()),
-                );
-            }
-        }
-
-        return true;
-    }
-
-    fn visit_precedence_parser(
-        &mut self,
-        precedence_parser: &PrecedenceParserRef,
-        location: &LocationRef,
-        reporter: &mut Reporter,
-    ) -> bool {
-        if let Some(name) = &precedence_parser.name {
             if self.language.productions.contains_key(name) {
                 reporter.report(
                     location,

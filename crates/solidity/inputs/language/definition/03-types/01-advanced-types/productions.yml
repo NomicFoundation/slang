@@ -3,7 +3,7 @@
 - name: "TypeName"
   kind: "PrecedenceParser"
   unversioned:
-    definitions:
+    operators:
       - name: "ArrayTypeName"
         model: "UnaryPostfix"
         operator:
