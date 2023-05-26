@@ -535,13 +535,9 @@
     },
     "PrecedenceParser": {
       "type": "object",
-      "required": ["definitions", "primaryExpression"],
+      "required": ["operators", "primaryExpression"],
       "properties": {
-        "name": {
-          "default": null,
-          "type": ["string", "null"]
-        },
-        "definitions": {
+        "operators": {
           "title": "Operator Definitions",
           "type": "array",
           "items": {

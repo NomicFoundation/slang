@@ -25,7 +25,7 @@
 - name: "VersionPragmaExpression"
   kind: "PrecedenceParser"
   unversioned:
-    definitions:
+    operators:
       - name: "VersionPragmaAlternatives"
         model: "BinaryLeftAssociative"
         operator:

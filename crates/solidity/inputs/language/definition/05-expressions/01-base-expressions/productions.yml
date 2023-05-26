@@ -4,7 +4,7 @@
   kind: "PrecedenceParser"
   versioned:
     0.4.11:
-      definitions:
+      operators:
         - name: "AssignmentExpression"
           model: "BinaryLeftAssociative"
           operator:
@@ -100,7 +100,7 @@
 
     0.6.0:
       # ExponentiationExpression is now BinaryRightAssociative
-      definitions:
+      operators:
         - name: "AssignmentExpression"
           model: "BinaryLeftAssociative"
           operator:

@@ -6,7 +6,7 @@ impl GenerateEbnf for PrecedenceParserRef {
     fn generate_ebnf(&self) -> EbnfNode {
         let mut choices = vec![];
 
-        for definition in &self.definition.definitions {
+        for definition in &self.operators {
             let mut comment = None;
 
             let operator = match definition.model {
@@ -43,12 +43,7 @@ impl GenerateEbnf for PrecedenceParserRef {
             ));
         }
 
-        choices.push(
-            self.definition
-                .primary_expression
-                .definition
-                .generate_ebnf(),
-        );
+        choices.push(self.primary_expression.definition.generate_ebnf());
 
         return EbnfNode::choices(choices);
     }

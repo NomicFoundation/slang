@@ -263,7 +263,7 @@ impl Receiver for PrecedenceParserRef {
 
         {
             let location = location.field("definitions");
-            for (i, definition) in self.definition.definitions.iter().enumerate() {
+            for (i, definition) in self.operators.iter().enumerate() {
                 let location = location.index(i).field("operator");
                 definition
                     .operator
@@ -273,8 +273,7 @@ impl Receiver for PrecedenceParserRef {
 
         {
             let location = location.field("primaryExpression");
-            self.definition
-                .primary_expression
+            self.primary_expression
                 .receive(visitor, language, location, reporter);
         }
     }

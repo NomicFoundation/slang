@@ -3,7 +3,7 @@
 - name: "YulExpression"
   kind: "PrecedenceParser"
   unversioned:
-    definitions:
+    operators:
       - name: "YulFunctionCallExpression"
         model: "UnaryPostfix"
         operator:

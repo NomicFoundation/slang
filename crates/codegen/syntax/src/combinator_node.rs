@@ -221,10 +221,8 @@ impl<'context> CombinatorNode<'context> {
         tree: &'context CombinatorTree<'context>,
         parser: &PrecedenceParserRef,
     ) -> &'context CombinatorNode<'context> {
-        let primary_expression = Self::from_parser(tree, &parser.definition.primary_expression);
         let operators: Vec<PrecedenceRuleOperator> = parser
-            .definition
-            .definitions
+            .operators
             .iter()
             .map(|definition| -> PrecedenceRuleOperator {
                 PrecedenceRuleOperator {
@@ -234,6 +232,9 @@ impl<'context> CombinatorNode<'context> {
                 }
             })
             .collect();
+
+        let primary_expression = Self::from_parser(tree, &parser.primary_expression);
+
         return tree.context.alloc_node(Self::PrecedenceExpressionRule {
             tree,
             operators,
