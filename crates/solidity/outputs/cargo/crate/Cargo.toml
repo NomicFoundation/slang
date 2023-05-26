@@ -25,16 +25,25 @@ categories = [
   "text-editors",
 ]
 
+[[bin]]
+name = "slang_solidity"
+path = "src/main.rs"
+required-features = ["cli"]
+
+[features]
+default = ["cli"]
+cli = ["dep:anyhow", "dep:clap", "dep:serde_json"]
+
 [dev-dependencies]
 solidity_cargo_build = { workspace = true }
 
 [dependencies]
-anyhow = { workspace = true }
+anyhow = { workspace = true, optional = true }
 ariadne = { workspace = true }
-clap = { workspace = true }
+clap = { workspace = true, optional = true }
 semver = { workspace = true }
 serde = { workspace = true }
-serde_json = { workspace = true }
+serde_json = { workspace = true, optional = true }
 strum = { workspace = true }
 strum_macros = { workspace = true }
 thiserror = { workspace = true }
