@@ -66,12 +66,12 @@ impl<'context> CombinatorNode<'context> {
                 }
             }
 
-            Self::Choice { elements, .. } => {
+            Self::Choice { elements, name } => {
                 let mut elements = elements
                     .iter()
                     .map(|element| element.to_parser_code(is_trivia, code));
                 let first_element = elements.next().unwrap();
-                quote! {
+                let result = quote! {
                     loop {
                         let start_position = stream.position();
                         let mut furthest_error;
@@ -88,6 +88,18 @@ impl<'context> CombinatorNode<'context> {
                         )*
                         break Fail{ error: furthest_error };
                     }
+                };
+                if let Some(name) = name {
+                    let kind = code.add_rule_kind(name.clone());
+                    quote! {
+                        match #result {
+                            Pass { node, error } => Pass { node: cst::Node::rule(RuleKind::#kind, vec![node]), error },
+                            fail => fail,
+
+                        }
+                    }
+                } else {
+                    result
                 }
             }
 
