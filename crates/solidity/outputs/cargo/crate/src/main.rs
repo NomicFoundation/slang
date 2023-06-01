@@ -1,9 +1,9 @@
 use std::{fs, path::PathBuf};
 
-use anyhow::Result;
+use anyhow::{Context, Result};
 use clap::{Parser as ClapParser, Subcommand};
 use semver::Version;
-use slang_solidity::{syntax::parser::ProductionKind, Language};
+use slang_solidity::{language::Language, syntax::parser::ProductionKind};
 
 mod _supress_library_dependencies_ {
     // Below are dependencies used by the library `lib.rs`, but not here.
@@ -54,23 +54,19 @@ fn main() -> Result<()> {
     };
 }
 
-fn execute_parse_command(file_path: String, version: Version, json: bool) -> Result<()> {
-    let input_file = &PathBuf::from(file_path).canonicalize()?;
-    let input = fs::read_to_string(input_file)?;
+fn execute_parse_command(file_path_string: String, version: Version, json: bool) -> Result<()> {
+    let file_path = PathBuf::from(&file_path_string)
+        .canonicalize()
+        .with_context(|| format!("Failed to find file path: {file_path_string:?}"))?;
 
+    let input = fs::read_to_string(file_path)?;
     let language = Language::new(version)?;
-    let output = language.parse(ProductionKind::SourceUnit, &input);
+    let output = language.parse(ProductionKind::SourceUnit, &input)?;
 
     let errors = output.errors();
     for error in errors {
-        eprintln!(
-            "{report}",
-            report = error.to_error_report(
-                input_file.to_str().unwrap(),
-                &input,
-                /* with_colour */ true,
-            )
-        );
+        let report = error.to_error_report(&file_path_string, &input, /* with_colour */ true);
+        eprintln!("{report}");
     }
 
     if json {

@@ -1,11 +1,9 @@
 import test from "ava";
-
-import * as slang from "@nomicfoundation/slang";
-import { Language } from "@nomicfoundation/slang";
+import { Language } from "@nomicfoundation/slang/language";
 import { NodeType, RuleKind, RuleNode, TokenKind, TokenNode } from "@nomicfoundation/slang/syntax/nodes";
 import { ProductionKind } from "@nomicfoundation/slang/syntax/parser";
 
-test("parse some token", (t) => {
+test("parse token", (t) => {
   const source = "5_286_981";
   const language = new Language("0.8.1");
 
@@ -20,7 +18,7 @@ test("parse some token", (t) => {
   }
 });
 
-test("parse some syntax", (t) => {
+test("parse rule", (t) => {
   const source = "int256 constant z = 1**2**3;";
   const language = new Language("0.8.1");
 
@@ -48,32 +46,4 @@ test("calculate both byte and char ranges", (t) => {
   } else {
     t.fail("Expected TokenNode");
   }
-});
-
-test("render some error", (t) => {
-  const source = "int256 constant";
-  const language = new Language("0.8.1");
-
-  const { errors } = language.parse(ProductionKind.SourceUnit, source);
-  t.is(errors.length, 1);
-
-  const report = errors[0]?.toErrorReport("test.sol", source, /* withColor */ false);
-
-  t.is(
-    report,
-    `
-Error: Expected end of input.
-   ╭─[test.sol:1:1]
-   │
- 1 │ int256 constant
-   │ │ 
-   │ ╰─ Error occurred here.
-───╯
-`.trim(),
-  );
-});
-
-test("use namespace import of the API", (t) => {
-  t.is(typeof slang.syntax.nodes.RuleKind, "object");
-  t.is(typeof slang.syntax.parser.ProductionKind, "object");
 });

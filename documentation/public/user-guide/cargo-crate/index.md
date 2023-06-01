@@ -36,12 +36,13 @@ methods (`ProductionKind::FunctionDefinition`), or any other syntax nodes.
 
 ```rust
 use slang_solidity::syntax::{
+    language::Language,
     nodes::{Node, RuleKind, TokenKind},
-    parser::{Language, ProductionKind},
+    parser::{ProductionKind},
 };
 
 let language = Language::new(Version::parse("0.8.0")?)?;
-let parse_output = language.parse(ProductionKind::ContractDefinition, "contract Foo {}");
+let parse_output = language.parse(ProductionKind::ContractDefinition, "contract Foo {}")?;
 ```
 
 The resulting `ParseOutput` object will contain syntax errors (if any), and the parse tree corresponding to the input source code.

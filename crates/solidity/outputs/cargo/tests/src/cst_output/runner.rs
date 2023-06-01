@@ -4,8 +4,8 @@ use anyhow::Result;
 use codegen_utils::context::CodegenContext;
 use semver::Version;
 use slang_solidity::{
+    language::{Error, Language},
     syntax::parser::{ParseOutput, ProductionKind},
-    Language,
 };
 use solidity_testing_utils::cst_snapshots::ParseOutputTestSnapshotExtensions;
 
@@ -35,7 +35,16 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
 
             let production_kind = ProductionKind::from_str(parser_name)
                 .expect(format!("No such parser: {parser_name}").as_str());
-            let output = Language::new(version)?.parse(production_kind, &source);
+
+            let output = match Language::new(version)?.parse(production_kind, &source) {
+                Ok(output) => output,
+                Err(error) => match error {
+                    Error::InvalidProductionVersion(_) => {
+                        continue; // Skip versions that this production is not defined in.
+                    }
+                    _ => panic!("Unexpected error: {:?}", error),
+                },
+            };
 
             if let Some(last_output) = &last_output {
                 if &output == last_output {
