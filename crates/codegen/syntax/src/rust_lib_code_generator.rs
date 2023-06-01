@@ -55,6 +55,7 @@ impl CodeGenerator {
                 "
                 {language_boilerplate_common}
 
+                #[derive(Debug)]
                 pub struct Language {{
                     pub(crate) version: Version,
                     {version_flag_declarations}
@@ -62,8 +63,10 @@ impl CodeGenerator {
 
                 #[derive(thiserror::Error, Debug)]
                 pub enum Error {{
-                    #[error(\"Invalid {language_title} language version '{{0}}'.\")]
-                    InvalidLanguageVersion(Version),
+                    #[error(\"Unsupported {language_title} language version '{{0}}'.\")]
+                    UnsupportedLanguageVersion(Version),
+                    #[error(\"Production '{{0:?}}' is not valid in this version of {language_title}.\")]
+                    InvalidProductionVersion(ProductionKind),
                 }}
 
                 impl Language {{
@@ -75,7 +78,7 @@ impl CodeGenerator {
                                 version,
                             }})
                         }} else {{
-                            Err(Error::InvalidLanguageVersion(version))
+                            Err(Error::UnsupportedLanguageVersion(version))
                         }}
                     }}
 
@@ -83,19 +86,13 @@ impl CodeGenerator {
                         &self.version
                     }}
 
-                    pub fn parse(&self, production_kind: ProductionKind, input: &str) -> ParseOutput {{
+                    pub fn parse(&self, production_kind: ProductionKind, input: &str) -> Result<ParseOutput, Error> {{
                         let output = match production_kind {{
                             {scanner_invocations},
                             {parser_invocations},
                         }};
                         
-                        output.unwrap_or_else(|| {{
-                            let message = format!(\"ProductionKind {{production_kind}} is not valid in this version of {language_title}\");
-                            ParseOutput {{
-                                parse_tree: None,
-                                errors: vec![ParseError::new(Default::default(), message)]
-                            }}
-                        }})
+                        output.ok_or_else(|| Error::InvalidProductionVersion(production_kind))
                     }}
                 }}
                 ",

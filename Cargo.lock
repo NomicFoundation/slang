@@ -1130,6 +1130,7 @@ dependencies = [
  "semver",
  "serde",
  "solidity_npm_build",
+ "thiserror",
 ]
 
 [[package]]

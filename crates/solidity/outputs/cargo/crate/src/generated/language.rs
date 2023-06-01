@@ -323,6 +323,7 @@ where
     })
 }
 
+#[derive(Debug)]
 pub struct Language {
     pub(crate) version: Version,
     pub(crate) version_is_equal_to_or_greater_than_0_4_21: bool,
@@ -342,8 +343,10 @@ pub struct Language {
 
 #[derive(thiserror::Error, Debug)]
 pub enum Error {
-    #[error("Invalid Solidity language version '{0}'.")]
-    InvalidLanguageVersion(Version),
+    #[error("Unsupported Solidity language version '{0}'.")]
+    UnsupportedLanguageVersion(Version),
+    #[error("Production '{0:?}' is not valid in this version of Solidity.")]
+    InvalidProductionVersion(ProductionKind),
 }
 
 impl Language {
@@ -390,7 +393,7 @@ impl Language {
                 version,
             })
         } else {
-            Err(Error::InvalidLanguageVersion(version))
+            Err(Error::UnsupportedLanguageVersion(version))
         }
     }
 
@@ -398,7 +401,11 @@ impl Language {
         &self.version
     }
 
-    pub fn parse(&self, production_kind: ProductionKind, input: &str) -> ParseOutput {
+    pub fn parse(
+        &self,
+        production_kind: ProductionKind,
+        input: &str,
+    ) -> Result<ParseOutput, Error> {
         let output = match production_kind {
             ProductionKind::AbicoderKeyword => call_scanner(
                 self,
@@ -1917,14 +1924,6 @@ impl Language {
             }
         };
 
-        output.unwrap_or_else(|| {
-            let message = format!(
-                "ProductionKind {production_kind} is not valid in this version of Solidity"
-            );
-            ParseOutput {
-                parse_tree: None,
-                errors: vec![ParseError::new(Default::default(), message)],
-            }
-        })
+        output.ok_or_else(|| Error::InvalidProductionVersion(production_kind))
     }
 }

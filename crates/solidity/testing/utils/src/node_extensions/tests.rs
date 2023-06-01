@@ -1,6 +1,6 @@
 use anyhow::{Context, Result};
 use semver::Version;
-use slang_solidity::{syntax::parser::ProductionKind, Language};
+use slang_solidity::{language::Language, syntax::parser::ProductionKind};
 
 use crate::node_extensions::NodeExtensions;
 
@@ -14,7 +14,7 @@ fn extract_non_trivia() -> Result<()> {
       )";
 
     let language = Language::new(Version::parse("0.8.0")?)?;
-    let output = language.parse(ProductionKind::Expression, source);
+    let output = language.parse(ProductionKind::Expression, source)?;
 
     assert_eq!(output.errors().len(), 0);
 

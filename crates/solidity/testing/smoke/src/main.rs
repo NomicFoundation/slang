@@ -7,7 +7,7 @@ use anyhow::Result;
 use codegen_schema::types::LanguageDefinition;
 use rayon::prelude::{IntoParallelRefIterator, ParallelIterator};
 use semver::Version;
-use slang_solidity::{syntax::parser::ProductionKind, Language};
+use slang_solidity::{language::Language, syntax::parser::ProductionKind};
 use solidity_language::SolidityLanguageExtensions;
 use solidity_testing_utils::version_pragmas::extract_version_pragmas;
 
@@ -101,7 +101,8 @@ fn process_source_file(
             continue;
         }
 
-        let output = Language::new(version.to_owned())?.parse(ProductionKind::SourceUnit, source);
+        let output =
+            Language::new(version.to_owned())?.parse(ProductionKind::SourceUnit, source)?;
 
         reporter.report_test_result(source_id, source, &version, &output);
     }
