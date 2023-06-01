@@ -117,14 +117,14 @@ fn write_node<W: Write>(
         if node.children.is_empty() {
             (
                 format!(" {preview}"),
-                format!("{range:?}", range = range.start.byte..range.end.byte),
+                format!("{range:?}", range = range.start.utf8..range.end.utf8),
             )
         } else {
             (
                 "".to_owned(),
                 format!(
                     "{range:?} {preview}",
-                    range = range.start.byte..range.end.byte
+                    range = range.start.utf8..range.end.utf8
                 ),
             )
         }

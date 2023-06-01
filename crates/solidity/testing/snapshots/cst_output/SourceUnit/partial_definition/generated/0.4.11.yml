@@ -9,9 +9,10 @@ Errors: # 1 total
     Error: Expected end of input.
        ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/partial_definition/input.sol:1:1]
        │
-     1 │ contract Sample {
-       │ │ 
-       │ ╰─ Error occurred here.
+     1 │ ╭─▶ contract Sample {
+     2 │ ├─▶   function
+       │ │               
+       │ ╰─────────────── Error occurred here.
     ───╯
 
 Tree: null

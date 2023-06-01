@@ -34,9 +34,15 @@ impl RuleNode {
     }
 
     #[napi(getter, ts_return_type = "[ start: number, end: number ]")]
-    pub fn byte_range(&self) -> [u32; 2] {
+    pub fn utf8_range(&self) -> [u32; 2] {
         let range = self.0.range();
-        [range.start.byte as u32, range.end.byte as u32]
+        [range.start.utf8 as u32, range.end.utf8 as u32]
+    }
+
+    #[napi(getter, ts_return_type = "[ start: number, end: number ]")]
+    pub fn utf16_range(&self) -> [u32; 2] {
+        let range = self.0.range();
+        [range.start.utf16 as u32, range.end.utf16 as u32]
     }
 
     #[napi(getter, ts_return_type = "[ start: number, end: number ]")]
@@ -46,9 +52,15 @@ impl RuleNode {
     }
 
     #[napi(getter, ts_return_type = "[ start: number, end: number ]")]
-    pub fn byte_range_including_trivia(&self) -> [u32; 2] {
+    pub fn utf8_range_including_trivia(&self) -> [u32; 2] {
         let range = self.0.range_including_trivia();
-        [range.start.byte as u32, range.end.byte as u32]
+        [range.start.utf8 as u32, range.end.utf8 as u32]
+    }
+
+    #[napi(getter, ts_return_type = "[ start: number, end: number ]")]
+    pub fn utf16_range_including_trivia(&self) -> [u32; 2] {
+        let range = self.0.range_including_trivia();
+        [range.start.utf16 as u32, range.end.utf16 as u32]
     }
 
     #[napi(getter, ts_return_type = "[ start: number, end: number ]")]
@@ -82,9 +94,15 @@ impl TokenNode {
     }
 
     #[napi(getter, ts_return_type = "[ start: number, end: number ]")]
-    pub fn byte_range(&self) -> [u32; 2] {
+    pub fn utf8_range(&self) -> [u32; 2] {
         let range = self.0.range();
-        [range.start.byte as u32, range.end.byte as u32]
+        [range.start.utf8 as u32, range.end.utf8 as u32]
+    }
+
+    #[napi(getter, ts_return_type = "[ start: number, end: number ]")]
+    pub fn utf16_range(&self) -> [u32; 2] {
+        let range = self.0.range();
+        [range.start.utf16 as u32, range.end.utf16 as u32]
     }
 
     #[napi(getter, ts_return_type = "[ start: number, end: number ]")]
@@ -94,9 +112,15 @@ impl TokenNode {
     }
 
     #[napi(getter, ts_return_type = "[ start: number, end: number ]")]
-    pub fn byte_range_including_trivia(&self) -> [u32; 2] {
+    pub fn utf8_range_including_trivia(&self) -> [u32; 2] {
         let range = self.0.range_including_trivia();
-        [range.start.byte as u32, range.end.byte as u32]
+        [range.start.utf8 as u32, range.end.utf8 as u32]
+    }
+
+    #[napi(getter, ts_return_type = "[ start: number, end: number ]")]
+    pub fn utf16_range_including_trivia(&self) -> [u32; 2] {
+        let range = self.0.range_including_trivia();
+        [range.start.utf16 as u32, range.end.utf16 as u32]
     }
 
     #[napi(getter, ts_return_type = "[ start: number, end: number ]")]

@@ -14,24 +14,35 @@ pub use super::{
 const DEBUG_ERROR_MERGING: bool = false;
 
 impl ParseError {
-    pub(crate) fn new<T: Into<String>>(position: TextPosition, expected: T) -> Self {
+    #[allow(dead_code)]
+    pub(crate) fn new_at<T: Into<String>>(position: TextPosition, expected: T) -> Self {
         Self {
-            position,
+            range: Range {
+                start: position,
+                end: position,
+            },
+            expected: BTreeSet::from([expected.into()]),
+        }
+    }
+
+    pub(crate) fn new_with_range<T: Into<String>>(range: TextRange, expected: T) -> Self {
+        Self {
+            range,
             expected: BTreeSet::from([expected.into()]),
         }
     }
 
     pub(crate) fn merge_with(&mut self, other: Self) {
         if DEBUG_ERROR_MERGING {
-            if self.position < other.position {
+            if self.range.start < other.range.start {
                 self.expected = BTreeSet::from([format!(
-                    "O={other_expected}\nNOT {position}@[{expected}]",
+                    "O={other_expected}\nNOT {range:?}@[{expected}]",
                     other_expected = other.expected.iter().next().unwrap(),
-                    position = self.position,
+                    range = self.range,
                     expected = self.expected.iter().next().unwrap(),
                 )]);
-                self.position = other.position;
-            } else if self.position == other.position {
+                self.range = other.range;
+            } else if self.range.start == other.range.start {
                 self.expected = BTreeSet::from([format!(
                     "{other_expected}, or {expected}",
                     other_expected = other.expected.iter().next().unwrap(),
@@ -39,16 +50,16 @@ impl ParseError {
                 )]);
             } else {
                 self.expected = BTreeSet::from([format!(
-                    "S={expected}\nNOT {other_position}@[{other_expected}]",
+                    "S={expected}\nNOT {other_range:?}@[{other_expected}]",
                     expected = self.expected.iter().next().unwrap(),
-                    other_position = other.position,
+                    other_range = other.range,
                     other_expected = other.expected.iter().next().unwrap(),
                 )]);
             }
         } else {
-            if self.position < other.position {
+            if self.range.start < other.range.start {
                 *self = other;
-            } else if self.position == other.position {
+            } else if self.range.start == other.range.start {
                 self.expected.extend(other.expected);
             }
         }
@@ -75,7 +86,8 @@ pub enum ParserResult {
 
 #[derive(Default, Copy, Clone, PartialEq, Eq, Debug, Serialize)]
 pub struct TextPosition {
-    pub byte: usize,
+    pub utf8: usize,
+    pub utf16: usize,
     pub char: usize,
 }
 
@@ -89,7 +101,7 @@ impl PartialOrd for TextPosition {
 
 impl Ord for TextPosition {
     fn cmp(&self, other: &Self) -> std::cmp::Ordering {
-        self.byte.cmp(&other.byte)
+        self.char.cmp(&other.char)
     }
 }
 
@@ -125,15 +137,16 @@ impl<'s> Stream<'s> {
     }
 
     pub fn peek(&self) -> Option<char> {
-        self.source[self.position.byte..].chars().next()
+        self.source[self.position.utf8..].chars().next()
     }
 
     pub fn next(&mut self) -> Option<char> {
         self.has_undo = true;
         self.undo_position = self.position;
-        let mut chars = self.source[self.position.byte..].chars();
+        let mut chars = self.source[self.position.utf8..].chars();
         if let Some(c) = chars.next() {
-            self.position.byte += c.len_utf8();
+            self.position.utf8 += c.len_utf8();
+            self.position.utf16 += c.len_utf16();
             self.position.char += 1;
             Some(c)
         } else {
@@ -160,8 +173,8 @@ pub(crate) fn render_error_report(
 
     let kind = ReportKind::Error;
     let color = if with_color { Color::Red } else { Color::Unset };
-    let source_start = error.position;
-    let source_end = error.position;
+    let source_start = error.range.start;
+    let source_end = error.range.end;
 
     let message = {
         let message = format!(
@@ -185,7 +198,7 @@ pub(crate) fn render_error_report(
         return format!("{kind}: {message}\n   ─[{source_id}:0:0]");
     }
 
-    let mut builder = Report::build(kind, source_id, source_start.byte)
+    let mut builder = Report::build(kind, source_id, source_start.utf8)
         .with_config(Config::default().with_color(with_color))
         .with_message(message);
 
@@ -234,9 +247,17 @@ where
                 errors: vec![],
             }
         } else {
+            let start = stream.position();
+            while stream.next().is_some() {}
             ParseOutput {
                 parse_tree: None,
-                errors: vec![ParseError::new(stream.position(), error_message)],
+                errors: vec![ParseError::new_with_range(
+                    Range {
+                        start,
+                        end: stream.position(),
+                    },
+                    error_message,
+                )],
             }
         },
     )
@@ -269,9 +290,17 @@ where
                 errors: vec![],
             }
         } else {
+            let start = stream.position();
+            while stream.next().is_some() {}
             ParseOutput {
                 parse_tree: None,
-                errors: vec![ParseError::new(stream.position(), error_message)],
+                errors: vec![ParseError::new_with_range(
+                    Range {
+                        start,
+                        end: stream.position(),
+                    },
+                    error_message,
+                )],
             }
         }
     })
@@ -288,10 +317,20 @@ where
             parse_tree: Some(node),
             errors: vec![],
         },
-        ParserResult::Pass { .. } => ParseOutput {
-            parse_tree: None,
-            errors: vec![ParseError::new(stream.position(), "end of input")],
-        },
+        ParserResult::Pass { .. } => {
+            let start = stream.position();
+            while stream.next().is_some() {}
+            ParseOutput {
+                parse_tree: None,
+                errors: vec![ParseError::new_with_range(
+                    Range {
+                        start,
+                        end: stream.position(),
+                    },
+                    "end of input",
+                )],
+            }
+        }
         ParserResult::Fail { error } => ParseOutput {
             parse_tree: None,
             errors: vec![error],
@@ -310,10 +349,20 @@ where
             parse_tree: Some(node),
             errors: vec![],
         },
-        ParserResult::Pass { .. } => ParseOutput {
-            parse_tree: None,
-            errors: vec![ParseError::new(stream.position(), "end of input")],
-        },
+        ParserResult::Pass { .. } => {
+            let start = stream.position();
+            while stream.next().is_some() {}
+            ParseOutput {
+                parse_tree: None,
+                errors: vec![ParseError::new_with_range(
+                    Range {
+                        start,
+                        end: stream.position(),
+                    },
+                    "end of input",
+                )],
+            }
+        }
         ParserResult::Fail { error } => ParseOutput {
             parse_tree: None,
             errors: vec![error],

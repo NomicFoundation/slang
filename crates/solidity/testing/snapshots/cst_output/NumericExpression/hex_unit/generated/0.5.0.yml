@@ -9,8 +9,8 @@ Errors: # 1 total
        ╭─[crates/solidity/testing/snapshots/cst_output/NumericExpression/hex_unit/input.sol:1:4]
        │
      1 │ 0x1 wei
-       │    │ 
-       │    ╰─ Error occurred here.
+       │    ──┬─  
+       │      ╰─── Error occurred here.
     ───╯
 
 Tree: null

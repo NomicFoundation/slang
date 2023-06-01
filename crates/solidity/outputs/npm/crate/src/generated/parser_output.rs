@@ -5,7 +5,7 @@ use std::{collections::BTreeSet, rc::Rc};
 use super::{
     cst,
     cst_types::RcNodeExtensions as CSTRcNodeExtensions,
-    language::{render_error_report, TextPosition},
+    language::{render_error_report, TextRange},
 };
 use napi::bindgen_prelude::*;
 
@@ -36,20 +36,25 @@ impl ParseOutput {
 #[napi]
 #[derive(PartialEq, Clone)]
 pub struct ParseError {
-    pub(crate) position: TextPosition,
+    pub(crate) range: TextRange,
     pub(crate) expected: BTreeSet<String>,
 }
 
 #[napi]
 impl ParseError {
-    #[napi(getter)]
-    pub fn byte_position(&self) -> u32 {
-        return self.position.byte as u32;
+    #[napi(getter, ts_return_type = "[ start: number, end: number ]")]
+    pub fn utf8_range(&self) -> [u32; 2] {
+        return [self.range.start.utf8 as u32, self.range.end.utf8 as u32];
     }
 
-    #[napi(getter)]
-    pub fn char_position(&self) -> u32 {
-        return self.position.char as u32;
+    #[napi(getter, ts_return_type = "[ start: number, end: number ]")]
+    pub fn utf16_range(&self) -> [u32; 2] {
+        return [self.range.start.utf16 as u32, self.range.end.utf16 as u32];
+    }
+
+    #[napi(getter, ts_return_type = "[ start: number, end: number ]")]
+    pub fn char_range(&self) -> [u32; 2] {
+        return [self.range.start.char as u32, self.range.end.char as u32];
     }
 
     #[napi(getter)]

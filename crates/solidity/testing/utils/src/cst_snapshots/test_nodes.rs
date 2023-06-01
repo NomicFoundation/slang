@@ -155,12 +155,12 @@ impl TestNode {
 
     pub fn render_preview(&self, source: &str, range: &TextRange) -> Result<String> {
         let max_length = 50;
-        let length = range.end.byte - range.start.byte;
+        let length = range.end.utf8 - range.start.utf8;
 
         // Trim long values:
         let contents = source
             .bytes()
-            .skip(range.start.byte)
+            .skip(range.start.utf8)
             .take(length.clamp(0, max_length))
             .collect();
 

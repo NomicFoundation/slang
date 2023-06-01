@@ -213,7 +213,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "AbicoderKeyword"),
+                        error: ParseError::new_at(start, "AbicoderKeyword"),
                     }
                 }
             } {
@@ -244,7 +244,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "Identifier"),
+                        error: ParseError::new_at(start, "Identifier"),
                     }
                 }
             } {
@@ -300,7 +300,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "Plus"),
+                        error: ParseError::new_at(start, "Plus"),
                     }
                 }
             } {
@@ -325,7 +325,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "Minus"),
+                        error: ParseError::new_at(start, "Minus"),
                     }
                 }
             } {
@@ -372,7 +372,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "AddressKeyword"),
+                        error: ParseError::new_at(start, "AddressKeyword"),
                     }
                 }
             } {
@@ -405,7 +405,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "PayableKeyword"),
+                            error: ParseError::new_at(start, "PayableKeyword"),
                         }
                     }
                 } {
@@ -468,7 +468,7 @@ impl Language {
                 }
             } else {
                 Fail {
-                    error: ParseError::new(start, "AmpersandAmpersand"),
+                    error: ParseError::new_at(start, "AmpersandAmpersand"),
                 }
             }
         }
@@ -507,7 +507,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "OpenParen"),
+                        error: ParseError::new_at(start, "OpenParen"),
                     }
                 }
             } {
@@ -565,7 +565,7 @@ impl Language {
                                     }
                                 } else {
                                     Fail {
-                                        error: ParseError::new(start, "CloseParen"),
+                                        error: ParseError::new_at(start, "CloseParen"),
                                     }
                                 }
                             } {
@@ -622,7 +622,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "OpenBracket"),
+                        error: ParseError::new_at(start, "OpenBracket"),
                     }
                 }
             } {
@@ -656,7 +656,7 @@ impl Language {
                                             }
                                         } else {
                                             Fail {
-                                                error: ParseError::new(start, "Comma"),
+                                                error: ParseError::new_at(start, "Comma"),
                                             }
                                         }
                                     } {
@@ -698,7 +698,7 @@ impl Language {
                                     }
                                 } else {
                                     Fail {
-                                        error: ParseError::new(start, "CloseBracket"),
+                                        error: ParseError::new_at(start, "CloseBracket"),
                                     }
                                 }
                             } {
@@ -755,7 +755,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "OpenParen"),
+                        error: ParseError::new_at(start, "OpenParen"),
                     }
                 }
             } {
@@ -782,7 +782,10 @@ impl Language {
                                 }
                             } else {
                                 Fail {
-                                    error: ParseError::new(start, "DoubleQuotedAsciiStringLiteral"),
+                                    error: ParseError::new_at(
+                                        start,
+                                        "DoubleQuotedAsciiStringLiteral",
+                                    ),
                                 }
                             }
                         } {
@@ -821,7 +824,7 @@ impl Language {
                                             }
                                         } else {
                                             Fail {
-                                                error: ParseError::new(start, "Comma"),
+                                                error: ParseError::new_at(start, "Comma"),
                                             }
                                         }
                                     } {
@@ -855,7 +858,7 @@ impl Language {
                                             }
                                         } else {
                                             Fail {
-                                                error: ParseError::new(
+                                                error: ParseError::new_at(
                                                     start,
                                                     "DoubleQuotedAsciiStringLiteral",
                                                 ),
@@ -931,7 +934,7 @@ impl Language {
                                     }
                                 } else {
                                     Fail {
-                                        error: ParseError::new(start, "CloseParen"),
+                                        error: ParseError::new_at(start, "CloseParen"),
                                     }
                                 }
                             } {
@@ -989,7 +992,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "AssemblyKeyword"),
+                        error: ParseError::new_at(start, "AssemblyKeyword"),
                     }
                 }
             } {
@@ -1022,7 +1025,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "Evmasm"),
+                            error: ParseError::new_at(start, "Evmasm"),
                         }
                     }
                 } {
@@ -1136,7 +1139,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "Equal"),
+                        error: ParseError::new_at(start, "Equal"),
                     }
                 }
             } {
@@ -1161,7 +1164,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "BarEqual"),
+                        error: ParseError::new_at(start, "BarEqual"),
                     }
                 }
             } {
@@ -1186,7 +1189,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "CaretEqual"),
+                        error: ParseError::new_at(start, "CaretEqual"),
                     }
                 }
             } {
@@ -1211,7 +1214,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "AmpersandEqual"),
+                        error: ParseError::new_at(start, "AmpersandEqual"),
                     }
                 }
             } {
@@ -1236,7 +1239,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "LessThanLessThanEqual"),
+                        error: ParseError::new_at(start, "LessThanLessThanEqual"),
                     }
                 }
             } {
@@ -1261,7 +1264,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "GreaterThanGreaterThanEqual"),
+                        error: ParseError::new_at(start, "GreaterThanGreaterThanEqual"),
                     }
                 }
             } {
@@ -1286,7 +1289,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "GreaterThanGreaterThanGreaterThanEqual"),
+                        error: ParseError::new_at(start, "GreaterThanGreaterThanGreaterThanEqual"),
                     }
                 }
             } {
@@ -1311,7 +1314,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "PlusEqual"),
+                        error: ParseError::new_at(start, "PlusEqual"),
                     }
                 }
             } {
@@ -1336,7 +1339,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "MinusEqual"),
+                        error: ParseError::new_at(start, "MinusEqual"),
                     }
                 }
             } {
@@ -1361,7 +1364,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "AsteriskEqual"),
+                        error: ParseError::new_at(start, "AsteriskEqual"),
                     }
                 }
             } {
@@ -1386,7 +1389,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "SlashEqual"),
+                        error: ParseError::new_at(start, "SlashEqual"),
                     }
                 }
             } {
@@ -1411,7 +1414,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "PercentEqual"),
+                        error: ParseError::new_at(start, "PercentEqual"),
                     }
                 }
             } {
@@ -1458,7 +1461,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "Asterisk"),
+                        error: ParseError::new_at(start, "Asterisk"),
                     }
                 }
             } {
@@ -1500,7 +1503,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "FromKeyword"),
+                        error: ParseError::new_at(start, "FromKeyword"),
                     }
                 }
             } {
@@ -1567,7 +1570,7 @@ impl Language {
                 }
             } else {
                 Fail {
-                    error: ParseError::new(start, "Ampersand"),
+                    error: ParseError::new_at(start, "Ampersand"),
                 }
             }
         }
@@ -1605,7 +1608,7 @@ impl Language {
                 }
             } else {
                 Fail {
-                    error: ParseError::new(start, "Bar"),
+                    error: ParseError::new_at(start, "Bar"),
                 }
             }
         }
@@ -1643,7 +1646,7 @@ impl Language {
                 }
             } else {
                 Fail {
-                    error: ParseError::new(start, "Caret"),
+                    error: ParseError::new_at(start, "Caret"),
                 }
             }
         }
@@ -1683,7 +1686,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "OpenBrace"),
+                        error: ParseError::new_at(start, "OpenBrace"),
                     }
                 }
             } {
@@ -1729,7 +1732,7 @@ impl Language {
                                     }
                                 } else {
                                     Fail {
-                                        error: ParseError::new(start, "CloseBrace"),
+                                        error: ParseError::new_at(start, "CloseBrace"),
                                     }
                                 }
                             } {
@@ -1776,7 +1779,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "OpenBrace"),
+                        error: ParseError::new_at(start, "OpenBrace"),
                     }
                 }
             } {
@@ -1837,7 +1840,7 @@ impl Language {
                                     }
                                 } else {
                                     Fail {
-                                        error: ParseError::new(start, "CloseBrace"),
+                                        error: ParseError::new_at(start, "CloseBrace"),
                                     }
                                 }
                             } {
@@ -1904,7 +1907,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "TrueKeyword"),
+                        error: ParseError::new_at(start, "TrueKeyword"),
                     }
                 }
             } {
@@ -1929,7 +1932,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "FalseKeyword"),
+                        error: ParseError::new_at(start, "FalseKeyword"),
                     }
                 }
             } {
@@ -1975,7 +1978,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "BreakKeyword"),
+                        error: ParseError::new_at(start, "BreakKeyword"),
                     }
                 }
             } {
@@ -2001,7 +2004,7 @@ impl Language {
                             }
                         } else {
                             Fail {
-                                error: ParseError::new(start, "Semicolon"),
+                                error: ParseError::new_at(start, "Semicolon"),
                             }
                         }
                     } {
@@ -2059,7 +2062,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "CatchKeyword"),
+                        error: ParseError::new_at(start, "CatchKeyword"),
                     }
                 }
             } {
@@ -2096,7 +2099,7 @@ impl Language {
                                 }
                             } else {
                                 Fail {
-                                    error: ParseError::new(start, "Identifier"),
+                                    error: ParseError::new_at(start, "Identifier"),
                                 }
                             }
                         } {
@@ -2224,7 +2227,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "QuestionMark"),
+                        error: ParseError::new_at(start, "QuestionMark"),
                     }
                 }
             } {
@@ -2266,7 +2269,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "Colon"),
+                        error: ParseError::new_at(start, "Colon"),
                     }
                 }
             } {
@@ -2347,7 +2350,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "ConstantKeyword"),
+                            error: ParseError::new_at(start, "ConstantKeyword"),
                         }
                     }
                 } {
@@ -2378,7 +2381,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "Identifier"),
+                            error: ParseError::new_at(start, "Identifier"),
                         }
                     }
                 } {
@@ -2409,7 +2412,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "Equal"),
+                            error: ParseError::new_at(start, "Equal"),
                         }
                     }
                 } {
@@ -2464,7 +2467,7 @@ impl Language {
                             }
                         } else {
                             Fail {
-                                error: ParseError::new(start, "Semicolon"),
+                                error: ParseError::new_at(start, "Semicolon"),
                             }
                         }
                     } {
@@ -2528,7 +2531,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "InternalKeyword"),
+                        error: ParseError::new_at(start, "InternalKeyword"),
                     }
                 }
             } {
@@ -2553,7 +2556,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "PayableKeyword"),
+                        error: ParseError::new_at(start, "PayableKeyword"),
                     }
                 }
             } {
@@ -2578,7 +2581,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "PublicKeyword"),
+                        error: ParseError::new_at(start, "PublicKeyword"),
                     }
                 }
             } {
@@ -2643,7 +2646,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "ConstructorKeyword"),
+                        error: ParseError::new_at(start, "ConstructorKeyword"),
                     }
                 }
             } {
@@ -2765,7 +2768,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "ContinueKeyword"),
+                        error: ParseError::new_at(start, "ContinueKeyword"),
                     }
                 }
             } {
@@ -2791,7 +2794,7 @@ impl Language {
                             }
                         } else {
                             Fail {
-                                error: ParseError::new(start, "Semicolon"),
+                                error: ParseError::new_at(start, "Semicolon"),
                             }
                         }
                     } {
@@ -3172,7 +3175,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "ContractKeyword"),
+                        error: ParseError::new_at(start, "ContractKeyword"),
                     }
                 }
             } {
@@ -3203,7 +3206,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "Identifier"),
+                        error: ParseError::new_at(start, "Identifier"),
                     }
                 }
             } {
@@ -3258,7 +3261,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "OpenBrace"),
+                            error: ParseError::new_at(start, "OpenBrace"),
                         }
                     }
                 } {
@@ -3304,7 +3307,7 @@ impl Language {
                                         }
                                     } else {
                                         Fail {
-                                            error: ParseError::new(start, "CloseBrace"),
+                                            error: ParseError::new_at(start, "CloseBrace"),
                                         }
                                     }
                                 } {
@@ -3372,7 +3375,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "AbstractKeyword"),
+                            error: ParseError::new_at(start, "AbstractKeyword"),
                         }
                     }
                 } {
@@ -3413,7 +3416,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "ContractKeyword"),
+                        error: ParseError::new_at(start, "ContractKeyword"),
                     }
                 }
             } {
@@ -3444,7 +3447,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "Identifier"),
+                        error: ParseError::new_at(start, "Identifier"),
                     }
                 }
             } {
@@ -3499,7 +3502,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "OpenBrace"),
+                            error: ParseError::new_at(start, "OpenBrace"),
                         }
                     }
                 } {
@@ -3545,7 +3548,7 @@ impl Language {
                                         }
                                     } else {
                                         Fail {
-                                            error: ParseError::new(start, "CloseBrace"),
+                                            error: ParseError::new_at(start, "CloseBrace"),
                                         }
                                     }
                                 } {
@@ -3631,7 +3634,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "MemoryKeyword"),
+                        error: ParseError::new_at(start, "MemoryKeyword"),
                     }
                 }
             } {
@@ -3656,7 +3659,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "StorageKeyword"),
+                        error: ParseError::new_at(start, "StorageKeyword"),
                     }
                 }
             } {
@@ -3694,7 +3697,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "MemoryKeyword"),
+                        error: ParseError::new_at(start, "MemoryKeyword"),
                     }
                 }
             } {
@@ -3719,7 +3722,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "StorageKeyword"),
+                        error: ParseError::new_at(start, "StorageKeyword"),
                     }
                 }
             } {
@@ -3744,7 +3747,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "CalldataKeyword"),
+                        error: ParseError::new_at(start, "CalldataKeyword"),
                     }
                 }
             } {
@@ -3945,7 +3948,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "DeleteKeyword"),
+                            error: ParseError::new_at(start, "DeleteKeyword"),
                         }
                     }
                 } {
@@ -3997,7 +4000,7 @@ impl Language {
                             }
                         } else {
                             Fail {
-                                error: ParseError::new(start, "Semicolon"),
+                                error: ParseError::new_at(start, "Semicolon"),
                             }
                         }
                     } {
@@ -4093,7 +4096,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "DoKeyword"),
+                            error: ParseError::new_at(start, "DoKeyword"),
                         }
                     }
                 } {
@@ -4135,7 +4138,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "WhileKeyword"),
+                            error: ParseError::new_at(start, "WhileKeyword"),
                         }
                     }
                 } {
@@ -4167,7 +4170,7 @@ impl Language {
                             }
                         } else {
                             Fail {
-                                error: ParseError::new(start, "OpenParen"),
+                                error: ParseError::new_at(start, "OpenParen"),
                             }
                         }
                     } {
@@ -4197,7 +4200,7 @@ impl Language {
                                         }
                                     } else {
                                         Fail {
-                                            error: ParseError::new(start, "CloseParen"),
+                                            error: ParseError::new_at(start, "CloseParen"),
                                         }
                                     }
                                 } {
@@ -4258,7 +4261,7 @@ impl Language {
                             }
                         } else {
                             Fail {
-                                error: ParseError::new(start, "Semicolon"),
+                                error: ParseError::new_at(start, "Semicolon"),
                             }
                         }
                     } {
@@ -4326,7 +4329,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "BoolKeyword"),
+                        error: ParseError::new_at(start, "BoolKeyword"),
                     }
                 }
             } {
@@ -4351,7 +4354,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "StringKeyword"),
+                        error: ParseError::new_at(start, "StringKeyword"),
                     }
                 }
             } {
@@ -4386,7 +4389,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "ByteType"),
+                        error: ParseError::new_at(start, "ByteType"),
                     }
                 }
             } {
@@ -4411,7 +4414,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "FixedBytesType"),
+                        error: ParseError::new_at(start, "FixedBytesType"),
                     }
                 }
             } {
@@ -4436,7 +4439,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "SignedIntegerType"),
+                        error: ParseError::new_at(start, "SignedIntegerType"),
                     }
                 }
             } {
@@ -4461,7 +4464,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "UnsignedIntegerType"),
+                        error: ParseError::new_at(start, "UnsignedIntegerType"),
                     }
                 }
             } {
@@ -4486,7 +4489,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "SignedFixedType"),
+                        error: ParseError::new_at(start, "SignedFixedType"),
                     }
                 }
             } {
@@ -4511,7 +4514,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "UnsignedFixedType"),
+                        error: ParseError::new_at(start, "UnsignedFixedType"),
                     }
                 }
             } {
@@ -4557,7 +4560,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "BoolKeyword"),
+                        error: ParseError::new_at(start, "BoolKeyword"),
                     }
                 }
             } {
@@ -4582,7 +4585,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "StringKeyword"),
+                        error: ParseError::new_at(start, "StringKeyword"),
                     }
                 }
             } {
@@ -4617,7 +4620,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "FixedBytesType"),
+                        error: ParseError::new_at(start, "FixedBytesType"),
                     }
                 }
             } {
@@ -4642,7 +4645,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "SignedIntegerType"),
+                        error: ParseError::new_at(start, "SignedIntegerType"),
                     }
                 }
             } {
@@ -4667,7 +4670,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "UnsignedIntegerType"),
+                        error: ParseError::new_at(start, "UnsignedIntegerType"),
                     }
                 }
             } {
@@ -4692,7 +4695,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "SignedFixedType"),
+                        error: ParseError::new_at(start, "SignedFixedType"),
                     }
                 }
             } {
@@ -4717,7 +4720,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "UnsignedFixedType"),
+                        error: ParseError::new_at(start, "UnsignedFixedType"),
                     }
                 }
             } {
@@ -4774,7 +4777,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "EmitKeyword"),
+                            error: ParseError::new_at(start, "EmitKeyword"),
                         }
                     }
                 } {
@@ -4837,7 +4840,7 @@ impl Language {
                             }
                         } else {
                             Fail {
-                                error: ParseError::new(start, "Semicolon"),
+                                error: ParseError::new_at(start, "Semicolon"),
                             }
                         }
                     } {
@@ -4911,7 +4914,7 @@ impl Language {
                             }
                         } else {
                             Fail {
-                                error: ParseError::new(start, "Whitespace"),
+                                error: ParseError::new_at(start, "Whitespace"),
                             }
                         }
                     } {
@@ -4934,7 +4937,7 @@ impl Language {
                             }
                         } else {
                             Fail {
-                                error: ParseError::new(start, "EndOfLine"),
+                                error: ParseError::new_at(start, "EndOfLine"),
                             }
                         }
                     } {
@@ -4957,7 +4960,7 @@ impl Language {
                             }
                         } else {
                             Fail {
-                                error: ParseError::new(start, "MultilineComment"),
+                                error: ParseError::new_at(start, "MultilineComment"),
                             }
                         }
                     } {
@@ -4980,7 +4983,7 @@ impl Language {
                             }
                         } else {
                             Fail {
-                                error: ParseError::new(start, "SingleLineComment"),
+                                error: ParseError::new_at(start, "SingleLineComment"),
                             }
                         }
                     } {
@@ -5041,7 +5044,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "EnumKeyword"),
+                        error: ParseError::new_at(start, "EnumKeyword"),
                     }
                 }
             } {
@@ -5072,7 +5075,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "Identifier"),
+                        error: ParseError::new_at(start, "Identifier"),
                     }
                 }
             } {
@@ -5104,7 +5107,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "OpenBrace"),
+                            error: ParseError::new_at(start, "OpenBrace"),
                         }
                     }
                 } {
@@ -5135,7 +5138,7 @@ impl Language {
                                             }
                                         } else {
                                             Fail {
-                                                error: ParseError::new(start, "Identifier"),
+                                                error: ParseError::new_at(start, "Identifier"),
                                             }
                                         }
                                     } {
@@ -5162,7 +5165,7 @@ impl Language {
                                                     }
                                                 } else {
                                                     Fail {
-                                                        error: ParseError::new(start, "Comma"),
+                                                        error: ParseError::new_at(start, "Comma"),
                                                     }
                                                 }
                                             } {
@@ -5214,7 +5217,7 @@ impl Language {
                                         }
                                     } else {
                                         Fail {
-                                            error: ParseError::new(start, "CloseBrace"),
+                                            error: ParseError::new_at(start, "CloseBrace"),
                                         }
                                     }
                                 } {
@@ -5288,7 +5291,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "EqualEqual"),
+                        error: ParseError::new_at(start, "EqualEqual"),
                     }
                 }
             } {
@@ -5313,7 +5316,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "BangEqual"),
+                        error: ParseError::new_at(start, "BangEqual"),
                     }
                 }
             } {
@@ -5361,7 +5364,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "ErrorKeyword"),
+                            error: ParseError::new_at(start, "ErrorKeyword"),
                         }
                     }
                 } {
@@ -5392,7 +5395,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "Identifier"),
+                            error: ParseError::new_at(start, "Identifier"),
                         }
                     }
                 } {
@@ -5424,7 +5427,7 @@ impl Language {
                             }
                         } else {
                             Fail {
-                                error: ParseError::new(start, "OpenParen"),
+                                error: ParseError::new_at(start, "OpenParen"),
                             }
                         }
                     } {
@@ -5461,7 +5464,9 @@ impl Language {
                                                         }
                                                     } else {
                                                         Fail {
-                                                            error: ParseError::new(start, "Comma"),
+                                                            error: ParseError::new_at(
+                                                                start, "Comma",
+                                                            ),
                                                         }
                                                     }
                                                 } {
@@ -5514,7 +5519,7 @@ impl Language {
                                             }
                                         } else {
                                             Fail {
-                                                error: ParseError::new(start, "CloseParen"),
+                                                error: ParseError::new_at(start, "CloseParen"),
                                             }
                                         }
                                     } {
@@ -5573,7 +5578,7 @@ impl Language {
                             }
                         } else {
                             Fail {
-                                error: ParseError::new(start, "Semicolon"),
+                                error: ParseError::new_at(start, "Semicolon"),
                             }
                         }
                     } {
@@ -5643,7 +5648,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "Identifier"),
+                            error: ParseError::new_at(start, "Identifier"),
                         }
                     }
                 } {
@@ -5709,7 +5714,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "EventKeyword"),
+                            error: ParseError::new_at(start, "EventKeyword"),
                         }
                     }
                 } {
@@ -5740,7 +5745,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "Identifier"),
+                            error: ParseError::new_at(start, "Identifier"),
                         }
                     }
                 } {
@@ -5772,7 +5777,7 @@ impl Language {
                             }
                         } else {
                             Fail {
-                                error: ParseError::new(start, "OpenParen"),
+                                error: ParseError::new_at(start, "OpenParen"),
                             }
                         }
                     } {
@@ -5809,7 +5814,9 @@ impl Language {
                                                         }
                                                     } else {
                                                         Fail {
-                                                            error: ParseError::new(start, "Comma"),
+                                                            error: ParseError::new_at(
+                                                                start, "Comma",
+                                                            ),
                                                         }
                                                     }
                                                 } {
@@ -5862,7 +5869,7 @@ impl Language {
                                             }
                                         } else {
                                             Fail {
-                                                error: ParseError::new(start, "CloseParen"),
+                                                error: ParseError::new_at(start, "CloseParen"),
                                             }
                                         }
                                     } {
@@ -5913,7 +5920,7 @@ impl Language {
                             }
                         } else {
                             Fail {
-                                error: ParseError::new(start, "AnonymousKeyword"),
+                                error: ParseError::new_at(start, "AnonymousKeyword"),
                             }
                         }
                     } {
@@ -5967,7 +5974,7 @@ impl Language {
                             }
                         } else {
                             Fail {
-                                error: ParseError::new(start, "Semicolon"),
+                                error: ParseError::new_at(start, "Semicolon"),
                             }
                         }
                     } {
@@ -6037,7 +6044,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "IndexedKeyword"),
+                            error: ParseError::new_at(start, "IndexedKeyword"),
                         }
                     }
                 } {
@@ -6080,7 +6087,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "Identifier"),
+                            error: ParseError::new_at(start, "Identifier"),
                         }
                     }
                 } {
@@ -6145,7 +6152,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "ExperimentalKeyword"),
+                        error: ParseError::new_at(start, "ExperimentalKeyword"),
                     }
                 }
             } {
@@ -6176,7 +6183,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "Identifier"),
+                        error: ParseError::new_at(start, "Identifier"),
                     }
                 }
             } {
@@ -6229,7 +6236,7 @@ impl Language {
                 }
             } else {
                 Fail {
-                    error: ParseError::new(start, "AsteriskAsterisk"),
+                    error: ParseError::new_at(start, "AsteriskAsterisk"),
                 }
             }
         }
@@ -7165,7 +7172,7 @@ impl Language {
                             }
                         } else {
                             Fail {
-                                error: ParseError::new(start, "Semicolon"),
+                                error: ParseError::new_at(start, "Semicolon"),
                             }
                         }
                     } {
@@ -7240,7 +7247,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "ExternalKeyword"),
+                        error: ParseError::new_at(start, "ExternalKeyword"),
                     }
                 }
             } {
@@ -7265,7 +7272,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "PayableKeyword"),
+                        error: ParseError::new_at(start, "PayableKeyword"),
                     }
                 }
             } {
@@ -7290,7 +7297,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "PureKeyword"),
+                        error: ParseError::new_at(start, "PureKeyword"),
                     }
                 }
             } {
@@ -7315,7 +7322,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "ViewKeyword"),
+                        error: ParseError::new_at(start, "ViewKeyword"),
                     }
                 }
             } {
@@ -7340,7 +7347,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "VirtualKeyword"),
+                        error: ParseError::new_at(start, "VirtualKeyword"),
                     }
                 }
             } {
@@ -7408,7 +7415,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "FallbackKeyword"),
+                        error: ParseError::new_at(start, "FallbackKeyword"),
                     }
                 }
             } {
@@ -7480,7 +7487,7 @@ impl Language {
                             }
                         } else {
                             Fail {
-                                error: ParseError::new(start, "ReturnsKeyword"),
+                                error: ParseError::new_at(start, "ReturnsKeyword"),
                             }
                         }
                     } {
@@ -7552,7 +7559,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "Semicolon"),
+                            error: ParseError::new_at(start, "Semicolon"),
                         }
                     }
                 } {
@@ -7642,7 +7649,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "ForKeyword"),
+                        error: ParseError::new_at(start, "ForKeyword"),
                     }
                 }
             } {
@@ -7674,7 +7681,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "OpenParen"),
+                            error: ParseError::new_at(start, "OpenParen"),
                         }
                     }
                 } {
@@ -7709,7 +7716,7 @@ impl Language {
                                         }
                                     } else {
                                         Fail {
-                                            error: ParseError::new(start, "Semicolon"),
+                                            error: ParseError::new_at(start, "Semicolon"),
                                         }
                                     }
                                 } {
@@ -7756,7 +7763,7 @@ impl Language {
                                         }
                                     } else {
                                         Fail {
-                                            error: ParseError::new(start, "Semicolon"),
+                                            error: ParseError::new_at(start, "Semicolon"),
                                         }
                                     }
                                 } {
@@ -7832,7 +7839,7 @@ impl Language {
                                         }
                                     } else {
                                         Fail {
-                                            error: ParseError::new(start, "CloseParen"),
+                                            error: ParseError::new_at(start, "CloseParen"),
                                         }
                                     }
                                 } {
@@ -7927,7 +7934,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "ConstantKeyword"),
+                        error: ParseError::new_at(start, "ConstantKeyword"),
                     }
                 }
             } {
@@ -7952,7 +7959,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "ExternalKeyword"),
+                        error: ParseError::new_at(start, "ExternalKeyword"),
                     }
                 }
             } {
@@ -7977,7 +7984,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "InternalKeyword"),
+                        error: ParseError::new_at(start, "InternalKeyword"),
                     }
                 }
             } {
@@ -8012,7 +8019,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "PayableKeyword"),
+                        error: ParseError::new_at(start, "PayableKeyword"),
                     }
                 }
             } {
@@ -8037,7 +8044,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "PrivateKeyword"),
+                        error: ParseError::new_at(start, "PrivateKeyword"),
                     }
                 }
             } {
@@ -8062,7 +8069,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "PublicKeyword"),
+                        error: ParseError::new_at(start, "PublicKeyword"),
                     }
                 }
             } {
@@ -8087,7 +8094,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "PureKeyword"),
+                        error: ParseError::new_at(start, "PureKeyword"),
                     }
                 }
             } {
@@ -8112,7 +8119,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "ViewKeyword"),
+                        error: ParseError::new_at(start, "ViewKeyword"),
                     }
                 }
             } {
@@ -8158,7 +8165,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "ExternalKeyword"),
+                        error: ParseError::new_at(start, "ExternalKeyword"),
                     }
                 }
             } {
@@ -8183,7 +8190,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "InternalKeyword"),
+                        error: ParseError::new_at(start, "InternalKeyword"),
                     }
                 }
             } {
@@ -8218,7 +8225,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "PayableKeyword"),
+                        error: ParseError::new_at(start, "PayableKeyword"),
                     }
                 }
             } {
@@ -8243,7 +8250,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "PrivateKeyword"),
+                        error: ParseError::new_at(start, "PrivateKeyword"),
                     }
                 }
             } {
@@ -8268,7 +8275,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "PublicKeyword"),
+                        error: ParseError::new_at(start, "PublicKeyword"),
                     }
                 }
             } {
@@ -8293,7 +8300,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "PureKeyword"),
+                        error: ParseError::new_at(start, "PureKeyword"),
                     }
                 }
             } {
@@ -8318,7 +8325,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "ViewKeyword"),
+                        error: ParseError::new_at(start, "ViewKeyword"),
                     }
                 }
             } {
@@ -8365,7 +8372,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "ExternalKeyword"),
+                        error: ParseError::new_at(start, "ExternalKeyword"),
                     }
                 }
             } {
@@ -8390,7 +8397,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "InternalKeyword"),
+                        error: ParseError::new_at(start, "InternalKeyword"),
                     }
                 }
             } {
@@ -8425,7 +8432,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "PayableKeyword"),
+                        error: ParseError::new_at(start, "PayableKeyword"),
                     }
                 }
             } {
@@ -8450,7 +8457,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "PrivateKeyword"),
+                        error: ParseError::new_at(start, "PrivateKeyword"),
                     }
                 }
             } {
@@ -8475,7 +8482,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "PublicKeyword"),
+                        error: ParseError::new_at(start, "PublicKeyword"),
                     }
                 }
             } {
@@ -8500,7 +8507,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "PureKeyword"),
+                        error: ParseError::new_at(start, "PureKeyword"),
                     }
                 }
             } {
@@ -8525,7 +8532,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "ViewKeyword"),
+                        error: ParseError::new_at(start, "ViewKeyword"),
                     }
                 }
             } {
@@ -8550,7 +8557,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "VirtualKeyword"),
+                        error: ParseError::new_at(start, "VirtualKeyword"),
                     }
                 }
             } {
@@ -8752,7 +8759,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "OpenBrace"),
+                        error: ParseError::new_at(start, "OpenBrace"),
                     }
                 }
             } {
@@ -8789,7 +8796,7 @@ impl Language {
                                                 }
                                             } else {
                                                 Fail {
-                                                    error: ParseError::new(start, "Comma"),
+                                                    error: ParseError::new_at(start, "Comma"),
                                                 }
                                             }
                                         } {
@@ -8841,7 +8848,7 @@ impl Language {
                                     }
                                 } else {
                                     Fail {
-                                        error: ParseError::new(start, "CloseBrace"),
+                                        error: ParseError::new_at(start, "CloseBrace"),
                                     }
                                 }
                             } {
@@ -8916,7 +8923,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "FunctionKeyword"),
+                        error: ParseError::new_at(start, "FunctionKeyword"),
                     }
                 }
             } {
@@ -8950,7 +8957,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "Identifier"),
+                            error: ParseError::new_at(start, "Identifier"),
                         }
                     }
                 } {
@@ -8975,7 +8982,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "FallbackKeyword"),
+                            error: ParseError::new_at(start, "FallbackKeyword"),
                         }
                     }
                 } {
@@ -9000,7 +9007,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "ReceiveKeyword"),
+                            error: ParseError::new_at(start, "ReceiveKeyword"),
                         }
                     }
                 } {
@@ -9079,7 +9086,7 @@ impl Language {
                             }
                         } else {
                             Fail {
-                                error: ParseError::new(start, "ReturnsKeyword"),
+                                error: ParseError::new_at(start, "ReturnsKeyword"),
                             }
                         }
                     } {
@@ -9151,7 +9158,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "Semicolon"),
+                            error: ParseError::new_at(start, "Semicolon"),
                         }
                     }
                 } {
@@ -9221,7 +9228,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "FunctionKeyword"),
+                        error: ParseError::new_at(start, "FunctionKeyword"),
                     }
                 }
             } {
@@ -9270,7 +9277,7 @@ impl Language {
                                 }
                             } else {
                                 Fail {
-                                    error: ParseError::new(start, "InternalKeyword"),
+                                    error: ParseError::new_at(start, "InternalKeyword"),
                                 }
                             }
                         } {
@@ -9295,7 +9302,7 @@ impl Language {
                                 }
                             } else {
                                 Fail {
-                                    error: ParseError::new(start, "ExternalKeyword"),
+                                    error: ParseError::new_at(start, "ExternalKeyword"),
                                 }
                             }
                         } {
@@ -9320,7 +9327,7 @@ impl Language {
                                 }
                             } else {
                                 Fail {
-                                    error: ParseError::new(start, "PrivateKeyword"),
+                                    error: ParseError::new_at(start, "PrivateKeyword"),
                                 }
                             }
                         } {
@@ -9345,7 +9352,7 @@ impl Language {
                                 }
                             } else {
                                 Fail {
-                                    error: ParseError::new(start, "PublicKeyword"),
+                                    error: ParseError::new_at(start, "PublicKeyword"),
                                 }
                             }
                         } {
@@ -9370,7 +9377,7 @@ impl Language {
                                 }
                             } else {
                                 Fail {
-                                    error: ParseError::new(start, "PureKeyword"),
+                                    error: ParseError::new_at(start, "PureKeyword"),
                                 }
                             }
                         } {
@@ -9395,7 +9402,7 @@ impl Language {
                                 }
                             } else {
                                 Fail {
-                                    error: ParseError::new(start, "ViewKeyword"),
+                                    error: ParseError::new_at(start, "ViewKeyword"),
                                 }
                             }
                         } {
@@ -9420,7 +9427,7 @@ impl Language {
                                 }
                             } else {
                                 Fail {
-                                    error: ParseError::new(start, "PayableKeyword"),
+                                    error: ParseError::new_at(start, "PayableKeyword"),
                                 }
                             }
                         } {
@@ -9473,7 +9480,7 @@ impl Language {
                             }
                         } else {
                             Fail {
-                                error: ParseError::new(start, "ReturnsKeyword"),
+                                error: ParseError::new_at(start, "ReturnsKeyword"),
                             }
                         }
                     } {
@@ -9570,7 +9577,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "Identifier"),
+                            error: ParseError::new_at(start, "Identifier"),
                         }
                     }
                 } {
@@ -9595,7 +9602,7 @@ impl Language {
                                 }
                             } else {
                                 Fail {
-                                    error: ParseError::new(start, "Period"),
+                                    error: ParseError::new_at(start, "Period"),
                                 }
                             }
                         } {
@@ -9648,7 +9655,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "IfKeyword"),
+                        error: ParseError::new_at(start, "IfKeyword"),
                     }
                 }
             } {
@@ -9680,7 +9687,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "OpenParen"),
+                            error: ParseError::new_at(start, "OpenParen"),
                         }
                     }
                 } {
@@ -9710,7 +9717,7 @@ impl Language {
                                     }
                                 } else {
                                     Fail {
-                                        error: ParseError::new(start, "CloseParen"),
+                                        error: ParseError::new_at(start, "CloseParen"),
                                     }
                                 }
                             } {
@@ -9773,7 +9780,7 @@ impl Language {
                             }
                         } else {
                             Fail {
-                                error: ParseError::new(start, "ElseKeyword"),
+                                error: ParseError::new_at(start, "ElseKeyword"),
                             }
                         }
                     } {
@@ -9869,7 +9876,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "AsKeyword"),
+                        error: ParseError::new_at(start, "AsKeyword"),
                     }
                 }
             } {
@@ -9900,7 +9907,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "Identifier"),
+                        error: ParseError::new_at(start, "Identifier"),
                     }
                 }
             } {
@@ -9956,7 +9963,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "ImportKeyword"),
+                            error: ParseError::new_at(start, "ImportKeyword"),
                         }
                     }
                 } {
@@ -10028,7 +10035,7 @@ impl Language {
                             }
                         } else {
                             Fail {
-                                error: ParseError::new(start, "Semicolon"),
+                                error: ParseError::new_at(start, "Semicolon"),
                             }
                         }
                     } {
@@ -10083,7 +10090,7 @@ impl Language {
                 }
             } else {
                 Fail {
-                    error: ParseError::new(start, "AsciiStringLiteral"),
+                    error: ParseError::new_at(start, "AsciiStringLiteral"),
                 }
             }
         }
@@ -10122,7 +10129,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "OpenBracket"),
+                        error: ParseError::new_at(start, "OpenBracket"),
                     }
                 }
             } {
@@ -10169,7 +10176,7 @@ impl Language {
                                             }
                                         } else {
                                             Fail {
-                                                error: ParseError::new(start, "Colon"),
+                                                error: ParseError::new_at(start, "Colon"),
                                             }
                                         }
                                     } {
@@ -10273,7 +10280,7 @@ impl Language {
                                     }
                                 } else {
                                     Fail {
-                                        error: ParseError::new(start, "Colon"),
+                                        error: ParseError::new_at(start, "Colon"),
                                     }
                                 }
                             } {
@@ -10349,7 +10356,7 @@ impl Language {
                                     }
                                 } else {
                                     Fail {
-                                        error: ParseError::new(start, "CloseBracket"),
+                                        error: ParseError::new_at(start, "CloseBracket"),
                                     }
                                 }
                             } {
@@ -10465,7 +10472,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "IsKeyword"),
+                        error: ParseError::new_at(start, "IsKeyword"),
                     }
                 }
             } {
@@ -10504,7 +10511,7 @@ impl Language {
                                     }
                                 } else {
                                     Fail {
-                                        error: ParseError::new(start, "Comma"),
+                                        error: ParseError::new_at(start, "Comma"),
                                     }
                                 }
                             } {
@@ -10572,7 +10579,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "InterfaceKeyword"),
+                        error: ParseError::new_at(start, "InterfaceKeyword"),
                     }
                 }
             } {
@@ -10603,7 +10610,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "Identifier"),
+                        error: ParseError::new_at(start, "Identifier"),
                     }
                 }
             } {
@@ -10658,7 +10665,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "OpenBrace"),
+                            error: ParseError::new_at(start, "OpenBrace"),
                         }
                     }
                 } {
@@ -10704,7 +10711,7 @@ impl Language {
                                         }
                                     } else {
                                         Fail {
-                                            error: ParseError::new(start, "CloseBrace"),
+                                            error: ParseError::new_at(start, "CloseBrace"),
                                         }
                                     }
                                 } {
@@ -10783,7 +10790,7 @@ impl Language {
                             }
                         } else {
                             Fail {
-                                error: ParseError::new(start, "Whitespace"),
+                                error: ParseError::new_at(start, "Whitespace"),
                             }
                         }
                     } {
@@ -10806,7 +10813,7 @@ impl Language {
                             }
                         } else {
                             Fail {
-                                error: ParseError::new(start, "EndOfLine"),
+                                error: ParseError::new_at(start, "EndOfLine"),
                             }
                         }
                     } {
@@ -10829,7 +10836,7 @@ impl Language {
                             }
                         } else {
                             Fail {
-                                error: ParseError::new(start, "MultilineComment"),
+                                error: ParseError::new_at(start, "MultilineComment"),
                             }
                         }
                     } {
@@ -10852,7 +10859,7 @@ impl Language {
                             }
                         } else {
                             Fail {
-                                error: ParseError::new(start, "SingleLineComment"),
+                                error: ParseError::new_at(start, "SingleLineComment"),
                             }
                         }
                     } {
@@ -10913,7 +10920,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "LibraryKeyword"),
+                        error: ParseError::new_at(start, "LibraryKeyword"),
                     }
                 }
             } {
@@ -10944,7 +10951,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "Identifier"),
+                        error: ParseError::new_at(start, "Identifier"),
                     }
                 }
             } {
@@ -10976,7 +10983,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "OpenBrace"),
+                            error: ParseError::new_at(start, "OpenBrace"),
                         }
                     }
                 } {
@@ -11022,7 +11029,7 @@ impl Language {
                                         }
                                     } else {
                                         Fail {
-                                            error: ParseError::new(start, "CloseBrace"),
+                                            error: ParseError::new_at(start, "CloseBrace"),
                                         }
                                     }
                                 } {
@@ -11164,7 +11171,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "Identifier"),
+                            error: ParseError::new_at(start, "Identifier"),
                         }
                     }
                 } {
@@ -11237,7 +11244,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "MappingKeyword"),
+                        error: ParseError::new_at(start, "MappingKeyword"),
                     }
                 }
             } {
@@ -11269,7 +11276,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "OpenParen"),
+                            error: ParseError::new_at(start, "OpenParen"),
                         }
                     }
                 } {
@@ -11308,7 +11315,7 @@ impl Language {
                                     }
                                 } else {
                                     Fail {
-                                        error: ParseError::new(start, "EqualGreaterThan"),
+                                        error: ParseError::new_at(start, "EqualGreaterThan"),
                                     }
                                 }
                             } {
@@ -11365,7 +11372,7 @@ impl Language {
                                         }
                                     } else {
                                         Fail {
-                                            error: ParseError::new(start, "CloseParen"),
+                                            error: ParseError::new_at(start, "CloseParen"),
                                         }
                                     }
                                 } {
@@ -11477,7 +11484,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "Identifier"),
+                            error: ParseError::new_at(start, "Identifier"),
                         }
                     }
                 } {
@@ -11550,7 +11557,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "Period"),
+                        error: ParseError::new_at(start, "Period"),
                     }
                 }
             } {
@@ -11584,7 +11591,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "Identifier"),
+                            error: ParseError::new_at(start, "Identifier"),
                         }
                     }
                 } {
@@ -11609,7 +11616,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "AddressKeyword"),
+                            error: ParseError::new_at(start, "AddressKeyword"),
                         }
                     }
                 } {
@@ -11686,7 +11693,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "VirtualKeyword"),
+                        error: ParseError::new_at(start, "VirtualKeyword"),
                     }
                 }
             } {
@@ -11741,7 +11748,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "ModifierKeyword"),
+                        error: ParseError::new_at(start, "ModifierKeyword"),
                     }
                 }
             } {
@@ -11772,7 +11779,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "Identifier"),
+                        error: ParseError::new_at(start, "Identifier"),
                     }
                 }
             } {
@@ -11855,7 +11862,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "Semicolon"),
+                            error: ParseError::new_at(start, "Semicolon"),
                         }
                     }
                 } {
@@ -11984,7 +11991,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "Asterisk"),
+                        error: ParseError::new_at(start, "Asterisk"),
                     }
                 }
             } {
@@ -12009,7 +12016,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "Slash"),
+                        error: ParseError::new_at(start, "Slash"),
                     }
                 }
             } {
@@ -12034,7 +12041,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "Percent"),
+                        error: ParseError::new_at(start, "Percent"),
                     }
                 }
             } {
@@ -12081,7 +12088,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "Identifier"),
+                        error: ParseError::new_at(start, "Identifier"),
                     }
                 }
             } {
@@ -12112,7 +12119,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "Colon"),
+                        error: ParseError::new_at(start, "Colon"),
                     }
                 }
             } {
@@ -12177,7 +12184,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "OpenBrace"),
+                        error: ParseError::new_at(start, "OpenBrace"),
                     }
                 }
             } {
@@ -12214,7 +12221,7 @@ impl Language {
                                                 }
                                             } else {
                                                 Fail {
-                                                    error: ParseError::new(start, "Comma"),
+                                                    error: ParseError::new_at(start, "Comma"),
                                                 }
                                             }
                                         } {
@@ -12266,7 +12273,7 @@ impl Language {
                                     }
                                 } else {
                                     Fail {
-                                        error: ParseError::new(start, "CloseBrace"),
+                                        error: ParseError::new_at(start, "CloseBrace"),
                                     }
                                 }
                             } {
@@ -12324,7 +12331,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "NewKeyword"),
+                        error: ParseError::new_at(start, "NewKeyword"),
                     }
                 }
             } {
@@ -12401,7 +12408,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "DaysKeyword"),
+                        error: ParseError::new_at(start, "DaysKeyword"),
                     }
                 }
             } {
@@ -12426,7 +12433,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "EtherKeyword"),
+                        error: ParseError::new_at(start, "EtherKeyword"),
                     }
                 }
             } {
@@ -12451,7 +12458,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "FinneyKeyword"),
+                        error: ParseError::new_at(start, "FinneyKeyword"),
                     }
                 }
             } {
@@ -12476,7 +12483,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "HoursKeyword"),
+                        error: ParseError::new_at(start, "HoursKeyword"),
                     }
                 }
             } {
@@ -12501,7 +12508,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "MinutesKeyword"),
+                        error: ParseError::new_at(start, "MinutesKeyword"),
                     }
                 }
             } {
@@ -12526,7 +12533,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "SecondsKeyword"),
+                        error: ParseError::new_at(start, "SecondsKeyword"),
                     }
                 }
             } {
@@ -12551,7 +12558,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "SzaboKeyword"),
+                        error: ParseError::new_at(start, "SzaboKeyword"),
                     }
                 }
             } {
@@ -12576,7 +12583,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "WeeksKeyword"),
+                        error: ParseError::new_at(start, "WeeksKeyword"),
                     }
                 }
             } {
@@ -12601,7 +12608,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "WeiKeyword"),
+                        error: ParseError::new_at(start, "WeiKeyword"),
                     }
                 }
             } {
@@ -12626,7 +12633,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "YearsKeyword"),
+                        error: ParseError::new_at(start, "YearsKeyword"),
                     }
                 }
             } {
@@ -12672,7 +12679,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "DaysKeyword"),
+                        error: ParseError::new_at(start, "DaysKeyword"),
                     }
                 }
             } {
@@ -12697,7 +12704,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "EtherKeyword"),
+                        error: ParseError::new_at(start, "EtherKeyword"),
                     }
                 }
             } {
@@ -12722,7 +12729,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "FinneyKeyword"),
+                        error: ParseError::new_at(start, "FinneyKeyword"),
                     }
                 }
             } {
@@ -12747,7 +12754,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "HoursKeyword"),
+                        error: ParseError::new_at(start, "HoursKeyword"),
                     }
                 }
             } {
@@ -12772,7 +12779,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "MinutesKeyword"),
+                        error: ParseError::new_at(start, "MinutesKeyword"),
                     }
                 }
             } {
@@ -12797,7 +12804,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "SecondsKeyword"),
+                        error: ParseError::new_at(start, "SecondsKeyword"),
                     }
                 }
             } {
@@ -12822,7 +12829,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "SzaboKeyword"),
+                        error: ParseError::new_at(start, "SzaboKeyword"),
                     }
                 }
             } {
@@ -12847,7 +12854,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "WeeksKeyword"),
+                        error: ParseError::new_at(start, "WeeksKeyword"),
                     }
                 }
             } {
@@ -12872,7 +12879,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "WeiKeyword"),
+                        error: ParseError::new_at(start, "WeiKeyword"),
                     }
                 }
             } {
@@ -12919,7 +12926,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "DaysKeyword"),
+                        error: ParseError::new_at(start, "DaysKeyword"),
                     }
                 }
             } {
@@ -12944,7 +12951,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "EtherKeyword"),
+                        error: ParseError::new_at(start, "EtherKeyword"),
                     }
                 }
             } {
@@ -12969,7 +12976,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "FinneyKeyword"),
+                        error: ParseError::new_at(start, "FinneyKeyword"),
                     }
                 }
             } {
@@ -12994,7 +13001,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "GweiKeyword"),
+                        error: ParseError::new_at(start, "GweiKeyword"),
                     }
                 }
             } {
@@ -13019,7 +13026,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "HoursKeyword"),
+                        error: ParseError::new_at(start, "HoursKeyword"),
                     }
                 }
             } {
@@ -13044,7 +13051,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "MinutesKeyword"),
+                        error: ParseError::new_at(start, "MinutesKeyword"),
                     }
                 }
             } {
@@ -13069,7 +13076,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "SecondsKeyword"),
+                        error: ParseError::new_at(start, "SecondsKeyword"),
                     }
                 }
             } {
@@ -13094,7 +13101,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "SzaboKeyword"),
+                        error: ParseError::new_at(start, "SzaboKeyword"),
                     }
                 }
             } {
@@ -13119,7 +13126,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "WeeksKeyword"),
+                        error: ParseError::new_at(start, "WeeksKeyword"),
                     }
                 }
             } {
@@ -13144,7 +13151,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "WeiKeyword"),
+                        error: ParseError::new_at(start, "WeiKeyword"),
                     }
                 }
             } {
@@ -13189,7 +13196,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "DaysKeyword"),
+                        error: ParseError::new_at(start, "DaysKeyword"),
                     }
                 }
             } {
@@ -13214,7 +13221,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "EtherKeyword"),
+                        error: ParseError::new_at(start, "EtherKeyword"),
                     }
                 }
             } {
@@ -13239,7 +13246,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "GweiKeyword"),
+                        error: ParseError::new_at(start, "GweiKeyword"),
                     }
                 }
             } {
@@ -13264,7 +13271,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "HoursKeyword"),
+                        error: ParseError::new_at(start, "HoursKeyword"),
                     }
                 }
             } {
@@ -13289,7 +13296,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "MinutesKeyword"),
+                        error: ParseError::new_at(start, "MinutesKeyword"),
                     }
                 }
             } {
@@ -13314,7 +13321,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "SecondsKeyword"),
+                        error: ParseError::new_at(start, "SecondsKeyword"),
                     }
                 }
             } {
@@ -13339,7 +13346,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "WeeksKeyword"),
+                        error: ParseError::new_at(start, "WeeksKeyword"),
                     }
                 }
             } {
@@ -13364,7 +13371,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "WeiKeyword"),
+                        error: ParseError::new_at(start, "WeiKeyword"),
                     }
                 }
             } {
@@ -13427,7 +13434,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "HexLiteral"),
+                            error: ParseError::new_at(start, "HexLiteral"),
                         }
                     }
                 } {
@@ -13452,7 +13459,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "DecimalLiteral"),
+                            error: ParseError::new_at(start, "DecimalLiteral"),
                         }
                     }
                 } {
@@ -13528,7 +13535,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "HexLiteral"),
+                        error: ParseError::new_at(start, "HexLiteral"),
                     }
                 }
             } {
@@ -13555,7 +13562,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "DecimalLiteral"),
+                            error: ParseError::new_at(start, "DecimalLiteral"),
                         }
                     }
                 } {
@@ -13646,7 +13653,7 @@ impl Language {
                 }
             } else {
                 Fail {
-                    error: ParseError::new(start, "BarBar"),
+                    error: ParseError::new_at(start, "BarBar"),
                 }
             }
         }
@@ -13687,7 +13694,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "LessThan"),
+                        error: ParseError::new_at(start, "LessThan"),
                     }
                 }
             } {
@@ -13712,7 +13719,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "GreaterThan"),
+                        error: ParseError::new_at(start, "GreaterThan"),
                     }
                 }
             } {
@@ -13737,7 +13744,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "LessThanEqual"),
+                        error: ParseError::new_at(start, "LessThanEqual"),
                     }
                 }
             } {
@@ -13762,7 +13769,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "GreaterThanEqual"),
+                        error: ParseError::new_at(start, "GreaterThanEqual"),
                     }
                 }
             } {
@@ -13809,7 +13816,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "OverrideKeyword"),
+                        error: ParseError::new_at(start, "OverrideKeyword"),
                     }
                 }
             } {
@@ -13843,7 +13850,7 @@ impl Language {
                             }
                         } else {
                             Fail {
-                                error: ParseError::new(start, "OpenParen"),
+                                error: ParseError::new_at(start, "OpenParen"),
                             }
                         }
                     } {
@@ -13878,7 +13885,7 @@ impl Language {
                                                     }
                                                 } else {
                                                     Fail {
-                                                        error: ParseError::new(start, "Comma"),
+                                                        error: ParseError::new_at(start, "Comma"),
                                                     }
                                                 }
                                             } {
@@ -13921,7 +13928,7 @@ impl Language {
                                             }
                                         } else {
                                             Fail {
-                                                error: ParseError::new(start, "CloseParen"),
+                                                error: ParseError::new_at(start, "CloseParen"),
                                             }
                                         }
                                     } {
@@ -14040,7 +14047,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "Identifier"),
+                            error: ParseError::new_at(start, "Identifier"),
                         }
                     }
                 } {
@@ -14104,7 +14111,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "OpenParen"),
+                        error: ParseError::new_at(start, "OpenParen"),
                     }
                 }
             } {
@@ -14141,7 +14148,7 @@ impl Language {
                                                 }
                                             } else {
                                                 Fail {
-                                                    error: ParseError::new(start, "Comma"),
+                                                    error: ParseError::new_at(start, "Comma"),
                                                 }
                                             }
                                         } {
@@ -14193,7 +14200,7 @@ impl Language {
                                     }
                                 } else {
                                     Fail {
-                                        error: ParseError::new(start, "CloseParen"),
+                                        error: ParseError::new_at(start, "CloseParen"),
                                     }
                                 }
                             } {
@@ -14249,7 +14256,7 @@ impl Language {
                 }
             } else {
                 Fail {
-                    error: ParseError::new(start, "PayableKeyword"),
+                    error: ParseError::new_at(start, "PayableKeyword"),
                 }
             }
         }
@@ -14295,7 +14302,7 @@ impl Language {
                                 }
                             } else {
                                 Fail {
-                                    error: ParseError::new(start, "Comma"),
+                                    error: ParseError::new_at(start, "Comma"),
                                 }
                             }
                         } {
@@ -14349,7 +14356,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "PragmaKeyword"),
+                            error: ParseError::new_at(start, "PragmaKeyword"),
                         }
                     }
                 } {
@@ -14421,7 +14428,7 @@ impl Language {
                             }
                         } else {
                             Fail {
-                                error: ParseError::new(start, "Semicolon"),
+                                error: ParseError::new_at(start, "Semicolon"),
                             }
                         }
                     } {
@@ -14522,7 +14529,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "Identifier"),
+                        error: ParseError::new_at(start, "Identifier"),
                     }
                 }
             } {
@@ -14608,7 +14615,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "Identifier"),
+                        error: ParseError::new_at(start, "Identifier"),
                     }
                 }
             } {
@@ -14679,7 +14686,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "ExternalKeyword"),
+                        error: ParseError::new_at(start, "ExternalKeyword"),
                     }
                 }
             } {
@@ -14704,7 +14711,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "PayableKeyword"),
+                        error: ParseError::new_at(start, "PayableKeyword"),
                     }
                 }
             } {
@@ -14729,7 +14736,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "VirtualKeyword"),
+                        error: ParseError::new_at(start, "VirtualKeyword"),
                     }
                 }
             } {
@@ -14797,7 +14804,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "ReceiveKeyword"),
+                        error: ParseError::new_at(start, "ReceiveKeyword"),
                     }
                 }
             } {
@@ -14868,7 +14875,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "Semicolon"),
+                            error: ParseError::new_at(start, "Semicolon"),
                         }
                     }
                 } {
@@ -14959,7 +14966,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "ReturnKeyword"),
+                            error: ParseError::new_at(start, "ReturnKeyword"),
                         }
                     }
                 } {
@@ -15023,7 +15030,7 @@ impl Language {
                             }
                         } else {
                             Fail {
-                                error: ParseError::new(start, "Semicolon"),
+                                error: ParseError::new_at(start, "Semicolon"),
                             }
                         }
                     } {
@@ -15081,7 +15088,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "RevertKeyword"),
+                            error: ParseError::new_at(start, "RevertKeyword"),
                         }
                     }
                 } {
@@ -15156,7 +15163,7 @@ impl Language {
                             }
                         } else {
                             Fail {
-                                error: ParseError::new(start, "Semicolon"),
+                                error: ParseError::new_at(start, "Semicolon"),
                             }
                         }
                     } {
@@ -15214,7 +15221,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "OpenBrace"),
+                            error: ParseError::new_at(start, "OpenBrace"),
                         }
                     }
                 } {
@@ -15245,7 +15252,7 @@ impl Language {
                                             }
                                         } else {
                                             Fail {
-                                                error: ParseError::new(start, "Identifier"),
+                                                error: ParseError::new_at(start, "Identifier"),
                                             }
                                         }
                                     } {
@@ -15320,7 +15327,7 @@ impl Language {
                                                 }
                                             } else {
                                                 Fail {
-                                                    error: ParseError::new(start, "Comma"),
+                                                    error: ParseError::new_at(start, "Comma"),
                                                 }
                                             }
                                         } {
@@ -15362,7 +15369,7 @@ impl Language {
                                         }
                                     } else {
                                         Fail {
-                                            error: ParseError::new(start, "CloseBrace"),
+                                            error: ParseError::new_at(start, "CloseBrace"),
                                         }
                                     }
                                 } {
@@ -15411,7 +15418,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "FromKeyword"),
+                        error: ParseError::new_at(start, "FromKeyword"),
                     }
                 }
             } {
@@ -15478,7 +15485,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "LessThanLessThan"),
+                        error: ParseError::new_at(start, "LessThanLessThan"),
                     }
                 }
             } {
@@ -15503,7 +15510,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "GreaterThanGreaterThan"),
+                        error: ParseError::new_at(start, "GreaterThanGreaterThan"),
                     }
                 }
             } {
@@ -15528,7 +15535,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "GreaterThanGreaterThanGreaterThan"),
+                        error: ParseError::new_at(start, "GreaterThanGreaterThanGreaterThan"),
                     }
                 }
             } {
@@ -15770,7 +15777,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "ConstantKeyword"),
+                        error: ParseError::new_at(start, "ConstantKeyword"),
                     }
                 }
             } {
@@ -15795,7 +15802,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "InternalKeyword"),
+                        error: ParseError::new_at(start, "InternalKeyword"),
                     }
                 }
             } {
@@ -15820,7 +15827,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "PrivateKeyword"),
+                        error: ParseError::new_at(start, "PrivateKeyword"),
                     }
                 }
             } {
@@ -15845,7 +15852,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "PublicKeyword"),
+                        error: ParseError::new_at(start, "PublicKeyword"),
                     }
                 }
             } {
@@ -15893,7 +15900,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "ConstantKeyword"),
+                        error: ParseError::new_at(start, "ConstantKeyword"),
                     }
                 }
             } {
@@ -15918,7 +15925,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "ImmutableKeyword"),
+                        error: ParseError::new_at(start, "ImmutableKeyword"),
                     }
                 }
             } {
@@ -15943,7 +15950,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "InternalKeyword"),
+                        error: ParseError::new_at(start, "InternalKeyword"),
                     }
                 }
             } {
@@ -15968,7 +15975,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "PrivateKeyword"),
+                        error: ParseError::new_at(start, "PrivateKeyword"),
                     }
                 }
             } {
@@ -15993,7 +16000,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "PublicKeyword"),
+                        error: ParseError::new_at(start, "PublicKeyword"),
                     }
                 }
             } {
@@ -16086,7 +16093,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "Identifier"),
+                            error: ParseError::new_at(start, "Identifier"),
                         }
                     }
                 } {
@@ -16121,7 +16128,7 @@ impl Language {
                                 }
                             } else {
                                 Fail {
-                                    error: ParseError::new(start, "Equal"),
+                                    error: ParseError::new_at(start, "Equal"),
                                 }
                             }
                         } {
@@ -16203,7 +16210,7 @@ impl Language {
                             }
                         } else {
                             Fail {
-                                error: ParseError::new(start, "Semicolon"),
+                                error: ParseError::new_at(start, "Semicolon"),
                             }
                         }
                     } {
@@ -16661,7 +16668,7 @@ impl Language {
                             }
                         } else {
                             Fail {
-                                error: ParseError::new(start, "HexStringLiteral"),
+                                error: ParseError::new_at(start, "HexStringLiteral"),
                             }
                         }
                     } {
@@ -16704,7 +16711,7 @@ impl Language {
                             }
                         } else {
                             Fail {
-                                error: ParseError::new(start, "AsciiStringLiteral"),
+                                error: ParseError::new_at(start, "AsciiStringLiteral"),
                             }
                         }
                     } {
@@ -16760,7 +16767,7 @@ impl Language {
                             }
                         } else {
                             Fail {
-                                error: ParseError::new(start, "HexStringLiteral"),
+                                error: ParseError::new_at(start, "HexStringLiteral"),
                             }
                         }
                     } {
@@ -16803,7 +16810,7 @@ impl Language {
                             }
                         } else {
                             Fail {
-                                error: ParseError::new(start, "AsciiStringLiteral"),
+                                error: ParseError::new_at(start, "AsciiStringLiteral"),
                             }
                         }
                     } {
@@ -16846,7 +16853,7 @@ impl Language {
                             }
                         } else {
                             Fail {
-                                error: ParseError::new(start, "UnicodeStringLiteral"),
+                                error: ParseError::new_at(start, "UnicodeStringLiteral"),
                             }
                         }
                     } {
@@ -16915,7 +16922,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "StructKeyword"),
+                        error: ParseError::new_at(start, "StructKeyword"),
                     }
                 }
             } {
@@ -16946,7 +16953,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "Identifier"),
+                        error: ParseError::new_at(start, "Identifier"),
                     }
                 }
             } {
@@ -16978,7 +16985,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "OpenBrace"),
+                            error: ParseError::new_at(start, "OpenBrace"),
                         }
                     }
                 } {
@@ -17027,7 +17034,7 @@ impl Language {
                                         }
                                     } else {
                                         Fail {
-                                            error: ParseError::new(start, "CloseBrace"),
+                                            error: ParseError::new_at(start, "CloseBrace"),
                                         }
                                     }
                                 } {
@@ -17112,7 +17119,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "Identifier"),
+                            error: ParseError::new_at(start, "Identifier"),
                         }
                     }
                 } {
@@ -17153,7 +17160,7 @@ impl Language {
                             }
                         } else {
                             Fail {
-                                error: ParseError::new(start, "Semicolon"),
+                                error: ParseError::new_at(start, "Semicolon"),
                             }
                         }
                     } {
@@ -17210,7 +17217,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "ThrowKeyword"),
+                        error: ParseError::new_at(start, "ThrowKeyword"),
                     }
                 }
             } {
@@ -17236,7 +17243,7 @@ impl Language {
                             }
                         } else {
                             Fail {
-                                error: ParseError::new(start, "Semicolon"),
+                                error: ParseError::new_at(start, "Semicolon"),
                             }
                         }
                     } {
@@ -17307,7 +17314,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "Whitespace"),
+                            error: ParseError::new_at(start, "Whitespace"),
                         }
                     }
                 } {
@@ -17348,7 +17355,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "SingleLineComment"),
+                            error: ParseError::new_at(start, "SingleLineComment"),
                         }
                     }
                 } {
@@ -17387,7 +17394,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "EndOfLine"),
+                        error: ParseError::new_at(start, "EndOfLine"),
                     }
                 }
             } {
@@ -17443,7 +17450,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "TryKeyword"),
+                        error: ParseError::new_at(start, "TryKeyword"),
                     }
                 }
             } {
@@ -17489,7 +17496,7 @@ impl Language {
                             }
                         } else {
                             Fail {
-                                error: ParseError::new(start, "ReturnsKeyword"),
+                                error: ParseError::new_at(start, "ReturnsKeyword"),
                             }
                         }
                     } {
@@ -17641,7 +17648,7 @@ impl Language {
                             }
                         } else {
                             Fail {
-                                error: ParseError::new(start, "OpenParen"),
+                                error: ParseError::new_at(start, "OpenParen"),
                             }
                         }
                     } {
@@ -17731,7 +17738,7 @@ impl Language {
                                                             }
                                                         } else {
                                                             Fail {
-                                                                error: ParseError::new(
+                                                                error: ParseError::new_at(
                                                                     start,
                                                                     "Identifier",
                                                                 ),
@@ -17819,7 +17826,7 @@ impl Language {
                                                             }
                                                         } else {
                                                             Fail {
-                                                                error: ParseError::new(
+                                                                error: ParseError::new_at(
                                                                     start,
                                                                     "Identifier",
                                                                 ),
@@ -17895,7 +17902,9 @@ impl Language {
                                                         }
                                                     } else {
                                                         Fail {
-                                                            error: ParseError::new(start, "Comma"),
+                                                            error: ParseError::new_at(
+                                                                start, "Comma",
+                                                            ),
                                                         }
                                                     }
                                                 } {
@@ -17948,7 +17957,7 @@ impl Language {
                                             }
                                         } else {
                                             Fail {
-                                                error: ParseError::new(start, "CloseParen"),
+                                                error: ParseError::new_at(start, "CloseParen"),
                                             }
                                         }
                                     } {
@@ -17997,7 +18006,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "Equal"),
+                            error: ParseError::new_at(start, "Equal"),
                         }
                     }
                 } {
@@ -18049,7 +18058,7 @@ impl Language {
                             }
                         } else {
                             Fail {
-                                error: ParseError::new(start, "Semicolon"),
+                                error: ParseError::new_at(start, "Semicolon"),
                             }
                         }
                     } {
@@ -18105,7 +18114,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "OpenParen"),
+                        error: ParseError::new_at(start, "OpenParen"),
                     }
                 }
             } {
@@ -18151,7 +18160,7 @@ impl Language {
                                             }
                                         } else {
                                             Fail {
-                                                error: ParseError::new(start, "Comma"),
+                                                error: ParseError::new_at(start, "Comma"),
                                             }
                                         }
                                     } {
@@ -18193,7 +18202,7 @@ impl Language {
                                     }
                                 } else {
                                     Fail {
-                                        error: ParseError::new(start, "CloseParen"),
+                                        error: ParseError::new_at(start, "CloseParen"),
                                     }
                                 }
                             } {
@@ -18252,7 +18261,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "TypeKeyword"),
+                        error: ParseError::new_at(start, "TypeKeyword"),
                     }
                 }
             } {
@@ -18284,7 +18293,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "OpenParen"),
+                            error: ParseError::new_at(start, "OpenParen"),
                         }
                     }
                 } {
@@ -18314,7 +18323,7 @@ impl Language {
                                     }
                                 } else {
                                     Fail {
-                                        error: ParseError::new(start, "CloseParen"),
+                                        error: ParseError::new_at(start, "CloseParen"),
                                     }
                                 }
                             } {
@@ -18443,7 +18452,7 @@ impl Language {
                                 }
                             } else {
                                 Fail {
-                                    error: ParseError::new(start, "OpenBracket"),
+                                    error: ParseError::new_at(start, "OpenBracket"),
                                 }
                             }
                         } {
@@ -18488,7 +18497,10 @@ impl Language {
                                                 }
                                             } else {
                                                 Fail {
-                                                    error: ParseError::new(start, "CloseBracket"),
+                                                    error: ParseError::new_at(
+                                                        start,
+                                                        "CloseBracket",
+                                                    ),
                                                 }
                                             }
                                         } {
@@ -18647,7 +18659,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "PlusPlus"),
+                        error: ParseError::new_at(start, "PlusPlus"),
                     }
                 }
             } {
@@ -18672,7 +18684,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "MinusMinus"),
+                        error: ParseError::new_at(start, "MinusMinus"),
                     }
                 }
             } {
@@ -18726,7 +18738,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "PlusPlus"),
+                        error: ParseError::new_at(start, "PlusPlus"),
                     }
                 }
             } {
@@ -18751,7 +18763,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "MinusMinus"),
+                        error: ParseError::new_at(start, "MinusMinus"),
                     }
                 }
             } {
@@ -18776,7 +18788,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "Tilde"),
+                        error: ParseError::new_at(start, "Tilde"),
                     }
                 }
             } {
@@ -18801,7 +18813,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "Bang"),
+                        error: ParseError::new_at(start, "Bang"),
                     }
                 }
             } {
@@ -18826,7 +18838,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "Minus"),
+                        error: ParseError::new_at(start, "Minus"),
                     }
                 }
             } {
@@ -18851,7 +18863,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "Plus"),
+                        error: ParseError::new_at(start, "Plus"),
                     }
                 }
             } {
@@ -18893,7 +18905,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "PlusPlus"),
+                        error: ParseError::new_at(start, "PlusPlus"),
                     }
                 }
             } {
@@ -18918,7 +18930,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "MinusMinus"),
+                        error: ParseError::new_at(start, "MinusMinus"),
                     }
                 }
             } {
@@ -18943,7 +18955,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "Tilde"),
+                        error: ParseError::new_at(start, "Tilde"),
                     }
                 }
             } {
@@ -18968,7 +18980,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "Bang"),
+                        error: ParseError::new_at(start, "Bang"),
                     }
                 }
             } {
@@ -18993,7 +19005,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "Minus"),
+                        error: ParseError::new_at(start, "Minus"),
                     }
                 }
             } {
@@ -19049,7 +19061,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "UncheckedKeyword"),
+                        error: ParseError::new_at(start, "UncheckedKeyword"),
                     }
                 }
             } {
@@ -19146,7 +19158,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "ExternalKeyword"),
+                        error: ParseError::new_at(start, "ExternalKeyword"),
                     }
                 }
             } {
@@ -19171,7 +19183,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "PayableKeyword"),
+                        error: ParseError::new_at(start, "PayableKeyword"),
                     }
                 }
             } {
@@ -19196,7 +19208,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "PureKeyword"),
+                        error: ParseError::new_at(start, "PureKeyword"),
                     }
                 }
             } {
@@ -19221,7 +19233,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "ViewKeyword"),
+                        error: ParseError::new_at(start, "ViewKeyword"),
                     }
                 }
             } {
@@ -19289,7 +19301,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "FunctionKeyword"),
+                        error: ParseError::new_at(start, "FunctionKeyword"),
                     }
                 }
             } {
@@ -19360,7 +19372,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "Semicolon"),
+                            error: ParseError::new_at(start, "Semicolon"),
                         }
                     }
                 } {
@@ -19466,7 +19478,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "Ampersand"),
+                        error: ParseError::new_at(start, "Ampersand"),
                     }
                 }
             } {
@@ -19491,7 +19503,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "BangEqual"),
+                        error: ParseError::new_at(start, "BangEqual"),
                     }
                 }
             } {
@@ -19516,7 +19528,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "Bar"),
+                        error: ParseError::new_at(start, "Bar"),
                     }
                 }
             } {
@@ -19541,7 +19553,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "Caret"),
+                        error: ParseError::new_at(start, "Caret"),
                     }
                 }
             } {
@@ -19566,7 +19578,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "EqualEqual"),
+                        error: ParseError::new_at(start, "EqualEqual"),
                     }
                 }
             } {
@@ -19591,7 +19603,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "GreaterThan"),
+                        error: ParseError::new_at(start, "GreaterThan"),
                     }
                 }
             } {
@@ -19616,7 +19628,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "GreaterThanEqual"),
+                        error: ParseError::new_at(start, "GreaterThanEqual"),
                     }
                 }
             } {
@@ -19641,7 +19653,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "LessThan"),
+                        error: ParseError::new_at(start, "LessThan"),
                     }
                 }
             } {
@@ -19666,7 +19678,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "LessThanEqual"),
+                        error: ParseError::new_at(start, "LessThanEqual"),
                     }
                 }
             } {
@@ -19691,7 +19703,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "Minus"),
+                        error: ParseError::new_at(start, "Minus"),
                     }
                 }
             } {
@@ -19716,7 +19728,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "Percent"),
+                        error: ParseError::new_at(start, "Percent"),
                     }
                 }
             } {
@@ -19741,7 +19753,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "Plus"),
+                        error: ParseError::new_at(start, "Plus"),
                     }
                 }
             } {
@@ -19766,7 +19778,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "Slash"),
+                        error: ParseError::new_at(start, "Slash"),
                     }
                 }
             } {
@@ -19791,7 +19803,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "Asterisk"),
+                        error: ParseError::new_at(start, "Asterisk"),
                     }
                 }
             } {
@@ -19816,7 +19828,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "Tilde"),
+                        error: ParseError::new_at(start, "Tilde"),
                     }
                 }
             } {
@@ -19882,7 +19894,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "TypeKeyword"),
+                            error: ParseError::new_at(start, "TypeKeyword"),
                         }
                     }
                 } {
@@ -19913,7 +19925,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "Identifier"),
+                            error: ParseError::new_at(start, "Identifier"),
                         }
                     }
                 } {
@@ -19944,7 +19956,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "IsKeyword"),
+                            error: ParseError::new_at(start, "IsKeyword"),
                         }
                     }
                 } {
@@ -19999,7 +20011,7 @@ impl Language {
                             }
                         } else {
                             Fail {
-                                error: ParseError::new(start, "Semicolon"),
+                                error: ParseError::new_at(start, "Semicolon"),
                             }
                         }
                     } {
@@ -20081,7 +20093,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "UsingKeyword"),
+                            error: ParseError::new_at(start, "UsingKeyword"),
                         }
                     }
                 } {
@@ -20121,7 +20133,7 @@ impl Language {
                                 }
                             } else {
                                 Fail {
-                                    error: ParseError::new(start, "OpenBrace"),
+                                    error: ParseError::new_at(start, "OpenBrace"),
                                 }
                             }
                         } {
@@ -20156,7 +20168,9 @@ impl Language {
                                                         }
                                                     } else {
                                                         Fail {
-                                                            error: ParseError::new(start, "Comma"),
+                                                            error: ParseError::new_at(
+                                                                start, "Comma",
+                                                            ),
                                                         }
                                                     }
                                                 } {
@@ -20200,7 +20214,7 @@ impl Language {
                                                 }
                                             } else {
                                                 Fail {
-                                                    error: ParseError::new(start, "CloseBrace"),
+                                                    error: ParseError::new_at(start, "CloseBrace"),
                                                 }
                                             }
                                         } {
@@ -20256,7 +20270,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "ForKeyword"),
+                            error: ParseError::new_at(start, "ForKeyword"),
                         }
                     }
                 } {
@@ -20290,7 +20304,7 @@ impl Language {
                             }
                         } else {
                             Fail {
-                                error: ParseError::new(start, "Asterisk"),
+                                error: ParseError::new_at(start, "Asterisk"),
                             }
                         }
                     } {
@@ -20335,7 +20349,7 @@ impl Language {
                             }
                         } else {
                             Fail {
-                                error: ParseError::new(start, "GlobalKeyword"),
+                                error: ParseError::new_at(start, "GlobalKeyword"),
                             }
                         }
                     } {
@@ -20389,7 +20403,7 @@ impl Language {
                             }
                         } else {
                             Fail {
-                                error: ParseError::new(start, "Semicolon"),
+                                error: ParseError::new_at(start, "Semicolon"),
                             }
                         }
                     } {
@@ -20437,7 +20451,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "UsingKeyword"),
+                            error: ParseError::new_at(start, "UsingKeyword"),
                         }
                     }
                 } {
@@ -20477,7 +20491,7 @@ impl Language {
                                 }
                             } else {
                                 Fail {
-                                    error: ParseError::new(start, "OpenBrace"),
+                                    error: ParseError::new_at(start, "OpenBrace"),
                                 }
                             }
                         } {
@@ -20528,7 +20542,7 @@ impl Language {
                                                             }
                                                         } else {
                                                             Fail {
-                                                                error: ParseError::new(
+                                                                error: ParseError::new_at(
                                                                     start,
                                                                     "AsKeyword",
                                                                 ),
@@ -20635,7 +20649,9 @@ impl Language {
                                                         }
                                                     } else {
                                                         Fail {
-                                                            error: ParseError::new(start, "Comma"),
+                                                            error: ParseError::new_at(
+                                                                start, "Comma",
+                                                            ),
                                                         }
                                                     }
                                                 } {
@@ -20679,7 +20695,7 @@ impl Language {
                                                 }
                                             } else {
                                                 Fail {
-                                                    error: ParseError::new(start, "CloseBrace"),
+                                                    error: ParseError::new_at(start, "CloseBrace"),
                                                 }
                                             }
                                         } {
@@ -20735,7 +20751,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "ForKeyword"),
+                            error: ParseError::new_at(start, "ForKeyword"),
                         }
                     }
                 } {
@@ -20769,7 +20785,7 @@ impl Language {
                             }
                         } else {
                             Fail {
-                                error: ParseError::new(start, "Asterisk"),
+                                error: ParseError::new_at(start, "Asterisk"),
                             }
                         }
                     } {
@@ -20814,7 +20830,7 @@ impl Language {
                             }
                         } else {
                             Fail {
-                                error: ParseError::new(start, "GlobalKeyword"),
+                                error: ParseError::new_at(start, "GlobalKeyword"),
                             }
                         }
                     } {
@@ -20868,7 +20884,7 @@ impl Language {
                             }
                         } else {
                             Fail {
-                                error: ParseError::new(start, "Semicolon"),
+                                error: ParseError::new_at(start, "Semicolon"),
                             }
                         }
                     } {
@@ -20985,7 +21001,7 @@ impl Language {
                             }
                         } else {
                             Fail {
-                                error: ParseError::new(start, "VarKeyword"),
+                                error: ParseError::new_at(start, "VarKeyword"),
                             }
                         }
                     } {
@@ -21023,7 +21039,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "Identifier"),
+                            error: ParseError::new_at(start, "Identifier"),
                         }
                     }
                 } {
@@ -21058,7 +21074,7 @@ impl Language {
                                 }
                             } else {
                                 Fail {
-                                    error: ParseError::new(start, "Equal"),
+                                    error: ParseError::new_at(start, "Equal"),
                                 }
                             }
                         } {
@@ -21137,7 +21153,7 @@ impl Language {
                             }
                         } else {
                             Fail {
-                                error: ParseError::new(start, "Semicolon"),
+                                error: ParseError::new_at(start, "Semicolon"),
                             }
                         }
                     } {
@@ -21219,7 +21235,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "Identifier"),
+                            error: ParseError::new_at(start, "Identifier"),
                         }
                     }
                 } {
@@ -21254,7 +21270,7 @@ impl Language {
                                 }
                             } else {
                                 Fail {
-                                    error: ParseError::new(start, "Equal"),
+                                    error: ParseError::new_at(start, "Equal"),
                                 }
                             }
                         } {
@@ -21336,7 +21352,7 @@ impl Language {
                             }
                         } else {
                             Fail {
-                                error: ParseError::new(start, "Semicolon"),
+                                error: ParseError::new_at(start, "Semicolon"),
                             }
                         }
                     } {
@@ -21401,7 +21417,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "SolidityKeyword"),
+                        error: ParseError::new_at(start, "SolidityKeyword"),
                     }
                 }
             } {
@@ -21503,7 +21519,7 @@ impl Language {
                                 }
                             } else {
                                 Fail {
-                                    error: ParseError::new(start, "Caret"),
+                                    error: ParseError::new_at(start, "Caret"),
                                 }
                             }
                         } {
@@ -21528,7 +21544,7 @@ impl Language {
                                 }
                             } else {
                                 Fail {
-                                    error: ParseError::new(start, "Tilde"),
+                                    error: ParseError::new_at(start, "Tilde"),
                                 }
                             }
                         } {
@@ -21553,7 +21569,7 @@ impl Language {
                                 }
                             } else {
                                 Fail {
-                                    error: ParseError::new(start, "Equal"),
+                                    error: ParseError::new_at(start, "Equal"),
                                 }
                             }
                         } {
@@ -21578,7 +21594,7 @@ impl Language {
                                 }
                             } else {
                                 Fail {
-                                    error: ParseError::new(start, "LessThan"),
+                                    error: ParseError::new_at(start, "LessThan"),
                                 }
                             }
                         } {
@@ -21603,7 +21619,7 @@ impl Language {
                                 }
                             } else {
                                 Fail {
-                                    error: ParseError::new(start, "GreaterThan"),
+                                    error: ParseError::new_at(start, "GreaterThan"),
                                 }
                             }
                         } {
@@ -21628,7 +21644,7 @@ impl Language {
                                 }
                             } else {
                                 Fail {
-                                    error: ParseError::new(start, "LessThanEqual"),
+                                    error: ParseError::new_at(start, "LessThanEqual"),
                                 }
                             }
                         } {
@@ -21653,7 +21669,7 @@ impl Language {
                                 }
                             } else {
                                 Fail {
-                                    error: ParseError::new(start, "GreaterThanEqual"),
+                                    error: ParseError::new_at(start, "GreaterThanEqual"),
                                 }
                             }
                         } {
@@ -21704,7 +21720,7 @@ impl Language {
                             }
                         } else {
                             Fail {
-                                error: ParseError::new(start, "BarBar"),
+                                error: ParseError::new_at(start, "BarBar"),
                             }
                         }
                     } {
@@ -21738,7 +21754,7 @@ impl Language {
                                 }
                             } else {
                                 Fail {
-                                    error: ParseError::new(start, "Minus"),
+                                    error: ParseError::new_at(start, "Minus"),
                                 }
                             }
                         } {
@@ -21883,7 +21899,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "VersionPragmaValue"),
+                            error: ParseError::new_at(start, "VersionPragmaValue"),
                         }
                     }
                 } {
@@ -21908,7 +21924,7 @@ impl Language {
                                 }
                             } else {
                                 Fail {
-                                    error: ParseError::new(start, "Period"),
+                                    error: ParseError::new_at(start, "Period"),
                                 }
                             }
                         } {
@@ -21961,7 +21977,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "WhileKeyword"),
+                        error: ParseError::new_at(start, "WhileKeyword"),
                     }
                 }
             } {
@@ -21993,7 +22009,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "OpenParen"),
+                            error: ParseError::new_at(start, "OpenParen"),
                         }
                     }
                 } {
@@ -22023,7 +22039,7 @@ impl Language {
                                     }
                                 } else {
                                     Fail {
-                                        error: ParseError::new(start, "CloseParen"),
+                                        error: ParseError::new_at(start, "CloseParen"),
                                     }
                                 }
                             } {
@@ -22114,7 +22130,7 @@ impl Language {
                                     }
                                 } else {
                                     Fail {
-                                        error: ParseError::new(start, "Comma"),
+                                        error: ParseError::new_at(start, "Comma"),
                                     }
                                 }
                             } {
@@ -22158,7 +22174,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "ColonEqual"),
+                        error: ParseError::new_at(start, "ColonEqual"),
                     }
                 }
             } {
@@ -22223,7 +22239,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "OpenBrace"),
+                        error: ParseError::new_at(start, "OpenBrace"),
                     }
                 }
             } {
@@ -22269,7 +22285,7 @@ impl Language {
                                     }
                                 } else {
                                     Fail {
-                                        error: ParseError::new(start, "CloseBrace"),
+                                        error: ParseError::new_at(start, "CloseBrace"),
                                     }
                                 }
                             } {
@@ -22325,7 +22341,7 @@ impl Language {
                 }
             } else {
                 Fail {
-                    error: ParseError::new(start, "BreakKeyword"),
+                    error: ParseError::new_at(start, "BreakKeyword"),
                 }
             }
         }
@@ -22363,7 +22379,7 @@ impl Language {
                 }
             } else {
                 Fail {
-                    error: ParseError::new(start, "ContinueKeyword"),
+                    error: ParseError::new_at(start, "ContinueKeyword"),
                 }
             }
         }
@@ -22403,7 +22419,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "LetKeyword"),
+                        error: ParseError::new_at(start, "LetKeyword"),
                     }
                 }
             } {
@@ -22442,7 +22458,7 @@ impl Language {
                                     }
                                 } else {
                                     Fail {
-                                        error: ParseError::new(start, "Comma"),
+                                        error: ParseError::new_at(start, "Comma"),
                                     }
                                 }
                             } {
@@ -22490,7 +22506,7 @@ impl Language {
                             }
                         } else {
                             Fail {
-                                error: ParseError::new(start, "ColonEqual"),
+                                error: ParseError::new_at(start, "ColonEqual"),
                             }
                         }
                     } {
@@ -22616,7 +22632,7 @@ impl Language {
                                 }
                             } else {
                                 Fail {
-                                    error: ParseError::new(start, "OpenParen"),
+                                    error: ParseError::new_at(start, "OpenParen"),
                                 }
                             }
                         } {
@@ -22653,7 +22669,7 @@ impl Language {
                                                             }
                                                         } else {
                                                             Fail {
-                                                                error: ParseError::new(
+                                                                error: ParseError::new_at(
                                                                     start, "Comma",
                                                                 ),
                                                             }
@@ -22709,7 +22725,7 @@ impl Language {
                                                 }
                                             } else {
                                                 Fail {
-                                                    error: ParseError::new(start, "CloseParen"),
+                                                    error: ParseError::new_at(start, "CloseParen"),
                                                 }
                                             }
                                         } {
@@ -22867,7 +22883,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "ForKeyword"),
+                        error: ParseError::new_at(start, "ForKeyword"),
                     }
                 }
             } {
@@ -22969,7 +22985,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "FunctionKeyword"),
+                        error: ParseError::new_at(start, "FunctionKeyword"),
                     }
                 }
             } {
@@ -23000,7 +23016,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "YulIdentifier"),
+                        error: ParseError::new_at(start, "YulIdentifier"),
                     }
                 }
             } {
@@ -23032,7 +23048,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "OpenParen"),
+                            error: ParseError::new_at(start, "OpenParen"),
                         }
                     }
                 } {
@@ -23063,7 +23079,7 @@ impl Language {
                                             }
                                         } else {
                                             Fail {
-                                                error: ParseError::new(start, "YulIdentifier"),
+                                                error: ParseError::new_at(start, "YulIdentifier"),
                                             }
                                         }
                                     } {
@@ -23090,7 +23106,7 @@ impl Language {
                                                     }
                                                 } else {
                                                     Fail {
-                                                        error: ParseError::new(start, "Comma"),
+                                                        error: ParseError::new_at(start, "Comma"),
                                                     }
                                                 }
                                             } {
@@ -23142,7 +23158,7 @@ impl Language {
                                         }
                                     } else {
                                         Fail {
-                                            error: ParseError::new(start, "CloseParen"),
+                                            error: ParseError::new_at(start, "CloseParen"),
                                         }
                                     }
                                 } {
@@ -23195,7 +23211,7 @@ impl Language {
                             }
                         } else {
                             Fail {
-                                error: ParseError::new(start, "MinusGreaterThan"),
+                                error: ParseError::new_at(start, "MinusGreaterThan"),
                             }
                         }
                     } {
@@ -23230,7 +23246,7 @@ impl Language {
                                     }
                                 } else {
                                     Fail {
-                                        error: ParseError::new(start, "YulIdentifier"),
+                                        error: ParseError::new_at(start, "YulIdentifier"),
                                     }
                                 }
                             } {
@@ -23256,7 +23272,7 @@ impl Language {
                                             }
                                         } else {
                                             Fail {
-                                                error: ParseError::new(start, "Comma"),
+                                                error: ParseError::new_at(start, "Comma"),
                                             }
                                         }
                                     } {
@@ -23365,7 +23381,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "YulIdentifier"),
+                            error: ParseError::new_at(start, "YulIdentifier"),
                         }
                     }
                 } {
@@ -23390,7 +23406,7 @@ impl Language {
                                 }
                             } else {
                                 Fail {
-                                    error: ParseError::new(start, "Period"),
+                                    error: ParseError::new_at(start, "Period"),
                                 }
                             }
                         } {
@@ -23443,7 +23459,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "IfKeyword"),
+                        error: ParseError::new_at(start, "IfKeyword"),
                     }
                 }
             } {
@@ -23519,7 +23535,7 @@ impl Language {
                 }
             } else {
                 Fail {
-                    error: ParseError::new(start, "LeaveKeyword"),
+                    error: ParseError::new_at(start, "LeaveKeyword"),
                 }
             }
         }
@@ -23586,7 +23602,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "YulHexLiteral"),
+                        error: ParseError::new_at(start, "YulHexLiteral"),
                     }
                 }
             } {
@@ -23611,7 +23627,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "YulDecimalLiteral"),
+                        error: ParseError::new_at(start, "YulDecimalLiteral"),
                     }
                 }
             } {
@@ -23636,7 +23652,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "HexStringLiteral"),
+                        error: ParseError::new_at(start, "HexStringLiteral"),
                     }
                 }
             } {
@@ -23661,7 +23677,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "AsciiStringLiteral"),
+                        error: ParseError::new_at(start, "AsciiStringLiteral"),
                     }
                 }
             } {
@@ -23877,7 +23893,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "SwitchKeyword"),
+                        error: ParseError::new_at(start, "SwitchKeyword"),
                     }
                 }
             } {
@@ -23930,7 +23946,7 @@ impl Language {
                                         }
                                     } else {
                                         Fail {
-                                            error: ParseError::new(start, "CaseKeyword"),
+                                            error: ParseError::new_at(start, "CaseKeyword"),
                                         }
                                     }
                                 } {
@@ -23986,7 +24002,7 @@ impl Language {
                                     }
                                 } else {
                                     Fail {
-                                        error: ParseError::new(start, "DefaultKeyword"),
+                                        error: ParseError::new_at(start, "DefaultKeyword"),
                                     }
                                 }
                             } {

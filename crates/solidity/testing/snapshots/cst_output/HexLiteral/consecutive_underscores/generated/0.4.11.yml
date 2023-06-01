@@ -9,8 +9,8 @@ Errors: # 1 total
        ╭─[crates/solidity/testing/snapshots/cst_output/HexLiteral/consecutive_underscores/input.sol:1:4]
        │
      1 │ 0x1__2
-       │    │ 
-       │    ╰─ Error occurred here.
+       │    ─┬─  
+       │     ╰─── Error occurred here.
     ───╯
 
 Tree: null

@@ -43,8 +43,9 @@ test("calculate both byte and char ranges", (t) => {
 
   if (parseTree instanceof TokenNode) {
     t.is(parseTree.kind, TokenKind.UnicodeStringLiteral);
+    t.deepEqual(parseTree.utf8Range, [0, 24]);
+    t.deepEqual(parseTree.utf16Range, [0, 22]);
     t.deepEqual(parseTree.charRange, [0, 21]);
-    t.deepEqual(parseTree.byteRange, [0, 24]);
   } else {
     t.fail("Expected TokenNode");
   }
@@ -66,8 +67,8 @@ Error: Expected end of input.
    ╭─[test.sol:1:1]
    │
  1 │ int256 constant
-   │ │ 
-   │ ╰─ Error occurred here.
+   │ ───────┬───────  
+   │        ╰───────── Error occurred here.
 ───╯
 `.trim(),
   );

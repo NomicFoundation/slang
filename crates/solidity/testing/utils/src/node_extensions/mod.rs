@@ -14,8 +14,8 @@ impl NodeExtensions for Node {
                 let range = range;
                 let result = source
                     .bytes()
-                    .skip(range.start.byte)
-                    .take(range.end.byte - range.start.byte)
+                    .skip(range.start.utf8)
+                    .take(range.end.utf8 - range.start.utf8)
                     .collect();
 
                 return String::from_utf8(result).unwrap();

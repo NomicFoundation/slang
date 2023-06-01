@@ -61,7 +61,7 @@ impl<'context> Visitor<Error> for PragmaCollector<'context> {
             [child] => self.extract_pragma(child).with_context(|| {
                 format!(
                     "Failed to extract pragma at {range:?}: '{value}'",
-                    range = range.start.byte..range.end.byte,
+                    range = range.start.utf8..range.end.utf8,
                     value = child.extract_non_trivia(self.source)
                 )
             })?,

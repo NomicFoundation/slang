@@ -612,7 +612,7 @@ fn scanner_code_to_parser_code(
                     let trailing_trivia = self.optional_trailing_trivia(stream);
                     Pass{ node: cst::Node::token(TokenKind::#kind, Range { start, end }, leading_trivia, trailing_trivia), error: None }
                 } else {
-                    Fail{ error: ParseError::new(start, #error_message) }
+                    Fail{ error: ParseError::new_at(start, #error_message) }
                 }
             }
         }
@@ -624,7 +624,7 @@ fn scanner_code_to_parser_code(
                     let end = stream.position();
                     Pass{ node: cst::Node::token(TokenKind::#kind, Range { start, end }, None, None), error: None }
                 } else {
-                    Fail{ error: ParseError::new(start, #error_message) }
+                    Fail{ error: ParseError::new_at(start, #error_message) }
                 }
             }
         }

@@ -1,10 +1,10 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-use std::{collections::BTreeSet, rc::Rc};
+use std::{collections::BTreeSet, ops::Range, rc::Rc};
 
 use super::{
     cst,
-    language::{render_error_report, TextPosition},
+    language::{render_error_report, TextRange},
 };
 
 #[derive(PartialEq)]
@@ -29,13 +29,25 @@ impl ParseOutput {
 
 #[derive(PartialEq)]
 pub struct ParseError {
-    pub(crate) position: TextPosition,
+    pub(crate) range: TextRange,
     pub(crate) expected: BTreeSet<String>,
 }
 
 impl ParseError {
-    pub fn position(&self) -> &TextPosition {
-        return &self.position;
+    pub fn range(&self) -> &TextRange {
+        return &self.range;
+    }
+
+    pub fn utf8_range(&self) -> Range<usize> {
+        self.range.start.utf8..self.range.end.utf8
+    }
+
+    pub fn utf16_range(&self) -> Range<usize> {
+        self.range.start.utf16..self.range.end.utf16
+    }
+
+    pub fn char_range(&self) -> Range<usize> {
+        self.range.start.char..self.range.end.char
     }
 
     pub fn expected(&self) -> &BTreeSet<String> {

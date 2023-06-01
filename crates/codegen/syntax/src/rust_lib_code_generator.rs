@@ -93,7 +93,7 @@ impl CodeGenerator {
                             let message = format!(\"ProductionKind {{production_kind}} is not valid in this version of {language_title}\");
                             ParseOutput {{
                                 parse_tree: None,
-                                errors: vec![ParseError::new(Default::default(), message)]
+                                errors: vec![ParseError::new_at(Default::default(), message)]
                             }}
                         }})
                     }}

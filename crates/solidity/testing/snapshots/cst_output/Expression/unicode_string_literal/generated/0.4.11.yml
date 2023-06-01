@@ -9,8 +9,8 @@ Errors: # 1 total
        ╭─[crates/solidity/testing/snapshots/cst_output/Expression/unicode_string_literal/input.sol:1:8]
        │
      1 │ unicode"This Emoji: 😃"
-       │        │ 
-       │        ╰─ Error occurred here.
+       │        ───────┬────────  
+       │               ╰────────── Error occurred here.
     ───╯
 
 Tree: null

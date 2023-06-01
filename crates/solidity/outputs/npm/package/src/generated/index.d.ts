@@ -658,18 +658,22 @@ export enum ProductionKind {
 export class RuleNode {
   get type(): NodeType.Rule;
   get kind(): RuleKind;
-  get byteRange(): [start: number, end: number];
+  get utf8Range(): [start: number, end: number];
+  get utf16Range(): [start: number, end: number];
   get charRange(): [start: number, end: number];
-  get byteRangeIncludingTrivia(): [start: number, end: number];
+  get utf8RangeIncludingTrivia(): [start: number, end: number];
+  get utf16RangeIncludingTrivia(): [start: number, end: number];
   get charRangeIncludingTrivia(): [start: number, end: number];
   get children(): (RuleNode | TokenNode)[];
 }
 export class TokenNode {
   get type(): NodeType.Token;
   get kind(): TokenKind;
-  get byteRange(): [start: number, end: number];
+  get utf8Range(): [start: number, end: number];
+  get utf16Range(): [start: number, end: number];
   get charRange(): [start: number, end: number];
-  get byteRangeIncludingTrivia(): [start: number, end: number];
+  get utf8RangeIncludingTrivia(): [start: number, end: number];
+  get utf16RangeIncludingTrivia(): [start: number, end: number];
   get charRangeIncludingTrivia(): [start: number, end: number];
   get trivia(): (RuleNode | TokenNode)[];
 }
@@ -684,8 +688,9 @@ export class ParseOutput {
   get isValid(): boolean;
 }
 export class ParseError {
-  get bytePosition(): number;
-  get charPosition(): number;
+  get utf8Range(): [start: number, end: number];
+  get utf16Range(): [start: number, end: number];
+  get charRange(): [start: number, end: number];
   get expected(): Array<string>;
   toErrorReport(sourceId: string, source: string, withColour: boolean): string;
 }

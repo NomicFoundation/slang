@@ -9,8 +9,8 @@ Errors: # 1 total
        ╭─[crates/solidity/testing/snapshots/cst_output/HexLiteral/leading_underscore/input.sol:1:3]
        │
      1 │ 0x_1
-       │   │ 
-       │   ╰─ Error occurred here.
+       │   ─┬  
+       │    ╰── Error occurred here.
     ───╯
 
 Tree: null
