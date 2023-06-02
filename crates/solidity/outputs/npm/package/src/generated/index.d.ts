@@ -676,6 +676,7 @@ export class TokenNode {
 export class Language {
   constructor(version: string);
   get version(): string;
+  static supportedVersions(): Array<string>;
   parse(productionKind: ProductionKind, input: string): ParseOutput;
 }
 export class ParseOutput {
