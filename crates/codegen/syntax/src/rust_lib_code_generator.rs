@@ -69,9 +69,10 @@ impl CodeGenerator {
                     InvalidProductionVersion(ProductionKind),
                 }}
 
+                {versions_array}
+
                 impl Language {{
                     pub fn new(version: Version) -> Result<Self, Error> {{
-                        {versions_array}
                         if VERSIONS.contains(&version.to_string().as_str()) {{
                             Ok(Self {{
                                 {version_flag_initializers},
@@ -84,6 +85,10 @@ impl CodeGenerator {
 
                     pub fn version(&self) -> &Version {{
                         &self.version
+                    }}
+
+                    pub fn supported_versions() -> Vec<Version> {{
+                        return VERSIONS.iter().map(|v| Version::parse(v).unwrap()).collect();
                     }}
 
                     pub fn parse(&self, production_kind: ProductionKind, input: &str) -> Result<ParseOutput, Error> {{
@@ -107,7 +112,7 @@ impl CodeGenerator {
                 language_title = &language.title,
                 versions_array = {
                     let versions = language.versions.iter().map(|v| v.to_string());
-                    quote! { static VERSIONS: &'static [&'static str] = &[ #(#versions),* ]; }
+                    quote! { const VERSIONS: &'static [&'static str] = &[ #(#versions),* ]; }
                 },
                 version_flag_initializers = self.version_flag_initializers(),
                 scanner_invocations = self.scanner_invocations(),

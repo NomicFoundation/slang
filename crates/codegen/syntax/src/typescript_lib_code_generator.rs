@@ -80,11 +80,12 @@ impl CodeGenerator {
                     }}
                 }}
 
+                {versions_array}
+
                 #[napi]
                 impl Language {{
                     #[napi(constructor)]
                     pub fn new(version: String) -> Result<Self, napi::Error> {{
-                        {versions_array}
                         let version = Version::parse(&version).map_err(|_| Error::InvalidSemanticVersion(version))?;
                         if VERSIONS.contains(&version.to_string().as_str()) {{
                             Ok(Self {{
@@ -99,6 +100,11 @@ impl CodeGenerator {
                     #[napi(getter)]
                     pub fn version(&self) -> String {{
                         self.version.to_string()
+                    }}
+
+                    #[napi]
+                    pub fn supported_versions() -> Vec<String> {{
+                        return VERSIONS.iter().map(|v| v.to_string()).collect();
                     }}
 
                     #[napi]
@@ -121,7 +127,7 @@ impl CodeGenerator {
                 version_flag_declarations = self.version_flag_declarations(),
                 versions_array = {
                     let versions = language.versions.iter().map(|v| v.to_string());
-                    quote! { static VERSIONS: &'static [&'static str] = &[ #(#versions),* ]; }
+                    quote! { const VERSIONS: &'static [&'static str] = &[ #(#versions),* ]; }
                 },
                 version_flag_initializers = self.version_flag_initializers(),
                 language_title = &language.title,
