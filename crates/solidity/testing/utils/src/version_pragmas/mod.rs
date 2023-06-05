@@ -6,12 +6,12 @@ use std::{rc::Rc, str::FromStr};
 use anyhow::{bail, Context, Error, Result};
 use semver::{Comparator, Op, Version};
 use slang_solidity::{
+    language::Language,
     syntax::{
         nodes::{Node, RuleKind, TextRange},
         parser::ProductionKind,
         visitors::{Visitable, Visitor, VisitorEntryResponse},
     },
-    Language,
 };
 
 use crate::node_extensions::NodeExtensions;
@@ -21,7 +21,7 @@ pub fn extract_version_pragmas(
     latest_version: &Version,
 ) -> Result<Vec<VersionPragma>> {
     let output =
-        Language::new(latest_version.to_owned())?.parse(ProductionKind::SourceUnit, source);
+        Language::new(latest_version.to_owned())?.parse(ProductionKind::SourceUnit, source)?;
 
     let parse_tree = if let Some(parse_tree) = output.parse_tree() {
         parse_tree

@@ -20,3 +20,4 @@ napi = { workspace = true }
 napi-derive = { workspace = true }
 semver = { workspace = true }
 serde = { workspace = true }
+thiserror = { workspace = true }

@@ -253,10 +253,11 @@ impl<'context> CombinatorNode<'context> {
                     .iter()
                     .map(|expr| Self::from_parser(tree, expr))
                     .collect::<Vec<_>>();
-                if elements.len() == 1 {
-                    return elements.pop().unwrap();
-                } else {
+
+                if name.is_some() || elements.len() > 1 {
                     Self::Choice { name, elements }
+                } else {
+                    return elements.pop().unwrap();
                 }
             }
 

@@ -55,6 +55,7 @@ impl CodeGenerator {
                 "
                 {language_boilerplate_common}
 
+                #[derive(Debug)]
                 pub struct Language {{
                     pub(crate) version: Version,
                     {version_flag_declarations}
@@ -62,20 +63,23 @@ impl CodeGenerator {
 
                 #[derive(thiserror::Error, Debug)]
                 pub enum Error {{
-                    #[error(\"Invalid {language_title} language version '{{0}}'.\")]
-                    InvalidLanguageVersion(Version),
+                    #[error(\"Unsupported {language_title} language version '{{0}}'.\")]
+                    UnsupportedLanguageVersion(Version),
+                    #[error(\"Production '{{0:?}}' is not valid in this version of {language_title}.\")]
+                    InvalidProductionVersion(ProductionKind),
                 }}
+
+                {versions_array}
 
                 impl Language {{
                     pub fn new(version: Version) -> Result<Self, Error> {{
-                        {versions_array}
                         if VERSIONS.contains(&version.to_string().as_str()) {{
                             Ok(Self {{
                                 {version_flag_initializers},
                                 version,
                             }})
                         }} else {{
-                            Err(Error::InvalidLanguageVersion(version))
+                            Err(Error::UnsupportedLanguageVersion(version))
                         }}
                     }}
 
@@ -83,19 +87,17 @@ impl CodeGenerator {
                         &self.version
                     }}
 
-                    pub fn parse(&self, production_kind: ProductionKind, input: &str) -> ParseOutput {{
+                    pub fn supported_versions() -> Vec<Version> {{
+                        return VERSIONS.iter().map(|v| Version::parse(v).unwrap()).collect();
+                    }}
+
+                    pub fn parse(&self, production_kind: ProductionKind, input: &str) -> Result<ParseOutput, Error> {{
                         let output = match production_kind {{
                             {scanner_invocations},
                             {parser_invocations},
                         }};
                         
-                        output.unwrap_or_else(|| {{
-                            let message = format!(\"ProductionKind {{production_kind}} is not valid in this version of {language_title}\");
-                            ParseOutput {{
-                                parse_tree: None,
-                                errors: vec![ParseError::new(Default::default(), message)]
-                            }}
-                        }})
+                        output.ok_or_else(|| Error::InvalidProductionVersion(production_kind))
                     }}
                 }}
                 ",
@@ -110,7 +112,7 @@ impl CodeGenerator {
                 language_title = &language.title,
                 versions_array = {
                     let versions = language.versions.iter().map(|v| v.to_string());
-                    quote! { static VERSIONS: &'static [&'static str] = &[ #(#versions),* ]; }
+                    quote! { const VERSIONS: &'static [&'static str] = &[ #(#versions),* ]; }
                 },
                 version_flag_initializers = self.version_flag_initializers(),
                 scanner_invocations = self.scanner_invocations(),

@@ -323,6 +323,7 @@ where
     })
 }
 
+#[derive(Debug)]
 pub struct Language {
     pub(crate) version: Version,
     pub(crate) version_is_equal_to_or_greater_than_0_4_21: bool,
@@ -342,23 +343,25 @@ pub struct Language {
 
 #[derive(thiserror::Error, Debug)]
 pub enum Error {
-    #[error("Invalid Solidity language version '{0}'.")]
-    InvalidLanguageVersion(Version),
+    #[error("Unsupported Solidity language version '{0}'.")]
+    UnsupportedLanguageVersion(Version),
+    #[error("Production '{0:?}' is not valid in this version of Solidity.")]
+    InvalidProductionVersion(ProductionKind),
 }
+
+const VERSIONS: &'static [&'static str] = &[
+    "0.4.11", "0.4.12", "0.4.13", "0.4.14", "0.4.15", "0.4.16", "0.4.17", "0.4.18", "0.4.19",
+    "0.4.20", "0.4.21", "0.4.22", "0.4.23", "0.4.24", "0.4.25", "0.4.26", "0.5.0", "0.5.1",
+    "0.5.2", "0.5.3", "0.5.4", "0.5.5", "0.5.6", "0.5.7", "0.5.8", "0.5.9", "0.5.10", "0.5.11",
+    "0.5.12", "0.5.13", "0.5.14", "0.5.15", "0.5.16", "0.5.17", "0.6.0", "0.6.1", "0.6.2", "0.6.3",
+    "0.6.4", "0.6.5", "0.6.6", "0.6.7", "0.6.8", "0.6.9", "0.6.10", "0.6.11", "0.6.12", "0.7.0",
+    "0.7.1", "0.7.2", "0.7.3", "0.7.4", "0.7.5", "0.7.6", "0.8.0", "0.8.1", "0.8.2", "0.8.3",
+    "0.8.4", "0.8.5", "0.8.6", "0.8.7", "0.8.8", "0.8.9", "0.8.10", "0.8.11", "0.8.12", "0.8.13",
+    "0.8.14", "0.8.15", "0.8.16", "0.8.17", "0.8.18", "0.8.19",
+];
 
 impl Language {
     pub fn new(version: Version) -> Result<Self, Error> {
-        static VERSIONS: &'static [&'static str] = &[
-            "0.4.11", "0.4.12", "0.4.13", "0.4.14", "0.4.15", "0.4.16", "0.4.17", "0.4.18",
-            "0.4.19", "0.4.20", "0.4.21", "0.4.22", "0.4.23", "0.4.24", "0.4.25", "0.4.26",
-            "0.5.0", "0.5.1", "0.5.2", "0.5.3", "0.5.4", "0.5.5", "0.5.6", "0.5.7", "0.5.8",
-            "0.5.9", "0.5.10", "0.5.11", "0.5.12", "0.5.13", "0.5.14", "0.5.15", "0.5.16",
-            "0.5.17", "0.6.0", "0.6.1", "0.6.2", "0.6.3", "0.6.4", "0.6.5", "0.6.6", "0.6.7",
-            "0.6.8", "0.6.9", "0.6.10", "0.6.11", "0.6.12", "0.7.0", "0.7.1", "0.7.2", "0.7.3",
-            "0.7.4", "0.7.5", "0.7.6", "0.8.0", "0.8.1", "0.8.2", "0.8.3", "0.8.4", "0.8.5",
-            "0.8.6", "0.8.7", "0.8.8", "0.8.9", "0.8.10", "0.8.11", "0.8.12", "0.8.13", "0.8.14",
-            "0.8.15", "0.8.16", "0.8.17", "0.8.18", "0.8.19",
-        ];
         if VERSIONS.contains(&version.to_string().as_str()) {
             Ok(Self {
                 version_is_equal_to_or_greater_than_0_4_21: Version::parse("0.4.21").unwrap()
@@ -390,7 +393,7 @@ impl Language {
                 version,
             })
         } else {
-            Err(Error::InvalidLanguageVersion(version))
+            Err(Error::UnsupportedLanguageVersion(version))
         }
     }
 
@@ -398,7 +401,18 @@ impl Language {
         &self.version
     }
 
-    pub fn parse(&self, production_kind: ProductionKind, input: &str) -> ParseOutput {
+    pub fn supported_versions() -> Vec<Version> {
+        return VERSIONS
+            .iter()
+            .map(|v| Version::parse(v).unwrap())
+            .collect();
+    }
+
+    pub fn parse(
+        &self,
+        production_kind: ProductionKind,
+        input: &str,
+    ) -> Result<ParseOutput, Error> {
         let output = match production_kind {
             ProductionKind::AbicoderKeyword => call_scanner(
                 self,
@@ -1917,14 +1931,6 @@ impl Language {
             }
         };
 
-        output.unwrap_or_else(|| {
-            let message = format!(
-                "ProductionKind {production_kind} is not valid in this version of Solidity"
-            );
-            ParseOutput {
-                parse_tree: None,
-                errors: vec![ParseError::new(Default::default(), message)],
-            }
-        })
+        output.ok_or_else(|| Error::InvalidProductionVersion(production_kind))
     }
 }

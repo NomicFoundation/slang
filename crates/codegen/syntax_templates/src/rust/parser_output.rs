@@ -5,7 +5,7 @@ use super::{
     language::{render_error_report, TextPosition},
 };
 
-#[derive(PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct ParseOutput {
     pub(crate) parse_tree: Option<Rc<cst::Node>>,
     pub(crate) errors: Vec<ParseError>,
@@ -25,7 +25,7 @@ impl ParseOutput {
     }
 }
 
-#[derive(PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct ParseError {
     pub(crate) position: TextPosition,
     pub(crate) expected: BTreeSet<String>,

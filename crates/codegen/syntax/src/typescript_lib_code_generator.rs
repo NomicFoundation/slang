@@ -61,19 +61,39 @@ impl CodeGenerator {
                     {version_flag_declarations}
                 }}
 
+                #[derive(thiserror::Error, Debug)]
+                pub enum Error {{
+                    // Shared with Rust
+                    #[error(\"Unsupported {language_title} language version '{{0}}'.\")]
+                    UnsupportedLanguageVersion(Version),
+                    #[error(\"Production '{{0:?}}' is not valid in this version of {language_title}.\")]
+                    InvalidProductionVersion(ProductionKind),
+
+                    // TypeScript-specific
+                    #[error(\"Invalid semantic version '{{0}}'.\")]
+                    InvalidSemanticVersion(String),
+                }}
+
+                impl From<Error> for napi::Error {{
+                    fn from(value: Error) -> Self {{
+                        napi::Error::from_reason(value.to_string())
+                    }}
+                }}
+
+                {versions_array}
+
                 #[napi]
                 impl Language {{
                     #[napi(constructor)]
-                    pub fn new(version: String) -> Self {{
-                        {versions_array}
-                        let version = Version::parse(&version).unwrap();
+                    pub fn new(version: String) -> Result<Self, napi::Error> {{
+                        let version = Version::parse(&version).map_err(|_| Error::InvalidSemanticVersion(version))?;
                         if VERSIONS.contains(&version.to_string().as_str()) {{
-                            Self {{
+                            Ok(Self {{
                                 {version_flag_initializers},
                                 version,
-                            }}
+                            }})
                         }} else {{
-                            panic!(\"Invalid {language_title} language version: {{version}}\");
+                            Err(Error::UnsupportedLanguageVersion(version).into())
                         }}
                     }}
 
@@ -83,12 +103,17 @@ impl CodeGenerator {
                     }}
 
                     #[napi]
-                    pub fn parse(&self, production_kind: ProductionKind, input: String) -> ParseOutput {{
+                    pub fn supported_versions() -> Vec<String> {{
+                        return VERSIONS.iter().map(|v| v.to_string()).collect();
+                    }}
+
+                    #[napi]
+                    pub fn parse(&self, production_kind: ProductionKind, input: String) -> Result<ParseOutput, napi::Error> {{
                         let input = input.as_str();
                         match production_kind {{
                             {scanner_invocations},
                             {parser_invocations},
-                        }}.expect(&format!(\"Production {{production_kind:?}} is not valid in this version of {language_title}\"))
+                        }}.ok_or_else(|| Error::InvalidProductionVersion(production_kind).into())
                     }}
                 }}
                 ",
@@ -102,7 +127,7 @@ impl CodeGenerator {
                 version_flag_declarations = self.version_flag_declarations(),
                 versions_array = {
                     let versions = language.versions.iter().map(|v| v.to_string());
-                    quote! { static VERSIONS: &'static [&'static str] = &[ #(#versions),* ]; }
+                    quote! { const VERSIONS: &'static [&'static str] = &[ #(#versions),* ]; }
                 },
                 version_flag_initializers = self.version_flag_initializers(),
                 language_title = &language.title,

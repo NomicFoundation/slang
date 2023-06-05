@@ -341,24 +341,44 @@ pub struct Language {
     pub(crate) version_is_equal_to_or_greater_than_0_8_8: bool,
 }
 
+#[derive(thiserror::Error, Debug)]
+pub enum Error {
+    // Shared with Rust
+    #[error("Unsupported Solidity language version '{0}'.")]
+    UnsupportedLanguageVersion(Version),
+    #[error("Production '{0:?}' is not valid in this version of Solidity.")]
+    InvalidProductionVersion(ProductionKind),
+
+    // TypeScript-specific
+    #[error("Invalid semantic version '{0}'.")]
+    InvalidSemanticVersion(String),
+}
+
+impl From<Error> for napi::Error {
+    fn from(value: Error) -> Self {
+        napi::Error::from_reason(value.to_string())
+    }
+}
+
+const VERSIONS: &'static [&'static str] = &[
+    "0.4.11", "0.4.12", "0.4.13", "0.4.14", "0.4.15", "0.4.16", "0.4.17", "0.4.18", "0.4.19",
+    "0.4.20", "0.4.21", "0.4.22", "0.4.23", "0.4.24", "0.4.25", "0.4.26", "0.5.0", "0.5.1",
+    "0.5.2", "0.5.3", "0.5.4", "0.5.5", "0.5.6", "0.5.7", "0.5.8", "0.5.9", "0.5.10", "0.5.11",
+    "0.5.12", "0.5.13", "0.5.14", "0.5.15", "0.5.16", "0.5.17", "0.6.0", "0.6.1", "0.6.2", "0.6.3",
+    "0.6.4", "0.6.5", "0.6.6", "0.6.7", "0.6.8", "0.6.9", "0.6.10", "0.6.11", "0.6.12", "0.7.0",
+    "0.7.1", "0.7.2", "0.7.3", "0.7.4", "0.7.5", "0.7.6", "0.8.0", "0.8.1", "0.8.2", "0.8.3",
+    "0.8.4", "0.8.5", "0.8.6", "0.8.7", "0.8.8", "0.8.9", "0.8.10", "0.8.11", "0.8.12", "0.8.13",
+    "0.8.14", "0.8.15", "0.8.16", "0.8.17", "0.8.18", "0.8.19",
+];
+
 #[napi]
 impl Language {
     #[napi(constructor)]
-    pub fn new(version: String) -> Self {
-        static VERSIONS: &'static [&'static str] = &[
-            "0.4.11", "0.4.12", "0.4.13", "0.4.14", "0.4.15", "0.4.16", "0.4.17", "0.4.18",
-            "0.4.19", "0.4.20", "0.4.21", "0.4.22", "0.4.23", "0.4.24", "0.4.25", "0.4.26",
-            "0.5.0", "0.5.1", "0.5.2", "0.5.3", "0.5.4", "0.5.5", "0.5.6", "0.5.7", "0.5.8",
-            "0.5.9", "0.5.10", "0.5.11", "0.5.12", "0.5.13", "0.5.14", "0.5.15", "0.5.16",
-            "0.5.17", "0.6.0", "0.6.1", "0.6.2", "0.6.3", "0.6.4", "0.6.5", "0.6.6", "0.6.7",
-            "0.6.8", "0.6.9", "0.6.10", "0.6.11", "0.6.12", "0.7.0", "0.7.1", "0.7.2", "0.7.3",
-            "0.7.4", "0.7.5", "0.7.6", "0.8.0", "0.8.1", "0.8.2", "0.8.3", "0.8.4", "0.8.5",
-            "0.8.6", "0.8.7", "0.8.8", "0.8.9", "0.8.10", "0.8.11", "0.8.12", "0.8.13", "0.8.14",
-            "0.8.15", "0.8.16", "0.8.17", "0.8.18", "0.8.19",
-        ];
-        let version = Version::parse(&version).unwrap();
+    pub fn new(version: String) -> Result<Self, napi::Error> {
+        let version =
+            Version::parse(&version).map_err(|_| Error::InvalidSemanticVersion(version))?;
         if VERSIONS.contains(&version.to_string().as_str()) {
-            Self {
+            Ok(Self {
                 version_is_equal_to_or_greater_than_0_4_21: Version::parse("0.4.21").unwrap()
                     <= version,
                 version_is_equal_to_or_greater_than_0_4_22: Version::parse("0.4.22").unwrap()
@@ -386,9 +406,9 @@ impl Language {
                 version_is_equal_to_or_greater_than_0_8_8: Version::parse("0.8.8").unwrap()
                     <= version,
                 version,
-            }
+            })
         } else {
-            panic!("Invalid Solidity language version: {version}");
+            Err(Error::UnsupportedLanguageVersion(version).into())
         }
     }
 
@@ -398,7 +418,16 @@ impl Language {
     }
 
     #[napi]
-    pub fn parse(&self, production_kind: ProductionKind, input: String) -> ParseOutput {
+    pub fn supported_versions() -> Vec<String> {
+        return VERSIONS.iter().map(|v| v.to_string()).collect();
+    }
+
+    #[napi]
+    pub fn parse(
+        &self,
+        production_kind: ProductionKind,
+        input: String,
+    ) -> Result<ParseOutput, napi::Error> {
         let input = input.as_str();
         match production_kind {
             ProductionKind::AbicoderKeyword => call_scanner(
@@ -1917,8 +1946,6 @@ impl Language {
                 call_parser(self, input, Language::parse_yul_switch_statement)
             }
         }
-        .expect(&format!(
-            "Production {production_kind:?} is not valid in this version of Solidity"
-        ))
+        .ok_or_else(|| Error::InvalidProductionVersion(production_kind).into())
     }
 }

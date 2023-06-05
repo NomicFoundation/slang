@@ -19,7 +19,7 @@ This allows callers to parse entire source files (`ProductionKind.SourceUnit`), 
 methods (`ProductionKind.FunctionDefinition`), or any other syntax nodes.
 
 ```typescript
-import { Language } from "@nomicfoundation/slang";
+import { Language } from "@nomicfoundation/slang/language";
 import { RuleKind, TokenKind } from "@nomicfoundation/slang/syntax/nodes";
 import { ProductionKind } from "@nomicfoundation/slang/syntax/parser";
 

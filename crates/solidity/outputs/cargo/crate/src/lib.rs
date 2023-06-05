@@ -23,7 +23,9 @@ mod public_api {
      * __SLANG_PUBLIC_API_SYNC__ (please keep in sync across all other instances)
      */
 
-    pub use crate::generated::language::Language;
+    pub mod language {
+        pub use crate::generated::language::{Error, Language};
+    }
 
     pub mod syntax {
         pub mod nodes {
