@@ -5,9 +5,9 @@ use clap::{Parser as ClapParser, Subcommand};
 use semver::Version;
 use slang_solidity::{language::Language, syntax::parser::ProductionKind};
 
-mod _supress_library_dependencies_ {
+mod _supress_library_dependencies {
     // Below are dependencies used by the library `lib.rs`, but not here.
-    // However, we need to add a fake usage below to supress Cargo warnings about unused dependencies.
+    // However, we need to add a fake usage to suppress Cargo warnings about unused dependencies.
     // This is a known issue, and we should remove this hack once there is a better solution from Cargo.
     // https://github.com/rust-lang/cargo/issues/1982
     use ariadne as _;
