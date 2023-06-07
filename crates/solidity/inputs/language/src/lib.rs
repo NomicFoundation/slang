@@ -13,7 +13,11 @@ impl SolidityLanguageExtensions for LanguageDefinition {
     /// 1. Expensive parsing and validation is done only once.
     /// 2. Errors are reported only once, instead of repeating for every crate.
     fn load_solidity() -> Result<LanguageDefinitionRef> {
-        let bin_path = PathBuf::from(env!("SLANG_SOLIDITY_LANGUAGE_DEFINITION_BIN"));
+        let bin_path = env!("SLANG_SOLIDITY_LANGUAGE_DEFINITION_BIN");
+
+        println!("cargo:rerun-if-changed={bin_path}");
+
+        let bin_path = PathBuf::from(bin_path);
         let buffer = std::fs::read(&bin_path)?;
         let language: LanguageDefinition = bson::from_slice(&buffer)?;
 

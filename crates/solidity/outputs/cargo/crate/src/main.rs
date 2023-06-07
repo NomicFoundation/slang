@@ -6,17 +6,23 @@ use semver::Version;
 use slang_solidity::{language::Language, syntax::parser::ProductionKind};
 
 mod _supress_library_dependencies {
-    // Below are dependencies used by the library `lib.rs`, but not here.
+    // Below are dependencies used by the API `lib.rs`, but not the CLI "main.rs".
     // However, we need to add a fake usage to suppress Cargo warnings about unused dependencies.
     // This is a known issue, and we should remove this hack once there is a better solution from Cargo.
     // https://github.com/rust-lang/cargo/issues/1982
-    use ariadne as _;
-    use serde as _;
+    mod api {
+        use ariadne as _;
+        use serde as _;
+        use strum as _;
+        use strum_macros as _;
+        use thiserror as _;
+    }
+
+    // Make sure codegen runs before building for tests.
     #[cfg(test)]
-    use solidity_cargo_build as _;
-    use strum as _;
-    use strum_macros as _;
-    use thiserror as _;
+    mod tests {
+        use solidity_cargo_build as _;
+    }
 }
 
 #[derive(ClapParser, Debug)]
