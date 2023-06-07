@@ -1,5 +1,17 @@
 # changelog
 
+## 0.6.0
+
+### Minor Changes
+
+-   [#490](https://github.com/NomicFoundation/slang/pull/490) [`ea8e7e7`](https://github.com/NomicFoundation/slang/commit/ea8e7e771fef7fd9195bcc3004b08fc132c8990d) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - provide API to list supported language versions
+
+-   [#489](https://github.com/NomicFoundation/slang/pull/489) [`15c34a7`](https://github.com/NomicFoundation/slang/commit/15c34a7bb0268bf26eaa6535dd637f73349596c8) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - replace panics with JS exceptions in npm package
+
+### Patch Changes
+
+-   [#488](https://github.com/NomicFoundation/slang/pull/488) [`d7f171c`](https://github.com/NomicFoundation/slang/commit/d7f171cf1e2da375a7ededd034a62fc6b723d44d) Thanks [@DaniPopes](https://github.com/DaniPopes)! - introduce a `cli` Cargo feature to compile the CLI binary
+
 ## 0.5.0
 
 ### Minor Changes
