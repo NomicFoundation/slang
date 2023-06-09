@@ -15,9 +15,8 @@ impl<'context> CombinatorNode<'context> {
                 Production::Scanner { name, .. } => {
                     let kind = format_ident!("{name}");
                     let function_name = format_ident!("scan_{name}", name = name.to_snake_case());
-                    let scanner = quote! { self.#function_name(stream) };
-                    let error_message = name;
-                    scanner_code_to_parser_code(scanner, kind, &error_message, !is_trivia)
+                    let scanner = quote! { Self::#function_name };
+                    scanner_code_to_parser_code(scanner, kind, !is_trivia)
                 }
                 Production::TriviaParser { name, .. } => {
                     let function_name = format_ident!("parse_{name}", name = name.to_snake_case());
@@ -588,45 +587,25 @@ fn scanner_production_to_parser_code(
     if let Production::Scanner { name, .. } = open.production.as_ref() {
         let kind = format_ident!("{name}");
         let function_name = format_ident!("scan_{name}", name = name.to_snake_case());
-        let scanner = quote! { self.#function_name(stream) };
-        let error_message = name;
-        scanner_code_to_parser_code(scanner, kind, &error_message, !is_trivia)
+        let scanner = quote! { Self::#function_name };
+        scanner_code_to_parser_code(scanner, kind, !is_trivia)
     } else {
         unreachable!("This reference should be to a scanner")
     }
 }
 
 fn scanner_code_to_parser_code(
-    scanner_code: TokenStream,
+    scanner: TokenStream,
     kind: Ident,
-    error_message: &str,
     with_trivia: bool,
 ) -> TokenStream {
     if with_trivia {
         quote! {
-            {
-                let leading_trivia = self.optional_leading_trivia(stream);
-                let start = stream.position();
-                if #scanner_code {
-                    let end = stream.position();
-                    let trailing_trivia = self.optional_trailing_trivia(stream);
-                    Pass{ node: cst::Node::token(TokenKind::#kind, Range { start, end }, leading_trivia, trailing_trivia), error: None }
-                } else {
-                    Fail{ error: ParseError::new(start, #error_message) }
-                }
-            }
+            self.parse_token_with_trivia(stream, #scanner, TokenKind::#kind)
         }
     } else {
         quote! {
-            {
-                let start = stream.position();
-                if #scanner_code {
-                    let end = stream.position();
-                    Pass{ node: cst::Node::token(TokenKind::#kind, Range { start, end }, None, None), error: None }
-                } else {
-                    Fail{ error: ParseError::new(start, #error_message) }
-                }
-            }
+            self.parse_token(stream, #scanner, TokenKind::#kind)
         }
     }
 }

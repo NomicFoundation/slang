@@ -1,12 +1,35 @@
 use serde::Serialize;
-use strum_macros::*;
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize)]
+#[derive(
+    Clone,
+    Copy,
+    Debug,
+    PartialEq,
+    Eq,
+    PartialOrd,
+    Ord,
+    Serialize,
+    strum_macros::EnumString,
+    strum_macros::AsRefStr,
+    strum_macros::Display,
+)]
 pub enum TokenKind {
     XXX,
 }
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize)]
+#[derive(
+    Clone,
+    Copy,
+    Debug,
+    PartialEq,
+    Eq,
+    PartialOrd,
+    Ord,
+    Serialize,
+    strum_macros::EnumString,
+    strum_macros::AsRefStr,
+    strum_macros::Display,
+)]
 pub enum RuleKind {
     _SEQUENCE,
     _DELIMITEDBY,
@@ -15,7 +38,17 @@ pub enum RuleKind {
 }
 
 #[derive(
-    Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, EnumString, AsRefStr, Display,
+    Clone,
+    Copy,
+    Debug,
+    PartialEq,
+    Eq,
+    PartialOrd,
+    Ord,
+    Serialize,
+    strum_macros::EnumString,
+    strum_macros::AsRefStr,
+    strum_macros::Display,
 )]
 pub enum ProductionKind {
     XXX,

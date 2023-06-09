@@ -132,15 +132,50 @@ impl CodeGenerator {
                 let production_kinds = self.production_kinds();
                 quote! {
                     use serde::Serialize;
-                    use strum_macros::*;
 
-                    #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize)]
+                    #[derive(
+                        Clone,
+                        Copy,
+                        Debug,
+                        PartialEq,
+                        Eq,
+                        PartialOrd,
+                        Ord,
+                        Serialize,
+                        strum_macros::EnumString,
+                        strum_macros::AsRefStr,
+                        strum_macros::Display,
+                    )]
                     #token_kinds
 
-                    #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize)]
+                    #[derive(
+                        Clone,
+                        Copy,
+                        Debug,
+                        PartialEq,
+                        Eq,
+                        PartialOrd,
+                        Ord,
+                        Serialize,
+                        strum_macros::EnumString,
+                        strum_macros::AsRefStr,
+                        strum_macros::Display,
+                    )]
                     #rule_kinds
 
-                    #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, EnumString, AsRefStr, Display)]
+                    #[derive(
+                        Clone,
+                        Copy,
+                        Debug,
+                        PartialEq,
+                        Eq,
+                        PartialOrd,
+                        Ord,
+                        Serialize,
+                        strum_macros::EnumString,
+                        strum_macros::AsRefStr,
+                        strum_macros::Display,
+                    )]
                     #production_kinds
                 }
             };

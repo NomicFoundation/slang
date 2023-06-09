@@ -1130,6 +1130,8 @@ dependencies = [
  "semver",
  "serde",
  "solidity_npm_build",
+ "strum",
+ "strum_macros",
  "thiserror",
 ]
 

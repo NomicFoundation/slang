@@ -4,7 +4,15 @@ use napi::bindgen_prelude::*;
 use napi_derive::napi;
 use serde::Serialize;
 #[napi]
-#[derive(Debug, PartialEq, Eq, Serialize)]
+#[derive(
+    Debug,
+    PartialEq,
+    Eq,
+    Serialize,
+    strum_macros :: EnumString,
+    strum_macros :: AsRefStr,
+    strum_macros :: Display,
+)]
 pub enum TokenKind {
     AbicoderKeyword,
     AbstractKeyword,
@@ -179,7 +187,15 @@ pub enum TokenKind {
     YulReservedKeyword,
 }
 #[napi]
-#[derive(Debug, PartialEq, Eq, Serialize)]
+#[derive(
+    Debug,
+    PartialEq,
+    Eq,
+    Serialize,
+    strum_macros :: EnumString,
+    strum_macros :: AsRefStr,
+    strum_macros :: Display,
+)]
 pub enum RuleKind {
     ABICoderPragma,
     AddSubExpression,
@@ -346,7 +362,15 @@ pub enum RuleKind {
     _TERMINATEDBY,
 }
 #[napi]
-#[derive(Debug, PartialEq, Eq, Serialize)]
+#[derive(
+    Debug,
+    PartialEq,
+    Eq,
+    Serialize,
+    strum_macros :: EnumString,
+    strum_macros :: AsRefStr,
+    strum_macros :: Display,
+)]
 pub enum ProductionKind {
     ABICoderPragma,
     AbicoderKeyword,

@@ -269,13 +269,101 @@ impl CodeGenerator {
             let token_kind = format_ident!("{name}");
             if scanner.is_defined_for_all_versions() {
                 let function_name = format_ident!("scan_{name}", name = name.to_snake_case());
-                quote!{ ProductionKind::#production_kind => call_scanner(self, input, Language::#function_name, TokenKind::#token_kind, #name) }
+                quote!{ ProductionKind::#production_kind => call_scanner(self, input, Language::#function_name, TokenKind::#token_kind) }
             } else {
                 let function_name = format_ident!("maybe_scan_{name}", name = name.to_snake_case());
-                quote!{ ProductionKind::#production_kind => try_call_scanner(self, input, Language::#function_name, TokenKind::#token_kind, #name) }
+                quote!{ ProductionKind::#production_kind => try_call_scanner(self, input, Language::#function_name, TokenKind::#token_kind) }
             }
         });
         quote! { #(#invocations),* }
+    }
+
+    pub fn token_functions(&self) -> TokenStream {
+        return quote! {
+            #[inline]
+            fn parse_token_with_trivia<F>(
+                &self,
+                stream: &mut Stream,
+                scanner: F,
+                kind: TokenKind,
+            ) -> ParserResult
+            where
+                F: Fn(&Self, &mut Stream) -> bool,
+            {
+                let leading_trivia = {
+                    let save = stream.position();
+                    match self.parse_leading_trivia(stream) {
+                        Fail { .. } => {
+                            stream.set_position(save);
+                            None
+                        }
+                        Pass { node, .. } => Some(node),
+                    }
+                };
+
+                let start = stream.position();
+
+                if !scanner(self, stream) {
+                    return Fail {
+                        error: ParseError::new(start, kind.as_ref()),
+                    };
+                }
+
+                let end = stream.position();
+
+                let trailing_trivia = {
+                    let save = stream.position();
+                    match self.parse_trailing_trivia(stream) {
+                        Fail { .. } => {
+                            stream.set_position(save);
+                            None
+                        }
+                        Pass { node, .. } => Some(node),
+                    }
+                };
+
+                return Pass {
+                    node: cst::Node::token(
+                        kind,
+                        Range { start, end },
+                        leading_trivia,
+                        trailing_trivia,
+                    ),
+                    error: None,
+                };
+            }
+
+            #[inline]
+            fn parse_token<F>(
+                &self,
+                stream: &mut Stream,
+                scanner: F,
+                kind: TokenKind,
+            ) -> ParserResult
+            where
+                F: Fn(&Self, &mut Stream) -> bool,
+            {
+                let start = stream.position();
+
+                if !scanner(self, stream) {
+                    return Fail {
+                        error: ParseError::new(start, kind.as_ref()),
+                    };
+                }
+
+                let end = stream.position();
+
+                return Pass {
+                    node: cst::Node::token(
+                        kind,
+                        Range { start, end },
+                        None,
+                        None,
+                    ),
+                    error: None,
+                };
+            }
+        };
     }
 
     pub fn parser_functions(&self) -> String {
@@ -427,33 +515,12 @@ impl CodeGenerator {
                 {scanning_macros}
                     
                 impl Language {{
-                    {trivia_functions}
+                    {token_functions}
                     {parser_functions}
                 }}
                 ",
-                trivia_functions = quote! {
-                    fn optional_leading_trivia(&self, stream: &mut Stream) -> Option<Rc<cst::Node>> {
-                        let save = stream.position();
-                        match self.parse_leading_trivia(stream) {
-                            Fail{ .. } => {
-                                stream.set_position(save);
-                                None
-                            },
-                            Pass{ node, .. } => Some(node),
-                        }
-                    }
-                    fn optional_trailing_trivia(&self, stream: &mut Stream) -> Option<Rc<cst::Node>> {
-                        let save = stream.position();
-                        match self.parse_trailing_trivia(stream) {
-                            Fail{ .. } => {
-                                stream.set_position(save);
-                                None
-                            },
-                            Pass{ node, .. } => Some(node),
-                        }
-                    }
-                },
-                parser_functions = self.parser_functions()
+                token_functions = self.token_functions(),
+                parser_functions = self.parser_functions(),
             );
 
             codegen

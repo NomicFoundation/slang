@@ -1,8 +1,19 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 use serde::Serialize;
-use strum_macros::*;
-#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize)]
+#[derive(
+    Clone,
+    Copy,
+    Debug,
+    PartialEq,
+    Eq,
+    PartialOrd,
+    Ord,
+    Serialize,
+    strum_macros :: EnumString,
+    strum_macros :: AsRefStr,
+    strum_macros :: Display,
+)]
 pub enum TokenKind {
     AbicoderKeyword,
     AbstractKeyword,
@@ -176,7 +187,19 @@ pub enum TokenKind {
     YulKeyword,
     YulReservedKeyword,
 }
-#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize)]
+#[derive(
+    Clone,
+    Copy,
+    Debug,
+    PartialEq,
+    Eq,
+    PartialOrd,
+    Ord,
+    Serialize,
+    strum_macros :: EnumString,
+    strum_macros :: AsRefStr,
+    strum_macros :: Display,
+)]
 pub enum RuleKind {
     ABICoderPragma,
     AddSubExpression,
@@ -343,7 +366,17 @@ pub enum RuleKind {
     _TERMINATEDBY,
 }
 #[derive(
-    Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, EnumString, AsRefStr, Display,
+    Clone,
+    Copy,
+    Debug,
+    PartialEq,
+    Eq,
+    PartialOrd,
+    Ord,
+    Serialize,
+    strum_macros :: EnumString,
+    strum_macros :: AsRefStr,
+    strum_macros :: Display,
 )]
 pub enum ProductionKind {
     ABICoderPragma,

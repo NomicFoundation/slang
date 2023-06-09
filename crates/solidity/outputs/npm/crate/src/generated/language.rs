@@ -210,13 +210,7 @@ pub(crate) fn render_error_report(
 }
 
 #[allow(dead_code)]
-fn call_scanner<L, F>(
-    language: &L,
-    input: &str,
-    scanner: F,
-    kind: TokenKind,
-    error_message: &str,
-) -> Option<ParseOutput>
+fn call_scanner<L, F>(language: &L, input: &str, scanner: F, kind: TokenKind) -> Option<ParseOutput>
 where
     F: Fn(&L, &mut Stream) -> bool,
 {
@@ -238,7 +232,7 @@ where
         } else {
             ParseOutput {
                 parse_tree: None,
-                errors: vec![ParseError::new(stream.position(), error_message)],
+                errors: vec![ParseError::new(stream.position(), kind.as_ref())],
             }
         },
     )
@@ -250,7 +244,6 @@ fn try_call_scanner<L, F>(
     input: &str,
     scanner: F,
     kind: TokenKind,
-    error_message: &str,
 ) -> Option<ParseOutput>
 where
     F: Fn(&L, &mut Stream) -> Option<bool>,
@@ -273,7 +266,7 @@ where
         } else {
             ParseOutput {
                 parse_tree: None,
-                errors: vec![ParseError::new(stream.position(), error_message)],
+                errors: vec![ParseError::new(stream.position(), kind.as_ref())],
             }
         }
     })
@@ -435,1157 +428,936 @@ impl Language {
                 input,
                 Language::scan_abicoder_keyword,
                 TokenKind::AbicoderKeyword,
-                "AbicoderKeyword",
             ),
             ProductionKind::AbstractKeyword => try_call_scanner(
                 self,
                 input,
                 Language::maybe_scan_abstract_keyword,
                 TokenKind::AbstractKeyword,
-                "AbstractKeyword",
             ),
             ProductionKind::AddressKeyword => call_scanner(
                 self,
                 input,
                 Language::scan_address_keyword,
                 TokenKind::AddressKeyword,
-                "AddressKeyword",
             ),
-            ProductionKind::Ampersand => call_scanner(
-                self,
-                input,
-                Language::scan_ampersand,
-                TokenKind::Ampersand,
-                "Ampersand",
-            ),
+            ProductionKind::Ampersand => {
+                call_scanner(self, input, Language::scan_ampersand, TokenKind::Ampersand)
+            }
             ProductionKind::AmpersandAmpersand => call_scanner(
                 self,
                 input,
                 Language::scan_ampersand_ampersand,
                 TokenKind::AmpersandAmpersand,
-                "AmpersandAmpersand",
             ),
             ProductionKind::AmpersandEqual => call_scanner(
                 self,
                 input,
                 Language::scan_ampersand_equal,
                 TokenKind::AmpersandEqual,
-                "AmpersandEqual",
             ),
             ProductionKind::AnonymousKeyword => call_scanner(
                 self,
                 input,
                 Language::scan_anonymous_keyword,
                 TokenKind::AnonymousKeyword,
-                "AnonymousKeyword",
             ),
-            ProductionKind::AsKeyword => call_scanner(
-                self,
-                input,
-                Language::scan_as_keyword,
-                TokenKind::AsKeyword,
-                "AsKeyword",
-            ),
+            ProductionKind::AsKeyword => {
+                call_scanner(self, input, Language::scan_as_keyword, TokenKind::AsKeyword)
+            }
             ProductionKind::AsciiEscape => call_scanner(
                 self,
                 input,
                 Language::scan_ascii_escape,
                 TokenKind::AsciiEscape,
-                "AsciiEscape",
             ),
             ProductionKind::AsciiStringLiteral => call_scanner(
                 self,
                 input,
                 Language::scan_ascii_string_literal,
                 TokenKind::AsciiStringLiteral,
-                "AsciiStringLiteral",
             ),
             ProductionKind::AssemblyKeyword => call_scanner(
                 self,
                 input,
                 Language::scan_assembly_keyword,
                 TokenKind::AssemblyKeyword,
-                "AssemblyKeyword",
             ),
-            ProductionKind::Asterisk => call_scanner(
-                self,
-                input,
-                Language::scan_asterisk,
-                TokenKind::Asterisk,
-                "Asterisk",
-            ),
+            ProductionKind::Asterisk => {
+                call_scanner(self, input, Language::scan_asterisk, TokenKind::Asterisk)
+            }
             ProductionKind::AsteriskAsterisk => call_scanner(
                 self,
                 input,
                 Language::scan_asterisk_asterisk,
                 TokenKind::AsteriskAsterisk,
-                "AsteriskAsterisk",
             ),
             ProductionKind::AsteriskEqual => call_scanner(
                 self,
                 input,
                 Language::scan_asterisk_equal,
                 TokenKind::AsteriskEqual,
-                "AsteriskEqual",
             ),
-            ProductionKind::Bang => {
-                call_scanner(self, input, Language::scan_bang, TokenKind::Bang, "Bang")
+            ProductionKind::Bang => call_scanner(self, input, Language::scan_bang, TokenKind::Bang),
+            ProductionKind::BangEqual => {
+                call_scanner(self, input, Language::scan_bang_equal, TokenKind::BangEqual)
             }
-            ProductionKind::BangEqual => call_scanner(
-                self,
-                input,
-                Language::scan_bang_equal,
-                TokenKind::BangEqual,
-                "BangEqual",
-            ),
-            ProductionKind::Bar => {
-                call_scanner(self, input, Language::scan_bar, TokenKind::Bar, "Bar")
+            ProductionKind::Bar => call_scanner(self, input, Language::scan_bar, TokenKind::Bar),
+            ProductionKind::BarBar => {
+                call_scanner(self, input, Language::scan_bar_bar, TokenKind::BarBar)
             }
-            ProductionKind::BarBar => call_scanner(
-                self,
-                input,
-                Language::scan_bar_bar,
-                TokenKind::BarBar,
-                "BarBar",
-            ),
-            ProductionKind::BarEqual => call_scanner(
-                self,
-                input,
-                Language::scan_bar_equal,
-                TokenKind::BarEqual,
-                "BarEqual",
-            ),
+            ProductionKind::BarEqual => {
+                call_scanner(self, input, Language::scan_bar_equal, TokenKind::BarEqual)
+            }
             ProductionKind::BoolKeyword => call_scanner(
                 self,
                 input,
                 Language::scan_bool_keyword,
                 TokenKind::BoolKeyword,
-                "BoolKeyword",
             ),
             ProductionKind::BreakKeyword => call_scanner(
                 self,
                 input,
                 Language::scan_break_keyword,
                 TokenKind::BreakKeyword,
-                "BreakKeyword",
             ),
             ProductionKind::ByteType => try_call_scanner(
                 self,
                 input,
                 Language::maybe_scan_byte_type,
                 TokenKind::ByteType,
-                "ByteType",
             ),
             ProductionKind::CalldataKeyword => try_call_scanner(
                 self,
                 input,
                 Language::maybe_scan_calldata_keyword,
                 TokenKind::CalldataKeyword,
-                "CalldataKeyword",
             ),
             ProductionKind::Caret => {
-                call_scanner(self, input, Language::scan_caret, TokenKind::Caret, "Caret")
+                call_scanner(self, input, Language::scan_caret, TokenKind::Caret)
             }
             ProductionKind::CaretEqual => call_scanner(
                 self,
                 input,
                 Language::scan_caret_equal,
                 TokenKind::CaretEqual,
-                "CaretEqual",
             ),
             ProductionKind::CaseKeyword => call_scanner(
                 self,
                 input,
                 Language::scan_case_keyword,
                 TokenKind::CaseKeyword,
-                "CaseKeyword",
             ),
             ProductionKind::CatchKeyword => try_call_scanner(
                 self,
                 input,
                 Language::maybe_scan_catch_keyword,
                 TokenKind::CatchKeyword,
-                "CatchKeyword",
             ),
             ProductionKind::CloseBrace => call_scanner(
                 self,
                 input,
                 Language::scan_close_brace,
                 TokenKind::CloseBrace,
-                "CloseBrace",
             ),
             ProductionKind::CloseBracket => call_scanner(
                 self,
                 input,
                 Language::scan_close_bracket,
                 TokenKind::CloseBracket,
-                "CloseBracket",
             ),
             ProductionKind::CloseParen => call_scanner(
                 self,
                 input,
                 Language::scan_close_paren,
                 TokenKind::CloseParen,
-                "CloseParen",
             ),
             ProductionKind::Colon => {
-                call_scanner(self, input, Language::scan_colon, TokenKind::Colon, "Colon")
+                call_scanner(self, input, Language::scan_colon, TokenKind::Colon)
             }
             ProductionKind::ColonEqual => call_scanner(
                 self,
                 input,
                 Language::scan_colon_equal,
                 TokenKind::ColonEqual,
-                "ColonEqual",
             ),
             ProductionKind::Comma => {
-                call_scanner(self, input, Language::scan_comma, TokenKind::Comma, "Comma")
+                call_scanner(self, input, Language::scan_comma, TokenKind::Comma)
             }
             ProductionKind::ConstantKeyword => call_scanner(
                 self,
                 input,
                 Language::scan_constant_keyword,
                 TokenKind::ConstantKeyword,
-                "ConstantKeyword",
             ),
             ProductionKind::ConstructorKeyword => try_call_scanner(
                 self,
                 input,
                 Language::maybe_scan_constructor_keyword,
                 TokenKind::ConstructorKeyword,
-                "ConstructorKeyword",
             ),
             ProductionKind::ContinueKeyword => call_scanner(
                 self,
                 input,
                 Language::scan_continue_keyword,
                 TokenKind::ContinueKeyword,
-                "ContinueKeyword",
             ),
             ProductionKind::ContractKeyword => call_scanner(
                 self,
                 input,
                 Language::scan_contract_keyword,
                 TokenKind::ContractKeyword,
-                "ContractKeyword",
             ),
             ProductionKind::DaysKeyword => call_scanner(
                 self,
                 input,
                 Language::scan_days_keyword,
                 TokenKind::DaysKeyword,
-                "DaysKeyword",
             ),
             ProductionKind::DecimalExponent => call_scanner(
                 self,
                 input,
                 Language::scan_decimal_exponent,
                 TokenKind::DecimalExponent,
-                "DecimalExponent",
             ),
             ProductionKind::DecimalLiteral => call_scanner(
                 self,
                 input,
                 Language::scan_decimal_literal,
                 TokenKind::DecimalLiteral,
-                "DecimalLiteral",
             ),
             ProductionKind::DecimalNumber => call_scanner(
                 self,
                 input,
                 Language::scan_decimal_number,
                 TokenKind::DecimalNumber,
-                "DecimalNumber",
             ),
             ProductionKind::DefaultKeyword => call_scanner(
                 self,
                 input,
                 Language::scan_default_keyword,
                 TokenKind::DefaultKeyword,
-                "DefaultKeyword",
             ),
             ProductionKind::DeleteKeyword => call_scanner(
                 self,
                 input,
                 Language::scan_delete_keyword,
                 TokenKind::DeleteKeyword,
-                "DeleteKeyword",
             ),
-            ProductionKind::DoKeyword => call_scanner(
-                self,
-                input,
-                Language::scan_do_keyword,
-                TokenKind::DoKeyword,
-                "DoKeyword",
-            ),
+            ProductionKind::DoKeyword => {
+                call_scanner(self, input, Language::scan_do_keyword, TokenKind::DoKeyword)
+            }
             ProductionKind::DoubleQuotedAsciiStringLiteral => call_scanner(
                 self,
                 input,
                 Language::scan_double_quoted_ascii_string_literal,
                 TokenKind::DoubleQuotedAsciiStringLiteral,
-                "DoubleQuotedAsciiStringLiteral",
             ),
             ProductionKind::DoubleQuotedUnicodeStringLiteral => try_call_scanner(
                 self,
                 input,
                 Language::maybe_scan_double_quoted_unicode_string_literal,
                 TokenKind::DoubleQuotedUnicodeStringLiteral,
-                "DoubleQuotedUnicodeStringLiteral",
             ),
             ProductionKind::ElseKeyword => call_scanner(
                 self,
                 input,
                 Language::scan_else_keyword,
                 TokenKind::ElseKeyword,
-                "ElseKeyword",
             ),
             ProductionKind::EmitKeyword => try_call_scanner(
                 self,
                 input,
                 Language::maybe_scan_emit_keyword,
                 TokenKind::EmitKeyword,
-                "EmitKeyword",
             ),
             ProductionKind::EndOfLine => call_scanner(
                 self,
                 input,
                 Language::scan_end_of_line,
                 TokenKind::EndOfLine,
-                "EndOfLine",
             ),
             ProductionKind::EnumKeyword => call_scanner(
                 self,
                 input,
                 Language::scan_enum_keyword,
                 TokenKind::EnumKeyword,
-                "EnumKeyword",
             ),
             ProductionKind::Equal => {
-                call_scanner(self, input, Language::scan_equal, TokenKind::Equal, "Equal")
+                call_scanner(self, input, Language::scan_equal, TokenKind::Equal)
             }
             ProductionKind::EqualEqual => call_scanner(
                 self,
                 input,
                 Language::scan_equal_equal,
                 TokenKind::EqualEqual,
-                "EqualEqual",
             ),
             ProductionKind::EqualGreaterThan => call_scanner(
                 self,
                 input,
                 Language::scan_equal_greater_than,
                 TokenKind::EqualGreaterThan,
-                "EqualGreaterThan",
             ),
             ProductionKind::ErrorKeyword => call_scanner(
                 self,
                 input,
                 Language::scan_error_keyword,
                 TokenKind::ErrorKeyword,
-                "ErrorKeyword",
             ),
             ProductionKind::EscapeSequence => call_scanner(
                 self,
                 input,
                 Language::scan_escape_sequence,
                 TokenKind::EscapeSequence,
-                "EscapeSequence",
             ),
             ProductionKind::EtherKeyword => call_scanner(
                 self,
                 input,
                 Language::scan_ether_keyword,
                 TokenKind::EtherKeyword,
-                "EtherKeyword",
             ),
             ProductionKind::EventKeyword => call_scanner(
                 self,
                 input,
                 Language::scan_event_keyword,
                 TokenKind::EventKeyword,
-                "EventKeyword",
             ),
-            ProductionKind::Evmasm => call_scanner(
-                self,
-                input,
-                Language::scan_evmasm,
-                TokenKind::Evmasm,
-                "Evmasm",
-            ),
+            ProductionKind::Evmasm => {
+                call_scanner(self, input, Language::scan_evmasm, TokenKind::Evmasm)
+            }
             ProductionKind::ExperimentalKeyword => call_scanner(
                 self,
                 input,
                 Language::scan_experimental_keyword,
                 TokenKind::ExperimentalKeyword,
-                "ExperimentalKeyword",
             ),
             ProductionKind::ExternalKeyword => call_scanner(
                 self,
                 input,
                 Language::scan_external_keyword,
                 TokenKind::ExternalKeyword,
-                "ExternalKeyword",
             ),
             ProductionKind::FallbackKeyword => call_scanner(
                 self,
                 input,
                 Language::scan_fallback_keyword,
                 TokenKind::FallbackKeyword,
-                "FallbackKeyword",
             ),
             ProductionKind::FalseKeyword => call_scanner(
                 self,
                 input,
                 Language::scan_false_keyword,
                 TokenKind::FalseKeyword,
-                "FalseKeyword",
             ),
             ProductionKind::FinneyKeyword => try_call_scanner(
                 self,
                 input,
                 Language::maybe_scan_finney_keyword,
                 TokenKind::FinneyKeyword,
-                "FinneyKeyword",
             ),
             ProductionKind::FixedBytesType => call_scanner(
                 self,
                 input,
                 Language::scan_fixed_bytes_type,
                 TokenKind::FixedBytesType,
-                "FixedBytesType",
             ),
             ProductionKind::ForKeyword => call_scanner(
                 self,
                 input,
                 Language::scan_for_keyword,
                 TokenKind::ForKeyword,
-                "ForKeyword",
             ),
             ProductionKind::FromKeyword => call_scanner(
                 self,
                 input,
                 Language::scan_from_keyword,
                 TokenKind::FromKeyword,
-                "FromKeyword",
             ),
             ProductionKind::FunctionKeyword => call_scanner(
                 self,
                 input,
                 Language::scan_function_keyword,
                 TokenKind::FunctionKeyword,
-                "FunctionKeyword",
             ),
             ProductionKind::GlobalKeyword => call_scanner(
                 self,
                 input,
                 Language::scan_global_keyword,
                 TokenKind::GlobalKeyword,
-                "GlobalKeyword",
             ),
             ProductionKind::GreaterThan => call_scanner(
                 self,
                 input,
                 Language::scan_greater_than,
                 TokenKind::GreaterThan,
-                "GreaterThan",
             ),
             ProductionKind::GreaterThanEqual => call_scanner(
                 self,
                 input,
                 Language::scan_greater_than_equal,
                 TokenKind::GreaterThanEqual,
-                "GreaterThanEqual",
             ),
             ProductionKind::GreaterThanGreaterThan => call_scanner(
                 self,
                 input,
                 Language::scan_greater_than_greater_than,
                 TokenKind::GreaterThanGreaterThan,
-                "GreaterThanGreaterThan",
             ),
             ProductionKind::GreaterThanGreaterThanEqual => call_scanner(
                 self,
                 input,
                 Language::scan_greater_than_greater_than_equal,
                 TokenKind::GreaterThanGreaterThanEqual,
-                "GreaterThanGreaterThanEqual",
             ),
             ProductionKind::GreaterThanGreaterThanGreaterThan => call_scanner(
                 self,
                 input,
                 Language::scan_greater_than_greater_than_greater_than,
                 TokenKind::GreaterThanGreaterThanGreaterThan,
-                "GreaterThanGreaterThanGreaterThan",
             ),
             ProductionKind::GreaterThanGreaterThanGreaterThanEqual => call_scanner(
                 self,
                 input,
                 Language::scan_greater_than_greater_than_greater_than_equal,
                 TokenKind::GreaterThanGreaterThanGreaterThanEqual,
-                "GreaterThanGreaterThanGreaterThanEqual",
             ),
             ProductionKind::GweiKeyword => try_call_scanner(
                 self,
                 input,
                 Language::maybe_scan_gwei_keyword,
                 TokenKind::GweiKeyword,
-                "GweiKeyword",
             ),
             ProductionKind::HexByteEscape => call_scanner(
                 self,
                 input,
                 Language::scan_hex_byte_escape,
                 TokenKind::HexByteEscape,
-                "HexByteEscape",
             ),
             ProductionKind::HexCharacter => call_scanner(
                 self,
                 input,
                 Language::scan_hex_character,
                 TokenKind::HexCharacter,
-                "HexCharacter",
             ),
             ProductionKind::HexLiteral => call_scanner(
                 self,
                 input,
                 Language::scan_hex_literal,
                 TokenKind::HexLiteral,
-                "HexLiteral",
             ),
             ProductionKind::HexStringLiteral => call_scanner(
                 self,
                 input,
                 Language::scan_hex_string_literal,
                 TokenKind::HexStringLiteral,
-                "HexStringLiteral",
             ),
             ProductionKind::HoursKeyword => call_scanner(
                 self,
                 input,
                 Language::scan_hours_keyword,
                 TokenKind::HoursKeyword,
-                "HoursKeyword",
             ),
             ProductionKind::Identifier => call_scanner(
                 self,
                 input,
                 Language::scan_identifier,
                 TokenKind::Identifier,
-                "Identifier",
             ),
             ProductionKind::IdentifierPart => call_scanner(
                 self,
                 input,
                 Language::scan_identifier_part,
                 TokenKind::IdentifierPart,
-                "IdentifierPart",
             ),
             ProductionKind::IdentifierStart => call_scanner(
                 self,
                 input,
                 Language::scan_identifier_start,
                 TokenKind::IdentifierStart,
-                "IdentifierStart",
             ),
-            ProductionKind::IfKeyword => call_scanner(
-                self,
-                input,
-                Language::scan_if_keyword,
-                TokenKind::IfKeyword,
-                "IfKeyword",
-            ),
+            ProductionKind::IfKeyword => {
+                call_scanner(self, input, Language::scan_if_keyword, TokenKind::IfKeyword)
+            }
             ProductionKind::ImmutableKeyword => try_call_scanner(
                 self,
                 input,
                 Language::maybe_scan_immutable_keyword,
                 TokenKind::ImmutableKeyword,
-                "ImmutableKeyword",
             ),
             ProductionKind::ImportKeyword => call_scanner(
                 self,
                 input,
                 Language::scan_import_keyword,
                 TokenKind::ImportKeyword,
-                "ImportKeyword",
             ),
             ProductionKind::IndexedKeyword => call_scanner(
                 self,
                 input,
                 Language::scan_indexed_keyword,
                 TokenKind::IndexedKeyword,
-                "IndexedKeyword",
             ),
             ProductionKind::InterfaceKeyword => call_scanner(
                 self,
                 input,
                 Language::scan_interface_keyword,
                 TokenKind::InterfaceKeyword,
-                "InterfaceKeyword",
             ),
             ProductionKind::InternalKeyword => call_scanner(
                 self,
                 input,
                 Language::scan_internal_keyword,
                 TokenKind::InternalKeyword,
-                "InternalKeyword",
             ),
-            ProductionKind::IsKeyword => call_scanner(
-                self,
-                input,
-                Language::scan_is_keyword,
-                TokenKind::IsKeyword,
-                "IsKeyword",
-            ),
+            ProductionKind::IsKeyword => {
+                call_scanner(self, input, Language::scan_is_keyword, TokenKind::IsKeyword)
+            }
             ProductionKind::LeaveKeyword => try_call_scanner(
                 self,
                 input,
                 Language::maybe_scan_leave_keyword,
                 TokenKind::LeaveKeyword,
-                "LeaveKeyword",
             ),
-            ProductionKind::LessThan => call_scanner(
-                self,
-                input,
-                Language::scan_less_than,
-                TokenKind::LessThan,
-                "LessThan",
-            ),
+            ProductionKind::LessThan => {
+                call_scanner(self, input, Language::scan_less_than, TokenKind::LessThan)
+            }
             ProductionKind::LessThanEqual => call_scanner(
                 self,
                 input,
                 Language::scan_less_than_equal,
                 TokenKind::LessThanEqual,
-                "LessThanEqual",
             ),
             ProductionKind::LessThanLessThan => call_scanner(
                 self,
                 input,
                 Language::scan_less_than_less_than,
                 TokenKind::LessThanLessThan,
-                "LessThanLessThan",
             ),
             ProductionKind::LessThanLessThanEqual => call_scanner(
                 self,
                 input,
                 Language::scan_less_than_less_than_equal,
                 TokenKind::LessThanLessThanEqual,
-                "LessThanLessThanEqual",
             ),
             ProductionKind::LetKeyword => call_scanner(
                 self,
                 input,
                 Language::scan_let_keyword,
                 TokenKind::LetKeyword,
-                "LetKeyword",
             ),
             ProductionKind::LibraryKeyword => call_scanner(
                 self,
                 input,
                 Language::scan_library_keyword,
                 TokenKind::LibraryKeyword,
-                "LibraryKeyword",
             ),
             ProductionKind::MappingKeyword => call_scanner(
                 self,
                 input,
                 Language::scan_mapping_keyword,
                 TokenKind::MappingKeyword,
-                "MappingKeyword",
             ),
             ProductionKind::MemoryKeyword => call_scanner(
                 self,
                 input,
                 Language::scan_memory_keyword,
                 TokenKind::MemoryKeyword,
-                "MemoryKeyword",
             ),
             ProductionKind::Minus => {
-                call_scanner(self, input, Language::scan_minus, TokenKind::Minus, "Minus")
+                call_scanner(self, input, Language::scan_minus, TokenKind::Minus)
             }
             ProductionKind::MinusEqual => call_scanner(
                 self,
                 input,
                 Language::scan_minus_equal,
                 TokenKind::MinusEqual,
-                "MinusEqual",
             ),
             ProductionKind::MinusGreaterThan => call_scanner(
                 self,
                 input,
                 Language::scan_minus_greater_than,
                 TokenKind::MinusGreaterThan,
-                "MinusGreaterThan",
             ),
             ProductionKind::MinusMinus => call_scanner(
                 self,
                 input,
                 Language::scan_minus_minus,
                 TokenKind::MinusMinus,
-                "MinusMinus",
             ),
             ProductionKind::MinutesKeyword => call_scanner(
                 self,
                 input,
                 Language::scan_minutes_keyword,
                 TokenKind::MinutesKeyword,
-                "MinutesKeyword",
             ),
             ProductionKind::ModifierKeyword => call_scanner(
                 self,
                 input,
                 Language::scan_modifier_keyword,
                 TokenKind::ModifierKeyword,
-                "ModifierKeyword",
             ),
             ProductionKind::MultilineComment => call_scanner(
                 self,
                 input,
                 Language::scan_multiline_comment,
                 TokenKind::MultilineComment,
-                "MultilineComment",
             ),
             ProductionKind::NewKeyword => call_scanner(
                 self,
                 input,
                 Language::scan_new_keyword,
                 TokenKind::NewKeyword,
-                "NewKeyword",
             ),
             ProductionKind::NotAnIdentifierInAnyVersion => call_scanner(
                 self,
                 input,
                 Language::scan_not_an_identifier_in_any_version,
                 TokenKind::NotAnIdentifierInAnyVersion,
-                "NotAnIdentifierInAnyVersion",
             ),
             ProductionKind::NotAnIdentifierInSomeVersions => call_scanner(
                 self,
                 input,
                 Language::scan_not_an_identifier_in_some_versions,
                 TokenKind::NotAnIdentifierInSomeVersions,
-                "NotAnIdentifierInSomeVersions",
             ),
-            ProductionKind::OpenBrace => call_scanner(
-                self,
-                input,
-                Language::scan_open_brace,
-                TokenKind::OpenBrace,
-                "OpenBrace",
-            ),
+            ProductionKind::OpenBrace => {
+                call_scanner(self, input, Language::scan_open_brace, TokenKind::OpenBrace)
+            }
             ProductionKind::OpenBracket => call_scanner(
                 self,
                 input,
                 Language::scan_open_bracket,
                 TokenKind::OpenBracket,
-                "OpenBracket",
             ),
-            ProductionKind::OpenParen => call_scanner(
-                self,
-                input,
-                Language::scan_open_paren,
-                TokenKind::OpenParen,
-                "OpenParen",
-            ),
+            ProductionKind::OpenParen => {
+                call_scanner(self, input, Language::scan_open_paren, TokenKind::OpenParen)
+            }
             ProductionKind::OverrideKeyword => call_scanner(
                 self,
                 input,
                 Language::scan_override_keyword,
                 TokenKind::OverrideKeyword,
-                "OverrideKeyword",
             ),
             ProductionKind::PayableKeyword => call_scanner(
                 self,
                 input,
                 Language::scan_payable_keyword,
                 TokenKind::PayableKeyword,
-                "PayableKeyword",
             ),
-            ProductionKind::Percent => call_scanner(
-                self,
-                input,
-                Language::scan_percent,
-                TokenKind::Percent,
-                "Percent",
-            ),
+            ProductionKind::Percent => {
+                call_scanner(self, input, Language::scan_percent, TokenKind::Percent)
+            }
             ProductionKind::PercentEqual => call_scanner(
                 self,
                 input,
                 Language::scan_percent_equal,
                 TokenKind::PercentEqual,
-                "PercentEqual",
             ),
-            ProductionKind::Period => call_scanner(
-                self,
-                input,
-                Language::scan_period,
-                TokenKind::Period,
-                "Period",
-            ),
-            ProductionKind::Plus => {
-                call_scanner(self, input, Language::scan_plus, TokenKind::Plus, "Plus")
+            ProductionKind::Period => {
+                call_scanner(self, input, Language::scan_period, TokenKind::Period)
             }
-            ProductionKind::PlusEqual => call_scanner(
-                self,
-                input,
-                Language::scan_plus_equal,
-                TokenKind::PlusEqual,
-                "PlusEqual",
-            ),
-            ProductionKind::PlusPlus => call_scanner(
-                self,
-                input,
-                Language::scan_plus_plus,
-                TokenKind::PlusPlus,
-                "PlusPlus",
-            ),
+            ProductionKind::Plus => call_scanner(self, input, Language::scan_plus, TokenKind::Plus),
+            ProductionKind::PlusEqual => {
+                call_scanner(self, input, Language::scan_plus_equal, TokenKind::PlusEqual)
+            }
+            ProductionKind::PlusPlus => {
+                call_scanner(self, input, Language::scan_plus_plus, TokenKind::PlusPlus)
+            }
             ProductionKind::PossiblySeparatedPairsOfHexDigits => call_scanner(
                 self,
                 input,
                 Language::scan_possibly_separated_pairs_of_hex_digits,
                 TokenKind::PossiblySeparatedPairsOfHexDigits,
-                "PossiblySeparatedPairsOfHexDigits",
             ),
             ProductionKind::PragmaKeyword => call_scanner(
                 self,
                 input,
                 Language::scan_pragma_keyword,
                 TokenKind::PragmaKeyword,
-                "PragmaKeyword",
             ),
             ProductionKind::PrivateKeyword => call_scanner(
                 self,
                 input,
                 Language::scan_private_keyword,
                 TokenKind::PrivateKeyword,
-                "PrivateKeyword",
             ),
             ProductionKind::PublicKeyword => call_scanner(
                 self,
                 input,
                 Language::scan_public_keyword,
                 TokenKind::PublicKeyword,
-                "PublicKeyword",
             ),
             ProductionKind::PureKeyword => call_scanner(
                 self,
                 input,
                 Language::scan_pure_keyword,
                 TokenKind::PureKeyword,
-                "PureKeyword",
             ),
             ProductionKind::QuestionMark => call_scanner(
                 self,
                 input,
                 Language::scan_question_mark,
                 TokenKind::QuestionMark,
-                "QuestionMark",
             ),
             ProductionKind::RawIdentifier => call_scanner(
                 self,
                 input,
                 Language::scan_raw_identifier,
                 TokenKind::RawIdentifier,
-                "RawIdentifier",
             ),
             ProductionKind::ReceiveKeyword => call_scanner(
                 self,
                 input,
                 Language::scan_receive_keyword,
                 TokenKind::ReceiveKeyword,
-                "ReceiveKeyword",
             ),
             ProductionKind::ReturnKeyword => call_scanner(
                 self,
                 input,
                 Language::scan_return_keyword,
                 TokenKind::ReturnKeyword,
-                "ReturnKeyword",
             ),
             ProductionKind::ReturnsKeyword => call_scanner(
                 self,
                 input,
                 Language::scan_returns_keyword,
                 TokenKind::ReturnsKeyword,
-                "ReturnsKeyword",
             ),
             ProductionKind::RevertKeyword => call_scanner(
                 self,
                 input,
                 Language::scan_revert_keyword,
                 TokenKind::RevertKeyword,
-                "RevertKeyword",
             ),
             ProductionKind::SecondsKeyword => call_scanner(
                 self,
                 input,
                 Language::scan_seconds_keyword,
                 TokenKind::SecondsKeyword,
-                "SecondsKeyword",
             ),
-            ProductionKind::Semicolon => call_scanner(
-                self,
-                input,
-                Language::scan_semicolon,
-                TokenKind::Semicolon,
-                "Semicolon",
-            ),
+            ProductionKind::Semicolon => {
+                call_scanner(self, input, Language::scan_semicolon, TokenKind::Semicolon)
+            }
             ProductionKind::SignedFixedType => call_scanner(
                 self,
                 input,
                 Language::scan_signed_fixed_type,
                 TokenKind::SignedFixedType,
-                "SignedFixedType",
             ),
             ProductionKind::SignedIntegerType => call_scanner(
                 self,
                 input,
                 Language::scan_signed_integer_type,
                 TokenKind::SignedIntegerType,
-                "SignedIntegerType",
             ),
             ProductionKind::SingleLineComment => call_scanner(
                 self,
                 input,
                 Language::scan_single_line_comment,
                 TokenKind::SingleLineComment,
-                "SingleLineComment",
             ),
             ProductionKind::SingleQuotedAsciiStringLiteral => call_scanner(
                 self,
                 input,
                 Language::scan_single_quoted_ascii_string_literal,
                 TokenKind::SingleQuotedAsciiStringLiteral,
-                "SingleQuotedAsciiStringLiteral",
             ),
             ProductionKind::SingleQuotedUnicodeStringLiteral => try_call_scanner(
                 self,
                 input,
                 Language::maybe_scan_single_quoted_unicode_string_literal,
                 TokenKind::SingleQuotedUnicodeStringLiteral,
-                "SingleQuotedUnicodeStringLiteral",
             ),
             ProductionKind::Slash => {
-                call_scanner(self, input, Language::scan_slash, TokenKind::Slash, "Slash")
+                call_scanner(self, input, Language::scan_slash, TokenKind::Slash)
             }
             ProductionKind::SlashEqual => call_scanner(
                 self,
                 input,
                 Language::scan_slash_equal,
                 TokenKind::SlashEqual,
-                "SlashEqual",
             ),
             ProductionKind::SolidityKeyword => call_scanner(
                 self,
                 input,
                 Language::scan_solidity_keyword,
                 TokenKind::SolidityKeyword,
-                "SolidityKeyword",
             ),
             ProductionKind::StorageKeyword => call_scanner(
                 self,
                 input,
                 Language::scan_storage_keyword,
                 TokenKind::StorageKeyword,
-                "StorageKeyword",
             ),
             ProductionKind::StringKeyword => call_scanner(
                 self,
                 input,
                 Language::scan_string_keyword,
                 TokenKind::StringKeyword,
-                "StringKeyword",
             ),
             ProductionKind::StructKeyword => call_scanner(
                 self,
                 input,
                 Language::scan_struct_keyword,
                 TokenKind::StructKeyword,
-                "StructKeyword",
             ),
             ProductionKind::SwitchKeyword => call_scanner(
                 self,
                 input,
                 Language::scan_switch_keyword,
                 TokenKind::SwitchKeyword,
-                "SwitchKeyword",
             ),
             ProductionKind::SzaboKeyword => try_call_scanner(
                 self,
                 input,
                 Language::maybe_scan_szabo_keyword,
                 TokenKind::SzaboKeyword,
-                "SzaboKeyword",
             ),
             ProductionKind::ThrowKeyword => try_call_scanner(
                 self,
                 input,
                 Language::maybe_scan_throw_keyword,
                 TokenKind::ThrowKeyword,
-                "ThrowKeyword",
             ),
             ProductionKind::Tilde => {
-                call_scanner(self, input, Language::scan_tilde, TokenKind::Tilde, "Tilde")
+                call_scanner(self, input, Language::scan_tilde, TokenKind::Tilde)
             }
             ProductionKind::TrueKeyword => call_scanner(
                 self,
                 input,
                 Language::scan_true_keyword,
                 TokenKind::TrueKeyword,
-                "TrueKeyword",
             ),
             ProductionKind::TryKeyword => try_call_scanner(
                 self,
                 input,
                 Language::maybe_scan_try_keyword,
                 TokenKind::TryKeyword,
-                "TryKeyword",
             ),
             ProductionKind::TypeKeyword => try_call_scanner(
                 self,
                 input,
                 Language::maybe_scan_type_keyword,
                 TokenKind::TypeKeyword,
-                "TypeKeyword",
             ),
             ProductionKind::UncheckedKeyword => try_call_scanner(
                 self,
                 input,
                 Language::maybe_scan_unchecked_keyword,
                 TokenKind::UncheckedKeyword,
-                "UncheckedKeyword",
             ),
             ProductionKind::UnicodeEscape => call_scanner(
                 self,
                 input,
                 Language::scan_unicode_escape,
                 TokenKind::UnicodeEscape,
-                "UnicodeEscape",
             ),
             ProductionKind::UnicodeStringLiteral => try_call_scanner(
                 self,
                 input,
                 Language::maybe_scan_unicode_string_literal,
                 TokenKind::UnicodeStringLiteral,
-                "UnicodeStringLiteral",
             ),
             ProductionKind::UnsignedFixedType => call_scanner(
                 self,
                 input,
                 Language::scan_unsigned_fixed_type,
                 TokenKind::UnsignedFixedType,
-                "UnsignedFixedType",
             ),
             ProductionKind::UnsignedIntegerType => call_scanner(
                 self,
                 input,
                 Language::scan_unsigned_integer_type,
                 TokenKind::UnsignedIntegerType,
-                "UnsignedIntegerType",
             ),
             ProductionKind::UsingKeyword => call_scanner(
                 self,
                 input,
                 Language::scan_using_keyword,
                 TokenKind::UsingKeyword,
-                "UsingKeyword",
             ),
             ProductionKind::VarKeyword => try_call_scanner(
                 self,
                 input,
                 Language::maybe_scan_var_keyword,
                 TokenKind::VarKeyword,
-                "VarKeyword",
             ),
             ProductionKind::VersionPragmaValue => call_scanner(
                 self,
                 input,
                 Language::scan_version_pragma_value,
                 TokenKind::VersionPragmaValue,
-                "VersionPragmaValue",
             ),
             ProductionKind::ViewKeyword => call_scanner(
                 self,
                 input,
                 Language::scan_view_keyword,
                 TokenKind::ViewKeyword,
-                "ViewKeyword",
             ),
             ProductionKind::VirtualKeyword => try_call_scanner(
                 self,
                 input,
                 Language::maybe_scan_virtual_keyword,
                 TokenKind::VirtualKeyword,
-                "VirtualKeyword",
             ),
             ProductionKind::WeeksKeyword => call_scanner(
                 self,
                 input,
                 Language::scan_weeks_keyword,
                 TokenKind::WeeksKeyword,
-                "WeeksKeyword",
             ),
             ProductionKind::WeiKeyword => call_scanner(
                 self,
                 input,
                 Language::scan_wei_keyword,
                 TokenKind::WeiKeyword,
-                "WeiKeyword",
             ),
             ProductionKind::WhileKeyword => call_scanner(
                 self,
                 input,
                 Language::scan_while_keyword,
                 TokenKind::WhileKeyword,
-                "WhileKeyword",
             ),
             ProductionKind::Whitespace => call_scanner(
                 self,
                 input,
                 Language::scan_whitespace,
                 TokenKind::Whitespace,
-                "Whitespace",
             ),
             ProductionKind::YearsKeyword => try_call_scanner(
                 self,
                 input,
                 Language::maybe_scan_years_keyword,
                 TokenKind::YearsKeyword,
-                "YearsKeyword",
             ),
             ProductionKind::YulDecimalLiteral => call_scanner(
                 self,
                 input,
                 Language::scan_yul_decimal_literal,
                 TokenKind::YulDecimalLiteral,
-                "YulDecimalLiteral",
             ),
             ProductionKind::YulHexLiteral => call_scanner(
                 self,
                 input,
                 Language::scan_yul_hex_literal,
                 TokenKind::YulHexLiteral,
-                "YulHexLiteral",
             ),
             ProductionKind::YulIdentifier => call_scanner(
                 self,
                 input,
                 Language::scan_yul_identifier,
                 TokenKind::YulIdentifier,
-                "YulIdentifier",
             ),
             ProductionKind::YulKeyword => call_scanner(
                 self,
                 input,
                 Language::scan_yul_keyword,
                 TokenKind::YulKeyword,
-                "YulKeyword",
             ),
             ProductionKind::YulReservedKeyword => call_scanner(
                 self,
                 input,
                 Language::scan_yul_reserved_keyword,
                 TokenKind::YulReservedKeyword,
-                "YulReservedKeyword",
             ),
             ProductionKind::ABICoderPragma => {
                 call_parser(self, input, Language::parse_abi_coder_pragma)
