@@ -49,20 +49,23 @@ impl<'context> CombinatorNode<'context> {
                         )
                     })
                     .unzip::<_, _, Vec<_>, Vec<_>>();
-                let kind =
-                    code.add_rule_kind(name.clone().unwrap_or_else(|| "_SEQUENCE".to_string()));
-                quote! {
+
+                let result = quote! {
                     loop {
                         let mut furthest_error = None;
+
                         #(
                             let #vars = match #elements{
-                                Pass{ node, error } => { furthest_error = error.map(|error| error.maybe_merge_with(furthest_error)) ; node }
+                                Pass{ builder, error } => { furthest_error = error.map(|error| error.maybe_merge_with(furthest_error)) ; builder }
                                 Fail{ error } => break Fail { error: error.maybe_merge_with(furthest_error) }
                             };
                         )*
-                        break Pass{ node: cst::Node::rule(RuleKind::#kind, vec![#(#vars),*]), error: furthest_error }
+
+                        break Pass{ builder: cst::NodeBuilder::multiple(vec![#(#vars),*]), error: furthest_error }
                     }
-                }
+                };
+
+                try_wrap_name(result, name, code)
             }
 
             Self::Choice { elements, name } => {
@@ -70,6 +73,7 @@ impl<'context> CombinatorNode<'context> {
                     .iter()
                     .map(|element| element.to_parser_code(is_trivia, code));
                 let first_element = elements.next().unwrap();
+
                 let result = quote! {
                     loop {
                         let start_position = stream.position();
@@ -88,18 +92,8 @@ impl<'context> CombinatorNode<'context> {
                         break Fail{ error: furthest_error };
                     }
                 };
-                if let Some(name) = name {
-                    let kind = code.add_rule_kind(name.clone());
-                    quote! {
-                        match #result {
-                            Pass { node, error } => Pass { node: cst::Node::rule(RuleKind::#kind, vec![node]), error },
-                            fail => fail,
 
-                        }
-                    }
-                } else {
-                    result
-                }
+                try_wrap_name(result, name, code)
             }
 
             /**********************************************************************
@@ -107,14 +101,14 @@ impl<'context> CombinatorNode<'context> {
              */
             Self::Optional { expr } => {
                 let expr = expr.to_parser_code(is_trivia, code);
-                let kind = code.add_rule_kind("_OPTIONAL".to_string());
+
                 quote! {
                     {
                         let start_position = stream.position();
                         match #expr {
                             Fail{ error } => {
                                 stream.set_position(start_position);
-                                Pass{ node: cst::Node::rule(RuleKind::#kind, vec![]), error: Some(error) }
+                                Pass{ builder: cst::NodeBuilder::empty(), error: Some(error) }
                             }
                             pass => pass,
                         }
@@ -124,9 +118,8 @@ impl<'context> CombinatorNode<'context> {
 
             Self::ZeroOrMore { expr, name } => {
                 let expr = expr.to_parser_code(is_trivia, code);
-                let kind =
-                    code.add_rule_kind(name.clone().unwrap_or_else(|| "_REPEATED".to_string()));
-                quote! {
+
+                let result = quote! {
                     {
                         let mut result = Vec::new();
                         loop {
@@ -134,20 +127,21 @@ impl<'context> CombinatorNode<'context> {
                             match #expr {
                                 Fail{ error } => {
                                     stream.set_position(start_position);
-                                    break Pass{ node: cst::Node::rule(RuleKind::#kind, result), error: Some(error) }
+                                    break Pass{ builder: cst::NodeBuilder::multiple(result), error: Some(error) }
                                 }
-                                Pass{ node, .. } => result.push(node),
+                                Pass{ builder, .. } => result.push(builder),
                             }
                         }
                     }
-                }
+                };
+
+                try_wrap_name(result, name, code)
             }
 
             Self::OneOrMore { expr, name } => {
                 let expr = expr.to_parser_code(is_trivia, code);
-                let kind =
-                    code.add_rule_kind(name.clone().unwrap_or_else(|| "_REPEATED".to_string()));
-                quote! {
+
+                let result = quote! {
                     {
                         let mut result = Vec::new();
                         loop {
@@ -158,13 +152,15 @@ impl<'context> CombinatorNode<'context> {
                                         break Fail { error }
                                     }
                                     stream.set_position(start_position);
-                                    break Pass{ node: cst::Node::rule(RuleKind::#kind, result), error: Some(error) }
+                                    break Pass{ builder: cst::NodeBuilder::multiple(result), error: Some(error) }
                                 }
-                                Pass{ node, .. } => result.push(node),
+                                Pass{ builder, .. } => result.push(builder),
                             }
                         }
                     }
-                }
+                };
+
+                try_wrap_name(result, name, code)
             }
 
             Self::Repeated {
@@ -174,9 +170,8 @@ impl<'context> CombinatorNode<'context> {
                 name,
             } => {
                 let expr = expr.to_parser_code(is_trivia, code);
-                let kind =
-                    code.add_rule_kind(name.clone().unwrap_or_else(|| "_REPEATED".to_string()));
-                quote! {
+
+                let result = quote! {
                     {
                         let mut result = Vec::new();
                         loop {
@@ -187,16 +182,18 @@ impl<'context> CombinatorNode<'context> {
                                         break error
                                     }
                                     stream.set_position(start_position);
-                                    break Pass{ node: cst::Node::rule(RuleKind::#kind, result), error: Some(error) }
+                                    break Pass{ builder: cst::NodeBuilder::multiple(result), error: Some(error) }
                                 }
-                                Pass{ node, .. } => result.push(node),
+                                Pass{ builder, .. } => result.push(builder),
                             }
                             if result.len() == #max {
-                                break Pass{ node: cst::Node::rule(RuleKind::#kind, result), error: None }
+                                break Pass{ builder: cst::NodeBuilder::multiple(result), error: None }
                             }
                         }
                     }
-                }
+                };
+
+                try_wrap_name(result, name, code)
             }
 
             /**********************************************************************
@@ -210,31 +207,22 @@ impl<'context> CombinatorNode<'context> {
             } => {
                 let open = scanner_production_to_parser_code(open, is_trivia);
                 let expr = expr.to_parser_code(is_trivia, code);
-                let kind =
-                    code.add_rule_kind(name.clone().unwrap_or_else(|| "_DELIMITEDBY".to_string()));
                 let close = scanner_production_to_parser_code(close, is_trivia);
-                quote! {
+
+                let result = quote! {
                     {
                         match #open {
                             err@Fail{ .. } => err,
-                            Pass{ node: open_node, .. } => {
+                            Pass{ builder: open_node, .. } => {
                                 match #expr {
                                     err@Fail{ .. } => err,
-                                    Pass{ node: expr_node, error: expr_error } => {
+                                    Pass{ builder: expr_node, error: expr_error } => {
                                         match #close {
-                                            Fail{ error } => Fail { error: error.maybe_merge_with(expr_error) },
-                                            Pass{ node: close_node, .. } => {
-                                                Pass{
-                                                    node: cst::Node::rule(
-                                                        RuleKind::#kind,
-                                                        vec![
-                                                            open_node,
-                                                            expr_node,
-                                                            close_node
-                                                        ]
-                                                    ),
-                                                    error: None
-                                                }
+                                            Fail{ error } => {
+                                                Fail { error: error.maybe_merge_with(expr_error) }
+                                            },
+                                            Pass{ builder: close_node, .. } => {
+                                                Pass{ builder: cst::NodeBuilder::multiple(vec![open_node, expr_node, close_node]), error: None }
                                            }
                                         }
                                     }
@@ -242,7 +230,9 @@ impl<'context> CombinatorNode<'context> {
                            }
                         }
                     }
-                }
+                };
+
+                try_wrap_name(result, name, code)
             }
 
             Self::SeparatedBy {
@@ -250,31 +240,32 @@ impl<'context> CombinatorNode<'context> {
                 separator,
                 name,
             } => {
-                let kind =
-                    code.add_rule_kind(name.clone().unwrap_or_else(|| "_SEPARATEDBY".to_string()));
                 let expr = expr.to_parser_code(is_trivia, code);
                 let separator = scanner_production_to_parser_code(separator, is_trivia);
-                quote! {
+
+                let result = quote! {
                     {
                         let mut result = Vec::new();
                         loop {
                             match #expr {
                                 err@Fail{ .. } => break err,
-                                Pass{ node, .. } => {
-                                    result.push(node);
+                                Pass{ builder, .. } => {
+                                    result.push(builder);
                                     let save = stream.position();
                                     match #separator {
                                         Fail{ error } => {
                                             stream.set_position(save);
-                                            break Pass{ node: cst::Node::rule(RuleKind::#kind, result), error: Some(error) }
+                                            break Pass{ builder: cst::NodeBuilder::multiple(result), error: Some(error) }
                                         }
-                                        Pass{ node, .. } => result.push(node),
+                                        Pass{ builder, .. } => result.push(builder),
                                     }
                                 }
                             }
                         }
                     }
-                }
+                };
+
+                try_wrap_name(result, name, code)
             }
 
             Self::TerminatedBy {
@@ -283,33 +274,25 @@ impl<'context> CombinatorNode<'context> {
                 name,
             } => {
                 let expr = expr.to_parser_code(is_trivia, code);
-                let kind =
-                    code.add_rule_kind(name.clone().unwrap_or_else(|| "_TERMINATEDBY".to_string()));
                 let terminator = scanner_production_to_parser_code(terminator, is_trivia);
-                quote! {
+
+                let result = quote! {
                     {
                         match #expr {
                             err@Fail{ .. } => err,
-                            Pass{ node: expr_node, error: expr_error } => {
+                            Pass{ builder: expr_node, error: expr_error } => {
                                 match #terminator {
                                     Fail{ error } => Fail { error: error.maybe_merge_with(expr_error) },
-                                    Pass{ node: terminator_node, .. } => {
-                                        Pass{
-                                            node: cst::Node::rule(
-                                                RuleKind::#kind,
-                                                vec![
-                                                    expr_node,
-                                                    terminator_node
-                                                ]
-                                            ),
-                                            error: None
-                                        }
+                                    Pass{ builder: terminator_node, .. } => {
+                                        Pass{ builder: cst::NodeBuilder::multiple(vec![expr_node, terminator_node]), error: None }
                                    }
                                 }
                             }
                         }
                     }
-                }
+                };
+
+                try_wrap_name(result, name, code)
             }
 
             /**********************************************************************
@@ -335,8 +318,8 @@ impl<'context> CombinatorNode<'context> {
                             let operator_code = operator.operator.to_parser_code(is_trivia, code);
                             binary_operators.push(quote!{
                                 match #operator_code {
-                                    Pass{ node, .. } => Ok(Pratt::Operator {
-                                        node, kind: RuleKind::#rule_kind, left_binding_power: #binding_power, right_binding_power: #binding_power + 1
+                                    Pass{ builder, .. } => Ok(Pratt::Operator {
+                                        builder, kind: RuleKind::#rule_kind, left_binding_power: #binding_power, right_binding_power: #binding_power + 1
                                     }),
                                     Fail{ error } => Err(error)
                                 }
@@ -346,8 +329,8 @@ impl<'context> CombinatorNode<'context> {
                             let operator_code = operator.operator.to_parser_code(is_trivia, code);
                             binary_operators.push(quote!{
                                 match #operator_code {
-                                    Pass{ node, .. } => Ok(Pratt::Operator {
-                                        node, kind: RuleKind::#rule_kind, left_binding_power: #binding_power + 1, right_binding_power: #binding_power
+                                    Pass{ builder, .. } => Ok(Pratt::Operator {
+                                        builder, kind: RuleKind::#rule_kind, left_binding_power: #binding_power + 1, right_binding_power: #binding_power
                                     }),
                                     Fail{ error } => Err(error)
                                 }
@@ -357,8 +340,8 @@ impl<'context> CombinatorNode<'context> {
                             let operator_code = operator.operator.to_parser_code(is_trivia, code);
                             prefix_operators.push(quote!{
                                 match #operator_code {
-                                    Pass{ node, .. } => Ok(Pratt::Operator {
-                                        node, kind: RuleKind::#rule_kind, left_binding_power: 255, right_binding_power: #binding_power
+                                    Pass{ builder, .. } => Ok(Pratt::Operator {
+                                        builder, kind: RuleKind::#rule_kind, left_binding_power: 255, right_binding_power: #binding_power
                                     }),
                                     Fail{ error } => Err(error)
                                 }
@@ -368,8 +351,8 @@ impl<'context> CombinatorNode<'context> {
                             let operator_code = operator.operator.to_parser_code(is_trivia, code);
                             postfix_operators.push(quote!{
                                 match #operator_code {
-                                    Pass{ node, .. } => Ok(Pratt::Operator {
-                                        node, kind: RuleKind::#rule_kind, left_binding_power: #binding_power, right_binding_power: 255
+                                    Pass{ builder, .. } => Ok(Pratt::Operator {
+                                        builder, kind: RuleKind::#rule_kind, left_binding_power: #binding_power, right_binding_power: 255
                                     }),
                                     Fail{ error } => Err(error)
                                 }
@@ -461,7 +444,7 @@ impl<'context> CombinatorNode<'context> {
                     quote! {
                         match #primary_expression {
                             Fail{ error } => break Some(error),
-                            Pass{ node, .. } => elements.push(Pratt::Node(node)),
+                            Pass{ builder, .. } => elements.push(Pratt::Builder(builder)),
                         }
                     }
                 };
@@ -471,11 +454,11 @@ impl<'context> CombinatorNode<'context> {
                         enum Pratt {
                             Operator {
                                 kind: RuleKind,
-                                node: Rc<cst::Node>,
+                                builder: cst::NodeBuilder,
                                 left_binding_power: u8,
                                 right_binding_power: u8,
                             },
-                            Node(Rc<cst::Node>),
+                            Builder(cst::NodeBuilder),
                         }
                         let mut elements = Vec::new();
                         if let Some(error) = loop {
@@ -507,12 +490,9 @@ impl<'context> CombinatorNode<'context> {
                                     if *right_binding_power == 255 {
                                         let left = elements.remove(i - 1);
                                         let op = elements.remove(i - 1);
-                                        if let (Pratt::Node(left), Pratt::Operator { node: op, kind, .. }) = (left, op) {
-                                            let node = cst::Node::rule(
-                                                kind,
-                                                vec![left, op],
-                                            );
-                                            elements.insert(i - 1, Pratt::Node(node));
+                                        if let (Pratt::Builder(left), Pratt::Operator { builder: op, kind, .. }) = (left, op) {
+                                            let builder = cst::NodeBuilder::multiple(vec![left, op]).with_kind(kind);
+                                            elements.insert(i - 1, Pratt::Builder(builder));
                                             i = i.saturating_sub(2);
                                         } else {
                                             unreachable!()
@@ -520,12 +500,9 @@ impl<'context> CombinatorNode<'context> {
                                     } else  if *left_binding_power == 255 {
                                         let op = elements.remove(i);
                                         let right = elements.remove(i);
-                                        if let (Pratt::Operator { node: op, kind, .. }, Pratt::Node(right)) = (op, right) {
-                                            let node = cst::Node::rule(
-                                                kind,
-                                                vec![op, right],
-                                            );
-                                            elements.insert(i, Pratt::Node(node));
+                                        if let (Pratt::Operator { builder: op, kind, .. }, Pratt::Builder(right)) = (op, right) {
+                                            let builder = cst::NodeBuilder::multiple(vec![op, right]).with_kind(kind);
+                                            elements.insert(i, Pratt::Builder(builder));
                                             i = i.saturating_sub(1);
                                         } else {
                                             unreachable!()
@@ -534,12 +511,9 @@ impl<'context> CombinatorNode<'context> {
                                         let left = elements.remove(i - 1);
                                         let op = elements.remove(i - 1);
                                         let right = elements.remove(i - 1);
-                                        if let (Pratt::Node(left), Pratt::Operator { node: op, kind, .. }, Pratt::Node(right)) = (left, op, right) {
-                                            let node = cst::Node::rule(
-                                                kind,
-                                                vec![left, op, right],
-                                            );
-                                            elements.insert(i - 1, Pratt::Node(node));
+                                        if let (Pratt::Builder(left), Pratt::Operator { builder: op, kind, .. }, Pratt::Builder(right)) = (left, op, right) {
+                                            let builder = cst::NodeBuilder::multiple(vec![left, op, right]).with_kind(kind);
+                                            elements.insert(i - 1, Pratt::Builder(builder));
                                             i = i.saturating_sub(2);
                                         } else {
                                             unreachable!()
@@ -550,8 +524,8 @@ impl<'context> CombinatorNode<'context> {
                                 }
                             }
 
-                            if let Pratt::Node(node) = elements.pop().unwrap() {
-                                Pass{ node, error: None }
+                            if let Pratt::Builder(builder) = elements.pop().unwrap() {
+                                Pass{ builder, error: None }
                             } else {
                                 unreachable!()
                             }
@@ -577,6 +551,22 @@ impl<'context> CombinatorNode<'context> {
 
             Self::Difference { .. } => unreachable!("Difference cannot be generated from a parser"),
         }
+    }
+}
+
+fn try_wrap_name(
+    result: TokenStream,
+    name: &Option<String>,
+    code: &mut CodeGenerator,
+) -> TokenStream {
+    if let Some(name) = name {
+        let kind = code.add_rule_kind(name.to_owned());
+
+        return quote! {
+            #result.with_kind(RuleKind::#kind)
+        };
+    } else {
+        return result;
     }
 }
 

@@ -8,16 +8,15 @@ Errors: []
 Tree:
   - TupleDeconstructionStatement (Rule): # 0..37 "(bool with_type, without_type) = rhs;"
       - OpenParen (Token): "(" # 0..1
-      - _SEPARATEDBY (Rule): # 1..29 "bool with_type, without_type"
-          - TypeName (Rule): # 1..5 "bool"
-              - ElementaryType (Rule): # 1..5 "bool"
-                  - BoolKeyword (Token): "bool" # 1..5
-          - Identifier (Token): "with_type" # 6..15
-          - Comma (Token): "," # 15..16
-          - Identifier (Token): "without_type" # 17..29
+      - TypeName (Rule): # 1..5 "bool"
+          - ElementaryType (Rule): # 1..5 "bool"
+              - BoolKeyword (Token): "bool" # 1..5
+      - Identifier (Token): "with_type" # 6..15
+      - Comma (Token): "," # 15..16
+      - Identifier (Token): "without_type" # 17..29
       - CloseParen (Token): ")" # 29..30
       - Equal (Token): "=" # 31..32
-      - Expression (Rule): # 33..36 "rhs"
-          - PrimaryExpression (Rule): # 33..36 "rhs"
+      - Expression (Rule): # 32..36 " rhs"
+          - PrimaryExpression (Rule): # 32..36 " rhs"
               - Identifier (Token): "rhs" # 33..36
       - Semicolon (Token): ";" # 36..37

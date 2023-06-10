@@ -187,7 +187,7 @@ impl Language {
                     stream.set_position(save);
                     None
                 }
-                Pass { node, .. } => Some(node),
+                Pass { builder, .. } => Some(builder.build()),
             }
         };
         let start = stream.position();
@@ -204,11 +204,12 @@ impl Language {
                     stream.set_position(save);
                     None
                 }
-                Pass { node, .. } => Some(node),
+                Pass { builder, .. } => Some(builder.build()),
             }
         };
+        let token = cst::Node::token(kind, Range { start, end }, leading_trivia, trailing_trivia);
         return Pass {
-            node: cst::Node::token(kind, Range { start, end }, leading_trivia, trailing_trivia),
+            builder: cst::NodeBuilder::single(token),
             error: None,
         };
     }
@@ -224,8 +225,9 @@ impl Language {
             };
         }
         let end = stream.position();
+        let token = cst::Node::token(kind, Range { start, end }, None, None);
         return Pass {
-            node: cst::Node::token(kind, Range { start, end }, None, None),
+            builder: cst::NodeBuilder::single(token),
             error: None,
         };
     }
@@ -240,9 +242,9 @@ impl Language {
                 Self::scan_abicoder_keyword,
                 TokenKind::AbicoderKeyword,
             ) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -255,9 +257,9 @@ impl Language {
                 Self::scan_identifier,
                 TokenKind::Identifier,
             ) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -266,7 +268,7 @@ impl Language {
                 }
             };
             break Pass {
-                node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1]),
+                builder: cst::NodeBuilder::multiple(vec![result_0, result_1]),
                 error: furthest_error,
             };
         }
@@ -274,13 +276,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_abi_coder_pragma(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_abi_coder_pragma_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::ABICoderPragma, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_abi_coder_pragma_0_4_11(stream)
+            .with_kind(RuleKind::ABICoderPragma)
     }
 
     // AddSubOperator = «Plus» | «Minus»;
@@ -307,13 +304,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_add_sub_operator(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_add_sub_operator_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::AddSubOperator, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_add_sub_operator_0_4_11(stream)
+            .with_kind(RuleKind::AddSubOperator)
     }
 
     // AddressType = «AddressKeyword» «PayableKeyword»?;
@@ -327,9 +319,9 @@ impl Language {
                 Self::scan_address_keyword,
                 TokenKind::AddressKeyword,
             ) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -347,16 +339,16 @@ impl Language {
                     Fail { error } => {
                         stream.set_position(start_position);
                         Pass {
-                            node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
+                            builder: cst::NodeBuilder::empty(),
                             error: Some(error),
                         }
                     }
                     pass => pass,
                 }
             } {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -365,7 +357,7 @@ impl Language {
                 }
             };
             break Pass {
-                node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1]),
+                builder: cst::NodeBuilder::multiple(vec![result_0, result_1]),
                 error: furthest_error,
             };
         }
@@ -373,13 +365,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_address_type(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_address_type_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::AddressType, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_address_type_0_4_11(stream)
+            .with_kind(RuleKind::AddressType)
     }
 
     // AndOperator = «AmpersandAmpersand»;
@@ -395,13 +382,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_and_operator(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_and_operator_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::AndOperator, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_and_operator_0_4_11(stream)
+            .with_kind(RuleKind::AndOperator)
     }
 
     // ArgumentList = «OpenParen» (PositionalArgumentList | NamedArgumentList)? «CloseParen»;
@@ -413,7 +395,7 @@ impl Language {
             {
                 err @ Fail { .. } => err,
                 Pass {
-                    node: open_node, ..
+                    builder: open_node, ..
                 } => {
                     match {
                         let start_position = stream.position();
@@ -436,7 +418,7 @@ impl Language {
                             Fail { error } => {
                                 stream.set_position(start_position);
                                 Pass {
-                                    node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
+                                    builder: cst::NodeBuilder::empty(),
                                     error: Some(error),
                                 }
                             }
@@ -445,7 +427,7 @@ impl Language {
                     } {
                         err @ Fail { .. } => err,
                         Pass {
-                            node: expr_node,
+                            builder: expr_node,
                             error: expr_error,
                         } => {
                             match self.parse_token_with_trivia(
@@ -457,12 +439,12 @@ impl Language {
                                     error: error.maybe_merge_with(expr_error),
                                 },
                                 Pass {
-                                    node: close_node, ..
+                                    builder: close_node,
+                                    ..
                                 } => Pass {
-                                    node: cst::Node::rule(
-                                        RuleKind::_DELIMITEDBY,
-                                        vec![open_node, expr_node, close_node],
-                                    ),
+                                    builder: cst::NodeBuilder::multiple(vec![
+                                        open_node, expr_node, close_node,
+                                    ]),
                                     error: None,
                                 },
                             }
@@ -475,13 +457,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_argument_list(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_argument_list_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::ArgumentList, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_argument_list_0_4_11(stream)
+            .with_kind(RuleKind::ArgumentList)
     }
 
     // ArrayLiteral = «OpenBracket» Expression («Comma» Expression)* «CloseBracket»;
@@ -496,15 +473,15 @@ impl Language {
             ) {
                 err @ Fail { .. } => err,
                 Pass {
-                    node: open_node, ..
+                    builder: open_node, ..
                 } => {
                     match {
                         let mut result = Vec::new();
                         loop {
                             match self.parse_expression(stream) {
                                 err @ Fail { .. } => break err,
-                                Pass { node, .. } => {
-                                    result.push(node);
+                                Pass { builder, .. } => {
+                                    result.push(builder);
                                     let save = stream.position();
                                     match self.parse_token_with_trivia(
                                         stream,
@@ -514,14 +491,11 @@ impl Language {
                                         Fail { error } => {
                                             stream.set_position(save);
                                             break Pass {
-                                                node: cst::Node::rule(
-                                                    RuleKind::_SEPARATEDBY,
-                                                    result,
-                                                ),
+                                                builder: cst::NodeBuilder::multiple(result),
                                                 error: Some(error),
                                             };
                                         }
-                                        Pass { node, .. } => result.push(node),
+                                        Pass { builder, .. } => result.push(builder),
                                     }
                                 }
                             }
@@ -529,7 +503,7 @@ impl Language {
                     } {
                         err @ Fail { .. } => err,
                         Pass {
-                            node: expr_node,
+                            builder: expr_node,
                             error: expr_error,
                         } => {
                             match self.parse_token_with_trivia(
@@ -541,12 +515,12 @@ impl Language {
                                     error: error.maybe_merge_with(expr_error),
                                 },
                                 Pass {
-                                    node: close_node, ..
+                                    builder: close_node,
+                                    ..
                                 } => Pass {
-                                    node: cst::Node::rule(
-                                        RuleKind::_DELIMITEDBY,
-                                        vec![open_node, expr_node, close_node],
-                                    ),
+                                    builder: cst::NodeBuilder::multiple(vec![
+                                        open_node, expr_node, close_node,
+                                    ]),
                                     error: None,
                                 },
                             }
@@ -559,13 +533,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_array_literal(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_array_literal_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::ArrayLiteral, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_array_literal_0_4_11(stream)
+            .with_kind(RuleKind::ArrayLiteral)
     }
 
     // AssemblyFlags = «OpenParen» «DoubleQuotedAsciiStringLiteral» («Comma» «DoubleQuotedAsciiStringLiteral»)* «CloseParen»;
@@ -577,7 +546,7 @@ impl Language {
             {
                 err @ Fail { .. } => err,
                 Pass {
-                    node: open_node, ..
+                    builder: open_node, ..
                 } => {
                     match loop {
                         let mut furthest_error = None;
@@ -586,10 +555,10 @@ impl Language {
                             Self::scan_double_quoted_ascii_string_literal,
                             TokenKind::DoubleQuotedAsciiStringLiteral,
                         ) {
-                            Pass { node, error } => {
+                            Pass { builder, error } => {
                                 furthest_error =
                                     error.map(|error| error.maybe_merge_with(furthest_error));
-                                node
+                                builder
                             }
                             Fail { error } => {
                                 break Fail {
@@ -608,11 +577,11 @@ impl Language {
                                         Self::scan_comma,
                                         TokenKind::Comma,
                                     ) {
-                                        Pass { node, error } => {
+                                        Pass { builder, error } => {
                                             furthest_error = error.map(|error| {
                                                 error.maybe_merge_with(furthest_error)
                                             });
-                                            node
+                                            builder
                                         }
                                         Fail { error } => {
                                             break Fail {
@@ -625,11 +594,11 @@ impl Language {
                                         Self::scan_double_quoted_ascii_string_literal,
                                         TokenKind::DoubleQuotedAsciiStringLiteral,
                                     ) {
-                                        Pass { node, error } => {
+                                        Pass { builder, error } => {
                                             furthest_error = error.map(|error| {
                                                 error.maybe_merge_with(furthest_error)
                                             });
-                                            node
+                                            builder
                                         }
                                         Fail { error } => {
                                             break Fail {
@@ -638,28 +607,27 @@ impl Language {
                                         }
                                     };
                                     break Pass {
-                                        node: cst::Node::rule(
-                                            RuleKind::_SEQUENCE,
-                                            vec![result_0, result_1],
-                                        ),
+                                        builder: cst::NodeBuilder::multiple(vec![
+                                            result_0, result_1,
+                                        ]),
                                         error: furthest_error,
                                     };
                                 } {
                                     Fail { error } => {
                                         stream.set_position(start_position);
                                         break Pass {
-                                            node: cst::Node::rule(RuleKind::_REPEATED, result),
+                                            builder: cst::NodeBuilder::multiple(result),
                                             error: Some(error),
                                         };
                                     }
-                                    Pass { node, .. } => result.push(node),
+                                    Pass { builder, .. } => result.push(builder),
                                 }
                             }
                         } {
-                            Pass { node, error } => {
+                            Pass { builder, error } => {
                                 furthest_error =
                                     error.map(|error| error.maybe_merge_with(furthest_error));
-                                node
+                                builder
                             }
                             Fail { error } => {
                                 break Fail {
@@ -668,13 +636,13 @@ impl Language {
                             }
                         };
                         break Pass {
-                            node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1]),
+                            builder: cst::NodeBuilder::multiple(vec![result_0, result_1]),
                             error: furthest_error,
                         };
                     } {
                         err @ Fail { .. } => err,
                         Pass {
-                            node: expr_node,
+                            builder: expr_node,
                             error: expr_error,
                         } => {
                             match self.parse_token_with_trivia(
@@ -686,12 +654,12 @@ impl Language {
                                     error: error.maybe_merge_with(expr_error),
                                 },
                                 Pass {
-                                    node: close_node, ..
+                                    builder: close_node,
+                                    ..
                                 } => Pass {
-                                    node: cst::Node::rule(
-                                        RuleKind::_DELIMITEDBY,
-                                        vec![open_node, expr_node, close_node],
-                                    ),
+                                    builder: cst::NodeBuilder::multiple(vec![
+                                        open_node, expr_node, close_node,
+                                    ]),
                                     error: None,
                                 },
                             }
@@ -704,13 +672,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_assembly_flags(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_assembly_flags_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::AssemblyFlags, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_assembly_flags_0_4_11(stream)
+            .with_kind(RuleKind::AssemblyFlags)
     }
 
     // AssemblyStatement = «AssemblyKeyword» «Evmasm»? AssemblyFlags? YulBlock;
@@ -724,9 +687,9 @@ impl Language {
                 Self::scan_assembly_keyword,
                 TokenKind::AssemblyKeyword,
             ) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -740,16 +703,16 @@ impl Language {
                     Fail { error } => {
                         stream.set_position(start_position);
                         Pass {
-                            node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
+                            builder: cst::NodeBuilder::empty(),
                             error: Some(error),
                         }
                     }
                     pass => pass,
                 }
             } {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -763,16 +726,16 @@ impl Language {
                     Fail { error } => {
                         stream.set_position(start_position);
                         Pass {
-                            node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
+                            builder: cst::NodeBuilder::empty(),
                             error: Some(error),
                         }
                     }
                     pass => pass,
                 }
             } {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -781,9 +744,9 @@ impl Language {
                 }
             };
             let result_3 = match self.parse_yul_block(stream) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -792,10 +755,7 @@ impl Language {
                 }
             };
             break Pass {
-                node: cst::Node::rule(
-                    RuleKind::_SEQUENCE,
-                    vec![result_0, result_1, result_2, result_3],
-                ),
+                builder: cst::NodeBuilder::multiple(vec![result_0, result_1, result_2, result_3]),
                 error: furthest_error,
             };
         }
@@ -803,13 +763,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_assembly_statement(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_assembly_statement_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::AssemblyStatement, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_assembly_statement_0_4_11(stream)
+            .with_kind(RuleKind::AssemblyStatement)
     }
 
     // AssignmentOperator = «Equal»
@@ -934,13 +889,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_assignment_operator(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_assignment_operator_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::AssignmentOperator, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_assignment_operator_0_4_11(stream)
+            .with_kind(RuleKind::AssignmentOperator)
     }
 
     // AsteriskImport = «Asterisk» ImportAlias «FromKeyword» ImportPath;
@@ -954,9 +904,9 @@ impl Language {
                 Self::scan_asterisk,
                 TokenKind::Asterisk,
             ) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -965,9 +915,9 @@ impl Language {
                 }
             };
             let result_1 = match self.parse_import_alias(stream) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -980,9 +930,9 @@ impl Language {
                 Self::scan_from_keyword,
                 TokenKind::FromKeyword,
             ) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -991,9 +941,9 @@ impl Language {
                 }
             };
             let result_3 = match self.parse_import_path(stream) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -1002,10 +952,7 @@ impl Language {
                 }
             };
             break Pass {
-                node: cst::Node::rule(
-                    RuleKind::_SEQUENCE,
-                    vec![result_0, result_1, result_2, result_3],
-                ),
+                builder: cst::NodeBuilder::multiple(vec![result_0, result_1, result_2, result_3]),
                 error: furthest_error,
             };
         }
@@ -1013,13 +960,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_asterisk_import(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_asterisk_import_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::AsteriskImport, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_asterisk_import_0_4_11(stream)
+            .with_kind(RuleKind::AsteriskImport)
     }
 
     // BitAndOperator = «Ampersand»;
@@ -1031,13 +973,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_bit_and_operator(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_bit_and_operator_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::BitAndOperator, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_bit_and_operator_0_4_11(stream)
+            .with_kind(RuleKind::BitAndOperator)
     }
 
     // BitOrOperator = «Bar»;
@@ -1049,13 +986,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_bit_or_operator(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_bit_or_operator_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::BitOrOperator, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_bit_or_operator_0_4_11(stream)
+            .with_kind(RuleKind::BitOrOperator)
     }
 
     // BitXOrOperator = «Caret»;
@@ -1067,13 +999,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_bit_x_or_operator(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_bit_x_or_operator_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::BitXOrOperator, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_bit_x_or_operator_0_4_11(stream)
+            .with_kind(RuleKind::BitXOrOperator)
     }
 
     // (* v0.4.11 *)
@@ -1086,7 +1013,7 @@ impl Language {
             {
                 err @ Fail { .. } => err,
                 Pass {
-                    node: open_node, ..
+                    builder: open_node, ..
                 } => {
                     match {
                         let mut result = Vec::new();
@@ -1096,17 +1023,17 @@ impl Language {
                                 Fail { error } => {
                                     stream.set_position(start_position);
                                     break Pass {
-                                        node: cst::Node::rule(RuleKind::_REPEATED, result),
+                                        builder: cst::NodeBuilder::multiple(result),
                                         error: Some(error),
                                     };
                                 }
-                                Pass { node, .. } => result.push(node),
+                                Pass { builder, .. } => result.push(builder),
                             }
                         }
                     } {
                         err @ Fail { .. } => err,
                         Pass {
-                            node: expr_node,
+                            builder: expr_node,
                             error: expr_error,
                         } => {
                             match self.parse_token_with_trivia(
@@ -1118,12 +1045,12 @@ impl Language {
                                     error: error.maybe_merge_with(expr_error),
                                 },
                                 Pass {
-                                    node: close_node, ..
+                                    builder: close_node,
+                                    ..
                                 } => Pass {
-                                    node: cst::Node::rule(
-                                        RuleKind::_DELIMITEDBY,
-                                        vec![open_node, expr_node, close_node],
-                                    ),
+                                    builder: cst::NodeBuilder::multiple(vec![
+                                        open_node, expr_node, close_node,
+                                    ]),
                                     error: None,
                                 },
                             }
@@ -1144,7 +1071,7 @@ impl Language {
             {
                 err @ Fail { .. } => err,
                 Pass {
-                    node: open_node, ..
+                    builder: open_node, ..
                 } => {
                     match {
                         let mut result = Vec::new();
@@ -1169,17 +1096,17 @@ impl Language {
                                 Fail { error } => {
                                     stream.set_position(start_position);
                                     break Pass {
-                                        node: cst::Node::rule(RuleKind::_REPEATED, result),
+                                        builder: cst::NodeBuilder::multiple(result),
                                         error: Some(error),
                                     };
                                 }
-                                Pass { node, .. } => result.push(node),
+                                Pass { builder, .. } => result.push(builder),
                             }
                         }
                     } {
                         err @ Fail { .. } => err,
                         Pass {
-                            node: expr_node,
+                            builder: expr_node,
                             error: expr_error,
                         } => {
                             match self.parse_token_with_trivia(
@@ -1191,12 +1118,12 @@ impl Language {
                                     error: error.maybe_merge_with(expr_error),
                                 },
                                 Pass {
-                                    node: close_node, ..
+                                    builder: close_node,
+                                    ..
                                 } => Pass {
-                                    node: cst::Node::rule(
-                                        RuleKind::_DELIMITEDBY,
-                                        vec![open_node, expr_node, close_node],
-                                    ),
+                                    builder: cst::NodeBuilder::multiple(vec![
+                                        open_node, expr_node, close_node,
+                                    ]),
                                     error: None,
                                 },
                             }
@@ -1217,13 +1144,7 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_block(&self, stream: &mut Stream) -> ParserResult {
-        match self.dispatch_parse_block(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::Block, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.dispatch_parse_block(stream).with_kind(RuleKind::Block)
     }
 
     // BooleanLiteral = «TrueKeyword» | «FalseKeyword»;
@@ -1258,13 +1179,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_boolean_literal(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_boolean_literal_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::BooleanLiteral, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_boolean_literal_0_4_11(stream)
+            .with_kind(RuleKind::BooleanLiteral)
     }
 
     // BreakStatement = «BreakKeyword» «Semicolon»;
@@ -1279,7 +1195,7 @@ impl Language {
             ) {
                 err @ Fail { .. } => err,
                 Pass {
-                    node: expr_node,
+                    builder: expr_node,
                     error: expr_error,
                 } => {
                     match self.parse_token_with_trivia(
@@ -1291,13 +1207,10 @@ impl Language {
                             error: error.maybe_merge_with(expr_error),
                         },
                         Pass {
-                            node: terminator_node,
+                            builder: terminator_node,
                             ..
                         } => Pass {
-                            node: cst::Node::rule(
-                                RuleKind::_TERMINATEDBY,
-                                vec![expr_node, terminator_node],
-                            ),
+                            builder: cst::NodeBuilder::multiple(vec![expr_node, terminator_node]),
                             error: None,
                         },
                     }
@@ -1308,13 +1221,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_break_statement(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_break_statement_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::BreakStatement, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_break_statement_0_4_11(stream)
+            .with_kind(RuleKind::BreakStatement)
     }
 
     // (* v0.6.0 *)
@@ -1329,9 +1237,9 @@ impl Language {
                 Self::scan_catch_keyword,
                 TokenKind::CatchKeyword,
             ) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -1353,17 +1261,17 @@ impl Language {
                             Fail { error } => {
                                 stream.set_position(start_position);
                                 Pass {
-                                    node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
+                                    builder: cst::NodeBuilder::empty(),
                                     error: Some(error),
                                 }
                             }
                             pass => pass,
                         }
                     } {
-                        Pass { node, error } => {
+                        Pass { builder, error } => {
                             furthest_error =
                                 error.map(|error| error.maybe_merge_with(furthest_error));
-                            node
+                            builder
                         }
                         Fail { error } => {
                             break Fail {
@@ -1372,10 +1280,10 @@ impl Language {
                         }
                     };
                     let result_1 = match self.parse_parameter_list(stream) {
-                        Pass { node, error } => {
+                        Pass { builder, error } => {
                             furthest_error =
                                 error.map(|error| error.maybe_merge_with(furthest_error));
-                            node
+                            builder
                         }
                         Fail { error } => {
                             break Fail {
@@ -1384,23 +1292,23 @@ impl Language {
                         }
                     };
                     break Pass {
-                        node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1]),
+                        builder: cst::NodeBuilder::multiple(vec![result_0, result_1]),
                         error: furthest_error,
                     };
                 } {
                     Fail { error } => {
                         stream.set_position(start_position);
                         Pass {
-                            node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
+                            builder: cst::NodeBuilder::empty(),
                             error: Some(error),
                         }
                     }
                     pass => pass,
                 }
             } {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -1409,9 +1317,9 @@ impl Language {
                 }
             };
             let result_2 = match self.parse_block(stream) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -1420,7 +1328,7 @@ impl Language {
                 }
             };
             break Pass {
-                node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1, result_2]),
+                builder: cst::NodeBuilder::multiple(vec![result_0, result_1, result_2]),
                 error: furthest_error,
             };
         }
@@ -1436,13 +1344,7 @@ impl Language {
 
     pub(crate) fn maybe_parse_catch_clause(&self, stream: &mut Stream) -> Option<ParserResult> {
         self.dispatch_parse_catch_clause(stream)
-            .map(|body| match body {
-                Pass { node, error } => Pass {
-                    node: cst::Node::top_level_rule(RuleKind::CatchClause, node),
-                    error,
-                },
-                fail => fail,
-            })
+            .map(|body| body.with_kind(RuleKind::CatchClause))
     }
 
     #[inline]
@@ -1462,9 +1364,9 @@ impl Language {
                 Self::scan_question_mark,
                 TokenKind::QuestionMark,
             ) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -1473,9 +1375,9 @@ impl Language {
                 }
             };
             let result_1 = match self.parse_expression(stream) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -1485,9 +1387,9 @@ impl Language {
             };
             let result_2 =
                 match self.parse_token_with_trivia(stream, Self::scan_colon, TokenKind::Colon) {
-                    Pass { node, error } => {
+                    Pass { builder, error } => {
                         furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
+                        builder
                     }
                     Fail { error } => {
                         break Fail {
@@ -1496,9 +1398,9 @@ impl Language {
                     }
                 };
             let result_3 = match self.parse_expression(stream) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -1507,10 +1409,7 @@ impl Language {
                 }
             };
             break Pass {
-                node: cst::Node::rule(
-                    RuleKind::_SEQUENCE,
-                    vec![result_0, result_1, result_2, result_3],
-                ),
+                builder: cst::NodeBuilder::multiple(vec![result_0, result_1, result_2, result_3]),
                 error: furthest_error,
             };
         }
@@ -1518,13 +1417,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_conditional_operator(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_conditional_operator_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::ConditionalOperator, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_conditional_operator_0_4_11(stream)
+            .with_kind(RuleKind::ConditionalOperator)
     }
 
     // ConstantDefinition = TypeName «ConstantKeyword» «Identifier» «Equal» Expression «Semicolon»;
@@ -1535,9 +1429,9 @@ impl Language {
             match loop {
                 let mut furthest_error = None;
                 let result_0 = match self.parse_type_name(stream) {
-                    Pass { node, error } => {
+                    Pass { builder, error } => {
                         furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
+                        builder
                     }
                     Fail { error } => {
                         break Fail {
@@ -1550,9 +1444,9 @@ impl Language {
                     Self::scan_constant_keyword,
                     TokenKind::ConstantKeyword,
                 ) {
-                    Pass { node, error } => {
+                    Pass { builder, error } => {
                         furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
+                        builder
                     }
                     Fail { error } => {
                         break Fail {
@@ -1565,9 +1459,9 @@ impl Language {
                     Self::scan_identifier,
                     TokenKind::Identifier,
                 ) {
-                    Pass { node, error } => {
+                    Pass { builder, error } => {
                         furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
+                        builder
                     }
                     Fail { error } => {
                         break Fail {
@@ -1580,9 +1474,9 @@ impl Language {
                     Self::scan_equal,
                     TokenKind::Equal,
                 ) {
-                    Pass { node, error } => {
+                    Pass { builder, error } => {
                         furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
+                        builder
                     }
                     Fail { error } => {
                         break Fail {
@@ -1591,9 +1485,9 @@ impl Language {
                     }
                 };
                 let result_4 = match self.parse_expression(stream) {
-                    Pass { node, error } => {
+                    Pass { builder, error } => {
                         furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
+                        builder
                     }
                     Fail { error } => {
                         break Fail {
@@ -1602,16 +1496,15 @@ impl Language {
                     }
                 };
                 break Pass {
-                    node: cst::Node::rule(
-                        RuleKind::_SEQUENCE,
-                        vec![result_0, result_1, result_2, result_3, result_4],
-                    ),
+                    builder: cst::NodeBuilder::multiple(vec![
+                        result_0, result_1, result_2, result_3, result_4,
+                    ]),
                     error: furthest_error,
                 };
             } {
                 err @ Fail { .. } => err,
                 Pass {
-                    node: expr_node,
+                    builder: expr_node,
                     error: expr_error,
                 } => {
                     match self.parse_token_with_trivia(
@@ -1623,13 +1516,10 @@ impl Language {
                             error: error.maybe_merge_with(expr_error),
                         },
                         Pass {
-                            node: terminator_node,
+                            builder: terminator_node,
                             ..
                         } => Pass {
-                            node: cst::Node::rule(
-                                RuleKind::_TERMINATEDBY,
-                                vec![expr_node, terminator_node],
-                            ),
+                            builder: cst::NodeBuilder::multiple(vec![expr_node, terminator_node]),
                             error: None,
                         },
                     }
@@ -1640,13 +1530,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_constant_definition(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_constant_definition_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::ConstantDefinition, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_constant_definition_0_4_11(stream)
+            .with_kind(RuleKind::ConstantDefinition)
     }
 
     // (* v0.4.22 *)
@@ -1707,13 +1592,7 @@ impl Language {
         stream: &mut Stream,
     ) -> Option<ParserResult> {
         self.dispatch_parse_constructor_attribute(stream)
-            .map(|body| match body {
-                Pass { node, error } => Pass {
-                    node: cst::Node::top_level_rule(RuleKind::ConstructorAttribute, node),
-                    error,
-                },
-                fail => fail,
-            })
+            .map(|body| body.with_kind(RuleKind::ConstructorAttribute))
     }
 
     #[inline]
@@ -1734,9 +1613,9 @@ impl Language {
                 Self::scan_constructor_keyword,
                 TokenKind::ConstructorKeyword,
             ) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -1745,9 +1624,9 @@ impl Language {
                 }
             };
             let result_1 = match self.parse_parameter_list(stream) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -1763,17 +1642,17 @@ impl Language {
                         Fail { error } => {
                             stream.set_position(start_position);
                             break Pass {
-                                node: cst::Node::rule(RuleKind::_REPEATED, result),
+                                builder: cst::NodeBuilder::multiple(result),
                                 error: Some(error),
                             };
                         }
-                        Pass { node, .. } => result.push(node),
+                        Pass { builder, .. } => result.push(builder),
                     }
                 }
             } {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -1782,9 +1661,9 @@ impl Language {
                 }
             };
             let result_3 = match self.parse_block(stream) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -1793,10 +1672,7 @@ impl Language {
                 }
             };
             break Pass {
-                node: cst::Node::rule(
-                    RuleKind::_SEQUENCE,
-                    vec![result_0, result_1, result_2, result_3],
-                ),
+                builder: cst::NodeBuilder::multiple(vec![result_0, result_1, result_2, result_3]),
                 error: furthest_error,
             };
         }
@@ -1815,13 +1691,7 @@ impl Language {
         stream: &mut Stream,
     ) -> Option<ParserResult> {
         self.dispatch_parse_constructor_definition(stream)
-            .map(|body| match body {
-                Pass { node, error } => Pass {
-                    node: cst::Node::top_level_rule(RuleKind::ConstructorDefinition, node),
-                    error,
-                },
-                fail => fail,
-            })
+            .map(|body| body.with_kind(RuleKind::ConstructorDefinition))
     }
 
     #[inline]
@@ -1842,7 +1712,7 @@ impl Language {
             ) {
                 err @ Fail { .. } => err,
                 Pass {
-                    node: expr_node,
+                    builder: expr_node,
                     error: expr_error,
                 } => {
                     match self.parse_token_with_trivia(
@@ -1854,13 +1724,10 @@ impl Language {
                             error: error.maybe_merge_with(expr_error),
                         },
                         Pass {
-                            node: terminator_node,
+                            builder: terminator_node,
                             ..
                         } => Pass {
-                            node: cst::Node::rule(
-                                RuleKind::_TERMINATEDBY,
-                                vec![expr_node, terminator_node],
-                            ),
+                            builder: cst::NodeBuilder::multiple(vec![expr_node, terminator_node]),
                             error: None,
                         },
                     }
@@ -1871,13 +1738,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_continue_statement(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_continue_statement_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::ContinueStatement, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_continue_statement_0_4_11(stream)
+            .with_kind(RuleKind::ContinueStatement)
     }
 
     // (* v0.4.11 *)
@@ -2194,13 +2056,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_contract_body_element(&self, stream: &mut Stream) -> ParserResult {
-        match self.dispatch_parse_contract_body_element(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::ContractBodyElement, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.dispatch_parse_contract_body_element(stream)
+            .with_kind(RuleKind::ContractBodyElement)
     }
 
     // (* v0.4.11 *)
@@ -2215,9 +2072,9 @@ impl Language {
                 Self::scan_contract_keyword,
                 TokenKind::ContractKeyword,
             ) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -2230,9 +2087,9 @@ impl Language {
                 Self::scan_identifier,
                 TokenKind::Identifier,
             ) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -2246,16 +2103,16 @@ impl Language {
                     Fail { error } => {
                         stream.set_position(start_position);
                         Pass {
-                            node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
+                            builder: cst::NodeBuilder::empty(),
                             error: Some(error),
                         }
                     }
                     pass => pass,
                 }
             } {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -2271,7 +2128,7 @@ impl Language {
                 ) {
                     err @ Fail { .. } => err,
                     Pass {
-                        node: open_node, ..
+                        builder: open_node, ..
                     } => {
                         match {
                             let mut result = Vec::new();
@@ -2281,17 +2138,17 @@ impl Language {
                                     Fail { error } => {
                                         stream.set_position(start_position);
                                         break Pass {
-                                            node: cst::Node::rule(RuleKind::_REPEATED, result),
+                                            builder: cst::NodeBuilder::multiple(result),
                                             error: Some(error),
                                         };
                                     }
-                                    Pass { node, .. } => result.push(node),
+                                    Pass { builder, .. } => result.push(builder),
                                 }
                             }
                         } {
                             err @ Fail { .. } => err,
                             Pass {
-                                node: expr_node,
+                                builder: expr_node,
                                 error: expr_error,
                             } => {
                                 match self.parse_token_with_trivia(
@@ -2303,12 +2160,12 @@ impl Language {
                                         error: error.maybe_merge_with(expr_error),
                                     },
                                     Pass {
-                                        node: close_node, ..
+                                        builder: close_node,
+                                        ..
                                     } => Pass {
-                                        node: cst::Node::rule(
-                                            RuleKind::_DELIMITEDBY,
-                                            vec![open_node, expr_node, close_node],
-                                        ),
+                                        builder: cst::NodeBuilder::multiple(vec![
+                                            open_node, expr_node, close_node,
+                                        ]),
                                         error: None,
                                     },
                                 }
@@ -2317,9 +2174,9 @@ impl Language {
                     }
                 }
             } {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -2328,10 +2185,7 @@ impl Language {
                 }
             };
             break Pass {
-                node: cst::Node::rule(
-                    RuleKind::_SEQUENCE,
-                    vec![result_0, result_1, result_2, result_3],
-                ),
+                builder: cst::NodeBuilder::multiple(vec![result_0, result_1, result_2, result_3]),
                 error: furthest_error,
             };
         }
@@ -2354,16 +2208,16 @@ impl Language {
                     Fail { error } => {
                         stream.set_position(start_position);
                         Pass {
-                            node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
+                            builder: cst::NodeBuilder::empty(),
                             error: Some(error),
                         }
                     }
                     pass => pass,
                 }
             } {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -2376,9 +2230,9 @@ impl Language {
                 Self::scan_contract_keyword,
                 TokenKind::ContractKeyword,
             ) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -2391,9 +2245,9 @@ impl Language {
                 Self::scan_identifier,
                 TokenKind::Identifier,
             ) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -2407,16 +2261,16 @@ impl Language {
                     Fail { error } => {
                         stream.set_position(start_position);
                         Pass {
-                            node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
+                            builder: cst::NodeBuilder::empty(),
                             error: Some(error),
                         }
                     }
                     pass => pass,
                 }
             } {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -2432,7 +2286,7 @@ impl Language {
                 ) {
                     err @ Fail { .. } => err,
                     Pass {
-                        node: open_node, ..
+                        builder: open_node, ..
                     } => {
                         match {
                             let mut result = Vec::new();
@@ -2442,17 +2296,17 @@ impl Language {
                                     Fail { error } => {
                                         stream.set_position(start_position);
                                         break Pass {
-                                            node: cst::Node::rule(RuleKind::_REPEATED, result),
+                                            builder: cst::NodeBuilder::multiple(result),
                                             error: Some(error),
                                         };
                                     }
-                                    Pass { node, .. } => result.push(node),
+                                    Pass { builder, .. } => result.push(builder),
                                 }
                             }
                         } {
                             err @ Fail { .. } => err,
                             Pass {
-                                node: expr_node,
+                                builder: expr_node,
                                 error: expr_error,
                             } => {
                                 match self.parse_token_with_trivia(
@@ -2464,12 +2318,12 @@ impl Language {
                                         error: error.maybe_merge_with(expr_error),
                                     },
                                     Pass {
-                                        node: close_node, ..
+                                        builder: close_node,
+                                        ..
                                     } => Pass {
-                                        node: cst::Node::rule(
-                                            RuleKind::_DELIMITEDBY,
-                                            vec![open_node, expr_node, close_node],
-                                        ),
+                                        builder: cst::NodeBuilder::multiple(vec![
+                                            open_node, expr_node, close_node,
+                                        ]),
                                         error: None,
                                     },
                                 }
@@ -2478,9 +2332,9 @@ impl Language {
                     }
                 }
             } {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -2489,10 +2343,9 @@ impl Language {
                 }
             };
             break Pass {
-                node: cst::Node::rule(
-                    RuleKind::_SEQUENCE,
-                    vec![result_0, result_1, result_2, result_3, result_4],
-                ),
+                builder: cst::NodeBuilder::multiple(vec![
+                    result_0, result_1, result_2, result_3, result_4,
+                ]),
                 error: furthest_error,
             };
         }
@@ -2508,13 +2361,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_contract_definition(&self, stream: &mut Stream) -> ParserResult {
-        match self.dispatch_parse_contract_definition(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::ContractDefinition, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.dispatch_parse_contract_definition(stream)
+            .with_kind(RuleKind::ContractDefinition)
     }
 
     // (* v0.4.11 *)
@@ -2598,13 +2446,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_data_location(&self, stream: &mut Stream) -> ParserResult {
-        match self.dispatch_parse_data_location(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::DataLocation, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.dispatch_parse_data_location(stream)
+            .with_kind(RuleKind::DataLocation)
     }
 
     // (* v0.4.11 *)
@@ -2743,13 +2586,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_definition(&self, stream: &mut Stream) -> ParserResult {
-        match self.dispatch_parse_definition(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::Definition, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.dispatch_parse_definition(stream)
+            .with_kind(RuleKind::Definition)
     }
 
     // DeleteStatement = «DeleteKeyword» Expression «Semicolon»;
@@ -2764,9 +2602,9 @@ impl Language {
                     Self::scan_delete_keyword,
                     TokenKind::DeleteKeyword,
                 ) {
-                    Pass { node, error } => {
+                    Pass { builder, error } => {
                         furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
+                        builder
                     }
                     Fail { error } => {
                         break Fail {
@@ -2775,9 +2613,9 @@ impl Language {
                     }
                 };
                 let result_1 = match self.parse_expression(stream) {
-                    Pass { node, error } => {
+                    Pass { builder, error } => {
                         furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
+                        builder
                     }
                     Fail { error } => {
                         break Fail {
@@ -2786,13 +2624,13 @@ impl Language {
                     }
                 };
                 break Pass {
-                    node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1]),
+                    builder: cst::NodeBuilder::multiple(vec![result_0, result_1]),
                     error: furthest_error,
                 };
             } {
                 err @ Fail { .. } => err,
                 Pass {
-                    node: expr_node,
+                    builder: expr_node,
                     error: expr_error,
                 } => {
                     match self.parse_token_with_trivia(
@@ -2804,13 +2642,10 @@ impl Language {
                             error: error.maybe_merge_with(expr_error),
                         },
                         Pass {
-                            node: terminator_node,
+                            builder: terminator_node,
                             ..
                         } => Pass {
-                            node: cst::Node::rule(
-                                RuleKind::_TERMINATEDBY,
-                                vec![expr_node, terminator_node],
-                            ),
+                            builder: cst::NodeBuilder::multiple(vec![expr_node, terminator_node]),
                             error: None,
                         },
                     }
@@ -2821,13 +2656,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_delete_statement(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_delete_statement_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::DeleteStatement, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_delete_statement_0_4_11(stream)
+            .with_kind(RuleKind::DeleteStatement)
     }
 
     // Directive = PragmaDirective | ImportDirective | UsingDirective;
@@ -2859,13 +2689,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_directive(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_directive_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::Directive, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_directive_0_4_11(stream)
+            .with_kind(RuleKind::Directive)
     }
 
     // DoWhileStatement = «DoKeyword» Statement «WhileKeyword» «OpenParen» Expression «CloseParen» «Semicolon»;
@@ -2880,9 +2705,9 @@ impl Language {
                     Self::scan_do_keyword,
                     TokenKind::DoKeyword,
                 ) {
-                    Pass { node, error } => {
+                    Pass { builder, error } => {
                         furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
+                        builder
                     }
                     Fail { error } => {
                         break Fail {
@@ -2891,9 +2716,9 @@ impl Language {
                     }
                 };
                 let result_1 = match self.parse_statement(stream) {
-                    Pass { node, error } => {
+                    Pass { builder, error } => {
                         furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
+                        builder
                     }
                     Fail { error } => {
                         break Fail {
@@ -2906,9 +2731,9 @@ impl Language {
                     Self::scan_while_keyword,
                     TokenKind::WhileKeyword,
                 ) {
-                    Pass { node, error } => {
+                    Pass { builder, error } => {
                         furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
+                        builder
                     }
                     Fail { error } => {
                         break Fail {
@@ -2924,11 +2749,11 @@ impl Language {
                     ) {
                         err @ Fail { .. } => err,
                         Pass {
-                            node: open_node, ..
+                            builder: open_node, ..
                         } => match self.parse_expression(stream) {
                             err @ Fail { .. } => err,
                             Pass {
-                                node: expr_node,
+                                builder: expr_node,
                                 error: expr_error,
                             } => {
                                 match self.parse_token_with_trivia(
@@ -2940,12 +2765,12 @@ impl Language {
                                         error: error.maybe_merge_with(expr_error),
                                     },
                                     Pass {
-                                        node: close_node, ..
+                                        builder: close_node,
+                                        ..
                                     } => Pass {
-                                        node: cst::Node::rule(
-                                            RuleKind::_DELIMITEDBY,
-                                            vec![open_node, expr_node, close_node],
-                                        ),
+                                        builder: cst::NodeBuilder::multiple(vec![
+                                            open_node, expr_node, close_node,
+                                        ]),
                                         error: None,
                                     },
                                 }
@@ -2953,9 +2778,9 @@ impl Language {
                         },
                     }
                 } {
-                    Pass { node, error } => {
+                    Pass { builder, error } => {
                         furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
+                        builder
                     }
                     Fail { error } => {
                         break Fail {
@@ -2964,16 +2789,15 @@ impl Language {
                     }
                 };
                 break Pass {
-                    node: cst::Node::rule(
-                        RuleKind::_SEQUENCE,
-                        vec![result_0, result_1, result_2, result_3],
-                    ),
+                    builder: cst::NodeBuilder::multiple(vec![
+                        result_0, result_1, result_2, result_3,
+                    ]),
                     error: furthest_error,
                 };
             } {
                 err @ Fail { .. } => err,
                 Pass {
-                    node: expr_node,
+                    builder: expr_node,
                     error: expr_error,
                 } => {
                     match self.parse_token_with_trivia(
@@ -2985,13 +2809,10 @@ impl Language {
                             error: error.maybe_merge_with(expr_error),
                         },
                         Pass {
-                            node: terminator_node,
+                            builder: terminator_node,
                             ..
                         } => Pass {
-                            node: cst::Node::rule(
-                                RuleKind::_TERMINATEDBY,
-                                vec![expr_node, terminator_node],
-                            ),
+                            builder: cst::NodeBuilder::multiple(vec![expr_node, terminator_node]),
                             error: None,
                         },
                     }
@@ -3002,13 +2823,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_do_while_statement(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_do_while_statement_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::DoWhileStatement, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_do_while_statement_0_4_11(stream)
+            .with_kind(RuleKind::DoWhileStatement)
     }
 
     // (* v0.4.11 *)
@@ -3215,13 +3031,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_elementary_type(&self, stream: &mut Stream) -> ParserResult {
-        match self.dispatch_parse_elementary_type(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::ElementaryType, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.dispatch_parse_elementary_type(stream)
+            .with_kind(RuleKind::ElementaryType)
     }
 
     // (* v0.4.21 *)
@@ -3237,9 +3048,9 @@ impl Language {
                     Self::scan_emit_keyword,
                     TokenKind::EmitKeyword,
                 ) {
-                    Pass { node, error } => {
+                    Pass { builder, error } => {
                         furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
+                        builder
                     }
                     Fail { error } => {
                         break Fail {
@@ -3248,9 +3059,9 @@ impl Language {
                     }
                 };
                 let result_1 = match self.parse_identifier_path(stream) {
-                    Pass { node, error } => {
+                    Pass { builder, error } => {
                         furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
+                        builder
                     }
                     Fail { error } => {
                         break Fail {
@@ -3259,9 +3070,9 @@ impl Language {
                     }
                 };
                 let result_2 = match self.parse_argument_list(stream) {
-                    Pass { node, error } => {
+                    Pass { builder, error } => {
                         furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
+                        builder
                     }
                     Fail { error } => {
                         break Fail {
@@ -3270,13 +3081,13 @@ impl Language {
                     }
                 };
                 break Pass {
-                    node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1, result_2]),
+                    builder: cst::NodeBuilder::multiple(vec![result_0, result_1, result_2]),
                     error: furthest_error,
                 };
             } {
                 err @ Fail { .. } => err,
                 Pass {
-                    node: expr_node,
+                    builder: expr_node,
                     error: expr_error,
                 } => {
                     match self.parse_token_with_trivia(
@@ -3288,13 +3099,10 @@ impl Language {
                             error: error.maybe_merge_with(expr_error),
                         },
                         Pass {
-                            node: terminator_node,
+                            builder: terminator_node,
                             ..
                         } => Pass {
-                            node: cst::Node::rule(
-                                RuleKind::_TERMINATEDBY,
-                                vec![expr_node, terminator_node],
-                            ),
+                            builder: cst::NodeBuilder::multiple(vec![expr_node, terminator_node]),
                             error: None,
                         },
                     }
@@ -3313,13 +3121,7 @@ impl Language {
 
     pub(crate) fn maybe_parse_emit_statement(&self, stream: &mut Stream) -> Option<ParserResult> {
         self.dispatch_parse_emit_statement(stream)
-            .map(|body| match body {
-                Pass { node, error } => Pass {
-                    node: cst::Node::top_level_rule(RuleKind::EmitStatement, node),
-                    error,
-                },
-                fail => fail,
-            })
+            .map(|body| body.with_kind(RuleKind::EmitStatement))
     }
 
     #[inline]
@@ -3376,11 +3178,11 @@ impl Language {
                         }
                         stream.set_position(start_position);
                         break Pass {
-                            node: cst::Node::rule(RuleKind::_REPEATED, result),
+                            builder: cst::NodeBuilder::multiple(result),
                             error: Some(error),
                         };
                     }
-                    Pass { node, .. } => result.push(node),
+                    Pass { builder, .. } => result.push(builder),
                 }
             }
         }
@@ -3388,13 +3190,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_end_of_file_trivia(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_end_of_file_trivia_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::EndOfFileTrivia, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_end_of_file_trivia_0_4_11(stream)
+            .with_kind(RuleKind::EndOfFileTrivia)
     }
 
     // EnumDefinition = «EnumKeyword» «Identifier» «OpenBrace» («Identifier» («Comma» «Identifier»)*)? «CloseBrace»;
@@ -3408,9 +3205,9 @@ impl Language {
                 Self::scan_enum_keyword,
                 TokenKind::EnumKeyword,
             ) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -3423,9 +3220,9 @@ impl Language {
                 Self::scan_identifier,
                 TokenKind::Identifier,
             ) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -3441,7 +3238,7 @@ impl Language {
                 ) {
                     err @ Fail { .. } => err,
                     Pass {
-                        node: open_node, ..
+                        builder: open_node, ..
                     } => {
                         match {
                             let start_position = stream.position();
@@ -3454,8 +3251,8 @@ impl Language {
                                         TokenKind::Identifier,
                                     ) {
                                         err @ Fail { .. } => break err,
-                                        Pass { node, .. } => {
-                                            result.push(node);
+                                        Pass { builder, .. } => {
+                                            result.push(builder);
                                             let save = stream.position();
                                             match self.parse_token_with_trivia(
                                                 stream,
@@ -3465,14 +3262,11 @@ impl Language {
                                                 Fail { error } => {
                                                     stream.set_position(save);
                                                     break Pass {
-                                                        node: cst::Node::rule(
-                                                            RuleKind::_SEPARATEDBY,
-                                                            result,
-                                                        ),
+                                                        builder: cst::NodeBuilder::multiple(result),
                                                         error: Some(error),
                                                     };
                                                 }
-                                                Pass { node, .. } => result.push(node),
+                                                Pass { builder, .. } => result.push(builder),
                                             }
                                         }
                                     }
@@ -3481,7 +3275,7 @@ impl Language {
                                 Fail { error } => {
                                     stream.set_position(start_position);
                                     Pass {
-                                        node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
+                                        builder: cst::NodeBuilder::empty(),
                                         error: Some(error),
                                     }
                                 }
@@ -3490,7 +3284,7 @@ impl Language {
                         } {
                             err @ Fail { .. } => err,
                             Pass {
-                                node: expr_node,
+                                builder: expr_node,
                                 error: expr_error,
                             } => {
                                 match self.parse_token_with_trivia(
@@ -3502,12 +3296,12 @@ impl Language {
                                         error: error.maybe_merge_with(expr_error),
                                     },
                                     Pass {
-                                        node: close_node, ..
+                                        builder: close_node,
+                                        ..
                                     } => Pass {
-                                        node: cst::Node::rule(
-                                            RuleKind::_DELIMITEDBY,
-                                            vec![open_node, expr_node, close_node],
-                                        ),
+                                        builder: cst::NodeBuilder::multiple(vec![
+                                            open_node, expr_node, close_node,
+                                        ]),
                                         error: None,
                                     },
                                 }
@@ -3516,9 +3310,9 @@ impl Language {
                     }
                 }
             } {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -3527,7 +3321,7 @@ impl Language {
                 }
             };
             break Pass {
-                node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1, result_2]),
+                builder: cst::NodeBuilder::multiple(vec![result_0, result_1, result_2]),
                 error: furthest_error,
             };
         }
@@ -3535,13 +3329,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_enum_definition(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_enum_definition_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::EnumDefinition, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_enum_definition_0_4_11(stream)
+            .with_kind(RuleKind::EnumDefinition)
     }
 
     // EqualityComparisonOperator = «EqualEqual» | «BangEqual»;
@@ -3573,13 +3362,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_equality_comparison_operator(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_equality_comparison_operator_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::EqualityComparisonOperator, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_equality_comparison_operator_0_4_11(stream)
+            .with_kind(RuleKind::EqualityComparisonOperator)
     }
 
     // ErrorDefinition = «ErrorKeyword» «Identifier» «OpenParen» (ErrorParameter («Comma» ErrorParameter)*)? «CloseParen» «Semicolon»;
@@ -3594,9 +3378,9 @@ impl Language {
                     Self::scan_error_keyword,
                     TokenKind::ErrorKeyword,
                 ) {
-                    Pass { node, error } => {
+                    Pass { builder, error } => {
                         furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
+                        builder
                     }
                     Fail { error } => {
                         break Fail {
@@ -3609,9 +3393,9 @@ impl Language {
                     Self::scan_identifier,
                     TokenKind::Identifier,
                 ) {
-                    Pass { node, error } => {
+                    Pass { builder, error } => {
                         furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
+                        builder
                     }
                     Fail { error } => {
                         break Fail {
@@ -3627,7 +3411,7 @@ impl Language {
                     ) {
                         err @ Fail { .. } => err,
                         Pass {
-                            node: open_node, ..
+                            builder: open_node, ..
                         } => {
                             match {
                                 let start_position = stream.position();
@@ -3636,8 +3420,8 @@ impl Language {
                                     loop {
                                         match self.parse_error_parameter(stream) {
                                             err @ Fail { .. } => break err,
-                                            Pass { node, .. } => {
-                                                result.push(node);
+                                            Pass { builder, .. } => {
+                                                result.push(builder);
                                                 let save = stream.position();
                                                 match self.parse_token_with_trivia(
                                                     stream,
@@ -3647,14 +3431,13 @@ impl Language {
                                                     Fail { error } => {
                                                         stream.set_position(save);
                                                         break Pass {
-                                                            node: cst::Node::rule(
-                                                                RuleKind::_SEPARATEDBY,
+                                                            builder: cst::NodeBuilder::multiple(
                                                                 result,
                                                             ),
                                                             error: Some(error),
                                                         };
                                                     }
-                                                    Pass { node, .. } => result.push(node),
+                                                    Pass { builder, .. } => result.push(builder),
                                                 }
                                             }
                                         }
@@ -3663,7 +3446,7 @@ impl Language {
                                     Fail { error } => {
                                         stream.set_position(start_position);
                                         Pass {
-                                            node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
+                                            builder: cst::NodeBuilder::empty(),
                                             error: Some(error),
                                         }
                                     }
@@ -3672,7 +3455,7 @@ impl Language {
                             } {
                                 err @ Fail { .. } => err,
                                 Pass {
-                                    node: expr_node,
+                                    builder: expr_node,
                                     error: expr_error,
                                 } => {
                                     match self.parse_token_with_trivia(
@@ -3684,12 +3467,12 @@ impl Language {
                                             error: error.maybe_merge_with(expr_error),
                                         },
                                         Pass {
-                                            node: close_node, ..
+                                            builder: close_node,
+                                            ..
                                         } => Pass {
-                                            node: cst::Node::rule(
-                                                RuleKind::_DELIMITEDBY,
-                                                vec![open_node, expr_node, close_node],
-                                            ),
+                                            builder: cst::NodeBuilder::multiple(vec![
+                                                open_node, expr_node, close_node,
+                                            ]),
                                             error: None,
                                         },
                                     }
@@ -3698,9 +3481,9 @@ impl Language {
                         }
                     }
                 } {
-                    Pass { node, error } => {
+                    Pass { builder, error } => {
                         furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
+                        builder
                     }
                     Fail { error } => {
                         break Fail {
@@ -3709,13 +3492,13 @@ impl Language {
                     }
                 };
                 break Pass {
-                    node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1, result_2]),
+                    builder: cst::NodeBuilder::multiple(vec![result_0, result_1, result_2]),
                     error: furthest_error,
                 };
             } {
                 err @ Fail { .. } => err,
                 Pass {
-                    node: expr_node,
+                    builder: expr_node,
                     error: expr_error,
                 } => {
                     match self.parse_token_with_trivia(
@@ -3727,13 +3510,10 @@ impl Language {
                             error: error.maybe_merge_with(expr_error),
                         },
                         Pass {
-                            node: terminator_node,
+                            builder: terminator_node,
                             ..
                         } => Pass {
-                            node: cst::Node::rule(
-                                RuleKind::_TERMINATEDBY,
-                                vec![expr_node, terminator_node],
-                            ),
+                            builder: cst::NodeBuilder::multiple(vec![expr_node, terminator_node]),
                             error: None,
                         },
                     }
@@ -3744,13 +3524,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_error_definition(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_error_definition_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::ErrorDefinition, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_error_definition_0_4_11(stream)
+            .with_kind(RuleKind::ErrorDefinition)
     }
 
     // ErrorParameter = TypeName «Identifier»?;
@@ -3760,9 +3535,9 @@ impl Language {
         loop {
             let mut furthest_error = None;
             let result_0 = match self.parse_type_name(stream) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -3780,16 +3555,16 @@ impl Language {
                     Fail { error } => {
                         stream.set_position(start_position);
                         Pass {
-                            node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
+                            builder: cst::NodeBuilder::empty(),
                             error: Some(error),
                         }
                     }
                     pass => pass,
                 }
             } {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -3798,7 +3573,7 @@ impl Language {
                 }
             };
             break Pass {
-                node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1]),
+                builder: cst::NodeBuilder::multiple(vec![result_0, result_1]),
                 error: furthest_error,
             };
         }
@@ -3806,13 +3581,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_error_parameter(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_error_parameter_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::ErrorParameter, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_error_parameter_0_4_11(stream)
+            .with_kind(RuleKind::ErrorParameter)
     }
 
     // EventDefinition = «EventKeyword» «Identifier» «OpenParen» (EventParameter («Comma» EventParameter)*)? «CloseParen» «AnonymousKeyword»? «Semicolon»;
@@ -3827,9 +3597,9 @@ impl Language {
                     Self::scan_event_keyword,
                     TokenKind::EventKeyword,
                 ) {
-                    Pass { node, error } => {
+                    Pass { builder, error } => {
                         furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
+                        builder
                     }
                     Fail { error } => {
                         break Fail {
@@ -3842,9 +3612,9 @@ impl Language {
                     Self::scan_identifier,
                     TokenKind::Identifier,
                 ) {
-                    Pass { node, error } => {
+                    Pass { builder, error } => {
                         furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
+                        builder
                     }
                     Fail { error } => {
                         break Fail {
@@ -3860,7 +3630,7 @@ impl Language {
                     ) {
                         err @ Fail { .. } => err,
                         Pass {
-                            node: open_node, ..
+                            builder: open_node, ..
                         } => {
                             match {
                                 let start_position = stream.position();
@@ -3869,8 +3639,8 @@ impl Language {
                                     loop {
                                         match self.parse_event_parameter(stream) {
                                             err @ Fail { .. } => break err,
-                                            Pass { node, .. } => {
-                                                result.push(node);
+                                            Pass { builder, .. } => {
+                                                result.push(builder);
                                                 let save = stream.position();
                                                 match self.parse_token_with_trivia(
                                                     stream,
@@ -3880,14 +3650,13 @@ impl Language {
                                                     Fail { error } => {
                                                         stream.set_position(save);
                                                         break Pass {
-                                                            node: cst::Node::rule(
-                                                                RuleKind::_SEPARATEDBY,
+                                                            builder: cst::NodeBuilder::multiple(
                                                                 result,
                                                             ),
                                                             error: Some(error),
                                                         };
                                                     }
-                                                    Pass { node, .. } => result.push(node),
+                                                    Pass { builder, .. } => result.push(builder),
                                                 }
                                             }
                                         }
@@ -3896,7 +3665,7 @@ impl Language {
                                     Fail { error } => {
                                         stream.set_position(start_position);
                                         Pass {
-                                            node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
+                                            builder: cst::NodeBuilder::empty(),
                                             error: Some(error),
                                         }
                                     }
@@ -3905,7 +3674,7 @@ impl Language {
                             } {
                                 err @ Fail { .. } => err,
                                 Pass {
-                                    node: expr_node,
+                                    builder: expr_node,
                                     error: expr_error,
                                 } => {
                                     match self.parse_token_with_trivia(
@@ -3917,12 +3686,12 @@ impl Language {
                                             error: error.maybe_merge_with(expr_error),
                                         },
                                         Pass {
-                                            node: close_node, ..
+                                            builder: close_node,
+                                            ..
                                         } => Pass {
-                                            node: cst::Node::rule(
-                                                RuleKind::_DELIMITEDBY,
-                                                vec![open_node, expr_node, close_node],
-                                            ),
+                                            builder: cst::NodeBuilder::multiple(vec![
+                                                open_node, expr_node, close_node,
+                                            ]),
                                             error: None,
                                         },
                                     }
@@ -3931,9 +3700,9 @@ impl Language {
                         }
                     }
                 } {
-                    Pass { node, error } => {
+                    Pass { builder, error } => {
                         furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
+                        builder
                     }
                     Fail { error } => {
                         break Fail {
@@ -3951,16 +3720,16 @@ impl Language {
                         Fail { error } => {
                             stream.set_position(start_position);
                             Pass {
-                                node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
+                                builder: cst::NodeBuilder::empty(),
                                 error: Some(error),
                             }
                         }
                         pass => pass,
                     }
                 } {
-                    Pass { node, error } => {
+                    Pass { builder, error } => {
                         furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
+                        builder
                     }
                     Fail { error } => {
                         break Fail {
@@ -3969,16 +3738,15 @@ impl Language {
                     }
                 };
                 break Pass {
-                    node: cst::Node::rule(
-                        RuleKind::_SEQUENCE,
-                        vec![result_0, result_1, result_2, result_3],
-                    ),
+                    builder: cst::NodeBuilder::multiple(vec![
+                        result_0, result_1, result_2, result_3,
+                    ]),
                     error: furthest_error,
                 };
             } {
                 err @ Fail { .. } => err,
                 Pass {
-                    node: expr_node,
+                    builder: expr_node,
                     error: expr_error,
                 } => {
                     match self.parse_token_with_trivia(
@@ -3990,13 +3758,10 @@ impl Language {
                             error: error.maybe_merge_with(expr_error),
                         },
                         Pass {
-                            node: terminator_node,
+                            builder: terminator_node,
                             ..
                         } => Pass {
-                            node: cst::Node::rule(
-                                RuleKind::_TERMINATEDBY,
-                                vec![expr_node, terminator_node],
-                            ),
+                            builder: cst::NodeBuilder::multiple(vec![expr_node, terminator_node]),
                             error: None,
                         },
                     }
@@ -4007,13 +3772,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_event_definition(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_event_definition_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::EventDefinition, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_event_definition_0_4_11(stream)
+            .with_kind(RuleKind::EventDefinition)
     }
 
     // EventParameter = TypeName «IndexedKeyword»? «Identifier»?;
@@ -4023,9 +3783,9 @@ impl Language {
         loop {
             let mut furthest_error = None;
             let result_0 = match self.parse_type_name(stream) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -4043,16 +3803,16 @@ impl Language {
                     Fail { error } => {
                         stream.set_position(start_position);
                         Pass {
-                            node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
+                            builder: cst::NodeBuilder::empty(),
                             error: Some(error),
                         }
                     }
                     pass => pass,
                 }
             } {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -4070,16 +3830,16 @@ impl Language {
                     Fail { error } => {
                         stream.set_position(start_position);
                         Pass {
-                            node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
+                            builder: cst::NodeBuilder::empty(),
                             error: Some(error),
                         }
                     }
                     pass => pass,
                 }
             } {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -4088,7 +3848,7 @@ impl Language {
                 }
             };
             break Pass {
-                node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1, result_2]),
+                builder: cst::NodeBuilder::multiple(vec![result_0, result_1, result_2]),
                 error: furthest_error,
             };
         }
@@ -4096,13 +3856,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_event_parameter(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_event_parameter_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::EventParameter, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_event_parameter_0_4_11(stream)
+            .with_kind(RuleKind::EventParameter)
     }
 
     // ExperimentalPragma = «ExperimentalKeyword» «Identifier»;
@@ -4116,9 +3871,9 @@ impl Language {
                 Self::scan_experimental_keyword,
                 TokenKind::ExperimentalKeyword,
             ) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -4131,9 +3886,9 @@ impl Language {
                 Self::scan_identifier,
                 TokenKind::Identifier,
             ) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -4142,7 +3897,7 @@ impl Language {
                 }
             };
             break Pass {
-                node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1]),
+                builder: cst::NodeBuilder::multiple(vec![result_0, result_1]),
                 error: furthest_error,
             };
         }
@@ -4150,13 +3905,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_experimental_pragma(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_experimental_pragma_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::ExperimentalPragma, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_experimental_pragma_0_4_11(stream)
+            .with_kind(RuleKind::ExperimentalPragma)
     }
 
     // ExponentiationOperator = «AsteriskAsterisk»;
@@ -4172,13 +3922,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_exponentiation_operator(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_exponentiation_operator_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::ExponentiationOperator, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_exponentiation_operator_0_4_11(stream)
+            .with_kind(RuleKind::ExponentiationOperator)
     }
 
     // (* v0.4.11 *)
@@ -4226,19 +3971,19 @@ impl Language {
             enum Pratt {
                 Operator {
                     kind: RuleKind,
-                    node: Rc<cst::Node>,
+                    builder: cst::NodeBuilder,
                     left_binding_power: u8,
                     right_binding_power: u8,
                 },
-                Node(Rc<cst::Node>),
+                Builder(cst::NodeBuilder),
             }
             let mut elements = Vec::new();
             if let Some(error) = loop {
                 loop {
                     let start_position = stream.position();
                     match match self.parse_unary_prefix_operator(stream) {
-                        Pass { node, .. } => Ok(Pratt::Operator {
-                            node,
+                        Pass { builder, .. } => Ok(Pratt::Operator {
+                            builder,
                             kind: RuleKind::UnaryPrefixExpression,
                             left_binding_power: 255,
                             right_binding_power: 29u8,
@@ -4254,7 +3999,7 @@ impl Language {
                 }
                 match self.parse_primary_expression(stream) {
                     Fail { error } => break Some(error),
-                    Pass { node, .. } => elements.push(Pratt::Node(node)),
+                    Pass { builder, .. } => elements.push(Pratt::Builder(builder)),
                 }
                 loop {
                     let start_position = stream.position();
@@ -4262,8 +4007,8 @@ impl Language {
                         let start_position = stream.position();
                         let mut furthest_error;
                         match match self.parse_conditional_operator(stream) {
-                            Pass { node, .. } => Ok(Pratt::Operator {
-                                node,
+                            Pass { builder, .. } => Ok(Pratt::Operator {
+                                builder,
                                 kind: RuleKind::ConditionalExpression,
                                 left_binding_power: 3u8,
                                 right_binding_power: 255,
@@ -4276,8 +4021,8 @@ impl Language {
                         stream.set_position(start_position);
                         match {
                             match self.parse_unary_postfix_operator(stream) {
-                                Pass { node, .. } => Ok(Pratt::Operator {
-                                    node,
+                                Pass { builder, .. } => Ok(Pratt::Operator {
+                                    builder,
                                     kind: RuleKind::UnaryPostfixExpression,
                                     left_binding_power: 27u8,
                                     right_binding_power: 255,
@@ -4291,8 +4036,8 @@ impl Language {
                         stream.set_position(start_position);
                         match {
                             match self.parse_function_call_operator(stream) {
-                                Pass { node, .. } => Ok(Pratt::Operator {
-                                    node,
+                                Pass { builder, .. } => Ok(Pratt::Operator {
+                                    builder,
                                     kind: RuleKind::FunctionCallExpression,
                                     left_binding_power: 31u8,
                                     right_binding_power: 255,
@@ -4306,8 +4051,8 @@ impl Language {
                         stream.set_position(start_position);
                         match {
                             match self.parse_member_access_operator(stream) {
-                                Pass { node, .. } => Ok(Pratt::Operator {
-                                    node,
+                                Pass { builder, .. } => Ok(Pratt::Operator {
+                                    builder,
                                     kind: RuleKind::MemberAccessExpression,
                                     left_binding_power: 33u8,
                                     right_binding_power: 255,
@@ -4321,8 +4066,8 @@ impl Language {
                         stream.set_position(start_position);
                         match {
                             match self.parse_index_access_operator(stream) {
-                                Pass { node, .. } => Ok(Pratt::Operator {
-                                    node,
+                                Pass { builder, .. } => Ok(Pratt::Operator {
+                                    builder,
                                     kind: RuleKind::IndexAccessExpression,
                                     left_binding_power: 35u8,
                                     right_binding_power: 255,
@@ -4347,8 +4092,8 @@ impl Language {
                     let start_position = stream.position();
                     let mut furthest_error;
                     match match self.parse_assignment_operator(stream) {
-                        Pass { node, .. } => Ok(Pratt::Operator {
-                            node,
+                        Pass { builder, .. } => Ok(Pratt::Operator {
+                            builder,
                             kind: RuleKind::AssignmentExpression,
                             left_binding_power: 1u8,
                             right_binding_power: 1u8 + 1,
@@ -4361,8 +4106,8 @@ impl Language {
                     stream.set_position(start_position);
                     match {
                         match self.parse_or_operator(stream) {
-                            Pass { node, .. } => Ok(Pratt::Operator {
-                                node,
+                            Pass { builder, .. } => Ok(Pratt::Operator {
+                                builder,
                                 kind: RuleKind::OrExpression,
                                 left_binding_power: 5u8,
                                 right_binding_power: 5u8 + 1,
@@ -4376,8 +4121,8 @@ impl Language {
                     stream.set_position(start_position);
                     match {
                         match self.parse_and_operator(stream) {
-                            Pass { node, .. } => Ok(Pratt::Operator {
-                                node,
+                            Pass { builder, .. } => Ok(Pratt::Operator {
+                                builder,
                                 kind: RuleKind::AndExpression,
                                 left_binding_power: 7u8,
                                 right_binding_power: 7u8 + 1,
@@ -4391,8 +4136,8 @@ impl Language {
                     stream.set_position(start_position);
                     match {
                         match self.parse_equality_comparison_operator(stream) {
-                            Pass { node, .. } => Ok(Pratt::Operator {
-                                node,
+                            Pass { builder, .. } => Ok(Pratt::Operator {
+                                builder,
                                 kind: RuleKind::EqualityComparisonExpression,
                                 left_binding_power: 9u8,
                                 right_binding_power: 9u8 + 1,
@@ -4406,8 +4151,8 @@ impl Language {
                     stream.set_position(start_position);
                     match {
                         match self.parse_order_comparison_operator(stream) {
-                            Pass { node, .. } => Ok(Pratt::Operator {
-                                node,
+                            Pass { builder, .. } => Ok(Pratt::Operator {
+                                builder,
                                 kind: RuleKind::OrderComparisonExpression,
                                 left_binding_power: 11u8,
                                 right_binding_power: 11u8 + 1,
@@ -4421,8 +4166,8 @@ impl Language {
                     stream.set_position(start_position);
                     match {
                         match self.parse_bit_or_operator(stream) {
-                            Pass { node, .. } => Ok(Pratt::Operator {
-                                node,
+                            Pass { builder, .. } => Ok(Pratt::Operator {
+                                builder,
                                 kind: RuleKind::BitOrExpression,
                                 left_binding_power: 13u8,
                                 right_binding_power: 13u8 + 1,
@@ -4436,8 +4181,8 @@ impl Language {
                     stream.set_position(start_position);
                     match {
                         match self.parse_bit_x_or_operator(stream) {
-                            Pass { node, .. } => Ok(Pratt::Operator {
-                                node,
+                            Pass { builder, .. } => Ok(Pratt::Operator {
+                                builder,
                                 kind: RuleKind::BitXOrExpression,
                                 left_binding_power: 15u8,
                                 right_binding_power: 15u8 + 1,
@@ -4451,8 +4196,8 @@ impl Language {
                     stream.set_position(start_position);
                     match {
                         match self.parse_bit_and_operator(stream) {
-                            Pass { node, .. } => Ok(Pratt::Operator {
-                                node,
+                            Pass { builder, .. } => Ok(Pratt::Operator {
+                                builder,
                                 kind: RuleKind::BitAndExpression,
                                 left_binding_power: 17u8,
                                 right_binding_power: 17u8 + 1,
@@ -4466,8 +4211,8 @@ impl Language {
                     stream.set_position(start_position);
                     match {
                         match self.parse_shift_operator(stream) {
-                            Pass { node, .. } => Ok(Pratt::Operator {
-                                node,
+                            Pass { builder, .. } => Ok(Pratt::Operator {
+                                builder,
                                 kind: RuleKind::ShiftExpression,
                                 left_binding_power: 19u8,
                                 right_binding_power: 19u8 + 1,
@@ -4481,8 +4226,8 @@ impl Language {
                     stream.set_position(start_position);
                     match {
                         match self.parse_add_sub_operator(stream) {
-                            Pass { node, .. } => Ok(Pratt::Operator {
-                                node,
+                            Pass { builder, .. } => Ok(Pratt::Operator {
+                                builder,
                                 kind: RuleKind::AddSubExpression,
                                 left_binding_power: 21u8,
                                 right_binding_power: 21u8 + 1,
@@ -4496,8 +4241,8 @@ impl Language {
                     stream.set_position(start_position);
                     match {
                         match self.parse_mul_div_mod_operator(stream) {
-                            Pass { node, .. } => Ok(Pratt::Operator {
-                                node,
+                            Pass { builder, .. } => Ok(Pratt::Operator {
+                                builder,
                                 kind: RuleKind::MulDivModExpression,
                                 left_binding_power: 23u8,
                                 right_binding_power: 23u8 + 1,
@@ -4511,8 +4256,8 @@ impl Language {
                     stream.set_position(start_position);
                     match {
                         match self.parse_exponentiation_operator(stream) {
-                            Pass { node, .. } => Ok(Pratt::Operator {
-                                node,
+                            Pass { builder, .. } => Ok(Pratt::Operator {
+                                builder,
                                 kind: RuleKind::ExponentiationExpression,
                                 left_binding_power: 25u8,
                                 right_binding_power: 25u8 + 1,
@@ -4566,11 +4311,16 @@ impl Language {
                         if *right_binding_power == 255 {
                             let left = elements.remove(i - 1);
                             let op = elements.remove(i - 1);
-                            if let (Pratt::Node(left), Pratt::Operator { node: op, kind, .. }) =
-                                (left, op)
+                            if let (
+                                Pratt::Builder(left),
+                                Pratt::Operator {
+                                    builder: op, kind, ..
+                                },
+                            ) = (left, op)
                             {
-                                let node = cst::Node::rule(kind, vec![left, op]);
-                                elements.insert(i - 1, Pratt::Node(node));
+                                let builder =
+                                    cst::NodeBuilder::multiple(vec![left, op]).with_kind(kind);
+                                elements.insert(i - 1, Pratt::Builder(builder));
                                 i = i.saturating_sub(2);
                             } else {
                                 unreachable!()
@@ -4578,11 +4328,16 @@ impl Language {
                         } else if *left_binding_power == 255 {
                             let op = elements.remove(i);
                             let right = elements.remove(i);
-                            if let (Pratt::Operator { node: op, kind, .. }, Pratt::Node(right)) =
-                                (op, right)
+                            if let (
+                                Pratt::Operator {
+                                    builder: op, kind, ..
+                                },
+                                Pratt::Builder(right),
+                            ) = (op, right)
                             {
-                                let node = cst::Node::rule(kind, vec![op, right]);
-                                elements.insert(i, Pratt::Node(node));
+                                let builder =
+                                    cst::NodeBuilder::multiple(vec![op, right]).with_kind(kind);
+                                elements.insert(i, Pratt::Builder(builder));
                                 i = i.saturating_sub(1);
                             } else {
                                 unreachable!()
@@ -4592,13 +4347,16 @@ impl Language {
                             let op = elements.remove(i - 1);
                             let right = elements.remove(i - 1);
                             if let (
-                                Pratt::Node(left),
-                                Pratt::Operator { node: op, kind, .. },
-                                Pratt::Node(right),
+                                Pratt::Builder(left),
+                                Pratt::Operator {
+                                    builder: op, kind, ..
+                                },
+                                Pratt::Builder(right),
                             ) = (left, op, right)
                             {
-                                let node = cst::Node::rule(kind, vec![left, op, right]);
-                                elements.insert(i - 1, Pratt::Node(node));
+                                let builder = cst::NodeBuilder::multiple(vec![left, op, right])
+                                    .with_kind(kind);
+                                elements.insert(i - 1, Pratt::Builder(builder));
                                 i = i.saturating_sub(2);
                             } else {
                                 unreachable!()
@@ -4608,8 +4366,11 @@ impl Language {
                         i += 1;
                     }
                 }
-                if let Pratt::Node(node) = elements.pop().unwrap() {
-                    Pass { node, error: None }
+                if let Pratt::Builder(builder) = elements.pop().unwrap() {
+                    Pass {
+                        builder,
+                        error: None,
+                    }
                 } else {
                     unreachable!()
                 }
@@ -4662,19 +4423,19 @@ impl Language {
             enum Pratt {
                 Operator {
                     kind: RuleKind,
-                    node: Rc<cst::Node>,
+                    builder: cst::NodeBuilder,
                     left_binding_power: u8,
                     right_binding_power: u8,
                 },
-                Node(Rc<cst::Node>),
+                Builder(cst::NodeBuilder),
             }
             let mut elements = Vec::new();
             if let Some(error) = loop {
                 loop {
                     let start_position = stream.position();
                     match match self.parse_unary_prefix_operator(stream) {
-                        Pass { node, .. } => Ok(Pratt::Operator {
-                            node,
+                        Pass { builder, .. } => Ok(Pratt::Operator {
+                            builder,
                             kind: RuleKind::UnaryPrefixExpression,
                             left_binding_power: 255,
                             right_binding_power: 29u8,
@@ -4690,7 +4451,7 @@ impl Language {
                 }
                 match self.parse_primary_expression(stream) {
                     Fail { error } => break Some(error),
-                    Pass { node, .. } => elements.push(Pratt::Node(node)),
+                    Pass { builder, .. } => elements.push(Pratt::Builder(builder)),
                 }
                 loop {
                     let start_position = stream.position();
@@ -4698,8 +4459,8 @@ impl Language {
                         let start_position = stream.position();
                         let mut furthest_error;
                         match match self.parse_conditional_operator(stream) {
-                            Pass { node, .. } => Ok(Pratt::Operator {
-                                node,
+                            Pass { builder, .. } => Ok(Pratt::Operator {
+                                builder,
                                 kind: RuleKind::ConditionalExpression,
                                 left_binding_power: 3u8,
                                 right_binding_power: 255,
@@ -4712,8 +4473,8 @@ impl Language {
                         stream.set_position(start_position);
                         match {
                             match self.parse_unary_postfix_operator(stream) {
-                                Pass { node, .. } => Ok(Pratt::Operator {
-                                    node,
+                                Pass { builder, .. } => Ok(Pratt::Operator {
+                                    builder,
                                     kind: RuleKind::UnaryPostfixExpression,
                                     left_binding_power: 27u8,
                                     right_binding_power: 255,
@@ -4727,8 +4488,8 @@ impl Language {
                         stream.set_position(start_position);
                         match {
                             match self.parse_function_call_operator(stream) {
-                                Pass { node, .. } => Ok(Pratt::Operator {
-                                    node,
+                                Pass { builder, .. } => Ok(Pratt::Operator {
+                                    builder,
                                     kind: RuleKind::FunctionCallExpression,
                                     left_binding_power: 31u8,
                                     right_binding_power: 255,
@@ -4742,8 +4503,8 @@ impl Language {
                         stream.set_position(start_position);
                         match {
                             match self.parse_member_access_operator(stream) {
-                                Pass { node, .. } => Ok(Pratt::Operator {
-                                    node,
+                                Pass { builder, .. } => Ok(Pratt::Operator {
+                                    builder,
                                     kind: RuleKind::MemberAccessExpression,
                                     left_binding_power: 33u8,
                                     right_binding_power: 255,
@@ -4757,8 +4518,8 @@ impl Language {
                         stream.set_position(start_position);
                         match {
                             match self.parse_index_access_operator(stream) {
-                                Pass { node, .. } => Ok(Pratt::Operator {
-                                    node,
+                                Pass { builder, .. } => Ok(Pratt::Operator {
+                                    builder,
                                     kind: RuleKind::IndexAccessExpression,
                                     left_binding_power: 35u8,
                                     right_binding_power: 255,
@@ -4783,8 +4544,8 @@ impl Language {
                     let start_position = stream.position();
                     let mut furthest_error;
                     match match self.parse_assignment_operator(stream) {
-                        Pass { node, .. } => Ok(Pratt::Operator {
-                            node,
+                        Pass { builder, .. } => Ok(Pratt::Operator {
+                            builder,
                             kind: RuleKind::AssignmentExpression,
                             left_binding_power: 1u8,
                             right_binding_power: 1u8 + 1,
@@ -4797,8 +4558,8 @@ impl Language {
                     stream.set_position(start_position);
                     match {
                         match self.parse_or_operator(stream) {
-                            Pass { node, .. } => Ok(Pratt::Operator {
-                                node,
+                            Pass { builder, .. } => Ok(Pratt::Operator {
+                                builder,
                                 kind: RuleKind::OrExpression,
                                 left_binding_power: 5u8,
                                 right_binding_power: 5u8 + 1,
@@ -4812,8 +4573,8 @@ impl Language {
                     stream.set_position(start_position);
                     match {
                         match self.parse_and_operator(stream) {
-                            Pass { node, .. } => Ok(Pratt::Operator {
-                                node,
+                            Pass { builder, .. } => Ok(Pratt::Operator {
+                                builder,
                                 kind: RuleKind::AndExpression,
                                 left_binding_power: 7u8,
                                 right_binding_power: 7u8 + 1,
@@ -4827,8 +4588,8 @@ impl Language {
                     stream.set_position(start_position);
                     match {
                         match self.parse_equality_comparison_operator(stream) {
-                            Pass { node, .. } => Ok(Pratt::Operator {
-                                node,
+                            Pass { builder, .. } => Ok(Pratt::Operator {
+                                builder,
                                 kind: RuleKind::EqualityComparisonExpression,
                                 left_binding_power: 9u8,
                                 right_binding_power: 9u8 + 1,
@@ -4842,8 +4603,8 @@ impl Language {
                     stream.set_position(start_position);
                     match {
                         match self.parse_order_comparison_operator(stream) {
-                            Pass { node, .. } => Ok(Pratt::Operator {
-                                node,
+                            Pass { builder, .. } => Ok(Pratt::Operator {
+                                builder,
                                 kind: RuleKind::OrderComparisonExpression,
                                 left_binding_power: 11u8,
                                 right_binding_power: 11u8 + 1,
@@ -4857,8 +4618,8 @@ impl Language {
                     stream.set_position(start_position);
                     match {
                         match self.parse_bit_or_operator(stream) {
-                            Pass { node, .. } => Ok(Pratt::Operator {
-                                node,
+                            Pass { builder, .. } => Ok(Pratt::Operator {
+                                builder,
                                 kind: RuleKind::BitOrExpression,
                                 left_binding_power: 13u8,
                                 right_binding_power: 13u8 + 1,
@@ -4872,8 +4633,8 @@ impl Language {
                     stream.set_position(start_position);
                     match {
                         match self.parse_bit_x_or_operator(stream) {
-                            Pass { node, .. } => Ok(Pratt::Operator {
-                                node,
+                            Pass { builder, .. } => Ok(Pratt::Operator {
+                                builder,
                                 kind: RuleKind::BitXOrExpression,
                                 left_binding_power: 15u8,
                                 right_binding_power: 15u8 + 1,
@@ -4887,8 +4648,8 @@ impl Language {
                     stream.set_position(start_position);
                     match {
                         match self.parse_bit_and_operator(stream) {
-                            Pass { node, .. } => Ok(Pratt::Operator {
-                                node,
+                            Pass { builder, .. } => Ok(Pratt::Operator {
+                                builder,
                                 kind: RuleKind::BitAndExpression,
                                 left_binding_power: 17u8,
                                 right_binding_power: 17u8 + 1,
@@ -4902,8 +4663,8 @@ impl Language {
                     stream.set_position(start_position);
                     match {
                         match self.parse_shift_operator(stream) {
-                            Pass { node, .. } => Ok(Pratt::Operator {
-                                node,
+                            Pass { builder, .. } => Ok(Pratt::Operator {
+                                builder,
                                 kind: RuleKind::ShiftExpression,
                                 left_binding_power: 19u8,
                                 right_binding_power: 19u8 + 1,
@@ -4917,8 +4678,8 @@ impl Language {
                     stream.set_position(start_position);
                     match {
                         match self.parse_add_sub_operator(stream) {
-                            Pass { node, .. } => Ok(Pratt::Operator {
-                                node,
+                            Pass { builder, .. } => Ok(Pratt::Operator {
+                                builder,
                                 kind: RuleKind::AddSubExpression,
                                 left_binding_power: 21u8,
                                 right_binding_power: 21u8 + 1,
@@ -4932,8 +4693,8 @@ impl Language {
                     stream.set_position(start_position);
                     match {
                         match self.parse_mul_div_mod_operator(stream) {
-                            Pass { node, .. } => Ok(Pratt::Operator {
-                                node,
+                            Pass { builder, .. } => Ok(Pratt::Operator {
+                                builder,
                                 kind: RuleKind::MulDivModExpression,
                                 left_binding_power: 23u8,
                                 right_binding_power: 23u8 + 1,
@@ -4947,8 +4708,8 @@ impl Language {
                     stream.set_position(start_position);
                     match {
                         match self.parse_exponentiation_operator(stream) {
-                            Pass { node, .. } => Ok(Pratt::Operator {
-                                node,
+                            Pass { builder, .. } => Ok(Pratt::Operator {
+                                builder,
                                 kind: RuleKind::ExponentiationExpression,
                                 left_binding_power: 25u8 + 1,
                                 right_binding_power: 25u8,
@@ -5002,11 +4763,16 @@ impl Language {
                         if *right_binding_power == 255 {
                             let left = elements.remove(i - 1);
                             let op = elements.remove(i - 1);
-                            if let (Pratt::Node(left), Pratt::Operator { node: op, kind, .. }) =
-                                (left, op)
+                            if let (
+                                Pratt::Builder(left),
+                                Pratt::Operator {
+                                    builder: op, kind, ..
+                                },
+                            ) = (left, op)
                             {
-                                let node = cst::Node::rule(kind, vec![left, op]);
-                                elements.insert(i - 1, Pratt::Node(node));
+                                let builder =
+                                    cst::NodeBuilder::multiple(vec![left, op]).with_kind(kind);
+                                elements.insert(i - 1, Pratt::Builder(builder));
                                 i = i.saturating_sub(2);
                             } else {
                                 unreachable!()
@@ -5014,11 +4780,16 @@ impl Language {
                         } else if *left_binding_power == 255 {
                             let op = elements.remove(i);
                             let right = elements.remove(i);
-                            if let (Pratt::Operator { node: op, kind, .. }, Pratt::Node(right)) =
-                                (op, right)
+                            if let (
+                                Pratt::Operator {
+                                    builder: op, kind, ..
+                                },
+                                Pratt::Builder(right),
+                            ) = (op, right)
                             {
-                                let node = cst::Node::rule(kind, vec![op, right]);
-                                elements.insert(i, Pratt::Node(node));
+                                let builder =
+                                    cst::NodeBuilder::multiple(vec![op, right]).with_kind(kind);
+                                elements.insert(i, Pratt::Builder(builder));
                                 i = i.saturating_sub(1);
                             } else {
                                 unreachable!()
@@ -5028,13 +4799,16 @@ impl Language {
                             let op = elements.remove(i - 1);
                             let right = elements.remove(i - 1);
                             if let (
-                                Pratt::Node(left),
-                                Pratt::Operator { node: op, kind, .. },
-                                Pratt::Node(right),
+                                Pratt::Builder(left),
+                                Pratt::Operator {
+                                    builder: op, kind, ..
+                                },
+                                Pratt::Builder(right),
                             ) = (left, op, right)
                             {
-                                let node = cst::Node::rule(kind, vec![left, op, right]);
-                                elements.insert(i - 1, Pratt::Node(node));
+                                let builder = cst::NodeBuilder::multiple(vec![left, op, right])
+                                    .with_kind(kind);
+                                elements.insert(i - 1, Pratt::Builder(builder));
                                 i = i.saturating_sub(2);
                             } else {
                                 unreachable!()
@@ -5044,8 +4818,11 @@ impl Language {
                         i += 1;
                     }
                 }
-                if let Pratt::Node(node) = elements.pop().unwrap() {
-                    Pass { node, error: None }
+                if let Pratt::Builder(builder) = elements.pop().unwrap() {
+                    Pass {
+                        builder,
+                        error: None,
+                    }
                 } else {
                     unreachable!()
                 }
@@ -5063,13 +4840,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_expression(&self, stream: &mut Stream) -> ParserResult {
-        match self.dispatch_parse_expression(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::Expression, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.dispatch_parse_expression(stream)
+            .with_kind(RuleKind::Expression)
     }
 
     // ExpressionStatement = Expression «Semicolon»;
@@ -5080,7 +4852,7 @@ impl Language {
             match self.parse_expression(stream) {
                 err @ Fail { .. } => err,
                 Pass {
-                    node: expr_node,
+                    builder: expr_node,
                     error: expr_error,
                 } => {
                     match self.parse_token_with_trivia(
@@ -5092,13 +4864,10 @@ impl Language {
                             error: error.maybe_merge_with(expr_error),
                         },
                         Pass {
-                            node: terminator_node,
+                            builder: terminator_node,
                             ..
                         } => Pass {
-                            node: cst::Node::rule(
-                                RuleKind::_TERMINATEDBY,
-                                vec![expr_node, terminator_node],
-                            ),
+                            builder: cst::NodeBuilder::multiple(vec![expr_node, terminator_node]),
                             error: None,
                         },
                     }
@@ -5109,13 +4878,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_expression_statement(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_expression_statement_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::ExpressionStatement, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_expression_statement_0_4_11(stream)
+            .with_kind(RuleKind::ExpressionStatement)
     }
 
     // (* v0.6.0 *)
@@ -5208,13 +4972,7 @@ impl Language {
         stream: &mut Stream,
     ) -> Option<ParserResult> {
         self.dispatch_parse_fallback_function_attribute(stream)
-            .map(|body| match body {
-                Pass { node, error } => Pass {
-                    node: cst::Node::top_level_rule(RuleKind::FallbackFunctionAttribute, node),
-                    error,
-                },
-                fail => fail,
-            })
+            .map(|body| body.with_kind(RuleKind::FallbackFunctionAttribute))
     }
 
     #[inline]
@@ -5235,9 +4993,9 @@ impl Language {
                 Self::scan_fallback_keyword,
                 TokenKind::FallbackKeyword,
             ) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -5246,9 +5004,9 @@ impl Language {
                 }
             };
             let result_1 = match self.parse_parameter_list(stream) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -5264,17 +5022,17 @@ impl Language {
                         Fail { error } => {
                             stream.set_position(start_position);
                             break Pass {
-                                node: cst::Node::rule(RuleKind::_REPEATED, result),
+                                builder: cst::NodeBuilder::multiple(result),
                                 error: Some(error),
                             };
                         }
-                        Pass { node, .. } => result.push(node),
+                        Pass { builder, .. } => result.push(builder),
                     }
                 }
             } {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -5291,10 +5049,10 @@ impl Language {
                         Self::scan_returns_keyword,
                         TokenKind::ReturnsKeyword,
                     ) {
-                        Pass { node, error } => {
+                        Pass { builder, error } => {
                             furthest_error =
                                 error.map(|error| error.maybe_merge_with(furthest_error));
-                            node
+                            builder
                         }
                         Fail { error } => {
                             break Fail {
@@ -5303,10 +5061,10 @@ impl Language {
                         }
                     };
                     let result_1 = match self.parse_parameter_list(stream) {
-                        Pass { node, error } => {
+                        Pass { builder, error } => {
                             furthest_error =
                                 error.map(|error| error.maybe_merge_with(furthest_error));
-                            node
+                            builder
                         }
                         Fail { error } => {
                             break Fail {
@@ -5315,23 +5073,23 @@ impl Language {
                         }
                     };
                     break Pass {
-                        node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1]),
+                        builder: cst::NodeBuilder::multiple(vec![result_0, result_1]),
                         error: furthest_error,
                     };
                 } {
                     Fail { error } => {
                         stream.set_position(start_position);
                         Pass {
-                            node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
+                            builder: cst::NodeBuilder::empty(),
                             error: Some(error),
                         }
                     }
                     pass => pass,
                 }
             } {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -5359,9 +5117,9 @@ impl Language {
                     error: furthest_error,
                 };
             } {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -5370,10 +5128,9 @@ impl Language {
                 }
             };
             break Pass {
-                node: cst::Node::rule(
-                    RuleKind::_SEQUENCE,
-                    vec![result_0, result_1, result_2, result_3, result_4],
-                ),
+                builder: cst::NodeBuilder::multiple(vec![
+                    result_0, result_1, result_2, result_3, result_4,
+                ]),
                 error: furthest_error,
             };
         }
@@ -5395,13 +5152,7 @@ impl Language {
         stream: &mut Stream,
     ) -> Option<ParserResult> {
         self.dispatch_parse_fallback_function_definition(stream)
-            .map(|body| match body {
-                Pass { node, error } => Pass {
-                    node: cst::Node::top_level_rule(RuleKind::FallbackFunctionDefinition, node),
-                    error,
-                },
-                fail => fail,
-            })
+            .map(|body| body.with_kind(RuleKind::FallbackFunctionDefinition))
     }
 
     #[inline]
@@ -5421,9 +5172,9 @@ impl Language {
                 Self::scan_for_keyword,
                 TokenKind::ForKeyword,
             ) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -5439,7 +5190,7 @@ impl Language {
                 ) {
                     err @ Fail { .. } => err,
                     Pass {
-                        node: open_node, ..
+                        builder: open_node, ..
                     } => {
                         match loop {
                             let mut furthest_error = None;
@@ -5463,10 +5214,10 @@ impl Language {
                                     error: furthest_error,
                                 };
                             } {
-                                Pass { node, error } => {
+                                Pass { builder, error } => {
                                     furthest_error =
                                         error.map(|error| error.maybe_merge_with(furthest_error));
-                                    node
+                                    builder
                                 }
                                 Fail { error } => {
                                     break Fail {
@@ -5494,10 +5245,10 @@ impl Language {
                                     error: furthest_error,
                                 };
                             } {
-                                Pass { node, error } => {
+                                Pass { builder, error } => {
                                     furthest_error =
                                         error.map(|error| error.maybe_merge_with(furthest_error));
-                                    node
+                                    builder
                                 }
                                 Fail { error } => {
                                     break Fail {
@@ -5511,17 +5262,17 @@ impl Language {
                                     Fail { error } => {
                                         stream.set_position(start_position);
                                         Pass {
-                                            node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
+                                            builder: cst::NodeBuilder::empty(),
                                             error: Some(error),
                                         }
                                     }
                                     pass => pass,
                                 }
                             } {
-                                Pass { node, error } => {
+                                Pass { builder, error } => {
                                     furthest_error =
                                         error.map(|error| error.maybe_merge_with(furthest_error));
-                                    node
+                                    builder
                                 }
                                 Fail { error } => {
                                     break Fail {
@@ -5530,16 +5281,15 @@ impl Language {
                                 }
                             };
                             break Pass {
-                                node: cst::Node::rule(
-                                    RuleKind::_SEQUENCE,
-                                    vec![result_0, result_1, result_2],
-                                ),
+                                builder: cst::NodeBuilder::multiple(vec![
+                                    result_0, result_1, result_2,
+                                ]),
                                 error: furthest_error,
                             };
                         } {
                             err @ Fail { .. } => err,
                             Pass {
-                                node: expr_node,
+                                builder: expr_node,
                                 error: expr_error,
                             } => {
                                 match self.parse_token_with_trivia(
@@ -5551,12 +5301,12 @@ impl Language {
                                         error: error.maybe_merge_with(expr_error),
                                     },
                                     Pass {
-                                        node: close_node, ..
+                                        builder: close_node,
+                                        ..
                                     } => Pass {
-                                        node: cst::Node::rule(
-                                            RuleKind::_DELIMITEDBY,
-                                            vec![open_node, expr_node, close_node],
-                                        ),
+                                        builder: cst::NodeBuilder::multiple(vec![
+                                            open_node, expr_node, close_node,
+                                        ]),
                                         error: None,
                                     },
                                 }
@@ -5565,9 +5315,9 @@ impl Language {
                     }
                 }
             } {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -5576,9 +5326,9 @@ impl Language {
                 }
             };
             let result_2 = match self.parse_statement(stream) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -5587,7 +5337,7 @@ impl Language {
                 }
             };
             break Pass {
-                node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1, result_2]),
+                builder: cst::NodeBuilder::multiple(vec![result_0, result_1, result_2]),
                 error: furthest_error,
             };
         }
@@ -5595,13 +5345,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_for_statement(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_for_statement_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::ForStatement, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_for_statement_0_4_11(stream)
+            .with_kind(RuleKind::ForStatement)
     }
 
     // (* v0.4.11 *)
@@ -5918,13 +5663,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_function_attribute(&self, stream: &mut Stream) -> ParserResult {
-        match self.dispatch_parse_function_attribute(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::FunctionAttribute, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.dispatch_parse_function_attribute(stream)
+            .with_kind(RuleKind::FunctionAttribute)
     }
 
     // (* v0.4.11 *)
@@ -5935,9 +5675,9 @@ impl Language {
         loop {
             let mut furthest_error = None;
             let result_0 = match self.parse_argument_list(stream) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -5946,7 +5686,7 @@ impl Language {
                 }
             };
             break Pass {
-                node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0]),
+                builder: cst::NodeBuilder::multiple(vec![result_0]),
                 error: furthest_error,
             };
         }
@@ -5967,17 +5707,17 @@ impl Language {
                         Fail { error } => {
                             stream.set_position(start_position);
                             break Pass {
-                                node: cst::Node::rule(RuleKind::_REPEATED, result),
+                                builder: cst::NodeBuilder::multiple(result),
                                 error: Some(error),
                             };
                         }
-                        Pass { node, .. } => result.push(node),
+                        Pass { builder, .. } => result.push(builder),
                     }
                 }
             } {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -5986,9 +5726,9 @@ impl Language {
                 }
             };
             let result_1 = match self.parse_argument_list(stream) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -5997,7 +5737,7 @@ impl Language {
                 }
             };
             break Pass {
-                node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1]),
+                builder: cst::NodeBuilder::multiple(vec![result_0, result_1]),
                 error: furthest_error,
             };
         }
@@ -6016,16 +5756,16 @@ impl Language {
                     Fail { error } => {
                         stream.set_position(start_position);
                         Pass {
-                            node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
+                            builder: cst::NodeBuilder::empty(),
                             error: Some(error),
                         }
                     }
                     pass => pass,
                 }
             } {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -6034,9 +5774,9 @@ impl Language {
                 }
             };
             let result_1 = match self.parse_argument_list(stream) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -6045,7 +5785,7 @@ impl Language {
                 }
             };
             break Pass {
-                node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1]),
+                builder: cst::NodeBuilder::multiple(vec![result_0, result_1]),
                 error: furthest_error,
             };
         }
@@ -6063,13 +5803,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_function_call_operator(&self, stream: &mut Stream) -> ParserResult {
-        match self.dispatch_parse_function_call_operator(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::FunctionCallOperator, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.dispatch_parse_function_call_operator(stream)
+            .with_kind(RuleKind::FunctionCallOperator)
     }
 
     // (* v0.6.2 *)
@@ -6082,7 +5817,7 @@ impl Language {
             {
                 err @ Fail { .. } => err,
                 Pass {
-                    node: open_node, ..
+                    builder: open_node, ..
                 } => {
                     match {
                         let start_position = stream.position();
@@ -6091,8 +5826,8 @@ impl Language {
                             loop {
                                 match self.parse_named_argument(stream) {
                                     err @ Fail { .. } => break err,
-                                    Pass { node, .. } => {
-                                        result.push(node);
+                                    Pass { builder, .. } => {
+                                        result.push(builder);
                                         let save = stream.position();
                                         match self.parse_token_with_trivia(
                                             stream,
@@ -6102,14 +5837,11 @@ impl Language {
                                             Fail { error } => {
                                                 stream.set_position(save);
                                                 break Pass {
-                                                    node: cst::Node::rule(
-                                                        RuleKind::_SEPARATEDBY,
-                                                        result,
-                                                    ),
+                                                    builder: cst::NodeBuilder::multiple(result),
                                                     error: Some(error),
                                                 };
                                             }
-                                            Pass { node, .. } => result.push(node),
+                                            Pass { builder, .. } => result.push(builder),
                                         }
                                     }
                                 }
@@ -6118,7 +5850,7 @@ impl Language {
                             Fail { error } => {
                                 stream.set_position(start_position);
                                 Pass {
-                                    node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
+                                    builder: cst::NodeBuilder::empty(),
                                     error: Some(error),
                                 }
                             }
@@ -6127,7 +5859,7 @@ impl Language {
                     } {
                         err @ Fail { .. } => err,
                         Pass {
-                            node: expr_node,
+                            builder: expr_node,
                             error: expr_error,
                         } => {
                             match self.parse_token_with_trivia(
@@ -6139,12 +5871,12 @@ impl Language {
                                     error: error.maybe_merge_with(expr_error),
                                 },
                                 Pass {
-                                    node: close_node, ..
+                                    builder: close_node,
+                                    ..
                                 } => Pass {
-                                    node: cst::Node::rule(
-                                        RuleKind::_DELIMITEDBY,
-                                        vec![open_node, expr_node, close_node],
-                                    ),
+                                    builder: cst::NodeBuilder::multiple(vec![
+                                        open_node, expr_node, close_node,
+                                    ]),
                                     error: None,
                                 },
                             }
@@ -6168,13 +5900,7 @@ impl Language {
         stream: &mut Stream,
     ) -> Option<ParserResult> {
         self.dispatch_parse_function_call_options(stream)
-            .map(|body| match body {
-                Pass { node, error } => Pass {
-                    node: cst::Node::top_level_rule(RuleKind::FunctionCallOptions, node),
-                    error,
-                },
-                fail => fail,
-            })
+            .map(|body| body.with_kind(RuleKind::FunctionCallOptions))
     }
 
     #[inline]
@@ -6194,9 +5920,9 @@ impl Language {
                 Self::scan_function_keyword,
                 TokenKind::FunctionKeyword,
             ) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -6237,9 +5963,9 @@ impl Language {
                     error: furthest_error,
                 };
             } {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -6248,9 +5974,9 @@ impl Language {
                 }
             };
             let result_2 = match self.parse_parameter_list(stream) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -6266,17 +5992,17 @@ impl Language {
                         Fail { error } => {
                             stream.set_position(start_position);
                             break Pass {
-                                node: cst::Node::rule(RuleKind::_REPEATED, result),
+                                builder: cst::NodeBuilder::multiple(result),
                                 error: Some(error),
                             };
                         }
-                        Pass { node, .. } => result.push(node),
+                        Pass { builder, .. } => result.push(builder),
                     }
                 }
             } {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -6293,10 +6019,10 @@ impl Language {
                         Self::scan_returns_keyword,
                         TokenKind::ReturnsKeyword,
                     ) {
-                        Pass { node, error } => {
+                        Pass { builder, error } => {
                             furthest_error =
                                 error.map(|error| error.maybe_merge_with(furthest_error));
-                            node
+                            builder
                         }
                         Fail { error } => {
                             break Fail {
@@ -6305,10 +6031,10 @@ impl Language {
                         }
                     };
                     let result_1 = match self.parse_parameter_list(stream) {
-                        Pass { node, error } => {
+                        Pass { builder, error } => {
                             furthest_error =
                                 error.map(|error| error.maybe_merge_with(furthest_error));
-                            node
+                            builder
                         }
                         Fail { error } => {
                             break Fail {
@@ -6317,23 +6043,23 @@ impl Language {
                         }
                     };
                     break Pass {
-                        node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1]),
+                        builder: cst::NodeBuilder::multiple(vec![result_0, result_1]),
                         error: furthest_error,
                     };
                 } {
                     Fail { error } => {
                         stream.set_position(start_position);
                         Pass {
-                            node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
+                            builder: cst::NodeBuilder::empty(),
                             error: Some(error),
                         }
                     }
                     pass => pass,
                 }
             } {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -6361,9 +6087,9 @@ impl Language {
                     error: furthest_error,
                 };
             } {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -6372,10 +6098,9 @@ impl Language {
                 }
             };
             break Pass {
-                node: cst::Node::rule(
-                    RuleKind::_SEQUENCE,
-                    vec![result_0, result_1, result_2, result_3, result_4, result_5],
-                ),
+                builder: cst::NodeBuilder::multiple(vec![
+                    result_0, result_1, result_2, result_3, result_4, result_5,
+                ]),
                 error: furthest_error,
             };
         }
@@ -6383,13 +6108,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_function_definition(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_function_definition_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::FunctionDefinition, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_function_definition_0_4_11(stream)
+            .with_kind(RuleKind::FunctionDefinition)
     }
 
     // FunctionType = «FunctionKeyword» ParameterList («InternalKeyword» | «ExternalKeyword» | «PrivateKeyword» | «PublicKeyword» | «PureKeyword» | «ViewKeyword» | «PayableKeyword»)* («ReturnsKeyword» ParameterList)?;
@@ -6403,9 +6123,9 @@ impl Language {
                 Self::scan_function_keyword,
                 TokenKind::FunctionKeyword,
             ) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -6414,9 +6134,9 @@ impl Language {
                 }
             };
             let result_1 = match self.parse_parameter_list(stream) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -6500,17 +6220,17 @@ impl Language {
                         Fail { error } => {
                             stream.set_position(start_position);
                             break Pass {
-                                node: cst::Node::rule(RuleKind::_REPEATED, result),
+                                builder: cst::NodeBuilder::multiple(result),
                                 error: Some(error),
                             };
                         }
-                        Pass { node, .. } => result.push(node),
+                        Pass { builder, .. } => result.push(builder),
                     }
                 }
             } {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -6527,10 +6247,10 @@ impl Language {
                         Self::scan_returns_keyword,
                         TokenKind::ReturnsKeyword,
                     ) {
-                        Pass { node, error } => {
+                        Pass { builder, error } => {
                             furthest_error =
                                 error.map(|error| error.maybe_merge_with(furthest_error));
-                            node
+                            builder
                         }
                         Fail { error } => {
                             break Fail {
@@ -6539,10 +6259,10 @@ impl Language {
                         }
                     };
                     let result_1 = match self.parse_parameter_list(stream) {
-                        Pass { node, error } => {
+                        Pass { builder, error } => {
                             furthest_error =
                                 error.map(|error| error.maybe_merge_with(furthest_error));
-                            node
+                            builder
                         }
                         Fail { error } => {
                             break Fail {
@@ -6551,23 +6271,23 @@ impl Language {
                         }
                     };
                     break Pass {
-                        node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1]),
+                        builder: cst::NodeBuilder::multiple(vec![result_0, result_1]),
                         error: furthest_error,
                     };
                 } {
                     Fail { error } => {
                         stream.set_position(start_position);
                         Pass {
-                            node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
+                            builder: cst::NodeBuilder::empty(),
                             error: Some(error),
                         }
                     }
                     pass => pass,
                 }
             } {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -6576,10 +6296,7 @@ impl Language {
                 }
             };
             break Pass {
-                node: cst::Node::rule(
-                    RuleKind::_SEQUENCE,
-                    vec![result_0, result_1, result_2, result_3],
-                ),
+                builder: cst::NodeBuilder::multiple(vec![result_0, result_1, result_2, result_3]),
                 error: furthest_error,
             };
         }
@@ -6587,13 +6304,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_function_type(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_function_type_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::FunctionType, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_function_type_0_4_11(stream)
+            .with_kind(RuleKind::FunctionType)
     }
 
     // IdentifierPath = «Identifier» («Period» «Identifier»)*;
@@ -6609,8 +6321,8 @@ impl Language {
                     TokenKind::Identifier,
                 ) {
                     err @ Fail { .. } => break err,
-                    Pass { node, .. } => {
-                        result.push(node);
+                    Pass { builder, .. } => {
+                        result.push(builder);
                         let save = stream.position();
                         match self.parse_token_with_trivia(
                             stream,
@@ -6620,11 +6332,11 @@ impl Language {
                             Fail { error } => {
                                 stream.set_position(save);
                                 break Pass {
-                                    node: cst::Node::rule(RuleKind::_SEPARATEDBY, result),
+                                    builder: cst::NodeBuilder::multiple(result),
                                     error: Some(error),
                                 };
                             }
-                            Pass { node, .. } => result.push(node),
+                            Pass { builder, .. } => result.push(builder),
                         }
                     }
                 }
@@ -6634,13 +6346,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_identifier_path(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_identifier_path_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::IdentifierPath, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_identifier_path_0_4_11(stream)
+            .with_kind(RuleKind::IdentifierPath)
     }
 
     // IfStatement = «IfKeyword» «OpenParen» Expression «CloseParen» Statement («ElseKeyword» Statement)?;
@@ -6654,9 +6361,9 @@ impl Language {
                 Self::scan_if_keyword,
                 TokenKind::IfKeyword,
             ) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -6672,11 +6379,11 @@ impl Language {
                 ) {
                     err @ Fail { .. } => err,
                     Pass {
-                        node: open_node, ..
+                        builder: open_node, ..
                     } => match self.parse_expression(stream) {
                         err @ Fail { .. } => err,
                         Pass {
-                            node: expr_node,
+                            builder: expr_node,
                             error: expr_error,
                         } => {
                             match self.parse_token_with_trivia(
@@ -6688,12 +6395,12 @@ impl Language {
                                     error: error.maybe_merge_with(expr_error),
                                 },
                                 Pass {
-                                    node: close_node, ..
+                                    builder: close_node,
+                                    ..
                                 } => Pass {
-                                    node: cst::Node::rule(
-                                        RuleKind::_DELIMITEDBY,
-                                        vec![open_node, expr_node, close_node],
-                                    ),
+                                    builder: cst::NodeBuilder::multiple(vec![
+                                        open_node, expr_node, close_node,
+                                    ]),
                                     error: None,
                                 },
                             }
@@ -6701,9 +6408,9 @@ impl Language {
                     },
                 }
             } {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -6712,9 +6419,9 @@ impl Language {
                 }
             };
             let result_2 = match self.parse_statement(stream) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -6731,10 +6438,10 @@ impl Language {
                         Self::scan_else_keyword,
                         TokenKind::ElseKeyword,
                     ) {
-                        Pass { node, error } => {
+                        Pass { builder, error } => {
                             furthest_error =
                                 error.map(|error| error.maybe_merge_with(furthest_error));
-                            node
+                            builder
                         }
                         Fail { error } => {
                             break Fail {
@@ -6743,10 +6450,10 @@ impl Language {
                         }
                     };
                     let result_1 = match self.parse_statement(stream) {
-                        Pass { node, error } => {
+                        Pass { builder, error } => {
                             furthest_error =
                                 error.map(|error| error.maybe_merge_with(furthest_error));
-                            node
+                            builder
                         }
                         Fail { error } => {
                             break Fail {
@@ -6755,23 +6462,23 @@ impl Language {
                         }
                     };
                     break Pass {
-                        node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1]),
+                        builder: cst::NodeBuilder::multiple(vec![result_0, result_1]),
                         error: furthest_error,
                     };
                 } {
                     Fail { error } => {
                         stream.set_position(start_position);
                         Pass {
-                            node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
+                            builder: cst::NodeBuilder::empty(),
                             error: Some(error),
                         }
                     }
                     pass => pass,
                 }
             } {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -6780,10 +6487,7 @@ impl Language {
                 }
             };
             break Pass {
-                node: cst::Node::rule(
-                    RuleKind::_SEQUENCE,
-                    vec![result_0, result_1, result_2, result_3],
-                ),
+                builder: cst::NodeBuilder::multiple(vec![result_0, result_1, result_2, result_3]),
                 error: furthest_error,
             };
         }
@@ -6791,13 +6495,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_if_statement(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_if_statement_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::IfStatement, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_if_statement_0_4_11(stream)
+            .with_kind(RuleKind::IfStatement)
     }
 
     // ImportAlias = «AsKeyword» «Identifier»;
@@ -6811,9 +6510,9 @@ impl Language {
                 Self::scan_as_keyword,
                 TokenKind::AsKeyword,
             ) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -6826,9 +6525,9 @@ impl Language {
                 Self::scan_identifier,
                 TokenKind::Identifier,
             ) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -6837,7 +6536,7 @@ impl Language {
                 }
             };
             break Pass {
-                node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1]),
+                builder: cst::NodeBuilder::multiple(vec![result_0, result_1]),
                 error: furthest_error,
             };
         }
@@ -6845,13 +6544,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_import_alias(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_import_alias_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::ImportAlias, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_import_alias_0_4_11(stream)
+            .with_kind(RuleKind::ImportAlias)
     }
 
     // ImportDirective = «ImportKeyword» (SimpleImport | AsteriskImport | SelectiveImport) «Semicolon»;
@@ -6866,9 +6560,9 @@ impl Language {
                     Self::scan_import_keyword,
                     TokenKind::ImportKeyword,
                 ) {
-                    Pass { node, error } => {
+                    Pass { builder, error } => {
                         furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
+                        builder
                     }
                     Fail { error } => {
                         break Fail {
@@ -6897,9 +6591,9 @@ impl Language {
                         error: furthest_error,
                     };
                 } {
-                    Pass { node, error } => {
+                    Pass { builder, error } => {
                         furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
+                        builder
                     }
                     Fail { error } => {
                         break Fail {
@@ -6908,13 +6602,13 @@ impl Language {
                     }
                 };
                 break Pass {
-                    node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1]),
+                    builder: cst::NodeBuilder::multiple(vec![result_0, result_1]),
                     error: furthest_error,
                 };
             } {
                 err @ Fail { .. } => err,
                 Pass {
-                    node: expr_node,
+                    builder: expr_node,
                     error: expr_error,
                 } => {
                     match self.parse_token_with_trivia(
@@ -6926,13 +6620,10 @@ impl Language {
                             error: error.maybe_merge_with(expr_error),
                         },
                         Pass {
-                            node: terminator_node,
+                            builder: terminator_node,
                             ..
                         } => Pass {
-                            node: cst::Node::rule(
-                                RuleKind::_TERMINATEDBY,
-                                vec![expr_node, terminator_node],
-                            ),
+                            builder: cst::NodeBuilder::multiple(vec![expr_node, terminator_node]),
                             error: None,
                         },
                     }
@@ -6943,13 +6634,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_import_directive(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_import_directive_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::ImportDirective, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_import_directive_0_4_11(stream)
+            .with_kind(RuleKind::ImportDirective)
     }
 
     // ImportPath = «AsciiStringLiteral»;
@@ -6965,13 +6651,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_import_path(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_import_path_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::ImportPath, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_import_path_0_4_11(stream)
+            .with_kind(RuleKind::ImportPath)
     }
 
     // IndexAccessOperator = «OpenBracket» ((Expression («Colon» Expression?)?) | («Colon» Expression?)) «CloseBracket»;
@@ -6986,7 +6667,7 @@ impl Language {
             ) {
                 err @ Fail { .. } => err,
                 Pass {
-                    node: open_node, ..
+                    builder: open_node, ..
                 } => {
                     match loop {
                         let start_position = stream.position();
@@ -6994,10 +6675,10 @@ impl Language {
                         match loop {
                             let mut furthest_error = None;
                             let result_0 = match self.parse_expression(stream) {
-                                Pass { node, error } => {
+                                Pass { builder, error } => {
                                     furthest_error =
                                         error.map(|error| error.maybe_merge_with(furthest_error));
-                                    node
+                                    builder
                                 }
                                 Fail { error } => {
                                     break Fail {
@@ -7014,11 +6695,11 @@ impl Language {
                                         Self::scan_colon,
                                         TokenKind::Colon,
                                     ) {
-                                        Pass { node, error } => {
+                                        Pass { builder, error } => {
                                             furthest_error = error.map(|error| {
                                                 error.maybe_merge_with(furthest_error)
                                             });
-                                            node
+                                            builder
                                         }
                                         Fail { error } => {
                                             break Fail {
@@ -7032,21 +6713,18 @@ impl Language {
                                             Fail { error } => {
                                                 stream.set_position(start_position);
                                                 Pass {
-                                                    node: cst::Node::rule(
-                                                        RuleKind::_OPTIONAL,
-                                                        vec![],
-                                                    ),
+                                                    builder: cst::NodeBuilder::empty(),
                                                     error: Some(error),
                                                 }
                                             }
                                             pass => pass,
                                         }
                                     } {
-                                        Pass { node, error } => {
+                                        Pass { builder, error } => {
                                             furthest_error = error.map(|error| {
                                                 error.maybe_merge_with(furthest_error)
                                             });
-                                            node
+                                            builder
                                         }
                                         Fail { error } => {
                                             break Fail {
@@ -7055,27 +6733,26 @@ impl Language {
                                         }
                                     };
                                     break Pass {
-                                        node: cst::Node::rule(
-                                            RuleKind::_SEQUENCE,
-                                            vec![result_0, result_1],
-                                        ),
+                                        builder: cst::NodeBuilder::multiple(vec![
+                                            result_0, result_1,
+                                        ]),
                                         error: furthest_error,
                                     };
                                 } {
                                     Fail { error } => {
                                         stream.set_position(start_position);
                                         Pass {
-                                            node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
+                                            builder: cst::NodeBuilder::empty(),
                                             error: Some(error),
                                         }
                                     }
                                     pass => pass,
                                 }
                             } {
-                                Pass { node, error } => {
+                                Pass { builder, error } => {
                                     furthest_error =
                                         error.map(|error| error.maybe_merge_with(furthest_error));
-                                    node
+                                    builder
                                 }
                                 Fail { error } => {
                                     break Fail {
@@ -7084,10 +6761,7 @@ impl Language {
                                 }
                             };
                             break Pass {
-                                node: cst::Node::rule(
-                                    RuleKind::_SEQUENCE,
-                                    vec![result_0, result_1],
-                                ),
+                                builder: cst::NodeBuilder::multiple(vec![result_0, result_1]),
                                 error: furthest_error,
                             };
                         } {
@@ -7102,10 +6776,10 @@ impl Language {
                                 Self::scan_colon,
                                 TokenKind::Colon,
                             ) {
-                                Pass { node, error } => {
+                                Pass { builder, error } => {
                                     furthest_error =
                                         error.map(|error| error.maybe_merge_with(furthest_error));
-                                    node
+                                    builder
                                 }
                                 Fail { error } => {
                                     break Fail {
@@ -7119,17 +6793,17 @@ impl Language {
                                     Fail { error } => {
                                         stream.set_position(start_position);
                                         Pass {
-                                            node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
+                                            builder: cst::NodeBuilder::empty(),
                                             error: Some(error),
                                         }
                                     }
                                     pass => pass,
                                 }
                             } {
-                                Pass { node, error } => {
+                                Pass { builder, error } => {
                                     furthest_error =
                                         error.map(|error| error.maybe_merge_with(furthest_error));
-                                    node
+                                    builder
                                 }
                                 Fail { error } => {
                                     break Fail {
@@ -7138,10 +6812,7 @@ impl Language {
                                 }
                             };
                             break Pass {
-                                node: cst::Node::rule(
-                                    RuleKind::_SEQUENCE,
-                                    vec![result_0, result_1],
-                                ),
+                                builder: cst::NodeBuilder::multiple(vec![result_0, result_1]),
                                 error: furthest_error,
                             };
                         } {
@@ -7154,7 +6825,7 @@ impl Language {
                     } {
                         err @ Fail { .. } => err,
                         Pass {
-                            node: expr_node,
+                            builder: expr_node,
                             error: expr_error,
                         } => {
                             match self.parse_token_with_trivia(
@@ -7166,12 +6837,12 @@ impl Language {
                                     error: error.maybe_merge_with(expr_error),
                                 },
                                 Pass {
-                                    node: close_node, ..
+                                    builder: close_node,
+                                    ..
                                 } => Pass {
-                                    node: cst::Node::rule(
-                                        RuleKind::_DELIMITEDBY,
-                                        vec![open_node, expr_node, close_node],
-                                    ),
+                                    builder: cst::NodeBuilder::multiple(vec![
+                                        open_node, expr_node, close_node,
+                                    ]),
                                     error: None,
                                 },
                             }
@@ -7184,13 +6855,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_index_access_operator(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_index_access_operator_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::IndexAccessOperator, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_index_access_operator_0_4_11(stream)
+            .with_kind(RuleKind::IndexAccessOperator)
     }
 
     // InheritanceSpecifier = IdentifierPath ArgumentList?;
@@ -7200,9 +6866,9 @@ impl Language {
         loop {
             let mut furthest_error = None;
             let result_0 = match self.parse_identifier_path(stream) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -7216,16 +6882,16 @@ impl Language {
                     Fail { error } => {
                         stream.set_position(start_position);
                         Pass {
-                            node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
+                            builder: cst::NodeBuilder::empty(),
                             error: Some(error),
                         }
                     }
                     pass => pass,
                 }
             } {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -7234,7 +6900,7 @@ impl Language {
                 }
             };
             break Pass {
-                node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1]),
+                builder: cst::NodeBuilder::multiple(vec![result_0, result_1]),
                 error: furthest_error,
             };
         }
@@ -7242,13 +6908,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_inheritance_specifier(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_inheritance_specifier_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::InheritanceSpecifier, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_inheritance_specifier_0_4_11(stream)
+            .with_kind(RuleKind::InheritanceSpecifier)
     }
 
     // InheritanceSpecifierList = «IsKeyword» InheritanceSpecifier («Comma» InheritanceSpecifier)*;
@@ -7262,9 +6923,9 @@ impl Language {
                 Self::scan_is_keyword,
                 TokenKind::IsKeyword,
             ) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -7277,8 +6938,8 @@ impl Language {
                 loop {
                     match self.parse_inheritance_specifier(stream) {
                         err @ Fail { .. } => break err,
-                        Pass { node, .. } => {
-                            result.push(node);
+                        Pass { builder, .. } => {
+                            result.push(builder);
                             let save = stream.position();
                             match self.parse_token_with_trivia(
                                 stream,
@@ -7288,19 +6949,19 @@ impl Language {
                                 Fail { error } => {
                                     stream.set_position(save);
                                     break Pass {
-                                        node: cst::Node::rule(RuleKind::_SEPARATEDBY, result),
+                                        builder: cst::NodeBuilder::multiple(result),
                                         error: Some(error),
                                     };
                                 }
-                                Pass { node, .. } => result.push(node),
+                                Pass { builder, .. } => result.push(builder),
                             }
                         }
                     }
                 }
             } {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -7309,7 +6970,7 @@ impl Language {
                 }
             };
             break Pass {
-                node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1]),
+                builder: cst::NodeBuilder::multiple(vec![result_0, result_1]),
                 error: furthest_error,
             };
         }
@@ -7317,13 +6978,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_inheritance_specifier_list(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_inheritance_specifier_list_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::InheritanceSpecifierList, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_inheritance_specifier_list_0_4_11(stream)
+            .with_kind(RuleKind::InheritanceSpecifierList)
     }
 
     // InterfaceDefinition = «InterfaceKeyword» «Identifier» InheritanceSpecifierList? «OpenBrace» ContractBodyElement* «CloseBrace»;
@@ -7337,9 +6993,9 @@ impl Language {
                 Self::scan_interface_keyword,
                 TokenKind::InterfaceKeyword,
             ) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -7352,9 +7008,9 @@ impl Language {
                 Self::scan_identifier,
                 TokenKind::Identifier,
             ) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -7368,16 +7024,16 @@ impl Language {
                     Fail { error } => {
                         stream.set_position(start_position);
                         Pass {
-                            node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
+                            builder: cst::NodeBuilder::empty(),
                             error: Some(error),
                         }
                     }
                     pass => pass,
                 }
             } {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -7393,7 +7049,7 @@ impl Language {
                 ) {
                     err @ Fail { .. } => err,
                     Pass {
-                        node: open_node, ..
+                        builder: open_node, ..
                     } => {
                         match {
                             let mut result = Vec::new();
@@ -7403,17 +7059,17 @@ impl Language {
                                     Fail { error } => {
                                         stream.set_position(start_position);
                                         break Pass {
-                                            node: cst::Node::rule(RuleKind::_REPEATED, result),
+                                            builder: cst::NodeBuilder::multiple(result),
                                             error: Some(error),
                                         };
                                     }
-                                    Pass { node, .. } => result.push(node),
+                                    Pass { builder, .. } => result.push(builder),
                                 }
                             }
                         } {
                             err @ Fail { .. } => err,
                             Pass {
-                                node: expr_node,
+                                builder: expr_node,
                                 error: expr_error,
                             } => {
                                 match self.parse_token_with_trivia(
@@ -7425,12 +7081,12 @@ impl Language {
                                         error: error.maybe_merge_with(expr_error),
                                     },
                                     Pass {
-                                        node: close_node, ..
+                                        builder: close_node,
+                                        ..
                                     } => Pass {
-                                        node: cst::Node::rule(
-                                            RuleKind::_DELIMITEDBY,
-                                            vec![open_node, expr_node, close_node],
-                                        ),
+                                        builder: cst::NodeBuilder::multiple(vec![
+                                            open_node, expr_node, close_node,
+                                        ]),
                                         error: None,
                                     },
                                 }
@@ -7439,9 +7095,9 @@ impl Language {
                     }
                 }
             } {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -7450,10 +7106,7 @@ impl Language {
                 }
             };
             break Pass {
-                node: cst::Node::rule(
-                    RuleKind::_SEQUENCE,
-                    vec![result_0, result_1, result_2, result_3],
-                ),
+                builder: cst::NodeBuilder::multiple(vec![result_0, result_1, result_2, result_3]),
                 error: furthest_error,
             };
         }
@@ -7461,13 +7114,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_interface_definition(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_interface_definition_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::InterfaceDefinition, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_interface_definition_0_4_11(stream)
+            .with_kind(RuleKind::InterfaceDefinition)
     }
 
     // LeadingTrivia = («Whitespace» | «EndOfLine» | «MultilineComment» | «SingleLineComment»)+;
@@ -7518,11 +7166,11 @@ impl Language {
                         }
                         stream.set_position(start_position);
                         break Pass {
-                            node: cst::Node::rule(RuleKind::_REPEATED, result),
+                            builder: cst::NodeBuilder::multiple(result),
                             error: Some(error),
                         };
                     }
-                    Pass { node, .. } => result.push(node),
+                    Pass { builder, .. } => result.push(builder),
                 }
             }
         }
@@ -7530,13 +7178,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_leading_trivia(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_leading_trivia_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::LeadingTrivia, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_leading_trivia_0_4_11(stream)
+            .with_kind(RuleKind::LeadingTrivia)
     }
 
     // LibraryDefinition = «LibraryKeyword» «Identifier» «OpenBrace» ContractBodyElement* «CloseBrace»;
@@ -7550,9 +7193,9 @@ impl Language {
                 Self::scan_library_keyword,
                 TokenKind::LibraryKeyword,
             ) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -7565,9 +7208,9 @@ impl Language {
                 Self::scan_identifier,
                 TokenKind::Identifier,
             ) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -7583,7 +7226,7 @@ impl Language {
                 ) {
                     err @ Fail { .. } => err,
                     Pass {
-                        node: open_node, ..
+                        builder: open_node, ..
                     } => {
                         match {
                             let mut result = Vec::new();
@@ -7593,17 +7236,17 @@ impl Language {
                                     Fail { error } => {
                                         stream.set_position(start_position);
                                         break Pass {
-                                            node: cst::Node::rule(RuleKind::_REPEATED, result),
+                                            builder: cst::NodeBuilder::multiple(result),
                                             error: Some(error),
                                         };
                                     }
-                                    Pass { node, .. } => result.push(node),
+                                    Pass { builder, .. } => result.push(builder),
                                 }
                             }
                         } {
                             err @ Fail { .. } => err,
                             Pass {
-                                node: expr_node,
+                                builder: expr_node,
                                 error: expr_error,
                             } => {
                                 match self.parse_token_with_trivia(
@@ -7615,12 +7258,12 @@ impl Language {
                                         error: error.maybe_merge_with(expr_error),
                                     },
                                     Pass {
-                                        node: close_node, ..
+                                        builder: close_node,
+                                        ..
                                     } => Pass {
-                                        node: cst::Node::rule(
-                                            RuleKind::_DELIMITEDBY,
-                                            vec![open_node, expr_node, close_node],
-                                        ),
+                                        builder: cst::NodeBuilder::multiple(vec![
+                                            open_node, expr_node, close_node,
+                                        ]),
                                         error: None,
                                     },
                                 }
@@ -7629,9 +7272,9 @@ impl Language {
                     }
                 }
             } {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -7640,7 +7283,7 @@ impl Language {
                 }
             };
             break Pass {
-                node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1, result_2]),
+                builder: cst::NodeBuilder::multiple(vec![result_0, result_1, result_2]),
                 error: furthest_error,
             };
         }
@@ -7648,13 +7291,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_library_definition(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_library_definition_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::LibraryDefinition, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_library_definition_0_4_11(stream)
+            .with_kind(RuleKind::LibraryDefinition)
     }
 
     // (* v0.4.11 *)
@@ -7680,9 +7318,9 @@ impl Language {
                     error: furthest_error,
                 };
             } {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -7691,7 +7329,7 @@ impl Language {
                 }
             };
             break Pass {
-                node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0]),
+                builder: cst::NodeBuilder::multiple(vec![result_0]),
                 error: furthest_error,
             };
         }
@@ -7720,9 +7358,9 @@ impl Language {
                     error: furthest_error,
                 };
             } {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -7740,16 +7378,16 @@ impl Language {
                     Fail { error } => {
                         stream.set_position(start_position);
                         Pass {
-                            node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
+                            builder: cst::NodeBuilder::empty(),
                             error: Some(error),
                         }
                     }
                     pass => pass,
                 }
             } {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -7758,7 +7396,7 @@ impl Language {
                 }
             };
             break Pass {
-                node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1]),
+                builder: cst::NodeBuilder::multiple(vec![result_0, result_1]),
                 error: furthest_error,
             };
         }
@@ -7774,13 +7412,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_mapping_key_type(&self, stream: &mut Stream) -> ParserResult {
-        match self.dispatch_parse_mapping_key_type(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::MappingKeyType, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.dispatch_parse_mapping_key_type(stream)
+            .with_kind(RuleKind::MappingKeyType)
     }
 
     // MappingType = «MappingKeyword» «OpenParen» MappingKeyType «EqualGreaterThan» MappingValueType «CloseParen»;
@@ -7794,9 +7427,9 @@ impl Language {
                 Self::scan_mapping_keyword,
                 TokenKind::MappingKeyword,
             ) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -7812,15 +7445,15 @@ impl Language {
                 ) {
                     err @ Fail { .. } => err,
                     Pass {
-                        node: open_node, ..
+                        builder: open_node, ..
                     } => {
                         match loop {
                             let mut furthest_error = None;
                             let result_0 = match self.parse_mapping_key_type(stream) {
-                                Pass { node, error } => {
+                                Pass { builder, error } => {
                                     furthest_error =
                                         error.map(|error| error.maybe_merge_with(furthest_error));
-                                    node
+                                    builder
                                 }
                                 Fail { error } => {
                                     break Fail {
@@ -7833,10 +7466,10 @@ impl Language {
                                 Self::scan_equal_greater_than,
                                 TokenKind::EqualGreaterThan,
                             ) {
-                                Pass { node, error } => {
+                                Pass { builder, error } => {
                                     furthest_error =
                                         error.map(|error| error.maybe_merge_with(furthest_error));
-                                    node
+                                    builder
                                 }
                                 Fail { error } => {
                                     break Fail {
@@ -7845,10 +7478,10 @@ impl Language {
                                 }
                             };
                             let result_2 = match self.parse_mapping_value_type(stream) {
-                                Pass { node, error } => {
+                                Pass { builder, error } => {
                                     furthest_error =
                                         error.map(|error| error.maybe_merge_with(furthest_error));
-                                    node
+                                    builder
                                 }
                                 Fail { error } => {
                                     break Fail {
@@ -7857,16 +7490,15 @@ impl Language {
                                 }
                             };
                             break Pass {
-                                node: cst::Node::rule(
-                                    RuleKind::_SEQUENCE,
-                                    vec![result_0, result_1, result_2],
-                                ),
+                                builder: cst::NodeBuilder::multiple(vec![
+                                    result_0, result_1, result_2,
+                                ]),
                                 error: furthest_error,
                             };
                         } {
                             err @ Fail { .. } => err,
                             Pass {
-                                node: expr_node,
+                                builder: expr_node,
                                 error: expr_error,
                             } => {
                                 match self.parse_token_with_trivia(
@@ -7878,12 +7510,12 @@ impl Language {
                                         error: error.maybe_merge_with(expr_error),
                                     },
                                     Pass {
-                                        node: close_node, ..
+                                        builder: close_node,
+                                        ..
                                     } => Pass {
-                                        node: cst::Node::rule(
-                                            RuleKind::_DELIMITEDBY,
-                                            vec![open_node, expr_node, close_node],
-                                        ),
+                                        builder: cst::NodeBuilder::multiple(vec![
+                                            open_node, expr_node, close_node,
+                                        ]),
                                         error: None,
                                     },
                                 }
@@ -7892,9 +7524,9 @@ impl Language {
                     }
                 }
             } {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -7903,7 +7535,7 @@ impl Language {
                 }
             };
             break Pass {
-                node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1]),
+                builder: cst::NodeBuilder::multiple(vec![result_0, result_1]),
                 error: furthest_error,
             };
         }
@@ -7911,13 +7543,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_mapping_type(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_mapping_type_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::MappingType, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_mapping_type_0_4_11(stream)
+            .with_kind(RuleKind::MappingType)
     }
 
     // (* v0.4.11 *)
@@ -7928,9 +7555,9 @@ impl Language {
         loop {
             let mut furthest_error = None;
             let result_0 = match self.parse_type_name(stream) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -7939,7 +7566,7 @@ impl Language {
                 }
             };
             break Pass {
-                node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0]),
+                builder: cst::NodeBuilder::multiple(vec![result_0]),
                 error: furthest_error,
             };
         }
@@ -7953,9 +7580,9 @@ impl Language {
         loop {
             let mut furthest_error = None;
             let result_0 = match self.parse_type_name(stream) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -7973,16 +7600,16 @@ impl Language {
                     Fail { error } => {
                         stream.set_position(start_position);
                         Pass {
-                            node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
+                            builder: cst::NodeBuilder::empty(),
                             error: Some(error),
                         }
                     }
                     pass => pass,
                 }
             } {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -7991,7 +7618,7 @@ impl Language {
                 }
             };
             break Pass {
-                node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1]),
+                builder: cst::NodeBuilder::multiple(vec![result_0, result_1]),
                 error: furthest_error,
             };
         }
@@ -8007,13 +7634,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_mapping_value_type(&self, stream: &mut Stream) -> ParserResult {
-        match self.dispatch_parse_mapping_value_type(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::MappingValueType, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.dispatch_parse_mapping_value_type(stream)
+            .with_kind(RuleKind::MappingValueType)
     }
 
     // MemberAccessOperator = «Period» («Identifier» | «AddressKeyword»);
@@ -8024,9 +7646,9 @@ impl Language {
             let mut furthest_error = None;
             let result_0 =
                 match self.parse_token_with_trivia(stream, Self::scan_period, TokenKind::Period) {
-                    Pass { node, error } => {
+                    Pass { builder, error } => {
                         furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
+                        builder
                     }
                     Fail { error } => {
                         break Fail {
@@ -8058,9 +7680,9 @@ impl Language {
                     error: furthest_error,
                 };
             } {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -8069,7 +7691,7 @@ impl Language {
                 }
             };
             break Pass {
-                node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1]),
+                builder: cst::NodeBuilder::multiple(vec![result_0, result_1]),
                 error: furthest_error,
             };
         }
@@ -8077,13 +7699,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_member_access_operator(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_member_access_operator_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::MemberAccessOperator, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_member_access_operator_0_4_11(stream)
+            .with_kind(RuleKind::MemberAccessOperator)
     }
 
     // (* v0.4.11 *)
@@ -8131,13 +7748,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_modifier_attribute(&self, stream: &mut Stream) -> ParserResult {
-        match self.dispatch_parse_modifier_attribute(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::ModifierAttribute, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.dispatch_parse_modifier_attribute(stream)
+            .with_kind(RuleKind::ModifierAttribute)
     }
 
     // ModifierDefinition = «ModifierKeyword» «Identifier» ParameterList? ModifierAttribute* («Semicolon» | Block);
@@ -8151,9 +7763,9 @@ impl Language {
                 Self::scan_modifier_keyword,
                 TokenKind::ModifierKeyword,
             ) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -8166,9 +7778,9 @@ impl Language {
                 Self::scan_identifier,
                 TokenKind::Identifier,
             ) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -8182,16 +7794,16 @@ impl Language {
                     Fail { error } => {
                         stream.set_position(start_position);
                         Pass {
-                            node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
+                            builder: cst::NodeBuilder::empty(),
                             error: Some(error),
                         }
                     }
                     pass => pass,
                 }
             } {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -8207,17 +7819,17 @@ impl Language {
                         Fail { error } => {
                             stream.set_position(start_position);
                             break Pass {
-                                node: cst::Node::rule(RuleKind::_REPEATED, result),
+                                builder: cst::NodeBuilder::multiple(result),
                                 error: Some(error),
                             };
                         }
-                        Pass { node, .. } => result.push(node),
+                        Pass { builder, .. } => result.push(builder),
                     }
                 }
             } {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -8245,9 +7857,9 @@ impl Language {
                     error: furthest_error,
                 };
             } {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -8256,10 +7868,9 @@ impl Language {
                 }
             };
             break Pass {
-                node: cst::Node::rule(
-                    RuleKind::_SEQUENCE,
-                    vec![result_0, result_1, result_2, result_3, result_4],
-                ),
+                builder: cst::NodeBuilder::multiple(vec![
+                    result_0, result_1, result_2, result_3, result_4,
+                ]),
                 error: furthest_error,
             };
         }
@@ -8267,13 +7878,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_modifier_definition(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_modifier_definition_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::ModifierDefinition, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_modifier_definition_0_4_11(stream)
+            .with_kind(RuleKind::ModifierDefinition)
     }
 
     // ModifierInvocation = IdentifierPath ArgumentList?;
@@ -8283,9 +7889,9 @@ impl Language {
         loop {
             let mut furthest_error = None;
             let result_0 = match self.parse_identifier_path(stream) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -8299,16 +7905,16 @@ impl Language {
                     Fail { error } => {
                         stream.set_position(start_position);
                         Pass {
-                            node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
+                            builder: cst::NodeBuilder::empty(),
                             error: Some(error),
                         }
                     }
                     pass => pass,
                 }
             } {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -8317,7 +7923,7 @@ impl Language {
                 }
             };
             break Pass {
-                node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1]),
+                builder: cst::NodeBuilder::multiple(vec![result_0, result_1]),
                 error: furthest_error,
             };
         }
@@ -8325,13 +7931,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_modifier_invocation(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_modifier_invocation_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::ModifierInvocation, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_modifier_invocation_0_4_11(stream)
+            .with_kind(RuleKind::ModifierInvocation)
     }
 
     // MulDivModOperator = «Asterisk» | «Slash» | «Percent»;
@@ -8363,13 +7964,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_mul_div_mod_operator(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_mul_div_mod_operator_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::MulDivModOperator, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_mul_div_mod_operator_0_4_11(stream)
+            .with_kind(RuleKind::MulDivModOperator)
     }
 
     // NamedArgument = «Identifier» «Colon» Expression;
@@ -8383,9 +7979,9 @@ impl Language {
                 Self::scan_identifier,
                 TokenKind::Identifier,
             ) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -8395,9 +7991,9 @@ impl Language {
             };
             let result_1 =
                 match self.parse_token_with_trivia(stream, Self::scan_colon, TokenKind::Colon) {
-                    Pass { node, error } => {
+                    Pass { builder, error } => {
                         furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
+                        builder
                     }
                     Fail { error } => {
                         break Fail {
@@ -8406,9 +8002,9 @@ impl Language {
                     }
                 };
             let result_2 = match self.parse_expression(stream) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -8417,7 +8013,7 @@ impl Language {
                 }
             };
             break Pass {
-                node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1, result_2]),
+                builder: cst::NodeBuilder::multiple(vec![result_0, result_1, result_2]),
                 error: furthest_error,
             };
         }
@@ -8425,13 +8021,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_named_argument(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_named_argument_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::NamedArgument, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_named_argument_0_4_11(stream)
+            .with_kind(RuleKind::NamedArgument)
     }
 
     // NamedArgumentList = «OpenBrace» (NamedArgument («Comma» NamedArgument)*)? «CloseBrace»;
@@ -8443,7 +8034,7 @@ impl Language {
             {
                 err @ Fail { .. } => err,
                 Pass {
-                    node: open_node, ..
+                    builder: open_node, ..
                 } => {
                     match {
                         let start_position = stream.position();
@@ -8452,8 +8043,8 @@ impl Language {
                             loop {
                                 match self.parse_named_argument(stream) {
                                     err @ Fail { .. } => break err,
-                                    Pass { node, .. } => {
-                                        result.push(node);
+                                    Pass { builder, .. } => {
+                                        result.push(builder);
                                         let save = stream.position();
                                         match self.parse_token_with_trivia(
                                             stream,
@@ -8463,14 +8054,11 @@ impl Language {
                                             Fail { error } => {
                                                 stream.set_position(save);
                                                 break Pass {
-                                                    node: cst::Node::rule(
-                                                        RuleKind::_SEPARATEDBY,
-                                                        result,
-                                                    ),
+                                                    builder: cst::NodeBuilder::multiple(result),
                                                     error: Some(error),
                                                 };
                                             }
-                                            Pass { node, .. } => result.push(node),
+                                            Pass { builder, .. } => result.push(builder),
                                         }
                                     }
                                 }
@@ -8479,7 +8067,7 @@ impl Language {
                             Fail { error } => {
                                 stream.set_position(start_position);
                                 Pass {
-                                    node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
+                                    builder: cst::NodeBuilder::empty(),
                                     error: Some(error),
                                 }
                             }
@@ -8488,7 +8076,7 @@ impl Language {
                     } {
                         err @ Fail { .. } => err,
                         Pass {
-                            node: expr_node,
+                            builder: expr_node,
                             error: expr_error,
                         } => {
                             match self.parse_token_with_trivia(
@@ -8500,12 +8088,12 @@ impl Language {
                                     error: error.maybe_merge_with(expr_error),
                                 },
                                 Pass {
-                                    node: close_node, ..
+                                    builder: close_node,
+                                    ..
                                 } => Pass {
-                                    node: cst::Node::rule(
-                                        RuleKind::_DELIMITEDBY,
-                                        vec![open_node, expr_node, close_node],
-                                    ),
+                                    builder: cst::NodeBuilder::multiple(vec![
+                                        open_node, expr_node, close_node,
+                                    ]),
                                     error: None,
                                 },
                             }
@@ -8518,13 +8106,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_named_argument_list(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_named_argument_list_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::NamedArgumentList, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_named_argument_list_0_4_11(stream)
+            .with_kind(RuleKind::NamedArgumentList)
     }
 
     // NewExpression = «NewKeyword» TypeName;
@@ -8538,9 +8121,9 @@ impl Language {
                 Self::scan_new_keyword,
                 TokenKind::NewKeyword,
             ) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -8549,9 +8132,9 @@ impl Language {
                 }
             };
             let result_1 = match self.parse_type_name(stream) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -8560,7 +8143,7 @@ impl Language {
                 }
             };
             break Pass {
-                node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1]),
+                builder: cst::NodeBuilder::multiple(vec![result_0, result_1]),
                 error: furthest_error,
             };
         }
@@ -8568,13 +8151,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_new_expression(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_new_expression_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::NewExpression, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_new_expression_0_4_11(stream)
+            .with_kind(RuleKind::NewExpression)
     }
 
     // (* v0.4.11 *)
@@ -9009,13 +8587,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_number_unit(&self, stream: &mut Stream) -> ParserResult {
-        match self.dispatch_parse_number_unit(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::NumberUnit, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.dispatch_parse_number_unit(stream)
+            .with_kind(RuleKind::NumberUnit)
     }
 
     // (* v0.4.11 *)
@@ -9049,9 +8622,9 @@ impl Language {
                     error: furthest_error,
                 };
             } {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -9065,16 +8638,16 @@ impl Language {
                     Fail { error } => {
                         stream.set_position(start_position);
                         Pass {
-                            node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
+                            builder: cst::NodeBuilder::empty(),
                             error: Some(error),
                         }
                     }
                     pass => pass,
                 }
             } {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -9083,7 +8656,7 @@ impl Language {
                 }
             };
             break Pass {
-                node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1]),
+                builder: cst::NodeBuilder::multiple(vec![result_0, result_1]),
                 error: furthest_error,
             };
         }
@@ -9113,9 +8686,9 @@ impl Language {
                     Self::scan_decimal_literal,
                     TokenKind::DecimalLiteral,
                 ) {
-                    Pass { node, error } => {
+                    Pass { builder, error } => {
                         furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
+                        builder
                     }
                     Fail { error } => {
                         break Fail {
@@ -9129,16 +8702,16 @@ impl Language {
                         Fail { error } => {
                             stream.set_position(start_position);
                             Pass {
-                                node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
+                                builder: cst::NodeBuilder::empty(),
                                 error: Some(error),
                             }
                         }
                         pass => pass,
                     }
                 } {
-                    Pass { node, error } => {
+                    Pass { builder, error } => {
                         furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
+                        builder
                     }
                     Fail { error } => {
                         break Fail {
@@ -9147,7 +8720,7 @@ impl Language {
                     }
                 };
                 break Pass {
-                    node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1]),
+                    builder: cst::NodeBuilder::multiple(vec![result_0, result_1]),
                     error: furthest_error,
                 };
             } {
@@ -9170,13 +8743,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_numeric_expression(&self, stream: &mut Stream) -> ParserResult {
-        match self.dispatch_parse_numeric_expression(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::NumericExpression, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.dispatch_parse_numeric_expression(stream)
+            .with_kind(RuleKind::NumericExpression)
     }
 
     // OrOperator = «BarBar»;
@@ -9188,13 +8756,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_or_operator(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_or_operator_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::OrOperator, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_or_operator_0_4_11(stream)
+            .with_kind(RuleKind::OrOperator)
     }
 
     // OrderComparisonOperator = «LessThan» | «GreaterThan» | «LessThanEqual» | «GreaterThanEqual»;
@@ -9243,13 +8806,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_order_comparison_operator(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_order_comparison_operator_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::OrderComparisonOperator, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_order_comparison_operator_0_4_11(stream)
+            .with_kind(RuleKind::OrderComparisonOperator)
     }
 
     // OverrideSpecifier = «OverrideKeyword» («OpenParen» IdentifierPath («Comma» IdentifierPath)* «CloseParen»)?;
@@ -9263,9 +8821,9 @@ impl Language {
                 Self::scan_override_keyword,
                 TokenKind::OverrideKeyword,
             ) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -9283,15 +8841,15 @@ impl Language {
                     ) {
                         err @ Fail { .. } => err,
                         Pass {
-                            node: open_node, ..
+                            builder: open_node, ..
                         } => {
                             match {
                                 let mut result = Vec::new();
                                 loop {
                                     match self.parse_identifier_path(stream) {
                                         err @ Fail { .. } => break err,
-                                        Pass { node, .. } => {
-                                            result.push(node);
+                                        Pass { builder, .. } => {
+                                            result.push(builder);
                                             let save = stream.position();
                                             match self.parse_token_with_trivia(
                                                 stream,
@@ -9301,14 +8859,11 @@ impl Language {
                                                 Fail { error } => {
                                                     stream.set_position(save);
                                                     break Pass {
-                                                        node: cst::Node::rule(
-                                                            RuleKind::_SEPARATEDBY,
-                                                            result,
-                                                        ),
+                                                        builder: cst::NodeBuilder::multiple(result),
                                                         error: Some(error),
                                                     };
                                                 }
-                                                Pass { node, .. } => result.push(node),
+                                                Pass { builder, .. } => result.push(builder),
                                             }
                                         }
                                     }
@@ -9316,7 +8871,7 @@ impl Language {
                             } {
                                 err @ Fail { .. } => err,
                                 Pass {
-                                    node: expr_node,
+                                    builder: expr_node,
                                     error: expr_error,
                                 } => {
                                     match self.parse_token_with_trivia(
@@ -9328,12 +8883,12 @@ impl Language {
                                             error: error.maybe_merge_with(expr_error),
                                         },
                                         Pass {
-                                            node: close_node, ..
+                                            builder: close_node,
+                                            ..
                                         } => Pass {
-                                            node: cst::Node::rule(
-                                                RuleKind::_DELIMITEDBY,
-                                                vec![open_node, expr_node, close_node],
-                                            ),
+                                            builder: cst::NodeBuilder::multiple(vec![
+                                                open_node, expr_node, close_node,
+                                            ]),
                                             error: None,
                                         },
                                     }
@@ -9345,16 +8900,16 @@ impl Language {
                     Fail { error } => {
                         stream.set_position(start_position);
                         Pass {
-                            node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
+                            builder: cst::NodeBuilder::empty(),
                             error: Some(error),
                         }
                     }
                     pass => pass,
                 }
             } {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -9363,7 +8918,7 @@ impl Language {
                 }
             };
             break Pass {
-                node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1]),
+                builder: cst::NodeBuilder::multiple(vec![result_0, result_1]),
                 error: furthest_error,
             };
         }
@@ -9371,13 +8926,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_override_specifier(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_override_specifier_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::OverrideSpecifier, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_override_specifier_0_4_11(stream)
+            .with_kind(RuleKind::OverrideSpecifier)
     }
 
     // ParameterDeclaration = TypeName DataLocation? «Identifier»?;
@@ -9387,9 +8937,9 @@ impl Language {
         loop {
             let mut furthest_error = None;
             let result_0 = match self.parse_type_name(stream) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -9403,16 +8953,16 @@ impl Language {
                     Fail { error } => {
                         stream.set_position(start_position);
                         Pass {
-                            node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
+                            builder: cst::NodeBuilder::empty(),
                             error: Some(error),
                         }
                     }
                     pass => pass,
                 }
             } {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -9430,16 +8980,16 @@ impl Language {
                     Fail { error } => {
                         stream.set_position(start_position);
                         Pass {
-                            node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
+                            builder: cst::NodeBuilder::empty(),
                             error: Some(error),
                         }
                     }
                     pass => pass,
                 }
             } {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -9448,7 +8998,7 @@ impl Language {
                 }
             };
             break Pass {
-                node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1, result_2]),
+                builder: cst::NodeBuilder::multiple(vec![result_0, result_1, result_2]),
                 error: furthest_error,
             };
         }
@@ -9456,13 +9006,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_parameter_declaration(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_parameter_declaration_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::ParameterDeclaration, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_parameter_declaration_0_4_11(stream)
+            .with_kind(RuleKind::ParameterDeclaration)
     }
 
     // ParameterList = «OpenParen» (ParameterDeclaration («Comma» ParameterDeclaration)*)? «CloseParen»;
@@ -9474,7 +9019,7 @@ impl Language {
             {
                 err @ Fail { .. } => err,
                 Pass {
-                    node: open_node, ..
+                    builder: open_node, ..
                 } => {
                     match {
                         let start_position = stream.position();
@@ -9483,8 +9028,8 @@ impl Language {
                             loop {
                                 match self.parse_parameter_declaration(stream) {
                                     err @ Fail { .. } => break err,
-                                    Pass { node, .. } => {
-                                        result.push(node);
+                                    Pass { builder, .. } => {
+                                        result.push(builder);
                                         let save = stream.position();
                                         match self.parse_token_with_trivia(
                                             stream,
@@ -9494,14 +9039,11 @@ impl Language {
                                             Fail { error } => {
                                                 stream.set_position(save);
                                                 break Pass {
-                                                    node: cst::Node::rule(
-                                                        RuleKind::_SEPARATEDBY,
-                                                        result,
-                                                    ),
+                                                    builder: cst::NodeBuilder::multiple(result),
                                                     error: Some(error),
                                                 };
                                             }
-                                            Pass { node, .. } => result.push(node),
+                                            Pass { builder, .. } => result.push(builder),
                                         }
                                     }
                                 }
@@ -9510,7 +9052,7 @@ impl Language {
                             Fail { error } => {
                                 stream.set_position(start_position);
                                 Pass {
-                                    node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
+                                    builder: cst::NodeBuilder::empty(),
                                     error: Some(error),
                                 }
                             }
@@ -9519,7 +9061,7 @@ impl Language {
                     } {
                         err @ Fail { .. } => err,
                         Pass {
-                            node: expr_node,
+                            builder: expr_node,
                             error: expr_error,
                         } => {
                             match self.parse_token_with_trivia(
@@ -9531,12 +9073,12 @@ impl Language {
                                     error: error.maybe_merge_with(expr_error),
                                 },
                                 Pass {
-                                    node: close_node, ..
+                                    builder: close_node,
+                                    ..
                                 } => Pass {
-                                    node: cst::Node::rule(
-                                        RuleKind::_DELIMITEDBY,
-                                        vec![open_node, expr_node, close_node],
-                                    ),
+                                    builder: cst::NodeBuilder::multiple(vec![
+                                        open_node, expr_node, close_node,
+                                    ]),
                                     error: None,
                                 },
                             }
@@ -9549,13 +9091,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_parameter_list(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_parameter_list_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::ParameterList, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_parameter_list_0_4_11(stream)
+            .with_kind(RuleKind::ParameterList)
     }
 
     // PayableType = «PayableKeyword»;
@@ -9571,13 +9108,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_payable_type(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_payable_type_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::PayableType, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_payable_type_0_4_11(stream)
+            .with_kind(RuleKind::PayableType)
     }
 
     // PositionalArgumentList = Expression («Comma» Expression)*;
@@ -9589,8 +9121,8 @@ impl Language {
             loop {
                 match self.parse_expression(stream) {
                     err @ Fail { .. } => break err,
-                    Pass { node, .. } => {
-                        result.push(node);
+                    Pass { builder, .. } => {
+                        result.push(builder);
                         let save = stream.position();
                         match self.parse_token_with_trivia(
                             stream,
@@ -9600,11 +9132,11 @@ impl Language {
                             Fail { error } => {
                                 stream.set_position(save);
                                 break Pass {
-                                    node: cst::Node::rule(RuleKind::_SEPARATEDBY, result),
+                                    builder: cst::NodeBuilder::multiple(result),
                                     error: Some(error),
                                 };
                             }
-                            Pass { node, .. } => result.push(node),
+                            Pass { builder, .. } => result.push(builder),
                         }
                     }
                 }
@@ -9614,13 +9146,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_positional_argument_list(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_positional_argument_list_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::PositionalArgumentList, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_positional_argument_list_0_4_11(stream)
+            .with_kind(RuleKind::PositionalArgumentList)
     }
 
     // PragmaDirective = «PragmaKeyword» (VersionPragma | ABICoderPragma | ExperimentalPragma) «Semicolon»;
@@ -9635,9 +9162,9 @@ impl Language {
                     Self::scan_pragma_keyword,
                     TokenKind::PragmaKeyword,
                 ) {
-                    Pass { node, error } => {
+                    Pass { builder, error } => {
                         furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
+                        builder
                     }
                     Fail { error } => {
                         break Fail {
@@ -9666,9 +9193,9 @@ impl Language {
                         error: furthest_error,
                     };
                 } {
-                    Pass { node, error } => {
+                    Pass { builder, error } => {
                         furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
+                        builder
                     }
                     Fail { error } => {
                         break Fail {
@@ -9677,13 +9204,13 @@ impl Language {
                     }
                 };
                 break Pass {
-                    node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1]),
+                    builder: cst::NodeBuilder::multiple(vec![result_0, result_1]),
                     error: furthest_error,
                 };
             } {
                 err @ Fail { .. } => err,
                 Pass {
-                    node: expr_node,
+                    builder: expr_node,
                     error: expr_error,
                 } => {
                     match self.parse_token_with_trivia(
@@ -9695,13 +9222,10 @@ impl Language {
                             error: error.maybe_merge_with(expr_error),
                         },
                         Pass {
-                            node: terminator_node,
+                            builder: terminator_node,
                             ..
                         } => Pass {
-                            node: cst::Node::rule(
-                                RuleKind::_TERMINATEDBY,
-                                vec![expr_node, terminator_node],
-                            ),
+                            builder: cst::NodeBuilder::multiple(vec![expr_node, terminator_node]),
                             error: None,
                         },
                     }
@@ -9712,13 +9236,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_pragma_directive(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_pragma_directive_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::PragmaDirective, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_pragma_directive_0_4_11(stream)
+            .with_kind(RuleKind::PragmaDirective)
     }
 
     // (* v0.4.11 *)
@@ -9859,13 +9378,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_primary_expression(&self, stream: &mut Stream) -> ParserResult {
-        match self.dispatch_parse_primary_expression(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::PrimaryExpression, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.dispatch_parse_primary_expression(stream)
+            .with_kind(RuleKind::PrimaryExpression)
     }
 
     // (* v0.6.0 *)
@@ -9938,13 +9452,7 @@ impl Language {
         stream: &mut Stream,
     ) -> Option<ParserResult> {
         self.dispatch_parse_receive_function_attribute(stream)
-            .map(|body| match body {
-                Pass { node, error } => Pass {
-                    node: cst::Node::top_level_rule(RuleKind::ReceiveFunctionAttribute, node),
-                    error,
-                },
-                fail => fail,
-            })
+            .map(|body| body.with_kind(RuleKind::ReceiveFunctionAttribute))
     }
 
     #[inline]
@@ -9965,9 +9473,9 @@ impl Language {
                 Self::scan_receive_keyword,
                 TokenKind::ReceiveKeyword,
             ) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -9976,9 +9484,9 @@ impl Language {
                 }
             };
             let result_1 = match self.parse_parameter_list(stream) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -9994,17 +9502,17 @@ impl Language {
                         Fail { error } => {
                             stream.set_position(start_position);
                             break Pass {
-                                node: cst::Node::rule(RuleKind::_REPEATED, result),
+                                builder: cst::NodeBuilder::multiple(result),
                                 error: Some(error),
                             };
                         }
-                        Pass { node, .. } => result.push(node),
+                        Pass { builder, .. } => result.push(builder),
                     }
                 }
             } {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -10032,9 +9540,9 @@ impl Language {
                     error: furthest_error,
                 };
             } {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -10043,10 +9551,7 @@ impl Language {
                 }
             };
             break Pass {
-                node: cst::Node::rule(
-                    RuleKind::_SEQUENCE,
-                    vec![result_0, result_1, result_2, result_3],
-                ),
+                builder: cst::NodeBuilder::multiple(vec![result_0, result_1, result_2, result_3]),
                 error: furthest_error,
             };
         }
@@ -10068,13 +9573,7 @@ impl Language {
         stream: &mut Stream,
     ) -> Option<ParserResult> {
         self.dispatch_parse_receive_function_definition(stream)
-            .map(|body| match body {
-                Pass { node, error } => Pass {
-                    node: cst::Node::top_level_rule(RuleKind::ReceiveFunctionDefinition, node),
-                    error,
-                },
-                fail => fail,
-            })
+            .map(|body| body.with_kind(RuleKind::ReceiveFunctionDefinition))
     }
 
     #[inline]
@@ -10095,9 +9594,9 @@ impl Language {
                     Self::scan_return_keyword,
                     TokenKind::ReturnKeyword,
                 ) {
-                    Pass { node, error } => {
+                    Pass { builder, error } => {
                         furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
+                        builder
                     }
                     Fail { error } => {
                         break Fail {
@@ -10111,16 +9610,16 @@ impl Language {
                         Fail { error } => {
                             stream.set_position(start_position);
                             Pass {
-                                node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
+                                builder: cst::NodeBuilder::empty(),
                                 error: Some(error),
                             }
                         }
                         pass => pass,
                     }
                 } {
-                    Pass { node, error } => {
+                    Pass { builder, error } => {
                         furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
+                        builder
                     }
                     Fail { error } => {
                         break Fail {
@@ -10129,13 +9628,13 @@ impl Language {
                     }
                 };
                 break Pass {
-                    node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1]),
+                    builder: cst::NodeBuilder::multiple(vec![result_0, result_1]),
                     error: furthest_error,
                 };
             } {
                 err @ Fail { .. } => err,
                 Pass {
-                    node: expr_node,
+                    builder: expr_node,
                     error: expr_error,
                 } => {
                     match self.parse_token_with_trivia(
@@ -10147,13 +9646,10 @@ impl Language {
                             error: error.maybe_merge_with(expr_error),
                         },
                         Pass {
-                            node: terminator_node,
+                            builder: terminator_node,
                             ..
                         } => Pass {
-                            node: cst::Node::rule(
-                                RuleKind::_TERMINATEDBY,
-                                vec![expr_node, terminator_node],
-                            ),
+                            builder: cst::NodeBuilder::multiple(vec![expr_node, terminator_node]),
                             error: None,
                         },
                     }
@@ -10164,13 +9660,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_return_statement(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_return_statement_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::ReturnStatement, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_return_statement_0_4_11(stream)
+            .with_kind(RuleKind::ReturnStatement)
     }
 
     // RevertStatement = «RevertKeyword» IdentifierPath? ArgumentList «Semicolon»;
@@ -10185,9 +9676,9 @@ impl Language {
                     Self::scan_revert_keyword,
                     TokenKind::RevertKeyword,
                 ) {
-                    Pass { node, error } => {
+                    Pass { builder, error } => {
                         furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
+                        builder
                     }
                     Fail { error } => {
                         break Fail {
@@ -10201,16 +9692,16 @@ impl Language {
                         Fail { error } => {
                             stream.set_position(start_position);
                             Pass {
-                                node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
+                                builder: cst::NodeBuilder::empty(),
                                 error: Some(error),
                             }
                         }
                         pass => pass,
                     }
                 } {
-                    Pass { node, error } => {
+                    Pass { builder, error } => {
                         furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
+                        builder
                     }
                     Fail { error } => {
                         break Fail {
@@ -10219,9 +9710,9 @@ impl Language {
                     }
                 };
                 let result_2 = match self.parse_argument_list(stream) {
-                    Pass { node, error } => {
+                    Pass { builder, error } => {
                         furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
+                        builder
                     }
                     Fail { error } => {
                         break Fail {
@@ -10230,13 +9721,13 @@ impl Language {
                     }
                 };
                 break Pass {
-                    node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1, result_2]),
+                    builder: cst::NodeBuilder::multiple(vec![result_0, result_1, result_2]),
                     error: furthest_error,
                 };
             } {
                 err @ Fail { .. } => err,
                 Pass {
-                    node: expr_node,
+                    builder: expr_node,
                     error: expr_error,
                 } => {
                     match self.parse_token_with_trivia(
@@ -10248,13 +9739,10 @@ impl Language {
                             error: error.maybe_merge_with(expr_error),
                         },
                         Pass {
-                            node: terminator_node,
+                            builder: terminator_node,
                             ..
                         } => Pass {
-                            node: cst::Node::rule(
-                                RuleKind::_TERMINATEDBY,
-                                vec![expr_node, terminator_node],
-                            ),
+                            builder: cst::NodeBuilder::multiple(vec![expr_node, terminator_node]),
                             error: None,
                         },
                     }
@@ -10265,13 +9753,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_revert_statement(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_revert_statement_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::RevertStatement, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_revert_statement_0_4_11(stream)
+            .with_kind(RuleKind::RevertStatement)
     }
 
     // SelectiveImport = «OpenBrace» «Identifier» ImportAlias? («Comma» «Identifier» ImportAlias?)* «CloseBrace» «FromKeyword» ImportPath;
@@ -10288,7 +9771,7 @@ impl Language {
                 ) {
                     err @ Fail { .. } => err,
                     Pass {
-                        node: open_node, ..
+                        builder: open_node, ..
                     } => {
                         match {
                             let mut result = Vec::new();
@@ -10300,11 +9783,11 @@ impl Language {
                                         Self::scan_identifier,
                                         TokenKind::Identifier,
                                     ) {
-                                        Pass { node, error } => {
+                                        Pass { builder, error } => {
                                             furthest_error = error.map(|error| {
                                                 error.maybe_merge_with(furthest_error)
                                             });
-                                            node
+                                            builder
                                         }
                                         Fail { error } => {
                                             break Fail {
@@ -10318,21 +9801,18 @@ impl Language {
                                             Fail { error } => {
                                                 stream.set_position(start_position);
                                                 Pass {
-                                                    node: cst::Node::rule(
-                                                        RuleKind::_OPTIONAL,
-                                                        vec![],
-                                                    ),
+                                                    builder: cst::NodeBuilder::empty(),
                                                     error: Some(error),
                                                 }
                                             }
                                             pass => pass,
                                         }
                                     } {
-                                        Pass { node, error } => {
+                                        Pass { builder, error } => {
                                             furthest_error = error.map(|error| {
                                                 error.maybe_merge_with(furthest_error)
                                             });
-                                            node
+                                            builder
                                         }
                                         Fail { error } => {
                                             break Fail {
@@ -10341,16 +9821,15 @@ impl Language {
                                         }
                                     };
                                     break Pass {
-                                        node: cst::Node::rule(
-                                            RuleKind::_SEQUENCE,
-                                            vec![result_0, result_1],
-                                        ),
+                                        builder: cst::NodeBuilder::multiple(vec![
+                                            result_0, result_1,
+                                        ]),
                                         error: furthest_error,
                                     };
                                 } {
                                     err @ Fail { .. } => break err,
-                                    Pass { node, .. } => {
-                                        result.push(node);
+                                    Pass { builder, .. } => {
+                                        result.push(builder);
                                         let save = stream.position();
                                         match self.parse_token_with_trivia(
                                             stream,
@@ -10360,14 +9839,11 @@ impl Language {
                                             Fail { error } => {
                                                 stream.set_position(save);
                                                 break Pass {
-                                                    node: cst::Node::rule(
-                                                        RuleKind::_SEPARATEDBY,
-                                                        result,
-                                                    ),
+                                                    builder: cst::NodeBuilder::multiple(result),
                                                     error: Some(error),
                                                 };
                                             }
-                                            Pass { node, .. } => result.push(node),
+                                            Pass { builder, .. } => result.push(builder),
                                         }
                                     }
                                 }
@@ -10375,7 +9851,7 @@ impl Language {
                         } {
                             err @ Fail { .. } => err,
                             Pass {
-                                node: expr_node,
+                                builder: expr_node,
                                 error: expr_error,
                             } => {
                                 match self.parse_token_with_trivia(
@@ -10387,12 +9863,12 @@ impl Language {
                                         error: error.maybe_merge_with(expr_error),
                                     },
                                     Pass {
-                                        node: close_node, ..
+                                        builder: close_node,
+                                        ..
                                     } => Pass {
-                                        node: cst::Node::rule(
-                                            RuleKind::_DELIMITEDBY,
-                                            vec![open_node, expr_node, close_node],
-                                        ),
+                                        builder: cst::NodeBuilder::multiple(vec![
+                                            open_node, expr_node, close_node,
+                                        ]),
                                         error: None,
                                     },
                                 }
@@ -10401,9 +9877,9 @@ impl Language {
                     }
                 }
             } {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -10416,9 +9892,9 @@ impl Language {
                 Self::scan_from_keyword,
                 TokenKind::FromKeyword,
             ) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -10427,9 +9903,9 @@ impl Language {
                 }
             };
             let result_2 = match self.parse_import_path(stream) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -10438,7 +9914,7 @@ impl Language {
                 }
             };
             break Pass {
-                node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1, result_2]),
+                builder: cst::NodeBuilder::multiple(vec![result_0, result_1, result_2]),
                 error: furthest_error,
             };
         }
@@ -10446,13 +9922,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_selective_import(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_selective_import_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::SelectiveImport, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_selective_import_0_4_11(stream)
+            .with_kind(RuleKind::SelectiveImport)
     }
 
     // ShiftOperator = «LessThanLessThan» | «GreaterThanGreaterThan» | «GreaterThanGreaterThanGreaterThan»;
@@ -10496,13 +9967,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_shift_operator(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_shift_operator_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::ShiftOperator, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_shift_operator_0_4_11(stream)
+            .with_kind(RuleKind::ShiftOperator)
     }
 
     // SimpleImport = ImportPath ImportAlias?;
@@ -10512,9 +9978,9 @@ impl Language {
         loop {
             let mut furthest_error = None;
             let result_0 = match self.parse_import_path(stream) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -10528,16 +9994,16 @@ impl Language {
                     Fail { error } => {
                         stream.set_position(start_position);
                         Pass {
-                            node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
+                            builder: cst::NodeBuilder::empty(),
                             error: Some(error),
                         }
                     }
                     pass => pass,
                 }
             } {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -10546,7 +10012,7 @@ impl Language {
                 }
             };
             break Pass {
-                node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1]),
+                builder: cst::NodeBuilder::multiple(vec![result_0, result_1]),
                 error: furthest_error,
             };
         }
@@ -10554,13 +10020,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_simple_import(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_simple_import_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::SimpleImport, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_simple_import_0_4_11(stream)
+            .with_kind(RuleKind::SimpleImport)
     }
 
     // SimpleStatement = TupleDeconstructionStatement | VariableDeclarationStatement | ExpressionStatement;
@@ -10592,13 +10053,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_simple_statement(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_simple_statement_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::SimpleStatement, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_simple_statement_0_4_11(stream)
+            .with_kind(RuleKind::SimpleStatement)
     }
 
     // SourceUnit = (Directive | Definition)* EndOfFileTrivia?;
@@ -10630,17 +10086,17 @@ impl Language {
                         Fail { error } => {
                             stream.set_position(start_position);
                             break Pass {
-                                node: cst::Node::rule(RuleKind::_REPEATED, result),
+                                builder: cst::NodeBuilder::multiple(result),
                                 error: Some(error),
                             };
                         }
-                        Pass { node, .. } => result.push(node),
+                        Pass { builder, .. } => result.push(builder),
                     }
                 }
             } {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -10654,16 +10110,16 @@ impl Language {
                     Fail { error } => {
                         stream.set_position(start_position);
                         Pass {
-                            node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
+                            builder: cst::NodeBuilder::empty(),
                             error: Some(error),
                         }
                     }
                     pass => pass,
                 }
             } {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -10672,7 +10128,7 @@ impl Language {
                 }
             };
             break Pass {
-                node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1]),
+                builder: cst::NodeBuilder::multiple(vec![result_0, result_1]),
                 error: furthest_error,
             };
         }
@@ -10680,13 +10136,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_source_unit(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_source_unit_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::SourceUnit, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_source_unit_0_4_11(stream)
+            .with_kind(RuleKind::SourceUnit)
     }
 
     // (* v0.4.11 *)
@@ -10825,13 +10276,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_state_variable_attribute(&self, stream: &mut Stream) -> ParserResult {
-        match self.dispatch_parse_state_variable_attribute(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::StateVariableAttribute, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.dispatch_parse_state_variable_attribute(stream)
+            .with_kind(RuleKind::StateVariableAttribute)
     }
 
     // StateVariableDeclaration = TypeName StateVariableAttribute* «Identifier» («Equal» Expression)? «Semicolon»;
@@ -10842,9 +10288,9 @@ impl Language {
             match loop {
                 let mut furthest_error = None;
                 let result_0 = match self.parse_type_name(stream) {
-                    Pass { node, error } => {
+                    Pass { builder, error } => {
                         furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
+                        builder
                     }
                     Fail { error } => {
                         break Fail {
@@ -10860,17 +10306,17 @@ impl Language {
                             Fail { error } => {
                                 stream.set_position(start_position);
                                 break Pass {
-                                    node: cst::Node::rule(RuleKind::_REPEATED, result),
+                                    builder: cst::NodeBuilder::multiple(result),
                                     error: Some(error),
                                 };
                             }
-                            Pass { node, .. } => result.push(node),
+                            Pass { builder, .. } => result.push(builder),
                         }
                     }
                 } {
-                    Pass { node, error } => {
+                    Pass { builder, error } => {
                         furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
+                        builder
                     }
                     Fail { error } => {
                         break Fail {
@@ -10883,9 +10329,9 @@ impl Language {
                     Self::scan_identifier,
                     TokenKind::Identifier,
                 ) {
-                    Pass { node, error } => {
+                    Pass { builder, error } => {
                         furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
+                        builder
                     }
                     Fail { error } => {
                         break Fail {
@@ -10902,10 +10348,10 @@ impl Language {
                             Self::scan_equal,
                             TokenKind::Equal,
                         ) {
-                            Pass { node, error } => {
+                            Pass { builder, error } => {
                                 furthest_error =
                                     error.map(|error| error.maybe_merge_with(furthest_error));
-                                node
+                                builder
                             }
                             Fail { error } => {
                                 break Fail {
@@ -10914,10 +10360,10 @@ impl Language {
                             }
                         };
                         let result_1 = match self.parse_expression(stream) {
-                            Pass { node, error } => {
+                            Pass { builder, error } => {
                                 furthest_error =
                                     error.map(|error| error.maybe_merge_with(furthest_error));
-                                node
+                                builder
                             }
                             Fail { error } => {
                                 break Fail {
@@ -10926,23 +10372,23 @@ impl Language {
                             }
                         };
                         break Pass {
-                            node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1]),
+                            builder: cst::NodeBuilder::multiple(vec![result_0, result_1]),
                             error: furthest_error,
                         };
                     } {
                         Fail { error } => {
                             stream.set_position(start_position);
                             Pass {
-                                node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
+                                builder: cst::NodeBuilder::empty(),
                                 error: Some(error),
                             }
                         }
                         pass => pass,
                     }
                 } {
-                    Pass { node, error } => {
+                    Pass { builder, error } => {
                         furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
+                        builder
                     }
                     Fail { error } => {
                         break Fail {
@@ -10951,16 +10397,15 @@ impl Language {
                     }
                 };
                 break Pass {
-                    node: cst::Node::rule(
-                        RuleKind::_SEQUENCE,
-                        vec![result_0, result_1, result_2, result_3],
-                    ),
+                    builder: cst::NodeBuilder::multiple(vec![
+                        result_0, result_1, result_2, result_3,
+                    ]),
                     error: furthest_error,
                 };
             } {
                 err @ Fail { .. } => err,
                 Pass {
-                    node: expr_node,
+                    builder: expr_node,
                     error: expr_error,
                 } => {
                     match self.parse_token_with_trivia(
@@ -10972,13 +10417,10 @@ impl Language {
                             error: error.maybe_merge_with(expr_error),
                         },
                         Pass {
-                            node: terminator_node,
+                            builder: terminator_node,
                             ..
                         } => Pass {
-                            node: cst::Node::rule(
-                                RuleKind::_TERMINATEDBY,
-                                vec![expr_node, terminator_node],
-                            ),
+                            builder: cst::NodeBuilder::multiple(vec![expr_node, terminator_node]),
                             error: None,
                         },
                     }
@@ -10989,13 +10431,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_state_variable_declaration(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_state_variable_declaration_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::StateVariableDeclaration, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_state_variable_declaration_0_4_11(stream)
+            .with_kind(RuleKind::StateVariableDeclaration)
     }
 
     // (* v0.4.11 *)
@@ -11384,13 +10821,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_statement(&self, stream: &mut Stream) -> ParserResult {
-        match self.dispatch_parse_statement(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::Statement, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.dispatch_parse_statement(stream)
+            .with_kind(RuleKind::Statement)
     }
 
     // (* v0.4.11 *)
@@ -11416,11 +10848,11 @@ impl Language {
                             }
                             stream.set_position(start_position);
                             break Pass {
-                                node: cst::Node::rule(RuleKind::_REPEATED, result),
+                                builder: cst::NodeBuilder::multiple(result),
                                 error: Some(error),
                             };
                         }
-                        Pass { node, .. } => result.push(node),
+                        Pass { builder, .. } => result.push(builder),
                     }
                 }
             } {
@@ -11443,11 +10875,11 @@ impl Language {
                             }
                             stream.set_position(start_position);
                             break Pass {
-                                node: cst::Node::rule(RuleKind::_REPEATED, result),
+                                builder: cst::NodeBuilder::multiple(result),
                                 error: Some(error),
                             };
                         }
-                        Pass { node, .. } => result.push(node),
+                        Pass { builder, .. } => result.push(builder),
                     }
                 }
             } {
@@ -11483,11 +10915,11 @@ impl Language {
                             }
                             stream.set_position(start_position);
                             break Pass {
-                                node: cst::Node::rule(RuleKind::_REPEATED, result),
+                                builder: cst::NodeBuilder::multiple(result),
                                 error: Some(error),
                             };
                         }
-                        Pass { node, .. } => result.push(node),
+                        Pass { builder, .. } => result.push(builder),
                     }
                 }
             } {
@@ -11510,11 +10942,11 @@ impl Language {
                             }
                             stream.set_position(start_position);
                             break Pass {
-                                node: cst::Node::rule(RuleKind::_REPEATED, result),
+                                builder: cst::NodeBuilder::multiple(result),
                                 error: Some(error),
                             };
                         }
-                        Pass { node, .. } => result.push(node),
+                        Pass { builder, .. } => result.push(builder),
                     }
                 }
             } {
@@ -11537,11 +10969,11 @@ impl Language {
                             }
                             stream.set_position(start_position);
                             break Pass {
-                                node: cst::Node::rule(RuleKind::_REPEATED, result),
+                                builder: cst::NodeBuilder::multiple(result),
                                 error: Some(error),
                             };
                         }
-                        Pass { node, .. } => result.push(node),
+                        Pass { builder, .. } => result.push(builder),
                     }
                 }
             } {
@@ -11564,13 +10996,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_string_expression(&self, stream: &mut Stream) -> ParserResult {
-        match self.dispatch_parse_string_expression(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::StringExpression, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.dispatch_parse_string_expression(stream)
+            .with_kind(RuleKind::StringExpression)
     }
 
     // StructDefinition = «StructKeyword» «Identifier» «OpenBrace» StructMember+ «CloseBrace»;
@@ -11584,9 +11011,9 @@ impl Language {
                 Self::scan_struct_keyword,
                 TokenKind::StructKeyword,
             ) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -11599,9 +11026,9 @@ impl Language {
                 Self::scan_identifier,
                 TokenKind::Identifier,
             ) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -11617,7 +11044,7 @@ impl Language {
                 ) {
                     err @ Fail { .. } => err,
                     Pass {
-                        node: open_node, ..
+                        builder: open_node, ..
                     } => {
                         match {
                             let mut result = Vec::new();
@@ -11630,17 +11057,17 @@ impl Language {
                                         }
                                         stream.set_position(start_position);
                                         break Pass {
-                                            node: cst::Node::rule(RuleKind::_REPEATED, result),
+                                            builder: cst::NodeBuilder::multiple(result),
                                             error: Some(error),
                                         };
                                     }
-                                    Pass { node, .. } => result.push(node),
+                                    Pass { builder, .. } => result.push(builder),
                                 }
                             }
                         } {
                             err @ Fail { .. } => err,
                             Pass {
-                                node: expr_node,
+                                builder: expr_node,
                                 error: expr_error,
                             } => {
                                 match self.parse_token_with_trivia(
@@ -11652,12 +11079,12 @@ impl Language {
                                         error: error.maybe_merge_with(expr_error),
                                     },
                                     Pass {
-                                        node: close_node, ..
+                                        builder: close_node,
+                                        ..
                                     } => Pass {
-                                        node: cst::Node::rule(
-                                            RuleKind::_DELIMITEDBY,
-                                            vec![open_node, expr_node, close_node],
-                                        ),
+                                        builder: cst::NodeBuilder::multiple(vec![
+                                            open_node, expr_node, close_node,
+                                        ]),
                                         error: None,
                                     },
                                 }
@@ -11666,9 +11093,9 @@ impl Language {
                     }
                 }
             } {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -11677,7 +11104,7 @@ impl Language {
                 }
             };
             break Pass {
-                node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1, result_2]),
+                builder: cst::NodeBuilder::multiple(vec![result_0, result_1, result_2]),
                 error: furthest_error,
             };
         }
@@ -11685,13 +11112,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_struct_definition(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_struct_definition_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::StructDefinition, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_struct_definition_0_4_11(stream)
+            .with_kind(RuleKind::StructDefinition)
     }
 
     // StructMember = TypeName «Identifier» «Semicolon»;
@@ -11702,9 +11124,9 @@ impl Language {
             match loop {
                 let mut furthest_error = None;
                 let result_0 = match self.parse_type_name(stream) {
-                    Pass { node, error } => {
+                    Pass { builder, error } => {
                         furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
+                        builder
                     }
                     Fail { error } => {
                         break Fail {
@@ -11717,9 +11139,9 @@ impl Language {
                     Self::scan_identifier,
                     TokenKind::Identifier,
                 ) {
-                    Pass { node, error } => {
+                    Pass { builder, error } => {
                         furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
+                        builder
                     }
                     Fail { error } => {
                         break Fail {
@@ -11728,13 +11150,13 @@ impl Language {
                     }
                 };
                 break Pass {
-                    node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1]),
+                    builder: cst::NodeBuilder::multiple(vec![result_0, result_1]),
                     error: furthest_error,
                 };
             } {
                 err @ Fail { .. } => err,
                 Pass {
-                    node: expr_node,
+                    builder: expr_node,
                     error: expr_error,
                 } => {
                     match self.parse_token_with_trivia(
@@ -11746,13 +11168,10 @@ impl Language {
                             error: error.maybe_merge_with(expr_error),
                         },
                         Pass {
-                            node: terminator_node,
+                            builder: terminator_node,
                             ..
                         } => Pass {
-                            node: cst::Node::rule(
-                                RuleKind::_TERMINATEDBY,
-                                vec![expr_node, terminator_node],
-                            ),
+                            builder: cst::NodeBuilder::multiple(vec![expr_node, terminator_node]),
                             error: None,
                         },
                     }
@@ -11763,13 +11182,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_struct_member(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_struct_member_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::StructMember, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_struct_member_0_4_11(stream)
+            .with_kind(RuleKind::StructMember)
     }
 
     // (* v0.4.11 *)
@@ -11785,7 +11199,7 @@ impl Language {
             ) {
                 err @ Fail { .. } => err,
                 Pass {
-                    node: expr_node,
+                    builder: expr_node,
                     error: expr_error,
                 } => {
                     match self.parse_token_with_trivia(
@@ -11797,13 +11211,10 @@ impl Language {
                             error: error.maybe_merge_with(expr_error),
                         },
                         Pass {
-                            node: terminator_node,
+                            builder: terminator_node,
                             ..
                         } => Pass {
-                            node: cst::Node::rule(
-                                RuleKind::_TERMINATEDBY,
-                                vec![expr_node, terminator_node],
-                            ),
+                            builder: cst::NodeBuilder::multiple(vec![expr_node, terminator_node]),
                             error: None,
                         },
                     }
@@ -11822,13 +11233,7 @@ impl Language {
 
     pub(crate) fn maybe_parse_throw_statement(&self, stream: &mut Stream) -> Option<ParserResult> {
         self.dispatch_parse_throw_statement(stream)
-            .map(|body| match body {
-                Pass { node, error } => Pass {
-                    node: cst::Node::top_level_rule(RuleKind::ThrowStatement, node),
-                    error,
-                },
-                fail => fail,
-            })
+            .map(|body| body.with_kind(RuleKind::ThrowStatement))
     }
 
     #[inline]
@@ -11849,16 +11254,16 @@ impl Language {
                     Fail { error } => {
                         stream.set_position(start_position);
                         Pass {
-                            node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
+                            builder: cst::NodeBuilder::empty(),
                             error: Some(error),
                         }
                     }
                     pass => pass,
                 }
             } {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -11876,16 +11281,16 @@ impl Language {
                     Fail { error } => {
                         stream.set_position(start_position);
                         Pass {
-                            node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
+                            builder: cst::NodeBuilder::empty(),
                             error: Some(error),
                         }
                     }
                     pass => pass,
                 }
             } {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -11895,9 +11300,9 @@ impl Language {
             };
             let result_2 =
                 match self.parse_token(stream, Self::scan_end_of_line, TokenKind::EndOfLine) {
-                    Pass { node, error } => {
+                    Pass { builder, error } => {
                         furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
+                        builder
                     }
                     Fail { error } => {
                         break Fail {
@@ -11906,7 +11311,7 @@ impl Language {
                     }
                 };
             break Pass {
-                node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1, result_2]),
+                builder: cst::NodeBuilder::multiple(vec![result_0, result_1, result_2]),
                 error: furthest_error,
             };
         }
@@ -11914,13 +11319,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_trailing_trivia(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_trailing_trivia_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::TrailingTrivia, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_trailing_trivia_0_4_11(stream)
+            .with_kind(RuleKind::TrailingTrivia)
     }
 
     // (* v0.6.0 *)
@@ -11935,9 +11335,9 @@ impl Language {
                 Self::scan_try_keyword,
                 TokenKind::TryKeyword,
             ) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -11946,9 +11346,9 @@ impl Language {
                 }
             };
             let result_1 = match self.parse_expression(stream) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -11965,10 +11365,10 @@ impl Language {
                         Self::scan_returns_keyword,
                         TokenKind::ReturnsKeyword,
                     ) {
-                        Pass { node, error } => {
+                        Pass { builder, error } => {
                             furthest_error =
                                 error.map(|error| error.maybe_merge_with(furthest_error));
-                            node
+                            builder
                         }
                         Fail { error } => {
                             break Fail {
@@ -11977,10 +11377,10 @@ impl Language {
                         }
                     };
                     let result_1 = match self.parse_parameter_list(stream) {
-                        Pass { node, error } => {
+                        Pass { builder, error } => {
                             furthest_error =
                                 error.map(|error| error.maybe_merge_with(furthest_error));
-                            node
+                            builder
                         }
                         Fail { error } => {
                             break Fail {
@@ -11989,23 +11389,23 @@ impl Language {
                         }
                     };
                     break Pass {
-                        node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1]),
+                        builder: cst::NodeBuilder::multiple(vec![result_0, result_1]),
                         error: furthest_error,
                     };
                 } {
                     Fail { error } => {
                         stream.set_position(start_position);
                         Pass {
-                            node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
+                            builder: cst::NodeBuilder::empty(),
                             error: Some(error),
                         }
                     }
                     pass => pass,
                 }
             } {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -12014,9 +11414,9 @@ impl Language {
                 }
             };
             let result_3 = match self.parse_block(stream) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -12035,17 +11435,17 @@ impl Language {
                             }
                             stream.set_position(start_position);
                             break Pass {
-                                node: cst::Node::rule(RuleKind::_REPEATED, result),
+                                builder: cst::NodeBuilder::multiple(result),
                                 error: Some(error),
                             };
                         }
-                        Pass { node, .. } => result.push(node),
+                        Pass { builder, .. } => result.push(builder),
                     }
                 }
             } {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -12054,10 +11454,9 @@ impl Language {
                 }
             };
             break Pass {
-                node: cst::Node::rule(
-                    RuleKind::_SEQUENCE,
-                    vec![result_0, result_1, result_2, result_3, result_4],
-                ),
+                builder: cst::NodeBuilder::multiple(vec![
+                    result_0, result_1, result_2, result_3, result_4,
+                ]),
                 error: furthest_error,
             };
         }
@@ -12073,13 +11472,7 @@ impl Language {
 
     pub(crate) fn maybe_parse_try_statement(&self, stream: &mut Stream) -> Option<ParserResult> {
         self.dispatch_parse_try_statement(stream)
-            .map(|body| match body {
-                Pass { node, error } => Pass {
-                    node: cst::Node::top_level_rule(RuleKind::TryStatement, node),
-                    error,
-                },
-                fail => fail,
-            })
+            .map(|body| body.with_kind(RuleKind::TryStatement))
     }
 
     #[inline]
@@ -12103,7 +11496,7 @@ impl Language {
                     ) {
                         err @ Fail { .. } => err,
                         Pass {
-                            node: open_node, ..
+                            builder: open_node, ..
                         } => {
                             match {
                                 let start_position = stream.position();
@@ -12120,13 +11513,13 @@ impl Language {
                                                     let result_0 = match self
                                                         .parse_type_name(stream)
                                                     {
-                                                        Pass { node, error } => {
+                                                        Pass { builder, error } => {
                                                             furthest_error = error.map(|error| {
                                                                 error.maybe_merge_with(
                                                                     furthest_error,
                                                                 )
                                                             });
-                                                            node
+                                                            builder
                                                         }
                                                         Fail { error } => {
                                                             break Fail {
@@ -12142,23 +11535,21 @@ impl Language {
                                                             Fail { error } => {
                                                                 stream.set_position(start_position);
                                                                 Pass {
-                                                                    node: cst::Node::rule(
-                                                                        RuleKind::_OPTIONAL,
-                                                                        vec![],
-                                                                    ),
+                                                                    builder:
+                                                                        cst::NodeBuilder::empty(),
                                                                     error: Some(error),
                                                                 }
                                                             }
                                                             pass => pass,
                                                         }
                                                     } {
-                                                        Pass { node, error } => {
+                                                        Pass { builder, error } => {
                                                             furthest_error = error.map(|error| {
                                                                 error.maybe_merge_with(
                                                                     furthest_error,
                                                                 )
                                                             });
-                                                            node
+                                                            builder
                                                         }
                                                         Fail { error } => {
                                                             break Fail {
@@ -12174,13 +11565,13 @@ impl Language {
                                                             Self::scan_identifier,
                                                             TokenKind::Identifier,
                                                         ) {
-                                                        Pass { node, error } => {
+                                                        Pass { builder, error } => {
                                                             furthest_error = error.map(|error| {
                                                                 error.maybe_merge_with(
                                                                     furthest_error,
                                                                 )
                                                             });
-                                                            node
+                                                            builder
                                                         }
                                                         Fail { error } => {
                                                             break Fail {
@@ -12191,10 +11582,9 @@ impl Language {
                                                         }
                                                     };
                                                     break Pass {
-                                                        node: cst::Node::rule(
-                                                            RuleKind::_SEQUENCE,
-                                                            vec![result_0, result_1, result_2],
-                                                        ),
+                                                        builder: cst::NodeBuilder::multiple(vec![
+                                                            result_0, result_1, result_2,
+                                                        ]),
                                                         error: furthest_error,
                                                     };
                                                 } {
@@ -12210,23 +11600,21 @@ impl Language {
                                                             Fail { error } => {
                                                                 stream.set_position(start_position);
                                                                 Pass {
-                                                                    node: cst::Node::rule(
-                                                                        RuleKind::_OPTIONAL,
-                                                                        vec![],
-                                                                    ),
+                                                                    builder:
+                                                                        cst::NodeBuilder::empty(),
                                                                     error: Some(error),
                                                                 }
                                                             }
                                                             pass => pass,
                                                         }
                                                     } {
-                                                        Pass { node, error } => {
+                                                        Pass { builder, error } => {
                                                             furthest_error = error.map(|error| {
                                                                 error.maybe_merge_with(
                                                                     furthest_error,
                                                                 )
                                                             });
-                                                            node
+                                                            builder
                                                         }
                                                         Fail { error } => {
                                                             break Fail {
@@ -12242,13 +11630,13 @@ impl Language {
                                                             Self::scan_identifier,
                                                             TokenKind::Identifier,
                                                         ) {
-                                                        Pass { node, error } => {
+                                                        Pass { builder, error } => {
                                                             furthest_error = error.map(|error| {
                                                                 error.maybe_merge_with(
                                                                     furthest_error,
                                                                 )
                                                             });
-                                                            node
+                                                            builder
                                                         }
                                                         Fail { error } => {
                                                             break Fail {
@@ -12259,10 +11647,9 @@ impl Language {
                                                         }
                                                     };
                                                     break Pass {
-                                                        node: cst::Node::rule(
-                                                            RuleKind::_SEQUENCE,
-                                                            vec![result_0, result_1],
-                                                        ),
+                                                        builder: cst::NodeBuilder::multiple(vec![
+                                                            result_0, result_1,
+                                                        ]),
                                                         error: furthest_error,
                                                     };
                                                 } {
@@ -12278,10 +11665,7 @@ impl Language {
                                                 Fail { error } => {
                                                     stream.set_position(start_position);
                                                     Pass {
-                                                        node: cst::Node::rule(
-                                                            RuleKind::_OPTIONAL,
-                                                            vec![],
-                                                        ),
+                                                        builder: cst::NodeBuilder::empty(),
                                                         error: Some(error),
                                                     }
                                                 }
@@ -12289,8 +11673,8 @@ impl Language {
                                             }
                                         } {
                                             err @ Fail { .. } => break err,
-                                            Pass { node, .. } => {
-                                                result.push(node);
+                                            Pass { builder, .. } => {
+                                                result.push(builder);
                                                 let save = stream.position();
                                                 match self.parse_token_with_trivia(
                                                     stream,
@@ -12300,14 +11684,13 @@ impl Language {
                                                     Fail { error } => {
                                                         stream.set_position(save);
                                                         break Pass {
-                                                            node: cst::Node::rule(
-                                                                RuleKind::_SEPARATEDBY,
+                                                            builder: cst::NodeBuilder::multiple(
                                                                 result,
                                                             ),
                                                             error: Some(error),
                                                         };
                                                     }
-                                                    Pass { node, .. } => result.push(node),
+                                                    Pass { builder, .. } => result.push(builder),
                                                 }
                                             }
                                         }
@@ -12316,7 +11699,7 @@ impl Language {
                                     Fail { error } => {
                                         stream.set_position(start_position);
                                         Pass {
-                                            node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
+                                            builder: cst::NodeBuilder::empty(),
                                             error: Some(error),
                                         }
                                     }
@@ -12325,7 +11708,7 @@ impl Language {
                             } {
                                 err @ Fail { .. } => err,
                                 Pass {
-                                    node: expr_node,
+                                    builder: expr_node,
                                     error: expr_error,
                                 } => {
                                     match self.parse_token_with_trivia(
@@ -12337,12 +11720,12 @@ impl Language {
                                             error: error.maybe_merge_with(expr_error),
                                         },
                                         Pass {
-                                            node: close_node, ..
+                                            builder: close_node,
+                                            ..
                                         } => Pass {
-                                            node: cst::Node::rule(
-                                                RuleKind::_DELIMITEDBY,
-                                                vec![open_node, expr_node, close_node],
-                                            ),
+                                            builder: cst::NodeBuilder::multiple(vec![
+                                                open_node, expr_node, close_node,
+                                            ]),
                                             error: None,
                                         },
                                     }
@@ -12351,9 +11734,9 @@ impl Language {
                         }
                     }
                 } {
-                    Pass { node, error } => {
+                    Pass { builder, error } => {
                         furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
+                        builder
                     }
                     Fail { error } => {
                         break Fail {
@@ -12366,9 +11749,9 @@ impl Language {
                     Self::scan_equal,
                     TokenKind::Equal,
                 ) {
-                    Pass { node, error } => {
+                    Pass { builder, error } => {
                         furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
+                        builder
                     }
                     Fail { error } => {
                         break Fail {
@@ -12377,9 +11760,9 @@ impl Language {
                     }
                 };
                 let result_2 = match self.parse_expression(stream) {
-                    Pass { node, error } => {
+                    Pass { builder, error } => {
                         furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
+                        builder
                     }
                     Fail { error } => {
                         break Fail {
@@ -12388,13 +11771,13 @@ impl Language {
                     }
                 };
                 break Pass {
-                    node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1, result_2]),
+                    builder: cst::NodeBuilder::multiple(vec![result_0, result_1, result_2]),
                     error: furthest_error,
                 };
             } {
                 err @ Fail { .. } => err,
                 Pass {
-                    node: expr_node,
+                    builder: expr_node,
                     error: expr_error,
                 } => {
                     match self.parse_token_with_trivia(
@@ -12406,13 +11789,10 @@ impl Language {
                             error: error.maybe_merge_with(expr_error),
                         },
                         Pass {
-                            node: terminator_node,
+                            builder: terminator_node,
                             ..
                         } => Pass {
-                            node: cst::Node::rule(
-                                RuleKind::_TERMINATEDBY,
-                                vec![expr_node, terminator_node],
-                            ),
+                            builder: cst::NodeBuilder::multiple(vec![expr_node, terminator_node]),
                             error: None,
                         },
                     }
@@ -12423,13 +11803,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_tuple_deconstruction_statement(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_tuple_deconstruction_statement_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::TupleDeconstructionStatement, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_tuple_deconstruction_statement_0_4_11(stream)
+            .with_kind(RuleKind::TupleDeconstructionStatement)
     }
 
     // TupleExpression = «OpenParen» Expression? («Comma» Expression?)* «CloseParen»;
@@ -12441,7 +11816,7 @@ impl Language {
             {
                 err @ Fail { .. } => err,
                 Pass {
-                    node: open_node, ..
+                    builder: open_node, ..
                 } => {
                     match {
                         let mut result = Vec::new();
@@ -12452,7 +11827,7 @@ impl Language {
                                     Fail { error } => {
                                         stream.set_position(start_position);
                                         Pass {
-                                            node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
+                                            builder: cst::NodeBuilder::empty(),
                                             error: Some(error),
                                         }
                                     }
@@ -12460,8 +11835,8 @@ impl Language {
                                 }
                             } {
                                 err @ Fail { .. } => break err,
-                                Pass { node, .. } => {
-                                    result.push(node);
+                                Pass { builder, .. } => {
+                                    result.push(builder);
                                     let save = stream.position();
                                     match self.parse_token_with_trivia(
                                         stream,
@@ -12471,14 +11846,11 @@ impl Language {
                                         Fail { error } => {
                                             stream.set_position(save);
                                             break Pass {
-                                                node: cst::Node::rule(
-                                                    RuleKind::_SEPARATEDBY,
-                                                    result,
-                                                ),
+                                                builder: cst::NodeBuilder::multiple(result),
                                                 error: Some(error),
                                             };
                                         }
-                                        Pass { node, .. } => result.push(node),
+                                        Pass { builder, .. } => result.push(builder),
                                     }
                                 }
                             }
@@ -12486,7 +11858,7 @@ impl Language {
                     } {
                         err @ Fail { .. } => err,
                         Pass {
-                            node: expr_node,
+                            builder: expr_node,
                             error: expr_error,
                         } => {
                             match self.parse_token_with_trivia(
@@ -12498,12 +11870,12 @@ impl Language {
                                     error: error.maybe_merge_with(expr_error),
                                 },
                                 Pass {
-                                    node: close_node, ..
+                                    builder: close_node,
+                                    ..
                                 } => Pass {
-                                    node: cst::Node::rule(
-                                        RuleKind::_DELIMITEDBY,
-                                        vec![open_node, expr_node, close_node],
-                                    ),
+                                    builder: cst::NodeBuilder::multiple(vec![
+                                        open_node, expr_node, close_node,
+                                    ]),
                                     error: None,
                                 },
                             }
@@ -12516,13 +11888,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_tuple_expression(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_tuple_expression_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::TupleExpression, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_tuple_expression_0_4_11(stream)
+            .with_kind(RuleKind::TupleExpression)
     }
 
     // (* v0.5.3 *)
@@ -12537,9 +11904,9 @@ impl Language {
                 Self::scan_type_keyword,
                 TokenKind::TypeKeyword,
             ) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -12555,11 +11922,11 @@ impl Language {
                 ) {
                     err @ Fail { .. } => err,
                     Pass {
-                        node: open_node, ..
+                        builder: open_node, ..
                     } => match self.parse_type_name(stream) {
                         err @ Fail { .. } => err,
                         Pass {
-                            node: expr_node,
+                            builder: expr_node,
                             error: expr_error,
                         } => {
                             match self.parse_token_with_trivia(
@@ -12571,12 +11938,12 @@ impl Language {
                                     error: error.maybe_merge_with(expr_error),
                                 },
                                 Pass {
-                                    node: close_node, ..
+                                    builder: close_node,
+                                    ..
                                 } => Pass {
-                                    node: cst::Node::rule(
-                                        RuleKind::_DELIMITEDBY,
-                                        vec![open_node, expr_node, close_node],
-                                    ),
+                                    builder: cst::NodeBuilder::multiple(vec![
+                                        open_node, expr_node, close_node,
+                                    ]),
                                     error: None,
                                 },
                             }
@@ -12584,9 +11951,9 @@ impl Language {
                     },
                 }
             } {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -12595,7 +11962,7 @@ impl Language {
                 }
             };
             break Pass {
-                node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1]),
+                builder: cst::NodeBuilder::multiple(vec![result_0, result_1]),
                 error: furthest_error,
             };
         }
@@ -12611,13 +11978,7 @@ impl Language {
 
     pub(crate) fn maybe_parse_type_expression(&self, stream: &mut Stream) -> Option<ParserResult> {
         self.dispatch_parse_type_expression(stream)
-            .map(|body| match body {
-                Pass { node, error } => Pass {
-                    node: cst::Node::top_level_rule(RuleKind::TypeExpression, node),
-                    error,
-                },
-                fail => fail,
-            })
+            .map(|body| body.with_kind(RuleKind::TypeExpression))
     }
 
     #[inline]
@@ -12635,11 +11996,11 @@ impl Language {
             enum Pratt {
                 Operator {
                     kind: RuleKind,
-                    node: Rc<cst::Node>,
+                    builder: cst::NodeBuilder,
                     left_binding_power: u8,
                     right_binding_power: u8,
                 },
-                Node(Rc<cst::Node>),
+                Builder(cst::NodeBuilder),
             }
             let mut elements = Vec::new();
             if let Some(error) = loop {
@@ -12670,7 +12031,7 @@ impl Language {
                     };
                 } {
                     Fail { error } => break Some(error),
-                    Pass { node, .. } => elements.push(Pratt::Node(node)),
+                    Pass { builder, .. } => elements.push(Pratt::Builder(builder)),
                 }
                 loop {
                     let start_position = stream.position();
@@ -12682,7 +12043,7 @@ impl Language {
                         ) {
                             err @ Fail { .. } => err,
                             Pass {
-                                node: open_node, ..
+                                builder: open_node, ..
                             } => {
                                 match {
                                     let start_position = stream.position();
@@ -12690,7 +12051,7 @@ impl Language {
                                         Fail { error } => {
                                             stream.set_position(start_position);
                                             Pass {
-                                                node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
+                                                builder: cst::NodeBuilder::empty(),
                                                 error: Some(error),
                                             }
                                         }
@@ -12699,7 +12060,7 @@ impl Language {
                                 } {
                                     err @ Fail { .. } => err,
                                     Pass {
-                                        node: expr_node,
+                                        builder: expr_node,
                                         error: expr_error,
                                     } => {
                                         match self.parse_token_with_trivia(
@@ -12711,12 +12072,12 @@ impl Language {
                                                 error: error.maybe_merge_with(expr_error),
                                             },
                                             Pass {
-                                                node: close_node, ..
+                                                builder: close_node,
+                                                ..
                                             } => Pass {
-                                                node: cst::Node::rule(
-                                                    RuleKind::_DELIMITEDBY,
-                                                    vec![open_node, expr_node, close_node],
-                                                ),
+                                                builder: cst::NodeBuilder::multiple(vec![
+                                                    open_node, expr_node, close_node,
+                                                ]),
                                                 error: None,
                                             },
                                         }
@@ -12725,8 +12086,8 @@ impl Language {
                             }
                         }
                     } {
-                        Pass { node, .. } => Ok(Pratt::Operator {
-                            node,
+                        Pass { builder, .. } => Ok(Pratt::Operator {
+                            builder,
                             kind: RuleKind::ArrayTypeName,
                             left_binding_power: 1u8,
                             right_binding_power: 255,
@@ -12776,11 +12137,16 @@ impl Language {
                         if *right_binding_power == 255 {
                             let left = elements.remove(i - 1);
                             let op = elements.remove(i - 1);
-                            if let (Pratt::Node(left), Pratt::Operator { node: op, kind, .. }) =
-                                (left, op)
+                            if let (
+                                Pratt::Builder(left),
+                                Pratt::Operator {
+                                    builder: op, kind, ..
+                                },
+                            ) = (left, op)
                             {
-                                let node = cst::Node::rule(kind, vec![left, op]);
-                                elements.insert(i - 1, Pratt::Node(node));
+                                let builder =
+                                    cst::NodeBuilder::multiple(vec![left, op]).with_kind(kind);
+                                elements.insert(i - 1, Pratt::Builder(builder));
                                 i = i.saturating_sub(2);
                             } else {
                                 unreachable!()
@@ -12788,11 +12154,16 @@ impl Language {
                         } else if *left_binding_power == 255 {
                             let op = elements.remove(i);
                             let right = elements.remove(i);
-                            if let (Pratt::Operator { node: op, kind, .. }, Pratt::Node(right)) =
-                                (op, right)
+                            if let (
+                                Pratt::Operator {
+                                    builder: op, kind, ..
+                                },
+                                Pratt::Builder(right),
+                            ) = (op, right)
                             {
-                                let node = cst::Node::rule(kind, vec![op, right]);
-                                elements.insert(i, Pratt::Node(node));
+                                let builder =
+                                    cst::NodeBuilder::multiple(vec![op, right]).with_kind(kind);
+                                elements.insert(i, Pratt::Builder(builder));
                                 i = i.saturating_sub(1);
                             } else {
                                 unreachable!()
@@ -12802,13 +12173,16 @@ impl Language {
                             let op = elements.remove(i - 1);
                             let right = elements.remove(i - 1);
                             if let (
-                                Pratt::Node(left),
-                                Pratt::Operator { node: op, kind, .. },
-                                Pratt::Node(right),
+                                Pratt::Builder(left),
+                                Pratt::Operator {
+                                    builder: op, kind, ..
+                                },
+                                Pratt::Builder(right),
                             ) = (left, op, right)
                             {
-                                let node = cst::Node::rule(kind, vec![left, op, right]);
-                                elements.insert(i - 1, Pratt::Node(node));
+                                let builder = cst::NodeBuilder::multiple(vec![left, op, right])
+                                    .with_kind(kind);
+                                elements.insert(i - 1, Pratt::Builder(builder));
                                 i = i.saturating_sub(2);
                             } else {
                                 unreachable!()
@@ -12818,8 +12192,11 @@ impl Language {
                         i += 1;
                     }
                 }
-                if let Pratt::Node(node) = elements.pop().unwrap() {
-                    Pass { node, error: None }
+                if let Pratt::Builder(builder) = elements.pop().unwrap() {
+                    Pass {
+                        builder,
+                        error: None,
+                    }
                 } else {
                     unreachable!()
                 }
@@ -12829,13 +12206,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_type_name(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_type_name_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::TypeName, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_type_name_0_4_11(stream)
+            .with_kind(RuleKind::TypeName)
     }
 
     // UnaryPostfixOperator = «PlusPlus» | «MinusMinus»;
@@ -12866,13 +12238,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_unary_postfix_operator(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_unary_postfix_operator_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::UnaryPostfixOperator, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_unary_postfix_operator_0_4_11(stream)
+            .with_kind(RuleKind::UnaryPostfixOperator)
     }
 
     // (* v0.4.11 *)
@@ -12983,13 +12350,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_unary_prefix_operator(&self, stream: &mut Stream) -> ParserResult {
-        match self.dispatch_parse_unary_prefix_operator(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::UnaryPrefixOperator, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.dispatch_parse_unary_prefix_operator(stream)
+            .with_kind(RuleKind::UnaryPrefixOperator)
     }
 
     // (* v0.8.0 *)
@@ -13004,9 +12366,9 @@ impl Language {
                 Self::scan_unchecked_keyword,
                 TokenKind::UncheckedKeyword,
             ) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -13015,9 +12377,9 @@ impl Language {
                 }
             };
             let result_1 = match self.parse_block(stream) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -13026,7 +12388,7 @@ impl Language {
                 }
             };
             break Pass {
-                node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1]),
+                builder: cst::NodeBuilder::multiple(vec![result_0, result_1]),
                 error: furthest_error,
             };
         }
@@ -13042,13 +12404,7 @@ impl Language {
 
     pub(crate) fn maybe_parse_unchecked_block(&self, stream: &mut Stream) -> Option<ParserResult> {
         self.dispatch_parse_unchecked_block(stream)
-            .map(|body| match body {
-                Pass { node, error } => Pass {
-                    node: cst::Node::top_level_rule(RuleKind::UncheckedBlock, node),
-                    error,
-                },
-                fail => fail,
-            })
+            .map(|body| body.with_kind(RuleKind::UncheckedBlock))
     }
 
     #[inline]
@@ -13137,13 +12493,7 @@ impl Language {
         stream: &mut Stream,
     ) -> Option<ParserResult> {
         self.dispatch_parse_unnamed_function_attribute(stream)
-            .map(|body| match body {
-                Pass { node, error } => Pass {
-                    node: cst::Node::top_level_rule(RuleKind::UnnamedFunctionAttribute, node),
-                    error,
-                },
-                fail => fail,
-            })
+            .map(|body| body.with_kind(RuleKind::UnnamedFunctionAttribute))
     }
 
     #[inline]
@@ -13164,9 +12514,9 @@ impl Language {
                 Self::scan_function_keyword,
                 TokenKind::FunctionKeyword,
             ) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -13175,9 +12525,9 @@ impl Language {
                 }
             };
             let result_1 = match self.parse_parameter_list(stream) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -13193,17 +12543,17 @@ impl Language {
                         Fail { error } => {
                             stream.set_position(start_position);
                             break Pass {
-                                node: cst::Node::rule(RuleKind::_REPEATED, result),
+                                builder: cst::NodeBuilder::multiple(result),
                                 error: Some(error),
                             };
                         }
-                        Pass { node, .. } => result.push(node),
+                        Pass { builder, .. } => result.push(builder),
                     }
                 }
             } {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -13231,9 +12581,9 @@ impl Language {
                     error: furthest_error,
                 };
             } {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -13242,10 +12592,7 @@ impl Language {
                 }
             };
             break Pass {
-                node: cst::Node::rule(
-                    RuleKind::_SEQUENCE,
-                    vec![result_0, result_1, result_2, result_3],
-                ),
+                builder: cst::NodeBuilder::multiple(vec![result_0, result_1, result_2, result_3]),
                 error: furthest_error,
             };
         }
@@ -13267,13 +12614,7 @@ impl Language {
         stream: &mut Stream,
     ) -> Option<ParserResult> {
         self.dispatch_parse_unnamed_function_definition(stream)
-            .map(|body| match body {
-                Pass { node, error } => Pass {
-                    node: cst::Node::top_level_rule(RuleKind::UnnamedFunctionDefinition, node),
-                    error,
-                },
-                fail => fail,
-            })
+            .map(|body| body.with_kind(RuleKind::UnnamedFunctionDefinition))
     }
 
     #[inline]
@@ -13414,13 +12755,7 @@ impl Language {
         stream: &mut Stream,
     ) -> Option<ParserResult> {
         self.dispatch_parse_user_defined_operator(stream)
-            .map(|body| match body {
-                Pass { node, error } => Pass {
-                    node: cst::Node::top_level_rule(RuleKind::UserDefinedOperator, node),
-                    error,
-                },
-                fail => fail,
-            })
+            .map(|body| body.with_kind(RuleKind::UserDefinedOperator))
     }
 
     #[inline]
@@ -13442,9 +12777,9 @@ impl Language {
                     Self::scan_type_keyword,
                     TokenKind::TypeKeyword,
                 ) {
-                    Pass { node, error } => {
+                    Pass { builder, error } => {
                         furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
+                        builder
                     }
                     Fail { error } => {
                         break Fail {
@@ -13457,9 +12792,9 @@ impl Language {
                     Self::scan_identifier,
                     TokenKind::Identifier,
                 ) {
-                    Pass { node, error } => {
+                    Pass { builder, error } => {
                         furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
+                        builder
                     }
                     Fail { error } => {
                         break Fail {
@@ -13472,9 +12807,9 @@ impl Language {
                     Self::scan_is_keyword,
                     TokenKind::IsKeyword,
                 ) {
-                    Pass { node, error } => {
+                    Pass { builder, error } => {
                         furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
+                        builder
                     }
                     Fail { error } => {
                         break Fail {
@@ -13483,9 +12818,9 @@ impl Language {
                     }
                 };
                 let result_3 = match self.parse_elementary_type(stream) {
-                    Pass { node, error } => {
+                    Pass { builder, error } => {
                         furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
+                        builder
                     }
                     Fail { error } => {
                         break Fail {
@@ -13494,16 +12829,15 @@ impl Language {
                     }
                 };
                 break Pass {
-                    node: cst::Node::rule(
-                        RuleKind::_SEQUENCE,
-                        vec![result_0, result_1, result_2, result_3],
-                    ),
+                    builder: cst::NodeBuilder::multiple(vec![
+                        result_0, result_1, result_2, result_3,
+                    ]),
                     error: furthest_error,
                 };
             } {
                 err @ Fail { .. } => err,
                 Pass {
-                    node: expr_node,
+                    builder: expr_node,
                     error: expr_error,
                 } => {
                     match self.parse_token_with_trivia(
@@ -13515,13 +12849,10 @@ impl Language {
                             error: error.maybe_merge_with(expr_error),
                         },
                         Pass {
-                            node: terminator_node,
+                            builder: terminator_node,
                             ..
                         } => Pass {
-                            node: cst::Node::rule(
-                                RuleKind::_TERMINATEDBY,
-                                vec![expr_node, terminator_node],
-                            ),
+                            builder: cst::NodeBuilder::multiple(vec![expr_node, terminator_node]),
                             error: None,
                         },
                     }
@@ -13546,13 +12877,7 @@ impl Language {
         stream: &mut Stream,
     ) -> Option<ParserResult> {
         self.dispatch_parse_user_defined_value_type_definition(stream)
-            .map(|body| match body {
-                Pass { node, error } => Pass {
-                    node: cst::Node::top_level_rule(RuleKind::UserDefinedValueTypeDefinition, node),
-                    error,
-                },
-                fail => fail,
-            })
+            .map(|body| body.with_kind(RuleKind::UserDefinedValueTypeDefinition))
     }
 
     #[inline]
@@ -13577,9 +12902,9 @@ impl Language {
                     Self::scan_using_keyword,
                     TokenKind::UsingKeyword,
                 ) {
-                    Pass { node, error } => {
+                    Pass { builder, error } => {
                         furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
+                        builder
                     }
                     Fail { error } => {
                         break Fail {
@@ -13603,15 +12928,15 @@ impl Language {
                         ) {
                             err @ Fail { .. } => err,
                             Pass {
-                                node: open_node, ..
+                                builder: open_node, ..
                             } => {
                                 match {
                                     let mut result = Vec::new();
                                     loop {
                                         match self.parse_identifier_path(stream) {
                                             err @ Fail { .. } => break err,
-                                            Pass { node, .. } => {
-                                                result.push(node);
+                                            Pass { builder, .. } => {
+                                                result.push(builder);
                                                 let save = stream.position();
                                                 match self.parse_token_with_trivia(
                                                     stream,
@@ -13621,14 +12946,13 @@ impl Language {
                                                     Fail { error } => {
                                                         stream.set_position(save);
                                                         break Pass {
-                                                            node: cst::Node::rule(
-                                                                RuleKind::_SEPARATEDBY,
+                                                            builder: cst::NodeBuilder::multiple(
                                                                 result,
                                                             ),
                                                             error: Some(error),
                                                         };
                                                     }
-                                                    Pass { node, .. } => result.push(node),
+                                                    Pass { builder, .. } => result.push(builder),
                                                 }
                                             }
                                         }
@@ -13636,7 +12960,7 @@ impl Language {
                                 } {
                                     err @ Fail { .. } => err,
                                     Pass {
-                                        node: expr_node,
+                                        builder: expr_node,
                                         error: expr_error,
                                     } => {
                                         match self.parse_token_with_trivia(
@@ -13648,12 +12972,12 @@ impl Language {
                                                 error: error.maybe_merge_with(expr_error),
                                             },
                                             Pass {
-                                                node: close_node, ..
+                                                builder: close_node,
+                                                ..
                                             } => Pass {
-                                                node: cst::Node::rule(
-                                                    RuleKind::_DELIMITEDBY,
-                                                    vec![open_node, expr_node, close_node],
-                                                ),
+                                                builder: cst::NodeBuilder::multiple(vec![
+                                                    open_node, expr_node, close_node,
+                                                ]),
                                                 error: None,
                                             },
                                         }
@@ -13669,9 +12993,9 @@ impl Language {
                         error: furthest_error,
                     };
                 } {
-                    Pass { node, error } => {
+                    Pass { builder, error } => {
                         furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
+                        builder
                     }
                     Fail { error } => {
                         break Fail {
@@ -13684,9 +13008,9 @@ impl Language {
                     Self::scan_for_keyword,
                     TokenKind::ForKeyword,
                 ) {
-                    Pass { node, error } => {
+                    Pass { builder, error } => {
                         furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
+                        builder
                     }
                     Fail { error } => {
                         break Fail {
@@ -13714,9 +13038,9 @@ impl Language {
                         error: furthest_error,
                     };
                 } {
-                    Pass { node, error } => {
+                    Pass { builder, error } => {
                         furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
+                        builder
                     }
                     Fail { error } => {
                         break Fail {
@@ -13734,16 +13058,16 @@ impl Language {
                         Fail { error } => {
                             stream.set_position(start_position);
                             Pass {
-                                node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
+                                builder: cst::NodeBuilder::empty(),
                                 error: Some(error),
                             }
                         }
                         pass => pass,
                     }
                 } {
-                    Pass { node, error } => {
+                    Pass { builder, error } => {
                         furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
+                        builder
                     }
                     Fail { error } => {
                         break Fail {
@@ -13752,16 +13076,15 @@ impl Language {
                     }
                 };
                 break Pass {
-                    node: cst::Node::rule(
-                        RuleKind::_SEQUENCE,
-                        vec![result_0, result_1, result_2, result_3, result_4],
-                    ),
+                    builder: cst::NodeBuilder::multiple(vec![
+                        result_0, result_1, result_2, result_3, result_4,
+                    ]),
                     error: furthest_error,
                 };
             } {
                 err @ Fail { .. } => err,
                 Pass {
-                    node: expr_node,
+                    builder: expr_node,
                     error: expr_error,
                 } => {
                     match self.parse_token_with_trivia(
@@ -13773,13 +13096,10 @@ impl Language {
                             error: error.maybe_merge_with(expr_error),
                         },
                         Pass {
-                            node: terminator_node,
+                            builder: terminator_node,
                             ..
                         } => Pass {
-                            node: cst::Node::rule(
-                                RuleKind::_TERMINATEDBY,
-                                vec![expr_node, terminator_node],
-                            ),
+                            builder: cst::NodeBuilder::multiple(vec![expr_node, terminator_node]),
                             error: None,
                         },
                     }
@@ -13801,9 +13121,9 @@ impl Language {
                     Self::scan_using_keyword,
                     TokenKind::UsingKeyword,
                 ) {
-                    Pass { node, error } => {
+                    Pass { builder, error } => {
                         furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
+                        builder
                     }
                     Fail { error } => {
                         break Fail {
@@ -13827,7 +13147,7 @@ impl Language {
                         ) {
                             err @ Fail { .. } => err,
                             Pass {
-                                node: open_node, ..
+                                builder: open_node, ..
                             } => {
                                 match {
                                     let mut result = Vec::new();
@@ -13836,11 +13156,11 @@ impl Language {
                                             let mut furthest_error = None;
                                             let result_0 = match self.parse_identifier_path(stream)
                                             {
-                                                Pass { node, error } => {
+                                                Pass { builder, error } => {
                                                     furthest_error = error.map(|error| {
                                                         error.maybe_merge_with(furthest_error)
                                                     });
-                                                    node
+                                                    builder
                                                 }
                                                 Fail { error } => {
                                                     break Fail {
@@ -13859,13 +13179,13 @@ impl Language {
                                                             Self::scan_as_keyword,
                                                             TokenKind::AsKeyword,
                                                         ) {
-                                                        Pass { node, error } => {
+                                                        Pass { builder, error } => {
                                                             furthest_error = error.map(|error| {
                                                                 error.maybe_merge_with(
                                                                     furthest_error,
                                                                 )
                                                             });
-                                                            node
+                                                            builder
                                                         }
                                                         Fail { error } => {
                                                             break Fail {
@@ -13878,13 +13198,13 @@ impl Language {
                                                     let result_1 = match self
                                                         .parse_user_defined_operator(stream)
                                                     {
-                                                        Pass { node, error } => {
+                                                        Pass { builder, error } => {
                                                             furthest_error = error.map(|error| {
                                                                 error.maybe_merge_with(
                                                                     furthest_error,
                                                                 )
                                                             });
-                                                            node
+                                                            builder
                                                         }
                                                         Fail { error } => {
                                                             break Fail {
@@ -13895,31 +13215,27 @@ impl Language {
                                                         }
                                                     };
                                                     break Pass {
-                                                        node: cst::Node::rule(
-                                                            RuleKind::_SEQUENCE,
-                                                            vec![result_0, result_1],
-                                                        ),
+                                                        builder: cst::NodeBuilder::multiple(vec![
+                                                            result_0, result_1,
+                                                        ]),
                                                         error: furthest_error,
                                                     };
                                                 } {
                                                     Fail { error } => {
                                                         stream.set_position(start_position);
                                                         Pass {
-                                                            node: cst::Node::rule(
-                                                                RuleKind::_OPTIONAL,
-                                                                vec![],
-                                                            ),
+                                                            builder: cst::NodeBuilder::empty(),
                                                             error: Some(error),
                                                         }
                                                     }
                                                     pass => pass,
                                                 }
                                             } {
-                                                Pass { node, error } => {
+                                                Pass { builder, error } => {
                                                     furthest_error = error.map(|error| {
                                                         error.maybe_merge_with(furthest_error)
                                                     });
-                                                    node
+                                                    builder
                                                 }
                                                 Fail { error } => {
                                                     break Fail {
@@ -13929,16 +13245,15 @@ impl Language {
                                                 }
                                             };
                                             break Pass {
-                                                node: cst::Node::rule(
-                                                    RuleKind::_SEQUENCE,
-                                                    vec![result_0, result_1],
-                                                ),
+                                                builder: cst::NodeBuilder::multiple(vec![
+                                                    result_0, result_1,
+                                                ]),
                                                 error: furthest_error,
                                             };
                                         } {
                                             err @ Fail { .. } => break err,
-                                            Pass { node, .. } => {
-                                                result.push(node);
+                                            Pass { builder, .. } => {
+                                                result.push(builder);
                                                 let save = stream.position();
                                                 match self.parse_token_with_trivia(
                                                     stream,
@@ -13948,14 +13263,13 @@ impl Language {
                                                     Fail { error } => {
                                                         stream.set_position(save);
                                                         break Pass {
-                                                            node: cst::Node::rule(
-                                                                RuleKind::_SEPARATEDBY,
+                                                            builder: cst::NodeBuilder::multiple(
                                                                 result,
                                                             ),
                                                             error: Some(error),
                                                         };
                                                     }
-                                                    Pass { node, .. } => result.push(node),
+                                                    Pass { builder, .. } => result.push(builder),
                                                 }
                                             }
                                         }
@@ -13963,7 +13277,7 @@ impl Language {
                                 } {
                                     err @ Fail { .. } => err,
                                     Pass {
-                                        node: expr_node,
+                                        builder: expr_node,
                                         error: expr_error,
                                     } => {
                                         match self.parse_token_with_trivia(
@@ -13975,12 +13289,12 @@ impl Language {
                                                 error: error.maybe_merge_with(expr_error),
                                             },
                                             Pass {
-                                                node: close_node, ..
+                                                builder: close_node,
+                                                ..
                                             } => Pass {
-                                                node: cst::Node::rule(
-                                                    RuleKind::_DELIMITEDBY,
-                                                    vec![open_node, expr_node, close_node],
-                                                ),
+                                                builder: cst::NodeBuilder::multiple(vec![
+                                                    open_node, expr_node, close_node,
+                                                ]),
                                                 error: None,
                                             },
                                         }
@@ -13996,9 +13310,9 @@ impl Language {
                         error: furthest_error,
                     };
                 } {
-                    Pass { node, error } => {
+                    Pass { builder, error } => {
                         furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
+                        builder
                     }
                     Fail { error } => {
                         break Fail {
@@ -14011,9 +13325,9 @@ impl Language {
                     Self::scan_for_keyword,
                     TokenKind::ForKeyword,
                 ) {
-                    Pass { node, error } => {
+                    Pass { builder, error } => {
                         furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
+                        builder
                     }
                     Fail { error } => {
                         break Fail {
@@ -14041,9 +13355,9 @@ impl Language {
                         error: furthest_error,
                     };
                 } {
-                    Pass { node, error } => {
+                    Pass { builder, error } => {
                         furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
+                        builder
                     }
                     Fail { error } => {
                         break Fail {
@@ -14061,16 +13375,16 @@ impl Language {
                         Fail { error } => {
                             stream.set_position(start_position);
                             Pass {
-                                node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
+                                builder: cst::NodeBuilder::empty(),
                                 error: Some(error),
                             }
                         }
                         pass => pass,
                     }
                 } {
-                    Pass { node, error } => {
+                    Pass { builder, error } => {
                         furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
+                        builder
                     }
                     Fail { error } => {
                         break Fail {
@@ -14079,16 +13393,15 @@ impl Language {
                     }
                 };
                 break Pass {
-                    node: cst::Node::rule(
-                        RuleKind::_SEQUENCE,
-                        vec![result_0, result_1, result_2, result_3, result_4],
-                    ),
+                    builder: cst::NodeBuilder::multiple(vec![
+                        result_0, result_1, result_2, result_3, result_4,
+                    ]),
                     error: furthest_error,
                 };
             } {
                 err @ Fail { .. } => err,
                 Pass {
-                    node: expr_node,
+                    builder: expr_node,
                     error: expr_error,
                 } => {
                     match self.parse_token_with_trivia(
@@ -14100,13 +13413,10 @@ impl Language {
                             error: error.maybe_merge_with(expr_error),
                         },
                         Pass {
-                            node: terminator_node,
+                            builder: terminator_node,
                             ..
                         } => Pass {
-                            node: cst::Node::rule(
-                                RuleKind::_TERMINATEDBY,
-                                vec![expr_node, terminator_node],
-                            ),
+                            builder: cst::NodeBuilder::multiple(vec![expr_node, terminator_node]),
                             error: None,
                         },
                     }
@@ -14125,13 +13435,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_using_directive(&self, stream: &mut Stream) -> ParserResult {
-        match self.dispatch_parse_using_directive(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::UsingDirective, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.dispatch_parse_using_directive(stream)
+            .with_kind(RuleKind::UsingDirective)
     }
 
     // (* v0.4.11 *)
@@ -14148,10 +13453,10 @@ impl Language {
                     match loop {
                         let mut furthest_error = None;
                         let result_0 = match self.parse_type_name(stream) {
-                            Pass { node, error } => {
+                            Pass { builder, error } => {
                                 furthest_error =
                                     error.map(|error| error.maybe_merge_with(furthest_error));
-                                node
+                                builder
                             }
                             Fail { error } => {
                                 break Fail {
@@ -14165,17 +13470,17 @@ impl Language {
                                 Fail { error } => {
                                     stream.set_position(start_position);
                                     Pass {
-                                        node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
+                                        builder: cst::NodeBuilder::empty(),
                                         error: Some(error),
                                     }
                                 }
                                 pass => pass,
                             }
                         } {
-                            Pass { node, error } => {
+                            Pass { builder, error } => {
                                 furthest_error =
                                     error.map(|error| error.maybe_merge_with(furthest_error));
-                                node
+                                builder
                             }
                             Fail { error } => {
                                 break Fail {
@@ -14184,7 +13489,7 @@ impl Language {
                             }
                         };
                         break Pass {
-                            node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1]),
+                            builder: cst::NodeBuilder::multiple(vec![result_0, result_1]),
                             error: furthest_error,
                         };
                     } {
@@ -14204,9 +13509,9 @@ impl Language {
                         error: furthest_error,
                     };
                 } {
-                    Pass { node, error } => {
+                    Pass { builder, error } => {
                         furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
+                        builder
                     }
                     Fail { error } => {
                         break Fail {
@@ -14219,9 +13524,9 @@ impl Language {
                     Self::scan_identifier,
                     TokenKind::Identifier,
                 ) {
-                    Pass { node, error } => {
+                    Pass { builder, error } => {
                         furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
+                        builder
                     }
                     Fail { error } => {
                         break Fail {
@@ -14238,10 +13543,10 @@ impl Language {
                             Self::scan_equal,
                             TokenKind::Equal,
                         ) {
-                            Pass { node, error } => {
+                            Pass { builder, error } => {
                                 furthest_error =
                                     error.map(|error| error.maybe_merge_with(furthest_error));
-                                node
+                                builder
                             }
                             Fail { error } => {
                                 break Fail {
@@ -14250,10 +13555,10 @@ impl Language {
                             }
                         };
                         let result_1 = match self.parse_expression(stream) {
-                            Pass { node, error } => {
+                            Pass { builder, error } => {
                                 furthest_error =
                                     error.map(|error| error.maybe_merge_with(furthest_error));
-                                node
+                                builder
                             }
                             Fail { error } => {
                                 break Fail {
@@ -14262,23 +13567,23 @@ impl Language {
                             }
                         };
                         break Pass {
-                            node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1]),
+                            builder: cst::NodeBuilder::multiple(vec![result_0, result_1]),
                             error: furthest_error,
                         };
                     } {
                         Fail { error } => {
                             stream.set_position(start_position);
                             Pass {
-                                node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
+                                builder: cst::NodeBuilder::empty(),
                                 error: Some(error),
                             }
                         }
                         pass => pass,
                     }
                 } {
-                    Pass { node, error } => {
+                    Pass { builder, error } => {
                         furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
+                        builder
                     }
                     Fail { error } => {
                         break Fail {
@@ -14287,13 +13592,13 @@ impl Language {
                     }
                 };
                 break Pass {
-                    node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1, result_2]),
+                    builder: cst::NodeBuilder::multiple(vec![result_0, result_1, result_2]),
                     error: furthest_error,
                 };
             } {
                 err @ Fail { .. } => err,
                 Pass {
-                    node: expr_node,
+                    builder: expr_node,
                     error: expr_error,
                 } => {
                     match self.parse_token_with_trivia(
@@ -14305,13 +13610,10 @@ impl Language {
                             error: error.maybe_merge_with(expr_error),
                         },
                         Pass {
-                            node: terminator_node,
+                            builder: terminator_node,
                             ..
                         } => Pass {
-                            node: cst::Node::rule(
-                                RuleKind::_TERMINATEDBY,
-                                vec![expr_node, terminator_node],
-                            ),
+                            builder: cst::NodeBuilder::multiple(vec![expr_node, terminator_node]),
                             error: None,
                         },
                     }
@@ -14329,9 +13631,9 @@ impl Language {
             match loop {
                 let mut furthest_error = None;
                 let result_0 = match self.parse_type_name(stream) {
-                    Pass { node, error } => {
+                    Pass { builder, error } => {
                         furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
+                        builder
                     }
                     Fail { error } => {
                         break Fail {
@@ -14345,16 +13647,16 @@ impl Language {
                         Fail { error } => {
                             stream.set_position(start_position);
                             Pass {
-                                node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
+                                builder: cst::NodeBuilder::empty(),
                                 error: Some(error),
                             }
                         }
                         pass => pass,
                     }
                 } {
-                    Pass { node, error } => {
+                    Pass { builder, error } => {
                         furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
+                        builder
                     }
                     Fail { error } => {
                         break Fail {
@@ -14367,9 +13669,9 @@ impl Language {
                     Self::scan_identifier,
                     TokenKind::Identifier,
                 ) {
-                    Pass { node, error } => {
+                    Pass { builder, error } => {
                         furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
+                        builder
                     }
                     Fail { error } => {
                         break Fail {
@@ -14386,10 +13688,10 @@ impl Language {
                             Self::scan_equal,
                             TokenKind::Equal,
                         ) {
-                            Pass { node, error } => {
+                            Pass { builder, error } => {
                                 furthest_error =
                                     error.map(|error| error.maybe_merge_with(furthest_error));
-                                node
+                                builder
                             }
                             Fail { error } => {
                                 break Fail {
@@ -14398,10 +13700,10 @@ impl Language {
                             }
                         };
                         let result_1 = match self.parse_expression(stream) {
-                            Pass { node, error } => {
+                            Pass { builder, error } => {
                                 furthest_error =
                                     error.map(|error| error.maybe_merge_with(furthest_error));
-                                node
+                                builder
                             }
                             Fail { error } => {
                                 break Fail {
@@ -14410,23 +13712,23 @@ impl Language {
                             }
                         };
                         break Pass {
-                            node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1]),
+                            builder: cst::NodeBuilder::multiple(vec![result_0, result_1]),
                             error: furthest_error,
                         };
                     } {
                         Fail { error } => {
                             stream.set_position(start_position);
                             Pass {
-                                node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
+                                builder: cst::NodeBuilder::empty(),
                                 error: Some(error),
                             }
                         }
                         pass => pass,
                     }
                 } {
-                    Pass { node, error } => {
+                    Pass { builder, error } => {
                         furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
+                        builder
                     }
                     Fail { error } => {
                         break Fail {
@@ -14435,16 +13737,15 @@ impl Language {
                     }
                 };
                 break Pass {
-                    node: cst::Node::rule(
-                        RuleKind::_SEQUENCE,
-                        vec![result_0, result_1, result_2, result_3],
-                    ),
+                    builder: cst::NodeBuilder::multiple(vec![
+                        result_0, result_1, result_2, result_3,
+                    ]),
                     error: furthest_error,
                 };
             } {
                 err @ Fail { .. } => err,
                 Pass {
-                    node: expr_node,
+                    builder: expr_node,
                     error: expr_error,
                 } => {
                     match self.parse_token_with_trivia(
@@ -14456,13 +13757,10 @@ impl Language {
                             error: error.maybe_merge_with(expr_error),
                         },
                         Pass {
-                            node: terminator_node,
+                            builder: terminator_node,
                             ..
                         } => Pass {
-                            node: cst::Node::rule(
-                                RuleKind::_TERMINATEDBY,
-                                vec![expr_node, terminator_node],
-                            ),
+                            builder: cst::NodeBuilder::multiple(vec![expr_node, terminator_node]),
                             error: None,
                         },
                     }
@@ -14481,13 +13779,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_variable_declaration_statement(&self, stream: &mut Stream) -> ParserResult {
-        match self.dispatch_parse_variable_declaration_statement(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::VariableDeclarationStatement, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.dispatch_parse_variable_declaration_statement(stream)
+            .with_kind(RuleKind::VariableDeclarationStatement)
     }
 
     // VersionPragma = «SolidityKeyword» VersionPragmaExpression+;
@@ -14501,9 +13794,9 @@ impl Language {
                 Self::scan_solidity_keyword,
                 TokenKind::SolidityKeyword,
             ) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -14522,17 +13815,17 @@ impl Language {
                             }
                             stream.set_position(start_position);
                             break Pass {
-                                node: cst::Node::rule(RuleKind::_REPEATED, result),
+                                builder: cst::NodeBuilder::multiple(result),
                                 error: Some(error),
                             };
                         }
-                        Pass { node, .. } => result.push(node),
+                        Pass { builder, .. } => result.push(builder),
                     }
                 }
             } {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -14541,7 +13834,7 @@ impl Language {
                 }
             };
             break Pass {
-                node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1]),
+                builder: cst::NodeBuilder::multiple(vec![result_0, result_1]),
                 error: furthest_error,
             };
         }
@@ -14549,13 +13842,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_version_pragma(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_version_pragma_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::VersionPragma, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_version_pragma_0_4_11(stream)
+            .with_kind(RuleKind::VersionPragma)
     }
 
     // VersionPragmaExpression = VersionPragmaAlternatives | VersionPragmaRange | VersionPragmaComparator | VersionPragmaSpecifier;
@@ -14569,11 +13857,11 @@ impl Language {
             enum Pratt {
                 Operator {
                     kind: RuleKind,
-                    node: Rc<cst::Node>,
+                    builder: cst::NodeBuilder,
                     left_binding_power: u8,
                     right_binding_power: u8,
                 },
-                Node(Rc<cst::Node>),
+                Builder(cst::NodeBuilder),
             }
             let mut elements = Vec::new();
             if let Some(error) = loop {
@@ -14648,8 +13936,8 @@ impl Language {
                             error: furthest_error,
                         };
                     } {
-                        Pass { node, .. } => Ok(Pratt::Operator {
-                            node,
+                        Pass { builder, .. } => Ok(Pratt::Operator {
+                            builder,
                             kind: RuleKind::VersionPragmaComparator,
                             left_binding_power: 255,
                             right_binding_power: 5u8,
@@ -14665,7 +13953,7 @@ impl Language {
                 }
                 match self.parse_version_pragma_specifier(stream) {
                     Fail { error } => break Some(error),
-                    Pass { node, .. } => elements.push(Pratt::Node(node)),
+                    Pass { builder, .. } => elements.push(Pratt::Builder(builder)),
                 }
                 let start_position = stream.position();
                 match loop {
@@ -14676,8 +13964,8 @@ impl Language {
                         Self::scan_bar_bar,
                         TokenKind::BarBar,
                     ) {
-                        Pass { node, .. } => Ok(Pratt::Operator {
-                            node,
+                        Pass { builder, .. } => Ok(Pratt::Operator {
+                            builder,
                             kind: RuleKind::VersionPragmaAlternatives,
                             left_binding_power: 1u8,
                             right_binding_power: 1u8 + 1,
@@ -14694,8 +13982,8 @@ impl Language {
                             Self::scan_minus,
                             TokenKind::Minus,
                         ) {
-                            Pass { node, .. } => Ok(Pratt::Operator {
-                                node,
+                            Pass { builder, .. } => Ok(Pratt::Operator {
+                                builder,
                                 kind: RuleKind::VersionPragmaRange,
                                 left_binding_power: 3u8,
                                 right_binding_power: 3u8 + 1,
@@ -14749,11 +14037,16 @@ impl Language {
                         if *right_binding_power == 255 {
                             let left = elements.remove(i - 1);
                             let op = elements.remove(i - 1);
-                            if let (Pratt::Node(left), Pratt::Operator { node: op, kind, .. }) =
-                                (left, op)
+                            if let (
+                                Pratt::Builder(left),
+                                Pratt::Operator {
+                                    builder: op, kind, ..
+                                },
+                            ) = (left, op)
                             {
-                                let node = cst::Node::rule(kind, vec![left, op]);
-                                elements.insert(i - 1, Pratt::Node(node));
+                                let builder =
+                                    cst::NodeBuilder::multiple(vec![left, op]).with_kind(kind);
+                                elements.insert(i - 1, Pratt::Builder(builder));
                                 i = i.saturating_sub(2);
                             } else {
                                 unreachable!()
@@ -14761,11 +14054,16 @@ impl Language {
                         } else if *left_binding_power == 255 {
                             let op = elements.remove(i);
                             let right = elements.remove(i);
-                            if let (Pratt::Operator { node: op, kind, .. }, Pratt::Node(right)) =
-                                (op, right)
+                            if let (
+                                Pratt::Operator {
+                                    builder: op, kind, ..
+                                },
+                                Pratt::Builder(right),
+                            ) = (op, right)
                             {
-                                let node = cst::Node::rule(kind, vec![op, right]);
-                                elements.insert(i, Pratt::Node(node));
+                                let builder =
+                                    cst::NodeBuilder::multiple(vec![op, right]).with_kind(kind);
+                                elements.insert(i, Pratt::Builder(builder));
                                 i = i.saturating_sub(1);
                             } else {
                                 unreachable!()
@@ -14775,13 +14073,16 @@ impl Language {
                             let op = elements.remove(i - 1);
                             let right = elements.remove(i - 1);
                             if let (
-                                Pratt::Node(left),
-                                Pratt::Operator { node: op, kind, .. },
-                                Pratt::Node(right),
+                                Pratt::Builder(left),
+                                Pratt::Operator {
+                                    builder: op, kind, ..
+                                },
+                                Pratt::Builder(right),
                             ) = (left, op, right)
                             {
-                                let node = cst::Node::rule(kind, vec![left, op, right]);
-                                elements.insert(i - 1, Pratt::Node(node));
+                                let builder = cst::NodeBuilder::multiple(vec![left, op, right])
+                                    .with_kind(kind);
+                                elements.insert(i - 1, Pratt::Builder(builder));
                                 i = i.saturating_sub(2);
                             } else {
                                 unreachable!()
@@ -14791,8 +14092,11 @@ impl Language {
                         i += 1;
                     }
                 }
-                if let Pratt::Node(node) = elements.pop().unwrap() {
-                    Pass { node, error: None }
+                if let Pratt::Builder(builder) = elements.pop().unwrap() {
+                    Pass {
+                        builder,
+                        error: None,
+                    }
                 } else {
                     unreachable!()
                 }
@@ -14802,13 +14106,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_version_pragma_expression(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_version_pragma_expression_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::VersionPragmaExpression, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_version_pragma_expression_0_4_11(stream)
+            .with_kind(RuleKind::VersionPragmaExpression)
     }
 
     // VersionPragmaSpecifier = «VersionPragmaValue» («Period» «VersionPragmaValue»)*;
@@ -14824,8 +14123,8 @@ impl Language {
                     TokenKind::VersionPragmaValue,
                 ) {
                     err @ Fail { .. } => break err,
-                    Pass { node, .. } => {
-                        result.push(node);
+                    Pass { builder, .. } => {
+                        result.push(builder);
                         let save = stream.position();
                         match self.parse_token_with_trivia(
                             stream,
@@ -14835,11 +14134,11 @@ impl Language {
                             Fail { error } => {
                                 stream.set_position(save);
                                 break Pass {
-                                    node: cst::Node::rule(RuleKind::_SEPARATEDBY, result),
+                                    builder: cst::NodeBuilder::multiple(result),
                                     error: Some(error),
                                 };
                             }
-                            Pass { node, .. } => result.push(node),
+                            Pass { builder, .. } => result.push(builder),
                         }
                     }
                 }
@@ -14849,13 +14148,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_version_pragma_specifier(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_version_pragma_specifier_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::VersionPragmaSpecifier, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_version_pragma_specifier_0_4_11(stream)
+            .with_kind(RuleKind::VersionPragmaSpecifier)
     }
 
     // WhileStatement = «WhileKeyword» «OpenParen» Expression «CloseParen» Statement;
@@ -14869,9 +14163,9 @@ impl Language {
                 Self::scan_while_keyword,
                 TokenKind::WhileKeyword,
             ) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -14887,11 +14181,11 @@ impl Language {
                 ) {
                     err @ Fail { .. } => err,
                     Pass {
-                        node: open_node, ..
+                        builder: open_node, ..
                     } => match self.parse_expression(stream) {
                         err @ Fail { .. } => err,
                         Pass {
-                            node: expr_node,
+                            builder: expr_node,
                             error: expr_error,
                         } => {
                             match self.parse_token_with_trivia(
@@ -14903,12 +14197,12 @@ impl Language {
                                     error: error.maybe_merge_with(expr_error),
                                 },
                                 Pass {
-                                    node: close_node, ..
+                                    builder: close_node,
+                                    ..
                                 } => Pass {
-                                    node: cst::Node::rule(
-                                        RuleKind::_DELIMITEDBY,
-                                        vec![open_node, expr_node, close_node],
-                                    ),
+                                    builder: cst::NodeBuilder::multiple(vec![
+                                        open_node, expr_node, close_node,
+                                    ]),
                                     error: None,
                                 },
                             }
@@ -14916,9 +14210,9 @@ impl Language {
                     },
                 }
             } {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -14927,9 +14221,9 @@ impl Language {
                 }
             };
             let result_2 = match self.parse_statement(stream) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -14938,7 +14232,7 @@ impl Language {
                 }
             };
             break Pass {
-                node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1, result_2]),
+                builder: cst::NodeBuilder::multiple(vec![result_0, result_1, result_2]),
                 error: furthest_error,
             };
         }
@@ -14946,13 +14240,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_while_statement(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_while_statement_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::WhileStatement, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_while_statement_0_4_11(stream)
+            .with_kind(RuleKind::WhileStatement)
     }
 
     // YulAssignmentStatement = YulIdentifierPath («Comma» YulIdentifierPath)* «ColonEqual» YulExpression;
@@ -14966,8 +14255,8 @@ impl Language {
                 loop {
                     match self.parse_yul_identifier_path(stream) {
                         err @ Fail { .. } => break err,
-                        Pass { node, .. } => {
-                            result.push(node);
+                        Pass { builder, .. } => {
+                            result.push(builder);
                             let save = stream.position();
                             match self.parse_token_with_trivia(
                                 stream,
@@ -14977,19 +14266,19 @@ impl Language {
                                 Fail { error } => {
                                     stream.set_position(save);
                                     break Pass {
-                                        node: cst::Node::rule(RuleKind::_SEPARATEDBY, result),
+                                        builder: cst::NodeBuilder::multiple(result),
                                         error: Some(error),
                                     };
                                 }
-                                Pass { node, .. } => result.push(node),
+                                Pass { builder, .. } => result.push(builder),
                             }
                         }
                     }
                 }
             } {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -15002,9 +14291,9 @@ impl Language {
                 Self::scan_colon_equal,
                 TokenKind::ColonEqual,
             ) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -15013,9 +14302,9 @@ impl Language {
                 }
             };
             let result_2 = match self.parse_yul_expression(stream) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -15024,7 +14313,7 @@ impl Language {
                 }
             };
             break Pass {
-                node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1, result_2]),
+                builder: cst::NodeBuilder::multiple(vec![result_0, result_1, result_2]),
                 error: furthest_error,
             };
         }
@@ -15032,13 +14321,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_yul_assignment_statement(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_yul_assignment_statement_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::YulAssignmentStatement, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_yul_assignment_statement_0_4_11(stream)
+            .with_kind(RuleKind::YulAssignmentStatement)
     }
 
     // YulBlock = «OpenBrace» YulStatement* «CloseBrace»;
@@ -15050,7 +14334,7 @@ impl Language {
             {
                 err @ Fail { .. } => err,
                 Pass {
-                    node: open_node, ..
+                    builder: open_node, ..
                 } => {
                     match {
                         let mut result = Vec::new();
@@ -15060,17 +14344,17 @@ impl Language {
                                 Fail { error } => {
                                     stream.set_position(start_position);
                                     break Pass {
-                                        node: cst::Node::rule(RuleKind::_REPEATED, result),
+                                        builder: cst::NodeBuilder::multiple(result),
                                         error: Some(error),
                                     };
                                 }
-                                Pass { node, .. } => result.push(node),
+                                Pass { builder, .. } => result.push(builder),
                             }
                         }
                     } {
                         err @ Fail { .. } => err,
                         Pass {
-                            node: expr_node,
+                            builder: expr_node,
                             error: expr_error,
                         } => {
                             match self.parse_token_with_trivia(
@@ -15082,12 +14366,12 @@ impl Language {
                                     error: error.maybe_merge_with(expr_error),
                                 },
                                 Pass {
-                                    node: close_node, ..
+                                    builder: close_node,
+                                    ..
                                 } => Pass {
-                                    node: cst::Node::rule(
-                                        RuleKind::_DELIMITEDBY,
-                                        vec![open_node, expr_node, close_node],
-                                    ),
+                                    builder: cst::NodeBuilder::multiple(vec![
+                                        open_node, expr_node, close_node,
+                                    ]),
                                     error: None,
                                 },
                             }
@@ -15100,13 +14384,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_yul_block(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_yul_block_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::YulBlock, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_yul_block_0_4_11(stream)
+            .with_kind(RuleKind::YulBlock)
     }
 
     // YulBreakStatement = «BreakKeyword»;
@@ -15118,13 +14397,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_yul_break_statement(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_yul_break_statement_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::YulBreakStatement, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_yul_break_statement_0_4_11(stream)
+            .with_kind(RuleKind::YulBreakStatement)
     }
 
     // YulContinueStatement = «ContinueKeyword»;
@@ -15140,13 +14414,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_yul_continue_statement(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_yul_continue_statement_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::YulContinueStatement, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_yul_continue_statement_0_4_11(stream)
+            .with_kind(RuleKind::YulContinueStatement)
     }
 
     // YulDeclarationStatement = «LetKeyword» YulIdentifierPath («Comma» YulIdentifierPath)* («ColonEqual» YulExpression)?;
@@ -15160,9 +14429,9 @@ impl Language {
                 Self::scan_let_keyword,
                 TokenKind::LetKeyword,
             ) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -15175,8 +14444,8 @@ impl Language {
                 loop {
                     match self.parse_yul_identifier_path(stream) {
                         err @ Fail { .. } => break err,
-                        Pass { node, .. } => {
-                            result.push(node);
+                        Pass { builder, .. } => {
+                            result.push(builder);
                             let save = stream.position();
                             match self.parse_token_with_trivia(
                                 stream,
@@ -15186,19 +14455,19 @@ impl Language {
                                 Fail { error } => {
                                     stream.set_position(save);
                                     break Pass {
-                                        node: cst::Node::rule(RuleKind::_SEPARATEDBY, result),
+                                        builder: cst::NodeBuilder::multiple(result),
                                         error: Some(error),
                                     };
                                 }
-                                Pass { node, .. } => result.push(node),
+                                Pass { builder, .. } => result.push(builder),
                             }
                         }
                     }
                 }
             } {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -15215,10 +14484,10 @@ impl Language {
                         Self::scan_colon_equal,
                         TokenKind::ColonEqual,
                     ) {
-                        Pass { node, error } => {
+                        Pass { builder, error } => {
                             furthest_error =
                                 error.map(|error| error.maybe_merge_with(furthest_error));
-                            node
+                            builder
                         }
                         Fail { error } => {
                             break Fail {
@@ -15227,10 +14496,10 @@ impl Language {
                         }
                     };
                     let result_1 = match self.parse_yul_expression(stream) {
-                        Pass { node, error } => {
+                        Pass { builder, error } => {
                             furthest_error =
                                 error.map(|error| error.maybe_merge_with(furthest_error));
-                            node
+                            builder
                         }
                         Fail { error } => {
                             break Fail {
@@ -15239,23 +14508,23 @@ impl Language {
                         }
                     };
                     break Pass {
-                        node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1]),
+                        builder: cst::NodeBuilder::multiple(vec![result_0, result_1]),
                         error: furthest_error,
                     };
                 } {
                     Fail { error } => {
                         stream.set_position(start_position);
                         Pass {
-                            node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
+                            builder: cst::NodeBuilder::empty(),
                             error: Some(error),
                         }
                     }
                     pass => pass,
                 }
             } {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -15264,7 +14533,7 @@ impl Language {
                 }
             };
             break Pass {
-                node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1, result_2]),
+                builder: cst::NodeBuilder::multiple(vec![result_0, result_1, result_2]),
                 error: furthest_error,
             };
         }
@@ -15272,13 +14541,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_yul_declaration_statement(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_yul_declaration_statement_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::YulDeclarationStatement, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_yul_declaration_statement_0_4_11(stream)
+            .with_kind(RuleKind::YulDeclarationStatement)
     }
 
     // YulExpression = YulFunctionCallExpression | YulLiteral | YulIdentifierPath;
@@ -15290,11 +14554,11 @@ impl Language {
             enum Pratt {
                 Operator {
                     kind: RuleKind,
-                    node: Rc<cst::Node>,
+                    builder: cst::NodeBuilder,
                     left_binding_power: u8,
                     right_binding_power: u8,
                 },
-                Node(Rc<cst::Node>),
+                Builder(cst::NodeBuilder),
             }
             let mut elements = Vec::new();
             if let Some(error) = loop {
@@ -15315,7 +14579,7 @@ impl Language {
                     };
                 } {
                     Fail { error } => break Some(error),
-                    Pass { node, .. } => elements.push(Pratt::Node(node)),
+                    Pass { builder, .. } => elements.push(Pratt::Builder(builder)),
                 }
                 loop {
                     let start_position = stream.position();
@@ -15327,7 +14591,7 @@ impl Language {
                         ) {
                             err @ Fail { .. } => err,
                             Pass {
-                                node: open_node, ..
+                                builder: open_node, ..
                             } => {
                                 match {
                                     let start_position = stream.position();
@@ -15336,8 +14600,8 @@ impl Language {
                                         loop {
                                             match self.parse_yul_expression(stream) {
                                                 err @ Fail { .. } => break err,
-                                                Pass { node, .. } => {
-                                                    result.push(node);
+                                                Pass { builder, .. } => {
+                                                    result.push(builder);
                                                     let save = stream.position();
                                                     match self.parse_token_with_trivia(
                                                         stream,
@@ -15347,14 +14611,15 @@ impl Language {
                                                         Fail { error } => {
                                                             stream.set_position(save);
                                                             break Pass {
-                                                                node: cst::Node::rule(
-                                                                    RuleKind::_SEPARATEDBY,
+                                                                builder: cst::NodeBuilder::multiple(
                                                                     result,
                                                                 ),
                                                                 error: Some(error),
                                                             };
                                                         }
-                                                        Pass { node, .. } => result.push(node),
+                                                        Pass { builder, .. } => {
+                                                            result.push(builder)
+                                                        }
                                                     }
                                                 }
                                             }
@@ -15363,7 +14628,7 @@ impl Language {
                                         Fail { error } => {
                                             stream.set_position(start_position);
                                             Pass {
-                                                node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
+                                                builder: cst::NodeBuilder::empty(),
                                                 error: Some(error),
                                             }
                                         }
@@ -15372,7 +14637,7 @@ impl Language {
                                 } {
                                     err @ Fail { .. } => err,
                                     Pass {
-                                        node: expr_node,
+                                        builder: expr_node,
                                         error: expr_error,
                                     } => {
                                         match self.parse_token_with_trivia(
@@ -15384,12 +14649,12 @@ impl Language {
                                                 error: error.maybe_merge_with(expr_error),
                                             },
                                             Pass {
-                                                node: close_node, ..
+                                                builder: close_node,
+                                                ..
                                             } => Pass {
-                                                node: cst::Node::rule(
-                                                    RuleKind::_DELIMITEDBY,
-                                                    vec![open_node, expr_node, close_node],
-                                                ),
+                                                builder: cst::NodeBuilder::multiple(vec![
+                                                    open_node, expr_node, close_node,
+                                                ]),
                                                 error: None,
                                             },
                                         }
@@ -15398,8 +14663,8 @@ impl Language {
                             }
                         }
                     } {
-                        Pass { node, .. } => Ok(Pratt::Operator {
-                            node,
+                        Pass { builder, .. } => Ok(Pratt::Operator {
+                            builder,
                             kind: RuleKind::YulFunctionCallExpression,
                             left_binding_power: 1u8,
                             right_binding_power: 255,
@@ -15449,11 +14714,16 @@ impl Language {
                         if *right_binding_power == 255 {
                             let left = elements.remove(i - 1);
                             let op = elements.remove(i - 1);
-                            if let (Pratt::Node(left), Pratt::Operator { node: op, kind, .. }) =
-                                (left, op)
+                            if let (
+                                Pratt::Builder(left),
+                                Pratt::Operator {
+                                    builder: op, kind, ..
+                                },
+                            ) = (left, op)
                             {
-                                let node = cst::Node::rule(kind, vec![left, op]);
-                                elements.insert(i - 1, Pratt::Node(node));
+                                let builder =
+                                    cst::NodeBuilder::multiple(vec![left, op]).with_kind(kind);
+                                elements.insert(i - 1, Pratt::Builder(builder));
                                 i = i.saturating_sub(2);
                             } else {
                                 unreachable!()
@@ -15461,11 +14731,16 @@ impl Language {
                         } else if *left_binding_power == 255 {
                             let op = elements.remove(i);
                             let right = elements.remove(i);
-                            if let (Pratt::Operator { node: op, kind, .. }, Pratt::Node(right)) =
-                                (op, right)
+                            if let (
+                                Pratt::Operator {
+                                    builder: op, kind, ..
+                                },
+                                Pratt::Builder(right),
+                            ) = (op, right)
                             {
-                                let node = cst::Node::rule(kind, vec![op, right]);
-                                elements.insert(i, Pratt::Node(node));
+                                let builder =
+                                    cst::NodeBuilder::multiple(vec![op, right]).with_kind(kind);
+                                elements.insert(i, Pratt::Builder(builder));
                                 i = i.saturating_sub(1);
                             } else {
                                 unreachable!()
@@ -15475,13 +14750,16 @@ impl Language {
                             let op = elements.remove(i - 1);
                             let right = elements.remove(i - 1);
                             if let (
-                                Pratt::Node(left),
-                                Pratt::Operator { node: op, kind, .. },
-                                Pratt::Node(right),
+                                Pratt::Builder(left),
+                                Pratt::Operator {
+                                    builder: op, kind, ..
+                                },
+                                Pratt::Builder(right),
                             ) = (left, op, right)
                             {
-                                let node = cst::Node::rule(kind, vec![left, op, right]);
-                                elements.insert(i - 1, Pratt::Node(node));
+                                let builder = cst::NodeBuilder::multiple(vec![left, op, right])
+                                    .with_kind(kind);
+                                elements.insert(i - 1, Pratt::Builder(builder));
                                 i = i.saturating_sub(2);
                             } else {
                                 unreachable!()
@@ -15491,8 +14769,11 @@ impl Language {
                         i += 1;
                     }
                 }
-                if let Pratt::Node(node) = elements.pop().unwrap() {
-                    Pass { node, error: None }
+                if let Pratt::Builder(builder) = elements.pop().unwrap() {
+                    Pass {
+                        builder,
+                        error: None,
+                    }
                 } else {
                     unreachable!()
                 }
@@ -15502,13 +14783,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_yul_expression(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_yul_expression_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::YulExpression, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_yul_expression_0_4_11(stream)
+            .with_kind(RuleKind::YulExpression)
     }
 
     // YulForStatement = «ForKeyword» YulBlock YulExpression YulBlock YulBlock;
@@ -15522,9 +14798,9 @@ impl Language {
                 Self::scan_for_keyword,
                 TokenKind::ForKeyword,
             ) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -15533,9 +14809,9 @@ impl Language {
                 }
             };
             let result_1 = match self.parse_yul_block(stream) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -15544,9 +14820,9 @@ impl Language {
                 }
             };
             let result_2 = match self.parse_yul_expression(stream) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -15555,9 +14831,9 @@ impl Language {
                 }
             };
             let result_3 = match self.parse_yul_block(stream) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -15566,9 +14842,9 @@ impl Language {
                 }
             };
             let result_4 = match self.parse_yul_block(stream) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -15577,10 +14853,9 @@ impl Language {
                 }
             };
             break Pass {
-                node: cst::Node::rule(
-                    RuleKind::_SEQUENCE,
-                    vec![result_0, result_1, result_2, result_3, result_4],
-                ),
+                builder: cst::NodeBuilder::multiple(vec![
+                    result_0, result_1, result_2, result_3, result_4,
+                ]),
                 error: furthest_error,
             };
         }
@@ -15588,13 +14863,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_yul_for_statement(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_yul_for_statement_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::YulForStatement, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_yul_for_statement_0_4_11(stream)
+            .with_kind(RuleKind::YulForStatement)
     }
 
     // YulFunctionDefinition = «FunctionKeyword» «YulIdentifier» «OpenParen» («YulIdentifier» («Comma» «YulIdentifier»)*)? «CloseParen» («MinusGreaterThan» «YulIdentifier» («Comma» «YulIdentifier»)*)? YulBlock;
@@ -15608,9 +14878,9 @@ impl Language {
                 Self::scan_function_keyword,
                 TokenKind::FunctionKeyword,
             ) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -15623,9 +14893,9 @@ impl Language {
                 Self::scan_yul_identifier,
                 TokenKind::YulIdentifier,
             ) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -15641,7 +14911,7 @@ impl Language {
                 ) {
                     err @ Fail { .. } => err,
                     Pass {
-                        node: open_node, ..
+                        builder: open_node, ..
                     } => {
                         match {
                             let start_position = stream.position();
@@ -15654,8 +14924,8 @@ impl Language {
                                         TokenKind::YulIdentifier,
                                     ) {
                                         err @ Fail { .. } => break err,
-                                        Pass { node, .. } => {
-                                            result.push(node);
+                                        Pass { builder, .. } => {
+                                            result.push(builder);
                                             let save = stream.position();
                                             match self.parse_token_with_trivia(
                                                 stream,
@@ -15665,23 +14935,22 @@ impl Language {
                                                 Fail { error } => {
                                                     stream.set_position(save);
                                                     break Pass {
-                                                        node: cst::Node::rule(
-                                                            RuleKind::Arguments,
-                                                            result,
-                                                        ),
+                                                        builder: cst::NodeBuilder::multiple(result),
                                                         error: Some(error),
                                                     };
                                                 }
-                                                Pass { node, .. } => result.push(node),
+                                                Pass { builder, .. } => result.push(builder),
                                             }
                                         }
                                     }
                                 }
-                            } {
+                            }
+                            .with_kind(RuleKind::Arguments)
+                            {
                                 Fail { error } => {
                                     stream.set_position(start_position);
                                     Pass {
-                                        node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
+                                        builder: cst::NodeBuilder::empty(),
                                         error: Some(error),
                                     }
                                 }
@@ -15690,7 +14959,7 @@ impl Language {
                         } {
                             err @ Fail { .. } => err,
                             Pass {
-                                node: expr_node,
+                                builder: expr_node,
                                 error: expr_error,
                             } => {
                                 match self.parse_token_with_trivia(
@@ -15702,12 +14971,12 @@ impl Language {
                                         error: error.maybe_merge_with(expr_error),
                                     },
                                     Pass {
-                                        node: close_node, ..
+                                        builder: close_node,
+                                        ..
                                     } => Pass {
-                                        node: cst::Node::rule(
-                                            RuleKind::_DELIMITEDBY,
-                                            vec![open_node, expr_node, close_node],
-                                        ),
+                                        builder: cst::NodeBuilder::multiple(vec![
+                                            open_node, expr_node, close_node,
+                                        ]),
                                         error: None,
                                     },
                                 }
@@ -15716,9 +14985,9 @@ impl Language {
                     }
                 }
             } {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -15735,10 +15004,10 @@ impl Language {
                         Self::scan_minus_greater_than,
                         TokenKind::MinusGreaterThan,
                     ) {
-                        Pass { node, error } => {
+                        Pass { builder, error } => {
                             furthest_error =
                                 error.map(|error| error.maybe_merge_with(furthest_error));
-                            node
+                            builder
                         }
                         Fail { error } => {
                             break Fail {
@@ -15755,8 +15024,8 @@ impl Language {
                                 TokenKind::YulIdentifier,
                             ) {
                                 err @ Fail { .. } => break err,
-                                Pass { node, .. } => {
-                                    result.push(node);
+                                Pass { builder, .. } => {
+                                    result.push(builder);
                                     let save = stream.position();
                                     match self.parse_token_with_trivia(
                                         stream,
@@ -15766,20 +15035,22 @@ impl Language {
                                         Fail { error } => {
                                             stream.set_position(save);
                                             break Pass {
-                                                node: cst::Node::rule(RuleKind::Results, result),
+                                                builder: cst::NodeBuilder::multiple(result),
                                                 error: Some(error),
                                             };
                                         }
-                                        Pass { node, .. } => result.push(node),
+                                        Pass { builder, .. } => result.push(builder),
                                     }
                                 }
                             }
                         }
-                    } {
-                        Pass { node, error } => {
+                    }
+                    .with_kind(RuleKind::Results)
+                    {
+                        Pass { builder, error } => {
                             furthest_error =
                                 error.map(|error| error.maybe_merge_with(furthest_error));
-                            node
+                            builder
                         }
                         Fail { error } => {
                             break Fail {
@@ -15788,23 +15059,23 @@ impl Language {
                         }
                     };
                     break Pass {
-                        node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1]),
+                        builder: cst::NodeBuilder::multiple(vec![result_0, result_1]),
                         error: furthest_error,
                     };
                 } {
                     Fail { error } => {
                         stream.set_position(start_position);
                         Pass {
-                            node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
+                            builder: cst::NodeBuilder::empty(),
                             error: Some(error),
                         }
                     }
                     pass => pass,
                 }
             } {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -15813,9 +15084,9 @@ impl Language {
                 }
             };
             let result_4 = match self.parse_yul_block(stream) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -15824,10 +15095,9 @@ impl Language {
                 }
             };
             break Pass {
-                node: cst::Node::rule(
-                    RuleKind::_SEQUENCE,
-                    vec![result_0, result_1, result_2, result_3, result_4],
-                ),
+                builder: cst::NodeBuilder::multiple(vec![
+                    result_0, result_1, result_2, result_3, result_4,
+                ]),
                 error: furthest_error,
             };
         }
@@ -15835,13 +15105,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_yul_function_definition(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_yul_function_definition_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::YulFunctionDefinition, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_yul_function_definition_0_4_11(stream)
+            .with_kind(RuleKind::YulFunctionDefinition)
     }
 
     // YulIdentifierPath = «YulIdentifier» («Period» «YulIdentifier»)*;
@@ -15857,8 +15122,8 @@ impl Language {
                     TokenKind::YulIdentifier,
                 ) {
                     err @ Fail { .. } => break err,
-                    Pass { node, .. } => {
-                        result.push(node);
+                    Pass { builder, .. } => {
+                        result.push(builder);
                         let save = stream.position();
                         match self.parse_token_with_trivia(
                             stream,
@@ -15868,11 +15133,11 @@ impl Language {
                             Fail { error } => {
                                 stream.set_position(save);
                                 break Pass {
-                                    node: cst::Node::rule(RuleKind::_SEPARATEDBY, result),
+                                    builder: cst::NodeBuilder::multiple(result),
                                     error: Some(error),
                                 };
                             }
-                            Pass { node, .. } => result.push(node),
+                            Pass { builder, .. } => result.push(builder),
                         }
                     }
                 }
@@ -15882,13 +15147,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_yul_identifier_path(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_yul_identifier_path_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::YulIdentifierPath, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_yul_identifier_path_0_4_11(stream)
+            .with_kind(RuleKind::YulIdentifierPath)
     }
 
     // YulIfStatement = «IfKeyword» YulExpression YulBlock;
@@ -15902,9 +15162,9 @@ impl Language {
                 Self::scan_if_keyword,
                 TokenKind::IfKeyword,
             ) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -15913,9 +15173,9 @@ impl Language {
                 }
             };
             let result_1 = match self.parse_yul_expression(stream) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -15924,9 +15184,9 @@ impl Language {
                 }
             };
             let result_2 = match self.parse_yul_block(stream) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -15935,7 +15195,7 @@ impl Language {
                 }
             };
             break Pass {
-                node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1, result_2]),
+                builder: cst::NodeBuilder::multiple(vec![result_0, result_1, result_2]),
                 error: furthest_error,
             };
         }
@@ -15943,13 +15203,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_yul_if_statement(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_yul_if_statement_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::YulIfStatement, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_yul_if_statement_0_4_11(stream)
+            .with_kind(RuleKind::YulIfStatement)
     }
 
     // (* v0.6.0 *)
@@ -15973,13 +15228,7 @@ impl Language {
         stream: &mut Stream,
     ) -> Option<ParserResult> {
         self.dispatch_parse_yul_leave_statement(stream)
-            .map(|body| match body {
-                Pass { node, error } => Pass {
-                    node: cst::Node::top_level_rule(RuleKind::YulLeaveStatement, node),
-                    error,
-                },
-                fail => fail,
-            })
+            .map(|body| body.with_kind(RuleKind::YulLeaveStatement))
     }
 
     #[inline]
@@ -16047,13 +15296,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_yul_literal(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_yul_literal_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::YulLiteral, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_yul_literal_0_4_11(stream)
+            .with_kind(RuleKind::YulLiteral)
     }
 
     // (* v0.4.11 *)
@@ -16216,13 +15460,8 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_yul_statement(&self, stream: &mut Stream) -> ParserResult {
-        match self.dispatch_parse_yul_statement(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::YulStatement, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.dispatch_parse_yul_statement(stream)
+            .with_kind(RuleKind::YulStatement)
     }
 
     // YulSwitchStatement = «SwitchKeyword» YulExpression (((«CaseKeyword» YulLiteral) | «DefaultKeyword») YulBlock)+;
@@ -16236,9 +15475,9 @@ impl Language {
                 Self::scan_switch_keyword,
                 TokenKind::SwitchKeyword,
             ) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -16247,9 +15486,9 @@ impl Language {
                 }
             };
             let result_1 = match self.parse_yul_expression(stream) {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -16273,10 +15512,10 @@ impl Language {
                                     Self::scan_case_keyword,
                                     TokenKind::CaseKeyword,
                                 ) {
-                                    Pass { node, error } => {
+                                    Pass { builder, error } => {
                                         furthest_error = error
                                             .map(|error| error.maybe_merge_with(furthest_error));
-                                        node
+                                        builder
                                     }
                                     Fail { error } => {
                                         break Fail {
@@ -16285,10 +15524,10 @@ impl Language {
                                     }
                                 };
                                 let result_1 = match self.parse_yul_literal(stream) {
-                                    Pass { node, error } => {
+                                    Pass { builder, error } => {
                                         furthest_error = error
                                             .map(|error| error.maybe_merge_with(furthest_error));
-                                        node
+                                        builder
                                     }
                                     Fail { error } => {
                                         break Fail {
@@ -16297,10 +15536,7 @@ impl Language {
                                     }
                                 };
                                 break Pass {
-                                    node: cst::Node::rule(
-                                        RuleKind::_SEQUENCE,
-                                        vec![result_0, result_1],
-                                    ),
+                                    builder: cst::NodeBuilder::multiple(vec![result_0, result_1]),
                                     error: furthest_error,
                                 };
                             } {
@@ -16320,10 +15556,10 @@ impl Language {
                                 error: furthest_error,
                             };
                         } {
-                            Pass { node, error } => {
+                            Pass { builder, error } => {
                                 furthest_error =
                                     error.map(|error| error.maybe_merge_with(furthest_error));
-                                node
+                                builder
                             }
                             Fail { error } => {
                                 break Fail {
@@ -16332,10 +15568,10 @@ impl Language {
                             }
                         };
                         let result_1 = match self.parse_yul_block(stream) {
-                            Pass { node, error } => {
+                            Pass { builder, error } => {
                                 furthest_error =
                                     error.map(|error| error.maybe_merge_with(furthest_error));
-                                node
+                                builder
                             }
                             Fail { error } => {
                                 break Fail {
@@ -16344,7 +15580,7 @@ impl Language {
                             }
                         };
                         break Pass {
-                            node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1]),
+                            builder: cst::NodeBuilder::multiple(vec![result_0, result_1]),
                             error: furthest_error,
                         };
                     } {
@@ -16354,17 +15590,17 @@ impl Language {
                             }
                             stream.set_position(start_position);
                             break Pass {
-                                node: cst::Node::rule(RuleKind::_REPEATED, result),
+                                builder: cst::NodeBuilder::multiple(result),
                                 error: Some(error),
                             };
                         }
-                        Pass { node, .. } => result.push(node),
+                        Pass { builder, .. } => result.push(builder),
                     }
                 }
             } {
-                Pass { node, error } => {
+                Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
+                    builder
                 }
                 Fail { error } => {
                     break Fail {
@@ -16373,7 +15609,7 @@ impl Language {
                 }
             };
             break Pass {
-                node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1, result_2]),
+                builder: cst::NodeBuilder::multiple(vec![result_0, result_1, result_2]),
                 error: furthest_error,
             };
         }
@@ -16381,12 +15617,7 @@ impl Language {
 
     #[inline]
     pub(crate) fn parse_yul_switch_statement(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_yul_switch_statement_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::YulSwitchStatement, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.parse_yul_switch_statement_0_4_11(stream)
+            .with_kind(RuleKind::YulSwitchStatement)
     }
 }

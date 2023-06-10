@@ -14,8 +14,7 @@ Tree:
               - ArgumentList (Rule): # 1..13 "(interested)"
                   - OpenParen (Token): "(" # 1..2
                   - PositionalArgumentList (Rule): # 2..12 "interested"
-                      - _SEPARATEDBY (Rule): # 2..12 "interested"
-                          - Expression (Rule): # 2..12 "interested"
-                              - PrimaryExpression (Rule): # 2..12 "interested"
-                                  - Identifier (Token): "interested" # 2..12
+                      - Expression (Rule): # 2..12 "interested"
+                          - PrimaryExpression (Rule): # 2..12 "interested"
+                              - Identifier (Token): "interested" # 2..12
                   - CloseParen (Token): ")" # 12..13

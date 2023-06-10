@@ -53,60 +53,32 @@ impl Node {
             }
         }
     }
+}
 
-    #[allow(dead_code)]
+#[allow(dead_code)]
+impl Node {
     pub(crate) fn rule(kind: RuleKind, children: Vec<Rc<Self>>) -> Rc<Self> {
-        let mut flattened_children: Vec<Rc<Self>> = Vec::new();
-        for child in children.into_iter() {
-            match child.as_ref() {
-                Node::Rule { children, .. } if children.is_empty() => {}
-                Node::Rule {
-                    kind: RuleKind::_SEQUENCE,
-                    children,
-                    ..
-                }
-                | Node::Rule {
-                    kind: RuleKind::_DELIMITEDBY,
-                    children,
-                    ..
-                }
-                | Node::Rule {
-                    kind: RuleKind::_TERMINATEDBY,
-                    children,
-                    ..
-                } => flattened_children.extend(children.iter().cloned()),
-                _ => flattened_children.push(child.clone()),
-            }
-        }
-        let range = if flattened_children.is_empty() {
+        let range = if children.is_empty() {
             Default::default()
         } else {
             Range {
-                start: flattened_children
-                    .first()
-                    .unwrap()
-                    .range_including_trivia()
-                    .start,
-                end: flattened_children
-                    .last()
-                    .unwrap()
-                    .range_including_trivia()
-                    .end,
+                start: children.first().unwrap().range_including_trivia().start,
+                end: children.last().unwrap().range_including_trivia().end,
             }
         };
-        return Rc::new(Self::Rule {
+
+        return Rc::new(Node::Rule {
             kind,
             range,
-            children: flattened_children,
+            children,
         });
     }
 
-    #[allow(dead_code)]
     pub(crate) fn token(
         kind: TokenKind,
         range: TextRange,
-        leading_trivia: Option<Rc<Self>>,
-        trailing_trivia: Option<Rc<Self>>,
+        leading_trivia: Option<Rc<Node>>,
+        trailing_trivia: Option<Rc<Node>>,
     ) -> Rc<Self> {
         let mut trivia = vec![];
         if let Some(leading_trivia) = leading_trivia {
@@ -115,40 +87,71 @@ impl Node {
         if let Some(trailing_trivia) = trailing_trivia {
             trivia.push(trailing_trivia)
         }
-        Rc::new(Self::Token {
+
+        return Rc::new(Node::Token {
             kind,
             range,
             trivia,
-        })
+        });
+    }
+}
+
+pub(crate) enum NodeBuilder {
+    Empty,
+    Single { node: Rc<Node> },
+    Multiple { nodes: Vec<Rc<Node>> },
+}
+
+#[allow(dead_code)]
+impl NodeBuilder {
+    pub(crate) fn empty() -> Self {
+        return Self::Empty;
     }
 
-    #[allow(dead_code)]
-    pub(crate) fn top_level_rule(kind: RuleKind, node: Rc<Self>) -> Rc<Self> {
-        match node.as_ref() {
-            Self::Rule {
-                kind: RuleKind::_SEQUENCE,
-                range,
-                children,
-            }
-            | Self::Rule {
-                kind: RuleKind::_DELIMITEDBY,
-                range,
-                children,
-            }
-            | Self::Rule {
-                kind: RuleKind::_TERMINATEDBY,
-                range,
-                children,
-            } => Rc::new(Self::Rule {
-                kind,
-                range: range.clone(),
-                children: children.clone(),
-            }),
-            _ => Rc::new(Self::Rule {
-                kind,
-                range: node.range(),
-                children: vec![node],
-            }),
+    pub(crate) fn single(node: Rc<Node>) -> Self {
+        return Self::Single { node };
+    }
+
+    pub(crate) fn multiple(builders: Vec<Self>) -> Self {
+        if builders.is_empty() {
+            return Self::Empty;
+        } else if builders.len() == 1 {
+            return builders.into_iter().next().unwrap();
         }
+
+        let mut nodes = vec![];
+
+        for builder in builders {
+            match builder {
+                Self::Empty => {}
+                Self::Single { node: other } => nodes.push(other),
+                Self::Multiple { nodes: mut other } => nodes.append(&mut other),
+            }
+        }
+
+        if nodes.is_empty() {
+            Self::Empty
+        } else {
+            Self::Multiple { nodes }
+        }
+    }
+
+    pub(crate) fn with_kind(self, kind: RuleKind) -> Self {
+        let children = match self {
+            Self::Empty => vec![],
+            Self::Single { node } => vec![node],
+            Self::Multiple { nodes } => nodes,
+        };
+
+        return Self::Single {
+            node: Node::rule(kind, children),
+        };
+    }
+
+    pub(crate) fn build(self) -> Rc<Node> {
+        return match self {
+            Self::Single { node } => node,
+            _ => panic!("cannot build unnamed nodes"),
+        };
     }
 }

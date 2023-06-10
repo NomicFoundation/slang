@@ -14,6 +14,6 @@ Tree:
               - AsKeyword (Token): "as" # 9..11
               - Identifier (Token): "foo" # 12..15
           - FromKeyword (Token): "from" # 16..20
-          - ImportPath (Rule): # 21..26 '"bar"'
+          - ImportPath (Rule): # 20..26 ' "bar"'
               - AsciiStringLiteral (Token): '"bar"' # 21..26
       - Semicolon (Token): ";" # 26..27

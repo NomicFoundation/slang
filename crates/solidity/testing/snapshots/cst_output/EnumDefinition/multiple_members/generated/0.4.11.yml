@@ -14,10 +14,9 @@ Tree:
       - EnumKeyword (Token): "enum" # 0..4
       - Identifier (Token): "Foo" # 5..8
       - OpenBrace (Token): "{" # 9..10
-      - _SEPARATEDBY (Rule): # 11..40 "    Bar1,\n    Bar2,\n    Bar3\n"
-          - Identifier (Token): "Bar1" # 15..19
-          - Comma (Token): "," # 19..20
-          - Identifier (Token): "Bar2" # 25..29
-          - Comma (Token): "," # 29..30
-          - Identifier (Token): "Bar3" # 35..39
+      - Identifier (Token): "Bar1" # 15..19
+      - Comma (Token): "," # 19..20
+      - Identifier (Token): "Bar2" # 25..29
+      - Comma (Token): "," # 29..30
+      - Identifier (Token): "Bar3" # 35..39
       - CloseBrace (Token): "}" # 40..41

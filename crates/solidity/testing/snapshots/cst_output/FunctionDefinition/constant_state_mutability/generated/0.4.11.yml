@@ -12,9 +12,8 @@ Tree:
       - ParameterList (Rule): # 10..12 "()"
           - OpenParen (Token): "(" # 10..11
           - CloseParen (Token): ")" # 11..12
-      - _REPEATED (Rule): # 13..21 "constant"
-          - FunctionAttribute (Rule): # 13..21 "constant"
-              - ConstantKeyword (Token): "constant" # 13..21
+      - FunctionAttribute (Rule): # 12..21 " constant"
+          - ConstantKeyword (Token): "constant" # 13..21
       - Block (Rule): # 21..24 " {}"
           - OpenBrace (Token): "{" # 22..23
           - CloseBrace (Token): "}" # 23..24

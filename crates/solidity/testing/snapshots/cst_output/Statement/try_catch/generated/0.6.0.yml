@@ -9,10 +9,10 @@ Tree:
   - Statement (Rule): # 0..21 "try a.b() {} catch {}"
       - TryStatement (Rule): # 0..21 "try a.b() {} catch {}"
           - TryKeyword (Token): "try" # 0..3
-          - Expression (Rule): # 4..9 "a.b()"
-              - FunctionCallExpression (Rule): # 4..9 "a.b()"
-                  - MemberAccessExpression (Rule): # 4..7 "a.b"
-                      - PrimaryExpression (Rule): # 4..5 "a"
+          - Expression (Rule): # 3..9 " a.b()"
+              - FunctionCallExpression (Rule): # 3..9 " a.b()"
+                  - MemberAccessExpression (Rule): # 3..7 " a.b"
+                      - PrimaryExpression (Rule): # 3..5 " a"
                           - Identifier (Token): "a" # 4..5
                       - MemberAccessOperator (Rule): # 5..7 ".b"
                           - Period (Token): "." # 5..6
@@ -24,9 +24,8 @@ Tree:
           - Block (Rule): # 9..12 " {}"
               - OpenBrace (Token): "{" # 10..11
               - CloseBrace (Token): "}" # 11..12
-          - _REPEATED (Rule): # 12..21 " catch {}"
-              - CatchClause (Rule): # 12..21 " catch {}"
-                  - CatchKeyword (Token): "catch" # 13..18
-                  - Block (Rule): # 18..21 " {}"
-                      - OpenBrace (Token): "{" # 19..20
-                      - CloseBrace (Token): "}" # 20..21
+          - CatchClause (Rule): # 12..21 " catch {}"
+              - CatchKeyword (Token): "catch" # 13..18
+              - Block (Rule): # 18..21 " {}"
+                  - OpenBrace (Token): "{" # 19..20
+                  - CloseBrace (Token): "}" # 20..21
