@@ -17,6 +17,7 @@ Tree:
               - ContractKeyword (Token): "contract" # 0..8
               - Identifier (Token): "X" # 9..10
               - OpenBrace (Token): "{" # 11..12
+              - ContractBodyElements (Rule): [] # 12..12
               - CloseBrace (Token): "}" # 13..14
       - EndOfFileTrivia (Rule): # 15..71 "    \n// spaces before this\n\n/* new lines after thi..."
           - SingleLineComment (Token): "// spaces before this" # 20..41

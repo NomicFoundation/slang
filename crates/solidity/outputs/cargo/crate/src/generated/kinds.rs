@@ -233,6 +233,7 @@ pub enum RuleKind {
     ConstructorDefinition,
     ContinueStatement,
     ContractBodyElement,
+    ContractBodyElements,
     ContractDefinition,
     DataLocation,
     Definition,

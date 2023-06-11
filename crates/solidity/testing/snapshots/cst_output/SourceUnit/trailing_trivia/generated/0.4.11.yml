@@ -19,6 +19,7 @@ Tree:
               - ContractKeyword (Token): "contract" # 0..8
               - Identifier (Token): "First" # 9..14
               - OpenBrace (Token): "{" # 15..16
+              - ContractBodyElements (Rule): [] # 16..16
               - CloseBrace (Token): "}" # 16..17
       - Definition (Rule): # 18..148 "\n\n// Newlines both before and after this comment s..."
           - ContractDefinition (Rule): # 18..148 "\n\n// Newlines both before and after this comment s..."
@@ -28,4 +29,5 @@ Tree:
                   - Contents: "contract" # 129..137
               - Identifier (Token): "Second" # 138..144
               - OpenBrace (Token): "{" # 145..146
+              - ContractBodyElements (Rule): [] # 146..146
               - CloseBrace (Token): "}" # 146..147
