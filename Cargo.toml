@@ -39,9 +39,9 @@ indexmap = { version = "1.9.2", features = ["serde"] }
 indicatif = { version = "0.17.3" }
 Inflector = { version = "0.11.4" }
 itertools = { version = "0.10.5" }
-napi = { version = "2.12.1", features = ["compat-mode", "napi8", "serde-json"] }
+napi = { version = "2.13.1", features = ["compat-mode", "napi8", "serde-json"] }
 napi-build = { version = "2.0.1" }
-napi-derive = { version = "2.12.2" }
+napi-derive = { version = "2.13.0" }
 proc-macro2 = { version = "1.0.53" }
 quote = { version = "1.0.26" }
 rayon = { version = "1.7.0" }

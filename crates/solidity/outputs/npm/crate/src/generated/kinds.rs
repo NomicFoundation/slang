@@ -3,7 +3,7 @@
 use napi::bindgen_prelude::*;
 use napi_derive::napi;
 use serde::Serialize;
-#[napi]
+#[napi(string_enum)]
 #[derive(
     Debug,
     PartialEq,
@@ -185,7 +185,7 @@ pub enum TokenKind {
     YulKeyword,
     YulReservedKeyword,
 }
-#[napi]
+#[napi(string_enum)]
 #[derive(
     Debug,
     PartialEq,
@@ -354,7 +354,7 @@ pub enum RuleKind {
     YulStatement,
     YulSwitchStatement,
 }
-#[napi]
+#[napi(string_enum)]
 #[derive(
     Debug,
     PartialEq,
