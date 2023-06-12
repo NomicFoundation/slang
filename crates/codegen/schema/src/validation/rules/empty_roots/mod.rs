@@ -36,7 +36,7 @@ impl Visitor for EmptyRoots {
         _location: &LocationRef,
         _reporter: &mut Reporter,
     ) -> bool {
-        if production.name() == &self.language.root_production {
+        if production.name == self.language.root_production {
             // Skip, as it is allowed to be empty.
             return false;
         }

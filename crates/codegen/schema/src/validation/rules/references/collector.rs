@@ -31,7 +31,7 @@ impl Visitor for Collector {
         location: &LocationRef,
         _reporter: &mut Reporter,
     ) -> bool {
-        self.metadata.add_production(&production.name(), location);
+        self.metadata.add_production(&production.name, location);
         self.current_production = Some(production.to_owned());
 
         return true;
@@ -43,8 +43,8 @@ impl Visitor for Collector {
         _location: &LocationRef,
         _reporter: &mut Reporter,
     ) -> bool {
-        let production = self.current_production.as_ref().unwrap().name();
-        self.metadata.add_version(production, version_set);
+        let production = self.current_production.as_ref().unwrap();
+        self.metadata.add_version(&production.name, version_set);
 
         return false;
     }

@@ -835,12 +835,6 @@ impl Language {
                 Language::scan_hex_byte_escape,
                 TokenKind::HexByteEscape,
             ),
-            ProductionKind::HexCharacter => call_scanner(
-                self,
-                input,
-                Language::scan_hex_character,
-                TokenKind::HexCharacter,
-            ),
             ProductionKind::HexLiteral => call_scanner(
                 self,
                 input,
@@ -1417,9 +1411,6 @@ impl Language {
             ProductionKind::ContinueStatement => {
                 call_parser(self, input, Language::parse_continue_statement)
             }
-            ProductionKind::ContractBodyElement => {
-                call_parser(self, input, Language::parse_contract_body_element)
-            }
             ProductionKind::ContractDefinition => {
                 call_parser(self, input, Language::parse_contract_definition)
             }
@@ -1673,9 +1664,6 @@ impl Language {
             }
             ProductionKind::VersionPragma => {
                 call_parser(self, input, Language::parse_version_pragma)
-            }
-            ProductionKind::VersionPragmaExpression => {
-                call_parser(self, input, Language::parse_version_pragma_expression)
             }
             ProductionKind::VersionPragmaSpecifier => {
                 call_parser(self, input, Language::parse_version_pragma_specifier)

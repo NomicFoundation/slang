@@ -3,7 +3,7 @@ use std::{
     path::PathBuf,
 };
 
-use codegen_schema::types::LanguageDefinition;
+use codegen_schema::types::LanguageDefinitionRef;
 use codegen_utils::context::CodegenContext;
 use inflector::Inflector;
 use proc_macro2::{Ident, TokenStream};
@@ -34,7 +34,11 @@ impl VersionedFunctionBody {
                 let version_name = version.to_string().replace(".", "_");
                 let per_version_function_name = format_ident!( "{name}_{version_name}",);
                 let function = quote! {
-                    #[allow(unused_assignments, unused_parens)]
+                    #[
+                        // Inlined scanners are not always inlined in codegen:
+                        // https://github.com/NomicFoundation/slang/issues/365
+                        allow(dead_code)
+                    ]
                     fn #per_version_function_name(&self, stream: &mut Stream) -> #return_type { #body }
                 };
                 format!("{comment}\n{function}")
@@ -116,6 +120,7 @@ impl VersionedFunctionBody {
 
 #[derive(Clone, Debug)]
 pub struct CodeGenerator {
+    pub language: LanguageDefinitionRef,
     pub first_version: Version,
 
     pub token_kinds: BTreeMap<String, Option<String>>,
@@ -128,13 +133,17 @@ pub struct CodeGenerator {
 }
 
 impl CodeGenerator {
-    pub fn new(language: &LanguageDefinition) -> Self {
+    pub fn new(language: &LanguageDefinitionRef) -> Self {
         Self {
+            language: language.clone(),
             first_version: language.versions.first().unwrap().clone(),
+
             token_kinds: Default::default(),
             scanners: Default::default(),
+
             rule_kinds: Default::default(),
             parsers: Default::default(),
+
             errors: Default::default(),
         }
     }
@@ -237,6 +246,11 @@ impl CodeGenerator {
                 if scanner.is_defined_for_all_versions() {
                     let internal_function = quote! {
                         #[inline]
+                        #[
+                            // Inlined scanners are not always inlined in codegen:
+                            // https://github.com/NomicFoundation/slang/issues/365
+                            allow(dead_code)
+                        ]
                         pub(crate) fn #internal_function_name(&self, stream: &mut Stream) -> bool {
                             self.#dispatch_function_name(stream)
                         }
@@ -246,12 +260,22 @@ impl CodeGenerator {
                     let external_function_name = format_ident!("maybe_scan_{name}", name = name.to_snake_case());
                     let external_function = quote! {
                         #[inline]
+                        #[
+                            // Inlined scanners are not always inlined in codegen:
+                            // https://github.com/NomicFoundation/slang/issues/365
+                            allow(dead_code)
+                        ]
                         pub(crate) fn #external_function_name(&self, stream: &mut Stream) -> Option<bool> {
                             self.#dispatch_function_name(stream)
                         }
                     };
                     let internal_function = quote! {
                         #[inline]
+                        #[
+                            // Inlined scanners are not always inlined in codegen:
+                            // https://github.com/NomicFoundation/slang/issues/365
+                            allow(dead_code)
+                        ]
                         pub(crate) fn #internal_function_name(&self, stream: &mut Stream) -> bool {
                             self.#dispatch_function_name(stream).expect("Validation should have checked that references are valid between versions")
                         }
@@ -264,7 +288,9 @@ impl CodeGenerator {
     }
 
     pub fn scanner_invocations(&self) -> TokenStream {
-        let invocations = self.scanners.iter().map(|(name, scanner)| {
+        let invocations = self.scanners.iter()
+        .filter(|(name, _)| !self.language.productions[*name].inlined)
+        .map(|(name, scanner)| {
             let production_kind = format_ident!("{name}");
             let token_kind = format_ident!("{name}");
             if scanner.is_defined_for_all_versions() {
@@ -378,11 +404,18 @@ impl CodeGenerator {
                 let kind = format_ident!("{name}");
                 let internal_function_name = format_ident!("parse_{name}", name = name.to_snake_case());
                 let (functions, dispatch_function_name) = parser.to_function_body(&internal_function_name, quote! {ParserResult});
+
+                let kind_wrapper = if  self.language.productions[name].inlined {
+                    None
+                } else {
+                    Some(quote! { .with_kind(RuleKind::#kind) })
+                };
+
                 if parser.is_defined_for_all_versions() {
                     let internal_function = quote! {
                         #[inline]
                         pub(crate) fn #internal_function_name(&self, stream: &mut Stream) -> ParserResult {
-                            self.#dispatch_function_name(stream).with_kind(RuleKind::#kind)
+                            self.#dispatch_function_name(stream) #kind_wrapper
                         }
                     };
                     format!("{functions}\n\n{internal_function}")
@@ -390,7 +423,7 @@ impl CodeGenerator {
                     let external_function_name = format_ident!("maybe_parse_{name}", name = name.to_snake_case());
                     let external_function = quote! {
                         pub(crate) fn #external_function_name(&self, stream: &mut Stream) -> Option<ParserResult> {
-                            self.#dispatch_function_name(stream).map(|body| body.with_kind(RuleKind::#kind))
+                            self.#dispatch_function_name(stream).map(|body| body #kind_wrapper)
                         }
                     };
                     let internal_function = quote! {
@@ -407,7 +440,9 @@ impl CodeGenerator {
     }
 
     pub fn parser_invocations(&self) -> TokenStream {
-        let invocations = self.parsers.iter().map(|(name, parser)| {
+        let invocations = self.parsers.iter()
+        .filter(|(name, _)| !self.language.productions[*name].inlined)
+        .map(|(name, parser)| {
             let production_kind = format_ident!("{name}");
             if parser.is_defined_for_all_versions() {
                 let function_name = format_ident!("parse_{name}", name = name.to_snake_case());
@@ -443,12 +478,15 @@ impl CodeGenerator {
 
     pub fn production_kinds(&self) -> TokenStream {
         let mut kinds: Vec<_> = self
-            .scanners
-            .iter()
-            .chain(self.parsers.iter())
-            .map(|(name, _)| format_ident!("{name}"))
+            .language
+            .productions
+            .values()
+            .filter(|production| !production.inlined)
+            .map(|production| format_ident!("{}", production.name))
             .collect();
+
         kinds.sort();
+
         quote! {
             pub enum ProductionKind {
                 #(#kinds),*

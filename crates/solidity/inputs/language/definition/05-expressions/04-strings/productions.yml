@@ -57,6 +57,7 @@
 
 - name: "HexCharacter"
   kind: "Scanner"
+  inlined: true
   unversioned:
     choice:
       - range:

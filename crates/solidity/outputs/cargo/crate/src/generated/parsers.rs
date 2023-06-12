@@ -233,7 +233,7 @@ impl Language {
     }
     // ABICoderPragma = «AbicoderKeyword» «Identifier»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_abi_coder_pragma_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
@@ -282,7 +282,7 @@ impl Language {
 
     // AddSubOperator = «Plus» | «Minus»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_add_sub_operator_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let start_position = stream.position();
@@ -310,7 +310,7 @@ impl Language {
 
     // AddressType = «AddressKeyword» «PayableKeyword»?;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_address_type_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
@@ -371,7 +371,7 @@ impl Language {
 
     // AndOperator = «AmpersandAmpersand»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_and_operator_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         self.parse_token_with_trivia(
             stream,
@@ -388,7 +388,7 @@ impl Language {
 
     // ArgumentList = «OpenParen» (PositionalArgumentList | NamedArgumentList)? «CloseParen»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_argument_list_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         {
             match self.parse_token_with_trivia(stream, Self::scan_open_paren, TokenKind::OpenParen)
@@ -463,7 +463,7 @@ impl Language {
 
     // ArrayLiteral = «OpenBracket» Expression («Comma» Expression)* «CloseBracket»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_array_literal_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         {
             match self.parse_token_with_trivia(
@@ -539,7 +539,7 @@ impl Language {
 
     // AssemblyFlags = «OpenParen» «DoubleQuotedAsciiStringLiteral» («Comma» «DoubleQuotedAsciiStringLiteral»)* «CloseParen»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_assembly_flags_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         {
             match self.parse_token_with_trivia(stream, Self::scan_open_paren, TokenKind::OpenParen)
@@ -682,7 +682,7 @@ impl Language {
 
     // AssemblyStatement = «AssemblyKeyword» «Evmasm»? AssemblyFlags? YulBlock;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_assembly_statement_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
@@ -784,7 +784,7 @@ impl Language {
     //                    | «SlashEqual»
     //                    | «PercentEqual»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_assignment_operator_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let start_position = stream.position();
@@ -899,7 +899,7 @@ impl Language {
 
     // AsteriskImport = «Asterisk» ImportAlias «FromKeyword» ImportPath;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_asterisk_import_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
@@ -970,7 +970,7 @@ impl Language {
 
     // BitAndOperator = «Ampersand»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_bit_and_operator_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         self.parse_token_with_trivia(stream, Self::scan_ampersand, TokenKind::Ampersand)
     }
@@ -983,7 +983,7 @@ impl Language {
 
     // BitOrOperator = «Bar»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_bit_or_operator_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         self.parse_token_with_trivia(stream, Self::scan_bar, TokenKind::Bar)
     }
@@ -996,7 +996,7 @@ impl Language {
 
     // BitXOrOperator = «Caret»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_bit_x_or_operator_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         self.parse_token_with_trivia(stream, Self::scan_caret, TokenKind::Caret)
     }
@@ -1010,7 +1010,7 @@ impl Language {
     // (* v0.4.11 *)
     // Block = «OpenBrace» Statement* «CloseBrace»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_block_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         {
             match self.parse_token_with_trivia(stream, Self::scan_open_brace, TokenKind::OpenBrace)
@@ -1072,7 +1072,7 @@ impl Language {
     // (* v0.8.0 *)
     // Block = «OpenBrace» (Statement | UncheckedBlock)* «CloseBrace»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_block_0_8_0(&self, stream: &mut Stream) -> ParserResult {
         {
             match self.parse_token_with_trivia(stream, Self::scan_open_brace, TokenKind::OpenBrace)
@@ -1161,7 +1161,7 @@ impl Language {
 
     // BooleanLiteral = «TrueKeyword» | «FalseKeyword»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_boolean_literal_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let start_position = stream.position();
@@ -1197,7 +1197,7 @@ impl Language {
 
     // BreakStatement = «BreakKeyword» «Semicolon»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_break_statement_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         {
             match self.parse_token_with_trivia(
@@ -1240,7 +1240,7 @@ impl Language {
     // (* v0.6.0 *)
     // CatchClause = «CatchKeyword» («Identifier»? ParameterList)? Block;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_catch_clause_0_6_0(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
@@ -1367,7 +1367,7 @@ impl Language {
 
     // ConditionalOperator = «QuestionMark» Expression «Colon» Expression;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_conditional_operator_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
@@ -1435,7 +1435,7 @@ impl Language {
 
     // ConstantDefinition = TypeName «ConstantKeyword» «Identifier» «Equal» Expression «Semicolon»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_constant_definition_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         {
             match loop {
@@ -1549,7 +1549,7 @@ impl Language {
     // (* v0.4.22 *)
     // ConstructorAttribute = ModifierInvocation | «InternalKeyword» | «PayableKeyword» | «PublicKeyword»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_constructor_attribute_0_4_22(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let start_position = stream.position();
@@ -1616,7 +1616,7 @@ impl Language {
     // (* v0.4.22 *)
     // ConstructorDefinition = «ConstructorKeyword» ParameterList ConstructorAttribute* Block;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_constructor_definition_0_4_22(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
@@ -1718,7 +1718,7 @@ impl Language {
 
     // ContinueStatement = «ContinueKeyword» «Semicolon»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_continue_statement_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         {
             match self.parse_token_with_trivia(
@@ -1769,7 +1769,7 @@ impl Language {
     //                     | ErrorDefinition
     //                     | StateVariableDeclaration;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_contract_body_element_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let start_position = stream.position();
@@ -1836,7 +1836,7 @@ impl Language {
     //                     | ErrorDefinition
     //                     | StateVariableDeclaration;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_contract_body_element_0_4_22(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let start_position = stream.position();
@@ -1909,7 +1909,7 @@ impl Language {
     //                     | ErrorDefinition
     //                     | StateVariableDeclaration;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_contract_body_element_0_6_0(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let start_position = stream.position();
@@ -1988,7 +1988,7 @@ impl Language {
     //                     | ErrorDefinition
     //                     | StateVariableDeclaration;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_contract_body_element_0_8_8(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let start_position = stream.position();
@@ -2073,13 +2073,12 @@ impl Language {
     #[inline]
     pub(crate) fn parse_contract_body_element(&self, stream: &mut Stream) -> ParserResult {
         self.dispatch_parse_contract_body_element(stream)
-            .with_kind(RuleKind::ContractBodyElement)
     }
 
     // (* v0.4.11 *)
     // ContractDefinition = «ContractKeyword» «Identifier» InheritanceSpecifierList? «OpenBrace» ContractBodyElement* «CloseBrace»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_contract_definition_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
@@ -2216,7 +2215,7 @@ impl Language {
     // (* v0.6.0 *)
     // ContractDefinition = «AbstractKeyword»? «ContractKeyword» «Identifier» InheritanceSpecifierList? «OpenBrace» ContractBodyElement* «CloseBrace»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_contract_definition_0_6_0(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
@@ -2396,7 +2395,7 @@ impl Language {
     // (* v0.4.11 *)
     // DataLocation = «MemoryKeyword» | «StorageKeyword»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_data_location_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let start_position = stream.position();
@@ -2427,7 +2426,7 @@ impl Language {
     // (* v0.5.0 *)
     // DataLocation = «MemoryKeyword» | «StorageKeyword» | «CalldataKeyword»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_data_location_0_5_0(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let start_position = stream.position();
@@ -2488,7 +2487,7 @@ impl Language {
     //            | LibraryDefinition
     //            | StructDefinition;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_definition_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let start_position = stream.position();
@@ -2549,7 +2548,7 @@ impl Language {
     //            | StructDefinition
     //            | UserDefinedValueTypeDefinition;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_definition_0_8_8(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let start_position = stream.position();
@@ -2620,7 +2619,7 @@ impl Language {
 
     // DeleteStatement = «DeleteKeyword» Expression «Semicolon»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_delete_statement_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         {
             match loop {
@@ -2690,7 +2689,7 @@ impl Language {
 
     // Directive = PragmaDirective | ImportDirective | UsingDirective;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_directive_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let start_position = stream.position();
@@ -2723,7 +2722,7 @@ impl Language {
 
     // DoWhileStatement = «DoKeyword» Statement «WhileKeyword» «OpenParen» Expression «CloseParen» «Semicolon»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_do_while_statement_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         {
             match loop {
@@ -2867,7 +2866,7 @@ impl Language {
     //                | «SignedFixedType»
     //                | «UnsignedFixedType»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_elementary_type_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let start_position = stream.position();
@@ -2966,7 +2965,7 @@ impl Language {
     //                | «SignedFixedType»
     //                | «UnsignedFixedType»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_elementary_type_0_8_0(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let start_position = stream.position();
@@ -3066,7 +3065,7 @@ impl Language {
     // (* v0.4.21 *)
     // EmitStatement = «EmitKeyword» IdentifierPath ArgumentList «Semicolon»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_emit_statement_0_4_21(&self, stream: &mut Stream) -> ParserResult {
         {
             match loop {
@@ -3160,7 +3159,7 @@ impl Language {
 
     // EndOfFileTrivia = («Whitespace» | «EndOfLine» | «MultilineComment» | «SingleLineComment»)+;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_end_of_file_trivia_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut result = Vec::new();
@@ -3224,7 +3223,7 @@ impl Language {
 
     // EnumDefinition = «EnumKeyword» «Identifier» «OpenBrace» («Identifier» («Comma» «Identifier»)*)? «CloseBrace»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_enum_definition_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
@@ -3363,7 +3362,7 @@ impl Language {
 
     // EqualityComparisonOperator = «EqualEqual» | «BangEqual»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_equality_comparison_operator_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let start_position = stream.position();
@@ -3396,7 +3395,7 @@ impl Language {
 
     // ErrorDefinition = «ErrorKeyword» «Identifier» «OpenParen» (ErrorParameter («Comma» ErrorParameter)*)? «CloseParen» «Semicolon»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_error_definition_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         {
             match loop {
@@ -3558,7 +3557,7 @@ impl Language {
 
     // ErrorParameter = TypeName «Identifier»?;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_error_parameter_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
@@ -3615,7 +3614,7 @@ impl Language {
 
     // EventDefinition = «EventKeyword» «Identifier» «OpenParen» (EventParameter («Comma» EventParameter)*)? «CloseParen» «AnonymousKeyword»? «Semicolon»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_event_definition_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         {
             match loop {
@@ -3806,7 +3805,7 @@ impl Language {
 
     // EventParameter = TypeName «IndexedKeyword»? «Identifier»?;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_event_parameter_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
@@ -3890,7 +3889,7 @@ impl Language {
 
     // ExperimentalPragma = «ExperimentalKeyword» «Identifier»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_experimental_pragma_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
@@ -3939,7 +3938,7 @@ impl Language {
 
     // ExponentiationOperator = «AsteriskAsterisk»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_exponentiation_operator_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         self.parse_token_with_trivia(
             stream,
@@ -3993,7 +3992,7 @@ impl Language {
     // MemberAccessExpression = Expression MemberAccessOperator;
     // IndexAccessExpression = Expression IndexAccessOperator;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_expression_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         {
             enum Pratt {
@@ -4445,7 +4444,7 @@ impl Language {
     // MemberAccessExpression = Expression MemberAccessOperator;
     // IndexAccessExpression = Expression IndexAccessOperator;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_expression_0_6_0(&self, stream: &mut Stream) -> ParserResult {
         {
             enum Pratt {
@@ -4874,7 +4873,7 @@ impl Language {
 
     // ExpressionStatement = Expression «Semicolon»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_expression_statement_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         {
             match self.parse_expression(stream) {
@@ -4919,7 +4918,7 @@ impl Language {
     //                           | «ViewKeyword»
     //                           | «VirtualKeyword»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_fallback_function_attribute_0_6_0(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let start_position = stream.position();
@@ -5012,7 +5011,7 @@ impl Language {
     // (* v0.6.0 *)
     // FallbackFunctionDefinition = «FallbackKeyword» ParameterList FallbackFunctionAttribute* («ReturnsKeyword» ParameterList)? («Semicolon» | Block);
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_fallback_function_definition_0_6_0(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
@@ -5195,7 +5194,7 @@ impl Language {
 
     // ForStatement = «ForKeyword» «OpenParen» (SimpleStatement | «Semicolon») (ExpressionStatement | «Semicolon») Expression? «CloseParen» Statement;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_for_statement_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
@@ -5393,7 +5392,7 @@ impl Language {
     //                   | «PureKeyword»
     //                   | «ViewKeyword»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_function_attribute_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let start_position = stream.position();
@@ -5496,7 +5495,7 @@ impl Language {
     //                   | «PureKeyword»
     //                   | «ViewKeyword»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_function_attribute_0_5_0(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let start_position = stream.position();
@@ -5591,7 +5590,7 @@ impl Language {
     //                   | «ViewKeyword»
     //                   | «VirtualKeyword»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_function_attribute_0_6_0(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let start_position = stream.position();
@@ -5702,7 +5701,7 @@ impl Language {
     // (* v0.4.11 *)
     // FunctionCallOperator = ArgumentList;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_function_call_operator_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
@@ -5727,7 +5726,7 @@ impl Language {
     // (* v0.6.2 *)
     // FunctionCallOperator = FunctionCallOptions* ArgumentList;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_function_call_operator_0_6_2(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
@@ -5782,7 +5781,7 @@ impl Language {
     // (* v0.8.0 *)
     // FunctionCallOperator = FunctionCallOptions? ArgumentList;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_function_call_operator_0_8_0(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
@@ -5846,7 +5845,7 @@ impl Language {
     // (* v0.6.2 *)
     // FunctionCallOptions = «OpenBrace» (NamedArgument («Comma» NamedArgument)*)? «CloseBrace»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_function_call_options_0_6_2(&self, stream: &mut Stream) -> ParserResult {
         {
             match self.parse_token_with_trivia(stream, Self::scan_open_brace, TokenKind::OpenBrace)
@@ -5947,7 +5946,7 @@ impl Language {
 
     // FunctionDefinition = «FunctionKeyword» («Identifier» | «FallbackKeyword» | «ReceiveKeyword») ParameterList FunctionAttribute* («ReturnsKeyword» ParameterList)? («Semicolon» | Block);
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_function_definition_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
@@ -6154,7 +6153,7 @@ impl Language {
 
     // FunctionType = «FunctionKeyword» ParameterList («InternalKeyword» | «ExternalKeyword» | «PrivateKeyword» | «PublicKeyword» | «PureKeyword» | «ViewKeyword» | «PayableKeyword»)* («ReturnsKeyword» ParameterList)?;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_function_type_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
@@ -6354,7 +6353,7 @@ impl Language {
 
     // IdentifierPath = «Identifier» («Period» «Identifier»)*;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_identifier_path_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut result = Vec::new();
@@ -6396,7 +6395,7 @@ impl Language {
 
     // IfStatement = «IfKeyword» «OpenParen» Expression «CloseParen» Statement («ElseKeyword» Statement)?;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_if_statement_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
@@ -6545,7 +6544,7 @@ impl Language {
 
     // ImportAlias = «AsKeyword» «Identifier»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_import_alias_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
@@ -6594,7 +6593,7 @@ impl Language {
 
     // ImportDirective = «ImportKeyword» (SimpleImport | AsteriskImport | SelectiveImport) «Semicolon»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_import_directive_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         {
             match loop {
@@ -6684,7 +6683,7 @@ impl Language {
 
     // ImportPath = «AsciiStringLiteral»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_import_path_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         self.parse_token_with_trivia(
             stream,
@@ -6701,7 +6700,7 @@ impl Language {
 
     // IndexAccessOperator = «OpenBracket» ((Expression («Colon» Expression?)?) | («Colon» Expression?)) «CloseBracket»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_index_access_operator_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         {
             match self.parse_token_with_trivia(
@@ -6907,7 +6906,7 @@ impl Language {
 
     // InheritanceSpecifier = IdentifierPath ArgumentList?;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_inheritance_specifier_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
@@ -6960,7 +6959,7 @@ impl Language {
 
     // InheritanceSpecifierList = «IsKeyword» InheritanceSpecifier («Comma» InheritanceSpecifier)*;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_inheritance_specifier_list_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
@@ -7030,7 +7029,7 @@ impl Language {
 
     // InterfaceDefinition = «InterfaceKeyword» «Identifier» InheritanceSpecifierList? «OpenBrace» ContractBodyElement* «CloseBrace»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_interface_definition_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
@@ -7170,7 +7169,7 @@ impl Language {
 
     // LeadingTrivia = («Whitespace» | «EndOfLine» | «MultilineComment» | «SingleLineComment»)+;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_leading_trivia_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut result = Vec::new();
@@ -7234,7 +7233,7 @@ impl Language {
 
     // LibraryDefinition = «LibraryKeyword» «Identifier» «OpenBrace» ContractBodyElement* «CloseBrace»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_library_definition_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
@@ -7352,7 +7351,7 @@ impl Language {
     // (* v0.4.11 *)
     // MappingKeyType = (ElementaryType | IdentifierPath);
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_mapping_key_type_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
@@ -7392,7 +7391,7 @@ impl Language {
     // (* v0.8.18 *)
     // MappingKeyType = (ElementaryType | IdentifierPath) «Identifier»?;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_mapping_key_type_0_8_18(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
@@ -7472,7 +7471,7 @@ impl Language {
 
     // MappingType = «MappingKeyword» «OpenParen» MappingKeyType «EqualGreaterThan» MappingValueType «CloseParen»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_mapping_type_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
@@ -7604,7 +7603,7 @@ impl Language {
     // (* v0.4.11 *)
     // MappingValueType = TypeName;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_mapping_value_type_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
@@ -7629,7 +7628,7 @@ impl Language {
     // (* v0.8.18 *)
     // MappingValueType = TypeName «Identifier»?;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_mapping_value_type_0_8_18(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
@@ -7694,7 +7693,7 @@ impl Language {
 
     // MemberAccessOperator = «Period» («Identifier» | «AddressKeyword»);
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_member_access_operator_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
@@ -7760,7 +7759,7 @@ impl Language {
     // (* v0.4.11 *)
     // ModifierAttribute = OverrideSpecifier;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_modifier_attribute_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         self.parse_override_specifier(stream)
     }
@@ -7768,7 +7767,7 @@ impl Language {
     // (* v0.6.0 *)
     // ModifierAttribute = OverrideSpecifier | «VirtualKeyword»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_modifier_attribute_0_6_0(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let start_position = stream.position();
@@ -7808,7 +7807,7 @@ impl Language {
 
     // ModifierDefinition = «ModifierKeyword» «Identifier» ParameterList? ModifierAttribute* («Semicolon» | Block);
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_modifier_definition_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
@@ -7942,7 +7941,7 @@ impl Language {
 
     // ModifierInvocation = IdentifierPath ArgumentList?;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_modifier_invocation_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
@@ -7995,7 +7994,7 @@ impl Language {
 
     // MulDivModOperator = «Asterisk» | «Slash» | «Percent»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_mul_div_mod_operator_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let start_position = stream.position();
@@ -8028,7 +8027,7 @@ impl Language {
 
     // NamedArgument = «Identifier» «Colon» Expression;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_named_argument_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
@@ -8085,7 +8084,7 @@ impl Language {
 
     // NamedArgumentList = «OpenBrace» (NamedArgument («Comma» NamedArgument)*)? «CloseBrace»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_named_argument_list_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         {
             match self.parse_token_with_trivia(stream, Self::scan_open_brace, TokenKind::OpenBrace)
@@ -8170,7 +8169,7 @@ impl Language {
 
     // NewExpression = «NewKeyword» TypeName;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_new_expression_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
@@ -8225,7 +8224,7 @@ impl Language {
     //            | «WeiKeyword»
     //            | «YearsKeyword»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_number_unit_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let start_position = stream.position();
@@ -8336,7 +8335,7 @@ impl Language {
     //            | «WeeksKeyword»
     //            | «WeiKeyword»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_number_unit_0_5_0(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let start_position = stream.position();
@@ -8439,7 +8438,7 @@ impl Language {
     //            | «WeeksKeyword»
     //            | «WeiKeyword»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_number_unit_0_6_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let start_position = stream.position();
@@ -8549,7 +8548,7 @@ impl Language {
     //            | «WeeksKeyword»
     //            | «WeiKeyword»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_number_unit_0_7_0(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let start_position = stream.position();
@@ -8652,7 +8651,7 @@ impl Language {
     // (* v0.4.11 *)
     // NumericExpression = («HexLiteral» | «DecimalLiteral») NumberUnit?;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_numeric_expression_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
@@ -8723,7 +8722,7 @@ impl Language {
     // (* v0.5.0 *)
     // NumericExpression = «HexLiteral» | («DecimalLiteral» NumberUnit?);
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_numeric_expression_0_5_0(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let start_position = stream.position();
@@ -8807,7 +8806,7 @@ impl Language {
 
     // OrOperator = «BarBar»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_or_operator_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         self.parse_token_with_trivia(stream, Self::scan_bar_bar, TokenKind::BarBar)
     }
@@ -8820,7 +8819,7 @@ impl Language {
 
     // OrderComparisonOperator = «LessThan» | «GreaterThan» | «LessThanEqual» | «GreaterThanEqual»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_order_comparison_operator_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let start_position = stream.position();
@@ -8870,7 +8869,7 @@ impl Language {
 
     // OverrideSpecifier = «OverrideKeyword» («OpenParen» IdentifierPath («Comma» IdentifierPath)* «CloseParen»)?;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_override_specifier_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
@@ -8990,7 +8989,7 @@ impl Language {
 
     // ParameterDeclaration = TypeName DataLocation? «Identifier»?;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_parameter_declaration_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
@@ -9070,7 +9069,7 @@ impl Language {
 
     // ParameterList = «OpenParen» (ParameterDeclaration («Comma» ParameterDeclaration)*)? «CloseParen»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_parameter_list_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         {
             match self.parse_token_with_trivia(stream, Self::scan_open_paren, TokenKind::OpenParen)
@@ -9155,7 +9154,7 @@ impl Language {
 
     // PayableType = «PayableKeyword»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_payable_type_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         self.parse_token_with_trivia(
             stream,
@@ -9172,7 +9171,7 @@ impl Language {
 
     // PositionalArgumentList = Expression («Comma» Expression)*;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_positional_argument_list_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut result = Vec::new();
@@ -9210,7 +9209,7 @@ impl Language {
 
     // PragmaDirective = «PragmaKeyword» (VersionPragma | ABICoderPragma | ExperimentalPragma) «Semicolon»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_pragma_directive_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         {
             match loop {
@@ -9308,7 +9307,7 @@ impl Language {
     //                   | ElementaryType
     //                   | «Identifier»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_primary_expression_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let start_position = stream.position();
@@ -9370,7 +9369,7 @@ impl Language {
     //                   | ElementaryType
     //                   | «Identifier»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_primary_expression_0_5_3(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let start_position = stream.position();
@@ -9447,7 +9446,7 @@ impl Language {
     //                          | «PayableKeyword»
     //                          | «VirtualKeyword»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_receive_function_attribute_0_6_0(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let start_position = stream.position();
@@ -9522,7 +9521,7 @@ impl Language {
     // (* v0.6.0 *)
     // ReceiveFunctionDefinition = «ReceiveKeyword» ParameterList ReceiveFunctionAttribute* («Semicolon» | Block);
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_receive_function_definition_0_6_0(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
@@ -9646,7 +9645,7 @@ impl Language {
 
     // ReturnStatement = «ReturnKeyword» Expression? «Semicolon»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_return_statement_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         {
             match loop {
@@ -9728,7 +9727,7 @@ impl Language {
 
     // RevertStatement = «RevertKeyword» IdentifierPath? ArgumentList «Semicolon»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_revert_statement_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         {
             match loop {
@@ -9821,7 +9820,7 @@ impl Language {
 
     // SelectiveImport = «OpenBrace» «Identifier» ImportAlias? («Comma» «Identifier» ImportAlias?)* «CloseBrace» «FromKeyword» ImportPath;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_selective_import_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
@@ -9992,7 +9991,7 @@ impl Language {
 
     // ShiftOperator = «LessThanLessThan» | «GreaterThanGreaterThan» | «GreaterThanGreaterThanGreaterThan»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_shift_operator_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let start_position = stream.position();
@@ -10037,7 +10036,7 @@ impl Language {
 
     // SimpleImport = ImportPath ImportAlias?;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_simple_import_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
@@ -10090,7 +10089,7 @@ impl Language {
 
     // SimpleStatement = TupleDeconstructionStatement | VariableDeclarationStatement | ExpressionStatement;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_simple_statement_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let start_position = stream.position();
@@ -10123,7 +10122,7 @@ impl Language {
 
     // SourceUnit = (Directive | Definition)* EndOfFileTrivia?;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_source_unit_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
@@ -10215,7 +10214,7 @@ impl Language {
     //                        | «PrivateKeyword»
     //                        | «PublicKeyword»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_state_variable_attribute_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let start_position = stream.position();
@@ -10274,7 +10273,7 @@ impl Language {
     //                        | «PrivateKeyword»
     //                        | «PublicKeyword»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_state_variable_attribute_0_6_5(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let start_position = stream.position();
@@ -10350,7 +10349,7 @@ impl Language {
 
     // StateVariableDeclaration = TypeName StateVariableAttribute* «Identifier» («Equal» Expression)? «Semicolon»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_state_variable_declaration_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         {
             match loop {
@@ -10522,7 +10521,7 @@ impl Language {
     //           | DeleteStatement
     //           | AssemblyStatement;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_statement_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let start_position = stream.position();
@@ -10613,7 +10612,7 @@ impl Language {
     //           | DeleteStatement
     //           | AssemblyStatement;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_statement_0_4_21(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let start_position = stream.position();
@@ -10708,7 +10707,7 @@ impl Language {
     //           | DeleteStatement
     //           | AssemblyStatement;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_statement_0_5_0(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let start_position = stream.position();
@@ -10799,7 +10798,7 @@ impl Language {
     //           | DeleteStatement
     //           | AssemblyStatement;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_statement_0_6_0(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let start_position = stream.position();
@@ -10900,7 +10899,7 @@ impl Language {
     // (* v0.4.11 *)
     // StringExpression = «HexStringLiteral»+ | «AsciiStringLiteral»+;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_string_expression_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let start_position = stream.position();
@@ -10967,7 +10966,7 @@ impl Language {
     // (* v0.7.0 *)
     // StringExpression = «HexStringLiteral»+ | «AsciiStringLiteral»+ | «UnicodeStringLiteral»+;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_string_expression_0_7_0(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let start_position = stream.position();
@@ -11074,7 +11073,7 @@ impl Language {
 
     // StructDefinition = «StructKeyword» «Identifier» «OpenBrace» StructMember+ «CloseBrace»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_struct_definition_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
@@ -11190,7 +11189,7 @@ impl Language {
 
     // StructMember = TypeName «Identifier» «Semicolon»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_struct_member_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         {
             match loop {
@@ -11261,7 +11260,7 @@ impl Language {
     // (* v0.4.11 *)
     // ThrowStatement = «ThrowKeyword» «Semicolon»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_throw_statement_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         {
             match self.parse_token_with_trivia(
@@ -11316,7 +11315,7 @@ impl Language {
 
     // TrailingTrivia = «Whitespace»? «SingleLineComment»? «EndOfLine»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_trailing_trivia_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
@@ -11398,7 +11397,7 @@ impl Language {
     // (* v0.6.0 *)
     // TryStatement = «TryKeyword» Expression («ReturnsKeyword» ParameterList)? Block CatchClause+;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_try_statement_0_6_0(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
@@ -11555,7 +11554,7 @@ impl Language {
 
     // TupleDeconstructionStatement = «OpenParen» (((TypeName DataLocation? «Identifier») | (DataLocation? «Identifier»))? («Comma» ((TypeName DataLocation? «Identifier») | (DataLocation? «Identifier»))?)*)? «CloseParen» «Equal» Expression «Semicolon»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_tuple_deconstruction_statement_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         {
             match loop {
@@ -11887,7 +11886,7 @@ impl Language {
 
     // TupleExpression = «OpenParen» Expression? («Comma» Expression?)* «CloseParen»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_tuple_expression_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         {
             match self.parse_token_with_trivia(stream, Self::scan_open_paren, TokenKind::OpenParen)
@@ -11973,7 +11972,7 @@ impl Language {
     // (* v0.5.3 *)
     // TypeExpression = «TypeKeyword» «OpenParen» TypeName «CloseParen»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_type_expression_0_5_3(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
@@ -12068,7 +12067,7 @@ impl Language {
     // TypeName = ArrayTypeName | FunctionType | MappingType | ElementaryType | IdentifierPath;
     // ArrayTypeName = TypeName «OpenBracket» Expression? «CloseBracket»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_type_name_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         {
             enum Pratt {
@@ -12290,7 +12289,7 @@ impl Language {
 
     // UnaryPostfixOperator = «PlusPlus» | «MinusMinus»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_unary_postfix_operator_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let start_position = stream.position();
@@ -12328,7 +12327,7 @@ impl Language {
     //                     | «Minus»
     //                     | «Plus»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_unary_prefix_operator_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let start_position = stream.position();
@@ -12379,7 +12378,7 @@ impl Language {
     //                     | «Bang»
     //                     | «Minus»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_unary_prefix_operator_0_5_0(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let start_position = stream.position();
@@ -12435,7 +12434,7 @@ impl Language {
     // (* v0.8.0 *)
     // UncheckedBlock = «UncheckedKeyword» Block;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_unchecked_block_0_8_0(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
@@ -12499,7 +12498,7 @@ impl Language {
     //                          | «PureKeyword»
     //                          | «ViewKeyword»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_unnamed_function_attribute_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let start_position = stream.position();
@@ -12583,7 +12582,7 @@ impl Language {
     // (* v0.4.11 *)
     // UnnamedFunctionDefinition = «FunctionKeyword» ParameterList UnnamedFunctionAttribute* («Semicolon» | Block);
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_unnamed_function_definition_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
@@ -12722,7 +12721,7 @@ impl Language {
     //                     | «Asterisk»
     //                     | «Tilde»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_user_defined_operator_0_8_19(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let start_position = stream.position();
@@ -12849,7 +12848,7 @@ impl Language {
     // (* v0.8.8 *)
     // UserDefinedValueTypeDefinition = «TypeKeyword» «Identifier» «IsKeyword» ElementaryType «Semicolon»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_user_defined_value_type_definition_0_8_8(&self, stream: &mut Stream) -> ParserResult {
         {
             match loop {
@@ -12974,7 +12973,7 @@ impl Language {
     // (* v0.4.11 *)
     // UsingDirective = «UsingKeyword» (IdentifierPath | («OpenBrace» IdentifierPath («Comma» IdentifierPath)* «CloseBrace»)) «ForKeyword» («Asterisk» | TypeName) «GlobalKeyword»? «Semicolon»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_using_directive_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         {
             match loop {
@@ -13193,7 +13192,7 @@ impl Language {
     // (* v0.8.19 *)
     // UsingDirective = «UsingKeyword» (IdentifierPath | («OpenBrace» IdentifierPath («AsKeyword» UserDefinedOperator)? («Comma» IdentifierPath («AsKeyword» UserDefinedOperator)?)* «CloseBrace»)) «ForKeyword» («Asterisk» | TypeName) «GlobalKeyword»? «Semicolon»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_using_directive_0_8_19(&self, stream: &mut Stream) -> ParserResult {
         {
             match loop {
@@ -13526,7 +13525,7 @@ impl Language {
     // (* v0.4.11 *)
     // VariableDeclarationStatement = ((TypeName DataLocation?) | «VarKeyword») «Identifier» («Equal» Expression)? «Semicolon»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_variable_declaration_statement_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         {
             match loop {
@@ -13709,7 +13708,7 @@ impl Language {
     // (* v0.5.0 *)
     // VariableDeclarationStatement = TypeName DataLocation? «Identifier» («Equal» Expression)? «Semicolon»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_variable_declaration_statement_0_5_0(&self, stream: &mut Stream) -> ParserResult {
         {
             match loop {
@@ -13869,7 +13868,7 @@ impl Language {
 
     // VersionPragma = «SolidityKeyword» VersionPragmaExpression+;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_version_pragma_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
@@ -13906,7 +13905,9 @@ impl Language {
                         Pass { builder, .. } => result.push(builder),
                     }
                 }
-            } {
+            }
+            .with_kind(RuleKind::VersionPragmaExpressionList)
+            {
                 Pass { builder, error } => {
                     furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
                     builder
@@ -13935,7 +13936,7 @@ impl Language {
     // VersionPragmaRange = VersionPragmaExpression «Minus» VersionPragmaExpression;
     // VersionPragmaComparator = («Caret» | «Tilde» | «Equal» | «LessThan» | «GreaterThan» | «LessThanEqual» | «GreaterThanEqual») VersionPragmaExpression;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_version_pragma_expression_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         {
             enum Pratt {
@@ -14191,12 +14192,11 @@ impl Language {
     #[inline]
     pub(crate) fn parse_version_pragma_expression(&self, stream: &mut Stream) -> ParserResult {
         self.parse_version_pragma_expression_0_4_11(stream)
-            .with_kind(RuleKind::VersionPragmaExpression)
     }
 
     // VersionPragmaSpecifier = «VersionPragmaValue» («Period» «VersionPragmaValue»)*;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_version_pragma_specifier_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut result = Vec::new();
@@ -14238,7 +14238,7 @@ impl Language {
 
     // WhileStatement = «WhileKeyword» «OpenParen» Expression «CloseParen» Statement;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_while_statement_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
@@ -14330,7 +14330,7 @@ impl Language {
 
     // YulAssignmentStatement = YulIdentifierPath («Comma» YulIdentifierPath)* «ColonEqual» YulExpression;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_yul_assignment_statement_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
@@ -14411,7 +14411,7 @@ impl Language {
 
     // YulBlock = «OpenBrace» YulStatement* «CloseBrace»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_yul_block_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         {
             match self.parse_token_with_trivia(stream, Self::scan_open_brace, TokenKind::OpenBrace)
@@ -14478,7 +14478,7 @@ impl Language {
 
     // YulBreakStatement = «BreakKeyword»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_yul_break_statement_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         self.parse_token_with_trivia(stream, Self::scan_break_keyword, TokenKind::BreakKeyword)
     }
@@ -14491,7 +14491,7 @@ impl Language {
 
     // YulContinueStatement = «ContinueKeyword»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_yul_continue_statement_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         self.parse_token_with_trivia(
             stream,
@@ -14508,7 +14508,7 @@ impl Language {
 
     // YulDeclarationStatement = «LetKeyword» YulIdentifierPath («Comma» YulIdentifierPath)* («ColonEqual» YulExpression)?;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_yul_declaration_statement_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
@@ -14636,7 +14636,7 @@ impl Language {
     // YulExpression = YulFunctionCallExpression | YulLiteral | YulIdentifierPath;
     // YulFunctionCallExpression = YulExpression «OpenParen» (YulExpression («Comma» YulExpression)*)? «CloseParen»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_yul_expression_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         {
             enum Pratt {
@@ -14877,7 +14877,7 @@ impl Language {
 
     // YulForStatement = «ForKeyword» YulBlock YulExpression YulBlock YulBlock;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_yul_for_statement_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
@@ -14957,7 +14957,7 @@ impl Language {
 
     // YulFunctionDefinition = «FunctionKeyword» «YulIdentifier» «OpenParen» («YulIdentifier» («Comma» «YulIdentifier»)*)? «CloseParen» («MinusGreaterThan» «YulIdentifier» («Comma» «YulIdentifier»)*)? YulBlock;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_yul_function_definition_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
@@ -15199,7 +15199,7 @@ impl Language {
 
     // YulIdentifierPath = «YulIdentifier» («Period» «YulIdentifier»)*;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_yul_identifier_path_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut result = Vec::new();
@@ -15241,7 +15241,7 @@ impl Language {
 
     // YulIfStatement = «IfKeyword» YulExpression YulBlock;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_yul_if_statement_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
@@ -15298,7 +15298,7 @@ impl Language {
     // (* v0.6.0 *)
     // YulLeaveStatement = «LeaveKeyword»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_yul_leave_statement_0_6_0(&self, stream: &mut Stream) -> ParserResult {
         self.parse_token_with_trivia(stream, Self::scan_leave_keyword, TokenKind::LeaveKeyword)
     }
@@ -15331,7 +15331,7 @@ impl Language {
     //            | «HexStringLiteral»
     //            | «AsciiStringLiteral»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_yul_literal_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let start_position = stream.position();
@@ -15400,7 +15400,7 @@ impl Language {
     //              | YulContinueStatement
     //              | YulExpression;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_yul_statement_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let start_position = stream.position();
@@ -15473,7 +15473,7 @@ impl Language {
     //              | YulContinueStatement
     //              | YulExpression;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_yul_statement_0_6_0(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let start_position = stream.position();
@@ -15554,7 +15554,7 @@ impl Language {
 
     // YulSwitchStatement = «SwitchKeyword» YulExpression (((«CaseKeyword» YulLiteral) | «DefaultKeyword») YulBlock)+;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn parse_yul_switch_statement_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;

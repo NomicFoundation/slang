@@ -10,61 +10,59 @@ use super::{parser::Parser, precedence_parser::PrecedenceParser, scanner::Scanne
 pub type ProductionRef = Rc<Production>;
 
 #[derive(Deserialize, Serialize, JsonSchema, Clone, Debug)]
+pub struct Production {
+    pub name: String,
+
+    #[serde(default)]
+    pub inlined: bool,
+
+    #[serde(flatten)]
+    pub definition: ProductionDefinition,
+}
+
+impl Production {
+    pub fn versions(&self) -> Option<Vec<&Version>> {
+        match &self.definition {
+            ProductionDefinition::Scanner { version_map, .. } => match version_map {
+                VersionMap::Unversioned(_) => None,
+                VersionMap::Versioned(ref map) => Some(map.keys().collect()),
+            },
+            ProductionDefinition::TriviaParser { version_map, .. } => match version_map {
+                VersionMap::Unversioned(_) => None,
+                VersionMap::Versioned(ref map) => Some(map.keys().collect()),
+            },
+            ProductionDefinition::Parser { version_map, .. } => match version_map {
+                VersionMap::Unversioned(_) => None,
+                VersionMap::Versioned(ref map) => Some(map.keys().collect()),
+            },
+            ProductionDefinition::PrecedenceParser { version_map, .. } => match version_map {
+                VersionMap::Unversioned(_) => None,
+                VersionMap::Versioned(ref map) => Some(map.keys().collect()),
+            },
+        }
+    }
+}
+
+#[derive(Deserialize, Serialize, JsonSchema, Clone, Debug)]
 #[serde(deny_unknown_fields)]
 #[serde(tag = "kind")]
-pub enum Production {
+pub enum ProductionDefinition {
     Scanner {
-        name: String,
         #[serde(flatten)]
         version_map: VersionMap<Scanner>,
     },
     TriviaParser {
-        name: String,
         #[serde(flatten)]
         version_map: VersionMap<Parser>,
     },
     Parser {
-        name: String,
         #[serde(flatten)]
         version_map: VersionMap<Parser>,
     },
     PrecedenceParser {
-        name: String,
         #[serde(flatten)]
         version_map: VersionMap<PrecedenceParser>,
     },
-}
-
-impl Production {
-    pub fn name(&self) -> &String {
-        match self {
-            Self::Scanner { name, .. }
-            | Self::TriviaParser { name, .. }
-            | Self::Parser { name, .. }
-            | Self::PrecedenceParser { name, .. } => name,
-        }
-    }
-
-    pub fn versions(&self) -> Option<Vec<&Version>> {
-        match self {
-            Production::Scanner { version_map, .. } => match version_map {
-                VersionMap::Unversioned(_) => None,
-                VersionMap::Versioned(ref map) => Some(map.keys().collect()),
-            },
-            Production::TriviaParser { version_map, .. } => match version_map {
-                VersionMap::Unversioned(_) => None,
-                VersionMap::Versioned(ref map) => Some(map.keys().collect()),
-            },
-            Production::Parser { version_map, .. } => match version_map {
-                VersionMap::Unversioned(_) => None,
-                VersionMap::Versioned(ref map) => Some(map.keys().collect()),
-            },
-            Production::PrecedenceParser { version_map, .. } => match version_map {
-                VersionMap::Unversioned(_) => None,
-                VersionMap::Versioned(ref map) => Some(map.keys().collect()),
-            },
-        }
-    }
 }
 
 #[derive(Deserialize, Serialize, JsonSchema, Clone, Debug)]

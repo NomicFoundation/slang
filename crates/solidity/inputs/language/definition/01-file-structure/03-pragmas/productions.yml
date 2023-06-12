@@ -19,11 +19,13 @@
   unversioned:
     sequence:
       - reference: "SolidityKeyword"
-      - oneOrMore:
+      - name: "VersionPragmaExpressionList"
+        oneOrMore:
           reference: "VersionPragmaExpression"
 
 - name: "VersionPragmaExpression"
   kind: "PrecedenceParser"
+  inlined: true
   unversioned:
     operators:
       - name: "VersionPragmaAlternatives"

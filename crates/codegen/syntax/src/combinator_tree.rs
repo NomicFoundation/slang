@@ -1,7 +1,7 @@
 use std::{cell::Cell, fmt::Write};
 
 use codegen_ebnf::EbnfSerializer;
-use codegen_schema::types::{Production, ProductionRef};
+use codegen_schema::types::{ProductionDefinition, ProductionRef};
 
 use crate::first_set::FirstSet;
 
@@ -35,15 +35,15 @@ impl<'context> CombinatorTree<'context> {
     pub fn ensure_tree_is_built(&'context self) {
         if self.root_node.get().is_none() {
             let version = &self.context.version;
-            self.root_node.set(match self.production.as_ref() {
-                Production::Scanner { version_map, .. } => version_map
+            self.root_node.set(match &self.production.definition {
+                ProductionDefinition::Scanner { version_map, .. } => version_map
                     .get_for_version(version)
                     .map(|scanner| CombinatorNode::from_scanner(self, &scanner)),
-                Production::TriviaParser { version_map, .. }
-                | Production::Parser { version_map, .. } => version_map
+                ProductionDefinition::TriviaParser { version_map, .. }
+                | ProductionDefinition::Parser { version_map, .. } => version_map
                     .get_for_version(version)
                     .map(|parser| CombinatorNode::from_parser(self, &parser)),
-                Production::PrecedenceParser { version_map, .. } => version_map
+                ProductionDefinition::PrecedenceParser { version_map, .. } => version_map
                     .get_for_version(version)
                     .map(|parser| CombinatorNode::from_precedence_parser(self, &parser)),
             });
@@ -61,31 +61,43 @@ impl<'context> CombinatorTree<'context> {
             return;
         }
 
+        let name = &self.production.name;
+        let inlined = &self.production.inlined;
         let comment = self.generate_comment();
 
-        match self.production.as_ref() {
-            Production::Scanner { name, .. } => {
+        match self.production.definition {
+            ProductionDefinition::Scanner { .. } => {
                 let definition = self.root_node.get().map(|node| {
                     if node.first_set().includes_epsilon {
                         unreachable!(
                             "Validation should have discovered that scanner {name} can be empty"
                         );
                     }
-                    code.add_token_kind(name.clone());
+
+                    if !inlined {
+                        code.add_token_kind(name.clone());
+                    }
+
                     (comment, node.to_scanner_code(code))
                 });
                 code.add_scanner(name.clone(), version, definition);
             }
-            Production::TriviaParser { name, .. } => {
-                code.add_rule_kind(name.clone());
+            ProductionDefinition::TriviaParser { .. } => {
+                if !inlined {
+                    code.add_rule_kind(name.clone());
+                }
+
                 let definition = self
                     .root_node
                     .get()
                     .map(|node| (comment, node.to_parser_code(true, code)));
                 code.add_parser(name.clone(), version, definition);
             }
-            Production::Parser { name, .. } | Production::PrecedenceParser { name, .. } => {
-                code.add_rule_kind(name.clone());
+            ProductionDefinition::Parser { .. } | ProductionDefinition::PrecedenceParser { .. } => {
+                if !inlined {
+                    code.add_rule_kind(name.clone());
+                }
+
                 let definition = self
                     .root_node
                     .get()

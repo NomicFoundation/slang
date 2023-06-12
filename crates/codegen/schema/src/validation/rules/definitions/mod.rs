@@ -48,7 +48,7 @@ impl Visitor for Definitions {
         location: &LocationRef,
         reporter: &mut Reporter,
     ) -> bool {
-        let name = production.name();
+        let name = &production.name;
         if !self.productions_so_far.insert(name.to_owned()) {
             reporter.report(location, Errors::DuplicateProduction(name.to_owned()));
         }

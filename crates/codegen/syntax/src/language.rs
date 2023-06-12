@@ -1,4 +1,4 @@
-use codegen_schema::types::LanguageDefinition;
+use codegen_schema::types::LanguageDefinitionRef;
 use codegen_utils::context::CodegenContext;
 
 use super::code_generator::CodeGenerator;
@@ -22,7 +22,7 @@ trait PrivateSyntaxGeneratorExtensions {
     fn create_code_generator(&self) -> CodeGenerator;
 }
 
-impl SyntaxGeneratorExtensions for LanguageDefinition {
+impl SyntaxGeneratorExtensions for LanguageDefinitionRef {
     fn generate_rust_lib_sources(
         &self,
         context: &mut CodegenContext,
@@ -42,7 +42,7 @@ impl SyntaxGeneratorExtensions for LanguageDefinition {
     }
 }
 
-impl PrivateSyntaxGeneratorExtensions for LanguageDefinition {
+impl PrivateSyntaxGeneratorExtensions for LanguageDefinitionRef {
     fn create_code_generator(&self) -> CodeGenerator {
         let version_breaks = self.collect_version_breaks();
 
@@ -57,7 +57,7 @@ impl PrivateSyntaxGeneratorExtensions for LanguageDefinition {
 
                 for production in self.productions.values() {
                     trees_by_name.insert(
-                        production.name().clone(),
+                        production.name.clone(),
                         CombinatorTree::new(&context, production),
                     );
                 }
