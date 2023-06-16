@@ -12,8 +12,7 @@ Tree:
           - ArrayTypeName (Rule): # 3..11 " Foo[][]"
               - ArrayTypeName (Rule): # 3..9 " Foo[]"
                   - IdentifierPath (Rule): # 3..7 " Foo"
-                      - _SEPARATEDBY (Rule): # 3..7 " Foo"
-                          - Identifier (Token): "Foo" # 4..7
+                      - Identifier (Token): "Foo" # 4..7
                   - OpenBracket (Token): "[" # 7..8
                   - CloseBracket (Token): "]" # 8..9
               - OpenBracket (Token): "[" # 9..10

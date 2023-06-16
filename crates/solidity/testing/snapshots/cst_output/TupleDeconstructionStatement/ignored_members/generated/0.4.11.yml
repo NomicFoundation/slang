@@ -8,15 +8,14 @@ Errors: []
 Tree:
   - TupleDeconstructionStatement (Rule): # 0..27 "(, second, , fourth) = rhs;"
       - OpenParen (Token): "(" # 0..1
-      - _SEPARATEDBY (Rule): # 1..19 ", second, , fourth"
-          - Comma (Token): "," # 1..2
-          - Identifier (Token): "second" # 3..9
-          - Comma (Token): "," # 9..10
-          - Comma (Token): "," # 11..12
-          - Identifier (Token): "fourth" # 13..19
+      - Comma (Token): "," # 1..2
+      - Identifier (Token): "second" # 3..9
+      - Comma (Token): "," # 9..10
+      - Comma (Token): "," # 11..12
+      - Identifier (Token): "fourth" # 13..19
       - CloseParen (Token): ")" # 19..20
       - Equal (Token): "=" # 21..22
-      - Expression (Rule): # 23..26 "rhs"
-          - PrimaryExpression (Rule): # 23..26 "rhs"
+      - Expression (Rule): # 22..26 " rhs"
+          - PrimaryExpression (Rule): # 22..26 " rhs"
               - Identifier (Token): "rhs" # 23..26
       - Semicolon (Token): ";" # 26..27

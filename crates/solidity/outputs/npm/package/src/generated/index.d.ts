@@ -343,12 +343,6 @@ export enum RuleKind {
   YulLiteral = 154,
   YulStatement = 155,
   YulSwitchStatement = 156,
-  _DELIMITEDBY = 157,
-  _OPTIONAL = 158,
-  _REPEATED = 159,
-  _SEPARATEDBY = 160,
-  _SEQUENCE = 161,
-  _TERMINATEDBY = 162,
 }
 export enum ProductionKind {
   ABICoderPragma = 0,

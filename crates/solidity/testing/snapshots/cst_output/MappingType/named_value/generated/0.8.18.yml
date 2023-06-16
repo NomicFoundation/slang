@@ -13,9 +13,9 @@ Tree:
           - ElementaryType (Rule): # 8..14 "string"
               - StringKeyword (Token): "string" # 8..14
       - EqualGreaterThan (Token): "=>" # 15..17
-      - MappingValueType (Rule): # 18..29 "bytes32 Bar"
-          - TypeName (Rule): # 18..25 "bytes32"
-              - ElementaryType (Rule): # 18..25 "bytes32"
+      - MappingValueType (Rule): # 17..29 " bytes32 Bar"
+          - TypeName (Rule): # 17..25 " bytes32"
+              - ElementaryType (Rule): # 17..25 " bytes32"
                   - FixedBytesType (Token): "bytes32" # 18..25
           - Identifier (Token): "Bar" # 26..29
       - CloseParen (Token): ")" # 29..30

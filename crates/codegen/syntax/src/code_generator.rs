@@ -297,7 +297,7 @@ impl CodeGenerator {
                             stream.set_position(save);
                             None
                         }
-                        Pass { node, .. } => Some(node),
+                        Pass { builder, .. } => Some(builder.build()),
                     }
                 };
 
@@ -318,17 +318,19 @@ impl CodeGenerator {
                             stream.set_position(save);
                             None
                         }
-                        Pass { node, .. } => Some(node),
+                        Pass { builder, .. } => Some(builder.build()),
                     }
                 };
 
+                let token = cst::Node::token(
+                    kind,
+                    Range { start, end },
+                    leading_trivia,
+                    trailing_trivia,
+                );
+
                 return Pass {
-                    node: cst::Node::token(
-                        kind,
-                        Range { start, end },
-                        leading_trivia,
-                        trailing_trivia,
-                    ),
+                    builder: cst::NodeBuilder::single(token),
                     error: None,
                 };
             }
@@ -353,13 +355,15 @@ impl CodeGenerator {
 
                 let end = stream.position();
 
+                let token = cst::Node::token(
+                    kind,
+                    Range { start, end },
+                    None,
+                    None,
+                );
+
                 return Pass {
-                    node: cst::Node::token(
-                        kind,
-                        Range { start, end },
-                        None,
-                        None,
-                    ),
+                    builder: cst::NodeBuilder::single(token),
                     error: None,
                 };
             }
@@ -378,10 +382,7 @@ impl CodeGenerator {
                     let internal_function = quote! {
                         #[inline]
                         pub(crate) fn #internal_function_name(&self, stream: &mut Stream) -> ParserResult {
-                            match self.#dispatch_function_name(stream) {
-                                Pass{ node, error } => Pass{ node: cst::Node::top_level_rule(RuleKind::#kind, node), error },
-                                fail => fail
-                            }
+                            self.#dispatch_function_name(stream).with_kind(RuleKind::#kind)
                         }
                     };
                     format!("{functions}\n\n{internal_function}")
@@ -389,12 +390,7 @@ impl CodeGenerator {
                     let external_function_name = format_ident!("maybe_parse_{name}", name = name.to_snake_case());
                     let external_function = quote! {
                         pub(crate) fn #external_function_name(&self, stream: &mut Stream) -> Option<ParserResult> {
-                            self.#dispatch_function_name(stream).map(|body|
-                                match body {
-                                    Pass{ node, error } => Pass{ node: cst::Node::top_level_rule(RuleKind::#kind, node), error },
-                                    fail => fail
-                                }
-                            )
+                            self.#dispatch_function_name(stream).map(|body| body.with_kind(RuleKind::#kind))
                         }
                     };
                     let internal_function = quote! {

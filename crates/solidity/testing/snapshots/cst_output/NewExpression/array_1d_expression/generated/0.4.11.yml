@@ -11,8 +11,7 @@ Tree:
       - TypeName (Rule): # 3..11 " Foo[10]"
           - ArrayTypeName (Rule): # 3..11 " Foo[10]"
               - IdentifierPath (Rule): # 3..7 " Foo"
-                  - _SEPARATEDBY (Rule): # 3..7 " Foo"
-                      - Identifier (Token): "Foo" # 4..7
+                  - Identifier (Token): "Foo" # 4..7
               - OpenBracket (Token): "[" # 7..8
               - Expression (Rule): # 8..10 "10"
                   - PrimaryExpression (Rule): # 8..10 "10"

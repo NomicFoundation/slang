@@ -65,14 +65,28 @@ impl ParseError {
     }
 }
 
-pub enum ParserResult {
+#[allow(dead_code)]
+pub(crate) enum ParserResult {
     Pass {
-        node: Rc<cst::Node>,
+        builder: cst::NodeBuilder,
         error: Option<ParseError>,
     },
     Fail {
         error: ParseError,
     },
+}
+
+#[allow(dead_code)]
+impl ParserResult {
+    pub(crate) fn with_kind(self, kind: RuleKind) -> Self {
+        match self {
+            Self::Pass { builder, error } => Self::Pass {
+                builder: builder.with_kind(kind),
+                error,
+            },
+            fail => fail,
+        }
+    }
 }
 
 #[derive(Default, Copy, Clone, PartialEq, Eq, Debug, Serialize)]
@@ -217,16 +231,18 @@ where
     let mut stream = Stream::new(input);
     Some(
         if scanner(language, &mut stream) && stream.peek().is_none() {
+            let token = cst::Node::token(
+                kind,
+                Range {
+                    start: Default::default(),
+                    end: stream.position(),
+                },
+                None,
+                None,
+            );
+
             ParseOutput {
-                parse_tree: Some(cst::Node::token(
-                    kind,
-                    Range {
-                        start: Default::default(),
-                        end: stream.position(),
-                    },
-                    None,
-                    None,
-                )),
+                parse_tree: Some(token),
                 errors: vec![],
             }
         } else {
@@ -251,16 +267,18 @@ where
     let mut stream = Stream::new(input);
     scanner(language, &mut stream).map(|result| {
         if result && stream.peek().is_none() {
+            let token = cst::Node::token(
+                kind,
+                Range {
+                    start: Default::default(),
+                    end: stream.position(),
+                },
+                None,
+                None,
+            );
+
             ParseOutput {
-                parse_tree: Some(cst::Node::token(
-                    kind,
-                    Range {
-                        start: Default::default(),
-                        end: stream.position(),
-                    },
-                    None,
-                    None,
-                )),
+                parse_tree: Some(token),
                 errors: vec![],
             }
         } else {
@@ -279,8 +297,8 @@ where
 {
     let mut stream = Stream::new(input);
     Some(match parser(language, &mut stream) {
-        ParserResult::Pass { node, .. } if stream.peek().is_none() => ParseOutput {
-            parse_tree: Some(node),
+        ParserResult::Pass { builder, .. } if stream.peek().is_none() => ParseOutput {
+            parse_tree: Some(builder.build()),
             errors: vec![],
         },
         ParserResult::Pass { .. } => ParseOutput {
@@ -301,8 +319,8 @@ where
 {
     let mut stream = Stream::new(input);
     parser(language, &mut stream).map(|result| match result {
-        ParserResult::Pass { node, .. } if stream.peek().is_none() => ParseOutput {
-            parse_tree: Some(node),
+        ParserResult::Pass { builder, .. } if stream.peek().is_none() => ParseOutput {
+            parse_tree: Some(builder.build()),
             errors: vec![],
         },
         ParserResult::Pass { .. } => ParseOutput {

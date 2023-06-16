@@ -7,5 +7,4 @@ Errors: []
 
 Tree:
   - StringExpression (Rule): # 0..5 '"foo"'
-      - _REPEATED (Rule): # 0..5 '"foo"'
-          - AsciiStringLiteral (Token): '"foo"' # 0..5
+      - AsciiStringLiteral (Token): '"foo"' # 0..5

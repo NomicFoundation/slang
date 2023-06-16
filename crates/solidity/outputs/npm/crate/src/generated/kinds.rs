@@ -354,12 +354,6 @@ pub enum RuleKind {
     YulLiteral,
     YulStatement,
     YulSwitchStatement,
-    _DELIMITEDBY,
-    _OPTIONAL,
-    _REPEATED,
-    _SEPARATEDBY,
-    _SEQUENCE,
-    _TERMINATEDBY,
 }
 #[napi]
 #[derive(
