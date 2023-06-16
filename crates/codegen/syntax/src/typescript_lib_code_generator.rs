@@ -152,15 +152,39 @@ impl CodeGenerator {
                     use napi_derive::napi;
 
                     #[napi]
-                    #[derive(Debug, PartialEq, Eq, Serialize)]
+                    #[derive(
+                        Debug,
+                        PartialEq,
+                        Eq,
+                        Serialize,
+                        strum_macros::EnumString,
+                        strum_macros::AsRefStr,
+                        strum_macros::Display,
+                    )]
                     #token_kinds
 
                     #[napi]
-                    #[derive(Debug, PartialEq, Eq, Serialize)]
+                    #[derive(
+                        Debug,
+                        PartialEq,
+                        Eq,
+                        Serialize,
+                        strum_macros::EnumString,
+                        strum_macros::AsRefStr,
+                        strum_macros::Display,
+                    )]
                     #rule_kinds
 
                     #[napi]
-                    #[derive(Debug, PartialEq, Eq, Serialize)]
+                    #[derive(
+                        Debug,
+                        PartialEq,
+                        Eq,
+                        Serialize,
+                        strum_macros::EnumString,
+                        strum_macros::AsRefStr,
+                        strum_macros::Display,
+                    )]
                     #production_kinds
                 }
             };

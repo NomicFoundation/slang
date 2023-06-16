@@ -208,13 +208,7 @@ pub(crate) fn render_error_report(
 }
 
 #[allow(dead_code)]
-fn call_scanner<L, F>(
-    language: &L,
-    input: &str,
-    scanner: F,
-    kind: TokenKind,
-    error_message: &str,
-) -> Option<ParseOutput>
+fn call_scanner<L, F>(language: &L, input: &str, scanner: F, kind: TokenKind) -> Option<ParseOutput>
 where
     F: Fn(&L, &mut Stream) -> bool,
 {
@@ -236,7 +230,7 @@ where
         } else {
             ParseOutput {
                 parse_tree: None,
-                errors: vec![ParseError::new(stream.position(), error_message)],
+                errors: vec![ParseError::new(stream.position(), kind.as_ref())],
             }
         },
     )
@@ -248,7 +242,6 @@ fn try_call_scanner<L, F>(
     input: &str,
     scanner: F,
     kind: TokenKind,
-    error_message: &str,
 ) -> Option<ParseOutput>
 where
     F: Fn(&L, &mut Stream) -> Option<bool>,
@@ -271,7 +264,7 @@ where
         } else {
             ParseOutput {
                 parse_tree: None,
-                errors: vec![ParseError::new(stream.position(), error_message)],
+                errors: vec![ParseError::new(stream.position(), kind.as_ref())],
             }
         }
     })
