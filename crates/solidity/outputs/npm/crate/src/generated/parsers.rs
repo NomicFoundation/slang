@@ -339,7 +339,7 @@ impl Language {
                     Fail { error } => {
                         stream.set_position(start_position);
                         Pass {
-                            builder: cst::NodeBuilder::empty(),
+                            builder: cst::NodeBuilder::empty(start_position),
                             error: Some(error),
                         }
                     }
@@ -418,7 +418,7 @@ impl Language {
                             Fail { error } => {
                                 stream.set_position(start_position);
                                 Pass {
-                                    builder: cst::NodeBuilder::empty(),
+                                    builder: cst::NodeBuilder::empty(start_position),
                                     error: Some(error),
                                 }
                             }
@@ -616,7 +616,11 @@ impl Language {
                                     Fail { error } => {
                                         stream.set_position(start_position);
                                         break Pass {
-                                            builder: cst::NodeBuilder::multiple(result),
+                                            builder: if result.is_empty() {
+                                                cst::NodeBuilder::empty(start_position)
+                                            } else {
+                                                cst::NodeBuilder::multiple(result)
+                                            },
                                             error: Some(error),
                                         };
                                     }
@@ -703,7 +707,7 @@ impl Language {
                     Fail { error } => {
                         stream.set_position(start_position);
                         Pass {
-                            builder: cst::NodeBuilder::empty(),
+                            builder: cst::NodeBuilder::empty(start_position),
                             error: Some(error),
                         }
                     }
@@ -726,7 +730,7 @@ impl Language {
                     Fail { error } => {
                         stream.set_position(start_position);
                         Pass {
-                            builder: cst::NodeBuilder::empty(),
+                            builder: cst::NodeBuilder::empty(start_position),
                             error: Some(error),
                         }
                     }
@@ -1023,7 +1027,11 @@ impl Language {
                                 Fail { error } => {
                                     stream.set_position(start_position);
                                     break Pass {
-                                        builder: cst::NodeBuilder::multiple(result),
+                                        builder: if result.is_empty() {
+                                            cst::NodeBuilder::empty(start_position)
+                                        } else {
+                                            cst::NodeBuilder::multiple(result)
+                                        },
                                         error: Some(error),
                                     };
                                 }
@@ -1096,7 +1104,11 @@ impl Language {
                                 Fail { error } => {
                                     stream.set_position(start_position);
                                     break Pass {
-                                        builder: cst::NodeBuilder::multiple(result),
+                                        builder: if result.is_empty() {
+                                            cst::NodeBuilder::empty(start_position)
+                                        } else {
+                                            cst::NodeBuilder::multiple(result)
+                                        },
                                         error: Some(error),
                                     };
                                 }
@@ -1261,7 +1273,7 @@ impl Language {
                             Fail { error } => {
                                 stream.set_position(start_position);
                                 Pass {
-                                    builder: cst::NodeBuilder::empty(),
+                                    builder: cst::NodeBuilder::empty(start_position),
                                     error: Some(error),
                                 }
                             }
@@ -1299,7 +1311,7 @@ impl Language {
                     Fail { error } => {
                         stream.set_position(start_position);
                         Pass {
-                            builder: cst::NodeBuilder::empty(),
+                            builder: cst::NodeBuilder::empty(start_position),
                             error: Some(error),
                         }
                     }
@@ -1642,7 +1654,11 @@ impl Language {
                         Fail { error } => {
                             stream.set_position(start_position);
                             break Pass {
-                                builder: cst::NodeBuilder::multiple(result),
+                                builder: if result.is_empty() {
+                                    cst::NodeBuilder::empty(start_position)
+                                } else {
+                                    cst::NodeBuilder::multiple(result)
+                                },
                                 error: Some(error),
                             };
                         }
@@ -2103,7 +2119,7 @@ impl Language {
                     Fail { error } => {
                         stream.set_position(start_position);
                         Pass {
-                            builder: cst::NodeBuilder::empty(),
+                            builder: cst::NodeBuilder::empty(start_position),
                             error: Some(error),
                         }
                     }
@@ -2138,14 +2154,20 @@ impl Language {
                                     Fail { error } => {
                                         stream.set_position(start_position);
                                         break Pass {
-                                            builder: cst::NodeBuilder::multiple(result),
+                                            builder: if result.is_empty() {
+                                                cst::NodeBuilder::empty(start_position)
+                                            } else {
+                                                cst::NodeBuilder::multiple(result)
+                                            },
                                             error: Some(error),
                                         };
                                     }
                                     Pass { builder, .. } => result.push(builder),
                                 }
                             }
-                        } {
+                        }
+                        .with_kind(RuleKind::ContractBodyElements)
+                        {
                             err @ Fail { .. } => err,
                             Pass {
                                 builder: expr_node,
@@ -2208,7 +2230,7 @@ impl Language {
                     Fail { error } => {
                         stream.set_position(start_position);
                         Pass {
-                            builder: cst::NodeBuilder::empty(),
+                            builder: cst::NodeBuilder::empty(start_position),
                             error: Some(error),
                         }
                     }
@@ -2261,7 +2283,7 @@ impl Language {
                     Fail { error } => {
                         stream.set_position(start_position);
                         Pass {
-                            builder: cst::NodeBuilder::empty(),
+                            builder: cst::NodeBuilder::empty(start_position),
                             error: Some(error),
                         }
                     }
@@ -2296,14 +2318,20 @@ impl Language {
                                     Fail { error } => {
                                         stream.set_position(start_position);
                                         break Pass {
-                                            builder: cst::NodeBuilder::multiple(result),
+                                            builder: if result.is_empty() {
+                                                cst::NodeBuilder::empty(start_position)
+                                            } else {
+                                                cst::NodeBuilder::multiple(result)
+                                            },
                                             error: Some(error),
                                         };
                                     }
                                     Pass { builder, .. } => result.push(builder),
                                 }
                             }
-                        } {
+                        }
+                        .with_kind(RuleKind::ContractBodyElements)
+                        {
                             err @ Fail { .. } => err,
                             Pass {
                                 builder: expr_node,
@@ -3275,7 +3303,7 @@ impl Language {
                                 Fail { error } => {
                                     stream.set_position(start_position);
                                     Pass {
-                                        builder: cst::NodeBuilder::empty(),
+                                        builder: cst::NodeBuilder::empty(start_position),
                                         error: Some(error),
                                     }
                                 }
@@ -3446,7 +3474,7 @@ impl Language {
                                     Fail { error } => {
                                         stream.set_position(start_position);
                                         Pass {
-                                            builder: cst::NodeBuilder::empty(),
+                                            builder: cst::NodeBuilder::empty(start_position),
                                             error: Some(error),
                                         }
                                     }
@@ -3555,7 +3583,7 @@ impl Language {
                     Fail { error } => {
                         stream.set_position(start_position);
                         Pass {
-                            builder: cst::NodeBuilder::empty(),
+                            builder: cst::NodeBuilder::empty(start_position),
                             error: Some(error),
                         }
                     }
@@ -3665,7 +3693,7 @@ impl Language {
                                     Fail { error } => {
                                         stream.set_position(start_position);
                                         Pass {
-                                            builder: cst::NodeBuilder::empty(),
+                                            builder: cst::NodeBuilder::empty(start_position),
                                             error: Some(error),
                                         }
                                     }
@@ -3720,7 +3748,7 @@ impl Language {
                         Fail { error } => {
                             stream.set_position(start_position);
                             Pass {
-                                builder: cst::NodeBuilder::empty(),
+                                builder: cst::NodeBuilder::empty(start_position),
                                 error: Some(error),
                             }
                         }
@@ -3803,7 +3831,7 @@ impl Language {
                     Fail { error } => {
                         stream.set_position(start_position);
                         Pass {
-                            builder: cst::NodeBuilder::empty(),
+                            builder: cst::NodeBuilder::empty(start_position),
                             error: Some(error),
                         }
                     }
@@ -3830,7 +3858,7 @@ impl Language {
                     Fail { error } => {
                         stream.set_position(start_position);
                         Pass {
-                            builder: cst::NodeBuilder::empty(),
+                            builder: cst::NodeBuilder::empty(start_position),
                             error: Some(error),
                         }
                     }
@@ -5022,7 +5050,11 @@ impl Language {
                         Fail { error } => {
                             stream.set_position(start_position);
                             break Pass {
-                                builder: cst::NodeBuilder::multiple(result),
+                                builder: if result.is_empty() {
+                                    cst::NodeBuilder::empty(start_position)
+                                } else {
+                                    cst::NodeBuilder::multiple(result)
+                                },
                                 error: Some(error),
                             };
                         }
@@ -5080,7 +5112,7 @@ impl Language {
                     Fail { error } => {
                         stream.set_position(start_position);
                         Pass {
-                            builder: cst::NodeBuilder::empty(),
+                            builder: cst::NodeBuilder::empty(start_position),
                             error: Some(error),
                         }
                     }
@@ -5262,7 +5294,7 @@ impl Language {
                                     Fail { error } => {
                                         stream.set_position(start_position);
                                         Pass {
-                                            builder: cst::NodeBuilder::empty(),
+                                            builder: cst::NodeBuilder::empty(start_position),
                                             error: Some(error),
                                         }
                                     }
@@ -5707,7 +5739,11 @@ impl Language {
                         Fail { error } => {
                             stream.set_position(start_position);
                             break Pass {
-                                builder: cst::NodeBuilder::multiple(result),
+                                builder: if result.is_empty() {
+                                    cst::NodeBuilder::empty(start_position)
+                                } else {
+                                    cst::NodeBuilder::multiple(result)
+                                },
                                 error: Some(error),
                             };
                         }
@@ -5756,7 +5792,7 @@ impl Language {
                     Fail { error } => {
                         stream.set_position(start_position);
                         Pass {
-                            builder: cst::NodeBuilder::empty(),
+                            builder: cst::NodeBuilder::empty(start_position),
                             error: Some(error),
                         }
                     }
@@ -5850,7 +5886,7 @@ impl Language {
                             Fail { error } => {
                                 stream.set_position(start_position);
                                 Pass {
-                                    builder: cst::NodeBuilder::empty(),
+                                    builder: cst::NodeBuilder::empty(start_position),
                                     error: Some(error),
                                 }
                             }
@@ -5992,7 +6028,11 @@ impl Language {
                         Fail { error } => {
                             stream.set_position(start_position);
                             break Pass {
-                                builder: cst::NodeBuilder::multiple(result),
+                                builder: if result.is_empty() {
+                                    cst::NodeBuilder::empty(start_position)
+                                } else {
+                                    cst::NodeBuilder::multiple(result)
+                                },
                                 error: Some(error),
                             };
                         }
@@ -6050,7 +6090,7 @@ impl Language {
                     Fail { error } => {
                         stream.set_position(start_position);
                         Pass {
-                            builder: cst::NodeBuilder::empty(),
+                            builder: cst::NodeBuilder::empty(start_position),
                             error: Some(error),
                         }
                     }
@@ -6220,7 +6260,11 @@ impl Language {
                         Fail { error } => {
                             stream.set_position(start_position);
                             break Pass {
-                                builder: cst::NodeBuilder::multiple(result),
+                                builder: if result.is_empty() {
+                                    cst::NodeBuilder::empty(start_position)
+                                } else {
+                                    cst::NodeBuilder::multiple(result)
+                                },
                                 error: Some(error),
                             };
                         }
@@ -6278,7 +6322,7 @@ impl Language {
                     Fail { error } => {
                         stream.set_position(start_position);
                         Pass {
-                            builder: cst::NodeBuilder::empty(),
+                            builder: cst::NodeBuilder::empty(start_position),
                             error: Some(error),
                         }
                     }
@@ -6469,7 +6513,7 @@ impl Language {
                     Fail { error } => {
                         stream.set_position(start_position);
                         Pass {
-                            builder: cst::NodeBuilder::empty(),
+                            builder: cst::NodeBuilder::empty(start_position),
                             error: Some(error),
                         }
                     }
@@ -6713,7 +6757,9 @@ impl Language {
                                             Fail { error } => {
                                                 stream.set_position(start_position);
                                                 Pass {
-                                                    builder: cst::NodeBuilder::empty(),
+                                                    builder: cst::NodeBuilder::empty(
+                                                        start_position,
+                                                    ),
                                                     error: Some(error),
                                                 }
                                             }
@@ -6742,7 +6788,7 @@ impl Language {
                                     Fail { error } => {
                                         stream.set_position(start_position);
                                         Pass {
-                                            builder: cst::NodeBuilder::empty(),
+                                            builder: cst::NodeBuilder::empty(start_position),
                                             error: Some(error),
                                         }
                                     }
@@ -6793,7 +6839,7 @@ impl Language {
                                     Fail { error } => {
                                         stream.set_position(start_position);
                                         Pass {
-                                            builder: cst::NodeBuilder::empty(),
+                                            builder: cst::NodeBuilder::empty(start_position),
                                             error: Some(error),
                                         }
                                     }
@@ -6882,7 +6928,7 @@ impl Language {
                     Fail { error } => {
                         stream.set_position(start_position);
                         Pass {
-                            builder: cst::NodeBuilder::empty(),
+                            builder: cst::NodeBuilder::empty(start_position),
                             error: Some(error),
                         }
                     }
@@ -7024,7 +7070,7 @@ impl Language {
                     Fail { error } => {
                         stream.set_position(start_position);
                         Pass {
-                            builder: cst::NodeBuilder::empty(),
+                            builder: cst::NodeBuilder::empty(start_position),
                             error: Some(error),
                         }
                     }
@@ -7059,7 +7105,11 @@ impl Language {
                                     Fail { error } => {
                                         stream.set_position(start_position);
                                         break Pass {
-                                            builder: cst::NodeBuilder::multiple(result),
+                                            builder: if result.is_empty() {
+                                                cst::NodeBuilder::empty(start_position)
+                                            } else {
+                                                cst::NodeBuilder::multiple(result)
+                                            },
                                             error: Some(error),
                                         };
                                     }
@@ -7236,7 +7286,11 @@ impl Language {
                                     Fail { error } => {
                                         stream.set_position(start_position);
                                         break Pass {
-                                            builder: cst::NodeBuilder::multiple(result),
+                                            builder: if result.is_empty() {
+                                                cst::NodeBuilder::empty(start_position)
+                                            } else {
+                                                cst::NodeBuilder::multiple(result)
+                                            },
                                             error: Some(error),
                                         };
                                     }
@@ -7378,7 +7432,7 @@ impl Language {
                     Fail { error } => {
                         stream.set_position(start_position);
                         Pass {
-                            builder: cst::NodeBuilder::empty(),
+                            builder: cst::NodeBuilder::empty(start_position),
                             error: Some(error),
                         }
                     }
@@ -7600,7 +7654,7 @@ impl Language {
                     Fail { error } => {
                         stream.set_position(start_position);
                         Pass {
-                            builder: cst::NodeBuilder::empty(),
+                            builder: cst::NodeBuilder::empty(start_position),
                             error: Some(error),
                         }
                     }
@@ -7794,7 +7848,7 @@ impl Language {
                     Fail { error } => {
                         stream.set_position(start_position);
                         Pass {
-                            builder: cst::NodeBuilder::empty(),
+                            builder: cst::NodeBuilder::empty(start_position),
                             error: Some(error),
                         }
                     }
@@ -7819,7 +7873,11 @@ impl Language {
                         Fail { error } => {
                             stream.set_position(start_position);
                             break Pass {
-                                builder: cst::NodeBuilder::multiple(result),
+                                builder: if result.is_empty() {
+                                    cst::NodeBuilder::empty(start_position)
+                                } else {
+                                    cst::NodeBuilder::multiple(result)
+                                },
                                 error: Some(error),
                             };
                         }
@@ -7905,7 +7963,7 @@ impl Language {
                     Fail { error } => {
                         stream.set_position(start_position);
                         Pass {
-                            builder: cst::NodeBuilder::empty(),
+                            builder: cst::NodeBuilder::empty(start_position),
                             error: Some(error),
                         }
                     }
@@ -8067,7 +8125,7 @@ impl Language {
                             Fail { error } => {
                                 stream.set_position(start_position);
                                 Pass {
-                                    builder: cst::NodeBuilder::empty(),
+                                    builder: cst::NodeBuilder::empty(start_position),
                                     error: Some(error),
                                 }
                             }
@@ -8638,7 +8696,7 @@ impl Language {
                     Fail { error } => {
                         stream.set_position(start_position);
                         Pass {
-                            builder: cst::NodeBuilder::empty(),
+                            builder: cst::NodeBuilder::empty(start_position),
                             error: Some(error),
                         }
                     }
@@ -8702,7 +8760,7 @@ impl Language {
                         Fail { error } => {
                             stream.set_position(start_position);
                             Pass {
-                                builder: cst::NodeBuilder::empty(),
+                                builder: cst::NodeBuilder::empty(start_position),
                                 error: Some(error),
                             }
                         }
@@ -8900,7 +8958,7 @@ impl Language {
                     Fail { error } => {
                         stream.set_position(start_position);
                         Pass {
-                            builder: cst::NodeBuilder::empty(),
+                            builder: cst::NodeBuilder::empty(start_position),
                             error: Some(error),
                         }
                     }
@@ -8953,7 +9011,7 @@ impl Language {
                     Fail { error } => {
                         stream.set_position(start_position);
                         Pass {
-                            builder: cst::NodeBuilder::empty(),
+                            builder: cst::NodeBuilder::empty(start_position),
                             error: Some(error),
                         }
                     }
@@ -8980,7 +9038,7 @@ impl Language {
                     Fail { error } => {
                         stream.set_position(start_position);
                         Pass {
-                            builder: cst::NodeBuilder::empty(),
+                            builder: cst::NodeBuilder::empty(start_position),
                             error: Some(error),
                         }
                     }
@@ -9052,7 +9110,7 @@ impl Language {
                             Fail { error } => {
                                 stream.set_position(start_position);
                                 Pass {
-                                    builder: cst::NodeBuilder::empty(),
+                                    builder: cst::NodeBuilder::empty(start_position),
                                     error: Some(error),
                                 }
                             }
@@ -9502,7 +9560,11 @@ impl Language {
                         Fail { error } => {
                             stream.set_position(start_position);
                             break Pass {
-                                builder: cst::NodeBuilder::multiple(result),
+                                builder: if result.is_empty() {
+                                    cst::NodeBuilder::empty(start_position)
+                                } else {
+                                    cst::NodeBuilder::multiple(result)
+                                },
                                 error: Some(error),
                             };
                         }
@@ -9610,7 +9672,7 @@ impl Language {
                         Fail { error } => {
                             stream.set_position(start_position);
                             Pass {
-                                builder: cst::NodeBuilder::empty(),
+                                builder: cst::NodeBuilder::empty(start_position),
                                 error: Some(error),
                             }
                         }
@@ -9692,7 +9754,7 @@ impl Language {
                         Fail { error } => {
                             stream.set_position(start_position);
                             Pass {
-                                builder: cst::NodeBuilder::empty(),
+                                builder: cst::NodeBuilder::empty(start_position),
                                 error: Some(error),
                             }
                         }
@@ -9801,7 +9863,9 @@ impl Language {
                                             Fail { error } => {
                                                 stream.set_position(start_position);
                                                 Pass {
-                                                    builder: cst::NodeBuilder::empty(),
+                                                    builder: cst::NodeBuilder::empty(
+                                                        start_position,
+                                                    ),
                                                     error: Some(error),
                                                 }
                                             }
@@ -9994,7 +10058,7 @@ impl Language {
                     Fail { error } => {
                         stream.set_position(start_position);
                         Pass {
-                            builder: cst::NodeBuilder::empty(),
+                            builder: cst::NodeBuilder::empty(start_position),
                             error: Some(error),
                         }
                     }
@@ -10086,7 +10150,11 @@ impl Language {
                         Fail { error } => {
                             stream.set_position(start_position);
                             break Pass {
-                                builder: cst::NodeBuilder::multiple(result),
+                                builder: if result.is_empty() {
+                                    cst::NodeBuilder::empty(start_position)
+                                } else {
+                                    cst::NodeBuilder::multiple(result)
+                                },
                                 error: Some(error),
                             };
                         }
@@ -10110,7 +10178,7 @@ impl Language {
                     Fail { error } => {
                         stream.set_position(start_position);
                         Pass {
-                            builder: cst::NodeBuilder::empty(),
+                            builder: cst::NodeBuilder::empty(start_position),
                             error: Some(error),
                         }
                     }
@@ -10306,7 +10374,11 @@ impl Language {
                             Fail { error } => {
                                 stream.set_position(start_position);
                                 break Pass {
-                                    builder: cst::NodeBuilder::multiple(result),
+                                    builder: if result.is_empty() {
+                                        cst::NodeBuilder::empty(start_position)
+                                    } else {
+                                        cst::NodeBuilder::multiple(result)
+                                    },
                                     error: Some(error),
                                 };
                             }
@@ -10379,7 +10451,7 @@ impl Language {
                         Fail { error } => {
                             stream.set_position(start_position);
                             Pass {
-                                builder: cst::NodeBuilder::empty(),
+                                builder: cst::NodeBuilder::empty(start_position),
                                 error: Some(error),
                             }
                         }
@@ -11254,7 +11326,7 @@ impl Language {
                     Fail { error } => {
                         stream.set_position(start_position);
                         Pass {
-                            builder: cst::NodeBuilder::empty(),
+                            builder: cst::NodeBuilder::empty(start_position),
                             error: Some(error),
                         }
                     }
@@ -11281,7 +11353,7 @@ impl Language {
                     Fail { error } => {
                         stream.set_position(start_position);
                         Pass {
-                            builder: cst::NodeBuilder::empty(),
+                            builder: cst::NodeBuilder::empty(start_position),
                             error: Some(error),
                         }
                     }
@@ -11396,7 +11468,7 @@ impl Language {
                     Fail { error } => {
                         stream.set_position(start_position);
                         Pass {
-                            builder: cst::NodeBuilder::empty(),
+                            builder: cst::NodeBuilder::empty(start_position),
                             error: Some(error),
                         }
                     }
@@ -11536,7 +11608,9 @@ impl Language {
                                                                 stream.set_position(start_position);
                                                                 Pass {
                                                                     builder:
-                                                                        cst::NodeBuilder::empty(),
+                                                                        cst::NodeBuilder::empty(
+                                                                            start_position,
+                                                                        ),
                                                                     error: Some(error),
                                                                 }
                                                             }
@@ -11601,7 +11675,9 @@ impl Language {
                                                                 stream.set_position(start_position);
                                                                 Pass {
                                                                     builder:
-                                                                        cst::NodeBuilder::empty(),
+                                                                        cst::NodeBuilder::empty(
+                                                                            start_position,
+                                                                        ),
                                                                     error: Some(error),
                                                                 }
                                                             }
@@ -11665,7 +11741,9 @@ impl Language {
                                                 Fail { error } => {
                                                     stream.set_position(start_position);
                                                     Pass {
-                                                        builder: cst::NodeBuilder::empty(),
+                                                        builder: cst::NodeBuilder::empty(
+                                                            start_position,
+                                                        ),
                                                         error: Some(error),
                                                     }
                                                 }
@@ -11699,7 +11777,7 @@ impl Language {
                                     Fail { error } => {
                                         stream.set_position(start_position);
                                         Pass {
-                                            builder: cst::NodeBuilder::empty(),
+                                            builder: cst::NodeBuilder::empty(start_position),
                                             error: Some(error),
                                         }
                                     }
@@ -11827,7 +11905,7 @@ impl Language {
                                     Fail { error } => {
                                         stream.set_position(start_position);
                                         Pass {
-                                            builder: cst::NodeBuilder::empty(),
+                                            builder: cst::NodeBuilder::empty(start_position),
                                             error: Some(error),
                                         }
                                     }
@@ -12051,7 +12129,7 @@ impl Language {
                                         Fail { error } => {
                                             stream.set_position(start_position);
                                             Pass {
-                                                builder: cst::NodeBuilder::empty(),
+                                                builder: cst::NodeBuilder::empty(start_position),
                                                 error: Some(error),
                                             }
                                         }
@@ -12543,7 +12621,11 @@ impl Language {
                         Fail { error } => {
                             stream.set_position(start_position);
                             break Pass {
-                                builder: cst::NodeBuilder::multiple(result),
+                                builder: if result.is_empty() {
+                                    cst::NodeBuilder::empty(start_position)
+                                } else {
+                                    cst::NodeBuilder::multiple(result)
+                                },
                                 error: Some(error),
                             };
                         }
@@ -13058,7 +13140,7 @@ impl Language {
                         Fail { error } => {
                             stream.set_position(start_position);
                             Pass {
-                                builder: cst::NodeBuilder::empty(),
+                                builder: cst::NodeBuilder::empty(start_position),
                                 error: Some(error),
                             }
                         }
@@ -13224,7 +13306,9 @@ impl Language {
                                                     Fail { error } => {
                                                         stream.set_position(start_position);
                                                         Pass {
-                                                            builder: cst::NodeBuilder::empty(),
+                                                            builder: cst::NodeBuilder::empty(
+                                                                start_position,
+                                                            ),
                                                             error: Some(error),
                                                         }
                                                     }
@@ -13375,7 +13459,7 @@ impl Language {
                         Fail { error } => {
                             stream.set_position(start_position);
                             Pass {
-                                builder: cst::NodeBuilder::empty(),
+                                builder: cst::NodeBuilder::empty(start_position),
                                 error: Some(error),
                             }
                         }
@@ -13470,7 +13554,7 @@ impl Language {
                                 Fail { error } => {
                                     stream.set_position(start_position);
                                     Pass {
-                                        builder: cst::NodeBuilder::empty(),
+                                        builder: cst::NodeBuilder::empty(start_position),
                                         error: Some(error),
                                     }
                                 }
@@ -13574,7 +13658,7 @@ impl Language {
                         Fail { error } => {
                             stream.set_position(start_position);
                             Pass {
-                                builder: cst::NodeBuilder::empty(),
+                                builder: cst::NodeBuilder::empty(start_position),
                                 error: Some(error),
                             }
                         }
@@ -13647,7 +13731,7 @@ impl Language {
                         Fail { error } => {
                             stream.set_position(start_position);
                             Pass {
-                                builder: cst::NodeBuilder::empty(),
+                                builder: cst::NodeBuilder::empty(start_position),
                                 error: Some(error),
                             }
                         }
@@ -13719,7 +13803,7 @@ impl Language {
                         Fail { error } => {
                             stream.set_position(start_position);
                             Pass {
-                                builder: cst::NodeBuilder::empty(),
+                                builder: cst::NodeBuilder::empty(start_position),
                                 error: Some(error),
                             }
                         }
@@ -14344,7 +14428,11 @@ impl Language {
                                 Fail { error } => {
                                     stream.set_position(start_position);
                                     break Pass {
-                                        builder: cst::NodeBuilder::multiple(result),
+                                        builder: if result.is_empty() {
+                                            cst::NodeBuilder::empty(start_position)
+                                        } else {
+                                            cst::NodeBuilder::multiple(result)
+                                        },
                                         error: Some(error),
                                     };
                                 }
@@ -14515,7 +14603,7 @@ impl Language {
                     Fail { error } => {
                         stream.set_position(start_position);
                         Pass {
-                            builder: cst::NodeBuilder::empty(),
+                            builder: cst::NodeBuilder::empty(start_position),
                             error: Some(error),
                         }
                     }
@@ -14628,7 +14716,7 @@ impl Language {
                                         Fail { error } => {
                                             stream.set_position(start_position);
                                             Pass {
-                                                builder: cst::NodeBuilder::empty(),
+                                                builder: cst::NodeBuilder::empty(start_position),
                                                 error: Some(error),
                                             }
                                         }
@@ -14950,7 +15038,7 @@ impl Language {
                                 Fail { error } => {
                                     stream.set_position(start_position);
                                     Pass {
-                                        builder: cst::NodeBuilder::empty(),
+                                        builder: cst::NodeBuilder::empty(start_position),
                                         error: Some(error),
                                     }
                                 }
@@ -15066,7 +15154,7 @@ impl Language {
                     Fail { error } => {
                         stream.set_position(start_position);
                         Pass {
-                            builder: cst::NodeBuilder::empty(),
+                            builder: cst::NodeBuilder::empty(start_position),
                             error: Some(error),
                         }
                     }

@@ -13,7 +13,7 @@ pub enum TestNodeKind {
 
 pub struct TestNode {
     pub kind: TestNodeKind,
-    pub range: Option<TextRange>,
+    pub range: TextRange,
     pub children: Vec<TestNode>,
 }
 
@@ -33,7 +33,7 @@ impl TestNode {
 
                 Self {
                     kind: TestNodeKind::Rule(*kind),
-                    range: Some(range.clone()),
+                    range: range.clone(),
                     children,
                 }
             }
@@ -83,14 +83,14 @@ impl TestNode {
         if leading.is_empty() && trailing.is_empty() {
             return Self {
                 kind: TestNodeKind::Token(*token_kind),
-                range: Some(token_range.clone()),
+                range: token_range.clone(),
                 children: vec![],
             };
         }
 
         let contents_node = Self {
             kind: TestNodeKind::Contents,
-            range: Some(token_range.clone()),
+            range: token_range.clone(),
             children: vec![],
         };
 
@@ -101,7 +101,7 @@ impl TestNode {
 
         return Self {
             kind: TestNodeKind::Token(*token_kind),
-            range: Some(node_range),
+            range: node_range,
             children,
         };
     }
@@ -131,7 +131,7 @@ impl TestNode {
                     TokenKind::SingleLineComment | TokenKind::MultilineComment => {
                         collection.push(Self {
                             kind: TestNodeKind::Trivia(*kind),
-                            range: Some(range.clone()),
+                            range: range.clone(),
                             children: vec![],
                         });
                     }

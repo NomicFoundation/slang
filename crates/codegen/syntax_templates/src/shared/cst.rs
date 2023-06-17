@@ -5,7 +5,7 @@ use std::rc::Rc;
 use serde::Serialize;
 
 use super::kinds::*;
-use super::language::TextRange;
+use super::language::{TextPosition, TextRange};
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
 pub enum Node {
@@ -55,16 +55,7 @@ impl Node {
 
 #[allow(dead_code)]
 impl Node {
-    pub(crate) fn rule(kind: RuleKind, children: Vec<Rc<Self>>) -> Rc<Self> {
-        let range = if children.is_empty() {
-            Default::default()
-        } else {
-            Range {
-                start: children.first().unwrap().range_including_trivia().start,
-                end: children.last().unwrap().range_including_trivia().end,
-            }
-        };
-
+    pub(crate) fn rule(kind: RuleKind, range: TextRange, children: Vec<Rc<Self>>) -> Rc<Self> {
         return Rc::new(Node::Rule {
             kind,
             range,
@@ -95,15 +86,15 @@ impl Node {
 }
 
 pub(crate) enum NodeBuilder {
-    Empty,
+    Empty { position: TextPosition },
     Single { node: Rc<Node> },
     Multiple { nodes: Vec<Rc<Node>> },
 }
 
 #[allow(dead_code)]
 impl NodeBuilder {
-    pub(crate) fn empty() -> Self {
-        return Self::Empty;
+    pub(crate) fn empty(position: TextPosition) -> Self {
+        return Self::Empty { position };
     }
 
     pub(crate) fn single(node: Rc<Node>) -> Self {
@@ -111,38 +102,48 @@ impl NodeBuilder {
     }
 
     pub(crate) fn multiple(builders: Vec<Self>) -> Self {
-        if builders.is_empty() {
-            return Self::Empty;
-        } else if builders.len() == 1 {
+        assert_ne!(
+            builders.len(),
+            0,
+            "codegen should have used empty() builder instead."
+        );
+
+        if builders.len() == 1 {
             return builders.into_iter().next().unwrap();
         }
+
+        let start_position = builders.first().unwrap().range().start;
 
         let mut nodes = vec![];
 
         for builder in builders {
             match builder {
-                Self::Empty => {}
+                Self::Empty { .. } => {}
                 Self::Single { node: other } => nodes.push(other),
                 Self::Multiple { nodes: mut other } => nodes.append(&mut other),
             }
         }
 
-        if nodes.is_empty() {
-            Self::Empty
+        return if nodes.is_empty() {
+            Self::Empty {
+                position: start_position,
+            }
         } else {
             Self::Multiple { nodes }
-        }
+        };
     }
 
     pub(crate) fn with_kind(self, kind: RuleKind) -> Self {
+        let range = self.range();
+
         let children = match self {
-            Self::Empty => vec![],
+            Self::Empty { .. } => vec![],
             Self::Single { node } => vec![node],
             Self::Multiple { nodes } => nodes,
         };
 
         return Self::Single {
-            node: Node::rule(kind, children),
+            node: Node::rule(kind, range, children),
         };
     }
 
@@ -150,6 +151,17 @@ impl NodeBuilder {
         return match self {
             Self::Single { node } => node,
             _ => panic!("cannot build unnamed nodes"),
+        };
+    }
+
+    pub(crate) fn range(&self) -> TextRange {
+        return match self {
+            Self::Empty { position } => position.to_owned()..position.to_owned(),
+            Self::Single { node } => node.range_including_trivia(),
+            Self::Multiple { nodes } => Range {
+                start: nodes.first().unwrap().range_including_trivia().start,
+                end: nodes.last().unwrap().range_including_trivia().end,
+            },
         };
     }
 }

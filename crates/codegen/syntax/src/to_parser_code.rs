@@ -108,7 +108,7 @@ impl<'context> CombinatorNode<'context> {
                         match #expr {
                             Fail{ error } => {
                                 stream.set_position(start_position);
-                                Pass{ builder: cst::NodeBuilder::empty(), error: Some(error) }
+                                Pass{ builder: cst::NodeBuilder::empty(start_position), error: Some(error) }
                             }
                             pass => pass,
                         }
@@ -127,7 +127,14 @@ impl<'context> CombinatorNode<'context> {
                             match #expr {
                                 Fail{ error } => {
                                     stream.set_position(start_position);
-                                    break Pass{ builder: cst::NodeBuilder::multiple(result), error: Some(error) }
+                                    break Pass {
+                                        builder: if result.is_empty() {
+                                            cst::NodeBuilder::empty(start_position)
+                                        } else {
+                                            cst::NodeBuilder::multiple(result)
+                                        },
+                                        error: Some(error),
+                                    }
                                 }
                                 Pass{ builder, .. } => result.push(builder),
                             }
@@ -182,12 +189,26 @@ impl<'context> CombinatorNode<'context> {
                                         break error
                                     }
                                     stream.set_position(start_position);
-                                    break Pass{ builder: cst::NodeBuilder::multiple(result), error: Some(error) }
+                                    break Pass {
+                                        builder: builder: if result.is_empty() {
+                                            cst::NodeBuilder::empty(start_position)
+                                        } else {
+                                            cst::NodeBuilder::multiple(result)
+                                        },
+                                        error: Some(error),
+                                    }
                                 }
                                 Pass{ builder, .. } => result.push(builder),
                             }
                             if result.len() == #max {
-                                break Pass{ builder: cst::NodeBuilder::multiple(result), error: None }
+                                break Pass {
+                                    builder: if result.is_empty() {
+                                        cst::NodeBuilder::empty(start_position)
+                                    } else {
+                                        cst::NodeBuilder::multiple(result)
+                                    },
+                                    error: None,
+                                }
                             }
                         }
                     }
