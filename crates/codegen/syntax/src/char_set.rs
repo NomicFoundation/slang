@@ -3,7 +3,7 @@ use std::{
     ops::Range,
 };
 
-use codegen_schema::types::{Production, ScannerDefinition, ScannerRef};
+use codegen_schema::types::{ProductionDefinition, ScannerDefinition, ScannerRef};
 use proc_macro2::TokenStream;
 use quote::quote;
 
@@ -168,15 +168,15 @@ impl CharSet {
 
             ScannerDefinition::Reference(name) => Self::from_scanner(
                 tree,
-                match tree.context.get_tree_by_name(name).production.as_ref() {
-                    Production::Scanner { name, version_map } => {
+                match &tree.context.get_tree_by_name(name).production.definition {
+                    ProductionDefinition::Scanner { version_map } => {
                         version_map.get_for_version(&tree.context.version).expect(
                             &format!("Validation should have ensured: no version of {name} exists for version {version}", version = tree.context.version)
                         ).clone()
                     }
-                    Production::TriviaParser { .. }
-                    | Production::Parser { .. }
-                    | Production::PrecedenceParser { .. } => {
+                    ProductionDefinition::TriviaParser { .. }
+                    | ProductionDefinition::Parser { .. }
+                    | ProductionDefinition::PrecedenceParser { .. } => {
                         unreachable!(
                             "Validation should have ensured: scanners can only reference scanners"
                         )

@@ -1,6 +1,6 @@
 use crate::{
     types::{
-        LanguageDefinitionRef, ParserDefinition, ParserRef, Production, ProductionRef,
+        LanguageDefinitionRef, ParserDefinition, ParserRef, ProductionDefinition, ProductionRef,
         ScannerDefinition, ScannerRef,
     },
     validation::{
@@ -116,8 +116,8 @@ impl Validator {
         reporter: &mut Reporter,
     ) {
         match self.language.productions.get(reference) {
-            Some(production) => match production.as_ref() {
-                Production::Scanner { .. } => {
+            Some(production) => match production.definition {
+                ProductionDefinition::Scanner { .. } => {
                     self.insert_reference(reference, location, reporter);
                 }
                 _ => {
@@ -136,12 +136,12 @@ impl Validator {
         location: &LocationRef,
         reporter: &mut Reporter,
     ) {
-        let production = self.current_production.as_ref().unwrap().name();
+        let production = self.current_production.as_ref().unwrap();
         let version_set = self.current_version_set.as_ref().unwrap();
 
         let can_be_added = self
             .metadata
-            .add_reference(production, &version_set, reference);
+            .add_reference(&production.name, &version_set, reference);
 
         if !can_be_added {
             reporter.report(

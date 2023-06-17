@@ -1,4 +1,4 @@
-use codegen_schema::types::{OperatorModel, Production};
+use codegen_schema::types::{OperatorModel, ProductionDefinition};
 use inflector::Inflector;
 use proc_macro2::{Ident, TokenStream};
 use quote::{format_ident, quote};
@@ -11,29 +11,34 @@ impl<'context> CombinatorNode<'context> {
             /**********************************************************************
              * Simple Reference
              */
-            Self::Reference { tree } => match tree.production.as_ref() {
-                Production::Scanner { name, .. } => {
-                    let kind = format_ident!("{name}");
-                    let function_name = format_ident!("scan_{name}", name = name.to_snake_case());
-                    let scanner = quote! { Self::#function_name };
-                    scanner_code_to_parser_code(scanner, kind, !is_trivia)
-                }
-                Production::TriviaParser { name, .. } => {
-                    let function_name = format_ident!("parse_{name}", name = name.to_snake_case());
-                    quote! { self.#function_name(stream) }
-                }
-                Production::Parser { name, .. } | Production::PrecedenceParser { name, .. } => {
-                    if !is_trivia {
-                        let function_name =
-                            format_ident!("parse_{name}", name = name.to_snake_case());
+            Self::Reference { tree } => {
+                let name = &tree.production.name;
+                let snake_case = name.to_snake_case();
+
+                match tree.production.definition {
+                    ProductionDefinition::Scanner { .. } => {
+                        let kind = format_ident!("{name}");
+                        let function_name = format_ident!("scan_{snake_case}");
+                        let scanner = quote! { Self::#function_name };
+                        scanner_code_to_parser_code(scanner, kind, !is_trivia)
+                    }
+                    ProductionDefinition::TriviaParser { .. } => {
+                        let function_name = format_ident!("parse_{snake_case}");
                         quote! { self.#function_name(stream) }
-                    } else {
-                        unreachable!(
-                            "Trivia productions can only reference trivia or token productions"
-                        )
+                    }
+                    ProductionDefinition::Parser { .. }
+                    | ProductionDefinition::PrecedenceParser { .. } => {
+                        if !is_trivia {
+                            let function_name = format_ident!("parse_{snake_case}");
+                            quote! { self.#function_name(stream) }
+                        } else {
+                            unreachable!(
+                                "Trivia productions can only reference trivia or token productions"
+                            )
+                        }
                     }
                 }
-            },
+            }
 
             /**********************************************************************
              * Sequence and Choice
@@ -592,12 +597,15 @@ fn try_wrap_name(
 }
 
 fn scanner_production_to_parser_code(
-    open: &&crate::combinator_tree::CombinatorTree,
+    tree: &&crate::combinator_tree::CombinatorTree,
     is_trivia: bool,
 ) -> TokenStream {
-    if let Production::Scanner { name, .. } = open.production.as_ref() {
+    let name = &tree.production.name;
+    let snake_case = name.to_snake_case();
+
+    if let ProductionDefinition::Scanner { .. } = tree.production.definition {
         let kind = format_ident!("{name}");
-        let function_name = format_ident!("scan_{name}", name = name.to_snake_case());
+        let function_name = format_ident!("scan_{snake_case}");
         let scanner = quote! { Self::#function_name };
         scanner_code_to_parser_code(scanner, kind, !is_trivia)
     } else {

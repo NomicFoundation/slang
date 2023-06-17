@@ -8,7 +8,7 @@ Errors: []
 Tree:
   - VersionPragma (Rule): # 0..14 "solidity 0.8.0"
       - SolidityKeyword (Token): "solidity" # 0..8
-      - VersionPragmaExpression (Rule): # 8..14 " 0.8.0"
+      - VersionPragmaExpressionList (Rule): # 8..14 " 0.8.0"
           - VersionPragmaSpecifier (Rule): # 8..14 " 0.8.0"
               - VersionPragmaValue (Token): "0" # 9..10
               - Period (Token): "." # 10..11

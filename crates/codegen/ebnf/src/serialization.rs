@@ -1,6 +1,6 @@
 use std::{collections::VecDeque, mem::discriminant};
 
-use codegen_schema::types::{LanguageDefinition, Production, ProductionRef};
+use codegen_schema::types::{LanguageDefinition, ProductionDefinition, ProductionRef};
 use semver::Version;
 
 use crate::nodes::EbnfNode;
@@ -23,17 +23,17 @@ impl<'language> EbnfSerializer<'language> {
         production: &'language ProductionRef,
         version: &Version,
     ) -> Option<String> {
-        let body = match production.as_ref() {
-            Production::Scanner { version_map, .. } => {
+        let body = match &production.definition {
+            ProductionDefinition::Scanner { version_map, .. } => {
                 version_map.get_for_version(version)?.generate_ebnf()
             }
-            Production::TriviaParser { version_map, .. } => {
+            ProductionDefinition::TriviaParser { version_map, .. } => {
                 version_map.get_for_version(version)?.generate_ebnf()
             }
-            Production::Parser { version_map, .. } => {
+            ProductionDefinition::Parser { version_map, .. } => {
                 version_map.get_for_version(version)?.generate_ebnf()
             }
-            Production::PrecedenceParser { version_map, .. } => {
+            ProductionDefinition::PrecedenceParser { version_map, .. } => {
                 version_map.get_for_version(version)?.generate_ebnf()
             }
         };
@@ -41,7 +41,7 @@ impl<'language> EbnfSerializer<'language> {
         let mut instance = Self {
             language,
             buffer: String::new(),
-            base_production: production.name(),
+            base_production: &production.name,
             queue: VecDeque::new(),
         };
 
@@ -184,7 +184,7 @@ impl<'language> EbnfSerializer<'language> {
 
     fn display_name(&self, name: &String) -> String {
         if let Some(production) = self.language.productions.get(name) {
-            if matches!(production.as_ref(), Production::Scanner { .. }) {
+            if matches!(production.definition, ProductionDefinition::Scanner { .. }) {
                 return format!("«{name}»");
             }
         }

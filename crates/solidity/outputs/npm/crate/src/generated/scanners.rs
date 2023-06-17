@@ -171,7 +171,7 @@ macro_rules! scan_not_followed_by {
 impl Language {
     // «AbicoderKeyword» = "abicoder";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_abicoder_keyword_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -185,6 +185,7 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_abicoder_keyword(&self, stream: &mut Stream) -> bool {
         self.scan_abicoder_keyword_0_4_11(stream)
     }
@@ -192,7 +193,7 @@ impl Language {
     // (* v0.6.0 *)
     // «AbstractKeyword» = "abstract";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_abstract_keyword_0_6_0(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -214,11 +215,13 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn maybe_scan_abstract_keyword(&self, stream: &mut Stream) -> Option<bool> {
         self.dispatch_scan_abstract_keyword(stream)
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_abstract_keyword(&self, stream: &mut Stream) -> bool {
         self.dispatch_scan_abstract_keyword(stream)
             .expect("Validation should have checked that references are valid between versions")
@@ -226,7 +229,7 @@ impl Language {
 
     // «AddressKeyword» = "address";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_address_keyword_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -240,13 +243,14 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_address_keyword(&self, stream: &mut Stream) -> bool {
         self.scan_address_keyword_0_4_11(stream)
     }
 
     // «Ampersand» = "&";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_ampersand_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -256,37 +260,40 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_ampersand(&self, stream: &mut Stream) -> bool {
         self.scan_ampersand_0_4_11(stream)
     }
 
     // «AmpersandAmpersand» = "&&";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_ampersand_ampersand_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_chars!(stream, '&', '&')
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_ampersand_ampersand(&self, stream: &mut Stream) -> bool {
         self.scan_ampersand_ampersand_0_4_11(stream)
     }
 
     // «AmpersandEqual» = "&=";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_ampersand_equal_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_chars!(stream, '&', '=')
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_ampersand_equal(&self, stream: &mut Stream) -> bool {
         self.scan_ampersand_equal_0_4_11(stream)
     }
 
     // «AnonymousKeyword» = "anonymous";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_anonymous_keyword_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -300,13 +307,14 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_anonymous_keyword(&self, stream: &mut Stream) -> bool {
         self.scan_anonymous_keyword_0_4_11(stream)
     }
 
     // «AsKeyword» = "as";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_as_keyword_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -320,6 +328,7 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_as_keyword(&self, stream: &mut Stream) -> bool {
         self.scan_as_keyword_0_4_11(stream)
     }
@@ -333,7 +342,7 @@ impl Language {
     //               | "\n"
     //               | "\r";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_ascii_escape_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_predicate!(stream, |c| c == '\n'
             || c == '\r'
@@ -346,13 +355,14 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_ascii_escape(&self, stream: &mut Stream) -> bool {
         self.scan_ascii_escape_0_4_11(stream)
     }
 
     // «AsciiStringLiteral» = «SingleQuotedAsciiStringLiteral» | «DoubleQuotedAsciiStringLiteral»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_ascii_string_literal_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_choice!(
             stream,
@@ -362,13 +372,14 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_ascii_string_literal(&self, stream: &mut Stream) -> bool {
         self.scan_ascii_string_literal_0_4_11(stream)
     }
 
     // «AssemblyKeyword» = "assembly";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_assembly_keyword_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -382,13 +393,14 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_assembly_keyword(&self, stream: &mut Stream) -> bool {
         self.scan_assembly_keyword_0_4_11(stream)
     }
 
     // «Asterisk» = "*";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_asterisk_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -398,61 +410,66 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_asterisk(&self, stream: &mut Stream) -> bool {
         self.scan_asterisk_0_4_11(stream)
     }
 
     // «AsteriskAsterisk» = "**";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_asterisk_asterisk_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_chars!(stream, '*', '*')
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_asterisk_asterisk(&self, stream: &mut Stream) -> bool {
         self.scan_asterisk_asterisk_0_4_11(stream)
     }
 
     // «AsteriskEqual» = "*=";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_asterisk_equal_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_chars!(stream, '*', '=')
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_asterisk_equal(&self, stream: &mut Stream) -> bool {
         self.scan_asterisk_equal_0_4_11(stream)
     }
 
     // «Bang» = "!";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_bang_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(stream, scan_chars!(stream, '!'), scan_chars!(stream, '='))
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_bang(&self, stream: &mut Stream) -> bool {
         self.scan_bang_0_4_11(stream)
     }
 
     // «BangEqual» = "!=";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_bang_equal_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_chars!(stream, '!', '=')
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_bang_equal(&self, stream: &mut Stream) -> bool {
         self.scan_bang_equal_0_4_11(stream)
     }
 
     // «Bar» = "|";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_bar_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -462,37 +479,40 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_bar(&self, stream: &mut Stream) -> bool {
         self.scan_bar_0_4_11(stream)
     }
 
     // «BarBar» = "||";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_bar_bar_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_chars!(stream, '|', '|')
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_bar_bar(&self, stream: &mut Stream) -> bool {
         self.scan_bar_bar_0_4_11(stream)
     }
 
     // «BarEqual» = "|=";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_bar_equal_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_chars!(stream, '|', '=')
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_bar_equal(&self, stream: &mut Stream) -> bool {
         self.scan_bar_equal_0_4_11(stream)
     }
 
     // «BoolKeyword» = "bool";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_bool_keyword_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -506,13 +526,14 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_bool_keyword(&self, stream: &mut Stream) -> bool {
         self.scan_bool_keyword_0_4_11(stream)
     }
 
     // «BreakKeyword» = "break";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_break_keyword_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -526,6 +547,7 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_break_keyword(&self, stream: &mut Stream) -> bool {
         self.scan_break_keyword_0_4_11(stream)
     }
@@ -533,7 +555,7 @@ impl Language {
     // (* v0.4.11 *)
     // «ByteType» = "byte";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_byte_type_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -555,11 +577,13 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn maybe_scan_byte_type(&self, stream: &mut Stream) -> Option<bool> {
         self.dispatch_scan_byte_type(stream)
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_byte_type(&self, stream: &mut Stream) -> bool {
         self.dispatch_scan_byte_type(stream)
             .expect("Validation should have checked that references are valid between versions")
@@ -568,7 +592,7 @@ impl Language {
     // (* v0.5.0 *)
     // «CalldataKeyword» = "calldata";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_calldata_keyword_0_5_0(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -590,11 +614,13 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn maybe_scan_calldata_keyword(&self, stream: &mut Stream) -> Option<bool> {
         self.dispatch_scan_calldata_keyword(stream)
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_calldata_keyword(&self, stream: &mut Stream) -> bool {
         self.dispatch_scan_calldata_keyword(stream)
             .expect("Validation should have checked that references are valid between versions")
@@ -602,31 +628,33 @@ impl Language {
 
     // «Caret» = "^";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_caret_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(stream, scan_chars!(stream, '^'), scan_chars!(stream, '='))
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_caret(&self, stream: &mut Stream) -> bool {
         self.scan_caret_0_4_11(stream)
     }
 
     // «CaretEqual» = "^=";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_caret_equal_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_chars!(stream, '^', '=')
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_caret_equal(&self, stream: &mut Stream) -> bool {
         self.scan_caret_equal_0_4_11(stream)
     }
 
     // «CaseKeyword» = "case";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_case_keyword_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -640,6 +668,7 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_case_keyword(&self, stream: &mut Stream) -> bool {
         self.scan_case_keyword_0_4_11(stream)
     }
@@ -647,7 +676,7 @@ impl Language {
     // (* v0.6.0 *)
     // «CatchKeyword» = "catch";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_catch_keyword_0_6_0(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -669,11 +698,13 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn maybe_scan_catch_keyword(&self, stream: &mut Stream) -> Option<bool> {
         self.dispatch_scan_catch_keyword(stream)
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_catch_keyword(&self, stream: &mut Stream) -> bool {
         self.dispatch_scan_catch_keyword(stream)
             .expect("Validation should have checked that references are valid between versions")
@@ -681,79 +712,85 @@ impl Language {
 
     // «CloseBrace» = "}";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_close_brace_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_chars!(stream, '}')
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_close_brace(&self, stream: &mut Stream) -> bool {
         self.scan_close_brace_0_4_11(stream)
     }
 
     // «CloseBracket» = "]";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_close_bracket_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_chars!(stream, ']')
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_close_bracket(&self, stream: &mut Stream) -> bool {
         self.scan_close_bracket_0_4_11(stream)
     }
 
     // «CloseParen» = ")";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_close_paren_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_chars!(stream, ')')
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_close_paren(&self, stream: &mut Stream) -> bool {
         self.scan_close_paren_0_4_11(stream)
     }
 
     // «Colon» = ":";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_colon_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(stream, scan_chars!(stream, ':'), scan_chars!(stream, '='))
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_colon(&self, stream: &mut Stream) -> bool {
         self.scan_colon_0_4_11(stream)
     }
 
     // «ColonEqual» = ":=";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_colon_equal_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_chars!(stream, ':', '=')
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_colon_equal(&self, stream: &mut Stream) -> bool {
         self.scan_colon_equal_0_4_11(stream)
     }
 
     // «Comma» = ",";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_comma_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_chars!(stream, ',')
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_comma(&self, stream: &mut Stream) -> bool {
         self.scan_comma_0_4_11(stream)
     }
 
     // «ConstantKeyword» = "constant";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_constant_keyword_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -767,6 +804,7 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_constant_keyword(&self, stream: &mut Stream) -> bool {
         self.scan_constant_keyword_0_4_11(stream)
     }
@@ -774,7 +812,7 @@ impl Language {
     // (* v0.4.22 *)
     // «ConstructorKeyword» = "constructor";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_constructor_keyword_0_4_22(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -796,11 +834,13 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn maybe_scan_constructor_keyword(&self, stream: &mut Stream) -> Option<bool> {
         self.dispatch_scan_constructor_keyword(stream)
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_constructor_keyword(&self, stream: &mut Stream) -> bool {
         self.dispatch_scan_constructor_keyword(stream)
             .expect("Validation should have checked that references are valid between versions")
@@ -808,7 +848,7 @@ impl Language {
 
     // «ContinueKeyword» = "continue";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_continue_keyword_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -822,13 +862,14 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_continue_keyword(&self, stream: &mut Stream) -> bool {
         self.scan_continue_keyword_0_4_11(stream)
     }
 
     // «ContractKeyword» = "contract";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_contract_keyword_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -842,13 +883,14 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_contract_keyword(&self, stream: &mut Stream) -> bool {
         self.scan_contract_keyword_0_4_11(stream)
     }
 
     // «DaysKeyword» = "days";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_days_keyword_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -862,13 +904,14 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_days_keyword(&self, stream: &mut Stream) -> bool {
         self.scan_days_keyword_0_4_11(stream)
     }
 
     // «DecimalExponent» = ("e" | "E") "-"? «DecimalNumber»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_decimal_exponent_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_sequence!(
             scan_predicate!(stream, |c| c == 'E' || c == 'e'),
@@ -878,6 +921,7 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_decimal_exponent(&self, stream: &mut Stream) -> bool {
         self.scan_decimal_exponent_0_4_11(stream)
     }
@@ -885,7 +929,7 @@ impl Language {
     // (* v0.4.11 *)
     // «DecimalLiteral» = ((«DecimalNumber» ("." «DecimalNumber»?)?) | ("." «DecimalNumber»)) «DecimalExponent»?;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_decimal_literal_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_sequence!(
             scan_choice!(
@@ -909,7 +953,7 @@ impl Language {
     // (* v0.5.0 *)
     // «DecimalLiteral» = ((«DecimalNumber» ("." «DecimalNumber»)?) | ("." «DecimalNumber»)) «DecimalExponent»?;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_decimal_literal_0_5_0(&self, stream: &mut Stream) -> bool {
         scan_sequence!(
             scan_choice!(
@@ -936,13 +980,14 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_decimal_literal(&self, stream: &mut Stream) -> bool {
         self.dispatch_scan_decimal_literal(stream)
     }
 
     // «DecimalNumber» = ("0"…"9")+ ("_" ("0"…"9")+)*;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_decimal_number_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_sequence!(
             scan_one_or_more!(stream, scan_predicate!(stream, |c| ('0' <= c && c <= '9'))),
@@ -957,13 +1002,14 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_decimal_number(&self, stream: &mut Stream) -> bool {
         self.scan_decimal_number_0_4_11(stream)
     }
 
     // «DefaultKeyword» = "default";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_default_keyword_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -977,13 +1023,14 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_default_keyword(&self, stream: &mut Stream) -> bool {
         self.scan_default_keyword_0_4_11(stream)
     }
 
     // «DeleteKeyword» = "delete";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_delete_keyword_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -997,13 +1044,14 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_delete_keyword(&self, stream: &mut Stream) -> bool {
         self.scan_delete_keyword_0_4_11(stream)
     }
 
     // «DoKeyword» = "do";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_do_keyword_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -1017,13 +1065,14 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_do_keyword(&self, stream: &mut Stream) -> bool {
         self.scan_do_keyword_0_4_11(stream)
     }
 
     // «DoubleQuotedAsciiStringLiteral» = '"' («EscapeSequence» | ((" "…"~") - ('"' | "\\")))* '"';
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_double_quoted_ascii_string_literal_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_sequence!(
             scan_chars!(stream, '"'),
@@ -1042,6 +1091,7 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_double_quoted_ascii_string_literal(&self, stream: &mut Stream) -> bool {
         self.scan_double_quoted_ascii_string_literal_0_4_11(stream)
     }
@@ -1049,7 +1099,7 @@ impl Language {
     // (* v0.7.0 *)
     // «DoubleQuotedUnicodeStringLiteral» = 'unicode"' («EscapeSequence» | !('"' | "\\" | "\n" | "\r"))* '"';
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_double_quoted_unicode_string_literal_0_7_0(&self, stream: &mut Stream) -> bool {
         scan_sequence!(
             scan_chars!(stream, 'u', 'n', 'i', 'c', 'o', 'd', 'e', '"'),
@@ -1077,6 +1127,7 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn maybe_scan_double_quoted_unicode_string_literal(
         &self,
         stream: &mut Stream,
@@ -1085,6 +1136,7 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_double_quoted_unicode_string_literal(&self, stream: &mut Stream) -> bool {
         self.dispatch_scan_double_quoted_unicode_string_literal(stream)
             .expect("Validation should have checked that references are valid between versions")
@@ -1092,7 +1144,7 @@ impl Language {
 
     // «ElseKeyword» = "else";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_else_keyword_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -1106,6 +1158,7 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_else_keyword(&self, stream: &mut Stream) -> bool {
         self.scan_else_keyword_0_4_11(stream)
     }
@@ -1113,7 +1166,7 @@ impl Language {
     // (* v0.4.21 *)
     // «EmitKeyword» = "emit";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_emit_keyword_0_4_21(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -1135,11 +1188,13 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn maybe_scan_emit_keyword(&self, stream: &mut Stream) -> Option<bool> {
         self.dispatch_scan_emit_keyword(stream)
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_emit_keyword(&self, stream: &mut Stream) -> bool {
         self.dispatch_scan_emit_keyword(stream)
             .expect("Validation should have checked that references are valid between versions")
@@ -1147,7 +1202,7 @@ impl Language {
 
     // «EndOfLine» = "\r"? "\n";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_end_of_line_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_sequence!(
             scan_optional!(stream, scan_chars!(stream, '\r')),
@@ -1156,13 +1211,14 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_end_of_line(&self, stream: &mut Stream) -> bool {
         self.scan_end_of_line_0_4_11(stream)
     }
 
     // «EnumKeyword» = "enum";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_enum_keyword_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -1176,13 +1232,14 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_enum_keyword(&self, stream: &mut Stream) -> bool {
         self.scan_enum_keyword_0_4_11(stream)
     }
 
     // «Equal» = "=";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_equal_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -1192,37 +1249,40 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_equal(&self, stream: &mut Stream) -> bool {
         self.scan_equal_0_4_11(stream)
     }
 
     // «EqualEqual» = "==";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_equal_equal_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_chars!(stream, '=', '=')
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_equal_equal(&self, stream: &mut Stream) -> bool {
         self.scan_equal_equal_0_4_11(stream)
     }
 
     // «EqualGreaterThan» = "=>";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_equal_greater_than_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_chars!(stream, '=', '>')
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_equal_greater_than(&self, stream: &mut Stream) -> bool {
         self.scan_equal_greater_than_0_4_11(stream)
     }
 
     // «ErrorKeyword» = "error";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_error_keyword_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -1236,13 +1296,14 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_error_keyword(&self, stream: &mut Stream) -> bool {
         self.scan_error_keyword_0_4_11(stream)
     }
 
     // «EscapeSequence» = "\\" («AsciiEscape» | «HexByteEscape» | «UnicodeEscape»);
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_escape_sequence_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_sequence!(
             scan_chars!(stream, '\\'),
@@ -1256,13 +1317,14 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_escape_sequence(&self, stream: &mut Stream) -> bool {
         self.scan_escape_sequence_0_4_11(stream)
     }
 
     // «EtherKeyword» = "ether";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_ether_keyword_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -1276,13 +1338,14 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_ether_keyword(&self, stream: &mut Stream) -> bool {
         self.scan_ether_keyword_0_4_11(stream)
     }
 
     // «EventKeyword» = "event";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_event_keyword_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -1296,25 +1359,27 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_event_keyword(&self, stream: &mut Stream) -> bool {
         self.scan_event_keyword_0_4_11(stream)
     }
 
     // «Evmasm» = '"evmasm"';
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_evmasm_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_chars!(stream, '"', 'e', 'v', 'm', 'a', 's', 'm', '"')
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_evmasm(&self, stream: &mut Stream) -> bool {
         self.scan_evmasm_0_4_11(stream)
     }
 
     // «ExperimentalKeyword» = "experimental";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_experimental_keyword_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -1328,13 +1393,14 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_experimental_keyword(&self, stream: &mut Stream) -> bool {
         self.scan_experimental_keyword_0_4_11(stream)
     }
 
     // «ExternalKeyword» = "external";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_external_keyword_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -1348,13 +1414,14 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_external_keyword(&self, stream: &mut Stream) -> bool {
         self.scan_external_keyword_0_4_11(stream)
     }
 
     // «FallbackKeyword» = "fallback";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_fallback_keyword_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -1368,13 +1435,14 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_fallback_keyword(&self, stream: &mut Stream) -> bool {
         self.scan_fallback_keyword_0_4_11(stream)
     }
 
     // «FalseKeyword» = "false";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_false_keyword_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -1388,6 +1456,7 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_false_keyword(&self, stream: &mut Stream) -> bool {
         self.scan_false_keyword_0_4_11(stream)
     }
@@ -1395,7 +1464,7 @@ impl Language {
     // (* v0.4.11 *)
     // «FinneyKeyword» = "finney";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_finney_keyword_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -1417,11 +1486,13 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn maybe_scan_finney_keyword(&self, stream: &mut Stream) -> Option<bool> {
         self.dispatch_scan_finney_keyword(stream)
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_finney_keyword(&self, stream: &mut Stream) -> bool {
         self.dispatch_scan_finney_keyword(stream)
             .expect("Validation should have checked that references are valid between versions")
@@ -1429,7 +1500,7 @@ impl Language {
 
     // «FixedBytesType» = "bytes" ("1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" | "10" | "11" | "12" | "13" | "14" | "15" | "16" | "17" | "18" | "19" | "20" | "21" | "22" | "23" | "24" | "25" | "26" | "27" | "28" | "29" | "30" | "31" | "32");
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_fixed_bytes_type_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -1460,13 +1531,14 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_fixed_bytes_type(&self, stream: &mut Stream) -> bool {
         self.scan_fixed_bytes_type_0_4_11(stream)
     }
 
     // «ForKeyword» = "for";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_for_keyword_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -1480,13 +1552,14 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_for_keyword(&self, stream: &mut Stream) -> bool {
         self.scan_for_keyword_0_4_11(stream)
     }
 
     // «FromKeyword» = "from";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_from_keyword_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -1500,13 +1573,14 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_from_keyword(&self, stream: &mut Stream) -> bool {
         self.scan_from_keyword_0_4_11(stream)
     }
 
     // «FunctionKeyword» = "function";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_function_keyword_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -1520,13 +1594,14 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_function_keyword(&self, stream: &mut Stream) -> bool {
         self.scan_function_keyword_0_4_11(stream)
     }
 
     // «GlobalKeyword» = "global";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_global_keyword_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -1540,13 +1615,14 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_global_keyword(&self, stream: &mut Stream) -> bool {
         self.scan_global_keyword_0_4_11(stream)
     }
 
     // «GreaterThan» = ">";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_greater_than_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -1556,25 +1632,27 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_greater_than(&self, stream: &mut Stream) -> bool {
         self.scan_greater_than_0_4_11(stream)
     }
 
     // «GreaterThanEqual» = ">=";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_greater_than_equal_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_chars!(stream, '>', '=')
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_greater_than_equal(&self, stream: &mut Stream) -> bool {
         self.scan_greater_than_equal_0_4_11(stream)
     }
 
     // «GreaterThanGreaterThan» = ">>";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_greater_than_greater_than_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -1584,25 +1662,27 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_greater_than_greater_than(&self, stream: &mut Stream) -> bool {
         self.scan_greater_than_greater_than_0_4_11(stream)
     }
 
     // «GreaterThanGreaterThanEqual» = ">>=";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_greater_than_greater_than_equal_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_chars!(stream, '>', '>', '=')
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_greater_than_greater_than_equal(&self, stream: &mut Stream) -> bool {
         self.scan_greater_than_greater_than_equal_0_4_11(stream)
     }
 
     // «GreaterThanGreaterThanGreaterThan» = ">>>";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_greater_than_greater_than_greater_than_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -1612,13 +1692,14 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_greater_than_greater_than_greater_than(&self, stream: &mut Stream) -> bool {
         self.scan_greater_than_greater_than_greater_than_0_4_11(stream)
     }
 
     // «GreaterThanGreaterThanGreaterThanEqual» = ">>>=";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_greater_than_greater_than_greater_than_equal_0_4_11(
         &self,
         stream: &mut Stream,
@@ -1627,6 +1708,7 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_greater_than_greater_than_greater_than_equal(
         &self,
         stream: &mut Stream,
@@ -1637,7 +1719,7 @@ impl Language {
     // (* v0.6.11 *)
     // «GweiKeyword» = "gwei";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_gwei_keyword_0_6_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -1659,11 +1741,13 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn maybe_scan_gwei_keyword(&self, stream: &mut Stream) -> Option<bool> {
         self.dispatch_scan_gwei_keyword(stream)
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_gwei_keyword(&self, stream: &mut Stream) -> bool {
         self.dispatch_scan_gwei_keyword(stream)
             .expect("Validation should have checked that references are valid between versions")
@@ -1671,7 +1755,7 @@ impl Language {
 
     // «HexByteEscape» = "x" «HexCharacter»{2,2};
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_hex_byte_escape_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_sequence!(
             scan_chars!(stream, 'x'),
@@ -1687,13 +1771,14 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_hex_byte_escape(&self, stream: &mut Stream) -> bool {
         self.scan_hex_byte_escape_0_4_11(stream)
     }
 
     // «HexCharacter» = ("0"…"9") | ("a"…"f") | ("A"…"F");
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_hex_character_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_predicate!(stream, |c| ('0' <= c && c <= '9')
             || ('A' <= c && c <= 'F')
@@ -1701,6 +1786,7 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_hex_character(&self, stream: &mut Stream) -> bool {
         self.scan_hex_character_0_4_11(stream)
     }
@@ -1708,7 +1794,7 @@ impl Language {
     // (* v0.4.11 *)
     // «HexLiteral» = "0" ("x" | "X") «HexCharacter»+ ("_" «HexCharacter»+)*;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_hex_literal_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_sequence!(
             scan_chars!(stream, '0'),
@@ -1737,7 +1823,7 @@ impl Language {
     // (* v0.5.0 *)
     // «HexLiteral» = "0x" «HexCharacter»+ ("_" «HexCharacter»+)*;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_hex_literal_0_5_0(&self, stream: &mut Stream) -> bool {
         scan_sequence!(
             scan_chars!(stream, '0', 'x'),
@@ -1771,13 +1857,14 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_hex_literal(&self, stream: &mut Stream) -> bool {
         self.dispatch_scan_hex_literal(stream)
     }
 
     // «HexStringLiteral» = "hex" (('"' «PossiblySeparatedPairsOfHexDigits»? '"') | ("'" «PossiblySeparatedPairsOfHexDigits»? "'"));
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_hex_string_literal_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_sequence!(
             scan_chars!(stream, 'h', 'e', 'x'),
@@ -1804,13 +1891,14 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_hex_string_literal(&self, stream: &mut Stream) -> bool {
         self.scan_hex_string_literal_0_4_11(stream)
     }
 
     // «HoursKeyword» = "hours";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_hours_keyword_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -1824,13 +1912,14 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_hours_keyword(&self, stream: &mut Stream) -> bool {
         self.scan_hours_keyword_0_4_11(stream)
     }
 
     // «Identifier» = «RawIdentifier» - («NotAnIdentifierInAnyVersion» | «NotAnIdentifierInSomeVersions» | «FixedBytesType» | «SignedFixedType» | «UnsignedFixedType» | «SignedIntegerType» | «UnsignedIntegerType»);
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_identifier_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_difference!(
             stream,
@@ -2021,13 +2110,14 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_identifier(&self, stream: &mut Stream) -> bool {
         self.scan_identifier_0_4_11(stream)
     }
 
     // «IdentifierPart» = «IdentifierStart» | ("0"…"9");
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_identifier_part_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_predicate!(stream, |c| c == '$'
             || ('0' <= c && c <= '9')
@@ -2037,13 +2127,14 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_identifier_part(&self, stream: &mut Stream) -> bool {
         self.scan_identifier_part_0_4_11(stream)
     }
 
     // «IdentifierStart» = "_" | "$" | ("a"…"z") | ("A"…"Z");
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_identifier_start_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_predicate!(stream, |c| c == '$'
             || ('A' <= c && c <= 'Z')
@@ -2052,13 +2143,14 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_identifier_start(&self, stream: &mut Stream) -> bool {
         self.scan_identifier_start_0_4_11(stream)
     }
 
     // «IfKeyword» = "if";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_if_keyword_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -2072,6 +2164,7 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_if_keyword(&self, stream: &mut Stream) -> bool {
         self.scan_if_keyword_0_4_11(stream)
     }
@@ -2079,7 +2172,7 @@ impl Language {
     // (* v0.6.5 *)
     // «ImmutableKeyword» = "immutable";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_immutable_keyword_0_6_5(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -2101,11 +2194,13 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn maybe_scan_immutable_keyword(&self, stream: &mut Stream) -> Option<bool> {
         self.dispatch_scan_immutable_keyword(stream)
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_immutable_keyword(&self, stream: &mut Stream) -> bool {
         self.dispatch_scan_immutable_keyword(stream)
             .expect("Validation should have checked that references are valid between versions")
@@ -2113,7 +2208,7 @@ impl Language {
 
     // «ImportKeyword» = "import";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_import_keyword_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -2127,13 +2222,14 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_import_keyword(&self, stream: &mut Stream) -> bool {
         self.scan_import_keyword_0_4_11(stream)
     }
 
     // «IndexedKeyword» = "indexed";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_indexed_keyword_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -2147,13 +2243,14 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_indexed_keyword(&self, stream: &mut Stream) -> bool {
         self.scan_indexed_keyword_0_4_11(stream)
     }
 
     // «InterfaceKeyword» = "interface";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_interface_keyword_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -2167,13 +2264,14 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_interface_keyword(&self, stream: &mut Stream) -> bool {
         self.scan_interface_keyword_0_4_11(stream)
     }
 
     // «InternalKeyword» = "internal";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_internal_keyword_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -2187,13 +2285,14 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_internal_keyword(&self, stream: &mut Stream) -> bool {
         self.scan_internal_keyword_0_4_11(stream)
     }
 
     // «IsKeyword» = "is";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_is_keyword_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -2207,6 +2306,7 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_is_keyword(&self, stream: &mut Stream) -> bool {
         self.scan_is_keyword_0_4_11(stream)
     }
@@ -2214,7 +2314,7 @@ impl Language {
     // (* v0.6.0 *)
     // «LeaveKeyword» = "leave";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_leave_keyword_0_6_0(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -2236,11 +2336,13 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn maybe_scan_leave_keyword(&self, stream: &mut Stream) -> Option<bool> {
         self.dispatch_scan_leave_keyword(stream)
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_leave_keyword(&self, stream: &mut Stream) -> bool {
         self.dispatch_scan_leave_keyword(stream)
             .expect("Validation should have checked that references are valid between versions")
@@ -2248,7 +2350,7 @@ impl Language {
 
     // «LessThan» = "<";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_less_than_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -2258,25 +2360,27 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_less_than(&self, stream: &mut Stream) -> bool {
         self.scan_less_than_0_4_11(stream)
     }
 
     // «LessThanEqual» = "<=";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_less_than_equal_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_chars!(stream, '<', '=')
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_less_than_equal(&self, stream: &mut Stream) -> bool {
         self.scan_less_than_equal_0_4_11(stream)
     }
 
     // «LessThanLessThan» = "<<";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_less_than_less_than_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -2286,25 +2390,27 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_less_than_less_than(&self, stream: &mut Stream) -> bool {
         self.scan_less_than_less_than_0_4_11(stream)
     }
 
     // «LessThanLessThanEqual» = "<<=";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_less_than_less_than_equal_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_chars!(stream, '<', '<', '=')
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_less_than_less_than_equal(&self, stream: &mut Stream) -> bool {
         self.scan_less_than_less_than_equal_0_4_11(stream)
     }
 
     // «LetKeyword» = "let";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_let_keyword_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -2318,13 +2424,14 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_let_keyword(&self, stream: &mut Stream) -> bool {
         self.scan_let_keyword_0_4_11(stream)
     }
 
     // «LibraryKeyword» = "library";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_library_keyword_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -2338,13 +2445,14 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_library_keyword(&self, stream: &mut Stream) -> bool {
         self.scan_library_keyword_0_4_11(stream)
     }
 
     // «MappingKeyword» = "mapping";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_mapping_keyword_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -2358,13 +2466,14 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_mapping_keyword(&self, stream: &mut Stream) -> bool {
         self.scan_mapping_keyword_0_4_11(stream)
     }
 
     // «MemoryKeyword» = "memory";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_memory_keyword_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -2378,13 +2487,14 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_memory_keyword(&self, stream: &mut Stream) -> bool {
         self.scan_memory_keyword_0_4_11(stream)
     }
 
     // «Minus» = "-";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_minus_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -2394,49 +2504,53 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_minus(&self, stream: &mut Stream) -> bool {
         self.scan_minus_0_4_11(stream)
     }
 
     // «MinusEqual» = "-=";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_minus_equal_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_chars!(stream, '-', '=')
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_minus_equal(&self, stream: &mut Stream) -> bool {
         self.scan_minus_equal_0_4_11(stream)
     }
 
     // «MinusGreaterThan» = "->";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_minus_greater_than_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_chars!(stream, '-', '>')
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_minus_greater_than(&self, stream: &mut Stream) -> bool {
         self.scan_minus_greater_than_0_4_11(stream)
     }
 
     // «MinusMinus» = "--";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_minus_minus_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_chars!(stream, '-', '-')
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_minus_minus(&self, stream: &mut Stream) -> bool {
         self.scan_minus_minus_0_4_11(stream)
     }
 
     // «MinutesKeyword» = "minutes";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_minutes_keyword_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -2450,13 +2564,14 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_minutes_keyword(&self, stream: &mut Stream) -> bool {
         self.scan_minutes_keyword_0_4_11(stream)
     }
 
     // «ModifierKeyword» = "modifier";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_modifier_keyword_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -2470,13 +2585,14 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_modifier_keyword(&self, stream: &mut Stream) -> bool {
         self.scan_modifier_keyword_0_4_11(stream)
     }
 
     // «MultilineComment» = "/*" (!"*" | ("*" !"/"))* "*/";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_multiline_comment_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_sequence!(
             scan_chars!(stream, '/', '*'),
@@ -2496,13 +2612,14 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_multiline_comment(&self, stream: &mut Stream) -> bool {
         self.scan_multiline_comment_0_4_11(stream)
     }
 
     // «NewKeyword» = "new";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_new_keyword_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -2516,6 +2633,7 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_new_keyword(&self, stream: &mut Stream) -> bool {
         self.scan_new_keyword_0_4_11(stream)
     }
@@ -2594,7 +2712,7 @@ impl Language {
     //                               | "while"
     //                               | "years";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_not_an_identifier_in_any_version_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_trie!(
             stream,
@@ -2772,6 +2890,7 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_not_an_identifier_in_any_version(&self, stream: &mut Stream) -> bool {
         self.scan_not_an_identifier_in_any_version_0_4_11(stream)
     }
@@ -2779,7 +2898,7 @@ impl Language {
     // (* v0.4.11 *)
     // «NotAnIdentifierInSomeVersions» = "finney" | "szabo";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_not_an_identifier_in_some_versions_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_trie!(
             stream,
@@ -2813,7 +2932,7 @@ impl Language {
     //                                 | "typedef"
     //                                 | "unchecked";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_not_an_identifier_in_some_versions_0_5_0(&self, stream: &mut Stream) -> bool {
         scan_trie!(
             stream,
@@ -2895,7 +3014,7 @@ impl Language {
     //                                 | "receive"
     //                                 | "virtual";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_not_an_identifier_in_some_versions_0_6_0(&self, stream: &mut Stream) -> bool {
         scan_trie!(
             stream,
@@ -2988,7 +3107,7 @@ impl Language {
     //                                 | "virtual"
     //                                 | "gwei";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_not_an_identifier_in_some_versions_0_7_0(&self, stream: &mut Stream) -> bool {
         scan_trie!(
             stream,
@@ -3063,49 +3182,53 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_not_an_identifier_in_some_versions(&self, stream: &mut Stream) -> bool {
         self.dispatch_scan_not_an_identifier_in_some_versions(stream)
     }
 
     // «OpenBrace» = "{";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_open_brace_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_chars!(stream, '{')
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_open_brace(&self, stream: &mut Stream) -> bool {
         self.scan_open_brace_0_4_11(stream)
     }
 
     // «OpenBracket» = "[";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_open_bracket_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_chars!(stream, '[')
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_open_bracket(&self, stream: &mut Stream) -> bool {
         self.scan_open_bracket_0_4_11(stream)
     }
 
     // «OpenParen» = "(";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_open_paren_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_chars!(stream, '(')
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_open_paren(&self, stream: &mut Stream) -> bool {
         self.scan_open_paren_0_4_11(stream)
     }
 
     // «OverrideKeyword» = "override";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_override_keyword_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -3119,13 +3242,14 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_override_keyword(&self, stream: &mut Stream) -> bool {
         self.scan_override_keyword_0_4_11(stream)
     }
 
     // «PayableKeyword» = "payable";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_payable_keyword_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -3139,49 +3263,53 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_payable_keyword(&self, stream: &mut Stream) -> bool {
         self.scan_payable_keyword_0_4_11(stream)
     }
 
     // «Percent» = "%";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_percent_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(stream, scan_chars!(stream, '%'), scan_chars!(stream, '='))
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_percent(&self, stream: &mut Stream) -> bool {
         self.scan_percent_0_4_11(stream)
     }
 
     // «PercentEqual» = "%=";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_percent_equal_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_chars!(stream, '%', '=')
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_percent_equal(&self, stream: &mut Stream) -> bool {
         self.scan_percent_equal_0_4_11(stream)
     }
 
     // «Period» = ".";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_period_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_chars!(stream, '.')
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_period(&self, stream: &mut Stream) -> bool {
         self.scan_period_0_4_11(stream)
     }
 
     // «Plus» = "+";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_plus_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -3191,37 +3319,40 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_plus(&self, stream: &mut Stream) -> bool {
         self.scan_plus_0_4_11(stream)
     }
 
     // «PlusEqual» = "+=";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_plus_equal_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_chars!(stream, '+', '=')
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_plus_equal(&self, stream: &mut Stream) -> bool {
         self.scan_plus_equal_0_4_11(stream)
     }
 
     // «PlusPlus» = "++";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_plus_plus_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_chars!(stream, '+', '+')
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_plus_plus(&self, stream: &mut Stream) -> bool {
         self.scan_plus_plus_0_4_11(stream)
     }
 
     // «PossiblySeparatedPairsOfHexDigits» = «HexCharacter»{2,2} ("_"? «HexCharacter»{2,2})*;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_possibly_separated_pairs_of_hex_digits_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_sequence!(
             scan_repeated!(
@@ -3250,13 +3381,14 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_possibly_separated_pairs_of_hex_digits(&self, stream: &mut Stream) -> bool {
         self.scan_possibly_separated_pairs_of_hex_digits_0_4_11(stream)
     }
 
     // «PragmaKeyword» = "pragma";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_pragma_keyword_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -3270,13 +3402,14 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_pragma_keyword(&self, stream: &mut Stream) -> bool {
         self.scan_pragma_keyword_0_4_11(stream)
     }
 
     // «PrivateKeyword» = "private";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_private_keyword_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -3290,13 +3423,14 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_private_keyword(&self, stream: &mut Stream) -> bool {
         self.scan_private_keyword_0_4_11(stream)
     }
 
     // «PublicKeyword» = "public";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_public_keyword_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -3310,13 +3444,14 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_public_keyword(&self, stream: &mut Stream) -> bool {
         self.scan_public_keyword_0_4_11(stream)
     }
 
     // «PureKeyword» = "pure";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_pure_keyword_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -3330,25 +3465,27 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_pure_keyword(&self, stream: &mut Stream) -> bool {
         self.scan_pure_keyword_0_4_11(stream)
     }
 
     // «QuestionMark» = "?";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_question_mark_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_chars!(stream, '?')
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_question_mark(&self, stream: &mut Stream) -> bool {
         self.scan_question_mark_0_4_11(stream)
     }
 
     // «RawIdentifier» = «IdentifierStart» «IdentifierPart»*;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_raw_identifier_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_sequence!(
             scan_predicate!(stream, |c| c == '$'
@@ -3367,13 +3504,14 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_raw_identifier(&self, stream: &mut Stream) -> bool {
         self.scan_raw_identifier_0_4_11(stream)
     }
 
     // «ReceiveKeyword» = "receive";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_receive_keyword_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -3387,13 +3525,14 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_receive_keyword(&self, stream: &mut Stream) -> bool {
         self.scan_receive_keyword_0_4_11(stream)
     }
 
     // «ReturnKeyword» = "return";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_return_keyword_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -3407,13 +3546,14 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_return_keyword(&self, stream: &mut Stream) -> bool {
         self.scan_return_keyword_0_4_11(stream)
     }
 
     // «ReturnsKeyword» = "returns";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_returns_keyword_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -3427,13 +3567,14 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_returns_keyword(&self, stream: &mut Stream) -> bool {
         self.scan_returns_keyword_0_4_11(stream)
     }
 
     // «RevertKeyword» = "revert";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_revert_keyword_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -3447,13 +3588,14 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_revert_keyword(&self, stream: &mut Stream) -> bool {
         self.scan_revert_keyword_0_4_11(stream)
     }
 
     // «SecondsKeyword» = "seconds";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_seconds_keyword_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -3467,25 +3609,27 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_seconds_keyword(&self, stream: &mut Stream) -> bool {
         self.scan_seconds_keyword_0_4_11(stream)
     }
 
     // «Semicolon» = ";";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_semicolon_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_chars!(stream, ';')
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_semicolon(&self, stream: &mut Stream) -> bool {
         self.scan_semicolon_0_4_11(stream)
     }
 
     // «SignedFixedType» = "fixed" (("0"…"9")+ "x" ("0"…"9")+)?;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_signed_fixed_type_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -3515,13 +3659,14 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_signed_fixed_type(&self, stream: &mut Stream) -> bool {
         self.scan_signed_fixed_type_0_4_11(stream)
     }
 
     // «SignedIntegerType» = "int" ("8" | "16" | "24" | "32" | "40" | "48" | "56" | "64" | "72" | "80" | "88" | "96" | "104" | "112" | "120" | "128" | "136" | "144" | "152" | "160" | "168" | "176" | "184" | "192" | "200" | "208" | "216" | "224" | "232" | "240" | "248" | "256")?;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_signed_integer_type_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -3572,13 +3717,14 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_signed_integer_type(&self, stream: &mut Stream) -> bool {
         self.scan_signed_integer_type_0_4_11(stream)
     }
 
     // «SingleLineComment» = "//" (!("\r" | "\n"))*;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_single_line_comment_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_sequence!(
             scan_chars!(stream, '/', '/'),
@@ -3587,13 +3733,14 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_single_line_comment(&self, stream: &mut Stream) -> bool {
         self.scan_single_line_comment_0_4_11(stream)
     }
 
     // «SingleQuotedAsciiStringLiteral» = "'" («EscapeSequence» | ((" "…"~") - ("'" | "\\")))* "'";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_single_quoted_ascii_string_literal_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_sequence!(
             scan_chars!(stream, '\''),
@@ -3612,6 +3759,7 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_single_quoted_ascii_string_literal(&self, stream: &mut Stream) -> bool {
         self.scan_single_quoted_ascii_string_literal_0_4_11(stream)
     }
@@ -3619,7 +3767,7 @@ impl Language {
     // (* v0.7.0 *)
     // «SingleQuotedUnicodeStringLiteral» = "unicode'" («EscapeSequence» | !("'" | "\\" | "\n" | "\r"))* "'";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_single_quoted_unicode_string_literal_0_7_0(&self, stream: &mut Stream) -> bool {
         scan_sequence!(
             scan_chars!(stream, 'u', 'n', 'i', 'c', 'o', 'd', 'e', '\''),
@@ -3647,6 +3795,7 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn maybe_scan_single_quoted_unicode_string_literal(
         &self,
         stream: &mut Stream,
@@ -3655,6 +3804,7 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_single_quoted_unicode_string_literal(&self, stream: &mut Stream) -> bool {
         self.dispatch_scan_single_quoted_unicode_string_literal(stream)
             .expect("Validation should have checked that references are valid between versions")
@@ -3662,31 +3812,33 @@ impl Language {
 
     // «Slash» = "/";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_slash_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(stream, scan_chars!(stream, '/'), scan_chars!(stream, '='))
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_slash(&self, stream: &mut Stream) -> bool {
         self.scan_slash_0_4_11(stream)
     }
 
     // «SlashEqual» = "/=";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_slash_equal_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_chars!(stream, '/', '=')
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_slash_equal(&self, stream: &mut Stream) -> bool {
         self.scan_slash_equal_0_4_11(stream)
     }
 
     // «SolidityKeyword» = "solidity";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_solidity_keyword_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -3700,13 +3852,14 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_solidity_keyword(&self, stream: &mut Stream) -> bool {
         self.scan_solidity_keyword_0_4_11(stream)
     }
 
     // «StorageKeyword» = "storage";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_storage_keyword_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -3720,13 +3873,14 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_storage_keyword(&self, stream: &mut Stream) -> bool {
         self.scan_storage_keyword_0_4_11(stream)
     }
 
     // «StringKeyword» = "string";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_string_keyword_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -3740,13 +3894,14 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_string_keyword(&self, stream: &mut Stream) -> bool {
         self.scan_string_keyword_0_4_11(stream)
     }
 
     // «StructKeyword» = "struct";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_struct_keyword_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -3760,13 +3915,14 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_struct_keyword(&self, stream: &mut Stream) -> bool {
         self.scan_struct_keyword_0_4_11(stream)
     }
 
     // «SwitchKeyword» = "switch";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_switch_keyword_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -3780,6 +3936,7 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_switch_keyword(&self, stream: &mut Stream) -> bool {
         self.scan_switch_keyword_0_4_11(stream)
     }
@@ -3787,7 +3944,7 @@ impl Language {
     // (* v0.4.11 *)
     // «SzaboKeyword» = "szabo";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_szabo_keyword_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -3809,11 +3966,13 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn maybe_scan_szabo_keyword(&self, stream: &mut Stream) -> Option<bool> {
         self.dispatch_scan_szabo_keyword(stream)
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_szabo_keyword(&self, stream: &mut Stream) -> bool {
         self.dispatch_scan_szabo_keyword(stream)
             .expect("Validation should have checked that references are valid between versions")
@@ -3822,7 +3981,7 @@ impl Language {
     // (* v0.4.11 *)
     // «ThrowKeyword» = "throw";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_throw_keyword_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -3844,11 +4003,13 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn maybe_scan_throw_keyword(&self, stream: &mut Stream) -> Option<bool> {
         self.dispatch_scan_throw_keyword(stream)
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_throw_keyword(&self, stream: &mut Stream) -> bool {
         self.dispatch_scan_throw_keyword(stream)
             .expect("Validation should have checked that references are valid between versions")
@@ -3856,19 +4017,20 @@ impl Language {
 
     // «Tilde» = "~";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_tilde_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_chars!(stream, '~')
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_tilde(&self, stream: &mut Stream) -> bool {
         self.scan_tilde_0_4_11(stream)
     }
 
     // «TrueKeyword» = "true";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_true_keyword_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -3882,6 +4044,7 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_true_keyword(&self, stream: &mut Stream) -> bool {
         self.scan_true_keyword_0_4_11(stream)
     }
@@ -3889,7 +4052,7 @@ impl Language {
     // (* v0.6.0 *)
     // «TryKeyword» = "try";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_try_keyword_0_6_0(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -3911,11 +4074,13 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn maybe_scan_try_keyword(&self, stream: &mut Stream) -> Option<bool> {
         self.dispatch_scan_try_keyword(stream)
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_try_keyword(&self, stream: &mut Stream) -> bool {
         self.dispatch_scan_try_keyword(stream)
             .expect("Validation should have checked that references are valid between versions")
@@ -3924,7 +4089,7 @@ impl Language {
     // (* v0.5.3 *)
     // «TypeKeyword» = "type";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_type_keyword_0_5_3(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -3946,11 +4111,13 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn maybe_scan_type_keyword(&self, stream: &mut Stream) -> Option<bool> {
         self.dispatch_scan_type_keyword(stream)
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_type_keyword(&self, stream: &mut Stream) -> bool {
         self.dispatch_scan_type_keyword(stream)
             .expect("Validation should have checked that references are valid between versions")
@@ -3959,7 +4126,7 @@ impl Language {
     // (* v0.8.0 *)
     // «UncheckedKeyword» = "unchecked";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_unchecked_keyword_0_8_0(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -3981,11 +4148,13 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn maybe_scan_unchecked_keyword(&self, stream: &mut Stream) -> Option<bool> {
         self.dispatch_scan_unchecked_keyword(stream)
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_unchecked_keyword(&self, stream: &mut Stream) -> bool {
         self.dispatch_scan_unchecked_keyword(stream)
             .expect("Validation should have checked that references are valid between versions")
@@ -3993,7 +4162,7 @@ impl Language {
 
     // «UnicodeEscape» = "u" «HexCharacter»{4,4};
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_unicode_escape_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_sequence!(
             scan_chars!(stream, 'u'),
@@ -4009,6 +4178,7 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_unicode_escape(&self, stream: &mut Stream) -> bool {
         self.scan_unicode_escape_0_4_11(stream)
     }
@@ -4016,7 +4186,7 @@ impl Language {
     // (* v0.7.0 *)
     // «UnicodeStringLiteral» = «SingleQuotedUnicodeStringLiteral» | «DoubleQuotedUnicodeStringLiteral»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_unicode_string_literal_0_7_0(&self, stream: &mut Stream) -> bool {
         scan_choice!(
             stream,
@@ -4034,11 +4204,13 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn maybe_scan_unicode_string_literal(&self, stream: &mut Stream) -> Option<bool> {
         self.dispatch_scan_unicode_string_literal(stream)
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_unicode_string_literal(&self, stream: &mut Stream) -> bool {
         self.dispatch_scan_unicode_string_literal(stream)
             .expect("Validation should have checked that references are valid between versions")
@@ -4046,7 +4218,7 @@ impl Language {
 
     // «UnsignedFixedType» = "u" «SignedFixedType»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_unsigned_fixed_type_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_sequence!(
             scan_chars!(stream, 'u'),
@@ -4055,13 +4227,14 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_unsigned_fixed_type(&self, stream: &mut Stream) -> bool {
         self.scan_unsigned_fixed_type_0_4_11(stream)
     }
 
     // «UnsignedIntegerType» = "u" «SignedIntegerType»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_unsigned_integer_type_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_sequence!(
             scan_chars!(stream, 'u'),
@@ -4070,13 +4243,14 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_unsigned_integer_type(&self, stream: &mut Stream) -> bool {
         self.scan_unsigned_integer_type_0_4_11(stream)
     }
 
     // «UsingKeyword» = "using";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_using_keyword_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -4090,6 +4264,7 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_using_keyword(&self, stream: &mut Stream) -> bool {
         self.scan_using_keyword_0_4_11(stream)
     }
@@ -4097,7 +4272,7 @@ impl Language {
     // (* v0.4.11 *)
     // «VarKeyword» = "var";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_var_keyword_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -4119,11 +4294,13 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn maybe_scan_var_keyword(&self, stream: &mut Stream) -> Option<bool> {
         self.dispatch_scan_var_keyword(stream)
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_var_keyword(&self, stream: &mut Stream) -> bool {
         self.dispatch_scan_var_keyword(stream)
             .expect("Validation should have checked that references are valid between versions")
@@ -4131,7 +4308,7 @@ impl Language {
 
     // «VersionPragmaValue» = (("0"…"9") | "x" | "X" | "*")+;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_version_pragma_value_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_one_or_more!(
             stream,
@@ -4143,13 +4320,14 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_version_pragma_value(&self, stream: &mut Stream) -> bool {
         self.scan_version_pragma_value_0_4_11(stream)
     }
 
     // «ViewKeyword» = "view";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_view_keyword_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -4163,6 +4341,7 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_view_keyword(&self, stream: &mut Stream) -> bool {
         self.scan_view_keyword_0_4_11(stream)
     }
@@ -4170,7 +4349,7 @@ impl Language {
     // (* v0.6.0 *)
     // «VirtualKeyword» = "virtual";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_virtual_keyword_0_6_0(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -4192,11 +4371,13 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn maybe_scan_virtual_keyword(&self, stream: &mut Stream) -> Option<bool> {
         self.dispatch_scan_virtual_keyword(stream)
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_virtual_keyword(&self, stream: &mut Stream) -> bool {
         self.dispatch_scan_virtual_keyword(stream)
             .expect("Validation should have checked that references are valid between versions")
@@ -4204,7 +4385,7 @@ impl Language {
 
     // «WeeksKeyword» = "weeks";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_weeks_keyword_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -4218,13 +4399,14 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_weeks_keyword(&self, stream: &mut Stream) -> bool {
         self.scan_weeks_keyword_0_4_11(stream)
     }
 
     // «WeiKeyword» = "wei";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_wei_keyword_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -4238,13 +4420,14 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_wei_keyword(&self, stream: &mut Stream) -> bool {
         self.scan_wei_keyword_0_4_11(stream)
     }
 
     // «WhileKeyword» = "while";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_while_keyword_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -4258,18 +4441,20 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_while_keyword(&self, stream: &mut Stream) -> bool {
         self.scan_while_keyword_0_4_11(stream)
     }
 
     // «Whitespace» = (" " | "\t")+;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_whitespace_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_one_or_more!(stream, scan_predicate!(stream, |c| c == '\t' || c == ' '))
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_whitespace(&self, stream: &mut Stream) -> bool {
         self.scan_whitespace_0_4_11(stream)
     }
@@ -4277,7 +4462,7 @@ impl Language {
     // (* v0.4.11 *)
     // «YearsKeyword» = "years";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_years_keyword_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
@@ -4299,11 +4484,13 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn maybe_scan_years_keyword(&self, stream: &mut Stream) -> Option<bool> {
         self.dispatch_scan_years_keyword(stream)
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_years_keyword(&self, stream: &mut Stream) -> bool {
         self.dispatch_scan_years_keyword(stream)
             .expect("Validation should have checked that references are valid between versions")
@@ -4311,7 +4498,7 @@ impl Language {
 
     // «YulDecimalLiteral» = "0" | (("1"…"9") ("0"…"9")*);
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_yul_decimal_literal_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_choice!(
             stream,
@@ -4324,13 +4511,14 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_yul_decimal_literal(&self, stream: &mut Stream) -> bool {
         self.scan_yul_decimal_literal_0_4_11(stream)
     }
 
     // «YulHexLiteral» = "0x" «HexCharacter»+;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_yul_hex_literal_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_sequence!(
             scan_chars!(stream, '0', 'x'),
@@ -4344,13 +4532,14 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_yul_hex_literal(&self, stream: &mut Stream) -> bool {
         self.scan_yul_hex_literal_0_4_11(stream)
     }
 
     // «YulIdentifier» = «RawIdentifier» - («YulKeyword» | «YulReservedKeyword»);
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_yul_identifier_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_difference!(
             stream,
@@ -4364,6 +4553,7 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_yul_identifier(&self, stream: &mut Stream) -> bool {
         self.scan_yul_identifier_0_4_11(stream)
     }
@@ -4381,7 +4571,7 @@ impl Language {
     //              | «SwitchKeyword»
     //              | «TrueKeyword»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_yul_keyword_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_choice!(
             stream,
@@ -4413,7 +4603,7 @@ impl Language {
     //              | «SwitchKeyword»
     //              | «TrueKeyword»;
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_yul_keyword_0_6_0(&self, stream: &mut Stream) -> bool {
         scan_choice!(
             stream,
@@ -4441,18 +4631,20 @@ impl Language {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_yul_keyword(&self, stream: &mut Stream) -> bool {
         self.dispatch_scan_yul_keyword(stream)
     }
 
     // «YulReservedKeyword» = "hex";
 
-    #[allow(unused_assignments, unused_parens)]
+    #[allow(dead_code)]
     fn scan_yul_reserved_keyword_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_chars!(stream, 'h', 'e', 'x')
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub(crate) fn scan_yul_reserved_keyword(&self, stream: &mut Stream) -> bool {
         self.scan_yul_reserved_keyword_0_4_11(stream)
     }

@@ -3,7 +3,8 @@ use std::path::PathBuf;
 use anyhow::Result;
 use codegen_ebnf::EbnfSerializer;
 use codegen_schema::types::{
-    LanguageDefinition, LanguageSection, LanguageTopic, Production, ProductionRef, VersionMap,
+    LanguageDefinition, LanguageSection, LanguageTopic, ProductionDefinition, ProductionRef,
+    VersionMap,
 };
 use codegen_utils::context::CodegenContext;
 use inflector::Inflector;
@@ -48,11 +49,10 @@ impl<'context> Snippets<'context> {
         production: &ProductionRef,
         version: &Version,
     ) -> Option<PathBuf> {
-        let production_name = &production.name();
-        let (section, topic) = self.locate_production(production_name);
+        let (section, topic) = self.locate_production(&production.name);
 
-        let file_name = match production.as_ref() {
-            Production::Scanner { version_map, .. } => match version_map {
+        let file_name = match &production.definition {
+            ProductionDefinition::Scanner { version_map, .. } => match version_map {
                 VersionMap::Unversioned(_) => Some("unversioned".to_owned()),
                 VersionMap::Versioned(versions) => versions
                     .keys()
@@ -60,8 +60,8 @@ impl<'context> Snippets<'context> {
                     .find(|v| *v <= version)
                     .and_then(|v| versions.get(v).unwrap().as_ref().map(|_| v.to_string())),
             },
-            Production::TriviaParser { version_map, .. }
-            | Production::Parser { version_map, .. } => match version_map {
+            ProductionDefinition::TriviaParser { version_map, .. }
+            | ProductionDefinition::Parser { version_map, .. } => match version_map {
                 VersionMap::Unversioned(_) => Some("unversioned".to_owned()),
                 VersionMap::Versioned(versions) => versions
                     .keys()
@@ -69,7 +69,7 @@ impl<'context> Snippets<'context> {
                     .find(|v| *v <= version)
                     .and_then(|v| versions.get(v).unwrap().as_ref().map(|_| v.to_string())),
             },
-            Production::PrecedenceParser { version_map, .. } => match version_map {
+            ProductionDefinition::PrecedenceParser { version_map, .. } => match version_map {
                 VersionMap::Unversioned(_) => Some("unversioned".to_owned()),
                 VersionMap::Versioned(versions) => versions
                     .keys()
@@ -84,7 +84,7 @@ impl<'context> Snippets<'context> {
                 .join("ebnf")
                 .join(&section.path)
                 .join(&topic.path)
-                .join(production_name.to_kebab_case())
+                .join(production.name.to_kebab_case())
                 .join(format!("{file_name}.md"))
         });
     }
@@ -94,7 +94,7 @@ impl<'context> Snippets<'context> {
 
         let language = "ebnf"; // https://pygments.org/languages/
         let class = "slang-ebnf"; // used to select code blocks via JS during runtime
-        let id = production.name(); // used for navigation (generarating URL hashes)
+        let id = &production.name; // used for navigation (generarating URL hashes)
 
         let contents = &EbnfSerializer::serialize_version(self.language, production, version)?;
         snippet.write_code_block(language, class, id, contents);
@@ -106,7 +106,7 @@ impl<'context> Snippets<'context> {
         for section in &self.language.sections {
             for topic in &section.topics {
                 for production in &topic.productions {
-                    if name == production.name() {
+                    if name == production.name {
                         return (section, topic);
                     }
                 }

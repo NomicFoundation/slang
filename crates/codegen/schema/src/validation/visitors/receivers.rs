@@ -2,8 +2,8 @@ use std::rc::Rc;
 
 use crate::{
     types::{
-        LanguageDefinitionRef, ParserDefinition, ParserRef, PrecedenceParserRef, Production,
-        ProductionRef, ScannerDefinition, ScannerRef, VersionMap,
+        LanguageDefinitionRef, ParserDefinition, ParserRef, PrecedenceParserRef,
+        ProductionDefinition, ProductionRef, ScannerDefinition, ScannerRef, VersionMap,
     },
     validation::visitors::{
         location::LocationRef, reporter::Reporter, visitor::Visitor, VersionSet,
@@ -32,17 +32,30 @@ impl Receiver for ProductionRef {
             return;
         }
 
-        match self.as_ref() {
-            Production::Scanner { version_map, .. } => {
+        self.definition
+            .receive(visitor, language, location, reporter);
+    }
+}
+
+impl Receiver for ProductionDefinition {
+    fn receive(
+        &self,
+        visitor: &mut impl Visitor,
+        language: &LanguageDefinitionRef,
+        location: LocationRef,
+        reporter: &mut Reporter,
+    ) {
+        match self {
+            Self::Scanner { version_map, .. } => {
                 version_map.receive(visitor, language, location, reporter);
             }
-            Production::TriviaParser { version_map, .. } => {
+            Self::TriviaParser { version_map, .. } => {
                 version_map.receive(visitor, language, location, reporter);
             }
-            Production::Parser { version_map, .. } => {
+            Self::Parser { version_map, .. } => {
                 version_map.receive(visitor, language, location, reporter);
             }
-            Production::PrecedenceParser { version_map, .. } => {
+            Self::PrecedenceParser { version_map, .. } => {
                 version_map.receive(visitor, language, location, reporter);
             }
         };

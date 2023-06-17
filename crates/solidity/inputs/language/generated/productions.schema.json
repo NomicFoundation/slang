@@ -7,6 +7,7 @@
   },
   "definitions": {
     "Production": {
+      "type": "object",
       "anyOf": [
         {
           "type": "object",
@@ -40,14 +41,11 @@
               }
             }
           ],
-          "required": ["kind", "name"],
+          "required": ["kind"],
           "properties": {
             "kind": {
               "type": "string",
               "enum": ["Scanner"]
-            },
-            "name": {
-              "type": "string"
             }
           }
         },
@@ -83,14 +81,11 @@
               }
             }
           ],
-          "required": ["kind", "name"],
+          "required": ["kind"],
           "properties": {
             "kind": {
               "type": "string",
               "enum": ["TriviaParser"]
-            },
-            "name": {
-              "type": "string"
             }
           }
         },
@@ -126,14 +121,11 @@
               }
             }
           ],
-          "required": ["kind", "name"],
+          "required": ["kind"],
           "properties": {
             "kind": {
               "type": "string",
               "enum": ["Parser"]
-            },
-            "name": {
-              "type": "string"
             }
           }
         },
@@ -169,18 +161,25 @@
               }
             }
           ],
-          "required": ["kind", "name"],
+          "required": ["kind"],
           "properties": {
             "kind": {
               "type": "string",
               "enum": ["PrecedenceParser"]
-            },
-            "name": {
-              "type": "string"
             }
           }
         }
-      ]
+      ],
+      "required": ["name"],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "inlined": {
+          "default": false,
+          "type": "boolean"
+        }
+      }
     },
     "Scanner": {
       "type": "object",

@@ -1,6 +1,6 @@
 use std::{collections::BTreeMap, fmt::Debug};
 
-use codegen_schema::types::{Production, ScannerDefinition, ScannerRef, VersionMap};
+use codegen_schema::types::{ProductionDefinition, ScannerDefinition, ScannerRef, VersionMap};
 
 use crate::combinator_tree::CombinatorTree;
 
@@ -116,18 +116,18 @@ pub fn from_scanner(tree: &CombinatorTree, scanner: ScannerRef) -> Option<Termin
             }
 
             ScannerDefinition::Reference(name) => {
-                match tree.context.get_tree_by_name(name).production.as_ref() {
-                    Production::Scanner {
+                match &tree.context.get_tree_by_name(name).production.definition {
+                    ProductionDefinition::Scanner {
                         version_map: VersionMap::Versioned(_),
                         ..
                     } => false,
-                    Production::Scanner {
+                    ProductionDefinition::Scanner {
                         version_map: VersionMap::Unversioned(scanner),
                         ..
                     } => collect_terminals(trie, tree, scanner.clone()),
-                    Production::TriviaParser { .. }
-                    | Production::Parser { .. }
-                    | Production::PrecedenceParser { .. } => {
+                    ProductionDefinition::TriviaParser { .. }
+                    | ProductionDefinition::Parser { .. }
+                    | ProductionDefinition::PrecedenceParser { .. } => {
                         unreachable!(
                             "Validation should have ensured: scanners can only reference scanners"
                         )
