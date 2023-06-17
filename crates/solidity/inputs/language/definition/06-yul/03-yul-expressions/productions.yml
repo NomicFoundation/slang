@@ -47,6 +47,7 @@
 
 - name: "YulKeyword"
   kind: "Scanner"
+  inlined: true
   versioned:
     0.4.11:
       choice:
@@ -79,9 +80,9 @@
 
 - name: "YulReservedKeyword"
   kind: "Scanner"
+  inlined: true
   unversioned:
-    choice:
-      - terminal: "hex"
+    terminal: "hex"
 
 - name: "YulLiteral"
   kind: "Parser"

@@ -537,7 +537,7 @@ impl Language {
             .with_kind(RuleKind::ArrayLiteral)
     }
 
-    // AssemblyFlags = «OpenParen» «DoubleQuotedAsciiStringLiteral» («Comma» «DoubleQuotedAsciiStringLiteral»)* «CloseParen»;
+    // AssemblyFlags = «OpenParen» «AsciiStringLiteral» («Comma» «AsciiStringLiteral»)* «CloseParen»;
 
     #[allow(dead_code)]
     fn parse_assembly_flags_0_4_11(&self, stream: &mut Stream) -> ParserResult {
@@ -552,8 +552,8 @@ impl Language {
                         let mut furthest_error = None;
                         let result_0 = match self.parse_token_with_trivia(
                             stream,
-                            Self::scan_double_quoted_ascii_string_literal,
-                            TokenKind::DoubleQuotedAsciiStringLiteral,
+                            Self::scan_ascii_string_literal,
+                            TokenKind::AsciiStringLiteral,
                         ) {
                             Pass { builder, error } => {
                                 furthest_error =
@@ -591,8 +591,8 @@ impl Language {
                                     };
                                     let result_1 = match self.parse_token_with_trivia(
                                         stream,
-                                        Self::scan_double_quoted_ascii_string_literal,
-                                        TokenKind::DoubleQuotedAsciiStringLiteral,
+                                        Self::scan_ascii_string_literal,
+                                        TokenKind::AsciiStringLiteral,
                                     ) {
                                         Pass { builder, error } => {
                                             furthest_error = error.map(|error| {
@@ -2856,10 +2856,10 @@ impl Language {
 
     // (* v0.4.11 *)
     // ElementaryType = «BoolKeyword»
+    //                | «ByteKeyword»
     //                | «StringKeyword»
     //                | AddressType
     //                | PayableType
-    //                | «ByteType»
     //                | «FixedBytesType»
     //                | «SignedIntegerType»
     //                | «UnsignedIntegerType»
@@ -2882,6 +2882,15 @@ impl Language {
             stream.set_position(start_position);
             match self.parse_token_with_trivia(
                 stream,
+                Self::scan_byte_keyword,
+                TokenKind::ByteKeyword,
+            ) {
+                Fail { error } => furthest_error.merge_with(error),
+                pass => break pass,
+            }
+            stream.set_position(start_position);
+            match self.parse_token_with_trivia(
+                stream,
                 Self::scan_string_keyword,
                 TokenKind::StringKeyword,
             ) {
@@ -2895,11 +2904,6 @@ impl Language {
             }
             stream.set_position(start_position);
             match self.parse_payable_type(stream) {
-                Fail { error } => furthest_error.merge_with(error),
-                pass => break pass,
-            }
-            stream.set_position(start_position);
-            match self.parse_token_with_trivia(stream, Self::scan_byte_type, TokenKind::ByteType) {
                 Fail { error } => furthest_error.merge_with(error),
                 pass => break pass,
             }
@@ -5703,24 +5707,7 @@ impl Language {
 
     #[allow(dead_code)]
     fn parse_function_call_operator_0_4_11(&self, stream: &mut Stream) -> ParserResult {
-        loop {
-            let mut furthest_error = None;
-            let result_0 = match self.parse_argument_list(stream) {
-                Pass { builder, error } => {
-                    furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    builder
-                }
-                Fail { error } => {
-                    break Fail {
-                        error: error.maybe_merge_with(furthest_error),
-                    }
-                }
-            };
-            break Pass {
-                builder: cst::NodeBuilder::multiple(vec![result_0]),
-                error: furthest_error,
-            };
-        }
+        self.parse_argument_list(stream)
     }
 
     // (* v0.6.2 *)
@@ -7349,40 +7336,23 @@ impl Language {
     }
 
     // (* v0.4.11 *)
-    // MappingKeyType = (ElementaryType | IdentifierPath);
+    // MappingKeyType = ElementaryType | IdentifierPath;
 
     #[allow(dead_code)]
     fn parse_mapping_key_type_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
-            let mut furthest_error = None;
-            let result_0 = match loop {
-                let start_position = stream.position();
-                let mut furthest_error;
-                match self.parse_elementary_type(stream) {
-                    Fail { error } => furthest_error = error,
-                    pass => break pass,
-                }
-                stream.set_position(start_position);
-                match self.parse_identifier_path(stream) {
-                    Fail { error } => furthest_error.merge_with(error),
-                    pass => break pass,
-                }
-                break Fail {
-                    error: furthest_error,
-                };
-            } {
-                Pass { builder, error } => {
-                    furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    builder
-                }
-                Fail { error } => {
-                    break Fail {
-                        error: error.maybe_merge_with(furthest_error),
-                    }
-                }
-            };
-            break Pass {
-                builder: cst::NodeBuilder::multiple(vec![result_0]),
+            let start_position = stream.position();
+            let mut furthest_error;
+            match self.parse_elementary_type(stream) {
+                Fail { error } => furthest_error = error,
+                pass => break pass,
+            }
+            stream.set_position(start_position);
+            match self.parse_identifier_path(stream) {
+                Fail { error } => furthest_error.merge_with(error),
+                pass => break pass,
+            }
+            break Fail {
                 error: furthest_error,
             };
         }
@@ -7605,24 +7575,7 @@ impl Language {
 
     #[allow(dead_code)]
     fn parse_mapping_value_type_0_4_11(&self, stream: &mut Stream) -> ParserResult {
-        loop {
-            let mut furthest_error = None;
-            let result_0 = match self.parse_type_name(stream) {
-                Pass { builder, error } => {
-                    furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    builder
-                }
-                Fail { error } => {
-                    break Fail {
-                        error: error.maybe_merge_with(furthest_error),
-                    }
-                }
-            };
-            break Pass {
-                builder: cst::NodeBuilder::multiple(vec![result_0]),
-                error: furthest_error,
-            };
-        }
+        self.parse_type_name(stream)
     }
 
     // (* v0.8.18 *)

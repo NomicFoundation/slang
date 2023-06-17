@@ -27,6 +27,7 @@
 
 - name: "NotAnIdentifierInAnyVersion"
   kind: "Scanner"
+  inlined: true
   unversioned:
     choice:
       - terminal: "abstract"
@@ -105,6 +106,7 @@
 
 - name: "NotAnIdentifierInSomeVersions"
   kind: "Scanner"
+  inlined: true
   versioned:
     0.4.11:
       choice:
@@ -138,8 +140,6 @@
         - terminal: "unchecked"
     0.6.0:
       choice:
-        - terminal: "finney"
-        - terminal: "szabo"
         - terminal: "alias"
         - terminal: "apply"
         - terminal: "auto"
@@ -148,6 +148,7 @@
         - terminal: "copyof"
         - terminal: "define"
         - terminal: "emit"
+        - terminal: "finney"
         - terminal: "immutable"
         - terminal: "implements"
         - terminal: "macro"
@@ -159,6 +160,7 @@
         - terminal: "sealed"
         - terminal: "sizeof"
         - terminal: "supports"
+        - terminal: "szabo"
         - terminal: "typedef"
         - terminal: "unchecked"
         # added
@@ -167,8 +169,8 @@
         - terminal: "virtual"
     0.7.0:
       choice:
-        # - terminal: "finney"
-        # - terminal: "szabo"
+        # removed: "finney"
+        # removed: "szabo"
         - terminal: "alias"
         - terminal: "apply"
         - terminal: "auto"
@@ -177,6 +179,7 @@
         - terminal: "copyof"
         - terminal: "define"
         - terminal: "emit"
+        - terminal: "fallback"
         - terminal: "immutable"
         - terminal: "implements"
         - terminal: "macro"
@@ -184,20 +187,20 @@
         - terminal: "override"
         - terminal: "partial"
         - terminal: "promise"
+        - terminal: "receive"
         - terminal: "reference"
         - terminal: "sealed"
         - terminal: "sizeof"
         - terminal: "supports"
         - terminal: "typedef"
         - terminal: "unchecked"
-        - terminal: "fallback"
-        - terminal: "receive"
         - terminal: "virtual"
         # added
         - terminal: "gwei"
 
 - name: "RawIdentifier"
   kind: "Scanner"
+  inlined: true
   unversioned:
     sequence:
       - reference: "IdentifierStart"
@@ -206,6 +209,7 @@
 
 - name: "IdentifierStart"
   kind: "Scanner"
+  inlined: true
   unversioned:
     choice:
       - terminal: "_"
@@ -219,6 +223,7 @@
 
 - name: "IdentifierPart"
   kind: "Scanner"
+  inlined: true
   unversioned:
     choice:
       - reference: "IdentifierStart"

@@ -44,14 +44,6 @@ impl GenerateEbnf for ParserDefinition {
                 return EbnfNode::production_ref(name.to_owned());
             }
 
-            ParserDefinition::Repeat {
-                min,
-                max,
-                expression,
-            } => {
-                return EbnfNode::repeat(*min, *max, expression.generate_ebnf());
-            }
-
             ParserDefinition::SeparatedBy {
                 expression,
                 separator,

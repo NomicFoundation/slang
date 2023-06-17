@@ -5,33 +5,35 @@ use crate::{
     },
     validation::{
         rules::references::metadata::Metadata,
-        visitors::{LocationRef, Reporter, VersionSet, Visitor},
+        visitors::{run_visitor, LocationRef, Reporter, VersionSet, Visitor},
     },
 };
 
-pub struct Validator {
+pub struct Validator<'validator> {
     language: LanguageDefinitionRef,
-    metadata: Metadata,
+    metadata: &'validator mut Metadata,
     current_production: Option<ProductionRef>,
     current_version_set: Option<VersionSet>,
 }
 
-impl Validator {
-    pub fn new(language: &LanguageDefinitionRef, metadata: Metadata) -> Self {
-        return Self {
+impl<'validator> Validator<'validator> {
+    pub fn validate<'call: 'validator>(
+        language: &'call LanguageDefinitionRef,
+        metadata: &'call mut Metadata,
+        reporter: &'call mut Reporter,
+    ) {
+        let mut instance = Self {
             language: language.to_owned(),
             metadata,
             current_production: None,
             current_version_set: None,
         };
-    }
 
-    pub fn metadata(self) -> Metadata {
-        return self.metadata;
+        run_visitor(&mut instance, language, reporter);
     }
 }
 
-impl Visitor for Validator {
+impl Visitor for Validator<'_> {
     fn visit_production(
         &mut self,
         production: &ProductionRef,
@@ -59,7 +61,12 @@ impl Visitor for Validator {
         reporter: &mut Reporter,
     ) -> bool {
         if let ScannerDefinition::Reference(reference) = &scanner.definition {
-            self.check_scanner_reference(&reference, location, reporter);
+            self.check(
+                &reference,
+                ReferenceKind::ScannerToScanner,
+                location,
+                reporter,
+            );
         }
 
         return true;
@@ -73,17 +80,42 @@ impl Visitor for Validator {
     ) -> bool {
         match &parser.definition {
             ParserDefinition::Reference(reference) => {
-                self.check_any_reference(reference, location, reporter);
+                self.check(
+                    reference,
+                    ReferenceKind::ParserToAnything,
+                    location,
+                    reporter,
+                );
             }
             ParserDefinition::DelimitedBy { open, close, .. } => {
-                self.check_scanner_reference(&open.reference, location, reporter);
-                self.check_scanner_reference(&close.reference, location, reporter);
+                self.check(
+                    &open.reference,
+                    ReferenceKind::ParserToScanner,
+                    location,
+                    reporter,
+                );
+                self.check(
+                    &close.reference,
+                    ReferenceKind::ParserToScanner,
+                    location,
+                    reporter,
+                );
             }
             ParserDefinition::SeparatedBy { separator, .. } => {
-                self.check_scanner_reference(&separator.reference, location, reporter);
+                self.check(
+                    &separator.reference,
+                    ReferenceKind::ParserToScanner,
+                    location,
+                    reporter,
+                );
             }
             ParserDefinition::TerminatedBy { terminator, .. } => {
-                self.check_scanner_reference(&terminator.reference, location, reporter);
+                self.check(
+                    &terminator.reference,
+                    ReferenceKind::ParserToScanner,
+                    location,
+                    reporter,
+                );
             }
             _ => {}
         };
@@ -92,72 +124,112 @@ impl Visitor for Validator {
     }
 }
 
-impl Validator {
-    fn check_any_reference(
-        &mut self,
-        reference: &str,
-        location: &LocationRef,
-        reporter: &mut Reporter,
-    ) {
-        match self.language.productions.get(reference) {
-            Some(_) => {
-                self.insert_reference(reference, location, reporter);
-            }
-            None => {
-                reporter.report(location, Errors::NotDefined(reference.to_owned()));
-            }
-        };
-    }
+enum ReferenceKind {
+    ParserToAnything,
+    ParserToScanner,
+    ScannerToScanner,
+}
 
-    fn check_scanner_reference(
+impl Validator<'_> {
+    fn check(
         &mut self,
-        reference: &str,
-        location: &LocationRef,
-        reporter: &mut Reporter,
-    ) {
-        match self.language.productions.get(reference) {
-            Some(production) => match production.definition {
-                ProductionDefinition::Scanner { .. } => {
-                    self.insert_reference(reference, location, reporter);
-                }
-                _ => {
-                    reporter.report(location, Errors::MustBeScanner);
-                }
-            },
-            None => {
-                reporter.report(location, Errors::NotDefined(reference.to_owned()));
-            }
-        };
-    }
-
-    fn insert_reference(
-        &mut self,
-        reference: &str,
+        reference_name: &str,
+        validation_kind: ReferenceKind,
         location: &LocationRef,
         reporter: &mut Reporter,
     ) {
         let production = self.current_production.as_ref().unwrap();
         let version_set = self.current_version_set.as_ref().unwrap();
 
-        let can_be_added = self
-            .metadata
-            .add_reference(&production.name, &version_set, reference);
+        if production.name == reference_name
+            && !matches!(
+                production.definition,
+                ProductionDefinition::PrecedenceParser { .. }
+            )
+        {
+            reporter.report(location, Errors::SelfReference(reference_name.to_owned()));
+            return;
+        }
 
-        if !can_be_added {
+        let reference = match self.language.productions.get(reference_name) {
+            Some(reference) => reference,
+            None => {
+                reporter.report(location, Errors::NotDefined(reference_name.to_owned()));
+                return;
+            }
+        };
+
+        if !self.metadata.is_defined_over(reference_name, version_set) {
             reporter.report(
                 &location,
-                Errors::ReferenceVersionNotDefined(reference.to_owned(), version_set.to_owned()),
+                Errors::ReferenceVersionNotDefined(
+                    reference_name.to_owned(),
+                    version_set.to_owned(),
+                ),
             );
+            return;
         }
+
+        match validation_kind {
+            ReferenceKind::ParserToAnything => {
+                if matches!(reference.definition, ProductionDefinition::Scanner { .. }) {
+                    if reference.inlined {
+                        reporter
+                            .report(location, Errors::CannotBeInlined(reference_name.to_owned()));
+                    }
+                }
+            }
+            ReferenceKind::ParserToScanner => {
+                if !matches!(reference.definition, ProductionDefinition::Scanner { .. }) {
+                    reporter.report(location, Errors::MustBeScanner);
+                } else if reference.inlined {
+                    reporter.report(location, Errors::CannotBeInlined(reference_name.to_owned()));
+                }
+            }
+            ReferenceKind::ScannerToScanner => {
+                if !matches!(reference.definition, ProductionDefinition::Scanner { .. }) {
+                    reporter.report(location, Errors::MustBeScanner);
+                } else if !reference.inlined {
+                    if !allow_non_inlined_scanner(reference_name) {
+                        reporter.report(location, Errors::MustBeInlined(reference_name.to_owned()));
+                    }
+                }
+            }
+        };
+
+        self.metadata
+            .add_reference(&production.name, &version_set, reference_name);
     }
+}
+
+fn allow_non_inlined_scanner(reference_name: &str) -> bool {
+    // TODO(OmarTawfik): remove these exclusions:
+    // We need to resolve the issue of keyword trailing contexts first.
+    // Until then, let's just skip these from checks.
+
+    return match reference_name {
+        "FixedBytesType"
+        | "SignedFixedType"
+        | "UnsignedFixedType"
+        | "SignedIntegerType"
+        | "UnsignedIntegerType" => true,
+        keyword if keyword.contains("Keyword") => true,
+        _ => false,
+    };
 }
 
 #[derive(thiserror::Error, Debug)]
 enum Errors {
     #[error("Production '{0}' is not defined anywhere in the grammar.")]
     NotDefined(String),
+    #[error("Production '{0}' cannot reference itself.")]
+    SelfReference(String),
     #[error("A scanner may only reference other scanners.")]
     MustBeScanner,
     #[error("Production '{0}' is not fully defined in versions: {1}")]
     ReferenceVersionNotDefined(String, VersionSet),
+    #[error("Production '{0}' cannot be inlined to be valid here.")]
+    CannotBeInlined(String),
+    #[error("Production '{0}' must be inlined to be valid here.")]
+    MustBeInlined(String),
 }

@@ -467,12 +467,6 @@ impl Language {
             ProductionKind::AsKeyword => {
                 call_scanner(self, input, Language::scan_as_keyword, TokenKind::AsKeyword)
             }
-            ProductionKind::AsciiEscape => call_scanner(
-                self,
-                input,
-                Language::scan_ascii_escape,
-                TokenKind::AsciiEscape,
-            ),
             ProductionKind::AsciiStringLiteral => call_scanner(
                 self,
                 input,
@@ -523,11 +517,11 @@ impl Language {
                 Language::scan_break_keyword,
                 TokenKind::BreakKeyword,
             ),
-            ProductionKind::ByteType => try_call_scanner(
+            ProductionKind::ByteKeyword => try_call_scanner(
                 self,
                 input,
-                Language::maybe_scan_byte_type,
-                TokenKind::ByteType,
+                Language::maybe_scan_byte_keyword,
+                TokenKind::ByteKeyword,
             ),
             ProductionKind::CalldataKeyword => try_call_scanner(
                 self,
@@ -616,23 +610,11 @@ impl Language {
                 Language::scan_days_keyword,
                 TokenKind::DaysKeyword,
             ),
-            ProductionKind::DecimalExponent => call_scanner(
-                self,
-                input,
-                Language::scan_decimal_exponent,
-                TokenKind::DecimalExponent,
-            ),
             ProductionKind::DecimalLiteral => call_scanner(
                 self,
                 input,
                 Language::scan_decimal_literal,
                 TokenKind::DecimalLiteral,
-            ),
-            ProductionKind::DecimalNumber => call_scanner(
-                self,
-                input,
-                Language::scan_decimal_number,
-                TokenKind::DecimalNumber,
             ),
             ProductionKind::DefaultKeyword => call_scanner(
                 self,
@@ -649,18 +631,6 @@ impl Language {
             ProductionKind::DoKeyword => {
                 call_scanner(self, input, Language::scan_do_keyword, TokenKind::DoKeyword)
             }
-            ProductionKind::DoubleQuotedAsciiStringLiteral => call_scanner(
-                self,
-                input,
-                Language::scan_double_quoted_ascii_string_literal,
-                TokenKind::DoubleQuotedAsciiStringLiteral,
-            ),
-            ProductionKind::DoubleQuotedUnicodeStringLiteral => try_call_scanner(
-                self,
-                input,
-                Language::maybe_scan_double_quoted_unicode_string_literal,
-                TokenKind::DoubleQuotedUnicodeStringLiteral,
-            ),
             ProductionKind::ElseKeyword => call_scanner(
                 self,
                 input,
@@ -705,12 +675,6 @@ impl Language {
                 input,
                 Language::scan_error_keyword,
                 TokenKind::ErrorKeyword,
-            ),
-            ProductionKind::EscapeSequence => call_scanner(
-                self,
-                input,
-                Language::scan_escape_sequence,
-                TokenKind::EscapeSequence,
             ),
             ProductionKind::EtherKeyword => call_scanner(
                 self,
@@ -829,12 +793,6 @@ impl Language {
                 Language::maybe_scan_gwei_keyword,
                 TokenKind::GweiKeyword,
             ),
-            ProductionKind::HexByteEscape => call_scanner(
-                self,
-                input,
-                Language::scan_hex_byte_escape,
-                TokenKind::HexByteEscape,
-            ),
             ProductionKind::HexLiteral => call_scanner(
                 self,
                 input,
@@ -858,18 +816,6 @@ impl Language {
                 input,
                 Language::scan_identifier,
                 TokenKind::Identifier,
-            ),
-            ProductionKind::IdentifierPart => call_scanner(
-                self,
-                input,
-                Language::scan_identifier_part,
-                TokenKind::IdentifierPart,
-            ),
-            ProductionKind::IdentifierStart => call_scanner(
-                self,
-                input,
-                Language::scan_identifier_start,
-                TokenKind::IdentifierStart,
             ),
             ProductionKind::IfKeyword => {
                 call_scanner(self, input, Language::scan_if_keyword, TokenKind::IfKeyword)
@@ -1003,18 +949,6 @@ impl Language {
                 Language::scan_new_keyword,
                 TokenKind::NewKeyword,
             ),
-            ProductionKind::NotAnIdentifierInAnyVersion => call_scanner(
-                self,
-                input,
-                Language::scan_not_an_identifier_in_any_version,
-                TokenKind::NotAnIdentifierInAnyVersion,
-            ),
-            ProductionKind::NotAnIdentifierInSomeVersions => call_scanner(
-                self,
-                input,
-                Language::scan_not_an_identifier_in_some_versions,
-                TokenKind::NotAnIdentifierInSomeVersions,
-            ),
             ProductionKind::OpenBrace => {
                 call_scanner(self, input, Language::scan_open_brace, TokenKind::OpenBrace)
             }
@@ -1058,12 +992,6 @@ impl Language {
             ProductionKind::PlusPlus => {
                 call_scanner(self, input, Language::scan_plus_plus, TokenKind::PlusPlus)
             }
-            ProductionKind::PossiblySeparatedPairsOfHexDigits => call_scanner(
-                self,
-                input,
-                Language::scan_possibly_separated_pairs_of_hex_digits,
-                TokenKind::PossiblySeparatedPairsOfHexDigits,
-            ),
             ProductionKind::PragmaKeyword => call_scanner(
                 self,
                 input,
@@ -1093,12 +1021,6 @@ impl Language {
                 input,
                 Language::scan_question_mark,
                 TokenKind::QuestionMark,
-            ),
-            ProductionKind::RawIdentifier => call_scanner(
-                self,
-                input,
-                Language::scan_raw_identifier,
-                TokenKind::RawIdentifier,
             ),
             ProductionKind::ReceiveKeyword => call_scanner(
                 self,
@@ -1150,18 +1072,6 @@ impl Language {
                 input,
                 Language::scan_single_line_comment,
                 TokenKind::SingleLineComment,
-            ),
-            ProductionKind::SingleQuotedAsciiStringLiteral => call_scanner(
-                self,
-                input,
-                Language::scan_single_quoted_ascii_string_literal,
-                TokenKind::SingleQuotedAsciiStringLiteral,
-            ),
-            ProductionKind::SingleQuotedUnicodeStringLiteral => try_call_scanner(
-                self,
-                input,
-                Language::maybe_scan_single_quoted_unicode_string_literal,
-                TokenKind::SingleQuotedUnicodeStringLiteral,
             ),
             ProductionKind::Slash => {
                 call_scanner(self, input, Language::scan_slash, TokenKind::Slash)
@@ -1240,12 +1150,6 @@ impl Language {
                 input,
                 Language::maybe_scan_unchecked_keyword,
                 TokenKind::UncheckedKeyword,
-            ),
-            ProductionKind::UnicodeEscape => call_scanner(
-                self,
-                input,
-                Language::scan_unicode_escape,
-                TokenKind::UnicodeEscape,
             ),
             ProductionKind::UnicodeStringLiteral => try_call_scanner(
                 self,
@@ -1342,18 +1246,6 @@ impl Language {
                 input,
                 Language::scan_yul_identifier,
                 TokenKind::YulIdentifier,
-            ),
-            ProductionKind::YulKeyword => call_scanner(
-                self,
-                input,
-                Language::scan_yul_keyword,
-                TokenKind::YulKeyword,
-            ),
-            ProductionKind::YulReservedKeyword => call_scanner(
-                self,
-                input,
-                Language::scan_yul_reserved_keyword,
-                TokenKind::YulReservedKeyword,
             ),
             ProductionKind::ABICoderPragma => {
                 call_parser(self, input, Language::parse_abi_coder_pragma)

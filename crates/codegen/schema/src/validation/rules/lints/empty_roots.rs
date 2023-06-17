@@ -1,5 +1,3 @@
-use codegen_utils::errors::CodegenResult;
-
 use crate::{
     types::{
         LanguageDefinitionRef, ParserDefinition, ParserRef, ProductionRef, ScannerDefinition,
@@ -8,24 +6,17 @@ use crate::{
     validation::visitors::{run_visitor, LocationRef, Reporter, Visitor},
 };
 
-pub fn run(language: &LanguageDefinitionRef) -> CodegenResult<()> {
-    let mut visitor = EmptyRoots::new(language);
-    let mut reporter = Reporter::new();
-
-    run_visitor(&mut visitor, language, &mut reporter);
-
-    return reporter.to_result();
-}
-
-struct EmptyRoots {
+pub struct EmptyRoots {
     language: LanguageDefinitionRef,
 }
 
 impl EmptyRoots {
-    fn new(language: &LanguageDefinitionRef) -> Self {
-        return Self {
+    pub fn check(language: &LanguageDefinitionRef, reporter: &mut Reporter) {
+        let mut instance = Self {
             language: language.to_owned(),
         };
+
+        run_visitor(&mut instance, language, reporter);
     }
 }
 
@@ -138,16 +129,6 @@ fn possible_empty_parser(parser: &ParserRef) -> bool {
             return sequence.iter().all(possible_empty_parser);
         }
 
-        ParserDefinition::Repeat {
-            min, expression, ..
-        } => {
-            if *min == 0 {
-                return true;
-            }
-
-            return possible_empty_parser(expression);
-        }
-
         ParserDefinition::DelimitedBy { .. } | ParserDefinition::Reference(_) => {
             return false;
         }
@@ -157,7 +138,7 @@ fn possible_empty_parser(parser: &ParserRef) -> bool {
 #[derive(thiserror::Error, Debug)]
 enum Errors {
     #[error(
-        "Root expression cannot be optionally empty. Refactor usages to specify the arity instead."
+        "Root expression cannot be possibly empty. Refactor usages to specify the arity instead."
     )]
     EmptyRoot,
 }

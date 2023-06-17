@@ -428,32 +428,6 @@
           }
         },
         {
-          "title": "Repeat Expression",
-          "type": "object",
-          "required": ["repeat"],
-          "properties": {
-            "repeat": {
-              "type": "object",
-              "required": ["expression", "max", "min"],
-              "properties": {
-                "expression": {
-                  "$ref": "#/definitions/Parser"
-                },
-                "min": {
-                  "type": "integer",
-                  "format": "uint",
-                  "minimum": 0.0
-                },
-                "max": {
-                  "type": "integer",
-                  "format": "uint",
-                  "minimum": 0.0
-                }
-              }
-            }
-          }
-        },
-        {
           "title": "SeparatedBy Expression",
           "type": "object",
           "required": ["separatedBy"],

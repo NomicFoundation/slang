@@ -42,19 +42,22 @@ impl Metadata {
         production.defined_in = production.defined_in.union(version_set);
     }
 
+    pub fn is_defined_over(&self, production: &str, version_set: &VersionSet) -> bool {
+        let production = self.productions.get(production).unwrap();
+        return version_set.difference(&production.defined_in).is_empty();
+    }
+
     pub fn add_reference(
         &mut self,
-        production: &str,
+        production_name: &str,
         version_set: &VersionSet,
-        reference: &str,
-    ) -> bool {
-        let production = self.productions.get_mut(production).unwrap();
-        production.references.insert(reference.to_owned());
-
-        let reference = self.productions.get_mut(reference).unwrap();
+        reference_name: &str,
+    ) {
+        let reference = self.productions.get_mut(reference_name).unwrap();
         reference.used_in = reference.used_in.union(version_set);
 
-        return version_set.difference(&reference.defined_in).is_empty();
+        let production = self.productions.get_mut(production_name).unwrap();
+        production.references.insert(reference_name.to_owned());
     }
 
     pub fn check_not_used(&self, language: &LanguageDefinitionRef, reporter: &mut Reporter) {

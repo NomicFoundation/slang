@@ -38,6 +38,7 @@
 
 - name: "PossiblySeparatedPairsOfHexDigits"
   kind: "Scanner"
+  inlined: true
   unversioned:
     sequence:
       - repeat:
@@ -79,6 +80,7 @@
 
 - name: "SingleQuotedAsciiStringLiteral"
   kind: "Scanner"
+  inlined: true
   unversioned:
     sequence:
       - terminal: "'"
@@ -98,6 +100,7 @@
 
 - name: "DoubleQuotedAsciiStringLiteral"
   kind: "Scanner"
+  inlined: true
   unversioned:
     sequence:
       - terminal: '"'
@@ -125,6 +128,7 @@
 
 - name: "SingleQuotedUnicodeStringLiteral"
   kind: "Scanner"
+  inlined: true
   versioned:
     0.7.0:
       sequence:
@@ -142,6 +146,7 @@
 
 - name: "DoubleQuotedUnicodeStringLiteral"
   kind: "Scanner"
+  inlined: true
   versioned:
     0.7.0:
       sequence:
@@ -159,6 +164,7 @@
 
 - name: "EscapeSequence"
   kind: "Scanner"
+  inlined: true
   unversioned:
     sequence:
       - terminal: "\\"
@@ -169,6 +175,7 @@
 
 - name: "AsciiEscape"
   kind: "Scanner"
+  inlined: true
   unversioned:
     choice:
       - terminal: "n"
@@ -182,6 +189,7 @@
 
 - name: "HexByteEscape"
   kind: "Scanner"
+  inlined: true
   unversioned:
     sequence:
       - terminal: "x"
@@ -193,6 +201,7 @@
 
 - name: "UnicodeEscape"
   kind: "Scanner"
+  inlined: true
   unversioned:
     sequence:
       - terminal: "u"

@@ -7,4 +7,4 @@ Errors: []
 
 Tree:
   - ElementaryType (Rule): # 0..4 "byte"
-      - ByteType (Token): "byte" # 0..4
+      - ByteKeyword (Token): "byte" # 0..4

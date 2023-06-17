@@ -71,6 +71,17 @@
       notFollowedBy:
         reference: "IdentifierPart"
 
+- name: "ByteKeyword"
+  kind: "Scanner"
+  versioned:
+    0.4.11:
+      trailingContext:
+        expression:
+          terminal: "byte"
+        notFollowedBy:
+          reference: "IdentifierPart"
+    0.8.0: null
+
 - name: "CalldataKeyword"
   kind: "Scanner"
   versioned:

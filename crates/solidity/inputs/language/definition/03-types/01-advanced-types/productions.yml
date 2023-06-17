@@ -63,10 +63,9 @@
   kind: "Parser"
   versioned:
     0.4.11:
-      sequence:
-        - choice:
-            - reference: "ElementaryType"
-            - reference: "IdentifierPath"
+      choice:
+        - reference: "ElementaryType"
+        - reference: "IdentifierPath"
     0.8.18:
       sequence:
         - choice:
@@ -79,8 +78,7 @@
   kind: "Parser"
   versioned:
     0.4.11:
-      sequence:
-        - reference: "TypeName"
+      reference: "TypeName"
     0.8.18:
       sequence:
         - reference: "TypeName"

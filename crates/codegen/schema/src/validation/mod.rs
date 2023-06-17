@@ -11,7 +11,7 @@ pub fn validate_language(language: &LanguageDefinitionRef) -> CodegenResult<()> 
     rules::language_versions::run(language)?;
     rules::definitions::run(language)?;
     rules::references::run(language)?;
-    rules::empty_roots::run(language)?;
+    rules::lints::run(language)?;
 
     return Ok(());
 }

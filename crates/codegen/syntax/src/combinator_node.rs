@@ -285,17 +285,6 @@ impl<'context> CombinatorNode<'context> {
                 tree: tree.context.get_tree_by_name(name),
             },
 
-            ParserDefinition::Repeat {
-                expression,
-                min,
-                max,
-            } => Self::Repeated {
-                name,
-                expr: Self::from_parser(tree, expression),
-                min: *min,
-                max: *max,
-            },
-
             ParserDefinition::SeparatedBy {
                 expression,
                 separator,

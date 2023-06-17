@@ -262,10 +262,13 @@
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/03-types/02-elementary-types/address-type/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/03-types/02-elementary-types/payable-type/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/03-types/02-elementary-types/fixed-bytes-type/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/03-types/02-elementary-types/fixed-bytes-type-size/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/03-types/02-elementary-types/signed-integer-type/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/03-types/02-elementary-types/unsigned-integer-type/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/03-types/02-elementary-types/integer-type-size/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/03-types/02-elementary-types/signed-fixed-type/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/03-types/02-elementary-types/unsigned-fixed-type/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/03-types/02-elementary-types/fixed-type-size/unversioned.md"
 
 ## 4. Statements
 
@@ -339,7 +342,7 @@
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/03-numbers/numeric-expression/0.5.0.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/03-numbers/hex-literal/0.5.0.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/03-numbers/decimal-literal/0.5.0.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/03-numbers/decimal-number/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/03-numbers/decimal-digits/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/03-numbers/decimal-exponent/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/03-numbers/number-unit/0.7.0.md"
 

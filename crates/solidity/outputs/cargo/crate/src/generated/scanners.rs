@@ -553,10 +553,10 @@ impl Language {
     }
 
     // (* v0.4.11 *)
-    // «ByteType» = "byte";
+    // «ByteKeyword» = "byte";
 
     #[allow(dead_code)]
-    fn scan_byte_type_0_4_11(&self, stream: &mut Stream) -> bool {
+    fn scan_byte_keyword_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
             scan_chars!(stream, 'b', 'y', 't', 'e'),
@@ -568,24 +568,24 @@ impl Language {
         )
     }
 
-    fn dispatch_scan_byte_type(&self, stream: &mut Stream) -> Option<bool> {
+    fn dispatch_scan_byte_keyword(&self, stream: &mut Stream) -> Option<bool> {
         if self.version_is_equal_to_or_greater_than_0_8_0 {
             None
         } else {
-            Some(self.scan_byte_type_0_4_11(stream))
+            Some(self.scan_byte_keyword_0_4_11(stream))
         }
     }
 
     #[inline]
     #[allow(dead_code)]
-    pub(crate) fn maybe_scan_byte_type(&self, stream: &mut Stream) -> Option<bool> {
-        self.dispatch_scan_byte_type(stream)
+    pub(crate) fn maybe_scan_byte_keyword(&self, stream: &mut Stream) -> Option<bool> {
+        self.dispatch_scan_byte_keyword(stream)
     }
 
     #[inline]
     #[allow(dead_code)]
-    pub(crate) fn scan_byte_type(&self, stream: &mut Stream) -> bool {
-        self.dispatch_scan_byte_type(stream)
+    pub(crate) fn scan_byte_keyword(&self, stream: &mut Stream) -> bool {
+        self.dispatch_scan_byte_keyword(stream)
             .expect("Validation should have checked that references are valid between versions")
     }
 
@@ -909,14 +909,36 @@ impl Language {
         self.scan_days_keyword_0_4_11(stream)
     }
 
-    // «DecimalExponent» = ("e" | "E") "-"? «DecimalNumber»;
+    // «DecimalDigits» = ("0"…"9")+ ("_" ("0"…"9")+)*;
+
+    #[allow(dead_code)]
+    fn scan_decimal_digits_0_4_11(&self, stream: &mut Stream) -> bool {
+        scan_sequence!(
+            scan_one_or_more!(stream, scan_predicate!(stream, |c| ('0' <= c && c <= '9'))),
+            scan_zero_or_more!(
+                stream,
+                scan_sequence!(
+                    scan_chars!(stream, '_'),
+                    scan_one_or_more!(stream, scan_predicate!(stream, |c| ('0' <= c && c <= '9')))
+                )
+            )
+        )
+    }
+
+    #[inline]
+    #[allow(dead_code)]
+    pub(crate) fn scan_decimal_digits(&self, stream: &mut Stream) -> bool {
+        self.scan_decimal_digits_0_4_11(stream)
+    }
+
+    // «DecimalExponent» = ("e" | "E") "-"? «DecimalDigits»;
 
     #[allow(dead_code)]
     fn scan_decimal_exponent_0_4_11(&self, stream: &mut Stream) -> bool {
         scan_sequence!(
             scan_predicate!(stream, |c| c == 'E' || c == 'e'),
             scan_optional!(stream, scan_chars!(stream, '-')),
-            self.scan_decimal_number(stream)
+            self.scan_decimal_digits(stream)
         )
     }
 
@@ -927,7 +949,7 @@ impl Language {
     }
 
     // (* v0.4.11 *)
-    // «DecimalLiteral» = ((«DecimalNumber» ("." «DecimalNumber»?)?) | ("." «DecimalNumber»)) «DecimalExponent»?;
+    // «DecimalLiteral» = ((«DecimalDigits» ("." «DecimalDigits»?)?) | ("." «DecimalDigits»)) «DecimalExponent»?;
 
     #[allow(dead_code)]
     fn scan_decimal_literal_0_4_11(&self, stream: &mut Stream) -> bool {
@@ -935,23 +957,23 @@ impl Language {
             scan_choice!(
                 stream,
                 scan_sequence!(
-                    self.scan_decimal_number(stream),
+                    self.scan_decimal_digits(stream),
                     scan_optional!(
                         stream,
                         scan_sequence!(
                             scan_chars!(stream, '.'),
-                            scan_optional!(stream, self.scan_decimal_number(stream))
+                            scan_optional!(stream, self.scan_decimal_digits(stream))
                         )
                     )
                 ),
-                scan_sequence!(scan_chars!(stream, '.'), self.scan_decimal_number(stream))
+                scan_sequence!(scan_chars!(stream, '.'), self.scan_decimal_digits(stream))
             ),
             scan_optional!(stream, self.scan_decimal_exponent(stream))
         )
     }
 
     // (* v0.5.0 *)
-    // «DecimalLiteral» = ((«DecimalNumber» ("." «DecimalNumber»)?) | ("." «DecimalNumber»)) «DecimalExponent»?;
+    // «DecimalLiteral» = ((«DecimalDigits» ("." «DecimalDigits»)?) | ("." «DecimalDigits»)) «DecimalExponent»?;
 
     #[allow(dead_code)]
     fn scan_decimal_literal_0_5_0(&self, stream: &mut Stream) -> bool {
@@ -959,13 +981,13 @@ impl Language {
             scan_choice!(
                 stream,
                 scan_sequence!(
-                    self.scan_decimal_number(stream),
+                    self.scan_decimal_digits(stream),
                     scan_optional!(
                         stream,
-                        scan_sequence!(scan_chars!(stream, '.'), self.scan_decimal_number(stream))
+                        scan_sequence!(scan_chars!(stream, '.'), self.scan_decimal_digits(stream))
                     )
                 ),
-                scan_sequence!(scan_chars!(stream, '.'), self.scan_decimal_number(stream))
+                scan_sequence!(scan_chars!(stream, '.'), self.scan_decimal_digits(stream))
             ),
             scan_optional!(stream, self.scan_decimal_exponent(stream))
         )
@@ -983,28 +1005,6 @@ impl Language {
     #[allow(dead_code)]
     pub(crate) fn scan_decimal_literal(&self, stream: &mut Stream) -> bool {
         self.dispatch_scan_decimal_literal(stream)
-    }
-
-    // «DecimalNumber» = ("0"…"9")+ ("_" ("0"…"9")+)*;
-
-    #[allow(dead_code)]
-    fn scan_decimal_number_0_4_11(&self, stream: &mut Stream) -> bool {
-        scan_sequence!(
-            scan_one_or_more!(stream, scan_predicate!(stream, |c| ('0' <= c && c <= '9'))),
-            scan_zero_or_more!(
-                stream,
-                scan_sequence!(
-                    scan_chars!(stream, '_'),
-                    scan_one_or_more!(stream, scan_predicate!(stream, |c| ('0' <= c && c <= '9')))
-                )
-            )
-        )
-    }
-
-    #[inline]
-    #[allow(dead_code)]
-    pub(crate) fn scan_decimal_number(&self, stream: &mut Stream) -> bool {
-        self.scan_decimal_number_0_4_11(stream)
     }
 
     // «DefaultKeyword» = "default";
@@ -1498,7 +1498,7 @@ impl Language {
             .expect("Validation should have checked that references are valid between versions")
     }
 
-    // «FixedBytesType» = "bytes" ("1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" | "10" | "11" | "12" | "13" | "14" | "15" | "16" | "17" | "18" | "19" | "20" | "21" | "22" | "23" | "24" | "25" | "26" | "27" | "28" | "29" | "30" | "31" | "32");
+    // «FixedBytesType» = "bytes" «FixedBytesTypeSize»;
 
     #[allow(dead_code)]
     fn scan_fixed_bytes_type_0_4_11(&self, stream: &mut Stream) -> bool {
@@ -1534,6 +1534,81 @@ impl Language {
     #[allow(dead_code)]
     pub(crate) fn scan_fixed_bytes_type(&self, stream: &mut Stream) -> bool {
         self.scan_fixed_bytes_type_0_4_11(stream)
+    }
+
+    // «FixedBytesTypeSize» = "1"
+    //                      | "2"
+    //                      | "3"
+    //                      | "4"
+    //                      | "5"
+    //                      | "6"
+    //                      | "7"
+    //                      | "8"
+    //                      | "9"
+    //                      | "10"
+    //                      | "11"
+    //                      | "12"
+    //                      | "13"
+    //                      | "14"
+    //                      | "15"
+    //                      | "16"
+    //                      | "17"
+    //                      | "18"
+    //                      | "19"
+    //                      | "20"
+    //                      | "21"
+    //                      | "22"
+    //                      | "23"
+    //                      | "24"
+    //                      | "25"
+    //                      | "26"
+    //                      | "27"
+    //                      | "28"
+    //                      | "29"
+    //                      | "30"
+    //                      | "31"
+    //                      | "32";
+
+    #[allow(dead_code)]
+    fn scan_fixed_bytes_type_size_0_4_11(&self, stream: &mut Stream) -> bool {
+        scan_trie!(
+            stream,
+            ['4' | '5' | '6' | '7' | '8' | '9'],
+            '1' + scan_trie!(
+                stream,
+                EMPTY,
+                ['0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9']
+            ),
+            '2' + scan_trie!(
+                stream,
+                EMPTY,
+                ['0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9']
+            ),
+            '3' + scan_trie!(stream, EMPTY, ['0' | '1' | '2'])
+        )
+    }
+
+    #[inline]
+    #[allow(dead_code)]
+    pub(crate) fn scan_fixed_bytes_type_size(&self, stream: &mut Stream) -> bool {
+        self.scan_fixed_bytes_type_size_0_4_11(stream)
+    }
+
+    // «FixedTypeSize» = ("0"…"9")+ "x" ("0"…"9")+;
+
+    #[allow(dead_code)]
+    fn scan_fixed_type_size_0_4_11(&self, stream: &mut Stream) -> bool {
+        scan_sequence!(
+            scan_one_or_more!(stream, scan_predicate!(stream, |c| ('0' <= c && c <= '9'))),
+            scan_chars!(stream, 'x'),
+            scan_one_or_more!(stream, scan_predicate!(stream, |c| ('0' <= c && c <= '9')))
+        )
+    }
+
+    #[inline]
+    #[allow(dead_code)]
+    pub(crate) fn scan_fixed_type_size(&self, stream: &mut Stream) -> bool {
+        self.scan_fixed_type_size_0_4_11(stream)
     }
 
     // «ForKeyword» = "for";
@@ -2246,6 +2321,81 @@ impl Language {
     #[allow(dead_code)]
     pub(crate) fn scan_indexed_keyword(&self, stream: &mut Stream) -> bool {
         self.scan_indexed_keyword_0_4_11(stream)
+    }
+
+    // «IntegerTypeSize» = "8"
+    //                   | "16"
+    //                   | "24"
+    //                   | "32"
+    //                   | "40"
+    //                   | "48"
+    //                   | "56"
+    //                   | "64"
+    //                   | "72"
+    //                   | "80"
+    //                   | "88"
+    //                   | "96"
+    //                   | "104"
+    //                   | "112"
+    //                   | "120"
+    //                   | "128"
+    //                   | "136"
+    //                   | "144"
+    //                   | "152"
+    //                   | "160"
+    //                   | "168"
+    //                   | "176"
+    //                   | "184"
+    //                   | "192"
+    //                   | "200"
+    //                   | "208"
+    //                   | "216"
+    //                   | "224"
+    //                   | "232"
+    //                   | "240"
+    //                   | "248"
+    //                   | "256";
+
+    #[allow(dead_code)]
+    fn scan_integer_type_size_0_4_11(&self, stream: &mut Stream) -> bool {
+        scan_trie!(
+            stream,
+            '1' + scan_trie!(
+                stream,
+                '0' + scan_chars!(stream, '4'),
+                '1' + scan_chars!(stream, '2'),
+                '2' + scan_trie!(stream, ['0' | '8']),
+                '3' + scan_chars!(stream, '6'),
+                '4' + scan_chars!(stream, '4'),
+                '5' + scan_chars!(stream, '2'),
+                '6' + scan_trie!(stream, EMPTY, ['0' | '8']),
+                '7' + scan_chars!(stream, '6'),
+                '8' + scan_chars!(stream, '4'),
+                '9' + scan_chars!(stream, '2')
+            ),
+            '2' + scan_trie!(
+                stream,
+                '0' + scan_trie!(stream, ['0' | '8']),
+                '1' + scan_chars!(stream, '6'),
+                '2' + scan_chars!(stream, '4'),
+                '3' + scan_chars!(stream, '2'),
+                '4' + scan_trie!(stream, EMPTY, ['0' | '8']),
+                '5' + scan_chars!(stream, '6')
+            ),
+            '3' + scan_chars!(stream, '2'),
+            '4' + scan_trie!(stream, ['0' | '8']),
+            '5' + scan_chars!(stream, '6'),
+            '6' + scan_chars!(stream, '4'),
+            '7' + scan_chars!(stream, '2'),
+            '8' + scan_trie!(stream, EMPTY, ['0' | '8']),
+            '9' + scan_chars!(stream, '6')
+        )
+    }
+
+    #[inline]
+    #[allow(dead_code)]
+    pub(crate) fn scan_integer_type_size(&self, stream: &mut Stream) -> bool {
+        self.scan_integer_type_size_0_4_11(stream)
     }
 
     // «InterfaceKeyword» = "interface";
@@ -2987,9 +3137,7 @@ impl Language {
     }
 
     // (* v0.6.0 *)
-    // «NotAnIdentifierInSomeVersions» = "finney"
-    //                                 | "szabo"
-    //                                 | "alias"
+    // «NotAnIdentifierInSomeVersions» = "alias"
     //                                 | "apply"
     //                                 | "auto"
     //                                 | "calldata"
@@ -2997,6 +3145,7 @@ impl Language {
     //                                 | "copyof"
     //                                 | "define"
     //                                 | "emit"
+    //                                 | "finney"
     //                                 | "immutable"
     //                                 | "implements"
     //                                 | "macro"
@@ -3008,6 +3157,7 @@ impl Language {
     //                                 | "sealed"
     //                                 | "sizeof"
     //                                 | "supports"
+    //                                 | "szabo"
     //                                 | "typedef"
     //                                 | "unchecked"
     //                                 | "fallback"
@@ -3089,6 +3239,7 @@ impl Language {
     //                                 | "copyof"
     //                                 | "define"
     //                                 | "emit"
+    //                                 | "fallback"
     //                                 | "immutable"
     //                                 | "implements"
     //                                 | "macro"
@@ -3096,14 +3247,13 @@ impl Language {
     //                                 | "override"
     //                                 | "partial"
     //                                 | "promise"
+    //                                 | "receive"
     //                                 | "reference"
     //                                 | "sealed"
     //                                 | "sizeof"
     //                                 | "supports"
     //                                 | "typedef"
     //                                 | "unchecked"
-    //                                 | "fallback"
-    //                                 | "receive"
     //                                 | "virtual"
     //                                 | "gwei";
 
@@ -3627,7 +3777,7 @@ impl Language {
         self.scan_semicolon_0_4_11(stream)
     }
 
-    // «SignedFixedType» = "fixed" (("0"…"9")+ "x" ("0"…"9")+)?;
+    // «SignedFixedType» = "fixed" «FixedTypeSize»?;
 
     #[allow(dead_code)]
     fn scan_signed_fixed_type_0_4_11(&self, stream: &mut Stream) -> bool {
@@ -3635,20 +3785,7 @@ impl Language {
             stream,
             scan_sequence!(
                 scan_chars!(stream, 'f', 'i', 'x', 'e', 'd'),
-                scan_optional!(
-                    stream,
-                    scan_sequence!(
-                        scan_one_or_more!(
-                            stream,
-                            scan_predicate!(stream, |c| ('0' <= c && c <= '9'))
-                        ),
-                        scan_chars!(stream, 'x'),
-                        scan_one_or_more!(
-                            stream,
-                            scan_predicate!(stream, |c| ('0' <= c && c <= '9'))
-                        )
-                    )
-                )
+                scan_optional!(stream, self.scan_fixed_type_size(stream))
             ),
             scan_predicate!(stream, |c| c == '$'
                 || ('0' <= c && c <= '9')
@@ -3664,7 +3801,7 @@ impl Language {
         self.scan_signed_fixed_type_0_4_11(stream)
     }
 
-    // «SignedIntegerType» = "int" ("8" | "16" | "24" | "32" | "40" | "48" | "56" | "64" | "72" | "80" | "88" | "96" | "104" | "112" | "120" | "128" | "136" | "144" | "152" | "160" | "168" | "176" | "184" | "192" | "200" | "208" | "216" | "224" | "232" | "240" | "248" | "256")?;
+    // «SignedIntegerType» = "int" «IntegerTypeSize»?;
 
     #[allow(dead_code)]
     fn scan_signed_integer_type_0_4_11(&self, stream: &mut Stream) -> bool {
@@ -4216,13 +4353,21 @@ impl Language {
             .expect("Validation should have checked that references are valid between versions")
     }
 
-    // «UnsignedFixedType» = "u" «SignedFixedType»;
+    // «UnsignedFixedType» = "ufixed" «FixedTypeSize»?;
 
     #[allow(dead_code)]
     fn scan_unsigned_fixed_type_0_4_11(&self, stream: &mut Stream) -> bool {
-        scan_sequence!(
-            scan_chars!(stream, 'u'),
-            self.scan_signed_fixed_type(stream)
+        scan_not_followed_by!(
+            stream,
+            scan_sequence!(
+                scan_chars!(stream, 'u', 'f', 'i', 'x', 'e', 'd'),
+                scan_optional!(stream, self.scan_fixed_type_size(stream))
+            ),
+            scan_predicate!(stream, |c| c == '$'
+                || ('0' <= c && c <= '9')
+                || ('A' <= c && c <= 'Z')
+                || c == '_'
+                || ('a' <= c && c <= 'z'))
         )
     }
 
@@ -4232,13 +4377,55 @@ impl Language {
         self.scan_unsigned_fixed_type_0_4_11(stream)
     }
 
-    // «UnsignedIntegerType» = "u" «SignedIntegerType»;
+    // «UnsignedIntegerType» = "uint" «IntegerTypeSize»?;
 
     #[allow(dead_code)]
     fn scan_unsigned_integer_type_0_4_11(&self, stream: &mut Stream) -> bool {
-        scan_sequence!(
-            scan_chars!(stream, 'u'),
-            self.scan_signed_integer_type(stream)
+        scan_not_followed_by!(
+            stream,
+            scan_sequence!(
+                scan_chars!(stream, 'u', 'i', 'n', 't'),
+                scan_optional!(
+                    stream,
+                    scan_trie!(
+                        stream,
+                        '1' + scan_trie!(
+                            stream,
+                            '0' + scan_chars!(stream, '4'),
+                            '1' + scan_chars!(stream, '2'),
+                            '2' + scan_trie!(stream, ['0' | '8']),
+                            '3' + scan_chars!(stream, '6'),
+                            '4' + scan_chars!(stream, '4'),
+                            '5' + scan_chars!(stream, '2'),
+                            '6' + scan_trie!(stream, EMPTY, ['0' | '8']),
+                            '7' + scan_chars!(stream, '6'),
+                            '8' + scan_chars!(stream, '4'),
+                            '9' + scan_chars!(stream, '2')
+                        ),
+                        '2' + scan_trie!(
+                            stream,
+                            '0' + scan_trie!(stream, ['0' | '8']),
+                            '1' + scan_chars!(stream, '6'),
+                            '2' + scan_chars!(stream, '4'),
+                            '3' + scan_chars!(stream, '2'),
+                            '4' + scan_trie!(stream, EMPTY, ['0' | '8']),
+                            '5' + scan_chars!(stream, '6')
+                        ),
+                        '3' + scan_chars!(stream, '2'),
+                        '4' + scan_trie!(stream, ['0' | '8']),
+                        '5' + scan_chars!(stream, '6'),
+                        '6' + scan_chars!(stream, '4'),
+                        '7' + scan_chars!(stream, '2'),
+                        '8' + scan_trie!(stream, EMPTY, ['0' | '8']),
+                        '9' + scan_chars!(stream, '6')
+                    )
+                )
+            ),
+            scan_predicate!(stream, |c| c == '$'
+                || ('0' <= c && c <= '9')
+                || ('A' <= c && c <= 'Z')
+                || c == '_'
+                || ('a' <= c && c <= 'z'))
         )
     }
 

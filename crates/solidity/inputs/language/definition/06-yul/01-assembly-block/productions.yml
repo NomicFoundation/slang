@@ -24,10 +24,10 @@
         reference: "OpenParen"
       expression:
         sequence:
-          - reference: "DoubleQuotedAsciiStringLiteral"
+          - reference: "AsciiStringLiteral"
           - zeroOrMore:
               sequence:
                 - reference: "Comma"
-                - reference: "DoubleQuotedAsciiStringLiteral"
+                - reference: "AsciiStringLiteral"
       close:
         reference: "CloseParen"

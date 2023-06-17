@@ -52,34 +52,35 @@
       sequence:
         - choice:
             - sequence:
-                - reference: "DecimalNumber"
+                - reference: "DecimalDigits"
                 - optional:
                     sequence:
                       - terminal: "."
                       - optional:
-                          reference: "DecimalNumber"
+                          reference: "DecimalDigits"
             - sequence:
                 - terminal: "."
-                - reference: "DecimalNumber"
+                - reference: "DecimalDigits"
         - optional:
             reference: "DecimalExponent"
     0.5.0:
       sequence:
         - choice:
             - sequence:
-                - reference: "DecimalNumber"
+                - reference: "DecimalDigits"
                 - optional:
                     sequence:
                       - terminal: "."
-                      - reference: "DecimalNumber"
+                      - reference: "DecimalDigits"
             - sequence:
                 - terminal: "."
-                - reference: "DecimalNumber"
+                - reference: "DecimalDigits"
         - optional:
             reference: "DecimalExponent"
 
-- name: "DecimalNumber"
+- name: "DecimalDigits"
   kind: "Scanner"
+  inlined: true
   unversioned:
     sequence:
       - oneOrMore:
@@ -96,6 +97,7 @@
 
 - name: "DecimalExponent"
   kind: "Scanner"
+  inlined: true
   unversioned:
     sequence:
       - choice:
@@ -103,7 +105,7 @@
           - terminal: "E"
       - optional:
           terminal: "-"
-      - reference: "DecimalNumber"
+      - reference: "DecimalDigits"
 
 - name: "NumberUnit"
   kind: "Parser"

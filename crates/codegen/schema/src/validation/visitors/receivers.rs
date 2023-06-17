@@ -237,10 +237,6 @@ impl Receiver for ParserDefinition {
                 expression.receive(visitor, language, location.field("optional"), reporter);
             }
             ParserDefinition::Reference(_) => {}
-            ParserDefinition::Repeat { expression, .. } => {
-                let location = location.field("repeat");
-                expression.receive(visitor, language, location.field("expression"), reporter);
-            }
             ParserDefinition::SeparatedBy { expression, .. } => {
                 let location = location.field("separatedBy");
                 expression.receive(visitor, language, location.field("expression"), reporter);
@@ -275,7 +271,7 @@ impl Receiver for PrecedenceParserRef {
         }
 
         {
-            let location = location.field("definitions");
+            let location = location.field("operators");
             for (i, definition) in self.operators.iter().enumerate() {
                 let location = location.index(i).field("operator");
                 definition

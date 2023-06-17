@@ -1,30 +1,32 @@
 use crate::{
-    types::ProductionRef,
+    types::{LanguageDefinitionRef, ProductionRef},
     validation::{
         rules::references::metadata::Metadata,
-        visitors::{LocationRef, Reporter, VersionSet, Visitor},
+        visitors::{run_visitor, LocationRef, Reporter, VersionSet, Visitor},
     },
 };
 
-pub struct Collector {
-    metadata: Metadata,
+pub struct Collector<'collector> {
+    metadata: &'collector mut Metadata,
     current_production: Option<ProductionRef>,
 }
 
-impl Collector {
-    pub fn new() -> Self {
-        return Self {
-            metadata: Metadata::new(),
+impl<'collector> Collector<'collector> {
+    pub fn collect<'call: 'collector>(
+        language: &'call LanguageDefinitionRef,
+        metadata: &'call mut Metadata,
+        reporter: &'call mut Reporter,
+    ) {
+        let mut instance = Self {
+            metadata,
             current_production: None,
         };
-    }
 
-    pub fn metadata(self) -> Metadata {
-        return self.metadata;
+        run_visitor(&mut instance, language, reporter);
     }
 }
 
-impl Visitor for Collector {
+impl Visitor for Collector<'_> {
     fn visit_production(
         &mut self,
         production: &ProductionRef,
