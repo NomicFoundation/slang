@@ -151,7 +151,7 @@ impl CodeGenerator {
                     use napi::bindgen_prelude::*;
                     use napi_derive::napi;
 
-                    #[napi]
+                    #[napi(string_enum)]
                     #[derive(
                         Debug,
                         PartialEq,
@@ -163,7 +163,7 @@ impl CodeGenerator {
                     )]
                     #token_kinds
 
-                    #[napi]
+                    #[napi(string_enum)]
                     #[derive(
                         Debug,
                         PartialEq,
@@ -175,7 +175,7 @@ impl CodeGenerator {
                     )]
                     #rule_kinds
 
-                    #[napi]
+                    #[napi(string_enum)]
                     #[derive(
                         Debug,
                         PartialEq,
