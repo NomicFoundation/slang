@@ -1,5 +1,5 @@
 <!-- This file is generated automatically by infrastructure scripts. Please don't edit by hand. -->
 
-```{ .ebnf .slang-ebnf #GreaterThanEqual }
-«GreaterThanEqual» = ">=";
+```{ .ebnf .slang-ebnf #GREATER_THAN_EQUAL }
+GREATER_THAN_EQUAL = ">=";
 ```

@@ -1,5 +1,5 @@
 <!-- This file is generated automatically by infrastructure scripts. Please don't edit by hand. -->
 
-```{ .ebnf .slang-ebnf #EnumKeyword }
-«EnumKeyword» = "enum";
+```{ .ebnf .slang-ebnf #ENUM_KEYWORD }
+ENUM_KEYWORD = "enum";
 ```

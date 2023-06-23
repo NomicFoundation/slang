@@ -1,5 +1,5 @@
 <!-- This file is generated automatically by infrastructure scripts. Please don't edit by hand. -->
 
 ```{ .ebnf .slang-ebnf #EnumDefinition }
-EnumDefinition = «EnumKeyword» «Identifier» «OpenBrace» («Identifier» («Comma» «Identifier»)*)? «CloseBrace»;
+EnumDefinition = ENUM_KEYWORD IDENTIFIER OPEN_BRACE (IDENTIFIER (COMMA IDENTIFIER)*)? CLOSE_BRACE;
 ```

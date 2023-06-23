@@ -1,75 +1,84 @@
-window.addEventListener("load", prepareGrammar);
-window.addEventListener("hashchange", prepareGrammar);
+window.addEventListener("load", () => {
+  const productionDivs = collectProductionDivs();
+  createLinksToKeywords(productionDivs);
+  highlightSelectedKeyword(productionDivs);
+});
 
-function prepareGrammar() {
-  const blocks = collectBlocks();
-  createLinks(blocks);
-  highlightSelected(blocks);
-}
+window.addEventListener("hashchange", () => {
+  const productionDivs = collectProductionDivs();
+  highlightSelectedKeyword(productionDivs);
+});
 
-function collectBlocks() {
-  const blocks = /** @type Map<string, Element> */ (new Map());
-  for (const block of document.querySelectorAll("div .slang-ebnf")) {
-    const id = block.getAttribute("id");
+function collectProductionDivs() {
+  const productionDivs = /** @type Map<string, Element> */ (new Map());
+  for (const productionDiv of document.querySelectorAll("div .slang-ebnf")) {
+    const id = productionDiv.getAttribute("id");
     if (!id) {
       continue;
     }
 
-    blocks.set(id, block);
+    productionDivs.set(id, productionDiv);
   }
 
-  return blocks;
+  return productionDivs;
 }
 
-function createLinks(/** @type Map<string, Element> */ blocks) {
-  for (const [_, block] of blocks) {
-    const spans = block.querySelectorAll("span[class='k']");
+function createLinksToKeywords(/** @type Map<string, Element> */ productionDivs) {
+  for (const [_, productionDiv] of productionDivs) {
+    const spans = productionDiv.querySelectorAll("span[class='k']");
     for (const span of spans) {
-      const id = span.textContent?.trim();
-      if (!id || !blocks.has(id) || span.hasAttribute("checked")) {
-        continue;
+      const spanContents = span.textContent || "";
+      if (spanContents.trim().length == 0) {
+        continue; // empty string
       }
 
-      span.setAttribute("checked", "");
+      // Keyword spans can have multiple keywords (and spaces). For example:
+      //        " IDENTIFIER ParameterList"
+      // We need to split them up and replace each one individually with an anchor.
+      // Splitting the above by word boundary "\b" produces the following:
+      //        [" ", "IDENTIFIER", " ", "ParameterList"]
 
-      const anchor = document.createElement("a");
-      anchor.setAttribute("href", `#${id}`);
+      span.replaceWith(
+        ...spanContents.split(/\b/).map((token) => {
+          const newSpan = /** @type Element */ (span.cloneNode(true));
+          newSpan.textContent = token;
 
-      if (span.previousSibling?.textContent === "«") {
-        /** @type Element */ (span.previousSibling).classList.replace("err", "k");
-        anchor.appendChild(span.previousSibling.cloneNode(true));
-        span.previousSibling.remove();
-      }
-
-      anchor.appendChild(span.cloneNode(true));
-
-      if (span.nextSibling?.textContent === "»") {
-        /** @type Element */ (span.nextSibling).classList.replace("err", "k");
-        anchor.appendChild(span.nextSibling.cloneNode(true));
-        span.nextSibling.remove();
-      }
-
-      span.replaceWith(anchor);
+          if (productionDivs.has(token)) {
+            // token is a keyword: wrap it with a new anchor link around it:
+            const anchor = document.createElement("a");
+            anchor.setAttribute("href", `#${token}`);
+            anchor.appendChild(newSpan);
+            return anchor;
+          } else {
+            // token is whitespace: return as-is:
+            return newSpan;
+          }
+        }),
+      );
     }
   }
 }
 
-function highlightSelected(/** @type Map<string, Element> */ blocks) {
-  function setBackground(/** @type Element */ block, /** @type string */ color) {
-    const code = block.querySelector("code");
-    if (!code) {
-      return;
-    }
+function highlightSelectedKeyword(/** @type Map<string, Element> */ productionDivs) {
+  // First, reset all code blocks to their default background color:
 
-    code.style.background = color;
+  for (const [_, productionDiv] of productionDivs) {
+    setBackground(productionDiv, "var(--md-code-bg-color)");
   }
 
-  for (const [_, block] of blocks) {
-    setBackground(block, "var(--md-code-bg-color)");
-  }
+  // Then, if one was selected (location.hash), highlight it:
 
-  const selected = blocks.get(location.hash.replace("#", ""));
-  if (selected) {
-    setBackground(selected, "var(--md-code-hl-color)");
+  const keyword = location.hash.replace("#", "");
+  const selectedProductionDiv = productionDivs.get(keyword);
+  if (selectedProductionDiv) {
+    setBackground(selectedProductionDiv, "var(--md-code-hl-color)");
+  }
+}
+
+function setBackground(/** @type Element */ productionDiv, /** @type string */ color) {
+  const codeBlock = productionDiv.querySelector("code");
+
+  if (codeBlock) {
+    codeBlock.style.background = color;
   }
 }

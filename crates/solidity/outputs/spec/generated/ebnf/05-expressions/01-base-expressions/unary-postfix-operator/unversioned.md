@@ -1,5 +1,5 @@
 <!-- This file is generated automatically by infrastructure scripts. Please don't edit by hand. -->
 
 ```{ .ebnf .slang-ebnf #UnaryPostfixOperator }
-UnaryPostfixOperator = «PlusPlus» | «MinusMinus»;
+UnaryPostfixOperator = PLUS_PLUS | MINUS_MINUS;
 ```

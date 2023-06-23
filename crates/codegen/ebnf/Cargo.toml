@@ -7,4 +7,6 @@ publish = false
 
 [dependencies]
 codegen_schema = { workspace = true }
+indexmap = { workspace = true }
+Inflector = { workspace = true }
 semver = { workspace = true }

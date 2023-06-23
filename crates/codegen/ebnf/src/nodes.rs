@@ -1,4 +1,4 @@
-#[derive(Clone)]
+#[derive(Clone, Eq, Hash, PartialEq)]
 pub enum EbnfNode {
     BaseProduction,
     Choices {

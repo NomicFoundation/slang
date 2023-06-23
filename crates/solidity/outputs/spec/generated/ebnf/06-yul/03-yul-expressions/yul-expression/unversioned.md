@@ -2,5 +2,5 @@
 
 ```{ .ebnf .slang-ebnf #YulExpression }
 YulExpression = YulFunctionCallExpression | YulLiteral | YulIdentifierPath;
-YulFunctionCallExpression = YulExpression «OpenParen» (YulExpression («Comma» YulExpression)*)? «CloseParen»;
+YulFunctionCallExpression = YulExpression OPEN_PAREN (YulExpression (COMMA YulExpression)*)? CLOSE_PAREN;
 ```

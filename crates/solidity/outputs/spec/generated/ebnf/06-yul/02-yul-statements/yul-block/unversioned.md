@@ -1,5 +1,5 @@
 <!-- This file is generated automatically by infrastructure scripts. Please don't edit by hand. -->
 
 ```{ .ebnf .slang-ebnf #YulBlock }
-YulBlock = «OpenBrace» YulStatement* «CloseBrace»;
+YulBlock = OPEN_BRACE YulStatement* CLOSE_BRACE;
 ```

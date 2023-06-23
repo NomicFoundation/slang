@@ -1,5 +1,5 @@
 <!-- This file is generated automatically by infrastructure scripts. Please don't edit by hand. -->
 
 ```{ .ebnf .slang-ebnf #EventDefinition }
-EventDefinition = «EventKeyword» «Identifier» «OpenParen» (EventParameter («Comma» EventParameter)*)? «CloseParen» «AnonymousKeyword»? «Semicolon»;
+EventDefinition = EVENT_KEYWORD IDENTIFIER OPEN_PAREN (EventParameter (COMMA EventParameter)*)? CLOSE_PAREN ANONYMOUS_KEYWORD? SEMICOLON;
 ```

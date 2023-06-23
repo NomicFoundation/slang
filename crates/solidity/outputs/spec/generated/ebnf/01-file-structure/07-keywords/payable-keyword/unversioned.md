@@ -1,5 +1,5 @@
 <!-- This file is generated automatically by infrastructure scripts. Please don't edit by hand. -->
 
-```{ .ebnf .slang-ebnf #PayableKeyword }
-«PayableKeyword» = "payable";
+```{ .ebnf .slang-ebnf #PAYABLE_KEYWORD }
+PAYABLE_KEYWORD = "payable";
 ```

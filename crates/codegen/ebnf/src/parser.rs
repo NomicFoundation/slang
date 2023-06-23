@@ -4,7 +4,12 @@ use crate::{nodes::EbnfNode, serialization::GenerateEbnf};
 
 impl GenerateEbnf for ParserRef {
     fn generate_ebnf(&self) -> EbnfNode {
-        return self.definition.generate_ebnf();
+        let definition = self.definition.generate_ebnf();
+
+        return match &self.name {
+            None => definition,
+            Some(name) => EbnfNode::sub_statement(name.to_owned(), None, definition),
+        };
     }
 }
 
@@ -15,7 +20,7 @@ impl GenerateEbnf for ParserDefinition {
                 return EbnfNode::choices(
                     sub_exprs
                         .iter()
-                        .map(|choice| choice.definition.generate_ebnf())
+                        .map(|choice| choice.generate_ebnf())
                         .collect(),
                 );
             }
@@ -27,7 +32,7 @@ impl GenerateEbnf for ParserDefinition {
             } => {
                 return EbnfNode::sequence(vec![
                     EbnfNode::production_ref(open.reference.to_owned()),
-                    expression.definition.generate_ebnf(),
+                    expression.generate_ebnf(),
                     EbnfNode::production_ref(close.reference.to_owned()),
                 ]);
             }
@@ -49,10 +54,10 @@ impl GenerateEbnf for ParserDefinition {
                 separator,
             } => {
                 return EbnfNode::sequence(vec![
-                    expression.definition.generate_ebnf(),
+                    expression.generate_ebnf(),
                     EbnfNode::zero_or_more(EbnfNode::sequence(vec![
                         EbnfNode::production_ref(separator.reference.to_owned()),
-                        expression.definition.generate_ebnf(),
+                        expression.generate_ebnf(),
                     ])),
                 ]);
             }
@@ -61,7 +66,7 @@ impl GenerateEbnf for ParserDefinition {
                 return EbnfNode::sequence(
                     elements
                         .iter()
-                        .map(|element| element.definition.generate_ebnf())
+                        .map(|element| element.generate_ebnf())
                         .collect(),
                 );
             }
@@ -71,7 +76,7 @@ impl GenerateEbnf for ParserDefinition {
                 terminator,
             } => {
                 return EbnfNode::sequence(vec![
-                    expression.definition.generate_ebnf(),
+                    expression.generate_ebnf(),
                     EbnfNode::production_ref(terminator.reference.to_owned()),
                 ]);
             }

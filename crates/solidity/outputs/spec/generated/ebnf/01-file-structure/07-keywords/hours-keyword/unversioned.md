@@ -1,5 +1,5 @@
 <!-- This file is generated automatically by infrastructure scripts. Please don't edit by hand. -->
 
-```{ .ebnf .slang-ebnf #HoursKeyword }
-«HoursKeyword» = "hours";
+```{ .ebnf .slang-ebnf #HOURS_KEYWORD }
+HOURS_KEYWORD = "hours";
 ```

@@ -3,7 +3,7 @@ use std::path::PathBuf;
 use anyhow::Result;
 use codegen_ebnf::EbnfSerializer;
 use codegen_schema::types::{
-    LanguageDefinition, LanguageSection, LanguageTopic, ProductionDefinition, ProductionRef,
+    LanguageDefinitionRef, LanguageSection, LanguageTopic, ProductionDefinition, ProductionRef,
     VersionMap,
 };
 use codegen_utils::context::CodegenContext;
@@ -12,16 +12,16 @@ use semver::Version;
 
 use crate::markdown::MarkdownWriter;
 
-pub struct Snippets<'context> {
-    language: &'context LanguageDefinition,
-    output_dir: &'context PathBuf,
+pub struct Snippets {
+    language: LanguageDefinitionRef,
+    output_dir: PathBuf,
 }
 
-impl<'context> Snippets<'context> {
-    pub fn new(language: &'context LanguageDefinition, output_dir: &'context PathBuf) -> Self {
+impl Snippets {
+    pub fn new(language: &LanguageDefinitionRef, output_dir: &PathBuf) -> Self {
         return Self {
-            language,
-            output_dir,
+            language: language.to_owned(),
+            output_dir: output_dir.to_owned(),
         };
     }
 
@@ -92,12 +92,19 @@ impl<'context> Snippets<'context> {
     fn get_snippet(&self, production: &ProductionRef, version: &Version) -> Option<String> {
         let mut snippet = MarkdownWriter::new();
 
-        let language = "ebnf"; // https://pygments.org/languages/
-        let class = "slang-ebnf"; // used to select code blocks via JS during runtime
-        let id = &production.name; // used for navigation (generarating URL hashes)
+        // https://pygments.org/languages/
+        let language = "ebnf";
+        // used to select code blocks via JS during runtime
+        let class = "slang-ebnf";
+        // used for navigation (generarating URL hashes)
+        let id = if matches!(production.definition, ProductionDefinition::Scanner { .. }) {
+            production.name.to_screaming_snake_case()
+        } else {
+            production.name.to_owned()
+        };
 
-        let contents = &EbnfSerializer::serialize_version(self.language, production, version)?;
-        snippet.write_code_block(language, class, id, contents);
+        let contents = &EbnfSerializer::serialize_version(&self.language, production, version)?;
+        snippet.write_code_block(language, class, &id, contents);
 
         return Some(snippet.to_string());
     }

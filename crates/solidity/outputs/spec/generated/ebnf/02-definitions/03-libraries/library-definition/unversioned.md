@@ -1,5 +1,5 @@
 <!-- This file is generated automatically by infrastructure scripts. Please don't edit by hand. -->
 
 ```{ .ebnf .slang-ebnf #LibraryDefinition }
-LibraryDefinition = «LibraryKeyword» «Identifier» «OpenBrace» ContractBodyElement* «CloseBrace»;
+LibraryDefinition = LIBRARY_KEYWORD IDENTIFIER OPEN_BRACE «ContractBodyElement»* CLOSE_BRACE;
 ```
