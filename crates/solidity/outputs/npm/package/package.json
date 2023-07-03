@@ -40,7 +40,7 @@
   },
   "devDependencies": {
     "@napi-rs/cli": "2.16.1",
-    "prettier": "2.8.6"
+    "prettier": "2.8.8"
   },
   "optionalDependencies": {
     "@nomicfoundation/slang-darwin-arm64": "0.6.0",
