@@ -6,11 +6,12 @@ Source: >
 Errors: # 1 total
   - >
     Error: Expected Identifier.
-       ╭─[crates/solidity/testing/snapshots/cst_output/Identifier/keyword_receive/input.sol:1:8]
+       ╭─[crates/solidity/testing/snapshots/cst_output/Identifier/keyword_receive/input.sol:1:1]
        │
      1 │ receive
-       │        │ 
-       │        ╰─ Error occurred here.
+       │ ───┬───  
+       │    ╰───── Error occurred here.
     ───╯
 
-Tree: null
+Tree:
+  - SKIPPED (Token): "receive" # 0..7

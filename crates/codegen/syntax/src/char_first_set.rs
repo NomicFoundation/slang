@@ -1,11 +1,11 @@
 use crate::char_set::CharSet;
 
-pub struct FirstSet {
+pub struct CharFirstSet {
     pub includes_epsilon: bool,
     pub char_set: CharSet,
 }
 
-impl FirstSet {
+impl CharFirstSet {
     pub fn new() -> Self {
         Self {
             includes_epsilon: false,

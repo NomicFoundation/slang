@@ -5,12 +5,15 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Expected end of input.
+    Error: Expected end of file.
        ╭─[crates/solidity/testing/snapshots/cst_output/NumericExpression/hex_unit/input.sol:1:4]
        │
      1 │ 0x1 wei
-       │    │ 
-       │    ╰─ Error occurred here.
+       │    ──┬─  
+       │      ╰─── Error occurred here.
     ───╯
 
-Tree: null
+Tree:
+  - NumericExpression (Rule): # 0..7 "0x1 wei"
+      - HexLiteral (Token): "0x1" # 0..3
+      - SKIPPED (Token): " wei" # 3..7

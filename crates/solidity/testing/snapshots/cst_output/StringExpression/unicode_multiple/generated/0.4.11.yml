@@ -8,9 +8,8 @@ Errors: # 1 total
     Error: Expected AsciiStringLiteral or HexStringLiteral.
        ╭─[crates/solidity/testing/snapshots/cst_output/StringExpression/unicode_multiple/input.sol:1:1]
        │
-     1 │ unicode"happy 😃" unicode'sad 😔'
-       │ │ 
-       │ ╰─ Error occurred here.
+     1 │ ╭─▶ unicode"happy 😃" unicode'sad 😔'
     ───╯
 
-Tree: null
+Tree:
+  - SKIPPED (Token): 'unicode"happy 😃" unicode''sad 😔''' # 0..37

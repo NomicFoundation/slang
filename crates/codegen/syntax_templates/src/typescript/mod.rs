@@ -2,9 +2,23 @@
 pub mod cst;
 #[path = "../shared/language.rs"]
 pub mod language;
-#[path = "../shared/macros.rs"]
-pub mod macros;
+#[path = "../shared/parse_error.rs"]
+pub mod parse_error;
+#[path = "../shared/parser_function.rs"]
+pub mod parser_function;
+#[path = "../shared/parser_helpers.rs"]
+pub mod parser_helpers;
+#[path = "../shared/parser_result.rs"]
+pub mod parser_result;
+#[path = "../shared/scanner_function.rs"]
+pub mod scanner_function;
+#[path = "../shared/scanner_macros.rs"]
+pub mod scanner_macros;
+#[path = "../shared/stream.rs"]
+pub mod stream;
+#[path = "../shared/text_index.rs"]
+pub mod text_index;
 
 pub mod cst_types;
 pub mod kinds;
-pub mod parser_output;
+pub mod parse_output;

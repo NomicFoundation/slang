@@ -6,11 +6,23 @@ Source: >
 Errors: # 1 total
   - >
     Error: Expected CloseParen.
-       ╭─[crates/solidity/testing/snapshots/cst_output/MappingType/named_value/input.sol:1:27]
+       ╭─[crates/solidity/testing/snapshots/cst_output/MappingType/named_value/input.sol:1:26]
        │
      1 │ mapping(string => bytes32 Bar)
-       │                           │ 
-       │                           ╰─ Error occurred here.
+       │                          ──┬──  
+       │                            ╰──── Error occurred here.
     ───╯
 
-Tree: null
+Tree:
+  - MappingType (Rule): # 0..30 "mapping(string => bytes32 Bar)"
+      - MappingKeyword (Token): "mapping" # 0..7
+      - OpenParen (Token): "(" # 7..8
+      - MappingKeyType (Rule): # 8..14 "string"
+          - ElementaryType (Rule): # 8..14 "string"
+              - StringKeyword (Token): "string" # 8..14
+      - EqualGreaterThan (Token): "=>" # 15..17
+      - MappingValueType (Rule): # 17..25 " bytes32"
+          - TypeName (Rule): # 17..25 " bytes32"
+              - ElementaryType (Rule): # 17..25 " bytes32"
+                  - FixedBytesType (Token): "bytes32" # 18..25
+      - SKIPPED (Token): " Bar)" # 25..30

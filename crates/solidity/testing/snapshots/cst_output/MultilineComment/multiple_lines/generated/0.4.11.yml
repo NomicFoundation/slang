@@ -9,4 +9,4 @@ Source: >
 Errors: []
 
 Tree:
-  - MultilineComment (Token): "/*\n * This is defined\n * on multiple lines.\n */" # 0..47
+  - MultilineComment (Trivia): "/*\n * This is defined\n * on multiple lines.\n */" # 0..47

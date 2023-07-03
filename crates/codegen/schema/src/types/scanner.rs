@@ -37,13 +37,6 @@ pub enum ScannerDefinition {
     #[schemars(title = "Reference Expression")]
     Reference(String),
 
-    #[schemars(title = "Repeat Expression")]
-    Repeat {
-        expression: ScannerRef,
-        min: usize,
-        max: usize,
-    },
-
     #[schemars(title = "Sequence Expression")]
     Sequence(Vec<ScannerRef>),
 

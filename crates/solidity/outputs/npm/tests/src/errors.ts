@@ -14,12 +14,12 @@ test("render error reports", (t) => {
   t.is(
     report,
     `
-Error: Expected end of input.
+Error: Expected Identifier.
    ╭─[test.sol:1:1]
    │
  1 │ int256 constant
-   │ │ 
-   │ ╰─ Error occurred here.
+   │ ───────┬───────  
+   │        ╰───────── Error occurred here.
 ───╯
 `.trim(),
   );

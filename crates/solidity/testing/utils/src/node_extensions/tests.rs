@@ -1,4 +1,4 @@
-use anyhow::{Context, Result};
+use anyhow::Result;
 use semver::Version;
 use slang_solidity::{language::Language, syntax::parser::ProductionKind};
 
@@ -18,8 +18,8 @@ fn extract_non_trivia() -> Result<()> {
 
     assert_eq!(output.errors().len(), 0);
 
-    let parse_tree = output.parse_tree().context("Expected a parse tree")?;
-    let value = parse_tree.extract_non_trivia(source);
+    let parse_tree = output.parse_tree();
+    let value = parse_tree.extract_non_trivia();
 
     assert_eq!(value, "x=(1+2)");
 

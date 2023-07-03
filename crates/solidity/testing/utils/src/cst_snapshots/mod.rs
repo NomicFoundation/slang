@@ -3,7 +3,7 @@ mod test_nodes;
 use std::{self, cmp::max, fmt::Write};
 
 use anyhow::Result;
-use slang_solidity::syntax::parser::ParseOutput;
+use slang_solidity::syntax::{nodes::TextRangeExtensions, parser::ParseOutput};
 
 use crate::cst_snapshots::test_nodes::TestNode;
 
@@ -94,12 +94,8 @@ fn write_errors<W: Write>(
 }
 
 fn write_tree<W: Write>(w: &mut W, output: &ParseOutput, source: &str) -> Result<()> {
-    let root_node = if let Some(parse_tree) = output.parse_tree() {
-        TestNode::from_cst(&parse_tree)
-    } else {
-        writeln!(w, "Tree: null")?;
-        return Ok(());
-    };
+    let parse_tree = output.parse_tree();
+    let root_node = TestNode::from_cst(parse_tree);
 
     writeln!(w, "Tree:")?;
     write_node(w, &root_node, source, 0)?;
@@ -112,19 +108,22 @@ fn write_node<W: Write>(
     source: &str,
     indentation: usize,
 ) -> Result<()> {
-    let range_string = format!(
-        "{range:?}",
-        range = node.range.start.byte..node.range.end.byte
-    );
+    let range_string = format!("{range:?}", range = node.range.utf8());
 
     let (node_value, node_comment) = if node.range.is_empty() {
         (" []".to_owned(), range_string)
     } else {
         let preview = node.render_preview(source, &node.range)?;
         if node.children.is_empty() {
-            (format!(" {preview}"), range_string)
+            (
+                format!(" {preview}"),
+                format!("{range:?}", range = node.range.utf8()),
+            )
         } else {
-            ("".to_owned(), format!("{range_string} {preview}"))
+            (
+                "".to_owned(),
+                format!("{range:?} {preview}", range = node.range.utf8()),
+            )
         }
     };
 

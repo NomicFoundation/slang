@@ -5,12 +5,15 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Expected end of input.
+    Error: Expected DaysKeyword or EtherKeyword or FinneyKeyword or HoursKeyword or MinutesKeyword or SecondsKeyword or SzaboKeyword or WeeksKeyword or WeiKeyword.
        ╭─[crates/solidity/testing/snapshots/cst_output/NumericExpression/hex_uppercase_prefix/input.sol:1:2]
        │
      1 │ 0X123456789
-       │  │ 
-       │  ╰─ Error occurred here.
+       │  ─────┬────  
+       │       ╰────── Error occurred here.
     ───╯
 
-Tree: null
+Tree:
+  - NumericExpression (Rule): # 0..11 "0X123456789"
+      - DecimalLiteral (Token): "0" # 0..1
+      - SKIPPED (Token): "X123456789" # 1..11

@@ -17,9 +17,9 @@ Tree:
       - Identifier (Token): "ICounter" # 10..18
       - OpenBrace (Token): "{" # 19..20
       - FunctionDefinition (Rule): # 21..105 "    // returns the current count\n    function coun..."
-          - FunctionKeyword (Token): # 21..66 "    // returns the current count\n    function"
+          - LeadingTrivia (Rule): # 21..58 "    // returns the current count\n    "
               - SingleLineComment (Trivia): "// returns the current count" # 25..53
-              - Contents: "function" # 58..66
+          - FunctionKeyword (Token): "function" # 58..66
           - Identifier (Token): "count" # 67..72
           - ParameterList (Rule): # 72..74 "()"
               - OpenParen (Token): "(" # 72..73
@@ -38,9 +38,9 @@ Tree:
               - CloseParen (Token): ")" # 102..103
           - Semicolon (Token): ";" # 103..104
       - FunctionDefinition (Rule): # 105..171 "\n    // increments the counter\n    function increm..."
-          - FunctionKeyword (Token): # 105..148 "\n    // increments the counter\n    function"
+          - LeadingTrivia (Rule): # 105..140 "\n    // increments the counter\n    "
               - SingleLineComment (Trivia): "// increments the counter" # 110..135
-              - Contents: "function" # 140..148
+          - FunctionKeyword (Token): "function" # 140..148
           - Identifier (Token): "increment" # 149..158
           - ParameterList (Rule): # 158..160 "()"
               - OpenParen (Token): "(" # 158..159

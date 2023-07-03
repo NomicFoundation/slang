@@ -280,32 +280,6 @@
           }
         },
         {
-          "title": "Repeat Expression",
-          "type": "object",
-          "required": ["repeat"],
-          "properties": {
-            "repeat": {
-              "type": "object",
-              "required": ["expression", "max", "min"],
-              "properties": {
-                "expression": {
-                  "$ref": "#/definitions/Scanner"
-                },
-                "min": {
-                  "type": "integer",
-                  "format": "uint",
-                  "minimum": 0.0
-                },
-                "max": {
-                  "type": "integer",
-                  "format": "uint",
-                  "minimum": 0.0
-                }
-              }
-            }
-          }
-        },
-        {
           "title": "Sequence Expression",
           "type": "object",
           "required": ["sequence"],
@@ -424,32 +398,6 @@
           "properties": {
             "reference": {
               "type": "string"
-            }
-          }
-        },
-        {
-          "title": "Repeat Expression",
-          "type": "object",
-          "required": ["repeat"],
-          "properties": {
-            "repeat": {
-              "type": "object",
-              "required": ["expression", "max", "min"],
-              "properties": {
-                "expression": {
-                  "$ref": "#/definitions/Parser"
-                },
-                "min": {
-                  "type": "integer",
-                  "format": "uint",
-                  "minimum": 0.0
-                },
-                "max": {
-                  "type": "integer",
-                  "format": "uint",
-                  "minimum": 0.0
-                }
-              }
             }
           }
         },

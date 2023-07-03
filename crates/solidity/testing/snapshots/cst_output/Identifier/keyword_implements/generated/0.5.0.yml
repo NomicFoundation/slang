@@ -6,11 +6,12 @@ Source: >
 Errors: # 1 total
   - >
     Error: Expected Identifier.
-       ╭─[crates/solidity/testing/snapshots/cst_output/Identifier/keyword_implements/input.sol:1:11]
+       ╭─[crates/solidity/testing/snapshots/cst_output/Identifier/keyword_implements/input.sol:1:1]
        │
      1 │ implements
-       │           │ 
-       │           ╰─ Error occurred here.
+       │ ─────┬────  
+       │      ╰────── Error occurred here.
     ───╯
 
-Tree: null
+Tree:
+  - SKIPPED (Token): "implements" # 0..10

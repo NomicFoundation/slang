@@ -76,10 +76,9 @@ fn execute_parse_command(file_path_string: String, version: Version, json: bool)
     }
 
     if json {
-        if let Some(root_node) = output.parse_tree() {
-            let json = serde_json::to_string_pretty(&root_node)?;
-            println!("{json}");
-        }
+        let root_node = output.parse_tree();
+        let json = serde_json::to_string_pretty(&root_node)?;
+        println!("{json}");
     }
 
     if !errors.is_empty() {

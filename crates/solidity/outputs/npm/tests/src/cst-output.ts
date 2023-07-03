@@ -12,7 +12,6 @@ test("parse token", (t) => {
   if (parseTree instanceof TokenNode) {
     t.is(parseTree.type, NodeType.Token);
     t.is(parseTree.kind, TokenKind.DecimalNumber);
-    t.is(parseTree.trivia.length, 0);
   } else {
     t.fail("Expected TokenNode");
   }
@@ -41,8 +40,8 @@ test("calculate both byte and char ranges", (t) => {
 
   if (parseTree instanceof TokenNode) {
     t.is(parseTree.kind, TokenKind.UnicodeStringLiteral);
-    t.deepEqual(parseTree.charRange, [0, 21]);
-    t.deepEqual(parseTree.byteRange, [0, 24]);
+    t.deepEqual(parseTree.textLen[2], 21);
+    t.deepEqual(parseTree.textLen[0], 24);
   } else {
     t.fail("Expected TokenNode");
   }

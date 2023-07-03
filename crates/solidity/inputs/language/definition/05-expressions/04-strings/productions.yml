@@ -40,20 +40,14 @@
   kind: "Scanner"
   unversioned:
     sequence:
-      - repeat:
-          min: 2
-          max: 2
-          expression:
-            reference: "HexCharacter"
+      - reference: "HexCharacter"
+      - reference: "HexCharacter"
       - zeroOrMore:
           sequence:
             - optional:
                 terminal: "_"
-            - repeat:
-                min: 2
-                max: 2
-                expression:
-                  reference: "HexCharacter"
+            - reference: "HexCharacter"
+            - reference: "HexCharacter"
 
 - name: "HexCharacter"
   kind: "Scanner"
@@ -185,19 +179,15 @@
   unversioned:
     sequence:
       - terminal: "x"
-      - repeat:
-          min: 2
-          max: 2
-          expression:
-            reference: "HexCharacter"
+      - reference: "HexCharacter"
+      - reference: "HexCharacter"
 
 - name: "UnicodeEscape"
   kind: "Scanner"
   unversioned:
     sequence:
       - terminal: "u"
-      - repeat:
-          min: 4
-          max: 4
-          expression:
-            reference: "HexCharacter"
+      - reference: "HexCharacter"
+      - reference: "HexCharacter"
+      - reference: "HexCharacter"
+      - reference: "HexCharacter"

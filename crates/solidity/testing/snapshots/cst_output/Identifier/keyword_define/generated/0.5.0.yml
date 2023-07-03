@@ -6,11 +6,12 @@ Source: >
 Errors: # 1 total
   - >
     Error: Expected Identifier.
-       ╭─[crates/solidity/testing/snapshots/cst_output/Identifier/keyword_define/input.sol:1:7]
+       ╭─[crates/solidity/testing/snapshots/cst_output/Identifier/keyword_define/input.sol:1:1]
        │
      1 │ define
-       │       │ 
-       │       ╰─ Error occurred here.
+       │ ───┬──  
+       │    ╰──── Error occurred here.
     ───╯
 
-Tree: null
+Tree:
+  - SKIPPED (Token): "define" # 0..6
