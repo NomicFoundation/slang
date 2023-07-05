@@ -32,13 +32,14 @@ mod public_api {
 
     pub mod syntax {
         pub mod nodes {
-            pub use crate::generated::cst::Node;
+            pub use crate::generated::cst::{Node, RuleNode, TokenNode};
             pub use crate::generated::kinds::{RuleKind, TokenKind};
-            pub use crate::generated::language::{TextPosition, TextRange};
+            pub use crate::generated::text_index::{TextIndex, TextRange, TextRangeExtensions};
         }
 
         pub mod parser {
-            pub use crate::generated::language::{ParseError, ParseOutput, ProductionKind};
+            pub use crate::generated::kinds::ProductionKind;
+            pub use crate::generated::parse_output::{ParseError, ParseOutput};
         }
 
         pub mod visitors {

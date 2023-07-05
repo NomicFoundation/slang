@@ -24,11 +24,6 @@ pub enum EbnfNode {
         from: char,
         to: char,
     },
-    Repeat {
-        min: usize,
-        max: usize,
-        body: Box<EbnfNode>,
-    },
     Sequence {
         elements: Vec<EbnfNode>,
     },
@@ -81,14 +76,6 @@ impl EbnfNode {
 
     pub fn range(from: char, to: char) -> Self {
         Self::Range { from, to }
-    }
-
-    pub fn repeat(min: usize, max: usize, body: EbnfNode) -> Self {
-        Self::Repeat {
-            min,
-            max,
-            body: Box::new(body),
-        }
     }
 
     pub fn sequence(elements: Vec<EbnfNode>) -> Self {

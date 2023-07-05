@@ -1,3 +1,5 @@
+// This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
 #[allow(unused_macros)]
 macro_rules! scan_predicate {
     ($stream:ident, $predicate:expr) => {
@@ -96,28 +98,6 @@ macro_rules! scan_one_or_more {
                 }
             }
             count += 1;
-        }
-    }};
-}
-
-#[allow(unused_macros)]
-macro_rules! scan_repeated {
-    ($stream:ident, $expr:expr, $min:literal, $max:literal) => {{
-        let mut count = 0;
-        loop {
-            let save = $stream.position();
-            if !($expr) {
-                if count < $min {
-                    break false;
-                } else {
-                    $stream.set_position(save);
-                    break true;
-                }
-            }
-            count += 1;
-            if count == $max {
-                break true;
-            }
         }
     }};
 }

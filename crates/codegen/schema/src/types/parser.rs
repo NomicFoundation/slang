@@ -36,13 +36,6 @@ pub enum ParserDefinition {
     #[schemars(title = "Reference Expression")]
     Reference(String),
 
-    #[schemars(title = "Repeat Expression")]
-    Repeat {
-        expression: ParserRef,
-        min: usize,
-        max: usize,
-    },
-
     #[schemars(title = "SeparatedBy Expression")]
     SeparatedBy {
         expression: ParserRef,

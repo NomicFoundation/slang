@@ -4,9 +4,9 @@ use codegen_schema::types::{
 use itertools::Itertools;
 
 use super::{
+    char_first_set::CharFirstSet,
     char_set::CharSet,
     combinator_tree::CombinatorTree,
-    first_set::FirstSet,
     trie::{self, TerminalTrie},
 };
 
@@ -43,12 +43,6 @@ pub enum CombinatorNode<'context> {
     },
     Reference {
         tree: &'context CombinatorTree<'context>,
-    },
-    Repeated {
-        name: Option<String>,
-        expr: &'context CombinatorNode<'context>,
-        min: usize,
-        max: usize,
     },
     SeparatedBy {
         name: Option<String>,
@@ -169,17 +163,6 @@ impl<'context> CombinatorNode<'context> {
                 tree: tree.context.get_tree_by_name(name),
             },
 
-            ScannerDefinition::Repeat {
-                expression,
-                min,
-                max,
-            } => Self::Repeated {
-                name: None,
-                expr: Self::from_scanner(tree, expression),
-                min: *min,
-                max: *max,
-            },
-
             ScannerDefinition::Sequence(exprs) => Self::Sequence {
                 name: None,
                 elements: exprs.iter().map(|e| Self::from_scanner(tree, e)).collect(),
@@ -285,17 +268,6 @@ impl<'context> CombinatorNode<'context> {
                 tree: tree.context.get_tree_by_name(name),
             },
 
-            ParserDefinition::Repeat {
-                expression,
-                min,
-                max,
-            } => Self::Repeated {
-                name,
-                expr: Self::from_parser(tree, expression),
-                min: *min,
-                max: *max,
-            },
-
             ParserDefinition::SeparatedBy {
                 expression,
                 separator,
@@ -326,16 +298,16 @@ impl<'context> CombinatorNode<'context> {
         })
     }
 
-    pub fn first_set(&self) -> FirstSet {
+    pub fn char_first_set(&self) -> CharFirstSet {
         match self {
-            Self::CharacterFilter { filter, .. } => FirstSet::from_char_set(filter.clone()),
+            Self::CharacterFilter { filter, .. } => CharFirstSet::from_char_set(filter.clone()),
 
             Self::TerminalTrie {
                 trie: TerminalTrie { subtries, .. },
                 ..
-            } => FirstSet::multiple(subtries.keys().copied()),
+            } => CharFirstSet::multiple(subtries.keys().copied()),
 
-            Self::DelimitedBy { open, .. } => open.first_set(),
+            Self::DelimitedBy { open, .. } => open.char_first_set(),
 
             Self::PrecedenceExpressionRule {
                 operators,
@@ -344,47 +316,48 @@ impl<'context> CombinatorNode<'context> {
             } => operators
                 .iter()
                 .filter(|op| op.model == OperatorModel::UnaryPrefix)
-                .fold(FirstSet::new(), |accum, expr| {
-                    accum.union_with(expr.operator.first_set())
+                .fold(CharFirstSet::new(), |accum, expr| {
+                    accum.union_with(expr.operator.char_first_set())
                 })
-                .union_with(primary_expression.first_set()),
+                .union_with(primary_expression.char_first_set()),
 
-            Self::Optional { expr }
-            | Self::ZeroOrMore { expr, .. }
-            | Self::Repeated { min: 0, expr, .. } => expr.first_set().with_epsilon(),
+            Self::Optional { expr } | Self::ZeroOrMore { expr, .. } => {
+                expr.char_first_set().with_epsilon()
+            }
 
             Self::SeparatedBy {
                 expr, separator, ..
-            } => expr.first_set().follow_by(separator.first_set()),
+            } => expr.char_first_set().follow_by(separator.char_first_set()),
 
             Self::TerminatedBy {
                 expr, terminator, ..
-            } => expr.first_set().follow_by(terminator.first_set()),
+            } => expr.char_first_set().follow_by(terminator.char_first_set()),
 
-            Self::Reference { tree } => tree.first_set(),
+            Self::Reference { tree } => tree.char_first_set(),
 
-            Self::Repeated { expr, .. }
-            | Self::TrailingContext {
+            Self::TrailingContext {
                 expression: expr, ..
             }
             | Self::OneOrMore { expr, .. }
-            | Self::Difference { minuend: expr, .. } => expr.first_set(),
+            | Self::Difference { minuend: expr, .. } => expr.char_first_set(),
 
             Self::Choice { elements, .. } => {
-                elements.iter().fold(FirstSet::new(), |accum, expr| {
-                    accum.union_with(expr.first_set())
+                elements.iter().fold(CharFirstSet::new(), |accum, expr| {
+                    accum.union_with(expr.char_first_set())
                 })
             }
 
             Self::Sequence { elements, .. } => {
-                elements.iter().fold(FirstSet::epsilon(), |accum, expr| {
-                    // have to do this check here to avoid infinite recursion
-                    if accum.includes_epsilon {
-                        accum.follow_by(expr.first_set())
-                    } else {
-                        accum
-                    }
-                })
+                elements
+                    .iter()
+                    .fold(CharFirstSet::epsilon(), |accum, expr| {
+                        // have to do this check here to avoid infinite recursion
+                        if accum.includes_epsilon {
+                            accum.follow_by(expr.char_first_set())
+                        } else {
+                            accum
+                        }
+                    })
             }
         }
     }

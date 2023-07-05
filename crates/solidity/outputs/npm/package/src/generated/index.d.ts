@@ -13,6 +13,7 @@ export enum NodeType {
   Token = 1,
 }
 export enum TokenKind {
+  SKIPPED = "SKIPPED",
   AbicoderKeyword = "AbicoderKeyword",
   AbstractKeyword = "AbstractKeyword",
   AddressKeyword = "AddressKeyword",
@@ -648,20 +649,13 @@ export enum ProductionKind {
 export class RuleNode {
   get type(): NodeType.Rule;
   get kind(): RuleKind;
-  get byteRange(): [start: number, end: number];
-  get charRange(): [start: number, end: number];
-  get byteRangeIncludingTrivia(): [start: number, end: number];
-  get charRangeIncludingTrivia(): [start: number, end: number];
+  get textLen(): [utf8: number, utf16: number, char: number];
   get children(): (RuleNode | TokenNode)[];
 }
 export class TokenNode {
   get type(): NodeType.Token;
   get kind(): TokenKind;
-  get byteRange(): [start: number, end: number];
-  get charRange(): [start: number, end: number];
-  get byteRangeIncludingTrivia(): [start: number, end: number];
-  get charRangeIncludingTrivia(): [start: number, end: number];
-  get trivia(): (RuleNode | TokenNode)[];
+  get textLen(): [utf8: number, utf16: number, char: number];
 }
 export class Language {
   constructor(version: string);
@@ -675,8 +669,7 @@ export class ParseOutput {
   get isValid(): boolean;
 }
 export class ParseError {
-  get bytePosition(): number;
-  get charPosition(): number;
-  get expected(): Array<string>;
+  get range(): [start: [utf8: number, utf16: number, char: number], end: [utf8: number, utf16: number, char: number]];
+  get tokensThatWouldHaveAllowedMoreProgress(): Array<string>;
   toErrorReport(sourceId: string, source: string, withColour: boolean): string;
 }

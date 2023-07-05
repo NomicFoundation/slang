@@ -14,6 +14,7 @@ use serde::Serialize;
     strum_macros::Display,
 )]
 pub enum TokenKind {
+    SKIPPED,
     XXX,
 }
 
@@ -31,9 +32,6 @@ pub enum TokenKind {
     strum_macros::Display,
 )]
 pub enum RuleKind {
-    _SEQUENCE,
-    _DELIMITEDBY,
-    _TERMINATEDBY,
     XXX,
 }
 

@@ -17,13 +17,24 @@ impl CodeGenerator {
 
         {
             let content = quote! {
-               pub mod kinds;
+               #[macro_use]
+               mod scanner_macros;
+
+               mod parser_function;
+               mod parser_helpers;
+               mod parser_result;
+               mod parsers;
+               mod scanner_function;
+               mod scanners;
+               mod stream;
+
                pub mod cst;
                pub mod cst_types;
+               pub mod kinds;
                pub mod language;
-               pub mod parser_output;
-               mod scanners;
-               mod parsers;
+               pub mod parse_error;
+               pub mod parse_output;
+               pub mod text_index;
             };
 
             codegen
@@ -44,8 +55,8 @@ impl CodeGenerator {
             .copy_file(
                 &codegen
                     .repo_root
-                    .join("crates/codegen/syntax_templates/src/typescript/parser_output.rs"),
-                &output_dir.join("parser_output.rs"),
+                    .join("crates/codegen/syntax_templates/src/typescript/parse_output.rs"),
+                &output_dir.join("parse_output.rs"),
             )
             .unwrap();
 

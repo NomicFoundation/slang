@@ -8,7 +8,7 @@ use semver::{Comparator, Op, Version};
 use slang_solidity::{
     language::Language,
     syntax::{
-        nodes::{Node, RuleKind, TextRange},
+        nodes::{Node, RuleKind, RuleNode, TextRange},
         parser::ProductionKind,
         visitors::{Visitable, Visitor, VisitorEntryResponse},
     },
@@ -22,47 +22,32 @@ pub fn extract_version_pragmas(
 ) -> Result<Vec<VersionPragma>> {
     let output =
         Language::new(latest_version.to_owned())?.parse(ProductionKind::SourceUnit, source)?;
-
-    let parse_tree = if let Some(parse_tree) = output.parse_tree() {
-        parse_tree
-    } else {
-        bail!("Failed to extract a parse tree.");
-    };
-
-    let mut collector = PragmaCollector {
-        source,
-        pragmas: vec![],
-    };
-
+    let parse_tree = output.parse_tree();
+    let mut collector = PragmaCollector { pragmas: vec![] };
     parse_tree.accept_visitor(&mut collector)?;
-
     return Ok(collector.pragmas);
 }
 
-struct PragmaCollector<'context> {
-    source: &'context str,
+struct PragmaCollector {
     pragmas: Vec<VersionPragma>,
 }
 
-impl<'context> Visitor<Error> for PragmaCollector<'context> {
+impl Visitor<Error> for PragmaCollector {
     fn enter_rule(
         &mut self,
-        kind: RuleKind,
+        node: &Rc<RuleNode>,
+        _path: &Vec<Rc<RuleNode>>,
         range: &TextRange,
-        children: &Vec<Rc<Node>>,
-        _node: &Rc<Node>,
-        _path: &Vec<Rc<Node>>,
     ) -> Result<VisitorEntryResponse> {
-        if kind != RuleKind::VersionPragmaExpressionList {
+        if node.kind != RuleKind::VersionPragmaExpressionList {
             return Ok(VisitorEntryResponse::StepIn);
         }
 
-        for child in children {
+        for child in &node.children {
             let pragma = self.extract_pragma(child).with_context(|| {
                 format!(
                     "Failed to extract pragma at {range:?}: '{value}'",
-                    range = range.start.byte..range.end.byte,
-                    value = child.extract_non_trivia(self.source)
+                    value = child.extract_non_trivia()
                 )
             });
 
@@ -73,17 +58,22 @@ impl<'context> Visitor<Error> for PragmaCollector<'context> {
     }
 }
 
-impl<'context> PragmaCollector<'context> {
+impl PragmaCollector {
     fn extract_pragma(&self, node: &Node) -> Result<VersionPragma> {
         let (kind, children) = match node {
-            Node::Rule { kind, children, .. } => (kind, children),
+            Node::Rule(rule_node) => (rule_node.kind, rule_node.children.clone()),
             _ => bail!("Expected rule: {node:?}"),
         };
+
+        let children: Vec<_> = children
+            .into_iter()
+            .filter(|child| !child.is_trivia())
+            .collect();
 
         match kind {
             RuleKind::VersionPragmaAlternatives => match &children[..] {
                 [left, operator, right] => {
-                    ensure!(operator.extract_non_trivia(self.source) == "||");
+                    ensure!(operator.extract_non_trivia() == "||");
 
                     let left = self.extract_pragma(left)?;
                     let right = self.extract_pragma(right)?;
@@ -94,7 +84,7 @@ impl<'context> PragmaCollector<'context> {
             },
             RuleKind::VersionPragmaRange => match &children[..] {
                 [start, operator, end] => {
-                    ensure!(operator.extract_non_trivia(self.source) == "-");
+                    ensure!(operator.extract_non_trivia() == "-");
 
                     let mut start = self.extract_pragma(start)?.comparator()?;
                     let mut end = self.extract_pragma(end)?.comparator()?;
@@ -112,13 +102,13 @@ impl<'context> PragmaCollector<'context> {
                 _ => bail!("Expected 3 children: {node:?}"),
             },
             RuleKind::VersionPragmaComparator => {
-                let value = node.extract_non_trivia(self.source);
+                let value = node.extract_non_trivia();
                 let comparator = Comparator::from_str(&value)?;
 
                 return Ok(VersionPragma::single(comparator));
             }
             RuleKind::VersionPragmaSpecifier => {
-                let specifier = node.extract_non_trivia(self.source);
+                let specifier = node.extract_non_trivia();
                 let comparator = Comparator::from_str(&format!("={specifier}"))?;
 
                 return Ok(VersionPragma::single(comparator));

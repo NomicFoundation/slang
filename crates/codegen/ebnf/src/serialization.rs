@@ -136,14 +136,6 @@ impl<'language> EbnfSerializer<'language> {
             EbnfNode::ProductionRef { name } => {
                 self.buffer.push_str(&self.display_name(name));
             }
-            EbnfNode::Repeat { min, max, body } => {
-                self.serialize_child_node(node, body);
-                self.buffer.push_str("{");
-                self.buffer.push_str(&min.to_string());
-                self.buffer.push_str(",");
-                self.buffer.push_str(&max.to_string());
-                self.buffer.push_str("}");
-            }
             EbnfNode::Sequence { elements } => {
                 for (i, element) in elements.into_iter().enumerate() {
                     if i > 0 {
@@ -207,10 +199,7 @@ fn precedence(node: &EbnfNode) -> u8 {
         EbnfNode::Not { .. } => 1,
 
         // Postfix
-        EbnfNode::OneOrMore { .. }
-        | EbnfNode::Optional { .. }
-        | EbnfNode::Repeat { .. }
-        | EbnfNode::ZeroOrMore { .. } => 2,
+        EbnfNode::OneOrMore { .. } | EbnfNode::Optional { .. } | EbnfNode::ZeroOrMore { .. } => 2,
 
         // Primary
         EbnfNode::BaseProduction

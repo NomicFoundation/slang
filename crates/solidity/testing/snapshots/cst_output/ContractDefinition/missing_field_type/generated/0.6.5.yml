@@ -7,12 +7,23 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Expected ConstantKeyword or Identifier or ImmutableKeyword or InternalKeyword or OverrideKeyword or PrivateKeyword or PublicKeyword.
+    Error: Expected ConstantKeyword or Identifier or ImmutableKeyword or InternalKeyword or OverrideKeyword or Period or PrivateKeyword or PublicKeyword.
        ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/missing_field_type/input.sol:2:8]
        │
-     2 │   field;
-       │        │ 
-       │        ╰─ Error occurred here.
+     2 │ ╭─▶   field;
+     3 │ ├─▶ }
+       │ │       
+       │ ╰─────── Error occurred here.
     ───╯
 
-Tree: null
+Tree:
+  - ContractDefinition (Rule): # 0..27 "contract Test {\n  field;\n}\n"
+      - ContractKeyword (Token): "contract" # 0..8
+      - Identifier (Token): "Test" # 9..13
+      - OpenBrace (Token): "{" # 14..15
+      - ContractBodyElements (Rule): # 16..23 "  field"
+          - StateVariableDeclaration (Rule): # 16..23 "  field"
+              - TypeName (Rule): # 16..23 "  field"
+                  - IdentifierPath (Rule): # 16..23 "  field"
+                      - Identifier (Token): "field" # 18..23
+      - SKIPPED (Token): ";\n}\n" # 23..27

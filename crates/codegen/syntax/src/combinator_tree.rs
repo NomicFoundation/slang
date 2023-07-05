@@ -3,11 +3,9 @@ use std::{cell::Cell, fmt::Write};
 use codegen_ebnf::EbnfSerializer;
 use codegen_schema::types::{ProductionDefinition, ProductionRef};
 
-use crate::first_set::FirstSet;
-
 use super::{
-    code_generator::CodeGenerator, combinator_context::CombinatorContext,
-    combinator_node::CombinatorNode,
+    char_first_set::CharFirstSet, code_generator::CodeGenerator,
+    combinator_context::CombinatorContext, combinator_node::CombinatorNode,
 };
 
 pub struct CombinatorTree<'context> {
@@ -28,8 +26,8 @@ impl<'context> CombinatorTree<'context> {
         })
     }
 
-    pub fn first_set(&self) -> FirstSet {
-        self.root_node.get().unwrap().first_set()
+    pub fn char_first_set(&self) -> CharFirstSet {
+        self.root_node.get().unwrap().char_first_set()
     }
 
     pub fn ensure_tree_is_built(&'context self) {
@@ -68,7 +66,7 @@ impl<'context> CombinatorTree<'context> {
         match self.production.definition {
             ProductionDefinition::Scanner { .. } => {
                 let definition = self.root_node.get().map(|node| {
-                    if node.first_set().includes_epsilon {
+                    if node.char_first_set().includes_epsilon {
                         unreachable!(
                             "Validation should have discovered that scanner {name} can be empty"
                         );
@@ -90,7 +88,7 @@ impl<'context> CombinatorTree<'context> {
                 let definition = self
                     .root_node
                     .get()
-                    .map(|node| (comment, node.to_parser_code(true, code)));
+                    .map(|node| (comment, node.to_parser_code(code, true)));
                 code.add_parser(name.clone(), version, definition);
             }
             ProductionDefinition::Parser { .. } | ProductionDefinition::PrecedenceParser { .. } => {
@@ -101,7 +99,7 @@ impl<'context> CombinatorTree<'context> {
                 let definition = self
                     .root_node
                     .get()
-                    .map(|node| (comment, node.to_parser_code(false, code)));
+                    .map(|node| (comment, node.to_parser_code(code, false)));
                 code.add_parser(name.clone(), version, definition);
             }
         }

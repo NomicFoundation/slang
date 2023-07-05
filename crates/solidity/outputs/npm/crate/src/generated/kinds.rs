@@ -14,6 +14,7 @@ use serde::Serialize;
     strum_macros :: Display,
 )]
 pub enum TokenKind {
+    SKIPPED,
     AbicoderKeyword,
     AbstractKeyword,
     AddressKeyword,

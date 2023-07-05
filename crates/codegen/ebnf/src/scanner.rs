@@ -50,14 +50,6 @@ impl GenerateEbnf for ScannerDefinition {
                 return EbnfNode::production_ref(name.to_owned());
             }
 
-            ScannerDefinition::Repeat {
-                min,
-                max,
-                expression,
-            } => {
-                return EbnfNode::repeat(*min, *max, expression.generate_ebnf());
-            }
-
             ScannerDefinition::Sequence(elements) => {
                 return EbnfNode::sequence(
                     elements

@@ -1,338 +1,10 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-use std::fmt::Display;
-pub use std::{collections::BTreeSet, ops::Range, rc::Rc};
-
 #[allow(deprecated, unused_imports)]
 use semver::Version;
-use serde::Serialize;
 
-pub use super::{
-    cst,
-    kinds::*,
-    parser_output::{ParseError, ParseOutput},
-};
-
-const DEBUG_ERROR_MERGING: bool = false;
-
-impl ParseError {
-    pub(crate) fn new<T: Into<String>>(position: TextPosition, expected: T) -> Self {
-        Self {
-            position,
-            expected: BTreeSet::from([expected.into()]),
-        }
-    }
-
-    pub(crate) fn merge_with(&mut self, other: Self) {
-        if DEBUG_ERROR_MERGING {
-            if self.position < other.position {
-                self.expected = BTreeSet::from([format!(
-                    "O={other_expected}\nNOT {position}@[{expected}]",
-                    other_expected = other.expected.iter().next().unwrap(),
-                    position = self.position,
-                    expected = self.expected.iter().next().unwrap(),
-                )]);
-                self.position = other.position;
-            } else if self.position == other.position {
-                self.expected = BTreeSet::from([format!(
-                    "{other_expected}, or {expected}",
-                    other_expected = other.expected.iter().next().unwrap(),
-                    expected = self.expected.iter().next().unwrap(),
-                )]);
-            } else {
-                self.expected = BTreeSet::from([format!(
-                    "S={expected}\nNOT {other_position}@[{other_expected}]",
-                    expected = self.expected.iter().next().unwrap(),
-                    other_position = other.position,
-                    other_expected = other.expected.iter().next().unwrap(),
-                )]);
-            }
-        } else {
-            if self.position < other.position {
-                *self = other;
-            } else if self.position == other.position {
-                self.expected.extend(other.expected);
-            }
-        }
-    }
-
-    #[allow(dead_code)]
-    pub(crate) fn maybe_merge_with(mut self, other: Option<Self>) -> Self {
-        if let Some(other) = other {
-            self.merge_with(other)
-        }
-        self
-    }
-}
-
-#[allow(dead_code)]
-pub(crate) enum ParserResult {
-    Pass {
-        builder: cst::NodeBuilder,
-        error: Option<ParseError>,
-    },
-    Fail {
-        error: ParseError,
-    },
-}
-
-#[allow(dead_code)]
-impl ParserResult {
-    pub(crate) fn with_kind(self, kind: RuleKind) -> Self {
-        match self {
-            Self::Pass { builder, error } => Self::Pass {
-                builder: builder.with_kind(kind),
-                error,
-            },
-            fail => fail,
-        }
-    }
-}
-
-#[derive(Default, Copy, Clone, PartialEq, Eq, Debug, Serialize)]
-pub struct TextPosition {
-    pub byte: usize,
-    pub char: usize,
-}
-
-pub type TextRange = Range<TextPosition>;
-
-impl PartialOrd for TextPosition {
-    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
-        self.char.partial_cmp(&other.char)
-    }
-}
-
-impl Ord for TextPosition {
-    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
-        self.byte.cmp(&other.byte)
-    }
-}
-
-impl Display for TextPosition {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        self.char.fmt(f)
-    }
-}
-
-pub struct Stream<'s> {
-    source: &'s str,
-    position: TextPosition,
-    undo_position: TextPosition,
-    has_undo: bool,
-}
-
-impl<'s> Stream<'s> {
-    pub fn new(source: &'s str) -> Self {
-        Self {
-            source,
-            position: Default::default(),
-            undo_position: Default::default(),
-            has_undo: false,
-        }
-    }
-
-    pub fn position(&self) -> TextPosition {
-        self.position
-    }
-
-    pub fn set_position(&mut self, position: TextPosition) {
-        self.position = position;
-    }
-
-    pub fn peek(&self) -> Option<char> {
-        self.source[self.position.byte..].chars().next()
-    }
-
-    pub fn next(&mut self) -> Option<char> {
-        self.has_undo = true;
-        self.undo_position = self.position;
-        let mut chars = self.source[self.position.byte..].chars();
-        if let Some(c) = chars.next() {
-            self.position.byte += c.len_utf8();
-            self.position.char += 1;
-            Some(c)
-        } else {
-            None
-        }
-    }
-
-    pub fn undo(&mut self) {
-        if !self.has_undo {
-            panic!("No undo position");
-        }
-        self.position = self.undo_position;
-        self.has_undo = false;
-    }
-}
-
-pub(crate) fn render_error_report(
-    error: &ParseError,
-    source_id: &str,
-    source: &str,
-    with_color: bool,
-) -> String {
-    use ariadne::{Color, Config, Label, Report, ReportKind, Source};
-
-    let kind = ReportKind::Error;
-    let color = if with_color { Color::Red } else { Color::Unset };
-    let source_start = error.position;
-    let source_end = error.position;
-
-    let message = {
-        let message = format!(
-            "Expected {expectations}.",
-            expectations = error
-                .expected
-                .iter()
-                .cloned()
-                .collect::<Vec<String>>()
-                .join(" or ")
-        );
-
-        if DEBUG_ERROR_MERGING {
-            format!("{position}: {message}", position = source_start.char)
-        } else {
-            message
-        }
-    };
-
-    if source.is_empty() {
-        return format!("{kind}: {message}\n   ─[{source_id}:0:0]");
-    }
-
-    let mut builder = Report::build(kind, source_id, source_start.byte)
-        .with_config(Config::default().with_color(with_color))
-        .with_message(message);
-
-    builder.add_label(
-        Label::new((source_id, source_start.char..source_end.char))
-            .with_color(color)
-            .with_message("Error occurred here.".to_string()),
-    );
-
-    let mut result = vec![];
-    builder
-        .finish()
-        .write((source_id, Source::from(&source)), &mut result)
-        .expect("Failed to write report");
-
-    return String::from_utf8(result)
-        .expect("Failed to convert report to utf8")
-        .trim()
-        .to_string();
-}
-
-#[allow(dead_code)]
-fn call_scanner<L, F>(language: &L, input: &str, scanner: F, kind: TokenKind) -> Option<ParseOutput>
-where
-    F: Fn(&L, &mut Stream) -> bool,
-{
-    let mut stream = Stream::new(input);
-    Some(
-        if scanner(language, &mut stream) && stream.peek().is_none() {
-            let token = cst::Node::token(
-                kind,
-                Range {
-                    start: Default::default(),
-                    end: stream.position(),
-                },
-                None,
-                None,
-            );
-
-            ParseOutput {
-                parse_tree: Some(token),
-                errors: vec![],
-            }
-        } else {
-            ParseOutput {
-                parse_tree: None,
-                errors: vec![ParseError::new(stream.position(), kind.as_ref())],
-            }
-        },
-    )
-}
-
-#[allow(dead_code)]
-fn try_call_scanner<L, F>(
-    language: &L,
-    input: &str,
-    scanner: F,
-    kind: TokenKind,
-) -> Option<ParseOutput>
-where
-    F: Fn(&L, &mut Stream) -> Option<bool>,
-{
-    let mut stream = Stream::new(input);
-    scanner(language, &mut stream).map(|result| {
-        if result && stream.peek().is_none() {
-            let token = cst::Node::token(
-                kind,
-                Range {
-                    start: Default::default(),
-                    end: stream.position(),
-                },
-                None,
-                None,
-            );
-
-            ParseOutput {
-                parse_tree: Some(token),
-                errors: vec![],
-            }
-        } else {
-            ParseOutput {
-                parse_tree: None,
-                errors: vec![ParseError::new(stream.position(), kind.as_ref())],
-            }
-        }
-    })
-}
-
-#[allow(dead_code)]
-fn call_parser<L, F>(language: &L, input: &str, parser: F) -> Option<ParseOutput>
-where
-    F: Fn(&L, &mut Stream) -> ParserResult,
-{
-    let mut stream = Stream::new(input);
-    Some(match parser(language, &mut stream) {
-        ParserResult::Pass { builder, .. } if stream.peek().is_none() => ParseOutput {
-            parse_tree: Some(builder.build()),
-            errors: vec![],
-        },
-        ParserResult::Pass { .. } => ParseOutput {
-            parse_tree: None,
-            errors: vec![ParseError::new(stream.position(), "end of input")],
-        },
-        ParserResult::Fail { error } => ParseOutput {
-            parse_tree: None,
-            errors: vec![error],
-        },
-    })
-}
-
-#[allow(dead_code)]
-fn try_call_parser<L, F>(language: &L, input: &str, parser: F) -> Option<ParseOutput>
-where
-    F: Fn(&L, &mut Stream) -> Option<ParserResult>,
-{
-    let mut stream = Stream::new(input);
-    parser(language, &mut stream).map(|result| match result {
-        ParserResult::Pass { builder, .. } if stream.peek().is_none() => ParseOutput {
-            parse_tree: Some(builder.build()),
-            errors: vec![],
-        },
-        ParserResult::Pass { .. } => ParseOutput {
-            parse_tree: None,
-            errors: vec![ParseError::new(stream.position(), "end of input")],
-        },
-        ParserResult::Fail { error } => ParseOutput {
-            parse_tree: None,
-            errors: vec![error],
-        },
-    })
-}
+#[allow(unused_imports)]
+use super::{kinds::*, parse_output::*, parser_function::*, scanner_function::*};
 
 #[napi]
 pub struct Language {
@@ -441,1288 +113,753 @@ impl Language {
     ) -> Result<ParseOutput, napi::Error> {
         let input = input.as_str();
         match production_kind {
-            ProductionKind::AbicoderKeyword => call_scanner(
+            ProductionKind::AbicoderKeyword => {
+                Language::abicoder_keyword.scan(self, input, TokenKind::AbicoderKeyword)
+            }
+            ProductionKind::AbstractKeyword => Language::abstract_keyword__sparse_dispatch.scan(
                 self,
                 input,
-                Language::scan_abicoder_keyword,
-                TokenKind::AbicoderKeyword,
-            ),
-            ProductionKind::AbstractKeyword => try_call_scanner(
-                self,
-                input,
-                Language::maybe_scan_abstract_keyword,
                 TokenKind::AbstractKeyword,
             ),
-            ProductionKind::AddressKeyword => call_scanner(
-                self,
-                input,
-                Language::scan_address_keyword,
-                TokenKind::AddressKeyword,
-            ),
+            ProductionKind::AddressKeyword => {
+                Language::address_keyword.scan(self, input, TokenKind::AddressKeyword)
+            }
             ProductionKind::Ampersand => {
-                call_scanner(self, input, Language::scan_ampersand, TokenKind::Ampersand)
+                Language::ampersand.scan(self, input, TokenKind::Ampersand)
             }
-            ProductionKind::AmpersandAmpersand => call_scanner(
-                self,
-                input,
-                Language::scan_ampersand_ampersand,
-                TokenKind::AmpersandAmpersand,
-            ),
-            ProductionKind::AmpersandEqual => call_scanner(
-                self,
-                input,
-                Language::scan_ampersand_equal,
-                TokenKind::AmpersandEqual,
-            ),
-            ProductionKind::AnonymousKeyword => call_scanner(
-                self,
-                input,
-                Language::scan_anonymous_keyword,
-                TokenKind::AnonymousKeyword,
-            ),
+            ProductionKind::AmpersandAmpersand => {
+                Language::ampersand_ampersand.scan(self, input, TokenKind::AmpersandAmpersand)
+            }
+            ProductionKind::AmpersandEqual => {
+                Language::ampersand_equal.scan(self, input, TokenKind::AmpersandEqual)
+            }
+            ProductionKind::AnonymousKeyword => {
+                Language::anonymous_keyword.scan(self, input, TokenKind::AnonymousKeyword)
+            }
             ProductionKind::AsKeyword => {
-                call_scanner(self, input, Language::scan_as_keyword, TokenKind::AsKeyword)
+                Language::as_keyword.scan(self, input, TokenKind::AsKeyword)
             }
-            ProductionKind::AsciiEscape => call_scanner(
-                self,
-                input,
-                Language::scan_ascii_escape,
-                TokenKind::AsciiEscape,
-            ),
-            ProductionKind::AsciiStringLiteral => call_scanner(
-                self,
-                input,
-                Language::scan_ascii_string_literal,
-                TokenKind::AsciiStringLiteral,
-            ),
-            ProductionKind::AssemblyKeyword => call_scanner(
-                self,
-                input,
-                Language::scan_assembly_keyword,
-                TokenKind::AssemblyKeyword,
-            ),
-            ProductionKind::Asterisk => {
-                call_scanner(self, input, Language::scan_asterisk, TokenKind::Asterisk)
+            ProductionKind::AsciiEscape => {
+                Language::ascii_escape.scan(self, input, TokenKind::AsciiEscape)
             }
-            ProductionKind::AsteriskAsterisk => call_scanner(
-                self,
-                input,
-                Language::scan_asterisk_asterisk,
-                TokenKind::AsteriskAsterisk,
-            ),
-            ProductionKind::AsteriskEqual => call_scanner(
-                self,
-                input,
-                Language::scan_asterisk_equal,
-                TokenKind::AsteriskEqual,
-            ),
-            ProductionKind::Bang => call_scanner(self, input, Language::scan_bang, TokenKind::Bang),
+            ProductionKind::AsciiStringLiteral => {
+                Language::ascii_string_literal.scan(self, input, TokenKind::AsciiStringLiteral)
+            }
+            ProductionKind::AssemblyKeyword => {
+                Language::assembly_keyword.scan(self, input, TokenKind::AssemblyKeyword)
+            }
+            ProductionKind::Asterisk => Language::asterisk.scan(self, input, TokenKind::Asterisk),
+            ProductionKind::AsteriskAsterisk => {
+                Language::asterisk_asterisk.scan(self, input, TokenKind::AsteriskAsterisk)
+            }
+            ProductionKind::AsteriskEqual => {
+                Language::asterisk_equal.scan(self, input, TokenKind::AsteriskEqual)
+            }
+            ProductionKind::Bang => Language::bang.scan(self, input, TokenKind::Bang),
             ProductionKind::BangEqual => {
-                call_scanner(self, input, Language::scan_bang_equal, TokenKind::BangEqual)
+                Language::bang_equal.scan(self, input, TokenKind::BangEqual)
             }
-            ProductionKind::Bar => call_scanner(self, input, Language::scan_bar, TokenKind::Bar),
-            ProductionKind::BarBar => {
-                call_scanner(self, input, Language::scan_bar_bar, TokenKind::BarBar)
+            ProductionKind::Bar => Language::bar.scan(self, input, TokenKind::Bar),
+            ProductionKind::BarBar => Language::bar_bar.scan(self, input, TokenKind::BarBar),
+            ProductionKind::BarEqual => Language::bar_equal.scan(self, input, TokenKind::BarEqual),
+            ProductionKind::BoolKeyword => {
+                Language::bool_keyword.scan(self, input, TokenKind::BoolKeyword)
             }
-            ProductionKind::BarEqual => {
-                call_scanner(self, input, Language::scan_bar_equal, TokenKind::BarEqual)
+            ProductionKind::BreakKeyword => {
+                Language::break_keyword.scan(self, input, TokenKind::BreakKeyword)
             }
-            ProductionKind::BoolKeyword => call_scanner(
+            ProductionKind::ByteType => {
+                Language::byte_type__sparse_dispatch.scan(self, input, TokenKind::ByteType)
+            }
+            ProductionKind::CalldataKeyword => Language::calldata_keyword__sparse_dispatch.scan(
                 self,
                 input,
-                Language::scan_bool_keyword,
-                TokenKind::BoolKeyword,
-            ),
-            ProductionKind::BreakKeyword => call_scanner(
-                self,
-                input,
-                Language::scan_break_keyword,
-                TokenKind::BreakKeyword,
-            ),
-            ProductionKind::ByteType => try_call_scanner(
-                self,
-                input,
-                Language::maybe_scan_byte_type,
-                TokenKind::ByteType,
-            ),
-            ProductionKind::CalldataKeyword => try_call_scanner(
-                self,
-                input,
-                Language::maybe_scan_calldata_keyword,
                 TokenKind::CalldataKeyword,
             ),
-            ProductionKind::Caret => {
-                call_scanner(self, input, Language::scan_caret, TokenKind::Caret)
+            ProductionKind::Caret => Language::caret.scan(self, input, TokenKind::Caret),
+            ProductionKind::CaretEqual => {
+                Language::caret_equal.scan(self, input, TokenKind::CaretEqual)
             }
-            ProductionKind::CaretEqual => call_scanner(
-                self,
-                input,
-                Language::scan_caret_equal,
-                TokenKind::CaretEqual,
-            ),
-            ProductionKind::CaseKeyword => call_scanner(
-                self,
-                input,
-                Language::scan_case_keyword,
-                TokenKind::CaseKeyword,
-            ),
-            ProductionKind::CatchKeyword => try_call_scanner(
-                self,
-                input,
-                Language::maybe_scan_catch_keyword,
-                TokenKind::CatchKeyword,
-            ),
-            ProductionKind::CloseBrace => call_scanner(
-                self,
-                input,
-                Language::scan_close_brace,
-                TokenKind::CloseBrace,
-            ),
-            ProductionKind::CloseBracket => call_scanner(
-                self,
-                input,
-                Language::scan_close_bracket,
-                TokenKind::CloseBracket,
-            ),
-            ProductionKind::CloseParen => call_scanner(
-                self,
-                input,
-                Language::scan_close_paren,
-                TokenKind::CloseParen,
-            ),
-            ProductionKind::Colon => {
-                call_scanner(self, input, Language::scan_colon, TokenKind::Colon)
+            ProductionKind::CaseKeyword => {
+                Language::case_keyword.scan(self, input, TokenKind::CaseKeyword)
             }
-            ProductionKind::ColonEqual => call_scanner(
-                self,
-                input,
-                Language::scan_colon_equal,
-                TokenKind::ColonEqual,
-            ),
-            ProductionKind::Comma => {
-                call_scanner(self, input, Language::scan_comma, TokenKind::Comma)
+            ProductionKind::CatchKeyword => {
+                Language::catch_keyword__sparse_dispatch.scan(self, input, TokenKind::CatchKeyword)
             }
-            ProductionKind::ConstantKeyword => call_scanner(
-                self,
-                input,
-                Language::scan_constant_keyword,
-                TokenKind::ConstantKeyword,
-            ),
-            ProductionKind::ConstructorKeyword => try_call_scanner(
-                self,
-                input,
-                Language::maybe_scan_constructor_keyword,
-                TokenKind::ConstructorKeyword,
-            ),
-            ProductionKind::ContinueKeyword => call_scanner(
-                self,
-                input,
-                Language::scan_continue_keyword,
-                TokenKind::ContinueKeyword,
-            ),
-            ProductionKind::ContractKeyword => call_scanner(
-                self,
-                input,
-                Language::scan_contract_keyword,
-                TokenKind::ContractKeyword,
-            ),
-            ProductionKind::DaysKeyword => call_scanner(
-                self,
-                input,
-                Language::scan_days_keyword,
-                TokenKind::DaysKeyword,
-            ),
-            ProductionKind::DecimalExponent => call_scanner(
-                self,
-                input,
-                Language::scan_decimal_exponent,
-                TokenKind::DecimalExponent,
-            ),
-            ProductionKind::DecimalLiteral => call_scanner(
-                self,
-                input,
-                Language::scan_decimal_literal,
-                TokenKind::DecimalLiteral,
-            ),
-            ProductionKind::DecimalNumber => call_scanner(
-                self,
-                input,
-                Language::scan_decimal_number,
-                TokenKind::DecimalNumber,
-            ),
-            ProductionKind::DefaultKeyword => call_scanner(
-                self,
-                input,
-                Language::scan_default_keyword,
-                TokenKind::DefaultKeyword,
-            ),
-            ProductionKind::DeleteKeyword => call_scanner(
-                self,
-                input,
-                Language::scan_delete_keyword,
-                TokenKind::DeleteKeyword,
-            ),
+            ProductionKind::CloseBrace => {
+                Language::close_brace.scan(self, input, TokenKind::CloseBrace)
+            }
+            ProductionKind::CloseBracket => {
+                Language::close_bracket.scan(self, input, TokenKind::CloseBracket)
+            }
+            ProductionKind::CloseParen => {
+                Language::close_paren.scan(self, input, TokenKind::CloseParen)
+            }
+            ProductionKind::Colon => Language::colon.scan(self, input, TokenKind::Colon),
+            ProductionKind::ColonEqual => {
+                Language::colon_equal.scan(self, input, TokenKind::ColonEqual)
+            }
+            ProductionKind::Comma => Language::comma.scan(self, input, TokenKind::Comma),
+            ProductionKind::ConstantKeyword => {
+                Language::constant_keyword.scan(self, input, TokenKind::ConstantKeyword)
+            }
+            ProductionKind::ConstructorKeyword => Language::constructor_keyword__sparse_dispatch
+                .scan(self, input, TokenKind::ConstructorKeyword),
+            ProductionKind::ContinueKeyword => {
+                Language::continue_keyword.scan(self, input, TokenKind::ContinueKeyword)
+            }
+            ProductionKind::ContractKeyword => {
+                Language::contract_keyword.scan(self, input, TokenKind::ContractKeyword)
+            }
+            ProductionKind::DaysKeyword => {
+                Language::days_keyword.scan(self, input, TokenKind::DaysKeyword)
+            }
+            ProductionKind::DecimalExponent => {
+                Language::decimal_exponent.scan(self, input, TokenKind::DecimalExponent)
+            }
+            ProductionKind::DecimalLiteral => {
+                Language::decimal_literal.scan(self, input, TokenKind::DecimalLiteral)
+            }
+            ProductionKind::DecimalNumber => {
+                Language::decimal_number.scan(self, input, TokenKind::DecimalNumber)
+            }
+            ProductionKind::DefaultKeyword => {
+                Language::default_keyword.scan(self, input, TokenKind::DefaultKeyword)
+            }
+            ProductionKind::DeleteKeyword => {
+                Language::delete_keyword.scan(self, input, TokenKind::DeleteKeyword)
+            }
             ProductionKind::DoKeyword => {
-                call_scanner(self, input, Language::scan_do_keyword, TokenKind::DoKeyword)
+                Language::do_keyword.scan(self, input, TokenKind::DoKeyword)
             }
-            ProductionKind::DoubleQuotedAsciiStringLiteral => call_scanner(
-                self,
-                input,
-                Language::scan_double_quoted_ascii_string_literal,
-                TokenKind::DoubleQuotedAsciiStringLiteral,
-            ),
-            ProductionKind::DoubleQuotedUnicodeStringLiteral => try_call_scanner(
-                self,
-                input,
-                Language::maybe_scan_double_quoted_unicode_string_literal,
-                TokenKind::DoubleQuotedUnicodeStringLiteral,
-            ),
-            ProductionKind::ElseKeyword => call_scanner(
-                self,
-                input,
-                Language::scan_else_keyword,
-                TokenKind::ElseKeyword,
-            ),
-            ProductionKind::EmitKeyword => try_call_scanner(
-                self,
-                input,
-                Language::maybe_scan_emit_keyword,
-                TokenKind::EmitKeyword,
-            ),
-            ProductionKind::EndOfLine => call_scanner(
-                self,
-                input,
-                Language::scan_end_of_line,
-                TokenKind::EndOfLine,
-            ),
-            ProductionKind::EnumKeyword => call_scanner(
-                self,
-                input,
-                Language::scan_enum_keyword,
-                TokenKind::EnumKeyword,
-            ),
-            ProductionKind::Equal => {
-                call_scanner(self, input, Language::scan_equal, TokenKind::Equal)
+            ProductionKind::DoubleQuotedAsciiStringLiteral => {
+                Language::double_quoted_ascii_string_literal.scan(
+                    self,
+                    input,
+                    TokenKind::DoubleQuotedAsciiStringLiteral,
+                )
             }
-            ProductionKind::EqualEqual => call_scanner(
-                self,
-                input,
-                Language::scan_equal_equal,
-                TokenKind::EqualEqual,
-            ),
-            ProductionKind::EqualGreaterThan => call_scanner(
-                self,
-                input,
-                Language::scan_equal_greater_than,
-                TokenKind::EqualGreaterThan,
-            ),
-            ProductionKind::ErrorKeyword => call_scanner(
-                self,
-                input,
-                Language::scan_error_keyword,
-                TokenKind::ErrorKeyword,
-            ),
-            ProductionKind::EscapeSequence => call_scanner(
-                self,
-                input,
-                Language::scan_escape_sequence,
-                TokenKind::EscapeSequence,
-            ),
-            ProductionKind::EtherKeyword => call_scanner(
-                self,
-                input,
-                Language::scan_ether_keyword,
-                TokenKind::EtherKeyword,
-            ),
-            ProductionKind::EventKeyword => call_scanner(
-                self,
-                input,
-                Language::scan_event_keyword,
-                TokenKind::EventKeyword,
-            ),
-            ProductionKind::Evmasm => {
-                call_scanner(self, input, Language::scan_evmasm, TokenKind::Evmasm)
+            ProductionKind::DoubleQuotedUnicodeStringLiteral => {
+                Language::double_quoted_unicode_string_literal__sparse_dispatch.scan(
+                    self,
+                    input,
+                    TokenKind::DoubleQuotedUnicodeStringLiteral,
+                )
             }
-            ProductionKind::ExperimentalKeyword => call_scanner(
+            ProductionKind::ElseKeyword => {
+                Language::else_keyword.scan(self, input, TokenKind::ElseKeyword)
+            }
+            ProductionKind::EmitKeyword => {
+                Language::emit_keyword__sparse_dispatch.scan(self, input, TokenKind::EmitKeyword)
+            }
+            ProductionKind::EndOfLine => {
+                Language::end_of_line.scan(self, input, TokenKind::EndOfLine)
+            }
+            ProductionKind::EnumKeyword => {
+                Language::enum_keyword.scan(self, input, TokenKind::EnumKeyword)
+            }
+            ProductionKind::Equal => Language::equal.scan(self, input, TokenKind::Equal),
+            ProductionKind::EqualEqual => {
+                Language::equal_equal.scan(self, input, TokenKind::EqualEqual)
+            }
+            ProductionKind::EqualGreaterThan => {
+                Language::equal_greater_than.scan(self, input, TokenKind::EqualGreaterThan)
+            }
+            ProductionKind::ErrorKeyword => {
+                Language::error_keyword.scan(self, input, TokenKind::ErrorKeyword)
+            }
+            ProductionKind::EscapeSequence => {
+                Language::escape_sequence.scan(self, input, TokenKind::EscapeSequence)
+            }
+            ProductionKind::EtherKeyword => {
+                Language::ether_keyword.scan(self, input, TokenKind::EtherKeyword)
+            }
+            ProductionKind::EventKeyword => {
+                Language::event_keyword.scan(self, input, TokenKind::EventKeyword)
+            }
+            ProductionKind::Evmasm => Language::evmasm.scan(self, input, TokenKind::Evmasm),
+            ProductionKind::ExperimentalKeyword => {
+                Language::experimental_keyword.scan(self, input, TokenKind::ExperimentalKeyword)
+            }
+            ProductionKind::ExternalKeyword => {
+                Language::external_keyword.scan(self, input, TokenKind::ExternalKeyword)
+            }
+            ProductionKind::FallbackKeyword => {
+                Language::fallback_keyword.scan(self, input, TokenKind::FallbackKeyword)
+            }
+            ProductionKind::FalseKeyword => {
+                Language::false_keyword.scan(self, input, TokenKind::FalseKeyword)
+            }
+            ProductionKind::FinneyKeyword => Language::finney_keyword__sparse_dispatch.scan(
                 self,
                 input,
-                Language::scan_experimental_keyword,
-                TokenKind::ExperimentalKeyword,
-            ),
-            ProductionKind::ExternalKeyword => call_scanner(
-                self,
-                input,
-                Language::scan_external_keyword,
-                TokenKind::ExternalKeyword,
-            ),
-            ProductionKind::FallbackKeyword => call_scanner(
-                self,
-                input,
-                Language::scan_fallback_keyword,
-                TokenKind::FallbackKeyword,
-            ),
-            ProductionKind::FalseKeyword => call_scanner(
-                self,
-                input,
-                Language::scan_false_keyword,
-                TokenKind::FalseKeyword,
-            ),
-            ProductionKind::FinneyKeyword => try_call_scanner(
-                self,
-                input,
-                Language::maybe_scan_finney_keyword,
                 TokenKind::FinneyKeyword,
             ),
-            ProductionKind::FixedBytesType => call_scanner(
+            ProductionKind::FixedBytesType => {
+                Language::fixed_bytes_type.scan(self, input, TokenKind::FixedBytesType)
+            }
+            ProductionKind::ForKeyword => {
+                Language::for_keyword.scan(self, input, TokenKind::ForKeyword)
+            }
+            ProductionKind::FromKeyword => {
+                Language::from_keyword.scan(self, input, TokenKind::FromKeyword)
+            }
+            ProductionKind::FunctionKeyword => {
+                Language::function_keyword.scan(self, input, TokenKind::FunctionKeyword)
+            }
+            ProductionKind::GlobalKeyword => {
+                Language::global_keyword.scan(self, input, TokenKind::GlobalKeyword)
+            }
+            ProductionKind::GreaterThan => {
+                Language::greater_than.scan(self, input, TokenKind::GreaterThan)
+            }
+            ProductionKind::GreaterThanEqual => {
+                Language::greater_than_equal.scan(self, input, TokenKind::GreaterThanEqual)
+            }
+            ProductionKind::GreaterThanGreaterThan => Language::greater_than_greater_than.scan(
                 self,
                 input,
-                Language::scan_fixed_bytes_type,
-                TokenKind::FixedBytesType,
-            ),
-            ProductionKind::ForKeyword => call_scanner(
-                self,
-                input,
-                Language::scan_for_keyword,
-                TokenKind::ForKeyword,
-            ),
-            ProductionKind::FromKeyword => call_scanner(
-                self,
-                input,
-                Language::scan_from_keyword,
-                TokenKind::FromKeyword,
-            ),
-            ProductionKind::FunctionKeyword => call_scanner(
-                self,
-                input,
-                Language::scan_function_keyword,
-                TokenKind::FunctionKeyword,
-            ),
-            ProductionKind::GlobalKeyword => call_scanner(
-                self,
-                input,
-                Language::scan_global_keyword,
-                TokenKind::GlobalKeyword,
-            ),
-            ProductionKind::GreaterThan => call_scanner(
-                self,
-                input,
-                Language::scan_greater_than,
-                TokenKind::GreaterThan,
-            ),
-            ProductionKind::GreaterThanEqual => call_scanner(
-                self,
-                input,
-                Language::scan_greater_than_equal,
-                TokenKind::GreaterThanEqual,
-            ),
-            ProductionKind::GreaterThanGreaterThan => call_scanner(
-                self,
-                input,
-                Language::scan_greater_than_greater_than,
                 TokenKind::GreaterThanGreaterThan,
             ),
-            ProductionKind::GreaterThanGreaterThanEqual => call_scanner(
-                self,
-                input,
-                Language::scan_greater_than_greater_than_equal,
-                TokenKind::GreaterThanGreaterThanEqual,
-            ),
-            ProductionKind::GreaterThanGreaterThanGreaterThan => call_scanner(
-                self,
-                input,
-                Language::scan_greater_than_greater_than_greater_than,
-                TokenKind::GreaterThanGreaterThanGreaterThan,
-            ),
-            ProductionKind::GreaterThanGreaterThanGreaterThanEqual => call_scanner(
-                self,
-                input,
-                Language::scan_greater_than_greater_than_greater_than_equal,
-                TokenKind::GreaterThanGreaterThanGreaterThanEqual,
-            ),
-            ProductionKind::GweiKeyword => try_call_scanner(
-                self,
-                input,
-                Language::maybe_scan_gwei_keyword,
-                TokenKind::GweiKeyword,
-            ),
-            ProductionKind::HexByteEscape => call_scanner(
-                self,
-                input,
-                Language::scan_hex_byte_escape,
-                TokenKind::HexByteEscape,
-            ),
-            ProductionKind::HexLiteral => call_scanner(
-                self,
-                input,
-                Language::scan_hex_literal,
-                TokenKind::HexLiteral,
-            ),
-            ProductionKind::HexStringLiteral => call_scanner(
-                self,
-                input,
-                Language::scan_hex_string_literal,
-                TokenKind::HexStringLiteral,
-            ),
-            ProductionKind::HoursKeyword => call_scanner(
-                self,
-                input,
-                Language::scan_hours_keyword,
-                TokenKind::HoursKeyword,
-            ),
-            ProductionKind::Identifier => call_scanner(
-                self,
-                input,
-                Language::scan_identifier,
-                TokenKind::Identifier,
-            ),
-            ProductionKind::IdentifierPart => call_scanner(
-                self,
-                input,
-                Language::scan_identifier_part,
-                TokenKind::IdentifierPart,
-            ),
-            ProductionKind::IdentifierStart => call_scanner(
-                self,
-                input,
-                Language::scan_identifier_start,
-                TokenKind::IdentifierStart,
-            ),
-            ProductionKind::IfKeyword => {
-                call_scanner(self, input, Language::scan_if_keyword, TokenKind::IfKeyword)
+            ProductionKind::GreaterThanGreaterThanEqual => {
+                Language::greater_than_greater_than_equal.scan(
+                    self,
+                    input,
+                    TokenKind::GreaterThanGreaterThanEqual,
+                )
             }
-            ProductionKind::ImmutableKeyword => try_call_scanner(
+            ProductionKind::GreaterThanGreaterThanGreaterThan => {
+                Language::greater_than_greater_than_greater_than.scan(
+                    self,
+                    input,
+                    TokenKind::GreaterThanGreaterThanGreaterThan,
+                )
+            }
+            ProductionKind::GreaterThanGreaterThanGreaterThanEqual => {
+                Language::greater_than_greater_than_greater_than_equal.scan(
+                    self,
+                    input,
+                    TokenKind::GreaterThanGreaterThanGreaterThanEqual,
+                )
+            }
+            ProductionKind::GweiKeyword => {
+                Language::gwei_keyword__sparse_dispatch.scan(self, input, TokenKind::GweiKeyword)
+            }
+            ProductionKind::HexByteEscape => {
+                Language::hex_byte_escape.scan(self, input, TokenKind::HexByteEscape)
+            }
+            ProductionKind::HexLiteral => {
+                Language::hex_literal.scan(self, input, TokenKind::HexLiteral)
+            }
+            ProductionKind::HexStringLiteral => {
+                Language::hex_string_literal.scan(self, input, TokenKind::HexStringLiteral)
+            }
+            ProductionKind::HoursKeyword => {
+                Language::hours_keyword.scan(self, input, TokenKind::HoursKeyword)
+            }
+            ProductionKind::Identifier => {
+                Language::identifier.scan(self, input, TokenKind::Identifier)
+            }
+            ProductionKind::IdentifierPart => {
+                Language::identifier_part.scan(self, input, TokenKind::IdentifierPart)
+            }
+            ProductionKind::IdentifierStart => {
+                Language::identifier_start.scan(self, input, TokenKind::IdentifierStart)
+            }
+            ProductionKind::IfKeyword => {
+                Language::if_keyword.scan(self, input, TokenKind::IfKeyword)
+            }
+            ProductionKind::ImmutableKeyword => Language::immutable_keyword__sparse_dispatch.scan(
                 self,
                 input,
-                Language::maybe_scan_immutable_keyword,
                 TokenKind::ImmutableKeyword,
             ),
-            ProductionKind::ImportKeyword => call_scanner(
-                self,
-                input,
-                Language::scan_import_keyword,
-                TokenKind::ImportKeyword,
-            ),
-            ProductionKind::IndexedKeyword => call_scanner(
-                self,
-                input,
-                Language::scan_indexed_keyword,
-                TokenKind::IndexedKeyword,
-            ),
-            ProductionKind::InterfaceKeyword => call_scanner(
-                self,
-                input,
-                Language::scan_interface_keyword,
-                TokenKind::InterfaceKeyword,
-            ),
-            ProductionKind::InternalKeyword => call_scanner(
-                self,
-                input,
-                Language::scan_internal_keyword,
-                TokenKind::InternalKeyword,
-            ),
+            ProductionKind::ImportKeyword => {
+                Language::import_keyword.scan(self, input, TokenKind::ImportKeyword)
+            }
+            ProductionKind::IndexedKeyword => {
+                Language::indexed_keyword.scan(self, input, TokenKind::IndexedKeyword)
+            }
+            ProductionKind::InterfaceKeyword => {
+                Language::interface_keyword.scan(self, input, TokenKind::InterfaceKeyword)
+            }
+            ProductionKind::InternalKeyword => {
+                Language::internal_keyword.scan(self, input, TokenKind::InternalKeyword)
+            }
             ProductionKind::IsKeyword => {
-                call_scanner(self, input, Language::scan_is_keyword, TokenKind::IsKeyword)
+                Language::is_keyword.scan(self, input, TokenKind::IsKeyword)
             }
-            ProductionKind::LeaveKeyword => try_call_scanner(
-                self,
-                input,
-                Language::maybe_scan_leave_keyword,
-                TokenKind::LeaveKeyword,
-            ),
-            ProductionKind::LessThan => {
-                call_scanner(self, input, Language::scan_less_than, TokenKind::LessThan)
+            ProductionKind::LeaveKeyword => {
+                Language::leave_keyword__sparse_dispatch.scan(self, input, TokenKind::LeaveKeyword)
             }
-            ProductionKind::LessThanEqual => call_scanner(
+            ProductionKind::LessThan => Language::less_than.scan(self, input, TokenKind::LessThan),
+            ProductionKind::LessThanEqual => {
+                Language::less_than_equal.scan(self, input, TokenKind::LessThanEqual)
+            }
+            ProductionKind::LessThanLessThan => {
+                Language::less_than_less_than.scan(self, input, TokenKind::LessThanLessThan)
+            }
+            ProductionKind::LessThanLessThanEqual => Language::less_than_less_than_equal.scan(
                 self,
                 input,
-                Language::scan_less_than_equal,
-                TokenKind::LessThanEqual,
-            ),
-            ProductionKind::LessThanLessThan => call_scanner(
-                self,
-                input,
-                Language::scan_less_than_less_than,
-                TokenKind::LessThanLessThan,
-            ),
-            ProductionKind::LessThanLessThanEqual => call_scanner(
-                self,
-                input,
-                Language::scan_less_than_less_than_equal,
                 TokenKind::LessThanLessThanEqual,
             ),
-            ProductionKind::LetKeyword => call_scanner(
-                self,
-                input,
-                Language::scan_let_keyword,
-                TokenKind::LetKeyword,
-            ),
-            ProductionKind::LibraryKeyword => call_scanner(
-                self,
-                input,
-                Language::scan_library_keyword,
-                TokenKind::LibraryKeyword,
-            ),
-            ProductionKind::MappingKeyword => call_scanner(
-                self,
-                input,
-                Language::scan_mapping_keyword,
-                TokenKind::MappingKeyword,
-            ),
-            ProductionKind::MemoryKeyword => call_scanner(
-                self,
-                input,
-                Language::scan_memory_keyword,
-                TokenKind::MemoryKeyword,
-            ),
-            ProductionKind::Minus => {
-                call_scanner(self, input, Language::scan_minus, TokenKind::Minus)
+            ProductionKind::LetKeyword => {
+                Language::let_keyword.scan(self, input, TokenKind::LetKeyword)
             }
-            ProductionKind::MinusEqual => call_scanner(
-                self,
-                input,
-                Language::scan_minus_equal,
-                TokenKind::MinusEqual,
-            ),
-            ProductionKind::MinusGreaterThan => call_scanner(
-                self,
-                input,
-                Language::scan_minus_greater_than,
-                TokenKind::MinusGreaterThan,
-            ),
-            ProductionKind::MinusMinus => call_scanner(
-                self,
-                input,
-                Language::scan_minus_minus,
-                TokenKind::MinusMinus,
-            ),
-            ProductionKind::MinutesKeyword => call_scanner(
-                self,
-                input,
-                Language::scan_minutes_keyword,
-                TokenKind::MinutesKeyword,
-            ),
-            ProductionKind::ModifierKeyword => call_scanner(
-                self,
-                input,
-                Language::scan_modifier_keyword,
-                TokenKind::ModifierKeyword,
-            ),
-            ProductionKind::MultilineComment => call_scanner(
-                self,
-                input,
-                Language::scan_multiline_comment,
-                TokenKind::MultilineComment,
-            ),
-            ProductionKind::NewKeyword => call_scanner(
-                self,
-                input,
-                Language::scan_new_keyword,
-                TokenKind::NewKeyword,
-            ),
-            ProductionKind::NotAnIdentifierInAnyVersion => call_scanner(
-                self,
-                input,
-                Language::scan_not_an_identifier_in_any_version,
-                TokenKind::NotAnIdentifierInAnyVersion,
-            ),
-            ProductionKind::NotAnIdentifierInSomeVersions => call_scanner(
-                self,
-                input,
-                Language::scan_not_an_identifier_in_some_versions,
-                TokenKind::NotAnIdentifierInSomeVersions,
-            ),
+            ProductionKind::LibraryKeyword => {
+                Language::library_keyword.scan(self, input, TokenKind::LibraryKeyword)
+            }
+            ProductionKind::MappingKeyword => {
+                Language::mapping_keyword.scan(self, input, TokenKind::MappingKeyword)
+            }
+            ProductionKind::MemoryKeyword => {
+                Language::memory_keyword.scan(self, input, TokenKind::MemoryKeyword)
+            }
+            ProductionKind::Minus => Language::minus.scan(self, input, TokenKind::Minus),
+            ProductionKind::MinusEqual => {
+                Language::minus_equal.scan(self, input, TokenKind::MinusEqual)
+            }
+            ProductionKind::MinusGreaterThan => {
+                Language::minus_greater_than.scan(self, input, TokenKind::MinusGreaterThan)
+            }
+            ProductionKind::MinusMinus => {
+                Language::minus_minus.scan(self, input, TokenKind::MinusMinus)
+            }
+            ProductionKind::MinutesKeyword => {
+                Language::minutes_keyword.scan(self, input, TokenKind::MinutesKeyword)
+            }
+            ProductionKind::ModifierKeyword => {
+                Language::modifier_keyword.scan(self, input, TokenKind::ModifierKeyword)
+            }
+            ProductionKind::MultilineComment => {
+                Language::multiline_comment.scan(self, input, TokenKind::MultilineComment)
+            }
+            ProductionKind::NewKeyword => {
+                Language::new_keyword.scan(self, input, TokenKind::NewKeyword)
+            }
+            ProductionKind::NotAnIdentifierInAnyVersion => {
+                Language::not_an_identifier_in_any_version.scan(
+                    self,
+                    input,
+                    TokenKind::NotAnIdentifierInAnyVersion,
+                )
+            }
+            ProductionKind::NotAnIdentifierInSomeVersions => {
+                Language::not_an_identifier_in_some_versions.scan(
+                    self,
+                    input,
+                    TokenKind::NotAnIdentifierInSomeVersions,
+                )
+            }
             ProductionKind::OpenBrace => {
-                call_scanner(self, input, Language::scan_open_brace, TokenKind::OpenBrace)
+                Language::open_brace.scan(self, input, TokenKind::OpenBrace)
             }
-            ProductionKind::OpenBracket => call_scanner(
-                self,
-                input,
-                Language::scan_open_bracket,
-                TokenKind::OpenBracket,
-            ),
+            ProductionKind::OpenBracket => {
+                Language::open_bracket.scan(self, input, TokenKind::OpenBracket)
+            }
             ProductionKind::OpenParen => {
-                call_scanner(self, input, Language::scan_open_paren, TokenKind::OpenParen)
+                Language::open_paren.scan(self, input, TokenKind::OpenParen)
             }
-            ProductionKind::OverrideKeyword => call_scanner(
-                self,
-                input,
-                Language::scan_override_keyword,
-                TokenKind::OverrideKeyword,
-            ),
-            ProductionKind::PayableKeyword => call_scanner(
-                self,
-                input,
-                Language::scan_payable_keyword,
-                TokenKind::PayableKeyword,
-            ),
-            ProductionKind::Percent => {
-                call_scanner(self, input, Language::scan_percent, TokenKind::Percent)
+            ProductionKind::OverrideKeyword => {
+                Language::override_keyword.scan(self, input, TokenKind::OverrideKeyword)
             }
-            ProductionKind::PercentEqual => call_scanner(
-                self,
-                input,
-                Language::scan_percent_equal,
-                TokenKind::PercentEqual,
-            ),
-            ProductionKind::Period => {
-                call_scanner(self, input, Language::scan_period, TokenKind::Period)
+            ProductionKind::PayableKeyword => {
+                Language::payable_keyword.scan(self, input, TokenKind::PayableKeyword)
             }
-            ProductionKind::Plus => call_scanner(self, input, Language::scan_plus, TokenKind::Plus),
+            ProductionKind::Percent => Language::percent.scan(self, input, TokenKind::Percent),
+            ProductionKind::PercentEqual => {
+                Language::percent_equal.scan(self, input, TokenKind::PercentEqual)
+            }
+            ProductionKind::Period => Language::period.scan(self, input, TokenKind::Period),
+            ProductionKind::Plus => Language::plus.scan(self, input, TokenKind::Plus),
             ProductionKind::PlusEqual => {
-                call_scanner(self, input, Language::scan_plus_equal, TokenKind::PlusEqual)
+                Language::plus_equal.scan(self, input, TokenKind::PlusEqual)
             }
-            ProductionKind::PlusPlus => {
-                call_scanner(self, input, Language::scan_plus_plus, TokenKind::PlusPlus)
+            ProductionKind::PlusPlus => Language::plus_plus.scan(self, input, TokenKind::PlusPlus),
+            ProductionKind::PossiblySeparatedPairsOfHexDigits => {
+                Language::possibly_separated_pairs_of_hex_digits.scan(
+                    self,
+                    input,
+                    TokenKind::PossiblySeparatedPairsOfHexDigits,
+                )
             }
-            ProductionKind::PossiblySeparatedPairsOfHexDigits => call_scanner(
-                self,
-                input,
-                Language::scan_possibly_separated_pairs_of_hex_digits,
-                TokenKind::PossiblySeparatedPairsOfHexDigits,
-            ),
-            ProductionKind::PragmaKeyword => call_scanner(
-                self,
-                input,
-                Language::scan_pragma_keyword,
-                TokenKind::PragmaKeyword,
-            ),
-            ProductionKind::PrivateKeyword => call_scanner(
-                self,
-                input,
-                Language::scan_private_keyword,
-                TokenKind::PrivateKeyword,
-            ),
-            ProductionKind::PublicKeyword => call_scanner(
-                self,
-                input,
-                Language::scan_public_keyword,
-                TokenKind::PublicKeyword,
-            ),
-            ProductionKind::PureKeyword => call_scanner(
-                self,
-                input,
-                Language::scan_pure_keyword,
-                TokenKind::PureKeyword,
-            ),
-            ProductionKind::QuestionMark => call_scanner(
-                self,
-                input,
-                Language::scan_question_mark,
-                TokenKind::QuestionMark,
-            ),
-            ProductionKind::RawIdentifier => call_scanner(
-                self,
-                input,
-                Language::scan_raw_identifier,
-                TokenKind::RawIdentifier,
-            ),
-            ProductionKind::ReceiveKeyword => call_scanner(
-                self,
-                input,
-                Language::scan_receive_keyword,
-                TokenKind::ReceiveKeyword,
-            ),
-            ProductionKind::ReturnKeyword => call_scanner(
-                self,
-                input,
-                Language::scan_return_keyword,
-                TokenKind::ReturnKeyword,
-            ),
-            ProductionKind::ReturnsKeyword => call_scanner(
-                self,
-                input,
-                Language::scan_returns_keyword,
-                TokenKind::ReturnsKeyword,
-            ),
-            ProductionKind::RevertKeyword => call_scanner(
-                self,
-                input,
-                Language::scan_revert_keyword,
-                TokenKind::RevertKeyword,
-            ),
-            ProductionKind::SecondsKeyword => call_scanner(
-                self,
-                input,
-                Language::scan_seconds_keyword,
-                TokenKind::SecondsKeyword,
-            ),
+            ProductionKind::PragmaKeyword => {
+                Language::pragma_keyword.scan(self, input, TokenKind::PragmaKeyword)
+            }
+            ProductionKind::PrivateKeyword => {
+                Language::private_keyword.scan(self, input, TokenKind::PrivateKeyword)
+            }
+            ProductionKind::PublicKeyword => {
+                Language::public_keyword.scan(self, input, TokenKind::PublicKeyword)
+            }
+            ProductionKind::PureKeyword => {
+                Language::pure_keyword.scan(self, input, TokenKind::PureKeyword)
+            }
+            ProductionKind::QuestionMark => {
+                Language::question_mark.scan(self, input, TokenKind::QuestionMark)
+            }
+            ProductionKind::RawIdentifier => {
+                Language::raw_identifier.scan(self, input, TokenKind::RawIdentifier)
+            }
+            ProductionKind::ReceiveKeyword => {
+                Language::receive_keyword.scan(self, input, TokenKind::ReceiveKeyword)
+            }
+            ProductionKind::ReturnKeyword => {
+                Language::return_keyword.scan(self, input, TokenKind::ReturnKeyword)
+            }
+            ProductionKind::ReturnsKeyword => {
+                Language::returns_keyword.scan(self, input, TokenKind::ReturnsKeyword)
+            }
+            ProductionKind::RevertKeyword => {
+                Language::revert_keyword.scan(self, input, TokenKind::RevertKeyword)
+            }
+            ProductionKind::SecondsKeyword => {
+                Language::seconds_keyword.scan(self, input, TokenKind::SecondsKeyword)
+            }
             ProductionKind::Semicolon => {
-                call_scanner(self, input, Language::scan_semicolon, TokenKind::Semicolon)
+                Language::semicolon.scan(self, input, TokenKind::Semicolon)
             }
-            ProductionKind::SignedFixedType => call_scanner(
-                self,
-                input,
-                Language::scan_signed_fixed_type,
-                TokenKind::SignedFixedType,
-            ),
-            ProductionKind::SignedIntegerType => call_scanner(
-                self,
-                input,
-                Language::scan_signed_integer_type,
-                TokenKind::SignedIntegerType,
-            ),
-            ProductionKind::SingleLineComment => call_scanner(
-                self,
-                input,
-                Language::scan_single_line_comment,
-                TokenKind::SingleLineComment,
-            ),
-            ProductionKind::SingleQuotedAsciiStringLiteral => call_scanner(
-                self,
-                input,
-                Language::scan_single_quoted_ascii_string_literal,
-                TokenKind::SingleQuotedAsciiStringLiteral,
-            ),
-            ProductionKind::SingleQuotedUnicodeStringLiteral => try_call_scanner(
-                self,
-                input,
-                Language::maybe_scan_single_quoted_unicode_string_literal,
-                TokenKind::SingleQuotedUnicodeStringLiteral,
-            ),
-            ProductionKind::Slash => {
-                call_scanner(self, input, Language::scan_slash, TokenKind::Slash)
+            ProductionKind::SignedFixedType => {
+                Language::signed_fixed_type.scan(self, input, TokenKind::SignedFixedType)
             }
-            ProductionKind::SlashEqual => call_scanner(
-                self,
-                input,
-                Language::scan_slash_equal,
-                TokenKind::SlashEqual,
-            ),
-            ProductionKind::SolidityKeyword => call_scanner(
-                self,
-                input,
-                Language::scan_solidity_keyword,
-                TokenKind::SolidityKeyword,
-            ),
-            ProductionKind::StorageKeyword => call_scanner(
-                self,
-                input,
-                Language::scan_storage_keyword,
-                TokenKind::StorageKeyword,
-            ),
-            ProductionKind::StringKeyword => call_scanner(
-                self,
-                input,
-                Language::scan_string_keyword,
-                TokenKind::StringKeyword,
-            ),
-            ProductionKind::StructKeyword => call_scanner(
-                self,
-                input,
-                Language::scan_struct_keyword,
-                TokenKind::StructKeyword,
-            ),
-            ProductionKind::SwitchKeyword => call_scanner(
-                self,
-                input,
-                Language::scan_switch_keyword,
-                TokenKind::SwitchKeyword,
-            ),
-            ProductionKind::SzaboKeyword => try_call_scanner(
-                self,
-                input,
-                Language::maybe_scan_szabo_keyword,
-                TokenKind::SzaboKeyword,
-            ),
-            ProductionKind::ThrowKeyword => try_call_scanner(
-                self,
-                input,
-                Language::maybe_scan_throw_keyword,
-                TokenKind::ThrowKeyword,
-            ),
-            ProductionKind::Tilde => {
-                call_scanner(self, input, Language::scan_tilde, TokenKind::Tilde)
+            ProductionKind::SignedIntegerType => {
+                Language::signed_integer_type.scan(self, input, TokenKind::SignedIntegerType)
             }
-            ProductionKind::TrueKeyword => call_scanner(
+            ProductionKind::SingleLineComment => {
+                Language::single_line_comment.scan(self, input, TokenKind::SingleLineComment)
+            }
+            ProductionKind::SingleQuotedAsciiStringLiteral => {
+                Language::single_quoted_ascii_string_literal.scan(
+                    self,
+                    input,
+                    TokenKind::SingleQuotedAsciiStringLiteral,
+                )
+            }
+            ProductionKind::SingleQuotedUnicodeStringLiteral => {
+                Language::single_quoted_unicode_string_literal__sparse_dispatch.scan(
+                    self,
+                    input,
+                    TokenKind::SingleQuotedUnicodeStringLiteral,
+                )
+            }
+            ProductionKind::Slash => Language::slash.scan(self, input, TokenKind::Slash),
+            ProductionKind::SlashEqual => {
+                Language::slash_equal.scan(self, input, TokenKind::SlashEqual)
+            }
+            ProductionKind::SolidityKeyword => {
+                Language::solidity_keyword.scan(self, input, TokenKind::SolidityKeyword)
+            }
+            ProductionKind::StorageKeyword => {
+                Language::storage_keyword.scan(self, input, TokenKind::StorageKeyword)
+            }
+            ProductionKind::StringKeyword => {
+                Language::string_keyword.scan(self, input, TokenKind::StringKeyword)
+            }
+            ProductionKind::StructKeyword => {
+                Language::struct_keyword.scan(self, input, TokenKind::StructKeyword)
+            }
+            ProductionKind::SwitchKeyword => {
+                Language::switch_keyword.scan(self, input, TokenKind::SwitchKeyword)
+            }
+            ProductionKind::SzaboKeyword => {
+                Language::szabo_keyword__sparse_dispatch.scan(self, input, TokenKind::SzaboKeyword)
+            }
+            ProductionKind::ThrowKeyword => {
+                Language::throw_keyword__sparse_dispatch.scan(self, input, TokenKind::ThrowKeyword)
+            }
+            ProductionKind::Tilde => Language::tilde.scan(self, input, TokenKind::Tilde),
+            ProductionKind::TrueKeyword => {
+                Language::true_keyword.scan(self, input, TokenKind::TrueKeyword)
+            }
+            ProductionKind::TryKeyword => {
+                Language::try_keyword__sparse_dispatch.scan(self, input, TokenKind::TryKeyword)
+            }
+            ProductionKind::TypeKeyword => {
+                Language::type_keyword__sparse_dispatch.scan(self, input, TokenKind::TypeKeyword)
+            }
+            ProductionKind::UncheckedKeyword => Language::unchecked_keyword__sparse_dispatch.scan(
                 self,
                 input,
-                Language::scan_true_keyword,
-                TokenKind::TrueKeyword,
-            ),
-            ProductionKind::TryKeyword => try_call_scanner(
-                self,
-                input,
-                Language::maybe_scan_try_keyword,
-                TokenKind::TryKeyword,
-            ),
-            ProductionKind::TypeKeyword => try_call_scanner(
-                self,
-                input,
-                Language::maybe_scan_type_keyword,
-                TokenKind::TypeKeyword,
-            ),
-            ProductionKind::UncheckedKeyword => try_call_scanner(
-                self,
-                input,
-                Language::maybe_scan_unchecked_keyword,
                 TokenKind::UncheckedKeyword,
             ),
-            ProductionKind::UnicodeEscape => call_scanner(
+            ProductionKind::UnicodeEscape => {
+                Language::unicode_escape.scan(self, input, TokenKind::UnicodeEscape)
+            }
+            ProductionKind::UnicodeStringLiteral => {
+                Language::unicode_string_literal__sparse_dispatch.scan(
+                    self,
+                    input,
+                    TokenKind::UnicodeStringLiteral,
+                )
+            }
+            ProductionKind::UnsignedFixedType => {
+                Language::unsigned_fixed_type.scan(self, input, TokenKind::UnsignedFixedType)
+            }
+            ProductionKind::UnsignedIntegerType => {
+                Language::unsigned_integer_type.scan(self, input, TokenKind::UnsignedIntegerType)
+            }
+            ProductionKind::UsingKeyword => {
+                Language::using_keyword.scan(self, input, TokenKind::UsingKeyword)
+            }
+            ProductionKind::VarKeyword => {
+                Language::var_keyword__sparse_dispatch.scan(self, input, TokenKind::VarKeyword)
+            }
+            ProductionKind::VersionPragmaValue => {
+                Language::version_pragma_value.scan(self, input, TokenKind::VersionPragmaValue)
+            }
+            ProductionKind::ViewKeyword => {
+                Language::view_keyword.scan(self, input, TokenKind::ViewKeyword)
+            }
+            ProductionKind::VirtualKeyword => Language::virtual_keyword__sparse_dispatch.scan(
                 self,
                 input,
-                Language::scan_unicode_escape,
-                TokenKind::UnicodeEscape,
-            ),
-            ProductionKind::UnicodeStringLiteral => try_call_scanner(
-                self,
-                input,
-                Language::maybe_scan_unicode_string_literal,
-                TokenKind::UnicodeStringLiteral,
-            ),
-            ProductionKind::UnsignedFixedType => call_scanner(
-                self,
-                input,
-                Language::scan_unsigned_fixed_type,
-                TokenKind::UnsignedFixedType,
-            ),
-            ProductionKind::UnsignedIntegerType => call_scanner(
-                self,
-                input,
-                Language::scan_unsigned_integer_type,
-                TokenKind::UnsignedIntegerType,
-            ),
-            ProductionKind::UsingKeyword => call_scanner(
-                self,
-                input,
-                Language::scan_using_keyword,
-                TokenKind::UsingKeyword,
-            ),
-            ProductionKind::VarKeyword => try_call_scanner(
-                self,
-                input,
-                Language::maybe_scan_var_keyword,
-                TokenKind::VarKeyword,
-            ),
-            ProductionKind::VersionPragmaValue => call_scanner(
-                self,
-                input,
-                Language::scan_version_pragma_value,
-                TokenKind::VersionPragmaValue,
-            ),
-            ProductionKind::ViewKeyword => call_scanner(
-                self,
-                input,
-                Language::scan_view_keyword,
-                TokenKind::ViewKeyword,
-            ),
-            ProductionKind::VirtualKeyword => try_call_scanner(
-                self,
-                input,
-                Language::maybe_scan_virtual_keyword,
                 TokenKind::VirtualKeyword,
             ),
-            ProductionKind::WeeksKeyword => call_scanner(
-                self,
-                input,
-                Language::scan_weeks_keyword,
-                TokenKind::WeeksKeyword,
-            ),
-            ProductionKind::WeiKeyword => call_scanner(
-                self,
-                input,
-                Language::scan_wei_keyword,
-                TokenKind::WeiKeyword,
-            ),
-            ProductionKind::WhileKeyword => call_scanner(
-                self,
-                input,
-                Language::scan_while_keyword,
-                TokenKind::WhileKeyword,
-            ),
-            ProductionKind::Whitespace => call_scanner(
-                self,
-                input,
-                Language::scan_whitespace,
-                TokenKind::Whitespace,
-            ),
-            ProductionKind::YearsKeyword => try_call_scanner(
-                self,
-                input,
-                Language::maybe_scan_years_keyword,
-                TokenKind::YearsKeyword,
-            ),
-            ProductionKind::YulDecimalLiteral => call_scanner(
-                self,
-                input,
-                Language::scan_yul_decimal_literal,
-                TokenKind::YulDecimalLiteral,
-            ),
-            ProductionKind::YulHexLiteral => call_scanner(
-                self,
-                input,
-                Language::scan_yul_hex_literal,
-                TokenKind::YulHexLiteral,
-            ),
-            ProductionKind::YulIdentifier => call_scanner(
-                self,
-                input,
-                Language::scan_yul_identifier,
-                TokenKind::YulIdentifier,
-            ),
-            ProductionKind::YulKeyword => call_scanner(
-                self,
-                input,
-                Language::scan_yul_keyword,
-                TokenKind::YulKeyword,
-            ),
-            ProductionKind::YulReservedKeyword => call_scanner(
-                self,
-                input,
-                Language::scan_yul_reserved_keyword,
-                TokenKind::YulReservedKeyword,
-            ),
-            ProductionKind::ABICoderPragma => {
-                call_parser(self, input, Language::parse_abi_coder_pragma)
+            ProductionKind::WeeksKeyword => {
+                Language::weeks_keyword.scan(self, input, TokenKind::WeeksKeyword)
             }
-            ProductionKind::AddSubOperator => {
-                call_parser(self, input, Language::parse_add_sub_operator)
+            ProductionKind::WeiKeyword => {
+                Language::wei_keyword.scan(self, input, TokenKind::WeiKeyword)
             }
-            ProductionKind::AddressType => call_parser(self, input, Language::parse_address_type),
-            ProductionKind::AndOperator => call_parser(self, input, Language::parse_and_operator),
-            ProductionKind::ArgumentList => call_parser(self, input, Language::parse_argument_list),
-            ProductionKind::ArrayLiteral => call_parser(self, input, Language::parse_array_literal),
-            ProductionKind::AssemblyFlags => {
-                call_parser(self, input, Language::parse_assembly_flags)
+            ProductionKind::WhileKeyword => {
+                Language::while_keyword.scan(self, input, TokenKind::WhileKeyword)
             }
-            ProductionKind::AssemblyStatement => {
-                call_parser(self, input, Language::parse_assembly_statement)
+            ProductionKind::Whitespace => {
+                Language::whitespace.scan(self, input, TokenKind::Whitespace)
             }
-            ProductionKind::AssignmentOperator => {
-                call_parser(self, input, Language::parse_assignment_operator)
+            ProductionKind::YearsKeyword => {
+                Language::years_keyword__sparse_dispatch.scan(self, input, TokenKind::YearsKeyword)
             }
-            ProductionKind::AsteriskImport => {
-                call_parser(self, input, Language::parse_asterisk_import)
+            ProductionKind::YulDecimalLiteral => {
+                Language::yul_decimal_literal.scan(self, input, TokenKind::YulDecimalLiteral)
             }
-            ProductionKind::BitAndOperator => {
-                call_parser(self, input, Language::parse_bit_and_operator)
+            ProductionKind::YulHexLiteral => {
+                Language::yul_hex_literal.scan(self, input, TokenKind::YulHexLiteral)
             }
-            ProductionKind::BitOrOperator => {
-                call_parser(self, input, Language::parse_bit_or_operator)
+            ProductionKind::YulIdentifier => {
+                Language::yul_identifier.scan(self, input, TokenKind::YulIdentifier)
             }
-            ProductionKind::BitXOrOperator => {
-                call_parser(self, input, Language::parse_bit_x_or_operator)
+            ProductionKind::YulKeyword => {
+                Language::yul_keyword.scan(self, input, TokenKind::YulKeyword)
             }
-            ProductionKind::Block => call_parser(self, input, Language::parse_block),
-            ProductionKind::BooleanLiteral => {
-                call_parser(self, input, Language::parse_boolean_literal)
+            ProductionKind::YulReservedKeyword => {
+                Language::yul_reserved_keyword.scan(self, input, TokenKind::YulReservedKeyword)
             }
-            ProductionKind::BreakStatement => {
-                call_parser(self, input, Language::parse_break_statement)
-            }
+            ProductionKind::ABICoderPragma => Language::abi_coder_pragma.parse(self, input),
+            ProductionKind::AddSubOperator => Language::add_sub_operator.parse(self, input),
+            ProductionKind::AddressType => Language::address_type.parse(self, input),
+            ProductionKind::AndOperator => Language::and_operator.parse(self, input),
+            ProductionKind::ArgumentList => Language::argument_list.parse(self, input),
+            ProductionKind::ArrayLiteral => Language::array_literal.parse(self, input),
+            ProductionKind::AssemblyFlags => Language::assembly_flags.parse(self, input),
+            ProductionKind::AssemblyStatement => Language::assembly_statement.parse(self, input),
+            ProductionKind::AssignmentOperator => Language::assignment_operator.parse(self, input),
+            ProductionKind::AsteriskImport => Language::asterisk_import.parse(self, input),
+            ProductionKind::BitAndOperator => Language::bit_and_operator.parse(self, input),
+            ProductionKind::BitOrOperator => Language::bit_or_operator.parse(self, input),
+            ProductionKind::BitXOrOperator => Language::bit_x_or_operator.parse(self, input),
+            ProductionKind::Block => Language::block.parse(self, input),
+            ProductionKind::BooleanLiteral => Language::boolean_literal.parse(self, input),
+            ProductionKind::BreakStatement => Language::break_statement.parse(self, input),
             ProductionKind::CatchClause => {
-                try_call_parser(self, input, Language::maybe_parse_catch_clause)
+                Language::catch_clause__sparse_dispatch.parse(self, input)
             }
             ProductionKind::ConditionalOperator => {
-                call_parser(self, input, Language::parse_conditional_operator)
+                Language::conditional_operator.parse(self, input)
             }
-            ProductionKind::ConstantDefinition => {
-                call_parser(self, input, Language::parse_constant_definition)
-            }
+            ProductionKind::ConstantDefinition => Language::constant_definition.parse(self, input),
             ProductionKind::ConstructorAttribute => {
-                try_call_parser(self, input, Language::maybe_parse_constructor_attribute)
+                Language::constructor_attribute__sparse_dispatch.parse(self, input)
             }
             ProductionKind::ConstructorDefinition => {
-                try_call_parser(self, input, Language::maybe_parse_constructor_definition)
+                Language::constructor_definition__sparse_dispatch.parse(self, input)
             }
-            ProductionKind::ContinueStatement => {
-                call_parser(self, input, Language::parse_continue_statement)
-            }
-            ProductionKind::ContractDefinition => {
-                call_parser(self, input, Language::parse_contract_definition)
-            }
-            ProductionKind::DataLocation => call_parser(self, input, Language::parse_data_location),
-            ProductionKind::Definition => call_parser(self, input, Language::parse_definition),
-            ProductionKind::DeleteStatement => {
-                call_parser(self, input, Language::parse_delete_statement)
-            }
-            ProductionKind::Directive => call_parser(self, input, Language::parse_directive),
-            ProductionKind::DoWhileStatement => {
-                call_parser(self, input, Language::parse_do_while_statement)
-            }
-            ProductionKind::ElementaryType => {
-                call_parser(self, input, Language::parse_elementary_type)
-            }
+            ProductionKind::ContinueStatement => Language::continue_statement.parse(self, input),
+            ProductionKind::ContractDefinition => Language::contract_definition.parse(self, input),
+            ProductionKind::DataLocation => Language::data_location.parse(self, input),
+            ProductionKind::Definition => Language::definition.parse(self, input),
+            ProductionKind::DeleteStatement => Language::delete_statement.parse(self, input),
+            ProductionKind::Directive => Language::directive.parse(self, input),
+            ProductionKind::DoWhileStatement => Language::do_while_statement.parse(self, input),
+            ProductionKind::ElementaryType => Language::elementary_type.parse(self, input),
             ProductionKind::EmitStatement => {
-                try_call_parser(self, input, Language::maybe_parse_emit_statement)
+                Language::emit_statement__sparse_dispatch.parse(self, input)
             }
-            ProductionKind::EndOfFileTrivia => {
-                call_parser(self, input, Language::parse_end_of_file_trivia)
-            }
-            ProductionKind::EnumDefinition => {
-                call_parser(self, input, Language::parse_enum_definition)
-            }
+            ProductionKind::EndOfFileTrivia => Language::end_of_file_trivia.parse(self, input),
+            ProductionKind::EnumDefinition => Language::enum_definition.parse(self, input),
             ProductionKind::EqualityComparisonOperator => {
-                call_parser(self, input, Language::parse_equality_comparison_operator)
+                Language::equality_comparison_operator.parse(self, input)
             }
-            ProductionKind::ErrorDefinition => {
-                call_parser(self, input, Language::parse_error_definition)
-            }
-            ProductionKind::ErrorParameter => {
-                call_parser(self, input, Language::parse_error_parameter)
-            }
-            ProductionKind::EventDefinition => {
-                call_parser(self, input, Language::parse_event_definition)
-            }
-            ProductionKind::EventParameter => {
-                call_parser(self, input, Language::parse_event_parameter)
-            }
-            ProductionKind::ExperimentalPragma => {
-                call_parser(self, input, Language::parse_experimental_pragma)
-            }
+            ProductionKind::ErrorDefinition => Language::error_definition.parse(self, input),
+            ProductionKind::ErrorParameter => Language::error_parameter.parse(self, input),
+            ProductionKind::EventDefinition => Language::event_definition.parse(self, input),
+            ProductionKind::EventParameter => Language::event_parameter.parse(self, input),
+            ProductionKind::ExperimentalPragma => Language::experimental_pragma.parse(self, input),
             ProductionKind::ExponentiationOperator => {
-                call_parser(self, input, Language::parse_exponentiation_operator)
+                Language::exponentiation_operator.parse(self, input)
             }
-            ProductionKind::Expression => call_parser(self, input, Language::parse_expression),
+            ProductionKind::Expression => Language::expression.parse(self, input),
             ProductionKind::ExpressionStatement => {
-                call_parser(self, input, Language::parse_expression_statement)
+                Language::expression_statement.parse(self, input)
             }
-            ProductionKind::FallbackFunctionAttribute => try_call_parser(
-                self,
-                input,
-                Language::maybe_parse_fallback_function_attribute,
-            ),
-            ProductionKind::FallbackFunctionDefinition => try_call_parser(
-                self,
-                input,
-                Language::maybe_parse_fallback_function_definition,
-            ),
-            ProductionKind::ForStatement => call_parser(self, input, Language::parse_for_statement),
-            ProductionKind::FunctionAttribute => {
-                call_parser(self, input, Language::parse_function_attribute)
+            ProductionKind::FallbackFunctionAttribute => {
+                Language::fallback_function_attribute__sparse_dispatch.parse(self, input)
             }
+            ProductionKind::FallbackFunctionDefinition => {
+                Language::fallback_function_definition__sparse_dispatch.parse(self, input)
+            }
+            ProductionKind::ForStatement => Language::for_statement.parse(self, input),
+            ProductionKind::FunctionAttribute => Language::function_attribute.parse(self, input),
             ProductionKind::FunctionCallOperator => {
-                call_parser(self, input, Language::parse_function_call_operator)
+                Language::function_call_operator.parse(self, input)
             }
             ProductionKind::FunctionCallOptions => {
-                try_call_parser(self, input, Language::maybe_parse_function_call_options)
+                Language::function_call_options__sparse_dispatch.parse(self, input)
             }
-            ProductionKind::FunctionDefinition => {
-                call_parser(self, input, Language::parse_function_definition)
-            }
-            ProductionKind::FunctionType => call_parser(self, input, Language::parse_function_type),
-            ProductionKind::IdentifierPath => {
-                call_parser(self, input, Language::parse_identifier_path)
-            }
-            ProductionKind::IfStatement => call_parser(self, input, Language::parse_if_statement),
-            ProductionKind::ImportAlias => call_parser(self, input, Language::parse_import_alias),
-            ProductionKind::ImportDirective => {
-                call_parser(self, input, Language::parse_import_directive)
-            }
-            ProductionKind::ImportPath => call_parser(self, input, Language::parse_import_path),
+            ProductionKind::FunctionDefinition => Language::function_definition.parse(self, input),
+            ProductionKind::FunctionType => Language::function_type.parse(self, input),
+            ProductionKind::IdentifierPath => Language::identifier_path.parse(self, input),
+            ProductionKind::IfStatement => Language::if_statement.parse(self, input),
+            ProductionKind::ImportAlias => Language::import_alias.parse(self, input),
+            ProductionKind::ImportDirective => Language::import_directive.parse(self, input),
+            ProductionKind::ImportPath => Language::import_path.parse(self, input),
             ProductionKind::IndexAccessOperator => {
-                call_parser(self, input, Language::parse_index_access_operator)
+                Language::index_access_operator.parse(self, input)
             }
             ProductionKind::InheritanceSpecifier => {
-                call_parser(self, input, Language::parse_inheritance_specifier)
+                Language::inheritance_specifier.parse(self, input)
             }
             ProductionKind::InheritanceSpecifierList => {
-                call_parser(self, input, Language::parse_inheritance_specifier_list)
+                Language::inheritance_specifier_list.parse(self, input)
             }
             ProductionKind::InterfaceDefinition => {
-                call_parser(self, input, Language::parse_interface_definition)
+                Language::interface_definition.parse(self, input)
             }
-            ProductionKind::LeadingTrivia => {
-                call_parser(self, input, Language::parse_leading_trivia)
-            }
-            ProductionKind::LibraryDefinition => {
-                call_parser(self, input, Language::parse_library_definition)
-            }
-            ProductionKind::MappingKeyType => {
-                call_parser(self, input, Language::parse_mapping_key_type)
-            }
-            ProductionKind::MappingType => call_parser(self, input, Language::parse_mapping_type),
-            ProductionKind::MappingValueType => {
-                call_parser(self, input, Language::parse_mapping_value_type)
-            }
+            ProductionKind::LeadingTrivia => Language::leading_trivia.parse(self, input),
+            ProductionKind::LibraryDefinition => Language::library_definition.parse(self, input),
+            ProductionKind::MappingKeyType => Language::mapping_key_type.parse(self, input),
+            ProductionKind::MappingType => Language::mapping_type.parse(self, input),
+            ProductionKind::MappingValueType => Language::mapping_value_type.parse(self, input),
             ProductionKind::MemberAccessOperator => {
-                call_parser(self, input, Language::parse_member_access_operator)
+                Language::member_access_operator.parse(self, input)
             }
-            ProductionKind::ModifierAttribute => {
-                call_parser(self, input, Language::parse_modifier_attribute)
-            }
-            ProductionKind::ModifierDefinition => {
-                call_parser(self, input, Language::parse_modifier_definition)
-            }
-            ProductionKind::ModifierInvocation => {
-                call_parser(self, input, Language::parse_modifier_invocation)
-            }
-            ProductionKind::MulDivModOperator => {
-                call_parser(self, input, Language::parse_mul_div_mod_operator)
-            }
-            ProductionKind::NamedArgument => {
-                call_parser(self, input, Language::parse_named_argument)
-            }
-            ProductionKind::NamedArgumentList => {
-                call_parser(self, input, Language::parse_named_argument_list)
-            }
-            ProductionKind::NewExpression => {
-                call_parser(self, input, Language::parse_new_expression)
-            }
-            ProductionKind::NumberUnit => call_parser(self, input, Language::parse_number_unit),
-            ProductionKind::NumericExpression => {
-                call_parser(self, input, Language::parse_numeric_expression)
-            }
-            ProductionKind::OrOperator => call_parser(self, input, Language::parse_or_operator),
+            ProductionKind::ModifierAttribute => Language::modifier_attribute.parse(self, input),
+            ProductionKind::ModifierDefinition => Language::modifier_definition.parse(self, input),
+            ProductionKind::ModifierInvocation => Language::modifier_invocation.parse(self, input),
+            ProductionKind::MulDivModOperator => Language::mul_div_mod_operator.parse(self, input),
+            ProductionKind::NamedArgument => Language::named_argument.parse(self, input),
+            ProductionKind::NamedArgumentList => Language::named_argument_list.parse(self, input),
+            ProductionKind::NewExpression => Language::new_expression.parse(self, input),
+            ProductionKind::NumberUnit => Language::number_unit.parse(self, input),
+            ProductionKind::NumericExpression => Language::numeric_expression.parse(self, input),
+            ProductionKind::OrOperator => Language::or_operator.parse(self, input),
             ProductionKind::OrderComparisonOperator => {
-                call_parser(self, input, Language::parse_order_comparison_operator)
+                Language::order_comparison_operator.parse(self, input)
             }
-            ProductionKind::OverrideSpecifier => {
-                call_parser(self, input, Language::parse_override_specifier)
-            }
+            ProductionKind::OverrideSpecifier => Language::override_specifier.parse(self, input),
             ProductionKind::ParameterDeclaration => {
-                call_parser(self, input, Language::parse_parameter_declaration)
+                Language::parameter_declaration.parse(self, input)
             }
-            ProductionKind::ParameterList => {
-                call_parser(self, input, Language::parse_parameter_list)
-            }
-            ProductionKind::PayableType => call_parser(self, input, Language::parse_payable_type),
+            ProductionKind::ParameterList => Language::parameter_list.parse(self, input),
+            ProductionKind::PayableType => Language::payable_type.parse(self, input),
             ProductionKind::PositionalArgumentList => {
-                call_parser(self, input, Language::parse_positional_argument_list)
+                Language::positional_argument_list.parse(self, input)
             }
-            ProductionKind::PragmaDirective => {
-                call_parser(self, input, Language::parse_pragma_directive)
+            ProductionKind::PragmaDirective => Language::pragma_directive.parse(self, input),
+            ProductionKind::PrimaryExpression => Language::primary_expression.parse(self, input),
+            ProductionKind::ReceiveFunctionAttribute => {
+                Language::receive_function_attribute__sparse_dispatch.parse(self, input)
             }
-            ProductionKind::PrimaryExpression => {
-                call_parser(self, input, Language::parse_primary_expression)
+            ProductionKind::ReceiveFunctionDefinition => {
+                Language::receive_function_definition__sparse_dispatch.parse(self, input)
             }
-            ProductionKind::ReceiveFunctionAttribute => try_call_parser(
-                self,
-                input,
-                Language::maybe_parse_receive_function_attribute,
-            ),
-            ProductionKind::ReceiveFunctionDefinition => try_call_parser(
-                self,
-                input,
-                Language::maybe_parse_receive_function_definition,
-            ),
-            ProductionKind::ReturnStatement => {
-                call_parser(self, input, Language::parse_return_statement)
-            }
-            ProductionKind::RevertStatement => {
-                call_parser(self, input, Language::parse_revert_statement)
-            }
-            ProductionKind::SelectiveImport => {
-                call_parser(self, input, Language::parse_selective_import)
-            }
-            ProductionKind::ShiftOperator => {
-                call_parser(self, input, Language::parse_shift_operator)
-            }
-            ProductionKind::SimpleImport => call_parser(self, input, Language::parse_simple_import),
-            ProductionKind::SimpleStatement => {
-                call_parser(self, input, Language::parse_simple_statement)
-            }
-            ProductionKind::SourceUnit => call_parser(self, input, Language::parse_source_unit),
+            ProductionKind::ReturnStatement => Language::return_statement.parse(self, input),
+            ProductionKind::RevertStatement => Language::revert_statement.parse(self, input),
+            ProductionKind::SelectiveImport => Language::selective_import.parse(self, input),
+            ProductionKind::ShiftOperator => Language::shift_operator.parse(self, input),
+            ProductionKind::SimpleImport => Language::simple_import.parse(self, input),
+            ProductionKind::SimpleStatement => Language::simple_statement.parse(self, input),
+            ProductionKind::SourceUnit => Language::source_unit.parse(self, input),
             ProductionKind::StateVariableAttribute => {
-                call_parser(self, input, Language::parse_state_variable_attribute)
+                Language::state_variable_attribute.parse(self, input)
             }
             ProductionKind::StateVariableDeclaration => {
-                call_parser(self, input, Language::parse_state_variable_declaration)
+                Language::state_variable_declaration.parse(self, input)
             }
-            ProductionKind::Statement => call_parser(self, input, Language::parse_statement),
-            ProductionKind::StringExpression => {
-                call_parser(self, input, Language::parse_string_expression)
-            }
-            ProductionKind::StructDefinition => {
-                call_parser(self, input, Language::parse_struct_definition)
-            }
-            ProductionKind::StructMember => call_parser(self, input, Language::parse_struct_member),
+            ProductionKind::Statement => Language::statement.parse(self, input),
+            ProductionKind::StringExpression => Language::string_expression.parse(self, input),
+            ProductionKind::StructDefinition => Language::struct_definition.parse(self, input),
+            ProductionKind::StructMember => Language::struct_member.parse(self, input),
             ProductionKind::ThrowStatement => {
-                try_call_parser(self, input, Language::maybe_parse_throw_statement)
+                Language::throw_statement__sparse_dispatch.parse(self, input)
             }
-            ProductionKind::TrailingTrivia => {
-                call_parser(self, input, Language::parse_trailing_trivia)
-            }
+            ProductionKind::TrailingTrivia => Language::trailing_trivia.parse(self, input),
             ProductionKind::TryStatement => {
-                try_call_parser(self, input, Language::maybe_parse_try_statement)
+                Language::try_statement__sparse_dispatch.parse(self, input)
             }
             ProductionKind::TupleDeconstructionStatement => {
-                call_parser(self, input, Language::parse_tuple_deconstruction_statement)
+                Language::tuple_deconstruction_statement.parse(self, input)
             }
-            ProductionKind::TupleExpression => {
-                call_parser(self, input, Language::parse_tuple_expression)
-            }
+            ProductionKind::TupleExpression => Language::tuple_expression.parse(self, input),
             ProductionKind::TypeExpression => {
-                try_call_parser(self, input, Language::maybe_parse_type_expression)
+                Language::type_expression__sparse_dispatch.parse(self, input)
             }
-            ProductionKind::TypeName => call_parser(self, input, Language::parse_type_name),
+            ProductionKind::TypeName => Language::type_name.parse(self, input),
             ProductionKind::UnaryPostfixOperator => {
-                call_parser(self, input, Language::parse_unary_postfix_operator)
+                Language::unary_postfix_operator.parse(self, input)
             }
             ProductionKind::UnaryPrefixOperator => {
-                call_parser(self, input, Language::parse_unary_prefix_operator)
+                Language::unary_prefix_operator.parse(self, input)
             }
             ProductionKind::UncheckedBlock => {
-                try_call_parser(self, input, Language::maybe_parse_unchecked_block)
+                Language::unchecked_block__sparse_dispatch.parse(self, input)
             }
-            ProductionKind::UnnamedFunctionAttribute => try_call_parser(
-                self,
-                input,
-                Language::maybe_parse_unnamed_function_attribute,
-            ),
-            ProductionKind::UnnamedFunctionDefinition => try_call_parser(
-                self,
-                input,
-                Language::maybe_parse_unnamed_function_definition,
-            ),
+            ProductionKind::UnnamedFunctionAttribute => {
+                Language::unnamed_function_attribute__sparse_dispatch.parse(self, input)
+            }
+            ProductionKind::UnnamedFunctionDefinition => {
+                Language::unnamed_function_definition__sparse_dispatch.parse(self, input)
+            }
             ProductionKind::UserDefinedOperator => {
-                try_call_parser(self, input, Language::maybe_parse_user_defined_operator)
+                Language::user_defined_operator__sparse_dispatch.parse(self, input)
             }
-            ProductionKind::UserDefinedValueTypeDefinition => try_call_parser(
-                self,
-                input,
-                Language::maybe_parse_user_defined_value_type_definition,
-            ),
-            ProductionKind::UsingDirective => {
-                call_parser(self, input, Language::parse_using_directive)
+            ProductionKind::UserDefinedValueTypeDefinition => {
+                Language::user_defined_value_type_definition__sparse_dispatch.parse(self, input)
             }
+            ProductionKind::UsingDirective => Language::using_directive.parse(self, input),
             ProductionKind::VariableDeclarationStatement => {
-                call_parser(self, input, Language::parse_variable_declaration_statement)
+                Language::variable_declaration_statement.parse(self, input)
             }
-            ProductionKind::VersionPragma => {
-                call_parser(self, input, Language::parse_version_pragma)
-            }
+            ProductionKind::VersionPragma => Language::version_pragma.parse(self, input),
             ProductionKind::VersionPragmaSpecifier => {
-                call_parser(self, input, Language::parse_version_pragma_specifier)
+                Language::version_pragma_specifier.parse(self, input)
             }
-            ProductionKind::WhileStatement => {
-                call_parser(self, input, Language::parse_while_statement)
-            }
+            ProductionKind::WhileStatement => Language::while_statement.parse(self, input),
             ProductionKind::YulAssignmentStatement => {
-                call_parser(self, input, Language::parse_yul_assignment_statement)
+                Language::yul_assignment_statement.parse(self, input)
             }
-            ProductionKind::YulBlock => call_parser(self, input, Language::parse_yul_block),
-            ProductionKind::YulBreakStatement => {
-                call_parser(self, input, Language::parse_yul_break_statement)
-            }
+            ProductionKind::YulBlock => Language::yul_block.parse(self, input),
+            ProductionKind::YulBreakStatement => Language::yul_break_statement.parse(self, input),
             ProductionKind::YulContinueStatement => {
-                call_parser(self, input, Language::parse_yul_continue_statement)
+                Language::yul_continue_statement.parse(self, input)
             }
             ProductionKind::YulDeclarationStatement => {
-                call_parser(self, input, Language::parse_yul_declaration_statement)
+                Language::yul_declaration_statement.parse(self, input)
             }
-            ProductionKind::YulExpression => {
-                call_parser(self, input, Language::parse_yul_expression)
-            }
-            ProductionKind::YulForStatement => {
-                call_parser(self, input, Language::parse_yul_for_statement)
-            }
+            ProductionKind::YulExpression => Language::yul_expression.parse(self, input),
+            ProductionKind::YulForStatement => Language::yul_for_statement.parse(self, input),
             ProductionKind::YulFunctionDefinition => {
-                call_parser(self, input, Language::parse_yul_function_definition)
+                Language::yul_function_definition.parse(self, input)
             }
-            ProductionKind::YulIdentifierPath => {
-                call_parser(self, input, Language::parse_yul_identifier_path)
-            }
-            ProductionKind::YulIfStatement => {
-                call_parser(self, input, Language::parse_yul_if_statement)
-            }
+            ProductionKind::YulIdentifierPath => Language::yul_identifier_path.parse(self, input),
+            ProductionKind::YulIfStatement => Language::yul_if_statement.parse(self, input),
             ProductionKind::YulLeaveStatement => {
-                try_call_parser(self, input, Language::maybe_parse_yul_leave_statement)
+                Language::yul_leave_statement__sparse_dispatch.parse(self, input)
             }
-            ProductionKind::YulLiteral => call_parser(self, input, Language::parse_yul_literal),
-            ProductionKind::YulStatement => call_parser(self, input, Language::parse_yul_statement),
-            ProductionKind::YulSwitchStatement => {
-                call_parser(self, input, Language::parse_yul_switch_statement)
-            }
+            ProductionKind::YulLiteral => Language::yul_literal.parse(self, input),
+            ProductionKind::YulStatement => Language::yul_statement.parse(self, input),
+            ProductionKind::YulSwitchStatement => Language::yul_switch_statement.parse(self, input),
         }
         .ok_or_else(|| Error::InvalidProductionVersion(production_kind).into())
     }

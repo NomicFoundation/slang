@@ -23,10 +23,10 @@ Tree:
               - CloseBrace (Token): "}" # 16..17
       - Definition (Rule): # 18..148 "\n\n// Newlines both before and after this comment s..."
           - ContractDefinition (Rule): # 18..148 "\n\n// Newlines both before and after this comment s..."
-              - ContractKeyword (Token): # 18..137 "\n\n// Newlines both before and after this comment s..."
+              - LeadingTrivia (Rule): # 18..129 "\n\n// Newlines both before and after this comment s..."
                   - SingleLineComment (Trivia): "// Newlines both before and after this comment sho..." # 20..73
                   - SingleLineComment (Trivia): "// be included in the trivia of the second contrac..." # 74..126
-                  - Contents: "contract" # 129..137
+              - ContractKeyword (Token): "contract" # 129..137
               - Identifier (Token): "Second" # 138..144
               - OpenBrace (Token): "{" # 145..146
               - ContractBodyElements (Rule): [] # 146..146

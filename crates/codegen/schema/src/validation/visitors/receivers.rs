@@ -164,9 +164,6 @@ impl Receiver for ScannerDefinition {
             }
             ScannerDefinition::Range { .. } => {}
             ScannerDefinition::Reference(_) => {}
-            ScannerDefinition::Repeat { expression, .. } => {
-                expression.receive(visitor, language, location.field("repeat"), reporter);
-            }
             ScannerDefinition::Sequence(expressions) => {
                 let location = location.field("sequence");
                 for (i, expression) in expressions.iter().enumerate() {
@@ -237,10 +234,6 @@ impl Receiver for ParserDefinition {
                 expression.receive(visitor, language, location.field("optional"), reporter);
             }
             ParserDefinition::Reference(_) => {}
-            ParserDefinition::Repeat { expression, .. } => {
-                let location = location.field("repeat");
-                expression.receive(visitor, language, location.field("expression"), reporter);
-            }
             ParserDefinition::SeparatedBy { expression, .. } => {
                 let location = location.field("separatedBy");
                 expression.receive(visitor, language, location.field("expression"), reporter);

@@ -7,4 +7,5 @@ Errors: # 1 total
     Error: Expected ContractKeyword.
        ─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/zero_length_input/input.sol:0:0]
 
-Tree: null
+Tree:
+  - SKIPPED (Token): [] # 0..0

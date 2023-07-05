@@ -9,8 +9,9 @@ Errors: # 1 total
        ╭─[crates/solidity/testing/snapshots/cst_output/Statement/try_catch/input.sol:1:1]
        │
      1 │ try a.b() {} catch {}
-       │ │ 
-       │ ╰─ Error occurred here.
+       │ ──────────┬──────────  
+       │           ╰──────────── Error occurred here.
     ───╯
 
-Tree: null
+Tree:
+  - SKIPPED (Token): "try a.b() {} catch {}" # 0..21

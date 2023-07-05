@@ -1,14 +1,16 @@
 use std::rc::Rc;
 
 use anyhow::Result;
-use slang_solidity::syntax::nodes::{Node, RuleKind, TextRange, TokenKind};
+use slang_solidity::syntax::{
+    nodes::{Node, RuleKind, RuleNode, TextRange, TokenKind, TokenNode},
+    visitors::{Visitable, Visitor, VisitorEntryResponse, VisitorExitResponse},
+};
 
 #[derive(Debug)]
 pub enum TestNodeKind {
     Rule(RuleKind),
     Token(TokenKind),
     Trivia(TokenKind),
-    Contents,
 }
 
 pub struct TestNode {
@@ -17,150 +19,100 @@ pub struct TestNode {
     pub children: Vec<TestNode>,
 }
 
-impl TestNode {
-    pub fn from_cst(node: &Rc<Node>) -> Self {
-        return match node.as_ref() {
-            Node::Rule {
-                kind,
-                range,
-                children,
-            } => {
-                let children = children
-                    .iter()
-                    .filter(|child| !Self::is_whitespace(child))
-                    .map(|child| Self::from_cst(child))
-                    .collect();
+struct TestNodeBuilder {
+    stack: Vec<Vec<TestNode>>,
+}
 
-                Self {
-                    kind: TestNodeKind::Rule(*kind),
-                    range: range.clone(),
-                    children,
-                }
-            }
-            Node::Token {
-                kind,
-                range,
-                trivia,
-            } => Self::from_token(kind, range, node.range_including_trivia(), trivia),
-        };
+impl Visitor<()> for TestNodeBuilder {
+    fn enter_rule(
+        &mut self,
+        _node: &Rc<RuleNode>,
+        _path: &Vec<Rc<RuleNode>>,
+        _range: &TextRange,
+    ) -> std::result::Result<VisitorEntryResponse, ()> {
+        self.stack.push(vec![]);
+        Ok(VisitorEntryResponse::StepIn)
     }
 
-    fn from_token(
-        token_kind: &TokenKind,
-        token_range: &TextRange,
-        node_range: TextRange,
-        token_trivia: &Vec<Rc<Node>>,
-    ) -> Self {
-        let mut leading = vec![];
-        let mut trailing = vec![];
+    fn exit_rule(
+        &mut self,
+        node: &Rc<RuleNode>,
+        _path: &Vec<Rc<RuleNode>>,
+        range: &TextRange,
+    ) -> std::result::Result<VisitorExitResponse, ()> {
+        let children = self.stack.pop().unwrap();
 
-        for trivium in token_trivia {
-            match trivium.as_ref() {
-                Node::Token { .. } => {
-                    unreachable!("Trivium should always be a Rule: {trivium:?}")
-                }
-                Node::Rule {
-                    kind: trivium_kind,
-                    children: trivium_children,
-                    ..
-                } => {
-                    for trivium_child in trivium_children {
-                        match trivium_kind {
-                            RuleKind::LeadingTrivia => {
-                                Self::collect_trivia(trivium_child, &mut leading);
-                            }
-                            RuleKind::TrailingTrivia => {
-                                Self::collect_trivia(trivium_child, &mut trailing);
-                            }
-                            _ => unreachable!("Unexpected trivium kind: {trivium_kind:?}"),
-                        }
-                    }
-                }
+        if (node.kind == RuleKind::LeadingTrivia) | (node.kind == RuleKind::TrailingTrivia) {
+            if children.is_empty() {
+                return Ok(VisitorExitResponse::Continue);
             }
         }
 
-        // If no trivia, or they were all skipped (whitespace) just return the inner lex_node:
-        if leading.is_empty() && trailing.is_empty() {
-            return Self {
-                kind: TestNodeKind::Token(*token_kind),
-                range: token_range.clone(),
-                children: vec![],
-            };
-        }
-
-        let contents_node = Self {
-            kind: TestNodeKind::Contents,
-            range: token_range.clone(),
-            children: vec![],
-        };
-
-        let mut children = vec![];
-        children.extend(leading);
-        children.push(contents_node);
-        children.extend(trailing);
-
-        return Self {
-            kind: TestNodeKind::Token(*token_kind),
-            range: node_range,
+        let new_node = TestNode {
+            kind: TestNodeKind::Rule(node.kind),
+            range: range.clone(),
             children,
         };
+        self.stack.last_mut().unwrap().push(new_node);
+
+        Ok(VisitorExitResponse::Continue)
     }
 
-    fn collect_trivia(node: &Rc<Node>, collection: &mut Vec<Self>) {
+    fn enter_token(
+        &mut self,
+        node: &Rc<TokenNode>,
+        _path: &Vec<Rc<RuleNode>>,
+        range: &TextRange,
+    ) -> std::result::Result<VisitorEntryResponse, ()> {
         if Self::is_whitespace(node) {
-            return;
+            return Ok(VisitorEntryResponse::StepOver);
         }
 
-        match node.as_ref() {
-            Node::Rule { children, .. } => {
-                for child in children {
-                    Self::collect_trivia(child, collection);
-                }
-            }
-            Node::Token {
-                kind,
-                trivia,
-                range,
-            } => {
-                assert!(
-                    trivia.is_empty(),
-                    "Trivia should not contain sub-trivia: {trivia:?}"
-                );
-
-                match kind {
-                    TokenKind::SingleLineComment | TokenKind::MultilineComment => {
-                        collection.push(Self {
-                            kind: TestNodeKind::Trivia(*kind),
-                            range: range.clone(),
-                            children: vec![],
-                        });
-                    }
-                    other => {
-                        unreachable!("Unexpected trivia token kind: {other:?}")
-                    }
-                };
-            }
+        let kind = if Self::is_comment(node) {
+            TestNodeKind::Trivia(node.kind)
+        } else {
+            TestNodeKind::Token(node.kind)
         };
+
+        let new_node = TestNode {
+            kind,
+            range: range.clone(),
+            children: vec![],
+        };
+        self.stack.last_mut().unwrap().push(new_node);
+
+        Ok(VisitorEntryResponse::StepOver)
+    }
+}
+
+impl TestNodeBuilder {
+    fn is_whitespace(token_node: &Rc<TokenNode>) -> bool {
+        (token_node.kind == TokenKind::Whitespace) | (token_node.kind == TokenKind::EndOfLine)
     }
 
-    fn is_whitespace(token: &Rc<Node>) -> bool {
-        return match token.as_ref() {
-            Node::Token { kind, .. } => match kind {
-                TokenKind::Whitespace | TokenKind::EndOfLine => true,
-                _ => false,
-            },
-            _ => false,
+    fn is_comment(token_node: &Rc<TokenNode>) -> bool {
+        (token_node.kind == TokenKind::SingleLineComment)
+            | (token_node.kind == TokenKind::MultilineComment)
+    }
+}
+
+impl TestNode {
+    pub fn from_cst(node: Node) -> Self {
+        let mut visitor = TestNodeBuilder {
+            stack: vec![vec![]],
         };
+        node.accept_visitor(&mut visitor).unwrap();
+        return visitor.stack.remove(0).remove(0);
     }
 
     pub fn render_preview(&self, source: &str, range: &TextRange) -> Result<String> {
         let max_length = 50;
-        let length = range.end.byte - range.start.byte;
+        let length = range.end.utf8 - range.start.utf8;
 
         // Trim long values:
         let contents = source
             .bytes()
-            .skip(range.start.byte)
+            .skip(range.start.utf8)
             .take(length.clamp(0, max_length))
             .collect();
 
@@ -176,15 +128,15 @@ impl TestNode {
             .replace("\r", "\\r")
             .replace("\n", "\\n");
 
-        // Surround by quotes:
+        // Surround by quotes for use in yaml:
         let contents = {
-            let delimiter = if contents.contains("\"") && !contents.contains("'") {
-                "'"
+            if contents.contains("\"") {
+                let contents = contents.replace("'", "''");
+                format!("'{contents}'")
             } else {
-                "\""
-            };
-            let contents = contents.replace(delimiter, &format!("\\{delimiter}"));
-            format!("{delimiter}{contents}{delimiter}")
+                let contents = contents.replace("\"", "\\\"");
+                format!("\"{contents}\"")
+            }
         };
 
         return Ok(contents);
@@ -197,7 +149,6 @@ impl std::fmt::Display for TestNodeKind {
             TestNodeKind::Rule(kind) => write!(f, "{kind:?} (Rule)"),
             TestNodeKind::Token(kind) => write!(f, "{kind:?} (Token)"),
             TestNodeKind::Trivia(kind) => write!(f, "{kind:?} (Trivia)"),
-            TestNodeKind::Contents => write!(f, "Contents"),
         };
     }
 }

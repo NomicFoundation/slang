@@ -24,97 +24,122 @@ impl VersionedFunctionBody {
         self.0.insert(version.clone(), definition);
     }
 
+    fn is_monomorphic(&self) -> bool {
+        self.0.len() == 1 && self.is_defined_for_all_versions()
+    }
+
     fn is_defined_for_all_versions(&self) -> bool {
         self.0.values().all(|f| f.is_some())
     }
 
-    fn to_function_body(&self, name: &Ident, return_type: TokenStream) -> (String, Ident) {
-        let mut per_version_functions = self.0.iter().filter_map(|(version, value)| {
+    fn invocation_name(&self, name: Ident) -> Ident {
+        if self.is_defined_for_all_versions() {
+            name
+        } else {
+            format_ident!("{name}__sparse_dispatch")
+        }
+    }
+
+    fn generate(&self, name: Ident, kind: Option<Ident>, return_type: TokenStream) -> String {
+        let kind_wrapper = kind.map(|kind| quote! { .with_kind(RuleKind::#kind) });
+
+        if self.is_monomorphic() {
+            let (comment, body) = self.0.first_key_value().unwrap().1.as_ref().unwrap();
+            let function = quote! {
+                #[
+                    // TODO: don't generate if it is inlined.
+                    allow(dead_code)
+                ]
+                #[allow(unused_assignments, unused_parens)]
+                pub(crate) fn #name(&self, stream: &mut Stream) -> #return_type { #body #kind_wrapper }
+            };
+            return format!("{comment}\n{function}");
+        };
+
+        let mut functions = self.0.iter().filter_map(|(version, value)| {
             value.as_ref().map(|(comment, body)| {
                 let version_name = version.to_string().replace(".", "_");
-                let per_version_function_name = format_ident!( "{name}_{version_name}",);
+                let per_version_function_name = format_ident!( "{name}__{version_name}",);
                 let function = quote! {
                     #[
                         // Inlined scanners are not always inlined in codegen:
                         // https://github.com/NomicFoundation/slang/issues/365
-                        allow(dead_code)
+                        allow(dead_code, non_snake_case)
                     ]
-                    fn #per_version_function_name(&self, stream: &mut Stream) -> #return_type { #body }
+                    fn #per_version_function_name(&self, stream: &mut Stream) -> #return_type { #body #kind_wrapper }
                 };
                 format!("{comment}\n{function}")
             })
         }).collect::<Vec<_>>();
 
-        let function_name = if self.is_defined_for_all_versions() {
-            if self.0.len() == 1 {
-                let version = self.0.keys().next().unwrap();
-                let version_name = version.to_string().replace(".", "_");
-                format_ident!("{name}_{version_name}")
-            } else {
-                let dispatch_function_name = format_ident!("dispatch_{name}");
-                let dispatch_function = {
-                    let first_version = self.0.keys().next().unwrap();
-                    let body = self
-                        .0
-                        .iter()
-                        .rev()
-                        .map(|(version, _)| {
-                            let version_name = version.to_string().replace(".", "_");
-                            let body = {
-                                let per_version_function_name =
-                                    format_ident!("{name}_{version_name}");
-                                quote! { self.#per_version_function_name(stream)  }
-                            };
-                            let version_flag =
-                                format_ident!("version_is_equal_to_or_greater_than_{version_name}");
-                            if version == first_version {
-                                quote! { { #body } }
-                            } else {
-                                quote! { if self.#version_flag { #body } }
-                            }
-                        })
-                        .reduce(|a, b| quote! { #a else #b })
-                        .unwrap();
-                    quote! { fn #dispatch_function_name(&self, stream: &mut Stream) -> #return_type { #body } }
-                };
-                per_version_functions.push(dispatch_function.to_string());
-                dispatch_function_name
-            }
+        if self.is_defined_for_all_versions() {
+            let first_version = self.0.keys().next().unwrap();
+            let body = self
+                .0
+                .iter()
+                .rev()
+                .map(|(version, _)| {
+                    let version_name = version.to_string().replace(".", "_");
+                    let body = {
+                        let per_version_function_name = format_ident!("{name}__{version_name}");
+                        quote! { self.#per_version_function_name(stream)  }
+                    };
+                    let version_flag =
+                        format_ident!("version_is_equal_to_or_greater_than_{version_name}");
+                    if version == first_version {
+                        quote! { { #body } }
+                    } else {
+                        quote! { if self.#version_flag { #body } }
+                    }
+                })
+                .reduce(|a, b| quote! { #a else #b })
+                .unwrap();
+            functions.push(
+                quote! {
+                    pub(crate) fn #name(&self, stream: &mut Stream) -> #return_type { #body }
+                }
+                .to_string(),
+            );
         } else {
-            let dispatch_function_name = format_ident!("dispatch_{name}");
-            let dispatch_function = {
-                let first_version = self.0.keys().next().unwrap();
-                let body = self
-                    .0
-                    .iter()
-                    .rev()
-                    .map(|(version, value)| {
-                        let version_name = version.to_string().replace(".", "_");
-                        let body = match value {
-                            Some(_) => {
-                                let per_version_function_name =
-                                    format_ident!("{name}_{version_name}");
-                                quote! { Some(self.#per_version_function_name(stream))  }
-                            }
-                            None => quote! { None },
-                        };
-                        let version_flag =
-                            format_ident!("version_is_equal_to_or_greater_than_{version_name}");
-                        if version == first_version {
-                            quote! { { #body } }
-                        } else {
-                            quote! { if self.#version_flag { #body } }
+            let dispatch_function_name = format_ident!("{name}__sparse_dispatch");
+            let first_version = self.0.keys().next().unwrap();
+            let body = self
+                .0
+                .iter()
+                .rev()
+                .map(|(version, value)| {
+                    let version_name = version.to_string().replace(".", "_");
+                    let body = match value {
+                        Some(_) => {
+                            let per_version_function_name = format_ident!("{name}__{version_name}");
+                            quote! { Some(self.#per_version_function_name(stream))  }
                         }
-                    })
-                    .reduce(|a, b| quote! { #a else #b })
-                    .unwrap();
-                quote! { fn #dispatch_function_name(&self, stream: &mut Stream) -> Option<#return_type> { #body } }
-            };
-            per_version_functions.push(dispatch_function.to_string());
-            dispatch_function_name
+                        None => quote! { None },
+                    };
+                    let version_flag =
+                        format_ident!("version_is_equal_to_or_greater_than_{version_name}");
+                    if version == first_version {
+                        quote! { { #body } }
+                    } else {
+                        quote! { if self.#version_flag { #body } }
+                    }
+                })
+                .reduce(|a, b| quote! { #a else #b })
+                .unwrap();
+            functions.push(
+                quote! {
+                    #[allow(non_snake_case)]
+                    pub(crate) fn #dispatch_function_name(&self, stream: &mut Stream) -> Option<#return_type> { #body }
+                }.to_string());
+            functions.push(quote! {
+                #[inline]
+                pub(crate) fn #name(&self, stream: &mut Stream) -> #return_type {
+                    self.#dispatch_function_name(stream).expect("Validation should have checked that references are valid between versions")
+                }
+            }.to_string());
         };
 
-        (per_version_functions.join("\n\n"), function_name)
+        return functions.join("\n\n");
     }
 }
 
@@ -241,47 +266,11 @@ impl CodeGenerator {
             .scanners
             .iter()
             .map(|(name, scanner)| {
-                let internal_function_name = format_ident!("scan_{name}", name = name.to_snake_case());
-                let (functions, dispatch_function_name) = scanner.to_function_body(&internal_function_name, quote! {bool});
-                if scanner.is_defined_for_all_versions() {
-                    let internal_function = quote! {
-                        #[inline]
-                        #[
-                            // Inlined scanners are not always inlined in codegen:
-                            // https://github.com/NomicFoundation/slang/issues/365
-                            allow(dead_code)
-                        ]
-                        pub(crate) fn #internal_function_name(&self, stream: &mut Stream) -> bool {
-                            self.#dispatch_function_name(stream)
-                        }
-                    };
-                    format!("{functions}\n\n{internal_function}")
-                } else {
-                    let external_function_name = format_ident!("maybe_scan_{name}", name = name.to_snake_case());
-                    let external_function = quote! {
-                        #[inline]
-                        #[
-                            // Inlined scanners are not always inlined in codegen:
-                            // https://github.com/NomicFoundation/slang/issues/365
-                            allow(dead_code)
-                        ]
-                        pub(crate) fn #external_function_name(&self, stream: &mut Stream) -> Option<bool> {
-                            self.#dispatch_function_name(stream)
-                        }
-                    };
-                    let internal_function = quote! {
-                        #[inline]
-                        #[
-                            // Inlined scanners are not always inlined in codegen:
-                            // https://github.com/NomicFoundation/slang/issues/365
-                            allow(dead_code)
-                        ]
-                        pub(crate) fn #internal_function_name(&self, stream: &mut Stream) -> bool {
-                            self.#dispatch_function_name(stream).expect("Validation should have checked that references are valid between versions")
-                        }
-                    };
-                    format!("{functions}\n\n{external_function}\n\n{internal_function}")
-                }
+                scanner.generate(
+                    format_ident!("{name}", name = name.to_snake_case()),
+                    None,
+                    quote! {bool},
+                )
             })
             .collect::<Vec<_>>();
         functions.join("\n\n")
@@ -291,22 +280,15 @@ impl CodeGenerator {
         let invocations = self.scanners.iter()
         .filter(|(name, _)| !self.language.productions[*name].inlined)
         .map(|(name, scanner)| {
-            let production_kind = format_ident!("{name}");
-            let token_kind = format_ident!("{name}");
-            if scanner.is_defined_for_all_versions() {
-                let function_name = format_ident!("scan_{name}", name = name.to_snake_case());
-                quote!{ ProductionKind::#production_kind => call_scanner(self, input, Language::#function_name, TokenKind::#token_kind) }
-            } else {
-                let function_name = format_ident!("maybe_scan_{name}", name = name.to_snake_case());
-                quote!{ ProductionKind::#production_kind => try_call_scanner(self, input, Language::#function_name, TokenKind::#token_kind) }
-            }
+            let kind = format_ident!("{name}");
+            let function_name = scanner.invocation_name(format_ident!("{name}", name = name.to_snake_case()));
+            quote!{ ProductionKind::#kind =>Language::#function_name.scan(self, input, TokenKind::#kind) }
         });
         quote! { #(#invocations),* }
     }
 
     pub fn token_functions(&self) -> TokenStream {
         return quote! {
-            #[inline]
             fn parse_token_with_trivia<F>(
                 &self,
                 stream: &mut Stream,
@@ -316,52 +298,36 @@ impl CodeGenerator {
             where
                 F: Fn(&Self, &mut Stream) -> bool,
             {
-                let leading_trivia = {
-                    let save = stream.position();
-                    match self.parse_leading_trivia(stream) {
-                        Fail { .. } => {
-                            stream.set_position(save);
-                            None
-                        }
-                        Pass { builder, .. } => Some(builder.build()),
-                    }
-                };
+                let mut children = vec![];
 
-                let start = stream.position();
-
-                if !scanner(self, stream) {
-                    return Fail {
-                        error: ParseError::new(start, kind.as_ref()),
-                    };
+                let restore = stream.position();
+                if let ParserResult::Match(r#match) = self.leading_trivia(stream) {
+                    children.extend(r#match.nodes);
+                } else {
+                    stream.set_position(restore);
                 }
 
+                let start = stream.position();
+                if !scanner(self, stream) {
+                    stream.set_position(restore);
+                    return ParserResult::no_match(vec![kind]);
+                }
                 let end = stream.position();
-
-                let trailing_trivia = {
-                    let save = stream.position();
-                    match self.parse_trailing_trivia(stream) {
-                        Fail { .. } => {
-                            stream.set_position(save);
-                            None
-                        }
-                        Pass { builder, .. } => Some(builder.build()),
-                    }
-                };
-
-                let token = cst::Node::token(
+                children.push(cst::Node::token(
                     kind,
-                    Range { start, end },
-                    leading_trivia,
-                    trailing_trivia,
-                );
+                    stream.content(start.utf8..end.utf8)
+                ));
 
-                return Pass {
-                    builder: cst::NodeBuilder::single(token),
-                    error: None,
-                };
+                let restore = stream.position();
+                if let ParserResult::Match(r#match) = self.trailing_trivia(stream) {
+                    children.extend(r#match.nodes);
+                } else {
+                    stream.set_position(restore);
+                }
+
+                return ParserResult::r#match(children, vec![]);
             }
 
-            #[inline]
             fn parse_token<F>(
                 &self,
                 stream: &mut Stream,
@@ -372,26 +338,14 @@ impl CodeGenerator {
                 F: Fn(&Self, &mut Stream) -> bool,
             {
                 let start = stream.position();
-
                 if !scanner(self, stream) {
-                    return Fail {
-                        error: ParseError::new(start, kind.as_ref()),
-                    };
+                    return ParserResult::no_match(vec![kind]);
                 }
-
                 let end = stream.position();
-
-                let token = cst::Node::token(
+                return ParserResult::r#match(vec![cst::Node::token(
                     kind,
-                    Range { start, end },
-                    None,
-                    None,
-                );
-
-                return Pass {
-                    builder: cst::NodeBuilder::single(token),
-                    error: None,
-                };
+                    stream.content(start.utf8..end.utf8)
+                )], vec![]);
             }
         };
     }
@@ -401,57 +355,31 @@ impl CodeGenerator {
             .parsers
             .iter()
             .map(|(name, parser)| {
-                let kind = format_ident!("{name}");
-                let internal_function_name = format_ident!("parse_{name}", name = name.to_snake_case());
-                let (functions, dispatch_function_name) = parser.to_function_body(&internal_function_name, quote! {ParserResult});
-
-                let kind_wrapper = if  self.language.productions[name].inlined {
-                    None
-                } else {
-                    Some(quote! { .with_kind(RuleKind::#kind) })
-                };
-
-                if parser.is_defined_for_all_versions() {
-                    let internal_function = quote! {
-                        #[inline]
-                        pub(crate) fn #internal_function_name(&self, stream: &mut Stream) -> ParserResult {
-                            self.#dispatch_function_name(stream) #kind_wrapper
-                        }
-                    };
-                    format!("{functions}\n\n{internal_function}")
-                } else {
-                    let external_function_name = format_ident!("maybe_parse_{name}", name = name.to_snake_case());
-                    let external_function = quote! {
-                        pub(crate) fn #external_function_name(&self, stream: &mut Stream) -> Option<ParserResult> {
-                            self.#dispatch_function_name(stream).map(|body| body #kind_wrapper)
-                        }
-                    };
-                    let internal_function = quote! {
-                        #[inline]
-                        pub(crate) fn #internal_function_name(&self, stream: &mut Stream) -> ParserResult {
-                            self.#external_function_name(stream).expect("Validation should have checked that references are valid between versions")
-                        }
-                    };
-                    format!("{functions}\n\n{external_function}\n\n{internal_function}")
-                }
+                parser.generate(
+                    format_ident!("{name}", name = name.to_snake_case()),
+                    if self.language.productions[name].inlined {
+                        None
+                    } else {
+                        Some(format_ident!("{name}"))
+                    },
+                    quote! {ParserResult},
+                )
             })
             .collect::<Vec<_>>();
         functions.join("\n\n")
     }
 
     pub fn parser_invocations(&self) -> TokenStream {
-        let invocations = self.parsers.iter()
-        .filter(|(name, _)| !self.language.productions[*name].inlined)
-        .map(|(name, parser)| {
-            let production_kind = format_ident!("{name}");
-            if parser.is_defined_for_all_versions() {
-                let function_name = format_ident!("parse_{name}", name = name.to_snake_case());
-                quote!{ ProductionKind::#production_kind => call_parser(self, input, Language::#function_name) }
-            } else {
-                let function_name = format_ident!("maybe_parse_{name}", name = name.to_snake_case());
-                quote!{ ProductionKind::#production_kind => try_call_parser(self, input, Language::#function_name) }
-            }
-        });
+        let invocations = self
+            .parsers
+            .iter()
+            .filter(|(name, _)| !self.language.productions[*name].inlined)
+            .map(|(name, parser)| {
+                let kind = format_ident!("{name}");
+                let function_name =
+                    parser.invocation_name(format_ident!("{name}", name = name.to_snake_case()));
+                quote! { ProductionKind::#kind => Language::#function_name.parse(self, input) }
+            });
         quote! { #(#invocations),* }
     }
 
@@ -462,6 +390,7 @@ impl CodeGenerator {
             .map(|(name, _)| format_ident!("{name}"));
         quote! {
             pub enum TokenKind {
+                SKIPPED,
                 #(#kinds),*
             }
         }
@@ -511,11 +440,75 @@ impl CodeGenerator {
             )
             .unwrap();
 
-        let scanning_macros = codegen
-            .read_file(
+        codegen
+            .copy_file(
                 &codegen
                     .repo_root
-                    .join("crates/codegen/syntax_templates/src/shared/macros.rs"),
+                    .join("crates/codegen/syntax_templates/src/shared/scanner_macros.rs"),
+                &output_dir.join("scanner_macros.rs"),
+            )
+            .unwrap();
+
+        codegen
+            .copy_file(
+                &codegen
+                    .repo_root
+                    .join("crates/codegen/syntax_templates/src/shared/parser_helpers.rs"),
+                &output_dir.join("parser_helpers.rs"),
+            )
+            .unwrap();
+
+        codegen
+            .copy_file(
+                &codegen
+                    .repo_root
+                    .join("crates/codegen/syntax_templates/src/shared/parse_error.rs"),
+                &output_dir.join("parse_error.rs"),
+            )
+            .unwrap();
+
+        codegen
+            .copy_file(
+                &codegen
+                    .repo_root
+                    .join("crates/codegen/syntax_templates/src/shared/parser_function.rs"),
+                &output_dir.join("parser_function.rs"),
+            )
+            .unwrap();
+
+        codegen
+            .copy_file(
+                &codegen
+                    .repo_root
+                    .join("crates/codegen/syntax_templates/src/shared/parser_result.rs"),
+                &output_dir.join("parser_result.rs"),
+            )
+            .unwrap();
+
+        codegen
+            .copy_file(
+                &codegen
+                    .repo_root
+                    .join("crates/codegen/syntax_templates/src/shared/scanner_function.rs"),
+                &output_dir.join("scanner_function.rs"),
+            )
+            .unwrap();
+
+        codegen
+            .copy_file(
+                &codegen
+                    .repo_root
+                    .join("crates/codegen/syntax_templates/src/shared/stream.rs"),
+                &output_dir.join("stream.rs"),
+            )
+            .unwrap();
+
+        codegen
+            .copy_file(
+                &codegen
+                    .repo_root
+                    .join("crates/codegen/syntax_templates/src/shared/text_index.rs"),
+                &output_dir.join("text_index.rs"),
             )
             .unwrap();
 
@@ -523,10 +516,9 @@ impl CodeGenerator {
             // Use `format!` here because the content contains comments, that `quote!` throws away.
             let content = format!(
                 "
-                use super::language::*;
+                use super::language::Language;
+                use super::stream::*;
 
-                {scanning_macros}
-                    
                 impl Language {{
                     {scanner_functions}
                 }}
@@ -541,20 +533,26 @@ impl CodeGenerator {
 
         {
             // Use `format!` here because the content contains comments, that `quote!` throws away.
+            // `token_functions` is copied in because it needs to reference trivia parsers from withing the `Language` instance.
             let content = format!(
                 "
-                use super::language::*;
-                use super::language::ParserResult::*;
+                use super::cst;
+                use super::kinds::*;
+                use super::language::Language;
+                use super::parser_helpers::*;
+                use super::parser_result::*;
+                use super::stream::*;
 
-                {scanning_macros}
-                    
                 impl Language {{
+                    
                     {token_functions}
+
                     {parser_functions}
+
                 }}
                 ",
                 token_functions = self.token_functions(),
-                parser_functions = self.parser_functions(),
+                parser_functions = self.parser_functions()
             );
 
             codegen

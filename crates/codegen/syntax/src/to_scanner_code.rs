@@ -20,8 +20,7 @@ impl<'context> CombinatorNode<'context> {
                 ProductionDefinition::Scanner { .. } => {
                     let name = &tree.production.name;
                     let snake_case = name.to_snake_case();
-                    let scanner_function_name = format_ident!("scan_{snake_case}");
-
+                    let scanner_function_name = format_ident!("{snake_case}");
                     quote! { self.#scanner_function_name(stream) }
                 }
                 ProductionDefinition::TriviaParser { .. }
@@ -65,11 +64,6 @@ impl<'context> CombinatorNode<'context> {
             Self::OneOrMore { expr, .. } => {
                 let expr = expr.to_scanner_code(code);
                 quote! { scan_one_or_more!(stream, #expr) }
-            }
-
-            Self::Repeated { expr, min, max, .. } => {
-                let expr = expr.to_scanner_code(code);
-                quote! { scan_repeated!(stream, #expr, #min, #max) }
             }
 
             /**********************************************************************

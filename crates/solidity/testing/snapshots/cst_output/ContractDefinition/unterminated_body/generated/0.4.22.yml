@@ -13,4 +13,10 @@ Errors: # 1 total
        │                  ╰─ Error occurred here.
     ───╯
 
-Tree: null
+Tree:
+  - ContractDefinition (Rule): # 0..17 "contract Sample {"
+      - ContractKeyword (Token): "contract" # 0..8
+      - Identifier (Token): "Sample" # 9..15
+      - OpenBrace (Token): "{" # 16..17
+      - ContractBodyElements (Rule): [] # 17..17
+      - SKIPPED (Token): [] # 17..17

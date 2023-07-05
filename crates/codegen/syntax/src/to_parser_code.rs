@@ -1,225 +1,60 @@
 use codegen_schema::types::{OperatorModel, ProductionDefinition};
 use inflector::Inflector;
-use proc_macro2::{Ident, TokenStream};
+use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
 
-use super::{code_generator::CodeGenerator, combinator_node::CombinatorNode};
+use super::{
+    code_generator::CodeGenerator,
+    combinator_node::{CombinatorNode, PrecedenceRuleOperator},
+    combinator_tree::CombinatorTree,
+};
 
 impl<'context> CombinatorNode<'context> {
-    pub fn to_parser_code(&self, is_trivia: bool, code: &mut CodeGenerator) -> TokenStream {
+    pub fn to_parser_code(
+        &self,
+        code_generator: &mut CodeGenerator,
+        is_trivia: bool,
+    ) -> TokenStream {
         match self {
             /**********************************************************************
              * Simple Reference
              */
-            Self::Reference { tree } => {
-                let name = &tree.production.name;
-                let snake_case = name.to_snake_case();
-
-                match tree.production.definition {
-                    ProductionDefinition::Scanner { .. } => {
-                        let kind = format_ident!("{name}");
-                        let function_name = format_ident!("scan_{snake_case}");
-                        let scanner = quote! { Self::#function_name };
-                        scanner_code_to_parser_code(scanner, kind, !is_trivia)
-                    }
-                    ProductionDefinition::TriviaParser { .. } => {
-                        let function_name = format_ident!("parse_{snake_case}");
-                        quote! { self.#function_name(stream) }
-                    }
-                    ProductionDefinition::Parser { .. }
-                    | ProductionDefinition::PrecedenceParser { .. } => {
-                        if !is_trivia {
-                            let function_name = format_ident!("parse_{snake_case}");
-                            quote! { self.#function_name(stream) }
-                        } else {
-                            unreachable!(
-                                "Trivia productions can only reference trivia or token productions"
-                            )
-                        }
-                    }
-                }
-            }
+            Self::Reference { tree } => reference_to_parser_code(tree, is_trivia),
 
             /**********************************************************************
              * Sequence and Choice
              */
             Self::Sequence { elements, name } => {
-                let (vars, elements) = elements
+                let parsers = elements
                     .iter()
-                    .enumerate()
-                    .map(|(index, element)| {
-                        (
-                            format_ident!("result_{index}"),
-                            element.to_parser_code(is_trivia, code),
-                        )
-                    })
-                    .unzip::<_, _, Vec<_>, Vec<_>>();
-
-                let result = quote! {
-                    loop {
-                        let mut furthest_error = None;
-
-                        #(
-                            let #vars = match #elements{
-                                Pass{ builder, error } => { furthest_error = error.map(|error| error.maybe_merge_with(furthest_error)) ; builder }
-                                Fail{ error } => break Fail { error: error.maybe_merge_with(furthest_error) }
-                            };
-                        )*
-
-                        break Pass{ builder: cst::NodeBuilder::multiple(vec![#(#vars),*]), error: furthest_error }
-                    }
-                };
-
-                try_wrap_name(result, name, code)
+                    .map(|element| element.to_parser_code(code_generator, is_trivia))
+                    .collect();
+                sequence_to_parser_code(code_generator, name, parsers)
             }
 
             Self::Choice { elements, name } => {
-                let mut elements = elements
+                let parsers = elements
                     .iter()
-                    .map(|element| element.to_parser_code(is_trivia, code));
-                let first_element = elements.next().unwrap();
-
-                let result = quote! {
-                    loop {
-                        let start_position = stream.position();
-                        let mut furthest_error;
-                        match #first_element {
-                            Fail{ error } => furthest_error = error,
-                            pass => break pass,
-                        }
-                        #(
-                            stream.set_position(start_position);
-                            match #elements {
-                                Fail{ error } => furthest_error.merge_with(error),
-                                pass => break pass,
-                            }
-                        )*
-                        break Fail{ error: furthest_error };
-                    }
-                };
-
-                try_wrap_name(result, name, code)
+                    .map(|element| element.to_parser_code(code_generator, is_trivia))
+                    .collect();
+                choice_to_parser_code(code_generator, name, parsers)
             }
 
             /**********************************************************************
              * Numeric qualification
              */
             Self::Optional { expr } => {
-                let expr = expr.to_parser_code(is_trivia, code);
-
-                quote! {
-                    {
-                        let start_position = stream.position();
-                        match #expr {
-                            Fail{ error } => {
-                                stream.set_position(start_position);
-                                Pass{ builder: cst::NodeBuilder::empty(start_position), error: Some(error) }
-                            }
-                            pass => pass,
-                        }
-                    }
-                }
+                option_to_parser_code(expr.to_parser_code(code_generator, is_trivia))
             }
 
             Self::ZeroOrMore { expr, name } => {
-                let expr = expr.to_parser_code(is_trivia, code);
-
-                let result = quote! {
-                    {
-                        let mut result = Vec::new();
-                        loop {
-                            let start_position = stream.position();
-                            match #expr {
-                                Fail{ error } => {
-                                    stream.set_position(start_position);
-                                    break Pass {
-                                        builder: if result.is_empty() {
-                                            cst::NodeBuilder::empty(start_position)
-                                        } else {
-                                            cst::NodeBuilder::multiple(result)
-                                        },
-                                        error: Some(error),
-                                    }
-                                }
-                                Pass{ builder, .. } => result.push(builder),
-                            }
-                        }
-                    }
-                };
-
-                try_wrap_name(result, name, code)
+                let parser = expr.to_parser_code(code_generator, is_trivia);
+                zero_or_more_to_parser_code(code_generator, name, parser)
             }
 
             Self::OneOrMore { expr, name } => {
-                let expr = expr.to_parser_code(is_trivia, code);
-
-                let result = quote! {
-                    {
-                        let mut result = Vec::new();
-                        loop {
-                            let start_position = stream.position();
-                            match #expr {
-                                Fail{ error } => {
-                                    if result.is_empty() {
-                                        break Fail { error }
-                                    }
-                                    stream.set_position(start_position);
-                                    break Pass{ builder: cst::NodeBuilder::multiple(result), error: Some(error) }
-                                }
-                                Pass{ builder, .. } => result.push(builder),
-                            }
-                        }
-                    }
-                };
-
-                try_wrap_name(result, name, code)
-            }
-
-            Self::Repeated {
-                expr,
-                min,
-                max,
-                name,
-            } => {
-                let expr = expr.to_parser_code(is_trivia, code);
-
-                let result = quote! {
-                    {
-                        let mut result = Vec::new();
-                        loop {
-                            let start_position = stream.position();
-                            match #expr {
-                                Fail{ error } => {
-                                    if result.len() < #min {
-                                        break error
-                                    }
-                                    stream.set_position(start_position);
-                                    break Pass {
-                                        builder: builder: if result.is_empty() {
-                                            cst::NodeBuilder::empty(start_position)
-                                        } else {
-                                            cst::NodeBuilder::multiple(result)
-                                        },
-                                        error: Some(error),
-                                    }
-                                }
-                                Pass{ builder, .. } => result.push(builder),
-                            }
-                            if result.len() == #max {
-                                break Pass {
-                                    builder: if result.is_empty() {
-                                        cst::NodeBuilder::empty(start_position)
-                                    } else {
-                                        cst::NodeBuilder::multiple(result)
-                                    },
-                                    error: None,
-                                }
-                            }
-                        }
-                    }
-                };
-
-                try_wrap_name(result, name, code)
+                let parser = expr.to_parser_code(code_generator, is_trivia);
+                one_or_more_to_parser_code(code_generator, name, parser)
             }
 
             /**********************************************************************
@@ -230,96 +65,54 @@ impl<'context> CombinatorNode<'context> {
                 expr,
                 close,
                 name,
-            } => {
-                let open = scanner_production_to_parser_code(open, is_trivia);
-                let expr = expr.to_parser_code(is_trivia, code);
-                let close = scanner_production_to_parser_code(close, is_trivia);
-
-                let result = quote! {
-                    {
-                        match #open {
-                            err@Fail{ .. } => err,
-                            Pass{ builder: open_node, .. } => {
-                                match #expr {
-                                    err@Fail{ .. } => err,
-                                    Pass{ builder: expr_node, error: expr_error } => {
-                                        match #close {
-                                            Fail{ error } => {
-                                                Fail { error: error.maybe_merge_with(expr_error) }
-                                            },
-                                            Pass{ builder: close_node, .. } => {
-                                                Pass{ builder: cst::NodeBuilder::multiple(vec![open_node, expr_node, close_node]), error: None }
-                                           }
-                                        }
-                                    }
-                                }
-                           }
-                        }
-                    }
-                };
-
-                try_wrap_name(result, name, code)
+            } => Self::Sequence {
+                name: name.clone(),
+                elements: vec![
+                    open.context.alloc_node(Self::Reference { tree: open }),
+                    expr,
+                    close.context.alloc_node(Self::Reference { tree: close }),
+                ],
             }
+            .to_parser_code(code_generator, is_trivia),
 
             Self::SeparatedBy {
                 expr,
                 separator,
                 name,
-            } => {
-                let expr = expr.to_parser_code(is_trivia, code);
-                let separator = scanner_production_to_parser_code(separator, is_trivia);
-
-                let result = quote! {
-                    {
-                        let mut result = Vec::new();
-                        loop {
-                            match #expr {
-                                err@Fail{ .. } => break err,
-                                Pass{ builder, .. } => {
-                                    result.push(builder);
-                                    let save = stream.position();
-                                    match #separator {
-                                        Fail{ error } => {
-                                            stream.set_position(save);
-                                            break Pass{ builder: cst::NodeBuilder::multiple(result), error: Some(error) }
-                                        }
-                                        Pass{ builder, .. } => result.push(builder),
-                                    }
-                                }
-                            }
-                        }
-                    }
-                };
-
-                try_wrap_name(result, name, code)
+            } => Self::Sequence {
+                name: name.clone(),
+                elements: vec![
+                    expr,
+                    separator.context.alloc_node(Self::ZeroOrMore {
+                        name: None,
+                        expr: separator.context.alloc_node(Self::Sequence {
+                            name: None,
+                            elements: vec![
+                                separator
+                                    .context
+                                    .alloc_node(Self::Reference { tree: separator }),
+                                expr,
+                            ],
+                        }),
+                    }),
+                ],
             }
+            .to_parser_code(code_generator, is_trivia),
 
             Self::TerminatedBy {
                 expr,
                 terminator,
                 name,
-            } => {
-                let expr = expr.to_parser_code(is_trivia, code);
-                let terminator = scanner_production_to_parser_code(terminator, is_trivia);
-
-                let result = quote! {
-                    {
-                        match #expr {
-                            err@Fail{ .. } => err,
-                            Pass{ builder: expr_node, error: expr_error } => {
-                                match #terminator {
-                                    Fail{ error } => Fail { error: error.maybe_merge_with(expr_error) },
-                                    Pass{ builder: terminator_node, .. } => {
-                                        Pass{ builder: cst::NodeBuilder::multiple(vec![expr_node, terminator_node]), error: None }
-                                   }
-                                }
-                            }
-                        }
-                    }
-                };
-
-                try_wrap_name(result, name, code)
+            } => Self::Sequence {
+                name: name.clone(),
+                elements: vec![
+                    expr,
+                    terminator
+                        .context
+                        .alloc_node(Self::Reference { tree: terminator }),
+                ],
             }
+            .to_parser_code(code_generator, is_trivia),
 
             /**********************************************************************
              * Precedence parsing
@@ -333,231 +126,7 @@ impl<'context> CombinatorNode<'context> {
                     unreachable!("Precedence expressions cannot be used in trivia productions")
                 }
 
-                let mut prefix_operators = Vec::new();
-                let mut postfix_operators = Vec::new();
-                let mut binary_operators = Vec::new();
-                for (index, operator) in operators.iter().enumerate() {
-                    let binding_power = (1 + index * 2) as u8;
-                    let rule_kind = code.add_rule_kind(operator.name.clone());
-                    match operator.model {
-                        OperatorModel::BinaryLeftAssociative => {
-                            let operator_code = operator.operator.to_parser_code(is_trivia, code);
-                            binary_operators.push(quote!{
-                                match #operator_code {
-                                    Pass{ builder, .. } => Ok(Pratt::Operator {
-                                        builder, kind: RuleKind::#rule_kind, left_binding_power: #binding_power, right_binding_power: #binding_power + 1
-                                    }),
-                                    Fail{ error } => Err(error)
-                                }
-                             });
-                        }
-                        OperatorModel::BinaryRightAssociative => {
-                            let operator_code = operator.operator.to_parser_code(is_trivia, code);
-                            binary_operators.push(quote!{
-                                match #operator_code {
-                                    Pass{ builder, .. } => Ok(Pratt::Operator {
-                                        builder, kind: RuleKind::#rule_kind, left_binding_power: #binding_power + 1, right_binding_power: #binding_power
-                                    }),
-                                    Fail{ error } => Err(error)
-                                }
-                             });
-                        }
-                        OperatorModel::UnaryPrefix => {
-                            let operator_code = operator.operator.to_parser_code(is_trivia, code);
-                            prefix_operators.push(quote!{
-                                match #operator_code {
-                                    Pass{ builder, .. } => Ok(Pratt::Operator {
-                                        builder, kind: RuleKind::#rule_kind, left_binding_power: 255, right_binding_power: #binding_power
-                                    }),
-                                    Fail{ error } => Err(error)
-                                }
-                            });
-                        }
-                        OperatorModel::UnaryPostfix => {
-                            let operator_code = operator.operator.to_parser_code(is_trivia, code);
-                            postfix_operators.push(quote!{
-                                match #operator_code {
-                                    Pass{ builder, .. } => Ok(Pratt::Operator {
-                                        builder, kind: RuleKind::#rule_kind, left_binding_power: #binding_power, right_binding_power: 255
-                                    }),
-                                    Fail{ error } => Err(error)
-                                }
-                             });
-                        }
-                    }
-                }
-
-                fn maybe_choice(mut elements: Vec<TokenStream>) -> Option<TokenStream> {
-                    if elements.is_empty() {
-                        None
-                    } else if elements.len() == 1 {
-                        elements.pop()
-                    } else {
-                        let mut elements = elements.into_iter();
-                        let first_element = elements.next().unwrap();
-                        Some(quote! {
-                            loop {
-                                let start_position = stream.position();
-                                let mut furthest_error;
-                                match #first_element {
-                                    Err(error) => furthest_error = error,
-                                    ok => break ok,
-                                }
-                                #(
-                                    stream.set_position(start_position);
-                                    match { #elements } {
-                                        Err(error) => furthest_error.merge_with(error),
-                                        ok => break ok,
-                                    }
-                                )*
-                                break Err(furthest_error);
-                            }
-                        })
-                    }
-                }
-
-                let binary_operators = maybe_choice(binary_operators)
-                    .map(|binary_operators| {
-                        quote! {
-                            let start_position = stream.position();
-                            match #binary_operators {
-                                Err(_) => {
-                                    stream.set_position(start_position);
-                                    break None
-                                }
-                                Ok(operator) => elements.push(operator),
-                            }
-                        }
-                    })
-                    .unwrap_or_else(|| {
-                        quote! {
-                            break None
-                        }
-                    });
-
-                let prefix_operators = maybe_choice(prefix_operators).map(|prefix_operators| {
-                    quote! {
-                        loop {
-                            let start_position = stream.position();
-                            match #prefix_operators {
-                                Err(_) => {
-                                    stream.set_position(start_position);
-                                    break;
-                                }
-                                Ok(operator) => elements.push(operator),
-                            }
-                        }
-                    }
-                });
-
-                let postfix_operators = maybe_choice(postfix_operators).map(|postfix_operators| {
-                    quote! {
-                        loop {
-                            let start_position = stream.position();
-                            match #postfix_operators {
-                                Err(_) => {
-                                    stream.set_position(start_position);
-                                    break;
-                                }
-                                Ok(operator) => elements.push(operator),
-                            }
-                        }
-                    }
-                });
-
-                let primary_expression = {
-                    let primary_expression = primary_expression.to_parser_code(is_trivia, code);
-                    quote! {
-                        match #primary_expression {
-                            Fail{ error } => break Some(error),
-                            Pass{ builder, .. } => elements.push(Pratt::Builder(builder)),
-                        }
-                    }
-                };
-
-                quote! {
-                    {
-                        enum Pratt {
-                            Operator {
-                                kind: RuleKind,
-                                builder: cst::NodeBuilder,
-                                left_binding_power: u8,
-                                right_binding_power: u8,
-                            },
-                            Builder(cst::NodeBuilder),
-                        }
-                        let mut elements = Vec::new();
-                        if let Some(error) = loop {
-                            #prefix_operators
-                            #primary_expression
-                            #postfix_operators
-                            #binary_operators
-                        } {
-                            Fail{ error }
-                        } else {
-                            let mut i = 0;
-                            while elements.len() > 1 {
-                                if let Pratt::Operator { right_binding_power, left_binding_power, .. } = &elements[i] {
-                                    let next_left_binding_power = if elements.len() == i + 1 {
-                                        0
-                                    } else if let Pratt::Operator { left_binding_power, .. } = &elements[i + 1] {
-                                        *left_binding_power
-                                    } else if elements.len() == i + 2 {
-                                        0
-                                    } else if let Pratt::Operator { left_binding_power, .. } = &elements[i + 2] {
-                                        *left_binding_power
-                                    } else {
-                                        0
-                                    };
-                                    if *right_binding_power <= next_left_binding_power {
-                                        i += 1;
-                                        continue;
-                                    }
-                                    if *right_binding_power == 255 {
-                                        let left = elements.remove(i - 1);
-                                        let op = elements.remove(i - 1);
-                                        if let (Pratt::Builder(left), Pratt::Operator { builder: op, kind, .. }) = (left, op) {
-                                            let builder = cst::NodeBuilder::multiple(vec![left, op]).with_kind(kind);
-                                            elements.insert(i - 1, Pratt::Builder(builder));
-                                            i = i.saturating_sub(2);
-                                        } else {
-                                            unreachable!()
-                                        }
-                                    } else  if *left_binding_power == 255 {
-                                        let op = elements.remove(i);
-                                        let right = elements.remove(i);
-                                        if let (Pratt::Operator { builder: op, kind, .. }, Pratt::Builder(right)) = (op, right) {
-                                            let builder = cst::NodeBuilder::multiple(vec![op, right]).with_kind(kind);
-                                            elements.insert(i, Pratt::Builder(builder));
-                                            i = i.saturating_sub(1);
-                                        } else {
-                                            unreachable!()
-                                        }
-                                    } else {
-                                        let left = elements.remove(i - 1);
-                                        let op = elements.remove(i - 1);
-                                        let right = elements.remove(i - 1);
-                                        if let (Pratt::Builder(left), Pratt::Operator { builder: op, kind, .. }, Pratt::Builder(right)) = (left, op, right) {
-                                            let builder = cst::NodeBuilder::multiple(vec![left, op, right]).with_kind(kind);
-                                            elements.insert(i - 1, Pratt::Builder(builder));
-                                            i = i.saturating_sub(2);
-                                        } else {
-                                            unreachable!()
-                                        }
-                                    }
-                                } else {
-                                    i += 1;
-                                }
-                            }
-
-                            if let Pratt::Builder(builder) = elements.pop().unwrap() {
-                                Pass{ builder, error: None }
-                            } else {
-                                unreachable!()
-                            }
-                        }
-                    }
-                }
+                precedence_expression_to_parser_code(code_generator, primary_expression, operators)
             }
 
             /**********************************************************************
@@ -580,51 +149,301 @@ impl<'context> CombinatorNode<'context> {
     }
 }
 
-fn try_wrap_name(
-    result: TokenStream,
-    name: &Option<String>,
-    code: &mut CodeGenerator,
-) -> TokenStream {
-    if let Some(name) = name {
+fn kind_wrapper(code: &mut CodeGenerator, name: Option<String>) -> Option<TokenStream> {
+    name.clone().map(|name| {
         let kind = code.add_rule_kind(name.to_owned());
-
-        return quote! {
-            #result.with_kind(RuleKind::#kind)
-        };
-    } else {
-        return result;
-    }
+        quote! { .with_kind(RuleKind::#kind) }
+    })
 }
 
-fn scanner_production_to_parser_code(
-    tree: &&crate::combinator_tree::CombinatorTree,
-    is_trivia: bool,
-) -> TokenStream {
+fn reference_to_parser_code(tree: &CombinatorTree, is_trivia: bool) -> TokenStream {
     let name = &tree.production.name;
-    let snake_case = name.to_snake_case();
+    let function_name = format_ident!("{snake_case}", snake_case = name.to_snake_case());
 
-    if let ProductionDefinition::Scanner { .. } = tree.production.definition {
-        let kind = format_ident!("{name}");
-        let function_name = format_ident!("scan_{snake_case}");
-        let scanner = quote! { Self::#function_name };
-        scanner_code_to_parser_code(scanner, kind, !is_trivia)
-    } else {
-        unreachable!("This reference should be to a scanner")
+    match tree.production.definition {
+        ProductionDefinition::Scanner { .. } => {
+            let kind = format_ident!("{name}");
+            if is_trivia {
+                quote! {
+                    self.parse_token(stream, &Self::#function_name, TokenKind::#kind)
+                }
+            } else {
+                quote! {
+                    self.parse_token_with_trivia(stream, &Self::#function_name, TokenKind::#kind)
+                }
+            }
+        }
+        ProductionDefinition::TriviaParser { .. } => {
+            quote! { self.#function_name(stream) }
+        }
+        ProductionDefinition::Parser { .. } | ProductionDefinition::PrecedenceParser { .. } => {
+            if !is_trivia {
+                quote! { self.#function_name(stream) }
+            } else {
+                unreachable!("Trivia productions can only reference trivia or token productions")
+            }
+        }
     }
 }
 
-fn scanner_code_to_parser_code(
-    scanner: TokenStream,
-    kind: Ident,
-    with_trivia: bool,
+fn sequence_to_parser_code(
+    code: &mut CodeGenerator,
+    name: &Option<String>,
+    mut parsers: Vec<TokenStream>,
 ) -> TokenStream {
-    if with_trivia {
-        quote! {
-            self.parse_token_with_trivia(stream, #scanner, TokenKind::#kind)
-        }
+    let kind_wrapper = kind_wrapper(code, name.clone());
+    if parsers.len() == 1 {
+        let parser = &parsers[0];
+        quote! { #parser #kind_wrapper }
     } else {
+        let last_parser = parsers.pop().unwrap();
         quote! {
-            self.parse_token(stream, #scanner, TokenKind::#kind)
+            {
+                let mut running_result = ParserResult::r#match(vec![], vec![]);
+                loop {
+                    #(
+                        if !running_result.incorporate_sequence_result(#parsers) {
+                            break;
+                        }
+                    )*
+                    running_result.incorporate_sequence_result(#last_parser);
+                    break;
+                }
+                running_result #kind_wrapper
+            }
+        }
+    }
+}
+
+fn choice_to_parser_code(
+    code: &mut CodeGenerator,
+    name: &Option<String>,
+    mut parsers: Vec<TokenStream>,
+) -> TokenStream {
+    let kind_wrapper = kind_wrapper(code, name.clone());
+    let last_parser = parsers.pop().unwrap();
+    quote! {
+        {
+            let mut running_result = ParserResult::no_match(vec![]);
+            let start_position = stream.position();
+            loop {
+                #(
+                    if running_result.incorporate_choice_result(#parsers) {
+                        break;
+                    }
+                    stream.set_position(start_position);
+                )*
+                running_result.incorporate_choice_result(#last_parser);
+                break;
+            }
+            running_result #kind_wrapper
+        }
+    }
+}
+
+fn option_to_parser_code(parser: TokenStream) -> TokenStream {
+    quote! {
+        transform_option_result(#parser)
+    }
+}
+
+fn zero_or_more_to_parser_code(
+    code_generator: &mut CodeGenerator,
+    name: &Option<String>,
+    parser: TokenStream,
+) -> TokenStream {
+    let kind_wrapper = kind_wrapper(code_generator, name.clone());
+    quote! {
+        {
+            let mut running_result = ParserResult::r#match(vec![], vec![]);
+            while running_result.incorporate_zero_or_more_result(#parser) {}
+            running_result #kind_wrapper
+        }
+    }
+}
+
+fn one_or_more_to_parser_code(
+    code_generator: &mut CodeGenerator,
+    name: &Option<String>,
+    parser: TokenStream,
+) -> TokenStream {
+    let kind_wrapper = kind_wrapper(code_generator, name.clone());
+    quote! {
+        {
+            let mut running_result = ParserResult::r#match(vec![], vec![]);
+            while running_result.incorporate_one_or_more_result(#parser) {}
+            running_result #kind_wrapper
+        }
+    }
+}
+
+fn precedence_expression_to_parser_code(
+    code: &mut CodeGenerator,
+    primary_expression: &&CombinatorNode,
+    operators: &Vec<PrecedenceRuleOperator>,
+) -> TokenStream {
+    let mut prefix_operator_parsers = Vec::new();
+    let mut postfix_operator_parsers = Vec::new();
+    let mut binary_operator_parsers = Vec::new();
+    let mut binding_power = 1u8;
+
+    for operator in operators.iter() {
+        let rule_kind = code.add_rule_kind(operator.name.clone());
+        let operator_code = operator.operator.to_parser_code(code, false);
+
+        match operator.model {
+                OperatorModel::BinaryLeftAssociative => binary_operator_parsers.push(
+                    quote! { #operator_code.to_pratt_element_operator(RuleKind::#rule_kind, #binding_power, #binding_power + 1) }
+                ),
+                OperatorModel::BinaryRightAssociative => binary_operator_parsers.push(
+                    quote! { #operator_code.to_pratt_element_operator(RuleKind::#rule_kind, #binding_power + 1, #binding_power) }
+                ),
+                OperatorModel::UnaryPrefix => prefix_operator_parsers.push(
+                    quote! { #operator_code.to_pratt_element_operator(RuleKind::#rule_kind, 255, #binding_power) }
+                ),
+                OperatorModel::UnaryPostfix => postfix_operator_parsers.push(
+                    quote! { #operator_code.to_pratt_element_operator(RuleKind::#rule_kind, #binding_power, 255) }
+                )
+            }
+
+        binding_power += 2;
+    }
+
+    fn combine_operator_parsers(mut parsers: Vec<TokenStream>) -> Option<TokenStream> {
+        if parsers.is_empty() {
+            None
+        } else if parsers.len() == 1 {
+            parsers.pop()
+        } else {
+            Some(quote! {
+                loop {
+                    let start_position = stream.position();
+                    #(
+                        stream.set_position(start_position);
+                        let next_result = #parsers;
+                        match next_result {
+                            ParserResult::PrattOperatorMatch(_) =>
+                                break next_result,
+                            ParserResult::Match(_) =>
+                                unreachable!("ParserResult::Match isn't constructed when parsing operators"),
+                            ParserResult::IncompleteMatch(_) |
+                            ParserResult::NoMatch(_) =>
+                                {}
+                        }
+                    )*
+                    break ParserResult::no_match(vec![]);
+                }
+            })
+        }
+    }
+
+    let add_zero_or_more_prefix_operators_to_elements_or_break =
+        combine_operator_parsers(prefix_operator_parsers).map(|combined_operator_parser| {
+            quote! {
+                let result = loop {
+                    let result = #combined_operator_parser;
+                    match result {
+                        ParserResult::PrattOperatorMatch(_) =>
+                            elements.push(result),
+                        // ParserResult::Match is handled in the combine_operator_parsers function
+                        _ =>
+                            break result,
+                    }
+                };
+                match result {
+                    ParserResult::NoMatch(_) => {}
+                    _ => { break result; }
+                }
+            }
+        });
+
+    let add_a_primary_expression_to_elements_or_break = {
+        let parser = primary_expression.to_parser_code(code, false);
+        quote! {
+            {
+                let result = #parser;
+                if result.is_match() {
+                    elements.push(result);
+                } else {
+                    break result;
+                }
+            }
+        }
+    };
+
+    let add_zero_or_more_postfix_operators_to_elements_or_break = combine_operator_parsers(
+        postfix_operator_parsers,
+    )
+    .map(|combined_operator_parser| -> TokenStream {
+        quote! {
+            let result = loop {
+                let result = #combined_operator_parser;
+                match result {
+                    ParserResult::PrattOperatorMatch(_) =>
+                        elements.push(result),
+                    // ParserResult::Match is handled in the combine_operator_parsers function
+                    _ =>
+                        break result,
+                }
+            };
+            match result {
+                ParserResult::NoMatch(_) => {}
+                _ => { break result; }
+            }
+        }
+    });
+
+    let add_a_binary_operator_to_elements_or_break =
+        combine_operator_parsers(binary_operator_parsers)
+            .map(|combined_operator_parser| {
+                quote! {
+                    let result = #combined_operator_parser;
+                    match result {
+                        ParserResult::PrattOperatorMatch(_) =>
+                            elements.push(result),
+                        // ParserResult::Match is handled in the combine_operator_parsers function
+                        _ =>
+                            break result,
+                    }
+                }
+            })
+            .unwrap_or_else(|| {
+                quote! {
+                    // This grammar has no binary operators, so we can't match one, and we need to break out of the outer loop
+                    break ParserResult::no_match(vec![]);
+                }
+            });
+
+    quote! {
+        loop {
+            let mut elements: Vec<ParserResult> = Vec::new();
+
+            let result = loop {
+                #add_zero_or_more_prefix_operators_to_elements_or_break
+                #add_a_primary_expression_to_elements_or_break
+                #add_zero_or_more_postfix_operators_to_elements_or_break
+                #add_a_binary_operator_to_elements_or_break
+            };
+
+            if elements.is_empty() {
+                break result;
+            }
+
+            reduce_pratt_elements(&mut elements);
+
+            if elements.len() != 1 {
+                unreachable!("Pratt parser failed to reduce to a single result: {:?}", elements);
+            }
+
+            if let ParserResult::Match(r#match) = elements.remove(0) {
+                if let ParserResult::IncompleteMatch(_) = result {
+                    break ParserResult::incomplete_match(r#match.nodes, vec![]);
+                } else {
+                    break ParserResult::r#match(r#match.nodes, r#match.tokens_that_would_have_allowed_more_progress);
+                }
+            } else {
+                unreachable!("Pratt parser failed to reduce to a single match")
+            }
         }
     }
 }

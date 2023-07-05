@@ -10,16 +10,16 @@ Tree:
       - SolidityKeyword (Token): "solidity" # 0..8
       - VersionPragmaExpressionList (Rule): # 8..68 " /* comments */ 0 /* are */ . /* allowed */ 0 . /*..."
           - VersionPragmaSpecifier (Rule): # 8..68 " /* comments */ 0 /* are */ . /* allowed */ 0 . /*..."
-              - VersionPragmaValue (Token): # 8..25 " /* comments */ 0"
+              - LeadingTrivia (Rule): # 8..24 " /* comments */ "
                   - MultilineComment (Trivia): "/* comments */" # 9..23
-                  - Contents: "0" # 24..25
-              - Period (Token): # 25..37 " /* are */ ."
+              - VersionPragmaValue (Token): "0" # 24..25
+              - LeadingTrivia (Rule): # 25..36 " /* are */ "
                   - MultilineComment (Trivia): "/* are */" # 26..35
-                  - Contents: "." # 36..37
-              - VersionPragmaValue (Token): # 37..53 " /* allowed */ 0"
+              - Period (Token): "." # 36..37
+              - LeadingTrivia (Rule): # 37..52 " /* allowed */ "
                   - MultilineComment (Trivia): "/* allowed */" # 38..51
-                  - Contents: "0" # 52..53
+              - VersionPragmaValue (Token): "0" # 52..53
               - Period (Token): "." # 54..55
-              - VersionPragmaValue (Token): # 55..68 " /* here */ 0"
+              - LeadingTrivia (Rule): # 55..67 " /* here */ "
                   - MultilineComment (Trivia): "/* here */" # 56..66
-                  - Contents: "0" # 67..68
+              - VersionPragmaValue (Token): "0" # 67..68

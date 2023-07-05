@@ -99,16 +99,6 @@ fn possible_empty_scanner(scanner: &ScannerRef) -> bool {
             return sequence.iter().all(possible_empty_scanner);
         }
 
-        ScannerDefinition::Repeat {
-            min, expression, ..
-        } => {
-            if *min == 0 {
-                return true;
-            }
-
-            return possible_empty_scanner(expression);
-        }
-
         ScannerDefinition::Not { .. }
         | ScannerDefinition::Range { .. }
         | ScannerDefinition::Reference(_)
@@ -136,16 +126,6 @@ fn possible_empty_parser(parser: &ParserRef) -> bool {
 
         ParserDefinition::Sequence(sequence) => {
             return sequence.iter().all(possible_empty_parser);
-        }
-
-        ParserDefinition::Repeat {
-            min, expression, ..
-        } => {
-            if *min == 0 {
-                return true;
-            }
-
-            return possible_empty_parser(expression);
         }
 
         ParserDefinition::DelimitedBy { .. } | ParserDefinition::Reference(_) => {

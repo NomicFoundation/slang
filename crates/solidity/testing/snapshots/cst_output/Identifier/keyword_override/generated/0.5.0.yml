@@ -6,11 +6,12 @@ Source: >
 Errors: # 1 total
   - >
     Error: Expected Identifier.
-       ╭─[crates/solidity/testing/snapshots/cst_output/Identifier/keyword_override/input.sol:1:9]
+       ╭─[crates/solidity/testing/snapshots/cst_output/Identifier/keyword_override/input.sol:1:1]
        │
      1 │ override
-       │         │ 
-       │         ╰─ Error occurred here.
+       │ ────┬───  
+       │     ╰───── Error occurred here.
     ───╯
 
-Tree: null
+Tree:
+  - SKIPPED (Token): "override" # 0..8
