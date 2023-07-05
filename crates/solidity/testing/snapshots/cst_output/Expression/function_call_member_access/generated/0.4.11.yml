@@ -8,13 +8,15 @@ Errors: []
 Tree:
   - Expression (Rule): # 0..5 "x().y"
       - MemberAccessExpression (Rule): # 0..5 "x().y"
-          - FunctionCallExpression (Rule): # 0..3 "x()"
-              - PrimaryExpression (Rule): # 0..1 "x"
-                  - Identifier (Token): "x" # 0..1
-              - FunctionCallOperator (Rule): # 1..3 "()"
-                  - ArgumentList (Rule): # 1..3 "()"
-                      - OpenParen (Token): "(" # 1..2
-                      - CloseParen (Token): ")" # 2..3
+          - Expression (Rule): # 0..3 "x()"
+              - FunctionCallExpression (Rule): # 0..3 "x()"
+                  - Expression (Rule): # 0..1 "x"
+                      - PrimaryExpression (Rule): # 0..1 "x"
+                          - Identifier (Token): "x" # 0..1
+                  - FunctionCallOperator (Rule): # 1..3 "()"
+                      - ArgumentList (Rule): # 1..3 "()"
+                          - OpenParen (Token): "(" # 1..2
+                          - CloseParen (Token): ")" # 2..3
           - MemberAccessOperator (Rule): # 3..5 ".y"
               - Period (Token): "." # 3..4
               - Identifier (Token): "y" # 4..5

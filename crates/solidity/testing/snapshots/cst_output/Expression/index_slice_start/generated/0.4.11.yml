@@ -8,8 +8,9 @@ Errors: []
 Tree:
   - Expression (Rule): # 0..11 "arr[start:]"
       - IndexAccessExpression (Rule): # 0..11 "arr[start:]"
-          - PrimaryExpression (Rule): # 0..3 "arr"
-              - Identifier (Token): "arr" # 0..3
+          - Expression (Rule): # 0..3 "arr"
+              - PrimaryExpression (Rule): # 0..3 "arr"
+                  - Identifier (Token): "arr" # 0..3
           - IndexAccessOperator (Rule): # 3..11 "[start:]"
               - OpenBracket (Token): "[" # 3..4
               - Expression (Rule): # 4..9 "start"

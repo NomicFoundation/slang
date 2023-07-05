@@ -8,8 +8,9 @@ Errors: []
 Tree:
   - Expression (Rule): # 0..23 "foo ? (a + b) : (c + d)"
       - ConditionalExpression (Rule): # 0..23 "foo ? (a + b) : (c + d)"
-          - PrimaryExpression (Rule): # 0..3 "foo"
-              - Identifier (Token): "foo" # 0..3
+          - Expression (Rule): # 0..3 "foo"
+              - PrimaryExpression (Rule): # 0..3 "foo"
+                  - Identifier (Token): "foo" # 0..3
           - ConditionalOperator (Rule): # 3..23 " ? (a + b) : (c + d)"
               - QuestionMark (Token): "?" # 4..5
               - Expression (Rule): # 5..13 " (a + b)"
@@ -18,12 +19,14 @@ Tree:
                           - OpenParen (Token): "(" # 6..7
                           - Expression (Rule): # 7..12 "a + b"
                               - AddSubExpression (Rule): # 7..12 "a + b"
-                                  - PrimaryExpression (Rule): # 7..8 "a"
-                                      - Identifier (Token): "a" # 7..8
+                                  - Expression (Rule): # 7..8 "a"
+                                      - PrimaryExpression (Rule): # 7..8 "a"
+                                          - Identifier (Token): "a" # 7..8
                                   - AddSubOperator (Rule): # 8..10 " +"
                                       - Plus (Token): "+" # 9..10
-                                  - PrimaryExpression (Rule): # 10..12 " b"
-                                      - Identifier (Token): "b" # 11..12
+                                  - Expression (Rule): # 10..12 " b"
+                                      - PrimaryExpression (Rule): # 10..12 " b"
+                                          - Identifier (Token): "b" # 11..12
                           - CloseParen (Token): ")" # 12..13
               - Colon (Token): ":" # 14..15
               - Expression (Rule): # 15..23 " (c + d)"
@@ -32,10 +35,12 @@ Tree:
                           - OpenParen (Token): "(" # 16..17
                           - Expression (Rule): # 17..22 "c + d"
                               - AddSubExpression (Rule): # 17..22 "c + d"
-                                  - PrimaryExpression (Rule): # 17..18 "c"
-                                      - Identifier (Token): "c" # 17..18
+                                  - Expression (Rule): # 17..18 "c"
+                                      - PrimaryExpression (Rule): # 17..18 "c"
+                                          - Identifier (Token): "c" # 17..18
                                   - AddSubOperator (Rule): # 18..20 " +"
                                       - Plus (Token): "+" # 19..20
-                                  - PrimaryExpression (Rule): # 20..22 " d"
-                                      - Identifier (Token): "d" # 21..22
+                                  - Expression (Rule): # 20..22 " d"
+                                      - PrimaryExpression (Rule): # 20..22 " d"
+                                          - Identifier (Token): "d" # 21..22
                           - CloseParen (Token): ")" # 22..23

@@ -8,12 +8,14 @@ Errors: []
 Tree:
   - Expression (Rule): # 0..5 "x.y.z"
       - MemberAccessExpression (Rule): # 0..5 "x.y.z"
-          - MemberAccessExpression (Rule): # 0..3 "x.y"
-              - PrimaryExpression (Rule): # 0..1 "x"
-                  - Identifier (Token): "x" # 0..1
-              - MemberAccessOperator (Rule): # 1..3 ".y"
-                  - Period (Token): "." # 1..2
-                  - Identifier (Token): "y" # 2..3
+          - Expression (Rule): # 0..3 "x.y"
+              - MemberAccessExpression (Rule): # 0..3 "x.y"
+                  - Expression (Rule): # 0..1 "x"
+                      - PrimaryExpression (Rule): # 0..1 "x"
+                          - Identifier (Token): "x" # 0..1
+                  - MemberAccessOperator (Rule): # 1..3 ".y"
+                      - Period (Token): "." # 1..2
+                      - Identifier (Token): "y" # 2..3
           - MemberAccessOperator (Rule): # 3..5 ".z"
               - Period (Token): "." # 3..4
               - Identifier (Token): "z" # 4..5

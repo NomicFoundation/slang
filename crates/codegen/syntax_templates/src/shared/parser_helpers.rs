@@ -176,7 +176,10 @@ pub fn transform_option_result(result: ParserResult) -> ParserResult {
     }
 }
 
-pub fn reduce_pratt_elements(elements: &mut Vec<ParserResult>) {
+pub fn reduce_pratt_elements<F>(operator_argument_transformer: F, elements: &mut Vec<ParserResult>)
+where
+    F: Fn(Vec<cst::Node>) -> Vec<cst::Node>,
+{
     let mut i = 0;
     while elements.len() > 1 {
         if let ParserResult::PrattOperatorMatch(PrattOperatorMatch {
@@ -227,7 +230,7 @@ pub fn reduce_pratt_elements(elements: &mut Vec<ParserResult>) {
                 ) = (left, op)
                 {
                     let mut children = vec![];
-                    children.extend(left.nodes);
+                    children.extend(operator_argument_transformer(left.nodes));
                     children.extend(nodes);
                     elements.insert(
                         i - 1,
@@ -254,7 +257,7 @@ pub fn reduce_pratt_elements(elements: &mut Vec<ParserResult>) {
                 {
                     let mut children = vec![];
                     children.extend(nodes);
-                    children.extend(right.nodes);
+                    children.extend(operator_argument_transformer(right.nodes));
                     elements.insert(
                         i,
                         ParserResult::r#match(
@@ -281,9 +284,9 @@ pub fn reduce_pratt_elements(elements: &mut Vec<ParserResult>) {
                 ) = (left, op, right)
                 {
                     let mut children = vec![];
-                    children.extend(left.nodes);
+                    children.extend(operator_argument_transformer(left.nodes));
                     children.extend(nodes);
-                    children.extend(right.nodes);
+                    children.extend(operator_argument_transformer(right.nodes));
                     elements.insert(
                         i - 1,
                         ParserResult::r#match(

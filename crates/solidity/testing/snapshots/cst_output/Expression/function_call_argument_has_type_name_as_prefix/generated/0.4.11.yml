@@ -8,8 +8,9 @@ Errors: []
 Tree:
   - Expression (Rule): # 0..13 "x(interested)"
       - FunctionCallExpression (Rule): # 0..13 "x(interested)"
-          - PrimaryExpression (Rule): # 0..1 "x"
-              - Identifier (Token): "x" # 0..1
+          - Expression (Rule): # 0..1 "x"
+              - PrimaryExpression (Rule): # 0..1 "x"
+                  - Identifier (Token): "x" # 0..1
           - FunctionCallOperator (Rule): # 1..13 "(interested)"
               - ArgumentList (Rule): # 1..13 "(interested)"
                   - OpenParen (Token): "(" # 1..2
