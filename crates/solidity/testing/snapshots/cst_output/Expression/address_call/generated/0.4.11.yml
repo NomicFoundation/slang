@@ -8,10 +8,11 @@ Errors: []
 Tree:
   - Expression (Rule): # 0..14 "address(value)"
       - FunctionCallExpression (Rule): # 0..14 "address(value)"
-          - PrimaryExpression (Rule): # 0..7 "address"
-              - ElementaryType (Rule): # 0..7 "address"
-                  - AddressType (Rule): # 0..7 "address"
-                      - AddressKeyword (Token): "address" # 0..7
+          - Expression (Rule): # 0..7 "address"
+              - PrimaryExpression (Rule): # 0..7 "address"
+                  - ElementaryType (Rule): # 0..7 "address"
+                      - AddressType (Rule): # 0..7 "address"
+                          - AddressKeyword (Token): "address" # 0..7
           - FunctionCallOperator (Rule): # 7..14 "(value)"
               - ArgumentList (Rule): # 7..14 "(value)"
                   - OpenParen (Token): "(" # 7..8

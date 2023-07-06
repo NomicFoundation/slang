@@ -8,8 +8,9 @@ Errors: []
 Tree:
   - Expression (Rule): # 0..20 "function_name(value)"
       - FunctionCallExpression (Rule): # 0..20 "function_name(value)"
-          - PrimaryExpression (Rule): # 0..13 "function_name"
-              - Identifier (Token): "function_name" # 0..13
+          - Expression (Rule): # 0..13 "function_name"
+              - PrimaryExpression (Rule): # 0..13 "function_name"
+                  - Identifier (Token): "function_name" # 0..13
           - FunctionCallOperator (Rule): # 13..20 "(value)"
               - ArgumentList (Rule): # 13..20 "(value)"
                   - OpenParen (Token): "(" # 13..14

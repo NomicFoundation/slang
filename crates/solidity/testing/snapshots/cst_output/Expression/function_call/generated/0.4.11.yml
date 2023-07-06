@@ -8,8 +8,9 @@ Errors: []
 Tree:
   - Expression (Rule): # 0..7 "x(1, 2)"
       - FunctionCallExpression (Rule): # 0..7 "x(1, 2)"
-          - PrimaryExpression (Rule): # 0..1 "x"
-              - Identifier (Token): "x" # 0..1
+          - Expression (Rule): # 0..1 "x"
+              - PrimaryExpression (Rule): # 0..1 "x"
+                  - Identifier (Token): "x" # 0..1
           - FunctionCallOperator (Rule): # 1..7 "(1, 2)"
               - ArgumentList (Rule): # 1..7 "(1, 2)"
                   - OpenParen (Token): "(" # 1..2

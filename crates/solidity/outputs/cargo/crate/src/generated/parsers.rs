@@ -2806,7 +2806,10 @@ impl Language {
             if elements.is_empty() {
                 break result;
             }
-            reduce_pratt_elements(&mut elements);
+            reduce_pratt_elements(
+                |children| vec![cst::Node::rule(RuleKind::Expression, children)],
+                &mut elements,
+            );
             if elements.len() != 1 {
                 unreachable!(
                     "Pratt parser failed to reduce to a single result: {:?}",
@@ -3141,7 +3144,10 @@ impl Language {
             if elements.is_empty() {
                 break result;
             }
-            reduce_pratt_elements(&mut elements);
+            reduce_pratt_elements(
+                |children| vec![cst::Node::rule(RuleKind::Expression, children)],
+                &mut elements,
+            );
             if elements.len() != 1 {
                 unreachable!(
                     "Pratt parser failed to reduce to a single result: {:?}",
@@ -7677,7 +7683,10 @@ impl Language {
             if elements.is_empty() {
                 break result;
             }
-            reduce_pratt_elements(&mut elements);
+            reduce_pratt_elements(
+                |children| vec![cst::Node::rule(RuleKind::TypeName, children)],
+                &mut elements,
+            );
             if elements.len() != 1 {
                 unreachable!(
                     "Pratt parser failed to reduce to a single result: {:?}",
@@ -8805,7 +8814,7 @@ impl Language {
             if elements.is_empty() {
                 break result;
             }
-            reduce_pratt_elements(&mut elements);
+            reduce_pratt_elements(|children| children, &mut elements);
             if elements.len() != 1 {
                 unreachable!(
                     "Pratt parser failed to reduce to a single result: {:?}",
@@ -9231,7 +9240,10 @@ impl Language {
             if elements.is_empty() {
                 break result;
             }
-            reduce_pratt_elements(&mut elements);
+            reduce_pratt_elements(
+                |children| vec![cst::Node::rule(RuleKind::YulExpression, children)],
+                &mut elements,
+            );
             if elements.len() != 1 {
                 unreachable!(
                     "Pratt parser failed to reduce to a single result: {:?}",

@@ -11,12 +11,14 @@ Tree:
           - TryKeyword (Token): "try" # 0..3
           - Expression (Rule): # 3..9 " a.b()"
               - FunctionCallExpression (Rule): # 3..9 " a.b()"
-                  - MemberAccessExpression (Rule): # 3..7 " a.b"
-                      - PrimaryExpression (Rule): # 3..5 " a"
-                          - Identifier (Token): "a" # 4..5
-                      - MemberAccessOperator (Rule): # 5..7 ".b"
-                          - Period (Token): "." # 5..6
-                          - Identifier (Token): "b" # 6..7
+                  - Expression (Rule): # 3..7 " a.b"
+                      - MemberAccessExpression (Rule): # 3..7 " a.b"
+                          - Expression (Rule): # 3..5 " a"
+                              - PrimaryExpression (Rule): # 3..5 " a"
+                                  - Identifier (Token): "a" # 4..5
+                          - MemberAccessOperator (Rule): # 5..7 ".b"
+                              - Period (Token): "." # 5..6
+                              - Identifier (Token): "b" # 6..7
                   - FunctionCallOperator (Rule): # 7..9 "()"
                       - ArgumentList (Rule): # 7..9 "()"
                           - OpenParen (Token): "(" # 7..8

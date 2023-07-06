@@ -8,18 +8,21 @@ Errors: []
 Tree:
   - Expression (Rule): # 0..27 "(foo == bar) ? true : false"
       - ConditionalExpression (Rule): # 0..27 "(foo == bar) ? true : false"
-          - PrimaryExpression (Rule): # 0..12 "(foo == bar)"
-              - TupleExpression (Rule): # 0..12 "(foo == bar)"
-                  - OpenParen (Token): "(" # 0..1
-                  - Expression (Rule): # 1..11 "foo == bar"
-                      - EqualityComparisonExpression (Rule): # 1..11 "foo == bar"
-                          - PrimaryExpression (Rule): # 1..4 "foo"
-                              - Identifier (Token): "foo" # 1..4
-                          - EqualityComparisonOperator (Rule): # 4..7 " =="
-                              - EqualEqual (Token): "==" # 5..7
-                          - PrimaryExpression (Rule): # 7..11 " bar"
-                              - Identifier (Token): "bar" # 8..11
-                  - CloseParen (Token): ")" # 11..12
+          - Expression (Rule): # 0..12 "(foo == bar)"
+              - PrimaryExpression (Rule): # 0..12 "(foo == bar)"
+                  - TupleExpression (Rule): # 0..12 "(foo == bar)"
+                      - OpenParen (Token): "(" # 0..1
+                      - Expression (Rule): # 1..11 "foo == bar"
+                          - EqualityComparisonExpression (Rule): # 1..11 "foo == bar"
+                              - Expression (Rule): # 1..4 "foo"
+                                  - PrimaryExpression (Rule): # 1..4 "foo"
+                                      - Identifier (Token): "foo" # 1..4
+                              - EqualityComparisonOperator (Rule): # 4..7 " =="
+                                  - EqualEqual (Token): "==" # 5..7
+                              - Expression (Rule): # 7..11 " bar"
+                                  - PrimaryExpression (Rule): # 7..11 " bar"
+                                      - Identifier (Token): "bar" # 8..11
+                      - CloseParen (Token): ")" # 11..12
           - ConditionalOperator (Rule): # 12..27 " ? true : false"
               - QuestionMark (Token): "?" # 13..14
               - Expression (Rule): # 14..19 " true"

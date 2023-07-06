@@ -8,15 +8,17 @@ Errors: []
 Tree:
   - Expression (Rule): # 0..19 "arr[index1][index2]"
       - IndexAccessExpression (Rule): # 0..19 "arr[index1][index2]"
-          - IndexAccessExpression (Rule): # 0..11 "arr[index1]"
-              - PrimaryExpression (Rule): # 0..3 "arr"
-                  - Identifier (Token): "arr" # 0..3
-              - IndexAccessOperator (Rule): # 3..11 "[index1]"
-                  - OpenBracket (Token): "[" # 3..4
-                  - Expression (Rule): # 4..10 "index1"
-                      - PrimaryExpression (Rule): # 4..10 "index1"
-                          - Identifier (Token): "index1" # 4..10
-                  - CloseBracket (Token): "]" # 10..11
+          - Expression (Rule): # 0..11 "arr[index1]"
+              - IndexAccessExpression (Rule): # 0..11 "arr[index1]"
+                  - Expression (Rule): # 0..3 "arr"
+                      - PrimaryExpression (Rule): # 0..3 "arr"
+                          - Identifier (Token): "arr" # 0..3
+                  - IndexAccessOperator (Rule): # 3..11 "[index1]"
+                      - OpenBracket (Token): "[" # 3..4
+                      - Expression (Rule): # 4..10 "index1"
+                          - PrimaryExpression (Rule): # 4..10 "index1"
+                              - Identifier (Token): "index1" # 4..10
+                      - CloseBracket (Token): "]" # 10..11
           - IndexAccessOperator (Rule): # 11..19 "[index2]"
               - OpenBracket (Token): "[" # 11..12
               - Expression (Rule): # 12..18 "index2"

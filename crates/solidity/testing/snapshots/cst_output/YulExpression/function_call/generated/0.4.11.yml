@@ -8,8 +8,9 @@ Errors: []
 Tree:
   - YulExpression (Rule): # 0..6 "foo(1)"
       - YulFunctionCallExpression (Rule): # 0..6 "foo(1)"
-          - YulIdentifierPath (Rule): # 0..3 "foo"
-              - YulIdentifier (Token): "foo" # 0..3
+          - YulExpression (Rule): # 0..3 "foo"
+              - YulIdentifierPath (Rule): # 0..3 "foo"
+                  - YulIdentifier (Token): "foo" # 0..3
           - OpenParen (Token): "(" # 3..4
           - YulExpression (Rule): # 4..5 "1"
               - YulLiteral (Rule): # 4..5 "1"

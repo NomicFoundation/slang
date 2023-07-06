@@ -8,12 +8,14 @@ Errors: []
 Tree:
   - Expression (Rule): # 0..25 'a.b{value: 0}{gas: 1}("")'
       - FunctionCallExpression (Rule): # 0..25 'a.b{value: 0}{gas: 1}("")'
-          - MemberAccessExpression (Rule): # 0..3 "a.b"
-              - PrimaryExpression (Rule): # 0..1 "a"
-                  - Identifier (Token): "a" # 0..1
-              - MemberAccessOperator (Rule): # 1..3 ".b"
-                  - Period (Token): "." # 1..2
-                  - Identifier (Token): "b" # 2..3
+          - Expression (Rule): # 0..3 "a.b"
+              - MemberAccessExpression (Rule): # 0..3 "a.b"
+                  - Expression (Rule): # 0..1 "a"
+                      - PrimaryExpression (Rule): # 0..1 "a"
+                          - Identifier (Token): "a" # 0..1
+                  - MemberAccessOperator (Rule): # 1..3 ".b"
+                      - Period (Token): "." # 1..2
+                      - Identifier (Token): "b" # 2..3
           - FunctionCallOperator (Rule): # 3..25 '{value: 0}{gas: 1}("")'
               - FunctionCallOptions (Rule): # 3..13 "{value: 0}"
                   - OpenBrace (Token): "{" # 3..4

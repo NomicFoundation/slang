@@ -1,6 +1,6 @@
 use codegen_schema::types::{OperatorModel, ProductionDefinition};
 use inflector::Inflector;
-use proc_macro2::TokenStream;
+use proc_macro2::{Ident, TokenStream};
 use quote::{format_ident, quote};
 
 use super::{
@@ -118,15 +118,26 @@ impl<'context> CombinatorNode<'context> {
              * Precedence parsing
              */
             Self::PrecedenceExpressionRule {
+                tree,
                 primary_expression,
                 operators,
-                ..
             } => {
                 if is_trivia {
                     unreachable!("Precedence expressions cannot be used in trivia productions")
                 }
 
-                precedence_expression_to_parser_code(code_generator, primary_expression, operators)
+                let expression_ident = if tree.production.inlined {
+                    None
+                } else {
+                    Some(format_ident!("{}", tree.production.name))
+                };
+
+                precedence_expression_to_parser_code(
+                    code_generator,
+                    expression_ident,
+                    primary_expression,
+                    operators,
+                )
             }
 
             /**********************************************************************
@@ -279,6 +290,7 @@ fn one_or_more_to_parser_code(
 
 fn precedence_expression_to_parser_code(
     code: &mut CodeGenerator,
+    expression_kind: Option<Ident>,
     primary_expression: &&CombinatorNode,
     operators: &Vec<PrecedenceRuleOperator>,
 ) -> TokenStream {
@@ -414,6 +426,10 @@ fn precedence_expression_to_parser_code(
                 }
             });
 
+    let operator_argument_transformer = expression_kind
+        .map(|kind| quote! { |children | vec![cst::Node::rule(RuleKind::#kind, children)] })
+        .unwrap_or_else(|| quote! { |children| children });
+
     quote! {
         loop {
             let mut elements: Vec<ParserResult> = Vec::new();
@@ -429,7 +445,7 @@ fn precedence_expression_to_parser_code(
                 break result;
             }
 
-            reduce_pratt_elements(&mut elements);
+            reduce_pratt_elements(#operator_argument_transformer, &mut elements);
 
             if elements.len() != 1 {
                 unreachable!("Pratt parser failed to reduce to a single result: {:?}", elements);

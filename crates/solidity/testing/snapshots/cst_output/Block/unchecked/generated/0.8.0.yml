@@ -17,13 +17,15 @@ Tree:
                       - ExpressionStatement (Rule): # 13..20 " x = 1;"
                           - Expression (Rule): # 13..19 " x = 1"
                               - AssignmentExpression (Rule): # 13..19 " x = 1"
-                                  - PrimaryExpression (Rule): # 13..15 " x"
-                                      - Identifier (Token): "x" # 14..15
+                                  - Expression (Rule): # 13..15 " x"
+                                      - PrimaryExpression (Rule): # 13..15 " x"
+                                          - Identifier (Token): "x" # 14..15
                                   - AssignmentOperator (Rule): # 15..17 " ="
                                       - Equal (Token): "=" # 16..17
-                                  - PrimaryExpression (Rule): # 17..19 " 1"
-                                      - NumericExpression (Rule): # 17..19 " 1"
-                                          - DecimalLiteral (Token): "1" # 18..19
+                                  - Expression (Rule): # 17..19 " 1"
+                                      - PrimaryExpression (Rule): # 17..19 " 1"
+                                          - NumericExpression (Rule): # 17..19 " 1"
+                                              - DecimalLiteral (Token): "1" # 18..19
                           - Semicolon (Token): ";" # 19..20
               - CloseBrace (Token): "}" # 21..22
       - CloseBrace (Token): "}" # 23..24
