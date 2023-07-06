@@ -343,6 +343,7 @@ fn precedence_expression_to_parser_code(
                                 {}
                         }
                     )*
+                    stream.set_position(start_position);
                     break ParserResult::no_match(vec![]);
                 }
             })

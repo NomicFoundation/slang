@@ -2619,6 +2619,7 @@ impl Language {
                             ),
                             ParserResult::IncompleteMatch(_) | ParserResult::NoMatch(_) => {}
                         }
+                        stream.set_position(start_position);
                         break ParserResult::no_match(vec![]);
                     };
                     match result {
@@ -2796,6 +2797,7 @@ impl Language {
                         ),
                         ParserResult::IncompleteMatch(_) | ParserResult::NoMatch(_) => {}
                     }
+                    stream.set_position(start_position);
                     break ParserResult::no_match(vec![]);
                 };
                 match result {
@@ -2957,6 +2959,7 @@ impl Language {
                             ),
                             ParserResult::IncompleteMatch(_) | ParserResult::NoMatch(_) => {}
                         }
+                        stream.set_position(start_position);
                         break ParserResult::no_match(vec![]);
                     };
                     match result {
@@ -3134,6 +3137,7 @@ impl Language {
                         ),
                         ParserResult::IncompleteMatch(_) | ParserResult::NoMatch(_) => {}
                     }
+                    stream.set_position(start_position);
                     break ParserResult::no_match(vec![]);
                 };
                 match result {
@@ -8804,6 +8808,7 @@ impl Language {
                         ),
                         ParserResult::IncompleteMatch(_) | ParserResult::NoMatch(_) => {}
                     }
+                    stream.set_position(start_position);
                     break ParserResult::no_match(vec![]);
                 };
                 match result {
