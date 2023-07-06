@@ -40,8 +40,8 @@ test("calculate both byte and char ranges", (t) => {
 
   if (parseTree instanceof TokenNode) {
     t.is(parseTree.kind, TokenKind.UnicodeStringLiteral);
-    t.deepEqual(parseTree.textLength[2], 21);
-    t.deepEqual(parseTree.textLength[0], 24);
+    t.deepEqual(parseTree.textLength.char, 21);
+    t.deepEqual(parseTree.textLength.utf8, 24);
   } else {
     t.fail("Expected TokenNode");
   }
