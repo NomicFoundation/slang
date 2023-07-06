@@ -1,0 +1,21 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ pragma solidity 1.0.0;                                                           │ 0..22
+
+Errors: []
+
+Tree:
+  - PragmaDirective (Rule): # 0..22 "pragma solidity 1.0.0;"
+      - PragmaKeyword (Token): "pragma" # 0..6
+      - VersionPragma (Rule): # 6..21 " solidity 1.0.0"
+          - SolidityKeyword (Token): "solidity" # 7..15
+          - VersionPragmaExpressionsList (Rule): # 15..21 " 1.0.0"
+              - VersionPragmaExpression (Rule): # 15..21 " 1.0.0"
+                  - VersionPragmaSpecifier (Rule): # 15..21 " 1.0.0"
+                      - VersionPragmaValue (Token): "1" # 16..17
+                      - Period (Token): "." # 17..18
+                      - VersionPragmaValue (Token): "0" # 18..19
+                      - Period (Token): "." # 19..20
+                      - VersionPragmaValue (Token): "0" # 20..21
+      - Semicolon (Token): ";" # 21..22

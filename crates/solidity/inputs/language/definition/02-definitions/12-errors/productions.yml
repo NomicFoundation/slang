@@ -13,15 +13,20 @@
                 reference: "OpenParen"
               expression:
                 optional:
-                  separatedBy:
-                    separator:
-                      reference: "Comma"
-                    expression:
-                      reference: "ErrorParameter"
+                  reference: "ErrorParametersList"
               close:
                 reference: "CloseParen"
       terminator:
         reference: "Semicolon"
+
+- name: "ErrorParametersList"
+  kind: "Parser"
+  unversioned:
+    separatedBy:
+      separator:
+        reference: "Comma"
+      expression:
+        reference: "ErrorParameter"
 
 - name: "ErrorParameter"
   kind: "Parser"

@@ -112,7 +112,7 @@
           sequence:
             - reference: "EmitKeyword"
             - reference: "IdentifierPath"
-            - reference: "ArgumentList"
+            - reference: "ArgumentsDeclaration"
         terminator:
           reference: "Semicolon"
 

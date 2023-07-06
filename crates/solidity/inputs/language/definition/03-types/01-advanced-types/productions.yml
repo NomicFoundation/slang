@@ -7,14 +7,7 @@
       - name: "ArrayTypeName"
         model: "UnaryPostfix"
         operator:
-          delimitedBy:
-            open:
-              reference: "OpenBracket"
-            expression:
-              optional:
-                reference: "Expression"
-            close:
-              reference: "CloseBracket"
+          reference: "ArrayTypeNameOperator"
 
     primaryExpression:
       choice:
@@ -23,25 +16,48 @@
         - reference: "ElementaryType"
         - reference: "IdentifierPath"
 
+- name: "ArrayTypeNameOperator"
+  kind: "Parser"
+  inlined: true
+  unversioned:
+    delimitedBy:
+      open:
+        reference: "OpenBracket"
+      expression:
+        optional:
+          reference: "Expression"
+      close:
+        reference: "CloseBracket"
+
 - name: "FunctionType"
   kind: "Parser"
   unversioned:
     sequence:
       - reference: "FunctionKeyword"
-      - reference: "ParameterList"
-      - zeroOrMore:
-          choice:
-            - reference: "InternalKeyword"
-            - reference: "ExternalKeyword"
-            - reference: "PrivateKeyword"
-            - reference: "PublicKeyword"
-            - reference: "PureKeyword"
-            - reference: "ViewKeyword"
-            - reference: "PayableKeyword"
+      - reference: "ParametersDeclaration"
       - optional:
-          sequence:
-            - reference: "ReturnsKeyword"
-            - reference: "ParameterList"
+          reference: "FunctionTypeAttributesList"
+      - optional:
+          reference: "ReturnsDeclaration"
+
+- name: "FunctionTypeAttributesList"
+  kind: "Parser"
+  unversioned:
+    oneOrMore:
+      reference: "FunctionTypeAttribute"
+
+- name: "FunctionTypeAttribute"
+  kind: "Parser"
+  inlined: true
+  unversioned:
+    choice:
+      - reference: "InternalKeyword"
+      - reference: "ExternalKeyword"
+      - reference: "PrivateKeyword"
+      - reference: "PublicKeyword"
+      - reference: "PureKeyword"
+      - reference: "ViewKeyword"
+      - reference: "PayableKeyword"
 
 - name: "MappingType"
   kind: "Parser"
@@ -63,10 +79,9 @@
   kind: "Parser"
   versioned:
     0.4.11:
-      sequence:
-        - choice:
-            - reference: "ElementaryType"
-            - reference: "IdentifierPath"
+      choice:
+        - reference: "ElementaryType"
+        - reference: "IdentifierPath"
     0.8.18:
       sequence:
         - choice:
@@ -79,8 +94,7 @@
   kind: "Parser"
   versioned:
     0.4.11:
-      sequence:
-        - reference: "TypeName"
+      reference: "TypeName"
     0.8.18:
       sequence:
         - reference: "TypeName"

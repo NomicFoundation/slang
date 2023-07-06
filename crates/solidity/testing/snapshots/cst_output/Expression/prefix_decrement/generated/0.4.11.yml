@@ -8,8 +8,6 @@ Errors: []
 Tree:
   - Expression (Rule): # 0..5 "--foo"
       - UnaryPrefixExpression (Rule): # 0..5 "--foo"
-          - UnaryPrefixOperator (Rule): # 0..2 "--"
-              - MinusMinus (Token): "--" # 0..2
+          - MinusMinus (Token): "--" # 0..2
           - Expression (Rule): # 2..5 "foo"
-              - PrimaryExpression (Rule): # 2..5 "foo"
-                  - Identifier (Token): "foo" # 2..5
+              - Identifier (Token): "foo" # 2..5

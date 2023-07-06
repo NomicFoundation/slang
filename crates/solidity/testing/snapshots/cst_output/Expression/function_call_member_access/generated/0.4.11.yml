@@ -11,12 +11,9 @@ Tree:
           - Expression (Rule): # 0..3 "x()"
               - FunctionCallExpression (Rule): # 0..3 "x()"
                   - Expression (Rule): # 0..1 "x"
-                      - PrimaryExpression (Rule): # 0..1 "x"
-                          - Identifier (Token): "x" # 0..1
-                  - FunctionCallOperator (Rule): # 1..3 "()"
-                      - ArgumentList (Rule): # 1..3 "()"
-                          - OpenParen (Token): "(" # 1..2
-                          - CloseParen (Token): ")" # 2..3
-          - MemberAccessOperator (Rule): # 3..5 ".y"
-              - Period (Token): "." # 3..4
-              - Identifier (Token): "y" # 4..5
+                      - Identifier (Token): "x" # 0..1
+                  - ArgumentsDeclaration (Rule): # 1..3 "()"
+                      - OpenParen (Token): "(" # 1..2
+                      - CloseParen (Token): ")" # 2..3
+          - Period (Token): "." # 3..4
+          - Identifier (Token): "y" # 4..5

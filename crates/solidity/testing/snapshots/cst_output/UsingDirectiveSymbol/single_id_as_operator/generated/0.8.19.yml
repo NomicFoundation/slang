@@ -1,0 +1,21 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ foo as /                                                                         │ 0..8
+
+Errors: # 1 total
+  - >
+    Error: Expected Ampersand or Asterisk or BangEqual or Bar or Caret or EqualEqual or GreaterThan or GreaterThanEqual or LessThan or LessThanEqual or Minus or Percent or Plus or Slash or Tilde.
+       ╭─[crates/solidity/testing/snapshots/cst_output/UsingDirectiveSymbol/single_id_as_operator/input.sol:1:7]
+       │
+     1 │ foo as /
+       │       ─┬  
+       │        ╰── Error occurred here.
+    ───╯
+
+Tree:
+  - UsingDirectiveSymbol (Rule): # 0..8 "foo as /"
+      - IdentifierPath (Rule): # 0..3 "foo"
+          - Identifier (Token): "foo" # 0..3
+      - AsKeyword (Token): "as" # 4..6
+      - SKIPPED (Token): " /" # 6..8

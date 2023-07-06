@@ -4,26 +4,26 @@ use crate::cst_output::runner::run;
 use anyhow::Result;
 
 #[test]
-fn asterisk_import() -> Result<()> {
-    return run("ImportDirective", "asterisk_import");
+fn destructure_import_multiple() -> Result<()> {
+    return run("ImportDirective", "destructure_import_multiple");
 }
 
 #[test]
-fn selective_import_multiple() -> Result<()> {
-    return run("ImportDirective", "selective_import_multiple");
+fn destructure_import_single() -> Result<()> {
+    return run("ImportDirective", "destructure_import_single");
 }
 
 #[test]
-fn selective_import_single() -> Result<()> {
-    return run("ImportDirective", "selective_import_single");
+fn named_import() -> Result<()> {
+    return run("ImportDirective", "named_import");
 }
 
 #[test]
-fn simple_import() -> Result<()> {
-    return run("ImportDirective", "simple_import");
+fn path_import() -> Result<()> {
+    return run("ImportDirective", "path_import");
 }
 
 #[test]
-fn simple_import_with_alias() -> Result<()> {
-    return run("ImportDirective", "simple_import_with_alias");
+fn path_import_with_alias() -> Result<()> {
+    return run("ImportDirective", "path_import_with_alias");
 }

@@ -42,22 +42,25 @@ impl Metadata {
         production.defined_in = production.defined_in.union(version_set);
     }
 
-    pub fn add_reference(
-        &mut self,
-        production: &str,
-        version_set: &VersionSet,
-        reference: &str,
-    ) -> bool {
-        let production = self.productions.get_mut(production).unwrap();
-        production.references.insert(reference.to_owned());
-
-        let reference = self.productions.get_mut(reference).unwrap();
-        reference.used_in = reference.used_in.union(version_set);
-
-        return version_set.difference(&reference.defined_in).is_empty();
+    pub fn is_defined_over(&self, production: &str, version_set: &VersionSet) -> bool {
+        let production = self.productions.get(production).unwrap();
+        return version_set.difference(&production.defined_in).is_empty();
     }
 
-    pub fn check_not_used(&self, language: &LanguageDefinitionRef, reporter: &mut Reporter) {
+    pub fn add_reference(
+        &mut self,
+        production_name: &str,
+        version_set: &VersionSet,
+        reference_name: &str,
+    ) {
+        let reference = self.productions.get_mut(reference_name).unwrap();
+        reference.used_in = reference.used_in.union(version_set);
+
+        let production = self.productions.get_mut(production_name).unwrap();
+        production.references.insert(reference_name.to_owned());
+    }
+
+    pub fn validate_not_used(&self, language: &LanguageDefinitionRef, reporter: &mut Reporter) {
         let required_productions = language.required_productions();
 
         for production_name in language.productions.keys() {
@@ -77,7 +80,11 @@ impl Metadata {
         }
     }
 
-    pub fn check_not_reachable(&self, language: &LanguageDefinitionRef, reporter: &mut Reporter) {
+    pub fn validate_not_reachable(
+        &self,
+        language: &LanguageDefinitionRef,
+        reporter: &mut Reporter,
+    ) {
         let mut visited = IndexSet::new();
 
         let mut queue = language

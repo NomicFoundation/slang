@@ -5,7 +5,7 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Expected Identifier or MemoryKeyword or Period or StorageKeyword.
+    Error: Expected Semicolon.
        ╭─[crates/solidity/testing/snapshots/cst_output/Block/unchecked/input.sol:1:2]
        │
      1 │ { unchecked { x = 1; } }
@@ -16,10 +16,9 @@ Errors: # 1 total
 Tree:
   - Block (Rule): # 0..34 "{ unchecked { x = 1; } }"
       - OpenBrace (Token): "{" # 0..1
-      - Statement (Rule): # 1..11 " unchecked"
-          - SimpleStatement (Rule): # 1..11 " unchecked"
-              - VariableDeclarationStatement (Rule): # 1..11 " unchecked"
-                  - TypeName (Rule): # 1..11 " unchecked"
-                      - IdentifierPath (Rule): # 1..11 " unchecked"
-                          - Identifier (Token): "unchecked" # 2..11
+      - StatementsList (Rule): # 1..11 " unchecked"
+          - Statement (Rule): # 1..11 " unchecked"
+              - ExpressionStatement (Rule): # 1..11 " unchecked"
+                  - Expression (Rule): # 1..11 " unchecked"
+                      - Identifier (Token): "unchecked" # 2..11
       - SKIPPED (Token): " { x = 1; } }" # 11..34

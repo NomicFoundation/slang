@@ -1,0 +1,31 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract Sample {                                                                │ 0..17
+  2  │   constructor() public {                                                         │ 18..42
+  3  │   }                                                                              │ 43..46
+  4  │ }                                                                                │ 47..48
+
+Errors: # 1 total
+  - >
+    Error: Expected ConstantKeyword or Identifier or InternalKeyword or OverrideKeyword or Period or PrivateKeyword or PublicKeyword.
+       ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/member_constructor_definition/input.sol:2:14]
+       │
+     2 │ ╭─▶   constructor() public {
+       ┆ ┆   
+     4 │ ├─▶ }
+       │ │      
+       │ ╰────── Error occurred here.
+    ───╯
+
+Tree:
+  - ContractDefinition (Rule): # 0..48 "contract Sample {\n  constructor() public {\n  }\n}"
+      - ContractKeyword (Token): "contract" # 0..8
+      - Identifier (Token): "Sample" # 9..15
+      - OpenBrace (Token): "{" # 16..17
+      - ContractMembersList (Rule): # 18..31 "  constructor"
+          - StateVariableDefinition (Rule): # 18..31 "  constructor"
+              - TypeName (Rule): # 18..31 "  constructor"
+                  - IdentifierPath (Rule): # 18..31 "  constructor"
+                      - Identifier (Token): "constructor" # 20..31
+      - SKIPPED (Token): "() public {\n  }\n}" # 31..48

@@ -1,0 +1,1 @@
+using {add} for Int global;

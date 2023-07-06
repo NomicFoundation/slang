@@ -2,112 +2,106 @@
 
 - name: "Block"
   kind: "Parser"
-  versioned:
-    0.4.11:
-      delimitedBy:
-        open:
-          reference: "OpenBrace"
-        expression:
-          zeroOrMore:
-            reference: "Statement"
-        close:
-          reference: "CloseBrace"
-    0.8.0:
-      delimitedBy:
-        open:
-          reference: "OpenBrace"
-        expression:
-          zeroOrMore:
-            choice:
-              - reference: "Statement"
-              - reference: "UncheckedBlock"
-        close:
-          reference: "CloseBrace"
+  unversioned:
+    delimitedBy:
+      open:
+        reference: "OpenBrace"
+      expression:
+        optional:
+          reference: "StatementsList"
+      close:
+        reference: "CloseBrace"
 
-- name: "UncheckedBlock"
+- name: "StatementsList"
   kind: "Parser"
-  versioned:
-    0.8.0:
-      sequence:
-        - reference: "UncheckedKeyword"
-        - reference: "Block"
+  unversioned:
+    oneOrMore:
+      reference: "Statement"
 
 - name: "Statement"
   kind: "Parser"
   versioned:
     0.4.11:
       choice:
-        - reference: "Block"
         - reference: "SimpleStatement"
+        - reference: "ControlStatement"
+        - reference: "AssemblyStatement"
+        - reference: "Block"
+    0.8.0:
+      choice:
+        # added "UncheckedBlock"
+        - reference: "SimpleStatement"
+        - reference: "ControlStatement"
+        - reference: "AssemblyStatement"
+        - reference: "Block"
+        - reference: "UncheckedBlock"
+
+- name: "ControlStatement"
+  kind: "Parser"
+  inlined: true
+  versioned:
+    0.4.11:
+      choice:
         - reference: "IfStatement"
         - reference: "ForStatement"
         - reference: "WhileStatement"
         - reference: "DoWhileStatement"
         - reference: "ContinueStatement"
         - reference: "BreakStatement"
-        - reference: "ReturnStatement"
-        - reference: "ThrowStatement"
-        - reference: "RevertStatement"
         - reference: "DeleteStatement"
-        - reference: "AssemblyStatement"
+        - reference: "ReturnStatement"
+        - reference: "RevertStatement"
+        - reference: "ThrowStatement"
     0.4.21:
-      # added "EmitStatement"
       choice:
-        - reference: "Block"
-        - reference: "SimpleStatement"
+        # added: "EmitStatement"
         - reference: "IfStatement"
         - reference: "ForStatement"
         - reference: "WhileStatement"
         - reference: "DoWhileStatement"
         - reference: "ContinueStatement"
         - reference: "BreakStatement"
+        - reference: "DeleteStatement"
         - reference: "ReturnStatement"
-        - reference: "EmitStatement"
+        - reference: "RevertStatement"
         - reference: "ThrowStatement"
-        - reference: "RevertStatement"
-        - reference: "DeleteStatement"
-        - reference: "AssemblyStatement"
+        - reference: "EmitStatement"
     0.5.0:
-      # removed: "ThrowStatement"
       choice:
-        - reference: "Block"
-        - reference: "SimpleStatement"
+        # removed: "ThrowStatement"
         - reference: "IfStatement"
         - reference: "ForStatement"
         - reference: "WhileStatement"
         - reference: "DoWhileStatement"
         - reference: "ContinueStatement"
         - reference: "BreakStatement"
-        - reference: "ReturnStatement"
-        - reference: "EmitStatement"
-        - reference: "RevertStatement"
         - reference: "DeleteStatement"
-        - reference: "AssemblyStatement"
+        - reference: "ReturnStatement"
+        - reference: "RevertStatement"
+        - reference: "EmitStatement"
     0.6.0:
-      # added: "TryStatement"
       choice:
-        - reference: "Block"
-        - reference: "SimpleStatement"
+        # added: "TryStatement"
         - reference: "IfStatement"
         - reference: "ForStatement"
         - reference: "WhileStatement"
         - reference: "DoWhileStatement"
         - reference: "ContinueStatement"
         - reference: "BreakStatement"
-        - reference: "TryStatement"
-        - reference: "ReturnStatement"
-        - reference: "EmitStatement"
-        - reference: "RevertStatement"
         - reference: "DeleteStatement"
-        - reference: "AssemblyStatement"
+        - reference: "ReturnStatement"
+        - reference: "RevertStatement"
+        - reference: "EmitStatement"
+        - reference: "TryStatement"
 
 - name: "SimpleStatement"
   kind: "Parser"
+  inlined: true
   unversioned:
     choice:
-      - reference: "TupleDeconstructionStatement"
-      - reference: "VariableDeclarationStatement"
       - reference: "ExpressionStatement"
+      - reference: "VariableDeclarationStatement"
+      - reference: "TupleDeconstructionStatement"
 
 - name: "ExpressionStatement"
   kind: "Parser"
@@ -117,3 +111,11 @@
         reference: "Expression"
       terminator:
         reference: "Semicolon"
+
+- name: "UncheckedBlock"
+  kind: "Parser"
+  versioned:
+    0.8.0:
+      sequence:
+        - reference: "UncheckedKeyword"
+        - reference: "Block"

@@ -8,16 +8,18 @@ Errors: []
 Tree:
   - VersionPragma (Rule): # 0..20 "solidity 0.7.0 0.8.0"
       - SolidityKeyword (Token): "solidity" # 0..8
-      - VersionPragmaExpressionList (Rule): # 8..20 " 0.7.0 0.8.0"
-          - VersionPragmaSpecifier (Rule): # 8..14 " 0.7.0"
-              - VersionPragmaValue (Token): "0" # 9..10
-              - Period (Token): "." # 10..11
-              - VersionPragmaValue (Token): "7" # 11..12
-              - Period (Token): "." # 12..13
-              - VersionPragmaValue (Token): "0" # 13..14
-          - VersionPragmaSpecifier (Rule): # 14..20 " 0.8.0"
-              - VersionPragmaValue (Token): "0" # 15..16
-              - Period (Token): "." # 16..17
-              - VersionPragmaValue (Token): "8" # 17..18
-              - Period (Token): "." # 18..19
-              - VersionPragmaValue (Token): "0" # 19..20
+      - VersionPragmaExpressionsList (Rule): # 8..20 " 0.7.0 0.8.0"
+          - VersionPragmaExpression (Rule): # 8..14 " 0.7.0"
+              - VersionPragmaSpecifier (Rule): # 8..14 " 0.7.0"
+                  - VersionPragmaValue (Token): "0" # 9..10
+                  - Period (Token): "." # 10..11
+                  - VersionPragmaValue (Token): "7" # 11..12
+                  - Period (Token): "." # 12..13
+                  - VersionPragmaValue (Token): "0" # 13..14
+          - VersionPragmaExpression (Rule): # 14..20 " 0.8.0"
+              - VersionPragmaSpecifier (Rule): # 14..20 " 0.8.0"
+                  - VersionPragmaValue (Token): "0" # 15..16
+                  - Period (Token): "." # 16..17
+                  - VersionPragmaValue (Token): "8" # 17..18
+                  - Period (Token): "." # 18..19
+                  - VersionPragmaValue (Token): "0" # 19..20

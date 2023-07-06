@@ -1,0 +1,16 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ using foo for *;                                                                 │ 0..16
+
+Errors: []
+
+Tree:
+  - UsingDirective (Rule): # 0..16 "using foo for *;"
+      - UsingKeyword (Token): "using" # 0..5
+      - UsingDirectivePath (Rule): # 5..9 " foo"
+          - IdentifierPath (Rule): # 5..9 " foo"
+              - Identifier (Token): "foo" # 6..9
+      - ForKeyword (Token): "for" # 10..13
+      - Asterisk (Token): "*" # 14..15
+      - Semicolon (Token): ";" # 15..16

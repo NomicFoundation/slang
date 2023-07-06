@@ -7,15 +7,22 @@
       - reference: "ModifierKeyword"
       - reference: "Identifier"
       - optional:
-          reference: "ParameterList"
-      - zeroOrMore:
-          reference: "ModifierAttribute"
+          reference: "ParametersDeclaration"
+      - optional:
+          reference: "ModifierAttributesList"
       - choice:
           - reference: "Semicolon"
           - reference: "Block"
 
+- name: "ModifierAttributesList"
+  kind: "Parser"
+  unversioned:
+    oneOrMore:
+      reference: "ModifierAttribute"
+
 - name: "ModifierAttribute"
   kind: "Parser"
+  inlined: true
   versioned:
     0.4.11:
       reference: "OverrideSpecifier"
@@ -30,4 +37,4 @@
     sequence:
       - reference: "IdentifierPath"
       - optional:
-          reference: "ArgumentList"
+          reference: "ArgumentsDeclaration"

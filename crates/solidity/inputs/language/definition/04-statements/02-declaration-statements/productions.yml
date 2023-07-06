@@ -11,21 +11,7 @@
                 reference: "OpenParen"
               expression:
                 optional:
-                  separatedBy:
-                    separator:
-                      reference: "Comma"
-                    expression:
-                      optional:
-                        choice:
-                          - sequence:
-                              - reference: "TypeName"
-                              - optional:
-                                  reference: "DataLocation"
-                              - reference: "Identifier"
-                          - sequence:
-                              - optional:
-                                  reference: "DataLocation"
-                              - reference: "Identifier"
+                  reference: "TupleMembersList"
               close:
                 reference: "CloseParen"
           - reference: "Equal"
@@ -33,43 +19,66 @@
       terminator:
         reference: "Semicolon"
 
-- name: "VariableDeclarationStatement"
+- name: "TupleMembersList"
   kind: "Parser"
-  versioned:
-    0.4.11:
-      terminatedBy:
-        expression:
-          sequence:
-            - choice:
-                - sequence:
-                    - reference: "TypeName"
-                    - optional:
-                        reference: "DataLocation"
-                - reference: "VarKeyword"
-            - reference: "Identifier"
-            - optional:
-                sequence:
-                  - reference: "Equal"
-                  - reference: "Expression"
-        terminator:
-          reference: "Semicolon"
-    0.5.0: # removed "VarKeyword"
-      terminatedBy:
-        expression:
-          sequence:
+  unversioned:
+    separatedBy:
+      separator:
+        reference: "Comma"
+      expression:
+        reference: "TupleMember"
+
+- name: "TupleMember"
+  kind: "Parser"
+  unversioned:
+    optional:
+      choice:
+        - sequence:
             - reference: "TypeName"
             - optional:
                 reference: "DataLocation"
             - reference: "Identifier"
+        - sequence:
             - optional:
-                sequence:
-                  - reference: "Equal"
-                  - reference: "Expression"
-        terminator:
-          reference: "Semicolon"
+                reference: "DataLocation"
+            - reference: "Identifier"
+
+- name: "VariableDeclarationStatement"
+  kind: "Parser"
+  unversioned:
+    terminatedBy:
+      expression:
+        sequence:
+          - reference: "VariableDeclaration"
+          - optional:
+              sequence:
+                - reference: "Equal"
+                - reference: "Expression"
+      terminator:
+        reference: "Semicolon"
+
+- name: "VariableDeclaration"
+  kind: "Parser"
+  versioned:
+    0.4.11:
+      sequence:
+        - choice:
+            - reference: "VarKeyword"
+            - reference: "TypeName"
+        - optional:
+            reference: "DataLocation"
+        - reference: "Identifier"
+    0.5.0:
+      # removed "VarKeyword"
+      sequence:
+        - reference: "TypeName"
+        - optional:
+            reference: "DataLocation"
+        - reference: "Identifier"
 
 - name: "DataLocation"
   kind: "Parser"
+  inlined: true
   versioned:
     0.4.11:
       choice:

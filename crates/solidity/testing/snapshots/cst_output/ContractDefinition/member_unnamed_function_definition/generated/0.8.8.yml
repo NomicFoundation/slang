@@ -1,0 +1,29 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract Sample {                                                                │ 0..17
+  2  │   function () {                                                                  │ 18..33
+  3  │   }                                                                              │ 34..37
+  4  │ }                                                                                │ 38..39
+
+Errors: # 1 total
+  - >
+    Error: Expected FallbackKeyword or Identifier or ReceiveKeyword.
+       ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/member_unnamed_function_definition/input.sol:2:1]
+       │
+     2 │ ╭─▶   function () {
+       ┆ ┆   
+     4 │ ├─▶ }
+       │ │      
+       │ ╰────── Error occurred here.
+    ───╯
+
+Tree:
+  - ContractDefinition (Rule): # 0..49 "contract Sample {\n  function () {\n  }\n}"
+      - ContractKeyword (Token): "contract" # 0..8
+      - Identifier (Token): "Sample" # 9..15
+      - OpenBrace (Token): "{" # 16..17
+      - ContractMembersList (Rule): # 18..28 "  function"
+          - FunctionDefinition (Rule): # 18..28 "  function"
+              - FunctionKeyword (Token): "function" # 20..28
+      - SKIPPED (Token): " () {\n  }\n}" # 28..49

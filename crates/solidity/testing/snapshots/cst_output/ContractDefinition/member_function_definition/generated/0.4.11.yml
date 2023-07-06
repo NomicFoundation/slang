@@ -1,0 +1,44 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract Sample {                                                                │ 0..17
+  2  │   function foo() returns (uint) {                                                │ 18..51
+  3  │     return 1;                                                                    │ 52..65
+  4  │   }                                                                              │ 66..69
+  5  │ }                                                                                │ 70..71
+
+Errors: []
+
+Tree:
+  - ContractDefinition (Rule): # 0..71 "contract Sample {\n  function foo() returns (uint) ..."
+      - ContractKeyword (Token): "contract" # 0..8
+      - Identifier (Token): "Sample" # 9..15
+      - OpenBrace (Token): "{" # 16..17
+      - ContractMembersList (Rule): # 18..70 "  function foo() returns (uint) {\n    return 1;\n  ..."
+          - FunctionDefinition (Rule): # 18..70 "  function foo() returns (uint) {\n    return 1;\n  ..."
+              - FunctionKeyword (Token): "function" # 20..28
+              - Identifier (Token): "foo" # 29..32
+              - ParametersDeclaration (Rule): # 32..34 "()"
+                  - OpenParen (Token): "(" # 32..33
+                  - CloseParen (Token): ")" # 33..34
+              - ReturnsDeclaration (Rule): # 34..49 " returns (uint)"
+                  - ReturnsKeyword (Token): "returns" # 35..42
+                  - ParametersDeclaration (Rule): # 42..49 " (uint)"
+                      - OpenParen (Token): "(" # 43..44
+                      - ParametersList (Rule): # 44..48 "uint"
+                          - Parameter (Rule): # 44..48 "uint"
+                              - TypeName (Rule): # 44..48 "uint"
+                                  - UnsignedIntegerType (Token): "uint" # 44..48
+                      - CloseParen (Token): ")" # 48..49
+              - Block (Rule): # 49..70 " {\n    return 1;\n  }\n"
+                  - OpenBrace (Token): "{" # 50..51
+                  - StatementsList (Rule): # 52..66 "    return 1;\n"
+                      - Statement (Rule): # 52..66 "    return 1;\n"
+                          - ReturnStatement (Rule): # 52..66 "    return 1;\n"
+                              - ReturnKeyword (Token): "return" # 56..62
+                              - Expression (Rule): # 62..64 " 1"
+                                  - NumericExpression (Rule): # 62..64 " 1"
+                                      - DecimalLiteral (Token): "1" # 63..64
+                              - Semicolon (Token): ";" # 64..65
+                  - CloseBrace (Token): "}" # 68..69
+      - CloseBrace (Token): "}" # 70..71

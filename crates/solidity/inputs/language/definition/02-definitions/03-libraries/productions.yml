@@ -10,7 +10,13 @@
           open:
             reference: "OpenBrace"
           expression:
-            zeroOrMore:
-              reference: "ContractBodyElement"
+            optional:
+              reference: "LibraryMembersList"
           close:
             reference: "CloseBrace"
+
+- name: "LibraryMembersList"
+  kind: "Parser"
+  unversioned:
+    oneOrMore:
+      reference: "ContractMember"

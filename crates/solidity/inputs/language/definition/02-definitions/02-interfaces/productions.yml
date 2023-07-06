@@ -7,12 +7,18 @@
       - reference: "InterfaceKeyword"
       - reference: "Identifier"
       - optional:
-          reference: "InheritanceSpecifierList"
+          reference: "InheritanceSpecifier"
       - delimitedBy:
           open:
             reference: "OpenBrace"
           expression:
-            zeroOrMore:
-              reference: "ContractBodyElement"
+            optional:
+              reference: "InterfaceMembersList"
           close:
             reference: "CloseBrace"
+
+- name: "InterfaceMembersList"
+  kind: "Parser"
+  unversioned:
+    oneOrMore:
+      reference: "ContractMember"

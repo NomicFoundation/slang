@@ -18,11 +18,9 @@ Tree:
       - MappingKeyword (Token): "mapping" # 0..7
       - OpenParen (Token): "(" # 7..8
       - MappingKeyType (Rule): # 8..14 "string"
-          - ElementaryType (Rule): # 8..14 "string"
-              - StringKeyword (Token): "string" # 8..14
+          - StringKeyword (Token): "string" # 8..14
       - EqualGreaterThan (Token): "=>" # 15..17
       - MappingValueType (Rule): # 17..25 " bytes32"
           - TypeName (Rule): # 17..25 " bytes32"
-              - ElementaryType (Rule): # 17..25 " bytes32"
-                  - FixedBytesType (Token): "bytes32" # 18..25
+              - FixedBytesType (Token): "bytes32" # 18..25
       - SKIPPED (Token): " Bar)" # 25..30

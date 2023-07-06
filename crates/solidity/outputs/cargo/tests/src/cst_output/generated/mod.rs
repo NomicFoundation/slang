@@ -1,6 +1,8 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 #[allow(non_snake_case)]
+mod AsciiStringLiteralsList;
+#[allow(non_snake_case)]
 mod Block;
 #[allow(non_snake_case)]
 mod ConstructorDefinition;
@@ -10,8 +12,6 @@ mod ContractDefinition;
 mod DecimalLiteral;
 #[allow(non_snake_case)]
 mod DeleteStatement;
-#[allow(non_snake_case)]
-mod ElementaryType;
 #[allow(non_snake_case)]
 mod EnumDefinition;
 #[allow(non_snake_case)]
@@ -27,6 +27,8 @@ mod HexLiteral;
 #[allow(non_snake_case)]
 mod HexStringLiteral;
 #[allow(non_snake_case)]
+mod HexStringLiteralsList;
+#[allow(non_snake_case)]
 mod Identifier;
 #[allow(non_snake_case)]
 mod ImportDirective;
@@ -41,6 +43,8 @@ mod NewExpression;
 #[allow(non_snake_case)]
 mod NumericExpression;
 #[allow(non_snake_case)]
+mod PragmaDirective;
+#[allow(non_snake_case)]
 mod ReceiveFunctionDefinition;
 #[allow(non_snake_case)]
 mod SignedIntegerType;
@@ -51,15 +55,17 @@ mod SourceUnit;
 #[allow(non_snake_case)]
 mod Statement;
 #[allow(non_snake_case)]
-mod StringExpression;
-#[allow(non_snake_case)]
 mod TupleDeconstructionStatement;
 #[allow(non_snake_case)]
 mod TupleExpression;
 #[allow(non_snake_case)]
+mod UnicodeStringLiteralsList;
+#[allow(non_snake_case)]
 mod UnsignedIntegerType;
 #[allow(non_snake_case)]
 mod UsingDirective;
+#[allow(non_snake_case)]
+mod UsingDirectiveSymbol;
 #[allow(non_snake_case)]
 mod VariableDeclarationStatement;
 #[allow(non_snake_case)]

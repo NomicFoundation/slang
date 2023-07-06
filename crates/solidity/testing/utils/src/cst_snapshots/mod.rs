@@ -5,7 +5,7 @@ use std::{self, cmp::max, fmt::Write};
 use anyhow::Result;
 use slang_solidity::syntax::{nodes::TextRangeExtensions, parser::ParseOutput};
 
-use crate::cst_snapshots::test_nodes::TestNode;
+use crate::cst_snapshots::test_nodes::{TestNode, TestNodeKind};
 
 pub trait ParseOutputTestSnapshotExtensions {
     fn to_test_snapshot(&self, source_id: &str, source: &str) -> Result<String>;
@@ -111,7 +111,11 @@ fn write_node<W: Write>(
     let range_string = format!("{range:?}", range = node.range.utf8());
 
     let (node_value, node_comment) = if node.range.is_empty() {
-        (" []".to_owned(), range_string)
+        let preview = match node.kind {
+            TestNodeKind::Rule(_) => " []",
+            TestNodeKind::Token(_) | TestNodeKind::Trivia(_) => " \"\"",
+        };
+        (preview.to_owned(), range_string)
     } else {
         let preview = node.render_preview(source, &node.range)?;
         if node.children.is_empty() {

@@ -1,0 +1,1 @@
+using {add as +, sub, mul, div as /} for Int global;

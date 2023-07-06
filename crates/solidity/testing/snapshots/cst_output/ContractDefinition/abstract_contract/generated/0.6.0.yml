@@ -11,5 +11,4 @@ Tree:
       - ContractKeyword (Token): "contract" # 9..17
       - Identifier (Token): "Sample" # 18..24
       - OpenBrace (Token): "{" # 25..26
-      - ContractBodyElements (Rule): [] # 26..26
       - CloseBrace (Token): "}" # 26..27

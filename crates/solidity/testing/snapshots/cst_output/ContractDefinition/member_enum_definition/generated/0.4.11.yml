@@ -1,0 +1,31 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract Sample {                                                                │ 0..17
+  2  │   enum State {                                                                   │ 18..32
+  3  │     A,                                                                           │ 33..39
+  4  │     B,                                                                           │ 40..46
+  5  │     C                                                                            │ 47..52
+  6  │   }                                                                              │ 53..56
+  7  │ }                                                                                │ 57..58
+
+Errors: []
+
+Tree:
+  - ContractDefinition (Rule): # 0..58 "contract Sample {\n  enum State {\n    A,\n    B,\n   ..."
+      - ContractKeyword (Token): "contract" # 0..8
+      - Identifier (Token): "Sample" # 9..15
+      - OpenBrace (Token): "{" # 16..17
+      - ContractMembersList (Rule): # 18..57 "  enum State {\n    A,\n    B,\n    C\n  }\n"
+          - EnumDefinition (Rule): # 18..57 "  enum State {\n    A,\n    B,\n    C\n  }\n"
+              - EnumKeyword (Token): "enum" # 20..24
+              - Identifier (Token): "State" # 25..30
+              - OpenBrace (Token): "{" # 31..32
+              - IdentifiersList (Rule): # 33..53 "    A,\n    B,\n    C\n"
+                  - Identifier (Token): "A" # 37..38
+                  - Comma (Token): "," # 38..39
+                  - Identifier (Token): "B" # 44..45
+                  - Comma (Token): "," # 45..46
+                  - Identifier (Token): "C" # 51..52
+              - CloseBrace (Token): "}" # 55..56
+      - CloseBrace (Token): "}" # 57..58

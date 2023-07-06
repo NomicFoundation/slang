@@ -7,28 +7,36 @@
 ### 1.2. Source Unit
 
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/02-source-unit/source-unit/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/02-source-unit/directive/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/02-source-unit/definition/0.4.11.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/02-source-unit/source-unit-members-list/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/02-source-unit/source-unit-member/0.4.11.md"
 
 ### 1.3. Pragmas
 
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/03-pragmas/pragma-directive/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/03-pragmas/version-pragma/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/03-pragmas/version-pragma-expression/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/03-pragmas/version-pragma-specifier/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/03-pragmas/version-pragma-value/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/03-pragmas/abi-coder-pragma/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/03-pragmas/experimental-pragma/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/03-pragmas/version-pragma/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/03-pragmas/version-pragma-expressions-list/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/03-pragmas/version-pragma-expression/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/03-pragmas/version-pragma-or-operator/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/03-pragmas/version-pragma-range-operator/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/03-pragmas/version-pragma-unary-operator/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/03-pragmas/version-pragma-specifier/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/03-pragmas/version-pragma-value/unversioned.md"
 
 ### 1.4. Imports
 
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/04-imports/import-directive/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/04-imports/simple-import/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/04-imports/asterisk-import/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/04-imports/selective-import/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/04-imports/import-alias/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/04-imports/import-path/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/04-imports/using-directive/0.4.11.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/04-imports/path-import/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/04-imports/named-import/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/04-imports/deconstruction-import/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/04-imports/deconstruction-import-symbols-list/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/04-imports/deconstruction-import-symbol/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/04-imports/using-directive/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/04-imports/using-directive-path/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/04-imports/using-directive-deconstruction/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/04-imports/using-directive-symbols-list/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/04-imports/using-directive-symbol/0.4.11.md"
 
 ### 1.5. Trivia
 
@@ -50,6 +58,7 @@
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/07-keywords/assembly-keyword/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/07-keywords/bool-keyword/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/07-keywords/break-keyword/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/07-keywords/byte-keyword/0.4.11.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/07-keywords/calldata-keyword/0.5.0.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/07-keywords/case-keyword/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/07-keywords/catch-keyword/0.6.0.md"
@@ -178,21 +187,26 @@
 ### 2.1. Contracts
 
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/01-contracts/contract-definition/0.6.0.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/01-contracts/inheritance-specifier-list/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/01-contracts/inheritance-specifier/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/01-contracts/contract-body-element/0.6.0.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/01-contracts/inheritance-types-list/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/01-contracts/inheritance-type/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/01-contracts/contract-members-list/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/01-contracts/contract-member/0.6.0.md"
 
 ### 2.2. Interfaces
 
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/02-interfaces/interface-definition/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/02-interfaces/interface-members-list/unversioned.md"
 
 ### 2.3. Libraries
 
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/03-libraries/library-definition/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/03-libraries/library-members-list/unversioned.md"
 
 ### 2.4. Structs
 
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/04-structs/struct-definition/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/04-structs/struct-members-list/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/04-structs/struct-member/unversioned.md"
 
 ### 2.5. Enums
@@ -205,42 +219,47 @@
 
 ### 2.7. State Variables
 
---8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/07-state-variables/state-variable-declaration/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/07-state-variables/state-variable-definition/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/07-state-variables/state-variable-attributes-list/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/07-state-variables/state-variable-attribute/0.6.5.md"
 
 ### 2.8. Functions
 
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/08-functions/function-definition/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/08-functions/returns-declaration/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/08-functions/function-attributes-list/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/08-functions/function-attribute/0.6.0.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/08-functions/override-specifier/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/08-functions/parameter-list/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/08-functions/parameter-declaration/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/08-functions/argument-list/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/08-functions/positional-argument-list/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/08-functions/named-argument-list/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/08-functions/function-call-options/0.6.2.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/08-functions/named-argument/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/08-functions/parameters-declaration/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/08-functions/parameters-list/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/08-functions/parameter/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/08-functions/constructor-definition/0.4.22.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/08-functions/constructor-attributes-list/0.4.22.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/08-functions/constructor-attribute/0.4.22.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/08-functions/fallback-function-definition/0.6.0.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/08-functions/fallback-function-attributes-list/0.6.0.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/08-functions/fallback-function-attribute/0.6.0.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/08-functions/receive-function-definition/0.6.0.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/08-functions/receive-function-attributes-list/0.6.0.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/08-functions/receive-function-attribute/0.6.0.md"
 
 ### 2.9. Modifiers
 
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/09-modifiers/modifier-definition/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/09-modifiers/modifier-attributes-list/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/09-modifiers/modifier-attribute/0.6.0.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/09-modifiers/modifier-invocation/unversioned.md"
 
 ### 2.10 Events
 
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/10-events/event-definition/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/10-events/event-parameters-list/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/10-events/event-parameter/unversioned.md"
 
 ### 2.12. Errors
 
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/12-errors/error-definition/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/12-errors/error-parameters-list/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/12-errors/error-parameter/unversioned.md"
 
 ## 3. Types
@@ -248,7 +267,10 @@
 ### 3.1. Advanced Types
 
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/03-types/01-advanced-types/type-name/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/03-types/01-advanced-types/array-type-name-operator/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/03-types/01-advanced-types/function-type/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/03-types/01-advanced-types/function-type-attributes-list/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/03-types/01-advanced-types/function-type-attribute/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/03-types/01-advanced-types/mapping-type/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/03-types/01-advanced-types/mapping-key-type/0.4.11.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/03-types/01-advanced-types/mapping-value-type/0.4.11.md"
@@ -257,27 +279,33 @@
 
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/03-types/02-elementary-types/elementary-type/0.4.11.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/03-types/02-elementary-types/address-type/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/03-types/02-elementary-types/payable-type/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/03-types/02-elementary-types/byte-type/0.4.11.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/03-types/02-elementary-types/fixed-bytes-type/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/03-types/02-elementary-types/fixed-bytes-type-size/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/03-types/02-elementary-types/signed-integer-type/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/03-types/02-elementary-types/unsigned-integer-type/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/03-types/02-elementary-types/integer-type-size/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/03-types/02-elementary-types/signed-fixed-type/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/03-types/02-elementary-types/unsigned-fixed-type/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/03-types/02-elementary-types/fixed-type-size/unversioned.md"
 
 ## 4. Statements
 
 ### 4.1. Blocks
 
---8<-- "crates/solidity/outputs/spec/generated/ebnf/04-statements/01-blocks/block/0.4.11.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/04-statements/01-blocks/statement/0.6.0.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/04-statements/01-blocks/block/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/04-statements/01-blocks/statements-list/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/04-statements/01-blocks/statement/0.4.11.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/04-statements/01-blocks/control-statement/0.6.0.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/04-statements/01-blocks/simple-statement/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/04-statements/01-blocks/expression-statement/unversioned.md"
 
 ### 4.2. Declaration Statements
 
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/04-statements/02-declaration-statements/tuple-deconstruction-statement/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/04-statements/02-declaration-statements/variable-declaration-statement/0.5.0.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/04-statements/02-declaration-statements/tuple-members-list/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/04-statements/02-declaration-statements/tuple-member/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/04-statements/02-declaration-statements/variable-declaration-statement/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/04-statements/02-declaration-statements/variable-declaration/0.5.0.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/04-statements/02-declaration-statements/data-location/0.5.0.md"
 
 ### 4.3. Control Statements
@@ -295,7 +323,9 @@
 ### 4.4. Error Handling
 
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/04-statements/04-error-handling/try-statement/0.6.0.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/04-statements/04-error-handling/catch-clauses-list/0.6.0.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/04-statements/04-error-handling/catch-clause/0.6.0.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/04-statements/04-error-handling/catch-clause-error/0.6.0.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/04-statements/04-error-handling/revert-statement/unversioned.md"
 
 ## 5. Expressions
@@ -309,9 +339,9 @@
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/01-base-expressions/and-operator/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/01-base-expressions/equality-comparison-operator/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/01-base-expressions/order-comparison-operator/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/01-base-expressions/bit-or-operator/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/01-base-expressions/bit-x-or-operator/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/01-base-expressions/bit-and-operator/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/01-base-expressions/bitwise-or-operator/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/01-base-expressions/bitwise-x-or-operator/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/01-base-expressions/bitwise-and-operator/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/01-base-expressions/shift-operator/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/01-base-expressions/add-sub-operator/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/01-base-expressions/mul-div-mod-operator/unversioned.md"
@@ -322,62 +352,83 @@
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/01-base-expressions/member-access-operator/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/01-base-expressions/index-access-operator/unversioned.md"
 
-### 5.2. Primary Expressions
+### 5.2. Function Calls
 
---8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/02-primary-expressions/primary-expression/0.5.3.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/02-primary-expressions/type-expression/0.5.3.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/02-primary-expressions/new-expression/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/02-primary-expressions/tuple-expression/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/02-primary-expressions/array-literal/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/02-primary-expressions/boolean-literal/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/02-function-calls/arguments-declaration/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/02-function-calls/positional-arguments-list/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/02-function-calls/function-call-options/0.6.2.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/02-function-calls/named-arguments-declaration/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/02-function-calls/named-arguments-list/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/02-function-calls/named-argument/unversioned.md"
 
-### 5.3. Numbers
+### 5.3. Primary Expressions
 
---8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/03-numbers/numeric-expression/0.5.0.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/03-numbers/hex-literal/0.5.0.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/03-numbers/decimal-literal/0.5.0.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/03-numbers/decimal-number/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/03-numbers/decimal-exponent/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/03-numbers/number-unit/0.6.11.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/03-primary-expressions/primary-expression/0.5.3.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/03-primary-expressions/type-expression/0.5.3.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/03-primary-expressions/new-expression/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/03-primary-expressions/tuple-expression/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/03-primary-expressions/tuple-values-list/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/03-primary-expressions/array-expression/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/03-primary-expressions/array-values-list/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/03-primary-expressions/boolean-expression/unversioned.md"
 
-### 5.4. Strings
+### 5.4. Numbers
 
---8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/04-strings/string-expression/0.4.11.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/04-strings/hex-string-literal/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/04-strings/possibly-separated-pairs-of-hex-digits/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/04-strings/hex-character/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/04-strings/ascii-string-literal/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/04-strings/single-quoted-ascii-string-literal/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/04-strings/double-quoted-ascii-string-literal/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/04-strings/escape-sequence/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/04-strings/ascii-escape/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/04-strings/hex-byte-escape/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/04-strings/unicode-escape/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/04-numbers/numeric-expression/0.5.0.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/04-numbers/hex-literal/0.5.0.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/04-numbers/decimal-literal/0.5.0.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/04-numbers/decimal-digits/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/04-numbers/decimal-exponent/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/04-numbers/number-unit/0.6.11.md"
 
-### 5.5. Identifiers
+### 5.5. Strings
 
---8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/05-identifiers/identifier-path/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/05-identifiers/identifier/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/05-identifiers/not-an-identifier-in-any-version/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/05-identifiers/not-an-identifier-in-some-versions/0.6.0.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/05-identifiers/raw-identifier/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/05-identifiers/identifier-start/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/05-identifiers/identifier-part/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/05-strings/string-expression/0.4.11.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/05-strings/hex-string-literals-list/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/05-strings/hex-string-literal/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/05-strings/single-quoted-hex-string-literal/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/05-strings/double-quoted-hex-string-literal/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/05-strings/hex-string-contents/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/05-strings/hex-character/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/05-strings/ascii-string-literals-list/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/05-strings/ascii-string-literal/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/05-strings/single-quoted-ascii-string-literal/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/05-strings/double-quoted-ascii-string-literal/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/05-strings/escape-sequence/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/05-strings/ascii-escape/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/05-strings/hex-byte-escape/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/05-strings/unicode-escape/unversioned.md"
+
+### 5.6. Identifiers
+
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/06-identifiers/identifier-paths-list/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/06-identifiers/identifier-path/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/06-identifiers/identifiers-list/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/06-identifiers/identifier/0.5.0.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/06-identifiers/keyword-in-any-version/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/06-identifiers/keyword-in-some-version/0.6.5.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/06-identifiers/reserved-word-in-any-version/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/06-identifiers/reserved-word-in-some-version/0.5.0.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/06-identifiers/raw-identifier/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/06-identifiers/identifier-start/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/06-identifiers/identifier-part/unversioned.md"
 
 ## 6. Yul
 
 ### 6.1. Assembly Block
 
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/06-yul/01-assembly-block/assembly-statement/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/06-yul/01-assembly-block/evmasm/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/06-yul/01-assembly-block/assembly-flags/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/06-yul/01-assembly-block/assembly-flags-list/unversioned.md"
 
 ### 6.2. Yul Statements
 
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/06-yul/02-yul-statements/yul-block/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/06-yul/02-yul-statements/yul-statements-list/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/06-yul/02-yul-statements/yul-statement/0.6.0.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/06-yul/02-yul-statements/yul-declaration-statement/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/06-yul/02-yul-statements/yul-function-definition/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/06-yul/02-yul-statements/yul-parameters-declaration/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/06-yul/02-yul-statements/yul-returns-declaration/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/06-yul/02-yul-statements/yul-assignment-statement/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/06-yul/02-yul-statements/yul-if-statement/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/06-yul/02-yul-statements/yul-leave-statement/0.6.0.md"
@@ -385,14 +436,20 @@
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/06-yul/02-yul-statements/yul-continue-statement/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/06-yul/02-yul-statements/yul-for-statement/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/06-yul/02-yul-statements/yul-switch-statement/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/06-yul/02-yul-statements/yul-switch-cases-list/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/06-yul/02-yul-statements/yul-switch-case/unversioned.md"
 
 ### 6.3. Yul Expressions
 
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/06-yul/03-yul-expressions/yul-expressions-list/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/06-yul/03-yul-expressions/yul-expression/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/06-yul/03-yul-expressions/yul-function-call-operator/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/06-yul/03-yul-expressions/yul-identifier-paths-list/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/06-yul/03-yul-expressions/yul-identifier-path/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/06-yul/03-yul-expressions/yul-identifiers-list/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/06-yul/03-yul-expressions/yul-identifier/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/06-yul/03-yul-expressions/yul-keyword/0.6.0.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/06-yul/03-yul-expressions/yul-reserved-keyword/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/06-yul/03-yul-expressions/yul-reserved-word/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/06-yul/03-yul-expressions/yul-literal/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/06-yul/03-yul-expressions/yul-hex-literal/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/06-yul/03-yul-expressions/yul-decimal-literal/unversioned.md"

@@ -15,7 +15,6 @@ Tree:
                       - Identifier (Token): "Foo" # 4..7
               - OpenBracket (Token): "[" # 7..8
               - Expression (Rule): # 8..10 "10"
-                  - PrimaryExpression (Rule): # 8..10 "10"
-                      - NumericExpression (Rule): # 8..10 "10"
-                          - DecimalLiteral (Token): "10" # 8..10
+                  - NumericExpression (Rule): # 8..10 "10"
+                      - DecimalLiteral (Token): "10" # 8..10
               - CloseBracket (Token): "]" # 10..11

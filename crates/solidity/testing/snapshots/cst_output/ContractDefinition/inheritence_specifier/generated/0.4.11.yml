@@ -1,0 +1,38 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract Sample is Foo, Bar(1, 2), Baz {}                                        │ 0..41
+
+Errors: []
+
+Tree:
+  - ContractDefinition (Rule): # 0..41 "contract Sample is Foo, Bar(1, 2), Baz {}"
+      - ContractKeyword (Token): "contract" # 0..8
+      - Identifier (Token): "Sample" # 9..15
+      - InheritanceSpecifier (Rule): # 15..38 " is Foo, Bar(1, 2), Baz"
+          - IsKeyword (Token): "is" # 16..18
+          - InheritanceTypesList (Rule): # 18..38 " Foo, Bar(1, 2), Baz"
+              - InheritanceType (Rule): # 18..22 " Foo"
+                  - IdentifierPath (Rule): # 18..22 " Foo"
+                      - Identifier (Token): "Foo" # 19..22
+              - Comma (Token): "," # 22..23
+              - InheritanceType (Rule): # 23..33 " Bar(1, 2)"
+                  - IdentifierPath (Rule): # 23..27 " Bar"
+                      - Identifier (Token): "Bar" # 24..27
+                  - ArgumentsDeclaration (Rule): # 27..33 "(1, 2)"
+                      - OpenParen (Token): "(" # 27..28
+                      - PositionalArgumentsList (Rule): # 28..32 "1, 2"
+                          - Expression (Rule): # 28..29 "1"
+                              - NumericExpression (Rule): # 28..29 "1"
+                                  - DecimalLiteral (Token): "1" # 28..29
+                          - Comma (Token): "," # 29..30
+                          - Expression (Rule): # 30..32 " 2"
+                              - NumericExpression (Rule): # 30..32 " 2"
+                                  - DecimalLiteral (Token): "2" # 31..32
+                      - CloseParen (Token): ")" # 32..33
+              - Comma (Token): "," # 33..34
+              - InheritanceType (Rule): # 34..38 " Baz"
+                  - IdentifierPath (Rule): # 34..38 " Baz"
+                      - Identifier (Token): "Baz" # 35..38
+      - OpenBrace (Token): "{" # 39..40
+      - CloseBrace (Token): "}" # 40..41

@@ -1,0 +1,25 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract Sample {                                                                │ 0..17
+  2  │   fallback() {                                                                   │ 18..32
+  3  │   }                                                                              │ 33..36
+  4  │ }                                                                                │ 37..38
+
+Errors: []
+
+Tree:
+  - ContractDefinition (Rule): # 0..38 "contract Sample {\n  fallback() {\n  }\n}"
+      - ContractKeyword (Token): "contract" # 0..8
+      - Identifier (Token): "Sample" # 9..15
+      - OpenBrace (Token): "{" # 16..17
+      - ContractMembersList (Rule): # 18..37 "  fallback() {\n  }\n"
+          - FallbackFunctionDefinition (Rule): # 18..37 "  fallback() {\n  }\n"
+              - FallbackKeyword (Token): "fallback" # 20..28
+              - ParametersDeclaration (Rule): # 28..30 "()"
+                  - OpenParen (Token): "(" # 28..29
+                  - CloseParen (Token): ")" # 29..30
+              - Block (Rule): # 30..37 " {\n  }\n"
+                  - OpenBrace (Token): "{" # 31..32
+                  - CloseBrace (Token): "}" # 35..36
+      - CloseBrace (Token): "}" # 37..38

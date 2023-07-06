@@ -7,10 +7,16 @@
       open:
         reference: "OpenBrace"
       expression:
-        zeroOrMore:
-          reference: "YulStatement"
+        optional:
+          reference: "YulStatementsList"
       close:
         reference: "CloseBrace"
+
+- name: "YulStatementsList"
+  kind: "Parser"
+  unversioned:
+    oneOrMore:
+      reference: "YulStatement"
 
 - name: "YulStatement"
   kind: "Parser"
@@ -28,7 +34,7 @@
         - reference: "YulContinueStatement"
         - reference: "YulExpression"
     0.6.0:
-      # added "YuiLeaveStatement"
+      # added "YulLeaveStatement"
       choice:
         - reference: "YulBlock"
         - reference: "YulFunctionDefinition"
@@ -47,11 +53,7 @@
   unversioned:
     sequence:
       - reference: "LetKeyword"
-      - separatedBy:
-          separator:
-            reference: "Comma"
-          expression:
-            reference: "YulIdentifierPath"
+      - reference: "YulIdentifierPathsList"
       - optional:
           sequence:
             - reference: "ColonEqual"
@@ -63,39 +65,35 @@
     sequence:
       - reference: "FunctionKeyword"
       - reference: "YulIdentifier"
-      - delimitedBy:
-          open:
-            reference: "OpenParen"
-          expression:
-            optional:
-              name: "Arguments"
-              separatedBy:
-                separator:
-                  reference: "Comma"
-                expression:
-                  reference: "YulIdentifier"
-          close:
-            reference: "CloseParen"
+      - reference: "YulParametersDeclaration"
       - optional:
-          sequence:
-            - reference: "MinusGreaterThan"
-            - name: "Results"
-              separatedBy:
-                separator:
-                  reference: "Comma"
-                expression:
-                  reference: "YulIdentifier"
+          reference: "YulReturnsDeclaration"
       - reference: "YulBlock"
+
+- name: "YulParametersDeclaration"
+  kind: "Parser"
+  unversioned:
+    delimitedBy:
+      open:
+        reference: "OpenParen"
+      expression:
+        optional:
+          reference: "YulIdentifiersList"
+      close:
+        reference: "CloseParen"
+
+- name: "YulReturnsDeclaration"
+  kind: "Parser"
+  unversioned:
+    sequence:
+      - reference: "MinusGreaterThan"
+      - reference: "YulIdentifiersList"
 
 - name: "YulAssignmentStatement"
   kind: "Parser"
   unversioned:
     sequence:
-      - separatedBy:
-          separator:
-            reference: "Comma"
-          expression:
-            reference: "YulIdentifierPath"
+      - reference: "YulIdentifierPathsList"
       - reference: "ColonEqual"
       - reference: "YulExpression"
 
@@ -139,11 +137,21 @@
     sequence:
       - reference: "SwitchKeyword"
       - reference: "YulExpression"
-      - oneOrMore:
-          sequence:
-            - choice:
-                - sequence:
-                    - reference: "CaseKeyword"
-                    - reference: "YulLiteral"
-                - reference: "DefaultKeyword"
-            - reference: "YulBlock"
+      - reference: "YulSwitchCasesList"
+
+- name: "YulSwitchCasesList"
+  kind: "Parser"
+  unversioned:
+    oneOrMore:
+      reference: "YulSwitchCase"
+
+- name: "YulSwitchCase"
+  kind: "Parser"
+  unversioned:
+    sequence:
+      - choice:
+          - reference: "DefaultKeyword"
+          - sequence:
+              - reference: "CaseKeyword"
+              - reference: "YulLiteral"
+      - reference: "YulBlock"

@@ -9,27 +9,39 @@
           - reference: "Identifier"
           - reference: "FallbackKeyword"
           - reference: "ReceiveKeyword"
-      - reference: "ParameterList"
-      - zeroOrMore:
-          reference: "FunctionAttribute"
+      - reference: "ParametersDeclaration"
       - optional:
-          sequence:
-            - reference: "ReturnsKeyword"
-            - reference: "ParameterList"
+          reference: "FunctionAttributesList"
+      - optional:
+          reference: "ReturnsDeclaration"
       - choice:
           - reference: "Semicolon"
           - reference: "Block"
 
+- name: "ReturnsDeclaration"
+  kind: "Parser"
+  unversioned:
+    sequence:
+      - reference: "ReturnsKeyword"
+      - reference: "ParametersDeclaration"
+
+- name: "FunctionAttributesList"
+  kind: "Parser"
+  unversioned:
+    oneOrMore:
+      reference: "FunctionAttribute"
+
 - name: "FunctionAttribute"
   kind: "Parser"
+  inlined: true
   versioned:
     0.4.11:
       choice:
+        - reference: "ModifierInvocation"
+        - reference: "OverrideSpecifier"
         - reference: "ConstantKeyword"
         - reference: "ExternalKeyword"
         - reference: "InternalKeyword"
-        - reference: "ModifierInvocation"
-        - reference: "OverrideSpecifier"
         - reference: "PayableKeyword"
         - reference: "PrivateKeyword"
         - reference: "PublicKeyword"
@@ -38,10 +50,10 @@
     0.5.0:
       # removed: ConstantKeyword
       choice:
-        - reference: "ExternalKeyword"
-        - reference: "InternalKeyword"
         - reference: "ModifierInvocation"
         - reference: "OverrideSpecifier"
+        - reference: "ExternalKeyword"
+        - reference: "InternalKeyword"
         - reference: "PayableKeyword"
         - reference: "PrivateKeyword"
         - reference: "PublicKeyword"
@@ -50,10 +62,10 @@
     0.6.0:
       # added: VirtualKeyword
       choice:
-        - reference: "ExternalKeyword"
-        - reference: "InternalKeyword"
         - reference: "ModifierInvocation"
         - reference: "OverrideSpecifier"
+        - reference: "ExternalKeyword"
+        - reference: "InternalKeyword"
         - reference: "PayableKeyword"
         - reference: "PrivateKeyword"
         - reference: "PublicKeyword"
@@ -71,15 +83,12 @@
             open:
               reference: "OpenParen"
             expression:
-              separatedBy:
-                separator:
-                  reference: "Comma"
-                expression:
-                  reference: "IdentifierPath"
+              optional:
+                reference: "IdentifierPathsList"
             close:
               reference: "CloseParen"
 
-- name: "ParameterList"
+- name: "ParametersDeclaration"
   kind: "Parser"
   unversioned:
     delimitedBy:
@@ -87,15 +96,20 @@
         reference: "OpenParen"
       expression:
         optional:
-          separatedBy:
-            separator:
-              reference: "Comma"
-            expression:
-              reference: "ParameterDeclaration"
+          reference: "ParametersList"
       close:
         reference: "CloseParen"
 
-- name: "ParameterDeclaration"
+- name: "ParametersList"
+  kind: "Parser"
+  unversioned:
+    separatedBy:
+      separator:
+        reference: "Comma"
+      expression:
+        reference: "Parameter"
+
+- name: "Parameter"
   kind: "Parser"
   unversioned:
     sequence:
@@ -105,83 +119,27 @@
       - optional:
           reference: "Identifier"
 
-- name: "ArgumentList"
-  kind: "Parser"
-  unversioned:
-    delimitedBy:
-      open:
-        reference: "OpenParen"
-      expression:
-        optional:
-          choice:
-            - reference: "PositionalArgumentList"
-            - reference: "NamedArgumentList"
-      close:
-        reference: "CloseParen"
-
-- name: "PositionalArgumentList"
-  kind: "Parser"
-  unversioned:
-    separatedBy:
-      separator:
-        reference: "Comma"
-      expression:
-        reference: "Expression"
-
-- name: "NamedArgumentList"
-  kind: "Parser"
-  unversioned:
-    delimitedBy:
-      open:
-        reference: "OpenBrace"
-      expression:
-        optional:
-          separatedBy:
-            separator:
-              reference: "Comma"
-            expression:
-              reference: "NamedArgument"
-      close:
-        reference: "CloseBrace"
-
-- name: "FunctionCallOptions"
-  kind: "Parser"
-  versioned:
-    0.6.2:
-      delimitedBy:
-        open:
-          reference: "OpenBrace"
-        expression:
-          optional:
-            separatedBy:
-              separator:
-                reference: "Comma"
-              expression:
-                reference: "NamedArgument"
-        close:
-          reference: "CloseBrace"
-
-- name: "NamedArgument"
-  kind: "Parser"
-  unversioned:
-    sequence:
-      - reference: "Identifier"
-      - reference: "Colon"
-      - reference: "Expression"
-
 - name: "ConstructorDefinition"
   kind: "Parser"
   versioned:
     0.4.22:
       sequence:
         - reference: "ConstructorKeyword"
-        - reference: "ParameterList"
-        - zeroOrMore:
-            reference: "ConstructorAttribute"
+        - reference: "ParametersDeclaration"
+        - optional:
+            reference: "ConstructorAttributesList"
         - reference: "Block"
+
+- name: "ConstructorAttributesList"
+  kind: "Parser"
+  versioned:
+    0.4.22:
+      oneOrMore:
+        reference: "ConstructorAttribute"
 
 - name: "ConstructorAttribute"
   kind: "Parser"
+  inlined: true
   versioned:
     0.4.22:
       choice:
@@ -196,16 +154,25 @@
     0.4.11:
       sequence:
         - reference: "FunctionKeyword"
-        - reference: "ParameterList"
-        - zeroOrMore:
-            reference: "UnnamedFunctionAttribute"
+        - reference: "ParametersDeclaration"
+        - optional:
+            reference: "UnnamedFunctionAttributesList"
         - choice:
             - reference: "Semicolon"
             - reference: "Block"
     0.6.0: null
 
+- name: "UnnamedFunctionAttributesList"
+  kind: "Parser"
+  versioned:
+    0.4.11:
+      oneOrMore:
+        reference: "UnnamedFunctionAttribute"
+    0.6.0: null
+
 - name: "UnnamedFunctionAttribute"
   kind: "Parser"
+  inlined: true
   versioned:
     0.4.11:
       choice:
@@ -223,19 +190,25 @@
     0.6.0:
       sequence:
         - reference: "FallbackKeyword"
-        - reference: "ParameterList"
-        - zeroOrMore:
-            reference: "FallbackFunctionAttribute"
+        - reference: "ParametersDeclaration"
         - optional:
-            sequence:
-              - reference: "ReturnsKeyword"
-              - reference: "ParameterList"
+            reference: "FallbackFunctionAttributesList"
+        - optional:
+            reference: "ReturnsDeclaration"
         - choice:
             - reference: "Semicolon"
             - reference: "Block"
 
+- name: "FallbackFunctionAttributesList"
+  kind: "Parser"
+  versioned:
+    0.6.0:
+      oneOrMore:
+        reference: "FallbackFunctionAttribute"
+
 - name: "FallbackFunctionAttribute"
   kind: "Parser"
+  inlined: true
   versioned:
     0.6.0:
       choice:
@@ -253,15 +226,23 @@
     0.6.0:
       sequence:
         - reference: "ReceiveKeyword"
-        - reference: "ParameterList"
-        - zeroOrMore:
-            reference: "ReceiveFunctionAttribute"
+        - reference: "ParametersDeclaration"
+        - optional:
+            reference: "ReceiveFunctionAttributesList"
         - choice:
             - reference: "Semicolon"
             - reference: "Block"
 
+- name: "ReceiveFunctionAttributesList"
+  kind: "Parser"
+  versioned:
+    0.6.0:
+      oneOrMore:
+        reference: "ReceiveFunctionAttribute"
+
 - name: "ReceiveFunctionAttribute"
   kind: "Parser"
+  inlined: true
   versioned:
     0.6.0:
       choice:

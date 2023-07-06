@@ -1,1 +1,0 @@
-import { A1 as A2, B, C1 as C3 } from "foo";

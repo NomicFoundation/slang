@@ -1,0 +1,62 @@
+# yaml-language-server: $schema=../../../generated/productions.schema.json
+
+- name: "ArgumentsDeclaration"
+  kind: "Parser"
+  unversioned:
+    delimitedBy:
+      open:
+        reference: "OpenParen"
+      expression:
+        optional:
+          choice:
+            - reference: "PositionalArgumentsList"
+            - reference: "NamedArgumentsDeclaration"
+      close:
+        reference: "CloseParen"
+
+- name: "PositionalArgumentsList"
+  kind: "Parser"
+  unversioned:
+    separatedBy:
+      separator:
+        reference: "Comma"
+      expression:
+        reference: "Expression"
+
+- name: "FunctionCallOptions"
+  kind: "Parser"
+  versioned:
+    0.6.2:
+      oneOrMore:
+        reference: "NamedArgumentsDeclaration"
+    0.8.0:
+      reference: "NamedArgumentsDeclaration"
+
+- name: "NamedArgumentsDeclaration"
+  kind: "Parser"
+  unversioned:
+    delimitedBy:
+      open:
+        reference: "OpenBrace"
+      expression:
+        optional:
+          reference: "NamedArgumentsList"
+      close:
+        reference: "CloseBrace"
+
+- name: "NamedArgumentsList"
+  kind: "Parser"
+  unversioned:
+    separatedBy:
+      separator:
+        reference: "Comma"
+      expression:
+        reference: "NamedArgument"
+
+- name: "NamedArgument"
+  kind: "Parser"
+  unversioned:
+    sequence:
+      - reference: "Identifier"
+      - reference: "Colon"
+      - reference: "Expression"

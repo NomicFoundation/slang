@@ -15,6 +15,5 @@ Errors: # 1 total
 
 Tree:
   - Expression (Rule): # 0..5 "arr[]"
-      - PrimaryExpression (Rule): # 0..3 "arr"
-          - Identifier (Token): "arr" # 0..3
+      - Identifier (Token): "arr" # 0..3
       - SKIPPED (Token): "[]" # 3..5

@@ -1,0 +1,23 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ using {add} for Int global;                                                      │ 0..27
+
+Errors: []
+
+Tree:
+  - UsingDirective (Rule): # 0..27 "using {add} for Int global;"
+      - UsingKeyword (Token): "using" # 0..5
+      - UsingDirectiveDeconstruction (Rule): # 5..11 " {add}"
+          - OpenBrace (Token): "{" # 6..7
+          - UsingDirectiveSymbolsList (Rule): # 7..10 "add"
+              - UsingDirectiveSymbol (Rule): # 7..10 "add"
+                  - IdentifierPath (Rule): # 7..10 "add"
+                      - Identifier (Token): "add" # 7..10
+          - CloseBrace (Token): "}" # 10..11
+      - ForKeyword (Token): "for" # 12..15
+      - TypeName (Rule): # 15..19 " Int"
+          - IdentifierPath (Rule): # 15..19 " Int"
+              - Identifier (Token): "Int" # 16..19
+      - GlobalKeyword (Token): "global" # 20..26
+      - Semicolon (Token): ";" # 26..27

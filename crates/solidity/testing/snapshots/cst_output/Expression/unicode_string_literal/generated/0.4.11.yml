@@ -13,6 +13,5 @@ Errors: # 1 total
 
 Tree:
   - Expression (Rule): # 0..25 'unicode"This Emoji: 😃"'
-      - PrimaryExpression (Rule): # 0..7 "unicode"
-          - Identifier (Token): "unicode" # 0..7
+      - Identifier (Token): "unicode" # 0..7
       - SKIPPED (Token): '"This Emoji: 😃"' # 7..25

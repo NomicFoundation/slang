@@ -13,17 +13,22 @@
                 reference: "OpenParen"
               expression:
                 optional:
-                  separatedBy:
-                    separator:
-                      reference: "Comma"
-                    expression:
-                      reference: "EventParameter"
+                  reference: "EventParametersList"
               close:
                 reference: "CloseParen"
           - optional:
               reference: "AnonymousKeyword"
       terminator:
         reference: "Semicolon"
+
+- name: "EventParametersList"
+  kind: "Parser"
+  unversioned:
+    separatedBy:
+      separator:
+        reference: "Comma"
+      expression:
+        reference: "EventParameter"
 
 - name: "EventParameter"
   kind: "Parser"

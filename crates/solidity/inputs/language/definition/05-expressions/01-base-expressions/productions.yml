@@ -5,7 +5,7 @@
   versioned:
     0.4.11:
       operators:
-        - name: "AssignmentExpression"
+        - name: "BinaryExpression"
           model: "BinaryLeftAssociative"
           operator:
             reference: "AssignmentOperator"
@@ -15,57 +15,57 @@
           operator:
             reference: "ConditionalOperator"
 
-        - name: "OrExpression"
+        - name: "BinaryExpression"
           model: "BinaryLeftAssociative"
           operator:
             reference: "OrOperator"
 
-        - name: "AndExpression"
+        - name: "BinaryExpression"
           model: "BinaryLeftAssociative"
           operator:
             reference: "AndOperator"
 
-        - name: "EqualityComparisonExpression"
+        - name: "BinaryExpression"
           model: "BinaryLeftAssociative"
           operator:
             reference: "EqualityComparisonOperator"
 
-        - name: "OrderComparisonExpression"
+        - name: "BinaryExpression"
           model: "BinaryLeftAssociative"
           operator:
             reference: "OrderComparisonOperator"
 
-        - name: "BitOrExpression"
+        - name: "BinaryExpression"
           model: "BinaryLeftAssociative"
           operator:
-            reference: "BitOrOperator"
+            reference: "BitwiseOrOperator"
 
-        - name: "BitXOrExpression"
+        - name: "BinaryExpression"
           model: "BinaryLeftAssociative"
           operator:
-            reference: "BitXOrOperator"
+            reference: "BitwiseXOrOperator"
 
-        - name: "BitAndExpression"
+        - name: "BinaryExpression"
           model: "BinaryLeftAssociative"
           operator:
-            reference: "BitAndOperator"
+            reference: "BitwiseAndOperator"
 
-        - name: "ShiftExpression"
+        - name: "BinaryExpression"
           model: "BinaryLeftAssociative"
           operator:
             reference: "ShiftOperator"
 
-        - name: "AddSubExpression"
+        - name: "BinaryExpression"
           model: "BinaryLeftAssociative"
           operator:
             reference: "AddSubOperator"
 
-        - name: "MulDivModExpression"
+        - name: "BinaryExpression"
           model: "BinaryLeftAssociative"
           operator:
             reference: "MulDivModOperator"
 
-        - name: "ExponentiationExpression"
+        - name: "BinaryExpression"
           model: "BinaryLeftAssociative"
           operator:
             reference: "ExponentiationOperator"
@@ -101,7 +101,7 @@
     0.6.0:
       # ExponentiationExpression is now BinaryRightAssociative
       operators:
-        - name: "AssignmentExpression"
+        - name: "BinaryExpression"
           model: "BinaryLeftAssociative"
           operator:
             reference: "AssignmentOperator"
@@ -111,57 +111,57 @@
           operator:
             reference: "ConditionalOperator"
 
-        - name: "OrExpression"
+        - name: "BinaryExpression"
           model: "BinaryLeftAssociative"
           operator:
             reference: "OrOperator"
 
-        - name: "AndExpression"
+        - name: "BinaryExpression"
           model: "BinaryLeftAssociative"
           operator:
             reference: "AndOperator"
 
-        - name: "EqualityComparisonExpression"
+        - name: "BinaryExpression"
           model: "BinaryLeftAssociative"
           operator:
             reference: "EqualityComparisonOperator"
 
-        - name: "OrderComparisonExpression"
+        - name: "BinaryExpression"
           model: "BinaryLeftAssociative"
           operator:
             reference: "OrderComparisonOperator"
 
-        - name: "BitOrExpression"
+        - name: "BinaryExpression"
           model: "BinaryLeftAssociative"
           operator:
-            reference: "BitOrOperator"
+            reference: "BitwiseOrOperator"
 
-        - name: "BitXOrExpression"
+        - name: "BinaryExpression"
           model: "BinaryLeftAssociative"
           operator:
-            reference: "BitXOrOperator"
+            reference: "BitwiseXOrOperator"
 
-        - name: "BitAndExpression"
+        - name: "BinaryExpression"
           model: "BinaryLeftAssociative"
           operator:
-            reference: "BitAndOperator"
+            reference: "BitwiseAndOperator"
 
-        - name: "ShiftExpression"
+        - name: "BinaryExpression"
           model: "BinaryLeftAssociative"
           operator:
             reference: "ShiftOperator"
 
-        - name: "AddSubExpression"
+        - name: "BinaryExpression"
           model: "BinaryLeftAssociative"
           operator:
             reference: "AddSubOperator"
 
-        - name: "MulDivModExpression"
+        - name: "BinaryExpression"
           model: "BinaryLeftAssociative"
           operator:
             reference: "MulDivModOperator"
 
-        - name: "ExponentiationExpression"
+        - name: "BinaryExpression"
           model: "BinaryRightAssociative"
           operator:
             reference: "ExponentiationOperator"
@@ -196,23 +196,25 @@
 
 - name: "AssignmentOperator"
   kind: "Parser"
+  inlined: true
   unversioned:
     choice:
       - reference: "Equal"
       - reference: "BarEqual"
+      - reference: "PlusEqual"
+      - reference: "MinusEqual"
       - reference: "CaretEqual"
+      - reference: "SlashEqual"
+      - reference: "PercentEqual"
+      - reference: "AsteriskEqual"
       - reference: "AmpersandEqual"
       - reference: "LessThanLessThanEqual"
       - reference: "GreaterThanGreaterThanEqual"
       - reference: "GreaterThanGreaterThanGreaterThanEqual"
-      - reference: "PlusEqual"
-      - reference: "MinusEqual"
-      - reference: "AsteriskEqual"
-      - reference: "SlashEqual"
-      - reference: "PercentEqual"
 
 - name: "ConditionalOperator"
   kind: "Parser"
+  inlined: true
   unversioned:
     sequence:
       - reference: "QuestionMark"
@@ -222,16 +224,19 @@
 
 - name: "OrOperator"
   kind: "Parser"
+  inlined: true
   unversioned:
     reference: "BarBar"
 
 - name: "AndOperator"
   kind: "Parser"
+  inlined: true
   unversioned:
     reference: "AmpersandAmpersand"
 
 - name: "EqualityComparisonOperator"
   kind: "Parser"
+  inlined: true
   unversioned:
     choice:
       - reference: "EqualEqual"
@@ -239,6 +244,7 @@
 
 - name: "OrderComparisonOperator"
   kind: "Parser"
+  inlined: true
   unversioned:
     choice:
       - reference: "LessThan"
@@ -246,23 +252,27 @@
       - reference: "LessThanEqual"
       - reference: "GreaterThanEqual"
 
-- name: "BitOrOperator"
+- name: "BitwiseOrOperator"
   kind: "Parser"
+  inlined: true
   unversioned:
     reference: "Bar"
 
-- name: "BitXOrOperator"
+- name: "BitwiseXOrOperator"
   kind: "Parser"
+  inlined: true
   unversioned:
     reference: "Caret"
 
-- name: "BitAndOperator"
+- name: "BitwiseAndOperator"
   kind: "Parser"
+  inlined: true
   unversioned:
     reference: "Ampersand"
 
 - name: "ShiftOperator"
   kind: "Parser"
+  inlined: true
   unversioned:
     choice:
       - reference: "LessThanLessThan"
@@ -271,6 +281,7 @@
 
 - name: "AddSubOperator"
   kind: "Parser"
+  inlined: true
   unversioned:
     choice:
       - reference: "Plus"
@@ -278,6 +289,7 @@
 
 - name: "MulDivModOperator"
   kind: "Parser"
+  inlined: true
   unversioned:
     choice:
       - reference: "Asterisk"
@@ -286,11 +298,13 @@
 
 - name: "ExponentiationOperator"
   kind: "Parser"
+  inlined: true
   unversioned:
     reference: "AsteriskAsterisk"
 
 - name: "UnaryPostfixOperator"
   kind: "Parser"
+  inlined: true
   unversioned:
     choice:
       - reference: "PlusPlus"
@@ -298,6 +312,7 @@
 
 - name: "UnaryPrefixOperator"
   kind: "Parser"
+  inlined: true
   versioned:
     0.4.11:
       choice:
@@ -318,23 +333,19 @@
 
 - name: "FunctionCallOperator"
   kind: "Parser"
+  inlined: true
   versioned:
     0.4.11:
-      sequence:
-        - reference: "ArgumentList"
+      reference: "ArgumentsDeclaration"
     0.6.2:
-      sequence:
-        - zeroOrMore:
-            reference: "FunctionCallOptions"
-        - reference: "ArgumentList"
-    0.8.0:
       sequence:
         - optional:
             reference: "FunctionCallOptions"
-        - reference: "ArgumentList"
+        - reference: "ArgumentsDeclaration"
 
 - name: "MemberAccessOperator"
   kind: "Parser"
+  inlined: true
   unversioned:
     sequence:
       - reference: "Period"
@@ -344,6 +355,7 @@
 
 - name: "IndexAccessOperator"
   kind: "Parser"
+  inlined: true
   unversioned:
     delimitedBy:
       open:

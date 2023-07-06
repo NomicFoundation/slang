@@ -1,0 +1,17 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ import * as foo from "bar";                                                      │ 0..27
+
+Errors: []
+
+Tree:
+  - ImportDirective (Rule): # 0..27 'import * as foo from "bar";'
+      - ImportKeyword (Token): "import" # 0..6
+      - NamedImport (Rule): # 6..26 ' * as foo from "bar"'
+          - Asterisk (Token): "*" # 7..8
+          - AsKeyword (Token): "as" # 9..11
+          - Identifier (Token): "foo" # 12..15
+          - FromKeyword (Token): "from" # 16..20
+          - AsciiStringLiteral (Token): '"bar"' # 21..26
+      - Semicolon (Token): ";" # 26..27

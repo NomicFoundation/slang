@@ -17,7 +17,7 @@ Tree:
   - FunctionDefinition (Rule): # 0..24 "function a() constant {}"
       - FunctionKeyword (Token): "function" # 0..8
       - Identifier (Token): "a" # 9..10
-      - ParameterList (Rule): # 10..12 "()"
+      - ParametersDeclaration (Rule): # 10..12 "()"
           - OpenParen (Token): "(" # 10..11
           - CloseParen (Token): ")" # 11..12
       - SKIPPED (Token): " constant {}" # 12..24

@@ -7,11 +7,11 @@ test("parse token", (t) => {
   const source = "5_286_981";
   const language = new Language("0.8.1");
 
-  const { parseTree } = language.parse(ProductionKind.DecimalNumber, source);
+  const { parseTree } = language.parse(ProductionKind.DecimalLiteral, source);
 
   if (parseTree instanceof TokenNode) {
     t.is(parseTree.type, NodeType.Token);
-    t.is(parseTree.kind, TokenKind.DecimalNumber);
+    t.is(parseTree.kind, TokenKind.DecimalLiteral);
   } else {
     t.fail("Expected TokenNode");
   }

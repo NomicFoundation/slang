@@ -8,12 +8,14 @@ Errors: []
 Tree:
   - VersionPragma (Rule): # 0..15 "solidity =0.8.0"
       - SolidityKeyword (Token): "solidity" # 0..8
-      - VersionPragmaExpressionList (Rule): # 8..15 " =0.8.0"
-          - VersionPragmaComparator (Rule): # 8..15 " =0.8.0"
-              - Equal (Token): "=" # 9..10
-              - VersionPragmaSpecifier (Rule): # 10..15 "0.8.0"
-                  - VersionPragmaValue (Token): "0" # 10..11
-                  - Period (Token): "." # 11..12
-                  - VersionPragmaValue (Token): "8" # 12..13
-                  - Period (Token): "." # 13..14
-                  - VersionPragmaValue (Token): "0" # 14..15
+      - VersionPragmaExpressionsList (Rule): # 8..15 " =0.8.0"
+          - VersionPragmaExpression (Rule): # 8..15 " =0.8.0"
+              - VersionPragmaUnaryExpression (Rule): # 8..15 " =0.8.0"
+                  - Equal (Token): "=" # 9..10
+                  - VersionPragmaExpression (Rule): # 10..15 "0.8.0"
+                      - VersionPragmaSpecifier (Rule): # 10..15 "0.8.0"
+                          - VersionPragmaValue (Token): "0" # 10..11
+                          - Period (Token): "." # 11..12
+                          - VersionPragmaValue (Token): "8" # 12..13
+                          - Period (Token): "." # 13..14
+                          - VersionPragmaValue (Token): "0" # 14..15

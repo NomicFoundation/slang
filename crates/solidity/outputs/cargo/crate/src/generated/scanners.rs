@@ -127,14 +127,14 @@ impl Language {
         )
     }
 
-    // ASCII_ESCAPE = "n"
-    //              | "r"
-    //              | "t"
-    //              | "'"
-    //              | '"'
-    //              | "\\"
-    //              | "\n"
-    //              | "\r";
+    // «ASCII_ESCAPE» = "n"
+    //                | "r"
+    //                | "t"
+    //                | "'"
+    //                | '"'
+    //                | "\\"
+    //                | "\n"
+    //                | "\r";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -149,15 +149,23 @@ impl Language {
             || c == 't')
     }
 
-    // ASCII_STRING_LITERAL = SINGLE_QUOTED_ASCII_STRING_LITERAL | DOUBLE_QUOTED_ASCII_STRING_LITERAL;
+    // ASCII_STRING_LITERAL = «SINGLE_QUOTED_ASCII_STRING_LITERAL» | «DOUBLE_QUOTED_ASCII_STRING_LITERAL»;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn ascii_string_literal(&self, stream: &mut Stream) -> bool {
-        scan_choice!(
+        scan_not_followed_by!(
             stream,
-            self.single_quoted_ascii_string_literal(stream),
-            self.double_quoted_ascii_string_literal(stream)
+            scan_choice!(
+                stream,
+                self.single_quoted_ascii_string_literal(stream),
+                self.double_quoted_ascii_string_literal(stream)
+            ),
+            scan_predicate!(stream, |c| c == '$'
+                || ('0' <= c && c <= '9')
+                || ('A' <= c && c <= 'Z')
+                || c == '_'
+                || ('a' <= c && c <= 'z'))
         )
     }
 
@@ -282,10 +290,10 @@ impl Language {
     }
 
     // (* v0.4.11 *)
-    // BYTE_TYPE = "byte";
+    // BYTE_KEYWORD = "byte";
 
     #[allow(dead_code, non_snake_case)]
-    fn byte_type__0_4_11(&self, stream: &mut Stream) -> bool {
+    fn byte_keyword__0_4_11(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
             scan_chars!(stream, 'b', 'y', 't', 'e'),
@@ -298,17 +306,17 @@ impl Language {
     }
 
     #[allow(non_snake_case)]
-    pub(crate) fn byte_type__sparse_dispatch(&self, stream: &mut Stream) -> Option<bool> {
+    pub(crate) fn byte_keyword__sparse_dispatch(&self, stream: &mut Stream) -> Option<bool> {
         if self.version_is_equal_to_or_greater_than_0_8_0 {
             None
         } else {
-            Some(self.byte_type__0_4_11(stream))
+            Some(self.byte_keyword__0_4_11(stream))
         }
     }
 
     #[inline]
-    pub(crate) fn byte_type(&self, stream: &mut Stream) -> bool {
-        self.byte_type__sparse_dispatch(stream)
+    pub(crate) fn byte_keyword(&self, stream: &mut Stream) -> bool {
+        self.byte_keyword__sparse_dispatch(stream)
             .expect("Validation should have checked that references are valid between versions")
     }
 
@@ -549,76 +557,11 @@ impl Language {
         )
     }
 
-    // DECIMAL_EXPONENT = ("e" | "E") "-"? DECIMAL_NUMBER;
+    // «DECIMAL_DIGITS» = "0"…"9"+ ("_" "0"…"9"+)*;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
-    pub(crate) fn decimal_exponent(&self, stream: &mut Stream) -> bool {
-        scan_sequence!(
-            scan_predicate!(stream, |c| c == 'E' || c == 'e'),
-            scan_optional!(stream, scan_chars!(stream, '-')),
-            self.decimal_number(stream)
-        )
-    }
-
-    // (* v0.4.11 *)
-    // DECIMAL_LITERAL = ((DECIMAL_NUMBER ("." DECIMAL_NUMBER?)?) | ("." DECIMAL_NUMBER)) DECIMAL_EXPONENT?;
-
-    #[allow(dead_code, non_snake_case)]
-    fn decimal_literal__0_4_11(&self, stream: &mut Stream) -> bool {
-        scan_sequence!(
-            scan_choice!(
-                stream,
-                scan_sequence!(
-                    self.decimal_number(stream),
-                    scan_optional!(
-                        stream,
-                        scan_sequence!(
-                            scan_chars!(stream, '.'),
-                            scan_optional!(stream, self.decimal_number(stream))
-                        )
-                    )
-                ),
-                scan_sequence!(scan_chars!(stream, '.'), self.decimal_number(stream))
-            ),
-            scan_optional!(stream, self.decimal_exponent(stream))
-        )
-    }
-
-    // (* v0.5.0 *)
-    // DECIMAL_LITERAL = ((DECIMAL_NUMBER ("." DECIMAL_NUMBER)?) | ("." DECIMAL_NUMBER)) DECIMAL_EXPONENT?;
-
-    #[allow(dead_code, non_snake_case)]
-    fn decimal_literal__0_5_0(&self, stream: &mut Stream) -> bool {
-        scan_sequence!(
-            scan_choice!(
-                stream,
-                scan_sequence!(
-                    self.decimal_number(stream),
-                    scan_optional!(
-                        stream,
-                        scan_sequence!(scan_chars!(stream, '.'), self.decimal_number(stream))
-                    )
-                ),
-                scan_sequence!(scan_chars!(stream, '.'), self.decimal_number(stream))
-            ),
-            scan_optional!(stream, self.decimal_exponent(stream))
-        )
-    }
-
-    pub(crate) fn decimal_literal(&self, stream: &mut Stream) -> bool {
-        if self.version_is_equal_to_or_greater_than_0_5_0 {
-            self.decimal_literal__0_5_0(stream)
-        } else {
-            self.decimal_literal__0_4_11(stream)
-        }
-    }
-
-    // DECIMAL_NUMBER = "0"…"9"+ ("_" "0"…"9"+)*;
-
-    #[allow(dead_code)]
-    #[allow(unused_assignments, unused_parens)]
-    pub(crate) fn decimal_number(&self, stream: &mut Stream) -> bool {
+    pub(crate) fn decimal_digits(&self, stream: &mut Stream) -> bool {
         scan_sequence!(
             scan_one_or_more!(stream, scan_predicate!(stream, |c| ('0' <= c && c <= '9'))),
             scan_zero_or_more!(
@@ -629,6 +572,87 @@ impl Language {
                 )
             )
         )
+    }
+
+    // «DECIMAL_EXPONENT» = ("e" | "E") "-"? «DECIMAL_DIGITS»;
+
+    #[allow(dead_code)]
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn decimal_exponent(&self, stream: &mut Stream) -> bool {
+        scan_sequence!(
+            scan_predicate!(stream, |c| c == 'E' || c == 'e'),
+            scan_optional!(stream, scan_chars!(stream, '-')),
+            self.decimal_digits(stream)
+        )
+    }
+
+    // (* v0.4.11 *)
+    // DECIMAL_LITERAL = ((«DECIMAL_DIGITS» ("." «DECIMAL_DIGITS»?)?) | ("." «DECIMAL_DIGITS»)) «DECIMAL_EXPONENT»?;
+
+    #[allow(dead_code, non_snake_case)]
+    fn decimal_literal__0_4_11(&self, stream: &mut Stream) -> bool {
+        scan_not_followed_by!(
+            stream,
+            scan_sequence!(
+                scan_choice!(
+                    stream,
+                    scan_sequence!(
+                        self.decimal_digits(stream),
+                        scan_optional!(
+                            stream,
+                            scan_sequence!(
+                                scan_chars!(stream, '.'),
+                                scan_optional!(stream, self.decimal_digits(stream))
+                            )
+                        )
+                    ),
+                    scan_sequence!(scan_chars!(stream, '.'), self.decimal_digits(stream))
+                ),
+                scan_optional!(stream, self.decimal_exponent(stream))
+            ),
+            scan_predicate!(stream, |c| c == '$'
+                || ('0' <= c && c <= '9')
+                || ('A' <= c && c <= 'Z')
+                || c == '_'
+                || ('a' <= c && c <= 'z'))
+        )
+    }
+
+    // (* v0.5.0 *)
+    // DECIMAL_LITERAL = ((«DECIMAL_DIGITS» ("." «DECIMAL_DIGITS»)?) | ("." «DECIMAL_DIGITS»)) «DECIMAL_EXPONENT»?;
+
+    #[allow(dead_code, non_snake_case)]
+    fn decimal_literal__0_5_0(&self, stream: &mut Stream) -> bool {
+        scan_not_followed_by!(
+            stream,
+            scan_sequence!(
+                scan_choice!(
+                    stream,
+                    scan_sequence!(
+                        self.decimal_digits(stream),
+                        scan_optional!(
+                            stream,
+                            scan_sequence!(scan_chars!(stream, '.'), self.decimal_digits(stream))
+                        )
+                    ),
+                    scan_sequence!(scan_chars!(stream, '.'), self.decimal_digits(stream))
+                ),
+                scan_optional!(stream, self.decimal_exponent(stream))
+            ),
+            scan_predicate!(stream, |c| c == '$'
+                || ('0' <= c && c <= '9')
+                || ('A' <= c && c <= 'Z')
+                || c == '_'
+                || ('a' <= c && c <= 'z'))
+        )
+    }
+
+    pub(crate) fn decimal_literal(&self, stream: &mut Stream) -> bool {
+        if self.version_is_equal_to_or_greater_than_0_5_0 {
+            self.decimal_literal__0_5_0(stream)
+        } else {
+            self.decimal_literal__0_4_11(stream)
+        }
     }
 
     // DEFAULT_KEYWORD = "default";
@@ -679,7 +703,7 @@ impl Language {
         )
     }
 
-    // DOUBLE_QUOTED_ASCII_STRING_LITERAL = '"' (ESCAPE_SEQUENCE | (" "…"~" - ('"' | "\\")))* '"';
+    // «DOUBLE_QUOTED_ASCII_STRING_LITERAL» = '"' («ESCAPE_SEQUENCE» | (" "…"~" - ('"' | "\\")))* '"';
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -700,8 +724,21 @@ impl Language {
         )
     }
 
+    // «DOUBLE_QUOTED_HEX_STRING_LITERAL» = "hex" '"' «HEX_STRING_CONTENTS»? '"';
+
+    #[allow(dead_code)]
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn double_quoted_hex_string_literal(&self, stream: &mut Stream) -> bool {
+        scan_sequence!(
+            scan_chars!(stream, 'h', 'e', 'x'),
+            scan_chars!(stream, '"'),
+            scan_optional!(stream, self.hex_string_contents(stream)),
+            scan_chars!(stream, '"')
+        )
+    }
+
     // (* v0.7.0 *)
-    // DOUBLE_QUOTED_UNICODE_STRING_LITERAL = 'unicode"' (ESCAPE_SEQUENCE | !('"' | "\\" | "\n" | "\r"))* '"';
+    // «DOUBLE_QUOTED_UNICODE_STRING_LITERAL» = 'unicode"' («ESCAPE_SEQUENCE» | !('"' | "\\" | "\n" | "\r"))* '"';
 
     #[allow(dead_code, non_snake_case)]
     fn double_quoted_unicode_string_literal__0_7_0(&self, stream: &mut Stream) -> bool {
@@ -855,7 +892,7 @@ impl Language {
         )
     }
 
-    // ESCAPE_SEQUENCE = "\\" (ASCII_ESCAPE | HEX_BYTE_ESCAPE | UNICODE_ESCAPE);
+    // «ESCAPE_SEQUENCE» = "\\" («ASCII_ESCAPE» | «HEX_BYTE_ESCAPE» | «UNICODE_ESCAPE»);
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -901,14 +938,6 @@ impl Language {
                 || c == '_'
                 || ('a' <= c && c <= 'z'))
         )
-    }
-
-    // EVMASM = '"evmasm"';
-
-    #[allow(dead_code)]
-    #[allow(unused_assignments, unused_parens)]
-    pub(crate) fn evmasm(&self, stream: &mut Stream) -> bool {
-        scan_chars!(stream, '"', 'e', 'v', 'm', 'a', 's', 'm', '"')
     }
 
     // EXPERIMENTAL_KEYWORD = "experimental";
@@ -1006,7 +1035,7 @@ impl Language {
             .expect("Validation should have checked that references are valid between versions")
     }
 
-    // FIXED_BYTES_TYPE = "bytes" ("1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" | "10" | "11" | "12" | "13" | "14" | "15" | "16" | "17" | "18" | "19" | "20" | "21" | "22" | "23" | "24" | "25" | "26" | "27" | "28" | "29" | "30" | "31" | "32");
+    // FIXED_BYTES_TYPE = "bytes" «FIXED_BYTES_TYPE_SIZE»;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -1036,6 +1065,71 @@ impl Language {
                 || ('A' <= c && c <= 'Z')
                 || c == '_'
                 || ('a' <= c && c <= 'z'))
+        )
+    }
+
+    // «FIXED_BYTES_TYPE_SIZE» = "1"
+    //                         | "2"
+    //                         | "3"
+    //                         | "4"
+    //                         | "5"
+    //                         | "6"
+    //                         | "7"
+    //                         | "8"
+    //                         | "9"
+    //                         | "10"
+    //                         | "11"
+    //                         | "12"
+    //                         | "13"
+    //                         | "14"
+    //                         | "15"
+    //                         | "16"
+    //                         | "17"
+    //                         | "18"
+    //                         | "19"
+    //                         | "20"
+    //                         | "21"
+    //                         | "22"
+    //                         | "23"
+    //                         | "24"
+    //                         | "25"
+    //                         | "26"
+    //                         | "27"
+    //                         | "28"
+    //                         | "29"
+    //                         | "30"
+    //                         | "31"
+    //                         | "32";
+
+    #[allow(dead_code)]
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn fixed_bytes_type_size(&self, stream: &mut Stream) -> bool {
+        scan_trie!(
+            stream,
+            ['4' | '5' | '6' | '7' | '8' | '9'],
+            '1' + scan_trie!(
+                stream,
+                EMPTY,
+                ['0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9']
+            ),
+            '2' + scan_trie!(
+                stream,
+                EMPTY,
+                ['0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9']
+            ),
+            '3' + scan_trie!(stream, EMPTY, ['0' | '1' | '2'])
+        )
+    }
+
+    // «FIXED_TYPE_SIZE» = "0"…"9"+ "x" "0"…"9"+;
+
+    #[allow(dead_code)]
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn fixed_type_size(&self, stream: &mut Stream) -> bool {
+        scan_sequence!(
+            scan_one_or_more!(stream, scan_predicate!(stream, |c| ('0' <= c && c <= '9'))),
+            scan_chars!(stream, 'x'),
+            scan_one_or_more!(stream, scan_predicate!(stream, |c| ('0' <= c && c <= '9')))
         )
     }
 
@@ -1194,7 +1288,7 @@ impl Language {
             .expect("Validation should have checked that references are valid between versions")
     }
 
-    // HEX_BYTE_ESCAPE = "x" «HEX_CHARACTER» «HEX_CHARACTER»;
+    // «HEX_BYTE_ESCAPE» = "x" «HEX_CHARACTER» «HEX_CHARACTER»;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -1221,31 +1315,38 @@ impl Language {
     }
 
     // (* v0.4.11 *)
-    // HEX_LITERAL = "0" ("x" | "X") «HEX_CHARACTER»+ ("_" «HEX_CHARACTER»+)*;
+    // HEX_LITERAL = ("0x" | "0X") «HEX_CHARACTER»+ ("_" «HEX_CHARACTER»+)*;
 
     #[allow(dead_code, non_snake_case)]
     fn hex_literal__0_4_11(&self, stream: &mut Stream) -> bool {
-        scan_sequence!(
-            scan_chars!(stream, '0'),
-            scan_predicate!(stream, |c| c == 'X' || c == 'x'),
-            scan_one_or_more!(
-                stream,
-                scan_predicate!(stream, |c| ('0' <= c && c <= '9')
-                    || ('A' <= c && c <= 'F')
-                    || ('a' <= c && c <= 'f'))
-            ),
-            scan_zero_or_more!(
-                stream,
-                scan_sequence!(
-                    scan_chars!(stream, '_'),
-                    scan_one_or_more!(
-                        stream,
-                        scan_predicate!(stream, |c| ('0' <= c && c <= '9')
-                            || ('A' <= c && c <= 'F')
-                            || ('a' <= c && c <= 'f'))
+        scan_not_followed_by!(
+            stream,
+            scan_sequence!(
+                scan_sequence!(scan_chars!(stream, '0'), scan_trie!(stream, ['X' | 'x'])),
+                scan_one_or_more!(
+                    stream,
+                    scan_predicate!(stream, |c| ('0' <= c && c <= '9')
+                        || ('A' <= c && c <= 'F')
+                        || ('a' <= c && c <= 'f'))
+                ),
+                scan_zero_or_more!(
+                    stream,
+                    scan_sequence!(
+                        scan_chars!(stream, '_'),
+                        scan_one_or_more!(
+                            stream,
+                            scan_predicate!(stream, |c| ('0' <= c && c <= '9')
+                                || ('A' <= c && c <= 'F')
+                                || ('a' <= c && c <= 'f'))
+                        )
                     )
                 )
-            )
+            ),
+            scan_predicate!(stream, |c| c == '$'
+                || ('0' <= c && c <= '9')
+                || ('A' <= c && c <= 'Z')
+                || c == '_'
+                || ('a' <= c && c <= 'z'))
         )
     }
 
@@ -1254,26 +1355,34 @@ impl Language {
 
     #[allow(dead_code, non_snake_case)]
     fn hex_literal__0_5_0(&self, stream: &mut Stream) -> bool {
-        scan_sequence!(
-            scan_chars!(stream, '0', 'x'),
-            scan_one_or_more!(
-                stream,
-                scan_predicate!(stream, |c| ('0' <= c && c <= '9')
-                    || ('A' <= c && c <= 'F')
-                    || ('a' <= c && c <= 'f'))
-            ),
-            scan_zero_or_more!(
-                stream,
-                scan_sequence!(
-                    scan_chars!(stream, '_'),
-                    scan_one_or_more!(
-                        stream,
-                        scan_predicate!(stream, |c| ('0' <= c && c <= '9')
-                            || ('A' <= c && c <= 'F')
-                            || ('a' <= c && c <= 'f'))
+        scan_not_followed_by!(
+            stream,
+            scan_sequence!(
+                scan_chars!(stream, '0', 'x'),
+                scan_one_or_more!(
+                    stream,
+                    scan_predicate!(stream, |c| ('0' <= c && c <= '9')
+                        || ('A' <= c && c <= 'F')
+                        || ('a' <= c && c <= 'f'))
+                ),
+                scan_zero_or_more!(
+                    stream,
+                    scan_sequence!(
+                        scan_chars!(stream, '_'),
+                        scan_one_or_more!(
+                            stream,
+                            scan_predicate!(stream, |c| ('0' <= c && c <= '9')
+                                || ('A' <= c && c <= 'F')
+                                || ('a' <= c && c <= 'f'))
+                        )
                     )
                 )
-            )
+            ),
+            scan_predicate!(stream, |c| c == '$'
+                || ('0' <= c && c <= '9')
+                || ('A' <= c && c <= 'Z')
+                || c == '_'
+                || ('a' <= c && c <= 'z'))
         )
     }
 
@@ -1285,26 +1394,50 @@ impl Language {
         }
     }
 
-    // HEX_STRING_LITERAL = "hex" (('"' POSSIBLY_SEPARATED_PAIRS_OF_HEX_DIGITS? '"') | ("'" POSSIBLY_SEPARATED_PAIRS_OF_HEX_DIGITS? "'"));
+    // «HEX_STRING_CONTENTS» = «HEX_CHARACTER» «HEX_CHARACTER» ("_"? «HEX_CHARACTER» «HEX_CHARACTER»)*;
+
+    #[allow(dead_code)]
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn hex_string_contents(&self, stream: &mut Stream) -> bool {
+        scan_sequence!(
+            scan_predicate!(stream, |c| ('0' <= c && c <= '9')
+                || ('A' <= c && c <= 'F')
+                || ('a' <= c && c <= 'f')),
+            scan_predicate!(stream, |c| ('0' <= c && c <= '9')
+                || ('A' <= c && c <= 'F')
+                || ('a' <= c && c <= 'f')),
+            scan_zero_or_more!(
+                stream,
+                scan_sequence!(
+                    scan_optional!(stream, scan_chars!(stream, '_')),
+                    scan_predicate!(stream, |c| ('0' <= c && c <= '9')
+                        || ('A' <= c && c <= 'F')
+                        || ('a' <= c && c <= 'f')),
+                    scan_predicate!(stream, |c| ('0' <= c && c <= '9')
+                        || ('A' <= c && c <= 'F')
+                        || ('a' <= c && c <= 'f'))
+                )
+            )
+        )
+    }
+
+    // HEX_STRING_LITERAL = «SINGLE_QUOTED_HEX_STRING_LITERAL» | «DOUBLE_QUOTED_HEX_STRING_LITERAL»;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn hex_string_literal(&self, stream: &mut Stream) -> bool {
-        scan_sequence!(
-            scan_chars!(stream, 'h', 'e', 'x'),
+        scan_not_followed_by!(
+            stream,
             scan_choice!(
                 stream,
-                scan_sequence!(
-                    scan_chars!(stream, '"'),
-                    scan_optional!(stream, self.possibly_separated_pairs_of_hex_digits(stream)),
-                    scan_chars!(stream, '"')
-                ),
-                scan_sequence!(
-                    scan_chars!(stream, '\''),
-                    scan_optional!(stream, self.possibly_separated_pairs_of_hex_digits(stream)),
-                    scan_chars!(stream, '\'')
-                )
-            )
+                self.single_quoted_hex_string_literal(stream),
+                self.double_quoted_hex_string_literal(stream)
+            ),
+            scan_predicate!(stream, |c| c == '$'
+                || ('0' <= c && c <= '9')
+                || ('A' <= c && c <= 'Z')
+                || c == '_'
+                || ('a' <= c && c <= 'z'))
         )
     }
 
@@ -1324,200 +1457,134 @@ impl Language {
         )
     }
 
-    // IDENTIFIER = RAW_IDENTIFIER - (NOT_AN_IDENTIFIER_IN_ANY_VERSION | NOT_AN_IDENTIFIER_IN_SOME_VERSIONS | FIXED_BYTES_TYPE | SIGNED_FIXED_TYPE | UNSIGNED_FIXED_TYPE | SIGNED_INTEGER_TYPE | UNSIGNED_INTEGER_TYPE);
+    // (* v0.4.11 *)
+    // IDENTIFIER = «RAW_IDENTIFIER» - («KEYWORD_IN_ANY_VERSION» | «KEYWORD_IN_SOME_VERSION» | «RESERVED_WORD_IN_ANY_VERSION»);
 
-    #[allow(dead_code)]
-    #[allow(unused_assignments, unused_parens)]
-    pub(crate) fn identifier(&self, stream: &mut Stream) -> bool {
+    #[allow(dead_code, non_snake_case)]
+    fn identifier__0_4_11(&self, stream: &mut Stream) -> bool {
         scan_difference!(
             stream,
             self.raw_identifier(stream),
             scan_choice!(
                 stream,
+                self.keyword_in_any_version(stream),
+                self.keyword_in_some_version(stream),
                 scan_trie!(
                     stream,
                     'a' + scan_trie!(
                         stream,
                         'b' + scan_chars!(stream, 's', 't', 'r', 'a', 'c', 't'),
-                        'd' + scan_chars!(stream, 'd', 'r', 'e', 's', 's'),
-                        'f' + scan_chars!(stream, 't', 'e', 'r'),
-                        'n' + scan_chars!(stream, 'o', 'n', 'y', 'm', 'o', 'u', 's'),
-                        's' + scan_trie!(
-                            stream,
-                            EMPTY,
-                            's' + scan_chars!(stream, 'e', 'm', 'b', 'l', 'y')
-                        )
+                        'f' + scan_chars!(stream, 't', 'e', 'r')
                     ),
-                    'b' + scan_trie!(
-                        stream,
-                        'o' + scan_chars!(stream, 'o', 'l'),
-                        'r' + scan_chars!(stream, 'e', 'a', 'k'),
-                        'y' + scan_chars!(stream, 't', 'e')
-                    ),
-                    'c' + scan_trie!(
-                        stream,
-                        'a' + scan_trie!(
-                            stream,
-                            's' + scan_chars!(stream, 'e'),
-                            't' + scan_chars!(stream, 'c', 'h')
-                        ),
-                        'o' + scan_sequence!(
-                            scan_chars!(stream, 'n'),
-                            scan_trie!(
-                                stream,
-                                's' + scan_chars!(stream, 't', 'a', 'n', 't'),
-                                't' + scan_trie!(
-                                    stream,
-                                    'i' + scan_chars!(stream, 'n', 'u', 'e'),
-                                    'r' + scan_chars!(stream, 'a', 'c', 't')
-                                )
-                            )
-                        )
-                    ),
-                    'd' + scan_trie!(
-                        stream,
-                        ['o'],
-                        'a' + scan_chars!(stream, 'y', 's'),
-                        'e' + scan_trie!(
-                            stream,
-                            'f' + scan_chars!(stream, 'a', 'u', 'l', 't'),
-                            'l' + scan_chars!(stream, 'e', 't', 'e')
-                        )
-                    ),
-                    'e' + scan_trie!(
-                        stream,
-                        'l' + scan_chars!(stream, 's', 'e'),
-                        'n' + scan_chars!(stream, 'u', 'm'),
-                        't' + scan_chars!(stream, 'h', 'e', 'r'),
-                        'v' + scan_chars!(stream, 'e', 'n', 't'),
-                        'x' + scan_chars!(stream, 't', 'e', 'r', 'n', 'a', 'l')
-                    ),
-                    'f' + scan_trie!(
-                        stream,
-                        'a' + scan_chars!(stream, 'l', 's', 'e'),
-                        'i' + scan_chars!(stream, 'n', 'a', 'l'),
-                        'o' + scan_chars!(stream, 'r'),
-                        'u' + scan_chars!(stream, 'n', 'c', 't', 'i', 'o', 'n')
-                    ),
-                    'h' + scan_trie!(
-                        stream,
-                        'e' + scan_chars!(stream, 'x'),
-                        'o' + scan_chars!(stream, 'u', 'r', 's')
-                    ),
-                    'i' + scan_trie!(
-                        stream,
-                        ['f' | 's'],
-                        'm' + scan_chars!(stream, 'p', 'o', 'r', 't'),
-                        'n' + scan_trie!(
-                            stream,
-                            EMPTY,
-                            'd' + scan_chars!(stream, 'e', 'x', 'e', 'd'),
-                            'l' + scan_chars!(stream, 'i', 'n', 'e'),
-                            't' + scan_sequence!(
-                                scan_chars!(stream, 'e', 'r'),
-                                scan_trie!(
-                                    stream,
-                                    'f' + scan_chars!(stream, 'a', 'c', 'e'),
-                                    'n' + scan_chars!(stream, 'a', 'l')
-                                )
-                            )
-                        )
-                    ),
-                    'l' + scan_trie!(
-                        stream,
-                        'e' + scan_chars!(stream, 't'),
-                        'i' + scan_chars!(stream, 'b', 'r', 'a', 'r', 'y')
-                    ),
-                    'm' + scan_trie!(
-                        stream,
-                        'a' + scan_trie!(
-                            stream,
-                            'p' + scan_chars!(stream, 'p', 'i', 'n', 'g'),
-                            't' + scan_chars!(stream, 'c', 'h')
-                        ),
-                        'e' + scan_chars!(stream, 'm', 'o', 'r', 'y'),
-                        'i' + scan_chars!(stream, 'n', 'u', 't', 'e', 's'),
-                        'o' + scan_chars!(stream, 'd', 'i', 'f', 'i', 'e', 'r')
-                    ),
-                    'n' + scan_trie!(
-                        stream,
-                        'e' + scan_chars!(stream, 'w'),
-                        'u' + scan_chars!(stream, 'l', 'l')
-                    ),
-                    'o' + scan_chars!(stream, 'f'),
-                    'p' + scan_trie!(
-                        stream,
-                        'a' + scan_chars!(stream, 'y', 'a', 'b', 'l', 'e'),
-                        'r' + scan_trie!(
-                            stream,
-                            'a' + scan_chars!(stream, 'g', 'm', 'a'),
-                            'i' + scan_chars!(stream, 'v', 'a', 't', 'e')
-                        ),
-                        'u' + scan_trie!(
-                            stream,
-                            'b' + scan_chars!(stream, 'l', 'i', 'c'),
-                            'r' + scan_chars!(stream, 'e')
-                        )
-                    ),
-                    'r' + scan_sequence!(
-                        scan_chars!(stream, 'e'),
+                    'b' + scan_chars!(stream, 'y', 't', 'e'),
+                    'c' + scan_chars!(stream, 'a', 't', 'c', 'h'),
+                    'f' + scan_sequence!(
+                        scan_chars!(stream, 'i', 'n'),
                         scan_trie!(
                             stream,
-                            'l' + scan_chars!(stream, 'o', 'c', 'a', 't', 'a', 'b', 'l', 'e'),
-                            't' + scan_sequence!(
-                                scan_chars!(stream, 'u', 'r', 'n'),
-                                scan_trie!(stream, EMPTY, ['s'])
-                            )
+                            'a' + scan_chars!(stream, 'l'),
+                            'n' + scan_chars!(stream, 'e', 'y')
                         )
                     ),
+                    'h' + scan_chars!(stream, 'e', 'x'),
+                    'i' + scan_sequence!(
+                        scan_chars!(stream, 'n'),
+                        scan_trie!(stream, EMPTY, 'l' + scan_chars!(stream, 'i', 'n', 'e'))
+                    ),
+                    'm' + scan_chars!(stream, 'a', 't', 'c', 'h'),
+                    'n' + scan_chars!(stream, 'u', 'l', 'l'),
+                    'o' + scan_chars!(stream, 'f'),
+                    'r' + scan_chars!(stream, 'e', 'l', 'o', 'c', 'a', 't', 'a', 'b', 'l', 'e'),
                     's' + scan_trie!(
                         stream,
-                        'e' + scan_chars!(stream, 'c', 'o', 'n', 'd', 's'),
-                        't' + scan_trie!(
-                            stream,
-                            'a' + scan_chars!(stream, 't', 'i', 'c'),
-                            'o' + scan_chars!(stream, 'r', 'a', 'g', 'e'),
-                            'r' + scan_trie!(
-                                stream,
-                                'i' + scan_chars!(stream, 'n', 'g'),
-                                'u' + scan_chars!(stream, 'c', 't')
-                            )
-                        ),
-                        'w' + scan_chars!(stream, 'i', 't', 'c', 'h')
+                        't' + scan_chars!(stream, 'a', 't', 'i', 'c'),
+                        'z' + scan_chars!(stream, 'a', 'b', 'o')
                     ),
                     't' + scan_trie!(
                         stream,
                         'h' + scan_chars!(stream, 'r', 'o', 'w'),
-                        'r' + scan_trie!(stream, ['y'], 'u' + scan_chars!(stream, 'e')),
+                        'r' + scan_chars!(stream, 'y'),
                         'y' + scan_sequence!(
                             scan_chars!(stream, 'p', 'e'),
                             scan_trie!(stream, EMPTY, 'o' + scan_chars!(stream, 'f'))
                         )
                     ),
-                    'u' + scan_chars!(stream, 's', 'i', 'n', 'g'),
-                    'v' + scan_trie!(
-                        stream,
-                        'a' + scan_chars!(stream, 'r'),
-                        'i' + scan_chars!(stream, 'e', 'w')
-                    ),
-                    'w' + scan_trie!(
-                        stream,
-                        'e' + scan_trie!(stream, ['i'], 'e' + scan_chars!(stream, 'k', 's')),
-                        'h' + scan_chars!(stream, 'i', 'l', 'e')
-                    ),
+                    'v' + scan_chars!(stream, 'a', 'r'),
                     'y' + scan_chars!(stream, 'e', 'a', 'r', 's')
-                ),
-                self.not_an_identifier_in_some_versions(stream),
-                self.fixed_bytes_type(stream),
-                self.signed_fixed_type(stream),
-                self.unsigned_fixed_type(stream),
-                self.signed_integer_type(stream),
-                self.unsigned_integer_type(stream)
+                )
             )
         )
     }
 
-    // IDENTIFIER_PART = IDENTIFIER_START | "0"…"9";
+    // (* v0.5.0 *)
+    // IDENTIFIER = «RAW_IDENTIFIER» - («KEYWORD_IN_ANY_VERSION» | «KEYWORD_IN_SOME_VERSION» | «RESERVED_WORD_IN_ANY_VERSION» | «RESERVED_WORD_IN_SOME_VERSION»);
+
+    #[allow(dead_code, non_snake_case)]
+    fn identifier__0_5_0(&self, stream: &mut Stream) -> bool {
+        scan_difference!(
+            stream,
+            self.raw_identifier(stream),
+            scan_choice!(
+                stream,
+                self.keyword_in_any_version(stream),
+                self.keyword_in_some_version(stream),
+                scan_trie!(
+                    stream,
+                    'a' + scan_trie!(
+                        stream,
+                        'b' + scan_chars!(stream, 's', 't', 'r', 'a', 'c', 't'),
+                        'f' + scan_chars!(stream, 't', 'e', 'r')
+                    ),
+                    'b' + scan_chars!(stream, 'y', 't', 'e'),
+                    'c' + scan_chars!(stream, 'a', 't', 'c', 'h'),
+                    'f' + scan_sequence!(
+                        scan_chars!(stream, 'i', 'n'),
+                        scan_trie!(
+                            stream,
+                            'a' + scan_chars!(stream, 'l'),
+                            'n' + scan_chars!(stream, 'e', 'y')
+                        )
+                    ),
+                    'h' + scan_chars!(stream, 'e', 'x'),
+                    'i' + scan_sequence!(
+                        scan_chars!(stream, 'n'),
+                        scan_trie!(stream, EMPTY, 'l' + scan_chars!(stream, 'i', 'n', 'e'))
+                    ),
+                    'm' + scan_chars!(stream, 'a', 't', 'c', 'h'),
+                    'n' + scan_chars!(stream, 'u', 'l', 'l'),
+                    'o' + scan_chars!(stream, 'f'),
+                    'r' + scan_chars!(stream, 'e', 'l', 'o', 'c', 'a', 't', 'a', 'b', 'l', 'e'),
+                    's' + scan_trie!(
+                        stream,
+                        't' + scan_chars!(stream, 'a', 't', 'i', 'c'),
+                        'z' + scan_chars!(stream, 'a', 'b', 'o')
+                    ),
+                    't' + scan_trie!(
+                        stream,
+                        'h' + scan_chars!(stream, 'r', 'o', 'w'),
+                        'r' + scan_chars!(stream, 'y'),
+                        'y' + scan_sequence!(
+                            scan_chars!(stream, 'p', 'e'),
+                            scan_trie!(stream, EMPTY, 'o' + scan_chars!(stream, 'f'))
+                        )
+                    ),
+                    'v' + scan_chars!(stream, 'a', 'r'),
+                    'y' + scan_chars!(stream, 'e', 'a', 'r', 's')
+                ),
+                self.reserved_word_in_some_version(stream)
+            )
+        )
+    }
+
+    pub(crate) fn identifier(&self, stream: &mut Stream) -> bool {
+        if self.version_is_equal_to_or_greater_than_0_5_0 {
+            self.identifier__0_5_0(stream)
+        } else {
+            self.identifier__0_4_11(stream)
+        }
+    }
+
+    // «IDENTIFIER_PART» = «IDENTIFIER_START» | "0"…"9";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -1529,7 +1596,7 @@ impl Language {
             || ('a' <= c && c <= 'z'))
     }
 
-    // IDENTIFIER_START = "_" | "$" | "a"…"z" | "A"…"Z";
+    // «IDENTIFIER_START» = "_" | "$" | "a"…"z" | "A"…"Z";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -1619,6 +1686,76 @@ impl Language {
         )
     }
 
+    // «INTEGER_TYPE_SIZE» = "8"
+    //                     | "16"
+    //                     | "24"
+    //                     | "32"
+    //                     | "40"
+    //                     | "48"
+    //                     | "56"
+    //                     | "64"
+    //                     | "72"
+    //                     | "80"
+    //                     | "88"
+    //                     | "96"
+    //                     | "104"
+    //                     | "112"
+    //                     | "120"
+    //                     | "128"
+    //                     | "136"
+    //                     | "144"
+    //                     | "152"
+    //                     | "160"
+    //                     | "168"
+    //                     | "176"
+    //                     | "184"
+    //                     | "192"
+    //                     | "200"
+    //                     | "208"
+    //                     | "216"
+    //                     | "224"
+    //                     | "232"
+    //                     | "240"
+    //                     | "248"
+    //                     | "256";
+
+    #[allow(dead_code)]
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn integer_type_size(&self, stream: &mut Stream) -> bool {
+        scan_trie!(
+            stream,
+            '1' + scan_trie!(
+                stream,
+                '0' + scan_chars!(stream, '4'),
+                '1' + scan_chars!(stream, '2'),
+                '2' + scan_trie!(stream, ['0' | '8']),
+                '3' + scan_chars!(stream, '6'),
+                '4' + scan_chars!(stream, '4'),
+                '5' + scan_chars!(stream, '2'),
+                '6' + scan_trie!(stream, EMPTY, ['0' | '8']),
+                '7' + scan_chars!(stream, '6'),
+                '8' + scan_chars!(stream, '4'),
+                '9' + scan_chars!(stream, '2')
+            ),
+            '2' + scan_trie!(
+                stream,
+                '0' + scan_trie!(stream, ['0' | '8']),
+                '1' + scan_chars!(stream, '6'),
+                '2' + scan_chars!(stream, '4'),
+                '3' + scan_chars!(stream, '2'),
+                '4' + scan_trie!(stream, EMPTY, ['0' | '8']),
+                '5' + scan_chars!(stream, '6')
+            ),
+            '3' + scan_chars!(stream, '2'),
+            '4' + scan_trie!(stream, ['0' | '8']),
+            '5' + scan_chars!(stream, '6'),
+            '6' + scan_chars!(stream, '4'),
+            '7' + scan_chars!(stream, '2'),
+            '8' + scan_trie!(stream, EMPTY, ['0' | '8']),
+            '9' + scan_chars!(stream, '6')
+        )
+    }
+
     // INTERFACE_KEYWORD = "interface";
 
     #[allow(dead_code)]
@@ -1665,6 +1802,370 @@ impl Language {
                 || c == '_'
                 || ('a' <= c && c <= 'z'))
         )
+    }
+
+    // «KEYWORD_IN_ANY_VERSION» = FIXED_BYTES_TYPE
+    //                          | SIGNED_FIXED_TYPE
+    //                          | UNSIGNED_FIXED_TYPE
+    //                          | SIGNED_INTEGER_TYPE
+    //                          | UNSIGNED_INTEGER_TYPE
+    //                          | ADDRESS_KEYWORD
+    //                          | ANONYMOUS_KEYWORD
+    //                          | AS_KEYWORD
+    //                          | ASSEMBLY_KEYWORD
+    //                          | BOOL_KEYWORD
+    //                          | BREAK_KEYWORD
+    //                          | CASE_KEYWORD
+    //                          | CONSTANT_KEYWORD
+    //                          | CONTINUE_KEYWORD
+    //                          | CONTRACT_KEYWORD
+    //                          | DAYS_KEYWORD
+    //                          | DEFAULT_KEYWORD
+    //                          | DELETE_KEYWORD
+    //                          | DO_KEYWORD
+    //                          | ELSE_KEYWORD
+    //                          | ENUM_KEYWORD
+    //                          | ETHER_KEYWORD
+    //                          | EVENT_KEYWORD
+    //                          | EXTERNAL_KEYWORD
+    //                          | FALSE_KEYWORD
+    //                          | FOR_KEYWORD
+    //                          | FUNCTION_KEYWORD
+    //                          | HOURS_KEYWORD
+    //                          | IF_KEYWORD
+    //                          | IMPORT_KEYWORD
+    //                          | INDEXED_KEYWORD
+    //                          | INTERFACE_KEYWORD
+    //                          | INTERNAL_KEYWORD
+    //                          | IS_KEYWORD
+    //                          | LET_KEYWORD
+    //                          | LIBRARY_KEYWORD
+    //                          | MAPPING_KEYWORD
+    //                          | MEMORY_KEYWORD
+    //                          | MINUTES_KEYWORD
+    //                          | MODIFIER_KEYWORD
+    //                          | NEW_KEYWORD
+    //                          | PAYABLE_KEYWORD
+    //                          | PRAGMA_KEYWORD
+    //                          | PRIVATE_KEYWORD
+    //                          | PUBLIC_KEYWORD
+    //                          | PURE_KEYWORD
+    //                          | RETURN_KEYWORD
+    //                          | RETURNS_KEYWORD
+    //                          | SECONDS_KEYWORD
+    //                          | STORAGE_KEYWORD
+    //                          | STRING_KEYWORD
+    //                          | STRUCT_KEYWORD
+    //                          | SWITCH_KEYWORD
+    //                          | TRUE_KEYWORD
+    //                          | USING_KEYWORD
+    //                          | VIEW_KEYWORD
+    //                          | WEEKS_KEYWORD
+    //                          | WEI_KEYWORD
+    //                          | WHILE_KEYWORD;
+
+    #[allow(dead_code)]
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn keyword_in_any_version(&self, stream: &mut Stream) -> bool {
+        scan_choice!(
+            stream,
+            self.fixed_bytes_type(stream),
+            self.signed_fixed_type(stream),
+            self.unsigned_fixed_type(stream),
+            self.signed_integer_type(stream),
+            self.unsigned_integer_type(stream),
+            self.address_keyword(stream),
+            self.anonymous_keyword(stream),
+            self.as_keyword(stream),
+            self.assembly_keyword(stream),
+            self.bool_keyword(stream),
+            self.break_keyword(stream),
+            self.case_keyword(stream),
+            self.constant_keyword(stream),
+            self.continue_keyword(stream),
+            self.contract_keyword(stream),
+            self.days_keyword(stream),
+            self.default_keyword(stream),
+            self.delete_keyword(stream),
+            self.do_keyword(stream),
+            self.else_keyword(stream),
+            self.enum_keyword(stream),
+            self.ether_keyword(stream),
+            self.event_keyword(stream),
+            self.external_keyword(stream),
+            self.false_keyword(stream),
+            self.for_keyword(stream),
+            self.function_keyword(stream),
+            self.hours_keyword(stream),
+            self.if_keyword(stream),
+            self.import_keyword(stream),
+            self.indexed_keyword(stream),
+            self.interface_keyword(stream),
+            self.internal_keyword(stream),
+            self.is_keyword(stream),
+            self.let_keyword(stream),
+            self.library_keyword(stream),
+            self.mapping_keyword(stream),
+            self.memory_keyword(stream),
+            self.minutes_keyword(stream),
+            self.modifier_keyword(stream),
+            self.new_keyword(stream),
+            self.payable_keyword(stream),
+            self.pragma_keyword(stream),
+            self.private_keyword(stream),
+            self.public_keyword(stream),
+            self.pure_keyword(stream),
+            self.return_keyword(stream),
+            self.returns_keyword(stream),
+            self.seconds_keyword(stream),
+            self.storage_keyword(stream),
+            self.string_keyword(stream),
+            self.struct_keyword(stream),
+            self.switch_keyword(stream),
+            self.true_keyword(stream),
+            self.using_keyword(stream),
+            self.view_keyword(stream),
+            self.weeks_keyword(stream),
+            self.wei_keyword(stream),
+            self.while_keyword(stream)
+        )
+    }
+
+    // (* v0.4.11 *)
+    // «KEYWORD_IN_SOME_VERSION» = BYTE_KEYWORD
+    //                           | FINNEY_KEYWORD
+    //                           | SZABO_KEYWORD
+    //                           | THROW_KEYWORD
+    //                           | VAR_KEYWORD
+    //                           | YEARS_KEYWORD;
+
+    #[allow(dead_code, non_snake_case)]
+    fn keyword_in_some_version__0_4_11(&self, stream: &mut Stream) -> bool {
+        scan_choice!(
+            stream,
+            self.byte_keyword(stream),
+            self.finney_keyword(stream),
+            self.szabo_keyword(stream),
+            self.throw_keyword(stream),
+            self.var_keyword(stream),
+            self.years_keyword(stream)
+        )
+    }
+
+    // (* v0.5.0 *)
+    // «KEYWORD_IN_SOME_VERSION» = BYTE_KEYWORD
+    //                           | FINNEY_KEYWORD
+    //                           | SZABO_KEYWORD
+    //                           | CALLDATA_KEYWORD
+    //                           | CONSTRUCTOR_KEYWORD
+    //                           | EMIT_KEYWORD
+    //                           | OVERRIDE_KEYWORD;
+
+    #[allow(dead_code, non_snake_case)]
+    fn keyword_in_some_version__0_5_0(&self, stream: &mut Stream) -> bool {
+        scan_choice!(
+            stream,
+            self.byte_keyword(stream),
+            self.finney_keyword(stream),
+            self.szabo_keyword(stream),
+            self.calldata_keyword(stream),
+            self.constructor_keyword(stream),
+            self.emit_keyword(stream),
+            self.override_keyword(stream)
+        )
+    }
+
+    // (* v0.5.3 *)
+    // «KEYWORD_IN_SOME_VERSION» = BYTE_KEYWORD
+    //                           | FINNEY_KEYWORD
+    //                           | SZABO_KEYWORD
+    //                           | CALLDATA_KEYWORD
+    //                           | CONSTRUCTOR_KEYWORD
+    //                           | EMIT_KEYWORD
+    //                           | OVERRIDE_KEYWORD
+    //                           | TYPE_KEYWORD;
+
+    #[allow(dead_code, non_snake_case)]
+    fn keyword_in_some_version__0_5_3(&self, stream: &mut Stream) -> bool {
+        scan_choice!(
+            stream,
+            self.byte_keyword(stream),
+            self.finney_keyword(stream),
+            self.szabo_keyword(stream),
+            self.calldata_keyword(stream),
+            self.constructor_keyword(stream),
+            self.emit_keyword(stream),
+            self.override_keyword(stream),
+            self.type_keyword(stream)
+        )
+    }
+
+    // (* v0.6.0 *)
+    // «KEYWORD_IN_SOME_VERSION» = BYTE_KEYWORD
+    //                           | FINNEY_KEYWORD
+    //                           | SZABO_KEYWORD
+    //                           | CALLDATA_KEYWORD
+    //                           | CONSTRUCTOR_KEYWORD
+    //                           | EMIT_KEYWORD
+    //                           | OVERRIDE_KEYWORD
+    //                           | TYPE_KEYWORD
+    //                           | ABSTRACT_KEYWORD
+    //                           | CATCH_KEYWORD
+    //                           | FALLBACK_KEYWORD
+    //                           | RECEIVE_KEYWORD
+    //                           | TRY_KEYWORD
+    //                           | VIRTUAL_KEYWORD;
+
+    #[allow(dead_code, non_snake_case)]
+    fn keyword_in_some_version__0_6_0(&self, stream: &mut Stream) -> bool {
+        scan_choice!(
+            stream,
+            self.byte_keyword(stream),
+            self.finney_keyword(stream),
+            self.szabo_keyword(stream),
+            self.calldata_keyword(stream),
+            self.constructor_keyword(stream),
+            self.emit_keyword(stream),
+            self.override_keyword(stream),
+            self.type_keyword(stream),
+            self.abstract_keyword(stream),
+            self.catch_keyword(stream),
+            self.fallback_keyword(stream),
+            self.receive_keyword(stream),
+            self.try_keyword(stream),
+            self.virtual_keyword(stream)
+        )
+    }
+
+    // (* v0.6.5 *)
+    // «KEYWORD_IN_SOME_VERSION» = BYTE_KEYWORD
+    //                           | FINNEY_KEYWORD
+    //                           | SZABO_KEYWORD
+    //                           | CALLDATA_KEYWORD
+    //                           | CONSTRUCTOR_KEYWORD
+    //                           | EMIT_KEYWORD
+    //                           | OVERRIDE_KEYWORD
+    //                           | TYPE_KEYWORD
+    //                           | ABSTRACT_KEYWORD
+    //                           | CATCH_KEYWORD
+    //                           | FALLBACK_KEYWORD
+    //                           | RECEIVE_KEYWORD
+    //                           | TRY_KEYWORD
+    //                           | VIRTUAL_KEYWORD
+    //                           | IMMUTABLE_KEYWORD;
+
+    #[allow(dead_code, non_snake_case)]
+    fn keyword_in_some_version__0_6_5(&self, stream: &mut Stream) -> bool {
+        scan_choice!(
+            stream,
+            self.byte_keyword(stream),
+            self.finney_keyword(stream),
+            self.szabo_keyword(stream),
+            self.calldata_keyword(stream),
+            self.constructor_keyword(stream),
+            self.emit_keyword(stream),
+            self.override_keyword(stream),
+            self.type_keyword(stream),
+            self.abstract_keyword(stream),
+            self.catch_keyword(stream),
+            self.fallback_keyword(stream),
+            self.receive_keyword(stream),
+            self.try_keyword(stream),
+            self.virtual_keyword(stream),
+            self.immutable_keyword(stream)
+        )
+    }
+
+    // (* v0.7.0 *)
+    // «KEYWORD_IN_SOME_VERSION» = BYTE_KEYWORD
+    //                           | CALLDATA_KEYWORD
+    //                           | CONSTRUCTOR_KEYWORD
+    //                           | EMIT_KEYWORD
+    //                           | OVERRIDE_KEYWORD
+    //                           | TYPE_KEYWORD
+    //                           | ABSTRACT_KEYWORD
+    //                           | CATCH_KEYWORD
+    //                           | FALLBACK_KEYWORD
+    //                           | RECEIVE_KEYWORD
+    //                           | TRY_KEYWORD
+    //                           | VIRTUAL_KEYWORD
+    //                           | IMMUTABLE_KEYWORD
+    //                           | GWEI_KEYWORD;
+
+    #[allow(dead_code, non_snake_case)]
+    fn keyword_in_some_version__0_7_0(&self, stream: &mut Stream) -> bool {
+        scan_choice!(
+            stream,
+            self.byte_keyword(stream),
+            self.calldata_keyword(stream),
+            self.constructor_keyword(stream),
+            self.emit_keyword(stream),
+            self.override_keyword(stream),
+            self.type_keyword(stream),
+            self.abstract_keyword(stream),
+            self.catch_keyword(stream),
+            self.fallback_keyword(stream),
+            self.receive_keyword(stream),
+            self.try_keyword(stream),
+            self.virtual_keyword(stream),
+            self.immutable_keyword(stream),
+            self.gwei_keyword(stream)
+        )
+    }
+
+    // (* v0.8.0 *)
+    // «KEYWORD_IN_SOME_VERSION» = CALLDATA_KEYWORD
+    //                           | CONSTRUCTOR_KEYWORD
+    //                           | EMIT_KEYWORD
+    //                           | OVERRIDE_KEYWORD
+    //                           | TYPE_KEYWORD
+    //                           | ABSTRACT_KEYWORD
+    //                           | CATCH_KEYWORD
+    //                           | FALLBACK_KEYWORD
+    //                           | RECEIVE_KEYWORD
+    //                           | TRY_KEYWORD
+    //                           | VIRTUAL_KEYWORD
+    //                           | IMMUTABLE_KEYWORD
+    //                           | GWEI_KEYWORD
+    //                           | UNCHECKED_KEYWORD;
+
+    #[allow(dead_code, non_snake_case)]
+    fn keyword_in_some_version__0_8_0(&self, stream: &mut Stream) -> bool {
+        scan_choice!(
+            stream,
+            self.calldata_keyword(stream),
+            self.constructor_keyword(stream),
+            self.emit_keyword(stream),
+            self.override_keyword(stream),
+            self.type_keyword(stream),
+            self.abstract_keyword(stream),
+            self.catch_keyword(stream),
+            self.fallback_keyword(stream),
+            self.receive_keyword(stream),
+            self.try_keyword(stream),
+            self.virtual_keyword(stream),
+            self.immutable_keyword(stream),
+            self.gwei_keyword(stream),
+            self.unchecked_keyword(stream)
+        )
+    }
+
+    pub(crate) fn keyword_in_some_version(&self, stream: &mut Stream) -> bool {
+        if self.version_is_equal_to_or_greater_than_0_8_0 {
+            self.keyword_in_some_version__0_8_0(stream)
+        } else if self.version_is_equal_to_or_greater_than_0_7_0 {
+            self.keyword_in_some_version__0_7_0(stream)
+        } else if self.version_is_equal_to_or_greater_than_0_6_5 {
+            self.keyword_in_some_version__0_6_5(stream)
+        } else if self.version_is_equal_to_or_greater_than_0_6_0 {
+            self.keyword_in_some_version__0_6_0(stream)
+        } else if self.version_is_equal_to_or_greater_than_0_5_3 {
+            self.keyword_in_some_version__0_5_3(stream)
+        } else if self.version_is_equal_to_or_greater_than_0_5_0 {
+            self.keyword_in_some_version__0_5_0(stream)
+        } else {
+            self.keyword_in_some_version__0_4_11(stream)
+        }
     }
 
     // (* v0.6.0 *)
@@ -1908,544 +2409,6 @@ impl Language {
         )
     }
 
-    // NOT_AN_IDENTIFIER_IN_ANY_VERSION = "abstract"
-    //                                  | "address"
-    //                                  | "after"
-    //                                  | "anonymous"
-    //                                  | "as"
-    //                                  | "assembly"
-    //                                  | "bool"
-    //                                  | "break"
-    //                                  | "byte"
-    //                                  | "case"
-    //                                  | "catch"
-    //                                  | "constant"
-    //                                  | "continue"
-    //                                  | "contract"
-    //                                  | "days"
-    //                                  | "default"
-    //                                  | "delete"
-    //                                  | "do"
-    //                                  | "else"
-    //                                  | "enum"
-    //                                  | "ether"
-    //                                  | "event"
-    //                                  | "external"
-    //                                  | "false"
-    //                                  | "final"
-    //                                  | "for"
-    //                                  | "function"
-    //                                  | "hex"
-    //                                  | "hours"
-    //                                  | "if"
-    //                                  | "import"
-    //                                  | "in"
-    //                                  | "indexed"
-    //                                  | "inline"
-    //                                  | "interface"
-    //                                  | "internal"
-    //                                  | "is"
-    //                                  | "let"
-    //                                  | "library"
-    //                                  | "mapping"
-    //                                  | "match"
-    //                                  | "memory"
-    //                                  | "minutes"
-    //                                  | "modifier"
-    //                                  | "new"
-    //                                  | "null"
-    //                                  | "of"
-    //                                  | "payable"
-    //                                  | "pragma"
-    //                                  | "private"
-    //                                  | "public"
-    //                                  | "pure"
-    //                                  | "relocatable"
-    //                                  | "return"
-    //                                  | "returns"
-    //                                  | "seconds"
-    //                                  | "static"
-    //                                  | "storage"
-    //                                  | "string"
-    //                                  | "struct"
-    //                                  | "switch"
-    //                                  | "throw"
-    //                                  | "true"
-    //                                  | "try"
-    //                                  | "type"
-    //                                  | "typeof"
-    //                                  | "using"
-    //                                  | "var"
-    //                                  | "view"
-    //                                  | "weeks"
-    //                                  | "wei"
-    //                                  | "while"
-    //                                  | "years";
-
-    #[allow(dead_code)]
-    #[allow(unused_assignments, unused_parens)]
-    pub(crate) fn not_an_identifier_in_any_version(&self, stream: &mut Stream) -> bool {
-        scan_trie!(
-            stream,
-            'a' + scan_trie!(
-                stream,
-                'b' + scan_chars!(stream, 's', 't', 'r', 'a', 'c', 't'),
-                'd' + scan_chars!(stream, 'd', 'r', 'e', 's', 's'),
-                'f' + scan_chars!(stream, 't', 'e', 'r'),
-                'n' + scan_chars!(stream, 'o', 'n', 'y', 'm', 'o', 'u', 's'),
-                's' + scan_trie!(
-                    stream,
-                    EMPTY,
-                    's' + scan_chars!(stream, 'e', 'm', 'b', 'l', 'y')
-                )
-            ),
-            'b' + scan_trie!(
-                stream,
-                'o' + scan_chars!(stream, 'o', 'l'),
-                'r' + scan_chars!(stream, 'e', 'a', 'k'),
-                'y' + scan_chars!(stream, 't', 'e')
-            ),
-            'c' + scan_trie!(
-                stream,
-                'a' + scan_trie!(
-                    stream,
-                    's' + scan_chars!(stream, 'e'),
-                    't' + scan_chars!(stream, 'c', 'h')
-                ),
-                'o' + scan_sequence!(
-                    scan_chars!(stream, 'n'),
-                    scan_trie!(
-                        stream,
-                        's' + scan_chars!(stream, 't', 'a', 'n', 't'),
-                        't' + scan_trie!(
-                            stream,
-                            'i' + scan_chars!(stream, 'n', 'u', 'e'),
-                            'r' + scan_chars!(stream, 'a', 'c', 't')
-                        )
-                    )
-                )
-            ),
-            'd' + scan_trie!(
-                stream,
-                ['o'],
-                'a' + scan_chars!(stream, 'y', 's'),
-                'e' + scan_trie!(
-                    stream,
-                    'f' + scan_chars!(stream, 'a', 'u', 'l', 't'),
-                    'l' + scan_chars!(stream, 'e', 't', 'e')
-                )
-            ),
-            'e' + scan_trie!(
-                stream,
-                'l' + scan_chars!(stream, 's', 'e'),
-                'n' + scan_chars!(stream, 'u', 'm'),
-                't' + scan_chars!(stream, 'h', 'e', 'r'),
-                'v' + scan_chars!(stream, 'e', 'n', 't'),
-                'x' + scan_chars!(stream, 't', 'e', 'r', 'n', 'a', 'l')
-            ),
-            'f' + scan_trie!(
-                stream,
-                'a' + scan_chars!(stream, 'l', 's', 'e'),
-                'i' + scan_chars!(stream, 'n', 'a', 'l'),
-                'o' + scan_chars!(stream, 'r'),
-                'u' + scan_chars!(stream, 'n', 'c', 't', 'i', 'o', 'n')
-            ),
-            'h' + scan_trie!(
-                stream,
-                'e' + scan_chars!(stream, 'x'),
-                'o' + scan_chars!(stream, 'u', 'r', 's')
-            ),
-            'i' + scan_trie!(
-                stream,
-                ['f' | 's'],
-                'm' + scan_chars!(stream, 'p', 'o', 'r', 't'),
-                'n' + scan_trie!(
-                    stream,
-                    EMPTY,
-                    'd' + scan_chars!(stream, 'e', 'x', 'e', 'd'),
-                    'l' + scan_chars!(stream, 'i', 'n', 'e'),
-                    't' + scan_sequence!(
-                        scan_chars!(stream, 'e', 'r'),
-                        scan_trie!(
-                            stream,
-                            'f' + scan_chars!(stream, 'a', 'c', 'e'),
-                            'n' + scan_chars!(stream, 'a', 'l')
-                        )
-                    )
-                )
-            ),
-            'l' + scan_trie!(
-                stream,
-                'e' + scan_chars!(stream, 't'),
-                'i' + scan_chars!(stream, 'b', 'r', 'a', 'r', 'y')
-            ),
-            'm' + scan_trie!(
-                stream,
-                'a' + scan_trie!(
-                    stream,
-                    'p' + scan_chars!(stream, 'p', 'i', 'n', 'g'),
-                    't' + scan_chars!(stream, 'c', 'h')
-                ),
-                'e' + scan_chars!(stream, 'm', 'o', 'r', 'y'),
-                'i' + scan_chars!(stream, 'n', 'u', 't', 'e', 's'),
-                'o' + scan_chars!(stream, 'd', 'i', 'f', 'i', 'e', 'r')
-            ),
-            'n' + scan_trie!(
-                stream,
-                'e' + scan_chars!(stream, 'w'),
-                'u' + scan_chars!(stream, 'l', 'l')
-            ),
-            'o' + scan_chars!(stream, 'f'),
-            'p' + scan_trie!(
-                stream,
-                'a' + scan_chars!(stream, 'y', 'a', 'b', 'l', 'e'),
-                'r' + scan_trie!(
-                    stream,
-                    'a' + scan_chars!(stream, 'g', 'm', 'a'),
-                    'i' + scan_chars!(stream, 'v', 'a', 't', 'e')
-                ),
-                'u' + scan_trie!(
-                    stream,
-                    'b' + scan_chars!(stream, 'l', 'i', 'c'),
-                    'r' + scan_chars!(stream, 'e')
-                )
-            ),
-            'r' + scan_sequence!(
-                scan_chars!(stream, 'e'),
-                scan_trie!(
-                    stream,
-                    'l' + scan_chars!(stream, 'o', 'c', 'a', 't', 'a', 'b', 'l', 'e'),
-                    't' + scan_sequence!(
-                        scan_chars!(stream, 'u', 'r', 'n'),
-                        scan_trie!(stream, EMPTY, ['s'])
-                    )
-                )
-            ),
-            's' + scan_trie!(
-                stream,
-                'e' + scan_chars!(stream, 'c', 'o', 'n', 'd', 's'),
-                't' + scan_trie!(
-                    stream,
-                    'a' + scan_chars!(stream, 't', 'i', 'c'),
-                    'o' + scan_chars!(stream, 'r', 'a', 'g', 'e'),
-                    'r' + scan_trie!(
-                        stream,
-                        'i' + scan_chars!(stream, 'n', 'g'),
-                        'u' + scan_chars!(stream, 'c', 't')
-                    )
-                ),
-                'w' + scan_chars!(stream, 'i', 't', 'c', 'h')
-            ),
-            't' + scan_trie!(
-                stream,
-                'h' + scan_chars!(stream, 'r', 'o', 'w'),
-                'r' + scan_trie!(stream, ['y'], 'u' + scan_chars!(stream, 'e')),
-                'y' + scan_sequence!(
-                    scan_chars!(stream, 'p', 'e'),
-                    scan_trie!(stream, EMPTY, 'o' + scan_chars!(stream, 'f'))
-                )
-            ),
-            'u' + scan_chars!(stream, 's', 'i', 'n', 'g'),
-            'v' + scan_trie!(
-                stream,
-                'a' + scan_chars!(stream, 'r'),
-                'i' + scan_chars!(stream, 'e', 'w')
-            ),
-            'w' + scan_trie!(
-                stream,
-                'e' + scan_trie!(stream, ['i'], 'e' + scan_chars!(stream, 'k', 's')),
-                'h' + scan_chars!(stream, 'i', 'l', 'e')
-            ),
-            'y' + scan_chars!(stream, 'e', 'a', 'r', 's')
-        )
-    }
-
-    // (* v0.4.11 *)
-    // NOT_AN_IDENTIFIER_IN_SOME_VERSIONS = "finney" | "szabo";
-
-    #[allow(dead_code, non_snake_case)]
-    fn not_an_identifier_in_some_versions__0_4_11(&self, stream: &mut Stream) -> bool {
-        scan_trie!(
-            stream,
-            'f' + scan_chars!(stream, 'i', 'n', 'n', 'e', 'y'),
-            's' + scan_chars!(stream, 'z', 'a', 'b', 'o')
-        )
-    }
-
-    // (* v0.5.0 *)
-    // NOT_AN_IDENTIFIER_IN_SOME_VERSIONS = "finney"
-    //                                    | "szabo"
-    //                                    | "alias"
-    //                                    | "apply"
-    //                                    | "auto"
-    //                                    | "calldata"
-    //                                    | "constructor"
-    //                                    | "copyof"
-    //                                    | "define"
-    //                                    | "emit"
-    //                                    | "immutable"
-    //                                    | "implements"
-    //                                    | "macro"
-    //                                    | "mutable"
-    //                                    | "override"
-    //                                    | "partial"
-    //                                    | "promise"
-    //                                    | "reference"
-    //                                    | "sealed"
-    //                                    | "sizeof"
-    //                                    | "supports"
-    //                                    | "typedef"
-    //                                    | "unchecked";
-
-    #[allow(dead_code, non_snake_case)]
-    fn not_an_identifier_in_some_versions__0_5_0(&self, stream: &mut Stream) -> bool {
-        scan_trie!(
-            stream,
-            'a' + scan_trie!(
-                stream,
-                'l' + scan_chars!(stream, 'i', 'a', 's'),
-                'p' + scan_chars!(stream, 'p', 'l', 'y'),
-                'u' + scan_chars!(stream, 't', 'o')
-            ),
-            'c' + scan_trie!(
-                stream,
-                'a' + scan_chars!(stream, 'l', 'l', 'd', 'a', 't', 'a'),
-                'o' + scan_trie!(
-                    stream,
-                    'n' + scan_chars!(stream, 's', 't', 'r', 'u', 'c', 't', 'o', 'r'),
-                    'p' + scan_chars!(stream, 'y', 'o', 'f')
-                )
-            ),
-            'd' + scan_chars!(stream, 'e', 'f', 'i', 'n', 'e'),
-            'e' + scan_chars!(stream, 'm', 'i', 't'),
-            'f' + scan_chars!(stream, 'i', 'n', 'n', 'e', 'y'),
-            'i' + scan_sequence!(
-                scan_chars!(stream, 'm'),
-                scan_trie!(
-                    stream,
-                    'm' + scan_chars!(stream, 'u', 't', 'a', 'b', 'l', 'e'),
-                    'p' + scan_chars!(stream, 'l', 'e', 'm', 'e', 'n', 't', 's')
-                )
-            ),
-            'm' + scan_trie!(
-                stream,
-                'a' + scan_chars!(stream, 'c', 'r', 'o'),
-                'u' + scan_chars!(stream, 't', 'a', 'b', 'l', 'e')
-            ),
-            'o' + scan_chars!(stream, 'v', 'e', 'r', 'r', 'i', 'd', 'e'),
-            'p' + scan_trie!(
-                stream,
-                'a' + scan_chars!(stream, 'r', 't', 'i', 'a', 'l'),
-                'r' + scan_chars!(stream, 'o', 'm', 'i', 's', 'e')
-            ),
-            'r' + scan_chars!(stream, 'e', 'f', 'e', 'r', 'e', 'n', 'c', 'e'),
-            's' + scan_trie!(
-                stream,
-                'e' + scan_chars!(stream, 'a', 'l', 'e', 'd'),
-                'i' + scan_chars!(stream, 'z', 'e', 'o', 'f'),
-                'u' + scan_chars!(stream, 'p', 'p', 'o', 'r', 't', 's'),
-                'z' + scan_chars!(stream, 'a', 'b', 'o')
-            ),
-            't' + scan_chars!(stream, 'y', 'p', 'e', 'd', 'e', 'f'),
-            'u' + scan_chars!(stream, 'n', 'c', 'h', 'e', 'c', 'k', 'e', 'd')
-        )
-    }
-
-    // (* v0.6.0 *)
-    // NOT_AN_IDENTIFIER_IN_SOME_VERSIONS = "finney"
-    //                                    | "szabo"
-    //                                    | "alias"
-    //                                    | "apply"
-    //                                    | "auto"
-    //                                    | "calldata"
-    //                                    | "constructor"
-    //                                    | "copyof"
-    //                                    | "define"
-    //                                    | "emit"
-    //                                    | "immutable"
-    //                                    | "implements"
-    //                                    | "macro"
-    //                                    | "mutable"
-    //                                    | "override"
-    //                                    | "partial"
-    //                                    | "promise"
-    //                                    | "reference"
-    //                                    | "sealed"
-    //                                    | "sizeof"
-    //                                    | "supports"
-    //                                    | "typedef"
-    //                                    | "unchecked"
-    //                                    | "fallback"
-    //                                    | "receive"
-    //                                    | "virtual";
-
-    #[allow(dead_code, non_snake_case)]
-    fn not_an_identifier_in_some_versions__0_6_0(&self, stream: &mut Stream) -> bool {
-        scan_trie!(
-            stream,
-            'a' + scan_trie!(
-                stream,
-                'l' + scan_chars!(stream, 'i', 'a', 's'),
-                'p' + scan_chars!(stream, 'p', 'l', 'y'),
-                'u' + scan_chars!(stream, 't', 'o')
-            ),
-            'c' + scan_trie!(
-                stream,
-                'a' + scan_chars!(stream, 'l', 'l', 'd', 'a', 't', 'a'),
-                'o' + scan_trie!(
-                    stream,
-                    'n' + scan_chars!(stream, 's', 't', 'r', 'u', 'c', 't', 'o', 'r'),
-                    'p' + scan_chars!(stream, 'y', 'o', 'f')
-                )
-            ),
-            'd' + scan_chars!(stream, 'e', 'f', 'i', 'n', 'e'),
-            'e' + scan_chars!(stream, 'm', 'i', 't'),
-            'f' + scan_trie!(
-                stream,
-                'a' + scan_chars!(stream, 'l', 'l', 'b', 'a', 'c', 'k'),
-                'i' + scan_chars!(stream, 'n', 'n', 'e', 'y')
-            ),
-            'i' + scan_sequence!(
-                scan_chars!(stream, 'm'),
-                scan_trie!(
-                    stream,
-                    'm' + scan_chars!(stream, 'u', 't', 'a', 'b', 'l', 'e'),
-                    'p' + scan_chars!(stream, 'l', 'e', 'm', 'e', 'n', 't', 's')
-                )
-            ),
-            'm' + scan_trie!(
-                stream,
-                'a' + scan_chars!(stream, 'c', 'r', 'o'),
-                'u' + scan_chars!(stream, 't', 'a', 'b', 'l', 'e')
-            ),
-            'o' + scan_chars!(stream, 'v', 'e', 'r', 'r', 'i', 'd', 'e'),
-            'p' + scan_trie!(
-                stream,
-                'a' + scan_chars!(stream, 'r', 't', 'i', 'a', 'l'),
-                'r' + scan_chars!(stream, 'o', 'm', 'i', 's', 'e')
-            ),
-            'r' + scan_sequence!(
-                scan_chars!(stream, 'e'),
-                scan_trie!(
-                    stream,
-                    'c' + scan_chars!(stream, 'e', 'i', 'v', 'e'),
-                    'f' + scan_chars!(stream, 'e', 'r', 'e', 'n', 'c', 'e')
-                )
-            ),
-            's' + scan_trie!(
-                stream,
-                'e' + scan_chars!(stream, 'a', 'l', 'e', 'd'),
-                'i' + scan_chars!(stream, 'z', 'e', 'o', 'f'),
-                'u' + scan_chars!(stream, 'p', 'p', 'o', 'r', 't', 's'),
-                'z' + scan_chars!(stream, 'a', 'b', 'o')
-            ),
-            't' + scan_chars!(stream, 'y', 'p', 'e', 'd', 'e', 'f'),
-            'u' + scan_chars!(stream, 'n', 'c', 'h', 'e', 'c', 'k', 'e', 'd'),
-            'v' + scan_chars!(stream, 'i', 'r', 't', 'u', 'a', 'l')
-        )
-    }
-
-    // (* v0.7.0 *)
-    // NOT_AN_IDENTIFIER_IN_SOME_VERSIONS = "alias"
-    //                                    | "apply"
-    //                                    | "auto"
-    //                                    | "calldata"
-    //                                    | "constructor"
-    //                                    | "copyof"
-    //                                    | "define"
-    //                                    | "emit"
-    //                                    | "immutable"
-    //                                    | "implements"
-    //                                    | "macro"
-    //                                    | "mutable"
-    //                                    | "override"
-    //                                    | "partial"
-    //                                    | "promise"
-    //                                    | "reference"
-    //                                    | "sealed"
-    //                                    | "sizeof"
-    //                                    | "supports"
-    //                                    | "typedef"
-    //                                    | "unchecked"
-    //                                    | "fallback"
-    //                                    | "receive"
-    //                                    | "virtual"
-    //                                    | "gwei";
-
-    #[allow(dead_code, non_snake_case)]
-    fn not_an_identifier_in_some_versions__0_7_0(&self, stream: &mut Stream) -> bool {
-        scan_trie!(
-            stream,
-            'a' + scan_trie!(
-                stream,
-                'l' + scan_chars!(stream, 'i', 'a', 's'),
-                'p' + scan_chars!(stream, 'p', 'l', 'y'),
-                'u' + scan_chars!(stream, 't', 'o')
-            ),
-            'c' + scan_trie!(
-                stream,
-                'a' + scan_chars!(stream, 'l', 'l', 'd', 'a', 't', 'a'),
-                'o' + scan_trie!(
-                    stream,
-                    'n' + scan_chars!(stream, 's', 't', 'r', 'u', 'c', 't', 'o', 'r'),
-                    'p' + scan_chars!(stream, 'y', 'o', 'f')
-                )
-            ),
-            'd' + scan_chars!(stream, 'e', 'f', 'i', 'n', 'e'),
-            'e' + scan_chars!(stream, 'm', 'i', 't'),
-            'f' + scan_chars!(stream, 'a', 'l', 'l', 'b', 'a', 'c', 'k'),
-            'g' + scan_chars!(stream, 'w', 'e', 'i'),
-            'i' + scan_sequence!(
-                scan_chars!(stream, 'm'),
-                scan_trie!(
-                    stream,
-                    'm' + scan_chars!(stream, 'u', 't', 'a', 'b', 'l', 'e'),
-                    'p' + scan_chars!(stream, 'l', 'e', 'm', 'e', 'n', 't', 's')
-                )
-            ),
-            'm' + scan_trie!(
-                stream,
-                'a' + scan_chars!(stream, 'c', 'r', 'o'),
-                'u' + scan_chars!(stream, 't', 'a', 'b', 'l', 'e')
-            ),
-            'o' + scan_chars!(stream, 'v', 'e', 'r', 'r', 'i', 'd', 'e'),
-            'p' + scan_trie!(
-                stream,
-                'a' + scan_chars!(stream, 'r', 't', 'i', 'a', 'l'),
-                'r' + scan_chars!(stream, 'o', 'm', 'i', 's', 'e')
-            ),
-            'r' + scan_sequence!(
-                scan_chars!(stream, 'e'),
-                scan_trie!(
-                    stream,
-                    'c' + scan_chars!(stream, 'e', 'i', 'v', 'e'),
-                    'f' + scan_chars!(stream, 'e', 'r', 'e', 'n', 'c', 'e')
-                )
-            ),
-            's' + scan_trie!(
-                stream,
-                'e' + scan_chars!(stream, 'a', 'l', 'e', 'd'),
-                'i' + scan_chars!(stream, 'z', 'e', 'o', 'f'),
-                'u' + scan_chars!(stream, 'p', 'p', 'o', 'r', 't', 's')
-            ),
-            't' + scan_chars!(stream, 'y', 'p', 'e', 'd', 'e', 'f'),
-            'u' + scan_chars!(stream, 'n', 'c', 'h', 'e', 'c', 'k', 'e', 'd'),
-            'v' + scan_chars!(stream, 'i', 'r', 't', 'u', 'a', 'l')
-        )
-    }
-
-    pub(crate) fn not_an_identifier_in_some_versions(&self, stream: &mut Stream) -> bool {
-        if self.version_is_equal_to_or_greater_than_0_7_0 {
-            self.not_an_identifier_in_some_versions__0_7_0(stream)
-        } else if self.version_is_equal_to_or_greater_than_0_6_0 {
-            self.not_an_identifier_in_some_versions__0_6_0(stream)
-        } else if self.version_is_equal_to_or_greater_than_0_5_0 {
-            self.not_an_identifier_in_some_versions__0_5_0(stream)
-        } else {
-            self.not_an_identifier_in_some_versions__0_4_11(stream)
-        }
-    }
-
     // OPEN_BRACE = "{";
 
     #[allow(dead_code)]
@@ -2554,33 +2517,6 @@ impl Language {
         scan_chars!(stream, '+', '+')
     }
 
-    // POSSIBLY_SEPARATED_PAIRS_OF_HEX_DIGITS = «HEX_CHARACTER» «HEX_CHARACTER» ("_"? «HEX_CHARACTER» «HEX_CHARACTER»)*;
-
-    #[allow(dead_code)]
-    #[allow(unused_assignments, unused_parens)]
-    pub(crate) fn possibly_separated_pairs_of_hex_digits(&self, stream: &mut Stream) -> bool {
-        scan_sequence!(
-            scan_predicate!(stream, |c| ('0' <= c && c <= '9')
-                || ('A' <= c && c <= 'F')
-                || ('a' <= c && c <= 'f')),
-            scan_predicate!(stream, |c| ('0' <= c && c <= '9')
-                || ('A' <= c && c <= 'F')
-                || ('a' <= c && c <= 'f')),
-            scan_zero_or_more!(
-                stream,
-                scan_sequence!(
-                    scan_optional!(stream, scan_chars!(stream, '_')),
-                    scan_predicate!(stream, |c| ('0' <= c && c <= '9')
-                        || ('A' <= c && c <= 'F')
-                        || ('a' <= c && c <= 'f')),
-                    scan_predicate!(stream, |c| ('0' <= c && c <= '9')
-                        || ('A' <= c && c <= 'F')
-                        || ('a' <= c && c <= 'f'))
-                )
-            )
-        )
-    }
-
     // PRAGMA_KEYWORD = "pragma";
 
     #[allow(dead_code)]
@@ -2653,7 +2589,7 @@ impl Language {
         scan_chars!(stream, '?')
     }
 
-    // RAW_IDENTIFIER = IDENTIFIER_START IDENTIFIER_PART*;
+    // «RAW_IDENTIFIER» = «IDENTIFIER_START» «IDENTIFIER_PART»*;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -2688,6 +2624,145 @@ impl Language {
                 || c == '_'
                 || ('a' <= c && c <= 'z'))
         )
+    }
+
+    // «RESERVED_WORD_IN_ANY_VERSION» = "abstract"
+    //                                | "after"
+    //                                | "byte"
+    //                                | "catch"
+    //                                | "final"
+    //                                | "finney"
+    //                                | "hex"
+    //                                | "in"
+    //                                | "inline"
+    //                                | "match"
+    //                                | "null"
+    //                                | "of"
+    //                                | "relocatable"
+    //                                | "static"
+    //                                | "szabo"
+    //                                | "throw"
+    //                                | "try"
+    //                                | "type"
+    //                                | "typeof"
+    //                                | "var"
+    //                                | "years";
+
+    #[allow(dead_code)]
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn reserved_word_in_any_version(&self, stream: &mut Stream) -> bool {
+        scan_trie!(
+            stream,
+            'a' + scan_trie!(
+                stream,
+                'b' + scan_chars!(stream, 's', 't', 'r', 'a', 'c', 't'),
+                'f' + scan_chars!(stream, 't', 'e', 'r')
+            ),
+            'b' + scan_chars!(stream, 'y', 't', 'e'),
+            'c' + scan_chars!(stream, 'a', 't', 'c', 'h'),
+            'f' + scan_sequence!(
+                scan_chars!(stream, 'i', 'n'),
+                scan_trie!(
+                    stream,
+                    'a' + scan_chars!(stream, 'l'),
+                    'n' + scan_chars!(stream, 'e', 'y')
+                )
+            ),
+            'h' + scan_chars!(stream, 'e', 'x'),
+            'i' + scan_sequence!(
+                scan_chars!(stream, 'n'),
+                scan_trie!(stream, EMPTY, 'l' + scan_chars!(stream, 'i', 'n', 'e'))
+            ),
+            'm' + scan_chars!(stream, 'a', 't', 'c', 'h'),
+            'n' + scan_chars!(stream, 'u', 'l', 'l'),
+            'o' + scan_chars!(stream, 'f'),
+            'r' + scan_chars!(stream, 'e', 'l', 'o', 'c', 'a', 't', 'a', 'b', 'l', 'e'),
+            's' + scan_trie!(
+                stream,
+                't' + scan_chars!(stream, 'a', 't', 'i', 'c'),
+                'z' + scan_chars!(stream, 'a', 'b', 'o')
+            ),
+            't' + scan_trie!(
+                stream,
+                'h' + scan_chars!(stream, 'r', 'o', 'w'),
+                'r' + scan_chars!(stream, 'y'),
+                'y' + scan_sequence!(
+                    scan_chars!(stream, 'p', 'e'),
+                    scan_trie!(stream, EMPTY, 'o' + scan_chars!(stream, 'f'))
+                )
+            ),
+            'v' + scan_chars!(stream, 'a', 'r'),
+            'y' + scan_chars!(stream, 'e', 'a', 'r', 's')
+        )
+    }
+
+    // (* v0.5.0 *)
+    // «RESERVED_WORD_IN_SOME_VERSION» = "alias"
+    //                                 | "apply"
+    //                                 | "auto"
+    //                                 | "copyof"
+    //                                 | "define"
+    //                                 | "implements"
+    //                                 | "macro"
+    //                                 | "mutable"
+    //                                 | "partial"
+    //                                 | "promise"
+    //                                 | "reference"
+    //                                 | "sealed"
+    //                                 | "sizeof"
+    //                                 | "supports"
+    //                                 | "typedef";
+
+    #[allow(dead_code, non_snake_case)]
+    fn reserved_word_in_some_version__0_5_0(&self, stream: &mut Stream) -> bool {
+        scan_trie!(
+            stream,
+            'a' + scan_trie!(
+                stream,
+                'l' + scan_chars!(stream, 'i', 'a', 's'),
+                'p' + scan_chars!(stream, 'p', 'l', 'y'),
+                'u' + scan_chars!(stream, 't', 'o')
+            ),
+            'c' + scan_chars!(stream, 'o', 'p', 'y', 'o', 'f'),
+            'd' + scan_chars!(stream, 'e', 'f', 'i', 'n', 'e'),
+            'i' + scan_chars!(stream, 'm', 'p', 'l', 'e', 'm', 'e', 'n', 't', 's'),
+            'm' + scan_trie!(
+                stream,
+                'a' + scan_chars!(stream, 'c', 'r', 'o'),
+                'u' + scan_chars!(stream, 't', 'a', 'b', 'l', 'e')
+            ),
+            'p' + scan_trie!(
+                stream,
+                'a' + scan_chars!(stream, 'r', 't', 'i', 'a', 'l'),
+                'r' + scan_chars!(stream, 'o', 'm', 'i', 's', 'e')
+            ),
+            'r' + scan_chars!(stream, 'e', 'f', 'e', 'r', 'e', 'n', 'c', 'e'),
+            's' + scan_trie!(
+                stream,
+                'e' + scan_chars!(stream, 'a', 'l', 'e', 'd'),
+                'i' + scan_chars!(stream, 'z', 'e', 'o', 'f'),
+                'u' + scan_chars!(stream, 'p', 'p', 'o', 'r', 't', 's')
+            ),
+            't' + scan_chars!(stream, 'y', 'p', 'e', 'd', 'e', 'f')
+        )
+    }
+
+    #[allow(non_snake_case)]
+    pub(crate) fn reserved_word_in_some_version__sparse_dispatch(
+        &self,
+        stream: &mut Stream,
+    ) -> Option<bool> {
+        if self.version_is_equal_to_or_greater_than_0_5_0 {
+            Some(self.reserved_word_in_some_version__0_5_0(stream))
+        } else {
+            None
+        }
+    }
+
+    #[inline]
+    pub(crate) fn reserved_word_in_some_version(&self, stream: &mut Stream) -> bool {
+        self.reserved_word_in_some_version__sparse_dispatch(stream)
+            .expect("Validation should have checked that references are valid between versions")
     }
 
     // RETURN_KEYWORD = "return";
@@ -2762,7 +2837,7 @@ impl Language {
         scan_chars!(stream, ';')
     }
 
-    // SIGNED_FIXED_TYPE = "fixed" ("0"…"9"+ "x" "0"…"9"+)?;
+    // SIGNED_FIXED_TYPE = "fixed" «FIXED_TYPE_SIZE»?;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -2771,20 +2846,7 @@ impl Language {
             stream,
             scan_sequence!(
                 scan_chars!(stream, 'f', 'i', 'x', 'e', 'd'),
-                scan_optional!(
-                    stream,
-                    scan_sequence!(
-                        scan_one_or_more!(
-                            stream,
-                            scan_predicate!(stream, |c| ('0' <= c && c <= '9'))
-                        ),
-                        scan_chars!(stream, 'x'),
-                        scan_one_or_more!(
-                            stream,
-                            scan_predicate!(stream, |c| ('0' <= c && c <= '9'))
-                        )
-                    )
-                )
+                scan_optional!(stream, self.fixed_type_size(stream))
             ),
             scan_predicate!(stream, |c| c == '$'
                 || ('0' <= c && c <= '9')
@@ -2794,7 +2856,7 @@ impl Language {
         )
     }
 
-    // SIGNED_INTEGER_TYPE = "int" ("8" | "16" | "24" | "32" | "40" | "48" | "56" | "64" | "72" | "80" | "88" | "96" | "104" | "112" | "120" | "128" | "136" | "144" | "152" | "160" | "168" | "176" | "184" | "192" | "200" | "208" | "216" | "224" | "232" | "240" | "248" | "256")?;
+    // SIGNED_INTEGER_TYPE = "int" «INTEGER_TYPE_SIZE»?;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -2858,7 +2920,7 @@ impl Language {
         )
     }
 
-    // SINGLE_QUOTED_ASCII_STRING_LITERAL = "'" (ESCAPE_SEQUENCE | (" "…"~" - ("'" | "\\")))* "'";
+    // «SINGLE_QUOTED_ASCII_STRING_LITERAL» = "'" («ESCAPE_SEQUENCE» | (" "…"~" - ("'" | "\\")))* "'";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -2879,8 +2941,21 @@ impl Language {
         )
     }
 
+    // «SINGLE_QUOTED_HEX_STRING_LITERAL» = "hex" "'" «HEX_STRING_CONTENTS»? "'";
+
+    #[allow(dead_code)]
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn single_quoted_hex_string_literal(&self, stream: &mut Stream) -> bool {
+        scan_sequence!(
+            scan_chars!(stream, 'h', 'e', 'x'),
+            scan_chars!(stream, '\''),
+            scan_optional!(stream, self.hex_string_contents(stream)),
+            scan_chars!(stream, '\'')
+        )
+    }
+
     // (* v0.7.0 *)
-    // SINGLE_QUOTED_UNICODE_STRING_LITERAL = "unicode'" (ESCAPE_SEQUENCE | !("'" | "\\" | "\n" | "\r"))* "'";
+    // «SINGLE_QUOTED_UNICODE_STRING_LITERAL» = "unicode'" («ESCAPE_SEQUENCE» | !("'" | "\\" | "\n" | "\r"))* "'";
 
     #[allow(dead_code, non_snake_case)]
     fn single_quoted_unicode_string_literal__0_7_0(&self, stream: &mut Stream) -> bool {
@@ -3191,7 +3266,7 @@ impl Language {
             .expect("Validation should have checked that references are valid between versions")
     }
 
-    // UNICODE_ESCAPE = "u" «HEX_CHARACTER» «HEX_CHARACTER» «HEX_CHARACTER» «HEX_CHARACTER»;
+    // «UNICODE_ESCAPE» = "u" «HEX_CHARACTER» «HEX_CHARACTER» «HEX_CHARACTER» «HEX_CHARACTER»;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -3214,14 +3289,22 @@ impl Language {
     }
 
     // (* v0.7.0 *)
-    // UNICODE_STRING_LITERAL = SINGLE_QUOTED_UNICODE_STRING_LITERAL | DOUBLE_QUOTED_UNICODE_STRING_LITERAL;
+    // UNICODE_STRING_LITERAL = «SINGLE_QUOTED_UNICODE_STRING_LITERAL» | «DOUBLE_QUOTED_UNICODE_STRING_LITERAL»;
 
     #[allow(dead_code, non_snake_case)]
     fn unicode_string_literal__0_7_0(&self, stream: &mut Stream) -> bool {
-        scan_choice!(
+        scan_not_followed_by!(
             stream,
-            self.single_quoted_unicode_string_literal(stream),
-            self.double_quoted_unicode_string_literal(stream)
+            scan_choice!(
+                stream,
+                self.single_quoted_unicode_string_literal(stream),
+                self.double_quoted_unicode_string_literal(stream)
+            ),
+            scan_predicate!(stream, |c| c == '$'
+                || ('0' <= c && c <= '9')
+                || ('A' <= c && c <= 'Z')
+                || c == '_'
+                || ('a' <= c && c <= 'z'))
         )
     }
 
@@ -3243,20 +3326,76 @@ impl Language {
             .expect("Validation should have checked that references are valid between versions")
     }
 
-    // UNSIGNED_FIXED_TYPE = "u" SIGNED_FIXED_TYPE;
+    // UNSIGNED_FIXED_TYPE = "ufixed" «FIXED_TYPE_SIZE»?;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn unsigned_fixed_type(&self, stream: &mut Stream) -> bool {
-        scan_sequence!(scan_chars!(stream, 'u'), self.signed_fixed_type(stream))
+        scan_not_followed_by!(
+            stream,
+            scan_sequence!(
+                scan_chars!(stream, 'u', 'f', 'i', 'x', 'e', 'd'),
+                scan_optional!(stream, self.fixed_type_size(stream))
+            ),
+            scan_predicate!(stream, |c| c == '$'
+                || ('0' <= c && c <= '9')
+                || ('A' <= c && c <= 'Z')
+                || c == '_'
+                || ('a' <= c && c <= 'z'))
+        )
     }
 
-    // UNSIGNED_INTEGER_TYPE = "u" SIGNED_INTEGER_TYPE;
+    // UNSIGNED_INTEGER_TYPE = "uint" «INTEGER_TYPE_SIZE»?;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn unsigned_integer_type(&self, stream: &mut Stream) -> bool {
-        scan_sequence!(scan_chars!(stream, 'u'), self.signed_integer_type(stream))
+        scan_not_followed_by!(
+            stream,
+            scan_sequence!(
+                scan_chars!(stream, 'u', 'i', 'n', 't'),
+                scan_optional!(
+                    stream,
+                    scan_trie!(
+                        stream,
+                        '1' + scan_trie!(
+                            stream,
+                            '0' + scan_chars!(stream, '4'),
+                            '1' + scan_chars!(stream, '2'),
+                            '2' + scan_trie!(stream, ['0' | '8']),
+                            '3' + scan_chars!(stream, '6'),
+                            '4' + scan_chars!(stream, '4'),
+                            '5' + scan_chars!(stream, '2'),
+                            '6' + scan_trie!(stream, EMPTY, ['0' | '8']),
+                            '7' + scan_chars!(stream, '6'),
+                            '8' + scan_chars!(stream, '4'),
+                            '9' + scan_chars!(stream, '2')
+                        ),
+                        '2' + scan_trie!(
+                            stream,
+                            '0' + scan_trie!(stream, ['0' | '8']),
+                            '1' + scan_chars!(stream, '6'),
+                            '2' + scan_chars!(stream, '4'),
+                            '3' + scan_chars!(stream, '2'),
+                            '4' + scan_trie!(stream, EMPTY, ['0' | '8']),
+                            '5' + scan_chars!(stream, '6')
+                        ),
+                        '3' + scan_chars!(stream, '2'),
+                        '4' + scan_trie!(stream, ['0' | '8']),
+                        '5' + scan_chars!(stream, '6'),
+                        '6' + scan_chars!(stream, '4'),
+                        '7' + scan_chars!(stream, '2'),
+                        '8' + scan_trie!(stream, EMPTY, ['0' | '8']),
+                        '9' + scan_chars!(stream, '6')
+                    )
+                )
+            ),
+            scan_predicate!(stream, |c| c == '$'
+                || ('0' <= c && c <= '9')
+                || ('A' <= c && c <= 'Z')
+                || c == '_'
+                || ('a' <= c && c <= 'z'))
+        )
     }
 
     // USING_KEYWORD = "using";
@@ -3459,13 +3598,21 @@ impl Language {
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn yul_decimal_literal(&self, stream: &mut Stream) -> bool {
-        scan_choice!(
+        scan_not_followed_by!(
             stream,
-            scan_chars!(stream, '0'),
-            scan_sequence!(
-                scan_predicate!(stream, |c| ('1' <= c && c <= '9')),
-                scan_zero_or_more!(stream, scan_predicate!(stream, |c| ('0' <= c && c <= '9')))
-            )
+            scan_choice!(
+                stream,
+                scan_chars!(stream, '0'),
+                scan_sequence!(
+                    scan_predicate!(stream, |c| ('1' <= c && c <= '9')),
+                    scan_zero_or_more!(stream, scan_predicate!(stream, |c| ('0' <= c && c <= '9')))
+                )
+            ),
+            scan_predicate!(stream, |c| c == '$'
+                || ('0' <= c && c <= '9')
+                || ('A' <= c && c <= 'Z')
+                || c == '_'
+                || ('a' <= c && c <= 'z'))
         )
     }
 
@@ -3474,18 +3621,26 @@ impl Language {
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn yul_hex_literal(&self, stream: &mut Stream) -> bool {
-        scan_sequence!(
-            scan_chars!(stream, '0', 'x'),
-            scan_one_or_more!(
-                stream,
-                scan_predicate!(stream, |c| ('0' <= c && c <= '9')
-                    || ('A' <= c && c <= 'F')
-                    || ('a' <= c && c <= 'f'))
-            )
+        scan_not_followed_by!(
+            stream,
+            scan_sequence!(
+                scan_chars!(stream, '0', 'x'),
+                scan_one_or_more!(
+                    stream,
+                    scan_predicate!(stream, |c| ('0' <= c && c <= '9')
+                        || ('A' <= c && c <= 'F')
+                        || ('a' <= c && c <= 'f'))
+                )
+            ),
+            scan_predicate!(stream, |c| c == '$'
+                || ('0' <= c && c <= '9')
+                || ('A' <= c && c <= 'Z')
+                || c == '_'
+                || ('a' <= c && c <= 'z'))
         )
     }
 
-    // YUL_IDENTIFIER = RAW_IDENTIFIER - (YUL_KEYWORD | YUL_RESERVED_KEYWORD);
+    // YUL_IDENTIFIER = «RAW_IDENTIFIER» - («YUL_KEYWORD» | «YUL_RESERVED_WORD»);
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -3502,17 +3657,17 @@ impl Language {
     }
 
     // (* v0.4.11 *)
-    // YUL_KEYWORD = BREAK_KEYWORD
-    //             | CASE_KEYWORD
-    //             | CONTINUE_KEYWORD
-    //             | DEFAULT_KEYWORD
-    //             | FALSE_KEYWORD
-    //             | FOR_KEYWORD
-    //             | FUNCTION_KEYWORD
-    //             | IF_KEYWORD
-    //             | LET_KEYWORD
-    //             | SWITCH_KEYWORD
-    //             | TRUE_KEYWORD;
+    // «YUL_KEYWORD» = BREAK_KEYWORD
+    //               | CASE_KEYWORD
+    //               | CONTINUE_KEYWORD
+    //               | DEFAULT_KEYWORD
+    //               | FALSE_KEYWORD
+    //               | FOR_KEYWORD
+    //               | FUNCTION_KEYWORD
+    //               | IF_KEYWORD
+    //               | LET_KEYWORD
+    //               | SWITCH_KEYWORD
+    //               | TRUE_KEYWORD;
 
     #[allow(dead_code, non_snake_case)]
     fn yul_keyword__0_4_11(&self, stream: &mut Stream) -> bool {
@@ -3533,18 +3688,18 @@ impl Language {
     }
 
     // (* v0.6.0 *)
-    // YUL_KEYWORD = BREAK_KEYWORD
-    //             | CASE_KEYWORD
-    //             | CONTINUE_KEYWORD
-    //             | DEFAULT_KEYWORD
-    //             | FALSE_KEYWORD
-    //             | FOR_KEYWORD
-    //             | FUNCTION_KEYWORD
-    //             | IF_KEYWORD
-    //             | LEAVE_KEYWORD
-    //             | LET_KEYWORD
-    //             | SWITCH_KEYWORD
-    //             | TRUE_KEYWORD;
+    // «YUL_KEYWORD» = BREAK_KEYWORD
+    //               | CASE_KEYWORD
+    //               | CONTINUE_KEYWORD
+    //               | DEFAULT_KEYWORD
+    //               | FALSE_KEYWORD
+    //               | FOR_KEYWORD
+    //               | FUNCTION_KEYWORD
+    //               | IF_KEYWORD
+    //               | LEAVE_KEYWORD
+    //               | LET_KEYWORD
+    //               | SWITCH_KEYWORD
+    //               | TRUE_KEYWORD;
 
     #[allow(dead_code, non_snake_case)]
     fn yul_keyword__0_6_0(&self, stream: &mut Stream) -> bool {
@@ -3573,11 +3728,11 @@ impl Language {
         }
     }
 
-    // YUL_RESERVED_KEYWORD = "hex";
+    // «YUL_RESERVED_WORD» = "hex";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
-    pub(crate) fn yul_reserved_keyword(&self, stream: &mut Stream) -> bool {
+    pub(crate) fn yul_reserved_word(&self, stream: &mut Stream) -> bool {
         scan_chars!(stream, 'h', 'e', 'x')
     }
 }

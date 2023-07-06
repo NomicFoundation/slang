@@ -8,14 +8,13 @@
         - reference: "ContractKeyword"
         - reference: "Identifier"
         - optional:
-            reference: "InheritanceSpecifierList"
+            reference: "InheritanceSpecifier"
         - delimitedBy:
             open:
               reference: "OpenBrace"
             expression:
-              name: "ContractBodyElements"
-              zeroOrMore:
-                reference: "ContractBodyElement"
+              optional:
+                reference: "ContractMembersList"
             close:
               reference: "CloseBrace"
     0.6.0:
@@ -26,37 +25,47 @@
         - reference: "ContractKeyword"
         - reference: "Identifier"
         - optional:
-            reference: "InheritanceSpecifierList"
+            reference: "InheritanceSpecifier"
         - delimitedBy:
             open:
               reference: "OpenBrace"
             expression:
-              name: "ContractBodyElements"
-              zeroOrMore:
-                reference: "ContractBodyElement"
+              optional:
+                reference: "ContractMembersList"
             close:
               reference: "CloseBrace"
-
-- name: "InheritanceSpecifierList"
-  kind: "Parser"
-  unversioned:
-    sequence:
-      - reference: "IsKeyword"
-      - separatedBy:
-          separator:
-            reference: "Comma"
-          expression:
-            reference: "InheritanceSpecifier"
 
 - name: "InheritanceSpecifier"
   kind: "Parser"
   unversioned:
     sequence:
+      - reference: "IsKeyword"
+      - reference: "InheritanceTypesList"
+
+- name: "InheritanceTypesList"
+  kind: "Parser"
+  unversioned:
+    separatedBy:
+      separator:
+        reference: "Comma"
+      expression:
+        reference: "InheritanceType"
+
+- name: "InheritanceType"
+  kind: "Parser"
+  unversioned:
+    sequence:
       - reference: "IdentifierPath"
       - optional:
-          reference: "ArgumentList"
+          reference: "ArgumentsDeclaration"
 
-- name: "ContractBodyElement"
+- name: "ContractMembersList"
+  kind: "Parser"
+  unversioned:
+    oneOrMore:
+      reference: "ContractMember"
+
+- name: "ContractMember"
   kind: "Parser"
   inlined: true
   versioned:
@@ -70,9 +79,9 @@
         - reference: "EnumDefinition"
         - reference: "EventDefinition"
         - reference: "ErrorDefinition"
-        - reference: "StateVariableDeclaration"
+        - reference: "StateVariableDefinition"
     0.4.22:
-      # added: ConstructorDefinition
+      # added: "ConstructorDefinition"
       choice:
         - reference: "UsingDirective"
         - reference: "ConstructorDefinition"
@@ -83,11 +92,11 @@
         - reference: "EnumDefinition"
         - reference: "EventDefinition"
         - reference: "ErrorDefinition"
-        - reference: "StateVariableDeclaration"
+        - reference: "StateVariableDefinition"
     0.6.0:
-      # added: ReceiveFunctionDefinition
-      # added: FallbackFunctionDefinition added
-      # removed: UnnamedFunctionDefinition
+      # added: "ReceiveFunctionDefinition"
+      # added: "FallbackFunctionDefinition"
+      # removed: "UnnamedFunctionDefinition"
       choice:
         - reference: "UsingDirective"
         - reference: "ConstructorDefinition"
@@ -99,9 +108,9 @@
         - reference: "EnumDefinition"
         - reference: "EventDefinition"
         - reference: "ErrorDefinition"
-        - reference: "StateVariableDeclaration"
+        - reference: "StateVariableDefinition"
     0.8.8:
-      # added: UserDefinedValueTypeDefinition
+      # added: "UserDefinedValueTypeDefinition"
       choice:
         - reference: "UsingDirective"
         - reference: "ConstructorDefinition"
@@ -111,7 +120,7 @@
         - reference: "ModifierDefinition"
         - reference: "StructDefinition"
         - reference: "EnumDefinition"
-        - reference: "UserDefinedValueTypeDefinition"
         - reference: "EventDefinition"
         - reference: "ErrorDefinition"
-        - reference: "StateVariableDeclaration"
+        - reference: "StateVariableDefinition"
+        - reference: "UserDefinedValueTypeDefinition"

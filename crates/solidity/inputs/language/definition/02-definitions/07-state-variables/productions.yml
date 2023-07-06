@@ -1,14 +1,14 @@
 # yaml-language-server: $schema=../../../generated/productions.schema.json
 
-- name: "StateVariableDeclaration"
+- name: "StateVariableDefinition"
   kind: "Parser"
   unversioned:
     terminatedBy:
       expression:
         sequence:
           - reference: "TypeName"
-          - zeroOrMore:
-              reference: "StateVariableAttribute"
+          - optional:
+              reference: "StateVariableAttributesList"
           - reference: "Identifier"
           - optional:
               sequence:
@@ -17,8 +17,15 @@
       terminator:
         reference: "Semicolon"
 
+- name: "StateVariableAttributesList"
+  kind: "Parser"
+  unversioned:
+    oneOrMore:
+      reference: "StateVariableAttribute"
+
 - name: "StateVariableAttribute"
   kind: "Parser"
+  inlined: true
   versioned:
     0.4.11:
       choice:

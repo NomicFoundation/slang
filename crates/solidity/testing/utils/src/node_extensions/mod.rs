@@ -1,7 +1,7 @@
 #[cfg(test)]
 mod tests;
 
-use slang_solidity::syntax::nodes::{Node, RuleKind};
+use slang_solidity::syntax::nodes::{Node, RuleKind, RuleNode, TokenNode};
 
 pub trait NodeExtensions {
     fn is_trivia(&self) -> bool;
@@ -10,24 +10,41 @@ pub trait NodeExtensions {
 
 impl NodeExtensions for Node {
     fn is_trivia(&self) -> bool {
-        match self {
-            Node::Token(_) => false,
-            Node::Rule(rule_node) => {
-                rule_node.kind == RuleKind::LeadingTrivia
-                    || rule_node.kind == RuleKind::TrailingTrivia
-            }
-        }
+        return match self {
+            Node::Token(token) => token.is_trivia(),
+            Node::Rule(rule) => rule.is_trivia(),
+        };
     }
 
     fn extract_non_trivia(&self) -> String {
-        match self {
-            Node::Token(token_node) => token_node.text.clone(),
-            Node::Rule(rule_node) => rule_node
-                .children
-                .iter()
-                .filter(|child| !child.is_trivia())
-                .map(|child| child.extract_non_trivia())
-                .collect(),
-        }
+        return match self {
+            Node::Token(token) => token.extract_non_trivia(),
+            Node::Rule(rule) => rule.extract_non_trivia(),
+        };
+    }
+}
+
+impl NodeExtensions for RuleNode {
+    fn is_trivia(&self) -> bool {
+        return self.kind == RuleKind::LeadingTrivia || self.kind == RuleKind::TrailingTrivia;
+    }
+
+    fn extract_non_trivia(&self) -> String {
+        return self
+            .children
+            .iter()
+            .filter(|child| !child.is_trivia())
+            .map(|child| child.extract_non_trivia())
+            .collect();
+    }
+}
+
+impl NodeExtensions for TokenNode {
+    fn is_trivia(&self) -> bool {
+        return false;
+    }
+
+    fn extract_non_trivia(&self) -> String {
+        return self.text.clone();
     }
 }

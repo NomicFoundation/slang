@@ -8,12 +8,16 @@
         - reference: "TryKeyword"
         - reference: "Expression"
         - optional:
-            sequence:
-              - reference: "ReturnsKeyword"
-              - reference: "ParameterList"
+            reference: "ReturnsDeclaration"
         - reference: "Block"
-        - oneOrMore:
-            reference: "CatchClause"
+        - reference: "CatchClausesList"
+
+- name: "CatchClausesList"
+  kind: "Parser"
+  versioned:
+    0.6.0:
+      oneOrMore:
+        reference: "CatchClause"
 
 - name: "CatchClause"
   kind: "Parser"
@@ -22,11 +26,17 @@
       sequence:
         - reference: "CatchKeyword"
         - optional:
-            sequence:
-              - optional:
-                  reference: "Identifier"
-              - reference: "ParameterList"
+            reference: "CatchClauseError"
         - reference: "Block"
+
+- name: "CatchClauseError"
+  kind: "Parser"
+  versioned:
+    0.6.0:
+      sequence:
+        - optional:
+            reference: "Identifier"
+        - reference: "ParametersDeclaration"
 
 - name: "RevertStatement"
   kind: "Parser"
@@ -37,7 +47,7 @@
           - reference: "RevertKeyword"
           - optional:
               reference: "IdentifierPath"
-          - reference: "ArgumentList"
+          - reference: "ArgumentsDeclaration"
       terminator:
         reference: "Semicolon"
 
