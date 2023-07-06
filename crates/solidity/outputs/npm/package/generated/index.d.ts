@@ -649,13 +649,13 @@ export enum ProductionKind {
 export class RuleNode {
   get type(): NodeType.Rule;
   get kind(): RuleKind;
-  get textLen(): [utf8: number, utf16: number, char: number];
+  get textLength(): [utf8: number, utf16: number, char: number];
   get children(): (RuleNode | TokenNode)[];
 }
 export class TokenNode {
   get type(): NodeType.Token;
   get kind(): TokenKind;
-  get textLen(): [utf8: number, utf16: number, char: number];
+  get textLength(): [utf8: number, utf16: number, char: number];
 }
 export class Language {
   constructor(version: string);
@@ -670,6 +670,5 @@ export class ParseOutput {
 }
 export class ParseError {
   get range(): [start: [utf8: number, utf16: number, char: number], end: [utf8: number, utf16: number, char: number]];
-  get tokensThatWouldHaveAllowedMoreProgress(): Array<string>;
   toErrorReport(sourceId: string, source: string, withColour: boolean): string;
 }

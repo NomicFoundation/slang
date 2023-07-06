@@ -36,6 +36,7 @@ impl RuleNode {
 
     #[napi(
         getter,
+        js_name = "textLength",
         ts_return_type = "[ utf8: number, utf16: number, char: number]"
     )]
     pub fn text_len(&self) -> [u32; 3] {
@@ -70,6 +71,7 @@ impl TokenNode {
 
     #[napi(
         getter,
+        js_name = "textLength",
         ts_return_type = "[ utf8: number, utf16: number, char: number]"
     )]
     pub fn text_len(&self) -> [u32; 3] {
