@@ -23,21 +23,14 @@
       "email": "omar@nomic.foundation"
     }
   ],
+  "type": "commonjs",
   "files": [
-    "src/**/*.d.ts",
-    "src/**/*.js",
+    "**/*.d.ts",
+    "**/*.js",
     "CHANGELOG.md",
     "LICENSE",
     "README.md"
   ],
-  "__exports_comment__": "__SLANG_PUBLIC_API_SYNC__ (please keep in sync across all other instances)",
-  "exports": {
-    ".": "./src/index.js",
-    "./language": "./src/language/index.js",
-    "./syntax": "./src/syntax/index.js",
-    "./syntax/nodes": "./src/syntax/nodes/index.js",
-    "./syntax/parser": "./src/syntax/parser/index.js"
-  },
   "devDependencies": {
     "@napi-rs/cli": "2.16.1",
     "prettier": "2.8.8"
