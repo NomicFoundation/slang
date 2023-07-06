@@ -35,10 +35,12 @@ This allows callers to parse entire source files (`ProductionKind::SourceUnit`),
 methods (`ProductionKind::FunctionDefinition`), or any other syntax nodes.
 
 ```rust
-use slang_solidity::syntax::{
+use slang_solidity::{
     language::Language,
-    nodes::{Node, RuleKind, TokenKind},
-    parser::{ProductionKind},
+    syntax::{
+        nodes::{Node, RuleKind, TokenKind},
+        parser::ProductionKind,
+    },
 };
 
 let language = Language::new(Version::parse("0.8.0")?)?;

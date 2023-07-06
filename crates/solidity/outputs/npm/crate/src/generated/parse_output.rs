@@ -57,7 +57,6 @@ impl ParseError {
         ];
     }
 
-    #[napi(getter)]
     pub fn tokens_that_would_have_allowed_more_progress(&self) -> Vec<String> {
         let tokens_that_would_have_allowed_more_progress = self
             .tokens_that_would_have_allowed_more_progress
