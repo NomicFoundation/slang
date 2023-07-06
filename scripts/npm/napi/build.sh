@@ -33,13 +33,13 @@ function _napi_build() {
   fi
 
   # Navigate to where files should be generated:
-  cd "$PACKAGE_DIR/src/generated"
+  cd "$PACKAGE_DIR/generated"
 
   command=(
     napi build
     --platform
-    --config "../../package.json"
-    --cargo-cwd "../../../crate"
+    --config "../package.json"
+    --cargo-cwd "../../crate"
     --target "$target"
     --no-const-enum
   )
@@ -55,8 +55,8 @@ function _process_generated_files() {
   printf "\n\n📚 Processing Generated Files: 📚\n\n\n"
 
   generated_files=(
-    "$PACKAGE_DIR/src/generated/index.d.ts"
-    "$PACKAGE_DIR/src/generated/index.js"
+    "$PACKAGE_DIR/generated/index.d.ts"
+    "$PACKAGE_DIR/generated/index.js"
   )
 
   for file in "${generated_files[@]}"; do
@@ -80,7 +80,7 @@ function _process_bindings() {
   # Populate artifacts folder with all binding files:
 
   mkdir -p "$PACKAGE_DIR/artifacts"
-  artifacts="$(_list_source_files "$PACKAGE_DIR/src/generated" "*.node")"
+  artifacts="$(_list_source_files "$PACKAGE_DIR/generated" "*.node")"
 
   echo "$artifacts" | while read -r artifact; do
     cp "$artifact" "$PACKAGE_DIR/artifacts"
