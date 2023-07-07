@@ -1,5 +1,5 @@
 [workspace.package]
-version = "0.6.0"
+version = "0.7.0"
 rust-version = "1.69.0" # Keep this version in sync with "$RUST_VERSION" in "$REPO_ROOT/bin/hermit.hcl" and "rust-src" in "$REPO_ROOT/bin"
 edition = "2021"
 publish = false
