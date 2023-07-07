@@ -31,12 +31,11 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
 
         for version in VERSION_BREAKS {
             let version = Version::parse(version)?;
-            let snapshot_path = test_dir.join(format!("generated/{version}.yml"));
 
             let production_kind = ProductionKind::from_str(parser_name)
                 .expect(format!("No such parser: {parser_name}").as_str());
 
-            let output = match Language::new(version)?.parse(production_kind, &source) {
+            let output = match Language::new(version.to_owned())?.parse(production_kind, &source) {
                 Ok(output) => output,
                 Err(error) => match error {
                     Error::InvalidProductionVersion(_) => {
@@ -53,6 +52,13 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
                 }
             }
 
+            let test_status = if output.is_valid() {
+                "success"
+            } else {
+                "failure"
+            };
+
+            let snapshot_path = test_dir.join(format!("generated/{version}-{test_status}.yml"));
             let snapshot = output.to_test_snapshot(source_id, source)?;
             codegen.write_file(&snapshot_path, &snapshot)?;
 
