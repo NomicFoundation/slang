@@ -14,6 +14,11 @@ fn experimental() -> Result<()> {
 }
 
 #[test]
+fn experimental_string() -> Result<()> {
+    return run("PragmaDirective", "experimental_string");
+}
+
+#[test]
 fn version() -> Result<()> {
     return run("PragmaDirective", "version");
 }

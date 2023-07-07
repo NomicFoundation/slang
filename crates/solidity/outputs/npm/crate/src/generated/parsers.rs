@@ -2857,7 +2857,7 @@ impl Language {
         .with_kind(RuleKind::EventParametersList)
     }
 
-    // ExperimentalPragma = EXPERIMENTAL_KEYWORD IDENTIFIER;
+    // ExperimentalPragma = EXPERIMENTAL_KEYWORD (ASCII_STRING_LITERAL | IDENTIFIER);
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -2872,11 +2872,33 @@ impl Language {
                 )) {
                     break;
                 }
-                running_result.incorporate_sequence_result(self.parse_token_with_trivia(
-                    stream,
-                    &Self::identifier,
-                    TokenKind::Identifier,
-                ));
+                running_result.incorporate_sequence_result({
+                    let mut running_result = ParserResult::no_match(vec![]);
+                    let start_position = stream.position();
+                    loop {
+                        if running_result.incorporate_choice_result(self.parse_token_with_trivia(
+                            stream,
+                            &Self::ascii_string_literal,
+                            TokenKind::AsciiStringLiteral,
+                        )) {
+                            break;
+                        }
+                        stream.set_position(start_position);
+                        if running_result.incorporate_choice_result(self.parse_token_with_trivia(
+                            stream,
+                            &Self::identifier,
+                            TokenKind::Identifier,
+                        )) {
+                            break;
+                        }
+                        stream.set_position(start_position);
+                        break;
+                    }
+                    if let ParserResult::IncompleteMatch(incomplete_match) = &running_result {
+                        incomplete_match.consume_stream(stream);
+                    }
+                    running_result
+                });
                 break;
             }
             running_result
