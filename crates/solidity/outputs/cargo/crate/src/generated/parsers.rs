@@ -45,6 +45,7 @@ impl Language {
     {
         let start = stream.position();
         if !scanner(self, stream) {
+            stream.set_position(start);
             return ParserResult::no_match(vec![kind]);
         }
         let end = stream.position();
@@ -98,12 +99,18 @@ impl Language {
                     break;
                 }
                 stream.set_position(start_position);
-                running_result.incorporate_choice_result(self.parse_token_with_trivia(
+                if running_result.incorporate_choice_result(self.parse_token_with_trivia(
                     stream,
                     &Self::minus,
                     TokenKind::Minus,
-                ));
+                )) {
+                    break;
+                }
+                stream.set_position(start_position);
                 break;
+            }
+            if let ParserResult::IncompleteMatch(incomplete_match) = &running_result {
+                incomplete_match.consume_stream(stream);
             }
             running_result
         }
@@ -144,12 +151,18 @@ impl Language {
                     break;
                 }
                 stream.set_position(start_position);
-                running_result.incorporate_choice_result(self.parse_token_with_trivia(
+                if running_result.incorporate_choice_result(self.parse_token_with_trivia(
                     stream,
                     &Self::payable_keyword,
                     TokenKind::PayableKeyword,
-                ));
+                )) {
+                    break;
+                }
+                stream.set_position(start_position);
                 break;
+            }
+            if let ParserResult::IncompleteMatch(incomplete_match) = &running_result {
+                incomplete_match.consume_stream(stream);
             }
             running_result
         }
@@ -193,9 +206,16 @@ impl Language {
                             break;
                         }
                         stream.set_position(start_position);
-                        running_result
-                            .incorporate_choice_result(self.named_arguments_declaration(stream));
+                        if running_result
+                            .incorporate_choice_result(self.named_arguments_declaration(stream))
+                        {
+                            break;
+                        }
+                        stream.set_position(start_position);
                         break;
+                    }
+                    if let ParserResult::IncompleteMatch(incomplete_match) = &running_result {
+                        incomplete_match.consume_stream(stream);
                     }
                     running_result
                 })) {
@@ -547,12 +567,18 @@ impl Language {
                     break;
                 }
                 stream.set_position(start_position);
-                running_result.incorporate_choice_result(self.parse_token_with_trivia(
+                if running_result.incorporate_choice_result(self.parse_token_with_trivia(
                     stream,
                     &Self::greater_than_greater_than_greater_than_equal,
                     TokenKind::GreaterThanGreaterThanGreaterThanEqual,
-                ));
+                )) {
+                    break;
+                }
+                stream.set_position(start_position);
                 break;
+            }
+            if let ParserResult::IncompleteMatch(incomplete_match) = &running_result {
+                incomplete_match.consume_stream(stream);
             }
             running_result
         }
@@ -631,12 +657,18 @@ impl Language {
                     break;
                 }
                 stream.set_position(start_position);
-                running_result.incorporate_choice_result(self.parse_token_with_trivia(
+                if running_result.incorporate_choice_result(self.parse_token_with_trivia(
                     stream,
                     &Self::false_keyword,
                     TokenKind::FalseKeyword,
-                ));
+                )) {
+                    break;
+                }
+                stream.set_position(start_position);
                 break;
+            }
+            if let ParserResult::IncompleteMatch(incomplete_match) = &running_result {
+                incomplete_match.consume_stream(stream);
             }
             running_result
         }
@@ -905,12 +937,18 @@ impl Language {
                     break;
                 }
                 stream.set_position(start_position);
-                running_result.incorporate_choice_result(self.parse_token_with_trivia(
+                if running_result.incorporate_choice_result(self.parse_token_with_trivia(
                     stream,
                     &Self::public_keyword,
                     TokenKind::PublicKeyword,
-                ));
+                )) {
+                    break;
+                }
+                stream.set_position(start_position);
                 break;
+            }
+            if let ParserResult::IncompleteMatch(incomplete_match) = &running_result {
+                incomplete_match.consume_stream(stream);
             }
             running_result
         }
@@ -1232,8 +1270,15 @@ impl Language {
                     break;
                 }
                 stream.set_position(start_position);
-                running_result.incorporate_choice_result(self.state_variable_definition(stream));
+                if running_result.incorporate_choice_result(self.state_variable_definition(stream))
+                {
+                    break;
+                }
+                stream.set_position(start_position);
                 break;
+            }
+            if let ParserResult::IncompleteMatch(incomplete_match) = &running_result {
+                incomplete_match.consume_stream(stream);
             }
             running_result
         }
@@ -1295,8 +1340,15 @@ impl Language {
                     break;
                 }
                 stream.set_position(start_position);
-                running_result.incorporate_choice_result(self.state_variable_definition(stream));
+                if running_result.incorporate_choice_result(self.state_variable_definition(stream))
+                {
+                    break;
+                }
+                stream.set_position(start_position);
                 break;
+            }
+            if let ParserResult::IncompleteMatch(incomplete_match) = &running_result {
+                incomplete_match.consume_stream(stream);
             }
             running_result
         }
@@ -1365,8 +1417,15 @@ impl Language {
                     break;
                 }
                 stream.set_position(start_position);
-                running_result.incorporate_choice_result(self.state_variable_definition(stream));
+                if running_result.incorporate_choice_result(self.state_variable_definition(stream))
+                {
+                    break;
+                }
+                stream.set_position(start_position);
                 break;
+            }
+            if let ParserResult::IncompleteMatch(incomplete_match) = &running_result {
+                incomplete_match.consume_stream(stream);
             }
             running_result
         }
@@ -1441,9 +1500,16 @@ impl Language {
                     break;
                 }
                 stream.set_position(start_position);
-                running_result
-                    .incorporate_choice_result(self.user_defined_value_type_definition(stream));
+                if running_result
+                    .incorporate_choice_result(self.user_defined_value_type_definition(stream))
+                {
+                    break;
+                }
+                stream.set_position(start_position);
                 break;
+            }
+            if let ParserResult::IncompleteMatch(incomplete_match) = &running_result {
+                incomplete_match.consume_stream(stream);
             }
             running_result
         }
@@ -1528,8 +1594,14 @@ impl Language {
                     break;
                 }
                 stream.set_position(start_position);
-                running_result.incorporate_choice_result(self.throw_statement(stream));
+                if running_result.incorporate_choice_result(self.throw_statement(stream)) {
+                    break;
+                }
+                stream.set_position(start_position);
                 break;
+            }
+            if let ParserResult::IncompleteMatch(incomplete_match) = &running_result {
+                incomplete_match.consume_stream(stream);
             }
             running_result
         }
@@ -1594,8 +1666,14 @@ impl Language {
                     break;
                 }
                 stream.set_position(start_position);
-                running_result.incorporate_choice_result(self.emit_statement(stream));
+                if running_result.incorporate_choice_result(self.emit_statement(stream)) {
+                    break;
+                }
+                stream.set_position(start_position);
                 break;
+            }
+            if let ParserResult::IncompleteMatch(incomplete_match) = &running_result {
+                incomplete_match.consume_stream(stream);
             }
             running_result
         }
@@ -1655,8 +1733,14 @@ impl Language {
                     break;
                 }
                 stream.set_position(start_position);
-                running_result.incorporate_choice_result(self.emit_statement(stream));
+                if running_result.incorporate_choice_result(self.emit_statement(stream)) {
+                    break;
+                }
+                stream.set_position(start_position);
                 break;
+            }
+            if let ParserResult::IncompleteMatch(incomplete_match) = &running_result {
+                incomplete_match.consume_stream(stream);
             }
             running_result
         }
@@ -1721,8 +1805,14 @@ impl Language {
                     break;
                 }
                 stream.set_position(start_position);
-                running_result.incorporate_choice_result(self.try_statement(stream));
+                if running_result.incorporate_choice_result(self.try_statement(stream)) {
+                    break;
+                }
+                stream.set_position(start_position);
                 break;
+            }
+            if let ParserResult::IncompleteMatch(incomplete_match) = &running_result {
+                incomplete_match.consume_stream(stream);
             }
             running_result
         }
@@ -1757,12 +1847,18 @@ impl Language {
                     break;
                 }
                 stream.set_position(start_position);
-                running_result.incorporate_choice_result(self.parse_token_with_trivia(
+                if running_result.incorporate_choice_result(self.parse_token_with_trivia(
                     stream,
                     &Self::storage_keyword,
                     TokenKind::StorageKeyword,
-                ));
+                )) {
+                    break;
+                }
+                stream.set_position(start_position);
                 break;
+            }
+            if let ParserResult::IncompleteMatch(incomplete_match) = &running_result {
+                incomplete_match.consume_stream(stream);
             }
             running_result
         }
@@ -1795,12 +1891,18 @@ impl Language {
                     break;
                 }
                 stream.set_position(start_position);
-                running_result.incorporate_choice_result(self.parse_token_with_trivia(
+                if running_result.incorporate_choice_result(self.parse_token_with_trivia(
                     stream,
                     &Self::calldata_keyword,
                     TokenKind::CalldataKeyword,
-                ));
+                )) {
+                    break;
+                }
+                stream.set_position(start_position);
                 break;
+            }
+            if let ParserResult::IncompleteMatch(incomplete_match) = &running_result {
+                incomplete_match.consume_stream(stream);
             }
             running_result
         }
@@ -2149,12 +2251,18 @@ impl Language {
                     break;
                 }
                 stream.set_position(start_position);
-                running_result.incorporate_choice_result(self.parse_token_with_trivia(
+                if running_result.incorporate_choice_result(self.parse_token_with_trivia(
                     stream,
                     &Self::unsigned_fixed_type,
                     TokenKind::UnsignedFixedType,
-                ));
+                )) {
+                    break;
+                }
+                stream.set_position(start_position);
                 break;
+            }
+            if let ParserResult::IncompleteMatch(incomplete_match) = &running_result {
+                incomplete_match.consume_stream(stream);
             }
             running_result
         }
@@ -2228,12 +2336,18 @@ impl Language {
                     break;
                 }
                 stream.set_position(start_position);
-                running_result.incorporate_choice_result(self.parse_token_with_trivia(
+                if running_result.incorporate_choice_result(self.parse_token_with_trivia(
                     stream,
                     &Self::unsigned_fixed_type,
                     TokenKind::UnsignedFixedType,
-                ));
+                )) {
+                    break;
+                }
+                stream.set_position(start_position);
                 break;
+            }
+            if let ParserResult::IncompleteMatch(incomplete_match) = &running_result {
+                incomplete_match.consume_stream(stream);
             }
             running_result
         }
@@ -2344,12 +2458,18 @@ impl Language {
                         break;
                     }
                     stream.set_position(start_position);
-                    running_result.incorporate_choice_result(self.parse_token(
+                    if running_result.incorporate_choice_result(self.parse_token(
                         stream,
                         &Self::single_line_comment,
                         TokenKind::SingleLineComment,
-                    ));
+                    )) {
+                        break;
+                    }
+                    stream.set_position(start_position);
                     break;
+                }
+                if let ParserResult::IncompleteMatch(incomplete_match) = &running_result {
+                    incomplete_match.consume_stream(stream);
                 }
                 running_result
             }) {}
@@ -2430,12 +2550,18 @@ impl Language {
                     break;
                 }
                 stream.set_position(start_position);
-                running_result.incorporate_choice_result(self.parse_token_with_trivia(
+                if running_result.incorporate_choice_result(self.parse_token_with_trivia(
                     stream,
                     &Self::bang_equal,
                     TokenKind::BangEqual,
-                ));
+                )) {
+                    break;
+                }
+                stream.set_position(start_position);
                 break;
+            }
+            if let ParserResult::IncompleteMatch(incomplete_match) = &running_result {
+                incomplete_match.consume_stream(stream);
             }
             running_result
         }
@@ -3472,12 +3598,18 @@ impl Language {
                     break;
                 }
                 stream.set_position(start_position);
-                running_result.incorporate_choice_result(self.parse_token_with_trivia(
+                if running_result.incorporate_choice_result(self.parse_token_with_trivia(
                     stream,
                     &Self::virtual_keyword,
                     TokenKind::VirtualKeyword,
-                ));
+                )) {
+                    break;
+                }
+                stream.set_position(start_position);
                 break;
+            }
+            if let ParserResult::IncompleteMatch(incomplete_match) = &running_result {
+                incomplete_match.consume_stream(stream);
             }
             running_result
         }
@@ -3576,8 +3708,14 @@ impl Language {
                             break;
                         }
                         stream.set_position(start_position);
-                        running_result.incorporate_choice_result(self.block(stream));
+                        if running_result.incorporate_choice_result(self.block(stream)) {
+                            break;
+                        }
+                        stream.set_position(start_position);
                         break;
+                    }
+                    if let ParserResult::IncompleteMatch(incomplete_match) = &running_result {
+                        incomplete_match.consume_stream(stream);
                     }
                     running_result
                 });
@@ -3646,14 +3784,22 @@ impl Language {
                                             break;
                                         }
                                         stream.set_position(start_position);
-                                        running_result.incorporate_choice_result(
+                                        if running_result.incorporate_choice_result(
                                             self.parse_token_with_trivia(
                                                 stream,
                                                 &Self::semicolon,
                                                 TokenKind::Semicolon,
                                             ),
-                                        );
+                                        ) {
+                                            break;
+                                        }
+                                        stream.set_position(start_position);
                                         break;
+                                    }
+                                    if let ParserResult::IncompleteMatch(incomplete_match) =
+                                        &running_result
+                                    {
+                                        incomplete_match.consume_stream(stream);
                                     }
                                     running_result
                                 }) {
@@ -3669,14 +3815,22 @@ impl Language {
                                             break;
                                         }
                                         stream.set_position(start_position);
-                                        running_result.incorporate_choice_result(
+                                        if running_result.incorporate_choice_result(
                                             self.parse_token_with_trivia(
                                                 stream,
                                                 &Self::semicolon,
                                                 TokenKind::Semicolon,
                                             ),
-                                        );
+                                        ) {
+                                            break;
+                                        }
+                                        stream.set_position(start_position);
                                         break;
+                                    }
+                                    if let ParserResult::IncompleteMatch(incomplete_match) =
+                                        &running_result
+                                    {
+                                        incomplete_match.consume_stream(stream);
                                     }
                                     running_result
                                 }) {
@@ -3792,12 +3946,18 @@ impl Language {
                     break;
                 }
                 stream.set_position(start_position);
-                running_result.incorporate_choice_result(self.parse_token_with_trivia(
+                if running_result.incorporate_choice_result(self.parse_token_with_trivia(
                     stream,
                     &Self::view_keyword,
                     TokenKind::ViewKeyword,
-                ));
+                )) {
+                    break;
+                }
+                stream.set_position(start_position);
                 break;
+            }
+            if let ParserResult::IncompleteMatch(incomplete_match) = &running_result {
+                incomplete_match.consume_stream(stream);
             }
             running_result
         }
@@ -3876,12 +4036,18 @@ impl Language {
                     break;
                 }
                 stream.set_position(start_position);
-                running_result.incorporate_choice_result(self.parse_token_with_trivia(
+                if running_result.incorporate_choice_result(self.parse_token_with_trivia(
                     stream,
                     &Self::view_keyword,
                     TokenKind::ViewKeyword,
-                ));
+                )) {
+                    break;
+                }
+                stream.set_position(start_position);
                 break;
+            }
+            if let ParserResult::IncompleteMatch(incomplete_match) = &running_result {
+                incomplete_match.consume_stream(stream);
             }
             running_result
         }
@@ -3969,12 +4135,18 @@ impl Language {
                     break;
                 }
                 stream.set_position(start_position);
-                running_result.incorporate_choice_result(self.parse_token_with_trivia(
+                if running_result.incorporate_choice_result(self.parse_token_with_trivia(
                     stream,
                     &Self::virtual_keyword,
                     TokenKind::VirtualKeyword,
-                ));
+                )) {
+                    break;
+                }
+                stream.set_position(start_position);
                 break;
+            }
+            if let ParserResult::IncompleteMatch(incomplete_match) = &running_result {
+                incomplete_match.consume_stream(stream);
             }
             running_result
         }
@@ -4119,12 +4291,18 @@ impl Language {
                             break;
                         }
                         stream.set_position(start_position);
-                        running_result.incorporate_choice_result(self.parse_token_with_trivia(
+                        if running_result.incorporate_choice_result(self.parse_token_with_trivia(
                             stream,
                             &Self::receive_keyword,
                             TokenKind::ReceiveKeyword,
-                        ));
+                        )) {
+                            break;
+                        }
+                        stream.set_position(start_position);
                         break;
+                    }
+                    if let ParserResult::IncompleteMatch(incomplete_match) = &running_result {
+                        incomplete_match.consume_stream(stream);
                     }
                     running_result
                 }) {
@@ -4156,8 +4334,14 @@ impl Language {
                             break;
                         }
                         stream.set_position(start_position);
-                        running_result.incorporate_choice_result(self.block(stream));
+                        if running_result.incorporate_choice_result(self.block(stream)) {
+                            break;
+                        }
+                        stream.set_position(start_position);
                         break;
+                    }
+                    if let ParserResult::IncompleteMatch(incomplete_match) = &running_result {
+                        incomplete_match.consume_stream(stream);
                     }
                     running_result
                 });
@@ -4265,12 +4449,18 @@ impl Language {
                     break;
                 }
                 stream.set_position(start_position);
-                running_result.incorporate_choice_result(self.parse_token_with_trivia(
+                if running_result.incorporate_choice_result(self.parse_token_with_trivia(
                     stream,
                     &Self::payable_keyword,
                     TokenKind::PayableKeyword,
-                ));
+                )) {
+                    break;
+                }
+                stream.set_position(start_position);
                 break;
+            }
+            if let ParserResult::IncompleteMatch(incomplete_match) = &running_result {
+                incomplete_match.consume_stream(stream);
             }
             running_result
         }
@@ -4550,9 +4740,17 @@ impl Language {
                                     break;
                                 }
                                 stream.set_position(start_position);
-                                running_result
-                                    .incorporate_choice_result(self.deconstruction_import(stream));
+                                if running_result
+                                    .incorporate_choice_result(self.deconstruction_import(stream))
+                                {
+                                    break;
+                                }
+                                stream.set_position(start_position);
                                 break;
+                            }
+                            if let ParserResult::IncompleteMatch(incomplete_match) = &running_result
+                            {
+                                incomplete_match.consume_stream(stream);
                             }
                             running_result
                         });
@@ -4574,7 +4772,7 @@ impl Language {
         .with_kind(RuleKind::ImportDirective)
     }
 
-    // «IndexAccessOperator» = OPEN_BRACKET ((Expression (COLON Expression?)?) | (COLON Expression?)) CLOSE_BRACKET;
+    // «IndexAccessOperator» = OPEN_BRACKET Expression? (COLON Expression?)? CLOSE_BRACKET;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -4590,47 +4788,14 @@ impl Language {
                     break;
                 }
                 if !running_result.incorporate_sequence_result({
-                    let mut running_result = ParserResult::no_match(vec![]);
-                    let start_position = stream.position();
+                    let mut running_result = ParserResult::r#match(vec![], vec![]);
                     loop {
-                        if running_result.incorporate_choice_result({
-                            let mut running_result = ParserResult::r#match(vec![], vec![]);
-                            loop {
-                                if !running_result
-                                    .incorporate_sequence_result(self.expression(stream))
-                                {
-                                    break;
-                                }
-                                running_result.incorporate_sequence_result(
-                                    transform_option_result({
-                                        let mut running_result =
-                                            ParserResult::r#match(vec![], vec![]);
-                                        loop {
-                                            if !running_result.incorporate_sequence_result(
-                                                self.parse_token_with_trivia(
-                                                    stream,
-                                                    &Self::colon,
-                                                    TokenKind::Colon,
-                                                ),
-                                            ) {
-                                                break;
-                                            }
-                                            running_result.incorporate_sequence_result(
-                                                transform_option_result(self.expression(stream)),
-                                            );
-                                            break;
-                                        }
-                                        running_result
-                                    }),
-                                );
-                                break;
-                            }
-                            running_result
-                        }) {
+                        if !running_result.incorporate_sequence_result(transform_option_result(
+                            self.expression(stream),
+                        )) {
                             break;
                         }
-                        stream.set_position(start_position);
-                        running_result.incorporate_choice_result({
+                        running_result.incorporate_sequence_result(transform_option_result({
                             let mut running_result = ParserResult::r#match(vec![], vec![]);
                             loop {
                                 if !running_result.incorporate_sequence_result(
@@ -4648,7 +4813,7 @@ impl Language {
                                 break;
                             }
                             running_result
-                        });
+                        }));
                         break;
                     }
                     running_result
@@ -4858,12 +5023,18 @@ impl Language {
                         break;
                     }
                     stream.set_position(start_position);
-                    running_result.incorporate_choice_result(self.parse_token(
+                    if running_result.incorporate_choice_result(self.parse_token(
                         stream,
                         &Self::single_line_comment,
                         TokenKind::SingleLineComment,
-                    ));
+                    )) {
+                        break;
+                    }
+                    stream.set_position(start_position);
                     break;
+                }
+                if let ParserResult::IncompleteMatch(incomplete_match) = &running_result {
+                    incomplete_match.consume_stream(stream);
                 }
                 running_result
             }) {}
@@ -4953,8 +5124,14 @@ impl Language {
                     break;
                 }
                 stream.set_position(start_position);
-                running_result.incorporate_choice_result(self.identifier_path(stream));
+                if running_result.incorporate_choice_result(self.identifier_path(stream)) {
+                    break;
+                }
+                stream.set_position(start_position);
                 break;
+            }
+            if let ParserResult::IncompleteMatch(incomplete_match) = &running_result {
+                incomplete_match.consume_stream(stream);
             }
             running_result
         }
@@ -4977,8 +5154,14 @@ impl Language {
                             break;
                         }
                         stream.set_position(start_position);
-                        running_result.incorporate_choice_result(self.identifier_path(stream));
+                        if running_result.incorporate_choice_result(self.identifier_path(stream)) {
+                            break;
+                        }
+                        stream.set_position(start_position);
                         break;
+                    }
+                    if let ParserResult::IncompleteMatch(incomplete_match) = &running_result {
+                        incomplete_match.consume_stream(stream);
                     }
                     running_result
                 }) {
@@ -5134,12 +5317,18 @@ impl Language {
                             break;
                         }
                         stream.set_position(start_position);
-                        running_result.incorporate_choice_result(self.parse_token_with_trivia(
+                        if running_result.incorporate_choice_result(self.parse_token_with_trivia(
                             stream,
                             &Self::address_keyword,
                             TokenKind::AddressKeyword,
-                        ));
+                        )) {
+                            break;
+                        }
+                        stream.set_position(start_position);
                         break;
+                    }
+                    if let ParserResult::IncompleteMatch(incomplete_match) = &running_result {
+                        incomplete_match.consume_stream(stream);
                     }
                     running_result
                 });
@@ -5170,12 +5359,18 @@ impl Language {
                     break;
                 }
                 stream.set_position(start_position);
-                running_result.incorporate_choice_result(self.parse_token_with_trivia(
+                if running_result.incorporate_choice_result(self.parse_token_with_trivia(
                     stream,
                     &Self::virtual_keyword,
                     TokenKind::VirtualKeyword,
-                ));
+                )) {
+                    break;
+                }
+                stream.set_position(start_position);
                 break;
+            }
+            if let ParserResult::IncompleteMatch(incomplete_match) = &running_result {
+                incomplete_match.consume_stream(stream);
             }
             running_result
         }
@@ -5246,8 +5441,14 @@ impl Language {
                             break;
                         }
                         stream.set_position(start_position);
-                        running_result.incorporate_choice_result(self.block(stream));
+                        if running_result.incorporate_choice_result(self.block(stream)) {
+                            break;
+                        }
+                        stream.set_position(start_position);
                         break;
+                    }
+                    if let ParserResult::IncompleteMatch(incomplete_match) = &running_result {
+                        incomplete_match.consume_stream(stream);
                     }
                     running_result
                 });
@@ -5306,12 +5507,18 @@ impl Language {
                     break;
                 }
                 stream.set_position(start_position);
-                running_result.incorporate_choice_result(self.parse_token_with_trivia(
+                if running_result.incorporate_choice_result(self.parse_token_with_trivia(
                     stream,
                     &Self::percent,
                     TokenKind::Percent,
-                ));
+                )) {
+                    break;
+                }
+                stream.set_position(start_position);
                 break;
+            }
+            if let ParserResult::IncompleteMatch(incomplete_match) = &running_result {
+                incomplete_match.consume_stream(stream);
             }
             running_result
         }
@@ -5579,12 +5786,18 @@ impl Language {
                     break;
                 }
                 stream.set_position(start_position);
-                running_result.incorporate_choice_result(self.parse_token_with_trivia(
+                if running_result.incorporate_choice_result(self.parse_token_with_trivia(
                     stream,
                     &Self::years_keyword,
                     TokenKind::YearsKeyword,
-                ));
+                )) {
+                    break;
+                }
+                stream.set_position(start_position);
                 break;
+            }
+            if let ParserResult::IncompleteMatch(incomplete_match) = &running_result {
+                incomplete_match.consume_stream(stream);
             }
             running_result
         }
@@ -5671,12 +5884,18 @@ impl Language {
                     break;
                 }
                 stream.set_position(start_position);
-                running_result.incorporate_choice_result(self.parse_token_with_trivia(
+                if running_result.incorporate_choice_result(self.parse_token_with_trivia(
                     stream,
                     &Self::wei_keyword,
                     TokenKind::WeiKeyword,
-                ));
+                )) {
+                    break;
+                }
+                stream.set_position(start_position);
                 break;
+            }
+            if let ParserResult::IncompleteMatch(incomplete_match) = &running_result {
+                incomplete_match.consume_stream(stream);
             }
             running_result
         }
@@ -5772,12 +5991,18 @@ impl Language {
                     break;
                 }
                 stream.set_position(start_position);
-                running_result.incorporate_choice_result(self.parse_token_with_trivia(
+                if running_result.incorporate_choice_result(self.parse_token_with_trivia(
                     stream,
                     &Self::wei_keyword,
                     TokenKind::WeiKeyword,
-                ));
+                )) {
+                    break;
+                }
+                stream.set_position(start_position);
                 break;
+            }
+            if let ParserResult::IncompleteMatch(incomplete_match) = &running_result {
+                incomplete_match.consume_stream(stream);
             }
             running_result
         }
@@ -5855,12 +6080,18 @@ impl Language {
                     break;
                 }
                 stream.set_position(start_position);
-                running_result.incorporate_choice_result(self.parse_token_with_trivia(
+                if running_result.incorporate_choice_result(self.parse_token_with_trivia(
                     stream,
                     &Self::wei_keyword,
                     TokenKind::WeiKeyword,
-                ));
+                )) {
+                    break;
+                }
+                stream.set_position(start_position);
                 break;
+            }
+            if let ParserResult::IncompleteMatch(incomplete_match) = &running_result {
+                incomplete_match.consume_stream(stream);
             }
             running_result
         }
@@ -5898,12 +6129,18 @@ impl Language {
                             break;
                         }
                         stream.set_position(start_position);
-                        running_result.incorporate_choice_result(self.parse_token_with_trivia(
+                        if running_result.incorporate_choice_result(self.parse_token_with_trivia(
                             stream,
                             &Self::decimal_literal,
                             TokenKind::DecimalLiteral,
-                        ));
+                        )) {
+                            break;
+                        }
+                        stream.set_position(start_position);
                         break;
+                    }
+                    if let ParserResult::IncompleteMatch(incomplete_match) = &running_result {
+                        incomplete_match.consume_stream(stream);
                     }
                     running_result
                 }) {
@@ -5935,7 +6172,7 @@ impl Language {
                     break;
                 }
                 stream.set_position(start_position);
-                running_result.incorporate_choice_result({
+                if running_result.incorporate_choice_result({
                     let mut running_result = ParserResult::r#match(vec![], vec![]);
                     loop {
                         if !running_result.incorporate_sequence_result(
@@ -5953,8 +6190,14 @@ impl Language {
                         break;
                     }
                     running_result
-                });
+                }) {
+                    break;
+                }
+                stream.set_position(start_position);
                 break;
+            }
+            if let ParserResult::IncompleteMatch(incomplete_match) = &running_result {
+                incomplete_match.consume_stream(stream);
             }
             running_result
         }
@@ -6013,12 +6256,18 @@ impl Language {
                     break;
                 }
                 stream.set_position(start_position);
-                running_result.incorporate_choice_result(self.parse_token_with_trivia(
+                if running_result.incorporate_choice_result(self.parse_token_with_trivia(
                     stream,
                     &Self::greater_than_equal,
                     TokenKind::GreaterThanEqual,
-                ));
+                )) {
+                    break;
+                }
+                stream.set_position(start_position);
                 break;
+            }
+            if let ParserResult::IncompleteMatch(incomplete_match) = &running_result {
+                incomplete_match.consume_stream(stream);
             }
             running_result
         }
@@ -6287,9 +6536,17 @@ impl Language {
                                     break;
                                 }
                                 stream.set_position(start_position);
-                                running_result
-                                    .incorporate_choice_result(self.version_pragma(stream));
+                                if running_result
+                                    .incorporate_choice_result(self.version_pragma(stream))
+                                {
+                                    break;
+                                }
+                                stream.set_position(start_position);
                                 break;
+                            }
+                            if let ParserResult::IncompleteMatch(incomplete_match) = &running_result
+                            {
+                                incomplete_match.consume_stream(stream);
                             }
                             running_result
                         });
@@ -6355,12 +6612,18 @@ impl Language {
                     break;
                 }
                 stream.set_position(start_position);
-                running_result.incorporate_choice_result(self.parse_token_with_trivia(
+                if running_result.incorporate_choice_result(self.parse_token_with_trivia(
                     stream,
                     &Self::identifier,
                     TokenKind::Identifier,
-                ));
+                )) {
+                    break;
+                }
+                stream.set_position(start_position);
                 break;
+            }
+            if let ParserResult::IncompleteMatch(incomplete_match) = &running_result {
+                incomplete_match.consume_stream(stream);
             }
             running_result
         }
@@ -6415,12 +6678,18 @@ impl Language {
                     break;
                 }
                 stream.set_position(start_position);
-                running_result.incorporate_choice_result(self.parse_token_with_trivia(
+                if running_result.incorporate_choice_result(self.parse_token_with_trivia(
                     stream,
                     &Self::identifier,
                     TokenKind::Identifier,
-                ));
+                )) {
+                    break;
+                }
+                stream.set_position(start_position);
                 break;
+            }
+            if let ParserResult::IncompleteMatch(incomplete_match) = &running_result {
+                incomplete_match.consume_stream(stream);
             }
             running_result
         }
@@ -6471,12 +6740,18 @@ impl Language {
                     break;
                 }
                 stream.set_position(start_position);
-                running_result.incorporate_choice_result(self.parse_token_with_trivia(
+                if running_result.incorporate_choice_result(self.parse_token_with_trivia(
                     stream,
                     &Self::virtual_keyword,
                     TokenKind::VirtualKeyword,
-                ));
+                )) {
+                    break;
+                }
+                stream.set_position(start_position);
                 break;
+            }
+            if let ParserResult::IncompleteMatch(incomplete_match) = &running_result {
+                incomplete_match.consume_stream(stream);
             }
             running_result
         }
@@ -6570,8 +6845,14 @@ impl Language {
                             break;
                         }
                         stream.set_position(start_position);
-                        running_result.incorporate_choice_result(self.block(stream));
+                        if running_result.incorporate_choice_result(self.block(stream)) {
+                            break;
+                        }
+                        stream.set_position(start_position);
                         break;
+                    }
+                    if let ParserResult::IncompleteMatch(incomplete_match) = &running_result {
+                        incomplete_match.consume_stream(stream);
                     }
                     running_result
                 });
@@ -6736,12 +7017,18 @@ impl Language {
                     break;
                 }
                 stream.set_position(start_position);
-                running_result.incorporate_choice_result(self.parse_token_with_trivia(
+                if running_result.incorporate_choice_result(self.parse_token_with_trivia(
                     stream,
                     &Self::greater_than_greater_than_greater_than,
                     TokenKind::GreaterThanGreaterThanGreaterThan,
-                ));
+                )) {
+                    break;
+                }
+                stream.set_position(start_position);
                 break;
+            }
+            if let ParserResult::IncompleteMatch(incomplete_match) = &running_result {
+                incomplete_match.consume_stream(stream);
             }
             running_result
         }
@@ -6768,9 +7055,16 @@ impl Language {
                     break;
                 }
                 stream.set_position(start_position);
-                running_result
-                    .incorporate_choice_result(self.tuple_deconstruction_statement(stream));
+                if running_result
+                    .incorporate_choice_result(self.tuple_deconstruction_statement(stream))
+                {
+                    break;
+                }
+                stream.set_position(start_position);
                 break;
+            }
+            if let ParserResult::IncompleteMatch(incomplete_match) = &running_result {
+                incomplete_match.consume_stream(stream);
             }
             running_result
         }
@@ -6858,8 +7152,14 @@ impl Language {
                     break;
                 }
                 stream.set_position(start_position);
-                running_result.incorporate_choice_result(self.using_directive(stream));
+                if running_result.incorporate_choice_result(self.using_directive(stream)) {
+                    break;
+                }
+                stream.set_position(start_position);
                 break;
+            }
+            if let ParserResult::IncompleteMatch(incomplete_match) = &running_result {
+                incomplete_match.consume_stream(stream);
             }
             running_result
         }
@@ -6929,9 +7229,16 @@ impl Language {
                     break;
                 }
                 stream.set_position(start_position);
-                running_result
-                    .incorporate_choice_result(self.user_defined_value_type_definition(stream));
+                if running_result
+                    .incorporate_choice_result(self.user_defined_value_type_definition(stream))
+                {
+                    break;
+                }
+                stream.set_position(start_position);
                 break;
+            }
+            if let ParserResult::IncompleteMatch(incomplete_match) = &running_result {
+                incomplete_match.consume_stream(stream);
             }
             running_result
         }
@@ -6999,12 +7306,18 @@ impl Language {
                     break;
                 }
                 stream.set_position(start_position);
-                running_result.incorporate_choice_result(self.parse_token_with_trivia(
+                if running_result.incorporate_choice_result(self.parse_token_with_trivia(
                     stream,
                     &Self::public_keyword,
                     TokenKind::PublicKeyword,
-                ));
+                )) {
+                    break;
+                }
+                stream.set_position(start_position);
                 break;
+            }
+            if let ParserResult::IncompleteMatch(incomplete_match) = &running_result {
+                incomplete_match.consume_stream(stream);
             }
             running_result
         }
@@ -7060,12 +7373,18 @@ impl Language {
                     break;
                 }
                 stream.set_position(start_position);
-                running_result.incorporate_choice_result(self.parse_token_with_trivia(
+                if running_result.incorporate_choice_result(self.parse_token_with_trivia(
                     stream,
                     &Self::public_keyword,
                     TokenKind::PublicKeyword,
-                ));
+                )) {
+                    break;
+                }
+                stream.set_position(start_position);
                 break;
+            }
+            if let ParserResult::IncompleteMatch(incomplete_match) = &running_result {
+                incomplete_match.consume_stream(stream);
             }
             running_result
         }
@@ -7181,8 +7500,14 @@ impl Language {
                     break;
                 }
                 stream.set_position(start_position);
-                running_result.incorporate_choice_result(self.block(stream));
+                if running_result.incorporate_choice_result(self.block(stream)) {
+                    break;
+                }
+                stream.set_position(start_position);
                 break;
+            }
+            if let ParserResult::IncompleteMatch(incomplete_match) = &running_result {
+                incomplete_match.consume_stream(stream);
             }
             running_result
         }
@@ -7218,8 +7543,14 @@ impl Language {
                     break;
                 }
                 stream.set_position(start_position);
-                running_result.incorporate_choice_result(self.unchecked_block(stream));
+                if running_result.incorporate_choice_result(self.unchecked_block(stream)) {
+                    break;
+                }
+                stream.set_position(start_position);
                 break;
+            }
+            if let ParserResult::IncompleteMatch(incomplete_match) = &running_result {
+                incomplete_match.consume_stream(stream);
             }
             running_result
         }
@@ -7260,8 +7591,15 @@ impl Language {
                     break;
                 }
                 stream.set_position(start_position);
-                running_result.incorporate_choice_result(self.ascii_string_literals_list(stream));
+                if running_result.incorporate_choice_result(self.ascii_string_literals_list(stream))
+                {
+                    break;
+                }
+                stream.set_position(start_position);
                 break;
+            }
+            if let ParserResult::IncompleteMatch(incomplete_match) = &running_result {
+                incomplete_match.consume_stream(stream);
             }
             running_result
         }
@@ -7287,8 +7625,16 @@ impl Language {
                     break;
                 }
                 stream.set_position(start_position);
-                running_result.incorporate_choice_result(self.unicode_string_literals_list(stream));
+                if running_result
+                    .incorporate_choice_result(self.unicode_string_literals_list(stream))
+                {
+                    break;
+                }
+                stream.set_position(start_position);
                 break;
+            }
+            if let ParserResult::IncompleteMatch(incomplete_match) = &running_result {
+                incomplete_match.consume_stream(stream);
             }
             running_result
         }
@@ -7665,7 +8011,7 @@ impl Language {
                     break;
                 }
                 stream.set_position(start_position);
-                running_result.incorporate_choice_result({
+                if running_result.incorporate_choice_result({
                     let mut running_result = ParserResult::r#match(vec![], vec![]);
                     loop {
                         if !running_result.incorporate_sequence_result(transform_option_result(
@@ -7681,8 +8027,14 @@ impl Language {
                         break;
                     }
                     running_result
-                });
+                }) {
+                    break;
+                }
+                stream.set_position(start_position);
                 break;
+            }
+            if let ParserResult::IncompleteMatch(incomplete_match) = &running_result {
+                incomplete_match.consume_stream(stream);
             }
             running_result
         })
@@ -7864,8 +8216,16 @@ impl Language {
                                 break;
                             }
                             stream.set_position(start_position);
-                            running_result.incorporate_choice_result(self.identifier_path(stream));
+                            if running_result
+                                .incorporate_choice_result(self.identifier_path(stream))
+                            {
+                                break;
+                            }
+                            stream.set_position(start_position);
                             break;
+                        }
+                        if let ParserResult::IncompleteMatch(incomplete_match) = &running_result {
+                            incomplete_match.consume_stream(stream);
                         }
                         running_result
                     };
@@ -7938,12 +8298,18 @@ impl Language {
                     break;
                 }
                 stream.set_position(start_position);
-                running_result.incorporate_choice_result(self.parse_token_with_trivia(
+                if running_result.incorporate_choice_result(self.parse_token_with_trivia(
                     stream,
                     &Self::minus_minus,
                     TokenKind::MinusMinus,
-                ));
+                )) {
+                    break;
+                }
+                stream.set_position(start_position);
                 break;
+            }
+            if let ParserResult::IncompleteMatch(incomplete_match) = &running_result {
+                incomplete_match.consume_stream(stream);
             }
             running_result
         }
@@ -8003,12 +8369,18 @@ impl Language {
                     break;
                 }
                 stream.set_position(start_position);
-                running_result.incorporate_choice_result(self.parse_token_with_trivia(
+                if running_result.incorporate_choice_result(self.parse_token_with_trivia(
                     stream,
                     &Self::plus,
                     TokenKind::Plus,
-                ));
+                )) {
+                    break;
+                }
+                stream.set_position(start_position);
                 break;
+            }
+            if let ParserResult::IncompleteMatch(incomplete_match) = &running_result {
+                incomplete_match.consume_stream(stream);
             }
             running_result
         }
@@ -8059,12 +8431,18 @@ impl Language {
                     break;
                 }
                 stream.set_position(start_position);
-                running_result.incorporate_choice_result(self.parse_token_with_trivia(
+                if running_result.incorporate_choice_result(self.parse_token_with_trivia(
                     stream,
                     &Self::minus,
                     TokenKind::Minus,
-                ));
+                )) {
+                    break;
+                }
+                stream.set_position(start_position);
                 break;
+            }
+            if let ParserResult::IncompleteMatch(incomplete_match) = &running_result {
+                incomplete_match.consume_stream(stream);
             }
             running_result
         }
@@ -8200,12 +8578,18 @@ impl Language {
                     break;
                 }
                 stream.set_position(start_position);
-                running_result.incorporate_choice_result(self.parse_token_with_trivia(
+                if running_result.incorporate_choice_result(self.parse_token_with_trivia(
                     stream,
                     &Self::view_keyword,
                     TokenKind::ViewKeyword,
-                ));
+                )) {
+                    break;
+                }
+                stream.set_position(start_position);
                 break;
+            }
+            if let ParserResult::IncompleteMatch(incomplete_match) = &running_result {
+                incomplete_match.consume_stream(stream);
             }
             running_result
         }
@@ -8299,8 +8683,14 @@ impl Language {
                             break;
                         }
                         stream.set_position(start_position);
-                        running_result.incorporate_choice_result(self.block(stream));
+                        if running_result.incorporate_choice_result(self.block(stream)) {
+                            break;
+                        }
+                        stream.set_position(start_position);
                         break;
+                    }
+                    if let ParserResult::IncompleteMatch(incomplete_match) = &running_result {
+                        incomplete_match.consume_stream(stream);
                     }
                     running_result
                 });
@@ -8434,10 +8824,17 @@ impl Language {
                                     break;
                                 }
                                 stream.set_position(start_position);
-                                running_result.incorporate_choice_result(
+                                if running_result.incorporate_choice_result(
                                     self.using_directive_deconstruction(stream),
-                                );
+                                ) {
+                                    break;
+                                }
+                                stream.set_position(start_position);
                                 break;
+                            }
+                            if let ParserResult::IncompleteMatch(incomplete_match) = &running_result
+                            {
+                                incomplete_match.consume_stream(stream);
                             }
                             running_result
                         }) {
@@ -8466,8 +8863,16 @@ impl Language {
                                     break;
                                 }
                                 stream.set_position(start_position);
-                                running_result.incorporate_choice_result(self.type_name(stream));
+                                if running_result.incorporate_choice_result(self.type_name(stream))
+                                {
+                                    break;
+                                }
+                                stream.set_position(start_position);
                                 break;
+                            }
+                            if let ParserResult::IncompleteMatch(incomplete_match) = &running_result
+                            {
+                                incomplete_match.consume_stream(stream);
                             }
                             running_result
                         }) {
@@ -8665,12 +9070,18 @@ impl Language {
                     break;
                 }
                 stream.set_position(start_position);
-                running_result.incorporate_choice_result(self.parse_token_with_trivia(
+                if running_result.incorporate_choice_result(self.parse_token_with_trivia(
                     stream,
                     &Self::tilde,
                     TokenKind::Tilde,
-                ));
+                )) {
+                    break;
+                }
+                stream.set_position(start_position);
                 break;
+            }
+            if let ParserResult::IncompleteMatch(incomplete_match) = &running_result {
+                incomplete_match.consume_stream(stream);
             }
             running_result
         }
@@ -8817,8 +9228,14 @@ impl Language {
                             break;
                         }
                         stream.set_position(start_position);
-                        running_result.incorporate_choice_result(self.type_name(stream));
+                        if running_result.incorporate_choice_result(self.type_name(stream)) {
+                            break;
+                        }
+                        stream.set_position(start_position);
                         break;
+                    }
+                    if let ParserResult::IncompleteMatch(incomplete_match) = &running_result {
+                        incomplete_match.consume_stream(stream);
                     }
                     running_result
                 }) {
@@ -9205,12 +9622,18 @@ impl Language {
                     break;
                 }
                 stream.set_position(start_position);
-                running_result.incorporate_choice_result(self.parse_token_with_trivia(
+                if running_result.incorporate_choice_result(self.parse_token_with_trivia(
                     stream,
                     &Self::greater_than_equal,
                     TokenKind::GreaterThanEqual,
-                ));
+                )) {
+                    break;
+                }
+                stream.set_position(start_position);
                 break;
+            }
+            if let ParserResult::IncompleteMatch(incomplete_match) = &running_result {
+                incomplete_match.consume_stream(stream);
             }
             running_result
         }
@@ -9405,9 +9828,16 @@ impl Language {
                                 break;
                             }
                             stream.set_position(start_position);
-                            running_result
-                                .incorporate_choice_result(self.yul_identifier_path(stream));
+                            if running_result
+                                .incorporate_choice_result(self.yul_identifier_path(stream))
+                            {
+                                break;
+                            }
+                            stream.set_position(start_position);
                             break;
+                        }
+                        if let ParserResult::IncompleteMatch(incomplete_match) = &running_result {
+                            incomplete_match.consume_stream(stream);
                         }
                         running_result
                     };
@@ -9850,12 +10280,18 @@ impl Language {
                     break;
                 }
                 stream.set_position(start_position);
-                running_result.incorporate_choice_result(self.parse_token_with_trivia(
+                if running_result.incorporate_choice_result(self.parse_token_with_trivia(
                     stream,
                     &Self::ascii_string_literal,
                     TokenKind::AsciiStringLiteral,
-                ));
+                )) {
+                    break;
+                }
+                stream.set_position(start_position);
                 break;
+            }
+            if let ParserResult::IncompleteMatch(incomplete_match) = &running_result {
+                incomplete_match.consume_stream(stream);
             }
             running_result
         }
@@ -9971,8 +10407,14 @@ impl Language {
                     break;
                 }
                 stream.set_position(start_position);
-                running_result.incorporate_choice_result(self.yul_expression(stream));
+                if running_result.incorporate_choice_result(self.yul_expression(stream)) {
+                    break;
+                }
+                stream.set_position(start_position);
                 break;
+            }
+            if let ParserResult::IncompleteMatch(incomplete_match) = &running_result {
+                incomplete_match.consume_stream(stream);
             }
             running_result
         }
@@ -10039,8 +10481,14 @@ impl Language {
                     break;
                 }
                 stream.set_position(start_position);
-                running_result.incorporate_choice_result(self.yul_expression(stream));
+                if running_result.incorporate_choice_result(self.yul_expression(stream)) {
+                    break;
+                }
+                stream.set_position(start_position);
                 break;
+            }
+            if let ParserResult::IncompleteMatch(incomplete_match) = &running_result {
+                incomplete_match.consume_stream(stream);
             }
             running_result
         }
@@ -10088,7 +10536,7 @@ impl Language {
                             break;
                         }
                         stream.set_position(start_position);
-                        running_result.incorporate_choice_result({
+                        if running_result.incorporate_choice_result({
                             let mut running_result = ParserResult::r#match(vec![], vec![]);
                             loop {
                                 if !running_result.incorporate_sequence_result(
@@ -10105,8 +10553,14 @@ impl Language {
                                 break;
                             }
                             running_result
-                        });
+                        }) {
+                            break;
+                        }
+                        stream.set_position(start_position);
                         break;
+                    }
+                    if let ParserResult::IncompleteMatch(incomplete_match) = &running_result {
+                        incomplete_match.consume_stream(stream);
                     }
                     running_result
                 }) {

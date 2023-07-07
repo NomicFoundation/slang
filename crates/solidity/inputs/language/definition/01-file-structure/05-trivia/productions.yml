@@ -55,10 +55,11 @@
           choice:
             - not:
                 terminal: "*"
-            - sequence:
-                - terminal: "*"
-                - not:
-                    terminal: "/"
+            - trailingContext:
+                expression:
+                  terminal: "*"
+                notFollowedBy:
+                  terminal: "/"
       - terminal: "*/"
 
 - name: "SingleLineComment"

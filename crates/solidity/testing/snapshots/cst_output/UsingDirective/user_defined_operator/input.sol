@@ -1,0 +1,1 @@
+using {div as /} for Int global;

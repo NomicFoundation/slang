@@ -361,17 +361,13 @@
       open:
         reference: "OpenBracket"
       expression:
-        choice:
-          - sequence:
-              - reference: "Expression"
-              - optional:
-                  sequence:
-                    - reference: "Colon"
-                    - optional:
-                        reference: "Expression"
-          - sequence:
-              - reference: "Colon"
-              - optional:
-                  reference: "Expression"
+        sequence:
+          - optional:
+              reference: "Expression"
+          - optional:
+              sequence:
+                - reference: "Colon"
+                - optional:
+                    reference: "Expression"
       close:
         reference: "CloseBracket"

@@ -15,11 +15,11 @@ test("render error reports", (t) => {
     report,
     `
 Error: Expected Identifier.
-   ╭─[test.sol:1:1]
+   ╭─[test.sol:1:16]
    │
  1 │ int256 constant
-   │ ───────┬───────  
-   │        ╰───────── Error occurred here.
+   │                │ 
+   │                ╰─ Error occurred here.
 ───╯
 `.trim(),
   );

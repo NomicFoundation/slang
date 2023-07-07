@@ -1,0 +1,1 @@
+(uint32 a, uint32 b) = abi.decode(data, (uint32, uint32));

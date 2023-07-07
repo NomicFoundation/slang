@@ -1,6 +1,6 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-use super::{cst, kinds::*};
+use super::{cst, kinds::*, stream::Stream};
 
 #[derive(PartialEq, Eq, Clone, Debug)]
 pub struct Match {
@@ -58,6 +58,14 @@ impl IncompleteMatch {
         Self {
             nodes,
             tokens_that_would_have_allowed_more_progress,
+        }
+    }
+
+    pub fn consume_stream(&self, stream: &mut Stream) {
+        for node in &self.nodes {
+            for _ in 0..node.text_len().char {
+                stream.next();
+            }
         }
     }
 }

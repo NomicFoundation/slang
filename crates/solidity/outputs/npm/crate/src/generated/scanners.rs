@@ -2371,7 +2371,7 @@ impl Language {
         )
     }
 
-    // MULTILINE_COMMENT = "/*" (!"*" | ("*" !"/"))* "*/";
+    // MULTILINE_COMMENT = "/*" (!"*" | "*")* "*/";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -2383,9 +2383,10 @@ impl Language {
                 scan_choice!(
                     stream,
                     scan_predicate!(stream, |c| c != '*'),
-                    scan_sequence!(
+                    scan_not_followed_by!(
+                        stream,
                         scan_chars!(stream, '*'),
-                        scan_predicate!(stream, |c| c != '/')
+                        scan_chars!(stream, '/')
                     )
                 )
             ),

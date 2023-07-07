@@ -1,0 +1,48 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ (uint32 a, uint32 b) = abi.decode(data, (uint32, uint32));                       │ 0..58
+
+Errors: []
+
+Tree:
+  - TupleDeconstructionStatement (Rule): # 0..58 "(uint32 a, uint32 b) = abi.decode(data, (uint32, u..."
+      - OpenParen (Token): "(" # 0..1
+      - TupleMembersList (Rule): # 1..19 "uint32 a, uint32 b"
+          - TupleMember (Rule): # 1..9 "uint32 a"
+              - TypeName (Rule): # 1..7 "uint32"
+                  - UnsignedIntegerType (Token): "uint32" # 1..7
+              - Identifier (Token): "a" # 8..9
+          - Comma (Token): "," # 9..10
+          - TupleMember (Rule): # 10..19 " uint32 b"
+              - TypeName (Rule): # 10..17 " uint32"
+                  - UnsignedIntegerType (Token): "uint32" # 11..17
+              - Identifier (Token): "b" # 18..19
+      - CloseParen (Token): ")" # 19..20
+      - Equal (Token): "=" # 21..22
+      - Expression (Rule): # 22..57 " abi.decode(data, (uint32, uint32))"
+          - FunctionCallExpression (Rule): # 22..57 " abi.decode(data, (uint32, uint32))"
+              - Expression (Rule): # 22..33 " abi.decode"
+                  - MemberAccessExpression (Rule): # 22..33 " abi.decode"
+                      - Expression (Rule): # 22..26 " abi"
+                          - Identifier (Token): "abi" # 23..26
+                      - Period (Token): "." # 26..27
+                      - Identifier (Token): "decode" # 27..33
+              - ArgumentsDeclaration (Rule): # 33..57 "(data, (uint32, uint32))"
+                  - OpenParen (Token): "(" # 33..34
+                  - PositionalArgumentsList (Rule): # 34..56 "data, (uint32, uint32)"
+                      - Expression (Rule): # 34..38 "data"
+                          - Identifier (Token): "data" # 34..38
+                      - Comma (Token): "," # 38..39
+                      - Expression (Rule): # 39..56 " (uint32, uint32)"
+                          - TupleExpression (Rule): # 39..56 " (uint32, uint32)"
+                              - OpenParen (Token): "(" # 40..41
+                              - TupleValuesList (Rule): # 41..55 "uint32, uint32"
+                                  - Expression (Rule): # 41..47 "uint32"
+                                      - UnsignedIntegerType (Token): "uint32" # 41..47
+                                  - Comma (Token): "," # 47..48
+                                  - Expression (Rule): # 48..55 " uint32"
+                                      - UnsignedIntegerType (Token): "uint32" # 49..55
+                              - CloseParen (Token): ")" # 55..56
+                  - CloseParen (Token): ")" # 56..57
+      - Semicolon (Token): ";" # 57..58
