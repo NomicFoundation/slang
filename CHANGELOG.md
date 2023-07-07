@@ -1,5 +1,29 @@
 # changelog
 
+## 0.7.0
+
+### Minor Changes
+
+-   [#502](https://github.com/NomicFoundation/slang/pull/502) [`c383238`](https://github.com/NomicFoundation/slang/commit/c383238c1f51157b37ec63bc99e63fb85c1bc224) Thanks [@AntonyBlakey](https://github.com/AntonyBlakey)! - Added error recovery i.e. a CST is _always_ produced, even if there are errors. The erroneous/skipped text is in the CST as a `TokenKind::SKIPPED` token.
+
+-   [#501](https://github.com/NomicFoundation/slang/pull/501) [`cb221fe`](https://github.com/NomicFoundation/slang/commit/cb221fed784e8a2eb59f17907412149c7b415ed8) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - generate typescript string enums for CST kinds
+
+-   [#517](https://github.com/NomicFoundation/slang/pull/517) [`8bd5446`](https://github.com/NomicFoundation/slang/commit/8bd544695a6dd4880a00d0cecf8d13ad79b238d3) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - extract inlined and sub-expressions in language grammar
+
+-   [#518](https://github.com/NomicFoundation/slang/pull/518) [`b3b562b`](https://github.com/NomicFoundation/slang/commit/b3b562be6365fab25b97e54746a7500b9e7bd595) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - fill in missing CST node names
+
+-   [#515](https://github.com/NomicFoundation/slang/pull/515) [`f24e873`](https://github.com/NomicFoundation/slang/commit/f24e873a93cbcef53aad1fa5eed1ea9ab1af1c04) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - switch over the NPM package to use CommonJS modules instead of ES modules.
+
+-   [#498](https://github.com/NomicFoundation/slang/pull/498) [`44f1ff7`](https://github.com/NomicFoundation/slang/commit/44f1ff70100d6e2f8afe54c7ff87e24a8479e4b9) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - flatten unnamed CST nodes into parent nodes
+
+-   [#502](https://github.com/NomicFoundation/slang/pull/502) [`c383238`](https://github.com/NomicFoundation/slang/commit/c383238c1f51157b37ec63bc99e63fb85c1bc224) Thanks [@AntonyBlakey](https://github.com/AntonyBlakey)! - Use the Rowan model for the CST i.e. TokenNodes contain the string content, and RuleNodes contain only the combined _length_ of their children's text.
+
+-   [#499](https://github.com/NomicFoundation/slang/pull/499) [`1582d60`](https://github.com/NomicFoundation/slang/commit/1582d60c7ef81a785db0b9e3cb4d074d9cb6d442) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - preserve correct ranges on empty rule nodes
+
+-   [#500](https://github.com/NomicFoundation/slang/pull/500) [`73ddac9`](https://github.com/NomicFoundation/slang/commit/73ddac9ca972f80aa9a0321de7f94c47b505d7a6) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - inlining CST nodes that offer no additional syntactic information
+
+-   [#512](https://github.com/NomicFoundation/slang/pull/512) [`72dc3d3`](https://github.com/NomicFoundation/slang/commit/72dc3d3d90bc6a02d36836cc1fed17f5be5de2fb) Thanks [@AntonyBlakey](https://github.com/AntonyBlakey)! - Expression productions now correctly wrap the recursive 'calls' in a rule node
+
 ## 0.6.0
 
 ### Minor Changes
