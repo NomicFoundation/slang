@@ -339,6 +339,7 @@ impl CodeGenerator {
             {
                 let start = stream.position();
                 if !scanner(self, stream) {
+                    stream.set_position(start);
                     return ParserResult::no_match(vec![kind]);
                 }
                 let end = stream.position();

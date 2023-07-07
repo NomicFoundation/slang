@@ -229,10 +229,9 @@ fn sequence_to_parser_code(
 fn choice_to_parser_code(
     code: &mut CodeGenerator,
     name: &Option<String>,
-    mut parsers: Vec<TokenStream>,
+    parsers: Vec<TokenStream>,
 ) -> TokenStream {
     let kind_wrapper = kind_wrapper(code, name.clone());
-    let last_parser = parsers.pop().unwrap();
     quote! {
         {
             let mut running_result = ParserResult::no_match(vec![]);
@@ -244,8 +243,10 @@ fn choice_to_parser_code(
                     }
                     stream.set_position(start_position);
                 )*
-                running_result.incorporate_choice_result(#last_parser);
                 break;
+            }
+            if let ParserResult::IncompleteMatch(incomplete_match) = &running_result {
+                incomplete_match.consume_stream(stream);
             }
             running_result #kind_wrapper
         }

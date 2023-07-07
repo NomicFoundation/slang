@@ -22,3 +22,8 @@ fn path_named() -> Result<()> {
 fn path_unnamed() -> Result<()> {
     return run("UsingDirective", "path_unnamed");
 }
+
+#[test]
+fn user_defined_operator() -> Result<()> {
+    return run("UsingDirective", "user_defined_operator");
+}

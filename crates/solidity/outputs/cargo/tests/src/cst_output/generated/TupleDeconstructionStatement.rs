@@ -4,6 +4,16 @@ use crate::cst_output::runner::run;
 use anyhow::Result;
 
 #[test]
+fn abi_decode_array_type() -> Result<()> {
+    return run("TupleDeconstructionStatement", "abi_decode_array_type");
+}
+
+#[test]
+fn abi_decode_singleton_type() -> Result<()> {
+    return run("TupleDeconstructionStatement", "abi_decode_singleton_type");
+}
+
+#[test]
 fn ignored_members() -> Result<()> {
     return run("TupleDeconstructionStatement", "ignored_members");
 }

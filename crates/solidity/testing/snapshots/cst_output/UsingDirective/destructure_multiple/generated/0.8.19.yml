@@ -3,22 +3,14 @@
 Source: >
   1  │ using {add as +, sub, mul, div as /} for Int global;                             │ 0..52
 
-Errors: # 1 total
-  - >
-    Error: Expected Ampersand or Asterisk or BangEqual or Bar or Caret or EqualEqual or GreaterThan or GreaterThanEqual or LessThan or LessThanEqual or Minus or Percent or Plus or Slash or Tilde.
-       ╭─[crates/solidity/testing/snapshots/cst_output/UsingDirective/destructure_multiple/input.sol:1:34]
-       │
-     1 │ using {add as +, sub, mul, div as /} for Int global;
-       │                                  ─────────┬─────────  
-       │                                           ╰─────────── Error occurred here.
-    ───╯
+Errors: []
 
 Tree:
   - UsingDirective (Rule): # 0..52 "using {add as +, sub, mul, div as /} for Int globa..."
       - UsingKeyword (Token): "using" # 0..5
-      - UsingDirectiveDeconstruction (Rule): # 5..33 " {add as +, sub, mul, div as"
+      - UsingDirectiveDeconstruction (Rule): # 5..36 " {add as +, sub, mul, div as /}"
           - OpenBrace (Token): "{" # 6..7
-          - UsingDirectiveSymbolsList (Rule): # 7..33 "add as +, sub, mul, div as"
+          - UsingDirectiveSymbolsList (Rule): # 7..35 "add as +, sub, mul, div as /"
               - UsingDirectiveSymbol (Rule): # 7..15 "add as +"
                   - IdentifierPath (Rule): # 7..10 "add"
                       - Identifier (Token): "add" # 7..10
@@ -33,8 +25,15 @@ Tree:
                   - IdentifierPath (Rule): # 21..25 " mul"
                       - Identifier (Token): "mul" # 22..25
               - Comma (Token): "," # 25..26
-              - UsingDirectiveSymbol (Rule): # 26..33 " div as"
+              - UsingDirectiveSymbol (Rule): # 26..35 " div as /"
                   - IdentifierPath (Rule): # 26..30 " div"
                       - Identifier (Token): "div" # 27..30
                   - AsKeyword (Token): "as" # 31..33
-      - SKIPPED (Token): " /} for Int global;" # 33..52
+                  - Slash (Token): "/" # 34..35
+          - CloseBrace (Token): "}" # 35..36
+      - ForKeyword (Token): "for" # 37..40
+      - TypeName (Rule): # 40..44 " Int"
+          - IdentifierPath (Rule): # 40..44 " Int"
+              - Identifier (Token): "Int" # 41..44
+      - GlobalKeyword (Token): "global" # 45..51
+      - Semicolon (Token): ";" # 51..52
