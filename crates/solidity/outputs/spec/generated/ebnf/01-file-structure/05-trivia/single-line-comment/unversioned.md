@@ -1,5 +1,5 @@
 <!-- This file is generated automatically by infrastructure scripts. Please don't edit by hand. -->
 
-```{ .ebnf .slang-ebnf #SingleLineComment }
-«SingleLineComment» = "//" (!("\r" | "\n"))*;
+```{ .ebnf .slang-ebnf #SINGLE_LINE_COMMENT }
+SINGLE_LINE_COMMENT = "//" (!("\r" | "\n"))*;
 ```

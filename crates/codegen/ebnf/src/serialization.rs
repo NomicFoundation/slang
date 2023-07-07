@@ -1,6 +1,8 @@
-use std::{collections::VecDeque, mem::discriminant};
+use std::mem::discriminant;
 
-use codegen_schema::types::{LanguageDefinition, ProductionDefinition, ProductionRef};
+use codegen_schema::types::{LanguageDefinitionRef, ProductionDefinition, ProductionRef};
+use indexmap::IndexSet;
+use inflector::Inflector;
 use semver::Version;
 
 use crate::nodes::EbnfNode;
@@ -9,18 +11,25 @@ pub trait GenerateEbnf {
     fn generate_ebnf(&self) -> EbnfNode;
 }
 
-pub struct EbnfSerializer<'language> {
-    language: &'language LanguageDefinition,
-    base_production: &'language str,
+pub struct EbnfSerializer {
+    language: LanguageDefinitionRef,
+    base_production: ProductionRef,
 
     buffer: String,
-    queue: VecDeque<(String, Option<String>, EbnfNode)>,
+    queue: IndexSet<QueuedStatement>,
 }
 
-impl<'language> EbnfSerializer<'language> {
+#[derive(Eq, Hash, PartialEq)]
+struct QueuedStatement {
+    name: String,
+    comment: Option<String>,
+    body: EbnfNode,
+}
+
+impl EbnfSerializer {
     pub fn serialize_version(
-        language: &'language LanguageDefinition,
-        production: &'language ProductionRef,
+        language: &LanguageDefinitionRef,
+        production: &ProductionRef,
         version: &Version,
     ) -> Option<String> {
         let body = match &production.definition {
@@ -39,57 +48,115 @@ impl<'language> EbnfSerializer<'language> {
         };
 
         let mut instance = Self {
-            language,
+            language: language.to_owned(),
+            base_production: production.to_owned(),
+
             buffer: String::new(),
-            base_production: &production.name,
-            queue: VecDeque::new(),
+            queue: IndexSet::new(),
         };
 
-        instance
-            .queue
-            .push_back((instance.base_production.to_owned(), None, body));
+        instance.queue.insert(QueuedStatement {
+            name: instance.base_production.name.to_owned(),
+            comment: None,
+            body,
+        });
 
-        while let Some((name, comment, body)) = instance.queue.pop_front() {
-            instance.serialize_statement(&name, &comment, &body);
+        while let Some(statement) = instance.queue.shift_remove_index(0) {
+            instance.serialize_statement(&statement);
         }
 
         return Some(instance.buffer.trim_end().to_owned());
     }
 
-    fn serialize_statement(&mut self, name: &String, comment: &Option<String>, body: &EbnfNode) {
-        self.buffer.push_str(&self.display_name(&name));
+    fn serialize_statement(&mut self, statement: &QueuedStatement) {
+        self.buffer.push_str(&self.display_name(&statement.name));
         self.buffer.push_str(" = ");
 
-        match body {
-            // Break long choices (like operators and keywords) over multiple lines:
-            EbnfNode::Choices { choices } if choices.len() >= 5 => {
-                let mut choices = choices.iter();
-
-                self.serialize_node(choices.next().unwrap());
-
-                let padding = " ".repeat(self.display_name(name).chars().count());
-                for choice in choices {
-                    self.buffer.push_str("\n");
-                    self.buffer.push_str(&padding);
-                    self.buffer.push_str(" | ");
-                    self.serialize_node(choice);
-                }
-            }
-            // Otherwise, just render on a single line as-is:
-            _ => {
-                self.serialize_node(&body);
-            }
-        };
+        // Naive version of formatting for long EBNF statements.
+        // Long lines are usually choices of references (PrecedenceParser) or keywords (Scanner).
+        // Let's just print one reference per line:
+        if !self.serialize_top_expression(statement) {
+            // Otherwise, just print the entire thing on the same line:
+            self.serialize_node(&statement.body);
+        }
 
         self.buffer.push_str(";");
 
-        if let Some(comment) = comment {
+        if let Some(comment) = &statement.comment {
             self.buffer.push_str(" (* ");
             self.buffer.push_str(comment);
             self.buffer.push_str(" *)");
         }
 
         self.buffer.push_str("\n");
+    }
+
+    fn serialize_top_expression(&mut self, statement: &QueuedStatement) -> bool {
+        let choices = match &statement.body {
+            EbnfNode::Choices { choices } if choices.len() >= 3 => choices,
+            _ => {
+                // Skip if not choices, or less than three choices.
+                return false;
+            }
+        };
+
+        // Use `IndexSet` to deduplicate choices in case of multiple operators:
+        let mut references = IndexSet::new();
+        let mut sub_statements = IndexSet::new();
+
+        for choice in choices {
+            match choice {
+                EbnfNode::BaseProduction => {
+                    references.insert(self.display_name(&self.base_production.name));
+                }
+                EbnfNode::ProductionRef { name } => {
+                    references.insert(self.display_name(name));
+                }
+
+                EbnfNode::SubStatement {
+                    name,
+                    comment,
+                    body,
+                } => {
+                    references.insert(self.display_name(name));
+                    sub_statements.insert(QueuedStatement {
+                        name: name.to_owned(),
+                        comment: comment.to_owned(),
+                        body: (**body).to_owned(),
+                    });
+                }
+                EbnfNode::Terminal { value } => {
+                    references.insert(format_string_literal(value));
+                }
+                EbnfNode::Choices { .. }
+                | EbnfNode::Difference { .. }
+                | EbnfNode::Not { .. }
+                | EbnfNode::OneOrMore { .. }
+                | EbnfNode::Optional { .. }
+                | EbnfNode::Range { .. }
+                | EbnfNode::Sequence { .. }
+                | EbnfNode::ZeroOrMore { .. } => {
+                    // Skip if choice produces anything other than an identifier.
+                    return false;
+                }
+            };
+        }
+
+        let padding = " ".repeat(self.display_name(&statement.name).chars().count());
+
+        for (i, reference) in references.iter().enumerate() {
+            if i > 0 {
+                self.buffer.push_str("\n");
+                self.buffer.push_str(&padding);
+                self.buffer.push_str(" | ");
+            }
+
+            self.buffer.push_str(reference);
+        }
+
+        self.queue.extend(sub_statements.into_iter());
+
+        return true;
     }
 
     fn serialize_node(&mut self, node: &EbnfNode) {
@@ -104,7 +171,8 @@ impl<'language> EbnfSerializer<'language> {
                 }
             }
             EbnfNode::BaseProduction => {
-                self.buffer.push_str(&self.base_production);
+                self.buffer
+                    .push_str(&self.display_name(&self.base_production.name));
             }
             EbnfNode::Difference {
                 minuend,
@@ -150,9 +218,13 @@ impl<'language> EbnfSerializer<'language> {
                 comment,
                 body,
             } => {
-                self.buffer.push_str(&name);
-                self.queue
-                    .push_back((name.to_owned(), comment.to_owned(), (**body).to_owned()));
+                self.buffer.push_str(&self.display_name(name));
+
+                self.queue.insert(QueuedStatement {
+                    name: name.to_owned(),
+                    comment: comment.to_owned(),
+                    body: (**body).to_owned(),
+                });
             }
             EbnfNode::Terminal { value } => {
                 self.buffer.push_str(&format_string_literal(value));
@@ -175,13 +247,26 @@ impl<'language> EbnfSerializer<'language> {
     }
 
     fn display_name(&self, name: &String) -> String {
-        if let Some(production) = self.language.productions.get(name) {
-            if matches!(production.definition, ProductionDefinition::Scanner { .. }) {
-                return format!("«{name}»");
+        let mut name = name.to_owned();
+
+        let production = match self.language.productions.get(&name) {
+            Some(production) => production,
+            None => {
+                // Not a top-level production, so it is an named parser.
+                // Therefore, it is neither inlined nor a scanner. Return name as-is:
+                return name;
             }
+        };
+
+        if matches!(production.definition, ProductionDefinition::Scanner { .. }) {
+            name = name.to_screaming_snake_case();
         }
 
-        return name.to_owned();
+        if production.inlined {
+            name = format!("«{name}»");
+        }
+
+        return name;
     }
 }
 
@@ -190,10 +275,7 @@ fn precedence(node: &EbnfNode) -> u8 {
     // This separates members of the same precedence, like both "a b (c | d)" and "a | b | (c d)".
     return match node {
         // Binary
-        EbnfNode::Choices { .. }
-        | EbnfNode::Difference { .. }
-        | EbnfNode::Range { .. }
-        | EbnfNode::Sequence { .. } => 0,
+        EbnfNode::Choices { .. } | EbnfNode::Difference { .. } | EbnfNode::Sequence { .. } => 0,
 
         // Prefix
         EbnfNode::Not { .. } => 1,
@@ -204,6 +286,7 @@ fn precedence(node: &EbnfNode) -> u8 {
         // Primary
         EbnfNode::BaseProduction
         | EbnfNode::ProductionRef { .. }
+        | EbnfNode::Range { .. }
         | EbnfNode::SubStatement { .. }
         | EbnfNode::Terminal { .. } => 3,
     };

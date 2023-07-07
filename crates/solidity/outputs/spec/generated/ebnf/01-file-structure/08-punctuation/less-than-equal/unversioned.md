@@ -1,5 +1,5 @@
 <!-- This file is generated automatically by infrastructure scripts. Please don't edit by hand. -->
 
-```{ .ebnf .slang-ebnf #LessThanEqual }
-«LessThanEqual» = "<=";
+```{ .ebnf .slang-ebnf #LESS_THAN_EQUAL }
+LESS_THAN_EQUAL = "<=";
 ```

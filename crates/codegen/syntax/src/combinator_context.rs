@@ -1,15 +1,13 @@
-use std::cell::RefCell;
-use std::collections::BTreeMap;
+use std::{cell::RefCell, collections::BTreeMap};
 
-use codegen_schema::types::LanguageDefinition;
+use codegen_schema::types::LanguageDefinitionRef;
 use semver::Version;
 use typed_arena::Arena;
 
-use super::combinator_node::CombinatorNode;
-use super::combinator_tree::CombinatorTree;
+use super::{combinator_node::CombinatorNode, combinator_tree::CombinatorTree};
 
 pub struct CombinatorContext<'context> {
-    pub language: &'context LanguageDefinition,
+    pub language: LanguageDefinitionRef,
     pub version: Version,
     pub trees_by_name: RefCell<BTreeMap<String, &'context CombinatorTree<'context>>>,
     tree_arena: Arena<CombinatorTree<'context>>,
@@ -17,9 +15,9 @@ pub struct CombinatorContext<'context> {
 }
 
 impl<'context> CombinatorContext<'context> {
-    pub fn new(language: &'context LanguageDefinition, version: Version) -> Self {
+    pub fn new(language: &LanguageDefinitionRef, version: Version) -> Self {
         CombinatorContext {
-            language,
+            language: language.to_owned(),
             version,
             trees_by_name: Default::default(),
             tree_arena: Arena::new(),

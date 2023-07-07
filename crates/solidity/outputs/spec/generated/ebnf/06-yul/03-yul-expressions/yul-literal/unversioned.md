@@ -2,8 +2,8 @@
 
 ```{ .ebnf .slang-ebnf #YulLiteral }
 YulLiteral = BooleanLiteral
-           | «YulHexLiteral»
-           | «YulDecimalLiteral»
-           | «HexStringLiteral»
-           | «AsciiStringLiteral»;
+           | YUL_HEX_LITERAL
+           | YUL_DECIMAL_LITERAL
+           | HEX_STRING_LITERAL
+           | ASCII_STRING_LITERAL;
 ```

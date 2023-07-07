@@ -1,5 +1,5 @@
 <!-- This file is generated automatically by infrastructure scripts. Please don't edit by hand. -->
 
 ```{ .ebnf .slang-ebnf #AddSubOperator }
-AddSubOperator = «Plus» | «Minus»;
+AddSubOperator = PLUS | MINUS;
 ```

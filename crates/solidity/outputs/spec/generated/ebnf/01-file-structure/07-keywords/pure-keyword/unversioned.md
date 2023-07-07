@@ -1,5 +1,5 @@
 <!-- This file is generated automatically by infrastructure scripts. Please don't edit by hand. -->
 
-```{ .ebnf .slang-ebnf #PureKeyword }
-«PureKeyword» = "pure";
+```{ .ebnf .slang-ebnf #PURE_KEYWORD }
+PURE_KEYWORD = "pure";
 ```

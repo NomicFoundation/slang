@@ -1,5 +1,5 @@
 <!-- This file is generated automatically by infrastructure scripts. Please don't edit by hand. -->
 
-```{ .ebnf .slang-ebnf #ConstantKeyword }
-«ConstantKeyword» = "constant";
+```{ .ebnf .slang-ebnf #CONSTANT_KEYWORD }
+CONSTANT_KEYWORD = "constant";
 ```

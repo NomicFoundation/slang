@@ -113,7 +113,7 @@ impl<'context> CombinatorTree<'context> {
         }
 
         if let Some(ebnf) = EbnfSerializer::serialize_version(
-            self.context.language,
+            &self.context.language,
             &self.production,
             &self.context.version,
         ) {

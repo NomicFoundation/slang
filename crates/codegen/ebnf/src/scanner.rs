@@ -15,7 +15,7 @@ impl GenerateEbnf for ScannerDefinition {
                 return EbnfNode::choices(
                     choices
                         .iter()
-                        .map(|choice| choice.definition.generate_ebnf())
+                        .map(|choice| choice.generate_ebnf())
                         .collect(),
                 );
             }
@@ -24,14 +24,11 @@ impl GenerateEbnf for ScannerDefinition {
                 minuend,
                 subtrahend,
             } => {
-                return EbnfNode::difference(
-                    minuend.definition.generate_ebnf(),
-                    subtrahend.definition.generate_ebnf(),
-                );
+                return EbnfNode::difference(minuend.generate_ebnf(), subtrahend.generate_ebnf());
             }
 
             ScannerDefinition::Not(sub_expr) => {
-                return EbnfNode::not(sub_expr.definition.generate_ebnf());
+                return EbnfNode::not(sub_expr.generate_ebnf());
             }
 
             ScannerDefinition::OneOrMore(expr) => {
@@ -54,7 +51,7 @@ impl GenerateEbnf for ScannerDefinition {
                 return EbnfNode::sequence(
                     elements
                         .iter()
-                        .map(|element| element.definition.generate_ebnf())
+                        .map(|element| element.generate_ebnf())
                         .collect(),
                 );
             }

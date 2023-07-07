@@ -1,5 +1,5 @@
 <!-- This file is generated automatically by infrastructure scripts. Please don't edit by hand. -->
 
-```{ .ebnf .slang-ebnf #SecondsKeyword }
-«SecondsKeyword» = "seconds";
+```{ .ebnf .slang-ebnf #SECONDS_KEYWORD }
+SECONDS_KEYWORD = "seconds";
 ```

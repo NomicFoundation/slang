@@ -1,5 +1,5 @@
 <!-- This file is generated automatically by infrastructure scripts. Please don't edit by hand. -->
 
 ```{ .ebnf .slang-ebnf #NamedArgument }
-NamedArgument = «Identifier» «Colon» Expression;
+NamedArgument = IDENTIFIER COLON Expression;
 ```

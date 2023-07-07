@@ -1,5 +1,5 @@
 <!-- This file is generated automatically by infrastructure scripts. Please don't edit by hand. -->
 
-```{ .ebnf .slang-ebnf #FallbackKeyword }
-«FallbackKeyword» = "fallback";
+```{ .ebnf .slang-ebnf #FALLBACK_KEYWORD }
+FALLBACK_KEYWORD = "fallback";
 ```

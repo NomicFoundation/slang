@@ -4,7 +4,7 @@ use super::language::Language;
 use super::stream::*;
 
 impl Language {
-    // «AbicoderKeyword» = "abicoder";
+    // ABICODER_KEYWORD = "abicoder";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -21,7 +21,7 @@ impl Language {
     }
 
     // (* v0.6.0 *)
-    // «AbstractKeyword» = "abstract";
+    // ABSTRACT_KEYWORD = "abstract";
 
     #[allow(dead_code, non_snake_case)]
     fn abstract_keyword__0_6_0(&self, stream: &mut Stream) -> bool {
@@ -51,7 +51,7 @@ impl Language {
             .expect("Validation should have checked that references are valid between versions")
     }
 
-    // «AddressKeyword» = "address";
+    // ADDRESS_KEYWORD = "address";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -67,7 +67,7 @@ impl Language {
         )
     }
 
-    // «Ampersand» = "&";
+    // AMPERSAND = "&";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -79,7 +79,7 @@ impl Language {
         )
     }
 
-    // «AmpersandAmpersand» = "&&";
+    // AMPERSAND_AMPERSAND = "&&";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -87,7 +87,7 @@ impl Language {
         scan_chars!(stream, '&', '&')
     }
 
-    // «AmpersandEqual» = "&=";
+    // AMPERSAND_EQUAL = "&=";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -95,7 +95,7 @@ impl Language {
         scan_chars!(stream, '&', '=')
     }
 
-    // «AnonymousKeyword» = "anonymous";
+    // ANONYMOUS_KEYWORD = "anonymous";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -111,7 +111,7 @@ impl Language {
         )
     }
 
-    // «AsKeyword» = "as";
+    // AS_KEYWORD = "as";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -127,14 +127,14 @@ impl Language {
         )
     }
 
-    // «AsciiEscape» = "n"
-    //               | "r"
-    //               | "t"
-    //               | "'"
-    //               | '"'
-    //               | "\\"
-    //               | "\n"
-    //               | "\r";
+    // ASCII_ESCAPE = "n"
+    //              | "r"
+    //              | "t"
+    //              | "'"
+    //              | '"'
+    //              | "\\"
+    //              | "\n"
+    //              | "\r";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -149,7 +149,7 @@ impl Language {
             || c == 't')
     }
 
-    // «AsciiStringLiteral» = «SingleQuotedAsciiStringLiteral» | «DoubleQuotedAsciiStringLiteral»;
+    // ASCII_STRING_LITERAL = SINGLE_QUOTED_ASCII_STRING_LITERAL | DOUBLE_QUOTED_ASCII_STRING_LITERAL;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -161,7 +161,7 @@ impl Language {
         )
     }
 
-    // «AssemblyKeyword» = "assembly";
+    // ASSEMBLY_KEYWORD = "assembly";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -177,7 +177,7 @@ impl Language {
         )
     }
 
-    // «Asterisk» = "*";
+    // ASTERISK = "*";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -189,7 +189,7 @@ impl Language {
         )
     }
 
-    // «AsteriskAsterisk» = "**";
+    // ASTERISK_ASTERISK = "**";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -197,7 +197,7 @@ impl Language {
         scan_chars!(stream, '*', '*')
     }
 
-    // «AsteriskEqual» = "*=";
+    // ASTERISK_EQUAL = "*=";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -205,7 +205,7 @@ impl Language {
         scan_chars!(stream, '*', '=')
     }
 
-    // «Bang» = "!";
+    // BANG = "!";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -213,7 +213,7 @@ impl Language {
         scan_not_followed_by!(stream, scan_chars!(stream, '!'), scan_chars!(stream, '='))
     }
 
-    // «BangEqual» = "!=";
+    // BANG_EQUAL = "!=";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -221,7 +221,7 @@ impl Language {
         scan_chars!(stream, '!', '=')
     }
 
-    // «Bar» = "|";
+    // BAR = "|";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -233,7 +233,7 @@ impl Language {
         )
     }
 
-    // «BarBar» = "||";
+    // BAR_BAR = "||";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -241,7 +241,7 @@ impl Language {
         scan_chars!(stream, '|', '|')
     }
 
-    // «BarEqual» = "|=";
+    // BAR_EQUAL = "|=";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -249,7 +249,7 @@ impl Language {
         scan_chars!(stream, '|', '=')
     }
 
-    // «BoolKeyword» = "bool";
+    // BOOL_KEYWORD = "bool";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -265,7 +265,7 @@ impl Language {
         )
     }
 
-    // «BreakKeyword» = "break";
+    // BREAK_KEYWORD = "break";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -282,7 +282,7 @@ impl Language {
     }
 
     // (* v0.4.11 *)
-    // «ByteType» = "byte";
+    // BYTE_TYPE = "byte";
 
     #[allow(dead_code, non_snake_case)]
     fn byte_type__0_4_11(&self, stream: &mut Stream) -> bool {
@@ -313,7 +313,7 @@ impl Language {
     }
 
     // (* v0.5.0 *)
-    // «CalldataKeyword» = "calldata";
+    // CALLDATA_KEYWORD = "calldata";
 
     #[allow(dead_code, non_snake_case)]
     fn calldata_keyword__0_5_0(&self, stream: &mut Stream) -> bool {
@@ -343,7 +343,7 @@ impl Language {
             .expect("Validation should have checked that references are valid between versions")
     }
 
-    // «Caret» = "^";
+    // CARET = "^";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -351,7 +351,7 @@ impl Language {
         scan_not_followed_by!(stream, scan_chars!(stream, '^'), scan_chars!(stream, '='))
     }
 
-    // «CaretEqual» = "^=";
+    // CARET_EQUAL = "^=";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -359,7 +359,7 @@ impl Language {
         scan_chars!(stream, '^', '=')
     }
 
-    // «CaseKeyword» = "case";
+    // CASE_KEYWORD = "case";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -376,7 +376,7 @@ impl Language {
     }
 
     // (* v0.6.0 *)
-    // «CatchKeyword» = "catch";
+    // CATCH_KEYWORD = "catch";
 
     #[allow(dead_code, non_snake_case)]
     fn catch_keyword__0_6_0(&self, stream: &mut Stream) -> bool {
@@ -406,7 +406,7 @@ impl Language {
             .expect("Validation should have checked that references are valid between versions")
     }
 
-    // «CloseBrace» = "}";
+    // CLOSE_BRACE = "}";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -414,7 +414,7 @@ impl Language {
         scan_chars!(stream, '}')
     }
 
-    // «CloseBracket» = "]";
+    // CLOSE_BRACKET = "]";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -422,7 +422,7 @@ impl Language {
         scan_chars!(stream, ']')
     }
 
-    // «CloseParen» = ")";
+    // CLOSE_PAREN = ")";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -430,7 +430,7 @@ impl Language {
         scan_chars!(stream, ')')
     }
 
-    // «Colon» = ":";
+    // COLON = ":";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -438,7 +438,7 @@ impl Language {
         scan_not_followed_by!(stream, scan_chars!(stream, ':'), scan_chars!(stream, '='))
     }
 
-    // «ColonEqual» = ":=";
+    // COLON_EQUAL = ":=";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -446,7 +446,7 @@ impl Language {
         scan_chars!(stream, ':', '=')
     }
 
-    // «Comma» = ",";
+    // COMMA = ",";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -454,7 +454,7 @@ impl Language {
         scan_chars!(stream, ',')
     }
 
-    // «ConstantKeyword» = "constant";
+    // CONSTANT_KEYWORD = "constant";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -471,7 +471,7 @@ impl Language {
     }
 
     // (* v0.4.22 *)
-    // «ConstructorKeyword» = "constructor";
+    // CONSTRUCTOR_KEYWORD = "constructor";
 
     #[allow(dead_code, non_snake_case)]
     fn constructor_keyword__0_4_22(&self, stream: &mut Stream) -> bool {
@@ -501,7 +501,7 @@ impl Language {
             .expect("Validation should have checked that references are valid between versions")
     }
 
-    // «ContinueKeyword» = "continue";
+    // CONTINUE_KEYWORD = "continue";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -517,7 +517,7 @@ impl Language {
         )
     }
 
-    // «ContractKeyword» = "contract";
+    // CONTRACT_KEYWORD = "contract";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -533,7 +533,7 @@ impl Language {
         )
     }
 
-    // «DaysKeyword» = "days";
+    // DAYS_KEYWORD = "days";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -549,7 +549,7 @@ impl Language {
         )
     }
 
-    // «DecimalExponent» = ("e" | "E") "-"? «DecimalNumber»;
+    // DECIMAL_EXPONENT = ("e" | "E") "-"? DECIMAL_NUMBER;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -562,7 +562,7 @@ impl Language {
     }
 
     // (* v0.4.11 *)
-    // «DecimalLiteral» = ((«DecimalNumber» ("." «DecimalNumber»?)?) | ("." «DecimalNumber»)) «DecimalExponent»?;
+    // DECIMAL_LITERAL = ((DECIMAL_NUMBER ("." DECIMAL_NUMBER?)?) | ("." DECIMAL_NUMBER)) DECIMAL_EXPONENT?;
 
     #[allow(dead_code, non_snake_case)]
     fn decimal_literal__0_4_11(&self, stream: &mut Stream) -> bool {
@@ -586,7 +586,7 @@ impl Language {
     }
 
     // (* v0.5.0 *)
-    // «DecimalLiteral» = ((«DecimalNumber» ("." «DecimalNumber»)?) | ("." «DecimalNumber»)) «DecimalExponent»?;
+    // DECIMAL_LITERAL = ((DECIMAL_NUMBER ("." DECIMAL_NUMBER)?) | ("." DECIMAL_NUMBER)) DECIMAL_EXPONENT?;
 
     #[allow(dead_code, non_snake_case)]
     fn decimal_literal__0_5_0(&self, stream: &mut Stream) -> bool {
@@ -614,7 +614,7 @@ impl Language {
         }
     }
 
-    // «DecimalNumber» = ("0"…"9")+ ("_" ("0"…"9")+)*;
+    // DECIMAL_NUMBER = "0"…"9"+ ("_" "0"…"9"+)*;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -631,7 +631,7 @@ impl Language {
         )
     }
 
-    // «DefaultKeyword» = "default";
+    // DEFAULT_KEYWORD = "default";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -647,7 +647,7 @@ impl Language {
         )
     }
 
-    // «DeleteKeyword» = "delete";
+    // DELETE_KEYWORD = "delete";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -663,7 +663,7 @@ impl Language {
         )
     }
 
-    // «DoKeyword» = "do";
+    // DO_KEYWORD = "do";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -679,7 +679,7 @@ impl Language {
         )
     }
 
-    // «DoubleQuotedAsciiStringLiteral» = '"' («EscapeSequence» | ((" "…"~") - ('"' | "\\")))* '"';
+    // DOUBLE_QUOTED_ASCII_STRING_LITERAL = '"' (ESCAPE_SEQUENCE | (" "…"~" - ('"' | "\\")))* '"';
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -701,7 +701,7 @@ impl Language {
     }
 
     // (* v0.7.0 *)
-    // «DoubleQuotedUnicodeStringLiteral» = 'unicode"' («EscapeSequence» | !('"' | "\\" | "\n" | "\r"))* '"';
+    // DOUBLE_QUOTED_UNICODE_STRING_LITERAL = 'unicode"' (ESCAPE_SEQUENCE | !('"' | "\\" | "\n" | "\r"))* '"';
 
     #[allow(dead_code, non_snake_case)]
     fn double_quoted_unicode_string_literal__0_7_0(&self, stream: &mut Stream) -> bool {
@@ -737,7 +737,7 @@ impl Language {
             .expect("Validation should have checked that references are valid between versions")
     }
 
-    // «ElseKeyword» = "else";
+    // ELSE_KEYWORD = "else";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -754,7 +754,7 @@ impl Language {
     }
 
     // (* v0.4.21 *)
-    // «EmitKeyword» = "emit";
+    // EMIT_KEYWORD = "emit";
 
     #[allow(dead_code, non_snake_case)]
     fn emit_keyword__0_4_21(&self, stream: &mut Stream) -> bool {
@@ -784,7 +784,7 @@ impl Language {
             .expect("Validation should have checked that references are valid between versions")
     }
 
-    // «EndOfLine» = "\r"? "\n";
+    // END_OF_LINE = "\r"? "\n";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -795,7 +795,7 @@ impl Language {
         )
     }
 
-    // «EnumKeyword» = "enum";
+    // ENUM_KEYWORD = "enum";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -811,7 +811,7 @@ impl Language {
         )
     }
 
-    // «Equal» = "=";
+    // EQUAL = "=";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -823,7 +823,7 @@ impl Language {
         )
     }
 
-    // «EqualEqual» = "==";
+    // EQUAL_EQUAL = "==";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -831,7 +831,7 @@ impl Language {
         scan_chars!(stream, '=', '=')
     }
 
-    // «EqualGreaterThan» = "=>";
+    // EQUAL_GREATER_THAN = "=>";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -839,7 +839,7 @@ impl Language {
         scan_chars!(stream, '=', '>')
     }
 
-    // «ErrorKeyword» = "error";
+    // ERROR_KEYWORD = "error";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -855,7 +855,7 @@ impl Language {
         )
     }
 
-    // «EscapeSequence» = "\\" («AsciiEscape» | «HexByteEscape» | «UnicodeEscape»);
+    // ESCAPE_SEQUENCE = "\\" (ASCII_ESCAPE | HEX_BYTE_ESCAPE | UNICODE_ESCAPE);
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -871,7 +871,7 @@ impl Language {
         )
     }
 
-    // «EtherKeyword» = "ether";
+    // ETHER_KEYWORD = "ether";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -887,7 +887,7 @@ impl Language {
         )
     }
 
-    // «EventKeyword» = "event";
+    // EVENT_KEYWORD = "event";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -903,7 +903,7 @@ impl Language {
         )
     }
 
-    // «Evmasm» = '"evmasm"';
+    // EVMASM = '"evmasm"';
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -911,7 +911,7 @@ impl Language {
         scan_chars!(stream, '"', 'e', 'v', 'm', 'a', 's', 'm', '"')
     }
 
-    // «ExperimentalKeyword» = "experimental";
+    // EXPERIMENTAL_KEYWORD = "experimental";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -927,7 +927,7 @@ impl Language {
         )
     }
 
-    // «ExternalKeyword» = "external";
+    // EXTERNAL_KEYWORD = "external";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -943,7 +943,7 @@ impl Language {
         )
     }
 
-    // «FallbackKeyword» = "fallback";
+    // FALLBACK_KEYWORD = "fallback";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -959,7 +959,7 @@ impl Language {
         )
     }
 
-    // «FalseKeyword» = "false";
+    // FALSE_KEYWORD = "false";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -976,7 +976,7 @@ impl Language {
     }
 
     // (* v0.4.11 *)
-    // «FinneyKeyword» = "finney";
+    // FINNEY_KEYWORD = "finney";
 
     #[allow(dead_code, non_snake_case)]
     fn finney_keyword__0_4_11(&self, stream: &mut Stream) -> bool {
@@ -1006,7 +1006,7 @@ impl Language {
             .expect("Validation should have checked that references are valid between versions")
     }
 
-    // «FixedBytesType» = "bytes" ("1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" | "10" | "11" | "12" | "13" | "14" | "15" | "16" | "17" | "18" | "19" | "20" | "21" | "22" | "23" | "24" | "25" | "26" | "27" | "28" | "29" | "30" | "31" | "32");
+    // FIXED_BYTES_TYPE = "bytes" ("1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" | "10" | "11" | "12" | "13" | "14" | "15" | "16" | "17" | "18" | "19" | "20" | "21" | "22" | "23" | "24" | "25" | "26" | "27" | "28" | "29" | "30" | "31" | "32");
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -1039,7 +1039,7 @@ impl Language {
         )
     }
 
-    // «ForKeyword» = "for";
+    // FOR_KEYWORD = "for";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -1055,7 +1055,7 @@ impl Language {
         )
     }
 
-    // «FromKeyword» = "from";
+    // FROM_KEYWORD = "from";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -1071,7 +1071,7 @@ impl Language {
         )
     }
 
-    // «FunctionKeyword» = "function";
+    // FUNCTION_KEYWORD = "function";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -1087,7 +1087,7 @@ impl Language {
         )
     }
 
-    // «GlobalKeyword» = "global";
+    // GLOBAL_KEYWORD = "global";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -1103,7 +1103,7 @@ impl Language {
         )
     }
 
-    // «GreaterThan» = ">";
+    // GREATER_THAN = ">";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -1115,7 +1115,7 @@ impl Language {
         )
     }
 
-    // «GreaterThanEqual» = ">=";
+    // GREATER_THAN_EQUAL = ">=";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -1123,7 +1123,7 @@ impl Language {
         scan_chars!(stream, '>', '=')
     }
 
-    // «GreaterThanGreaterThan» = ">>";
+    // GREATER_THAN_GREATER_THAN = ">>";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -1135,7 +1135,7 @@ impl Language {
         )
     }
 
-    // «GreaterThanGreaterThanEqual» = ">>=";
+    // GREATER_THAN_GREATER_THAN_EQUAL = ">>=";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -1143,7 +1143,7 @@ impl Language {
         scan_chars!(stream, '>', '>', '=')
     }
 
-    // «GreaterThanGreaterThanGreaterThan» = ">>>";
+    // GREATER_THAN_GREATER_THAN_GREATER_THAN = ">>>";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -1155,7 +1155,7 @@ impl Language {
         )
     }
 
-    // «GreaterThanGreaterThanGreaterThanEqual» = ">>>=";
+    // GREATER_THAN_GREATER_THAN_GREATER_THAN_EQUAL = ">>>=";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -1164,7 +1164,7 @@ impl Language {
     }
 
     // (* v0.6.11 *)
-    // «GweiKeyword» = "gwei";
+    // GWEI_KEYWORD = "gwei";
 
     #[allow(dead_code, non_snake_case)]
     fn gwei_keyword__0_6_11(&self, stream: &mut Stream) -> bool {
@@ -1194,7 +1194,7 @@ impl Language {
             .expect("Validation should have checked that references are valid between versions")
     }
 
-    // «HexByteEscape» = "x" «HexCharacter» «HexCharacter»;
+    // HEX_BYTE_ESCAPE = "x" «HEX_CHARACTER» «HEX_CHARACTER»;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -1210,7 +1210,7 @@ impl Language {
         )
     }
 
-    // «HexCharacter» = ("0"…"9") | ("a"…"f") | ("A"…"F");
+    // «HEX_CHARACTER» = "0"…"9" | "a"…"f" | "A"…"F";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -1221,7 +1221,7 @@ impl Language {
     }
 
     // (* v0.4.11 *)
-    // «HexLiteral» = "0" ("x" | "X") «HexCharacter»+ ("_" «HexCharacter»+)*;
+    // HEX_LITERAL = "0" ("x" | "X") «HEX_CHARACTER»+ ("_" «HEX_CHARACTER»+)*;
 
     #[allow(dead_code, non_snake_case)]
     fn hex_literal__0_4_11(&self, stream: &mut Stream) -> bool {
@@ -1250,7 +1250,7 @@ impl Language {
     }
 
     // (* v0.5.0 *)
-    // «HexLiteral» = "0x" «HexCharacter»+ ("_" «HexCharacter»+)*;
+    // HEX_LITERAL = "0x" «HEX_CHARACTER»+ ("_" «HEX_CHARACTER»+)*;
 
     #[allow(dead_code, non_snake_case)]
     fn hex_literal__0_5_0(&self, stream: &mut Stream) -> bool {
@@ -1285,7 +1285,7 @@ impl Language {
         }
     }
 
-    // «HexStringLiteral» = "hex" (('"' «PossiblySeparatedPairsOfHexDigits»? '"') | ("'" «PossiblySeparatedPairsOfHexDigits»? "'"));
+    // HEX_STRING_LITERAL = "hex" (('"' POSSIBLY_SEPARATED_PAIRS_OF_HEX_DIGITS? '"') | ("'" POSSIBLY_SEPARATED_PAIRS_OF_HEX_DIGITS? "'"));
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -1308,7 +1308,7 @@ impl Language {
         )
     }
 
-    // «HoursKeyword» = "hours";
+    // HOURS_KEYWORD = "hours";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -1324,7 +1324,7 @@ impl Language {
         )
     }
 
-    // «Identifier» = «RawIdentifier» - («NotAnIdentifierInAnyVersion» | «NotAnIdentifierInSomeVersions» | «FixedBytesType» | «SignedFixedType» | «UnsignedFixedType» | «SignedIntegerType» | «UnsignedIntegerType»);
+    // IDENTIFIER = RAW_IDENTIFIER - (NOT_AN_IDENTIFIER_IN_ANY_VERSION | NOT_AN_IDENTIFIER_IN_SOME_VERSIONS | FIXED_BYTES_TYPE | SIGNED_FIXED_TYPE | UNSIGNED_FIXED_TYPE | SIGNED_INTEGER_TYPE | UNSIGNED_INTEGER_TYPE);
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -1517,7 +1517,7 @@ impl Language {
         )
     }
 
-    // «IdentifierPart» = «IdentifierStart» | ("0"…"9");
+    // IDENTIFIER_PART = IDENTIFIER_START | "0"…"9";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -1529,7 +1529,7 @@ impl Language {
             || ('a' <= c && c <= 'z'))
     }
 
-    // «IdentifierStart» = "_" | "$" | ("a"…"z") | ("A"…"Z");
+    // IDENTIFIER_START = "_" | "$" | "a"…"z" | "A"…"Z";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -1540,7 +1540,7 @@ impl Language {
             || ('a' <= c && c <= 'z'))
     }
 
-    // «IfKeyword» = "if";
+    // IF_KEYWORD = "if";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -1557,7 +1557,7 @@ impl Language {
     }
 
     // (* v0.6.5 *)
-    // «ImmutableKeyword» = "immutable";
+    // IMMUTABLE_KEYWORD = "immutable";
 
     #[allow(dead_code, non_snake_case)]
     fn immutable_keyword__0_6_5(&self, stream: &mut Stream) -> bool {
@@ -1587,7 +1587,7 @@ impl Language {
             .expect("Validation should have checked that references are valid between versions")
     }
 
-    // «ImportKeyword» = "import";
+    // IMPORT_KEYWORD = "import";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -1603,7 +1603,7 @@ impl Language {
         )
     }
 
-    // «IndexedKeyword» = "indexed";
+    // INDEXED_KEYWORD = "indexed";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -1619,7 +1619,7 @@ impl Language {
         )
     }
 
-    // «InterfaceKeyword» = "interface";
+    // INTERFACE_KEYWORD = "interface";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -1635,7 +1635,7 @@ impl Language {
         )
     }
 
-    // «InternalKeyword» = "internal";
+    // INTERNAL_KEYWORD = "internal";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -1651,7 +1651,7 @@ impl Language {
         )
     }
 
-    // «IsKeyword» = "is";
+    // IS_KEYWORD = "is";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -1668,7 +1668,7 @@ impl Language {
     }
 
     // (* v0.6.0 *)
-    // «LeaveKeyword» = "leave";
+    // LEAVE_KEYWORD = "leave";
 
     #[allow(dead_code, non_snake_case)]
     fn leave_keyword__0_6_0(&self, stream: &mut Stream) -> bool {
@@ -1698,7 +1698,7 @@ impl Language {
             .expect("Validation should have checked that references are valid between versions")
     }
 
-    // «LessThan» = "<";
+    // LESS_THAN = "<";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -1710,7 +1710,7 @@ impl Language {
         )
     }
 
-    // «LessThanEqual» = "<=";
+    // LESS_THAN_EQUAL = "<=";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -1718,7 +1718,7 @@ impl Language {
         scan_chars!(stream, '<', '=')
     }
 
-    // «LessThanLessThan» = "<<";
+    // LESS_THAN_LESS_THAN = "<<";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -1730,7 +1730,7 @@ impl Language {
         )
     }
 
-    // «LessThanLessThanEqual» = "<<=";
+    // LESS_THAN_LESS_THAN_EQUAL = "<<=";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -1738,7 +1738,7 @@ impl Language {
         scan_chars!(stream, '<', '<', '=')
     }
 
-    // «LetKeyword» = "let";
+    // LET_KEYWORD = "let";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -1754,7 +1754,7 @@ impl Language {
         )
     }
 
-    // «LibraryKeyword» = "library";
+    // LIBRARY_KEYWORD = "library";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -1770,7 +1770,7 @@ impl Language {
         )
     }
 
-    // «MappingKeyword» = "mapping";
+    // MAPPING_KEYWORD = "mapping";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -1786,7 +1786,7 @@ impl Language {
         )
     }
 
-    // «MemoryKeyword» = "memory";
+    // MEMORY_KEYWORD = "memory";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -1802,7 +1802,7 @@ impl Language {
         )
     }
 
-    // «Minus» = "-";
+    // MINUS = "-";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -1814,7 +1814,7 @@ impl Language {
         )
     }
 
-    // «MinusEqual» = "-=";
+    // MINUS_EQUAL = "-=";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -1822,7 +1822,7 @@ impl Language {
         scan_chars!(stream, '-', '=')
     }
 
-    // «MinusGreaterThan» = "->";
+    // MINUS_GREATER_THAN = "->";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -1830,7 +1830,7 @@ impl Language {
         scan_chars!(stream, '-', '>')
     }
 
-    // «MinusMinus» = "--";
+    // MINUS_MINUS = "--";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -1838,7 +1838,7 @@ impl Language {
         scan_chars!(stream, '-', '-')
     }
 
-    // «MinutesKeyword» = "minutes";
+    // MINUTES_KEYWORD = "minutes";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -1854,7 +1854,7 @@ impl Language {
         )
     }
 
-    // «ModifierKeyword» = "modifier";
+    // MODIFIER_KEYWORD = "modifier";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -1870,7 +1870,7 @@ impl Language {
         )
     }
 
-    // «MultilineComment» = "/*" (!"*" | ("*" !"/"))* "*/";
+    // MULTILINE_COMMENT = "/*" (!"*" | ("*" !"/"))* "*/";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -1892,7 +1892,7 @@ impl Language {
         )
     }
 
-    // «NewKeyword» = "new";
+    // NEW_KEYWORD = "new";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -1908,79 +1908,79 @@ impl Language {
         )
     }
 
-    // «NotAnIdentifierInAnyVersion» = "abstract"
-    //                               | "address"
-    //                               | "after"
-    //                               | "anonymous"
-    //                               | "as"
-    //                               | "assembly"
-    //                               | "bool"
-    //                               | "break"
-    //                               | "byte"
-    //                               | "case"
-    //                               | "catch"
-    //                               | "constant"
-    //                               | "continue"
-    //                               | "contract"
-    //                               | "days"
-    //                               | "default"
-    //                               | "delete"
-    //                               | "do"
-    //                               | "else"
-    //                               | "enum"
-    //                               | "ether"
-    //                               | "event"
-    //                               | "external"
-    //                               | "false"
-    //                               | "final"
-    //                               | "for"
-    //                               | "function"
-    //                               | "hex"
-    //                               | "hours"
-    //                               | "if"
-    //                               | "import"
-    //                               | "in"
-    //                               | "indexed"
-    //                               | "inline"
-    //                               | "interface"
-    //                               | "internal"
-    //                               | "is"
-    //                               | "let"
-    //                               | "library"
-    //                               | "mapping"
-    //                               | "match"
-    //                               | "memory"
-    //                               | "minutes"
-    //                               | "modifier"
-    //                               | "new"
-    //                               | "null"
-    //                               | "of"
-    //                               | "payable"
-    //                               | "pragma"
-    //                               | "private"
-    //                               | "public"
-    //                               | "pure"
-    //                               | "relocatable"
-    //                               | "return"
-    //                               | "returns"
-    //                               | "seconds"
-    //                               | "static"
-    //                               | "storage"
-    //                               | "string"
-    //                               | "struct"
-    //                               | "switch"
-    //                               | "throw"
-    //                               | "true"
-    //                               | "try"
-    //                               | "type"
-    //                               | "typeof"
-    //                               | "using"
-    //                               | "var"
-    //                               | "view"
-    //                               | "weeks"
-    //                               | "wei"
-    //                               | "while"
-    //                               | "years";
+    // NOT_AN_IDENTIFIER_IN_ANY_VERSION = "abstract"
+    //                                  | "address"
+    //                                  | "after"
+    //                                  | "anonymous"
+    //                                  | "as"
+    //                                  | "assembly"
+    //                                  | "bool"
+    //                                  | "break"
+    //                                  | "byte"
+    //                                  | "case"
+    //                                  | "catch"
+    //                                  | "constant"
+    //                                  | "continue"
+    //                                  | "contract"
+    //                                  | "days"
+    //                                  | "default"
+    //                                  | "delete"
+    //                                  | "do"
+    //                                  | "else"
+    //                                  | "enum"
+    //                                  | "ether"
+    //                                  | "event"
+    //                                  | "external"
+    //                                  | "false"
+    //                                  | "final"
+    //                                  | "for"
+    //                                  | "function"
+    //                                  | "hex"
+    //                                  | "hours"
+    //                                  | "if"
+    //                                  | "import"
+    //                                  | "in"
+    //                                  | "indexed"
+    //                                  | "inline"
+    //                                  | "interface"
+    //                                  | "internal"
+    //                                  | "is"
+    //                                  | "let"
+    //                                  | "library"
+    //                                  | "mapping"
+    //                                  | "match"
+    //                                  | "memory"
+    //                                  | "minutes"
+    //                                  | "modifier"
+    //                                  | "new"
+    //                                  | "null"
+    //                                  | "of"
+    //                                  | "payable"
+    //                                  | "pragma"
+    //                                  | "private"
+    //                                  | "public"
+    //                                  | "pure"
+    //                                  | "relocatable"
+    //                                  | "return"
+    //                                  | "returns"
+    //                                  | "seconds"
+    //                                  | "static"
+    //                                  | "storage"
+    //                                  | "string"
+    //                                  | "struct"
+    //                                  | "switch"
+    //                                  | "throw"
+    //                                  | "true"
+    //                                  | "try"
+    //                                  | "type"
+    //                                  | "typeof"
+    //                                  | "using"
+    //                                  | "var"
+    //                                  | "view"
+    //                                  | "weeks"
+    //                                  | "wei"
+    //                                  | "while"
+    //                                  | "years";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -2161,7 +2161,7 @@ impl Language {
     }
 
     // (* v0.4.11 *)
-    // «NotAnIdentifierInSomeVersions» = "finney" | "szabo";
+    // NOT_AN_IDENTIFIER_IN_SOME_VERSIONS = "finney" | "szabo";
 
     #[allow(dead_code, non_snake_case)]
     fn not_an_identifier_in_some_versions__0_4_11(&self, stream: &mut Stream) -> bool {
@@ -2173,29 +2173,29 @@ impl Language {
     }
 
     // (* v0.5.0 *)
-    // «NotAnIdentifierInSomeVersions» = "finney"
-    //                                 | "szabo"
-    //                                 | "alias"
-    //                                 | "apply"
-    //                                 | "auto"
-    //                                 | "calldata"
-    //                                 | "constructor"
-    //                                 | "copyof"
-    //                                 | "define"
-    //                                 | "emit"
-    //                                 | "immutable"
-    //                                 | "implements"
-    //                                 | "macro"
-    //                                 | "mutable"
-    //                                 | "override"
-    //                                 | "partial"
-    //                                 | "promise"
-    //                                 | "reference"
-    //                                 | "sealed"
-    //                                 | "sizeof"
-    //                                 | "supports"
-    //                                 | "typedef"
-    //                                 | "unchecked";
+    // NOT_AN_IDENTIFIER_IN_SOME_VERSIONS = "finney"
+    //                                    | "szabo"
+    //                                    | "alias"
+    //                                    | "apply"
+    //                                    | "auto"
+    //                                    | "calldata"
+    //                                    | "constructor"
+    //                                    | "copyof"
+    //                                    | "define"
+    //                                    | "emit"
+    //                                    | "immutable"
+    //                                    | "implements"
+    //                                    | "macro"
+    //                                    | "mutable"
+    //                                    | "override"
+    //                                    | "partial"
+    //                                    | "promise"
+    //                                    | "reference"
+    //                                    | "sealed"
+    //                                    | "sizeof"
+    //                                    | "supports"
+    //                                    | "typedef"
+    //                                    | "unchecked";
 
     #[allow(dead_code, non_snake_case)]
     fn not_an_identifier_in_some_versions__0_5_0(&self, stream: &mut Stream) -> bool {
@@ -2252,32 +2252,32 @@ impl Language {
     }
 
     // (* v0.6.0 *)
-    // «NotAnIdentifierInSomeVersions» = "finney"
-    //                                 | "szabo"
-    //                                 | "alias"
-    //                                 | "apply"
-    //                                 | "auto"
-    //                                 | "calldata"
-    //                                 | "constructor"
-    //                                 | "copyof"
-    //                                 | "define"
-    //                                 | "emit"
-    //                                 | "immutable"
-    //                                 | "implements"
-    //                                 | "macro"
-    //                                 | "mutable"
-    //                                 | "override"
-    //                                 | "partial"
-    //                                 | "promise"
-    //                                 | "reference"
-    //                                 | "sealed"
-    //                                 | "sizeof"
-    //                                 | "supports"
-    //                                 | "typedef"
-    //                                 | "unchecked"
-    //                                 | "fallback"
-    //                                 | "receive"
-    //                                 | "virtual";
+    // NOT_AN_IDENTIFIER_IN_SOME_VERSIONS = "finney"
+    //                                    | "szabo"
+    //                                    | "alias"
+    //                                    | "apply"
+    //                                    | "auto"
+    //                                    | "calldata"
+    //                                    | "constructor"
+    //                                    | "copyof"
+    //                                    | "define"
+    //                                    | "emit"
+    //                                    | "immutable"
+    //                                    | "implements"
+    //                                    | "macro"
+    //                                    | "mutable"
+    //                                    | "override"
+    //                                    | "partial"
+    //                                    | "promise"
+    //                                    | "reference"
+    //                                    | "sealed"
+    //                                    | "sizeof"
+    //                                    | "supports"
+    //                                    | "typedef"
+    //                                    | "unchecked"
+    //                                    | "fallback"
+    //                                    | "receive"
+    //                                    | "virtual";
 
     #[allow(dead_code, non_snake_case)]
     fn not_an_identifier_in_some_versions__0_6_0(&self, stream: &mut Stream) -> bool {
@@ -2346,31 +2346,31 @@ impl Language {
     }
 
     // (* v0.7.0 *)
-    // «NotAnIdentifierInSomeVersions» = "alias"
-    //                                 | "apply"
-    //                                 | "auto"
-    //                                 | "calldata"
-    //                                 | "constructor"
-    //                                 | "copyof"
-    //                                 | "define"
-    //                                 | "emit"
-    //                                 | "immutable"
-    //                                 | "implements"
-    //                                 | "macro"
-    //                                 | "mutable"
-    //                                 | "override"
-    //                                 | "partial"
-    //                                 | "promise"
-    //                                 | "reference"
-    //                                 | "sealed"
-    //                                 | "sizeof"
-    //                                 | "supports"
-    //                                 | "typedef"
-    //                                 | "unchecked"
-    //                                 | "fallback"
-    //                                 | "receive"
-    //                                 | "virtual"
-    //                                 | "gwei";
+    // NOT_AN_IDENTIFIER_IN_SOME_VERSIONS = "alias"
+    //                                    | "apply"
+    //                                    | "auto"
+    //                                    | "calldata"
+    //                                    | "constructor"
+    //                                    | "copyof"
+    //                                    | "define"
+    //                                    | "emit"
+    //                                    | "immutable"
+    //                                    | "implements"
+    //                                    | "macro"
+    //                                    | "mutable"
+    //                                    | "override"
+    //                                    | "partial"
+    //                                    | "promise"
+    //                                    | "reference"
+    //                                    | "sealed"
+    //                                    | "sizeof"
+    //                                    | "supports"
+    //                                    | "typedef"
+    //                                    | "unchecked"
+    //                                    | "fallback"
+    //                                    | "receive"
+    //                                    | "virtual"
+    //                                    | "gwei";
 
     #[allow(dead_code, non_snake_case)]
     fn not_an_identifier_in_some_versions__0_7_0(&self, stream: &mut Stream) -> bool {
@@ -2446,7 +2446,7 @@ impl Language {
         }
     }
 
-    // «OpenBrace» = "{";
+    // OPEN_BRACE = "{";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -2454,7 +2454,7 @@ impl Language {
         scan_chars!(stream, '{')
     }
 
-    // «OpenBracket» = "[";
+    // OPEN_BRACKET = "[";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -2462,7 +2462,7 @@ impl Language {
         scan_chars!(stream, '[')
     }
 
-    // «OpenParen» = "(";
+    // OPEN_PAREN = "(";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -2470,7 +2470,7 @@ impl Language {
         scan_chars!(stream, '(')
     }
 
-    // «OverrideKeyword» = "override";
+    // OVERRIDE_KEYWORD = "override";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -2486,7 +2486,7 @@ impl Language {
         )
     }
 
-    // «PayableKeyword» = "payable";
+    // PAYABLE_KEYWORD = "payable";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -2502,7 +2502,7 @@ impl Language {
         )
     }
 
-    // «Percent» = "%";
+    // PERCENT = "%";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -2510,7 +2510,7 @@ impl Language {
         scan_not_followed_by!(stream, scan_chars!(stream, '%'), scan_chars!(stream, '='))
     }
 
-    // «PercentEqual» = "%=";
+    // PERCENT_EQUAL = "%=";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -2518,7 +2518,7 @@ impl Language {
         scan_chars!(stream, '%', '=')
     }
 
-    // «Period» = ".";
+    // PERIOD = ".";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -2526,7 +2526,7 @@ impl Language {
         scan_chars!(stream, '.')
     }
 
-    // «Plus» = "+";
+    // PLUS = "+";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -2538,7 +2538,7 @@ impl Language {
         )
     }
 
-    // «PlusEqual» = "+=";
+    // PLUS_EQUAL = "+=";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -2546,7 +2546,7 @@ impl Language {
         scan_chars!(stream, '+', '=')
     }
 
-    // «PlusPlus» = "++";
+    // PLUS_PLUS = "++";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -2554,7 +2554,7 @@ impl Language {
         scan_chars!(stream, '+', '+')
     }
 
-    // «PossiblySeparatedPairsOfHexDigits» = «HexCharacter» «HexCharacter» ("_"? «HexCharacter» «HexCharacter»)*;
+    // POSSIBLY_SEPARATED_PAIRS_OF_HEX_DIGITS = «HEX_CHARACTER» «HEX_CHARACTER» ("_"? «HEX_CHARACTER» «HEX_CHARACTER»)*;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -2581,7 +2581,7 @@ impl Language {
         )
     }
 
-    // «PragmaKeyword» = "pragma";
+    // PRAGMA_KEYWORD = "pragma";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -2597,7 +2597,7 @@ impl Language {
         )
     }
 
-    // «PrivateKeyword» = "private";
+    // PRIVATE_KEYWORD = "private";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -2613,7 +2613,7 @@ impl Language {
         )
     }
 
-    // «PublicKeyword» = "public";
+    // PUBLIC_KEYWORD = "public";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -2629,7 +2629,7 @@ impl Language {
         )
     }
 
-    // «PureKeyword» = "pure";
+    // PURE_KEYWORD = "pure";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -2645,7 +2645,7 @@ impl Language {
         )
     }
 
-    // «QuestionMark» = "?";
+    // QUESTION_MARK = "?";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -2653,7 +2653,7 @@ impl Language {
         scan_chars!(stream, '?')
     }
 
-    // «RawIdentifier» = «IdentifierStart» «IdentifierPart»*;
+    // RAW_IDENTIFIER = IDENTIFIER_START IDENTIFIER_PART*;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -2674,7 +2674,7 @@ impl Language {
         )
     }
 
-    // «ReceiveKeyword» = "receive";
+    // RECEIVE_KEYWORD = "receive";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -2690,7 +2690,7 @@ impl Language {
         )
     }
 
-    // «ReturnKeyword» = "return";
+    // RETURN_KEYWORD = "return";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -2706,7 +2706,7 @@ impl Language {
         )
     }
 
-    // «ReturnsKeyword» = "returns";
+    // RETURNS_KEYWORD = "returns";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -2722,7 +2722,7 @@ impl Language {
         )
     }
 
-    // «RevertKeyword» = "revert";
+    // REVERT_KEYWORD = "revert";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -2738,7 +2738,7 @@ impl Language {
         )
     }
 
-    // «SecondsKeyword» = "seconds";
+    // SECONDS_KEYWORD = "seconds";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -2754,7 +2754,7 @@ impl Language {
         )
     }
 
-    // «Semicolon» = ";";
+    // SEMICOLON = ";";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -2762,7 +2762,7 @@ impl Language {
         scan_chars!(stream, ';')
     }
 
-    // «SignedFixedType» = "fixed" (("0"…"9")+ "x" ("0"…"9")+)?;
+    // SIGNED_FIXED_TYPE = "fixed" ("0"…"9"+ "x" "0"…"9"+)?;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -2794,7 +2794,7 @@ impl Language {
         )
     }
 
-    // «SignedIntegerType» = "int" ("8" | "16" | "24" | "32" | "40" | "48" | "56" | "64" | "72" | "80" | "88" | "96" | "104" | "112" | "120" | "128" | "136" | "144" | "152" | "160" | "168" | "176" | "184" | "192" | "200" | "208" | "216" | "224" | "232" | "240" | "248" | "256")?;
+    // SIGNED_INTEGER_TYPE = "int" ("8" | "16" | "24" | "32" | "40" | "48" | "56" | "64" | "72" | "80" | "88" | "96" | "104" | "112" | "120" | "128" | "136" | "144" | "152" | "160" | "168" | "176" | "184" | "192" | "200" | "208" | "216" | "224" | "232" | "240" | "248" | "256")?;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -2847,7 +2847,7 @@ impl Language {
         )
     }
 
-    // «SingleLineComment» = "//" (!("\r" | "\n"))*;
+    // SINGLE_LINE_COMMENT = "//" (!("\r" | "\n"))*;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -2858,7 +2858,7 @@ impl Language {
         )
     }
 
-    // «SingleQuotedAsciiStringLiteral» = "'" («EscapeSequence» | ((" "…"~") - ("'" | "\\")))* "'";
+    // SINGLE_QUOTED_ASCII_STRING_LITERAL = "'" (ESCAPE_SEQUENCE | (" "…"~" - ("'" | "\\")))* "'";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -2880,7 +2880,7 @@ impl Language {
     }
 
     // (* v0.7.0 *)
-    // «SingleQuotedUnicodeStringLiteral» = "unicode'" («EscapeSequence» | !("'" | "\\" | "\n" | "\r"))* "'";
+    // SINGLE_QUOTED_UNICODE_STRING_LITERAL = "unicode'" (ESCAPE_SEQUENCE | !("'" | "\\" | "\n" | "\r"))* "'";
 
     #[allow(dead_code, non_snake_case)]
     fn single_quoted_unicode_string_literal__0_7_0(&self, stream: &mut Stream) -> bool {
@@ -2916,7 +2916,7 @@ impl Language {
             .expect("Validation should have checked that references are valid between versions")
     }
 
-    // «Slash» = "/";
+    // SLASH = "/";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -2924,7 +2924,7 @@ impl Language {
         scan_not_followed_by!(stream, scan_chars!(stream, '/'), scan_chars!(stream, '='))
     }
 
-    // «SlashEqual» = "/=";
+    // SLASH_EQUAL = "/=";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -2932,7 +2932,7 @@ impl Language {
         scan_chars!(stream, '/', '=')
     }
 
-    // «SolidityKeyword» = "solidity";
+    // SOLIDITY_KEYWORD = "solidity";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -2948,7 +2948,7 @@ impl Language {
         )
     }
 
-    // «StorageKeyword» = "storage";
+    // STORAGE_KEYWORD = "storage";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -2964,7 +2964,7 @@ impl Language {
         )
     }
 
-    // «StringKeyword» = "string";
+    // STRING_KEYWORD = "string";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -2980,7 +2980,7 @@ impl Language {
         )
     }
 
-    // «StructKeyword» = "struct";
+    // STRUCT_KEYWORD = "struct";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -2996,7 +2996,7 @@ impl Language {
         )
     }
 
-    // «SwitchKeyword» = "switch";
+    // SWITCH_KEYWORD = "switch";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -3013,7 +3013,7 @@ impl Language {
     }
 
     // (* v0.4.11 *)
-    // «SzaboKeyword» = "szabo";
+    // SZABO_KEYWORD = "szabo";
 
     #[allow(dead_code, non_snake_case)]
     fn szabo_keyword__0_4_11(&self, stream: &mut Stream) -> bool {
@@ -3044,7 +3044,7 @@ impl Language {
     }
 
     // (* v0.4.11 *)
-    // «ThrowKeyword» = "throw";
+    // THROW_KEYWORD = "throw";
 
     #[allow(dead_code, non_snake_case)]
     fn throw_keyword__0_4_11(&self, stream: &mut Stream) -> bool {
@@ -3074,7 +3074,7 @@ impl Language {
             .expect("Validation should have checked that references are valid between versions")
     }
 
-    // «Tilde» = "~";
+    // TILDE = "~";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -3082,7 +3082,7 @@ impl Language {
         scan_chars!(stream, '~')
     }
 
-    // «TrueKeyword» = "true";
+    // TRUE_KEYWORD = "true";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -3099,7 +3099,7 @@ impl Language {
     }
 
     // (* v0.6.0 *)
-    // «TryKeyword» = "try";
+    // TRY_KEYWORD = "try";
 
     #[allow(dead_code, non_snake_case)]
     fn try_keyword__0_6_0(&self, stream: &mut Stream) -> bool {
@@ -3130,7 +3130,7 @@ impl Language {
     }
 
     // (* v0.5.3 *)
-    // «TypeKeyword» = "type";
+    // TYPE_KEYWORD = "type";
 
     #[allow(dead_code, non_snake_case)]
     fn type_keyword__0_5_3(&self, stream: &mut Stream) -> bool {
@@ -3161,7 +3161,7 @@ impl Language {
     }
 
     // (* v0.8.0 *)
-    // «UncheckedKeyword» = "unchecked";
+    // UNCHECKED_KEYWORD = "unchecked";
 
     #[allow(dead_code, non_snake_case)]
     fn unchecked_keyword__0_8_0(&self, stream: &mut Stream) -> bool {
@@ -3191,7 +3191,7 @@ impl Language {
             .expect("Validation should have checked that references are valid between versions")
     }
 
-    // «UnicodeEscape» = "u" «HexCharacter» «HexCharacter» «HexCharacter» «HexCharacter»;
+    // UNICODE_ESCAPE = "u" «HEX_CHARACTER» «HEX_CHARACTER» «HEX_CHARACTER» «HEX_CHARACTER»;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -3214,7 +3214,7 @@ impl Language {
     }
 
     // (* v0.7.0 *)
-    // «UnicodeStringLiteral» = «SingleQuotedUnicodeStringLiteral» | «DoubleQuotedUnicodeStringLiteral»;
+    // UNICODE_STRING_LITERAL = SINGLE_QUOTED_UNICODE_STRING_LITERAL | DOUBLE_QUOTED_UNICODE_STRING_LITERAL;
 
     #[allow(dead_code, non_snake_case)]
     fn unicode_string_literal__0_7_0(&self, stream: &mut Stream) -> bool {
@@ -3243,7 +3243,7 @@ impl Language {
             .expect("Validation should have checked that references are valid between versions")
     }
 
-    // «UnsignedFixedType» = "u" «SignedFixedType»;
+    // UNSIGNED_FIXED_TYPE = "u" SIGNED_FIXED_TYPE;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -3251,7 +3251,7 @@ impl Language {
         scan_sequence!(scan_chars!(stream, 'u'), self.signed_fixed_type(stream))
     }
 
-    // «UnsignedIntegerType» = "u" «SignedIntegerType»;
+    // UNSIGNED_INTEGER_TYPE = "u" SIGNED_INTEGER_TYPE;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -3259,7 +3259,7 @@ impl Language {
         scan_sequence!(scan_chars!(stream, 'u'), self.signed_integer_type(stream))
     }
 
-    // «UsingKeyword» = "using";
+    // USING_KEYWORD = "using";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -3276,7 +3276,7 @@ impl Language {
     }
 
     // (* v0.4.11 *)
-    // «VarKeyword» = "var";
+    // VAR_KEYWORD = "var";
 
     #[allow(dead_code, non_snake_case)]
     fn var_keyword__0_4_11(&self, stream: &mut Stream) -> bool {
@@ -3306,7 +3306,7 @@ impl Language {
             .expect("Validation should have checked that references are valid between versions")
     }
 
-    // «VersionPragmaValue» = (("0"…"9") | "x" | "X" | "*")+;
+    // VERSION_PRAGMA_VALUE = ("0"…"9" | "x" | "X" | "*")+;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -3320,7 +3320,7 @@ impl Language {
         )
     }
 
-    // «ViewKeyword» = "view";
+    // VIEW_KEYWORD = "view";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -3337,7 +3337,7 @@ impl Language {
     }
 
     // (* v0.6.0 *)
-    // «VirtualKeyword» = "virtual";
+    // VIRTUAL_KEYWORD = "virtual";
 
     #[allow(dead_code, non_snake_case)]
     fn virtual_keyword__0_6_0(&self, stream: &mut Stream) -> bool {
@@ -3367,7 +3367,7 @@ impl Language {
             .expect("Validation should have checked that references are valid between versions")
     }
 
-    // «WeeksKeyword» = "weeks";
+    // WEEKS_KEYWORD = "weeks";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -3383,7 +3383,7 @@ impl Language {
         )
     }
 
-    // «WeiKeyword» = "wei";
+    // WEI_KEYWORD = "wei";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -3399,7 +3399,7 @@ impl Language {
         )
     }
 
-    // «WhileKeyword» = "while";
+    // WHILE_KEYWORD = "while";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -3415,7 +3415,7 @@ impl Language {
         )
     }
 
-    // «Whitespace» = (" " | "\t")+;
+    // WHITESPACE = (" " | "\t")+;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -3424,7 +3424,7 @@ impl Language {
     }
 
     // (* v0.4.11 *)
-    // «YearsKeyword» = "years";
+    // YEARS_KEYWORD = "years";
 
     #[allow(dead_code, non_snake_case)]
     fn years_keyword__0_4_11(&self, stream: &mut Stream) -> bool {
@@ -3454,7 +3454,7 @@ impl Language {
             .expect("Validation should have checked that references are valid between versions")
     }
 
-    // «YulDecimalLiteral» = "0" | (("1"…"9") ("0"…"9")*);
+    // YUL_DECIMAL_LITERAL = "0" | ("1"…"9" "0"…"9"*);
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -3469,7 +3469,7 @@ impl Language {
         )
     }
 
-    // «YulHexLiteral» = "0x" «HexCharacter»+;
+    // YUL_HEX_LITERAL = "0x" «HEX_CHARACTER»+;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -3485,7 +3485,7 @@ impl Language {
         )
     }
 
-    // «YulIdentifier» = «RawIdentifier» - («YulKeyword» | «YulReservedKeyword»);
+    // YUL_IDENTIFIER = RAW_IDENTIFIER - (YUL_KEYWORD | YUL_RESERVED_KEYWORD);
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -3502,17 +3502,17 @@ impl Language {
     }
 
     // (* v0.4.11 *)
-    // «YulKeyword» = «BreakKeyword»
-    //              | «CaseKeyword»
-    //              | «ContinueKeyword»
-    //              | «DefaultKeyword»
-    //              | «FalseKeyword»
-    //              | «ForKeyword»
-    //              | «FunctionKeyword»
-    //              | «IfKeyword»
-    //              | «LetKeyword»
-    //              | «SwitchKeyword»
-    //              | «TrueKeyword»;
+    // YUL_KEYWORD = BREAK_KEYWORD
+    //             | CASE_KEYWORD
+    //             | CONTINUE_KEYWORD
+    //             | DEFAULT_KEYWORD
+    //             | FALSE_KEYWORD
+    //             | FOR_KEYWORD
+    //             | FUNCTION_KEYWORD
+    //             | IF_KEYWORD
+    //             | LET_KEYWORD
+    //             | SWITCH_KEYWORD
+    //             | TRUE_KEYWORD;
 
     #[allow(dead_code, non_snake_case)]
     fn yul_keyword__0_4_11(&self, stream: &mut Stream) -> bool {
@@ -3533,18 +3533,18 @@ impl Language {
     }
 
     // (* v0.6.0 *)
-    // «YulKeyword» = «BreakKeyword»
-    //              | «CaseKeyword»
-    //              | «ContinueKeyword»
-    //              | «DefaultKeyword»
-    //              | «FalseKeyword»
-    //              | «ForKeyword»
-    //              | «FunctionKeyword»
-    //              | «IfKeyword»
-    //              | «LeaveKeyword»
-    //              | «LetKeyword»
-    //              | «SwitchKeyword»
-    //              | «TrueKeyword»;
+    // YUL_KEYWORD = BREAK_KEYWORD
+    //             | CASE_KEYWORD
+    //             | CONTINUE_KEYWORD
+    //             | DEFAULT_KEYWORD
+    //             | FALSE_KEYWORD
+    //             | FOR_KEYWORD
+    //             | FUNCTION_KEYWORD
+    //             | IF_KEYWORD
+    //             | LEAVE_KEYWORD
+    //             | LET_KEYWORD
+    //             | SWITCH_KEYWORD
+    //             | TRUE_KEYWORD;
 
     #[allow(dead_code, non_snake_case)]
     fn yul_keyword__0_6_0(&self, stream: &mut Stream) -> bool {
@@ -3573,7 +3573,7 @@ impl Language {
         }
     }
 
-    // «YulReservedKeyword» = "hex";
+    // YUL_RESERVED_KEYWORD = "hex";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]

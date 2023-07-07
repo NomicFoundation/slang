@@ -1,5 +1,5 @@
 <!-- This file is generated automatically by infrastructure scripts. Please don't edit by hand. -->
 
 ```{ .ebnf .slang-ebnf #OverrideSpecifier }
-OverrideSpecifier = «OverrideKeyword» («OpenParen» IdentifierPath («Comma» IdentifierPath)* «CloseParen»)?;
+OverrideSpecifier = OVERRIDE_KEYWORD (OPEN_PAREN IdentifierPath (COMMA IdentifierPath)* CLOSE_PAREN)?;
 ```

@@ -1,5 +1,5 @@
 <!-- This file is generated automatically by infrastructure scripts. Please don't edit by hand. -->
 
-```{ .ebnf .slang-ebnf #BangEqual }
-«BangEqual» = "!=";
+```{ .ebnf .slang-ebnf #BANG_EQUAL }
+BANG_EQUAL = "!=";
 ```

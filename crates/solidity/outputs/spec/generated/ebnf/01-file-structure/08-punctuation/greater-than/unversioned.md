@@ -1,5 +1,5 @@
 <!-- This file is generated automatically by infrastructure scripts. Please don't edit by hand. -->
 
-```{ .ebnf .slang-ebnf #GreaterThan }
-«GreaterThan» = ">";
+```{ .ebnf .slang-ebnf #GREATER_THAN }
+GREATER_THAN = ">";
 ```

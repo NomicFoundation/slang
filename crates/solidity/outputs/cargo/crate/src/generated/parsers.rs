@@ -54,7 +54,7 @@ impl Language {
         );
     }
 
-    // ABICoderPragma = «AbicoderKeyword» «Identifier»;
+    // ABICoderPragma = ABICODER_KEYWORD IDENTIFIER;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -81,7 +81,7 @@ impl Language {
         .with_kind(RuleKind::ABICoderPragma)
     }
 
-    // AddSubOperator = «Plus» | «Minus»;
+    // AddSubOperator = PLUS | MINUS;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -110,7 +110,7 @@ impl Language {
         .with_kind(RuleKind::AddSubOperator)
     }
 
-    // AddressType = «AddressKeyword» «PayableKeyword»?;
+    // AddressType = ADDRESS_KEYWORD PAYABLE_KEYWORD?;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -139,7 +139,7 @@ impl Language {
         .with_kind(RuleKind::AddressType)
     }
 
-    // AndOperator = «AmpersandAmpersand»;
+    // AndOperator = AMPERSAND_AMPERSAND;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -152,7 +152,7 @@ impl Language {
         .with_kind(RuleKind::AndOperator)
     }
 
-    // ArgumentList = «OpenParen» (PositionalArgumentList | NamedArgumentList)? «CloseParen»;
+    // ArgumentList = OPEN_PAREN (PositionalArgumentList | NamedArgumentList)? CLOSE_PAREN;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -196,7 +196,7 @@ impl Language {
         .with_kind(RuleKind::ArgumentList)
     }
 
-    // ArrayLiteral = «OpenBracket» Expression («Comma» Expression)* «CloseBracket»;
+    // ArrayLiteral = OPEN_BRACKET Expression (COMMA Expression)* CLOSE_BRACKET;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -257,7 +257,7 @@ impl Language {
         .with_kind(RuleKind::ArrayLiteral)
     }
 
-    // AssemblyFlags = «OpenParen» «DoubleQuotedAsciiStringLiteral» («Comma» «DoubleQuotedAsciiStringLiteral»)* «CloseParen»;
+    // AssemblyFlags = OPEN_PAREN DOUBLE_QUOTED_ASCII_STRING_LITERAL (COMMA DOUBLE_QUOTED_ASCII_STRING_LITERAL)* CLOSE_PAREN;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -329,7 +329,7 @@ impl Language {
         .with_kind(RuleKind::AssemblyFlags)
     }
 
-    // AssemblyStatement = «AssemblyKeyword» «Evmasm»? AssemblyFlags? YulBlock;
+    // AssemblyStatement = ASSEMBLY_KEYWORD EVMASM? AssemblyFlags? YulBlock;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -362,18 +362,18 @@ impl Language {
         .with_kind(RuleKind::AssemblyStatement)
     }
 
-    // AssignmentOperator = «Equal»
-    //                    | «BarEqual»
-    //                    | «CaretEqual»
-    //                    | «AmpersandEqual»
-    //                    | «LessThanLessThanEqual»
-    //                    | «GreaterThanGreaterThanEqual»
-    //                    | «GreaterThanGreaterThanGreaterThanEqual»
-    //                    | «PlusEqual»
-    //                    | «MinusEqual»
-    //                    | «AsteriskEqual»
-    //                    | «SlashEqual»
-    //                    | «PercentEqual»;
+    // AssignmentOperator = EQUAL
+    //                    | BAR_EQUAL
+    //                    | CARET_EQUAL
+    //                    | AMPERSAND_EQUAL
+    //                    | LESS_THAN_LESS_THAN_EQUAL
+    //                    | GREATER_THAN_GREATER_THAN_EQUAL
+    //                    | GREATER_THAN_GREATER_THAN_GREATER_THAN_EQUAL
+    //                    | PLUS_EQUAL
+    //                    | MINUS_EQUAL
+    //                    | ASTERISK_EQUAL
+    //                    | SLASH_EQUAL
+    //                    | PERCENT_EQUAL;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -482,7 +482,7 @@ impl Language {
         .with_kind(RuleKind::AssignmentOperator)
     }
 
-    // AsteriskImport = «Asterisk» ImportAlias «FromKeyword» ImportPath;
+    // AsteriskImport = ASTERISK ImportAlias FROM_KEYWORD ImportPath;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -515,7 +515,7 @@ impl Language {
         .with_kind(RuleKind::AsteriskImport)
     }
 
-    // BitAndOperator = «Ampersand»;
+    // BitAndOperator = AMPERSAND;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -524,7 +524,7 @@ impl Language {
             .with_kind(RuleKind::BitAndOperator)
     }
 
-    // BitOrOperator = «Bar»;
+    // BitOrOperator = BAR;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -533,7 +533,7 @@ impl Language {
             .with_kind(RuleKind::BitOrOperator)
     }
 
-    // BitXOrOperator = «Caret»;
+    // BitXOrOperator = CARET;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -543,7 +543,7 @@ impl Language {
     }
 
     // (* v0.4.11 *)
-    // Block = «OpenBrace» Statement* «CloseBrace»;
+    // Block = OPEN_BRACE Statement* CLOSE_BRACE;
 
     #[allow(dead_code, non_snake_case)]
     fn block__0_4_11(&self, stream: &mut Stream) -> ParserResult {
@@ -577,7 +577,7 @@ impl Language {
     }
 
     // (* v0.8.0 *)
-    // Block = «OpenBrace» (Statement | UncheckedBlock)* «CloseBrace»;
+    // Block = OPEN_BRACE (Statement | UncheckedBlock)* CLOSE_BRACE;
 
     #[allow(dead_code, non_snake_case)]
     fn block__0_8_0(&self, stream: &mut Stream) -> ParserResult {
@@ -630,7 +630,7 @@ impl Language {
         }
     }
 
-    // BooleanLiteral = «TrueKeyword» | «FalseKeyword»;
+    // BooleanLiteral = TRUE_KEYWORD | FALSE_KEYWORD;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -659,7 +659,7 @@ impl Language {
         .with_kind(RuleKind::BooleanLiteral)
     }
 
-    // BreakStatement = «BreakKeyword» «Semicolon»;
+    // BreakStatement = BREAK_KEYWORD SEMICOLON;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -687,7 +687,7 @@ impl Language {
     }
 
     // (* v0.6.0 *)
-    // CatchClause = «CatchKeyword» («Identifier»? ParameterList)? Block;
+    // CatchClause = CATCH_KEYWORD (IDENTIFIER? ParameterList)? Block;
 
     #[allow(dead_code, non_snake_case)]
     fn catch_clause__0_6_0(&self, stream: &mut Stream) -> ParserResult {
@@ -746,7 +746,7 @@ impl Language {
             .expect("Validation should have checked that references are valid between versions")
     }
 
-    // ConditionalOperator = «QuestionMark» Expression «Colon» Expression;
+    // ConditionalOperator = QUESTION_MARK Expression COLON Expression;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -779,7 +779,7 @@ impl Language {
         .with_kind(RuleKind::ConditionalOperator)
     }
 
-    // ConstantDefinition = TypeName «ConstantKeyword» «Identifier» «Equal» Expression «Semicolon»;
+    // ConstantDefinition = TypeName CONSTANT_KEYWORD IDENTIFIER EQUAL Expression SEMICOLON;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -836,7 +836,10 @@ impl Language {
     }
 
     // (* v0.4.22 *)
-    // ConstructorAttribute = ModifierInvocation | «InternalKeyword» | «PayableKeyword» | «PublicKeyword»;
+    // ConstructorAttribute = ModifierInvocation
+    //                      | INTERNAL_KEYWORD
+    //                      | PAYABLE_KEYWORD
+    //                      | PUBLIC_KEYWORD;
 
     #[allow(dead_code, non_snake_case)]
     fn constructor_attribute__0_4_22(&self, stream: &mut Stream) -> ParserResult {
@@ -895,7 +898,7 @@ impl Language {
     }
 
     // (* v0.4.22 *)
-    // ConstructorDefinition = «ConstructorKeyword» ParameterList ConstructorAttribute* Block;
+    // ConstructorDefinition = CONSTRUCTOR_KEYWORD ParameterList ConstructorAttribute* Block;
 
     #[allow(dead_code, non_snake_case)]
     fn constructor_definition__0_4_22(&self, stream: &mut Stream) -> ParserResult {
@@ -948,7 +951,7 @@ impl Language {
             .expect("Validation should have checked that references are valid between versions")
     }
 
-    // ContinueStatement = «ContinueKeyword» «Semicolon»;
+    // ContinueStatement = CONTINUE_KEYWORD SEMICOLON;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -976,15 +979,15 @@ impl Language {
     }
 
     // (* v0.4.11 *)
-    // ContractBodyElement = UsingDirective
-    //                     | FunctionDefinition
-    //                     | UnnamedFunctionDefinition
-    //                     | ModifierDefinition
-    //                     | StructDefinition
-    //                     | EnumDefinition
-    //                     | EventDefinition
-    //                     | ErrorDefinition
-    //                     | StateVariableDeclaration;
+    // «ContractBodyElement» = UsingDirective
+    //                       | FunctionDefinition
+    //                       | UnnamedFunctionDefinition
+    //                       | ModifierDefinition
+    //                       | StructDefinition
+    //                       | EnumDefinition
+    //                       | EventDefinition
+    //                       | ErrorDefinition
+    //                       | StateVariableDeclaration;
 
     #[allow(dead_code, non_snake_case)]
     fn contract_body_element__0_4_11(&self, stream: &mut Stream) -> ParserResult {
@@ -1034,16 +1037,16 @@ impl Language {
     }
 
     // (* v0.4.22 *)
-    // ContractBodyElement = UsingDirective
-    //                     | ConstructorDefinition
-    //                     | FunctionDefinition
-    //                     | UnnamedFunctionDefinition
-    //                     | ModifierDefinition
-    //                     | StructDefinition
-    //                     | EnumDefinition
-    //                     | EventDefinition
-    //                     | ErrorDefinition
-    //                     | StateVariableDeclaration;
+    // «ContractBodyElement» = UsingDirective
+    //                       | ConstructorDefinition
+    //                       | FunctionDefinition
+    //                       | UnnamedFunctionDefinition
+    //                       | ModifierDefinition
+    //                       | StructDefinition
+    //                       | EnumDefinition
+    //                       | EventDefinition
+    //                       | ErrorDefinition
+    //                       | StateVariableDeclaration;
 
     #[allow(dead_code, non_snake_case)]
     fn contract_body_element__0_4_22(&self, stream: &mut Stream) -> ParserResult {
@@ -1097,17 +1100,17 @@ impl Language {
     }
 
     // (* v0.6.0 *)
-    // ContractBodyElement = UsingDirective
-    //                     | ConstructorDefinition
-    //                     | FunctionDefinition
-    //                     | FallbackFunctionDefinition
-    //                     | ReceiveFunctionDefinition
-    //                     | ModifierDefinition
-    //                     | StructDefinition
-    //                     | EnumDefinition
-    //                     | EventDefinition
-    //                     | ErrorDefinition
-    //                     | StateVariableDeclaration;
+    // «ContractBodyElement» = UsingDirective
+    //                       | ConstructorDefinition
+    //                       | FunctionDefinition
+    //                       | FallbackFunctionDefinition
+    //                       | ReceiveFunctionDefinition
+    //                       | ModifierDefinition
+    //                       | StructDefinition
+    //                       | EnumDefinition
+    //                       | EventDefinition
+    //                       | ErrorDefinition
+    //                       | StateVariableDeclaration;
 
     #[allow(dead_code, non_snake_case)]
     fn contract_body_element__0_6_0(&self, stream: &mut Stream) -> ParserResult {
@@ -1167,18 +1170,18 @@ impl Language {
     }
 
     // (* v0.8.8 *)
-    // ContractBodyElement = UsingDirective
-    //                     | ConstructorDefinition
-    //                     | FunctionDefinition
-    //                     | FallbackFunctionDefinition
-    //                     | ReceiveFunctionDefinition
-    //                     | ModifierDefinition
-    //                     | StructDefinition
-    //                     | EnumDefinition
-    //                     | UserDefinedValueTypeDefinition
-    //                     | EventDefinition
-    //                     | ErrorDefinition
-    //                     | StateVariableDeclaration;
+    // «ContractBodyElement» = UsingDirective
+    //                       | ConstructorDefinition
+    //                       | FunctionDefinition
+    //                       | FallbackFunctionDefinition
+    //                       | ReceiveFunctionDefinition
+    //                       | ModifierDefinition
+    //                       | StructDefinition
+    //                       | EnumDefinition
+    //                       | UserDefinedValueTypeDefinition
+    //                       | EventDefinition
+    //                       | ErrorDefinition
+    //                       | StateVariableDeclaration;
 
     #[allow(dead_code, non_snake_case)]
     fn contract_body_element__0_8_8(&self, stream: &mut Stream) -> ParserResult {
@@ -1256,7 +1259,8 @@ impl Language {
     }
 
     // (* v0.4.11 *)
-    // ContractDefinition = «ContractKeyword» «Identifier» InheritanceSpecifierList? «OpenBrace» ContractBodyElement* «CloseBrace»;
+    // ContractDefinition = CONTRACT_KEYWORD IDENTIFIER InheritanceSpecifierList? OPEN_BRACE ContractBodyElements CLOSE_BRACE;
+    // ContractBodyElements = «ContractBodyElement»*;
 
     #[allow(dead_code, non_snake_case)]
     fn contract_definition__0_4_11(&self, stream: &mut Stream) -> ParserResult {
@@ -1321,7 +1325,8 @@ impl Language {
     }
 
     // (* v0.6.0 *)
-    // ContractDefinition = «AbstractKeyword»? «ContractKeyword» «Identifier» InheritanceSpecifierList? «OpenBrace» ContractBodyElement* «CloseBrace»;
+    // ContractDefinition = ABSTRACT_KEYWORD? CONTRACT_KEYWORD IDENTIFIER InheritanceSpecifierList? OPEN_BRACE ContractBodyElements CLOSE_BRACE;
+    // ContractBodyElements = «ContractBodyElement»*;
 
     #[allow(dead_code, non_snake_case)]
     fn contract_definition__0_6_0(&self, stream: &mut Stream) -> ParserResult {
@@ -1403,7 +1408,7 @@ impl Language {
     }
 
     // (* v0.4.11 *)
-    // DataLocation = «MemoryKeyword» | «StorageKeyword»;
+    // DataLocation = MEMORY_KEYWORD | STORAGE_KEYWORD;
 
     #[allow(dead_code, non_snake_case)]
     fn data_location__0_4_11(&self, stream: &mut Stream) -> ParserResult {
@@ -1432,7 +1437,9 @@ impl Language {
     }
 
     // (* v0.5.0 *)
-    // DataLocation = «MemoryKeyword» | «StorageKeyword» | «CalldataKeyword»;
+    // DataLocation = MEMORY_KEYWORD
+    //              | STORAGE_KEYWORD
+    //              | CALLDATA_KEYWORD;
 
     #[allow(dead_code, non_snake_case)]
     fn data_location__0_5_0(&self, stream: &mut Stream) -> ParserResult {
@@ -1594,7 +1601,7 @@ impl Language {
         }
     }
 
-    // DeleteStatement = «DeleteKeyword» Expression «Semicolon»;
+    // DeleteStatement = DELETE_KEYWORD Expression SEMICOLON;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -1633,7 +1640,9 @@ impl Language {
         .with_kind(RuleKind::DeleteStatement)
     }
 
-    // Directive = PragmaDirective | ImportDirective | UsingDirective;
+    // Directive = PragmaDirective
+    //           | ImportDirective
+    //           | UsingDirective;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -1658,7 +1667,7 @@ impl Language {
         .with_kind(RuleKind::Directive)
     }
 
-    // DoWhileStatement = «DoKeyword» Statement «WhileKeyword» «OpenParen» Expression «CloseParen» «Semicolon»;
+    // DoWhileStatement = DO_KEYWORD Statement WHILE_KEYWORD OPEN_PAREN Expression CLOSE_PAREN SEMICOLON;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -1737,16 +1746,16 @@ impl Language {
     }
 
     // (* v0.4.11 *)
-    // ElementaryType = «BoolKeyword»
-    //                | «StringKeyword»
+    // ElementaryType = BOOL_KEYWORD
+    //                | STRING_KEYWORD
     //                | AddressType
     //                | PayableType
-    //                | «ByteType»
-    //                | «FixedBytesType»
-    //                | «SignedIntegerType»
-    //                | «UnsignedIntegerType»
-    //                | «SignedFixedType»
-    //                | «UnsignedFixedType»;
+    //                | BYTE_TYPE
+    //                | FIXED_BYTES_TYPE
+    //                | SIGNED_INTEGER_TYPE
+    //                | UNSIGNED_INTEGER_TYPE
+    //                | SIGNED_FIXED_TYPE
+    //                | UNSIGNED_FIXED_TYPE;
 
     #[allow(dead_code, non_snake_case)]
     fn elementary_type__0_4_11(&self, stream: &mut Stream) -> ParserResult {
@@ -1831,15 +1840,15 @@ impl Language {
     }
 
     // (* v0.8.0 *)
-    // ElementaryType = «BoolKeyword»
-    //                | «StringKeyword»
+    // ElementaryType = BOOL_KEYWORD
+    //                | STRING_KEYWORD
     //                | AddressType
     //                | PayableType
-    //                | «FixedBytesType»
-    //                | «SignedIntegerType»
-    //                | «UnsignedIntegerType»
-    //                | «SignedFixedType»
-    //                | «UnsignedFixedType»;
+    //                | FIXED_BYTES_TYPE
+    //                | SIGNED_INTEGER_TYPE
+    //                | UNSIGNED_INTEGER_TYPE
+    //                | SIGNED_FIXED_TYPE
+    //                | UNSIGNED_FIXED_TYPE;
 
     #[allow(dead_code, non_snake_case)]
     fn elementary_type__0_8_0(&self, stream: &mut Stream) -> ParserResult {
@@ -1924,7 +1933,7 @@ impl Language {
     }
 
     // (* v0.4.21 *)
-    // EmitStatement = «EmitKeyword» IdentifierPath ArgumentList «Semicolon»;
+    // EmitStatement = EMIT_KEYWORD IdentifierPath ArgumentList SEMICOLON;
 
     #[allow(dead_code, non_snake_case)]
     fn emit_statement__0_4_21(&self, stream: &mut Stream) -> ParserResult {
@@ -1984,7 +1993,7 @@ impl Language {
             .expect("Validation should have checked that references are valid between versions")
     }
 
-    // EndOfFileTrivia = («Whitespace» | «EndOfLine» | «MultilineComment» | «SingleLineComment»)+;
+    // EndOfFileTrivia = (WHITESPACE | END_OF_LINE | MULTILINE_COMMENT | SINGLE_LINE_COMMENT)+;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -2033,7 +2042,7 @@ impl Language {
         .with_kind(RuleKind::EndOfFileTrivia)
     }
 
-    // EnumDefinition = «EnumKeyword» «Identifier» «OpenBrace» («Identifier» («Comma» «Identifier»)*)? «CloseBrace»;
+    // EnumDefinition = ENUM_KEYWORD IDENTIFIER OPEN_BRACE (IDENTIFIER (COMMA IDENTIFIER)*)? CLOSE_BRACE;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -2129,7 +2138,7 @@ impl Language {
         .with_kind(RuleKind::EnumDefinition)
     }
 
-    // EqualityComparisonOperator = «EqualEqual» | «BangEqual»;
+    // EqualityComparisonOperator = EQUAL_EQUAL | BANG_EQUAL;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -2158,7 +2167,7 @@ impl Language {
         .with_kind(RuleKind::EqualityComparisonOperator)
     }
 
-    // ErrorDefinition = «ErrorKeyword» «Identifier» «OpenParen» (ErrorParameter («Comma» ErrorParameter)*)? «CloseParen» «Semicolon»;
+    // ErrorDefinition = ERROR_KEYWORD IDENTIFIER OPEN_PAREN (ErrorParameter (COMMA ErrorParameter)*)? CLOSE_PAREN SEMICOLON;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -2276,7 +2285,7 @@ impl Language {
         .with_kind(RuleKind::ErrorDefinition)
     }
 
-    // ErrorParameter = TypeName «Identifier»?;
+    // ErrorParameter = TypeName IDENTIFIER?;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -2297,7 +2306,7 @@ impl Language {
         .with_kind(RuleKind::ErrorParameter)
     }
 
-    // EventDefinition = «EventKeyword» «Identifier» «OpenParen» (EventParameter («Comma» EventParameter)*)? «CloseParen» «AnonymousKeyword»? «Semicolon»;
+    // EventDefinition = EVENT_KEYWORD IDENTIFIER OPEN_PAREN (EventParameter (COMMA EventParameter)*)? CLOSE_PAREN ANONYMOUS_KEYWORD? SEMICOLON;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -2424,7 +2433,7 @@ impl Language {
         .with_kind(RuleKind::EventDefinition)
     }
 
-    // EventParameter = TypeName «IndexedKeyword»? «Identifier»?;
+    // EventParameter = TypeName INDEXED_KEYWORD? IDENTIFIER?;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -2454,7 +2463,7 @@ impl Language {
         .with_kind(RuleKind::EventParameter)
     }
 
-    // ExperimentalPragma = «ExperimentalKeyword» «Identifier»;
+    // ExperimentalPragma = EXPERIMENTAL_KEYWORD IDENTIFIER;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -2481,7 +2490,7 @@ impl Language {
         .with_kind(RuleKind::ExperimentalPragma)
     }
 
-    // ExponentiationOperator = «AsteriskAsterisk»;
+    // ExponentiationOperator = ASTERISK_ASTERISK;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -3182,7 +3191,7 @@ impl Language {
         }
     }
 
-    // ExpressionStatement = Expression «Semicolon»;
+    // ExpressionStatement = Expression SEMICOLON;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -3208,11 +3217,11 @@ impl Language {
     // (* v0.6.0 *)
     // FallbackFunctionAttribute = ModifierInvocation
     //                           | OverrideSpecifier
-    //                           | «ExternalKeyword»
-    //                           | «PayableKeyword»
-    //                           | «PureKeyword»
-    //                           | «ViewKeyword»
-    //                           | «VirtualKeyword»;
+    //                           | EXTERNAL_KEYWORD
+    //                           | PAYABLE_KEYWORD
+    //                           | PURE_KEYWORD
+    //                           | VIEW_KEYWORD
+    //                           | VIRTUAL_KEYWORD;
 
     #[allow(dead_code, non_snake_case)]
     fn fallback_function_attribute__0_6_0(&self, stream: &mut Stream) -> ParserResult {
@@ -3291,7 +3300,7 @@ impl Language {
     }
 
     // (* v0.6.0 *)
-    // FallbackFunctionDefinition = «FallbackKeyword» ParameterList FallbackFunctionAttribute* («ReturnsKeyword» ParameterList)? («Semicolon» | Block);
+    // FallbackFunctionDefinition = FALLBACK_KEYWORD ParameterList FallbackFunctionAttribute* (RETURNS_KEYWORD ParameterList)? (SEMICOLON | Block);
 
     #[allow(dead_code, non_snake_case)]
     fn fallback_function_definition__0_6_0(&self, stream: &mut Stream) -> ParserResult {
@@ -3379,7 +3388,7 @@ impl Language {
             .expect("Validation should have checked that references are valid between versions")
     }
 
-    // ForStatement = «ForKeyword» «OpenParen» (SimpleStatement | «Semicolon») (ExpressionStatement | «Semicolon») Expression? «CloseParen» Statement;
+    // ForStatement = FOR_KEYWORD OPEN_PAREN (SimpleStatement | SEMICOLON) (ExpressionStatement | SEMICOLON) Expression? CLOSE_PAREN Statement;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -3484,16 +3493,16 @@ impl Language {
     }
 
     // (* v0.4.11 *)
-    // FunctionAttribute = «ConstantKeyword»
-    //                   | «ExternalKeyword»
-    //                   | «InternalKeyword»
+    // FunctionAttribute = CONSTANT_KEYWORD
+    //                   | EXTERNAL_KEYWORD
+    //                   | INTERNAL_KEYWORD
     //                   | ModifierInvocation
     //                   | OverrideSpecifier
-    //                   | «PayableKeyword»
-    //                   | «PrivateKeyword»
-    //                   | «PublicKeyword»
-    //                   | «PureKeyword»
-    //                   | «ViewKeyword»;
+    //                   | PAYABLE_KEYWORD
+    //                   | PRIVATE_KEYWORD
+    //                   | PUBLIC_KEYWORD
+    //                   | PURE_KEYWORD
+    //                   | VIEW_KEYWORD;
 
     #[allow(dead_code, non_snake_case)]
     fn function_attribute__0_4_11(&self, stream: &mut Stream) -> ParserResult {
@@ -3578,15 +3587,15 @@ impl Language {
     }
 
     // (* v0.5.0 *)
-    // FunctionAttribute = «ExternalKeyword»
-    //                   | «InternalKeyword»
+    // FunctionAttribute = EXTERNAL_KEYWORD
+    //                   | INTERNAL_KEYWORD
     //                   | ModifierInvocation
     //                   | OverrideSpecifier
-    //                   | «PayableKeyword»
-    //                   | «PrivateKeyword»
-    //                   | «PublicKeyword»
-    //                   | «PureKeyword»
-    //                   | «ViewKeyword»;
+    //                   | PAYABLE_KEYWORD
+    //                   | PRIVATE_KEYWORD
+    //                   | PUBLIC_KEYWORD
+    //                   | PURE_KEYWORD
+    //                   | VIEW_KEYWORD;
 
     #[allow(dead_code, non_snake_case)]
     fn function_attribute__0_5_0(&self, stream: &mut Stream) -> ParserResult {
@@ -3663,16 +3672,16 @@ impl Language {
     }
 
     // (* v0.6.0 *)
-    // FunctionAttribute = «ExternalKeyword»
-    //                   | «InternalKeyword»
+    // FunctionAttribute = EXTERNAL_KEYWORD
+    //                   | INTERNAL_KEYWORD
     //                   | ModifierInvocation
     //                   | OverrideSpecifier
-    //                   | «PayableKeyword»
-    //                   | «PrivateKeyword»
-    //                   | «PublicKeyword»
-    //                   | «PureKeyword»
-    //                   | «ViewKeyword»
-    //                   | «VirtualKeyword»;
+    //                   | PAYABLE_KEYWORD
+    //                   | PRIVATE_KEYWORD
+    //                   | PUBLIC_KEYWORD
+    //                   | PURE_KEYWORD
+    //                   | VIEW_KEYWORD
+    //                   | VIRTUAL_KEYWORD;
 
     #[allow(dead_code, non_snake_case)]
     fn function_attribute__0_6_0(&self, stream: &mut Stream) -> ParserResult {
@@ -3833,7 +3842,7 @@ impl Language {
     }
 
     // (* v0.6.2 *)
-    // FunctionCallOptions = «OpenBrace» (NamedArgument («Comma» NamedArgument)*)? «CloseBrace»;
+    // FunctionCallOptions = OPEN_BRACE (NamedArgument (COMMA NamedArgument)*)? CLOSE_BRACE;
 
     #[allow(dead_code, non_snake_case)]
     fn function_call_options__0_6_2(&self, stream: &mut Stream) -> ParserResult {
@@ -3912,7 +3921,7 @@ impl Language {
             .expect("Validation should have checked that references are valid between versions")
     }
 
-    // FunctionDefinition = «FunctionKeyword» («Identifier» | «FallbackKeyword» | «ReceiveKeyword») ParameterList FunctionAttribute* («ReturnsKeyword» ParameterList)? («Semicolon» | Block);
+    // FunctionDefinition = FUNCTION_KEYWORD (IDENTIFIER | FALLBACK_KEYWORD | RECEIVE_KEYWORD) ParameterList FunctionAttribute* (RETURNS_KEYWORD ParameterList)? (SEMICOLON | Block);
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -4014,7 +4023,7 @@ impl Language {
         .with_kind(RuleKind::FunctionDefinition)
     }
 
-    // FunctionType = «FunctionKeyword» ParameterList («InternalKeyword» | «ExternalKeyword» | «PrivateKeyword» | «PublicKeyword» | «PureKeyword» | «ViewKeyword» | «PayableKeyword»)* («ReturnsKeyword» ParameterList)?;
+    // FunctionType = FUNCTION_KEYWORD ParameterList (INTERNAL_KEYWORD | EXTERNAL_KEYWORD | PRIVATE_KEYWORD | PUBLIC_KEYWORD | PURE_KEYWORD | VIEW_KEYWORD | PAYABLE_KEYWORD)* (RETURNS_KEYWORD ParameterList)?;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -4135,7 +4144,7 @@ impl Language {
         .with_kind(RuleKind::FunctionType)
     }
 
-    // IdentifierPath = «Identifier» («Period» «Identifier»)*;
+    // IdentifierPath = IDENTIFIER (PERIOD IDENTIFIER)*;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -4184,7 +4193,7 @@ impl Language {
         .with_kind(RuleKind::IdentifierPath)
     }
 
-    // IfStatement = «IfKeyword» «OpenParen» Expression «CloseParen» Statement («ElseKeyword» Statement)?;
+    // IfStatement = IF_KEYWORD OPEN_PAREN Expression CLOSE_PAREN Statement (ELSE_KEYWORD Statement)?;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -4252,7 +4261,7 @@ impl Language {
         .with_kind(RuleKind::IfStatement)
     }
 
-    // ImportAlias = «AsKeyword» «Identifier»;
+    // ImportAlias = AS_KEYWORD IDENTIFIER;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -4279,7 +4288,7 @@ impl Language {
         .with_kind(RuleKind::ImportAlias)
     }
 
-    // ImportDirective = «ImportKeyword» (SimpleImport | AsteriskImport | SelectiveImport) «Semicolon»;
+    // ImportDirective = IMPORT_KEYWORD (SimpleImport | AsteriskImport | SelectiveImport) SEMICOLON;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -4339,7 +4348,7 @@ impl Language {
         .with_kind(RuleKind::ImportDirective)
     }
 
-    // ImportPath = «AsciiStringLiteral»;
+    // ImportPath = ASCII_STRING_LITERAL;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -4352,7 +4361,7 @@ impl Language {
         .with_kind(RuleKind::ImportPath)
     }
 
-    // IndexAccessOperator = «OpenBracket» ((Expression («Colon» Expression?)?) | («Colon» Expression?)) «CloseBracket»;
+    // IndexAccessOperator = OPEN_BRACKET ((Expression (COLON Expression?)?) | (COLON Expression?)) CLOSE_BRACKET;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -4466,7 +4475,7 @@ impl Language {
         .with_kind(RuleKind::InheritanceSpecifier)
     }
 
-    // InheritanceSpecifierList = «IsKeyword» InheritanceSpecifier («Comma» InheritanceSpecifier)*;
+    // InheritanceSpecifierList = IS_KEYWORD InheritanceSpecifier (COMMA InheritanceSpecifier)*;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -4523,7 +4532,7 @@ impl Language {
         .with_kind(RuleKind::InheritanceSpecifierList)
     }
 
-    // InterfaceDefinition = «InterfaceKeyword» «Identifier» InheritanceSpecifierList? «OpenBrace» ContractBodyElement* «CloseBrace»;
+    // InterfaceDefinition = INTERFACE_KEYWORD IDENTIFIER InheritanceSpecifierList? OPEN_BRACE «ContractBodyElement»* CLOSE_BRACE;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -4588,7 +4597,7 @@ impl Language {
         .with_kind(RuleKind::InterfaceDefinition)
     }
 
-    // LeadingTrivia = («Whitespace» | «EndOfLine» | «MultilineComment» | «SingleLineComment»)+;
+    // LeadingTrivia = (WHITESPACE | END_OF_LINE | MULTILINE_COMMENT | SINGLE_LINE_COMMENT)+;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -4637,7 +4646,7 @@ impl Language {
         .with_kind(RuleKind::LeadingTrivia)
     }
 
-    // LibraryDefinition = «LibraryKeyword» «Identifier» «OpenBrace» ContractBodyElement* «CloseBrace»;
+    // LibraryDefinition = LIBRARY_KEYWORD IDENTIFIER OPEN_BRACE «ContractBodyElement»* CLOSE_BRACE;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -4719,7 +4728,7 @@ impl Language {
     }
 
     // (* v0.8.18 *)
-    // MappingKeyType = (ElementaryType | IdentifierPath) «Identifier»?;
+    // MappingKeyType = (ElementaryType | IdentifierPath) IDENTIFIER?;
 
     #[allow(dead_code, non_snake_case)]
     fn mapping_key_type__0_8_18(&self, stream: &mut Stream) -> ParserResult {
@@ -4759,7 +4768,7 @@ impl Language {
         }
     }
 
-    // MappingType = «MappingKeyword» «OpenParen» MappingKeyType «EqualGreaterThan» MappingValueType «CloseParen»;
+    // MappingType = MAPPING_KEYWORD OPEN_PAREN MappingKeyType EQUAL_GREATER_THAN MappingValueType CLOSE_PAREN;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -4836,7 +4845,7 @@ impl Language {
     }
 
     // (* v0.8.18 *)
-    // MappingValueType = TypeName «Identifier»?;
+    // MappingValueType = TypeName IDENTIFIER?;
 
     #[allow(dead_code, non_snake_case)]
     fn mapping_value_type__0_8_18(&self, stream: &mut Stream) -> ParserResult {
@@ -4864,7 +4873,7 @@ impl Language {
         }
     }
 
-    // MemberAccessOperator = «Period» («Identifier» | «AddressKeyword»);
+    // MemberAccessOperator = PERIOD (IDENTIFIER | ADDRESS_KEYWORD);
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -4917,7 +4926,7 @@ impl Language {
     }
 
     // (* v0.6.0 *)
-    // ModifierAttribute = OverrideSpecifier | «VirtualKeyword»;
+    // ModifierAttribute = OverrideSpecifier | VIRTUAL_KEYWORD;
 
     #[allow(dead_code, non_snake_case)]
     fn modifier_attribute__0_6_0(&self, stream: &mut Stream) -> ParserResult {
@@ -4949,7 +4958,7 @@ impl Language {
         }
     }
 
-    // ModifierDefinition = «ModifierKeyword» «Identifier» ParameterList? ModifierAttribute* («Semicolon» | Block);
+    // ModifierDefinition = MODIFIER_KEYWORD IDENTIFIER ParameterList? ModifierAttribute* (SEMICOLON | Block);
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -5031,7 +5040,9 @@ impl Language {
         .with_kind(RuleKind::ModifierInvocation)
     }
 
-    // MulDivModOperator = «Asterisk» | «Slash» | «Percent»;
+    // MulDivModOperator = ASTERISK
+    //                   | SLASH
+    //                   | PERCENT;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -5068,7 +5079,7 @@ impl Language {
         .with_kind(RuleKind::MulDivModOperator)
     }
 
-    // NamedArgument = «Identifier» «Colon» Expression;
+    // NamedArgument = IDENTIFIER COLON Expression;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -5098,7 +5109,7 @@ impl Language {
         .with_kind(RuleKind::NamedArgument)
     }
 
-    // NamedArgumentList = «OpenBrace» (NamedArgument («Comma» NamedArgument)*)? «CloseBrace»;
+    // NamedArgumentList = OPEN_BRACE (NamedArgument (COMMA NamedArgument)*)? CLOSE_BRACE;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -5160,7 +5171,7 @@ impl Language {
         .with_kind(RuleKind::NamedArgumentList)
     }
 
-    // NewExpression = «NewKeyword» TypeName;
+    // NewExpression = NEW_KEYWORD TypeName;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -5184,16 +5195,16 @@ impl Language {
     }
 
     // (* v0.4.11 *)
-    // NumberUnit = «DaysKeyword»
-    //            | «EtherKeyword»
-    //            | «FinneyKeyword»
-    //            | «HoursKeyword»
-    //            | «MinutesKeyword»
-    //            | «SecondsKeyword»
-    //            | «SzaboKeyword»
-    //            | «WeeksKeyword»
-    //            | «WeiKeyword»
-    //            | «YearsKeyword»;
+    // NumberUnit = DAYS_KEYWORD
+    //            | ETHER_KEYWORD
+    //            | FINNEY_KEYWORD
+    //            | HOURS_KEYWORD
+    //            | MINUTES_KEYWORD
+    //            | SECONDS_KEYWORD
+    //            | SZABO_KEYWORD
+    //            | WEEKS_KEYWORD
+    //            | WEI_KEYWORD
+    //            | YEARS_KEYWORD;
 
     #[allow(dead_code, non_snake_case)]
     fn number_unit__0_4_11(&self, stream: &mut Stream) -> ParserResult {
@@ -5286,15 +5297,15 @@ impl Language {
     }
 
     // (* v0.5.0 *)
-    // NumberUnit = «DaysKeyword»
-    //            | «EtherKeyword»
-    //            | «FinneyKeyword»
-    //            | «HoursKeyword»
-    //            | «MinutesKeyword»
-    //            | «SecondsKeyword»
-    //            | «SzaboKeyword»
-    //            | «WeeksKeyword»
-    //            | «WeiKeyword»;
+    // NumberUnit = DAYS_KEYWORD
+    //            | ETHER_KEYWORD
+    //            | FINNEY_KEYWORD
+    //            | HOURS_KEYWORD
+    //            | MINUTES_KEYWORD
+    //            | SECONDS_KEYWORD
+    //            | SZABO_KEYWORD
+    //            | WEEKS_KEYWORD
+    //            | WEI_KEYWORD;
 
     #[allow(dead_code, non_snake_case)]
     fn number_unit__0_5_0(&self, stream: &mut Stream) -> ParserResult {
@@ -5379,16 +5390,16 @@ impl Language {
     }
 
     // (* v0.6.11 *)
-    // NumberUnit = «DaysKeyword»
-    //            | «EtherKeyword»
-    //            | «FinneyKeyword»
-    //            | «GweiKeyword»
-    //            | «HoursKeyword»
-    //            | «MinutesKeyword»
-    //            | «SecondsKeyword»
-    //            | «SzaboKeyword»
-    //            | «WeeksKeyword»
-    //            | «WeiKeyword»;
+    // NumberUnit = DAYS_KEYWORD
+    //            | ETHER_KEYWORD
+    //            | FINNEY_KEYWORD
+    //            | GWEI_KEYWORD
+    //            | HOURS_KEYWORD
+    //            | MINUTES_KEYWORD
+    //            | SECONDS_KEYWORD
+    //            | SZABO_KEYWORD
+    //            | WEEKS_KEYWORD
+    //            | WEI_KEYWORD;
 
     #[allow(dead_code, non_snake_case)]
     fn number_unit__0_6_11(&self, stream: &mut Stream) -> ParserResult {
@@ -5481,14 +5492,14 @@ impl Language {
     }
 
     // (* v0.7.0 *)
-    // NumberUnit = «DaysKeyword»
-    //            | «EtherKeyword»
-    //            | «GweiKeyword»
-    //            | «HoursKeyword»
-    //            | «MinutesKeyword»
-    //            | «SecondsKeyword»
-    //            | «WeeksKeyword»
-    //            | «WeiKeyword»;
+    // NumberUnit = DAYS_KEYWORD
+    //            | ETHER_KEYWORD
+    //            | GWEI_KEYWORD
+    //            | HOURS_KEYWORD
+    //            | MINUTES_KEYWORD
+    //            | SECONDS_KEYWORD
+    //            | WEEKS_KEYWORD
+    //            | WEI_KEYWORD;
 
     #[allow(dead_code, non_snake_case)]
     fn number_unit__0_7_0(&self, stream: &mut Stream) -> ParserResult {
@@ -5577,7 +5588,7 @@ impl Language {
     }
 
     // (* v0.4.11 *)
-    // NumericExpression = («HexLiteral» | «DecimalLiteral») NumberUnit?;
+    // NumericExpression = (HEX_LITERAL | DECIMAL_LITERAL) NumberUnit?;
 
     #[allow(dead_code, non_snake_case)]
     fn numeric_expression__0_4_11(&self, stream: &mut Stream) -> ParserResult {
@@ -5617,7 +5628,7 @@ impl Language {
     }
 
     // (* v0.5.0 *)
-    // NumericExpression = «HexLiteral» | («DecimalLiteral» NumberUnit?);
+    // NumericExpression = HEX_LITERAL | (DECIMAL_LITERAL NumberUnit?);
 
     #[allow(dead_code, non_snake_case)]
     fn numeric_expression__0_5_0(&self, stream: &mut Stream) -> ParserResult {
@@ -5667,7 +5678,7 @@ impl Language {
         }
     }
 
-    // OrOperator = «BarBar»;
+    // OrOperator = BAR_BAR;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -5676,7 +5687,10 @@ impl Language {
             .with_kind(RuleKind::OrOperator)
     }
 
-    // OrderComparisonOperator = «LessThan» | «GreaterThan» | «LessThanEqual» | «GreaterThanEqual»;
+    // OrderComparisonOperator = LESS_THAN
+    //                         | GREATER_THAN
+    //                         | LESS_THAN_EQUAL
+    //                         | GREATER_THAN_EQUAL;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -5721,7 +5735,7 @@ impl Language {
         .with_kind(RuleKind::OrderComparisonOperator)
     }
 
-    // OverrideSpecifier = «OverrideKeyword» («OpenParen» IdentifierPath («Comma» IdentifierPath)* «CloseParen»)?;
+    // OverrideSpecifier = OVERRIDE_KEYWORD (OPEN_PAREN IdentifierPath (COMMA IdentifierPath)* CLOSE_PAREN)?;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -5802,7 +5816,7 @@ impl Language {
         .with_kind(RuleKind::OverrideSpecifier)
     }
 
-    // ParameterDeclaration = TypeName DataLocation? «Identifier»?;
+    // ParameterDeclaration = TypeName DataLocation? IDENTIFIER?;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -5828,7 +5842,7 @@ impl Language {
         .with_kind(RuleKind::ParameterDeclaration)
     }
 
-    // ParameterList = «OpenParen» (ParameterDeclaration («Comma» ParameterDeclaration)*)? «CloseParen»;
+    // ParameterList = OPEN_PAREN (ParameterDeclaration (COMMA ParameterDeclaration)*)? CLOSE_PAREN;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -5892,7 +5906,7 @@ impl Language {
         .with_kind(RuleKind::ParameterList)
     }
 
-    // PayableType = «PayableKeyword»;
+    // PayableType = PAYABLE_KEYWORD;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -5901,7 +5915,7 @@ impl Language {
             .with_kind(RuleKind::PayableType)
     }
 
-    // PositionalArgumentList = Expression («Comma» Expression)*;
+    // PositionalArgumentList = Expression (COMMA Expression)*;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -5940,7 +5954,7 @@ impl Language {
         .with_kind(RuleKind::PositionalArgumentList)
     }
 
-    // PragmaDirective = «PragmaKeyword» (VersionPragma | ABICoderPragma | ExperimentalPragma) «Semicolon»;
+    // PragmaDirective = PRAGMA_KEYWORD (VersionPragma | ABICoderPragma | ExperimentalPragma) SEMICOLON;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -6008,7 +6022,7 @@ impl Language {
     //                   | NumericExpression
     //                   | StringExpression
     //                   | ElementaryType
-    //                   | «Identifier»;
+    //                   | IDENTIFIER;
 
     #[allow(dead_code, non_snake_case)]
     fn primary_expression__0_4_11(&self, stream: &mut Stream) -> ParserResult {
@@ -6065,7 +6079,7 @@ impl Language {
     //                   | NumericExpression
     //                   | StringExpression
     //                   | ElementaryType
-    //                   | «Identifier»;
+    //                   | IDENTIFIER;
 
     #[allow(dead_code, non_snake_case)]
     fn primary_expression__0_5_3(&self, stream: &mut Stream) -> ParserResult {
@@ -6128,9 +6142,9 @@ impl Language {
     // (* v0.6.0 *)
     // ReceiveFunctionAttribute = ModifierInvocation
     //                          | OverrideSpecifier
-    //                          | «ExternalKeyword»
-    //                          | «PayableKeyword»
-    //                          | «VirtualKeyword»;
+    //                          | EXTERNAL_KEYWORD
+    //                          | PAYABLE_KEYWORD
+    //                          | VIRTUAL_KEYWORD;
 
     #[allow(dead_code, non_snake_case)]
     fn receive_function_attribute__0_6_0(&self, stream: &mut Stream) -> ParserResult {
@@ -6193,7 +6207,7 @@ impl Language {
     }
 
     // (* v0.6.0 *)
-    // ReceiveFunctionDefinition = «ReceiveKeyword» ParameterList ReceiveFunctionAttribute* («Semicolon» | Block);
+    // ReceiveFunctionDefinition = RECEIVE_KEYWORD ParameterList ReceiveFunctionAttribute* (SEMICOLON | Block);
 
     #[allow(dead_code, non_snake_case)]
     fn receive_function_definition__0_6_0(&self, stream: &mut Stream) -> ParserResult {
@@ -6262,7 +6276,7 @@ impl Language {
             .expect("Validation should have checked that references are valid between versions")
     }
 
-    // ReturnStatement = «ReturnKeyword» Expression? «Semicolon»;
+    // ReturnStatement = RETURN_KEYWORD Expression? SEMICOLON;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -6303,7 +6317,7 @@ impl Language {
         .with_kind(RuleKind::ReturnStatement)
     }
 
-    // RevertStatement = «RevertKeyword» IdentifierPath? ArgumentList «Semicolon»;
+    // RevertStatement = REVERT_KEYWORD IdentifierPath? ArgumentList SEMICOLON;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -6347,7 +6361,7 @@ impl Language {
         .with_kind(RuleKind::RevertStatement)
     }
 
-    // SelectiveImport = «OpenBrace» «Identifier» ImportAlias? («Comma» «Identifier» ImportAlias?)* «CloseBrace» «FromKeyword» ImportPath;
+    // SelectiveImport = OPEN_BRACE IDENTIFIER ImportAlias? (COMMA IDENTIFIER ImportAlias?)* CLOSE_BRACE FROM_KEYWORD ImportPath;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -6466,7 +6480,9 @@ impl Language {
         .with_kind(RuleKind::SelectiveImport)
     }
 
-    // ShiftOperator = «LessThanLessThan» | «GreaterThanGreaterThan» | «GreaterThanGreaterThanGreaterThan»;
+    // ShiftOperator = LESS_THAN_LESS_THAN
+    //               | GREATER_THAN_GREATER_THAN
+    //               | GREATER_THAN_GREATER_THAN_GREATER_THAN;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -6524,7 +6540,9 @@ impl Language {
         .with_kind(RuleKind::SimpleImport)
     }
 
-    // SimpleStatement = TupleDeconstructionStatement | VariableDeclarationStatement | ExpressionStatement;
+    // SimpleStatement = TupleDeconstructionStatement
+    //                 | VariableDeclarationStatement
+    //                 | ExpressionStatement;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -6592,10 +6610,10 @@ impl Language {
 
     // (* v0.4.11 *)
     // StateVariableAttribute = OverrideSpecifier
-    //                        | «ConstantKeyword»
-    //                        | «InternalKeyword»
-    //                        | «PrivateKeyword»
-    //                        | «PublicKeyword»;
+    //                        | CONSTANT_KEYWORD
+    //                        | INTERNAL_KEYWORD
+    //                        | PRIVATE_KEYWORD
+    //                        | PUBLIC_KEYWORD;
 
     #[allow(dead_code, non_snake_case)]
     fn state_variable_attribute__0_4_11(&self, stream: &mut Stream) -> ParserResult {
@@ -6645,11 +6663,11 @@ impl Language {
 
     // (* v0.6.5 *)
     // StateVariableAttribute = OverrideSpecifier
-    //                        | «ConstantKeyword»
-    //                        | «ImmutableKeyword»
-    //                        | «InternalKeyword»
-    //                        | «PrivateKeyword»
-    //                        | «PublicKeyword»;
+    //                        | CONSTANT_KEYWORD
+    //                        | IMMUTABLE_KEYWORD
+    //                        | INTERNAL_KEYWORD
+    //                        | PRIVATE_KEYWORD
+    //                        | PUBLIC_KEYWORD;
 
     #[allow(dead_code, non_snake_case)]
     fn state_variable_attribute__0_6_5(&self, stream: &mut Stream) -> ParserResult {
@@ -6713,7 +6731,7 @@ impl Language {
         }
     }
 
-    // StateVariableDeclaration = TypeName StateVariableAttribute* «Identifier» («Equal» Expression)? «Semicolon»;
+    // StateVariableDeclaration = TypeName StateVariableAttribute* IDENTIFIER (EQUAL Expression)? SEMICOLON;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -7111,7 +7129,7 @@ impl Language {
     }
 
     // (* v0.4.11 *)
-    // StringExpression = «HexStringLiteral»+ | «AsciiStringLiteral»+;
+    // StringExpression = HEX_STRING_LITERAL+ | ASCII_STRING_LITERAL+;
 
     #[allow(dead_code, non_snake_case)]
     fn string_expression__0_4_11(&self, stream: &mut Stream) -> ParserResult {
@@ -7152,7 +7170,7 @@ impl Language {
     }
 
     // (* v0.7.0 *)
-    // StringExpression = «HexStringLiteral»+ | «AsciiStringLiteral»+ | «UnicodeStringLiteral»+;
+    // StringExpression = HEX_STRING_LITERAL+ | ASCII_STRING_LITERAL+ | UNICODE_STRING_LITERAL+;
 
     #[allow(dead_code, non_snake_case)]
     fn string_expression__0_7_0(&self, stream: &mut Stream) -> ParserResult {
@@ -7214,7 +7232,7 @@ impl Language {
         }
     }
 
-    // StructDefinition = «StructKeyword» «Identifier» «OpenBrace» StructMember+ «CloseBrace»;
+    // StructDefinition = STRUCT_KEYWORD IDENTIFIER OPEN_BRACE StructMember+ CLOSE_BRACE;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -7274,7 +7292,7 @@ impl Language {
         .with_kind(RuleKind::StructDefinition)
     }
 
-    // StructMember = TypeName «Identifier» «Semicolon»;
+    // StructMember = TypeName IDENTIFIER SEMICOLON;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -7312,7 +7330,7 @@ impl Language {
     }
 
     // (* v0.4.11 *)
-    // ThrowStatement = «ThrowKeyword» «Semicolon»;
+    // ThrowStatement = THROW_KEYWORD SEMICOLON;
 
     #[allow(dead_code, non_snake_case)]
     fn throw_statement__0_4_11(&self, stream: &mut Stream) -> ParserResult {
@@ -7356,7 +7374,7 @@ impl Language {
             .expect("Validation should have checked that references are valid between versions")
     }
 
-    // TrailingTrivia = «Whitespace»? «SingleLineComment»? «EndOfLine»;
+    // TrailingTrivia = WHITESPACE? SINGLE_LINE_COMMENT? END_OF_LINE;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -7391,7 +7409,7 @@ impl Language {
     }
 
     // (* v0.6.0 *)
-    // TryStatement = «TryKeyword» Expression («ReturnsKeyword» ParameterList)? Block CatchClause+;
+    // TryStatement = TRY_KEYWORD Expression (RETURNS_KEYWORD ParameterList)? Block CatchClause+;
 
     #[allow(dead_code, non_snake_case)]
     fn try_statement__0_6_0(&self, stream: &mut Stream) -> ParserResult {
@@ -7461,7 +7479,7 @@ impl Language {
             .expect("Validation should have checked that references are valid between versions")
     }
 
-    // TupleDeconstructionStatement = «OpenParen» (((TypeName DataLocation? «Identifier») | (DataLocation? «Identifier»))? («Comma» ((TypeName DataLocation? «Identifier») | (DataLocation? «Identifier»))?)*)? «CloseParen» «Equal» Expression «Semicolon»;
+    // TupleDeconstructionStatement = OPEN_PAREN (((TypeName DataLocation? IDENTIFIER) | (DataLocation? IDENTIFIER))? (COMMA ((TypeName DataLocation? IDENTIFIER) | (DataLocation? IDENTIFIER))?)*)? CLOSE_PAREN EQUAL Expression SEMICOLON;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -7469,7 +7487,7 @@ impl Language {
         { let mut running_result = ParserResult :: r#match (vec ! [] , vec ! []) ; loop { if ! running_result . incorporate_sequence_result ({ let mut running_result = ParserResult :: r#match (vec ! [] , vec ! []) ; loop { if ! running_result . incorporate_sequence_result ({ let mut running_result = ParserResult :: r#match (vec ! [] , vec ! []) ; loop { if ! running_result . incorporate_sequence_result (self . parse_token_with_trivia (stream , & Self :: open_paren , TokenKind :: OpenParen)) { break ; } if ! running_result . incorporate_sequence_result (transform_option_result ({ let mut running_result = ParserResult :: r#match (vec ! [] , vec ! []) ; loop { if ! running_result . incorporate_sequence_result (transform_option_result ({ let mut running_result = ParserResult :: no_match (vec ! []) ; let start_position = stream . position () ; loop { if running_result . incorporate_choice_result ({ let mut running_result = ParserResult :: r#match (vec ! [] , vec ! []) ; loop { if ! running_result . incorporate_sequence_result (self . type_name (stream)) { break ; } if ! running_result . incorporate_sequence_result (transform_option_result (self . data_location (stream))) { break ; } running_result . incorporate_sequence_result (self . parse_token_with_trivia (stream , & Self :: identifier , TokenKind :: Identifier)) ; break ; } running_result }) { break ; } stream . set_position (start_position) ; running_result . incorporate_choice_result ({ let mut running_result = ParserResult :: r#match (vec ! [] , vec ! []) ; loop { if ! running_result . incorporate_sequence_result (transform_option_result (self . data_location (stream))) { break ; } running_result . incorporate_sequence_result (self . parse_token_with_trivia (stream , & Self :: identifier , TokenKind :: Identifier)) ; break ; } running_result }) ; break ; } running_result })) { break ; } running_result . incorporate_sequence_result ({ let mut running_result = ParserResult :: r#match (vec ! [] , vec ! []) ; while running_result . incorporate_zero_or_more_result ({ let mut running_result = ParserResult :: r#match (vec ! [] , vec ! []) ; loop { if ! running_result . incorporate_sequence_result (self . parse_token_with_trivia (stream , & Self :: comma , TokenKind :: Comma)) { break ; } running_result . incorporate_sequence_result (transform_option_result ({ let mut running_result = ParserResult :: no_match (vec ! []) ; let start_position = stream . position () ; loop { if running_result . incorporate_choice_result ({ let mut running_result = ParserResult :: r#match (vec ! [] , vec ! []) ; loop { if ! running_result . incorporate_sequence_result (self . type_name (stream)) { break ; } if ! running_result . incorporate_sequence_result (transform_option_result (self . data_location (stream))) { break ; } running_result . incorporate_sequence_result (self . parse_token_with_trivia (stream , & Self :: identifier , TokenKind :: Identifier)) ; break ; } running_result }) { break ; } stream . set_position (start_position) ; running_result . incorporate_choice_result ({ let mut running_result = ParserResult :: r#match (vec ! [] , vec ! []) ; loop { if ! running_result . incorporate_sequence_result (transform_option_result (self . data_location (stream))) { break ; } running_result . incorporate_sequence_result (self . parse_token_with_trivia (stream , & Self :: identifier , TokenKind :: Identifier)) ; break ; } running_result }) ; break ; } running_result })) ; break ; } running_result }) { } running_result }) ; break ; } running_result })) { break ; } running_result . incorporate_sequence_result (self . parse_token_with_trivia (stream , & Self :: close_paren , TokenKind :: CloseParen)) ; break ; } running_result }) { break ; } if ! running_result . incorporate_sequence_result (self . parse_token_with_trivia (stream , & Self :: equal , TokenKind :: Equal)) { break ; } running_result . incorporate_sequence_result (self . expression (stream)) ; break ; } running_result }) { break ; } running_result . incorporate_sequence_result (self . parse_token_with_trivia (stream , & Self :: semicolon , TokenKind :: Semicolon)) ; break ; } running_result } . with_kind (RuleKind :: TupleDeconstructionStatement)
     }
 
-    // TupleExpression = «OpenParen» Expression? («Comma» Expression?)* «CloseParen»;
+    // TupleExpression = OPEN_PAREN Expression? (COMMA Expression?)* CLOSE_PAREN;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -7534,7 +7552,7 @@ impl Language {
     }
 
     // (* v0.5.3 *)
-    // TypeExpression = «TypeKeyword» «OpenParen» TypeName «CloseParen»;
+    // TypeExpression = TYPE_KEYWORD OPEN_PAREN TypeName CLOSE_PAREN;
 
     #[allow(dead_code, non_snake_case)]
     fn type_expression__0_5_3(&self, stream: &mut Stream) -> ParserResult {
@@ -7598,7 +7616,7 @@ impl Language {
     }
 
     // TypeName = ArrayTypeName | FunctionType | MappingType | ElementaryType | IdentifierPath;
-    // ArrayTypeName = TypeName «OpenBracket» Expression? «CloseBracket»;
+    // ArrayTypeName = TypeName OPEN_BRACKET Expression? CLOSE_BRACKET;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -7713,7 +7731,7 @@ impl Language {
         .with_kind(RuleKind::TypeName)
     }
 
-    // UnaryPostfixOperator = «PlusPlus» | «MinusMinus»;
+    // UnaryPostfixOperator = PLUS_PLUS | MINUS_MINUS;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -7743,12 +7761,12 @@ impl Language {
     }
 
     // (* v0.4.11 *)
-    // UnaryPrefixOperator = «PlusPlus»
-    //                     | «MinusMinus»
-    //                     | «Tilde»
-    //                     | «Bang»
-    //                     | «Minus»
-    //                     | «Plus»;
+    // UnaryPrefixOperator = PLUS_PLUS
+    //                     | MINUS_MINUS
+    //                     | TILDE
+    //                     | BANG
+    //                     | MINUS
+    //                     | PLUS;
 
     #[allow(dead_code, non_snake_case)]
     fn unary_prefix_operator__0_4_11(&self, stream: &mut Stream) -> ParserResult {
@@ -7809,11 +7827,11 @@ impl Language {
     }
 
     // (* v0.5.0 *)
-    // UnaryPrefixOperator = «PlusPlus»
-    //                     | «MinusMinus»
-    //                     | «Tilde»
-    //                     | «Bang»
-    //                     | «Minus»;
+    // UnaryPrefixOperator = PLUS_PLUS
+    //                     | MINUS_MINUS
+    //                     | TILDE
+    //                     | BANG
+    //                     | MINUS;
 
     #[allow(dead_code, non_snake_case)]
     fn unary_prefix_operator__0_5_0(&self, stream: &mut Stream) -> ParserResult {
@@ -7874,7 +7892,7 @@ impl Language {
     }
 
     // (* v0.8.0 *)
-    // UncheckedBlock = «UncheckedKeyword» Block;
+    // UncheckedBlock = UNCHECKED_KEYWORD Block;
 
     #[allow(dead_code, non_snake_case)]
     fn unchecked_block__0_8_0(&self, stream: &mut Stream) -> ParserResult {
@@ -7917,10 +7935,10 @@ impl Language {
     // (* v0.4.11 *)
     // UnnamedFunctionAttribute = ModifierInvocation
     //                          | OverrideSpecifier
-    //                          | «ExternalKeyword»
-    //                          | «PayableKeyword»
-    //                          | «PureKeyword»
-    //                          | «ViewKeyword»;
+    //                          | EXTERNAL_KEYWORD
+    //                          | PAYABLE_KEYWORD
+    //                          | PURE_KEYWORD
+    //                          | VIEW_KEYWORD;
 
     #[allow(dead_code, non_snake_case)]
     fn unnamed_function_attribute__0_4_11(&self, stream: &mut Stream) -> ParserResult {
@@ -7991,7 +8009,7 @@ impl Language {
     }
 
     // (* v0.4.11 *)
-    // UnnamedFunctionDefinition = «FunctionKeyword» ParameterList UnnamedFunctionAttribute* («Semicolon» | Block);
+    // UnnamedFunctionDefinition = FUNCTION_KEYWORD ParameterList UnnamedFunctionAttribute* (SEMICOLON | Block);
 
     #[allow(dead_code, non_snake_case)]
     fn unnamed_function_definition__0_4_11(&self, stream: &mut Stream) -> ParserResult {
@@ -8061,21 +8079,21 @@ impl Language {
     }
 
     // (* v0.8.19 *)
-    // UserDefinedOperator = «Ampersand»
-    //                     | «BangEqual»
-    //                     | «Bar»
-    //                     | «Caret»
-    //                     | «EqualEqual»
-    //                     | «GreaterThan»
-    //                     | «GreaterThanEqual»
-    //                     | «LessThan»
-    //                     | «LessThanEqual»
-    //                     | «Minus»
-    //                     | «Percent»
-    //                     | «Plus»
-    //                     | «Slash»
-    //                     | «Asterisk»
-    //                     | «Tilde»;
+    // UserDefinedOperator = AMPERSAND
+    //                     | BANG_EQUAL
+    //                     | BAR
+    //                     | CARET
+    //                     | EQUAL_EQUAL
+    //                     | GREATER_THAN
+    //                     | GREATER_THAN_EQUAL
+    //                     | LESS_THAN
+    //                     | LESS_THAN_EQUAL
+    //                     | MINUS
+    //                     | PERCENT
+    //                     | PLUS
+    //                     | SLASH
+    //                     | ASTERISK
+    //                     | TILDE;
 
     #[allow(dead_code, non_snake_case)]
     fn user_defined_operator__0_8_19(&self, stream: &mut Stream) -> ParserResult {
@@ -8226,7 +8244,7 @@ impl Language {
     }
 
     // (* v0.8.8 *)
-    // UserDefinedValueTypeDefinition = «TypeKeyword» «Identifier» «IsKeyword» ElementaryType «Semicolon»;
+    // UserDefinedValueTypeDefinition = TYPE_KEYWORD IDENTIFIER IS_KEYWORD ElementaryType SEMICOLON;
 
     #[allow(dead_code, non_snake_case)]
     fn user_defined_value_type_definition__0_8_8(&self, stream: &mut Stream) -> ParserResult {
@@ -8301,7 +8319,7 @@ impl Language {
     }
 
     // (* v0.4.11 *)
-    // UsingDirective = «UsingKeyword» (IdentifierPath | («OpenBrace» IdentifierPath («Comma» IdentifierPath)* «CloseBrace»)) «ForKeyword» («Asterisk» | TypeName) «GlobalKeyword»? «Semicolon»;
+    // UsingDirective = USING_KEYWORD (IdentifierPath | (OPEN_BRACE IdentifierPath (COMMA IdentifierPath)* CLOSE_BRACE)) FOR_KEYWORD (ASTERISK | TypeName) GLOBAL_KEYWORD? SEMICOLON;
 
     #[allow(dead_code, non_snake_case)]
     fn using_directive__0_4_11(&self, stream: &mut Stream) -> ParserResult {
@@ -8465,7 +8483,7 @@ impl Language {
     }
 
     // (* v0.8.19 *)
-    // UsingDirective = «UsingKeyword» (IdentifierPath | («OpenBrace» IdentifierPath («AsKeyword» UserDefinedOperator)? («Comma» IdentifierPath («AsKeyword» UserDefinedOperator)?)* «CloseBrace»)) «ForKeyword» («Asterisk» | TypeName) «GlobalKeyword»? «Semicolon»;
+    // UsingDirective = USING_KEYWORD (IdentifierPath | (OPEN_BRACE IdentifierPath (AS_KEYWORD UserDefinedOperator)? (COMMA IdentifierPath (AS_KEYWORD UserDefinedOperator)?)* CLOSE_BRACE)) FOR_KEYWORD (ASTERISK | TypeName) GLOBAL_KEYWORD? SEMICOLON;
 
     #[allow(dead_code, non_snake_case)]
     fn using_directive__0_8_19(&self, stream: &mut Stream) -> ParserResult {
@@ -8481,7 +8499,7 @@ impl Language {
     }
 
     // (* v0.4.11 *)
-    // VariableDeclarationStatement = ((TypeName DataLocation?) | «VarKeyword») «Identifier» («Equal» Expression)? «Semicolon»;
+    // VariableDeclarationStatement = ((TypeName DataLocation?) | VAR_KEYWORD) IDENTIFIER (EQUAL Expression)? SEMICOLON;
 
     #[allow(dead_code, non_snake_case)]
     fn variable_declaration_statement__0_4_11(&self, stream: &mut Stream) -> ParserResult {
@@ -8571,7 +8589,7 @@ impl Language {
     }
 
     // (* v0.5.0 *)
-    // VariableDeclarationStatement = TypeName DataLocation? «Identifier» («Equal» Expression)? «Semicolon»;
+    // VariableDeclarationStatement = TypeName DataLocation? IDENTIFIER (EQUAL Expression)? SEMICOLON;
 
     #[allow(dead_code, non_snake_case)]
     fn variable_declaration_statement__0_5_0(&self, stream: &mut Stream) -> ParserResult {
@@ -8641,7 +8659,8 @@ impl Language {
         }
     }
 
-    // VersionPragma = «SolidityKeyword» VersionPragmaExpression+;
+    // VersionPragma = SOLIDITY_KEYWORD VersionPragmaExpressionList;
+    // VersionPragmaExpressionList = «VersionPragmaExpression»+;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -8671,10 +8690,13 @@ impl Language {
         .with_kind(RuleKind::VersionPragma)
     }
 
-    // VersionPragmaExpression = VersionPragmaAlternatives | VersionPragmaRange | VersionPragmaComparator | VersionPragmaSpecifier;
-    // VersionPragmaAlternatives = VersionPragmaExpression «BarBar» VersionPragmaExpression;
-    // VersionPragmaRange = VersionPragmaExpression «Minus» VersionPragmaExpression;
-    // VersionPragmaComparator = («Caret» | «Tilde» | «Equal» | «LessThan» | «GreaterThan» | «LessThanEqual» | «GreaterThanEqual») VersionPragmaExpression;
+    // «VersionPragmaExpression» = VersionPragmaAlternatives
+    //                           | VersionPragmaRange
+    //                           | VersionPragmaComparator
+    //                           | VersionPragmaSpecifier;
+    // VersionPragmaAlternatives = «VersionPragmaExpression» BAR_BAR «VersionPragmaExpression»;
+    // VersionPragmaRange = «VersionPragmaExpression» MINUS «VersionPragmaExpression»;
+    // VersionPragmaComparator = (CARET | TILDE | EQUAL | LESS_THAN | GREATER_THAN | LESS_THAN_EQUAL | GREATER_THAN_EQUAL) «VersionPragmaExpression»;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -8841,7 +8863,7 @@ impl Language {
         }
     }
 
-    // VersionPragmaSpecifier = «VersionPragmaValue» («Period» «VersionPragmaValue»)*;
+    // VersionPragmaSpecifier = VERSION_PRAGMA_VALUE (PERIOD VERSION_PRAGMA_VALUE)*;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -8890,7 +8912,7 @@ impl Language {
         .with_kind(RuleKind::VersionPragmaSpecifier)
     }
 
-    // WhileStatement = «WhileKeyword» «OpenParen» Expression «CloseParen» Statement;
+    // WhileStatement = WHILE_KEYWORD OPEN_PAREN Expression CLOSE_PAREN Statement;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -8939,7 +8961,7 @@ impl Language {
         .with_kind(RuleKind::WhileStatement)
     }
 
-    // YulAssignmentStatement = YulIdentifierPath («Comma» YulIdentifierPath)* «ColonEqual» YulExpression;
+    // YulAssignmentStatement = YulIdentifierPath (COMMA YulIdentifierPath)* COLON_EQUAL YulExpression;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -8999,7 +9021,7 @@ impl Language {
         .with_kind(RuleKind::YulAssignmentStatement)
     }
 
-    // YulBlock = «OpenBrace» YulStatement* «CloseBrace»;
+    // YulBlock = OPEN_BRACE YulStatement* CLOSE_BRACE;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -9035,7 +9057,7 @@ impl Language {
         .with_kind(RuleKind::YulBlock)
     }
 
-    // YulBreakStatement = «BreakKeyword»;
+    // YulBreakStatement = BREAK_KEYWORD;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -9044,7 +9066,7 @@ impl Language {
             .with_kind(RuleKind::YulBreakStatement)
     }
 
-    // YulContinueStatement = «ContinueKeyword»;
+    // YulContinueStatement = CONTINUE_KEYWORD;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -9053,7 +9075,7 @@ impl Language {
             .with_kind(RuleKind::YulContinueStatement)
     }
 
-    // YulDeclarationStatement = «LetKeyword» YulIdentifierPath («Comma» YulIdentifierPath)* («ColonEqual» YulExpression)?;
+    // YulDeclarationStatement = LET_KEYWORD YulIdentifierPath (COMMA YulIdentifierPath)* (COLON_EQUAL YulExpression)?;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -9130,7 +9152,7 @@ impl Language {
     }
 
     // YulExpression = YulFunctionCallExpression | YulLiteral | YulIdentifierPath;
-    // YulFunctionCallExpression = YulExpression «OpenParen» (YulExpression («Comma» YulExpression)*)? «CloseParen»;
+    // YulFunctionCallExpression = YulExpression OPEN_PAREN (YulExpression (COMMA YulExpression)*)? CLOSE_PAREN;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -9271,7 +9293,7 @@ impl Language {
         .with_kind(RuleKind::YulExpression)
     }
 
-    // YulForStatement = «ForKeyword» YulBlock YulExpression YulBlock YulBlock;
+    // YulForStatement = FOR_KEYWORD YulBlock YulExpression YulBlock YulBlock;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -9303,7 +9325,9 @@ impl Language {
         .with_kind(RuleKind::YulForStatement)
     }
 
-    // YulFunctionDefinition = «FunctionKeyword» «YulIdentifier» «OpenParen» («YulIdentifier» («Comma» «YulIdentifier»)*)? «CloseParen» («MinusGreaterThan» «YulIdentifier» («Comma» «YulIdentifier»)*)? YulBlock;
+    // YulFunctionDefinition = FUNCTION_KEYWORD YUL_IDENTIFIER OPEN_PAREN Arguments? CLOSE_PAREN (MINUS_GREATER_THAN Results)? YulBlock;
+    // Arguments = YUL_IDENTIFIER (COMMA YUL_IDENTIFIER)*;
+    // Results = YUL_IDENTIFIER (COMMA YUL_IDENTIFIER)*;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -9464,7 +9488,7 @@ impl Language {
         .with_kind(RuleKind::YulFunctionDefinition)
     }
 
-    // YulIdentifierPath = «YulIdentifier» («Period» «YulIdentifier»)*;
+    // YulIdentifierPath = YUL_IDENTIFIER (PERIOD YUL_IDENTIFIER)*;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -9513,7 +9537,7 @@ impl Language {
         .with_kind(RuleKind::YulIdentifierPath)
     }
 
-    // YulIfStatement = «IfKeyword» YulExpression YulBlock;
+    // YulIfStatement = IF_KEYWORD YulExpression YulBlock;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -9540,7 +9564,7 @@ impl Language {
     }
 
     // (* v0.6.0 *)
-    // YulLeaveStatement = «LeaveKeyword»;
+    // YulLeaveStatement = LEAVE_KEYWORD;
 
     #[allow(dead_code, non_snake_case)]
     fn yul_leave_statement__0_6_0(&self, stream: &mut Stream) -> ParserResult {
@@ -9567,10 +9591,10 @@ impl Language {
     }
 
     // YulLiteral = BooleanLiteral
-    //            | «YulHexLiteral»
-    //            | «YulDecimalLiteral»
-    //            | «HexStringLiteral»
-    //            | «AsciiStringLiteral»;
+    //            | YUL_HEX_LITERAL
+    //            | YUL_DECIMAL_LITERAL
+    //            | HEX_STRING_LITERAL
+    //            | ASCII_STRING_LITERAL;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -9758,7 +9782,7 @@ impl Language {
         }
     }
 
-    // YulSwitchStatement = «SwitchKeyword» YulExpression (((«CaseKeyword» YulLiteral) | «DefaultKeyword») YulBlock)+;
+    // YulSwitchStatement = SWITCH_KEYWORD YulExpression (((CASE_KEYWORD YulLiteral) | DEFAULT_KEYWORD) YulBlock)+;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]

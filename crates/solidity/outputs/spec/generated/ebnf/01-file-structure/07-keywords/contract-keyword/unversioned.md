@@ -1,5 +1,5 @@
 <!-- This file is generated automatically by infrastructure scripts. Please don't edit by hand. -->
 
-```{ .ebnf .slang-ebnf #ContractKeyword }
-«ContractKeyword» = "contract";
+```{ .ebnf .slang-ebnf #CONTRACT_KEYWORD }
+CONTRACT_KEYWORD = "contract";
 ```

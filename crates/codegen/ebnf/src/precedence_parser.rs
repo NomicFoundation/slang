@@ -43,7 +43,7 @@ impl GenerateEbnf for PrecedenceParserRef {
             ));
         }
 
-        choices.push(self.primary_expression.definition.generate_ebnf());
+        choices.push(self.primary_expression.generate_ebnf());
 
         return EbnfNode::choices(choices);
     }
