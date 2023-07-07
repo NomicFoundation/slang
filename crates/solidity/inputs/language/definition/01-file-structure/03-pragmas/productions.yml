@@ -26,7 +26,10 @@
   unversioned:
     sequence:
       - reference: "ExperimentalKeyword"
-      - reference: "Identifier"
+      - choice:
+          # Grammar says any token but semicolon
+          - reference: "AsciiStringLiteral"
+          - reference: "Identifier"
 
 - name: "VersionPragma"
   kind: "Parser"

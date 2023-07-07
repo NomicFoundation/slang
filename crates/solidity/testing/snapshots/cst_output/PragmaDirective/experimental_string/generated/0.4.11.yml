@@ -1,0 +1,14 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ pragma experimental "ABIEncoderV2";                                              │ 0..35
+
+Errors: []
+
+Tree:
+  - PragmaDirective (Rule): # 0..36 'pragma experimental "ABIEncoderV2";\n'
+      - PragmaKeyword (Token): "pragma" # 0..6
+      - ExperimentalPragma (Rule): # 6..34 ' experimental "ABIEncoderV2"'
+          - ExperimentalKeyword (Token): "experimental" # 7..19
+          - AsciiStringLiteral (Token): '"ABIEncoderV2"' # 20..34
+      - Semicolon (Token): ";" # 34..35
