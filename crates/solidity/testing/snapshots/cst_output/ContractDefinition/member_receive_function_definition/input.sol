@@ -1,0 +1,4 @@
+contract Sample {
+  receive() {
+  }
+}

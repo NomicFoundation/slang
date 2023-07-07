@@ -10,10 +10,16 @@
           open:
             reference: "OpenBrace"
           expression:
-            oneOrMore:
-              reference: "StructMember"
+            optional:
+              reference: "StructMembersList"
           close:
             reference: "CloseBrace"
+
+- name: "StructMembersList"
+  kind: "Parser"
+  unversioned:
+    oneOrMore:
+      reference: "StructMember"
 
 - name: "StructMember"
   kind: "Parser"

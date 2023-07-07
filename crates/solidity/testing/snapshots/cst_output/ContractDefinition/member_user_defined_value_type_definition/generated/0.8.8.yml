@@ -1,0 +1,22 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract Sample {                                                                │ 0..17
+  2  │   type Foo is bool;                                                              │ 18..37
+  3  │ }                                                                                │ 38..39
+
+Errors: []
+
+Tree:
+  - ContractDefinition (Rule): # 0..39 "contract Sample {\n  type Foo is bool;\n}"
+      - ContractKeyword (Token): "contract" # 0..8
+      - Identifier (Token): "Sample" # 9..15
+      - OpenBrace (Token): "{" # 16..17
+      - ContractMembersList (Rule): # 18..38 "  type Foo is bool;\n"
+          - UserDefinedValueTypeDefinition (Rule): # 18..38 "  type Foo is bool;\n"
+              - TypeKeyword (Token): "type" # 20..24
+              - Identifier (Token): "Foo" # 25..28
+              - IsKeyword (Token): "is" # 29..31
+              - BoolKeyword (Token): "bool" # 32..36
+              - Semicolon (Token): ";" # 36..37
+      - CloseBrace (Token): "}" # 38..39

@@ -12,7 +12,7 @@ Tree:
               - YulIdentifierPath (Rule): # 0..3 "foo"
                   - YulIdentifier (Token): "foo" # 0..3
           - OpenParen (Token): "(" # 3..4
-          - YulExpression (Rule): # 4..5 "1"
-              - YulLiteral (Rule): # 4..5 "1"
+          - YulExpressionsList (Rule): # 4..5 "1"
+              - YulExpression (Rule): # 4..5 "1"
                   - YulDecimalLiteral (Token): "1" # 4..5
           - CloseParen (Token): ")" # 5..6

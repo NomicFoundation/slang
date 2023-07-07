@@ -17,12 +17,12 @@ Errors: # 1 total
 
 Tree:
   - SourceUnit (Rule): # 0..56 "contract Sample {\n  function..."
-      - Definition (Rule): # 0..28 "contract Sample {\n  function"
+      - SourceUnitMembersList (Rule): # 0..28 "contract Sample {\n  function"
           - ContractDefinition (Rule): # 0..28 "contract Sample {\n  function"
               - ContractKeyword (Token): "contract" # 0..8
               - Identifier (Token): "Sample" # 9..15
               - OpenBrace (Token): "{" # 16..17
-              - ContractBodyElements (Rule): # 18..28 "  function"
+              - ContractMembersList (Rule): # 18..28 "  function"
                   - FunctionDefinition (Rule): # 18..28 "  function"
                       - FunctionKeyword (Token): "function" # 20..28
       - SKIPPED (Token): "" # 28..56

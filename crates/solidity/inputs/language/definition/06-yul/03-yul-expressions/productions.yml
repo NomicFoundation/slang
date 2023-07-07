@@ -1,5 +1,14 @@
 # yaml-language-server: $schema=../../../generated/productions.schema.json
 
+- name: "YulExpressionsList"
+  kind: "Parser"
+  unversioned:
+    separatedBy:
+      separator:
+        reference: "Comma"
+      expression:
+        reference: "YulExpression"
+
 - name: "YulExpression"
   kind: "PrecedenceParser"
   unversioned:
@@ -7,23 +16,34 @@
       - name: "YulFunctionCallExpression"
         model: "UnaryPostfix"
         operator:
-          delimitedBy:
-            open:
-              reference: "OpenParen"
-            expression:
-              optional:
-                separatedBy:
-                  separator:
-                    reference: "Comma"
-                  expression:
-                    reference: "YulExpression"
-            close:
-              reference: "CloseParen"
+          reference: "YulFunctionCallOperator"
 
     primaryExpression:
       choice:
         - reference: "YulLiteral"
         - reference: "YulIdentifierPath"
+
+- name: "YulFunctionCallOperator"
+  kind: "Parser"
+  inlined: true
+  unversioned:
+    delimitedBy:
+      open:
+        reference: "OpenParen"
+      expression:
+        optional:
+          reference: "YulExpressionsList"
+      close:
+        reference: "CloseParen"
+
+- name: "YulIdentifierPathsList"
+  kind: "Parser"
+  unversioned:
+    separatedBy:
+      separator:
+        reference: "Comma"
+      expression:
+        reference: "YulIdentifierPath"
 
 - name: "YulIdentifierPath"
   kind: "Parser"
@@ -31,6 +51,15 @@
     separatedBy:
       separator:
         reference: "Period"
+      expression:
+        reference: "YulIdentifier"
+
+- name: "YulIdentifiersList"
+  kind: "Parser"
+  unversioned:
+    separatedBy:
+      separator:
+        reference: "Comma"
       expression:
         reference: "YulIdentifier"
 
@@ -43,10 +72,11 @@
       subtrahend:
         choice:
           - reference: "YulKeyword"
-          - reference: "YulReservedKeyword"
+          - reference: "YulReservedWord"
 
 - name: "YulKeyword"
   kind: "Scanner"
+  inlined: true
   versioned:
     0.4.11:
       choice:
@@ -77,17 +107,19 @@
         - reference: "SwitchKeyword"
         - reference: "TrueKeyword"
 
-- name: "YulReservedKeyword"
+- name: "YulReservedWord"
   kind: "Scanner"
+  inlined: true
   unversioned:
-    choice:
-      - terminal: "hex"
+    terminal: "hex"
 
 - name: "YulLiteral"
   kind: "Parser"
+  inlined: true
   unversioned:
     choice:
-      - reference: "BooleanLiteral"
+      - reference: "TrueKeyword"
+      - reference: "FalseKeyword"
       - reference: "YulHexLiteral"
       - reference: "YulDecimalLiteral"
       - reference: "HexStringLiteral"
@@ -96,21 +128,29 @@
 - name: "YulHexLiteral"
   kind: "Scanner"
   unversioned:
-    sequence:
-      - terminal: "0x"
-      - oneOrMore:
-          reference: "HexCharacter"
+    trailingContext:
+      expression:
+        sequence:
+          - terminal: "0x"
+          - oneOrMore:
+              reference: "HexCharacter"
+      notFollowedBy:
+        reference: "IdentifierPart"
 
 - name: "YulDecimalLiteral"
   kind: "Scanner"
   unversioned:
-    choice:
-      - terminal: "0"
-      - sequence:
-          - range:
-              from: "1"
-              to: "9"
-          - zeroOrMore:
-              range:
-                from: "0"
-                to: "9"
+    trailingContext:
+      expression:
+        choice:
+          - terminal: "0"
+          - sequence:
+              - range:
+                  from: "1"
+                  to: "9"
+              - zeroOrMore:
+                  range:
+                    from: "0"
+                    to: "9"
+      notFollowedBy:
+        reference: "IdentifierPart"

@@ -1,0 +1,14 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ pragma experimental foo;                                                         │ 0..24
+
+Errors: []
+
+Tree:
+  - PragmaDirective (Rule): # 0..24 "pragma experimental foo;"
+      - PragmaKeyword (Token): "pragma" # 0..6
+      - ExperimentalPragma (Rule): # 6..23 " experimental foo"
+          - ExperimentalKeyword (Token): "experimental" # 7..19
+          - Identifier (Token): "foo" # 20..23
+      - Semicolon (Token): ";" # 23..24

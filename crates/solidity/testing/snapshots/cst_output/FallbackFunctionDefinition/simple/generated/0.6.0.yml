@@ -8,7 +8,7 @@ Errors: []
 Tree:
   - FallbackFunctionDefinition (Rule): # 0..14 "fallback () {}"
       - FallbackKeyword (Token): "fallback" # 0..8
-      - ParameterList (Rule): # 8..11 " ()"
+      - ParametersDeclaration (Rule): # 8..11 " ()"
           - OpenParen (Token): "(" # 9..10
           - CloseParen (Token): ")" # 10..11
       - Block (Rule): # 11..14 " {}"

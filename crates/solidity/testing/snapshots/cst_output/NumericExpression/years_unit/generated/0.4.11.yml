@@ -8,5 +8,4 @@ Errors: []
 Tree:
   - NumericExpression (Rule): # 0..9 "10 years\n"
       - DecimalLiteral (Token): "10" # 0..2
-      - NumberUnit (Rule): # 2..9 " years\n"
-          - YearsKeyword (Token): "years" # 3..8
+      - YearsKeyword (Token): "years" # 3..8

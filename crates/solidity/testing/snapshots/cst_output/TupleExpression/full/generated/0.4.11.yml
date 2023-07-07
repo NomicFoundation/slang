@@ -8,19 +8,16 @@ Errors: []
 Tree:
   - TupleExpression (Rule): # 0..30 "(first, second, third, fourth)"
       - OpenParen (Token): "(" # 0..1
-      - Expression (Rule): # 1..6 "first"
-          - PrimaryExpression (Rule): # 1..6 "first"
+      - TupleValuesList (Rule): # 1..29 "first, second, third, fourth"
+          - Expression (Rule): # 1..6 "first"
               - Identifier (Token): "first" # 1..6
-      - Comma (Token): "," # 6..7
-      - Expression (Rule): # 7..14 " second"
-          - PrimaryExpression (Rule): # 7..14 " second"
+          - Comma (Token): "," # 6..7
+          - Expression (Rule): # 7..14 " second"
               - Identifier (Token): "second" # 8..14
-      - Comma (Token): "," # 14..15
-      - Expression (Rule): # 15..21 " third"
-          - PrimaryExpression (Rule): # 15..21 " third"
+          - Comma (Token): "," # 14..15
+          - Expression (Rule): # 15..21 " third"
               - Identifier (Token): "third" # 16..21
-      - Comma (Token): "," # 21..22
-      - Expression (Rule): # 22..29 " fourth"
-          - PrimaryExpression (Rule): # 22..29 " fourth"
+          - Comma (Token): "," # 21..22
+          - Expression (Rule): # 22..29 " fourth"
               - Identifier (Token): "fourth" # 23..29
       - CloseParen (Token): ")" # 29..30

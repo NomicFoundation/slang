@@ -1,0 +1,1 @@
+contract Sample is Foo, Bar(1, 2), Baz {}

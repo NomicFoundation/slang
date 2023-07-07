@@ -8,48 +8,85 @@
         sequence:
           - reference: "PragmaKeyword"
           - choice:
-              - reference: "VersionPragma"
               - reference: "ABICoderPragma"
               - reference: "ExperimentalPragma"
+              - reference: "VersionPragma"
       terminator:
         reference: "Semicolon"
+
+- name: "ABICoderPragma"
+  kind: "Parser"
+  unversioned:
+    sequence:
+      - reference: "AbicoderKeyword"
+      - reference: "Identifier"
+
+- name: "ExperimentalPragma"
+  kind: "Parser"
+  unversioned:
+    sequence:
+      - reference: "ExperimentalKeyword"
+      - reference: "Identifier"
 
 - name: "VersionPragma"
   kind: "Parser"
   unversioned:
     sequence:
       - reference: "SolidityKeyword"
-      - name: "VersionPragmaExpressionList"
-        oneOrMore:
-          reference: "VersionPragmaExpression"
+      - reference: "VersionPragmaExpressionsList"
+
+- name: "VersionPragmaExpressionsList"
+  kind: "Parser"
+  unversioned:
+    oneOrMore:
+      reference: "VersionPragmaExpression"
 
 - name: "VersionPragmaExpression"
   kind: "PrecedenceParser"
-  inlined: true
   unversioned:
     operators:
-      - name: "VersionPragmaAlternatives"
+      - name: "VersionPragmaBinaryExpression"
         model: "BinaryLeftAssociative"
         operator:
-          reference: "BarBar"
-      - name: "VersionPragmaRange"
+          reference: "VersionPragmaOrOperator"
+
+      - name: "VersionPragmaBinaryExpression"
         model: "BinaryLeftAssociative"
         operator:
-          reference: "Minus"
-      - name: "VersionPragmaComparator"
+          reference: "VersionPragmaRangeOperator"
+
+      - name: "VersionPragmaUnaryExpression"
         model: "UnaryPrefix"
         operator:
-          choice:
-            - reference: "Caret"
-            - reference: "Tilde"
-            - reference: "Equal"
-            - reference: "LessThan"
-            - reference: "GreaterThan"
-            - reference: "LessThanEqual"
-            - reference: "GreaterThanEqual"
+          reference: "VersionPragmaUnaryOperator"
 
     primaryExpression:
       reference: "VersionPragmaSpecifier"
+
+- name: "VersionPragmaOrOperator"
+  kind: "Parser"
+  inlined: true
+  unversioned:
+    reference: "BarBar"
+
+- name: "VersionPragmaRangeOperator"
+  kind: "Parser"
+  inlined: true
+  unversioned:
+    reference: "Minus"
+
+- name: "VersionPragmaUnaryOperator"
+  kind: "Parser"
+  inlined: true
+  unversioned:
+    choice:
+      - reference: "Caret"
+      - reference: "Tilde"
+      - reference: "Equal"
+      - reference: "LessThan"
+      - reference: "GreaterThan"
+      - reference: "LessThanEqual"
+      - reference: "GreaterThanEqual"
 
 - name: "VersionPragmaSpecifier"
   kind: "Parser"
@@ -71,17 +108,3 @@
         - terminal: "x"
         - terminal: "X"
         - terminal: "*"
-
-- name: "ABICoderPragma"
-  kind: "Parser"
-  unversioned:
-    sequence:
-      - reference: "AbicoderKeyword"
-      - reference: "Identifier"
-
-- name: "ExperimentalPragma"
-  kind: "Parser"
-  unversioned:
-    sequence:
-      - reference: "ExperimentalKeyword"
-      - reference: "Identifier"

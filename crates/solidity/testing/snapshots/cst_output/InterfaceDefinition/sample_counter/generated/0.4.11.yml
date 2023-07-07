@@ -16,36 +16,37 @@ Tree:
       - InterfaceKeyword (Token): "interface" # 0..9
       - Identifier (Token): "ICounter" # 10..18
       - OpenBrace (Token): "{" # 19..20
-      - FunctionDefinition (Rule): # 21..105 "    // returns the current count\n    function coun..."
-          - LeadingTrivia (Rule): # 21..58 "    // returns the current count\n    "
-              - SingleLineComment (Trivia): "// returns the current count" # 25..53
-          - FunctionKeyword (Token): "function" # 58..66
-          - Identifier (Token): "count" # 67..72
-          - ParameterList (Rule): # 72..74 "()"
-              - OpenParen (Token): "(" # 72..73
-              - CloseParen (Token): ")" # 73..74
-          - FunctionAttribute (Rule): # 74..83 " external"
-              - ExternalKeyword (Token): "external" # 75..83
-          - FunctionAttribute (Rule): # 83..88 " view"
-              - ViewKeyword (Token): "view" # 84..88
-          - ReturnsKeyword (Token): "returns" # 89..96
-          - ParameterList (Rule): # 96..103 " (uint)"
-              - OpenParen (Token): "(" # 97..98
-              - ParameterDeclaration (Rule): # 98..102 "uint"
-                  - TypeName (Rule): # 98..102 "uint"
-                      - ElementaryType (Rule): # 98..102 "uint"
-                          - UnsignedIntegerType (Token): "uint" # 98..102
-              - CloseParen (Token): ")" # 102..103
-          - Semicolon (Token): ";" # 103..104
-      - FunctionDefinition (Rule): # 105..171 "\n    // increments the counter\n    function increm..."
-          - LeadingTrivia (Rule): # 105..140 "\n    // increments the counter\n    "
-              - SingleLineComment (Trivia): "// increments the counter" # 110..135
-          - FunctionKeyword (Token): "function" # 140..148
-          - Identifier (Token): "increment" # 149..158
-          - ParameterList (Rule): # 158..160 "()"
-              - OpenParen (Token): "(" # 158..159
-              - CloseParen (Token): ")" # 159..160
-          - FunctionAttribute (Rule): # 160..169 " external"
-              - ExternalKeyword (Token): "external" # 161..169
-          - Semicolon (Token): ";" # 169..170
+      - InterfaceMembersList (Rule): # 21..171 "    // returns the current count\n    function coun..."
+          - FunctionDefinition (Rule): # 21..105 "    // returns the current count\n    function coun..."
+              - LeadingTrivia (Rule): # 21..58 "    // returns the current count\n    "
+                  - SingleLineComment (Trivia): "// returns the current count" # 25..53
+              - FunctionKeyword (Token): "function" # 58..66
+              - Identifier (Token): "count" # 67..72
+              - ParametersDeclaration (Rule): # 72..74 "()"
+                  - OpenParen (Token): "(" # 72..73
+                  - CloseParen (Token): ")" # 73..74
+              - FunctionAttributesList (Rule): # 74..88 " external view"
+                  - ExternalKeyword (Token): "external" # 75..83
+                  - ViewKeyword (Token): "view" # 84..88
+              - ReturnsDeclaration (Rule): # 88..103 " returns (uint)"
+                  - ReturnsKeyword (Token): "returns" # 89..96
+                  - ParametersDeclaration (Rule): # 96..103 " (uint)"
+                      - OpenParen (Token): "(" # 97..98
+                      - ParametersList (Rule): # 98..102 "uint"
+                          - Parameter (Rule): # 98..102 "uint"
+                              - TypeName (Rule): # 98..102 "uint"
+                                  - UnsignedIntegerType (Token): "uint" # 98..102
+                      - CloseParen (Token): ")" # 102..103
+              - Semicolon (Token): ";" # 103..104
+          - FunctionDefinition (Rule): # 105..171 "\n    // increments the counter\n    function increm..."
+              - LeadingTrivia (Rule): # 105..140 "\n    // increments the counter\n    "
+                  - SingleLineComment (Trivia): "// increments the counter" # 110..135
+              - FunctionKeyword (Token): "function" # 140..148
+              - Identifier (Token): "increment" # 149..158
+              - ParametersDeclaration (Rule): # 158..160 "()"
+                  - OpenParen (Token): "(" # 158..159
+                  - CloseParen (Token): ")" # 159..160
+              - FunctionAttributesList (Rule): # 160..169 " external"
+                  - ExternalKeyword (Token): "external" # 161..169
+              - Semicolon (Token): ";" # 169..170
       - CloseBrace (Token): "}" # 171..172

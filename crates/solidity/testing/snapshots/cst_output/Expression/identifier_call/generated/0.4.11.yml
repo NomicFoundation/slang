@@ -9,13 +9,10 @@ Tree:
   - Expression (Rule): # 0..20 "function_name(value)"
       - FunctionCallExpression (Rule): # 0..20 "function_name(value)"
           - Expression (Rule): # 0..13 "function_name"
-              - PrimaryExpression (Rule): # 0..13 "function_name"
-                  - Identifier (Token): "function_name" # 0..13
-          - FunctionCallOperator (Rule): # 13..20 "(value)"
-              - ArgumentList (Rule): # 13..20 "(value)"
-                  - OpenParen (Token): "(" # 13..14
-                  - PositionalArgumentList (Rule): # 14..19 "value"
-                      - Expression (Rule): # 14..19 "value"
-                          - PrimaryExpression (Rule): # 14..19 "value"
-                              - Identifier (Token): "value" # 14..19
-                  - CloseParen (Token): ")" # 19..20
+              - Identifier (Token): "function_name" # 0..13
+          - ArgumentsDeclaration (Rule): # 13..20 "(value)"
+              - OpenParen (Token): "(" # 13..14
+              - PositionalArgumentsList (Rule): # 14..19 "value"
+                  - Expression (Rule): # 14..19 "value"
+                      - Identifier (Token): "value" # 14..19
+              - CloseParen (Token): ")" # 19..20

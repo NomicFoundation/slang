@@ -11,12 +11,9 @@ Tree:
       - Expression (Rule): # 6..15 " foo[bar]"
           - IndexAccessExpression (Rule): # 6..15 " foo[bar]"
               - Expression (Rule): # 6..10 " foo"
-                  - PrimaryExpression (Rule): # 6..10 " foo"
-                      - Identifier (Token): "foo" # 7..10
-              - IndexAccessOperator (Rule): # 10..15 "[bar]"
-                  - OpenBracket (Token): "[" # 10..11
-                  - Expression (Rule): # 11..14 "bar"
-                      - PrimaryExpression (Rule): # 11..14 "bar"
-                          - Identifier (Token): "bar" # 11..14
-                  - CloseBracket (Token): "]" # 14..15
+                  - Identifier (Token): "foo" # 7..10
+              - OpenBracket (Token): "[" # 10..11
+              - Expression (Rule): # 11..14 "bar"
+                  - Identifier (Token): "bar" # 11..14
+              - CloseBracket (Token): "]" # 14..15
       - Semicolon (Token): ";" # 15..16

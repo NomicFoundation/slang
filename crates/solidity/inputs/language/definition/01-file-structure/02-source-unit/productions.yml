@@ -4,43 +4,46 @@
   kind: "Parser"
   unversioned:
     sequence:
-      - zeroOrMore:
-          choice:
-            - reference: "Directive"
-            - reference: "Definition"
+      - optional:
+          reference: "SourceUnitMembersList"
       - optional:
           reference: "EndOfFileTrivia"
 
-- name: "Directive"
+- name: "SourceUnitMembersList"
   kind: "Parser"
   unversioned:
-    choice:
-      - reference: "PragmaDirective"
-      - reference: "ImportDirective"
-      - reference: "UsingDirective"
+    oneOrMore:
+      reference: "SourceUnitMember"
 
-- name: "Definition"
+- name: "SourceUnitMember"
   kind: "Parser"
+  inlined: true
   versioned:
     0.4.11:
       choice:
-        - reference: "ConstantDefinition"
         - reference: "ContractDefinition"
-        - reference: "EnumDefinition"
-        - reference: "ErrorDefinition"
-        - reference: "FunctionDefinition"
-        - reference: "InterfaceDefinition"
         - reference: "LibraryDefinition"
+        - reference: "InterfaceDefinition"
         - reference: "StructDefinition"
+        - reference: "EnumDefinition"
+        - reference: "ConstantDefinition"
+        - reference: "FunctionDefinition"
+        - reference: "ErrorDefinition"
+        - reference: "ImportDirective"
+        - reference: "PragmaDirective"
+        - reference: "UsingDirective"
     0.8.8:
-      # added: UserDefinedValueTypeDefinition
       choice:
-        - reference: "ConstantDefinition"
         - reference: "ContractDefinition"
-        - reference: "EnumDefinition"
-        - reference: "ErrorDefinition"
-        - reference: "FunctionDefinition"
-        - reference: "InterfaceDefinition"
         - reference: "LibraryDefinition"
+        - reference: "InterfaceDefinition"
         - reference: "StructDefinition"
+        - reference: "EnumDefinition"
+        - reference: "ConstantDefinition"
+        - reference: "FunctionDefinition"
+        - reference: "ErrorDefinition"
+        - reference: "ImportDirective"
+        - reference: "PragmaDirective"
+        - reference: "UsingDirective"
+        # added:
         - reference: "UserDefinedValueTypeDefinition"

@@ -7,19 +7,14 @@ Errors: []
 
 Tree:
   - Expression (Rule): # 0..10 "a & b && c"
-      - AndExpression (Rule): # 0..10 "a & b && c"
+      - BinaryExpression (Rule): # 0..10 "a & b && c"
           - Expression (Rule): # 0..5 "a & b"
-              - BitAndExpression (Rule): # 0..5 "a & b"
+              - BinaryExpression (Rule): # 0..5 "a & b"
                   - Expression (Rule): # 0..1 "a"
-                      - PrimaryExpression (Rule): # 0..1 "a"
-                          - Identifier (Token): "a" # 0..1
-                  - BitAndOperator (Rule): # 1..3 " &"
-                      - Ampersand (Token): "&" # 2..3
+                      - Identifier (Token): "a" # 0..1
+                  - Ampersand (Token): "&" # 2..3
                   - Expression (Rule): # 3..5 " b"
-                      - PrimaryExpression (Rule): # 3..5 " b"
-                          - Identifier (Token): "b" # 4..5
-          - AndOperator (Rule): # 5..8 " &&"
-              - AmpersandAmpersand (Token): "&&" # 6..8
+                      - Identifier (Token): "b" # 4..5
+          - AmpersandAmpersand (Token): "&&" # 6..8
           - Expression (Rule): # 8..10 " c"
-              - PrimaryExpression (Rule): # 8..10 " c"
-                  - Identifier (Token): "c" # 9..10
+              - Identifier (Token): "c" # 9..10

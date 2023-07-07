@@ -94,8 +94,7 @@ fn process_source_file(
             continue;
         }
 
-        // solc doesn't follow SemVer, and introduces breaking changes during minor version upgrades.
-        // Let's run against the latest release of each minor release.
+        // Let's test each minor version only once:
         let unique_key = version.major ^ version.minor;
         if !tested_versions.insert(unique_key) {
             continue;

@@ -268,7 +268,7 @@ impl Receiver for PrecedenceParserRef {
         }
 
         {
-            let location = location.field("definitions");
+            let location = location.field("operators");
             for (i, definition) in self.operators.iter().enumerate() {
                 let location = location.index(i).field("operator");
                 definition

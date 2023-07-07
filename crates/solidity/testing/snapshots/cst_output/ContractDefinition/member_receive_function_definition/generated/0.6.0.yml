@@ -1,0 +1,25 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract Sample {                                                                │ 0..17
+  2  │   receive() {                                                                    │ 18..31
+  3  │   }                                                                              │ 32..35
+  4  │ }                                                                                │ 36..37
+
+Errors: []
+
+Tree:
+  - ContractDefinition (Rule): # 0..37 "contract Sample {\n  receive() {\n  }\n}"
+      - ContractKeyword (Token): "contract" # 0..8
+      - Identifier (Token): "Sample" # 9..15
+      - OpenBrace (Token): "{" # 16..17
+      - ContractMembersList (Rule): # 18..36 "  receive() {\n  }\n"
+          - ReceiveFunctionDefinition (Rule): # 18..36 "  receive() {\n  }\n"
+              - ReceiveKeyword (Token): "receive" # 20..27
+              - ParametersDeclaration (Rule): # 27..29 "()"
+                  - OpenParen (Token): "(" # 27..28
+                  - CloseParen (Token): ")" # 28..29
+              - Block (Rule): # 29..36 " {\n  }\n"
+                  - OpenBrace (Token): "{" # 30..31
+                  - CloseBrace (Token): "}" # 34..35
+      - CloseBrace (Token): "}" # 36..37

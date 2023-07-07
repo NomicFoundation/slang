@@ -1,0 +1,126 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ pragma solidity 0.0.0;                                                           │ 0..22
+  2  │                                                                                  │ 23..23
+  3  │ import "foo.sol";                                                                │ 24..41
+  4  │                                                                                  │ 42..42
+  5  │ using A for B;                                                                   │ 43..57
+  6  │                                                                                  │ 58..58
+  7  │ contract C { }                                                                   │ 59..73
+  8  │                                                                                  │ 74..74
+  9  │ interface I { }                                                                  │ 75..90
+  10 │                                                                                  │ 91..91
+  11 │ library L { }                                                                    │ 92..105
+  12 │                                                                                  │ 106..106
+  13 │ struct S { }                                                                     │ 107..119
+  14 │                                                                                  │ 120..120
+  15 │ enum E { }                                                                       │ 121..131
+  16 │                                                                                  │ 132..132
+  17 │ uint32 constant x = 0;                                                           │ 133..155
+  18 │                                                                                  │ 156..156
+  19 │ function f() public { }                                                          │ 157..180
+  20 │                                                                                  │ 181..181
+  21 │ error E1(string);                                                                │ 182..199
+  22 │                                                                                  │ 200..200
+  23 │ type T is bool;                                                                  │ 201..216
+
+Errors: # 1 total
+  - >
+    Error: Expected EndOfLine or MultilineComment or SingleLineComment or Whitespace.
+        ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/everything/input.sol:23:1]
+        │
+     23 │ type T is bool;
+        │ ────────┬───────  
+        │         ╰───────── Error occurred here.
+    ────╯
+
+Tree:
+  - SourceUnit (Rule): # 0..217 'pragma solidity 0.0.0;\n\nimport "foo.sol";\n\nusing A...'
+      - SourceUnitMembersList (Rule): # 0..200 'pragma solidity 0.0.0;\n\nimport "foo.sol";\n\nusing A...'
+          - PragmaDirective (Rule): # 0..23 "pragma solidity 0.0.0;\n"
+              - PragmaKeyword (Token): "pragma" # 0..6
+              - VersionPragma (Rule): # 6..21 " solidity 0.0.0"
+                  - SolidityKeyword (Token): "solidity" # 7..15
+                  - VersionPragmaExpressionsList (Rule): # 15..21 " 0.0.0"
+                      - VersionPragmaExpression (Rule): # 15..21 " 0.0.0"
+                          - VersionPragmaSpecifier (Rule): # 15..21 " 0.0.0"
+                              - VersionPragmaValue (Token): "0" # 16..17
+                              - Period (Token): "." # 17..18
+                              - VersionPragmaValue (Token): "0" # 18..19
+                              - Period (Token): "." # 19..20
+                              - VersionPragmaValue (Token): "0" # 20..21
+              - Semicolon (Token): ";" # 21..22
+          - ImportDirective (Rule): # 23..42 '\nimport "foo.sol";\n'
+              - ImportKeyword (Token): "import" # 24..30
+              - PathImport (Rule): # 30..40 ' "foo.sol"'
+                  - AsciiStringLiteral (Token): '"foo.sol"' # 31..40
+              - Semicolon (Token): ";" # 40..41
+          - UsingDirective (Rule): # 42..58 "\nusing A for B;\n"
+              - UsingKeyword (Token): "using" # 43..48
+              - UsingDirectivePath (Rule): # 48..50 " A"
+                  - IdentifierPath (Rule): # 48..50 " A"
+                      - Identifier (Token): "A" # 49..50
+              - ForKeyword (Token): "for" # 51..54
+              - TypeName (Rule): # 54..56 " B"
+                  - IdentifierPath (Rule): # 54..56 " B"
+                      - Identifier (Token): "B" # 55..56
+              - Semicolon (Token): ";" # 56..57
+          - ContractDefinition (Rule): # 58..74 "\ncontract C { }\n"
+              - ContractKeyword (Token): "contract" # 59..67
+              - Identifier (Token): "C" # 68..69
+              - OpenBrace (Token): "{" # 70..71
+              - CloseBrace (Token): "}" # 72..73
+          - InterfaceDefinition (Rule): # 74..91 "\ninterface I { }\n"
+              - InterfaceKeyword (Token): "interface" # 75..84
+              - Identifier (Token): "I" # 85..86
+              - OpenBrace (Token): "{" # 87..88
+              - CloseBrace (Token): "}" # 89..90
+          - LibraryDefinition (Rule): # 91..106 "\nlibrary L { }\n"
+              - LibraryKeyword (Token): "library" # 92..99
+              - Identifier (Token): "L" # 100..101
+              - OpenBrace (Token): "{" # 102..103
+              - CloseBrace (Token): "}" # 104..105
+          - StructDefinition (Rule): # 106..120 "\nstruct S { }\n"
+              - StructKeyword (Token): "struct" # 107..113
+              - Identifier (Token): "S" # 114..115
+              - OpenBrace (Token): "{" # 116..117
+              - CloseBrace (Token): "}" # 118..119
+          - EnumDefinition (Rule): # 120..132 "\nenum E { }\n"
+              - EnumKeyword (Token): "enum" # 121..125
+              - Identifier (Token): "E" # 126..127
+              - OpenBrace (Token): "{" # 128..129
+              - CloseBrace (Token): "}" # 130..131
+          - ConstantDefinition (Rule): # 132..156 "\nuint32 constant x = 0;\n"
+              - TypeName (Rule): # 132..139 "\nuint32"
+                  - UnsignedIntegerType (Token): "uint32" # 133..139
+              - ConstantKeyword (Token): "constant" # 140..148
+              - Identifier (Token): "x" # 149..150
+              - Equal (Token): "=" # 151..152
+              - Expression (Rule): # 152..154 " 0"
+                  - NumericExpression (Rule): # 152..154 " 0"
+                      - DecimalLiteral (Token): "0" # 153..154
+              - Semicolon (Token): ";" # 154..155
+          - FunctionDefinition (Rule): # 156..181 "\nfunction f() public { }\n"
+              - FunctionKeyword (Token): "function" # 157..165
+              - Identifier (Token): "f" # 166..167
+              - ParametersDeclaration (Rule): # 167..169 "()"
+                  - OpenParen (Token): "(" # 167..168
+                  - CloseParen (Token): ")" # 168..169
+              - FunctionAttributesList (Rule): # 169..176 " public"
+                  - PublicKeyword (Token): "public" # 170..176
+              - Block (Rule): # 176..181 " { }\n"
+                  - OpenBrace (Token): "{" # 177..178
+                  - CloseBrace (Token): "}" # 179..180
+          - ErrorDefinition (Rule): # 181..200 "\nerror E1(string);\n"
+              - ErrorKeyword (Token): "error" # 182..187
+              - Identifier (Token): "E1" # 188..190
+              - OpenParen (Token): "(" # 190..191
+              - ErrorParametersList (Rule): # 191..197 "string"
+                  - ErrorParameter (Rule): # 191..197 "string"
+                      - TypeName (Rule): # 191..197 "string"
+                          - StringKeyword (Token): "string" # 191..197
+              - CloseParen (Token): ")" # 197..198
+              - Semicolon (Token): ";" # 198..199
+      - EndOfFileTrivia (Rule): "\n" # 200..201
+      - SKIPPED (Token): "type T is bool;\n" # 201..217

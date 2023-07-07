@@ -11,10 +11,6 @@
             reference: "OpenBrace"
           expression:
             optional:
-              separatedBy:
-                separator:
-                  reference: "Comma"
-                expression:
-                  reference: "Identifier"
+              reference: "IdentifiersList"
           close:
             reference: "CloseBrace"

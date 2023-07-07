@@ -1,0 +1,13 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ foo.bar                                                                          │ 0..7
+
+Errors: []
+
+Tree:
+  - UsingDirectiveSymbol (Rule): # 0..7 "foo.bar"
+      - IdentifierPath (Rule): # 0..7 "foo.bar"
+          - Identifier (Token): "foo" # 0..3
+          - Period (Token): "." # 3..4
+          - Identifier (Token): "bar" # 4..7

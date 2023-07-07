@@ -11,37 +11,34 @@ Tree:
           - Expression (Rule): # 0..3 "a.b"
               - MemberAccessExpression (Rule): # 0..3 "a.b"
                   - Expression (Rule): # 0..1 "a"
-                      - PrimaryExpression (Rule): # 0..1 "a"
-                          - Identifier (Token): "a" # 0..1
-                  - MemberAccessOperator (Rule): # 1..3 ".b"
-                      - Period (Token): "." # 1..2
-                      - Identifier (Token): "b" # 2..3
-          - FunctionCallOperator (Rule): # 3..25 '{value: 0}{gas: 1}("")'
-              - FunctionCallOptions (Rule): # 3..13 "{value: 0}"
+                      - Identifier (Token): "a" # 0..1
+                  - Period (Token): "." # 1..2
+                  - Identifier (Token): "b" # 2..3
+          - FunctionCallOptions (Rule): # 3..21 "{value: 0}{gas: 1}"
+              - NamedArgumentsDeclaration (Rule): # 3..13 "{value: 0}"
                   - OpenBrace (Token): "{" # 3..4
-                  - NamedArgument (Rule): # 4..12 "value: 0"
-                      - Identifier (Token): "value" # 4..9
-                      - Colon (Token): ":" # 9..10
-                      - Expression (Rule): # 10..12 " 0"
-                          - PrimaryExpression (Rule): # 10..12 " 0"
+                  - NamedArgumentsList (Rule): # 4..12 "value: 0"
+                      - NamedArgument (Rule): # 4..12 "value: 0"
+                          - Identifier (Token): "value" # 4..9
+                          - Colon (Token): ":" # 9..10
+                          - Expression (Rule): # 10..12 " 0"
                               - NumericExpression (Rule): # 10..12 " 0"
                                   - DecimalLiteral (Token): "0" # 11..12
                   - CloseBrace (Token): "}" # 12..13
-              - FunctionCallOptions (Rule): # 13..21 "{gas: 1}"
+              - NamedArgumentsDeclaration (Rule): # 13..21 "{gas: 1}"
                   - OpenBrace (Token): "{" # 13..14
-                  - NamedArgument (Rule): # 14..20 "gas: 1"
-                      - Identifier (Token): "gas" # 14..17
-                      - Colon (Token): ":" # 17..18
-                      - Expression (Rule): # 18..20 " 1"
-                          - PrimaryExpression (Rule): # 18..20 " 1"
+                  - NamedArgumentsList (Rule): # 14..20 "gas: 1"
+                      - NamedArgument (Rule): # 14..20 "gas: 1"
+                          - Identifier (Token): "gas" # 14..17
+                          - Colon (Token): ":" # 17..18
+                          - Expression (Rule): # 18..20 " 1"
                               - NumericExpression (Rule): # 18..20 " 1"
                                   - DecimalLiteral (Token): "1" # 19..20
                   - CloseBrace (Token): "}" # 20..21
-              - ArgumentList (Rule): # 21..25 '("")'
-                  - OpenParen (Token): "(" # 21..22
-                  - PositionalArgumentList (Rule): # 22..24 '""'
-                      - Expression (Rule): # 22..24 '""'
-                          - PrimaryExpression (Rule): # 22..24 '""'
-                              - StringExpression (Rule): # 22..24 '""'
-                                  - AsciiStringLiteral (Token): '""' # 22..24
-                  - CloseParen (Token): ")" # 24..25
+          - ArgumentsDeclaration (Rule): # 21..25 '("")'
+              - OpenParen (Token): "(" # 21..22
+              - PositionalArgumentsList (Rule): # 22..24 '""'
+                  - Expression (Rule): # 22..24 '""'
+                      - AsciiStringLiteralsList (Rule): # 22..24 '""'
+                          - AsciiStringLiteral (Token): '""' # 22..24
+              - CloseParen (Token): ")" # 24..25

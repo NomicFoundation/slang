@@ -9,38 +9,30 @@ Tree:
   - Expression (Rule): # 0..23 "foo ? (a + b) : (c + d)"
       - ConditionalExpression (Rule): # 0..23 "foo ? (a + b) : (c + d)"
           - Expression (Rule): # 0..3 "foo"
-              - PrimaryExpression (Rule): # 0..3 "foo"
-                  - Identifier (Token): "foo" # 0..3
-          - ConditionalOperator (Rule): # 3..23 " ? (a + b) : (c + d)"
-              - QuestionMark (Token): "?" # 4..5
-              - Expression (Rule): # 5..13 " (a + b)"
-                  - PrimaryExpression (Rule): # 5..13 " (a + b)"
-                      - TupleExpression (Rule): # 5..13 " (a + b)"
-                          - OpenParen (Token): "(" # 6..7
-                          - Expression (Rule): # 7..12 "a + b"
-                              - AddSubExpression (Rule): # 7..12 "a + b"
-                                  - Expression (Rule): # 7..8 "a"
-                                      - PrimaryExpression (Rule): # 7..8 "a"
-                                          - Identifier (Token): "a" # 7..8
-                                  - AddSubOperator (Rule): # 8..10 " +"
-                                      - Plus (Token): "+" # 9..10
-                                  - Expression (Rule): # 10..12 " b"
-                                      - PrimaryExpression (Rule): # 10..12 " b"
-                                          - Identifier (Token): "b" # 11..12
-                          - CloseParen (Token): ")" # 12..13
-              - Colon (Token): ":" # 14..15
-              - Expression (Rule): # 15..23 " (c + d)"
-                  - PrimaryExpression (Rule): # 15..23 " (c + d)"
-                      - TupleExpression (Rule): # 15..23 " (c + d)"
-                          - OpenParen (Token): "(" # 16..17
-                          - Expression (Rule): # 17..22 "c + d"
-                              - AddSubExpression (Rule): # 17..22 "c + d"
-                                  - Expression (Rule): # 17..18 "c"
-                                      - PrimaryExpression (Rule): # 17..18 "c"
-                                          - Identifier (Token): "c" # 17..18
-                                  - AddSubOperator (Rule): # 18..20 " +"
-                                      - Plus (Token): "+" # 19..20
-                                  - Expression (Rule): # 20..22 " d"
-                                      - PrimaryExpression (Rule): # 20..22 " d"
-                                          - Identifier (Token): "d" # 21..22
-                          - CloseParen (Token): ")" # 22..23
+              - Identifier (Token): "foo" # 0..3
+          - QuestionMark (Token): "?" # 4..5
+          - Expression (Rule): # 5..13 " (a + b)"
+              - TupleExpression (Rule): # 5..13 " (a + b)"
+                  - OpenParen (Token): "(" # 6..7
+                  - TupleValuesList (Rule): # 7..12 "a + b"
+                      - Expression (Rule): # 7..12 "a + b"
+                          - BinaryExpression (Rule): # 7..12 "a + b"
+                              - Expression (Rule): # 7..8 "a"
+                                  - Identifier (Token): "a" # 7..8
+                              - Plus (Token): "+" # 9..10
+                              - Expression (Rule): # 10..12 " b"
+                                  - Identifier (Token): "b" # 11..12
+                  - CloseParen (Token): ")" # 12..13
+          - Colon (Token): ":" # 14..15
+          - Expression (Rule): # 15..23 " (c + d)"
+              - TupleExpression (Rule): # 15..23 " (c + d)"
+                  - OpenParen (Token): "(" # 16..17
+                  - TupleValuesList (Rule): # 17..22 "c + d"
+                      - Expression (Rule): # 17..22 "c + d"
+                          - BinaryExpression (Rule): # 17..22 "c + d"
+                              - Expression (Rule): # 17..18 "c"
+                                  - Identifier (Token): "c" # 17..18
+                              - Plus (Token): "+" # 19..20
+                              - Expression (Rule): # 20..22 " d"
+                                  - Identifier (Token): "d" # 21..22
+                  - CloseParen (Token): ")" # 22..23

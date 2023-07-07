@@ -1,0 +1,31 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract Sample {                                                                │ 0..17
+  2  │   receive() {                                                                    │ 18..31
+  3  │   }                                                                              │ 32..35
+  4  │ }                                                                                │ 36..37
+
+Errors: # 1 total
+  - >
+    Error: Expected ConstantKeyword or Identifier or InternalKeyword or OverrideKeyword or Period or PrivateKeyword or PublicKeyword.
+       ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/member_receive_function_definition/input.sol:2:10]
+       │
+     2 │ ╭─▶   receive() {
+       ┆ ┆   
+     4 │ ├─▶ }
+       │ │      
+       │ ╰────── Error occurred here.
+    ───╯
+
+Tree:
+  - ContractDefinition (Rule): # 0..37 "contract Sample {\n  receive() {\n  }\n}"
+      - ContractKeyword (Token): "contract" # 0..8
+      - Identifier (Token): "Sample" # 9..15
+      - OpenBrace (Token): "{" # 16..17
+      - ContractMembersList (Rule): # 18..27 "  receive"
+          - StateVariableDefinition (Rule): # 18..27 "  receive"
+              - TypeName (Rule): # 18..27 "  receive"
+                  - IdentifierPath (Rule): # 18..27 "  receive"
+                      - Identifier (Token): "receive" # 20..27
+      - SKIPPED (Token): "() {\n  }\n}" # 27..37

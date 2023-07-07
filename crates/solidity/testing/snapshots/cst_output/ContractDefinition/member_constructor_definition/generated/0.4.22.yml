@@ -1,0 +1,27 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract Sample {                                                                │ 0..17
+  2  │   constructor() public {                                                         │ 18..42
+  3  │   }                                                                              │ 43..46
+  4  │ }                                                                                │ 47..48
+
+Errors: []
+
+Tree:
+  - ContractDefinition (Rule): # 0..48 "contract Sample {\n  constructor() public {\n  }\n}"
+      - ContractKeyword (Token): "contract" # 0..8
+      - Identifier (Token): "Sample" # 9..15
+      - OpenBrace (Token): "{" # 16..17
+      - ContractMembersList (Rule): # 18..47 "  constructor() public {\n  }\n"
+          - ConstructorDefinition (Rule): # 18..47 "  constructor() public {\n  }\n"
+              - ConstructorKeyword (Token): "constructor" # 20..31
+              - ParametersDeclaration (Rule): # 31..33 "()"
+                  - OpenParen (Token): "(" # 31..32
+                  - CloseParen (Token): ")" # 32..33
+              - ConstructorAttributesList (Rule): # 33..40 " public"
+                  - PublicKeyword (Token): "public" # 34..40
+              - Block (Rule): # 40..47 " {\n  }\n"
+                  - OpenBrace (Token): "{" # 41..42
+                  - CloseBrace (Token): "}" # 45..46
+      - CloseBrace (Token): "}" # 47..48

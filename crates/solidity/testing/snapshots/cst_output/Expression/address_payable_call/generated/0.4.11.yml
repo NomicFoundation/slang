@@ -9,16 +9,12 @@ Tree:
   - Expression (Rule): # 0..22 "address payable(value)"
       - FunctionCallExpression (Rule): # 0..22 "address payable(value)"
           - Expression (Rule): # 0..15 "address payable"
-              - PrimaryExpression (Rule): # 0..15 "address payable"
-                  - ElementaryType (Rule): # 0..15 "address payable"
-                      - AddressType (Rule): # 0..15 "address payable"
-                          - AddressKeyword (Token): "address" # 0..7
-                          - PayableKeyword (Token): "payable" # 8..15
-          - FunctionCallOperator (Rule): # 15..22 "(value)"
-              - ArgumentList (Rule): # 15..22 "(value)"
-                  - OpenParen (Token): "(" # 15..16
-                  - PositionalArgumentList (Rule): # 16..21 "value"
-                      - Expression (Rule): # 16..21 "value"
-                          - PrimaryExpression (Rule): # 16..21 "value"
-                              - Identifier (Token): "value" # 16..21
-                  - CloseParen (Token): ")" # 21..22
+              - AddressType (Rule): # 0..15 "address payable"
+                  - AddressKeyword (Token): "address" # 0..7
+                  - PayableKeyword (Token): "payable" # 8..15
+          - ArgumentsDeclaration (Rule): # 15..22 "(value)"
+              - OpenParen (Token): "(" # 15..16
+              - PositionalArgumentsList (Rule): # 16..21 "value"
+                  - Expression (Rule): # 16..21 "value"
+                      - Identifier (Token): "value" # 16..21
+              - CloseParen (Token): ")" # 21..22
