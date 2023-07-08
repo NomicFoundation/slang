@@ -9,6 +9,8 @@ mod ConstructorDefinition;
 #[allow(non_snake_case)]
 mod ContractDefinition;
 #[allow(non_snake_case)]
+mod ContractMembersList;
+#[allow(non_snake_case)]
 mod DecimalLiteral;
 #[allow(non_snake_case)]
 mod DeleteStatement;

@@ -2950,7 +2950,7 @@ impl Language {
     fn expression__0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut elements: Vec<ParserResult> = Vec::new();
-            let result = loop {
+            let initial_result = loop {
                 let result = loop {
                     let result = self
                         .unary_prefix_operator(stream)
@@ -3198,7 +3198,7 @@ impl Language {
                 }
             };
             if elements.is_empty() {
-                break result;
+                break initial_result;
             }
             reduce_pratt_elements(
                 |children| vec![cst::Node::rule(RuleKind::Expression, children)],
@@ -3210,17 +3210,31 @@ impl Language {
                     elements
                 );
             }
-            if let ParserResult::Match(r#match) = elements.remove(0) {
-                if let ParserResult::IncompleteMatch(_) = result {
-                    break ParserResult::incomplete_match(r#match.nodes, vec![]);
-                } else {
-                    break ParserResult::r#match(
-                        r#match.nodes,
-                        r#match.tokens_that_would_have_allowed_more_progress,
-                    );
+            match elements.remove(0) {
+                ParserResult::Match(r#match) => {
+                    if let ParserResult::IncompleteMatch(_) = initial_result {
+                        break ParserResult::incomplete_match(r#match.nodes, vec![]);
+                    } else {
+                        break ParserResult::r#match(
+                            r#match.nodes,
+                            r#match.tokens_that_would_have_allowed_more_progress,
+                        );
+                    }
                 }
-            } else {
-                unreachable!("Pratt parser failed to reduce to a single match")
+                ParserResult::IncompleteMatch(incomplete_match) => {
+                    if let ParserResult::IncompleteMatch(initial_incomplete_match) = initial_result
+                    {
+                        let mut nodes = incomplete_match.nodes;
+                        nodes.extend(initial_incomplete_match.nodes);
+                        break ParserResult::incomplete_match(
+                            nodes,
+                            initial_incomplete_match.tokens_that_would_have_allowed_more_progress,
+                        );
+                    } else {
+                        break ParserResult::IncompleteMatch(incomplete_match);
+                    }
+                }
+                _ => unreachable!("Pratt parser produced an invalid result"),
             }
         }
         .with_kind(RuleKind::Expression)
@@ -3258,7 +3272,7 @@ impl Language {
     fn expression__0_6_0(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut elements: Vec<ParserResult> = Vec::new();
-            let result = loop {
+            let initial_result = loop {
                 let result = loop {
                     let result = self
                         .unary_prefix_operator(stream)
@@ -3506,7 +3520,7 @@ impl Language {
                 }
             };
             if elements.is_empty() {
-                break result;
+                break initial_result;
             }
             reduce_pratt_elements(
                 |children| vec![cst::Node::rule(RuleKind::Expression, children)],
@@ -3518,17 +3532,31 @@ impl Language {
                     elements
                 );
             }
-            if let ParserResult::Match(r#match) = elements.remove(0) {
-                if let ParserResult::IncompleteMatch(_) = result {
-                    break ParserResult::incomplete_match(r#match.nodes, vec![]);
-                } else {
-                    break ParserResult::r#match(
-                        r#match.nodes,
-                        r#match.tokens_that_would_have_allowed_more_progress,
-                    );
+            match elements.remove(0) {
+                ParserResult::Match(r#match) => {
+                    if let ParserResult::IncompleteMatch(_) = initial_result {
+                        break ParserResult::incomplete_match(r#match.nodes, vec![]);
+                    } else {
+                        break ParserResult::r#match(
+                            r#match.nodes,
+                            r#match.tokens_that_would_have_allowed_more_progress,
+                        );
+                    }
                 }
-            } else {
-                unreachable!("Pratt parser failed to reduce to a single match")
+                ParserResult::IncompleteMatch(incomplete_match) => {
+                    if let ParserResult::IncompleteMatch(initial_incomplete_match) = initial_result
+                    {
+                        let mut nodes = incomplete_match.nodes;
+                        nodes.extend(initial_incomplete_match.nodes);
+                        break ParserResult::incomplete_match(
+                            nodes,
+                            initial_incomplete_match.tokens_that_would_have_allowed_more_progress,
+                        );
+                    } else {
+                        break ParserResult::IncompleteMatch(incomplete_match);
+                    }
+                }
+                _ => unreachable!("Pratt parser produced an invalid result"),
             }
         }
         .with_kind(RuleKind::Expression)
@@ -8217,7 +8245,7 @@ impl Language {
     pub(crate) fn type_name(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut elements: Vec<ParserResult> = Vec::new();
-            let result = loop {
+            let initial_result = loop {
                 {
                     let result = {
                         let mut running_result = ParserResult::no_match(vec![]);
@@ -8275,7 +8303,7 @@ impl Language {
                 break ParserResult::no_match(vec![]);
             };
             if elements.is_empty() {
-                break result;
+                break initial_result;
             }
             reduce_pratt_elements(
                 |children| vec![cst::Node::rule(RuleKind::TypeName, children)],
@@ -8287,17 +8315,31 @@ impl Language {
                     elements
                 );
             }
-            if let ParserResult::Match(r#match) = elements.remove(0) {
-                if let ParserResult::IncompleteMatch(_) = result {
-                    break ParserResult::incomplete_match(r#match.nodes, vec![]);
-                } else {
-                    break ParserResult::r#match(
-                        r#match.nodes,
-                        r#match.tokens_that_would_have_allowed_more_progress,
-                    );
+            match elements.remove(0) {
+                ParserResult::Match(r#match) => {
+                    if let ParserResult::IncompleteMatch(_) = initial_result {
+                        break ParserResult::incomplete_match(r#match.nodes, vec![]);
+                    } else {
+                        break ParserResult::r#match(
+                            r#match.nodes,
+                            r#match.tokens_that_would_have_allowed_more_progress,
+                        );
+                    }
                 }
-            } else {
-                unreachable!("Pratt parser failed to reduce to a single match")
+                ParserResult::IncompleteMatch(incomplete_match) => {
+                    if let ParserResult::IncompleteMatch(initial_incomplete_match) = initial_result
+                    {
+                        let mut nodes = incomplete_match.nodes;
+                        nodes.extend(initial_incomplete_match.nodes);
+                        break ParserResult::incomplete_match(
+                            nodes,
+                            initial_incomplete_match.tokens_that_would_have_allowed_more_progress,
+                        );
+                    } else {
+                        break ParserResult::IncompleteMatch(incomplete_match);
+                    }
+                }
+                _ => unreachable!("Pratt parser produced an invalid result"),
             }
         }
         .with_kind(RuleKind::TypeName)
@@ -9403,7 +9445,7 @@ impl Language {
     pub(crate) fn version_pragma_expression(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut elements: Vec<ParserResult> = Vec::new();
-            let result = loop {
+            let initial_result = loop {
                 let result = loop {
                     let result = self
                         .version_pragma_unary_operator(stream)
@@ -9472,7 +9514,7 @@ impl Language {
                 }
             };
             if elements.is_empty() {
-                break result;
+                break initial_result;
             }
             reduce_pratt_elements(
                 |children| vec![cst::Node::rule(RuleKind::VersionPragmaExpression, children)],
@@ -9484,17 +9526,31 @@ impl Language {
                     elements
                 );
             }
-            if let ParserResult::Match(r#match) = elements.remove(0) {
-                if let ParserResult::IncompleteMatch(_) = result {
-                    break ParserResult::incomplete_match(r#match.nodes, vec![]);
-                } else {
-                    break ParserResult::r#match(
-                        r#match.nodes,
-                        r#match.tokens_that_would_have_allowed_more_progress,
-                    );
+            match elements.remove(0) {
+                ParserResult::Match(r#match) => {
+                    if let ParserResult::IncompleteMatch(_) = initial_result {
+                        break ParserResult::incomplete_match(r#match.nodes, vec![]);
+                    } else {
+                        break ParserResult::r#match(
+                            r#match.nodes,
+                            r#match.tokens_that_would_have_allowed_more_progress,
+                        );
+                    }
                 }
-            } else {
-                unreachable!("Pratt parser failed to reduce to a single match")
+                ParserResult::IncompleteMatch(incomplete_match) => {
+                    if let ParserResult::IncompleteMatch(initial_incomplete_match) = initial_result
+                    {
+                        let mut nodes = incomplete_match.nodes;
+                        nodes.extend(initial_incomplete_match.nodes);
+                        break ParserResult::incomplete_match(
+                            nodes,
+                            initial_incomplete_match.tokens_that_would_have_allowed_more_progress,
+                        );
+                    } else {
+                        break ParserResult::IncompleteMatch(incomplete_match);
+                    }
+                }
+                _ => unreachable!("Pratt parser produced an invalid result"),
             }
         }
         .with_kind(RuleKind::VersionPragmaExpression)
@@ -9840,7 +9896,7 @@ impl Language {
     pub(crate) fn yul_expression(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut elements: Vec<ParserResult> = Vec::new();
-            let result = loop {
+            let initial_result = loop {
                 {
                     let result = {
                         let mut running_result = ParserResult::no_match(vec![]);
@@ -9887,7 +9943,7 @@ impl Language {
                 break ParserResult::no_match(vec![]);
             };
             if elements.is_empty() {
-                break result;
+                break initial_result;
             }
             reduce_pratt_elements(
                 |children| vec![cst::Node::rule(RuleKind::YulExpression, children)],
@@ -9899,17 +9955,31 @@ impl Language {
                     elements
                 );
             }
-            if let ParserResult::Match(r#match) = elements.remove(0) {
-                if let ParserResult::IncompleteMatch(_) = result {
-                    break ParserResult::incomplete_match(r#match.nodes, vec![]);
-                } else {
-                    break ParserResult::r#match(
-                        r#match.nodes,
-                        r#match.tokens_that_would_have_allowed_more_progress,
-                    );
+            match elements.remove(0) {
+                ParserResult::Match(r#match) => {
+                    if let ParserResult::IncompleteMatch(_) = initial_result {
+                        break ParserResult::incomplete_match(r#match.nodes, vec![]);
+                    } else {
+                        break ParserResult::r#match(
+                            r#match.nodes,
+                            r#match.tokens_that_would_have_allowed_more_progress,
+                        );
+                    }
                 }
-            } else {
-                unreachable!("Pratt parser failed to reduce to a single match")
+                ParserResult::IncompleteMatch(incomplete_match) => {
+                    if let ParserResult::IncompleteMatch(initial_incomplete_match) = initial_result
+                    {
+                        let mut nodes = incomplete_match.nodes;
+                        nodes.extend(initial_incomplete_match.nodes);
+                        break ParserResult::incomplete_match(
+                            nodes,
+                            initial_incomplete_match.tokens_that_would_have_allowed_more_progress,
+                        );
+                    } else {
+                        break ParserResult::IncompleteMatch(incomplete_match);
+                    }
+                }
+                _ => unreachable!("Pratt parser produced an invalid result"),
             }
         }
         .with_kind(RuleKind::YulExpression)

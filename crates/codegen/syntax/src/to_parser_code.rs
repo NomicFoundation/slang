@@ -436,7 +436,7 @@ fn precedence_expression_to_parser_code(
         loop {
             let mut elements: Vec<ParserResult> = Vec::new();
 
-            let result = loop {
+            let initial_result = loop {
                 #add_zero_or_more_prefix_operators_to_elements_or_break
                 #add_a_primary_expression_to_elements_or_break
                 #add_zero_or_more_postfix_operators_to_elements_or_break
@@ -444,7 +444,7 @@ fn precedence_expression_to_parser_code(
             };
 
             if elements.is_empty() {
-                break result;
+                break initial_result;
             }
 
             reduce_pratt_elements(#operator_argument_transformer, &mut elements);
@@ -453,14 +453,22 @@ fn precedence_expression_to_parser_code(
                 unreachable!("Pratt parser failed to reduce to a single result: {:?}", elements);
             }
 
-            if let ParserResult::Match(r#match) = elements.remove(0) {
-                if let ParserResult::IncompleteMatch(_) = result {
-                    break ParserResult::incomplete_match(r#match.nodes, vec![]);
-                } else {
-                    break ParserResult::r#match(r#match.nodes, r#match.tokens_that_would_have_allowed_more_progress);
-                }
-            } else {
-                unreachable!("Pratt parser failed to reduce to a single match")
+            match elements.remove(0) {
+                ParserResult::Match(r#match) =>
+                    if let ParserResult::IncompleteMatch(_) = initial_result {
+                        break ParserResult::incomplete_match(r#match.nodes, vec![]);
+                    } else {
+                        break ParserResult::r#match(r#match.nodes, r#match.tokens_that_would_have_allowed_more_progress);
+                    }
+                ParserResult::IncompleteMatch(incomplete_match) =>
+                    if let ParserResult::IncompleteMatch(initial_incomplete_match) = initial_result {
+                        let mut nodes = incomplete_match.nodes;
+                        nodes.extend(initial_incomplete_match.nodes);
+                        break ParserResult::incomplete_match(nodes, initial_incomplete_match.tokens_that_would_have_allowed_more_progress);
+                    } else {
+                        break ParserResult::IncompleteMatch(incomplete_match)
+                    }
+                _ => unreachable!("Pratt parser produced an invalid result")
             }
         }
     }

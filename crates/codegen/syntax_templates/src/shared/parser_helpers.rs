@@ -241,7 +241,7 @@ where
                     );
                     i = i.saturating_sub(2);
                 } else {
-                    unreachable!()
+                    unreachable!("This is a malformed pratt parser sequence")
                 }
             } else if *left_binding_power == 255 {
                 let op = elements.remove(i);
@@ -267,9 +267,9 @@ where
                     );
                     i = i.saturating_sub(1);
                 } else {
-                    unreachable!()
+                    unreachable!("This is a malformed pratt parser sequence")
                 }
-            } else {
+            } else if 3 <= elements.len() {
                 let left = elements.remove(i - 1);
                 let op = elements.remove(i - 1);
                 let right = elements.remove(i - 1);
@@ -296,7 +296,34 @@ where
                     );
                     i = i.saturating_sub(2);
                 } else {
-                    unreachable!()
+                    unreachable!("This is a malformed pratt parser sequence")
+                }
+            } else {
+                // We have not enough elements because of an previous error
+                let left = elements.remove(i - 1);
+                let op = elements.remove(i - 1);
+                if let (
+                    ParserResult::Match(left),
+                    ParserResult::PrattOperatorMatch(PrattOperatorMatch {
+                        nodes,
+                        operator_kind,
+                        ..
+                    }),
+                ) = (left, op)
+                {
+                    let mut children = vec![];
+                    children.extend(operator_argument_transformer(left.nodes));
+                    children.extend(nodes);
+                    elements.insert(
+                        i - 1,
+                        ParserResult::incomplete_match(
+                            vec![cst::Node::rule(operator_kind, children)],
+                            vec![],
+                        ),
+                    );
+                    i = i.saturating_sub(2);
+                } else {
+                    unreachable!("This is a malformed pratt parser sequence")
                 }
             }
         } else {
