@@ -1,7 +1,7 @@
 mod datasets;
 mod reporting;
 
-use std::{collections::HashSet, path::PathBuf};
+use std::{collections::BTreeSet, path::PathBuf};
 
 use anyhow::Result;
 use codegen_schema::types::LanguageDefinition;
@@ -20,9 +20,10 @@ fn main() {
     // Fail the parent process if a child thread panics:
     std::panic::catch_unwind(|| -> Result<()> {
         let language = &LanguageDefinition::load_solidity()?;
+        let versions = language.collect_version_breaks();
 
         for dataset in get_all_datasets()? {
-            process_dataset(&dataset, &language.versions)?;
+            process_dataset(&dataset, &versions)?;
         }
 
         return Ok(());
@@ -31,7 +32,7 @@ fn main() {
     .unwrap();
 }
 
-fn process_dataset(dataset: &impl Dataset, all_versions: &Vec<Version>) -> Result<()> {
+fn process_dataset(dataset: &impl Dataset, versions: &BTreeSet<Version>) -> Result<()> {
     println!();
     println!();
     println!("  🧪 Dataset: {title}", title = dataset.get_title());
@@ -52,7 +53,7 @@ fn process_dataset(dataset: &impl Dataset, all_versions: &Vec<Version>) -> Resul
     source_files
         .par_iter()
         .map(|file_path| {
-            process_source_file(file_path, all_versions, &reporter)?;
+            process_source_file(file_path, versions, &reporter)?;
             reporter.report_file_completed();
             return Ok(());
         })
@@ -68,13 +69,13 @@ fn process_dataset(dataset: &impl Dataset, all_versions: &Vec<Version>) -> Resul
 
 fn process_source_file(
     file_path: &PathBuf,
-    all_versions: &Vec<Version>,
+    versions: &BTreeSet<Version>,
     reporter: &Reporter,
 ) -> Result<()> {
     let source_id = file_path.to_str().unwrap();
     let source = &std::fs::read_to_string(file_path)?;
 
-    let latest_version = all_versions.iter().max().unwrap();
+    let latest_version = versions.iter().max().unwrap();
     let pragmas = if let Ok(pragmas) = extract_version_pragmas(source, latest_version) {
         pragmas
     } else {
@@ -87,21 +88,13 @@ fn process_source_file(
         return Ok(());
     }
 
-    let mut tested_versions = HashSet::new();
-
-    for version in all_versions {
+    for version in versions {
         if !pragmas.iter().all(|pragma| pragma.matches(version)) {
             continue;
         }
 
-        // Let's test each minor version only once:
-        let unique_key = version.major ^ version.minor;
-        if !tested_versions.insert(unique_key) {
-            continue;
-        }
-
-        let output =
-            Language::new(version.to_owned())?.parse(ProductionKind::SourceUnit, source)?;
+        let language = Language::new(version.to_owned())?;
+        let output = language.parse(ProductionKind::SourceUnit, source)?;
 
         reporter.report_test_result(source_id, source, &version, &output);
     }
