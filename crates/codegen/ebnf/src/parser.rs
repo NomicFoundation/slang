@@ -11,73 +11,67 @@ impl GenerateEbnf for ParserRef {
 impl GenerateEbnf for ParserDefinition {
     fn generate_ebnf(&self) -> EbnfNode {
         match &self {
-            ParserDefinition::Choice(sub_exprs) => {
-                return EbnfNode::choices(
-                    sub_exprs
+            ParserDefinition::Choice(parsers) => {
+                return EbnfNode::choice(
+                    parsers
                         .iter()
-                        .map(|choice| choice.generate_ebnf())
+                        .map(|parser| parser.generate_ebnf())
                         .collect(),
                 );
             }
 
             ParserDefinition::DelimitedBy {
                 open,
-                expression,
+                parser,
                 close,
             } => {
                 return EbnfNode::sequence(vec![
                     EbnfNode::production_ref(open.reference.to_owned()),
-                    expression.generate_ebnf(),
+                    parser.generate_ebnf(),
                     EbnfNode::production_ref(close.reference.to_owned()),
                 ]);
             }
 
-            ParserDefinition::OneOrMore(expr) => {
-                return EbnfNode::one_or_more(expr.generate_ebnf());
+            ParserDefinition::OneOrMore(parser) => {
+                return EbnfNode::one_or_more(parser.generate_ebnf());
             }
 
-            ParserDefinition::Optional(expr) => {
-                return EbnfNode::optional(expr.generate_ebnf());
+            ParserDefinition::Optional(parser) => {
+                return EbnfNode::optional(parser.generate_ebnf());
             }
 
             ParserDefinition::Reference(name) => {
                 return EbnfNode::production_ref(name.to_owned());
             }
 
-            ParserDefinition::SeparatedBy {
-                expression,
-                separator,
-            } => {
+            ParserDefinition::SeparatedBy { parser, separator } => {
                 return EbnfNode::sequence(vec![
-                    expression.generate_ebnf(),
+                    parser.generate_ebnf(),
                     EbnfNode::zero_or_more(EbnfNode::sequence(vec![
                         EbnfNode::production_ref(separator.reference.to_owned()),
-                        expression.generate_ebnf(),
+                        parser.generate_ebnf(),
                     ])),
                 ]);
             }
 
-            ParserDefinition::Sequence(elements) => {
+            ParserDefinition::Sequence(parsers) => {
                 return EbnfNode::sequence(
-                    elements
+                    parsers
                         .iter()
-                        .map(|element| element.generate_ebnf())
+                        .map(|parser| parser.generate_ebnf())
                         .collect(),
                 );
             }
 
-            ParserDefinition::TerminatedBy {
-                expression,
-                terminator,
-            } => {
+            ParserDefinition::TerminatedBy { parser, terminator } => {
                 return EbnfNode::sequence(vec![
-                    expression.generate_ebnf(),
+                    parser.generate_ebnf(),
                     EbnfNode::production_ref(terminator.reference.to_owned()),
                 ]);
             }
 
-            ParserDefinition::ZeroOrMore(expr) => {
-                return EbnfNode::zero_or_more(expr.generate_ebnf());
+            ParserDefinition::ZeroOrMore(parser) => {
+                return EbnfNode::zero_or_more(parser.generate_ebnf());
             }
         }
     }

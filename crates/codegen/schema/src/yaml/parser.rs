@@ -77,7 +77,7 @@ impl<'context> Parser<'context> {
                 Node::Value { range: start..end }
             }
             Event::SequenceStart(_) => {
-                let mut items = Vec::new();
+                let mut nodes = Vec::new();
 
                 let mut start = start;
                 let mut end = loop {
@@ -85,17 +85,17 @@ impl<'context> Parser<'context> {
                         break self.consume()?.position;
                     }
 
-                    items.push(self.parse_value()?);
+                    nodes.push(self.parse_value()?);
                 };
 
-                if !items.is_empty() {
-                    start = min(start, items.first().unwrap().range().start);
-                    end = max(end, items.last().unwrap().range().end);
+                if !nodes.is_empty() {
+                    start = min(start, nodes.first().unwrap().range().start);
+                    end = max(end, nodes.last().unwrap().range().end);
                 }
 
                 Node::Array {
                     range: start..end,
-                    items,
+                    nodes,
                 }
             }
             Event::MappingStart(_) => {

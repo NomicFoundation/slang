@@ -40,8 +40,8 @@ fn relax_schema(value: Value) -> Value {
             return value;
         }
 
-        Value::Array(items) => {
-            return Value::Array(items.into_iter().map(relax_schema).collect());
+        Value::Array(nodes) => {
+            return Value::Array(nodes.into_iter().map(relax_schema).collect());
         }
 
         Value::Object(entries) => {

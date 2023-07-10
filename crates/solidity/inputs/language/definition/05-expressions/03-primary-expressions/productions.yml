@@ -36,7 +36,7 @@
         - delimitedBy:
             open:
               reference: "OpenParen"
-            expression:
+            parser:
               reference: "TypeName"
             close:
               reference: "CloseParen"
@@ -54,7 +54,7 @@
     delimitedBy:
       open:
         reference: "OpenParen"
-      expression:
+      parser:
         reference: "TupleValuesList"
       close:
         reference: "CloseParen"
@@ -65,7 +65,7 @@
     separatedBy:
       separator:
         reference: "Comma"
-      expression:
+      parser:
         optional:
           reference: "Expression"
 
@@ -75,7 +75,7 @@
     delimitedBy:
       open:
         reference: "OpenBracket"
-      expression:
+      parser:
         reference: "ArrayValuesList"
       close:
         reference: "CloseBracket"
@@ -86,7 +86,7 @@
     separatedBy:
       separator:
         reference: "Comma"
-      expression:
+      parser:
         reference: "Expression"
 
 - name: "BooleanExpression"

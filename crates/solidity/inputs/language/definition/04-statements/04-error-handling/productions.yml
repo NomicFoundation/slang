@@ -42,7 +42,7 @@
   kind: "Parser"
   unversioned:
     terminatedBy:
-      expression:
+      parser:
         sequence:
           - reference: "RevertKeyword"
           - optional:
@@ -56,7 +56,7 @@
   versioned:
     0.4.11:
       terminatedBy:
-        expression:
+        parser:
           reference: "ThrowKeyword"
         terminator:
           reference: "Semicolon"

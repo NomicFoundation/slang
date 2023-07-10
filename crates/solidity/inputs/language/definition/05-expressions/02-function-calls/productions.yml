@@ -6,7 +6,7 @@
     delimitedBy:
       open:
         reference: "OpenParen"
-      expression:
+      parser:
         optional:
           choice:
             - reference: "PositionalArgumentsList"
@@ -20,7 +20,7 @@
     separatedBy:
       separator:
         reference: "Comma"
-      expression:
+      parser:
         reference: "Expression"
 
 - name: "FunctionCallOptions"
@@ -38,7 +38,7 @@
     delimitedBy:
       open:
         reference: "OpenBrace"
-      expression:
+      parser:
         optional:
           reference: "NamedArgumentsList"
       close:
@@ -50,7 +50,7 @@
     separatedBy:
       separator:
         reference: "Comma"
-      expression:
+      parser:
         reference: "NamedArgument"
 
 - name: "NamedArgument"

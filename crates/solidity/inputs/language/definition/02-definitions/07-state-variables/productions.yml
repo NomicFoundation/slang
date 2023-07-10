@@ -4,7 +4,7 @@
   kind: "Parser"
   unversioned:
     terminatedBy:
-      expression:
+      parser:
         sequence:
           - reference: "TypeName"
           - optional:

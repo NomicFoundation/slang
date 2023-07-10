@@ -82,7 +82,7 @@
           delimitedBy:
             open:
               reference: "OpenParen"
-            expression:
+            parser:
               optional:
                 reference: "IdentifierPathsList"
             close:
@@ -94,7 +94,7 @@
     delimitedBy:
       open:
         reference: "OpenParen"
-      expression:
+      parser:
         optional:
           reference: "ParametersList"
       close:
@@ -106,7 +106,7 @@
     separatedBy:
       separator:
         reference: "Comma"
-      expression:
+      parser:
         reference: "Parameter"
 
 - name: "Parameter"

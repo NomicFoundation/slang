@@ -9,7 +9,7 @@
       - delimitedBy:
           open:
             reference: "OpenBrace"
-          expression:
+          parser:
             optional:
               reference: "StructMembersList"
           close:
@@ -25,7 +25,7 @@
   kind: "Parser"
   unversioned:
     terminatedBy:
-      expression:
+      parser:
         sequence:
           - reference: "TypeName"
           - reference: "Identifier"

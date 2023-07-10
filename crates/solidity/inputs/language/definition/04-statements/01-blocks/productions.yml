@@ -6,7 +6,7 @@
     delimitedBy:
       open:
         reference: "OpenBrace"
-      expression:
+      parser:
         optional:
           reference: "StatementsList"
       close:
@@ -107,7 +107,7 @@
   kind: "Parser"
   unversioned:
     terminatedBy:
-      expression:
+      parser:
         reference: "Expression"
       terminator:
         reference: "Semicolon"

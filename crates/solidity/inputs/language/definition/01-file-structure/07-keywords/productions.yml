@@ -2,7 +2,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         terminal: "abicoder"
       notFollowedBy:
         reference: "IdentifierPart"
@@ -12,7 +12,7 @@
   versioned:
     0.6.0:
       trailingContext:
-        expression:
+        scanner:
           terminal: "abstract"
         notFollowedBy:
           reference: "IdentifierPart"
@@ -21,7 +21,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         terminal: "address"
       notFollowedBy:
         reference: "IdentifierPart"
@@ -30,7 +30,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         terminal: "anonymous"
       notFollowedBy:
         reference: "IdentifierPart"
@@ -39,7 +39,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         terminal: "as"
       notFollowedBy:
         reference: "IdentifierPart"
@@ -48,7 +48,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         terminal: "assembly"
       notFollowedBy:
         reference: "IdentifierPart"
@@ -57,7 +57,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         terminal: "bool"
       notFollowedBy:
         reference: "IdentifierPart"
@@ -66,7 +66,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         terminal: "break"
       notFollowedBy:
         reference: "IdentifierPart"
@@ -76,7 +76,7 @@
   versioned:
     0.4.11:
       trailingContext:
-        expression:
+        scanner:
           terminal: "byte"
         notFollowedBy:
           reference: "IdentifierPart"
@@ -87,7 +87,7 @@
   versioned:
     0.5.0:
       trailingContext:
-        expression:
+        scanner:
           terminal: "calldata"
         notFollowedBy:
           reference: "IdentifierPart"
@@ -96,7 +96,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         terminal: "case"
       notFollowedBy:
         reference: "IdentifierPart"
@@ -106,7 +106,7 @@
   versioned:
     0.6.0:
       trailingContext:
-        expression:
+        scanner:
           terminal: "catch"
         notFollowedBy:
           reference: "IdentifierPart"
@@ -115,7 +115,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         terminal: "constant"
       notFollowedBy:
         reference: "IdentifierPart"
@@ -125,7 +125,7 @@
   versioned:
     0.4.22:
       trailingContext:
-        expression:
+        scanner:
           terminal: "constructor"
         notFollowedBy:
           reference: "IdentifierPart"
@@ -134,7 +134,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         terminal: "continue"
       notFollowedBy:
         reference: "IdentifierPart"
@@ -143,7 +143,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         terminal: "contract"
       notFollowedBy:
         reference: "IdentifierPart"
@@ -152,7 +152,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         terminal: "days"
       notFollowedBy:
         reference: "IdentifierPart"
@@ -161,7 +161,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         terminal: "default"
       notFollowedBy:
         reference: "IdentifierPart"
@@ -170,7 +170,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         terminal: "delete"
       notFollowedBy:
         reference: "IdentifierPart"
@@ -179,7 +179,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         terminal: "do"
       notFollowedBy:
         reference: "IdentifierPart"
@@ -188,7 +188,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         terminal: "else"
       notFollowedBy:
         reference: "IdentifierPart"
@@ -198,7 +198,7 @@
   versioned:
     0.4.21:
       trailingContext:
-        expression:
+        scanner:
           terminal: "emit"
         notFollowedBy:
           reference: "IdentifierPart"
@@ -207,7 +207,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         terminal: "enum"
       notFollowedBy:
         reference: "IdentifierPart"
@@ -216,7 +216,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         terminal: "error"
       notFollowedBy:
         reference: "IdentifierPart"
@@ -225,7 +225,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         terminal: "ether"
       notFollowedBy:
         reference: "IdentifierPart"
@@ -234,7 +234,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         terminal: "event"
       notFollowedBy:
         reference: "IdentifierPart"
@@ -243,7 +243,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         terminal: "experimental"
       notFollowedBy:
         reference: "IdentifierPart"
@@ -252,7 +252,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         terminal: "external"
       notFollowedBy:
         reference: "IdentifierPart"
@@ -261,7 +261,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         terminal: "fallback"
       notFollowedBy:
         reference: "IdentifierPart"
@@ -270,7 +270,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         terminal: "false"
       notFollowedBy:
         reference: "IdentifierPart"
@@ -280,7 +280,7 @@
   versioned:
     0.4.11:
       trailingContext:
-        expression:
+        scanner:
           terminal: "finney"
         notFollowedBy:
           reference: "IdentifierPart"
@@ -290,7 +290,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         terminal: "for"
       notFollowedBy:
         reference: "IdentifierPart"
@@ -299,7 +299,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         terminal: "from"
       notFollowedBy:
         reference: "IdentifierPart"
@@ -308,7 +308,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         terminal: "function"
       notFollowedBy:
         reference: "IdentifierPart"
@@ -317,7 +317,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         terminal: "global"
       notFollowedBy:
         reference: "IdentifierPart"
@@ -327,7 +327,7 @@
   versioned:
     0.6.11:
       trailingContext:
-        expression:
+        scanner:
           terminal: "gwei"
         notFollowedBy:
           reference: "IdentifierPart"
@@ -336,7 +336,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         terminal: "hours"
       notFollowedBy:
         reference: "IdentifierPart"
@@ -345,7 +345,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         terminal: "if"
       notFollowedBy:
         reference: "IdentifierPart"
@@ -355,7 +355,7 @@
   versioned:
     0.6.5:
       trailingContext:
-        expression:
+        scanner:
           terminal: "immutable"
         notFollowedBy:
           reference: "IdentifierPart"
@@ -364,7 +364,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         terminal: "import"
       notFollowedBy:
         reference: "IdentifierPart"
@@ -373,7 +373,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         terminal: "indexed"
       notFollowedBy:
         reference: "IdentifierPart"
@@ -382,7 +382,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         terminal: "interface"
       notFollowedBy:
         reference: "IdentifierPart"
@@ -391,7 +391,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         terminal: "internal"
       notFollowedBy:
         reference: "IdentifierPart"
@@ -400,7 +400,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         terminal: "is"
       notFollowedBy:
         reference: "IdentifierPart"
@@ -410,7 +410,7 @@
   versioned:
     0.6.0:
       trailingContext:
-        expression:
+        scanner:
           terminal: "leave"
         notFollowedBy:
           reference: "IdentifierPart"
@@ -419,7 +419,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         terminal: "let"
       notFollowedBy:
         reference: "IdentifierPart"
@@ -428,7 +428,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         terminal: "library"
       notFollowedBy:
         reference: "IdentifierPart"
@@ -437,7 +437,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         terminal: "mapping"
       notFollowedBy:
         reference: "IdentifierPart"
@@ -446,7 +446,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         terminal: "memory"
       notFollowedBy:
         reference: "IdentifierPart"
@@ -455,7 +455,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         terminal: "minutes"
       notFollowedBy:
         reference: "IdentifierPart"
@@ -464,7 +464,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         terminal: "modifier"
       notFollowedBy:
         reference: "IdentifierPart"
@@ -473,7 +473,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         terminal: "new"
       notFollowedBy:
         reference: "IdentifierPart"
@@ -482,7 +482,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         terminal: "override"
       notFollowedBy:
         reference: "IdentifierPart"
@@ -491,7 +491,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         terminal: "payable"
       notFollowedBy:
         reference: "IdentifierPart"
@@ -500,7 +500,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         terminal: "pragma"
       notFollowedBy:
         reference: "IdentifierPart"
@@ -509,7 +509,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         terminal: "private"
       notFollowedBy:
         reference: "IdentifierPart"
@@ -518,7 +518,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         terminal: "public"
       notFollowedBy:
         reference: "IdentifierPart"
@@ -527,7 +527,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         terminal: "pure"
       notFollowedBy:
         reference: "IdentifierPart"
@@ -536,7 +536,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         terminal: "receive"
       notFollowedBy:
         reference: "IdentifierPart"
@@ -545,7 +545,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         terminal: "return"
       notFollowedBy:
         reference: "IdentifierPart"
@@ -554,7 +554,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         terminal: "returns"
       notFollowedBy:
         reference: "IdentifierPart"
@@ -563,7 +563,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         terminal: "revert"
       notFollowedBy:
         reference: "IdentifierPart"
@@ -572,7 +572,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         terminal: "seconds"
       notFollowedBy:
         reference: "IdentifierPart"
@@ -581,7 +581,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         terminal: "solidity"
       notFollowedBy:
         reference: "IdentifierPart"
@@ -590,7 +590,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         terminal: "storage"
       notFollowedBy:
         reference: "IdentifierPart"
@@ -599,7 +599,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         terminal: "string"
       notFollowedBy:
         reference: "IdentifierPart"
@@ -608,7 +608,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         terminal: "struct"
       notFollowedBy:
         reference: "IdentifierPart"
@@ -617,7 +617,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         terminal: "switch"
       notFollowedBy:
         reference: "IdentifierPart"
@@ -627,7 +627,7 @@
   versioned:
     0.4.11:
       trailingContext:
-        expression:
+        scanner:
           terminal: "szabo"
         notFollowedBy:
           reference: "IdentifierPart"
@@ -638,7 +638,7 @@
   versioned:
     0.4.11:
       trailingContext:
-        expression:
+        scanner:
           terminal: "throw"
         notFollowedBy:
           reference: "IdentifierPart"
@@ -648,7 +648,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         terminal: "true"
       notFollowedBy:
         reference: "IdentifierPart"
@@ -658,7 +658,7 @@
   versioned:
     0.6.0:
       trailingContext:
-        expression:
+        scanner:
           terminal: "try"
         notFollowedBy:
           reference: "IdentifierPart"
@@ -668,7 +668,7 @@
   versioned:
     0.5.3:
       trailingContext:
-        expression:
+        scanner:
           terminal: "type"
         notFollowedBy:
           reference: "IdentifierPart"
@@ -678,7 +678,7 @@
   versioned:
     0.8.0:
       trailingContext:
-        expression:
+        scanner:
           terminal: "unchecked"
         notFollowedBy:
           reference: "IdentifierPart"
@@ -687,7 +687,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         terminal: "using"
       notFollowedBy:
         reference: "IdentifierPart"
@@ -697,7 +697,7 @@
   versioned:
     0.4.11:
       trailingContext:
-        expression:
+        scanner:
           terminal: "var"
         notFollowedBy:
           reference: "IdentifierPart"
@@ -707,7 +707,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         terminal: "view"
       notFollowedBy:
         reference: "IdentifierPart"
@@ -717,7 +717,7 @@
   versioned:
     0.6.0:
       trailingContext:
-        expression:
+        scanner:
           terminal: "virtual"
         notFollowedBy:
           reference: "IdentifierPart"
@@ -726,7 +726,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         terminal: "weeks"
       notFollowedBy:
         reference: "IdentifierPart"
@@ -735,7 +735,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         terminal: "wei"
       notFollowedBy:
         reference: "IdentifierPart"
@@ -744,7 +744,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         terminal: "while"
       notFollowedBy:
         reference: "IdentifierPart"
@@ -754,7 +754,7 @@
   versioned:
     0.4.11:
       trailingContext:
-        expression:
+        scanner:
           terminal: "years"
         notFollowedBy:
           reference: "IdentifierPart"

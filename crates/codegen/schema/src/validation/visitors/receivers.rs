@@ -139,10 +139,10 @@ impl Receiver for ScannerDefinition {
         reporter: &mut Reporter,
     ) {
         match self {
-            ScannerDefinition::Choice(expressions) => {
+            ScannerDefinition::Choice(scanners) => {
                 let location = location.field("choice");
-                for (i, expression) in expressions.iter().enumerate() {
-                    expression.receive(visitor, language, location.index(i), reporter);
+                for (i, scanner) in scanners.iter().enumerate() {
+                    scanner.receive(visitor, language, location.index(i), reporter);
                 }
             }
             ScannerDefinition::Difference {
@@ -153,30 +153,30 @@ impl Receiver for ScannerDefinition {
                 minuend.receive(visitor, language, location.field("minuend"), reporter);
                 subtrahend.receive(visitor, language, location.field("subtrahend"), reporter);
             }
-            ScannerDefinition::Not(expression) => {
-                expression.receive(visitor, language, location.field("not"), reporter);
+            ScannerDefinition::Not(scanner) => {
+                scanner.receive(visitor, language, location.field("not"), reporter);
             }
-            ScannerDefinition::OneOrMore(expression) => {
-                expression.receive(visitor, language, location.field("oneOrMore"), reporter);
+            ScannerDefinition::OneOrMore(scanner) => {
+                scanner.receive(visitor, language, location.field("oneOrMore"), reporter);
             }
-            ScannerDefinition::Optional(expression) => {
-                expression.receive(visitor, language, location.field("optional"), reporter);
+            ScannerDefinition::Optional(scanner) => {
+                scanner.receive(visitor, language, location.field("optional"), reporter);
             }
             ScannerDefinition::Range { .. } => {}
             ScannerDefinition::Reference(_) => {}
-            ScannerDefinition::Sequence(expressions) => {
+            ScannerDefinition::Sequence(scanners) => {
                 let location = location.field("sequence");
-                for (i, expression) in expressions.iter().enumerate() {
-                    expression.receive(visitor, language, location.index(i), reporter);
+                for (i, scanner) in scanners.iter().enumerate() {
+                    scanner.receive(visitor, language, location.index(i), reporter);
                 }
             }
             ScannerDefinition::Terminal(_) => {}
             ScannerDefinition::TrailingContext {
-                expression,
+                scanner,
                 not_followed_by,
             } => {
                 let location = location.field("trailingContext");
-                expression.receive(visitor, language, location.field("expression"), reporter);
+                scanner.receive(visitor, language, location.field("scanner"), reporter);
                 not_followed_by.receive(
                     visitor,
                     language,
@@ -184,8 +184,8 @@ impl Receiver for ScannerDefinition {
                     reporter,
                 );
             }
-            ScannerDefinition::ZeroOrMore(expression) => {
-                expression.receive(visitor, language, location.field("zeroOrMore"), reporter);
+            ScannerDefinition::ZeroOrMore(scanner) => {
+                scanner.receive(visitor, language, location.field("zeroOrMore"), reporter);
             }
         };
     }
@@ -217,39 +217,39 @@ impl Receiver for ParserDefinition {
         reporter: &mut Reporter,
     ) {
         match self {
-            ParserDefinition::Choice(expressions) => {
+            ParserDefinition::Choice(parsers) => {
                 let location = location.field("choice");
-                for (i, expression) in expressions.iter().enumerate() {
-                    expression.receive(visitor, language, location.index(i), reporter);
+                for (i, parser) in parsers.iter().enumerate() {
+                    parser.receive(visitor, language, location.index(i), reporter);
                 }
             }
-            ParserDefinition::DelimitedBy { expression, .. } => {
+            ParserDefinition::DelimitedBy { parser, .. } => {
                 let location = location.field("delimitedBy");
-                expression.receive(visitor, language, location.field("expression"), reporter);
+                parser.receive(visitor, language, location.field("parser"), reporter);
             }
-            ParserDefinition::OneOrMore(expression) => {
-                expression.receive(visitor, language, location.field("oneOrMore"), reporter);
+            ParserDefinition::OneOrMore(parser) => {
+                parser.receive(visitor, language, location.field("oneOrMore"), reporter);
             }
-            ParserDefinition::Optional(expression) => {
-                expression.receive(visitor, language, location.field("optional"), reporter);
+            ParserDefinition::Optional(parser) => {
+                parser.receive(visitor, language, location.field("optional"), reporter);
             }
             ParserDefinition::Reference(_) => {}
-            ParserDefinition::SeparatedBy { expression, .. } => {
+            ParserDefinition::SeparatedBy { parser, .. } => {
                 let location = location.field("separatedBy");
-                expression.receive(visitor, language, location.field("expression"), reporter);
+                parser.receive(visitor, language, location.field("parser"), reporter);
             }
-            ParserDefinition::Sequence(expressions) => {
+            ParserDefinition::Sequence(parsers) => {
                 let location = location.field("sequence");
-                for (i, expression) in expressions.iter().enumerate() {
-                    expression.receive(visitor, language, location.index(i), reporter);
+                for (i, parser) in parsers.iter().enumerate() {
+                    parser.receive(visitor, language, location.index(i), reporter);
                 }
             }
-            ParserDefinition::TerminatedBy { expression, .. } => {
+            ParserDefinition::TerminatedBy { parser, .. } => {
                 let location = location.field("terminatedBy");
-                expression.receive(visitor, language, location.field("expression"), reporter);
+                parser.receive(visitor, language, location.field("parser"), reporter);
             }
-            ParserDefinition::ZeroOrMore(expression) => {
-                expression.receive(visitor, language, location.field("zeroOrMore"), reporter);
+            ParserDefinition::ZeroOrMore(parser) => {
+                parser.receive(visitor, language, location.field("zeroOrMore"), reporter);
             }
         };
     }
@@ -268,10 +268,10 @@ impl Receiver for PrecedenceParserRef {
         }
 
         {
-            let location = location.field("operators");
-            for (i, definition) in self.operators.iter().enumerate() {
+            let location = location.field("operatorExpressions");
+            for (i, expression) in self.operator_expressions.iter().enumerate() {
                 let location = location.index(i).field("operator");
-                definition
+                expression
                     .operator
                     .receive(visitor, language, location, reporter);
             }

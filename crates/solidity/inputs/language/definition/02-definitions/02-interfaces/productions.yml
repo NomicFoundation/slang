@@ -11,7 +11,7 @@
       - delimitedBy:
           open:
             reference: "OpenBrace"
-          expression:
+          parser:
             optional:
               reference: "InterfaceMembersList"
           close:

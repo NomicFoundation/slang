@@ -52,7 +52,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         terminal: ":"
       notFollowedBy:
         terminal: "="
@@ -66,7 +66,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         terminal: "="
       notFollowedBy:
         choice:
@@ -87,7 +87,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         terminal: "*"
       notFollowedBy:
         choice:
@@ -108,7 +108,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         terminal: "|"
       notFollowedBy:
         choice:
@@ -129,7 +129,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         terminal: "&"
       notFollowedBy:
         choice:
@@ -150,7 +150,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         terminal: "<"
       notFollowedBy:
         choice:
@@ -166,7 +166,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         terminal: "<<"
       notFollowedBy:
         terminal: "="
@@ -180,7 +180,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         terminal: ">"
       notFollowedBy:
         choice:
@@ -196,7 +196,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         terminal: ">>"
       notFollowedBy:
         choice:
@@ -212,7 +212,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         terminal: ">>>"
       notFollowedBy:
         terminal: "="
@@ -226,7 +226,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         terminal: "+"
       notFollowedBy:
         choice:
@@ -247,7 +247,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         terminal: "-"
       notFollowedBy:
         choice:
@@ -274,7 +274,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         terminal: "/"
       notFollowedBy:
         terminal: "="
@@ -288,7 +288,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         terminal: "%"
       notFollowedBy:
         terminal: "="
@@ -302,7 +302,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         terminal: "!"
       notFollowedBy:
         terminal: "="
@@ -316,7 +316,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         terminal: "^"
       notFollowedBy:
         terminal: "="

@@ -50,7 +50,7 @@ impl ParserResult {
                     *self = next_result;
                 }
                 ParserResult::PrattOperatorMatch(_) => {
-                    unreachable!("Pratt operators are not supported in sequence expressions")
+                    unreachable!("Pratt operators are not supported in sequence parsers")
                 }
             }
         } else {
@@ -76,7 +76,7 @@ impl ParserResult {
                     unreachable!("Choice has continued to run after it has already succeeded")
                 }
                 ParserResult::PrattOperatorMatch(_) => {
-                    unreachable!("Pratt operators are not supported in choice expressions")
+                    unreachable!("Pratt operators are not supported in choice parsers")
                 }
             },
             ParserResult::NoMatch(no_match) => {
@@ -87,7 +87,7 @@ impl ParserResult {
                 }
             }
             ParserResult::PrattOperatorMatch(_) => {
-                unreachable!("Pratt operators are not supported in choice expressions")
+                unreachable!("Pratt operators are not supported in choice parsers")
             }
         }
         return false;
@@ -118,7 +118,7 @@ impl ParserResult {
                     );
                 }
                 ParserResult::PrattOperatorMatch(_) => {
-                    unreachable!("Pratt operators are not supported in zero-or-more expressions")
+                    unreachable!("Pratt operators are not supported in zero-or-more parsers")
                 }
             }
         } else {
@@ -155,7 +155,7 @@ impl ParserResult {
                     *self = result;
                 }
                 ParserResult::PrattOperatorMatch(_) => {
-                    unreachable!("Pratt operators are not supported in one-or-more expressions")
+                    unreachable!("Pratt operators are not supported in one-or-more parsers")
                 }
             }
         } else {
@@ -173,40 +173,40 @@ pub fn transform_option_result(result: ParserResult) -> ParserResult {
             no_match.tokens_that_would_have_allowed_more_progress,
         ),
         ParserResult::PrattOperatorMatch(_) => {
-            unreachable!("Pratt operators are not supported in optional expressions")
+            unreachable!("Pratt operators are not supported in optional parsers")
         }
     }
 }
 
-pub fn reduce_pratt_elements<F>(operator_argument_transformer: F, elements: &mut Vec<ParserResult>)
+pub fn reduce_pratt_elements<F>(operator_argument_transformer: F, results: &mut Vec<ParserResult>)
 where
     F: Fn(Vec<cst::Node>) -> Vec<cst::Node>,
 {
     let mut i = 0;
-    while elements.len() > 1 {
+    while results.len() > 1 {
         if let ParserResult::PrattOperatorMatch(PrattOperatorMatch {
             right_binding_power,
             left_binding_power,
             ..
-        }) = &elements[i]
+        }) = &results[i]
         {
-            let next_left_binding_power = if elements.len() == i + 1 {
+            let next_left_binding_power = if results.len() == i + 1 {
                 // ... operator
                 0
             } else if let ParserResult::PrattOperatorMatch(PrattOperatorMatch {
                 left_binding_power,
                 ..
-            }) = &elements[i + 1]
+            }) = &results[i + 1]
             {
                 // ... operator operator ...?
                 *left_binding_power
-            } else if elements.len() == i + 2 {
+            } else if results.len() == i + 2 {
                 // ... operator expr
                 0
             } else if let ParserResult::PrattOperatorMatch(PrattOperatorMatch {
                 left_binding_power,
                 ..
-            }) = &elements[i + 2]
+            }) = &results[i + 2]
             {
                 // ... operator expr operator ...?
                 *left_binding_power
@@ -220,8 +220,8 @@ where
             }
 
             if *right_binding_power == 255 {
-                let left = elements.remove(i - 1);
-                let op = elements.remove(i - 1);
+                let left = results.remove(i - 1);
+                let op = results.remove(i - 1);
                 if let (
                     ParserResult::Match(left),
                     ParserResult::PrattOperatorMatch(PrattOperatorMatch {
@@ -234,7 +234,7 @@ where
                     let mut children = vec![];
                     children.extend(operator_argument_transformer(left.nodes));
                     children.extend(nodes);
-                    elements.insert(
+                    results.insert(
                         i - 1,
                         ParserResult::r#match(
                             vec![cst::Node::rule(operator_kind, children)],
@@ -246,8 +246,8 @@ where
                     unreachable!("This is a malformed pratt parser sequence")
                 }
             } else if *left_binding_power == 255 {
-                let op = elements.remove(i);
-                let right = elements.remove(i);
+                let op = results.remove(i);
+                let right = results.remove(i);
                 if let (
                     ParserResult::PrattOperatorMatch(PrattOperatorMatch {
                         nodes,
@@ -260,7 +260,7 @@ where
                     let mut children = vec![];
                     children.extend(nodes);
                     children.extend(operator_argument_transformer(right.nodes));
-                    elements.insert(
+                    results.insert(
                         i,
                         ParserResult::r#match(
                             vec![cst::Node::rule(operator_kind, children)],
@@ -271,10 +271,10 @@ where
                 } else {
                     unreachable!("This is a malformed pratt parser sequence")
                 }
-            } else if 3 <= elements.len() {
-                let left = elements.remove(i - 1);
-                let op = elements.remove(i - 1);
-                let right = elements.remove(i - 1);
+            } else if 3 <= results.len() {
+                let left = results.remove(i - 1);
+                let op = results.remove(i - 1);
+                let right = results.remove(i - 1);
                 if let (
                     ParserResult::Match(left),
                     ParserResult::PrattOperatorMatch(PrattOperatorMatch {
@@ -289,7 +289,7 @@ where
                     children.extend(operator_argument_transformer(left.nodes));
                     children.extend(nodes);
                     children.extend(operator_argument_transformer(right.nodes));
-                    elements.insert(
+                    results.insert(
                         i - 1,
                         ParserResult::r#match(
                             vec![cst::Node::rule(operator_kind, children)],
@@ -301,9 +301,9 @@ where
                     unreachable!("This is a malformed pratt parser sequence")
                 }
             } else {
-                // We have not enough elements because of an previous error
-                let left = elements.remove(i - 1);
-                let op = elements.remove(i - 1);
+                // We have not enough results because of an previous error
+                let left = results.remove(i - 1);
+                let op = results.remove(i - 1);
                 if let (
                     ParserResult::Match(left),
                     ParserResult::PrattOperatorMatch(PrattOperatorMatch {
@@ -316,7 +316,7 @@ where
                     let mut children = vec![];
                     children.extend(operator_argument_transformer(left.nodes));
                     children.extend(nodes);
-                    elements.insert(
+                    results.insert(
                         i - 1,
                         ParserResult::incomplete_match(
                             vec![cst::Node::rule(operator_kind, children)],

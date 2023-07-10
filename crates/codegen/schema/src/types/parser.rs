@@ -15,40 +15,40 @@ pub struct Parser {
 #[derive(Clone, Debug, Deserialize, Serialize, JsonSchema, PartialEq, Eq, Hash)]
 #[serde(deny_unknown_fields, rename_all = "camelCase")]
 pub enum ParserDefinition {
-    #[schemars(title = "Choice Expression")]
+    #[schemars(title = "Choice Parser")]
     Choice(Vec<ParserRef>),
 
-    #[schemars(title = "DelimitedBy Expression")]
+    #[schemars(title = "DelimitedBy Parser")]
     DelimitedBy {
         open: Reference,
-        expression: ParserRef,
+        parser: ParserRef,
         close: Reference,
     },
 
-    #[schemars(title = "OneOrMore Expression")]
+    #[schemars(title = "OneOrMore Parser")]
     OneOrMore(ParserRef),
 
-    #[schemars(title = "Optional Expression")]
+    #[schemars(title = "Optional Parser")]
     Optional(ParserRef),
 
-    #[schemars(title = "Reference Expression")]
+    #[schemars(title = "Reference Parser")]
     Reference(String),
 
-    #[schemars(title = "SeparatedBy Expression")]
+    #[schemars(title = "SeparatedBy Parser")]
     SeparatedBy {
-        expression: ParserRef,
+        parser: ParserRef,
         separator: Reference,
     },
 
-    #[schemars(title = "Sequence Expression")]
+    #[schemars(title = "Sequence Parser")]
     Sequence(Vec<ParserRef>),
 
-    #[schemars(title = "TerminatedBy Expression")]
+    #[schemars(title = "TerminatedBy Parser")]
     TerminatedBy {
-        expression: ParserRef,
+        parser: ParserRef,
         terminator: Reference,
     },
 
-    #[schemars(title = "ZeroOrMore Expression")]
+    #[schemars(title = "ZeroOrMore Parser")]
     ZeroOrMore(ParserRef),
 }

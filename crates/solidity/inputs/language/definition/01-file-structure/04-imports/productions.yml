@@ -4,7 +4,7 @@
   kind: "Parser"
   unversioned:
     terminatedBy:
-      expression:
+      parser:
         sequence:
           - reference: "ImportKeyword"
           - choice:
@@ -41,7 +41,7 @@
       - delimitedBy:
           open:
             reference: "OpenBrace"
-          expression:
+          parser:
             reference: "DeconstructionImportSymbolsList"
           close:
             reference: "CloseBrace"
@@ -54,7 +54,7 @@
     separatedBy:
       separator:
         reference: "Comma"
-      expression:
+      parser:
         reference: "DeconstructionImportSymbol"
 
 - name: "DeconstructionImportSymbol"
@@ -71,7 +71,7 @@
   kind: "Parser"
   unversioned:
     terminatedBy:
-      expression:
+      parser:
         sequence:
           - reference: "UsingKeyword"
           - choice:
@@ -97,7 +97,7 @@
     delimitedBy:
       open:
         reference: "OpenBrace"
-      expression:
+      parser:
         reference: "UsingDirectiveSymbolsList"
       close:
         reference: "CloseBrace"
@@ -108,7 +108,7 @@
     separatedBy:
       separator:
         reference: "Comma"
-      expression:
+      parser:
         reference: "UsingDirectiveSymbol"
 
 - name: "UsingDirectiveSymbol"

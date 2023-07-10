@@ -3,7 +3,7 @@
 - name: "TypeName"
   kind: "PrecedenceParser"
   unversioned:
-    operators:
+    operatorExpressions:
       - name: "ArrayTypeName"
         model: "UnaryPostfix"
         operator:
@@ -23,7 +23,7 @@
     delimitedBy:
       open:
         reference: "OpenBracket"
-      expression:
+      parser:
         optional:
           reference: "Expression"
       close:
@@ -67,7 +67,7 @@
       - delimitedBy:
           open:
             reference: "OpenParen"
-          expression:
+          parser:
             sequence:
               - reference: "MappingKeyType"
               - reference: "EqualGreaterThan"

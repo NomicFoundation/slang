@@ -8,8 +8,8 @@ pub type PrecedenceParserRef = std::rc::Rc<PrecedenceParser>;
 #[derive(Clone, Debug, Deserialize, Serialize, JsonSchema, PartialEq, Eq, Hash)]
 #[serde(deny_unknown_fields, rename_all = "camelCase")]
 pub struct PrecedenceParser {
-    #[schemars(title = "Operator Definitions")]
-    pub operators: Vec<OperatorDefinition>,
+    #[schemars(title = "Operator Expressions")]
+    pub operator_expressions: Vec<OperatorExpression>,
 
     #[schemars(title = "Primary Expression")]
     pub primary_expression: ParserRef,
@@ -17,7 +17,7 @@ pub struct PrecedenceParser {
 
 #[derive(Clone, Debug, Deserialize, Serialize, JsonSchema, PartialEq, Eq, Hash)]
 #[serde(deny_unknown_fields, rename_all = "camelCase")]
-pub struct OperatorDefinition {
+pub struct OperatorExpression {
     pub name: String,
     pub model: OperatorModel,
     pub operator: ParserRef,

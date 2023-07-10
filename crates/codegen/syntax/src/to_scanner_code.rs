@@ -33,37 +33,37 @@ impl<'context> CombinatorNode<'context> {
             /**********************************************************************
              * Sequence and Choice
              */
-            Self::Sequence { elements, .. } => {
-                let elements = elements
+            Self::Sequence { nodes, .. } => {
+                let scanners = nodes
                     .iter()
                     .map(|e| e.to_scanner_code(code))
                     .collect::<Vec<_>>();
-                quote! { scan_sequence!(#(#elements),*) }
+                quote! { scan_sequence!(#(#scanners),*) }
             }
 
-            Self::Choice { elements, .. } => {
-                let elements = elements
+            Self::Choice { nodes, .. } => {
+                let scanners = nodes
                     .iter()
                     .map(|e| e.to_scanner_code(code))
                     .collect::<Vec<_>>();
-                quote! { scan_choice!(stream, #(#elements),*) }
+                quote! { scan_choice!(stream, #(#scanners),*) }
             }
 
             /**********************************************************************
              * Numeric qualification
              */
-            Self::Optional { expr } => {
-                let expr = expr.to_scanner_code(code);
-                quote! { scan_optional!(stream, #expr) }
+            Self::Optional { node } => {
+                let scanner = node.to_scanner_code(code);
+                quote! { scan_optional!(stream, #scanner) }
             }
 
-            Self::ZeroOrMore { expr, .. } => {
-                let expr = expr.to_scanner_code(code);
-                quote! { scan_zero_or_more!(stream, #expr) }
+            Self::ZeroOrMore { node, .. } => {
+                let scanner = node.to_scanner_code(code);
+                quote! { scan_zero_or_more!(stream, #scanner) }
             }
-            Self::OneOrMore { expr, .. } => {
-                let expr = expr.to_scanner_code(code);
-                quote! { scan_one_or_more!(stream, #expr) }
+            Self::OneOrMore { node, .. } => {
+                let scanner = node.to_scanner_code(code);
+                quote! { scan_one_or_more!(stream, #scanner) }
             }
 
             /**********************************************************************
@@ -84,8 +84,8 @@ impl<'context> CombinatorNode<'context> {
             /**********************************************************************
              * Precedence parsing
              */
-            Self::PrecedenceExpressionRule { .. } => {
-                unreachable!("PrecedenceExpressionRule cannot be generated from a scanner")
+            Self::PrecedenceParser { .. } => {
+                unreachable!("PrecedenceParser cannot be generated from a scanner")
             }
 
             /**********************************************************************
@@ -105,12 +105,12 @@ impl<'context> CombinatorNode<'context> {
             }
 
             Self::TrailingContext {
-                expression,
+                node,
                 not_followed_by,
             } => {
-                let expression = expression.to_scanner_code(code);
+                let scanner = node.to_scanner_code(code);
                 let not_followed_by = not_followed_by.to_scanner_code(code);
-                quote! { scan_not_followed_by!(stream, #expression, #not_followed_by) }
+                quote! { scan_not_followed_by!(stream, #scanner, #not_followed_by) }
             }
         }
     }

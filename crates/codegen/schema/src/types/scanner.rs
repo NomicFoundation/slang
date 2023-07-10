@@ -13,43 +13,43 @@ pub struct Scanner {
 #[derive(Clone, Debug, Deserialize, Serialize, JsonSchema, PartialEq, Eq, Hash)]
 #[serde(deny_unknown_fields, rename_all = "camelCase")]
 pub enum ScannerDefinition {
-    #[schemars(title = "Choice Expression")]
+    #[schemars(title = "Choice Scanner")]
     Choice(Vec<ScannerRef>),
 
-    #[schemars(title = "Difference Expression")]
+    #[schemars(title = "Difference Scanner")]
     Difference {
         minuend: ScannerRef,
         subtrahend: ScannerRef,
     },
 
-    #[schemars(title = "Not Expression")]
+    #[schemars(title = "Not Scanner")]
     Not(ScannerRef),
 
-    #[schemars(title = "OneOrMore Expression")]
+    #[schemars(title = "OneOrMore Scanner")]
     OneOrMore(ScannerRef),
 
-    #[schemars(title = "Optional Expression")]
+    #[schemars(title = "Optional Scanner")]
     Optional(ScannerRef),
 
-    #[schemars(title = "Range Expression")]
+    #[schemars(title = "Range Scanner")]
     Range { from: char, to: char },
 
-    #[schemars(title = "Reference Expression")]
+    #[schemars(title = "Reference Scanner")]
     Reference(String),
 
-    #[schemars(title = "Sequence Expression")]
+    #[schemars(title = "Sequence Scanner")]
     Sequence(Vec<ScannerRef>),
 
-    #[schemars(title = "TrailingContext Expression")]
+    #[schemars(title = "TrailingContext Scanner")]
     #[serde(rename_all = "camelCase")]
     TrailingContext {
-        expression: ScannerRef,
+        scanner: ScannerRef,
         not_followed_by: ScannerRef,
     },
 
-    #[schemars(title = "Terminal Expression")]
+    #[schemars(title = "Terminal Scanner")]
     Terminal(String),
 
-    #[schemars(title = "ZeroOrMore Expression")]
+    #[schemars(title = "ZeroOrMore Scanner")]
     ZeroOrMore(ScannerRef),
 }

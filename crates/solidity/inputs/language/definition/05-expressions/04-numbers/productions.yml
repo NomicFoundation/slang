@@ -24,7 +24,7 @@
   versioned:
     0.4.11:
       trailingContext:
-        expression:
+        scanner:
           sequence:
             - choice:
                 - terminal: "0x" # lowercase
@@ -41,7 +41,7 @@
     0.5.0:
       # removed uppercase "0X"
       trailingContext:
-        expression:
+        scanner:
           sequence:
             - terminal: "0x" # lowercase
             - oneOrMore:
@@ -59,7 +59,7 @@
   versioned:
     0.4.11:
       trailingContext:
-        expression:
+        scanner:
           sequence:
             - choice:
                 - sequence:
@@ -79,7 +79,7 @@
     0.5.0:
       # Second "DecimalDigits" is no longer "optional"
       trailingContext:
-        expression:
+        scanner:
           sequence:
             - choice:
                 - sequence:

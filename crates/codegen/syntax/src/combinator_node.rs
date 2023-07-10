@@ -15,11 +15,11 @@ pub enum CombinatorNode<'context> {
         filter: CharSet,
     },
     Choice {
-        elements: Vec<&'context CombinatorNode<'context>>,
+        nodes: Vec<&'context CombinatorNode<'context>>,
     },
     DelimitedBy {
         open: &'context CombinatorTree<'context>,
-        expr: &'context CombinatorNode<'context>,
+        node: &'context CombinatorNode<'context>,
         close: &'context CombinatorTree<'context>,
     },
     Difference {
@@ -27,43 +27,43 @@ pub enum CombinatorNode<'context> {
         subtrahend: &'context CombinatorNode<'context>,
     },
     OneOrMore {
-        expr: &'context CombinatorNode<'context>,
+        node: &'context CombinatorNode<'context>,
     },
     Optional {
-        expr: &'context CombinatorNode<'context>,
+        node: &'context CombinatorNode<'context>,
     },
-    PrecedenceExpressionRule {
+    PrecedenceParser {
         tree: &'context CombinatorTree<'context>,
-        operators: Vec<PrecedenceRuleOperator<'context>>,
+        operator_expressions: Vec<OperatorExpression<'context>>,
         primary_expression: &'context CombinatorNode<'context>,
     },
     Reference {
         tree: &'context CombinatorTree<'context>,
     },
     SeparatedBy {
-        expr: &'context CombinatorNode<'context>,
+        node: &'context CombinatorNode<'context>,
         separator: &'context CombinatorTree<'context>,
     },
     Sequence {
-        elements: Vec<&'context CombinatorNode<'context>>,
+        nodes: Vec<&'context CombinatorNode<'context>>,
     },
     TerminalTrie {
         trie: TerminalTrie,
     },
     TerminatedBy {
-        expr: &'context CombinatorNode<'context>,
+        node: &'context CombinatorNode<'context>,
         terminator: &'context CombinatorTree<'context>,
     },
     TrailingContext {
-        expression: &'context CombinatorNode<'context>,
+        node: &'context CombinatorNode<'context>,
         not_followed_by: &'context CombinatorNode<'context>,
     },
     ZeroOrMore {
-        expr: &'context CombinatorNode<'context>,
+        node: &'context CombinatorNode<'context>,
     },
 }
 
-pub struct PrecedenceRuleOperator<'context> {
+pub struct OperatorExpression<'context> {
     pub name: String,
     pub model: OperatorModel,
     pub operator: &'context CombinatorNode<'context>,
@@ -83,17 +83,17 @@ impl<'context> CombinatorNode<'context> {
         }
 
         tree.context.alloc_node(match &scanner.definition {
-            ScannerDefinition::Choice(exprs) => {
+            ScannerDefinition::Choice(scanners) => {
                 // (unversioned) terminals in choices are merged, and represented as a trie
 
                 enum TN<'c> {
                     Trie(trie::TerminalTrie),
                     Node(&'c CombinatorNode<'c>),
                 }
-                let mut elements = exprs
+                let mut nodes = scanners
                     .iter()
-                    .map(|expr| match trie::from_scanner(tree, expr.clone()) {
-                        None => TN::Node(Self::from_scanner(tree, expr)),
+                    .map(|scanner| match trie::from_scanner(tree, scanner.clone()) {
+                        None => TN::Node(Self::from_scanner(tree, scanner)),
                         Some(trie) => TN::Trie(trie),
                     })
                     .coalesce(|prev, curr| match (prev, curr) {
@@ -109,10 +109,10 @@ impl<'context> CombinatorNode<'context> {
                         TN::Trie(trie) => tree.context.alloc_node(Self::TerminalTrie { trie }),
                     })
                     .collect::<Vec<_>>();
-                if elements.len() == 1 {
-                    return elements.pop().unwrap();
+                if nodes.len() == 1 {
+                    return nodes.pop().unwrap();
                 } else {
-                    Self::Choice { elements }
+                    Self::Choice { nodes }
                 }
             }
 
@@ -132,12 +132,12 @@ impl<'context> CombinatorNode<'context> {
                 }
             }
 
-            ScannerDefinition::OneOrMore(expr) => Self::OneOrMore {
-                expr: Self::from_scanner(tree, expr),
+            ScannerDefinition::OneOrMore(scanner) => Self::OneOrMore {
+                node: Self::from_scanner(tree, scanner),
             },
 
-            ScannerDefinition::Optional(expr) => Self::Optional {
-                expr: Self::from_scanner(tree, expr),
+            ScannerDefinition::Optional(scanner) => Self::Optional {
+                node: Self::from_scanner(tree, scanner),
             },
 
             ScannerDefinition::Range { .. } => Self::CharacterFilter {
@@ -148,8 +148,11 @@ impl<'context> CombinatorNode<'context> {
                 tree: tree.context.get_tree_by_name(name),
             },
 
-            ScannerDefinition::Sequence(exprs) => Self::Sequence {
-                elements: exprs.iter().map(|e| Self::from_scanner(tree, e)).collect(),
+            ScannerDefinition::Sequence(scanners) => Self::Sequence {
+                nodes: scanners
+                    .iter()
+                    .map(|scanner| Self::from_scanner(tree, scanner))
+                    .collect(),
             },
 
             ScannerDefinition::Terminal(_) => {
@@ -163,15 +166,15 @@ impl<'context> CombinatorNode<'context> {
             }
 
             ScannerDefinition::TrailingContext {
-                expression,
+                scanner,
                 not_followed_by,
             } => Self::TrailingContext {
-                expression: Self::from_scanner(tree, expression),
+                node: Self::from_scanner(tree, scanner),
                 not_followed_by: Self::from_scanner(tree, not_followed_by),
             },
 
-            ScannerDefinition::ZeroOrMore(expr) => Self::ZeroOrMore {
-                expr: Self::from_scanner(tree, expr),
+            ScannerDefinition::ZeroOrMore(scanner) => Self::ZeroOrMore {
+                node: Self::from_scanner(tree, scanner),
             },
         })
     }
@@ -187,23 +190,23 @@ impl<'context> CombinatorNode<'context> {
         tree: &'context CombinatorTree<'context>,
         parser: &PrecedenceParserRef,
     ) -> &'context CombinatorNode<'context> {
-        let operators: Vec<PrecedenceRuleOperator> = parser
-            .operators
+        let operator_expressions: Vec<OperatorExpression> = parser
+            .operator_expressions
             .iter()
-            .map(|definition| -> PrecedenceRuleOperator {
-                PrecedenceRuleOperator {
-                    name: definition.name.clone(),
-                    model: definition.model,
-                    operator: Self::from_parser(tree, &definition.operator),
+            .map(|expression| -> OperatorExpression {
+                OperatorExpression {
+                    name: expression.name.clone(),
+                    model: expression.model,
+                    operator: Self::from_parser(tree, &expression.operator),
                 }
             })
             .collect();
 
         let primary_expression = Self::from_parser(tree, &parser.primary_expression);
 
-        return tree.context.alloc_node(Self::PrecedenceExpressionRule {
+        return tree.context.alloc_node(Self::PrecedenceParser {
             tree,
-            operators,
+            operator_expressions,
             primary_expression,
         });
     }
@@ -213,63 +216,60 @@ impl<'context> CombinatorNode<'context> {
         parser_definition: &ParserDefinition,
     ) -> &'context CombinatorNode<'context> {
         tree.context.alloc_node(match &parser_definition {
-            ParserDefinition::Choice(exprs) => {
-                let mut elements = exprs
+            ParserDefinition::Choice(parsers) => {
+                let mut nodes = parsers
                     .iter()
-                    .map(|expr| Self::from_parser(tree, expr))
+                    .map(|parser| Self::from_parser(tree, parser))
                     .collect::<Vec<_>>();
 
-                if elements.len() > 1 {
-                    Self::Choice { elements }
+                if nodes.len() > 1 {
+                    Self::Choice { nodes }
                 } else {
-                    return elements.pop().unwrap();
+                    return nodes.pop().unwrap();
                 }
             }
 
             ParserDefinition::DelimitedBy {
                 open,
-                expression,
+                parser,
                 close,
             } => Self::DelimitedBy {
                 open: tree.context.get_tree_by_name(&open.reference),
-                expr: Self::from_parser(tree, expression),
+                node: Self::from_parser(tree, parser),
                 close: tree.context.get_tree_by_name(&close.reference),
             },
 
-            ParserDefinition::OneOrMore(expr) => Self::OneOrMore {
-                expr: Self::from_parser(tree, expr),
+            ParserDefinition::OneOrMore(parser) => Self::OneOrMore {
+                node: Self::from_parser(tree, parser),
             },
 
-            ParserDefinition::Optional(expr) => Self::Optional {
-                expr: Self::from_parser(tree, expr),
+            ParserDefinition::Optional(parser) => Self::Optional {
+                node: Self::from_parser(tree, parser),
             },
 
             ParserDefinition::Reference(name) => Self::Reference {
                 tree: tree.context.get_tree_by_name(name),
             },
 
-            ParserDefinition::SeparatedBy {
-                expression,
-                separator,
-            } => Self::SeparatedBy {
-                expr: Self::from_parser(tree, expression),
+            ParserDefinition::SeparatedBy { parser, separator } => Self::SeparatedBy {
+                node: Self::from_parser(tree, parser),
                 separator: tree.context.get_tree_by_name(&separator.reference),
             },
 
-            ParserDefinition::Sequence(exprs) => Self::Sequence {
-                elements: exprs.iter().map(|e| Self::from_parser(tree, e)).collect(),
+            ParserDefinition::Sequence(parsers) => Self::Sequence {
+                nodes: parsers
+                    .iter()
+                    .map(|parser| Self::from_parser(tree, parser))
+                    .collect(),
             },
 
-            ParserDefinition::TerminatedBy {
-                expression,
-                terminator,
-            } => Self::TerminatedBy {
-                expr: Self::from_parser(tree, expression),
+            ParserDefinition::TerminatedBy { parser, terminator } => Self::TerminatedBy {
+                node: Self::from_parser(tree, parser),
                 terminator: tree.context.get_tree_by_name(&terminator.reference),
             },
 
-            ParserDefinition::ZeroOrMore(expr) => Self::ZeroOrMore {
-                expr: Self::from_parser(tree, expr),
+            ParserDefinition::ZeroOrMore(parser) => Self::ZeroOrMore {
+                node: Self::from_parser(tree, parser),
             },
         })
     }
@@ -285,55 +285,49 @@ impl<'context> CombinatorNode<'context> {
 
             Self::DelimitedBy { open, .. } => open.char_first_set(),
 
-            Self::PrecedenceExpressionRule {
-                operators,
+            Self::PrecedenceParser {
+                operator_expressions,
                 primary_expression,
                 ..
-            } => operators
+            } => operator_expressions
                 .iter()
-                .filter(|op| op.model == OperatorModel::UnaryPrefix)
-                .fold(CharFirstSet::new(), |accum, expr| {
-                    accum.union_with(expr.operator.char_first_set())
+                .filter(|expression| expression.model == OperatorModel::UnaryPrefix)
+                .fold(CharFirstSet::new(), |accum, expression| {
+                    accum.union_with(expression.operator.char_first_set())
                 })
                 .union_with(primary_expression.char_first_set()),
 
-            Self::Optional { expr } | Self::ZeroOrMore { expr, .. } => {
-                expr.char_first_set().with_epsilon()
+            Self::Optional { node } | Self::ZeroOrMore { node, .. } => {
+                node.char_first_set().with_epsilon()
             }
 
             Self::SeparatedBy {
-                expr, separator, ..
-            } => expr.char_first_set().follow_by(separator.char_first_set()),
+                node, separator, ..
+            } => node.char_first_set().follow_by(separator.char_first_set()),
 
             Self::TerminatedBy {
-                expr, terminator, ..
-            } => expr.char_first_set().follow_by(terminator.char_first_set()),
+                node, terminator, ..
+            } => node.char_first_set().follow_by(terminator.char_first_set()),
 
             Self::Reference { tree } => tree.char_first_set(),
 
-            Self::TrailingContext {
-                expression: expr, ..
-            }
-            | Self::OneOrMore { expr, .. }
-            | Self::Difference { minuend: expr, .. } => expr.char_first_set(),
+            Self::TrailingContext { node, .. }
+            | Self::OneOrMore { node, .. }
+            | Self::Difference { minuend: node, .. } => node.char_first_set(),
 
-            Self::Choice { elements, .. } => {
-                elements.iter().fold(CharFirstSet::new(), |accum, expr| {
-                    accum.union_with(expr.char_first_set())
+            Self::Choice { nodes, .. } => nodes.iter().fold(CharFirstSet::new(), |accum, node| {
+                accum.union_with(node.char_first_set())
+            }),
+
+            Self::Sequence { nodes, .. } => {
+                nodes.iter().fold(CharFirstSet::epsilon(), |accum, node| {
+                    // have to do this check here to avoid infinite recursion
+                    if accum.includes_epsilon {
+                        accum.follow_by(node.char_first_set())
+                    } else {
+                        accum
+                    }
                 })
-            }
-
-            Self::Sequence { elements, .. } => {
-                elements
-                    .iter()
-                    .fold(CharFirstSet::epsilon(), |accum, expr| {
-                        // have to do this check here to avoid infinite recursion
-                        if accum.includes_epsilon {
-                            accum.follow_by(expr.char_first_set())
-                        } else {
-                            accum
-                        }
-                    })
             }
         }
     }
