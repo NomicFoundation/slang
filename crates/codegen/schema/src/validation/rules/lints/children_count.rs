@@ -53,7 +53,7 @@ impl Visitor for ChildrenCount {
     ) -> bool {
         match &parser.definition {
             ParserDefinition::Choice(children) | ParserDefinition::Sequence(children) => {
-                if parser.name.is_none() && children.len() < 2 {
+                if children.len() < 2 {
                     reporter.report(location, Errors::MinChildrenCount(2));
                 }
             }

@@ -12,15 +12,12 @@ use super::{
 
 pub enum CombinatorNode<'context> {
     CharacterFilter {
-        name: Option<String>,
         filter: CharSet,
     },
     Choice {
-        name: Option<String>,
         elements: Vec<&'context CombinatorNode<'context>>,
     },
     DelimitedBy {
-        name: Option<String>,
         open: &'context CombinatorTree<'context>,
         expr: &'context CombinatorNode<'context>,
         close: &'context CombinatorTree<'context>,
@@ -30,7 +27,6 @@ pub enum CombinatorNode<'context> {
         subtrahend: &'context CombinatorNode<'context>,
     },
     OneOrMore {
-        name: Option<String>,
         expr: &'context CombinatorNode<'context>,
     },
     Optional {
@@ -45,19 +41,16 @@ pub enum CombinatorNode<'context> {
         tree: &'context CombinatorTree<'context>,
     },
     SeparatedBy {
-        name: Option<String>,
         expr: &'context CombinatorNode<'context>,
         separator: &'context CombinatorTree<'context>,
     },
     Sequence {
-        name: Option<String>,
         elements: Vec<&'context CombinatorNode<'context>>,
     },
     TerminalTrie {
         trie: TerminalTrie,
     },
     TerminatedBy {
-        name: Option<String>,
         expr: &'context CombinatorNode<'context>,
         terminator: &'context CombinatorTree<'context>,
     },
@@ -66,7 +59,6 @@ pub enum CombinatorNode<'context> {
         not_followed_by: &'context CombinatorNode<'context>,
     },
     ZeroOrMore {
-        name: Option<String>,
         expr: &'context CombinatorNode<'context>,
     },
 }
@@ -83,9 +75,7 @@ impl<'context> CombinatorNode<'context> {
         scanner: &ScannerRef,
     ) -> &'context CombinatorNode<'context> {
         if let Some(filter) = CharSet::from_scanner(tree, scanner.clone()) {
-            return tree
-                .context
-                .alloc_node(Self::CharacterFilter { name: None, filter });
+            return tree.context.alloc_node(Self::CharacterFilter { filter });
         }
 
         if let Some(trie) = trie::from_scanner(tree, scanner.clone()) {
@@ -122,10 +112,7 @@ impl<'context> CombinatorNode<'context> {
                 if elements.len() == 1 {
                     return elements.pop().unwrap();
                 } else {
-                    Self::Choice {
-                        name: None,
-                        elements,
-                    }
+                    Self::Choice { elements }
                 }
             }
 
@@ -139,14 +126,13 @@ impl<'context> CombinatorNode<'context> {
 
             ScannerDefinition::Not(_) => {
                 if let Some(filter) = CharSet::from_scanner(tree, scanner.clone()) {
-                    Self::CharacterFilter { name: None, filter }
+                    Self::CharacterFilter { filter }
                 } else {
                     unimplemented!("'Not' is only supported on characters or sets thereof")
                 }
             }
 
             ScannerDefinition::OneOrMore(expr) => Self::OneOrMore {
-                name: None,
                 expr: Self::from_scanner(tree, expr),
             },
 
@@ -155,7 +141,6 @@ impl<'context> CombinatorNode<'context> {
             },
 
             ScannerDefinition::Range { .. } => Self::CharacterFilter {
-                name: None,
                 filter: CharSet::from_scanner(tree, scanner.clone()).unwrap(),
             },
 
@@ -164,13 +149,12 @@ impl<'context> CombinatorNode<'context> {
             },
 
             ScannerDefinition::Sequence(exprs) => Self::Sequence {
-                name: None,
                 elements: exprs.iter().map(|e| Self::from_scanner(tree, e)).collect(),
             },
 
             ScannerDefinition::Terminal(_) => {
                 if let Some(filter) = CharSet::from_scanner(tree, scanner.clone()) {
-                    Self::CharacterFilter { name: None, filter }
+                    Self::CharacterFilter { filter }
                 } else {
                     Self::TerminalTrie {
                         trie: trie::from_scanner(tree, scanner.clone()).unwrap(),
@@ -187,7 +171,6 @@ impl<'context> CombinatorNode<'context> {
             },
 
             ScannerDefinition::ZeroOrMore(expr) => Self::ZeroOrMore {
-                name: None,
                 expr: Self::from_scanner(tree, expr),
             },
         })
@@ -197,7 +180,7 @@ impl<'context> CombinatorNode<'context> {
         tree: &'context CombinatorTree<'context>,
         parser: &ParserRef,
     ) -> &'context CombinatorNode<'context> {
-        Self::from_parser_definition(tree, parser.name.clone(), &parser.definition)
+        Self::from_parser_definition(tree, &parser.definition)
     }
 
     pub fn from_precedence_parser(
@@ -227,7 +210,6 @@ impl<'context> CombinatorNode<'context> {
 
     fn from_parser_definition(
         tree: &'context CombinatorTree<'context>,
-        name: Option<String>,
         parser_definition: &ParserDefinition,
     ) -> &'context CombinatorNode<'context> {
         tree.context.alloc_node(match &parser_definition {
@@ -237,8 +219,8 @@ impl<'context> CombinatorNode<'context> {
                     .map(|expr| Self::from_parser(tree, expr))
                     .collect::<Vec<_>>();
 
-                if name.is_some() || elements.len() > 1 {
-                    Self::Choice { name, elements }
+                if elements.len() > 1 {
+                    Self::Choice { elements }
                 } else {
                     return elements.pop().unwrap();
                 }
@@ -249,14 +231,12 @@ impl<'context> CombinatorNode<'context> {
                 expression,
                 close,
             } => Self::DelimitedBy {
-                name,
                 open: tree.context.get_tree_by_name(&open.reference),
                 expr: Self::from_parser(tree, expression),
                 close: tree.context.get_tree_by_name(&close.reference),
             },
 
             ParserDefinition::OneOrMore(expr) => Self::OneOrMore {
-                name,
                 expr: Self::from_parser(tree, expr),
             },
 
@@ -272,13 +252,11 @@ impl<'context> CombinatorNode<'context> {
                 expression,
                 separator,
             } => Self::SeparatedBy {
-                name,
                 expr: Self::from_parser(tree, expression),
                 separator: tree.context.get_tree_by_name(&separator.reference),
             },
 
             ParserDefinition::Sequence(exprs) => Self::Sequence {
-                name,
                 elements: exprs.iter().map(|e| Self::from_parser(tree, e)).collect(),
             },
 
@@ -286,13 +264,11 @@ impl<'context> CombinatorNode<'context> {
                 expression,
                 terminator,
             } => Self::TerminatedBy {
-                name,
                 expr: Self::from_parser(tree, expression),
                 terminator: tree.context.get_tree_by_name(&terminator.reference),
             },
 
             ParserDefinition::ZeroOrMore(expr) => Self::ZeroOrMore {
-                name,
                 expr: Self::from_parser(tree, expr),
             },
         })

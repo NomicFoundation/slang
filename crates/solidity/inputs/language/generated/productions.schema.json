@@ -462,13 +462,7 @@
             }
           }
         }
-      ],
-      "properties": {
-        "name": {
-          "default": null,
-          "type": ["string", "null"]
-        }
-      }
+      ]
     },
     "Reference": {
       "type": "object",

@@ -8,8 +8,6 @@ pub type ParserRef = std::rc::Rc<Parser>;
 #[derive(Clone, Debug, Deserialize, Serialize, JsonSchema, PartialEq, Eq, Hash)]
 #[serde(deny_unknown_fields)]
 pub struct Parser {
-    #[serde(default)]
-    pub name: Option<String>,
     #[serde(flatten)]
     pub definition: ParserDefinition,
 }
