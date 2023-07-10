@@ -80,10 +80,6 @@ impl Visitor for ConsistentShape {
 
 impl ConsistentShape {
     fn is_single_named(&self, parser: &ParserRef) -> bool {
-        if parser.name.is_some() {
-            return true;
-        }
-
         match &parser.definition {
             ParserDefinition::Choice(_)
             | ParserDefinition::DelimitedBy { .. }

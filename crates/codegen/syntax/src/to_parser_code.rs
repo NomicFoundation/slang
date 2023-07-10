@@ -24,20 +24,20 @@ impl<'context> CombinatorNode<'context> {
             /**********************************************************************
              * Sequence and Choice
              */
-            Self::Sequence { elements, name } => {
+            Self::Sequence { elements } => {
                 let parsers = elements
                     .iter()
                     .map(|element| element.to_parser_code(code_generator, is_trivia))
                     .collect();
-                sequence_to_parser_code(code_generator, name, parsers)
+                sequence_to_parser_code(parsers)
             }
 
-            Self::Choice { elements, name } => {
+            Self::Choice { elements } => {
                 let parsers = elements
                     .iter()
                     .map(|element| element.to_parser_code(code_generator, is_trivia))
                     .collect();
-                choice_to_parser_code(code_generator, name, parsers)
+                choice_to_parser_code(parsers)
             }
 
             /**********************************************************************
@@ -47,26 +47,20 @@ impl<'context> CombinatorNode<'context> {
                 option_to_parser_code(expr.to_parser_code(code_generator, is_trivia))
             }
 
-            Self::ZeroOrMore { expr, name } => {
+            Self::ZeroOrMore { expr } => {
                 let parser = expr.to_parser_code(code_generator, is_trivia);
-                zero_or_more_to_parser_code(code_generator, name, parser)
+                zero_or_more_to_parser_code(parser)
             }
 
-            Self::OneOrMore { expr, name } => {
+            Self::OneOrMore { expr } => {
                 let parser = expr.to_parser_code(code_generator, is_trivia);
-                one_or_more_to_parser_code(code_generator, name, parser)
+                one_or_more_to_parser_code(parser)
             }
 
             /**********************************************************************
              * Special Structures
              */
-            Self::DelimitedBy {
-                open,
-                expr,
-                close,
-                name,
-            } => Self::Sequence {
-                name: name.clone(),
+            Self::DelimitedBy { open, expr, close } => Self::Sequence {
                 elements: vec![
                     open.context.alloc_node(Self::Reference { tree: open }),
                     expr,
@@ -75,18 +69,11 @@ impl<'context> CombinatorNode<'context> {
             }
             .to_parser_code(code_generator, is_trivia),
 
-            Self::SeparatedBy {
-                expr,
-                separator,
-                name,
-            } => Self::Sequence {
-                name: name.clone(),
+            Self::SeparatedBy { expr, separator } => Self::Sequence {
                 elements: vec![
                     expr,
                     separator.context.alloc_node(Self::ZeroOrMore {
-                        name: None,
                         expr: separator.context.alloc_node(Self::Sequence {
-                            name: None,
                             elements: vec![
                                 separator
                                     .context
@@ -99,12 +86,7 @@ impl<'context> CombinatorNode<'context> {
             }
             .to_parser_code(code_generator, is_trivia),
 
-            Self::TerminatedBy {
-                expr,
-                terminator,
-                name,
-            } => Self::Sequence {
-                name: name.clone(),
+            Self::TerminatedBy { expr, terminator } => Self::Sequence {
                 elements: vec![
                     expr,
                     terminator
@@ -160,13 +142,6 @@ impl<'context> CombinatorNode<'context> {
     }
 }
 
-fn kind_wrapper(code: &mut CodeGenerator, name: Option<String>) -> Option<TokenStream> {
-    name.clone().map(|name| {
-        let kind = code.add_rule_kind(name.to_owned());
-        quote! { .with_kind(RuleKind::#kind) }
-    })
-}
-
 fn reference_to_parser_code(tree: &CombinatorTree, is_trivia: bool) -> TokenStream {
     let name = &tree.production.name;
     let function_name = format_ident!("{snake_case}", snake_case = name.to_snake_case());
@@ -197,15 +172,10 @@ fn reference_to_parser_code(tree: &CombinatorTree, is_trivia: bool) -> TokenStre
     }
 }
 
-fn sequence_to_parser_code(
-    code: &mut CodeGenerator,
-    name: &Option<String>,
-    mut parsers: Vec<TokenStream>,
-) -> TokenStream {
-    let kind_wrapper = kind_wrapper(code, name.clone());
+fn sequence_to_parser_code(mut parsers: Vec<TokenStream>) -> TokenStream {
     if parsers.len() == 1 {
         let parser = &parsers[0];
-        quote! { #parser #kind_wrapper }
+        quote! { #parser  }
     } else {
         let last_parser = parsers.pop().unwrap();
         quote! {
@@ -220,18 +190,13 @@ fn sequence_to_parser_code(
                     running_result.incorporate_sequence_result(#last_parser);
                     break;
                 }
-                running_result #kind_wrapper
+                running_result
             }
         }
     }
 }
 
-fn choice_to_parser_code(
-    code: &mut CodeGenerator,
-    name: &Option<String>,
-    parsers: Vec<TokenStream>,
-) -> TokenStream {
-    let kind_wrapper = kind_wrapper(code, name.clone());
+fn choice_to_parser_code(parsers: Vec<TokenStream>) -> TokenStream {
     quote! {
         {
             let mut running_result = ParserResult::no_match(vec![]);
@@ -248,7 +213,7 @@ fn choice_to_parser_code(
             if let ParserResult::IncompleteMatch(incomplete_match) = &running_result {
                 incomplete_match.consume_stream(stream);
             }
-            running_result #kind_wrapper
+            running_result
         }
     }
 }
@@ -259,32 +224,22 @@ fn option_to_parser_code(parser: TokenStream) -> TokenStream {
     }
 }
 
-fn zero_or_more_to_parser_code(
-    code_generator: &mut CodeGenerator,
-    name: &Option<String>,
-    parser: TokenStream,
-) -> TokenStream {
-    let kind_wrapper = kind_wrapper(code_generator, name.clone());
+fn zero_or_more_to_parser_code(parser: TokenStream) -> TokenStream {
     quote! {
         {
             let mut running_result = ParserResult::r#match(vec![], vec![]);
             while running_result.incorporate_zero_or_more_result(#parser) {}
-            running_result #kind_wrapper
+            running_result
         }
     }
 }
 
-fn one_or_more_to_parser_code(
-    code_generator: &mut CodeGenerator,
-    name: &Option<String>,
-    parser: TokenStream,
-) -> TokenStream {
-    let kind_wrapper = kind_wrapper(code_generator, name.clone());
+fn one_or_more_to_parser_code(parser: TokenStream) -> TokenStream {
     quote! {
         {
             let mut running_result = ParserResult::r#match(vec![], vec![]);
             while running_result.incorporate_one_or_more_result(#parser) {}
-            running_result #kind_wrapper
+            running_result
         }
     }
 }

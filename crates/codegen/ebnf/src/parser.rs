@@ -4,12 +4,7 @@ use crate::{nodes::EbnfNode, serialization::GenerateEbnf};
 
 impl GenerateEbnf for ParserRef {
     fn generate_ebnf(&self) -> EbnfNode {
-        let definition = self.definition.generate_ebnf();
-
-        return match &self.name {
-            None => definition,
-            Some(name) => EbnfNode::sub_statement(name.to_owned(), None, definition),
-        };
+        return self.definition.generate_ebnf();
     }
 }
 
