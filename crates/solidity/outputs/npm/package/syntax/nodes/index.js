@@ -6,10 +6,8 @@
 
 const generated = require("../../generated");
 
-module.exports = Object.freeze({
-  NodeType: generated.NodeType,
-  RuleKind: generated.RuleKind,
-  RuleNode: generated.RuleNode,
-  TokenKind: generated.TokenKind,
-  TokenNode: generated.TokenNode,
-});
+module.exports.NodeType = generated.NodeType;
+module.exports.RuleKind = generated.RuleKind;
+module.exports.RuleNode = generated.RuleNode;
+module.exports.TokenKind = generated.TokenKind;
+module.exports.TokenNode = generated.TokenNode;

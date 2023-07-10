@@ -7,7 +7,5 @@
 const nodes = require("./nodes");
 const parser = require("./parser");
 
-module.exports = Object.freeze({
-  nodes,
-  parser,
-});
+module.exports.nodes = nodes;
+module.exports.parser = parser;

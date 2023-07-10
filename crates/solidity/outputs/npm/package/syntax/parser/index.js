@@ -6,8 +6,6 @@
 
 const generated = require("../../generated");
 
-module.exports = Object.freeze({
-  ParseError: generated.ParseError,
-  ParseOutput: generated.ParseOutput,
-  ProductionKind: generated.ProductionKind,
-});
+module.exports.ParseError = generated.ParseError;
+module.exports.ParseOutput = generated.ParseOutput;
+module.exports.ProductionKind = generated.ProductionKind;
