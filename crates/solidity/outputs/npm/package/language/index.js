@@ -6,6 +6,4 @@
 
 const generated = require("../generated");
 
-module.exports = Object.freeze({
-  Language: generated.Language,
-});
+module.exports.Language = generated.Language;
