@@ -1,5 +1,15 @@
 # changelog
 
+## 0.8.0
+
+### Minor Changes
+
+-   [#513](https://github.com/NomicFoundation/slang/pull/513) [`7e01250`](https://github.com/NomicFoundation/slang/commit/7e012501c04e639b54cd150e3736683ee2c2606f) Thanks [@AntonyBlakey](https://github.com/AntonyBlakey)! - Typescript API now has TextIndex and TextRange types that are returned from the appropriate methods rather than tuples.
+
+### Patch Changes
+
+-   [#527](https://github.com/NomicFoundation/slang/pull/527) [`7ccca87`](https://github.com/NomicFoundation/slang/commit/7ccca87beaa9cb96ad294d1af8a02f115481b71a) Thanks [@AntonyBlakey](https://github.com/AntonyBlakey)! - Fix pratt parser behavior in the face of error correction
+
 ## 0.7.0
 
 ### Minor Changes
