@@ -2,7 +2,10 @@
 
 use std::collections::BTreeSet;
 
-use super::{cst, kinds::TokenKind, parse_error::render_error_report, text_index::TextRange};
+use super::{
+    cst, cst_types::TextRange, kinds::TokenKind, parse_error::render_error_report,
+    text_index::TextRange as RustTextRange,
+};
 use napi::bindgen_prelude::*;
 
 #[napi]
@@ -32,29 +35,15 @@ impl ParseOutput {
 #[napi]
 #[derive(PartialEq, Clone)]
 pub struct ParseError {
-    pub(crate) range: TextRange,
+    pub(crate) range: RustTextRange,
     pub(crate) tokens_that_would_have_allowed_more_progress: Vec<TokenKind>,
 }
 
 #[napi]
 impl ParseError {
-    #[napi(
-        getter,
-        ts_return_type = "[ start: [ utf8: number, utf16: number, char: number], end: [ utf8: number, utf16: number, char: number] ]"
-    )]
-    pub fn range(&self) -> [[u32; 3]; 2] {
-        return [
-            [
-                self.range.start.utf8 as u32,
-                self.range.start.utf16 as u32,
-                self.range.start.char as u32,
-            ],
-            [
-                self.range.end.utf8 as u32,
-                self.range.end.utf16 as u32,
-                self.range.end.char as u32,
-            ],
-        ];
+    #[napi(getter)]
+    pub fn range(&self) -> TextRange {
+        (&self.range).into()
     }
 
     pub fn tokens_that_would_have_allowed_more_progress(&self) -> Vec<String> {

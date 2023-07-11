@@ -3,7 +3,7 @@
 use super::{
     cst::{Node, RuleNode as RustRuleNode, TokenNode as RustTokenNode},
     kinds::*,
-    text_index::TextIndex,
+    text_index::{TextIndex as RustTextIndex, TextRange as RustTextRange},
 };
 
 use std::rc::Rc;
@@ -12,7 +12,41 @@ use napi::bindgen_prelude::*;
 use napi::JsObject;
 use napi::NapiValue;
 
-#[napi]
+#[napi(object)]
+#[derive(Copy, Clone)]
+pub struct TextIndex {
+    pub utf8: u32,
+    pub utf16: u32,
+    pub char: u32,
+}
+
+impl From<&RustTextIndex> for TextIndex {
+    fn from(value: &RustTextIndex) -> Self {
+        Self {
+            utf8: value.utf8 as u32,
+            utf16: value.utf16 as u32,
+            char: value.char as u32,
+        }
+    }
+}
+
+#[napi(object)]
+#[derive(Copy, Clone)]
+pub struct TextRange {
+    pub start: TextIndex,
+    pub end: TextIndex,
+}
+
+impl From<&RustTextRange> for TextRange {
+    fn from(value: &RustTextRange) -> Self {
+        Self {
+            start: (&value.start).into(),
+            end: (&value.end).into(),
+        }
+    }
+}
+
+#[napi(object)]
 pub enum NodeType {
     Rule,
     Token,
@@ -36,17 +70,9 @@ impl RuleNode {
         self.0.kind
     }
 
-    #[napi(
-        getter,
-        js_name = "textLength",
-        ts_return_type = "[ utf8: number, utf16: number, char: number]"
-    )]
-    pub fn text_len(&self) -> [u32; 3] {
-        [
-            self.0.text_len.utf8 as u32,
-            self.0.text_len.utf16 as u32,
-            self.0.text_len.char as u32,
-        ]
+    #[napi(getter, js_name = "textLength")]
+    pub fn text_len(&self) -> TextIndex {
+        (&self.0.text_len).into()
     }
 
     #[napi(getter, ts_return_type = "(RuleNode | TokenNode)[]")]
@@ -71,18 +97,10 @@ impl TokenNode {
         self.0.kind
     }
 
-    #[napi(
-        getter,
-        js_name = "textLength",
-        ts_return_type = "[ utf8: number, utf16: number, char: number]"
-    )]
-    pub fn text_len(&self) -> [u32; 3] {
-        let text_len: TextIndex = (&self.0.text).into();
-        [
-            text_len.utf8 as u32,
-            text_len.utf16 as u32,
-            text_len.char as u32,
-        ]
+    #[napi(getter, js_name = "textLength")]
+    pub fn text_len(&self) -> TextIndex {
+        let text_len: RustTextIndex = (&self.0.text).into();
+        (&text_len).into()
     }
 }
 
