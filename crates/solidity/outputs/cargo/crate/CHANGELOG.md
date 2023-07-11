@@ -9,6 +9,7 @@
 ### Patch Changes
 
 -   [#527](https://github.com/NomicFoundation/slang/pull/527) [`7ccca87`](https://github.com/NomicFoundation/slang/commit/7ccca87beaa9cb96ad294d1af8a02f115481b71a) Thanks [@AntonyBlakey](https://github.com/AntonyBlakey)! - Fix pratt parser behavior in the face of error correction
+-   [#531](https://github.com/NomicFoundation/slang/pull/531) [`e3450be4`](https://github.com/NomicFoundation/slang/commit/e3450be4722845bcfce7a9ec3b3046ba6eb6961d) Thanks [@alcuadrado](https://github.com/alcuadrado)! - Make ESM named imports work in Node.js.
 
 ## 0.7.0
 
