@@ -17,5 +17,5 @@ Written in Rust and distributed in multiple languages.
 
 <br/>
 
-> ❗ This repository is **highly experimental**, and is under active development.
-> Any code or binaries produced from this project should not be used in any production or critical workloads, and is subject to deletion or changes at any time.
+> ❗ This project is still in alpha, and is under active development.
+> If you are planning on using it, please reach out to us on [Telegram](https://t.me/+pxApdT-Ssn5hMTFh) so we can help you get started.
