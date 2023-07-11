@@ -7,10 +7,7 @@ use anyhow::{bail, ensure, Context, Result};
 use semver::{Comparator, Op, Version};
 use slang_solidity::{
     language::Language,
-    syntax::{
-        nodes::{Node, RuleKind, TokenKind},
-        parser::ProductionKind,
-    },
+    syntax::nodes::{Node, ProductionKind, RuleKind, TokenKind},
 };
 
 use crate::node_extensions::NodeExtensions;

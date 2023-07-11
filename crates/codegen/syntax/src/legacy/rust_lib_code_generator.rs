@@ -30,7 +30,6 @@ impl CodeGenerator {
 
                pub mod cst;
                pub mod cursor;
-               pub mod kinds;
                pub mod language;
                pub mod parse_error;
                pub mod parse_output;
@@ -124,67 +123,6 @@ impl CodeGenerator {
 
             codegen
                 .write_file(&output_dir.join("language.rs"), &content)
-                .unwrap();
-        }
-
-        // Do the kinds last, because the code generation steps above may have added new kinds
-        {
-            let content = {
-                let token_kinds = self.token_kinds();
-                let rule_kinds = self.rule_kinds();
-                let production_kinds = self.production_kinds();
-                quote! {
-                    use serde::Serialize;
-
-                    #[derive(
-                        Clone,
-                        Copy,
-                        Debug,
-                        PartialEq,
-                        Eq,
-                        PartialOrd,
-                        Ord,
-                        Serialize,
-                        strum_macros::EnumString,
-                        strum_macros::AsRefStr,
-                        strum_macros::Display,
-                    )]
-                    #token_kinds
-
-                    #[derive(
-                        Clone,
-                        Copy,
-                        Debug,
-                        PartialEq,
-                        Eq,
-                        PartialOrd,
-                        Ord,
-                        Serialize,
-                        strum_macros::EnumString,
-                        strum_macros::AsRefStr,
-                        strum_macros::Display,
-                    )]
-                    #rule_kinds
-
-                    #[derive(
-                        Clone,
-                        Copy,
-                        Debug,
-                        PartialEq,
-                        Eq,
-                        PartialOrd,
-                        Ord,
-                        Serialize,
-                        strum_macros::EnumString,
-                        strum_macros::AsRefStr,
-                        strum_macros::Display,
-                    )]
-                    #production_kinds
-                }
-            };
-
-            codegen
-                .write_file(&output_dir.join("kinds.rs"), &content.to_string())
                 .unwrap();
         }
     }

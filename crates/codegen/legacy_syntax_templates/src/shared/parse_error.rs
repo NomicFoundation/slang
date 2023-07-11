@@ -1,8 +1,9 @@
 use super::{
-    kinds::*,
     parse_output::ParseError,
     text_index::{TextIndex, TextRange},
 };
+
+use crate::syntax::nodes::TokenKind;
 
 impl ParseError {
     #[allow(dead_code)]

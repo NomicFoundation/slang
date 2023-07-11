@@ -1,7 +1,13 @@
 import test from "ava";
 import { Language } from "@nomicfoundation/slang/language";
-import { NodeType, RuleKind, RuleNode, TokenKind, TokenNode } from "@nomicfoundation/slang/syntax/nodes";
-import { ProductionKind } from "@nomicfoundation/slang/syntax/parser";
+import {
+  ProductionKind,
+  NodeType,
+  RuleKind,
+  RuleNode,
+  TokenKind,
+  TokenNode,
+} from "@nomicfoundation/slang/syntax/nodes";
 
 test("parse token", (t) => {
   const source = "5_286_981";

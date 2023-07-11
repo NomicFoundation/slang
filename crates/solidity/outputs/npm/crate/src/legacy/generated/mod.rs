@@ -6,7 +6,6 @@ pub mod cst;
 pub mod cst_ts_wrappers;
 pub mod cursor;
 pub mod cursor_ts_wrappers;
-pub mod kinds;
 pub mod language;
 pub mod parse_error;
 pub mod parse_output;

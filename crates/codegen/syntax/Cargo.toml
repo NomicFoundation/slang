@@ -6,6 +6,7 @@ edition.workspace = true
 publish = false
 
 [dependencies]
+anyhow = { workspace = true }
 codegen_ebnf = { workspace = true }
 codegen_schema = { workspace = true }
 codegen_utils = { workspace = true }

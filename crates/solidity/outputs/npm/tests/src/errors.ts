@@ -1,6 +1,6 @@
 import test from "ava";
 import { Language } from "@nomicfoundation/slang/language";
-import { ProductionKind } from "@nomicfoundation/slang/syntax/parser";
+import { ProductionKind } from "@nomicfoundation/slang/syntax/nodes";
 
 test("render error reports", (t) => {
   const source = "int256 constant";

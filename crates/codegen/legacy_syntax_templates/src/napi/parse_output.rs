@@ -1,13 +1,15 @@
 use std::collections::BTreeSet;
 
+use napi::bindgen_prelude::*;
+
 use super::{
     cst,
     cst_ts_wrappers::{TextRange, ToJS},
-    kinds::TokenKind,
     parse_error::render_error_report,
     text_index::TextRange as RustTextRange,
 };
-use napi::bindgen_prelude::*;
+
+use crate::syntax::nodes::TokenKind;
 
 #[napi(namespace = "legacy")]
 pub struct ParseOutput {

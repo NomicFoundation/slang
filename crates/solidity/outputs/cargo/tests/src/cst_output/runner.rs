@@ -5,7 +5,7 @@ use codegen_utils::context::CodegenContext;
 use semver::Version;
 use slang_solidity::{
     language::{Error, Language},
-    syntax::parser::{ParseOutput, ProductionKind},
+    syntax::{nodes::ProductionKind, parser::ParseOutput},
 };
 use solidity_testing_utils::cst_snapshots::ParseOutputTestSnapshotExtensions;
 

@@ -60,7 +60,6 @@ impl<'context> CombinatorTree<'context> {
         }
 
         let name = &self.production.name;
-        let inlined = &self.production.inlined;
         let comment = self.generate_comment();
 
         match self.production.definition {
@@ -72,19 +71,11 @@ impl<'context> CombinatorTree<'context> {
                         );
                     }
 
-                    if !inlined {
-                        code.add_token_kind(name.clone());
-                    }
-
                     (comment, node.to_scanner_code(code))
                 });
                 code.add_scanner(name.clone(), version, definition);
             }
             ProductionDefinition::TriviaParser { .. } => {
-                if !inlined {
-                    code.add_rule_kind(name.clone());
-                }
-
                 let definition = self
                     .root_node
                     .get()
@@ -92,10 +83,6 @@ impl<'context> CombinatorTree<'context> {
                 code.add_parser(name.clone(), version, definition);
             }
             ProductionDefinition::Parser { .. } | ProductionDefinition::PrecedenceParser { .. } => {
-                if !inlined {
-                    code.add_rule_kind(name.clone());
-                }
-
                 let definition = self
                     .root_node
                     .get()

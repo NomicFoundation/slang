@@ -2,9 +2,10 @@ use std::rc::Rc;
 
 use super::{
     cst::{Node, RuleNode, TokenNode},
-    kinds::{RuleKind, TokenKind},
     text_index::{TextIndex, TextRange},
 };
+
+use crate::syntax::nodes::{RuleKind, TokenKind};
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 struct CursorPathElement {

@@ -1,5 +1,5 @@
 use semver::Version;
-use slang_solidity::{language::Language, syntax::parser::ProductionKind};
+use slang_solidity::{language::Language, syntax::nodes::ProductionKind};
 
 #[test]
 fn unsupported_language_version() {

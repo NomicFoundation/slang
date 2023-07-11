@@ -1,4 +1,6 @@
-use super::{cst, kinds::*, stream::Stream};
+use super::{cst, stream::Stream};
+
+use crate::syntax::nodes::{RuleKind, TokenKind};
 
 #[derive(PartialEq, Eq, Clone, Debug)]
 pub struct Match {

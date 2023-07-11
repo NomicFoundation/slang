@@ -8,6 +8,13 @@ publish = false
 [lib]
 crate-type = ["cdylib"]
 
+[features]
+default = ["slang_napi_interfaces"]
+slang_napi_interfaces = [
+  # This feature is used to enable `#[napi]` attributes on Rust API types.
+  # It is defined here as we import the source files via `#[path] mod` declarations.
+]
+
 [dev-dependencies]
 solidity_npm_build = { workspace = true }
 

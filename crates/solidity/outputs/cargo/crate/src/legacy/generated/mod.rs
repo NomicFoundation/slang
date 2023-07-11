@@ -4,7 +4,6 @@
 mod scanner_macros;
 pub mod cst;
 pub mod cursor;
-pub mod kinds;
 pub mod language;
 pub mod parse_error;
 pub mod parse_output;
