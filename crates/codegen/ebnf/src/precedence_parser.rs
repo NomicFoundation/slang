@@ -4,15 +4,15 @@ use crate::{nodes::EbnfNode, serialization::GenerateEbnf};
 
 impl GenerateEbnf for PrecedenceParserRef {
     fn generate_ebnf(&self) -> EbnfNode {
-        let mut choices = vec![];
+        let mut nodes = vec![];
 
-        for definition in &self.operators {
+        for expression in &self.operator_expressions {
             let mut comment = None;
 
-            let operator = match definition.model {
+            let operator = match expression.model {
                 OperatorModel::BinaryLeftAssociative => EbnfNode::sequence(vec![
                     EbnfNode::BaseProduction,
-                    definition.operator.generate_ebnf(),
+                    expression.operator.generate_ebnf(),
                     EbnfNode::BaseProduction,
                 ]),
 
@@ -21,30 +21,30 @@ impl GenerateEbnf for PrecedenceParserRef {
 
                     EbnfNode::sequence(vec![
                         EbnfNode::BaseProduction,
-                        definition.operator.generate_ebnf(),
+                        expression.operator.generate_ebnf(),
                         EbnfNode::BaseProduction,
                     ])
                 }
                 OperatorModel::UnaryPrefix => EbnfNode::sequence(vec![
-                    definition.operator.generate_ebnf(),
+                    expression.operator.generate_ebnf(),
                     EbnfNode::BaseProduction,
                 ]),
 
                 OperatorModel::UnaryPostfix => EbnfNode::sequence(vec![
                     EbnfNode::BaseProduction,
-                    definition.operator.generate_ebnf(),
+                    expression.operator.generate_ebnf(),
                 ]),
             };
 
-            choices.push(EbnfNode::sub_statement(
-                definition.name.to_owned(),
+            nodes.push(EbnfNode::sub_statement(
+                expression.name.to_owned(),
                 comment,
                 operator,
             ));
         }
 
-        choices.push(self.primary_expression.generate_ebnf());
+        nodes.push(self.primary_expression.generate_ebnf());
 
-        return EbnfNode::choices(choices);
+        return EbnfNode::choice(nodes);
     }
 }

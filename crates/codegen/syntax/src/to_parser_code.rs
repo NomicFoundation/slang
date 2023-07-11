@@ -5,7 +5,7 @@ use quote::{format_ident, quote};
 
 use super::{
     code_generator::CodeGenerator,
-    combinator_node::{CombinatorNode, PrecedenceRuleOperator},
+    combinator_node::{CombinatorNode, OperatorExpression},
     combinator_tree::CombinatorTree,
 };
 
@@ -24,18 +24,18 @@ impl<'context> CombinatorNode<'context> {
             /**********************************************************************
              * Sequence and Choice
              */
-            Self::Sequence { elements } => {
-                let parsers = elements
+            Self::Sequence { nodes } => {
+                let parsers = nodes
                     .iter()
-                    .map(|element| element.to_parser_code(code_generator, is_trivia))
+                    .map(|node| node.to_parser_code(code_generator, is_trivia))
                     .collect();
                 sequence_to_parser_code(parsers)
             }
 
-            Self::Choice { elements } => {
-                let parsers = elements
+            Self::Choice { nodes } => {
+                let parsers = nodes
                     .iter()
-                    .map(|element| element.to_parser_code(code_generator, is_trivia))
+                    .map(|node| node.to_parser_code(code_generator, is_trivia))
                     .collect();
                 choice_to_parser_code(parsers)
             }
@@ -43,42 +43,42 @@ impl<'context> CombinatorNode<'context> {
             /**********************************************************************
              * Numeric qualification
              */
-            Self::Optional { expr } => {
-                option_to_parser_code(expr.to_parser_code(code_generator, is_trivia))
+            Self::Optional { node } => {
+                option_to_parser_code(node.to_parser_code(code_generator, is_trivia))
             }
 
-            Self::ZeroOrMore { expr } => {
-                let parser = expr.to_parser_code(code_generator, is_trivia);
+            Self::ZeroOrMore { node } => {
+                let parser = node.to_parser_code(code_generator, is_trivia);
                 zero_or_more_to_parser_code(parser)
             }
 
-            Self::OneOrMore { expr } => {
-                let parser = expr.to_parser_code(code_generator, is_trivia);
+            Self::OneOrMore { node } => {
+                let parser = node.to_parser_code(code_generator, is_trivia);
                 one_or_more_to_parser_code(parser)
             }
 
             /**********************************************************************
              * Special Structures
              */
-            Self::DelimitedBy { open, expr, close } => Self::Sequence {
-                elements: vec![
+            Self::DelimitedBy { open, node, close } => Self::Sequence {
+                nodes: vec![
                     open.context.alloc_node(Self::Reference { tree: open }),
-                    expr,
+                    node,
                     close.context.alloc_node(Self::Reference { tree: close }),
                 ],
             }
             .to_parser_code(code_generator, is_trivia),
 
-            Self::SeparatedBy { expr, separator } => Self::Sequence {
-                elements: vec![
-                    expr,
+            Self::SeparatedBy { node, separator } => Self::Sequence {
+                nodes: vec![
+                    node,
                     separator.context.alloc_node(Self::ZeroOrMore {
-                        expr: separator.context.alloc_node(Self::Sequence {
-                            elements: vec![
+                        node: separator.context.alloc_node(Self::Sequence {
+                            nodes: vec![
                                 separator
                                     .context
                                     .alloc_node(Self::Reference { tree: separator }),
-                                expr,
+                                node,
                             ],
                         }),
                     }),
@@ -86,9 +86,9 @@ impl<'context> CombinatorNode<'context> {
             }
             .to_parser_code(code_generator, is_trivia),
 
-            Self::TerminatedBy { expr, terminator } => Self::Sequence {
-                elements: vec![
-                    expr,
+            Self::TerminatedBy { node, terminator } => Self::Sequence {
+                nodes: vec![
+                    node,
                     terminator
                         .context
                         .alloc_node(Self::Reference { tree: terminator }),
@@ -99,13 +99,13 @@ impl<'context> CombinatorNode<'context> {
             /**********************************************************************
              * Precedence parsing
              */
-            Self::PrecedenceExpressionRule {
+            Self::PrecedenceParser {
                 tree,
                 primary_expression,
-                operators,
+                operator_expressions,
             } => {
                 if is_trivia {
-                    unreachable!("Precedence expressions cannot be used in trivia productions")
+                    unreachable!("Precedence operators cannot be used in trivia productions")
                 }
 
                 let expression_ident = if tree.production.inlined {
@@ -118,7 +118,7 @@ impl<'context> CombinatorNode<'context> {
                     code_generator,
                     expression_ident,
                     primary_expression,
-                    operators,
+                    operator_expressions,
                 )
             }
 
@@ -248,18 +248,18 @@ fn precedence_expression_to_parser_code(
     code: &mut CodeGenerator,
     expression_kind: Option<Ident>,
     primary_expression: &&CombinatorNode,
-    operators: &Vec<PrecedenceRuleOperator>,
+    operator_expressions: &Vec<OperatorExpression>,
 ) -> TokenStream {
     let mut prefix_operator_parsers = Vec::new();
     let mut postfix_operator_parsers = Vec::new();
     let mut binary_operator_parsers = Vec::new();
     let mut binding_power = 1u8;
 
-    for operator in operators.iter() {
-        let rule_kind = code.add_rule_kind(operator.name.clone());
-        let operator_code = operator.operator.to_parser_code(code, false);
+    for expression in operator_expressions.iter() {
+        let rule_kind = code.add_rule_kind(expression.name.clone());
+        let operator_code = expression.operator.to_parser_code(code, false);
 
-        match operator.model {
+        match expression.model {
                 OperatorModel::BinaryLeftAssociative => binary_operator_parsers.push(
                     quote! { #operator_code.to_pratt_element_operator(RuleKind::#rule_kind, #binding_power, #binding_power + 1) }
                 ),
@@ -313,7 +313,7 @@ fn precedence_expression_to_parser_code(
                     let result = #combined_operator_parser;
                     match result {
                         ParserResult::PrattOperatorMatch(_) =>
-                            elements.push(result),
+                            results.push(result),
                         // ParserResult::Match is handled in the combine_operator_parsers function
                         _ =>
                             break result,
@@ -332,7 +332,7 @@ fn precedence_expression_to_parser_code(
             {
                 let result = #parser;
                 if result.is_match() {
-                    elements.push(result);
+                    results.push(result);
                 } else {
                     break result;
                 }
@@ -349,7 +349,7 @@ fn precedence_expression_to_parser_code(
                 let result = #combined_operator_parser;
                 match result {
                     ParserResult::PrattOperatorMatch(_) =>
-                        elements.push(result),
+                        results.push(result),
                     // ParserResult::Match is handled in the combine_operator_parsers function
                     _ =>
                         break result,
@@ -369,7 +369,7 @@ fn precedence_expression_to_parser_code(
                     let result = #combined_operator_parser;
                     match result {
                         ParserResult::PrattOperatorMatch(_) =>
-                            elements.push(result),
+                            results.push(result),
                         // ParserResult::Match is handled in the combine_operator_parsers function
                         _ =>
                             break result,
@@ -389,7 +389,7 @@ fn precedence_expression_to_parser_code(
 
     quote! {
         loop {
-            let mut elements: Vec<ParserResult> = Vec::new();
+            let mut results: Vec<ParserResult> = Vec::new();
 
             let initial_result = loop {
                 #add_zero_or_more_prefix_operators_to_elements_or_break
@@ -398,17 +398,17 @@ fn precedence_expression_to_parser_code(
                 #add_a_binary_operator_to_elements_or_break
             };
 
-            if elements.is_empty() {
+            if results.is_empty() {
                 break initial_result;
             }
 
-            reduce_pratt_elements(#operator_argument_transformer, &mut elements);
+            reduce_pratt_elements(#operator_argument_transformer, &mut results);
 
-            if elements.len() != 1 {
-                unreachable!("Pratt parser failed to reduce to a single result: {:?}", elements);
+            if results.len() != 1 {
+                unreachable!("Pratt parser failed to reduce to a single result: {:?}", results);
             }
 
-            match elements.remove(0) {
+            match results.remove(0) {
                 ParserResult::Match(r#match) =>
                     if let ParserResult::IncompleteMatch(_) = initial_result {
                         break ParserResult::incomplete_match(r#match.nodes, vec![]);

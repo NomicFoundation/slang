@@ -6,13 +6,13 @@
     separatedBy:
       separator:
         reference: "Comma"
-      expression:
+      parser:
         reference: "YulExpression"
 
 - name: "YulExpression"
   kind: "PrecedenceParser"
   unversioned:
-    operators:
+    operatorExpressions:
       - name: "YulFunctionCallExpression"
         model: "UnaryPostfix"
         operator:
@@ -30,7 +30,7 @@
     delimitedBy:
       open:
         reference: "OpenParen"
-      expression:
+      parser:
         optional:
           reference: "YulExpressionsList"
       close:
@@ -42,7 +42,7 @@
     separatedBy:
       separator:
         reference: "Comma"
-      expression:
+      parser:
         reference: "YulIdentifierPath"
 
 - name: "YulIdentifierPath"
@@ -51,7 +51,7 @@
     separatedBy:
       separator:
         reference: "Period"
-      expression:
+      parser:
         reference: "YulIdentifier"
 
 - name: "YulIdentifiersList"
@@ -60,7 +60,7 @@
     separatedBy:
       separator:
         reference: "Comma"
-      expression:
+      parser:
         reference: "YulIdentifier"
 
 - name: "YulIdentifier"
@@ -129,7 +129,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         sequence:
           - terminal: "0x"
           - oneOrMore:
@@ -141,7 +141,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         choice:
           - terminal: "0"
           - sequence:

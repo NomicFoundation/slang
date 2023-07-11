@@ -4,7 +4,7 @@
   kind: "Parser"
   unversioned:
     terminatedBy:
-      expression:
+      parser:
         sequence:
           - reference: "PragmaKeyword"
           - choice:
@@ -47,7 +47,7 @@
 - name: "VersionPragmaExpression"
   kind: "PrecedenceParser"
   unversioned:
-    operators:
+    operatorExpressions:
       - name: "VersionPragmaBinaryExpression"
         model: "BinaryLeftAssociative"
         operator:
@@ -95,7 +95,7 @@
   kind: "Parser"
   unversioned:
     separatedBy:
-      expression:
+      parser:
         reference: "VersionPragmaValue"
       separator:
         reference: "Period"

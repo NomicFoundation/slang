@@ -25,7 +25,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         choice:
           - reference: "SingleQuotedHexStringLiteral"
           - reference: "DoubleQuotedHexStringLiteral"
@@ -93,7 +93,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         choice:
           - reference: "SingleQuotedAsciiStringLiteral"
           - reference: "DoubleQuotedAsciiStringLiteral"
@@ -152,7 +152,7 @@
   versioned:
     0.7.0:
       trailingContext:
-        expression:
+        scanner:
           choice:
             - reference: "SingleQuotedUnicodeStringLiteral"
             - reference: "DoubleQuotedUnicodeStringLiteral"

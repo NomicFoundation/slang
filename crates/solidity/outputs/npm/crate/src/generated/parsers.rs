@@ -2949,14 +2949,14 @@ impl Language {
     #[allow(dead_code, non_snake_case)]
     fn expression__0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
-            let mut elements: Vec<ParserResult> = Vec::new();
+            let mut results: Vec<ParserResult> = Vec::new();
             let initial_result = loop {
                 let result = loop {
                     let result = self
                         .unary_prefix_operator(stream)
                         .to_pratt_element_operator(RuleKind::UnaryPrefixExpression, 255, 29u8);
                     match result {
-                        ParserResult::PrattOperatorMatch(_) => elements.push(result),
+                        ParserResult::PrattOperatorMatch(_) => results.push(result),
                         _ => break result,
                     }
                 };
@@ -2969,7 +2969,7 @@ impl Language {
                 {
                     let result = self.primary_expression(stream);
                     if result.is_match() {
-                        elements.push(result);
+                        results.push(result);
                     } else {
                         break result;
                     }
@@ -3036,7 +3036,7 @@ impl Language {
                         break ParserResult::no_match(vec![]);
                     };
                     match result {
-                        ParserResult::PrattOperatorMatch(_) => elements.push(result),
+                        ParserResult::PrattOperatorMatch(_) => results.push(result),
                         _ => break result,
                     }
                 };
@@ -3193,24 +3193,24 @@ impl Language {
                         break ParserResult::no_match(vec![]);
                     };
                 match result {
-                    ParserResult::PrattOperatorMatch(_) => elements.push(result),
+                    ParserResult::PrattOperatorMatch(_) => results.push(result),
                     _ => break result,
                 }
             };
-            if elements.is_empty() {
+            if results.is_empty() {
                 break initial_result;
             }
             reduce_pratt_elements(
                 |children| vec![cst::Node::rule(RuleKind::Expression, children)],
-                &mut elements,
+                &mut results,
             );
-            if elements.len() != 1 {
+            if results.len() != 1 {
                 unreachable!(
                     "Pratt parser failed to reduce to a single result: {:?}",
-                    elements
+                    results
                 );
             }
-            match elements.remove(0) {
+            match results.remove(0) {
                 ParserResult::Match(r#match) => {
                     if let ParserResult::IncompleteMatch(_) = initial_result {
                         break ParserResult::incomplete_match(r#match.nodes, vec![]);
@@ -3271,14 +3271,14 @@ impl Language {
     #[allow(dead_code, non_snake_case)]
     fn expression__0_6_0(&self, stream: &mut Stream) -> ParserResult {
         loop {
-            let mut elements: Vec<ParserResult> = Vec::new();
+            let mut results: Vec<ParserResult> = Vec::new();
             let initial_result = loop {
                 let result = loop {
                     let result = self
                         .unary_prefix_operator(stream)
                         .to_pratt_element_operator(RuleKind::UnaryPrefixExpression, 255, 29u8);
                     match result {
-                        ParserResult::PrattOperatorMatch(_) => elements.push(result),
+                        ParserResult::PrattOperatorMatch(_) => results.push(result),
                         _ => break result,
                     }
                 };
@@ -3291,7 +3291,7 @@ impl Language {
                 {
                     let result = self.primary_expression(stream);
                     if result.is_match() {
-                        elements.push(result);
+                        results.push(result);
                     } else {
                         break result;
                     }
@@ -3358,7 +3358,7 @@ impl Language {
                         break ParserResult::no_match(vec![]);
                     };
                     match result {
-                        ParserResult::PrattOperatorMatch(_) => elements.push(result),
+                        ParserResult::PrattOperatorMatch(_) => results.push(result),
                         _ => break result,
                     }
                 };
@@ -3515,24 +3515,24 @@ impl Language {
                         break ParserResult::no_match(vec![]);
                     };
                 match result {
-                    ParserResult::PrattOperatorMatch(_) => elements.push(result),
+                    ParserResult::PrattOperatorMatch(_) => results.push(result),
                     _ => break result,
                 }
             };
-            if elements.is_empty() {
+            if results.is_empty() {
                 break initial_result;
             }
             reduce_pratt_elements(
                 |children| vec![cst::Node::rule(RuleKind::Expression, children)],
-                &mut elements,
+                &mut results,
             );
-            if elements.len() != 1 {
+            if results.len() != 1 {
                 unreachable!(
                     "Pratt parser failed to reduce to a single result: {:?}",
-                    elements
+                    results
                 );
             }
-            match elements.remove(0) {
+            match results.remove(0) {
                 ParserResult::Match(r#match) => {
                     if let ParserResult::IncompleteMatch(_) = initial_result {
                         break ParserResult::incomplete_match(r#match.nodes, vec![]);
@@ -8244,7 +8244,7 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn type_name(&self, stream: &mut Stream) -> ParserResult {
         loop {
-            let mut elements: Vec<ParserResult> = Vec::new();
+            let mut results: Vec<ParserResult> = Vec::new();
             let initial_result = loop {
                 {
                     let result = {
@@ -8280,7 +8280,7 @@ impl Language {
                         running_result
                     };
                     if result.is_match() {
-                        elements.push(result);
+                        results.push(result);
                     } else {
                         break result;
                     }
@@ -8290,7 +8290,7 @@ impl Language {
                         .array_type_name_operator(stream)
                         .to_pratt_element_operator(RuleKind::ArrayTypeName, 1u8, 255);
                     match result {
-                        ParserResult::PrattOperatorMatch(_) => elements.push(result),
+                        ParserResult::PrattOperatorMatch(_) => results.push(result),
                         _ => break result,
                     }
                 };
@@ -8302,20 +8302,20 @@ impl Language {
                 }
                 break ParserResult::no_match(vec![]);
             };
-            if elements.is_empty() {
+            if results.is_empty() {
                 break initial_result;
             }
             reduce_pratt_elements(
                 |children| vec![cst::Node::rule(RuleKind::TypeName, children)],
-                &mut elements,
+                &mut results,
             );
-            if elements.len() != 1 {
+            if results.len() != 1 {
                 unreachable!(
                     "Pratt parser failed to reduce to a single result: {:?}",
-                    elements
+                    results
                 );
             }
-            match elements.remove(0) {
+            match results.remove(0) {
                 ParserResult::Match(r#match) => {
                     if let ParserResult::IncompleteMatch(_) = initial_result {
                         break ParserResult::incomplete_match(r#match.nodes, vec![]);
@@ -9444,7 +9444,7 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn version_pragma_expression(&self, stream: &mut Stream) -> ParserResult {
         loop {
-            let mut elements: Vec<ParserResult> = Vec::new();
+            let mut results: Vec<ParserResult> = Vec::new();
             let initial_result = loop {
                 let result = loop {
                     let result = self
@@ -9455,7 +9455,7 @@ impl Language {
                             5u8,
                         );
                     match result {
-                        ParserResult::PrattOperatorMatch(_) => elements.push(result),
+                        ParserResult::PrattOperatorMatch(_) => results.push(result),
                         _ => break result,
                     }
                 };
@@ -9468,7 +9468,7 @@ impl Language {
                 {
                     let result = self.version_pragma_specifier(stream);
                     if result.is_match() {
-                        elements.push(result);
+                        results.push(result);
                     } else {
                         break result;
                     }
@@ -9509,24 +9509,24 @@ impl Language {
                     break ParserResult::no_match(vec![]);
                 };
                 match result {
-                    ParserResult::PrattOperatorMatch(_) => elements.push(result),
+                    ParserResult::PrattOperatorMatch(_) => results.push(result),
                     _ => break result,
                 }
             };
-            if elements.is_empty() {
+            if results.is_empty() {
                 break initial_result;
             }
             reduce_pratt_elements(
                 |children| vec![cst::Node::rule(RuleKind::VersionPragmaExpression, children)],
-                &mut elements,
+                &mut results,
             );
-            if elements.len() != 1 {
+            if results.len() != 1 {
                 unreachable!(
                     "Pratt parser failed to reduce to a single result: {:?}",
-                    elements
+                    results
                 );
             }
-            match elements.remove(0) {
+            match results.remove(0) {
                 ParserResult::Match(r#match) => {
                     if let ParserResult::IncompleteMatch(_) = initial_result {
                         break ParserResult::incomplete_match(r#match.nodes, vec![]);
@@ -9895,7 +9895,7 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn yul_expression(&self, stream: &mut Stream) -> ParserResult {
         loop {
-            let mut elements: Vec<ParserResult> = Vec::new();
+            let mut results: Vec<ParserResult> = Vec::new();
             let initial_result = loop {
                 {
                     let result = {
@@ -9920,7 +9920,7 @@ impl Language {
                         running_result
                     };
                     if result.is_match() {
-                        elements.push(result);
+                        results.push(result);
                     } else {
                         break result;
                     }
@@ -9930,7 +9930,7 @@ impl Language {
                         .yul_function_call_operator(stream)
                         .to_pratt_element_operator(RuleKind::YulFunctionCallExpression, 1u8, 255);
                     match result {
-                        ParserResult::PrattOperatorMatch(_) => elements.push(result),
+                        ParserResult::PrattOperatorMatch(_) => results.push(result),
                         _ => break result,
                     }
                 };
@@ -9942,20 +9942,20 @@ impl Language {
                 }
                 break ParserResult::no_match(vec![]);
             };
-            if elements.is_empty() {
+            if results.is_empty() {
                 break initial_result;
             }
             reduce_pratt_elements(
                 |children| vec![cst::Node::rule(RuleKind::YulExpression, children)],
-                &mut elements,
+                &mut results,
             );
-            if elements.len() != 1 {
+            if results.len() != 1 {
                 unreachable!(
                     "Pratt parser failed to reduce to a single result: {:?}",
-                    elements
+                    results
                 );
             }
-            match elements.remove(0) {
+            match results.remove(0) {
                 ParserResult::Match(r#match) => {
                     if let ParserResult::IncompleteMatch(_) = initial_result {
                         break ParserResult::incomplete_match(r#match.nodes, vec![]);

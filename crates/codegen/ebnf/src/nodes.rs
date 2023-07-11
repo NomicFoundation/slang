@@ -1,21 +1,21 @@
 #[derive(Clone, Eq, Hash, PartialEq)]
 pub enum EbnfNode {
     BaseProduction,
-    Choices {
-        choices: Vec<EbnfNode>,
+    Choice {
+        nodes: Vec<EbnfNode>,
     },
     Difference {
         minuend: Box<EbnfNode>,
         subtrahend: Box<EbnfNode>,
     },
     Not {
-        body: Box<EbnfNode>,
+        node: Box<EbnfNode>,
     },
     OneOrMore {
-        body: Box<EbnfNode>,
+        node: Box<EbnfNode>,
     },
     Optional {
-        body: Box<EbnfNode>,
+        node: Box<EbnfNode>,
     },
     ProductionRef {
         name: String,
@@ -25,24 +25,24 @@ pub enum EbnfNode {
         to: char,
     },
     Sequence {
-        elements: Vec<EbnfNode>,
+        nodes: Vec<EbnfNode>,
     },
     SubStatement {
         name: String,
         comment: Option<String>,
-        body: Box<EbnfNode>,
+        root_node: Box<EbnfNode>,
     },
     Terminal {
         value: String,
     },
     ZeroOrMore {
-        body: Box<EbnfNode>,
+        node: Box<EbnfNode>,
     },
 }
 
 impl EbnfNode {
-    pub fn choices(choices: Vec<EbnfNode>) -> Self {
-        Self::Choices { choices }
+    pub fn choice(nodes: Vec<EbnfNode>) -> Self {
+        Self::Choice { nodes }
     }
 
     pub fn difference(minuend: EbnfNode, subtrahend: EbnfNode) -> Self {
@@ -52,21 +52,21 @@ impl EbnfNode {
         }
     }
 
-    pub fn not(body: EbnfNode) -> Self {
+    pub fn not(node: EbnfNode) -> Self {
         Self::Not {
-            body: Box::new(body),
+            node: Box::new(node),
         }
     }
 
-    pub fn one_or_more(body: EbnfNode) -> Self {
+    pub fn one_or_more(node: EbnfNode) -> Self {
         Self::OneOrMore {
-            body: Box::new(body),
+            node: Box::new(node),
         }
     }
 
-    pub fn optional(body: EbnfNode) -> Self {
+    pub fn optional(node: EbnfNode) -> Self {
         Self::Optional {
-            body: Box::new(body),
+            node: Box::new(node),
         }
     }
 
@@ -78,15 +78,15 @@ impl EbnfNode {
         Self::Range { from, to }
     }
 
-    pub fn sequence(elements: Vec<EbnfNode>) -> Self {
-        Self::Sequence { elements }
+    pub fn sequence(nodes: Vec<EbnfNode>) -> Self {
+        Self::Sequence { nodes }
     }
 
-    pub fn sub_statement(name: String, comment: Option<String>, body: EbnfNode) -> Self {
+    pub fn sub_statement(name: String, comment: Option<String>, root_node: EbnfNode) -> Self {
         Self::SubStatement {
             name,
             comment,
-            body: Box::new(body),
+            root_node: Box::new(root_node),
         }
     }
 
@@ -94,9 +94,9 @@ impl EbnfNode {
         Self::Terminal { value }
     }
 
-    pub fn zero_or_more(body: EbnfNode) -> Self {
+    pub fn zero_or_more(node: EbnfNode) -> Self {
         Self::ZeroOrMore {
-            body: Box::new(body),
+            node: Box::new(node),
         }
     }
 }

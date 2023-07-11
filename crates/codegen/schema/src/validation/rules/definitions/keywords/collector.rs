@@ -53,8 +53,8 @@ impl Visitor for KeywordsCollector {
         reporter: &mut Reporter,
     ) -> bool {
         let identifier =
-            if let ScannerDefinition::TrailingContext { expression, .. } = &scanner.definition {
-                expression
+            if let ScannerDefinition::TrailingContext { scanner, .. } = &scanner.definition {
+                scanner
             } else {
                 return true;
             };
@@ -96,10 +96,10 @@ impl KeywordsCollector {
         // https://github.com/NomicFoundation/slang/issues/505
 
         match &scanner.definition {
-            ScannerDefinition::Choice(choices) => {
+            ScannerDefinition::Choice(scanners) => {
                 let mut variations = Vec::new();
-                for choice in choices {
-                    variations.extend(Self::collect_variations(&choice)?);
+                for scanner in scanners {
+                    variations.extend(Self::collect_variations(&scanner)?);
                 }
 
                 return Some(variations);
@@ -143,8 +143,8 @@ impl KeywordsCollector {
 
                 return Some(existing_variations);
             }
-            ScannerDefinition::TrailingContext { expression, .. } => {
-                return Self::collect_variations(expression);
+            ScannerDefinition::TrailingContext { scanner, .. } => {
+                return Self::collect_variations(scanner);
             }
             ScannerDefinition::Terminal(terminal) => {
                 if terminal.chars().all(|c| c == '_' || c.is_alphanumeric()) {

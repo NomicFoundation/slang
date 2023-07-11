@@ -59,8 +59,8 @@ impl Visitor for Operators {
         location: &LocationRef,
         reporter: &mut Reporter,
     ) -> bool {
-        for operator in parser.operators.iter() {
-            let name = &operator.name;
+        for expression in parser.operator_expressions.iter() {
+            let name = &expression.name;
             if self.language.productions.contains_key(name) {
                 reporter.report(location, Errors::OperatorNamedAsProduction(name.to_owned()));
                 continue;

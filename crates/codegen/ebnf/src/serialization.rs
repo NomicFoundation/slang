@@ -23,7 +23,7 @@ pub struct EbnfSerializer {
 struct QueuedStatement {
     name: String,
     comment: Option<String>,
-    body: EbnfNode,
+    root_node: EbnfNode,
 }
 
 impl EbnfSerializer {
@@ -32,7 +32,7 @@ impl EbnfSerializer {
         production: &ProductionRef,
         version: &Version,
     ) -> Option<String> {
-        let body = match &production.definition {
+        let root_node = match &production.definition {
             ProductionDefinition::Scanner { version_map, .. } => {
                 version_map.get_for_version(version)?.generate_ebnf()
             }
@@ -58,7 +58,7 @@ impl EbnfSerializer {
         instance.queue.insert(QueuedStatement {
             name: instance.base_production.name.to_owned(),
             comment: None,
-            body,
+            root_node,
         });
 
         while let Some(statement) = instance.queue.shift_remove_index(0) {
@@ -75,9 +75,9 @@ impl EbnfSerializer {
         // Naive version of formatting for long EBNF statements.
         // Long lines are usually choices of references (PrecedenceParser) or keywords (Scanner).
         // Let's just print one reference per line:
-        if !self.serialize_top_expression(statement) {
+        if !self.serialize_top_node(statement) {
             // Otherwise, just print the entire thing on the same line:
-            self.serialize_node(&statement.body);
+            self.serialize_node(&statement.root_node);
         }
 
         self.buffer.push_str(";");
@@ -91,9 +91,9 @@ impl EbnfSerializer {
         self.buffer.push_str("\n");
     }
 
-    fn serialize_top_expression(&mut self, statement: &QueuedStatement) -> bool {
-        let choices = match &statement.body {
-            EbnfNode::Choices { choices } if choices.len() >= 3 => choices,
+    fn serialize_top_node(&mut self, statement: &QueuedStatement) -> bool {
+        let choices = match &statement.root_node {
+            EbnfNode::Choice { nodes } if nodes.len() >= 3 => nodes,
             _ => {
                 // Skip if not choices, or less than three choices.
                 return false;
@@ -116,19 +116,19 @@ impl EbnfSerializer {
                 EbnfNode::SubStatement {
                     name,
                     comment,
-                    body,
+                    root_node,
                 } => {
                     references.insert(self.display_name(name));
                     sub_statements.insert(QueuedStatement {
                         name: name.to_owned(),
                         comment: comment.to_owned(),
-                        body: (**body).to_owned(),
+                        root_node: (**root_node).to_owned(),
                     });
                 }
                 EbnfNode::Terminal { value } => {
                     references.insert(format_string_literal(value));
                 }
-                EbnfNode::Choices { .. }
+                EbnfNode::Choice { .. }
                 | EbnfNode::Difference { .. }
                 | EbnfNode::Not { .. }
                 | EbnfNode::OneOrMore { .. }
@@ -159,15 +159,15 @@ impl EbnfSerializer {
         return true;
     }
 
-    fn serialize_node(&mut self, node: &EbnfNode) {
-        match node {
-            EbnfNode::Choices { choices } => {
-                for (i, choice) in choices.into_iter().enumerate() {
+    fn serialize_node(&mut self, top_node: &EbnfNode) {
+        match top_node {
+            EbnfNode::Choice { nodes } => {
+                for (i, node) in nodes.into_iter().enumerate() {
                     if i > 0 {
                         self.buffer.push_str(" | ");
                     }
 
-                    self.serialize_child_node(node, choice);
+                    self.serialize_child_node(top_node, node);
                 }
             }
             EbnfNode::BaseProduction => {
@@ -178,20 +178,20 @@ impl EbnfSerializer {
                 minuend,
                 subtrahend,
             } => {
-                self.serialize_child_node(node, minuend);
+                self.serialize_child_node(top_node, minuend);
                 self.buffer.push_str(" - ");
-                self.serialize_child_node(node, subtrahend);
+                self.serialize_child_node(top_node, subtrahend);
             }
-            EbnfNode::Not { body } => {
+            EbnfNode::Not { node } => {
                 self.buffer.push_str("!");
-                self.serialize_child_node(node, body);
+                self.serialize_child_node(top_node, node);
             }
-            EbnfNode::OneOrMore { body } => {
-                self.serialize_child_node(node, body);
+            EbnfNode::OneOrMore { node } => {
+                self.serialize_child_node(top_node, node);
                 self.buffer.push_str("+");
             }
-            EbnfNode::Optional { body } => {
-                self.serialize_child_node(node, body);
+            EbnfNode::Optional { node } => {
+                self.serialize_child_node(top_node, node);
                 self.buffer.push_str("?");
             }
             EbnfNode::Range { from, to } => {
@@ -204,33 +204,33 @@ impl EbnfSerializer {
             EbnfNode::ProductionRef { name } => {
                 self.buffer.push_str(&self.display_name(name));
             }
-            EbnfNode::Sequence { elements } => {
-                for (i, element) in elements.into_iter().enumerate() {
+            EbnfNode::Sequence { nodes } => {
+                for (i, node) in nodes.into_iter().enumerate() {
                     if i > 0 {
                         self.buffer.push_str(" ");
                     }
 
-                    self.serialize_child_node(node, element);
+                    self.serialize_child_node(top_node, node);
                 }
             }
             EbnfNode::SubStatement {
                 name,
                 comment,
-                body,
+                root_node,
             } => {
                 self.buffer.push_str(&self.display_name(name));
 
                 self.queue.insert(QueuedStatement {
                     name: name.to_owned(),
                     comment: comment.to_owned(),
-                    body: (**body).to_owned(),
+                    root_node: (**root_node).to_owned(),
                 });
             }
             EbnfNode::Terminal { value } => {
                 self.buffer.push_str(&format_string_literal(value));
             }
-            EbnfNode::ZeroOrMore { body } => {
-                self.serialize_child_node(node, body);
+            EbnfNode::ZeroOrMore { node } => {
+                self.serialize_child_node(top_node, node);
                 self.buffer.push_str("*");
             }
         };
@@ -275,7 +275,7 @@ fn precedence(node: &EbnfNode) -> u8 {
     // This separates members of the same precedence, like both "a b (c | d)" and "a | b | (c d)".
     return match node {
         // Binary
-        EbnfNode::Choices { .. } | EbnfNode::Difference { .. } | EbnfNode::Sequence { .. } => 0,
+        EbnfNode::Choice { .. } | EbnfNode::Difference { .. } | EbnfNode::Sequence { .. } => 0,
 
         // Prefix
         EbnfNode::Not { .. } => 1,

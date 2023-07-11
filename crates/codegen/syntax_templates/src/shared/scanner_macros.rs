@@ -49,18 +49,18 @@ macro_rules! scan_trie {
 
 #[allow(unused_macros)]
 macro_rules! scan_sequence {
-    ($($expr:expr),*) => {
-        $(($expr))&&*
+    ($($scanner:expr),*) => {
+        $(($scanner))&&*
     };
 }
 
 #[allow(unused_macros)]
 macro_rules! scan_choice {
-    ($stream:ident, $($expr:expr),*) => {
+    ($stream:ident, $($scanner:expr),*) => {
         loop {
             let save = $stream.position();
             $(
-                if ($expr) { break true }
+                if ($scanner) { break true }
                 $stream.set_position(save);
             )*
             break false
@@ -70,10 +70,10 @@ macro_rules! scan_choice {
 
 #[allow(unused_macros)]
 macro_rules! scan_zero_or_more {
-    ($stream:ident, $expr:expr) => {
+    ($stream:ident, $scanner:expr) => {
         loop {
             let save = $stream.position();
-            if !($expr) {
+            if !($scanner) {
                 $stream.set_position(save);
                 break true;
             }
@@ -83,11 +83,11 @@ macro_rules! scan_zero_or_more {
 
 #[allow(unused_macros)]
 macro_rules! scan_one_or_more {
-    ($stream:ident, $expr:expr) => {{
+    ($stream:ident, $scanner:expr) => {{
         let mut count = 0;
         loop {
             let save = $stream.position();
-            if !($expr) {
+            if !($scanner) {
                 if count < 1 {
                     break false;
                 } else {
@@ -102,9 +102,9 @@ macro_rules! scan_one_or_more {
 
 #[allow(unused_macros)]
 macro_rules! scan_optional {
-    ($stream:ident, $expr:expr) => {{
+    ($stream:ident, $scanner:expr) => {{
         let save = $stream.position();
-        if !($expr) {
+        if !($scanner) {
             $stream.set_position(save)
         }
         true
@@ -131,8 +131,8 @@ macro_rules! scan_difference {
 
 #[allow(unused_macros)]
 macro_rules! scan_not_followed_by {
-    ($stream:ident, $expression:expr, $not_followed_by:expr) => {
-        ($expression)
+    ($stream:ident, $scanner:expr, $not_followed_by:expr) => {
+        ($scanner)
             && ({
                 let end = $stream.position();
                 let following = $not_followed_by;

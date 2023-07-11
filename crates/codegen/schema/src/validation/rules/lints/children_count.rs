@@ -75,7 +75,7 @@ impl Visitor for ChildrenCount {
         location: &LocationRef,
         reporter: &mut Reporter,
     ) -> bool {
-        if precedence_parser.operators.is_empty() {
+        if precedence_parser.operator_expressions.is_empty() {
             reporter.report(location, Errors::MinChildrenCount(1));
         }
 

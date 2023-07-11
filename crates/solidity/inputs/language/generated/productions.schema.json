@@ -185,7 +185,7 @@
       "type": "object",
       "anyOf": [
         {
-          "title": "Choice Expression",
+          "title": "Choice Scanner",
           "type": "object",
           "required": ["choice"],
           "properties": {
@@ -198,7 +198,7 @@
           }
         },
         {
-          "title": "Difference Expression",
+          "title": "Difference Scanner",
           "type": "object",
           "required": ["difference"],
           "properties": {
@@ -217,7 +217,7 @@
           }
         },
         {
-          "title": "Not Expression",
+          "title": "Not Scanner",
           "type": "object",
           "required": ["not"],
           "properties": {
@@ -227,7 +227,7 @@
           }
         },
         {
-          "title": "OneOrMore Expression",
+          "title": "OneOrMore Scanner",
           "type": "object",
           "required": ["oneOrMore"],
           "properties": {
@@ -237,7 +237,7 @@
           }
         },
         {
-          "title": "Optional Expression",
+          "title": "Optional Scanner",
           "type": "object",
           "required": ["optional"],
           "properties": {
@@ -247,7 +247,7 @@
           }
         },
         {
-          "title": "Range Expression",
+          "title": "Range Scanner",
           "type": "object",
           "required": ["range"],
           "properties": {
@@ -270,7 +270,7 @@
           }
         },
         {
-          "title": "Reference Expression",
+          "title": "Reference Scanner",
           "type": "object",
           "required": ["reference"],
           "properties": {
@@ -280,7 +280,7 @@
           }
         },
         {
-          "title": "Sequence Expression",
+          "title": "Sequence Scanner",
           "type": "object",
           "required": ["sequence"],
           "properties": {
@@ -293,15 +293,15 @@
           }
         },
         {
-          "title": "TrailingContext Expression",
+          "title": "TrailingContext Scanner",
           "type": "object",
           "required": ["trailingContext"],
           "properties": {
             "trailingContext": {
               "type": "object",
-              "required": ["expression", "notFollowedBy"],
+              "required": ["notFollowedBy", "scanner"],
               "properties": {
-                "expression": {
+                "scanner": {
                   "$ref": "#/definitions/Scanner"
                 },
                 "notFollowedBy": {
@@ -312,7 +312,7 @@
           }
         },
         {
-          "title": "Terminal Expression",
+          "title": "Terminal Scanner",
           "type": "object",
           "required": ["terminal"],
           "properties": {
@@ -322,7 +322,7 @@
           }
         },
         {
-          "title": "ZeroOrMore Expression",
+          "title": "ZeroOrMore Scanner",
           "type": "object",
           "required": ["zeroOrMore"],
           "properties": {
@@ -337,7 +337,7 @@
       "type": "object",
       "anyOf": [
         {
-          "title": "Choice Expression",
+          "title": "Choice Parser",
           "type": "object",
           "required": ["choice"],
           "properties": {
@@ -350,18 +350,18 @@
           }
         },
         {
-          "title": "DelimitedBy Expression",
+          "title": "DelimitedBy Parser",
           "type": "object",
           "required": ["delimitedBy"],
           "properties": {
             "delimitedBy": {
               "type": "object",
-              "required": ["close", "expression", "open"],
+              "required": ["close", "open", "parser"],
               "properties": {
                 "open": {
                   "$ref": "#/definitions/Reference"
                 },
-                "expression": {
+                "parser": {
                   "$ref": "#/definitions/Parser"
                 },
                 "close": {
@@ -372,7 +372,7 @@
           }
         },
         {
-          "title": "OneOrMore Expression",
+          "title": "OneOrMore Parser",
           "type": "object",
           "required": ["oneOrMore"],
           "properties": {
@@ -382,7 +382,7 @@
           }
         },
         {
-          "title": "Optional Expression",
+          "title": "Optional Parser",
           "type": "object",
           "required": ["optional"],
           "properties": {
@@ -392,7 +392,7 @@
           }
         },
         {
-          "title": "Reference Expression",
+          "title": "Reference Parser",
           "type": "object",
           "required": ["reference"],
           "properties": {
@@ -402,15 +402,15 @@
           }
         },
         {
-          "title": "SeparatedBy Expression",
+          "title": "SeparatedBy Parser",
           "type": "object",
           "required": ["separatedBy"],
           "properties": {
             "separatedBy": {
               "type": "object",
-              "required": ["expression", "separator"],
+              "required": ["parser", "separator"],
               "properties": {
-                "expression": {
+                "parser": {
                   "$ref": "#/definitions/Parser"
                 },
                 "separator": {
@@ -421,7 +421,7 @@
           }
         },
         {
-          "title": "Sequence Expression",
+          "title": "Sequence Parser",
           "type": "object",
           "required": ["sequence"],
           "properties": {
@@ -434,15 +434,15 @@
           }
         },
         {
-          "title": "TerminatedBy Expression",
+          "title": "TerminatedBy Parser",
           "type": "object",
           "required": ["terminatedBy"],
           "properties": {
             "terminatedBy": {
               "type": "object",
-              "required": ["expression", "terminator"],
+              "required": ["parser", "terminator"],
               "properties": {
-                "expression": {
+                "parser": {
                   "$ref": "#/definitions/Parser"
                 },
                 "terminator": {
@@ -453,7 +453,7 @@
           }
         },
         {
-          "title": "ZeroOrMore Expression",
+          "title": "ZeroOrMore Parser",
           "type": "object",
           "required": ["zeroOrMore"],
           "properties": {
@@ -476,13 +476,13 @@
     },
     "PrecedenceParser": {
       "type": "object",
-      "required": ["operators", "primaryExpression"],
+      "required": ["operatorExpressions", "primaryExpression"],
       "properties": {
-        "operators": {
-          "title": "Operator Definitions",
+        "operatorExpressions": {
+          "title": "Operator Expressions",
           "type": "array",
           "items": {
-            "$ref": "#/definitions/OperatorDefinition"
+            "$ref": "#/definitions/OperatorExpression"
           }
         },
         "primaryExpression": {
@@ -495,7 +495,7 @@
         }
       }
     },
-    "OperatorDefinition": {
+    "OperatorExpression": {
       "type": "object",
       "required": ["model", "name", "operator"],
       "properties": {

@@ -12,7 +12,7 @@ pub enum Node {
     },
     Array {
         range: Range,
-        items: Vec<NodeRef>,
+        nodes: Vec<NodeRef>,
     },
     Object {
         range: Range,
@@ -39,7 +39,7 @@ impl Node {
 
     pub fn index(&self, index: usize) -> &NodeRef {
         return match self {
-            Node::Array { items, .. } => items
+            Node::Array { nodes, .. } => nodes
                 .get(index)
                 .expect(&format!("Expected array to have index '{index}'.")),
             _ => unreachable!("Expected an array."),

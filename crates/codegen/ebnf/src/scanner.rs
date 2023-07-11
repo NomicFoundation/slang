@@ -11,11 +11,11 @@ impl GenerateEbnf for ScannerRef {
 impl GenerateEbnf for ScannerDefinition {
     fn generate_ebnf(&self) -> EbnfNode {
         match &self {
-            ScannerDefinition::Choice(choices) => {
-                return EbnfNode::choices(
-                    choices
+            ScannerDefinition::Choice(scanners) => {
+                return EbnfNode::choice(
+                    scanners
                         .iter()
-                        .map(|choice| choice.generate_ebnf())
+                        .map(|scanner| scanner.generate_ebnf())
                         .collect(),
                 );
             }
@@ -27,16 +27,16 @@ impl GenerateEbnf for ScannerDefinition {
                 return EbnfNode::difference(minuend.generate_ebnf(), subtrahend.generate_ebnf());
             }
 
-            ScannerDefinition::Not(sub_expr) => {
-                return EbnfNode::not(sub_expr.generate_ebnf());
+            ScannerDefinition::Not(scanner) => {
+                return EbnfNode::not(scanner.generate_ebnf());
             }
 
-            ScannerDefinition::OneOrMore(expr) => {
-                return EbnfNode::one_or_more(expr.generate_ebnf());
+            ScannerDefinition::OneOrMore(scanner) => {
+                return EbnfNode::one_or_more(scanner.generate_ebnf());
             }
 
-            ScannerDefinition::Optional(expr) => {
-                return EbnfNode::optional(expr.generate_ebnf());
+            ScannerDefinition::Optional(scanner) => {
+                return EbnfNode::optional(scanner.generate_ebnf());
             }
 
             ScannerDefinition::Range { from, to } => {
@@ -47,11 +47,11 @@ impl GenerateEbnf for ScannerDefinition {
                 return EbnfNode::production_ref(name.to_owned());
             }
 
-            ScannerDefinition::Sequence(elements) => {
+            ScannerDefinition::Sequence(scanners) => {
                 return EbnfNode::sequence(
-                    elements
+                    scanners
                         .iter()
-                        .map(|element| element.generate_ebnf())
+                        .map(|scanner| scanner.generate_ebnf())
                         .collect(),
                 );
             }
@@ -60,12 +60,12 @@ impl GenerateEbnf for ScannerDefinition {
                 return EbnfNode::terminal(string.to_owned());
             }
 
-            ScannerDefinition::TrailingContext { expression, .. } => {
-                return expression.generate_ebnf();
+            ScannerDefinition::TrailingContext { scanner, .. } => {
+                return scanner.generate_ebnf();
             }
 
-            ScannerDefinition::ZeroOrMore(expr) => {
-                return EbnfNode::zero_or_more(expr.generate_ebnf());
+            ScannerDefinition::ZeroOrMore(scanner) => {
+                return EbnfNode::zero_or_more(scanner.generate_ebnf());
             }
         };
     }

@@ -41,7 +41,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         sequence:
           - terminal: "bytes"
           - reference: "FixedBytesTypeSize"
@@ -90,7 +90,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         sequence:
           - terminal: "int"
           - optional:
@@ -102,7 +102,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         sequence:
           - terminal: "uint"
           - optional:
@@ -152,7 +152,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         sequence:
           - terminal: "fixed"
           - optional:
@@ -164,7 +164,7 @@
   kind: "Scanner"
   unversioned:
     trailingContext:
-      expression:
+      scanner:
         sequence:
           - terminal: "ufixed"
           - optional:

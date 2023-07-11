@@ -4,7 +4,7 @@
   kind: "PrecedenceParser"
   versioned:
     0.4.11:
-      operators:
+      operatorExpressions:
         - name: "BinaryExpression"
           model: "BinaryLeftAssociative"
           operator:
@@ -100,7 +100,7 @@
 
     0.6.0:
       # ExponentiationExpression is now BinaryRightAssociative
-      operators:
+      operatorExpressions:
         - name: "BinaryExpression"
           model: "BinaryLeftAssociative"
           operator:
@@ -360,7 +360,7 @@
     delimitedBy:
       open:
         reference: "OpenBracket"
-      expression:
+      parser:
         sequence:
           - optional:
               reference: "Expression"

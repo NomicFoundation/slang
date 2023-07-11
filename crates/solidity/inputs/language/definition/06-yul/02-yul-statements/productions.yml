@@ -6,7 +6,7 @@
     delimitedBy:
       open:
         reference: "OpenBrace"
-      expression:
+      parser:
         optional:
           reference: "YulStatementsList"
       close:
@@ -76,7 +76,7 @@
     delimitedBy:
       open:
         reference: "OpenParen"
-      expression:
+      parser:
         optional:
           reference: "YulIdentifiersList"
       close:

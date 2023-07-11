@@ -5,7 +5,7 @@
   versioned:
     0.8.8:
       terminatedBy:
-        expression:
+        parser:
           sequence:
             - reference: "TypeKeyword"
             - reference: "Identifier"

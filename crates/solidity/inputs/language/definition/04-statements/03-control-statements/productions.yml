@@ -8,7 +8,7 @@
       - delimitedBy:
           open:
             reference: "OpenParen"
-          expression:
+          parser:
             reference: "Expression"
           close:
             reference: "CloseParen"
@@ -26,7 +26,7 @@
       - delimitedBy:
           open:
             reference: "OpenParen"
-          expression:
+          parser:
             sequence:
               - choice:
                   - reference: "SimpleStatement"
@@ -48,7 +48,7 @@
       - delimitedBy:
           open:
             reference: "OpenParen"
-          expression:
+          parser:
             reference: "Expression"
           close:
             reference: "CloseParen"
@@ -58,7 +58,7 @@
   kind: "Parser"
   unversioned:
     terminatedBy:
-      expression:
+      parser:
         sequence:
           - reference: "DoKeyword"
           - reference: "Statement"
@@ -66,7 +66,7 @@
           - delimitedBy:
               open:
                 reference: "OpenParen"
-              expression:
+              parser:
                 reference: "Expression"
               close:
                 reference: "CloseParen"
@@ -77,7 +77,7 @@
   kind: "Parser"
   unversioned:
     terminatedBy:
-      expression:
+      parser:
         reference: "ContinueKeyword"
       terminator:
         reference: "Semicolon"
@@ -86,7 +86,7 @@
   kind: "Parser"
   unversioned:
     terminatedBy:
-      expression:
+      parser:
         reference: "BreakKeyword"
       terminator:
         reference: "Semicolon"
@@ -95,7 +95,7 @@
   kind: "Parser"
   unversioned:
     terminatedBy:
-      expression:
+      parser:
         sequence:
           - reference: "ReturnKeyword"
           - optional:
@@ -108,7 +108,7 @@
   versioned:
     0.4.21:
       terminatedBy:
-        expression:
+        parser:
           sequence:
             - reference: "EmitKeyword"
             - reference: "IdentifierPath"
@@ -120,7 +120,7 @@
   kind: "Parser"
   unversioned:
     terminatedBy:
-      expression:
+      parser:
         sequence:
           - reference: "DeleteKeyword"
           - reference: "Expression"

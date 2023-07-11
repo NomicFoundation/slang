@@ -106,7 +106,7 @@ pub fn from_scanner(tree: &CombinatorTree, scanner: ScannerRef) -> Option<Termin
         scanner: ScannerRef,
     ) -> bool {
         match &scanner.definition {
-            ScannerDefinition::Choice(exprs) => exprs.iter().fold(true, |accum, scanner| {
+            ScannerDefinition::Choice(scanners) => scanners.iter().fold(true, |accum, scanner| {
                 accum && collect_terminals(trie, tree, scanner.clone())
             }),
 
