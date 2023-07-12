@@ -1,6 +1,6 @@
 use std::{
     fmt::Display,
-    ops::{Add, AddAssign, Range},
+    ops::{Add, AddAssign, Range, Sub, SubAssign},
 };
 
 use serde::Serialize;
@@ -70,11 +70,31 @@ impl Add for TextIndex {
     }
 }
 
+impl Sub for TextIndex {
+    type Output = Self;
+
+    fn sub(self, rhs: Self) -> Self::Output {
+        Self {
+            utf8: self.utf8 - rhs.utf8,
+            utf16: self.utf16 - rhs.utf16,
+            char: self.char - rhs.char,
+        }
+    }
+}
+
 impl AddAssign for TextIndex {
     fn add_assign(&mut self, rhs: Self) {
         self.utf8 += rhs.utf8;
         self.utf16 += rhs.utf16;
         self.char += rhs.char;
+    }
+}
+
+impl SubAssign for TextIndex {
+    fn sub_assign(&mut self, rhs: Self) {
+        self.utf8 -= rhs.utf8;
+        self.utf16 -= rhs.utf16;
+        self.char -= rhs.char;
     }
 }
 

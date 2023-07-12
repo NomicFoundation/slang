@@ -1,5 +1,7 @@
 #[path = "../shared/cst.rs"]
 pub mod cst;
+#[path = "../shared/cursor.rs"]
+pub mod cursor;
 #[path = "../shared/language.rs"]
 pub mod language;
 #[path = "../shared/parse_error.rs"]
@@ -18,7 +20,8 @@ pub mod scanner_macros;
 pub mod stream;
 #[path = "../shared/text_index.rs"]
 pub mod text_index;
+#[path = "../shared/visitor.rs"]
+pub mod visitor;
 
-pub mod cst_visitor;
 pub mod kinds;
 pub mod parse_output;

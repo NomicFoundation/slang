@@ -29,12 +29,15 @@ impl CodeGenerator {
                mod stream;
 
                pub mod cst;
-               pub mod cst_types;
+               pub mod cst_ts_wrappers;
+               pub mod cursor;
+               pub mod cursor_ts_wrappers;
                pub mod kinds;
                pub mod language;
                pub mod parse_error;
                pub mod parse_output;
                pub mod text_index;
+               pub mod visitor;
             };
 
             codegen
@@ -46,8 +49,17 @@ impl CodeGenerator {
             .copy_file(
                 &codegen
                     .repo_root
-                    .join("crates/codegen/syntax_templates/src/typescript/cst_types.rs"),
-                &output_dir.join("cst_types.rs"),
+                    .join("crates/codegen/syntax_templates/src/typescript/cst_ts_wrappers.rs"),
+                &output_dir.join("cst_ts_wrappers.rs"),
+            )
+            .unwrap();
+
+        codegen
+            .copy_file(
+                &codegen
+                    .repo_root
+                    .join("crates/codegen/syntax_templates/src/typescript/cursor_ts_wrappers.rs"),
+                &output_dir.join("cursor_ts_wrappers.rs"),
             )
             .unwrap();
 

@@ -445,6 +445,15 @@ impl CodeGenerator {
             .copy_file(
                 &codegen
                     .repo_root
+                    .join("crates/codegen/syntax_templates/src/shared/cursor.rs"),
+                &output_dir.join("cursor.rs"),
+            )
+            .unwrap();
+
+        codegen
+            .copy_file(
+                &codegen
+                    .repo_root
                     .join("crates/codegen/syntax_templates/src/shared/scanner_macros.rs"),
                 &output_dir.join("scanner_macros.rs"),
             )
@@ -510,6 +519,15 @@ impl CodeGenerator {
                     .repo_root
                     .join("crates/codegen/syntax_templates/src/shared/text_index.rs"),
                 &output_dir.join("text_index.rs"),
+            )
+            .unwrap();
+
+        codegen
+            .copy_file(
+                &codegen
+                    .repo_root
+                    .join("crates/codegen/syntax_templates/src/shared/visitor.rs"),
+                &output_dir.join("visitor.rs"),
             )
             .unwrap();
 

@@ -1,14 +1,13 @@
 use std::rc::Rc;
 
-use anyhow::{bail, Error, Result};
+use anyhow::{bail, ensure, Error, Result};
 use semver::Version;
 
 use slang_solidity::{
     language::Language,
     syntax::{
-        nodes::{Node, RuleKind, RuleNode, TextRange, TokenKind},
+        nodes::{Cursor, Node, RuleKind, RuleNode, TokenKind, Visitor, VisitorEntryResponse},
         parser::ProductionKind,
-        visitors::{Visitable, Visitor, VisitorEntryResponse},
     },
 };
 
@@ -17,26 +16,22 @@ struct ContractCollector {
 }
 
 impl Visitor<Error> for ContractCollector {
-    fn enter_rule(
+    fn rule_enter(
         &mut self,
         node: &Rc<RuleNode>,
-        _path: &Vec<Rc<RuleNode>>,
-        _range: &TextRange,
+        _cursor: &Cursor,
     ) -> Result<VisitorEntryResponse> {
-        if node.kind != RuleKind::ContractDefinition {
-            return Ok(VisitorEntryResponse::StepIn);
+        if node.kind == RuleKind::ContractDefinition {
+            if let Node::Token(token) = &node.children[2] {
+                ensure!(token.kind == TokenKind::Identifier);
+                self.contract_names.push(token.text.to_owned());
+            } else {
+                bail!("Expected contract identifier: {node:?}");
+            };
+            return Ok(VisitorEntryResponse::StepOver);
         }
 
-        let identifier = if let Node::Token(token) = &node.children[2] {
-            assert_eq!(token.kind, TokenKind::Identifier);
-            token.text.to_owned()
-        } else {
-            bail!("Expected contract identifier: {node:?}");
-        };
-
-        self.contract_names.push(identifier);
-
-        return Ok(VisitorEntryResponse::StepOver);
+        return Ok(VisitorEntryResponse::StepIn);
     }
 }
 
@@ -44,13 +39,15 @@ impl Visitor<Error> for ContractCollector {
 fn visitor_api() -> Result<()> {
     let language = Language::new(Version::parse("0.8.0")?)?;
     let parse_output = language.parse(ProductionKind::ContractDefinition, "contract Foo {}")?;
-    let parse_tree = parse_output.parse_tree();
 
     let mut collector = ContractCollector {
         contract_names: Vec::new(),
     };
 
-    parse_tree.accept_visitor(&mut collector)?;
+    parse_output
+        .parse_tree()
+        .cursor()
+        .drive_visitor(&mut collector)?;
 
     assert!(matches!(&collector.contract_names[..], [single] if single == "Foo"));
 

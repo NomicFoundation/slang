@@ -3,7 +3,10 @@
 use std::collections::BTreeSet;
 
 use super::{
-    cst, cst_types::TextRange, kinds::TokenKind, parse_error::render_error_report,
+    cst,
+    cst_ts_wrappers::{TextRange, ToJS},
+    kinds::TokenKind,
+    parse_error::render_error_report,
     text_index::TextRange as RustTextRange,
 };
 use napi::bindgen_prelude::*;
@@ -35,15 +38,15 @@ impl ParseOutput {
 #[napi]
 #[derive(PartialEq, Clone)]
 pub struct ParseError {
-    pub(crate) range: RustTextRange,
+    pub(crate) text_range: RustTextRange,
     pub(crate) tokens_that_would_have_allowed_more_progress: Vec<TokenKind>,
 }
 
 #[napi]
 impl ParseError {
     #[napi(getter)]
-    pub fn range(&self) -> TextRange {
-        (&self.range).into()
+    pub fn text_range(&self) -> TextRange {
+        (&self.text_range).into()
     }
 
     pub fn tokens_that_would_have_allowed_more_progress(&self) -> Vec<String> {

@@ -623,12 +623,35 @@ export class RuleNode {
   get type(): NodeType.Rule;
   get kind(): RuleKind;
   get textLength(): TextIndex;
-  get children(): (RuleNode | TokenNode)[];
+  get children(): Array<RuleNode | TokenNode>;
 }
 export class TokenNode {
   get type(): NodeType.Token;
   get kind(): TokenKind;
   get textLength(): TextIndex;
+  get text(): string;
+}
+export class Cursor {
+  get reset(): void;
+  get complete(): void;
+  clone(): Cursor;
+  spawn(): Cursor;
+  get isCompleted(): boolean;
+  get node(): RuleNode | TokenNode;
+  get textOffset(): TextIndex;
+  get textRange(): TextRange;
+  get pathRuleNodes(): Array<RuleNode>;
+  goToNext(): boolean;
+  goToNextNonDescendent(): boolean;
+  goToPrevious(): boolean;
+  goToParent(): boolean;
+  goToFirstChild(): boolean;
+  goToLastChild(): boolean;
+  goToNthChild(childNumber: number): boolean;
+  goToNextSibling(): boolean;
+  goToPreviousSibling(): boolean;
+  findTokenWithKind(kinds: Array<TokenKind>): TokenNode | null;
+  findRuleWithKind(kinds: Array<RuleKind>): RuleNode | null;
 }
 export class Language {
   constructor(version: string);
@@ -642,6 +665,6 @@ export class ParseOutput {
   get isValid(): boolean;
 }
 export class ParseError {
-  get range(): TextRange;
+  get textRange(): TextRange;
   toErrorReport(sourceId: string, source: string, withColour: boolean): string;
 }
