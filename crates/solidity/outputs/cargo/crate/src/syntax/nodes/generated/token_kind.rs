@@ -2,22 +2,29 @@
 
 #[cfg(feature = "slang_napi_interfaces")]
 use napi::bindgen_prelude::*;
+
 #[derive(
     Debug,
     Eq,
     Ord,
     PartialEq,
     PartialOrd,
-    serde :: Serialize,
-    strum_macros :: AsRefStr,
-    strum_macros :: Display,
-    strum_macros :: EnumString,
+    serde::Serialize,
+    strum_macros::AsRefStr,
+    strum_macros::Display,
+    strum_macros::EnumString,
 )]
 #[cfg_attr(
+    // If feature is enabled, derive the NAPI version.
+    // This also derives `Clone` and `Copy` automatically.
     feature = "slang_napi_interfaces",
     napi(string_enum, namespace = "syntax$nodes")
 )]
-#[cfg_attr(not(feature = "slang_napi_interfaces"), derive(Clone, Copy))]
+#[cfg_attr(
+    // If feature is not enabled, derive `Clone` and `Copy` manually.
+    not(feature = "slang_napi_interfaces"),
+    derive(Clone, Copy),
+)]
 pub enum TokenKind {
     SKIPPED,
     AbicoderKeyword,
