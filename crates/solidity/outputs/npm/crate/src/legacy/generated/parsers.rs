@@ -1866,9 +1866,7 @@ impl Language {
     }
 
     // (* v0.5.0 *)
-    // «DataLocation» = MEMORY_KEYWORD
-    //                | STORAGE_KEYWORD
-    //                | CALLDATA_KEYWORD;
+    // «DataLocation» = MEMORY_KEYWORD | STORAGE_KEYWORD | CALLDATA_KEYWORD;
 
     #[allow(dead_code, non_snake_case)]
     fn data_location__0_5_0(&self, stream: &mut Stream) -> ParserResult {
@@ -2920,32 +2918,43 @@ impl Language {
     }
 
     // (* v0.4.11 *)
-    // Expression = BinaryExpression
-    //            | ConditionalExpression
-    //            | UnaryPostfixExpression
-    //            | UnaryPrefixExpression
-    //            | FunctionCallExpression
-    //            | MemberAccessExpression
-    //            | IndexAccessExpression
+    // Expression = BinaryExpression (* Expression «AssignmentOperator» Expression *) (* Binary Operator, Left Associative *)
+    //            | ConditionalExpression (* Expression «ConditionalOperator» *) (* Unary Operator, Postfix *)
+    //            | BinaryExpression (* Expression «OrOperator» Expression *) (* Binary Operator, Left Associative *)
+    //            | BinaryExpression (* Expression «AndOperator» Expression *) (* Binary Operator, Left Associative *)
+    //            | BinaryExpression (* Expression «EqualityComparisonOperator» Expression *) (* Binary Operator, Left Associative *)
+    //            | BinaryExpression (* Expression «OrderComparisonOperator» Expression *) (* Binary Operator, Left Associative *)
+    //            | BinaryExpression (* Expression «BitwiseOrOperator» Expression *) (* Binary Operator, Left Associative *)
+    //            | BinaryExpression (* Expression «BitwiseXOrOperator» Expression *) (* Binary Operator, Left Associative *)
+    //            | BinaryExpression (* Expression «BitwiseAndOperator» Expression *) (* Binary Operator, Left Associative *)
+    //            | BinaryExpression (* Expression «ShiftOperator» Expression *) (* Binary Operator, Left Associative *)
+    //            | BinaryExpression (* Expression «AddSubOperator» Expression *) (* Binary Operator, Left Associative *)
+    //            | BinaryExpression (* Expression «MulDivModOperator» Expression *) (* Binary Operator, Left Associative *)
+    //            | BinaryExpression (* Expression «ExponentiationOperator» Expression *) (* Binary Operator, Left Associative *)
+    //            | UnaryPostfixExpression (* Expression «UnaryPostfixOperator» *) (* Unary Operator, Postfix *)
+    //            | UnaryPrefixExpression (* «UnaryPrefixOperator» Expression *) (* Unary Operator, Prefix *)
+    //            | FunctionCallExpression (* Expression «FunctionCallOperator» *) (* Unary Operator, Postfix *)
+    //            | MemberAccessExpression (* Expression «MemberAccessOperator» *) (* Unary Operator, Postfix *)
+    //            | IndexAccessExpression (* Expression «IndexAccessOperator» *) (* Unary Operator, Postfix *)
     //            | «PrimaryExpression»;
-    // BinaryExpression = Expression «AssignmentOperator» Expression;
-    // ConditionalExpression = Expression «ConditionalOperator»;
-    // BinaryExpression = Expression «OrOperator» Expression;
-    // BinaryExpression = Expression «AndOperator» Expression;
-    // BinaryExpression = Expression «EqualityComparisonOperator» Expression;
-    // BinaryExpression = Expression «OrderComparisonOperator» Expression;
-    // BinaryExpression = Expression «BitwiseOrOperator» Expression;
-    // BinaryExpression = Expression «BitwiseXOrOperator» Expression;
-    // BinaryExpression = Expression «BitwiseAndOperator» Expression;
-    // BinaryExpression = Expression «ShiftOperator» Expression;
-    // BinaryExpression = Expression «AddSubOperator» Expression;
-    // BinaryExpression = Expression «MulDivModOperator» Expression;
-    // BinaryExpression = Expression «ExponentiationOperator» Expression;
-    // UnaryPostfixExpression = Expression «UnaryPostfixOperator»;
-    // UnaryPrefixExpression = «UnaryPrefixOperator» Expression;
-    // FunctionCallExpression = Expression «FunctionCallOperator»;
-    // MemberAccessExpression = Expression «MemberAccessOperator»;
-    // IndexAccessExpression = Expression «IndexAccessOperator»;
+    // BinaryExpression = Expression «AssignmentOperator» Expression (* Binary Operator, Left Associative *);
+    // BinaryExpression = Expression «OrOperator» Expression (* Binary Operator, Left Associative *);
+    // BinaryExpression = Expression «AndOperator» Expression (* Binary Operator, Left Associative *);
+    // BinaryExpression = Expression «EqualityComparisonOperator» Expression (* Binary Operator, Left Associative *);
+    // BinaryExpression = Expression «OrderComparisonOperator» Expression (* Binary Operator, Left Associative *);
+    // BinaryExpression = Expression «BitwiseOrOperator» Expression (* Binary Operator, Left Associative *);
+    // BinaryExpression = Expression «BitwiseXOrOperator» Expression (* Binary Operator, Left Associative *);
+    // BinaryExpression = Expression «BitwiseAndOperator» Expression (* Binary Operator, Left Associative *);
+    // BinaryExpression = Expression «ShiftOperator» Expression (* Binary Operator, Left Associative *);
+    // BinaryExpression = Expression «AddSubOperator» Expression (* Binary Operator, Left Associative *);
+    // BinaryExpression = Expression «MulDivModOperator» Expression (* Binary Operator, Left Associative *);
+    // BinaryExpression = Expression «ExponentiationOperator» Expression (* Binary Operator, Left Associative *);
+    // ConditionalExpression = Expression «ConditionalOperator» (* Unary Operator, Postfix *);
+    // UnaryPostfixExpression = Expression «UnaryPostfixOperator» (* Unary Operator, Postfix *);
+    // UnaryPrefixExpression = «UnaryPrefixOperator» Expression (* Unary Operator, Prefix *);
+    // FunctionCallExpression = Expression «FunctionCallOperator» (* Unary Operator, Postfix *);
+    // MemberAccessExpression = Expression «MemberAccessOperator» (* Unary Operator, Postfix *);
+    // IndexAccessExpression = Expression «IndexAccessOperator» (* Unary Operator, Postfix *);
 
     #[allow(dead_code, non_snake_case)]
     fn expression__0_4_11(&self, stream: &mut Stream) -> ParserResult {
@@ -3242,32 +3251,43 @@ impl Language {
     }
 
     // (* v0.6.0 *)
-    // Expression = BinaryExpression
-    //            | ConditionalExpression
-    //            | UnaryPostfixExpression
-    //            | UnaryPrefixExpression
-    //            | FunctionCallExpression
-    //            | MemberAccessExpression
-    //            | IndexAccessExpression
+    // Expression = BinaryExpression (* Expression «AssignmentOperator» Expression *) (* Binary Operator, Left Associative *)
+    //            | ConditionalExpression (* Expression «ConditionalOperator» *) (* Unary Operator, Postfix *)
+    //            | BinaryExpression (* Expression «OrOperator» Expression *) (* Binary Operator, Left Associative *)
+    //            | BinaryExpression (* Expression «AndOperator» Expression *) (* Binary Operator, Left Associative *)
+    //            | BinaryExpression (* Expression «EqualityComparisonOperator» Expression *) (* Binary Operator, Left Associative *)
+    //            | BinaryExpression (* Expression «OrderComparisonOperator» Expression *) (* Binary Operator, Left Associative *)
+    //            | BinaryExpression (* Expression «BitwiseOrOperator» Expression *) (* Binary Operator, Left Associative *)
+    //            | BinaryExpression (* Expression «BitwiseXOrOperator» Expression *) (* Binary Operator, Left Associative *)
+    //            | BinaryExpression (* Expression «BitwiseAndOperator» Expression *) (* Binary Operator, Left Associative *)
+    //            | BinaryExpression (* Expression «ShiftOperator» Expression *) (* Binary Operator, Left Associative *)
+    //            | BinaryExpression (* Expression «AddSubOperator» Expression *) (* Binary Operator, Left Associative *)
+    //            | BinaryExpression (* Expression «MulDivModOperator» Expression *) (* Binary Operator, Left Associative *)
+    //            | BinaryExpression (* Expression «ExponentiationOperator» Expression *) (* Binary Operator, Right Associative *)
+    //            | UnaryPostfixExpression (* Expression «UnaryPostfixOperator» *) (* Unary Operator, Postfix *)
+    //            | UnaryPrefixExpression (* «UnaryPrefixOperator» Expression *) (* Unary Operator, Prefix *)
+    //            | FunctionCallExpression (* Expression «FunctionCallOperator» *) (* Unary Operator, Postfix *)
+    //            | MemberAccessExpression (* Expression «MemberAccessOperator» *) (* Unary Operator, Postfix *)
+    //            | IndexAccessExpression (* Expression «IndexAccessOperator» *) (* Unary Operator, Postfix *)
     //            | «PrimaryExpression»;
-    // BinaryExpression = Expression «AssignmentOperator» Expression;
-    // ConditionalExpression = Expression «ConditionalOperator»;
-    // BinaryExpression = Expression «OrOperator» Expression;
-    // BinaryExpression = Expression «AndOperator» Expression;
-    // BinaryExpression = Expression «EqualityComparisonOperator» Expression;
-    // BinaryExpression = Expression «OrderComparisonOperator» Expression;
-    // BinaryExpression = Expression «BitwiseOrOperator» Expression;
-    // BinaryExpression = Expression «BitwiseXOrOperator» Expression;
-    // BinaryExpression = Expression «BitwiseAndOperator» Expression;
-    // BinaryExpression = Expression «ShiftOperator» Expression;
-    // BinaryExpression = Expression «AddSubOperator» Expression;
-    // BinaryExpression = Expression «MulDivModOperator» Expression;
-    // BinaryExpression = Expression «ExponentiationOperator» Expression; (* Right Associative *)
-    // UnaryPostfixExpression = Expression «UnaryPostfixOperator»;
-    // UnaryPrefixExpression = «UnaryPrefixOperator» Expression;
-    // FunctionCallExpression = Expression «FunctionCallOperator»;
-    // MemberAccessExpression = Expression «MemberAccessOperator»;
-    // IndexAccessExpression = Expression «IndexAccessOperator»;
+    // BinaryExpression = Expression «AssignmentOperator» Expression (* Binary Operator, Left Associative *);
+    // BinaryExpression = Expression «OrOperator» Expression (* Binary Operator, Left Associative *);
+    // BinaryExpression = Expression «AndOperator» Expression (* Binary Operator, Left Associative *);
+    // BinaryExpression = Expression «EqualityComparisonOperator» Expression (* Binary Operator, Left Associative *);
+    // BinaryExpression = Expression «OrderComparisonOperator» Expression (* Binary Operator, Left Associative *);
+    // BinaryExpression = Expression «BitwiseOrOperator» Expression (* Binary Operator, Left Associative *);
+    // BinaryExpression = Expression «BitwiseXOrOperator» Expression (* Binary Operator, Left Associative *);
+    // BinaryExpression = Expression «BitwiseAndOperator» Expression (* Binary Operator, Left Associative *);
+    // BinaryExpression = Expression «ShiftOperator» Expression (* Binary Operator, Left Associative *);
+    // BinaryExpression = Expression «AddSubOperator» Expression (* Binary Operator, Left Associative *);
+    // BinaryExpression = Expression «MulDivModOperator» Expression (* Binary Operator, Left Associative *);
+    // BinaryExpression = Expression «ExponentiationOperator» Expression (* Binary Operator, Right Associative *);
+    // ConditionalExpression = Expression «ConditionalOperator» (* Unary Operator, Postfix *);
+    // UnaryPostfixExpression = Expression «UnaryPostfixOperator» (* Unary Operator, Postfix *);
+    // UnaryPrefixExpression = «UnaryPrefixOperator» Expression (* Unary Operator, Prefix *);
+    // FunctionCallExpression = Expression «FunctionCallOperator» (* Unary Operator, Postfix *);
+    // MemberAccessExpression = Expression «MemberAccessOperator» (* Unary Operator, Postfix *);
+    // IndexAccessExpression = Expression «IndexAccessOperator» (* Unary Operator, Postfix *);
 
     #[allow(dead_code, non_snake_case)]
     fn expression__0_6_0(&self, stream: &mut Stream) -> ParserResult {
@@ -5531,9 +5551,7 @@ impl Language {
         .with_kind(RuleKind::ModifierInvocation)
     }
 
-    // «MulDivModOperator» = ASTERISK
-    //                     | SLASH
-    //                     | PERCENT;
+    // «MulDivModOperator» = ASTERISK | SLASH | PERCENT;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -8238,8 +8256,12 @@ impl Language {
             .expect("Validation should have checked that references are valid between versions")
     }
 
-    // TypeName = ArrayTypeName | FunctionType | MappingType | «ElementaryType» | IdentifierPath;
-    // ArrayTypeName = TypeName «ArrayTypeNameOperator»;
+    // TypeName = ArrayTypeName (* TypeName «ArrayTypeNameOperator» *) (* Unary Operator, Postfix *)
+    //          | FunctionType
+    //          | MappingType
+    //          | «ElementaryType»
+    //          | IdentifierPath;
+    // ArrayTypeName = TypeName «ArrayTypeNameOperator» (* Unary Operator, Postfix *);
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -8381,12 +8403,7 @@ impl Language {
     }
 
     // (* v0.4.11 *)
-    // «UnaryPrefixOperator» = PLUS_PLUS
-    //                       | MINUS_MINUS
-    //                       | TILDE
-    //                       | BANG
-    //                       | MINUS
-    //                       | PLUS;
+    // «UnaryPrefixOperator» = PLUS_PLUS | MINUS_MINUS | TILDE | BANG | MINUS | PLUS;
 
     #[allow(dead_code, non_snake_case)]
     fn unary_prefix_operator__0_4_11(&self, stream: &mut Stream) -> ParserResult {
@@ -8452,11 +8469,7 @@ impl Language {
     }
 
     // (* v0.5.0 *)
-    // «UnaryPrefixOperator» = PLUS_PLUS
-    //                       | MINUS_MINUS
-    //                       | TILDE
-    //                       | BANG
-    //                       | MINUS;
+    // «UnaryPrefixOperator» = PLUS_PLUS | MINUS_MINUS | TILDE | BANG | MINUS;
 
     #[allow(dead_code, non_snake_case)]
     fn unary_prefix_operator__0_5_0(&self, stream: &mut Stream) -> ParserResult {
@@ -9434,12 +9447,13 @@ impl Language {
         .with_kind(RuleKind::VersionPragma)
     }
 
-    // VersionPragmaExpression = VersionPragmaBinaryExpression
-    //                         | VersionPragmaUnaryExpression
+    // VersionPragmaExpression = VersionPragmaBinaryExpression (* VersionPragmaExpression «VersionPragmaOrOperator» VersionPragmaExpression *) (* Binary Operator, Left Associative *)
+    //                         | VersionPragmaBinaryExpression (* VersionPragmaExpression «VersionPragmaRangeOperator» VersionPragmaExpression *) (* Binary Operator, Left Associative *)
+    //                         | VersionPragmaUnaryExpression (* «VersionPragmaUnaryOperator» VersionPragmaExpression *) (* Unary Operator, Prefix *)
     //                         | VersionPragmaSpecifier;
-    // VersionPragmaBinaryExpression = VersionPragmaExpression «VersionPragmaOrOperator» VersionPragmaExpression;
-    // VersionPragmaBinaryExpression = VersionPragmaExpression «VersionPragmaRangeOperator» VersionPragmaExpression;
-    // VersionPragmaUnaryExpression = «VersionPragmaUnaryOperator» VersionPragmaExpression;
+    // VersionPragmaBinaryExpression = VersionPragmaExpression «VersionPragmaOrOperator» VersionPragmaExpression (* Binary Operator, Left Associative *);
+    // VersionPragmaBinaryExpression = VersionPragmaExpression «VersionPragmaRangeOperator» VersionPragmaExpression (* Binary Operator, Left Associative *);
+    // VersionPragmaUnaryExpression = «VersionPragmaUnaryOperator» VersionPragmaExpression (* Unary Operator, Prefix *);
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -9889,8 +9903,10 @@ impl Language {
         .with_kind(RuleKind::YulDeclarationStatement)
     }
 
-    // YulExpression = YulFunctionCallExpression | «YulLiteral» | YulIdentifierPath;
-    // YulFunctionCallExpression = YulExpression «YulFunctionCallOperator»;
+    // YulExpression = YulFunctionCallExpression (* YulExpression «YulFunctionCallOperator» *) (* Unary Operator, Postfix *)
+    //               | «YulLiteral»
+    //               | YulIdentifierPath;
+    // YulFunctionCallExpression = YulExpression «YulFunctionCallOperator» (* Unary Operator, Postfix *);
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]

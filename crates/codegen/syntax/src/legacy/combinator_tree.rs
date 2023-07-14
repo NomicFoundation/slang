@@ -99,12 +99,14 @@ impl<'context> CombinatorTree<'context> {
             writeln!(comment, "(* v{version} *)", version = self.context.version).unwrap();
         }
 
-        if let Some(ebnf) = EbnfSerializer::serialize_version(
+        if let Some(outputs) = EbnfSerializer::serialize_version(
             &self.context.language,
             &self.production,
             &self.context.version,
         ) {
-            writeln!(comment, "{ebnf}").unwrap();
+            for ebnf in outputs.values() {
+                writeln!(comment, "{ebnf}").unwrap();
+            }
         }
 
         return comment.lines().map(|line| format!("// {line}\n")).collect();

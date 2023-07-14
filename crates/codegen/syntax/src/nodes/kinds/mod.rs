@@ -1,14 +1,22 @@
-use std::collections::BTreeSet;
+use std::collections::HashMap;
 
-use codegen_schema::types::{LanguageDefinitionRef, ProductionDefinition};
+use codegen_ebnf::EbnfSerializer;
+use codegen_schema::types::{LanguageDefinitionRef, ProductionDefinition, ProductionRef};
+use itertools::Itertools;
 use serde::Serialize;
 
 use crate::templates::TemplateContext;
 
 #[derive(Serialize)]
 pub struct NodeKindsTemplate {
-    pub enum_name: String,
-    pub enum_variants: Vec<String>,
+    pub type_name: String,
+    pub variants: Vec<NodeKindsVariant>,
+}
+
+#[derive(Eq, Ord, PartialEq, PartialOrd, Serialize)]
+pub struct NodeKindsVariant {
+    pub name: String,
+    pub documentation: String,
 }
 
 impl TemplateContext for NodeKindsTemplate {
@@ -17,95 +25,191 @@ impl TemplateContext for NodeKindsTemplate {
 
 impl NodeKindsTemplate {
     pub fn collect_production_kinds(language: &LanguageDefinitionRef) -> Self {
-        let mut enum_variants = vec![];
+        let mut variants = vec![];
 
         for production in language.productions.values() {
-            if production.inlined {
-                continue;
-            }
-
-            enum_variants.push(production.name.to_owned());
+            collect_top_level(language, production, &mut variants);
         }
 
-        enum_variants.sort();
+        variants.sort();
 
         return Self {
-            enum_name: "ProductionKind".to_string(),
-            enum_variants,
+            type_name: "ProductionKind".to_string(),
+            variants,
         };
     }
 
     pub fn collect_rule_kinds(language: &LanguageDefinitionRef) -> Self {
-        // Use a BTreeSet to deduplicate operator names:
-        let mut enum_variants = BTreeSet::new();
+        let mut variants = vec![];
 
         for production in language.productions.values() {
-            if production.inlined {
-                continue;
-            }
-
             match &production.definition {
-                ProductionDefinition::Parser { .. } | ProductionDefinition::TriviaParser { .. } => {
-                    enum_variants.insert(production.name.to_owned());
+                ProductionDefinition::Parser { .. }
+                | ProductionDefinition::PrecedenceParser { .. }
+                | ProductionDefinition::TriviaParser { .. } => {
+                    collect_recursive(language, production, &mut variants);
                 }
-                ProductionDefinition::PrecedenceParser { version_map, .. } => {
-                    enum_variants.insert(production.name.to_owned());
-
-                    match version_map {
-                        codegen_schema::types::VersionMap::Unversioned(unversioned) => {
-                            for expression in &unversioned.operator_expressions {
-                                enum_variants.insert(expression.name.to_owned());
-                            }
-                        }
-                        codegen_schema::types::VersionMap::Versioned(versioned) => {
-                            for version in versioned.values() {
-                                if let Some(version) = version {
-                                    for expression in &version.operator_expressions {
-                                        enum_variants.insert(expression.name.to_owned());
-                                    }
-                                }
-                            }
-                        }
-                    };
+                ProductionDefinition::Scanner { .. } => {
+                    // Skip
                 }
-                ProductionDefinition::Scanner { .. } => {}
             };
         }
 
-        // BTreeSet iterators are always ordered, so we don't need to sort.
+        variants.sort();
 
         return Self {
-            enum_name: "RuleKind".to_string(),
-            enum_variants: enum_variants.into_iter().collect(),
+            type_name: "RuleKind".to_string(),
+            variants,
         };
     }
 
     pub fn collect_token_kinds(language: &LanguageDefinitionRef) -> Self {
-        let mut enum_variants = vec![];
+        let mut variants = vec![];
 
         for production in language.productions.values() {
-            if production.inlined {
-                continue;
-            }
-
             match production.definition {
                 ProductionDefinition::Scanner { .. } => {
-                    enum_variants.push(production.name.to_owned());
+                    collect_top_level(language, production, &mut variants);
                 }
                 ProductionDefinition::Parser { .. }
                 | ProductionDefinition::PrecedenceParser { .. }
-                | ProductionDefinition::TriviaParser { .. } => {}
+                | ProductionDefinition::TriviaParser { .. } => {
+                    // Skip
+                }
             };
         }
 
-        enum_variants.sort();
+        variants.sort();
 
-        // Insert "SKIPPED" as the first token kind (after sorting):
-        enum_variants.insert(0, "SKIPPED".to_owned());
+        variants.insert(
+            0, // Insert "SKIPPED" as the first token kind (after sorting)
+            NodeKindsVariant {
+                name: "SKIPPED".to_owned(),
+                documentation:
+                    "Used to hold parts of input that cannot be parsed (incomplete, or erroneous)."
+                        .to_owned(),
+            },
+        );
 
         return Self {
-            enum_name: "TokenKind".to_string(),
-            enum_variants,
+            type_name: "TokenKind".to_string(),
+            variants,
         };
     }
+}
+
+fn collect_top_level(
+    language: &LanguageDefinitionRef,
+    production: &ProductionRef,
+    variants: &mut Vec<NodeKindsVariant>,
+) {
+    if production.inlined {
+        return;
+    }
+
+    let documentation = extract_documentation(language, production);
+
+    variants.push(NodeKindsVariant {
+        name: production.name.to_owned(),
+        documentation: documentation[&production.name].to_owned(),
+    });
+}
+
+fn collect_recursive(
+    language: &LanguageDefinitionRef,
+    production: &ProductionRef,
+    variants: &mut Vec<NodeKindsVariant>,
+) {
+    let documentation = extract_documentation(language, production);
+
+    if !production.inlined {
+        variants.push(NodeKindsVariant {
+            name: production.name.to_owned(),
+            documentation: documentation[&production.name].to_owned(),
+        });
+    }
+
+    let version_map = match &production.definition {
+        ProductionDefinition::PrecedenceParser { version_map, .. } => version_map,
+        ProductionDefinition::Parser { .. }
+        | ProductionDefinition::Scanner { .. }
+        | ProductionDefinition::TriviaParser { .. } => {
+            // Nothing recursive to collect
+            return;
+        }
+    };
+
+    let expressions: Vec<_> = match &version_map {
+        codegen_schema::types::VersionMap::Unversioned(unversioned) => unversioned
+            .operator_expressions
+            .iter()
+            .map(|expression| &expression.name)
+            .unique()
+            .collect(),
+        codegen_schema::types::VersionMap::Versioned(versioned) => versioned
+            .values()
+            .filter_map(|version| version.as_ref())
+            .flat_map(|precedence_parser| &precedence_parser.operator_expressions)
+            .map(|expression| &expression.name)
+            .unique()
+            .collect(),
+    };
+
+    for expression in expressions {
+        variants.push(NodeKindsVariant {
+            name: expression.to_owned(),
+            documentation: documentation[expression].to_owned(),
+        });
+    }
+}
+
+// Constructs all documentation headers for the given production, including any sub-statements
+// It returns a map from each statement name to its markdown documentation:
+fn extract_documentation(
+    language: &LanguageDefinitionRef,
+    production: &ProductionRef,
+) -> HashMap<String, String> {
+    let mut results = HashMap::<String, Vec<String>>::new();
+
+    match production.versions() {
+        Some(versions) => {
+            for version in versions {
+                if let Some(outputs) =
+                    EbnfSerializer::serialize_version(language, production, version)
+                {
+                    for (name, ebnf) in outputs {
+                        results
+                            .entry(name)
+                            .or_default()
+                            .extend([format!("## v{version}"), format!("```ebnf\n{ebnf}\n```")]);
+                    }
+                } else {
+                    results
+                        .entry(production.name.to_owned())
+                        .or_default()
+                        .extend([
+                            format!("## v{version}"),
+                            format!("```ebnf\n(* DELETED *)\n```"),
+                        ]);
+                }
+            }
+        }
+        None => {
+            let latest_version = language.versions.last().unwrap();
+            let outputs =
+                EbnfSerializer::serialize_version(language, production, latest_version).unwrap();
+
+            for (name, ebnf) in outputs {
+                results
+                    .entry(name)
+                    .or_default()
+                    .extend([format!("## Unversioned"), format!("```ebnf\n{ebnf}\n```")]);
+            }
+        }
+    };
+
+    return results
+        .into_iter()
+        .map(|(key, entries)| (key, entries.join("\n\n")))
+        .collect();
 }

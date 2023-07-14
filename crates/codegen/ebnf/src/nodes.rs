@@ -1,6 +1,4 @@
-#[derive(Clone, Eq, Hash, PartialEq)]
 pub enum EbnfNode {
-    BaseProduction,
     Choice {
         nodes: Vec<EbnfNode>,
     },
@@ -27,13 +25,12 @@ pub enum EbnfNode {
     Sequence {
         nodes: Vec<EbnfNode>,
     },
-    SubStatement {
-        name: String,
-        comment: Option<String>,
-        root_node: Box<EbnfNode>,
-    },
     Terminal {
-        value: String,
+        terminal: String,
+    },
+    WithComment {
+        node: Box<EbnfNode>,
+        comment: String,
     },
     ZeroOrMore {
         node: Box<EbnfNode>,
@@ -42,7 +39,16 @@ pub enum EbnfNode {
 
 impl EbnfNode {
     pub fn choice(nodes: Vec<EbnfNode>) -> Self {
-        Self::Choice { nodes }
+        let mut results = vec![];
+
+        for node in nodes {
+            match node {
+                EbnfNode::Choice { nodes } => results.extend(nodes),
+                _ => results.push(node),
+            }
+        }
+
+        Self::Choice { nodes: results }
     }
 
     pub fn difference(minuend: EbnfNode, subtrahend: EbnfNode) -> Self {
@@ -70,8 +76,10 @@ impl EbnfNode {
         }
     }
 
-    pub fn production_ref(name: String) -> Self {
-        Self::ProductionRef { name }
+    pub fn production_ref(name: &str) -> Self {
+        Self::ProductionRef {
+            name: name.to_owned(),
+        }
     }
 
     pub fn range(from: char, to: char) -> Self {
@@ -79,24 +87,61 @@ impl EbnfNode {
     }
 
     pub fn sequence(nodes: Vec<EbnfNode>) -> Self {
-        Self::Sequence { nodes }
+        let mut results = vec![];
+
+        for node in nodes {
+            match node {
+                EbnfNode::Sequence { nodes } => results.extend(nodes),
+                _ => results.push(node),
+            }
+        }
+
+        Self::Sequence { nodes: results }
     }
 
-    pub fn sub_statement(name: String, comment: Option<String>, root_node: EbnfNode) -> Self {
-        Self::SubStatement {
-            name,
-            comment,
-            root_node: Box::new(root_node),
+    pub fn terminal(terminal: &str) -> Self {
+        Self::Terminal {
+            terminal: terminal.to_owned(),
         }
     }
 
-    pub fn terminal(value: String) -> Self {
-        Self::Terminal { value }
+    pub fn with_comment(node: EbnfNode, comment: String) -> Self {
+        Self::WithComment {
+            node: Box::new(node),
+            comment,
+        }
     }
 
     pub fn zero_or_more(node: EbnfNode) -> Self {
         Self::ZeroOrMore {
             node: Box::new(node),
         }
+    }
+}
+
+impl EbnfNode {
+    pub fn precedence(&self) -> u8 {
+        // We are specifying precedence "groups" instead of a flat list.
+        // This separates members of the same precedence, like both "a b (c | d)" and "a | b | (c d)".
+        return match self {
+            // Not an operator
+            EbnfNode::WithComment { .. } => 0,
+
+            // Binary
+            EbnfNode::Choice { .. } | EbnfNode::Difference { .. } | EbnfNode::Sequence { .. } => 1,
+
+            // Prefix
+            EbnfNode::Not { .. } => 2,
+
+            // Postfix
+            EbnfNode::OneOrMore { .. }
+            | EbnfNode::Optional { .. }
+            | EbnfNode::ZeroOrMore { .. } => 3,
+
+            // Primary
+            EbnfNode::ProductionRef { .. } | EbnfNode::Range { .. } | EbnfNode::Terminal { .. } => {
+                4
+            }
+        };
     }
 }

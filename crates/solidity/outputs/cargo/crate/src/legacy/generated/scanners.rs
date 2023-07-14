@@ -127,14 +127,7 @@ impl Language {
         )
     }
 
-    // «ASCII_ESCAPE» = "n"
-    //                | "r"
-    //                | "t"
-    //                | "'"
-    //                | '"'
-    //                | "\\"
-    //                | "\n"
-    //                | "\r";
+    // «ASCII_ESCAPE» = "n" | "r" | "t" | "'" | '"' | "\\" | "\n" | "\r";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -149,7 +142,8 @@ impl Language {
             || c == 't')
     }
 
-    // ASCII_STRING_LITERAL = «SINGLE_QUOTED_ASCII_STRING_LITERAL» | «DOUBLE_QUOTED_ASCII_STRING_LITERAL»;
+    // ASCII_STRING_LITERAL = «SINGLE_QUOTED_ASCII_STRING_LITERAL»
+    //                      | «DOUBLE_QUOTED_ASCII_STRING_LITERAL»;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -1421,7 +1415,8 @@ impl Language {
         )
     }
 
-    // HEX_STRING_LITERAL = «SINGLE_QUOTED_HEX_STRING_LITERAL» | «DOUBLE_QUOTED_HEX_STRING_LITERAL»;
+    // HEX_STRING_LITERAL = «SINGLE_QUOTED_HEX_STRING_LITERAL»
+    //                    | «DOUBLE_QUOTED_HEX_STRING_LITERAL»;
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
@@ -2371,13 +2366,14 @@ impl Language {
         )
     }
 
-    // MULTILINE_COMMENT = "/*" (!"*" | "*")* "*/";
+    // MULTILINE_COMMENT = "/" "*" (!"*" | "*")* "*" "/";
 
     #[allow(dead_code)]
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn multiline_comment(&self, stream: &mut Stream) -> bool {
         scan_sequence!(
-            scan_chars!(stream, '/', '*'),
+            scan_chars!(stream, '/'),
+            scan_chars!(stream, '*'),
             scan_zero_or_more!(
                 stream,
                 scan_choice!(
@@ -2390,7 +2386,8 @@ impl Language {
                     )
                 )
             ),
-            scan_chars!(stream, '*', '/')
+            scan_chars!(stream, '*'),
+            scan_chars!(stream, '/')
         )
     }
 
@@ -3290,7 +3287,8 @@ impl Language {
     }
 
     // (* v0.7.0 *)
-    // UNICODE_STRING_LITERAL = «SINGLE_QUOTED_UNICODE_STRING_LITERAL» | «DOUBLE_QUOTED_UNICODE_STRING_LITERAL»;
+    // UNICODE_STRING_LITERAL = «SINGLE_QUOTED_UNICODE_STRING_LITERAL»
+    //                        | «DOUBLE_QUOTED_UNICODE_STRING_LITERAL»;
 
     #[allow(dead_code, non_snake_case)]
     fn unicode_string_literal__0_7_0(&self, stream: &mut Stream) -> bool {
