@@ -33,13 +33,13 @@ function _napi_build() {
   fi
 
   # Navigate to where files should be generated:
-  cd "$PACKAGE_DIR/generated"
+  cd "$PACKAGE_DIR/src/generated"
 
   command=(
     napi build
     --platform
-    --config "../package.json"
-    --cargo-cwd "../../crate"
+    --config "../../package.json"
+    --cargo-cwd "../../../crate"
     --target "$target"
     --no-const-enum
   )
@@ -55,21 +55,24 @@ function _process_generated_files() {
   printf "\n\n📚 Processing Generated Files: 📚\n\n\n"
 
   generated_files=(
-    "$PACKAGE_DIR/generated/index.d.ts"
-    "$PACKAGE_DIR/generated/index.js"
+    "$PACKAGE_DIR/src/generated/index.d.ts"
+    "$PACKAGE_DIR/src/generated/index.js"
   )
 
   for file in "${generated_files[@]}"; do
-    contents=$(
-      echo "// Slang License: https://github.com/NomicFoundation/slang/blob/main/LICENSE"
-      echo "// NAPI-RS License: https://github.com/napi-rs/napi-rs/blob/main/LICENSE"
-      echo ""
-      echo "// @ts-nocheck"
-      echo ""
-      cat "$file"
-    )
+    if ! grep -q "Slang License" "$file"; then
+      contents=$(
+        echo "// Slang License: https://github.com/NomicFoundation/slang/blob/main/LICENSE"
+        echo "// NAPI-RS License: https://github.com/napi-rs/napi-rs/blob/main/LICENSE"
+        echo ""
+        echo "// @ts-nocheck"
+        echo ""
+        cat "$file"
+      )
 
-    echo "$contents" > "$file"
+      echo "$contents" > "$file"
+    fi
+
     prettier --write "$file"
   done
 }
@@ -80,7 +83,7 @@ function _process_bindings() {
   # Populate artifacts folder with all binding files:
 
   mkdir -p "$PACKAGE_DIR/artifacts"
-  artifacts="$(_list_source_files "$PACKAGE_DIR/generated" "*.node")"
+  artifacts="$(_list_source_files "$PACKAGE_DIR/src/generated" "*.node")"
 
   echo "$artifacts" | while read -r artifact; do
     cp "$artifact" "$PACKAGE_DIR/artifacts"
@@ -92,6 +95,27 @@ function _process_bindings() {
   napi artifacts --dir "artifacts" --dist "platforms"
 }
 
+function _process_typescript() {
+  printf "\n\n📚 Processing TypeScript: 📚\n\n\n"
+
+  dist_dir="$PACKAGE_DIR/target/dist"
+
+  cd "$PACKAGE_DIR"
+
+  tsc --project "$PACKAGE_DIR/tsconfig.json" \
+    --outDir "$dist_dir" \
+    --declaration true \
+    --noEmit false
+
+  mkdir -p "$dist_dir/generated"
+  cp -r "$PACKAGE_DIR/src/generated" "$dist_dir"
+
+  cp "$PACKAGE_DIR/package.json" "$dist_dir"
+  cp "$PACKAGE_DIR/CHANGELOG.md" "$dist_dir"
+  cp "$PACKAGE_DIR/LICENSE" "$dist_dir"
+  cp "$PACKAGE_DIR/README.md" "$dist_dir"
+}
+
 (
   _check_local_changes
 
@@ -101,6 +125,7 @@ function _process_bindings() {
 
   _process_generated_files
   _process_bindings
+  _process_typescript
 
   _check_local_changes
 )

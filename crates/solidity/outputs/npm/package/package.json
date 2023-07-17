@@ -24,13 +24,6 @@
     }
   ],
   "type": "commonjs",
-  "files": [
-    "**/*.d.ts",
-    "**/*.js",
-    "CHANGELOG.md",
-    "LICENSE",
-    "README.md"
-  ],
   "devDependencies": {
     "@napi-rs/cli": "2.16.1",
     "prettier": "2.8.8"

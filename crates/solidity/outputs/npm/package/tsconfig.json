@@ -1,0 +1,12 @@
+{
+  "extends": "../../../../../tsconfig.json",
+
+  "include": ["./src/**/*.ts"],
+
+  "compilerOptions": {
+    "lib": [],
+    "module": "CommonJS",
+    "moduleResolution": "Node",
+    "target": "ES2016"
+  }
+}

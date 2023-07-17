@@ -46,5 +46,5 @@ function _napi_publish() {
 
   # Then publish the root package:
 
-  _napi_publish "$PACKAGE_DIR/package.json"
+  _napi_publish "$PACKAGE_DIR/target/dist/package.json"
 )
