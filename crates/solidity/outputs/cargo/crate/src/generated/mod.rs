@@ -3,7 +3,7 @@
 #[macro_use]
 mod scanner_macros;
 pub mod cst;
-pub mod cst_visitor;
+pub mod cursor;
 pub mod kinds;
 pub mod language;
 pub mod parse_error;
@@ -16,3 +16,4 @@ mod scanner_function;
 mod scanners;
 mod stream;
 pub mod text_index;
+pub mod visitor;

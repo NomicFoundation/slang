@@ -1,9 +1,9 @@
 use std::rc::Rc;
 
 use anyhow::Result;
-use slang_solidity::syntax::{
-    nodes::{Node, RuleKind, RuleNode, TextRange, TokenKind, TokenNode},
-    visitors::{Visitable, Visitor, VisitorEntryResponse, VisitorExitResponse},
+use slang_solidity::syntax::nodes::{
+    Cursor, Node, RuleKind, RuleNode, TextRange, TokenKind, TokenNode, Visitor,
+    VisitorEntryResponse, VisitorExitResponse,
 };
 
 #[derive(Debug)]
@@ -24,21 +24,19 @@ struct TestNodeBuilder {
 }
 
 impl Visitor<()> for TestNodeBuilder {
-    fn enter_rule(
+    fn rule_enter(
         &mut self,
         _node: &Rc<RuleNode>,
-        _path: &Vec<Rc<RuleNode>>,
-        _range: &TextRange,
+        _cursor: &Cursor,
     ) -> std::result::Result<VisitorEntryResponse, ()> {
         self.stack.push(vec![]);
         Ok(VisitorEntryResponse::StepIn)
     }
 
-    fn exit_rule(
+    fn rule_exit(
         &mut self,
         node: &Rc<RuleNode>,
-        _path: &Vec<Rc<RuleNode>>,
-        range: &TextRange,
+        cursor: &Cursor,
     ) -> std::result::Result<VisitorExitResponse, ()> {
         let children = self.stack.pop().unwrap();
 
@@ -50,7 +48,7 @@ impl Visitor<()> for TestNodeBuilder {
 
         let new_node = TestNode {
             kind: TestNodeKind::Rule(node.kind),
-            range: range.clone(),
+            range: cursor.text_range(),
             children,
         };
         self.stack.last_mut().unwrap().push(new_node);
@@ -58,30 +56,27 @@ impl Visitor<()> for TestNodeBuilder {
         Ok(VisitorExitResponse::Continue)
     }
 
-    fn enter_token(
+    fn token(
         &mut self,
         node: &Rc<TokenNode>,
-        _path: &Vec<Rc<RuleNode>>,
-        range: &TextRange,
-    ) -> std::result::Result<VisitorEntryResponse, ()> {
-        if Self::is_whitespace(node) {
-            return Ok(VisitorEntryResponse::StepOver);
+        cursor: &Cursor,
+    ) -> std::result::Result<VisitorExitResponse, ()> {
+        if !Self::is_whitespace(node) {
+            let kind = if Self::is_comment(node) {
+                TestNodeKind::Trivia(node.kind)
+            } else {
+                TestNodeKind::Token(node.kind)
+            };
+
+            let new_node = TestNode {
+                kind,
+                range: cursor.text_range(),
+                children: vec![],
+            };
+            self.stack.last_mut().unwrap().push(new_node);
         }
 
-        let kind = if Self::is_comment(node) {
-            TestNodeKind::Trivia(node.kind)
-        } else {
-            TestNodeKind::Token(node.kind)
-        };
-
-        let new_node = TestNode {
-            kind,
-            range: range.clone(),
-            children: vec![],
-        };
-        self.stack.last_mut().unwrap().push(new_node);
-
-        Ok(VisitorEntryResponse::StepOver)
+        Ok(VisitorExitResponse::Continue)
     }
 }
 
@@ -101,7 +96,7 @@ impl TestNode {
         let mut visitor = TestNodeBuilder {
             stack: vec![vec![]],
         };
-        node.accept_visitor(&mut visitor).unwrap();
+        node.cursor().drive_visitor(&mut visitor).unwrap();
         return visitor.stack.remove(0).remove(0);
     }
 

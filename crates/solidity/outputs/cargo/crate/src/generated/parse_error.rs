@@ -13,17 +13,17 @@ impl ParseError {
         tokens_that_would_have_allowed_more_progress: Vec<TokenKind>,
     ) -> Self {
         Self {
-            range: position..position,
+            text_range: position..position,
             tokens_that_would_have_allowed_more_progress,
         }
     }
 
     pub(crate) fn new_covering_range(
-        range: TextRange,
+        text_range: TextRange,
         tokens_that_would_have_allowed_more_progress: Vec<TokenKind>,
     ) -> Self {
         Self {
-            range,
+            text_range,
             tokens_that_would_have_allowed_more_progress,
         }
     }
@@ -39,8 +39,8 @@ pub(crate) fn render_error_report(
 
     let kind = ReportKind::Error;
     let color = if with_color { Color::Red } else { Color::Unset };
-    let source_start = error.range.start.utf8;
-    let source_end = error.range.end.utf8;
+    let source_start = error.text_range.start.utf8;
+    let source_end = error.text_range.end.utf8;
 
     let tokens_that_would_have_allowed_more_progress =
         error.tokens_that_would_have_allowed_more_progress();

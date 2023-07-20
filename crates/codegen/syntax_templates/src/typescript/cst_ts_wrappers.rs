@@ -1,5 +1,6 @@
 use super::{
-    cst::{Node, RuleNode as RustRuleNode, TokenNode as RustTokenNode},
+    cst::{Node as RustNode, RuleNode as RustRuleNode, TokenNode as RustTokenNode},
+    cursor_ts_wrappers::Cursor,
     kinds::*,
     text_index::{TextIndex as RustTextIndex, TextRange as RustTextRange},
 };
@@ -73,13 +74,17 @@ impl RuleNode {
         (&self.0.text_len).into()
     }
 
-    #[napi(getter, ts_return_type = "(RuleNode | TokenNode)[]")]
+    #[napi(getter, ts_return_type = "Array<RuleNode | TokenNode>")]
     pub fn children(&self, env: Env) -> Vec<JsObject> {
         self.0
             .children
             .iter()
             .map(|child| child.to_js(&env))
             .collect()
+    }
+
+    pub fn cursor(&self) -> Cursor {
+        Cursor::new(RustNode::Rule(self.0.clone()).cursor())
     }
 }
 
@@ -100,18 +105,43 @@ impl TokenNode {
         let text_len: RustTextIndex = (&self.0.text).into();
         (&text_len).into()
     }
+
+    #[napi(getter)]
+    pub fn text(&self) -> String {
+        self.0.text.clone()
+    }
+
+    pub fn cursor(&self) -> Cursor {
+        Cursor::new(RustNode::Token(self.0.clone()).cursor())
+    }
 }
 
-impl Node {
-    pub fn to_js(&self, env: &Env) -> JsObject {
-        let obj = match self {
-            Node::Rule(node) => unsafe {
-                <RuleNode as ToNapiValue>::to_napi_value(env.raw(), RuleNode(node.clone()))
-            },
-            Node::Token(node) => unsafe {
-                <TokenNode as ToNapiValue>::to_napi_value(env.raw(), TokenNode(node.clone()))
-            },
+pub trait ToJS {
+    fn to_js(&self, env: &Env) -> JsObject;
+}
+
+impl ToJS for Rc<RustRuleNode> {
+    fn to_js(&self, env: &Env) -> JsObject {
+        let obj =
+            unsafe { <RuleNode as ToNapiValue>::to_napi_value(env.raw(), RuleNode(self.clone())) };
+        return unsafe { JsObject::from_raw_unchecked(env.raw(), obj.unwrap()) };
+    }
+}
+
+impl ToJS for Rc<RustTokenNode> {
+    fn to_js(&self, env: &Env) -> JsObject {
+        let obj = unsafe {
+            <TokenNode as ToNapiValue>::to_napi_value(env.raw(), TokenNode(self.clone()))
         };
         return unsafe { JsObject::from_raw_unchecked(env.raw(), obj.unwrap()) };
+    }
+}
+
+impl ToJS for RustNode {
+    fn to_js(&self, env: &Env) -> JsObject {
+        match self {
+            RustNode::Rule(rust_rule_node) => rust_rule_node.to_js(env),
+            RustNode::Token(rust_token_node) => rust_token_node.to_js(env),
+        }
     }
 }

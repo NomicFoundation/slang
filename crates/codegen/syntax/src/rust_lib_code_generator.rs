@@ -29,27 +29,19 @@ impl CodeGenerator {
                mod stream;
 
                pub mod cst;
-               pub mod cst_visitor;
+               pub mod cursor;
                pub mod kinds;
                pub mod language;
                pub mod parse_error;
                pub mod parse_output;
                pub mod text_index;
+               pub mod visitor;
             };
 
             codegen
                 .write_file(&output_dir.join("mod.rs"), &content.to_string())
                 .unwrap();
         }
-
-        codegen
-            .copy_file(
-                &codegen
-                    .repo_root
-                    .join("crates/codegen/syntax_templates/src/rust/cst_visitor.rs"),
-                &output_dir.join("cst_visitor.rs"),
-            )
-            .unwrap();
 
         codegen
             .copy_file(

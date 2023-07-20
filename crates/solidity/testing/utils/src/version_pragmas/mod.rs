@@ -1,16 +1,15 @@
 #[cfg(test)]
 mod tests;
 
-use std::{rc::Rc, str::FromStr};
+use std::str::FromStr;
 
-use anyhow::{bail, ensure, Context, Error, Result};
+use anyhow::{bail, ensure, Context, Result};
 use semver::{Comparator, Op, Version};
 use slang_solidity::{
     language::Language,
     syntax::{
-        nodes::{Node, RuleKind, RuleNode, TextRange, TokenKind},
+        nodes::{Node, RuleKind, TokenKind},
         parser::ProductionKind,
-        visitors::{Visitable, Visitor, VisitorEntryResponse},
     },
 };
 
@@ -22,120 +21,100 @@ pub fn extract_version_pragmas(
 ) -> Result<Vec<VersionPragma>> {
     let language = &Language::new(latest_version.to_owned())?;
     let output = language.parse(ProductionKind::SourceUnit, source)?;
-    let parse_tree = output.parse_tree();
 
-    let mut collector = PragmaCollector { pragmas: vec![] };
-    parse_tree.accept_visitor(&mut collector)?;
-    return Ok(collector.pragmas);
-}
-
-struct PragmaCollector {
-    pragmas: Vec<VersionPragma>,
-}
-
-impl Visitor<Error> for PragmaCollector {
-    fn enter_rule(
-        &mut self,
-        node: &Rc<RuleNode>,
-        _path: &Vec<Rc<RuleNode>>,
-        range: &TextRange,
-    ) -> Result<VisitorEntryResponse> {
-        if node.kind != RuleKind::VersionPragmaExpression {
-            return Ok(VisitorEntryResponse::StepIn);
-        }
-
-        let pragma = self
-            .extract_pragma(&Node::Rule(node.to_owned()))
-            .with_context(|| {
+    let mut cursor = output.parse_tree().cursor();
+    let mut pragmas = vec![];
+    while let Some(rule_node) = cursor.find_rule_with_kind(&[RuleKind::VersionPragmaExpression]) {
+        pragmas.push(
+            extract_pragma(&Node::Rule(rule_node.clone())).with_context(|| {
                 format!(
                     "Failed to extract pragma at {range:?}: '{value}'",
-                    value = node.extract_non_trivia()
+                    range = cursor.text_range(),
+                    value = rule_node.extract_non_trivia()
                 )
-            })?;
-
-        self.pragmas.push(pragma);
-
-        return Ok(VisitorEntryResponse::StepOver);
+            })?,
+        );
+        cursor.go_to_next_non_descendent();
     }
+
+    return Ok(pragmas);
 }
 
-impl PragmaCollector {
-    fn extract_pragma(&self, expression_node: &Node) -> Result<VersionPragma> {
-        let expression_rule = match expression_node {
+fn extract_pragma(expression_node: &Node) -> Result<VersionPragma> {
+    let expression_rule = match expression_node {
+        Node::Rule(rule) => rule,
+        _ => bail!("Expected rule: {expression_node:?}"),
+    };
+
+    ensure!(
+        expression_rule.kind == RuleKind::VersionPragmaExpression,
+        "Expected VersionPragmaExpression: {expression_rule:?}",
+    );
+
+    let inner_expression = match &expression_rule.children[..] {
+        [child] => match child {
             Node::Rule(rule) => rule,
-            _ => bail!("Expected rule: {expression_node:?}"),
-        };
+            _ => bail!("Expected rule: {child:?}"),
+        },
+        _ => unreachable!("Expected single child: {expression_rule:?}"),
+    };
 
-        ensure!(
-            expression_rule.kind == RuleKind::VersionPragmaExpression,
-            "Expected VersionPragmaExpression: {expression_rule:?}",
-        );
+    let inner_children: Vec<_> = inner_expression
+        .children
+        .iter()
+        .filter(|child| !child.is_trivia())
+        .collect();
 
-        let inner_expression = match &expression_rule.children[..] {
-            [child] => match child {
-                Node::Rule(rule) => rule,
-                _ => bail!("Expected rule: {child:?}"),
-            },
-            _ => unreachable!("Expected single child: {expression_rule:?}"),
-        };
+    match inner_expression.kind {
+        RuleKind::VersionPragmaBinaryExpression => match &inner_children[..] {
+            [left, operator, right] => {
+                let operator_kind = match operator {
+                    Node::Token(token) => token.kind,
+                    _ => bail!("Expected rule: {operator:?}"),
+                };
 
-        let inner_children: Vec<_> = inner_expression
-            .children
-            .iter()
-            .filter(|child| !child.is_trivia())
-            .collect();
+                match operator_kind {
+                    TokenKind::BarBar => {
+                        let left = extract_pragma(left)?;
+                        let right = extract_pragma(right)?;
 
-        match inner_expression.kind {
-            RuleKind::VersionPragmaBinaryExpression => match &inner_children[..] {
-                [left, operator, right] => {
-                    let operator_kind = match operator {
-                        Node::Token(token) => token.kind,
-                        _ => bail!("Expected rule: {operator:?}"),
-                    };
+                        return Ok(VersionPragma::or(left, right));
+                    }
+                    TokenKind::Minus => {
+                        let mut left = extract_pragma(left)?.comparator()?;
+                        let mut right = extract_pragma(right)?.comparator()?;
 
-                    match operator_kind {
-                        TokenKind::BarBar => {
-                            let left = self.extract_pragma(left)?;
-                            let right = self.extract_pragma(right)?;
+                        // Simulate solc bug:
+                        // https://github.com/ethereum/solidity/issues/13920
+                        left.op = Op::GreaterEq;
+                        right.op = Op::LessEq;
 
-                            return Ok(VersionPragma::or(left, right));
-                        }
-                        TokenKind::Minus => {
-                            let mut left = self.extract_pragma(left)?.comparator()?;
-                            let mut right = self.extract_pragma(right)?.comparator()?;
+                        return Ok(VersionPragma::and(
+                            VersionPragma::single(left),
+                            VersionPragma::single(right),
+                        ));
+                    }
 
-                            // Simulate solc bug:
-                            // https://github.com/ethereum/solidity/issues/13920
-                            left.op = Op::GreaterEq;
-                            right.op = Op::LessEq;
-
-                            return Ok(VersionPragma::and(
-                                VersionPragma::single(left),
-                                VersionPragma::single(right),
-                            ));
-                        }
-
-                        _ => bail!("Unexpected operator: {operator:?}"),
-                    };
-                }
-
-                _ => bail!("Expected 3 children: {inner_expression:?}"),
-            },
-            RuleKind::VersionPragmaUnaryExpression => {
-                let value = inner_expression.extract_non_trivia();
-                let comparator = Comparator::from_str(&value)?;
-
-                return Ok(VersionPragma::single(comparator));
+                    _ => bail!("Unexpected operator: {operator:?}"),
+                };
             }
-            RuleKind::VersionPragmaSpecifier => {
-                let specifier = inner_expression.extract_non_trivia();
-                let comparator = Comparator::from_str(&format!("={specifier}"))?;
 
-                return Ok(VersionPragma::single(comparator));
-            }
-            _ => bail!("Unexpected inner expression: {inner_expression:?}"),
-        };
-    }
+            _ => bail!("Expected 3 children: {inner_expression:?}"),
+        },
+        RuleKind::VersionPragmaUnaryExpression => {
+            let value = inner_expression.extract_non_trivia();
+            let comparator = Comparator::from_str(&value)?;
+
+            return Ok(VersionPragma::single(comparator));
+        }
+        RuleKind::VersionPragmaSpecifier => {
+            let specifier = inner_expression.extract_non_trivia();
+            let comparator = Comparator::from_str(&format!("={specifier}"))?;
+
+            return Ok(VersionPragma::single(comparator));
+        }
+        _ => bail!("Unexpected inner expression: {inner_expression:?}"),
+    };
 }
 
 #[derive(Debug)]

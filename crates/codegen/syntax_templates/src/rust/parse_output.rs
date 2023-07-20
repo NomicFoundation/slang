@@ -24,13 +24,13 @@ impl ParseOutput {
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct ParseError {
-    pub(crate) range: TextRange,
+    pub(crate) text_range: TextRange,
     pub(crate) tokens_that_would_have_allowed_more_progress: Vec<TokenKind>,
 }
 
 impl ParseError {
-    pub fn range(&self) -> &TextRange {
-        return &self.range;
+    pub fn text_range(&self) -> &TextRange {
+        return &self.text_range;
     }
 
     pub fn tokens_that_would_have_allowed_more_progress(&self) -> Vec<String> {
