@@ -62,12 +62,6 @@ jobs:
         with:
           entrypoint: "scripts/cargo/test.sh"
 
-      - name: "Run linters"
-        if: "${{ (success() || failure()) && steps.installDependencies.outcome == 'success' }}"
-        uses: "./.devcontainer"
-        with:
-          entrypoint: "scripts/lint/all.sh"
-
       - name: "NPM build"
         if: "${{ (success() || failure()) && steps.installDependencies.outcome == 'success' }}"
         uses: "./.devcontainer"
@@ -85,6 +79,12 @@ jobs:
         uses: "./.devcontainer"
         with:
           entrypoint: "scripts/mkdocs/build.sh"
+
+      - name: "Run linters"
+        if: "${{ (success() || failure()) && steps.installDependencies.outcome == 'success' }}"
+        uses: "./.devcontainer"
+        with:
+          entrypoint: "scripts/lint/all.sh"
 
       #
       # Update cache files:

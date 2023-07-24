@@ -8,7 +8,7 @@ publish = false
 members = [
     "crates/codegen/ebnf",
     "crates/codegen/syntax",
-    "crates/codegen/syntax_templates",
+    "crates/codegen/legacy_syntax_templates",
     "crates/codegen/schema",
     "crates/codegen/spec",
     "crates/codegen/testing",

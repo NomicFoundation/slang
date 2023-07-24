@@ -1,5 +1,4 @@
-/*
- * __SLANG_PUBLIC_API_SYNC__ (please keep in sync across all other instances)
- */
+import * as generated from "../generated";
 
-export { Language } from "../generated";
+export const Language: typeof generated.legacy.Language;
+export type Language = generated.legacy.Language;

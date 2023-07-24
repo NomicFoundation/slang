@@ -239,26 +239,6 @@ if (!nativeBinding) {
   throw new Error(`Failed to load native binding`);
 }
 
-const {
-  NodeType,
-  RuleNode,
-  TokenNode,
-  Cursor,
-  TokenKind,
-  RuleKind,
-  ProductionKind,
-  Language,
-  ParseOutput,
-  ParseError,
-} = nativeBinding;
+const { legacy } = nativeBinding;
 
-module.exports.NodeType = NodeType;
-module.exports.RuleNode = RuleNode;
-module.exports.TokenNode = TokenNode;
-module.exports.Cursor = Cursor;
-module.exports.TokenKind = TokenKind;
-module.exports.RuleKind = RuleKind;
-module.exports.ProductionKind = ProductionKind;
-module.exports.Language = Language;
-module.exports.ParseOutput = ParseOutput;
-module.exports.ParseError = ParseError;
+module.exports.legacy = legacy;
