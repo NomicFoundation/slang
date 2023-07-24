@@ -9,6 +9,7 @@
     "codegen",
     "devcontainer",
     "doxygen",
+    "ebnf",
     "inheritdoc",
     "ipfs",
     "mkdocs",

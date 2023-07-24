@@ -50,7 +50,8 @@
   kind: "Scanner"
   unversioned:
     sequence:
-      - terminal: "/*"
+      - terminal: "/"
+      - terminal: "*"
       - zeroOrMore:
           choice:
             - not:
@@ -60,7 +61,8 @@
                   terminal: "*"
                 notFollowedBy:
                   terminal: "/"
-      - terminal: "*/"
+      - terminal: "*"
+      - terminal: "/"
 
 - name: "SingleLineComment"
   kind: "Scanner"

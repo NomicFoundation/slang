@@ -92,19 +92,26 @@ impl Snippets {
     fn get_snippet(&self, production: &ProductionRef, version: &Version) -> Option<String> {
         let mut snippet = MarkdownWriter::new();
 
-        // https://pygments.org/languages/
-        let language = "ebnf";
-        // used to select code blocks via JS during runtime
-        let class = "slang-ebnf";
-        // used for navigation (generarating URL hashes)
-        let id = if matches!(production.definition, ProductionDefinition::Scanner { .. }) {
-            production.name.to_screaming_snake_case()
-        } else {
-            production.name.to_owned()
-        };
+        let outputs = &EbnfSerializer::serialize_version(&self.language, production, version)?;
 
-        let contents = &EbnfSerializer::serialize_version(&self.language, production, version)?;
-        snippet.write_code_block(language, class, &id, contents);
+        for (i, (name, ebnf)) in outputs.iter().enumerate() {
+            // https://pygments.org/languages/
+            let language = "ebnf";
+            // used to select code blocks via JS during runtime
+            let class = "slang-ebnf";
+            // used for navigation (generarating URL hashes)
+            let id = if matches!(production.definition, ProductionDefinition::Scanner { .. }) {
+                name.to_screaming_snake_case()
+            } else {
+                name.to_owned()
+            };
+
+            if i > 0 {
+                snippet.write_newline();
+            }
+
+            snippet.write_code_block(language, class, &id, ebnf);
+        }
 
         return Some(snippet.to_string());
     }
