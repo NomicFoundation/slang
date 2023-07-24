@@ -8,11 +8,11 @@ fn main() -> Result<()> {
     return CodegenContext::with_context(|codegen| {
         let language = LanguageDefinition::load_solidity()?;
 
-        let output_dir = codegen
+        let src_dir = codegen
             .repo_root
-            .join("crates/solidity/outputs/npm/crate/src/generated");
+            .join("crates/solidity/outputs/npm/crate/src");
 
-        language.generate_typescript_lib_sources(codegen, &output_dir);
+        language.generate_legacy_napi_lib_sources(codegen, &src_dir.join("legacy/generated"));
 
         return Ok(());
     });

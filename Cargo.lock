@@ -269,6 +269,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "codegen_legacy_syntax_templates"
+version = "0.8.0"
+dependencies = [
+ "ariadne",
+ "napi",
+ "napi-build",
+ "napi-derive",
+ "semver",
+ "serde",
+ "strum",
+ "strum_macros",
+]
+
+[[package]]
 name = "codegen_schema"
 version = "0.8.0"
 dependencies = [
@@ -309,20 +323,6 @@ dependencies = [
  "quote",
  "semver",
  "typed-arena",
-]
-
-[[package]]
-name = "codegen_syntax_templates"
-version = "0.8.0"
-dependencies = [
- "ariadne",
- "napi",
- "napi-build",
- "napi-derive",
- "semver",
- "serde",
- "strum",
- "strum_macros",
 ]
 
 [[package]]

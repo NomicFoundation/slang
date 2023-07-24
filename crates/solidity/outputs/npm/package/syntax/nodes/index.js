@@ -1,14 +1,10 @@
-/*
- * __SLANG_PUBLIC_API_SYNC__ (please keep in sync across all other instances)
- */
-
 "use strict";
 
 const generated = require("../../generated");
 
-module.exports.Cursor = generated.Cursor;
-module.exports.NodeType = generated.NodeType;
-module.exports.RuleKind = generated.RuleKind;
-module.exports.RuleNode = generated.RuleNode;
-module.exports.TokenKind = generated.TokenKind;
-module.exports.TokenNode = generated.TokenNode;
+module.exports.Cursor = generated.legacy.Cursor;
+module.exports.NodeType = generated.legacy.NodeType;
+module.exports.RuleKind = generated.legacy.RuleKind;
+module.exports.RuleNode = generated.legacy.RuleNode;
+module.exports.TokenKind = generated.legacy.TokenKind;
+module.exports.TokenNode = generated.legacy.TokenNode;
