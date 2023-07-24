@@ -7,7 +7,7 @@ use anyhow::Result;
 use codegen_schema::types::LanguageDefinition;
 use rayon::prelude::{IntoParallelRefIterator, ParallelIterator};
 use semver::Version;
-use slang_solidity::{language::Language, syntax::parser::ProductionKind};
+use slang_solidity::{language::Language, syntax::nodes::ProductionKind};
 use solidity_language::SolidityLanguageExtensions;
 use solidity_testing_utils::version_pragmas::extract_version_pragmas;
 

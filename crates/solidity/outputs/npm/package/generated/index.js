@@ -239,6 +239,7 @@ if (!nativeBinding) {
   throw new Error(`Failed to load native binding`);
 }
 
-const { legacy } = nativeBinding;
+const { legacy, syntax$nodes } = nativeBinding;
 
 module.exports.legacy = legacy;
+module.exports.syntax$nodes = syntax$nodes;

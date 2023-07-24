@@ -1,6 +1,8 @@
 use std::collections::BTreeSet;
 
-use super::{cst, kinds::TokenKind, parse_error::render_error_report, text_index::TextRange};
+use super::{cst, parse_error::render_error_report, text_index::TextRange};
+
+use crate::syntax::nodes::TokenKind;
 
 #[derive(Debug, PartialEq)]
 pub struct ParseOutput {

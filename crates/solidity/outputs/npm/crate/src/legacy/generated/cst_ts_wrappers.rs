@@ -3,7 +3,6 @@
 use super::{
     cst::{Node as RustNode, RuleNode as RustRuleNode, TokenNode as RustTokenNode},
     cursor_ts_wrappers::Cursor,
-    kinds::*,
     text_index::{TextIndex as RustTextIndex, TextRange as RustTextRange},
 };
 
@@ -12,6 +11,8 @@ use std::rc::Rc;
 use napi::bindgen_prelude::*;
 use napi::JsObject;
 use napi::NapiValue;
+
+use crate::syntax::nodes::{RuleKind, TokenKind};
 
 #[napi(object, namespace = "legacy")]
 #[derive(Copy, Clone)]

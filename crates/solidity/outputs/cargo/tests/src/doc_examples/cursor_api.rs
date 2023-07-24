@@ -3,10 +3,7 @@ use semver::Version;
 
 use slang_solidity::{
     language::Language,
-    syntax::{
-        nodes::{RuleKind, TokenKind},
-        parser::ProductionKind,
-    },
+    syntax::nodes::{ProductionKind, RuleKind, TokenKind},
 };
 
 #[test]

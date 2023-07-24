@@ -256,7 +256,7 @@ fn precedence_expression_to_parser_code(
     let mut binding_power = 1u8;
 
     for expression in operator_expressions.iter() {
-        let rule_kind = code.add_rule_kind(expression.name.clone());
+        let rule_kind = format_ident!("{}", expression.name.clone());
         let operator_code = expression.operator.to_parser_code(code, false);
 
         match expression.model {

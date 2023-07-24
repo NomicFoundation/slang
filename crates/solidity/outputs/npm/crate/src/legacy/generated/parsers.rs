@@ -1,11 +1,12 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 use super::cst;
-use super::kinds::*;
 use super::language::Language;
 use super::parser_helpers::*;
 use super::parser_result::*;
 use super::stream::*;
+
+use crate::syntax::nodes::{RuleKind, TokenKind};
 
 impl Language {
     fn parse_token_with_trivia<F>(

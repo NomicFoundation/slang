@@ -1,11 +1,12 @@
 use super::{
     cst_ts_wrappers::{TextIndex, TextRange, ToJS},
     cursor::Cursor as RustCursor,
-    kinds::*,
 };
 
 use napi::bindgen_prelude::*;
 use napi::JsObject;
+
+use crate::syntax::nodes::{RuleKind, TokenKind};
 
 #[napi(namespace = "legacy")]
 pub struct Cursor(Box<RustCursor>);

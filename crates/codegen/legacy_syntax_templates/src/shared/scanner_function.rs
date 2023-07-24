@@ -1,9 +1,10 @@
 use super::{
     cst,
-    kinds::*,
     parse_output::{ParseError, ParseOutput},
     stream::Stream,
 };
+
+use crate::syntax::nodes::TokenKind;
 
 // Return type of the function has to be a type parameter of the trait
 pub trait ScannerFunction<L, R>

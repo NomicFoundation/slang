@@ -5,9 +5,8 @@ use semver::Version;
 
 use slang_solidity::{
     language::Language,
-    syntax::{
-        nodes::{Cursor, Node, RuleKind, RuleNode, TokenKind, Visitor, VisitorEntryResponse},
-        parser::ProductionKind,
+    syntax::nodes::{
+        Cursor, Node, ProductionKind, RuleKind, RuleNode, TokenKind, Visitor, VisitorEntryResponse,
     },
 };
 

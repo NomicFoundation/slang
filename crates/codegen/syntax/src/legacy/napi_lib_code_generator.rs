@@ -32,7 +32,6 @@ impl CodeGenerator {
                pub mod cst_ts_wrappers;
                pub mod cursor;
                pub mod cursor_ts_wrappers;
-               pub mod kinds;
                pub mod language;
                pub mod parse_error;
                pub mod parse_output;
@@ -160,60 +159,6 @@ impl CodeGenerator {
 
             codegen
                 .write_file(&output_dir.join("language.rs"), &content)
-                .unwrap();
-        }
-
-        // Do the kinds last, because the code generation steps above may have added new kinds
-        {
-            let content = {
-                let token_kinds = self.token_kinds();
-                let rule_kinds = self.rule_kinds();
-                let production_kinds = self.production_kinds();
-                quote! {
-                    use serde::Serialize;
-                    use napi::bindgen_prelude::*;
-                    use napi_derive::napi;
-
-                    #[napi(string_enum, namespace = "legacy")]
-                    #[derive(
-                        Debug,
-                        PartialEq,
-                        Eq,
-                        Serialize,
-                        strum_macros::EnumString,
-                        strum_macros::AsRefStr,
-                        strum_macros::Display,
-                    )]
-                    #token_kinds
-
-                    #[napi(string_enum, namespace = "legacy")]
-                    #[derive(
-                        Debug,
-                        PartialEq,
-                        Eq,
-                        Serialize,
-                        strum_macros::EnumString,
-                        strum_macros::AsRefStr,
-                        strum_macros::Display,
-                    )]
-                    #rule_kinds
-
-                    #[napi(string_enum, namespace = "legacy")]
-                    #[derive(
-                        Debug,
-                        PartialEq,
-                        Eq,
-                        Serialize,
-                        strum_macros::EnumString,
-                        strum_macros::AsRefStr,
-                        strum_macros::Display,
-                    )]
-                    #production_kinds
-                }
-            };
-
-            codegen
-                .write_file(&output_dir.join("kinds.rs"), &content.to_string())
                 .unwrap();
         }
     }

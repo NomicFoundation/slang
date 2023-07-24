@@ -2,7 +2,6 @@
 
 use super::{
     cst::{Node, RuleNode as RustRuleNode, TokenNode as RustTokenNode},
-    kinds::*,
     text_index::{TextIndex as RustTextIndex, TextRange as RustTextRange},
 };
 

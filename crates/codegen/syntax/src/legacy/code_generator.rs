@@ -148,10 +148,7 @@ pub struct CodeGenerator {
     pub language: LanguageDefinitionRef,
     pub first_version: Version,
 
-    pub token_kinds: BTreeMap<String, Option<String>>,
     pub scanners: BTreeMap<String, VersionedFunctionBody>,
-
-    pub rule_kinds: BTreeSet<String>,
     pub parsers: BTreeMap<String, VersionedFunctionBody>,
 
     pub errors: Vec<String>,
@@ -163,21 +160,11 @@ impl CodeGenerator {
             language: language.clone(),
             first_version: language.versions.first().unwrap().clone(),
 
-            token_kinds: Default::default(),
             scanners: Default::default(),
-
-            rule_kinds: Default::default(),
             parsers: Default::default(),
 
             errors: Default::default(),
         }
-    }
-
-    pub fn add_token_kind(&mut self, name: String) -> Ident {
-        let name = name;
-        let ident = format_ident!("{name}");
-        self.token_kinds.insert(name, None);
-        ident
     }
 
     pub fn add_scanner(
@@ -190,13 +177,6 @@ impl CodeGenerator {
             .entry(name)
             .or_insert_with(|| VersionedFunctionBody::new(&self.first_version))
             .insert(version, definition);
-    }
-
-    pub fn add_rule_kind(&mut self, name: String) -> Ident {
-        let name = name;
-        let ident = format_ident!("{name}");
-        self.rule_kinds.insert(name);
-        ident
     }
 
     pub fn add_parser(
@@ -384,46 +364,6 @@ impl CodeGenerator {
         quote! { #(#invocations),* }
     }
 
-    pub fn token_kinds(&self) -> TokenStream {
-        let kinds = self
-            .token_kinds
-            .iter()
-            .map(|(name, _)| format_ident!("{name}"));
-        quote! {
-            pub enum TokenKind {
-                SKIPPED,
-                #(#kinds),*
-            }
-        }
-    }
-
-    pub fn rule_kinds(&self) -> TokenStream {
-        let kinds = self.rule_kinds.iter().map(|name| format_ident!("{name}"));
-        quote! {
-            pub enum RuleKind {
-                #(#kinds),*
-            }
-        }
-    }
-
-    pub fn production_kinds(&self) -> TokenStream {
-        let mut kinds: Vec<_> = self
-            .language
-            .productions
-            .values()
-            .filter(|production| !production.inlined)
-            .map(|production| format_ident!("{}", production.name))
-            .collect();
-
-        kinds.sort();
-
-        quote! {
-            pub enum ProductionKind {
-                #(#kinds),*
-            }
-        }
-    }
-
     pub fn write_common_sources(&self, codegen: &mut CodegenContext, output_dir: &PathBuf) {
         // Rebuild if input files are added/removed
         codegen.track_input_dir(
@@ -556,11 +496,12 @@ impl CodeGenerator {
             let content = format!(
                 "
                 use super::cst;
-                use super::kinds::*;
                 use super::language::Language;
                 use super::parser_helpers::*;
                 use super::parser_result::*;
                 use super::stream::*;
+                
+                use crate::syntax::nodes::{{RuleKind, TokenKind}};
 
                 impl Language {{
                     

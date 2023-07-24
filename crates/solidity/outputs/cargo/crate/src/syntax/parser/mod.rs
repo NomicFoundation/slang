@@ -1,4 +1,1 @@
-pub use crate::legacy::generated::{
-    kinds::ProductionKind,
-    parse_output::{ParseError, ParseOutput},
-};
+pub use crate::legacy::generated::parse_output::{ParseError, ParseOutput};

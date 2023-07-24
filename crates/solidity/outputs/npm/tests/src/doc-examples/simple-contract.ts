@@ -1,7 +1,6 @@
 import test from "ava";
 import { Language } from "@nomicfoundation/slang/language";
-import { RuleKind, RuleNode, TokenKind, TokenNode } from "@nomicfoundation/slang/syntax/nodes";
-import { ProductionKind } from "@nomicfoundation/slang/syntax/parser";
+import { ProductionKind, RuleKind, RuleNode, TokenKind, TokenNode } from "@nomicfoundation/slang/syntax/nodes";
 
 test("simple contract", (t) => {
   const language = new Language("0.8.0");
