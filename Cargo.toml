@@ -58,6 +58,7 @@ solidity_language = { path = "crates/solidity/inputs/language" }
 solidity_testing_utils = { path = "crates/solidity/testing/utils" }
 strum = { version = "0.24" }
 strum_macros = { version = "0.24" }
+tera = { version = "1.19.0" }
 thiserror = { version = "1.0.40" }
 typed-arena = { version = "2.0.2" }
 url = { version = "2.3.1" }

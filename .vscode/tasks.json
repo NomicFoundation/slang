@@ -2,6 +2,10 @@
   "version": "2.0.0",
   "tasks": [
     {
+      "label": "Run Rust Analyzer Checks",
+      "command": "${command:rust-analyzer.runFlycheck}"
+    },
+    {
       "label": "Validate Solidity Definition",
       "type": "shell",
       "command": "scripts/solidity/validate-definition.sh",

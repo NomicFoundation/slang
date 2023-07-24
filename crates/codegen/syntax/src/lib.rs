@@ -1,5 +1,6 @@
 mod legacy;
 mod nodes;
+mod templates;
 
 use std::path::PathBuf;
 
@@ -7,7 +8,10 @@ use anyhow::Result;
 use codegen_schema::types::LanguageDefinitionRef;
 use codegen_utils::context::CodegenContext;
 
-use crate::{legacy::language::PrivateSyntaxGeneratorExtensions, nodes::generate_syntax_nodes_mod};
+use crate::{
+    legacy::language::PrivateSyntaxGeneratorExtensions, nodes::generate_syntax_nodes_mod,
+    templates::compile_templates,
+};
 
 pub struct SyntaxGeneratorPaths {
     pub src_dir: PathBuf,
@@ -42,7 +46,14 @@ impl SyntaxGeneratorExtensions for LanguageDefinitionRef {
         codegen: &mut CodegenContext,
         paths: &SyntaxGeneratorPaths,
     ) -> Result<()> {
-        generate_syntax_nodes_mod(self, codegen, &paths.src_dir.join(paths.syntax_nodes_mod))?;
+        let tera = compile_templates(codegen)?;
+
+        generate_syntax_nodes_mod(
+            self,
+            &tera,
+            codegen,
+            &paths.src_dir.join(paths.syntax_nodes_mod),
+        )?;
 
         return Ok(());
     }
