@@ -3,7 +3,7 @@ mod test_nodes;
 use std::{self, cmp::max, fmt::Write};
 
 use anyhow::Result;
-use slang_solidity::syntax::nodes::{Node, TextRangeExtensions};
+use slang_solidity::{cst::Node, text_index::TextRangeExtensions};
 
 use crate::cst_snapshots::test_nodes::{TestNode, TestNodeKind};
 

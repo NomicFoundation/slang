@@ -13,8 +13,6 @@ mod ContractDefinition;
 #[allow(non_snake_case)]
 mod ContractMembersList;
 #[allow(non_snake_case)]
-mod DecimalLiteral;
-#[allow(non_snake_case)]
 mod DeleteStatement;
 #[allow(non_snake_case)]
 mod EnumDefinition;
@@ -25,25 +23,15 @@ mod Expression;
 #[allow(non_snake_case)]
 mod FallbackFunctionDefinition;
 #[allow(non_snake_case)]
-mod FixedBytesType;
-#[allow(non_snake_case)]
 mod FunctionDefinition;
 #[allow(non_snake_case)]
-mod HexLiteral;
-#[allow(non_snake_case)]
-mod HexStringLiteral;
-#[allow(non_snake_case)]
 mod HexStringLiteralsList;
-#[allow(non_snake_case)]
-mod Identifier;
 #[allow(non_snake_case)]
 mod ImportDirective;
 #[allow(non_snake_case)]
 mod InterfaceDefinition;
 #[allow(non_snake_case)]
 mod MappingType;
-#[allow(non_snake_case)]
-mod MultilineComment;
 #[allow(non_snake_case)]
 mod NewExpression;
 #[allow(non_snake_case)]
@@ -52,10 +40,6 @@ mod NumericExpression;
 mod PragmaDirective;
 #[allow(non_snake_case)]
 mod ReceiveFunctionDefinition;
-#[allow(non_snake_case)]
-mod SignedIntegerType;
-#[allow(non_snake_case)]
-mod SingleLineComment;
 #[allow(non_snake_case)]
 mod SourceUnit;
 #[allow(non_snake_case)]
@@ -66,8 +50,6 @@ mod TupleDeconstructionStatement;
 mod TupleExpression;
 #[allow(non_snake_case)]
 mod UnicodeStringLiteralsList;
-#[allow(non_snake_case)]
-mod UnsignedIntegerType;
 #[allow(non_snake_case)]
 mod UserDefinedValueTypeDefinition;
 #[allow(non_snake_case)]

@@ -1,5 +1,5 @@
 import { Language } from "@nomicfoundation/slang/language";
-import { ProductionKind } from "@nomicfoundation/slang/syntax/nodes";
+import { ProductionKind } from "@nomicfoundation/slang/kinds";
 
 test("render error reports", () => {
   const source = "int256 constant";
@@ -29,12 +29,4 @@ test("invalid semantic version", () => {
 
 test("unsupported language version", () => {
   expect(() => new Language("0.0.0")).toThrowError("Unsupported Solidity language version '0.0.0'.");
-});
-
-test("invalid production version", () => {
-  const language = new Language("0.4.11");
-
-  expect(() => language.parse(ProductionKind.ConstructorDefinition, "")).toThrowError(
-    "Production 'ConstructorDefinition' is not valid in this version of Solidity.",
-  );
 });

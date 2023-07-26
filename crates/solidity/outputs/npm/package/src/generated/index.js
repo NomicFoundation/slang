@@ -241,7 +241,12 @@ if (!nativeBinding) {
   throw new Error(`Failed to load native binding`);
 }
 
-const { legacy, syntax$nodes } = nativeBinding;
+const { kinds, language, cst, cursor, parse_error, parse_output, text_index } = nativeBinding;
 
-module.exports.legacy = legacy;
-module.exports.syntax$nodes = syntax$nodes;
+module.exports.kinds = kinds;
+module.exports.language = language;
+module.exports.cst = cst;
+module.exports.cursor = cursor;
+module.exports.parse_error = parse_error;
+module.exports.parse_output = parse_output;
+module.exports.text_index = text_index;

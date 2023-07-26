@@ -5,8 +5,13 @@ Source: >
 
 Errors: # 1 total
   - >
-    InvalidProductionVersion(
-        ErrorDefinition,
-    )
+    Error: Expected end of file.
+       ╭─[crates/solidity/testing/snapshots/cst_output/ErrorDefinition/top_level/input.sol:1:1]
+       │
+     1 │ error MyError();
+       │ ────────┬───────  
+       │         ╰───────── Error occurred here.
+    ───╯
 
-Tree: null
+Tree:
+  - SKIPPED (Token): "error MyError();" # 0..16

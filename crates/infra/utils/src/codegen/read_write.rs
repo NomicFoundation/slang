@@ -1,7 +1,11 @@
-use std::path::{Path, PathBuf};
+use std::{
+    collections::HashMap,
+    path::{Path, PathBuf},
+};
 
 use anyhow::{bail, Context, Result};
 use cargo_emit::rerun_if_changed;
+use inflector::Inflector;
 use serde::Serialize;
 use tera::Tera;
 
@@ -26,6 +30,16 @@ impl CodegenReadWrite {
         let tera = {
             let templates_glob = input_dir.join("**/*.tera");
             let mut tera = Tera::new(templates_glob.unwrap_str())?;
+
+            fn snake_case(
+                value: &tera::Value,
+                _params: &HashMap<String, tera::Value>,
+            ) -> Result<tera::Value, tera::Error> {
+                let value = value.as_str().unwrap();
+                let result = value.to_snake_case();
+                return Ok(tera::Value::String(result));
+            }
+            tera.register_filter("snake_case", snake_case);
 
             tera.autoescape_on(vec![]); // disable autoescaping
 

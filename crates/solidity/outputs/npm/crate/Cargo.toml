@@ -19,7 +19,6 @@ slang_napi_interfaces = [
 anyhow = { workspace = true }
 infra_utils = { workspace = true }
 napi-build = { workspace = true }
-solidity_npm_build = { workspace = true }
 
 [dependencies]
 ariadne = { workspace = true }

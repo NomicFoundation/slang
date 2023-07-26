@@ -9,6 +9,6 @@ Tree:
   - PragmaDirective (Rule): # 0..20 "pragma abicoder foo;"
       - PragmaKeyword (Token): "pragma" # 0..6
       - ABICoderPragma (Rule): # 6..19 " abicoder foo"
-          - AbicoderKeyword (Token): "abicoder" # 7..15
+          - ABICoderKeyword (Token): "abicoder" # 7..15
           - Identifier (Token): "foo" # 16..19
       - Semicolon (Token): ";" # 19..20

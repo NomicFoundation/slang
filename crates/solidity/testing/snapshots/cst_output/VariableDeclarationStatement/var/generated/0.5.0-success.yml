@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ var z = 0;                                                                       │ 0..10
+
+Errors: []
+
+Tree:
+  - VariableDeclarationStatement (Rule): # 0..10 "var z = 0;"
+      - VariableDeclaration (Rule): # 0..5 "var z"
+          - TypeName (Rule): # 0..3 "var"
+              - IdentifierPath (Rule): # 0..3 "var"
+                  - Identifier (Token): "var" # 0..3
+          - Identifier (Token): "z" # 4..5
+      - Equal (Token): "=" # 6..7
+      - Expression (Rule): # 7..9 " 0"
+          - NumericExpression (Rule): # 7..9 " 0"
+              - DecimalLiteral (Token): "0" # 8..9
+      - Semicolon (Token): ";" # 9..10

@@ -1,3 +1,2 @@
-mod legacy;
-
-pub mod syntax;
+mod generated;
+pub use generated::*;

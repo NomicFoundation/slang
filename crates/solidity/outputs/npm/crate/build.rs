@@ -2,9 +2,6 @@ use anyhow::Result;
 use infra_utils::{cargo::CargoWorkspace, commands::Command};
 
 fn main() -> Result<()> {
-    // Reference here to make sure we recompile when that changes:
-    use solidity_npm_build as _;
-
     execute_codegen_for_local_development()?;
 
     napi_build::setup();

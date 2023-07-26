@@ -5,7 +5,7 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Expected ContractKeyword or EndOfLine or ImportKeyword or InterfaceKeyword or LibraryKeyword or MultilineComment or PragmaKeyword or SingleLineComment or Whitespace.
+    Error: Expected EndOfLine or MultilineComment or SingleLineComment or Whitespace.
        ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/top_level_function/input.sol:1:1]
        │
      1 │ function foo() { }

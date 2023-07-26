@@ -1,0 +1,26 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract Sample {                                                                │ 0..17
+  2  │   fallback() {                                                                   │ 18..32
+  3  │   }                                                                              │ 33..36
+  4  │ }                                                                                │ 37..38
+
+Errors: # 1 total
+  - >
+    Error: Expected AddressKeyword or BoolKeyword or ByteKeyword or CloseBrace or ConstructorKeyword or EnumKeyword or EventKeyword or FixedBytesType or FunctionKeyword or Identifier or MappingKeyword or ModifierKeyword or PayableKeyword or SignedFixedType or SignedIntegerType or StringKeyword or StructKeyword or UnsignedFixedType or UnsignedIntegerType or UsingKeyword.
+       ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/member_fallback_function_definition/input.sol:2:1]
+       │
+     2 │ ╭─▶   fallback() {
+       ┆ ┆   
+     4 │ ├─▶ }
+       │ │      
+       │ ╰────── Error occurred here.
+    ───╯
+
+Tree:
+  - ContractDefinition (Rule): # 0..38 "contract Sample {\n  fallback() {\n  }\n}"
+      - ContractKeyword (Token): "contract" # 0..8
+      - Identifier (Token): "Sample" # 9..15
+      - OpenBrace (Token): "{" # 16..17
+      - SKIPPED (Token): "  fallback() {\n  }\n}" # 18..38

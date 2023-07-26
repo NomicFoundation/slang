@@ -2,14 +2,14 @@ use anyhow::Result;
 use semver::Version;
 
 use slang_solidity::{
+    kinds::{ProductionKind, RuleKind, TokenKind},
     language::Language,
-    syntax::nodes::{ProductionKind, RuleKind, TokenKind},
 };
 
 #[test]
 fn cursor_api() -> Result<()> {
     let language = Language::new(Version::parse("0.8.0")?)?;
-    let parse_output = language.parse(ProductionKind::ContractDefinition, "contract Foo {}")?;
+    let parse_output = language.parse(ProductionKind::ContractDefinition, "contract Foo {}");
 
     let mut contract_names = Vec::new();
     let mut cursor = parse_output.parse_tree().cursor();
@@ -36,7 +36,7 @@ fn cursor_api() -> Result<()> {
 #[test]
 fn cursor_api_using_spawn() -> Result<()> {
     let language = Language::new(Version::parse("0.8.0")?)?;
-    let parse_output = language.parse(ProductionKind::ContractDefinition, "contract Foo {}")?;
+    let parse_output = language.parse(ProductionKind::ContractDefinition, "contract Foo {}");
 
     let mut contract_names = Vec::new();
     let mut cursor = parse_output.parse_tree().cursor();
@@ -68,7 +68,7 @@ fn cursor_api_using_spawn() -> Result<()> {
 #[test]
 fn cursor_api_using_iter() -> Result<()> {
     let language = Language::new(Version::parse("0.8.0")?)?;
-    let parse_output = language.parse(ProductionKind::ContractDefinition, "contract Foo {}")?;
+    let parse_output = language.parse(ProductionKind::ContractDefinition, "contract Foo {}");
 
     let mut contract_names = Vec::new();
     let mut cursor = parse_output.parse_tree().cursor();

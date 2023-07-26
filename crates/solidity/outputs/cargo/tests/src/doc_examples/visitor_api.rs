@@ -4,10 +4,11 @@ use anyhow::{bail, ensure, Error, Result};
 use semver::Version;
 
 use slang_solidity::{
+    cst::{Node, RuleNode},
+    cursor::Cursor,
+    kinds::{ProductionKind, RuleKind, TokenKind},
     language::Language,
-    syntax::nodes::{
-        Cursor, Node, ProductionKind, RuleKind, RuleNode, TokenKind, Visitor, VisitorEntryResponse,
-    },
+    visitor::{Visitor, VisitorEntryResponse},
 };
 
 struct ContractCollector {
@@ -37,7 +38,7 @@ impl Visitor<Error> for ContractCollector {
 #[test]
 fn visitor_api() -> Result<()> {
     let language = Language::new(Version::parse("0.8.0")?)?;
-    let parse_output = language.parse(ProductionKind::ContractDefinition, "contract Foo {}")?;
+    let parse_output = language.parse(ProductionKind::ContractDefinition, "contract Foo {}");
 
     let mut collector = ContractCollector {
         contract_names: Vec::new(),

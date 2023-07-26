@@ -1,9 +1,10 @@
 use std::rc::Rc;
 
 use anyhow::Result;
-use slang_solidity::syntax::nodes::{
-    Cursor, Node, RuleKind, RuleNode, TextRange, TokenKind, TokenNode, Visitor,
-    VisitorEntryResponse, VisitorExitResponse,
+use slang_solidity::{
+    cst::Node, cst::RuleNode, cst::TokenNode, cursor::Cursor, kinds::RuleKind, kinds::TokenKind,
+    text_index::TextRange, visitor::Visitor, visitor::VisitorEntryResponse,
+    visitor::VisitorExitResponse,
 };
 
 #[derive(Debug)]

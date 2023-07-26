@@ -5,6 +5,10 @@
 //! 2. Errors are reported only once, instead of repeating for every crate.
 //!
 //! Call the [`SolidityLanguageExtensions::load_solidity`] method to load the precompiled language definition.
+
+mod dsl;
+pub use dsl::*;
+
 use anyhow::Result;
 use codegen_schema::types::{LanguageDefinition, LanguageDefinitionRef};
 
