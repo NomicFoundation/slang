@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ function foo() { }                                                               │ 0..18
+
+Errors: []
+
+Tree:
+  - SourceUnit (Rule): # 0..18 "function foo() { }"
+      - SourceUnitMembersList (Rule): # 0..18 "function foo() { }"
+          - FunctionDefinition (Rule): # 0..18 "function foo() { }"
+              - FunctionKeyword (Token): "function" # 0..8
+              - Identifier (Token): "foo" # 9..12
+              - ParametersDeclaration (Rule): # 12..14 "()"
+                  - OpenParen (Token): "(" # 12..13
+                  - CloseParen (Token): ")" # 13..14
+              - Block (Rule): # 14..18 " { }"
+                  - OpenBrace (Token): "{" # 15..16
+                  - CloseBrace (Token): "}" # 17..18

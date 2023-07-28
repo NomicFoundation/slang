@@ -156,7 +156,7 @@ pub enum RuleKind {
     /// ConditionalExpression = Expression «ConditionalOperator» (* Unary Operator, Postfix *);
     /// ```
     ConditionalExpression,
-    /// ## Unversioned
+    /// ## v0.7.4
     ///
     /// ```ebnf
     /// ConstantDefinition = TypeName CONSTANT_KEYWORD IDENTIFIER EQUAL Expression SEMICOLON;
@@ -246,19 +246,19 @@ pub enum RuleKind {
     /// EnumDefinition = ENUM_KEYWORD IDENTIFIER OPEN_BRACE IdentifiersList? CLOSE_BRACE;
     /// ```
     EnumDefinition,
-    /// ## Unversioned
+    /// ## v0.8.4
     ///
     /// ```ebnf
     /// ErrorDefinition = ERROR_KEYWORD IDENTIFIER OPEN_PAREN ErrorParametersList? CLOSE_PAREN SEMICOLON;
     /// ```
     ErrorDefinition,
-    /// ## Unversioned
+    /// ## v0.8.4
     ///
     /// ```ebnf
     /// ErrorParameter = TypeName IDENTIFIER?;
     /// ```
     ErrorParameter,
-    /// ## Unversioned
+    /// ## v0.8.4
     ///
     /// ```ebnf
     /// ErrorParametersList = ErrorParameter (COMMA ErrorParameter)*;

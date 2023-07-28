@@ -1,0 +1,14 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ type Foo is bool;                                                                │ 0..17
+
+Errors: []
+
+Tree:
+  - UserDefinedValueTypeDefinition (Rule): # 0..17 "type Foo is bool;"
+      - TypeKeyword (Token): "type" # 0..4
+      - Identifier (Token): "Foo" # 5..8
+      - IsKeyword (Token): "is" # 9..11
+      - BoolKeyword (Token): "bool" # 12..16
+      - Semicolon (Token): ";" # 16..17

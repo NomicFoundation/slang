@@ -68,7 +68,6 @@
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/07-keywords/do-keyword/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/07-keywords/else-keyword/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/07-keywords/enum-keyword/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/07-keywords/error-keyword/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/07-keywords/ether-keyword/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/07-keywords/event-keyword/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/07-keywords/experimental-keyword/unversioned.md"
@@ -205,10 +204,6 @@
 
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/05-enums/enum-definition/unversioned.md"
 
-### 2.6. Constants
-
---8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/06-constants/constant-definition/unversioned.md"
-
 ### 2.7. State Variables
 
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/07-state-variables/state-variable-definition/unversioned.md"
@@ -241,12 +236,6 @@
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/10-events/event-definition/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/10-events/event-parameters-list/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/10-events/event-parameter/unversioned.md"
-
-### 2.12. Errors
-
---8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/12-errors/error-definition/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/12-errors/error-parameters-list/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/12-errors/error-parameter/unversioned.md"
 
 ## 3. Types
 

@@ -1,0 +1,18 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ int constant foo = 0;                                                            │ 0..21
+
+Errors: []
+
+Tree:
+  - ConstantDefinition (Rule): # 0..21 "int constant foo = 0;"
+      - TypeName (Rule): # 0..3 "int"
+          - SignedIntegerType (Token): "int" # 0..3
+      - ConstantKeyword (Token): "constant" # 4..12
+      - Identifier (Token): "foo" # 13..16
+      - Equal (Token): "=" # 17..18
+      - Expression (Rule): # 18..20 " 0"
+          - NumericExpression (Rule): # 18..20 " 0"
+              - DecimalLiteral (Token): "0" # 19..20
+      - Semicolon (Token): ";" # 20..21

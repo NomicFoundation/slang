@@ -7,7 +7,7 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Expected AddressKeyword or BoolKeyword or ByteKeyword or CloseBrace or ConstructorKeyword or EnumKeyword or ErrorKeyword or EventKeyword or FixedBytesType or FunctionKeyword or Identifier or MappingKeyword or ModifierKeyword or PayableKeyword or SignedFixedType or SignedIntegerType or StringKeyword or StructKeyword or UnsignedFixedType or UnsignedIntegerType or UsingKeyword.
+    Error: Expected AddressKeyword or BoolKeyword or ByteKeyword or CloseBrace or ConstructorKeyword or EnumKeyword or EventKeyword or FixedBytesType or FunctionKeyword or Identifier or MappingKeyword or ModifierKeyword or PayableKeyword or SignedFixedType or SignedIntegerType or StringKeyword or StructKeyword or UnsignedFixedType or UnsignedIntegerType or UsingKeyword.
        ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/member_user_defined_value_type_definition/input.sol:2:1]
        │
      2 │ ╭─▶   type Foo is bool;

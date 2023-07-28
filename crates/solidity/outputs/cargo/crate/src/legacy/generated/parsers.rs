@@ -850,11 +850,11 @@ impl Language {
         }
     }
 
+    // (* v0.7.4 *)
     // ConstantDefinition = TypeName CONSTANT_KEYWORD IDENTIFIER EQUAL Expression SEMICOLON;
 
-    #[allow(dead_code)]
-    #[allow(unused_assignments, unused_parens)]
-    pub(crate) fn constant_definition(&self, stream: &mut Stream) -> ParserResult {
+    #[allow(dead_code, non_snake_case)]
+    fn constant_definition__0_7_4(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut running_result = ParserResult::r#match(vec![], vec![]);
             loop {
@@ -904,6 +904,24 @@ impl Language {
             running_result
         }
         .with_kind(RuleKind::ConstantDefinition)
+    }
+
+    #[allow(non_snake_case)]
+    pub(crate) fn constant_definition__sparse_dispatch(
+        &self,
+        stream: &mut Stream,
+    ) -> Option<ParserResult> {
+        if self.version_is_equal_to_or_greater_than_0_7_4 {
+            Some(self.constant_definition__0_7_4(stream))
+        } else {
+            None
+        }
+    }
+
+    #[inline]
+    pub(crate) fn constant_definition(&self, stream: &mut Stream) -> ParserResult {
+        self.constant_definition__sparse_dispatch(stream)
+            .expect("Validation should have checked that references are valid between versions")
     }
 
     // (* v0.4.22 *)
@@ -1228,7 +1246,6 @@ impl Language {
     //                  | StructDefinition
     //                  | EnumDefinition
     //                  | EventDefinition
-    //                  | ErrorDefinition
     //                  | StateVariableDefinition;
 
     #[allow(dead_code, non_snake_case)]
@@ -1267,10 +1284,6 @@ impl Language {
                     break;
                 }
                 stream.set_position(start_position);
-                if running_result.incorporate_choice_result(self.error_definition(stream)) {
-                    break;
-                }
-                stream.set_position(start_position);
                 if running_result.incorporate_choice_result(self.state_variable_definition(stream))
                 {
                     break;
@@ -1294,7 +1307,6 @@ impl Language {
     //                  | StructDefinition
     //                  | EnumDefinition
     //                  | EventDefinition
-    //                  | ErrorDefinition
     //                  | StateVariableDefinition;
 
     #[allow(dead_code, non_snake_case)]
@@ -1337,10 +1349,6 @@ impl Language {
                     break;
                 }
                 stream.set_position(start_position);
-                if running_result.incorporate_choice_result(self.error_definition(stream)) {
-                    break;
-                }
-                stream.set_position(start_position);
                 if running_result.incorporate_choice_result(self.state_variable_definition(stream))
                 {
                     break;
@@ -1365,11 +1373,83 @@ impl Language {
     //                  | StructDefinition
     //                  | EnumDefinition
     //                  | EventDefinition
-    //                  | ErrorDefinition
     //                  | StateVariableDefinition;
 
     #[allow(dead_code, non_snake_case)]
     fn contract_member__0_6_0(&self, stream: &mut Stream) -> ParserResult {
+        {
+            let mut running_result = ParserResult::no_match(vec![]);
+            let start_position = stream.position();
+            loop {
+                if running_result.incorporate_choice_result(self.using_directive(stream)) {
+                    break;
+                }
+                stream.set_position(start_position);
+                if running_result.incorporate_choice_result(self.constructor_definition(stream)) {
+                    break;
+                }
+                stream.set_position(start_position);
+                if running_result.incorporate_choice_result(self.function_definition(stream)) {
+                    break;
+                }
+                stream.set_position(start_position);
+                if running_result
+                    .incorporate_choice_result(self.fallback_function_definition(stream))
+                {
+                    break;
+                }
+                stream.set_position(start_position);
+                if running_result
+                    .incorporate_choice_result(self.receive_function_definition(stream))
+                {
+                    break;
+                }
+                stream.set_position(start_position);
+                if running_result.incorporate_choice_result(self.modifier_definition(stream)) {
+                    break;
+                }
+                stream.set_position(start_position);
+                if running_result.incorporate_choice_result(self.struct_definition(stream)) {
+                    break;
+                }
+                stream.set_position(start_position);
+                if running_result.incorporate_choice_result(self.enum_definition(stream)) {
+                    break;
+                }
+                stream.set_position(start_position);
+                if running_result.incorporate_choice_result(self.event_definition(stream)) {
+                    break;
+                }
+                stream.set_position(start_position);
+                if running_result.incorporate_choice_result(self.state_variable_definition(stream))
+                {
+                    break;
+                }
+                stream.set_position(start_position);
+                break;
+            }
+            if let ParserResult::IncompleteMatch(incomplete_match) = &running_result {
+                incomplete_match.consume_stream(stream);
+            }
+            running_result
+        }
+    }
+
+    // (* v0.8.4 *)
+    // «ContractMember» = UsingDirective
+    //                  | ConstructorDefinition
+    //                  | FunctionDefinition
+    //                  | FallbackFunctionDefinition
+    //                  | ReceiveFunctionDefinition
+    //                  | ModifierDefinition
+    //                  | StructDefinition
+    //                  | EnumDefinition
+    //                  | EventDefinition
+    //                  | ErrorDefinition
+    //                  | StateVariableDefinition;
+
+    #[allow(dead_code, non_snake_case)]
+    fn contract_member__0_8_4(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut running_result = ParserResult::no_match(vec![]);
             let start_position = stream.position();
@@ -1519,6 +1599,8 @@ impl Language {
     pub(crate) fn contract_member(&self, stream: &mut Stream) -> ParserResult {
         if self.version_is_equal_to_or_greater_than_0_8_8 {
             self.contract_member__0_8_8(stream)
+        } else if self.version_is_equal_to_or_greater_than_0_8_4 {
+            self.contract_member__0_8_4(stream)
         } else if self.version_is_equal_to_or_greater_than_0_6_0 {
             self.contract_member__0_6_0(stream)
         } else if self.version_is_equal_to_or_greater_than_0_4_22 {
@@ -2566,11 +2648,11 @@ impl Language {
         }
     }
 
+    // (* v0.8.4 *)
     // ErrorDefinition = ERROR_KEYWORD IDENTIFIER OPEN_PAREN ErrorParametersList? CLOSE_PAREN SEMICOLON;
 
-    #[allow(dead_code)]
-    #[allow(unused_assignments, unused_parens)]
-    pub(crate) fn error_definition(&self, stream: &mut Stream) -> ParserResult {
+    #[allow(dead_code, non_snake_case)]
+    fn error_definition__0_8_4(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut running_result = ParserResult::r#match(vec![], vec![]);
             loop {
@@ -2641,11 +2723,29 @@ impl Language {
         .with_kind(RuleKind::ErrorDefinition)
     }
 
+    #[allow(non_snake_case)]
+    pub(crate) fn error_definition__sparse_dispatch(
+        &self,
+        stream: &mut Stream,
+    ) -> Option<ParserResult> {
+        if self.version_is_equal_to_or_greater_than_0_8_4 {
+            Some(self.error_definition__0_8_4(stream))
+        } else {
+            None
+        }
+    }
+
+    #[inline]
+    pub(crate) fn error_definition(&self, stream: &mut Stream) -> ParserResult {
+        self.error_definition__sparse_dispatch(stream)
+            .expect("Validation should have checked that references are valid between versions")
+    }
+
+    // (* v0.8.4 *)
     // ErrorParameter = TypeName IDENTIFIER?;
 
-    #[allow(dead_code)]
-    #[allow(unused_assignments, unused_parens)]
-    pub(crate) fn error_parameter(&self, stream: &mut Stream) -> ParserResult {
+    #[allow(dead_code, non_snake_case)]
+    fn error_parameter__0_8_4(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut running_result = ParserResult::r#match(vec![], vec![]);
             loop {
@@ -2662,11 +2762,29 @@ impl Language {
         .with_kind(RuleKind::ErrorParameter)
     }
 
+    #[allow(non_snake_case)]
+    pub(crate) fn error_parameter__sparse_dispatch(
+        &self,
+        stream: &mut Stream,
+    ) -> Option<ParserResult> {
+        if self.version_is_equal_to_or_greater_than_0_8_4 {
+            Some(self.error_parameter__0_8_4(stream))
+        } else {
+            None
+        }
+    }
+
+    #[inline]
+    pub(crate) fn error_parameter(&self, stream: &mut Stream) -> ParserResult {
+        self.error_parameter__sparse_dispatch(stream)
+            .expect("Validation should have checked that references are valid between versions")
+    }
+
+    // (* v0.8.4 *)
     // ErrorParametersList = ErrorParameter (COMMA ErrorParameter)*;
 
-    #[allow(dead_code)]
-    #[allow(unused_assignments, unused_parens)]
-    pub(crate) fn error_parameters_list(&self, stream: &mut Stream) -> ParserResult {
+    #[allow(dead_code, non_snake_case)]
+    fn error_parameters_list__0_8_4(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut running_result = ParserResult::r#match(vec![], vec![]);
             loop {
@@ -2700,6 +2818,24 @@ impl Language {
             running_result
         }
         .with_kind(RuleKind::ErrorParametersList)
+    }
+
+    #[allow(non_snake_case)]
+    pub(crate) fn error_parameters_list__sparse_dispatch(
+        &self,
+        stream: &mut Stream,
+    ) -> Option<ParserResult> {
+        if self.version_is_equal_to_or_greater_than_0_8_4 {
+            Some(self.error_parameters_list__0_8_4(stream))
+        } else {
+            None
+        }
+    }
+
+    #[inline]
+    pub(crate) fn error_parameters_list(&self, stream: &mut Stream) -> ParserResult {
+        self.error_parameters_list__sparse_dispatch(stream)
+            .expect("Validation should have checked that references are valid between versions")
     }
 
     // EventDefinition = EVENT_KEYWORD IDENTIFIER OPEN_PAREN EventParametersList? CLOSE_PAREN ANONYMOUS_KEYWORD? SEMICOLON;
@@ -7163,17 +7299,11 @@ impl Language {
     }
 
     // (* v0.4.11 *)
-    // «SourceUnitMember» = ContractDefinition
-    //                    | LibraryDefinition
-    //                    | InterfaceDefinition
-    //                    | StructDefinition
-    //                    | EnumDefinition
-    //                    | ConstantDefinition
-    //                    | FunctionDefinition
-    //                    | ErrorDefinition
+    // «SourceUnitMember» = PragmaDirective
     //                    | ImportDirective
-    //                    | PragmaDirective
-    //                    | UsingDirective;
+    //                    | ContractDefinition
+    //                    | InterfaceDefinition
+    //                    | LibraryDefinition;
 
     #[allow(dead_code, non_snake_case)]
     fn source_unit_member__0_4_11(&self, stream: &mut Stream) -> ParserResult {
@@ -7181,7 +7311,19 @@ impl Language {
             let mut running_result = ParserResult::no_match(vec![]);
             let start_position = stream.position();
             loop {
+                if running_result.incorporate_choice_result(self.pragma_directive(stream)) {
+                    break;
+                }
+                stream.set_position(start_position);
+                if running_result.incorporate_choice_result(self.import_directive(stream)) {
+                    break;
+                }
+                stream.set_position(start_position);
                 if running_result.incorporate_choice_result(self.contract_definition(stream)) {
+                    break;
+                }
+                stream.set_position(start_position);
+                if running_result.incorporate_choice_result(self.interface_definition(stream)) {
                     break;
                 }
                 stream.set_position(start_position);
@@ -7189,7 +7331,47 @@ impl Language {
                     break;
                 }
                 stream.set_position(start_position);
+                break;
+            }
+            if let ParserResult::IncompleteMatch(incomplete_match) = &running_result {
+                incomplete_match.consume_stream(stream);
+            }
+            running_result
+        }
+    }
+
+    // (* v0.6.0 *)
+    // «SourceUnitMember» = PragmaDirective
+    //                    | ImportDirective
+    //                    | ContractDefinition
+    //                    | InterfaceDefinition
+    //                    | LibraryDefinition
+    //                    | StructDefinition
+    //                    | EnumDefinition;
+
+    #[allow(dead_code, non_snake_case)]
+    fn source_unit_member__0_6_0(&self, stream: &mut Stream) -> ParserResult {
+        {
+            let mut running_result = ParserResult::no_match(vec![]);
+            let start_position = stream.position();
+            loop {
+                if running_result.incorporate_choice_result(self.pragma_directive(stream)) {
+                    break;
+                }
+                stream.set_position(start_position);
+                if running_result.incorporate_choice_result(self.import_directive(stream)) {
+                    break;
+                }
+                stream.set_position(start_position);
+                if running_result.incorporate_choice_result(self.contract_definition(stream)) {
+                    break;
+                }
+                stream.set_position(start_position);
                 if running_result.incorporate_choice_result(self.interface_definition(stream)) {
+                    break;
+                }
+                stream.set_position(start_position);
+                if running_result.incorporate_choice_result(self.library_definition(stream)) {
                     break;
                 }
                 stream.set_position(start_position);
@@ -7201,15 +7383,32 @@ impl Language {
                     break;
                 }
                 stream.set_position(start_position);
-                if running_result.incorporate_choice_result(self.constant_definition(stream)) {
-                    break;
-                }
-                stream.set_position(start_position);
-                if running_result.incorporate_choice_result(self.function_definition(stream)) {
-                    break;
-                }
-                stream.set_position(start_position);
-                if running_result.incorporate_choice_result(self.error_definition(stream)) {
+                break;
+            }
+            if let ParserResult::IncompleteMatch(incomplete_match) = &running_result {
+                incomplete_match.consume_stream(stream);
+            }
+            running_result
+        }
+    }
+
+    // (* v0.7.1 *)
+    // «SourceUnitMember» = PragmaDirective
+    //                    | ImportDirective
+    //                    | ContractDefinition
+    //                    | InterfaceDefinition
+    //                    | LibraryDefinition
+    //                    | StructDefinition
+    //                    | EnumDefinition
+    //                    | FunctionDefinition;
+
+    #[allow(dead_code, non_snake_case)]
+    fn source_unit_member__0_7_1(&self, stream: &mut Stream) -> ParserResult {
+        {
+            let mut running_result = ParserResult::no_match(vec![]);
+            let start_position = stream.position();
+            loop {
+                if running_result.incorporate_choice_result(self.pragma_directive(stream)) {
                     break;
                 }
                 stream.set_position(start_position);
@@ -7217,11 +7416,156 @@ impl Language {
                     break;
                 }
                 stream.set_position(start_position);
+                if running_result.incorporate_choice_result(self.contract_definition(stream)) {
+                    break;
+                }
+                stream.set_position(start_position);
+                if running_result.incorporate_choice_result(self.interface_definition(stream)) {
+                    break;
+                }
+                stream.set_position(start_position);
+                if running_result.incorporate_choice_result(self.library_definition(stream)) {
+                    break;
+                }
+                stream.set_position(start_position);
+                if running_result.incorporate_choice_result(self.struct_definition(stream)) {
+                    break;
+                }
+                stream.set_position(start_position);
+                if running_result.incorporate_choice_result(self.enum_definition(stream)) {
+                    break;
+                }
+                stream.set_position(start_position);
+                if running_result.incorporate_choice_result(self.function_definition(stream)) {
+                    break;
+                }
+                stream.set_position(start_position);
+                break;
+            }
+            if let ParserResult::IncompleteMatch(incomplete_match) = &running_result {
+                incomplete_match.consume_stream(stream);
+            }
+            running_result
+        }
+    }
+
+    // (* v0.7.4 *)
+    // «SourceUnitMember» = PragmaDirective
+    //                    | ImportDirective
+    //                    | ContractDefinition
+    //                    | InterfaceDefinition
+    //                    | LibraryDefinition
+    //                    | StructDefinition
+    //                    | EnumDefinition
+    //                    | FunctionDefinition
+    //                    | ConstantDefinition;
+
+    #[allow(dead_code, non_snake_case)]
+    fn source_unit_member__0_7_4(&self, stream: &mut Stream) -> ParserResult {
+        {
+            let mut running_result = ParserResult::no_match(vec![]);
+            let start_position = stream.position();
+            loop {
                 if running_result.incorporate_choice_result(self.pragma_directive(stream)) {
                     break;
                 }
                 stream.set_position(start_position);
-                if running_result.incorporate_choice_result(self.using_directive(stream)) {
+                if running_result.incorporate_choice_result(self.import_directive(stream)) {
+                    break;
+                }
+                stream.set_position(start_position);
+                if running_result.incorporate_choice_result(self.contract_definition(stream)) {
+                    break;
+                }
+                stream.set_position(start_position);
+                if running_result.incorporate_choice_result(self.interface_definition(stream)) {
+                    break;
+                }
+                stream.set_position(start_position);
+                if running_result.incorporate_choice_result(self.library_definition(stream)) {
+                    break;
+                }
+                stream.set_position(start_position);
+                if running_result.incorporate_choice_result(self.struct_definition(stream)) {
+                    break;
+                }
+                stream.set_position(start_position);
+                if running_result.incorporate_choice_result(self.enum_definition(stream)) {
+                    break;
+                }
+                stream.set_position(start_position);
+                if running_result.incorporate_choice_result(self.function_definition(stream)) {
+                    break;
+                }
+                stream.set_position(start_position);
+                if running_result.incorporate_choice_result(self.constant_definition(stream)) {
+                    break;
+                }
+                stream.set_position(start_position);
+                break;
+            }
+            if let ParserResult::IncompleteMatch(incomplete_match) = &running_result {
+                incomplete_match.consume_stream(stream);
+            }
+            running_result
+        }
+    }
+
+    // (* v0.8.4 *)
+    // «SourceUnitMember» = PragmaDirective
+    //                    | ImportDirective
+    //                    | ContractDefinition
+    //                    | InterfaceDefinition
+    //                    | LibraryDefinition
+    //                    | StructDefinition
+    //                    | EnumDefinition
+    //                    | FunctionDefinition
+    //                    | ConstantDefinition
+    //                    | ErrorDefinition;
+
+    #[allow(dead_code, non_snake_case)]
+    fn source_unit_member__0_8_4(&self, stream: &mut Stream) -> ParserResult {
+        {
+            let mut running_result = ParserResult::no_match(vec![]);
+            let start_position = stream.position();
+            loop {
+                if running_result.incorporate_choice_result(self.pragma_directive(stream)) {
+                    break;
+                }
+                stream.set_position(start_position);
+                if running_result.incorporate_choice_result(self.import_directive(stream)) {
+                    break;
+                }
+                stream.set_position(start_position);
+                if running_result.incorporate_choice_result(self.contract_definition(stream)) {
+                    break;
+                }
+                stream.set_position(start_position);
+                if running_result.incorporate_choice_result(self.interface_definition(stream)) {
+                    break;
+                }
+                stream.set_position(start_position);
+                if running_result.incorporate_choice_result(self.library_definition(stream)) {
+                    break;
+                }
+                stream.set_position(start_position);
+                if running_result.incorporate_choice_result(self.struct_definition(stream)) {
+                    break;
+                }
+                stream.set_position(start_position);
+                if running_result.incorporate_choice_result(self.enum_definition(stream)) {
+                    break;
+                }
+                stream.set_position(start_position);
+                if running_result.incorporate_choice_result(self.function_definition(stream)) {
+                    break;
+                }
+                stream.set_position(start_position);
+                if running_result.incorporate_choice_result(self.constant_definition(stream)) {
+                    break;
+                }
+                stream.set_position(start_position);
+                if running_result.incorporate_choice_result(self.error_definition(stream)) {
                     break;
                 }
                 stream.set_position(start_position);
@@ -7235,17 +7579,16 @@ impl Language {
     }
 
     // (* v0.8.8 *)
-    // «SourceUnitMember» = ContractDefinition
-    //                    | LibraryDefinition
+    // «SourceUnitMember» = PragmaDirective
+    //                    | ImportDirective
+    //                    | ContractDefinition
     //                    | InterfaceDefinition
+    //                    | LibraryDefinition
     //                    | StructDefinition
     //                    | EnumDefinition
-    //                    | ConstantDefinition
     //                    | FunctionDefinition
+    //                    | ConstantDefinition
     //                    | ErrorDefinition
-    //                    | ImportDirective
-    //                    | PragmaDirective
-    //                    | UsingDirective
     //                    | UserDefinedValueTypeDefinition;
 
     #[allow(dead_code, non_snake_case)]
@@ -7254,15 +7597,23 @@ impl Language {
             let mut running_result = ParserResult::no_match(vec![]);
             let start_position = stream.position();
             loop {
+                if running_result.incorporate_choice_result(self.pragma_directive(stream)) {
+                    break;
+                }
+                stream.set_position(start_position);
+                if running_result.incorporate_choice_result(self.import_directive(stream)) {
+                    break;
+                }
+                stream.set_position(start_position);
                 if running_result.incorporate_choice_result(self.contract_definition(stream)) {
                     break;
                 }
                 stream.set_position(start_position);
-                if running_result.incorporate_choice_result(self.library_definition(stream)) {
+                if running_result.incorporate_choice_result(self.interface_definition(stream)) {
                     break;
                 }
                 stream.set_position(start_position);
-                if running_result.incorporate_choice_result(self.interface_definition(stream)) {
+                if running_result.incorporate_choice_result(self.library_definition(stream)) {
                     break;
                 }
                 stream.set_position(start_position);
@@ -7274,27 +7625,15 @@ impl Language {
                     break;
                 }
                 stream.set_position(start_position);
-                if running_result.incorporate_choice_result(self.constant_definition(stream)) {
-                    break;
-                }
-                stream.set_position(start_position);
                 if running_result.incorporate_choice_result(self.function_definition(stream)) {
                     break;
                 }
                 stream.set_position(start_position);
+                if running_result.incorporate_choice_result(self.constant_definition(stream)) {
+                    break;
+                }
+                stream.set_position(start_position);
                 if running_result.incorporate_choice_result(self.error_definition(stream)) {
-                    break;
-                }
-                stream.set_position(start_position);
-                if running_result.incorporate_choice_result(self.import_directive(stream)) {
-                    break;
-                }
-                stream.set_position(start_position);
-                if running_result.incorporate_choice_result(self.pragma_directive(stream)) {
-                    break;
-                }
-                stream.set_position(start_position);
-                if running_result.incorporate_choice_result(self.using_directive(stream)) {
                     break;
                 }
                 stream.set_position(start_position);
@@ -7313,9 +7652,98 @@ impl Language {
         }
     }
 
+    // (* v0.8.13 *)
+    // «SourceUnitMember» = PragmaDirective
+    //                    | ImportDirective
+    //                    | ContractDefinition
+    //                    | InterfaceDefinition
+    //                    | LibraryDefinition
+    //                    | StructDefinition
+    //                    | EnumDefinition
+    //                    | FunctionDefinition
+    //                    | ConstantDefinition
+    //                    | ErrorDefinition
+    //                    | UserDefinedValueTypeDefinition
+    //                    | UsingDirective;
+
+    #[allow(dead_code, non_snake_case)]
+    fn source_unit_member__0_8_13(&self, stream: &mut Stream) -> ParserResult {
+        {
+            let mut running_result = ParserResult::no_match(vec![]);
+            let start_position = stream.position();
+            loop {
+                if running_result.incorporate_choice_result(self.pragma_directive(stream)) {
+                    break;
+                }
+                stream.set_position(start_position);
+                if running_result.incorporate_choice_result(self.import_directive(stream)) {
+                    break;
+                }
+                stream.set_position(start_position);
+                if running_result.incorporate_choice_result(self.contract_definition(stream)) {
+                    break;
+                }
+                stream.set_position(start_position);
+                if running_result.incorporate_choice_result(self.interface_definition(stream)) {
+                    break;
+                }
+                stream.set_position(start_position);
+                if running_result.incorporate_choice_result(self.library_definition(stream)) {
+                    break;
+                }
+                stream.set_position(start_position);
+                if running_result.incorporate_choice_result(self.struct_definition(stream)) {
+                    break;
+                }
+                stream.set_position(start_position);
+                if running_result.incorporate_choice_result(self.enum_definition(stream)) {
+                    break;
+                }
+                stream.set_position(start_position);
+                if running_result.incorporate_choice_result(self.function_definition(stream)) {
+                    break;
+                }
+                stream.set_position(start_position);
+                if running_result.incorporate_choice_result(self.constant_definition(stream)) {
+                    break;
+                }
+                stream.set_position(start_position);
+                if running_result.incorporate_choice_result(self.error_definition(stream)) {
+                    break;
+                }
+                stream.set_position(start_position);
+                if running_result
+                    .incorporate_choice_result(self.user_defined_value_type_definition(stream))
+                {
+                    break;
+                }
+                stream.set_position(start_position);
+                if running_result.incorporate_choice_result(self.using_directive(stream)) {
+                    break;
+                }
+                stream.set_position(start_position);
+                break;
+            }
+            if let ParserResult::IncompleteMatch(incomplete_match) = &running_result {
+                incomplete_match.consume_stream(stream);
+            }
+            running_result
+        }
+    }
+
     pub(crate) fn source_unit_member(&self, stream: &mut Stream) -> ParserResult {
-        if self.version_is_equal_to_or_greater_than_0_8_8 {
+        if self.version_is_equal_to_or_greater_than_0_8_13 {
+            self.source_unit_member__0_8_13(stream)
+        } else if self.version_is_equal_to_or_greater_than_0_8_8 {
             self.source_unit_member__0_8_8(stream)
+        } else if self.version_is_equal_to_or_greater_than_0_8_4 {
+            self.source_unit_member__0_8_4(stream)
+        } else if self.version_is_equal_to_or_greater_than_0_7_4 {
+            self.source_unit_member__0_7_4(stream)
+        } else if self.version_is_equal_to_or_greater_than_0_7_1 {
+            self.source_unit_member__0_7_1(stream)
+        } else if self.version_is_equal_to_or_greater_than_0_6_0 {
+            self.source_unit_member__0_6_0(stream)
         } else {
             self.source_unit_member__0_4_11(stream)
         }

@@ -1,0 +1,1 @@
+int constant foo = 0;

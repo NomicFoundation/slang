@@ -870,11 +870,11 @@ impl Language {
         scan_chars!(stream, '=', '>')
     }
 
+    // (* v0.8.4 *)
     // ERROR_KEYWORD = "error";
 
-    #[allow(dead_code)]
-    #[allow(unused_assignments, unused_parens)]
-    pub(crate) fn error_keyword(&self, stream: &mut Stream) -> bool {
+    #[allow(dead_code, non_snake_case)]
+    fn error_keyword__0_8_4(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
             scan_chars!(stream, 'e', 'r', 'r', 'o', 'r'),
@@ -884,6 +884,21 @@ impl Language {
                 || c == '_'
                 || ('a' <= c && c <= 'z'))
         )
+    }
+
+    #[allow(non_snake_case)]
+    pub(crate) fn error_keyword__sparse_dispatch(&self, stream: &mut Stream) -> Option<bool> {
+        if self.version_is_equal_to_or_greater_than_0_8_4 {
+            Some(self.error_keyword__0_8_4(stream))
+        } else {
+            None
+        }
+    }
+
+    #[inline]
+    pub(crate) fn error_keyword(&self, stream: &mut Stream) -> bool {
+        self.error_keyword__sparse_dispatch(stream)
+            .expect("Validation should have checked that references are valid between versions")
     }
 
     // «ESCAPE_SEQUENCE» = "\\" («ASCII_ESCAPE» | «HEX_BYTE_ESCAPE» | «UNICODE_ESCAPE»);
