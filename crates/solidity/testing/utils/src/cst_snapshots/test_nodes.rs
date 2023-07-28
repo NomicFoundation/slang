@@ -92,7 +92,7 @@ impl TestNodeBuilder {
 }
 
 impl TestNode {
-    pub fn from_cst(node: Node) -> Self {
+    pub fn from_cst(node: &Node) -> Self {
         let mut visitor = TestNodeBuilder {
             stack: vec![vec![]],
         };

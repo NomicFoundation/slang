@@ -1,0 +1,12 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ unicode"emoji 😃"                                                                 │ 0..19
+
+Errors: # 1 total
+  - >
+    InvalidProductionVersion(
+        UnicodeStringLiteralsList,
+    )
+
+Tree: null

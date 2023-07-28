@@ -3,25 +3,23 @@ mod test_nodes;
 use std::{self, cmp::max, fmt::Write};
 
 use anyhow::Result;
-use slang_solidity::syntax::{nodes::TextRangeExtensions, parser::ParseOutput};
+use slang_solidity::syntax::nodes::{Node, TextRangeExtensions};
 
 use crate::cst_snapshots::test_nodes::{TestNode, TestNodeKind};
 
-pub trait ParseOutputTestSnapshotExtensions {
-    fn to_test_snapshot(&self, source_id: &str, source: &str) -> Result<String>;
-}
+pub struct CstSnapshots;
 
-impl ParseOutputTestSnapshotExtensions for ParseOutput {
-    fn to_test_snapshot(&self, source_id: &str, source: &str) -> Result<String> {
+impl CstSnapshots {
+    pub fn render(source: &str, errors: &Vec<String>, tree: &Option<Node>) -> Result<String> {
         let mut w = String::new();
 
         write_source(&mut w, source)?;
         writeln!(&mut w)?;
 
-        write_errors(&mut w, &self, source_id, source)?;
+        write_errors(&mut w, errors)?;
         writeln!(&mut w)?;
 
-        write_tree(&mut w, &self, source)?;
+        write_tree(&mut w, tree, source)?;
 
         return Ok(w);
     }
@@ -67,14 +65,7 @@ fn write_source<W: Write>(w: &mut W, source: &str) -> Result<()> {
     return Ok(());
 }
 
-fn write_errors<W: Write>(
-    w: &mut W,
-    output: &ParseOutput,
-    source_id: &str,
-    source: &str,
-) -> Result<()> {
-    let errors = output.errors();
-
+fn write_errors<W: Write>(w: &mut W, errors: &Vec<String>) -> Result<()> {
     if errors.len() == 0 {
         writeln!(w, "Errors: []")?;
         return Ok(());
@@ -84,8 +75,7 @@ fn write_errors<W: Write>(
 
     for error in errors {
         writeln!(w, "  - >")?;
-        let report = error.to_error_report(source_id, source, /* with_colour */ false);
-        for line in report.lines() {
+        for line in error.lines() {
             writeln!(w, "    {line}")?;
         }
     }
@@ -93,12 +83,18 @@ fn write_errors<W: Write>(
     return Ok(());
 }
 
-fn write_tree<W: Write>(w: &mut W, output: &ParseOutput, source: &str) -> Result<()> {
-    let parse_tree = output.parse_tree();
-    let root_node = TestNode::from_cst(parse_tree);
+fn write_tree<W: Write>(w: &mut W, tree: &Option<Node>, source: &str) -> Result<()> {
+    write!(w, "Tree:")?;
 
-    writeln!(w, "Tree:")?;
-    write_node(w, &root_node, source, 0)?;
+    if let Some(tree) = tree {
+        writeln!(w)?;
+
+        let tree = TestNode::from_cst(tree);
+        write_node(w, &tree, source, 0)?;
+    } else {
+        writeln!(w, " null")?;
+    }
+
     return Ok(());
 }
 

@@ -1,0 +1,12 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ constructor () {}                                                                │ 0..17
+
+Errors: # 1 total
+  - >
+    InvalidProductionVersion(
+        ConstructorDefinition,
+    )
+
+Tree: null
