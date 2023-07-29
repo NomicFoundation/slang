@@ -78,7 +78,6 @@
         - reference: "StructDefinition"
         - reference: "EnumDefinition"
         - reference: "EventDefinition"
-        - reference: "ErrorDefinition"
         - reference: "StateVariableDefinition"
     0.4.22:
       # added: "ConstructorDefinition"
@@ -91,12 +90,24 @@
         - reference: "StructDefinition"
         - reference: "EnumDefinition"
         - reference: "EventDefinition"
-        - reference: "ErrorDefinition"
         - reference: "StateVariableDefinition"
     0.6.0:
       # added: "ReceiveFunctionDefinition"
       # added: "FallbackFunctionDefinition"
       # removed: "UnnamedFunctionDefinition"
+      choice:
+        - reference: "UsingDirective"
+        - reference: "ConstructorDefinition"
+        - reference: "FunctionDefinition"
+        - reference: "FallbackFunctionDefinition"
+        - reference: "ReceiveFunctionDefinition"
+        - reference: "ModifierDefinition"
+        - reference: "StructDefinition"
+        - reference: "EnumDefinition"
+        - reference: "EventDefinition"
+        - reference: "StateVariableDefinition"
+    0.8.4:
+      # added: "ErrorDefinition"
       choice:
         - reference: "UsingDirective"
         - reference: "ConstructorDefinition"

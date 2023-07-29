@@ -214,12 +214,13 @@
 
 - name: "ErrorKeyword"
   kind: "Scanner"
-  unversioned:
-    trailingContext:
-      scanner:
-        terminal: "error"
-      notFollowedBy:
-        reference: "IdentifierPart"
+  versioned:
+    0.8.4:
+      trailingContext:
+        scanner:
+          terminal: "error"
+        notFollowedBy:
+          reference: "IdentifierPart"
 
 - name: "EtherKeyword"
   kind: "Scanner"

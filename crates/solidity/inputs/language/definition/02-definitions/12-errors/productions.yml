@@ -2,36 +2,39 @@
 
 - name: "ErrorDefinition"
   kind: "Parser"
-  unversioned:
-    terminatedBy:
-      parser:
-        sequence:
-          - reference: "ErrorKeyword"
-          - reference: "Identifier"
-          - delimitedBy:
-              open:
-                reference: "OpenParen"
-              parser:
-                optional:
-                  reference: "ErrorParametersList"
-              close:
-                reference: "CloseParen"
-      terminator:
-        reference: "Semicolon"
+  versioned:
+    0.8.4:
+      terminatedBy:
+        parser:
+          sequence:
+            - reference: "ErrorKeyword"
+            - reference: "Identifier"
+            - delimitedBy:
+                open:
+                  reference: "OpenParen"
+                parser:
+                  optional:
+                    reference: "ErrorParametersList"
+                close:
+                  reference: "CloseParen"
+        terminator:
+          reference: "Semicolon"
 
 - name: "ErrorParametersList"
   kind: "Parser"
-  unversioned:
-    separatedBy:
-      separator:
-        reference: "Comma"
-      parser:
-        reference: "ErrorParameter"
+  versioned:
+    0.8.4:
+      separatedBy:
+        separator:
+          reference: "Comma"
+        parser:
+          reference: "ErrorParameter"
 
 - name: "ErrorParameter"
   kind: "Parser"
-  unversioned:
-    sequence:
-      - reference: "TypeName"
-      - optional:
-          reference: "Identifier"
+  versioned:
+    0.8.4:
+      sequence:
+        - reference: "TypeName"
+        - optional:
+            reference: "Identifier"

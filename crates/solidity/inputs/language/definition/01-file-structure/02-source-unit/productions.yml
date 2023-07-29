@@ -21,29 +21,83 @@
   versioned:
     0.4.11:
       choice:
+        - reference: "PragmaDirective"
+        - reference: "ImportDirective"
         - reference: "ContractDefinition"
-        - reference: "LibraryDefinition"
         - reference: "InterfaceDefinition"
+        - reference: "LibraryDefinition"
+    0.6.0:
+      choice:
+        - reference: "PragmaDirective"
+        - reference: "ImportDirective"
+        - reference: "ContractDefinition"
+        - reference: "InterfaceDefinition"
+        - reference: "LibraryDefinition"
+        # added"
         - reference: "StructDefinition"
         - reference: "EnumDefinition"
-        - reference: "ConstantDefinition"
-        - reference: "FunctionDefinition"
-        - reference: "ErrorDefinition"
-        - reference: "ImportDirective"
+    0.7.1:
+      choice:
         - reference: "PragmaDirective"
-        - reference: "UsingDirective"
+        - reference: "ImportDirective"
+        - reference: "ContractDefinition"
+        - reference: "InterfaceDefinition"
+        - reference: "LibraryDefinition"
+        - reference: "StructDefinition"
+        - reference: "EnumDefinition"
+        # added
+        - reference: "FunctionDefinition"
+    0.7.4:
+      choice:
+        - reference: "PragmaDirective"
+        - reference: "ImportDirective"
+        - reference: "ContractDefinition"
+        - reference: "InterfaceDefinition"
+        - reference: "LibraryDefinition"
+        - reference: "StructDefinition"
+        - reference: "EnumDefinition"
+        - reference: "FunctionDefinition"
+        # added
+        - reference: "ConstantDefinition"
+    0.8.4:
+      choice:
+        - reference: "PragmaDirective"
+        - reference: "ImportDirective"
+        - reference: "ContractDefinition"
+        - reference: "InterfaceDefinition"
+        - reference: "LibraryDefinition"
+        - reference: "StructDefinition"
+        - reference: "EnumDefinition"
+        - reference: "FunctionDefinition"
+        - reference: "ConstantDefinition"
+        # added:
+        - reference: "ErrorDefinition"
     0.8.8:
       choice:
+        - reference: "PragmaDirective"
+        - reference: "ImportDirective"
         - reference: "ContractDefinition"
-        - reference: "LibraryDefinition"
         - reference: "InterfaceDefinition"
+        - reference: "LibraryDefinition"
         - reference: "StructDefinition"
         - reference: "EnumDefinition"
-        - reference: "ConstantDefinition"
         - reference: "FunctionDefinition"
+        - reference: "ConstantDefinition"
         - reference: "ErrorDefinition"
-        - reference: "ImportDirective"
-        - reference: "PragmaDirective"
-        - reference: "UsingDirective"
         # added:
         - reference: "UserDefinedValueTypeDefinition"
+    0.8.13:
+      choice:
+        - reference: "PragmaDirective"
+        - reference: "ImportDirective"
+        - reference: "ContractDefinition"
+        - reference: "InterfaceDefinition"
+        - reference: "LibraryDefinition"
+        - reference: "StructDefinition"
+        - reference: "EnumDefinition"
+        - reference: "FunctionDefinition"
+        - reference: "ConstantDefinition"
+        - reference: "ErrorDefinition"
+        - reference: "UserDefinedValueTypeDefinition"
+        # added:
+        - reference: "UsingDirective"

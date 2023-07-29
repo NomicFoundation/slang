@@ -303,7 +303,7 @@ pub enum ProductionKind {
     /// COMMA = ",";
     /// ```
     Comma,
-    /// ## Unversioned
+    /// ## v0.7.4
     ///
     /// ```ebnf
     /// ConstantDefinition = TypeName CONSTANT_KEYWORD IDENTIFIER EQUAL Expression SEMICOLON;
@@ -495,25 +495,25 @@ pub enum ProductionKind {
     /// EQUAL_GREATER_THAN = "=>";
     /// ```
     EqualGreaterThan,
-    /// ## Unversioned
+    /// ## v0.8.4
     ///
     /// ```ebnf
     /// ErrorDefinition = ERROR_KEYWORD IDENTIFIER OPEN_PAREN ErrorParametersList? CLOSE_PAREN SEMICOLON;
     /// ```
     ErrorDefinition,
-    /// ## Unversioned
+    /// ## v0.8.4
     ///
     /// ```ebnf
     /// ERROR_KEYWORD = "error";
     /// ```
     ErrorKeyword,
-    /// ## Unversioned
+    /// ## v0.8.4
     ///
     /// ```ebnf
     /// ErrorParameter = TypeName IDENTIFIER?;
     /// ```
     ErrorParameter,
-    /// ## Unversioned
+    /// ## v0.8.4
     ///
     /// ```ebnf
     /// ErrorParametersList = ErrorParameter (COMMA ErrorParameter)*;

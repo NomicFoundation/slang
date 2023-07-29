@@ -2,14 +2,15 @@
 
 - name: "ConstantDefinition"
   kind: "Parser"
-  unversioned:
-    terminatedBy:
-      parser:
-        sequence:
-          - reference: "TypeName"
-          - reference: "ConstantKeyword"
-          - reference: "Identifier"
-          - reference: "Equal"
-          - reference: "Expression"
-      terminator:
-        reference: "Semicolon"
+  versioned:
+    0.7.4:
+      terminatedBy:
+        parser:
+          sequence:
+            - reference: "TypeName"
+            - reference: "ConstantKeyword"
+            - reference: "Identifier"
+            - reference: "Equal"
+            - reference: "Expression"
+        terminator:
+          reference: "Semicolon"

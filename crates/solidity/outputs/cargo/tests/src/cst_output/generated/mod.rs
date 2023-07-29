@@ -5,6 +5,8 @@ mod AsciiStringLiteralsList;
 #[allow(non_snake_case)]
 mod Block;
 #[allow(non_snake_case)]
+mod ConstantDefinition;
+#[allow(non_snake_case)]
 mod ConstructorDefinition;
 #[allow(non_snake_case)]
 mod ContractDefinition;
@@ -16,6 +18,8 @@ mod DecimalLiteral;
 mod DeleteStatement;
 #[allow(non_snake_case)]
 mod EnumDefinition;
+#[allow(non_snake_case)]
+mod ErrorDefinition;
 #[allow(non_snake_case)]
 mod Expression;
 #[allow(non_snake_case)]
@@ -65,6 +69,8 @@ mod UnicodeStringLiteralsList;
 #[allow(non_snake_case)]
 mod UnsignedIntegerType;
 #[allow(non_snake_case)]
+mod UserDefinedValueTypeDefinition;
+#[allow(non_snake_case)]
 mod UsingDirective;
 #[allow(non_snake_case)]
 mod UsingDirectiveSymbol;
@@ -77,7 +83,7 @@ mod YulExpression;
 #[allow(non_snake_case)]
 mod YulStatement;
 
-pub const VERSION_BREAKS: [&str; 14] = [
+pub const VERSION_BREAKS: [&str; 18] = [
     "0.4.11", "0.4.21", "0.4.22", "0.5.0", "0.5.3", "0.6.0", "0.6.2", "0.6.5", "0.6.11", "0.7.0",
-    "0.8.0", "0.8.8", "0.8.18", "0.8.19",
+    "0.7.1", "0.7.4", "0.8.0", "0.8.4", "0.8.8", "0.8.13", "0.8.18", "0.8.19",
 ];

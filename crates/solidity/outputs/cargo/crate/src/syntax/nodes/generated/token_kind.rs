@@ -329,7 +329,7 @@ pub enum TokenKind {
     /// EQUAL_GREATER_THAN = "=>";
     /// ```
     EqualGreaterThan,
-    /// ## Unversioned
+    /// ## v0.8.4
     ///
     /// ```ebnf
     /// ERROR_KEYWORD = "error";

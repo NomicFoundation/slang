@@ -2,7 +2,7 @@
 
 # Supported Versions
 
-This specification compiles information from 74 publicly released versions of Solidity. Among which, 14 versions had syntax-related changes:
+This specification compiles information from 74 publicly released versions of Solidity. Among which, 18 versions had syntax-related changes:
 
 -   [0.4.11](../grammar/v0.4.11/)
 -   [0.4.21](../grammar/v0.4.21/)
@@ -14,8 +14,12 @@ This specification compiles information from 74 publicly released versions of So
 -   [0.6.5](../grammar/v0.6.5/)
 -   [0.6.11](../grammar/v0.6.11/)
 -   [0.7.0](../grammar/v0.7.0/)
+-   [0.7.1](../grammar/v0.7.1/)
+-   [0.7.4](../grammar/v0.7.4/)
 -   [0.8.0](../grammar/v0.8.0/)
+-   [0.8.4](../grammar/v0.8.4/)
 -   [0.8.8](../grammar/v0.8.8/)
+-   [0.8.13](../grammar/v0.8.13/)
 -   [0.8.18](../grammar/v0.8.18/)
 -   [0.8.19](../grammar/v0.8.19/)
 

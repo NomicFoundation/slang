@@ -442,7 +442,7 @@ export namespace syntax$nodes {
      */
     Comma = "Comma",
     /**
-     * ## Unversioned
+     * ## v0.7.4
      *
      * ```ebnf
      * ConstantDefinition = TypeName CONSTANT_KEYWORD IDENTIFIER EQUAL Expression SEMICOLON;
@@ -696,7 +696,7 @@ export namespace syntax$nodes {
      */
     EqualGreaterThan = "EqualGreaterThan",
     /**
-     * ## Unversioned
+     * ## v0.8.4
      *
      * ```ebnf
      * ErrorDefinition = ERROR_KEYWORD IDENTIFIER OPEN_PAREN ErrorParametersList? CLOSE_PAREN SEMICOLON;
@@ -704,7 +704,7 @@ export namespace syntax$nodes {
      */
     ErrorDefinition = "ErrorDefinition",
     /**
-     * ## Unversioned
+     * ## v0.8.4
      *
      * ```ebnf
      * ERROR_KEYWORD = "error";
@@ -712,7 +712,7 @@ export namespace syntax$nodes {
      */
     ErrorKeyword = "ErrorKeyword",
     /**
-     * ## Unversioned
+     * ## v0.8.4
      *
      * ```ebnf
      * ErrorParameter = TypeName IDENTIFIER?;
@@ -720,7 +720,7 @@ export namespace syntax$nodes {
      */
     ErrorParameter = "ErrorParameter",
     /**
-     * ## Unversioned
+     * ## v0.8.4
      *
      * ```ebnf
      * ErrorParametersList = ErrorParameter (COMMA ErrorParameter)*;
@@ -2769,7 +2769,7 @@ export namespace syntax$nodes {
      */
     ConditionalExpression = "ConditionalExpression",
     /**
-     * ## Unversioned
+     * ## v0.7.4
      *
      * ```ebnf
      * ConstantDefinition = TypeName CONSTANT_KEYWORD IDENTIFIER EQUAL Expression SEMICOLON;
@@ -2887,7 +2887,7 @@ export namespace syntax$nodes {
      */
     EnumDefinition = "EnumDefinition",
     /**
-     * ## Unversioned
+     * ## v0.8.4
      *
      * ```ebnf
      * ErrorDefinition = ERROR_KEYWORD IDENTIFIER OPEN_PAREN ErrorParametersList? CLOSE_PAREN SEMICOLON;
@@ -2895,7 +2895,7 @@ export namespace syntax$nodes {
      */
     ErrorDefinition = "ErrorDefinition",
     /**
-     * ## Unversioned
+     * ## v0.8.4
      *
      * ```ebnf
      * ErrorParameter = TypeName IDENTIFIER?;
@@ -2903,7 +2903,7 @@ export namespace syntax$nodes {
      */
     ErrorParameter = "ErrorParameter",
     /**
-     * ## Unversioned
+     * ## v0.8.4
      *
      * ```ebnf
      * ErrorParametersList = ErrorParameter (COMMA ErrorParameter)*;
@@ -4424,7 +4424,7 @@ export namespace syntax$nodes {
      */
     EqualGreaterThan = "EqualGreaterThan",
     /**
-     * ## Unversioned
+     * ## v0.8.4
      *
      * ```ebnf
      * ERROR_KEYWORD = "error";

@@ -21,9 +21,13 @@ pub struct Language {
     pub(crate) version_is_equal_to_or_greater_than_0_6_2: bool,
     pub(crate) version_is_equal_to_or_greater_than_0_6_5: bool,
     pub(crate) version_is_equal_to_or_greater_than_0_7_0: bool,
+    pub(crate) version_is_equal_to_or_greater_than_0_7_1: bool,
+    pub(crate) version_is_equal_to_or_greater_than_0_7_4: bool,
     pub(crate) version_is_equal_to_or_greater_than_0_8_0: bool,
+    pub(crate) version_is_equal_to_or_greater_than_0_8_13: bool,
     pub(crate) version_is_equal_to_or_greater_than_0_8_18: bool,
     pub(crate) version_is_equal_to_or_greater_than_0_8_19: bool,
+    pub(crate) version_is_equal_to_or_greater_than_0_8_4: bool,
     pub(crate) version_is_equal_to_or_greater_than_0_8_8: bool,
 }
 
@@ -68,11 +72,19 @@ impl Language {
                     <= version,
                 version_is_equal_to_or_greater_than_0_7_0: Version::parse("0.7.0").unwrap()
                     <= version,
+                version_is_equal_to_or_greater_than_0_7_1: Version::parse("0.7.1").unwrap()
+                    <= version,
+                version_is_equal_to_or_greater_than_0_7_4: Version::parse("0.7.4").unwrap()
+                    <= version,
                 version_is_equal_to_or_greater_than_0_8_0: Version::parse("0.8.0").unwrap()
+                    <= version,
+                version_is_equal_to_or_greater_than_0_8_13: Version::parse("0.8.13").unwrap()
                     <= version,
                 version_is_equal_to_or_greater_than_0_8_18: Version::parse("0.8.18").unwrap()
                     <= version,
                 version_is_equal_to_or_greater_than_0_8_19: Version::parse("0.8.19").unwrap()
+                    <= version,
+                version_is_equal_to_or_greater_than_0_8_4: Version::parse("0.8.4").unwrap()
                     <= version,
                 version_is_equal_to_or_greater_than_0_8_8: Version::parse("0.8.8").unwrap()
                     <= version,
@@ -230,7 +242,7 @@ impl Language {
                 Language::equal_greater_than.scan(self, input, TokenKind::EqualGreaterThan)
             }
             ProductionKind::ErrorKeyword => {
-                Language::error_keyword.scan(self, input, TokenKind::ErrorKeyword)
+                Language::error_keyword__sparse_dispatch.scan(self, input, TokenKind::ErrorKeyword)
             }
             ProductionKind::EtherKeyword => {
                 Language::ether_keyword.scan(self, input, TokenKind::EtherKeyword)
@@ -573,7 +585,9 @@ impl Language {
             ProductionKind::CatchClausesList => {
                 Language::catch_clauses_list__sparse_dispatch.parse(self, input)
             }
-            ProductionKind::ConstantDefinition => Language::constant_definition.parse(self, input),
+            ProductionKind::ConstantDefinition => {
+                Language::constant_definition__sparse_dispatch.parse(self, input)
+            }
             ProductionKind::ConstructorAttributesList => {
                 Language::constructor_attributes_list__sparse_dispatch.parse(self, input)
             }
@@ -601,10 +615,14 @@ impl Language {
             }
             ProductionKind::EndOfFileTrivia => Language::end_of_file_trivia.parse(self, input),
             ProductionKind::EnumDefinition => Language::enum_definition.parse(self, input),
-            ProductionKind::ErrorDefinition => Language::error_definition.parse(self, input),
-            ProductionKind::ErrorParameter => Language::error_parameter.parse(self, input),
+            ProductionKind::ErrorDefinition => {
+                Language::error_definition__sparse_dispatch.parse(self, input)
+            }
+            ProductionKind::ErrorParameter => {
+                Language::error_parameter__sparse_dispatch.parse(self, input)
+            }
             ProductionKind::ErrorParametersList => {
-                Language::error_parameters_list.parse(self, input)
+                Language::error_parameters_list__sparse_dispatch.parse(self, input)
             }
             ProductionKind::EventDefinition => Language::event_definition.parse(self, input),
             ProductionKind::EventParameter => Language::event_parameter.parse(self, input),
