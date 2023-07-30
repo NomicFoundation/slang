@@ -13,7 +13,3 @@ mod supress_cli_dependencies {
     use clap as _;
     use serde_json as _;
 }
-
-// Make sure codegen runs before building for tests.
-#[cfg(test)]
-use solidity_cargo_build as _;

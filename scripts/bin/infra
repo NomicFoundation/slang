@@ -1,0 +1,15 @@
+#!/bin/bash
+set -euo pipefail
+
+source "$(dirname "${BASH_SOURCE[0]}")/../_common.sh"
+
+(
+  # Run in that crate's directory, to use its own `target` dir.
+  # This prevents locking when building other workspace crates:
+  cd "$REPO_ROOT/crates/infra/cli/"
+
+  # Allow passing additional args from CI workflows through "$SLANG_INFRA_CLI_EXTRA_ARGS"
+  # Then forward any other arguments to this script through "$@"
+  # shellcheck disable=SC2086
+  cargo run --bin "infra_cli" -- ${SLANG_INFRA_CLI_EXTRA_ARGS:-} "$@"
+)

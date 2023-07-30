@@ -1,12 +1,15 @@
 use std::{
-    path::PathBuf,
+    path::{Path, PathBuf},
     time::{Duration, SystemTime},
 };
 
-use anyhow::{anyhow, Result};
-use codegen_utils::commands::{run_command, run_command_inline};
+use anyhow::Result;
+use infra_utils::{
+    cargo::CargoWorkspace,
+    commands::Command,
+    paths::{FileWalker, PathExtensions},
+};
 use url::Url;
-use walkdir::WalkDir;
 
 use crate::datasets::Dataset;
 
@@ -21,8 +24,8 @@ impl Dataset for GitDataset {
     }
 
     fn prepare(&self) -> Result<Vec<PathBuf>> {
-        let dataset_dir = PathBuf::from(std::env::var("REPO_ROOT")?)
-            .join("target/solidity/testing/smoke/git-datasets")
+        let dataset_dir = CargoWorkspace::locate_source_crate("solidity_testing_smoke")?
+            .join("target/git-datasets")
             .join(self.name);
 
         if dataset_dir.exists() {
@@ -31,7 +34,10 @@ impl Dataset for GitDataset {
             Self::clone(&self.git_url, &dataset_dir)?;
         }
 
-        let source_files = Self::collect_files(&dataset_dir)?;
+        let source_files = FileWalker::from_directory(dataset_dir)
+            .find(["**/*.sol"])?
+            .into_iter()
+            .collect();
 
         return Ok(source_files);
     }
@@ -44,70 +50,43 @@ impl GitDataset {
         return Self { name, git_url: url };
     }
 
-    fn clone(git_url: &Url, dataset_dir: &PathBuf) -> Result<()> {
-        let parent_dir = dataset_dir.parent().unwrap().to_owned();
+    fn clone(git_url: &Url, dataset_dir: &Path) -> Result<()> {
+        std::fs::create_dir_all(dataset_dir.unwrap_parent())?;
 
-        std::fs::create_dir_all(&parent_dir)?;
-
-        run_command_inline(
-            &parent_dir,
-            &[
-                "git",
-                "clone",
-                "--depth",
-                "1",
-                git_url.as_str(),
-                dataset_dir.to_str().unwrap(),
-            ],
-        )?;
-
-        return Ok(());
+        return Command::new("git")
+            .args(["clone", git_url.as_str(), dataset_dir.unwrap_str()])
+            .property("--depth", "1")
+            .run();
     }
 
-    fn update(dataset_dir: &PathBuf) -> Result<()> {
-        let current_commit_age = {
-            let since_epoch = run_command(
-                &dataset_dir,
-                &["git", "log", "--no-walk", "--format=%ct", "HEAD"],
-                None,
-            )?;
+    fn update(dataset_dir: &Path) -> Result<()> {
+        let since_epoch = Command::new("git")
+            .args(["log", "HEAD"])
+            .flag("--no-walk")
+            .flag("--format=%ct")
+            .current_dir(dataset_dir)
+            .evaluate()?
+            .trim()
+            .parse::<u64>()?;
 
-            let since_epoch = Duration::from_secs(since_epoch.trim().parse::<u64>()?);
-            SystemTime::now().duration_since(SystemTime::UNIX_EPOCH + since_epoch)?
-        };
+        let last_change_timestamp = SystemTime::UNIX_EPOCH + Duration::from_secs(since_epoch);
+        let current_commit_age = SystemTime::now().duration_since(last_change_timestamp)?;
 
         if current_commit_age < Self::MAX_REPO_STALENESS {
             return Ok(());
         }
 
-        run_command_inline(
-            &dataset_dir,
-            &["git", "fetch", "origin", "HEAD", "--depth", "1"],
-        )?;
+        Command::new("git")
+            .args(["fetch", "origin", "HEAD"])
+            .property("--depth", "1")
+            .current_dir(dataset_dir)
+            .run()?;
 
-        run_command_inline(&dataset_dir, &["git", "checkout", "origin/HEAD"])?;
+        Command::new("git")
+            .args(["checkout", "origin/HEAD"])
+            .current_dir(dataset_dir)
+            .run()?;
 
         return Ok(());
-    }
-
-    fn collect_files(dataset_dir: &PathBuf) -> Result<Vec<PathBuf>> {
-        return WalkDir::new(dataset_dir)
-            .into_iter()
-            .filter_map(|entry| match entry {
-                Err(error) => Some(Err(anyhow!(error))),
-                Ok(entry) => {
-                    if entry.file_type().is_dir() {
-                        return None;
-                    }
-
-                    let file_path = entry.path().to_path_buf();
-                    if file_path.extension()? != "sol" {
-                        return None;
-                    }
-
-                    Some(Ok(file_path))
-                }
-            })
-            .collect();
     }
 }

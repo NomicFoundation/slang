@@ -17,10 +17,6 @@ mod supress_api_dependencies {
     use thiserror as _;
 }
 
-// Make sure codegen runs before building for tests.
-#[cfg(test)]
-use solidity_cargo_build as _;
-
 #[derive(ClapParser, Debug)]
 #[command(next_line_help = true)]
 #[command(author, about)]

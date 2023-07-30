@@ -1,4 +1,6 @@
-use std::{fmt::Write, path::PathBuf};
+use std::{fmt::Write, path::Path};
+
+use infra_utils::paths::PathExtensions;
 
 pub struct MarkdownWriter {
     w: String,
@@ -17,15 +19,11 @@ impl MarkdownWriter {
         writeln!(self.w, "{prefix} {value}", prefix = "#".repeat(level)).unwrap();
     }
 
-    pub fn write_snippet(&mut self, repo_root: &PathBuf, snippet_path: &PathBuf) {
+    pub fn write_snippet(&mut self, snippet_path: &Path) {
         writeln!(
             self.w,
             "--8<-- \"{snippet_path}\"",
-            snippet_path = snippet_path
-                .strip_prefix(repo_root)
-                .unwrap()
-                .to_str()
-                .unwrap()
+            snippet_path = snippet_path.strip_repo_root().unwrap().unwrap_str()
         )
         .unwrap();
     }

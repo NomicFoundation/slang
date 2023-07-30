@@ -5,8 +5,6 @@ use codegen_schema::types::{LanguageDefinitionRef, ProductionDefinition, Product
 use itertools::Itertools;
 use serde::Serialize;
 
-use crate::templates::TemplateContext;
-
 #[derive(Serialize)]
 pub struct NodeKindsTemplate {
     pub type_name: String,
@@ -17,10 +15,6 @@ pub struct NodeKindsTemplate {
 pub struct NodeKindsVariant {
     pub name: String,
     pub documentation: String,
-}
-
-impl TemplateContext for NodeKindsTemplate {
-    const TEMPLATE_RELATIVE_PATH: &'static str = "nodes/kinds/template.tera";
 }
 
 impl NodeKindsTemplate {

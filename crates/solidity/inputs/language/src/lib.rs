@@ -1,7 +1,9 @@
 use std::path::PathBuf;
 
 use anyhow::Result;
+use cargo_emit::rerun_if_changed;
 use codegen_schema::types::{LanguageDefinition, LanguageDefinitionRef};
+use infra_utils::paths::PathExtensions;
 
 pub trait SolidityLanguageExtensions {
     fn load_solidity() -> Result<LanguageDefinitionRef>;
@@ -13,12 +15,11 @@ impl SolidityLanguageExtensions for LanguageDefinition {
     /// 1. Expensive parsing and validation is done only once.
     /// 2. Errors are reported only once, instead of repeating for every crate.
     fn load_solidity() -> Result<LanguageDefinitionRef> {
-        let bin_path = env!("SLANG_SOLIDITY_LANGUAGE_DEFINITION_BIN");
+        let bin_file_path = PathBuf::from(env!("COMPILED_SOLIDITY_LANGUAGE_DEFINITION_BIN"));
 
-        println!("cargo:rerun-if-changed={bin_path}");
+        rerun_if_changed!(bin_file_path.unwrap_str());
 
-        let bin_path = PathBuf::from(bin_path);
-        let buffer = std::fs::read(&bin_path)?;
+        let buffer = std::fs::read(&bin_file_path)?;
         let language: LanguageDefinition = bson::from_slice(&buffer)?;
 
         return Ok(LanguageDefinitionRef::new(language));

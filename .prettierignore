@@ -1,6 +1,9 @@
 # Ember Templates
 documentation/overrides/**/*.html
 
+# Tera Templates
+**/*.tera
+
 # Packages and Dependencies
 .hermit/
 node_modules/

@@ -7,7 +7,7 @@ publish = false
 
 [dependencies]
 anyhow = { workspace = true }
-codegen_utils = { workspace = true }
+infra_utils = { workspace = true }
 indexmap = { workspace = true }
 schemars = { workspace = true }
 semver = { workspace = true }

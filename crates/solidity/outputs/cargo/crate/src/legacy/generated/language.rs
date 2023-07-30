@@ -31,7 +31,7 @@ pub struct Language {
     pub(crate) version_is_equal_to_or_greater_than_0_8_8: bool,
 }
 
-#[derive(thiserror::Error, Debug)]
+#[derive(Debug, Eq, PartialEq, thiserror::Error)]
 pub enum Error {
     #[error("Unsupported Solidity language version '{0}'.")]
     UnsupportedLanguageVersion(Version),

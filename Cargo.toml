@@ -12,55 +12,79 @@ members = [
     "crates/codegen/schema",
     "crates/codegen/spec",
     "crates/codegen/testing",
-    "crates/codegen/utils",
+    "crates/infra/cli",
+    "crates/infra/utils",
     "crates/solidity/inputs/language",
     "crates/solidity/outputs/cargo/build",
     "crates/solidity/outputs/cargo/crate",
     "crates/solidity/outputs/cargo/tests",
     "crates/solidity/outputs/npm/build",
     "crates/solidity/outputs/npm/crate",
+    "crates/solidity/outputs/npm/package",
     "crates/solidity/outputs/spec",
     "crates/solidity/testing/smoke",
+    "crates/solidity/testing/snapshots",
     "crates/solidity/testing/utils",
 ]
 
 [workspace.dependencies]
+#
+# Internal
+#
+codegen_ebnf = { path = "crates/codegen/ebnf" }
+codegen_legacy_syntax_templates = { path = "crates/codegen/legacy_syntax_templates" }
+codegen_schema = { path = "crates/codegen/schema" }
+codegen_spec = { path = "crates/codegen/spec" }
+codegen_syntax = { path = "crates/codegen/syntax" }
+codegen_testing = { path = "crates/codegen/testing" }
+infra_cli = { path = "crates/infra/cli" }
+infra_utils = { path = "crates/infra/utils" }
+slang_solidity = { path = "crates/solidity/outputs/cargo/crate" }
+solidity_cargo_build = { path = "crates/solidity/outputs/cargo/build" }
+solidity_cargo_tests = { path = "crates/solidity/outputs/cargo/tests" }
+solidity_language = { path = "crates/solidity/inputs/language" }
+solidity_npm_build = { path = "crates/solidity/outputs/npm/build" }
+solidity_npm_crate = { path = "crates/solidity/outputs/npm/crate" }
+solidity_npm_package = { path = "crates/solidity/outputs/npm/package" }
+solidity_spec = { path = "crates/solidity/outputs/spec" }
+solidity_testing_smoke = { path = "crates/solidity/testing/smoke" }
+solidity_testing_snapshots = { path = "crates/solidity/testing/snapshots" }
+solidity_testing_utils = { path = "crates/solidity/testing/utils" }
+#
+# External
+#
 anyhow = { version = "1.0.70", features = ["backtrace", "std"] }
 ariadne = { version = "0.2.0" }
 bson = { version = "2.6.1" }
-clap = { version = "4.1.13", features = ["derive"] }
-codegen_ebnf = { path = "crates/codegen/ebnf" }
-codegen_syntax = { path = "crates/codegen/syntax" }
-codegen_schema = { path = "crates/codegen/schema" }
-codegen_spec = { path = "crates/codegen/spec" }
-codegen_testing = { path = "crates/codegen/testing" }
-codegen_utils = { path = "crates/codegen/utils" }
+cargo-emit = { version = "0.2.1" }
+cargo-xwin = { version = "0.14.2" }
+clap = { version = "4.1.13", features = ["derive", "wrap_help"] }
+ignore = { version = "0.4.20" }
 indexmap = { version = "1.9.2", features = ["serde"] }
 indicatif = { version = "0.17.3" }
 Inflector = { version = "0.11.4" }
 itertools = { version = "0.10.5" }
+markdown = { version = "0.3.0" }
 napi = { version = "2.13.1", features = ["compat-mode", "napi8", "serde-json"] }
 napi-build = { version = "2.0.1" }
 napi-derive = { version = "2.13.0" }
+owo-colors = { version = "3.5.0", features = ["supports-colors"] }
 proc-macro2 = { version = "1.0.53" }
 quote = { version = "1.0.26" }
 rayon = { version = "1.7.0" }
+regex = { version = "1.9.1" }
 schemars = { version = "0.8.12", features = ["derive", "preserve_order"] }
 semver = { version = "1.0.17", features = ["serde"] }
 serde = { version = "1.0.158", features = ["derive", "rc"] }
 serde_json = { version = "1.0.94", features = ["preserve_order"] }
 serde_yaml = { version = "0.9.19" }
 similar-asserts = { version = "1.4.2" }
-slang_solidity = { path = "crates/solidity/outputs/cargo/crate" }
-solidity_cargo_build = { path = "crates/solidity/outputs/cargo/build" }
-solidity_npm_build = { path = "crates/solidity/outputs/npm/build" }
-solidity_language = { path = "crates/solidity/inputs/language" }
-solidity_testing_utils = { path = "crates/solidity/testing/utils" }
-strum = { version = "0.24" }
-strum_macros = { version = "0.24" }
+strum = { version = "0.24.0" }
+strum_macros = { version = "0.24.0" }
 tera = { version = "1.19.0" }
+terminal_size = { version = "0.2.6" }
 thiserror = { version = "1.0.40" }
+toml = { version = "0.7.6" }
 typed-arena = { version = "2.0.2" }
 url = { version = "2.3.1" }
-walkdir = { version = "2.3.3" }
 yaml-rust = { version = "0.4.5" }

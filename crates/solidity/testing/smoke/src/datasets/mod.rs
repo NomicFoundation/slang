@@ -3,6 +3,7 @@ mod git;
 use std::path::PathBuf;
 
 use anyhow::Result;
+use infra_utils::github::GitHub;
 use url::Url;
 
 use crate::datasets::git::GitDataset;
@@ -41,7 +42,7 @@ pub fn get_all_datasets() -> Result<Vec<impl Dataset>> {
     ];
 
     // Large repositories (millions of files). Skip running locally for now.
-    if std::env::var("CI").is_ok() {
+    if GitHub::is_running_in_ci() {
         result.extend(
             [
                 GitDataset::new(

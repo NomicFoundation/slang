@@ -1,4 +1,4 @@
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 use anyhow::Result;
 use codegen_ebnf::EbnfSerializer;
@@ -6,8 +6,8 @@ use codegen_schema::types::{
     LanguageDefinitionRef, LanguageSection, LanguageTopic, ProductionDefinition, ProductionRef,
     VersionMap,
 };
-use codegen_utils::context::CodegenContext;
 use inflector::Inflector;
+use infra_utils::codegen::CodegenWriteOnly;
 use semver::Version;
 
 use crate::markdown::MarkdownWriter;
@@ -18,14 +18,14 @@ pub struct Snippets {
 }
 
 impl Snippets {
-    pub fn new(language: &LanguageDefinitionRef, output_dir: &PathBuf) -> Self {
+    pub fn new(language: &LanguageDefinitionRef, output_dir: &Path) -> Self {
         return Self {
             language: language.to_owned(),
             output_dir: output_dir.to_owned(),
         };
     }
 
-    pub fn write_files(&self, codegen: &mut CodegenContext) -> Result<()> {
+    pub fn write_files(&self, codegen: &mut CodegenWriteOnly) -> Result<()> {
         let last_version = self.language.versions.last().unwrap();
         for production in self.language.productions.values() {
             let versions = match production.versions() {
@@ -36,7 +36,7 @@ impl Snippets {
             for version in versions {
                 if let Some(snippet_path) = self.get_snippet_path(production, &version) {
                     let snippet = self.get_snippet(production, &version).unwrap_or_default();
-                    codegen.write_file(&snippet_path, &snippet)?
+                    codegen.write_file(snippet_path, snippet)?
                 };
             }
         }

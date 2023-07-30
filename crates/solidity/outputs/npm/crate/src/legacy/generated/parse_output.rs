@@ -3,6 +3,7 @@
 use std::collections::BTreeSet;
 
 use napi::bindgen_prelude::*;
+use napi_derive::napi;
 
 use super::{
     cst,

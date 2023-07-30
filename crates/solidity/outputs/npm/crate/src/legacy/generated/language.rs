@@ -9,6 +9,8 @@ use super::{parse_output::*, parser_function::*, scanner_function::*};
 #[allow(unused_imports)]
 use crate::syntax::nodes::{ProductionKind, RuleKind, TokenKind};
 
+use napi_derive::napi;
+
 #[napi(namespace = "legacy")]
 pub struct Language {
     pub(crate) version: Version,
@@ -31,7 +33,7 @@ pub struct Language {
     pub(crate) version_is_equal_to_or_greater_than_0_8_8: bool,
 }
 
-#[derive(thiserror::Error, Debug)]
+#[derive(Debug, Eq, PartialEq, thiserror::Error)]
 pub enum Error {
     // Shared with Rust
     #[error("Unsupported Solidity language version '{0}'.")]

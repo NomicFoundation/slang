@@ -1,23 +1,17 @@
 use anyhow::Result;
 use codegen_schema::types::LanguageDefinition;
 use codegen_testing::TestingGeneratorExtensions;
-use codegen_utils::context::CodegenContext;
+use infra_utils::cargo::CargoWorkspace;
 use solidity_language::SolidityLanguageExtensions;
 
 fn main() -> Result<()> {
-    return CodegenContext::with_context(|codegen| {
-        let language = LanguageDefinition::load_solidity()?;
+    let language = LanguageDefinition::load_solidity()?;
 
-        language.generate_cst_output_tests(
-            codegen,
-            &codegen
-                .repo_root
-                .join("crates/solidity/testing/snapshots/cst_output"),
-            &codegen
-                .repo_root
-                .join("crates/solidity/outputs/cargo/tests/src/cst_output/generated"),
-        )?;
+    language.generate_cst_output_tests(
+        &CargoWorkspace::locate_source_crate("solidity_testing_snapshots")?.join("cst_output"),
+        &CargoWorkspace::locate_source_crate("solidity_cargo_tests")?
+            .join("src/cst_output/generated"),
+    )?;
 
-        return Ok(());
-    });
+    return Ok(());
 }
