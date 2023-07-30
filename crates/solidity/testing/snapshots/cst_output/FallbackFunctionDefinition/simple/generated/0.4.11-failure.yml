@@ -1,0 +1,12 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ fallback () {}                                                                   │ 0..14
+
+Errors: # 1 total
+  - >
+    InvalidProductionVersion(
+        FallbackFunctionDefinition,
+    )
+
+Tree: null

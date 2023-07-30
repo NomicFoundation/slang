@@ -3,13 +3,18 @@ use std::str::FromStr;
 use anyhow::Result;
 use codegen_utils::context::CodegenContext;
 use semver::Version;
-use slang_solidity::{
-    language::{Error, Language},
-    syntax::{nodes::ProductionKind, parser::ParseOutput},
-};
-use solidity_testing_utils::cst_snapshots::ParseOutputTestSnapshotExtensions;
+use slang_solidity::{language::Language, syntax::nodes::ProductionKind};
+use solidity_testing_utils::cst_snapshots::CstSnapshots;
+use strum_macros::AsRefStr;
 
 use crate::cst_output::generated::VERSION_BREAKS;
+
+#[derive(AsRefStr)]
+#[strum(serialize_all = "kebab_case")]
+enum TestStatus {
+    Success,
+    Failure,
+}
 
 pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
     return CodegenContext::with_context(|codegen| {
@@ -27,7 +32,7 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
 
         let source = &std::fs::read_to_string(&input_path)?;
 
-        let mut last_output: Option<ParseOutput> = None;
+        let mut last_snapshot: Option<String> = None;
 
         for version in VERSION_BREAKS {
             let version = Version::parse(version)?;
@@ -35,34 +40,52 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
             let production_kind = ProductionKind::from_str(parser_name)
                 .expect(format!("No such parser: {parser_name}").as_str());
 
-            let output = match Language::new(version.to_owned())?.parse(production_kind, &source) {
-                Ok(output) => output,
-                Err(error) => match error {
-                    Error::InvalidProductionVersion(_) => {
-                        continue; // Skip versions that this production is not defined in.
-                    }
-                    _ => panic!("Unexpected error: {:?}", error),
-                },
+            let (errors, tree, status) = match Language::new(version.to_owned())?
+                .parse(production_kind, &source)
+            {
+                Ok(output) => {
+                    let errors = output
+                        .errors()
+                        .iter()
+                        .map(|error| {
+                            error.to_error_report(source_id, source, /* with_colour */ false)
+                        })
+                        .collect();
+
+                    let tree = Some(output.parse_tree());
+
+                    let status = if output.is_valid() {
+                        TestStatus::Success
+                    } else {
+                        TestStatus::Failure
+                    };
+
+                    (errors, tree, status)
+                }
+                Err(error) => {
+                    let errors = vec![format!("{error:#?}")];
+                    let tree = None;
+                    let status = TestStatus::Failure;
+
+                    (errors, tree, status)
+                }
             };
 
-            if let Some(last_output) = &last_output {
-                if &output == last_output {
-                    // Skip versions that produce the same output.
-                    continue;
-                }
+            let snapshot = CstSnapshots::render(source, &errors, &tree)?;
+
+            if Some(&snapshot) == last_snapshot.as_ref() {
+                // Skip versions that produce the same output.
+                continue;
             }
 
-            let test_status = if output.is_valid() {
-                "success"
-            } else {
-                "failure"
-            };
+            let snapshot_path = test_dir.join(format!(
+                "generated/{version}-{status}.yml",
+                status = status.as_ref(),
+            ));
 
-            let snapshot_path = test_dir.join(format!("generated/{version}-{test_status}.yml"));
-            let snapshot = output.to_test_snapshot(source_id, source)?;
             codegen.write_file(&snapshot_path, &snapshot)?;
 
-            last_output = Some(output);
+            last_snapshot = Some(snapshot);
         }
 
         return Ok(());

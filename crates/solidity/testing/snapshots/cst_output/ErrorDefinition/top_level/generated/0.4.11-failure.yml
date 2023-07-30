@@ -1,0 +1,12 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ error MyError();                                                                 │ 0..16
+
+Errors: # 1 total
+  - >
+    InvalidProductionVersion(
+        ErrorDefinition,
+    )
+
+Tree: null

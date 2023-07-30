@@ -1444,6 +1444,7 @@ dependencies = [
  "slang_solidity",
  "solidity_language",
  "solidity_testing_utils",
+ "strum_macros",
 ]
 
 [[package]]
