@@ -1,0 +1,12 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ int constant foo = 0;                                                            │ 0..21
+
+Errors: # 1 total
+  - >
+    InvalidProductionVersion(
+        ConstantDefinition,
+    )
+
+Tree: null
