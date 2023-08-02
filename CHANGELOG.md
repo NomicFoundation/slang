@@ -1,5 +1,27 @@
 # changelog
 
+## 0.9.0
+
+### Minor Changes
+
+-   [#540](https://github.com/NomicFoundation/slang/pull/540) [`0d04f95`](https://github.com/NomicFoundation/slang/commit/0d04f959bf1f5831c912d5109de3d933cfaa6266) Thanks [@AntonyBlakey](https://github.com/AntonyBlakey)! - Add a Rust Cursor API and refactor the Rust Visitor API to run on top of it.
+
+-   [#540](https://github.com/NomicFoundation/slang/pull/540) [`0d04f95`](https://github.com/NomicFoundation/slang/commit/0d04f959bf1f5831c912d5109de3d933cfaa6266) Thanks [@AntonyBlakey](https://github.com/AntonyBlakey)! - Move Visitor et al to node:: namespace, which is where Cursor is.
+
+-   [#540](https://github.com/NomicFoundation/slang/pull/540) [`0d04f95`](https://github.com/NomicFoundation/slang/commit/0d04f959bf1f5831c912d5109de3d933cfaa6266) Thanks [@AntonyBlakey](https://github.com/AntonyBlakey)! - Rename `range` functions that return a TextRange to `text_range`
+
+### Patch Changes
+
+-   [#543](https://github.com/NomicFoundation/slang/pull/543) [`7a34599`](https://github.com/NomicFoundation/slang/commit/7a34599f6b237b03a0f8ba92755cae6107589e37) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - Move `syntax::parser::ProductionKind` to `syntax::nodes` namespace.
+
+-   [#540](https://github.com/NomicFoundation/slang/pull/540) [`0d04f95`](https://github.com/NomicFoundation/slang/commit/0d04f959bf1f5831c912d5109de3d933cfaa6266) Thanks [@AntonyBlakey](https://github.com/AntonyBlakey)! - Add TokenNode.text to the TS API.
+
+-   [#540](https://github.com/NomicFoundation/slang/pull/540) [`0d04f95`](https://github.com/NomicFoundation/slang/commit/0d04f959bf1f5831c912d5109de3d933cfaa6266) Thanks [@AntonyBlakey](https://github.com/AntonyBlakey)! - Add first pass of Typescript binding to the Cursor API, but no TS Visitor yet.
+
+-   [#545](https://github.com/NomicFoundation/slang/pull/545) [`e73658a`](https://github.com/NomicFoundation/slang/commit/e73658ae4e777e78a01e213f213e2a5dc13e5cba) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - render EBNF grammar on top of each `ProductionKind`, `RuleKind`, and `TokenKind`.
+
+-   [#558](https://github.com/NomicFoundation/slang/pull/558) [`95bbc50`](https://github.com/NomicFoundation/slang/commit/95bbc5025fbf63b8d4e07f7652a70a7f66363db6) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - Correct versioning for `SourceUnitMember` and `ContractMember` children.
+
 ## 0.8.0
 
 ### Minor Changes
