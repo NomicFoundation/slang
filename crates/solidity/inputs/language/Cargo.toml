@@ -1,5 +1,6 @@
 [package]
 name = "solidity_language"
+description = "Solidity language definition compilation"
 version.workspace = true
 rust-version.workspace = true
 edition.workspace = true
