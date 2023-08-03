@@ -1,4 +1,4 @@
-<!-- This file is generated automatically by infrastructure scripts. Please don't edit by hand. -->
+<!-- This file is @generated automatically by infrastructure scripts. Please don't edit by hand. -->
 
 ```{ .ebnf .slang-ebnf #RESERVED_WORD_IN_ANY_VERSION }
 «RESERVED_WORD_IN_ANY_VERSION» = "abstract"

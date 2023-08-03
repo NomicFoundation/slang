@@ -69,7 +69,7 @@ fn backup_raw_file(file_path: &PathBuf, unformatted: &str) -> Result<PathBuf> {
 
 fn generate_header(file_path: &PathBuf) -> Result<String> {
     let warning_line =
-        "This file is generated automatically by infrastructure scripts. Please don't edit by hand.";
+        "This file is @generated automatically by infrastructure scripts. Please don't edit by hand.";
 
     return match get_extension(file_path)? {
         "json" => Ok(format!("")),

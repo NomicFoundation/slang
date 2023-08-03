@@ -1,4 +1,4 @@
-// This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+// This file is @generated automatically by infrastructure scripts. Please don't edit by hand.
 
 #[cfg(feature = "slang_napi_interfaces")]
 use napi::bindgen_prelude::*;

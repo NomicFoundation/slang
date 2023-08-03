@@ -1,4 +1,4 @@
-// This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+// This file is @generated automatically by infrastructure scripts. Please don't edit by hand.
 
 #[allow(unused_macros)]
 macro_rules! scan_predicate {
