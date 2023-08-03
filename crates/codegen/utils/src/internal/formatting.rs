@@ -74,7 +74,7 @@ fn generate_header(file_path: &PathBuf) -> Result<String> {
     return match get_extension(file_path)? {
         "json" => Ok(format!("")),
         "html" | "md" => Ok(format!("<!-- {warning_line} -->")),
-        "rs" => Ok(format!("// {warning_line}")),
+        "rs" => Ok(format!("// {warning_line}\n#![allow(clippy::all)]")),
         "yml" => Ok(format!("# {warning_line}")),
         ext => bail!("Unsupported extension to generate a header for: {ext}"),
     };

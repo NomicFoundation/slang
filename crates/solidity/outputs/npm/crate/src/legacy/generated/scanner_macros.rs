@@ -1,4 +1,5 @@
 // This file is @generated automatically by infrastructure scripts. Please don't edit by hand.
+#![allow(clippy::all)]
 
 #[allow(unused_macros)]
 macro_rules! scan_predicate {
