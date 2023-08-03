@@ -1,3 +1,13 @@
+//! Generates a human-readable specification for the [`LanguageDefinitionRef`].
+//!
+//! At the time of writing, the generated pages include:
+//! - A list of supported versions
+//! - A grammar page for each version
+//! - A reference page for each version
+//!
+//! and the auxiliary snippet files included by the grammar mkdocs pages.
+//!
+//! Exposes a [`SpecGeneratorExtensions`] trait that generates all the pages in a given [`CodegenContext`].
 mod grammar;
 mod markdown;
 mod navigation;
@@ -17,7 +27,9 @@ use crate::{
     snippets::Snippets,
 };
 
+/// Extension trait for [`LanguageDefinitionRef`] that generates the specification files.
 pub trait SpecGeneratorExtensions {
+    /// Generates the specification files in a [`CodegenContext`].
     fn generate_spec(&self, codegen: &mut CodegenContext, output_dir: &PathBuf) -> Result<()>;
 }
 
