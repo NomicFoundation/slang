@@ -61,7 +61,7 @@ impl EbnfSerializer {
     /// Serializes a single EBNF statement.
     ///
     /// Example:
-    /// ```ebnf,no_run
+    /// ```ebnf
     /// UNSIGNED_INTEGER_TYPE = "uint" «INTEGER_TYPE_SIZE»?;
     /// ```
     pub fn serialize_statement(&mut self, name: &str, root_node: &EbnfNode) {
