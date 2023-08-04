@@ -34,6 +34,10 @@ fn compile_language(codegen: &mut CodegenContext, definition_dir: PathBuf) -> Re
         "cargo:rustc-env=SLANG_SOLIDITY_LANGUAGE_DEFINITION_BIN={path}",
         path = output_path.to_str().unwrap()
     );
+    println!(
+        "cargo:rerun-if-changed={path}",
+        path = output_path.to_str().unwrap()
+    );
 
     return Ok(());
 }
