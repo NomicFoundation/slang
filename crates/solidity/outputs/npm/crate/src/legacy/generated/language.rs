@@ -1,5 +1,4 @@
 // This file is @generated automatically by infrastructure scripts. Please don't edit by hand.
-#![allow(clippy::all)]
 
 #[allow(deprecated, unused_imports)]
 use semver::Version;

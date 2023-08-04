@@ -1,5 +1,4 @@
 // This file is @generated automatically by infrastructure scripts. Please don't edit by hand.
-#![allow(clippy::all)]
 
 use super::{
     cst::{Node as RustNode, RuleNode as RustRuleNode, TokenNode as RustTokenNode},

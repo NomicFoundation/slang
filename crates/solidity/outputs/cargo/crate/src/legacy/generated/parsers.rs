@@ -1,5 +1,4 @@
 // This file is @generated automatically by infrastructure scripts. Please don't edit by hand.
-#![allow(clippy::all)]
 
 use super::cst;
 use super::language::Language;
