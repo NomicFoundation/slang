@@ -1,0 +1,6 @@
+[package]
+name = "solidity_testing_snapshots"
+version.workspace = true
+rust-version.workspace = true
+edition.workspace = true
+publish = false

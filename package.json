@@ -2,9 +2,8 @@
   "name": "@slang-private/workspace",
   "private": true,
   "workspaces": [
+    "crates/infra/cli",
     "crates/solidity/outputs/npm/package",
-    "crates/solidity/outputs/npm/tests",
-    "scripts/changelog",
-    "scripts/lint"
+    "crates/solidity/outputs/npm/tests"
   ]
 }

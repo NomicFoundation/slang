@@ -1,10 +1,6 @@
 {
   "$schema": "https://unpkg.com/@changesets/config@2.3.0/schema.json",
-
   "access": "public",
   "baseBranch": "main",
-  "changelog": ["@changesets/changelog-github", { "repo": "NomicFoundation/slang" }],
-
-  "_COMMENT_": "All packages should be ignored by default, except the single 'changelog' private package.",
-  "ignore": ["@nomicfoundation/*", "@slang-private/*"]
+  "changelog": ["@changesets/changelog-github", { "repo": "NomicFoundation/slang" }]
 }

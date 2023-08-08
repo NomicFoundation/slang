@@ -1,7 +1,7 @@
 mod children_count;
 mod consistent_shape;
 
-use codegen_utils::errors::CodegenResult;
+use anyhow::Result;
 
 use crate::{
     types::LanguageDefinitionRef,
@@ -11,7 +11,7 @@ use crate::{
     },
 };
 
-pub fn run(language: &LanguageDefinitionRef) -> CodegenResult<()> {
+pub fn run(language: &LanguageDefinitionRef) -> Result<()> {
     let mut reporter = Reporter::new();
 
     ChildrenCount::validate(language, &mut reporter);

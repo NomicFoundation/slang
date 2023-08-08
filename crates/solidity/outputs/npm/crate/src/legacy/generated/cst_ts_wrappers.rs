@@ -1,16 +1,15 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
+use std::rc::Rc;
+
+use napi::{bindgen_prelude::*, JsObject, NapiValue};
+use napi_derive::napi;
+
 use super::{
     cst::{Node as RustNode, RuleNode as RustRuleNode, TokenNode as RustTokenNode},
     cursor_ts_wrappers::Cursor,
     text_index::{TextIndex as RustTextIndex, TextRange as RustTextRange},
 };
-
-use std::rc::Rc;
-
-use napi::bindgen_prelude::*;
-use napi::JsObject;
-use napi::NapiValue;
 
 use crate::syntax::nodes::{RuleKind, TokenKind};
 

@@ -1,7 +1,7 @@
 use std::rc::Rc;
 
-use codegen_utils::errors::Range;
 use indexmap::IndexMap;
+use infra_utils::errors::Range;
 
 pub type NodeRef = Rc<Node>;
 

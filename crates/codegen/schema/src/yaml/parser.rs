@@ -5,8 +5,9 @@ use std::{
     unreachable,
 };
 
-use codegen_utils::errors::{CodegenErrors, CodegenResult, Position};
+use anyhow::Result;
 use indexmap::IndexMap;
+use infra_utils::errors::{InfraErrors, Position};
 use yaml_rust::{
     parser::Parser as YamlParser,
     scanner::{Marker, TScalarStyle},
@@ -21,10 +22,7 @@ pub struct Parser<'context> {
 }
 
 impl<'context> Parser<'context> {
-    pub fn run_parser(
-        file_path: &'context PathBuf,
-        source: &'context str,
-    ) -> CodegenResult<NodeRef> {
+    pub fn run_parser(file_path: &'context PathBuf, source: &'context str) -> Result<NodeRef> {
         let mut instance = Self {
             file_path,
             parser: YamlParser::new(source.chars()),
@@ -41,7 +39,7 @@ impl<'context> Parser<'context> {
         return Ok(root);
     }
 
-    fn parse_value(&mut self) -> CodegenResult<NodeRef> {
+    fn parse_value(&mut self) -> Result<NodeRef> {
         let Token {
             event: current,
             position: start,
@@ -141,18 +139,18 @@ impl<'context> Parser<'context> {
         return Ok(NodeRef::new(value));
     }
 
-    fn consume(&mut self) -> CodegenResult<Token> {
+    fn consume(&mut self) -> Result<Token> {
         let token = self.peek()?;
         self.parser.next().unwrap(); // advance the iterator
         return Ok(token);
     }
 
-    fn peek(&mut self) -> CodegenResult<Token> {
+    fn peek(&mut self) -> Result<Token> {
         let (event, marker) = self.parser.peek().map_err(|error| {
             let position = marker_to_position(error.marker());
             let range = position..position;
 
-            return CodegenErrors::single(self.file_path.to_owned(), range, error.to_string());
+            return InfraErrors::single(self.file_path.to_owned(), range, error.to_string());
         })?;
 
         return Ok(Token {

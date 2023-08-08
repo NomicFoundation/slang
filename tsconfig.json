@@ -20,6 +20,10 @@
     "allowJs": true,
     "checkJs": true,
 
+    /* Projects */
+    "incremental": true,
+    "tsBuildInfoFile": "target/tsc/.tsbuildinfo",
+
     /* Emit */
     "noEmit": true,
 

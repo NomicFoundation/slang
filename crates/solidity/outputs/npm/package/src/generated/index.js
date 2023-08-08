@@ -1,3 +1,5 @@
+// This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
 // Slang License: https://github.com/NomicFoundation/slang/blob/main/LICENSE
 // NAPI-RS License: https://github.com/napi-rs/napi-rs/blob/main/LICENSE
 

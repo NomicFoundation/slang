@@ -1,11 +1,12 @@
 use std::{
     collections::{BTreeMap, BTreeSet},
-    path::PathBuf,
+    path::Path,
 };
 
+use anyhow::Result;
 use codegen_schema::types::LanguageDefinitionRef;
-use codegen_utils::context::CodegenContext;
 use inflector::Inflector;
+use infra_utils::codegen::CodegenReadWrite;
 use proc_macro2::{Ident, TokenStream};
 use quote::{format_ident, quote};
 use semver::Version;
@@ -364,112 +365,66 @@ impl CodeGenerator {
         quote! { #(#invocations),* }
     }
 
-    pub fn write_common_sources(&self, codegen: &mut CodegenContext, output_dir: &PathBuf) {
-        // Rebuild if input files are added/removed
-        codegen.track_input_dir(
-            &codegen
-                .repo_root
-                .join("crates/codegen/legacy_syntax_templates/src"),
-        );
+    pub fn write_common_sources(
+        &self,
+        codegen: &mut CodegenReadWrite,
+        templates_dir: &Path,
+        output_dir: &Path,
+    ) -> Result<()> {
+        codegen.copy_file(
+            templates_dir.join("shared/cst.rs"),
+            output_dir.join("cst.rs"),
+        )?;
 
-        codegen
-            .copy_file(
-                &codegen
-                    .repo_root
-                    .join("crates/codegen/legacy_syntax_templates/src/shared/cst.rs"),
-                &output_dir.join("cst.rs"),
-            )
-            .unwrap();
+        codegen.copy_file(
+            templates_dir.join("shared/cursor.rs"),
+            output_dir.join("cursor.rs"),
+        )?;
 
-        codegen
-            .copy_file(
-                &codegen
-                    .repo_root
-                    .join("crates/codegen/legacy_syntax_templates/src/shared/cursor.rs"),
-                &output_dir.join("cursor.rs"),
-            )
-            .unwrap();
+        codegen.copy_file(
+            templates_dir.join("shared/scanner_macros.rs"),
+            output_dir.join("scanner_macros.rs"),
+        )?;
 
-        codegen
-            .copy_file(
-                &codegen
-                    .repo_root
-                    .join("crates/codegen/legacy_syntax_templates/src/shared/scanner_macros.rs"),
-                &output_dir.join("scanner_macros.rs"),
-            )
-            .unwrap();
+        codegen.copy_file(
+            templates_dir.join("shared/parser_helpers.rs"),
+            output_dir.join("parser_helpers.rs"),
+        )?;
 
-        codegen
-            .copy_file(
-                &codegen
-                    .repo_root
-                    .join("crates/codegen/legacy_syntax_templates/src/shared/parser_helpers.rs"),
-                &output_dir.join("parser_helpers.rs"),
-            )
-            .unwrap();
+        codegen.copy_file(
+            templates_dir.join("shared/parse_error.rs"),
+            output_dir.join("parse_error.rs"),
+        )?;
 
-        codegen
-            .copy_file(
-                &codegen
-                    .repo_root
-                    .join("crates/codegen/legacy_syntax_templates/src/shared/parse_error.rs"),
-                &output_dir.join("parse_error.rs"),
-            )
-            .unwrap();
+        codegen.copy_file(
+            templates_dir.join("shared/parser_function.rs"),
+            output_dir.join("parser_function.rs"),
+        )?;
 
-        codegen
-            .copy_file(
-                &codegen
-                    .repo_root
-                    .join("crates/codegen/legacy_syntax_templates/src/shared/parser_function.rs"),
-                &output_dir.join("parser_function.rs"),
-            )
-            .unwrap();
+        codegen.copy_file(
+            templates_dir.join("shared/parser_result.rs"),
+            output_dir.join("parser_result.rs"),
+        )?;
 
-        codegen
-            .copy_file(
-                &codegen
-                    .repo_root
-                    .join("crates/codegen/legacy_syntax_templates/src/shared/parser_result.rs"),
-                &output_dir.join("parser_result.rs"),
-            )
-            .unwrap();
+        codegen.copy_file(
+            templates_dir.join("shared/scanner_function.rs"),
+            output_dir.join("scanner_function.rs"),
+        )?;
 
-        codegen
-            .copy_file(
-                &codegen
-                    .repo_root
-                    .join("crates/codegen/legacy_syntax_templates/src/shared/scanner_function.rs"),
-                &output_dir.join("scanner_function.rs"),
-            )
-            .unwrap();
+        codegen.copy_file(
+            templates_dir.join("shared/stream.rs"),
+            output_dir.join("stream.rs"),
+        )?;
 
-        codegen
-            .copy_file(
-                &codegen
-                    .repo_root
-                    .join("crates/codegen/legacy_syntax_templates/src/shared/stream.rs"),
-                &output_dir.join("stream.rs"),
-            )
-            .unwrap();
+        codegen.copy_file(
+            templates_dir.join("shared/text_index.rs"),
+            output_dir.join("text_index.rs"),
+        )?;
 
-        codegen
-            .copy_file(
-                &codegen
-                    .repo_root
-                    .join("crates/codegen/legacy_syntax_templates/src/shared/text_index.rs"),
-                &output_dir.join("text_index.rs"),
-            )
-            .unwrap();
-
-        codegen
-            .copy_file(
-                &codegen
-                    .repo_root
-                    .join("crates/codegen/legacy_syntax_templates/src/shared/visitor.rs"),
-                &output_dir.join("visitor.rs"),
-            )
-            .unwrap();
+        codegen.copy_file(
+            templates_dir.join("shared/visitor.rs"),
+            output_dir.join("visitor.rs"),
+        )?;
 
         {
             // Use `format!` here because the content contains comments, that `quote!` throws away.
@@ -485,9 +440,7 @@ impl CodeGenerator {
                 scanner_functions = self.scanner_functions()
             );
 
-            codegen
-                .write_file(&output_dir.join("scanners.rs"), &content)
-                .unwrap();
+            codegen.write_file(output_dir.join("scanners.rs"), content)?;
         }
 
         {
@@ -515,9 +468,9 @@ impl CodeGenerator {
                 parser_functions = self.parser_functions()
             );
 
-            codegen
-                .write_file(&output_dir.join("parsers.rs"), &content)
-                .unwrap();
+            codegen.write_file(output_dir.join("parsers.rs"), content)?;
         }
+
+        return Ok(());
     }
 }

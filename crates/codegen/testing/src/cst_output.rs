@@ -1,26 +1,34 @@
 use std::{
     collections::{BTreeMap, BTreeSet},
-    path::PathBuf,
+    path::Path,
 };
 
-use anyhow::{bail, Context, Result};
+use anyhow::{bail, Result};
 use codegen_schema::types::LanguageDefinition;
-use codegen_utils::context::CodegenContext;
-use walkdir::WalkDir;
+use infra_utils::{
+    codegen::{Codegen, CodegenReadWrite},
+    paths::{FileWalker, PathExtensions},
+};
 
 pub fn generate_cst_output_tests(
     language: &LanguageDefinition,
-    codegen: &mut CodegenContext,
-    data_dir: &PathBuf,
-    output_dir: &PathBuf,
+    data_dir: &Path,
+    output_dir: &Path,
 ) -> Result<()> {
-    let mod_file_path = output_dir.join("mod.rs");
-    let parser_tests = &collect_parser_tests(codegen, data_dir)?;
-    generate_mod_file(language, codegen, &mod_file_path, parser_tests)?;
+    let parser_tests = collect_parser_tests(data_dir)?;
 
-    for (parser_name, test_names) in parser_tests {
+    let mut codegen = Codegen::read_write(data_dir)?;
+
+    generate_mod_file(
+        language,
+        &mut codegen,
+        &output_dir.join("mod.rs"),
+        &parser_tests,
+    )?;
+
+    for (parser_name, test_names) in &parser_tests {
         generate_unit_test_file(
-            codegen,
+            &mut codegen,
             parser_name,
             test_names,
             &output_dir.join(format!("{parser_name}.rs")),
@@ -30,32 +38,20 @@ pub fn generate_cst_output_tests(
     return Ok(());
 }
 
-fn collect_parser_tests(
-    codegen: &mut CodegenContext,
-    data_dir: &PathBuf,
-) -> Result<BTreeMap<String, BTreeSet<String>>> {
+fn collect_parser_tests(data_dir: &Path) -> Result<BTreeMap<String, BTreeSet<String>>> {
     let mut parser_tests = BTreeMap::<String, BTreeSet<String>>::new();
 
-    // Rebuild if input files are added/removed
-    codegen.track_input_dir(data_dir);
-
-    let walker = WalkDir::new(data_dir).into_iter().filter_entry(|entry| {
-        // skip generated files
-        codegen.get_generated_dir(entry.path()).is_err()
-    });
-
-    for entry in walker {
-        let entry = entry?;
-        if entry.file_type().is_dir() {
+    for file in FileWalker::from_directory(data_dir).find_all()? {
+        if file.generated_dir().is_ok() {
+            // skip generated files
             continue;
         }
 
-        let file_path = entry.into_path();
-        let parts = file_path
+        let parts: Vec<_> = file
             .strip_prefix(data_dir)?
             .iter()
-            .map(|p| Ok(p.to_str().context(format!("Failed to parse part: {p:?}"))?))
-            .collect::<Result<Vec<&str>>>()?;
+            .map(|p| p.to_str().unwrap())
+            .collect();
 
         match &parts[..] {
             [parser_name, test_name, "input.sol"] => {
@@ -66,7 +62,7 @@ fn collect_parser_tests(
                 parser_tests.insert(test_name.to_string());
             }
             _ => {
-                bail!("Invalid test input. Should be in the form of '<tests-dir>/PARSER_NAME/TEST_NAME/input.sol', but found: {file_path:?}");
+                bail!("Invalid test input. Should be in the form of '<tests-dir>/PARSER_NAME/TEST_NAME/input.sol', but found: {file:?}");
             }
         };
     }
@@ -76,8 +72,8 @@ fn collect_parser_tests(
 
 fn generate_mod_file(
     language: &LanguageDefinition,
-    codegen: &mut CodegenContext,
-    mod_file_path: &PathBuf,
+    codegen: &mut CodegenReadWrite,
+    mod_file_path: &Path,
     parser_tests: &BTreeMap<String, BTreeSet<String>>,
 ) -> Result<()> {
     let module_declarations = parser_tests
@@ -102,14 +98,14 @@ fn generate_mod_file(
         ",
     );
 
-    return codegen.write_file(mod_file_path, &contents);
+    return codegen.write_file(mod_file_path, contents);
 }
 
 fn generate_unit_test_file(
-    codegen: &mut CodegenContext,
+    codegen: &mut CodegenReadWrite,
     parser_name: &str,
     test_names: &BTreeSet<String>,
-    unit_test_file_path: &PathBuf,
+    unit_test_file_path: &Path,
 ) -> Result<()> {
     let unit_tests = test_names
         .iter()
@@ -134,5 +130,5 @@ fn generate_unit_test_file(
         "
     );
 
-    return codegen.write_file(unit_test_file_path, &contents);
+    return codegen.write_file(unit_test_file_path, contents);
 }

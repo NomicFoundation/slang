@@ -1,39 +1,51 @@
-use std::path::PathBuf;
+use std::path::Path;
 
 use anyhow::Result;
-use codegen_schema::types::LanguageDefinition;
-use codegen_utils::context::CodegenContext;
+use cargo_emit::rustc_env;
+use codegen_schema::types::{LanguageDefinition, LanguageDefinitionRef};
+use infra_utils::{cargo::CargoWorkspace, paths::PathExtensions};
 
 fn main() -> Result<()> {
-    return CodegenContext::with_context(|codegen| {
-        let crate_dir = PathBuf::from(std::env::var("CARGO_MANIFEST_DIR")?);
+    let crate_dir = CargoWorkspace::locate_source_crate("solidity_language")?;
 
-        LanguageDefinition::generate_json_schema(codegen, crate_dir.join("generated"))?;
+    LanguageDefinition::generate_json_schema(&crate_dir.join("generated"))?;
 
-        compile_language(codegen, crate_dir.join("definition"))?;
+    let language = compile_language(&crate_dir)?;
+    let bin_file_path = crate_dir.join("target/language-definition.bin");
 
-        return Ok(());
-    });
+    write_binary(&language, &bin_file_path)?;
+
+    rustc_env!(
+        "COMPILED_SOLIDITY_LANGUAGE_DEFINITION_BIN",
+        "{}",
+        bin_file_path.unwrap_str()
+    );
+
+    return Ok(());
 }
 
-fn compile_language(codegen: &mut CodegenContext, definition_dir: PathBuf) -> Result<()> {
-    // Rebuild if input files are added/removed
-    codegen.track_input_dir(&definition_dir);
+fn compile_language(crate_dir: &Path) -> Result<LanguageDefinitionRef> {
+    let definition_dir = crate_dir.join("definition");
 
-    let language = LanguageDefinition::compile(codegen, definition_dir)?;
+    return LanguageDefinition::compile(definition_dir);
+}
 
+fn write_binary(language: &LanguageDefinitionRef, bin_file_path: &Path) -> Result<()> {
     let mut buffer = Vec::new();
     bson::to_document(&language)?.to_writer(&mut buffer)?;
 
-    let output_path =
-        PathBuf::from(std::env::var("OUT_DIR")?).join("generated/language-definition.bin");
-    std::fs::create_dir_all(output_path.parent().unwrap())?;
-    std::fs::write(&output_path, &buffer)?;
+    if bin_file_path.exists() {
+        let existing_buffer = std::fs::read(&bin_file_path)?;
 
-    println!(
-        "cargo:rustc-env=SLANG_SOLIDITY_LANGUAGE_DEFINITION_BIN={path}",
-        path = output_path.to_str().unwrap()
-    );
+        if buffer == existing_buffer {
+            // Don't overwrite, in order not to trigger a rebuild by Cargo:
+            return Ok(());
+        }
+    }
+
+    std::fs::create_dir_all(bin_file_path.unwrap_parent())?;
+
+    std::fs::write(&bin_file_path, &buffer)?;
 
     return Ok(());
 }

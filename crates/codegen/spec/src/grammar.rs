@@ -36,18 +36,14 @@ pub fn generate_supported_versions_page(language: &LanguageDefinition) -> Naviga
     };
 }
 
-pub fn generate_grammar_dir(
-    language: &LanguageDefinition,
-    snippets: &Snippets,
-    repo_root: &PathBuf,
-) -> NavigationEntry {
+pub fn generate_grammar_dir(language: &LanguageDefinition, snippets: &Snippets) -> NavigationEntry {
     let mut pages = Vec::<NavigationEntry>::new();
 
     for version in language.collect_version_breaks() {
         pages.push(NavigationEntry::Page {
             title: format!("v{version}"),
             path: format!("v{version}"),
-            contents: generate_grammar_page(language, snippets, repo_root, &version),
+            contents: generate_grammar_page(language, snippets, &version),
         });
     }
 
@@ -61,7 +57,6 @@ pub fn generate_grammar_dir(
 fn generate_grammar_page(
     language: &LanguageDefinition,
     snippets: &Snippets,
-    repo_root: &PathBuf,
     version: &Version,
 ) -> String {
     let mut page = MarkdownWriter::new();
@@ -88,7 +83,7 @@ fn generate_grammar_page(
 
             page.write_newline();
             for snippet_path in snippets {
-                page.write_snippet(repo_root, &snippet_path);
+                page.write_snippet(&snippet_path);
             }
         }
     }

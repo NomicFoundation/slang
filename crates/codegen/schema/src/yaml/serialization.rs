@@ -1,15 +1,16 @@
-use std::path::PathBuf;
+use std::path::Path;
 
-use codegen_utils::{
-    context::CodegenContext,
-    errors::{CodegenErrors, CodegenResult, Position},
+use anyhow::Result;
+use infra_utils::{
+    codegen::CodegenReadWrite,
+    errors::{InfraErrors, Position},
 };
 use serde::de::DeserializeOwned;
 
 pub fn deserialize_yaml<T: DeserializeOwned>(
-    codegen: &mut CodegenContext,
-    file_path: &PathBuf,
-) -> CodegenResult<T> {
+    codegen: &mut CodegenReadWrite,
+    file_path: &Path,
+) -> Result<T, InfraErrors> {
     let source = codegen.read_file(file_path).unwrap();
 
     return serde_yaml::from_str(&source).map_err(|error| {
@@ -20,6 +21,6 @@ pub fn deserialize_yaml<T: DeserializeOwned>(
         let end = Position::new(start.offset + width, start.line, start.column + width);
 
         let range = start..end;
-        return CodegenErrors::single(file_path.to_owned(), range, error.to_string());
+        return InfraErrors::single(file_path.to_owned(), range, error.to_string());
     });
 }

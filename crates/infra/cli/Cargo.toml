@@ -1,0 +1,21 @@
+[package]
+name = "infra_cli"
+version.workspace = true
+rust-version.workspace = true
+edition.workspace = true
+publish = false
+
+description = "Commands to build, test, version, and publish projects in this repository."
+
+[dependencies]
+anyhow = { workspace = true }
+clap = { workspace = true }
+infra_utils = { workspace = true }
+itertools = { workspace = true }
+markdown = { workspace = true }
+owo-colors = { workspace = true }
+semver = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+terminal_size = { workspace = true }
+toml = { workspace = true }

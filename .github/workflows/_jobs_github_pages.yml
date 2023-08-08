@@ -23,7 +23,11 @@ jobs:
       #
 
       - name: "Clone repository"
+        # Mark the repository as a safe directory in git: https://github.com/actions/checkout/issues/766
         uses: "actions/checkout@v3.4.0"
+
+      - name: "Prepare Repository"
+        run: "git config --global --add safe.directory $GITHUB_WORKSPACE"
 
       - name: "Restore hermit cache"
         uses: "actions/cache/restore@v3.3.1"
@@ -35,7 +39,7 @@ jobs:
       - name: "Restore build cache"
         uses: "actions/cache/restore@v3.3.1"
         with:
-          path: "target/"
+          path: "**/target/"
           key: "build-cache-${{ hashFiles('Cargo.lock', 'package-lock.json', 'Pipfile.lock') }}"
           fail-on-cache-miss: true
 
@@ -44,19 +48,24 @@ jobs:
         with:
           entrypoint: "echo"
 
-      - name: "Install Dependencies"
+      - name: "scripts/bin/infra setup pipenv"
         uses: "./.devcontainer"
         with:
-          entrypoint: "scripts/setup/all.sh"
+          entrypoint: "scripts/bin/infra"
+        env:
+          SLANG_INFRA_CLI_EXTRA_ARGS: "setup pipenv"
 
       #
       # Deploy to GitHub Pages:
       #
 
-      - name: "Build documentation"
+      - name: "scripts/bin/infra check mkdocs"
         uses: "./.devcontainer"
         with:
-          entrypoint: "scripts/mkdocs/build.sh"
+          entrypoint: "scripts/bin/infra"
+        env:
+          SLANG_INFRA_CLI_EXTRA_ARGS: "check mkdocs"
+          SLANG_MKDOCS_DOCUMENTATION_SITE_DIR: "documentation/target/release"
 
       - name: "Configure GitHub Pages"
         uses: "actions/configure-pages@v3.0.5"
@@ -64,7 +73,7 @@ jobs:
       - name: "Upload artifacts"
         uses: "actions/upload-pages-artifact@v1.0.7"
         with:
-          path: "target/documentation"
+          path: "documentation/target/release"
 
       - name: "Deploy to GitHub Pages"
         id: "deployment"

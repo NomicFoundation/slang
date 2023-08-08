@@ -10,5 +10,5 @@ publish = false
 anyhow = { workspace = true }
 codegen_schema = { workspace = true }
 codegen_spec = { workspace = true }
-codegen_utils = { workspace = true }
+infra_utils = { workspace = true }
 solidity_language = { workspace = true }

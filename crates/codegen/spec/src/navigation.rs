@@ -1,7 +1,7 @@
-use std::path::PathBuf;
+use std::path::Path;
 
 use anyhow::Result;
-use codegen_utils::context::CodegenContext;
+use infra_utils::codegen::CodegenWriteOnly;
 
 use crate::markdown::MarkdownWriter;
 
@@ -19,7 +19,7 @@ pub enum NavigationEntry {
 }
 
 impl NavigationEntry {
-    pub fn write_files(&self, codegen: &mut CodegenContext, parent_dir: &PathBuf) -> Result<()> {
+    pub fn write_files(&self, codegen: &mut CodegenWriteOnly, parent_dir: &Path) -> Result<()> {
         let current_dir = parent_dir.join(self.path());
 
         match self {
@@ -39,11 +39,11 @@ impl NavigationEntry {
                     index_page.write_list_link(child.title(), &child.nav_path());
                 }
 
-                codegen.write_file(&current_dir.join("NAV.md"), &nav_page.to_string())?;
-                codegen.write_file(&current_dir.join("index.md"), &index_page.to_string())?;
+                codegen.write_file(current_dir.join("NAV.md"), nav_page.to_string())?;
+                codegen.write_file(current_dir.join("index.md"), index_page.to_string())?;
             }
             NavigationEntry::Page { contents, .. } => {
-                codegen.write_file(&current_dir.join("index.md"), &contents)?;
+                codegen.write_file(current_dir.join("index.md"), contents)?;
             }
         };
 

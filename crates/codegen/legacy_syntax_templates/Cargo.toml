@@ -13,6 +13,3 @@ strum = { workspace = true }
 strum_macros = { workspace = true }
 napi = { workspace = true }
 napi-derive = { workspace = true }
-
-[build-dependencies]
-napi-build = { workspace = true }

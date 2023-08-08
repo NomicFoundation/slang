@@ -1,25 +1,30 @@
-use std::path::PathBuf;
+use std::path::Path;
 
 use anyhow::Result;
-use codegen_utils::context::CodegenContext;
+use infra_utils::codegen::{Codegen, CodegenWriteOnly};
 use schemars::{schema_for, JsonSchema};
 use serde_json::Value;
 
 use crate::types::{LanguageDefinition, ManifestFile, ProductionsFile};
 
 impl LanguageDefinition {
-    pub fn generate_json_schema(codegen: &mut CodegenContext, output_dir: PathBuf) -> Result<()> {
-        write_schema_file::<ManifestFile>(codegen, &output_dir.join("manifest.schema.json"))?;
+    pub fn generate_json_schema(output_dir: &Path) -> Result<()> {
+        let mut codegen = Codegen::write_only()?;
 
-        write_schema_file::<ProductionsFile>(codegen, &output_dir.join("productions.schema.json"))?;
+        write_schema_file::<ManifestFile>(&mut codegen, &output_dir.join("manifest.schema.json"))?;
+
+        write_schema_file::<ProductionsFile>(
+            &mut codegen,
+            &output_dir.join("productions.schema.json"),
+        )?;
 
         return Ok(());
     }
 }
 
 fn write_schema_file<TSchema: JsonSchema>(
-    codegen: &mut CodegenContext,
-    file_path: &PathBuf,
+    codegen: &mut CodegenWriteOnly,
+    file_path: &Path,
 ) -> Result<()> {
     let schema = schema_for!(TSchema);
 
@@ -31,7 +36,7 @@ fn write_schema_file<TSchema: JsonSchema>(
         serde_json::to_string_pretty(&relaxed)?
     };
 
-    return codegen.write_file(file_path, &schema_json);
+    return codegen.write_file(file_path, schema_json);
 }
 
 fn relax_schema(value: Value) -> Value {

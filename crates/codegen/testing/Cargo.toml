@@ -8,5 +8,4 @@ publish = false
 [dependencies]
 anyhow = { workspace = true }
 codegen_schema = { workspace = true }
-codegen_utils = { workspace = true }
-walkdir = { workspace = true }
+infra_utils = { workspace = true }

@@ -1,0 +1,3 @@
+[build]
+# Using a separate target-dir to avoid dead locks when this binary is invoked from the source crate during build.
+target-dir = "./target"

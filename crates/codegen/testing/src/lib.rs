@@ -1,29 +1,18 @@
 mod cst_output;
 
-use std::path::PathBuf;
+use std::path::Path;
 
 use anyhow::Result;
 use codegen_schema::types::LanguageDefinition;
-use codegen_utils::context::CodegenContext;
 
 use crate::cst_output::generate_cst_output_tests;
 
 pub trait TestingGeneratorExtensions {
-    fn generate_cst_output_tests(
-        &self,
-        codegen: &mut CodegenContext,
-        snapshots_dir: &PathBuf,
-        output_dir: &PathBuf,
-    ) -> Result<()>;
+    fn generate_cst_output_tests(&self, snapshots_dir: &Path, output_dir: &Path) -> Result<()>;
 }
 
 impl TestingGeneratorExtensions for LanguageDefinition {
-    fn generate_cst_output_tests(
-        &self,
-        codegen: &mut CodegenContext,
-        data_dir: &PathBuf,
-        output_dir: &PathBuf,
-    ) -> Result<()> {
-        return generate_cst_output_tests(self, codegen, data_dir, output_dir);
+    fn generate_cst_output_tests(&self, data_dir: &Path, output_dir: &Path) -> Result<()> {
+        return generate_cst_output_tests(self, data_dir, output_dir);
     }
 }

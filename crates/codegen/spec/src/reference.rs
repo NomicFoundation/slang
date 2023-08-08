@@ -1,13 +1,8 @@
-use std::path::PathBuf;
-
 use codegen_schema::types::{LanguageDefinition, LanguageSection, LanguageTopic};
 
 use crate::{markdown::MarkdownWriter, navigation::NavigationEntry};
 
-pub fn generate_reference_dir(
-    language: &LanguageDefinition,
-    repo_root: &PathBuf,
-) -> NavigationEntry {
+pub fn generate_reference_dir(language: &LanguageDefinition) -> NavigationEntry {
     let mut sections = Vec::<NavigationEntry>::new();
 
     for section in &language.sections {
@@ -17,7 +12,7 @@ pub fn generate_reference_dir(
             topics.push(NavigationEntry::Page {
                 title: topic.title.to_owned(),
                 path: topic.path.to_owned(),
-                contents: generate_topic_page(language, section, topic, repo_root),
+                contents: generate_topic_page(language, section, topic),
             });
         }
 
@@ -39,7 +34,6 @@ fn generate_topic_page(
     language: &LanguageDefinition,
     section: &LanguageSection,
     topic: &LanguageTopic,
-    repo_root: &PathBuf,
 ) -> String {
     let mut page = MarkdownWriter::new();
 
@@ -47,7 +41,6 @@ fn generate_topic_page(
 
     page.write_newline();
     page.write_snippet(
-        repo_root,
         &language
             .language_dir
             .join(&section.path)
