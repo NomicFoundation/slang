@@ -1,4 +1,4 @@
-<!-- This file is @generated automatically by infrastructure scripts. Please don't edit by hand. -->
+<!-- This file is generated automatically by infrastructure scripts. Please don't edit by hand. -->
 
 -   [3. Types](./index.md)
 -   [3.1. Advanced Types](./01-advanced-types/index.md)

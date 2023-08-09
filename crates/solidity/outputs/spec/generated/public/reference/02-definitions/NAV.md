@@ -1,4 +1,4 @@
-<!-- This file is @generated automatically by infrastructure scripts. Please don't edit by hand. -->
+<!-- This file is generated automatically by infrastructure scripts. Please don't edit by hand. -->
 
 -   [2. Definitions](./index.md)
 -   [2.1. Contracts](./01-contracts/index.md)

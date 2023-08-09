@@ -1,4 +1,4 @@
-<!-- This file is @generated automatically by infrastructure scripts. Please don't edit by hand. -->
+<!-- This file is generated automatically by infrastructure scripts. Please don't edit by hand. -->
 
 -   [1. File Structure](./index.md)
 -   [1.1. License Specifiers](./01-license-specifiers/index.md)

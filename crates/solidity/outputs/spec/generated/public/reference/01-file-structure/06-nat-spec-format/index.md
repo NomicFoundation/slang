@@ -1,4 +1,4 @@
-<!-- This file is @generated automatically by infrastructure scripts. Please don't edit by hand. -->
+<!-- This file is generated automatically by infrastructure scripts. Please don't edit by hand. -->
 
 # 1.6. NatSpec Format
 

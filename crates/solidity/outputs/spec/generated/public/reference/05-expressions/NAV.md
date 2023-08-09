@@ -1,4 +1,4 @@
-<!-- This file is @generated automatically by infrastructure scripts. Please don't edit by hand. -->
+<!-- This file is generated automatically by infrastructure scripts. Please don't edit by hand. -->
 
 -   [5. Expressions](./index.md)
 -   [5.1. Base Expressions](./01-base-expressions/index.md)
