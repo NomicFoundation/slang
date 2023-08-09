@@ -12,12 +12,12 @@ In the future, if we decide to enable code spaces, we can have a 1-click button 
 
 To install language-specific binaries and packages, we use [Hermit](https://cashapp.github.io/hermit/), which installs all tools only when it is first needed/invoked, so you can quickly setup and build different projects quickly. It also takes care of updating your `$PATH` as you `cd` in and out of different projects, to make sure you are using the right tools every time. Follow [this guide](https://cashapp.github.io/hermit/usage/get-started/) to install it locally to your machine, or simply build any included project, and it will bootstrap itself if it is missing.
 
-## Build Scripts
+## Infra CLI
 
-To ensure consistency, and a good experience for first-time developers, all build/test/run/debug commands should be written, versioned, and documented inside the `scripts/` folder. This means that any dev instructions are well documented, versioned, and verified/executed with every build. Scripts should never assume or use `cwd`, but activate their own hermit environment and run all other commands using repo-relative paths. This allows reusing/invoking across projects.
+To ensure consistency, and a good experience for first-time developers, all build/test/run/debug commands should be written, versioned, and documented inside the `infra_cli` crate. This means that any dev instructions are well documented, versioned, and verified/executed with every build. It also means that we can minimize any manual setup or teardown steps during development, and just rely on that cli.
+
+You can access all such commands (from the hermit environment) by just running the `infra` script, which just refers to `$REPO_ROOT/scripts/bin/infra`. If this is your first time contributing, we recommend starting with `infra --help` to familiarize yourself with its capabilities.
 
 ## Versioning and Publishing
 
-We manage versioning through [changesets](https://github.com/changesets/changesets). Each pull request can describe what user
-facing changes it is introducing, and include this information as a "changeset" markdown file along with source changes.
-These changeset files are analyzed and used to create another pull request to bump the repository version and update dependencies. Once the version bump is merged, artifacts are built and released to all registries.
+We manage versioning through [changesets](https://github.com/changesets/changesets). Each pull request can describe what user facing changes it is introducing, and include this information as a "changeset" markdown file along with source changes. These changeset files are analyzed and used to create another pull request to bump the repository version and update dependencies. Once the version bump is merged, artifacts are built and released to all registries.

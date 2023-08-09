@@ -1,0 +1,21 @@
+[package]
+name = "infra_utils"
+version.workspace = true
+rust-version.workspace = true
+edition.workspace = true
+publish = false
+
+[dependencies]
+anyhow = { workspace = true }
+ariadne = { workspace = true }
+cargo-emit = { workspace = true }
+ignore = { workspace = true }
+itertools = { workspace = true }
+rayon = { workspace = true }
+regex = { workspace = true }
+semver = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+similar-asserts = { workspace = true }
+tera = { workspace = true }
+toml = { workspace = true }

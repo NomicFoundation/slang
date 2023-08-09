@@ -14,20 +14,27 @@ jobs:
 
     steps:
       - name: "Clone repository"
+        # Mark the repository as a safe directory in git: https://github.com/actions/checkout/issues/766
         uses: "actions/checkout@v3.4.0"
 
-      - name: "Install Dependencies"
-        run: "scripts/setup/all.sh"
+      - name: "Prepare Repository"
+        run: "git config --global --add safe.directory $GITHUB_WORKSPACE"
 
-      - name: "Analyze Changesets"
+      - name: "scripts/bin/infra setup npm"
+        run: "scripts/bin/infra"
+        env:
+          SLANG_INFRA_CLI_EXTRA_ARGS: "setup npm"
+
+      - name: "scripts/bin/infra bump-version"
         id: "changesets"
         uses: "changesets/action@v1.4.1"
         with:
           title: "Bump Slang Version"
           commit: "Bump Slang Version"
           createGithubReleases: false
-          version: "scripts/changelog/bump-version.sh"
+          version: "scripts/bin/infra"
         env:
+          SLANG_INFRA_CLI_EXTRA_ARGS: "bump-version"
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
     outputs:
@@ -45,7 +52,11 @@ jobs:
       #
 
       - name: "Clone repository"
+        # Mark the repository as a safe directory in git: https://github.com/actions/checkout/issues/766
         uses: "actions/checkout@v3.4.0"
+
+      - name: "Prepare Repository"
+        run: "git config --global --add safe.directory $GITHUB_WORKSPACE"
 
       - name: "Restore hermit cache"
         uses: "actions/cache/restore@v3.3.1"
@@ -57,7 +68,7 @@ jobs:
       - name: "Restore build cache"
         uses: "actions/cache/restore@v3.3.1"
         with:
-          path: "target/"
+          path: "**/target/"
           key: "build-cache-${{ hashFiles('Cargo.lock', 'package-lock.json', 'Pipfile.lock') }}"
           fail-on-cache-miss: true
 
@@ -66,50 +77,45 @@ jobs:
         with:
           entrypoint: "echo"
 
-      - name: "Install Dependencies"
+      - name: "scripts/bin/infra setup cargo npm"
         uses: "./.devcontainer"
         with:
-          entrypoint: "scripts/setup/all.sh"
+          entrypoint: "scripts/bin/infra"
+        env:
+          SLANG_INFRA_CLI_EXTRA_ARGS: "setup cargo npm"
 
       #
       # Build and Publish:
       #
 
-      - name: "Build Native Binaries"
+      - name: "scripts/bin/infra publish npm"
         uses: "./.devcontainer"
         with:
-          entrypoint: "scripts/npm/build.sh"
+          entrypoint: "scripts/bin/infra"
         env:
-          SLANG_CROSS_BUILD: "true"
-
-      - name: "Publish to NPM"
-        uses: "./.devcontainer"
-        with:
-          entrypoint: "scripts/npm/publish.sh"
-        env:
-          SLANG_PUBLISH: "true"
+          SLANG_INFRA_CLI_EXTRA_ARGS: "publish npm"
           NPM_TOKEN: "${{ secrets.NPM_TOKEN }}"
 
-      - name: "Publish to Cargo"
+      - name: "scripts/bin/infra publish cargo"
         uses: "./.devcontainer"
         with:
-          entrypoint: "scripts/cargo/publish.sh"
+          entrypoint: "scripts/bin/infra"
         env:
-          SLANG_PUBLISH: "true"
+          SLANG_INFRA_CLI_EXTRA_ARGS: "publish cargo"
           CARGO_REGISTRY_TOKEN: "${{ secrets.CARGO_REGISTRY_TOKEN }}"
 
-      - name: "Create GitHub Release"
+      - name: "scripts/bin/infra publish github-release"
         uses: "./.devcontainer"
         with:
-          entrypoint: "scripts/changelog/create-release.sh"
+          entrypoint: "scripts/bin/infra"
         env:
-          SLANG_PUBLISH: "true"
+          SLANG_INFRA_CLI_EXTRA_ARGS: "publish github-release"
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
-      - name: "Update Lock Files"
+      - name: "scripts/bin/infra publish lock-files"
         uses: "./.devcontainer"
         with:
-          entrypoint: "scripts/changelog/update-lock-files.sh"
+          entrypoint: "scripts/bin/infra"
         env:
-          SLANG_PUBLISH: "true"
+          SLANG_INFRA_CLI_EXTRA_ARGS: "publish lock-files"
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"

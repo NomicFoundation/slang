@@ -3,6 +3,8 @@ mod operators;
 mod productions;
 mod versions;
 
+use anyhow::Result;
+
 use crate::{
     types::LanguageDefinitionRef,
     validation::{
@@ -12,9 +14,8 @@ use crate::{
         visitors::Reporter,
     },
 };
-use codegen_utils::errors::CodegenResult;
 
-pub fn run(language: &LanguageDefinitionRef) -> CodegenResult<()> {
+pub fn run(language: &LanguageDefinitionRef) -> Result<()> {
     let mut reporter = Reporter::new();
 
     Keywords::validate(language, &mut reporter);

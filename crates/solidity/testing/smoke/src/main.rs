@@ -1,10 +1,11 @@
 mod datasets;
 mod reporting;
 
-use std::{collections::BTreeSet, path::PathBuf};
+use std::{collections::BTreeSet, path::Path};
 
 use anyhow::Result;
 use codegen_schema::types::LanguageDefinition;
+use infra_utils::paths::PathExtensions;
 use rayon::prelude::{IntoParallelRefIterator, ParallelIterator};
 use semver::Version;
 use slang_solidity::{language::Language, syntax::nodes::ProductionKind};
@@ -68,12 +69,12 @@ fn process_dataset(dataset: &impl Dataset, versions: &BTreeSet<Version>) -> Resu
 }
 
 fn process_source_file(
-    file_path: &PathBuf,
+    file_path: &Path,
     versions: &BTreeSet<Version>,
     reporter: &Reporter,
 ) -> Result<()> {
-    let source_id = file_path.to_str().unwrap();
-    let source = &std::fs::read_to_string(file_path)?;
+    let source_id = file_path.unwrap_str();
+    let source = &file_path.read_to_string()?;
 
     let latest_version = versions.iter().max().unwrap();
     let pragmas = if let Ok(pragmas) = extract_version_pragmas(source, latest_version) {

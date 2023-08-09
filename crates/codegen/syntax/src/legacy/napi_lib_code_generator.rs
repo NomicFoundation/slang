@@ -1,7 +1,8 @@
-use std::path::PathBuf;
+use std::path::Path;
 
+use anyhow::Result;
 use codegen_schema::types::LanguageDefinition;
-use codegen_utils::context::CodegenContext;
+use infra_utils::{cargo::CargoWorkspace, codegen::Codegen};
 use quote::quote;
 
 use crate::legacy::code_generator::CodeGenerator;
@@ -10,10 +11,14 @@ impl CodeGenerator {
     pub fn write_napi_lib_sources(
         &self,
         language: &LanguageDefinition,
-        codegen: &mut CodegenContext,
-        output_dir: &PathBuf,
-    ) {
-        self.write_common_sources(codegen, output_dir);
+        output_dir: &Path,
+    ) -> Result<()> {
+        let templates_dir =
+            CargoWorkspace::locate_source_crate("codegen_legacy_syntax_templates")?.join("src");
+
+        let mut codegen = Codegen::read_write(&templates_dir)?;
+
+        self.write_common_sources(&mut codegen, &templates_dir, output_dir)?;
 
         {
             let content = quote! {
@@ -39,37 +44,23 @@ impl CodeGenerator {
                pub mod visitor;
             };
 
-            codegen
-                .write_file(&output_dir.join("mod.rs"), &content.to_string())
-                .unwrap();
+            codegen.write_file(output_dir.join("mod.rs"), content.to_string())?;
         }
 
-        codegen
-            .copy_file(
-                &codegen
-                    .repo_root
-                    .join("crates/codegen/legacy_syntax_templates/src/napi/cst_ts_wrappers.rs"),
-                &output_dir.join("cst_ts_wrappers.rs"),
-            )
-            .unwrap();
+        codegen.copy_file(
+            templates_dir.join("napi/cst_ts_wrappers.rs"),
+            output_dir.join("cst_ts_wrappers.rs"),
+        )?;
 
-        codegen
-            .copy_file(
-                &codegen
-                    .repo_root
-                    .join("crates/codegen/legacy_syntax_templates/src/napi/cursor_ts_wrappers.rs"),
-                &output_dir.join("cursor_ts_wrappers.rs"),
-            )
-            .unwrap();
+        codegen.copy_file(
+            templates_dir.join("napi/cursor_ts_wrappers.rs"),
+            output_dir.join("cursor_ts_wrappers.rs"),
+        )?;
 
-        codegen
-            .copy_file(
-                &codegen
-                    .repo_root
-                    .join("crates/codegen/legacy_syntax_templates/src/napi/parse_output.rs"),
-                &output_dir.join("parse_output.rs"),
-            )
-            .unwrap();
+        codegen.copy_file(
+            templates_dir.join("napi/parse_output.rs"),
+            output_dir.join("parse_output.rs"),
+        )?;
 
         {
             // Use `format!` here because the content contains comments, that `quote!` throws away.
@@ -77,13 +68,15 @@ impl CodeGenerator {
                 "
                 {language_boilerplate_common}
 
+                use napi_derive::napi;
+
                 #[napi(namespace = \"legacy\")]
                 pub struct Language {{
                     pub(crate) version: Version,
                     {version_flag_declarations}
                 }}
 
-                #[derive(thiserror::Error, Debug)]
+                #[derive(Debug, Eq, PartialEq, thiserror::Error)]
                 pub enum Error {{
                     // Shared with Rust
                     #[error(\"Unsupported {language_title} language version '{{0}}'.\")]
@@ -139,13 +132,7 @@ impl CodeGenerator {
                     }}
                 }}
                 ",
-                language_boilerplate_common = codegen
-                    .read_file(
-                        &codegen
-                            .repo_root
-                            .join("crates/codegen/legacy_syntax_templates/src/shared/language.rs"),
-                    )
-                    .unwrap(),
+                language_boilerplate_common = codegen.read_file(templates_dir.join("shared/language.rs"))?,
                 version_flag_declarations = self.version_flag_declarations(),
                 versions_array = {
                     let versions = language.versions.iter().map(|v| v.to_string());
@@ -157,9 +144,9 @@ impl CodeGenerator {
                 parser_invocations = self.parser_invocations(),
             );
 
-            codegen
-                .write_file(&output_dir.join("language.rs"), &content)
-                .unwrap();
+            codegen.write_file(output_dir.join("language.rs"), content)?;
         }
+
+        return Ok(());
     }
 }

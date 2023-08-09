@@ -1,18 +1,16 @@
-import test from "ava";
 import { Language } from "@nomicfoundation/slang/language";
 import { ProductionKind } from "@nomicfoundation/slang/syntax/nodes";
 
-test("render error reports", (t) => {
+test("render error reports", () => {
   const source = "int256 constant";
   const language = new Language("0.8.1");
 
   const { errors } = language.parse(ProductionKind.SourceUnit, source);
-  t.is(errors.length, 1);
+  expect(errors).toHaveLength(1);
 
   const report = errors[0]?.toErrorReport("test.sol", source, /* withColor */ false);
 
-  t.is(
-    report,
+  expect(report).toEqual(
     `
 Error: Expected Identifier.
    ╭─[test.sol:1:16]
@@ -25,23 +23,18 @@ Error: Expected Identifier.
   );
 });
 
-test("invalid semantic version", (t) => {
-  t.throws(() => new Language("foo_bar"), {
-    code: "GenericFailure",
-    message: "Invalid semantic version 'foo_bar'.",
-  });
+test("invalid semantic version", () => {
+  expect(() => new Language("foo_bar")).toThrowError("Invalid semantic version 'foo_bar'.");
 });
 
-test("unsupported language version", (t) => {
-  t.throws(() => new Language("0.0.0"), {
-    code: "GenericFailure",
-    message: "Unsupported Solidity language version '0.0.0'.",
-  });
+test("unsupported language version", () => {
+  expect(() => new Language("0.0.0")).toThrowError("Unsupported Solidity language version '0.0.0'.");
 });
 
-test("invalid production version", (t) => {
-  t.throws(() => new Language("0.4.11").parse(ProductionKind.ConstructorDefinition, ""), {
-    code: "GenericFailure",
-    message: "Production 'ConstructorDefinition' is not valid in this version of Solidity.",
-  });
+test("invalid production version", () => {
+  const language = new Language("0.4.11");
+
+  expect(() => language.parse(ProductionKind.ConstructorDefinition, "")).toThrowError(
+    "Production 'ConstructorDefinition' is not valid in this version of Solidity.",
+  );
 });

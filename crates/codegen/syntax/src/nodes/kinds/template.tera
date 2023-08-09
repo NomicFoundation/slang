@@ -16,7 +16,7 @@ use napi::bindgen_prelude::*;
     // If feature is enabled, derive the NAPI version.
     // This also derives `Clone` and `Copy` automatically.
     feature = "slang_napi_interfaces",
-    napi(string_enum, namespace = "syntax$nodes")
+    napi_derive::napi(string_enum, namespace = "syntax$nodes")
 )]
 #[cfg_attr(
     // If feature is not enabled, derive `Clone` and `Copy` manually.

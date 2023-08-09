@@ -1,6 +1,7 @@
 use std::{collections::HashMap, error::Error, path::PathBuf};
 
-use codegen_utils::errors::{CodegenErrors, CodegenResult};
+use anyhow::Result;
+use infra_utils::{errors::InfraErrors, paths::PathExtensions};
 
 use crate::{
     validation::visitors::location::{Location, LocationRef},
@@ -20,16 +21,15 @@ impl Reporter {
         self.errors.push((location.to_owned(), error.to_string()));
     }
 
-    pub fn to_result(self) -> CodegenResult<()> {
-        let mut errors = CodegenErrors::new();
+    pub fn to_result(self) -> Result<()> {
+        let mut errors = InfraErrors::new();
         let mut cst_cache = HashMap::<PathBuf, NodeRef>::new();
 
         for (location, message) in self.errors {
             let (file_path, path) = location.flatten();
 
             let cst = cst_cache.entry(file_path.to_owned()).or_insert_with(|| {
-                let source = std::fs::read_to_string(&file_path)
-                    .expect(&format!("File cannot be read: {file_path:?}"));
+                let source = file_path.read_to_string().unwrap();
 
                 return Parser::run_parser(&file_path, &source)
                     .expect(&format!("File cannot be parsed: {file_path:?}"));

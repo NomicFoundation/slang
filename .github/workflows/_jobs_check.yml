@@ -18,6 +18,10 @@ jobs:
       - name: "Clone repository"
         uses: "actions/checkout@v3.4.0"
 
+      - name: "Prepare Repository"
+        # Mark the repository as a safe directory in git: https://github.com/actions/checkout/issues/766
+        run: "git config --global --add safe.directory $GITHUB_WORKSPACE"
+
       - name: "Restore hermit cache"
         if: "${{ github.ref_name != 'main' }}"
         uses: "actions/cache/restore@v3.3.1"
@@ -30,7 +34,7 @@ jobs:
         if: "${{ github.ref_name != 'main' }}"
         uses: "actions/cache/restore@v3.3.1"
         with:
-          path: "target/"
+          path: "**/target/"
           key: "build-cache-${{ hashFiles('Cargo.lock', 'package-lock.json', 'Pipfile.lock') }}"
           restore-keys: "build-cache-"
 
@@ -39,52 +43,39 @@ jobs:
         with:
           entrypoint: "echo"
 
-      - name: "Install Dependencies"
+      - name: "scripts/bin/infra setup"
         id: "installDependencies"
         uses: "./.devcontainer"
         with:
-          entrypoint: "scripts/setup/all.sh"
+          entrypoint: "scripts/bin/infra"
+        env:
+          SLANG_INFRA_CLI_EXTRA_ARGS: "setup"
 
       #
       # Checks:
       # Run all checks and report issues found, even if other checks failed:
       #
 
-      - name: "Cargo check"
-        if: "${{ (success() || failure()) && steps.installDependencies.outcome == 'success' }}"
+      - name: "scripts/bin/infra check"
         uses: "./.devcontainer"
         with:
-          entrypoint: "scripts/cargo/check.sh"
+          entrypoint: "scripts/bin/infra"
+        env:
+          SLANG_INFRA_CLI_EXTRA_ARGS: "check"
 
-      - name: "Cargo test"
-        if: "${{ (success() || failure()) && steps.installDependencies.outcome == 'success' }}"
+      - name: "scripts/bin/infra test"
         uses: "./.devcontainer"
         with:
-          entrypoint: "scripts/cargo/test.sh"
+          entrypoint: "scripts/bin/infra"
+        env:
+          SLANG_INFRA_CLI_EXTRA_ARGS: "test"
 
-      - name: "NPM build"
-        if: "${{ (success() || failure()) && steps.installDependencies.outcome == 'success' }}"
+      - name: "scripts/bin/infra lint"
         uses: "./.devcontainer"
         with:
-          entrypoint: "scripts/npm/build.sh"
-
-      - name: "NPM test"
-        if: "${{ (success() || failure()) && steps.installDependencies.outcome == 'success' }}"
-        uses: "./.devcontainer"
-        with:
-          entrypoint: "scripts/npm/test.sh"
-
-      - name: "Build documentation"
-        if: "${{ (success() || failure()) && steps.installDependencies.outcome == 'success' }}"
-        uses: "./.devcontainer"
-        with:
-          entrypoint: "scripts/mkdocs/build.sh"
-
-      - name: "Run linters"
-        if: "${{ (success() || failure()) && steps.installDependencies.outcome == 'success' }}"
-        uses: "./.devcontainer"
-        with:
-          entrypoint: "scripts/lint/all.sh"
+          entrypoint: "scripts/bin/infra"
+        env:
+          SLANG_INFRA_CLI_EXTRA_ARGS: "lint"
 
       #
       # Update cache files:
@@ -102,5 +93,5 @@ jobs:
       - name: "Save build cache"
         uses: "actions/cache/save@v3.3.1"
         with:
-          path: "target/"
+          path: "**/target/"
           key: "build-cache-${{ hashFiles('Cargo.lock', 'package-lock.json', 'Pipfile.lock') }}"

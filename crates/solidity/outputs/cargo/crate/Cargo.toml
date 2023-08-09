@@ -34,9 +34,6 @@ required-features = ["cli"]
 default = ["cli"]
 cli = ["dep:anyhow", "dep:clap", "dep:serde_json"]
 
-[dev-dependencies]
-solidity_cargo_build = { workspace = true }
-
 [dependencies]
 anyhow = { workspace = true, optional = true }
 ariadne = { workspace = true }

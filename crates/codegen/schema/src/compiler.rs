@@ -1,8 +1,9 @@
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
-use codegen_utils::{
-    context::CodegenContext,
-    errors::{CodegenErrors, CodegenResult, Position},
+use anyhow::Result;
+use infra_utils::{
+    codegen::{Codegen, CodegenReadWrite},
+    errors::{InfraErrors, Position},
 };
 
 use crate::{
@@ -15,46 +16,65 @@ use crate::{
 };
 
 impl LanguageDefinition {
-    pub fn compile(
-        codegen: &mut CodegenContext,
-        language_dir: PathBuf,
-    ) -> CodegenResult<LanguageDefinitionRef> {
-        let manifest_path = language_dir.join(LanguageDefinition::MANIFEST_FILE_NAME);
-        let manifest = deserialize_yaml::<ManifestFile>(codegen, &manifest_path)?;
+    pub fn compile(language_dir: PathBuf) -> Result<LanguageDefinitionRef> {
+        return compile_language(language_dir).map_err(|error| {
+            if let Some(errors) = error.downcast_ref::<InfraErrors>() {
+                eprintln!();
+                eprintln!("{errors}");
 
-        let sections = load_sections(codegen, &language_dir, &manifest.sections)?;
+                eprintln!();
+                eprintln!(
+                    "Found {count} validation errors. Aborting.",
+                    count = errors.len()
+                );
 
-        let productions = sections
-            .iter()
-            .flat_map(|section| &section.topics)
-            .flat_map(|topic| &topic.productions)
-            .map(|production| (production.name.to_owned(), production.clone()))
-            .collect();
-
-        let language = LanguageDefinitionRef::new(LanguageDefinition {
-            title: manifest.title,
-            sections,
-            versions: manifest.versions,
-
-            root_production: manifest.root_production,
-            productions,
-
-            language_dir,
+                // `process::exit()` instead of `panic!()`. No need to pollute the output with useless stack traces:
+                std::process::exit(1);
+            } else {
+                return error;
+            }
         });
-
-        validate_language(&language)?;
-
-        return Ok(language);
     }
 }
 
+fn compile_language(language_dir: PathBuf) -> Result<LanguageDefinitionRef> {
+    let mut codegen = Codegen::read_write(&language_dir)?;
+
+    let manifest_path = language_dir.join(LanguageDefinition::MANIFEST_FILE_NAME);
+    let manifest = deserialize_yaml::<ManifestFile>(&mut codegen, &manifest_path)?;
+
+    let sections = load_sections(&mut codegen, &language_dir, &manifest.sections)?;
+
+    let productions = sections
+        .iter()
+        .flat_map(|section| &section.topics)
+        .flat_map(|topic| &topic.productions)
+        .map(|production| (production.name.to_owned(), production.clone()))
+        .collect();
+
+    let language = LanguageDefinitionRef::new(LanguageDefinition {
+        title: manifest.title,
+        sections,
+        versions: manifest.versions,
+
+        root_production: manifest.root_production,
+        productions,
+
+        language_dir,
+    });
+
+    validate_language(&language)?;
+
+    return Ok(language);
+}
+
 fn load_sections(
-    codegen: &mut CodegenContext,
-    manifest_dir: &PathBuf,
+    codegen: &mut CodegenReadWrite,
+    manifest_dir: &Path,
     sections: &Vec<ManifestSection>,
-) -> CodegenResult<Vec<LanguageSection>> {
+) -> Result<Vec<LanguageSection>> {
     let mut results = Vec::<LanguageSection>::new();
-    let mut errors = CodegenErrors::new();
+    let mut errors = InfraErrors::new();
 
     for section in sections {
         let section_dir = manifest_dir.join(&section.path);
@@ -82,10 +102,10 @@ fn load_sections(
 }
 
 fn load_topic(
-    codegen: &mut CodegenContext,
-    section_dir: &PathBuf,
+    codegen: &mut CodegenReadWrite,
+    section_dir: &Path,
     topic: &ManifestTopic,
-) -> CodegenResult<LanguageTopic> {
+) -> Result<LanguageTopic, InfraErrors> {
     let topic_dir = section_dir.join(&topic.path);
 
     let notes_path = topic_dir.join(LanguageTopic::NOTES_FILE_NAME);
@@ -95,7 +115,8 @@ fn load_topic(
         if !path.exists() {
             let range = Position::new(0, 0, 0)..Position::new(usize::MAX, usize::MAX, usize::MAX);
             let message = format!("Topic file not found.");
-            return Err(CodegenErrors::single(path.to_owned(), range, message));
+
+            return Err(InfraErrors::single(path.to_owned(), range, message));
         }
     }
 

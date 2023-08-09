@@ -4,9 +4,9 @@
   "build": {
     "dockerfile": "Dockerfile"
   },
-  "postAttachCommand": "/bin/bash scripts/setup/all.sh",
+  "postAttachCommand": "/bin/bash scripts/bin/infra setup",
   "portsAttributes": {
-    // Keep in-sync with the port number defined in "$REPO_ROOT/scripts/mkdocs/watch.sh":
+    // _MKDOCS_WATCH_PORT_ | keep in sync with the port number defined in "$REPO_ROOT/crates/infra/cli/src/toolchains/mkdocs/mod.rs"
     "5353": {
       "label": "mkdocs",
       "onAutoForward": "openPreview"
