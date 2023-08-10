@@ -1,5 +1,6 @@
 [package]
 name = "solidity_language"
+description = "Solidity language definition compilation"
 version.workspace = true
 rust-version.workspace = true
 edition.workspace = true
@@ -15,6 +16,4 @@ infra_utils = { workspace = true }
 [dependencies]
 anyhow = { workspace = true }
 bson = { workspace = true }
-cargo-emit = { workspace = true }
 codegen_schema = { workspace = true }
-infra_utils = { workspace = true }

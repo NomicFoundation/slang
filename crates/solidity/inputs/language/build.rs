@@ -1,7 +1,7 @@
 use std::path::Path;
 
 use anyhow::Result;
-use cargo_emit::rustc_env;
+use cargo_emit::{rerun_if_changed, rustc_env};
 use codegen_schema::types::{LanguageDefinition, LanguageDefinitionRef};
 use infra_utils::{cargo::CargoWorkspace, paths::PathExtensions};
 
@@ -20,6 +20,7 @@ fn main() -> Result<()> {
         "{}",
         bin_file_path.unwrap_str()
     );
+    rerun_if_changed!(bin_file_path.unwrap_str());
 
     return Ok(());
 }

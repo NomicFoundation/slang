@@ -1,5 +1,6 @@
 [package]
 name = "codegen_ebnf"
+description = "EBNF snippet serializer for language definitions"
 version.workspace = true
 rust-version.workspace = true
 edition.workspace = true

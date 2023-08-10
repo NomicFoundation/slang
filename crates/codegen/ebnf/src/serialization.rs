@@ -9,6 +9,7 @@ use crate::nodes::EbnfNode;
 
 const MAX_LINE_WIDTH: usize = 80;
 
+/// Serializes [`LanguageDefinition`](`codegen_schema::types::LanguageDefinition`) into EBNF snippets.
 pub struct EbnfSerializer {
     language: LanguageDefinitionRef,
     outputs: IndexMap<String, String>,
@@ -17,7 +18,7 @@ pub struct EbnfSerializer {
 impl EbnfSerializer {
     /// Returns `None` if version is not found.
     /// Otherwise, returns a map of LHS names to EBNF snippets.
-    /// Some productions (like `PrecedenceParser`) generate more than one statement.
+    /// Some productions (like ([`PrecedenceParser`](`ProductionDefinition::PrecedenceParser`)) generate more than one statement.
     pub fn serialize_version(
         language: &LanguageDefinitionRef,
         production: &ProductionRef,
@@ -57,6 +58,12 @@ impl EbnfSerializer {
         return Some(instance.outputs);
     }
 
+    /// Serializes a single EBNF statement.
+    ///
+    /// Example:
+    /// ```ebnf
+    /// UNSIGNED_INTEGER_TYPE = "uint" «INTEGER_TYPE_SIZE»?;
+    /// ```
     pub fn serialize_statement(&mut self, name: &str, root_node: &EbnfNode) {
         let mut buffer = String::new();
 
@@ -116,6 +123,7 @@ impl EbnfSerializer {
         return choices.join(&format!("\n{padding} | ", padding = " ".repeat(name_width)));
     }
 
+    /// Serialize and append an EBNF node to the buffer.
     pub fn serialize_node(&mut self, top_node: &EbnfNode, buffer: &mut String) {
         match top_node {
             EbnfNode::Choice { nodes } => {
