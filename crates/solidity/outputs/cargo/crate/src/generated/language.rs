@@ -56,37 +56,103 @@ impl From<Error> for napi::Error {
 }
 
 impl Language {
-    const VERSIONS: &'static [&'static str] = &[
-        "0.4.11", "0.4.12", "0.4.13", "0.4.14", "0.4.15", "0.4.16", "0.4.17", "0.4.18", "0.4.19",
-        "0.4.20", "0.4.21", "0.4.22", "0.4.23", "0.4.24", "0.4.25", "0.4.26", "0.5.0", "0.5.1",
-        "0.5.2", "0.5.3", "0.5.4", "0.5.5", "0.5.6", "0.5.7", "0.5.8", "0.5.9", "0.5.10", "0.5.11",
-        "0.5.12", "0.5.13", "0.5.14", "0.5.15", "0.5.16", "0.5.17", "0.6.0", "0.6.1", "0.6.2",
-        "0.6.3", "0.6.4", "0.6.5", "0.6.6", "0.6.7", "0.6.8", "0.6.9", "0.6.10", "0.6.11",
-        "0.6.12", "0.7.0", "0.7.1", "0.7.2", "0.7.3", "0.7.4", "0.7.5", "0.7.6", "0.8.0", "0.8.1",
-        "0.8.2", "0.8.3", "0.8.4", "0.8.5", "0.8.6", "0.8.7", "0.8.8", "0.8.9", "0.8.10", "0.8.11",
-        "0.8.12", "0.8.13", "0.8.14", "0.8.15", "0.8.16", "0.8.17", "0.8.18", "0.8.19",
+    pub const SUPPORTED_VERSIONS: &[Version] = &[
+        Version::new(0, 4, 11),
+        Version::new(0, 4, 12),
+        Version::new(0, 4, 13),
+        Version::new(0, 4, 14),
+        Version::new(0, 4, 15),
+        Version::new(0, 4, 16),
+        Version::new(0, 4, 17),
+        Version::new(0, 4, 18),
+        Version::new(0, 4, 19),
+        Version::new(0, 4, 20),
+        Version::new(0, 4, 21),
+        Version::new(0, 4, 22),
+        Version::new(0, 4, 23),
+        Version::new(0, 4, 24),
+        Version::new(0, 4, 25),
+        Version::new(0, 4, 26),
+        Version::new(0, 5, 0),
+        Version::new(0, 5, 1),
+        Version::new(0, 5, 2),
+        Version::new(0, 5, 3),
+        Version::new(0, 5, 4),
+        Version::new(0, 5, 5),
+        Version::new(0, 5, 6),
+        Version::new(0, 5, 7),
+        Version::new(0, 5, 8),
+        Version::new(0, 5, 9),
+        Version::new(0, 5, 10),
+        Version::new(0, 5, 11),
+        Version::new(0, 5, 12),
+        Version::new(0, 5, 13),
+        Version::new(0, 5, 14),
+        Version::new(0, 5, 15),
+        Version::new(0, 5, 16),
+        Version::new(0, 5, 17),
+        Version::new(0, 6, 0),
+        Version::new(0, 6, 1),
+        Version::new(0, 6, 2),
+        Version::new(0, 6, 3),
+        Version::new(0, 6, 4),
+        Version::new(0, 6, 5),
+        Version::new(0, 6, 6),
+        Version::new(0, 6, 7),
+        Version::new(0, 6, 8),
+        Version::new(0, 6, 9),
+        Version::new(0, 6, 10),
+        Version::new(0, 6, 11),
+        Version::new(0, 6, 12),
+        Version::new(0, 7, 0),
+        Version::new(0, 7, 1),
+        Version::new(0, 7, 2),
+        Version::new(0, 7, 3),
+        Version::new(0, 7, 4),
+        Version::new(0, 7, 5),
+        Version::new(0, 7, 6),
+        Version::new(0, 8, 0),
+        Version::new(0, 8, 1),
+        Version::new(0, 8, 2),
+        Version::new(0, 8, 3),
+        Version::new(0, 8, 4),
+        Version::new(0, 8, 5),
+        Version::new(0, 8, 6),
+        Version::new(0, 8, 7),
+        Version::new(0, 8, 8),
+        Version::new(0, 8, 9),
+        Version::new(0, 8, 10),
+        Version::new(0, 8, 11),
+        Version::new(0, 8, 12),
+        Version::new(0, 8, 13),
+        Version::new(0, 8, 14),
+        Version::new(0, 8, 15),
+        Version::new(0, 8, 16),
+        Version::new(0, 8, 17),
+        Version::new(0, 8, 18),
+        Version::new(0, 8, 19),
     ];
 
     pub fn new(version: Version) -> std::result::Result<Self, Error> {
-        if Self::VERSIONS.contains(&version.to_string().as_str()) {
+        if Self::SUPPORTED_VERSIONS.contains(&version) {
             Ok(Self {
-                version_is_at_least_0_4_21: Version::parse("0.4.21").unwrap() <= version,
-                version_is_at_least_0_4_22: Version::parse("0.4.22").unwrap() <= version,
-                version_is_at_least_0_5_0: Version::parse("0.5.0").unwrap() <= version,
-                version_is_at_least_0_5_3: Version::parse("0.5.3").unwrap() <= version,
-                version_is_at_least_0_6_0: Version::parse("0.6.0").unwrap() <= version,
-                version_is_at_least_0_6_2: Version::parse("0.6.2").unwrap() <= version,
-                version_is_at_least_0_6_5: Version::parse("0.6.5").unwrap() <= version,
-                version_is_at_least_0_6_11: Version::parse("0.6.11").unwrap() <= version,
-                version_is_at_least_0_7_0: Version::parse("0.7.0").unwrap() <= version,
-                version_is_at_least_0_7_1: Version::parse("0.7.1").unwrap() <= version,
-                version_is_at_least_0_7_4: Version::parse("0.7.4").unwrap() <= version,
-                version_is_at_least_0_8_0: Version::parse("0.8.0").unwrap() <= version,
-                version_is_at_least_0_8_4: Version::parse("0.8.4").unwrap() <= version,
-                version_is_at_least_0_8_8: Version::parse("0.8.8").unwrap() <= version,
-                version_is_at_least_0_8_13: Version::parse("0.8.13").unwrap() <= version,
-                version_is_at_least_0_8_18: Version::parse("0.8.18").unwrap() <= version,
-                version_is_at_least_0_8_19: Version::parse("0.8.19").unwrap() <= version,
+                version_is_at_least_0_4_21: Version::new(0, 4, 21) <= version,
+                version_is_at_least_0_4_22: Version::new(0, 4, 22) <= version,
+                version_is_at_least_0_5_0: Version::new(0, 5, 0) <= version,
+                version_is_at_least_0_5_3: Version::new(0, 5, 3) <= version,
+                version_is_at_least_0_6_0: Version::new(0, 6, 0) <= version,
+                version_is_at_least_0_6_2: Version::new(0, 6, 2) <= version,
+                version_is_at_least_0_6_5: Version::new(0, 6, 5) <= version,
+                version_is_at_least_0_6_11: Version::new(0, 6, 11) <= version,
+                version_is_at_least_0_7_0: Version::new(0, 7, 0) <= version,
+                version_is_at_least_0_7_1: Version::new(0, 7, 1) <= version,
+                version_is_at_least_0_7_4: Version::new(0, 7, 4) <= version,
+                version_is_at_least_0_8_0: Version::new(0, 8, 0) <= version,
+                version_is_at_least_0_8_4: Version::new(0, 8, 4) <= version,
+                version_is_at_least_0_8_8: Version::new(0, 8, 8) <= version,
+                version_is_at_least_0_8_13: Version::new(0, 8, 13) <= version,
+                version_is_at_least_0_8_18: Version::new(0, 8, 18) <= version,
+                version_is_at_least_0_8_19: Version::new(0, 8, 19) <= version,
                 version,
             })
         } else {
@@ -96,13 +162,6 @@ impl Language {
 
     pub fn version(&self) -> &Version {
         &self.version
-    }
-
-    pub fn supported_versions() -> Vec<Version> {
-        return Self::VERSIONS
-            .iter()
-            .map(|v| Version::parse(v).unwrap())
-            .collect();
     }
 
     #[allow(dead_code)]
@@ -9422,7 +9481,10 @@ impl Language {
 
     #[napi(js_name = "supportedVersions")]
     pub fn supported_versions_napi() -> Vec<String> {
-        return Self::VERSIONS.iter().map(|v| v.to_string()).collect();
+        return Self::SUPPORTED_VERSIONS
+            .iter()
+            .map(|v| v.to_string())
+            .collect();
     }
 
     #[napi(js_name = "scan")]

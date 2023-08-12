@@ -40,18 +40,18 @@ impl From<Error> for napi::Error {
 }
 
 impl Language {
-    const VERSIONS: &'static [&'static str] = &[
+    pub const SUPPORTED_VERSIONS: &[Version] = &[
         {%- for version in versions -%}
-            "{{ version }}",
+            Version::new({{ version | split(pat=".") | join(sep=", ") }}),
         {%- endfor -%}
     ];
 
     pub fn new(version: Version) -> std::result::Result<Self, Error> {
-        if Self::VERSIONS.contains(&version.to_string().as_str()) {
+        if Self::SUPPORTED_VERSIONS.contains(&version) {
             Ok(Self {
                 {%- for version in code.referenced_versions -%}
                     {# Separator #}
-                    version_is_at_least_{{ version | replace(from=".", to="_") }}: Version::parse("{{ version }}").unwrap() <= version,
+                    version_is_at_least_{{ version | replace(from=".", to="_") }}: Version::new({{ version | split(pat=".") | join(sep=", ") }}) <= version,
                 {%- endfor -%}
                 version,
             })
@@ -62,10 +62,6 @@ impl Language {
 
     pub fn version(&self) -> &Version {
         &self.version
-    }
-
-    pub fn supported_versions() -> Vec<Version> {
-        return Self::VERSIONS.iter().map(|v| Version::parse(v).unwrap()).collect();
     }
 
     {# Separator #}
@@ -254,7 +250,7 @@ impl Language {
 
     #[napi(js_name = "supportedVersions")]
     pub fn supported_versions_napi() -> Vec<String> {
-        return Self::VERSIONS.iter().map(|v| v.to_string()).collect();
+        return Self::SUPPORTED_VERSIONS.iter().map(|v| v.to_string()).collect();
     }
 
     #[napi(js_name = "scan")]
