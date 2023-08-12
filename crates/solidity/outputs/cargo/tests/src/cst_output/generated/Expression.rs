@@ -97,6 +97,11 @@ fn identifier_call() -> Result<()> {
 }
 
 #[test]
+fn incomplete_operand() -> Result<()> {
+    return run("Expression", "incomplete_operand");
+}
+
+#[test]
 fn index_access() -> Result<()> {
     return run("Expression", "index_access");
 }
