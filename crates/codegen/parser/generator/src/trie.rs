@@ -66,13 +66,7 @@ impl Trie {
 
             if branches.is_empty() && !path.is_empty() {
                 // This is an optimisation for a common case
-                let leaf = quote! {
-                    if scan_chars!(stream, #(#path),*) {
-                         Some(TokenKind::#kind)
-                    } else {
-                        None
-                    }
-                };
+                let leaf = quote! { scan_chars!(stream, #(#path),*).then_some(TokenKind::#kind) };
                 return if let ScannerDefinitionNode::Versioned(_, version_quality_ranges, _) =
                     scanner_definition_ref.node()
                 {
