@@ -120,20 +120,20 @@ impl Language {
         pub(crate) fn {{ context.name | snake_case }}_next_token(&self, stream: &mut Stream) -> Option<TokenKind> {
             let save = stream.position();
             let mut furthest_position = stream.position();
-            let mut longest_token = TokenKind::SKIPPED; // just a marker
+            let mut longest_token = None;
 
             if let Some(kind) = {{ context.alpha_literal_scanner }} {
                 // Make sure that this is not the start of an identifier
                 if !self.identifier_part(stream) {
                     furthest_position = stream.position();
-                    longest_token = kind;
+                    longest_token = Some(kind);
                 }
             }
             stream.set_position(save);
-            
+
             if let Some(kind) = {{ context.non_alpha_literal_scanner }} {
                 furthest_position = stream.position();
-                longest_token = kind;
+                longest_token = Some(kind);
             }
             stream.set_position(save);
 
@@ -142,7 +142,7 @@ impl Language {
                     $(
                         if self.$function(stream) && stream.position() > furthest_position {
                             furthest_position = stream.position();
-                            longest_token = TokenKind::$kind;
+                            longest_token = Some(TokenKind::$kind);
                         }
                         stream.set_position(save);
                     )*
@@ -157,12 +157,11 @@ impl Language {
                 {# Separator #}
             }
 
-            if longest_token != TokenKind::SKIPPED {
+            if longest_token.is_some() {
                 stream.set_position(furthest_position);
-                Some(longest_token)
-            } else {
-                None
             }
+
+            longest_token
         }
         {# Separator #}
     {%- endfor -%}
