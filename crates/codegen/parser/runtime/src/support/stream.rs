@@ -34,8 +34,8 @@ impl<'s> Stream<'s> {
     pub fn next(&mut self) -> Option<char> {
         self.has_undo = true;
         self.undo_position = self.position;
-        let mut chars = self.source[self.position.utf8..].chars();
-        if let Some(c) = chars.next() {
+
+        if let Some(c) = self.peek() {
             self.position.utf8 += c.len_utf8();
             self.position.utf16 += c.len_utf16();
             self.position.char += 1;
