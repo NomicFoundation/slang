@@ -3,12 +3,8 @@ use super::*;
 use semver::Version;
 #[derive(Clone, Debug, Copy, PartialEq, Eq, strum_macros::Display)]
 pub enum VersionQuality {
-    Enabled,
-    Disabled,
-    Valid,
-    Invalid,
-    Reserved,
-    Deprecated,
+    Introduced,
+    Removed,
 }
 
 #[derive(Clone, Debug)]

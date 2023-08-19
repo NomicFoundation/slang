@@ -226,7 +226,7 @@ impl VersionQualityRangeVecExtensions for Vec<VersionQualityRange> {
                     "version_is_at_least_{v}",
                     v = &vqr.from.0.to_string().replace('.', "_")
                 );
-                if vqr.quality.0 == VersionQuality::Enabled {
+                if vqr.quality.0 == VersionQuality::Introduced {
                     quote! { self.#flag }
                 } else {
                     quote! { !self.#flag }

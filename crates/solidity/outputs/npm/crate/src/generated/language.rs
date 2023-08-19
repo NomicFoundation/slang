@@ -169,12 +169,8 @@ impl Language {
                         }
                     }
                     Some('s') => {
-                        if self.version_is_at_least_0_6_0 {
-                            if scan_chars!(stream, 't', 'r', 'a', 'c', 't') {
-                                Some(TokenKind::AbstractKeyword)
-                            } else {
-                                None
-                            }
+                        if scan_chars!(stream, 't', 'r', 'a', 'c', 't') {
+                            Some(TokenKind::AbstractKeyword)
                         } else {
                             None
                         }
@@ -192,9 +188,38 @@ impl Language {
                         None
                     }
                 }
+                Some('f') => {
+                    if scan_chars!(stream, 't', 'e', 'r') {
+                        Some(TokenKind::AfterKeyword)
+                    } else {
+                        None
+                    }
+                }
+                Some('l') => {
+                    if self.version_is_at_least_0_5_0 {
+                        if scan_chars!(stream, 'i', 'a', 's') {
+                            Some(TokenKind::AliasKeyword)
+                        } else {
+                            None
+                        }
+                    } else {
+                        None
+                    }
+                }
                 Some('n') => {
                     if scan_chars!(stream, 'o', 'n', 'y', 'm', 'o', 'u', 's') {
                         Some(TokenKind::AnonymousKeyword)
+                    } else {
+                        None
+                    }
+                }
+                Some('p') => {
+                    if self.version_is_at_least_0_5_0 {
+                        if scan_chars!(stream, 'p', 'l', 'y') {
+                            Some(TokenKind::ApplyKeyword)
+                        } else {
+                            None
+                        }
                     } else {
                         None
                     }
@@ -213,6 +238,17 @@ impl Language {
                     }
                     None => Some(TokenKind::AsKeyword),
                 },
+                Some('u') => {
+                    if self.version_is_at_least_0_5_0 {
+                        if scan_chars!(stream, 't', 'o') {
+                            Some(TokenKind::AutoKeyword)
+                        } else {
+                            None
+                        }
+                    } else {
+                        None
+                    }
+                }
                 Some(_) => {
                     stream.undo();
                     None
@@ -235,12 +271,8 @@ impl Language {
                     }
                 }
                 Some('y') => {
-                    if !self.version_is_at_least_0_8_0 {
-                        if scan_chars!(stream, 't', 'e') {
-                            Some(TokenKind::ByteKeyword)
-                        } else {
-                            None
-                        }
+                    if scan_chars!(stream, 't', 'e') {
+                        Some(TokenKind::ByteKeyword)
                     } else {
                         None
                     }
@@ -264,10 +296,90 @@ impl Language {
                             None
                         }
                     }
+                    Some('s') => {
+                        if scan_chars!(stream, 'e') {
+                            Some(TokenKind::CaseKeyword)
+                        } else {
+                            None
+                        }
+                    }
                     Some('t') => {
-                        if self.version_is_at_least_0_6_0 {
-                            if scan_chars!(stream, 'c', 'h') {
-                                Some(TokenKind::CatchKeyword)
+                        if scan_chars!(stream, 'c', 'h') {
+                            Some(TokenKind::CatchKeyword)
+                        } else {
+                            None
+                        }
+                    }
+                    Some(_) => {
+                        stream.undo();
+                        None
+                    }
+                    None => None,
+                },
+                Some('o') => match stream.next() {
+                    Some('n') => match stream.next() {
+                        Some('s') => {
+                            if scan_chars!(stream, 't') {
+                                match stream.next() {
+                                    Some('a') => {
+                                        if scan_chars!(stream, 'n', 't') {
+                                            Some(TokenKind::ConstantKeyword)
+                                        } else {
+                                            None
+                                        }
+                                    }
+                                    Some('r') => {
+                                        if self.version_is_at_least_0_4_22 {
+                                            if scan_chars!(stream, 'u', 'c', 't', 'o', 'r') {
+                                                Some(TokenKind::ConstructorKeyword)
+                                            } else {
+                                                None
+                                            }
+                                        } else {
+                                            None
+                                        }
+                                    }
+                                    Some(_) => {
+                                        stream.undo();
+                                        None
+                                    }
+                                    None => None,
+                                }
+                            } else {
+                                None
+                            }
+                        }
+                        Some('t') => match stream.next() {
+                            Some('i') => {
+                                if scan_chars!(stream, 'n', 'u', 'e') {
+                                    Some(TokenKind::ContinueKeyword)
+                                } else {
+                                    None
+                                }
+                            }
+                            Some('r') => {
+                                if scan_chars!(stream, 'a', 'c', 't') {
+                                    Some(TokenKind::ContractKeyword)
+                                } else {
+                                    None
+                                }
+                            }
+                            Some(_) => {
+                                stream.undo();
+                                None
+                            }
+                            None => None,
+                        },
+                        Some(_) => {
+                            stream.undo();
+                            None
+                        }
+                        None => None,
+                    },
+                    Some('p') => {
+                        if self.version_is_at_least_0_5_0 {
+                            if scan_chars!(stream, 'y', 'o', 'f') {
+                                Some(TokenKind::CopyofKeyword)
                             } else {
                                 None
                             }
@@ -281,71 +393,6 @@ impl Language {
                     }
                     None => None,
                 },
-                Some('o') => {
-                    if scan_chars!(stream, 'n') {
-                        match stream.next() {
-                            Some('s') => {
-                                if scan_chars!(stream, 't') {
-                                    match stream.next() {
-                                        Some('a') => {
-                                            if scan_chars!(stream, 'n', 't') {
-                                                Some(TokenKind::ConstantKeyword)
-                                            } else {
-                                                None
-                                            }
-                                        }
-                                        Some('r') => {
-                                            if self.version_is_at_least_0_4_22 {
-                                                if scan_chars!(stream, 'u', 'c', 't', 'o', 'r') {
-                                                    Some(TokenKind::ConstructorKeyword)
-                                                } else {
-                                                    None
-                                                }
-                                            } else {
-                                                None
-                                            }
-                                        }
-                                        Some(_) => {
-                                            stream.undo();
-                                            None
-                                        }
-                                        None => None,
-                                    }
-                                } else {
-                                    None
-                                }
-                            }
-                            Some('t') => match stream.next() {
-                                Some('i') => {
-                                    if scan_chars!(stream, 'n', 'u', 'e') {
-                                        Some(TokenKind::ContinueKeyword)
-                                    } else {
-                                        None
-                                    }
-                                }
-                                Some('r') => {
-                                    if scan_chars!(stream, 'a', 'c', 't') {
-                                        Some(TokenKind::ContractKeyword)
-                                    } else {
-                                        None
-                                    }
-                                }
-                                Some(_) => {
-                                    stream.undo();
-                                    None
-                                }
-                                None => None,
-                            },
-                            Some(_) => {
-                                stream.undo();
-                                None
-                            }
-                            None => None,
-                        }
-                    } else {
-                        None
-                    }
-                }
                 Some(_) => {
                     stream.undo();
                     None
@@ -360,13 +407,45 @@ impl Language {
                         None
                     }
                 }
-                Some('e') => {
-                    if scan_chars!(stream, 'l', 'e', 't', 'e') {
-                        Some(TokenKind::DeleteKeyword)
-                    } else {
+                Some('e') => match stream.next() {
+                    Some('f') => match stream.next() {
+                        Some('a') => {
+                            if scan_chars!(stream, 'u', 'l', 't') {
+                                Some(TokenKind::DefaultKeyword)
+                            } else {
+                                None
+                            }
+                        }
+                        Some('i') => {
+                            if self.version_is_at_least_0_5_0 {
+                                if scan_chars!(stream, 'n', 'e') {
+                                    Some(TokenKind::DefineKeyword)
+                                } else {
+                                    None
+                                }
+                            } else {
+                                None
+                            }
+                        }
+                        Some(_) => {
+                            stream.undo();
+                            None
+                        }
+                        None => None,
+                    },
+                    Some('l') => {
+                        if scan_chars!(stream, 'e', 't', 'e') {
+                            Some(TokenKind::DeleteKeyword)
+                        } else {
+                            None
+                        }
+                    }
+                    Some(_) => {
+                        stream.undo();
                         None
                     }
-                }
+                    None => None,
+                },
                 Some('o') => Some(TokenKind::DoKeyword),
                 Some(_) => {
                     stream.undo();
@@ -481,11 +560,27 @@ impl Language {
                     }
                 }
                 Some('i') => {
-                    if !self.version_is_at_least_0_7_0 {
-                        if scan_chars!(stream, 'n', 'n', 'e', 'y') {
-                            Some(TokenKind::FinneyKeyword)
-                        } else {
-                            None
+                    if scan_chars!(stream, 'n') {
+                        match stream.next() {
+                            Some('a') => {
+                                if scan_chars!(stream, 'l') {
+                                    Some(TokenKind::FinalKeyword)
+                                } else {
+                                    None
+                                }
+                            }
+                            Some('n') => {
+                                if scan_chars!(stream, 'e', 'y') {
+                                    Some(TokenKind::FinneyKeyword)
+                                } else {
+                                    None
+                                }
+                            }
+                            Some(_) => {
+                                stream.undo();
+                                None
+                            }
+                            None => None,
                         }
                     } else {
                         None
@@ -543,13 +638,27 @@ impl Language {
                 }
                 None => None,
             },
-            Some('h') => {
-                if scan_chars!(stream, 'o', 'u', 'r', 's') {
-                    Some(TokenKind::HoursKeyword)
-                } else {
+            Some('h') => match stream.next() {
+                Some('e') => {
+                    if scan_chars!(stream, 'x') {
+                        Some(TokenKind::HexKeyword)
+                    } else {
+                        None
+                    }
+                }
+                Some('o') => {
+                    if scan_chars!(stream, 'u', 'r', 's') {
+                        Some(TokenKind::HoursKeyword)
+                    } else {
+                        None
+                    }
+                }
+                Some(_) => {
+                    stream.undo();
                     None
                 }
-            }
+                None => None,
+            },
             Some('i') => match stream.next() {
                 Some('f') => Some(TokenKind::IfKeyword),
                 Some('m') => match stream.next() {
@@ -564,13 +673,31 @@ impl Language {
                             None
                         }
                     }
-                    Some('p') => {
-                        if scan_chars!(stream, 'o', 'r', 't') {
-                            Some(TokenKind::ImportKeyword)
-                        } else {
+                    Some('p') => match stream.next() {
+                        Some('l') => {
+                            if self.version_is_at_least_0_5_0 {
+                                if scan_chars!(stream, 'e', 'm', 'e', 'n', 't', 's') {
+                                    Some(TokenKind::ImplementsKeyword)
+                                } else {
+                                    None
+                                }
+                            } else {
+                                None
+                            }
+                        }
+                        Some('o') => {
+                            if scan_chars!(stream, 'r', 't') {
+                                Some(TokenKind::ImportKeyword)
+                            } else {
+                                None
+                            }
+                        }
+                        Some(_) => {
+                            stream.undo();
                             None
                         }
-                    }
+                        None => None,
+                    },
                     Some(_) => {
                         stream.undo();
                         None
@@ -581,6 +708,13 @@ impl Language {
                     Some('d') => {
                         if scan_chars!(stream, 'e', 'x', 'e', 'd') {
                             Some(TokenKind::IndexedKeyword)
+                        } else {
+                            None
+                        }
+                    }
+                    Some('l') => {
+                        if scan_chars!(stream, 'i', 'n', 'e') {
+                            Some(TokenKind::InlineKeyword)
                         } else {
                             None
                         }
@@ -614,9 +748,9 @@ impl Language {
                     }
                     Some(_) => {
                         stream.undo();
-                        None
+                        Some(TokenKind::InKeyword)
                     }
-                    None => None,
+                    None => Some(TokenKind::InKeyword),
                 },
                 Some('s') => Some(TokenKind::IsKeyword),
                 Some(_) => {
@@ -625,21 +759,72 @@ impl Language {
                 }
                 None => None,
             },
-            Some('l') => {
-                if scan_chars!(stream, 'i', 'b', 'r', 'a', 'r', 'y') {
-                    Some(TokenKind::LibraryKeyword)
-                } else {
-                    None
-                }
-            }
-            Some('m') => match stream.next() {
-                Some('a') => {
-                    if scan_chars!(stream, 'p', 'p', 'i', 'n', 'g') {
-                        Some(TokenKind::MappingKeyword)
+            Some('l') => match stream.next() {
+                Some('e') => match stream.next() {
+                    Some('a') => {
+                        if self.version_is_at_least_0_6_0 {
+                            if scan_chars!(stream, 'v', 'e') {
+                                Some(TokenKind::LeaveKeyword)
+                            } else {
+                                None
+                            }
+                        } else {
+                            None
+                        }
+                    }
+                    Some('t') => Some(TokenKind::LetKeyword),
+                    Some(_) => {
+                        stream.undo();
+                        None
+                    }
+                    None => None,
+                },
+                Some('i') => {
+                    if scan_chars!(stream, 'b', 'r', 'a', 'r', 'y') {
+                        Some(TokenKind::LibraryKeyword)
                     } else {
                         None
                     }
                 }
+                Some(_) => {
+                    stream.undo();
+                    None
+                }
+                None => None,
+            },
+            Some('m') => match stream.next() {
+                Some('a') => match stream.next() {
+                    Some('c') => {
+                        if self.version_is_at_least_0_5_0 {
+                            if scan_chars!(stream, 'r', 'o') {
+                                Some(TokenKind::MacroKeyword)
+                            } else {
+                                None
+                            }
+                        } else {
+                            None
+                        }
+                    }
+                    Some('p') => {
+                        if scan_chars!(stream, 'p', 'i', 'n', 'g') {
+                            Some(TokenKind::MappingKeyword)
+                        } else {
+                            None
+                        }
+                    }
+                    Some('t') => {
+                        if scan_chars!(stream, 'c', 'h') {
+                            Some(TokenKind::MatchKeyword)
+                        } else {
+                            None
+                        }
+                    }
+                    Some(_) => {
+                        stream.undo();
+                        None
+                    }
+                    None => None,
+                },
                 Some('e') => {
                     if scan_chars!(stream, 'm', 'o', 'r', 'y') {
                         Some(TokenKind::MemoryKeyword)
@@ -661,34 +846,85 @@ impl Language {
                         None
                     }
                 }
+                Some('u') => {
+                    if self.version_is_at_least_0_5_0 {
+                        if scan_chars!(stream, 't', 'a', 'b', 'l', 'e') {
+                            Some(TokenKind::MutableKeyword)
+                        } else {
+                            None
+                        }
+                    } else {
+                        None
+                    }
+                }
                 Some(_) => {
                     stream.undo();
                     None
                 }
                 None => None,
             },
-            Some('n') => {
-                if scan_chars!(stream, 'e', 'w') {
-                    Some(TokenKind::NewKeyword)
-                } else {
-                    None
-                }
-            }
-            Some('o') => {
-                if scan_chars!(stream, 'v', 'e', 'r', 'r', 'i', 'd', 'e') {
-                    Some(TokenKind::OverrideKeyword)
-                } else {
-                    None
-                }
-            }
-            Some('p') => match stream.next() {
-                Some('a') => {
-                    if scan_chars!(stream, 'y', 'a', 'b', 'l', 'e') {
-                        Some(TokenKind::PayableKeyword)
+            Some('n') => match stream.next() {
+                Some('e') => {
+                    if scan_chars!(stream, 'w') {
+                        Some(TokenKind::NewKeyword)
                     } else {
                         None
                     }
                 }
+                Some('u') => {
+                    if scan_chars!(stream, 'l', 'l') {
+                        Some(TokenKind::NullKeyword)
+                    } else {
+                        None
+                    }
+                }
+                Some(_) => {
+                    stream.undo();
+                    None
+                }
+                None => None,
+            },
+            Some('o') => match stream.next() {
+                Some('f') => Some(TokenKind::OfKeyword),
+                Some('v') => {
+                    if scan_chars!(stream, 'e', 'r', 'r', 'i', 'd', 'e') {
+                        Some(TokenKind::OverrideKeyword)
+                    } else {
+                        None
+                    }
+                }
+                Some(_) => {
+                    stream.undo();
+                    None
+                }
+                None => None,
+            },
+            Some('p') => match stream.next() {
+                Some('a') => match stream.next() {
+                    Some('r') => {
+                        if self.version_is_at_least_0_5_0 {
+                            if scan_chars!(stream, 't', 'i', 'a', 'l') {
+                                Some(TokenKind::PartialKeyword)
+                            } else {
+                                None
+                            }
+                        } else {
+                            None
+                        }
+                    }
+                    Some('y') => {
+                        if scan_chars!(stream, 'a', 'b', 'l', 'e') {
+                            Some(TokenKind::PayableKeyword)
+                        } else {
+                            None
+                        }
+                    }
+                    Some(_) => {
+                        stream.undo();
+                        None
+                    }
+                    None => None,
+                },
                 Some('r') => match stream.next() {
                     Some('a') => {
                         if scan_chars!(stream, 'g', 'm', 'a') {
@@ -700,6 +936,17 @@ impl Language {
                     Some('i') => {
                         if scan_chars!(stream, 'v', 'a', 't', 'e') {
                             Some(TokenKind::PrivateKeyword)
+                        } else {
+                            None
+                        }
+                    }
+                    Some('o') => {
+                        if self.version_is_at_least_0_5_0 {
+                            if scan_chars!(stream, 'm', 'i', 's', 'e') {
+                                Some(TokenKind::PromiseKeyword)
+                            } else {
+                                None
+                            }
                         } else {
                             None
                         }
@@ -747,6 +994,24 @@ impl Language {
                                 None
                             }
                         }
+                        Some('f') => {
+                            if self.version_is_at_least_0_5_0 {
+                                if scan_chars!(stream, 'e', 'r', 'e', 'n', 'c', 'e') {
+                                    Some(TokenKind::ReferenceKeyword)
+                                } else {
+                                    None
+                                }
+                            } else {
+                                None
+                            }
+                        }
+                        Some('l') => {
+                            if scan_chars!(stream, 'o', 'c', 'a', 't', 'a', 'b', 'l', 'e') {
+                                Some(TokenKind::RelocatableKeyword)
+                            } else {
+                                None
+                            }
+                        }
                         Some('t') => {
                             if scan_chars!(stream, 'u', 'r', 'n') {
                                 match stream.next() {
@@ -779,14 +1044,57 @@ impl Language {
                 }
             }
             Some('s') => match stream.next() {
-                Some('e') => {
-                    if scan_chars!(stream, 'c', 'o', 'n', 'd', 's') {
-                        Some(TokenKind::SecondsKeyword)
+                Some('e') => match stream.next() {
+                    Some('a') => {
+                        if self.version_is_at_least_0_5_0 {
+                            if scan_chars!(stream, 'l', 'e', 'd') {
+                                Some(TokenKind::SealedKeyword)
+                            } else {
+                                None
+                            }
+                        } else {
+                            None
+                        }
+                    }
+                    Some('c') => {
+                        if scan_chars!(stream, 'o', 'n', 'd', 's') {
+                            Some(TokenKind::SecondsKeyword)
+                        } else {
+                            None
+                        }
+                    }
+                    Some(_) => {
+                        stream.undo();
+                        None
+                    }
+                    None => None,
+                },
+                Some('i') => {
+                    if self.version_is_at_least_0_5_0 {
+                        if scan_chars!(stream, 'z', 'e', 'o', 'f') {
+                            Some(TokenKind::SizeofKeyword)
+                        } else {
+                            None
+                        }
+                    } else {
+                        None
+                    }
+                }
+                Some('o') => {
+                    if scan_chars!(stream, 'l', 'i', 'd', 'i', 't', 'y') {
+                        Some(TokenKind::SolidityKeyword)
                     } else {
                         None
                     }
                 }
                 Some('t') => match stream.next() {
+                    Some('a') => {
+                        if scan_chars!(stream, 't', 'i', 'c') {
+                            Some(TokenKind::StaticKeyword)
+                        } else {
+                            None
+                        }
+                    }
                     Some('o') => {
                         if scan_chars!(stream, 'r', 'a', 'g', 'e') {
                             Some(TokenKind::StorageKeyword)
@@ -821,13 +1129,27 @@ impl Language {
                     }
                     None => None,
                 },
-                Some('z') => {
-                    if !self.version_is_at_least_0_7_0 {
-                        if scan_chars!(stream, 'a', 'b', 'o') {
-                            Some(TokenKind::SzaboKeyword)
+                Some('u') => {
+                    if self.version_is_at_least_0_5_0 {
+                        if scan_chars!(stream, 'p', 'p', 'o', 'r', 't', 's') {
+                            Some(TokenKind::SupportsKeyword)
                         } else {
                             None
                         }
+                    } else {
+                        None
+                    }
+                }
+                Some('w') => {
+                    if scan_chars!(stream, 'i', 't', 'c', 'h') {
+                        Some(TokenKind::SwitchKeyword)
+                    } else {
+                        None
+                    }
+                }
+                Some('z') => {
+                    if scan_chars!(stream, 'a', 'b', 'o') {
+                        Some(TokenKind::SzaboKeyword)
                     } else {
                         None
                     }
@@ -840,12 +1162,8 @@ impl Language {
             },
             Some('t') => match stream.next() {
                 Some('h') => {
-                    if !self.version_is_at_least_0_5_0 {
-                        if scan_chars!(stream, 'r', 'o', 'w') {
-                            Some(TokenKind::ThrowKeyword)
-                        } else {
-                            None
-                        }
+                    if scan_chars!(stream, 'r', 'o', 'w') {
+                        Some(TokenKind::ThrowKeyword)
                     } else {
                         None
                     }
@@ -872,11 +1190,41 @@ impl Language {
                     None => None,
                 },
                 Some('y') => {
-                    if self.version_is_at_least_0_5_3 {
-                        if scan_chars!(stream, 'p', 'e') {
-                            Some(TokenKind::TypeKeyword)
-                        } else {
-                            None
+                    if scan_chars!(stream, 'p', 'e') {
+                        match stream.next() {
+                            Some('d') => {
+                                if self.version_is_at_least_0_5_0 {
+                                    if scan_chars!(stream, 'e', 'f') {
+                                        Some(TokenKind::TypedefKeyword)
+                                    } else {
+                                        None
+                                    }
+                                } else {
+                                    None
+                                }
+                            }
+                            Some('o') => {
+                                if scan_chars!(stream, 'f') {
+                                    Some(TokenKind::TypeofKeyword)
+                                } else {
+                                    None
+                                }
+                            }
+                            Some(_) => {
+                                stream.undo();
+                                if self.version_is_at_least_0_5_3 {
+                                    Some(TokenKind::TypeKeyword)
+                                } else {
+                                    None
+                                }
+                            }
+                            None => {
+                                if self.version_is_at_least_0_5_3 {
+                                    Some(TokenKind::TypeKeyword)
+                                } else {
+                                    None
+                                }
+                            }
                         }
                     } else {
                         None
@@ -915,12 +1263,8 @@ impl Language {
             },
             Some('v') => match stream.next() {
                 Some('a') => {
-                    if !self.version_is_at_least_0_5_0 {
-                        if scan_chars!(stream, 'r') {
-                            Some(TokenKind::VarKeyword)
-                        } else {
-                            None
-                        }
+                    if scan_chars!(stream, 'r') {
+                        Some(TokenKind::VarKeyword)
                     } else {
                         None
                     }
@@ -986,12 +1330,8 @@ impl Language {
                 None => None,
             },
             Some('y') => {
-                if !self.version_is_at_least_0_5_0 {
-                    if scan_chars!(stream, 'e', 'a', 'r', 's') {
-                        Some(TokenKind::YearsKeyword)
-                    } else {
-                        None
-                    }
+                if scan_chars!(stream, 'e', 'a', 'r', 's') {
+                    Some(TokenKind::YearsKeyword)
                 } else {
                     None
                 }
@@ -1445,6 +1785,13 @@ impl Language {
                 }
                 None => None,
             },
+            Some('h') => {
+                if scan_chars!(stream, 'e', 'x') {
+                    Some(TokenKind::HexKeyword)
+                } else {
+                    None
+                }
+            }
             Some('i') => {
                 if scan_chars!(stream, 'f') {
                     Some(TokenKind::IfKeyword)
@@ -3454,7 +3801,7 @@ impl Language {
                 helper.result(stream)
             })
         };
-        let parse_exponentiation_operator_disabled_from_0_6_0 = |stream: &mut Stream| {
+        let parse_exponentiation_operator_removed_from_0_6_0 = |stream: &mut Stream| {
             PrecedenceHelper::to_precedence_result(
                 RuleKind::BinaryExpression,
                 25u8,
@@ -3462,7 +3809,7 @@ impl Language {
                 self.default_parse_token_with_trivia(stream, TokenKind::AsteriskAsterisk),
             )
         };
-        let parse_exponentiation_operator_enabled_from_0_6_0 = |stream: &mut Stream| {
+        let parse_exponentiation_operator_introduced_from_0_6_0 = |stream: &mut Stream| {
             PrecedenceHelper::to_precedence_result(
                 RuleKind::BinaryExpression,
                 28u8,
@@ -3738,13 +4085,13 @@ impl Language {
                     break;
                 }
                 if !self.version_is_at_least_0_6_0 {
-                    let result = parse_exponentiation_operator_disabled_from_0_6_0(stream);
+                    let result = parse_exponentiation_operator_removed_from_0_6_0(stream);
                     if helper.handle_next_result(stream, result) {
                         break;
                     }
                 }
                 if self.version_is_at_least_0_6_0 {
-                    let result = parse_exponentiation_operator_enabled_from_0_6_0(stream);
+                    let result = parse_exponentiation_operator_introduced_from_0_6_0(stream);
                     if helper.handle_next_result(stream, result) {
                         break;
                     }
@@ -5874,6 +6221,490 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
+    pub fn solidity_keywords_over_all_versions(&self, stream: &mut Stream) -> ParserResult {
+        {
+            let mut helper = ChoiceHelper::new(stream);
+            loop {
+                let result =
+                    self.default_parse_token_with_trivia(stream, TokenKind::ABICoderKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result =
+                    self.default_parse_token_with_trivia(stream, TokenKind::AbstractKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result =
+                    self.default_parse_token_with_trivia(stream, TokenKind::AddressKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.default_parse_token_with_trivia(stream, TokenKind::AfterKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result =
+                    self.default_parse_token_with_trivia(stream, TokenKind::AnonymousKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.default_parse_token_with_trivia(stream, TokenKind::AsKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result =
+                    self.default_parse_token_with_trivia(stream, TokenKind::AssemblyKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.default_parse_token_with_trivia(stream, TokenKind::BoolKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.default_parse_token_with_trivia(stream, TokenKind::BreakKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.default_parse_token_with_trivia(stream, TokenKind::ByteKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.default_parse_token_with_trivia(stream, TokenKind::CaseKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.default_parse_token_with_trivia(stream, TokenKind::CatchKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result =
+                    self.default_parse_token_with_trivia(stream, TokenKind::ConstantKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result =
+                    self.default_parse_token_with_trivia(stream, TokenKind::ContinueKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result =
+                    self.default_parse_token_with_trivia(stream, TokenKind::ContractKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.default_parse_token_with_trivia(stream, TokenKind::DaysKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result =
+                    self.default_parse_token_with_trivia(stream, TokenKind::DefaultKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.default_parse_token_with_trivia(stream, TokenKind::DeleteKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.default_parse_token_with_trivia(stream, TokenKind::DoKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.default_parse_token_with_trivia(stream, TokenKind::ElseKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.default_parse_token_with_trivia(stream, TokenKind::EnumKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.default_parse_token_with_trivia(stream, TokenKind::EtherKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.default_parse_token_with_trivia(stream, TokenKind::EventKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result =
+                    self.default_parse_token_with_trivia(stream, TokenKind::ExperimentalKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result =
+                    self.default_parse_token_with_trivia(stream, TokenKind::ExternalKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result =
+                    self.default_parse_token_with_trivia(stream, TokenKind::FallbackKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.default_parse_token_with_trivia(stream, TokenKind::FalseKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.default_parse_token_with_trivia(stream, TokenKind::FinalKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.default_parse_token_with_trivia(stream, TokenKind::FinneyKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.default_parse_token_with_trivia(stream, TokenKind::ForKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.default_parse_token_with_trivia(stream, TokenKind::FromKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result =
+                    self.default_parse_token_with_trivia(stream, TokenKind::FunctionKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.default_parse_token_with_trivia(stream, TokenKind::GlobalKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.default_parse_token_with_trivia(stream, TokenKind::HexKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.default_parse_token_with_trivia(stream, TokenKind::HoursKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.default_parse_token_with_trivia(stream, TokenKind::IfKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.default_parse_token_with_trivia(stream, TokenKind::ImportKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result =
+                    self.default_parse_token_with_trivia(stream, TokenKind::IndexedKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.default_parse_token_with_trivia(stream, TokenKind::InKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.default_parse_token_with_trivia(stream, TokenKind::InlineKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result =
+                    self.default_parse_token_with_trivia(stream, TokenKind::InterfaceKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result =
+                    self.default_parse_token_with_trivia(stream, TokenKind::InternalKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.default_parse_token_with_trivia(stream, TokenKind::IsKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.default_parse_token_with_trivia(stream, TokenKind::LetKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result =
+                    self.default_parse_token_with_trivia(stream, TokenKind::LibraryKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result =
+                    self.default_parse_token_with_trivia(stream, TokenKind::MappingKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.default_parse_token_with_trivia(stream, TokenKind::MatchKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.default_parse_token_with_trivia(stream, TokenKind::MemoryKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result =
+                    self.default_parse_token_with_trivia(stream, TokenKind::MinutesKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result =
+                    self.default_parse_token_with_trivia(stream, TokenKind::ModifierKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.default_parse_token_with_trivia(stream, TokenKind::NewKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.default_parse_token_with_trivia(stream, TokenKind::NullKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.default_parse_token_with_trivia(stream, TokenKind::OfKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result =
+                    self.default_parse_token_with_trivia(stream, TokenKind::OverrideKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result =
+                    self.default_parse_token_with_trivia(stream, TokenKind::PayableKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.default_parse_token_with_trivia(stream, TokenKind::PragmaKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result =
+                    self.default_parse_token_with_trivia(stream, TokenKind::PrivateKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.default_parse_token_with_trivia(stream, TokenKind::PublicKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.default_parse_token_with_trivia(stream, TokenKind::PureKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result =
+                    self.default_parse_token_with_trivia(stream, TokenKind::ReceiveKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result =
+                    self.default_parse_token_with_trivia(stream, TokenKind::RelocatableKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.default_parse_token_with_trivia(stream, TokenKind::ReturnKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result =
+                    self.default_parse_token_with_trivia(stream, TokenKind::ReturnsKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.default_parse_token_with_trivia(stream, TokenKind::RevertKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result =
+                    self.default_parse_token_with_trivia(stream, TokenKind::SecondsKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result =
+                    self.default_parse_token_with_trivia(stream, TokenKind::SolidityKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.default_parse_token_with_trivia(stream, TokenKind::StaticKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result =
+                    self.default_parse_token_with_trivia(stream, TokenKind::StorageKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.default_parse_token_with_trivia(stream, TokenKind::StringKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.default_parse_token_with_trivia(stream, TokenKind::StructKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.default_parse_token_with_trivia(stream, TokenKind::SwitchKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.default_parse_token_with_trivia(stream, TokenKind::SzaboKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.default_parse_token_with_trivia(stream, TokenKind::ThrowKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.default_parse_token_with_trivia(stream, TokenKind::TrueKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.default_parse_token_with_trivia(stream, TokenKind::TypeofKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.default_parse_token_with_trivia(stream, TokenKind::UsingKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.default_parse_token_with_trivia(stream, TokenKind::VarKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.default_parse_token_with_trivia(stream, TokenKind::ViewKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.default_parse_token_with_trivia(stream, TokenKind::WeeksKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.default_parse_token_with_trivia(stream, TokenKind::WeiKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.default_parse_token_with_trivia(stream, TokenKind::WhileKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.default_parse_token_with_trivia(stream, TokenKind::YearsKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.default_parse_token_with_trivia(stream, TokenKind::EmitKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result =
+                    self.default_parse_token_with_trivia(stream, TokenKind::ConstructorKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.default_parse_token_with_trivia(stream, TokenKind::AliasKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.default_parse_token_with_trivia(stream, TokenKind::ApplyKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.default_parse_token_with_trivia(stream, TokenKind::AutoKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result =
+                    self.default_parse_token_with_trivia(stream, TokenKind::CalldataKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.default_parse_token_with_trivia(stream, TokenKind::CopyofKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.default_parse_token_with_trivia(stream, TokenKind::DefineKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result =
+                    self.default_parse_token_with_trivia(stream, TokenKind::ImplementsKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.default_parse_token_with_trivia(stream, TokenKind::MacroKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result =
+                    self.default_parse_token_with_trivia(stream, TokenKind::MutableKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result =
+                    self.default_parse_token_with_trivia(stream, TokenKind::PartialKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result =
+                    self.default_parse_token_with_trivia(stream, TokenKind::PromiseKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result =
+                    self.default_parse_token_with_trivia(stream, TokenKind::ReferenceKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.default_parse_token_with_trivia(stream, TokenKind::SealedKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.default_parse_token_with_trivia(stream, TokenKind::SizeofKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result =
+                    self.default_parse_token_with_trivia(stream, TokenKind::SupportsKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result =
+                    self.default_parse_token_with_trivia(stream, TokenKind::TypedefKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.default_parse_token_with_trivia(stream, TokenKind::TypeKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.default_parse_token_with_trivia(stream, TokenKind::LeaveKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.default_parse_token_with_trivia(stream, TokenKind::TryKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result =
+                    self.default_parse_token_with_trivia(stream, TokenKind::VirtualKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result =
+                    self.default_parse_token_with_trivia(stream, TokenKind::ImmutableKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.default_parse_token_with_trivia(stream, TokenKind::GweiKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result =
+                    self.default_parse_token_with_trivia(stream, TokenKind::UncheckedKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.default_parse_token_with_trivia(stream, TokenKind::ErrorKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                break;
+            }
+            helper.result(stream)
+        }
+    }
+
+    #[allow(unused_assignments, unused_parens)]
     pub fn source_unit(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
@@ -7977,6 +8808,76 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
+    pub fn yul_keywords_over_all_versions(&self, stream: &mut Stream) -> ParserResult {
+        {
+            let mut helper = ChoiceHelper::new(stream);
+            loop {
+                let result =
+                    self.yul_block_parse_token_with_trivia(stream, TokenKind::BreakKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.yul_block_parse_token_with_trivia(stream, TokenKind::CaseKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result =
+                    self.yul_block_parse_token_with_trivia(stream, TokenKind::ContinueKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result =
+                    self.yul_block_parse_token_with_trivia(stream, TokenKind::DefaultKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result =
+                    self.yul_block_parse_token_with_trivia(stream, TokenKind::FalseKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.yul_block_parse_token_with_trivia(stream, TokenKind::ForKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result =
+                    self.yul_block_parse_token_with_trivia(stream, TokenKind::FunctionKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.yul_block_parse_token_with_trivia(stream, TokenKind::HexKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.yul_block_parse_token_with_trivia(stream, TokenKind::IfKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result =
+                    self.yul_block_parse_token_with_trivia(stream, TokenKind::LeaveKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.yul_block_parse_token_with_trivia(stream, TokenKind::LetKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result =
+                    self.yul_block_parse_token_with_trivia(stream, TokenKind::SwitchKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.yul_block_parse_token_with_trivia(stream, TokenKind::TrueKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                break;
+            }
+            helper.result(stream)
+        }
+    }
+
+    #[allow(unused_assignments, unused_parens)]
     pub fn yul_leave_statement(&self, stream: &mut Stream) -> ParserResult {
         if self.version_is_at_least_0_6_0 {
             self.yul_block_parse_token_with_trivia(stream, TokenKind::LeaveKeyword)
@@ -8221,6 +9122,26 @@ impl Language {
      ********************************************/
 
     #[allow(unused_assignments, unused_parens)]
+    fn ascii_character_without_double_quote_or_backslash(&self, stream: &mut Stream) -> bool {
+        scan_choice!(
+            stream,
+            scan_char_range!(stream, ' ', '!'),
+            scan_char_range!(stream, '#', '['),
+            scan_char_range!(stream, ']', '~')
+        )
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn ascii_character_without_single_quote_or_backslash(&self, stream: &mut Stream) -> bool {
+        scan_choice!(
+            stream,
+            scan_char_range!(stream, ' ', '&'),
+            scan_char_range!(stream, '(', '['),
+            scan_char_range!(stream, ']', '~')
+        )
+    }
+
+    #[allow(unused_assignments, unused_parens)]
     fn ascii_escape(&self, stream: &mut Stream) -> bool {
         scan_choice!(
             stream,
@@ -8245,14 +9166,19 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
+    fn decimal_digit(&self, stream: &mut Stream) -> bool {
+        scan_char_range!(stream, '0', '9')
+    }
+
+    #[allow(unused_assignments, unused_parens)]
     fn decimal_digits(&self, stream: &mut Stream) -> bool {
         scan_sequence!(
-            scan_one_or_more!(stream, scan_char_range!(stream, '0', '9')),
+            scan_one_or_more!(stream, self.decimal_digit(stream)),
             scan_zero_or_more!(
                 stream,
                 scan_sequence!(
                     scan_chars!(stream, '_'),
-                    scan_one_or_more!(stream, scan_char_range!(stream, '0', '9'))
+                    scan_one_or_more!(stream, self.decimal_digit(stream))
                 )
             )
         )
@@ -8272,28 +9198,31 @@ impl Language {
         scan_sequence!(
             scan_choice!(
                 stream,
-                scan_sequence!(
-                    self.decimal_digits(stream),
-                    scan_optional!(
-                        stream,
-                        scan_sequence!(
-                            scan_chars!(stream, '.'),
-                            scan_choice!(
-                                stream,
-                                if !self.version_is_at_least_0_5_0 {
-                                    scan_optional!(stream, self.decimal_digits(stream))
-                                } else {
-                                    false
-                                },
-                                if self.version_is_at_least_0_5_0 {
-                                    self.decimal_digits(stream)
-                                } else {
-                                    false
-                                }
+                if !self.version_is_at_least_0_5_0 {
+                    scan_sequence!(
+                        self.decimal_digits(stream),
+                        scan_optional!(
+                            stream,
+                            scan_sequence!(
+                                scan_chars!(stream, '.'),
+                                scan_optional!(stream, self.decimal_digits(stream))
                             )
                         )
                     )
-                ),
+                } else {
+                    false
+                },
+                if self.version_is_at_least_0_5_0 {
+                    scan_sequence!(
+                        self.decimal_digits(stream),
+                        scan_optional!(
+                            stream,
+                            scan_sequence!(scan_chars!(stream, '.'), self.decimal_digits(stream))
+                        )
+                    )
+                } else {
+                    false
+                },
                 scan_sequence!(scan_chars!(stream, '.'), self.decimal_digits(stream))
             ),
             scan_optional!(stream, self.decimal_exponent(stream))
@@ -8309,12 +9238,7 @@ impl Language {
                 scan_choice!(
                     stream,
                     self.escape_sequence(stream),
-                    scan_choice!(
-                        stream,
-                        scan_char_range!(stream, ' ', '!'),
-                        scan_char_range!(stream, '#', '['),
-                        scan_char_range!(stream, ']', '~')
-                    )
+                    self.ascii_character_without_double_quote_or_backslash(stream)
                 )
             ),
             scan_chars!(stream, '"')
@@ -8324,8 +9248,7 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn double_quoted_hex_string_literal(&self, stream: &mut Stream) -> bool {
         scan_sequence!(
-            scan_chars!(stream, 'h', 'e', 'x'),
-            scan_chars!(stream, '"'),
+            scan_chars!(stream, 'h', 'e', 'x', '"'),
             scan_optional!(stream, self.hex_string_contents(stream)),
             scan_chars!(stream, '"')
         )
@@ -8441,7 +9364,7 @@ impl Language {
     fn hex_character(&self, stream: &mut Stream) -> bool {
         scan_choice!(
             stream,
-            scan_char_range!(stream, '0', '9'),
+            self.decimal_digit(stream),
             scan_char_range!(stream, 'A', 'F'),
             scan_char_range!(stream, 'a', 'f')
         )
@@ -8618,12 +9541,7 @@ impl Language {
                 scan_choice!(
                     stream,
                     self.escape_sequence(stream),
-                    scan_choice!(
-                        stream,
-                        scan_char_range!(stream, ' ', '&'),
-                        scan_char_range!(stream, '(', '['),
-                        scan_char_range!(stream, ']', '~')
-                    )
+                    self.ascii_character_without_single_quote_or_backslash(stream)
                 )
             ),
             scan_chars!(stream, '\'')
@@ -8633,8 +9551,7 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn single_quoted_hex_string_literal(&self, stream: &mut Stream) -> bool {
         scan_sequence!(
-            scan_chars!(stream, 'h', 'e', 'x'),
-            scan_chars!(stream, '\''),
+            scan_chars!(stream, 'h', 'e', 'x', '\''),
             scan_optional!(stream, self.hex_string_contents(stream)),
             scan_chars!(stream, '\'')
         )
@@ -8729,7 +9646,7 @@ impl Language {
             scan_chars!(stream, '0'),
             scan_sequence!(
                 scan_char_range!(stream, '1', '9'),
-                scan_zero_or_more!(stream, scan_char_range!(stream, '0', '9'))
+                scan_zero_or_more!(stream, self.decimal_digit(stream))
             )
         )
     }
@@ -8908,6 +9825,9 @@ impl Language {
             ProductionKind::RevertStatement => Self::revert_statement.parse(self, input),
             ProductionKind::ShiftOperator => Self::shift_operator.parse(self, input),
             ProductionKind::SimpleStatement => Self::simple_statement.parse(self, input),
+            ProductionKind::SolidityKeywordsOverAllVersions => {
+                Self::solidity_keywords_over_all_versions.parse(self, input)
+            }
             ProductionKind::SourceUnit => Self::source_unit.parse(self, input),
             ProductionKind::SourceUnitMember => Self::source_unit_member.parse(self, input),
             ProductionKind::SourceUnitMembersList => {
@@ -9018,6 +9938,9 @@ impl Language {
             }
             ProductionKind::YulIdentifiersList => Self::yul_identifiers_list.parse(self, input),
             ProductionKind::YulIfStatement => Self::yul_if_statement.parse(self, input),
+            ProductionKind::YulKeywordsOverAllVersions => {
+                Self::yul_keywords_over_all_versions.parse(self, input)
+            }
             ProductionKind::YulLeaveStatement => Self::yul_leave_statement.parse(self, input),
             ProductionKind::YulLiteral => Self::yul_literal.parse(self, input),
             ProductionKind::YulParametersDeclaration => {

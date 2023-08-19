@@ -32,6 +32,135 @@ slang_grammar! {
 
     lexical context Default = {
 
+        inline parser SolidityKeywordsOverAllVersions = (
+              ABICoderKeyword
+            | AbstractKeyword
+            | AddressKeyword
+            | AfterKeyword
+            | AnonymousKeyword
+            | AsKeyword
+            | AssemblyKeyword
+            | BoolKeyword
+            | BreakKeyword
+            | ByteKeyword
+            | CaseKeyword
+            | CatchKeyword
+            | ConstantKeyword
+            | ContinueKeyword
+            | ContractKeyword
+            | DaysKeyword
+            | DefaultKeyword
+            | DeleteKeyword
+            | DoKeyword
+            | ElseKeyword
+            | EnumKeyword
+            | EtherKeyword
+            | EventKeyword
+            | ExperimentalKeyword
+            | ExternalKeyword
+            | FallbackKeyword
+            | FalseKeyword
+            | FinalKeyword
+            | FinneyKeyword
+            | ForKeyword
+            | FromKeyword
+            | FunctionKeyword
+            | GlobalKeyword
+            | HexKeyword
+            | HoursKeyword
+            | IfKeyword
+            | ImportKeyword
+            | IndexedKeyword
+            | InKeyword
+            | InlineKeyword
+            | InterfaceKeyword
+            | InternalKeyword
+            | IsKeyword
+            | LetKeyword
+            | LibraryKeyword
+            | MappingKeyword
+            | MatchKeyword
+            | MemoryKeyword
+            | MinutesKeyword
+            | ModifierKeyword
+            | NewKeyword
+            | NullKeyword
+            | OfKeyword
+            | OverrideKeyword
+            | PayableKeyword
+            | PragmaKeyword
+            | PrivateKeyword
+            | PublicKeyword
+            | PureKeyword
+            | ReceiveKeyword
+            | RelocatableKeyword
+            | ReturnKeyword
+            | ReturnsKeyword
+            | RevertKeyword
+            | SecondsKeyword
+            | SolidityKeyword
+            | StaticKeyword
+            | StorageKeyword
+            | StringKeyword
+            | StructKeyword
+            | SwitchKeyword
+            | SzaboKeyword
+            | ThrowKeyword
+            | TrueKeyword
+            | TypeofKeyword
+            | UsingKeyword
+            | VarKeyword
+            | ViewKeyword
+            | WeeksKeyword
+            | WeiKeyword
+            | WhileKeyword
+            | YearsKeyword
+
+            // Introduced in 0.4.21
+            | EmitKeyword
+
+            // Introduced in 0.4.22
+            | ConstructorKeyword
+
+            // introduced in 0.5.0
+            | AliasKeyword
+            | ApplyKeyword
+            | AutoKeyword
+            | CalldataKeyword
+            | CopyofKeyword
+            | DefineKeyword
+            | ImplementsKeyword
+            | MacroKeyword
+            | MutableKeyword
+            | PartialKeyword
+            | PromiseKeyword
+            | ReferenceKeyword
+            | SealedKeyword
+            | SizeofKeyword
+            | SupportsKeyword
+            | TypedefKeyword
+
+            // Introduced in 0.5.3
+            | TypeKeyword
+
+            // Introduced in 0.6.0
+            | LeaveKeyword
+            | TryKeyword
+            | VirtualKeyword
+
+            // Introduced in 0.6.5
+            | ImmutableKeyword
+
+            // Introduced in 0.6.11
+            | GweiKeyword
+
+            // Introduced in 0.8.0
+            | UncheckedKeyword
+
+            // Introduced in 0.8.4
+            | ErrorKeyword
+        ) ;
+
         parser ABICoderPragma = (ABICoderKeyword Identifier) ;
 
         inline parser AddSubOperator = (Plus | Minus) ;
@@ -71,49 +200,49 @@ slang_grammar! {
 
         parser BreakStatement = (BreakKeyword terminated_by Semicolon) ;
 
-        parser CatchClause = { enabled from "0.6.0" (CatchKeyword (CatchClauseError ?) Block) } ;
+        parser CatchClause = { introduced in "0.6.0" (CatchKeyword (CatchClauseError ?) Block) } ;
 
-        parser CatchClauseError = { enabled from "0.6.0" ((Identifier ?) ParametersDeclaration) } ;
+        parser CatchClauseError = { introduced in "0.6.0" ((Identifier ?) ParametersDeclaration) } ;
 
-        parser CatchClausesList = { enabled from "0.6.0" (CatchClause +) } ;
+        parser CatchClausesList = { introduced in "0.6.0" (CatchClause +) } ;
 
         inline parser ConditionalOperator = (QuestionMark Expression Colon Expression) ;
 
-        parser ConstantDefinition = { enabled from "0.7.4" ((TypeName ConstantKeyword Identifier Equal Expression) terminated_by Semicolon) } ;
+        parser ConstantDefinition = { introduced in "0.7.4" ((TypeName ConstantKeyword Identifier Equal Expression) terminated_by Semicolon) } ;
 
-        inline parser ConstructorAttribute = { enabled from "0.4.22" (ModifierInvocation | InternalKeyword | PayableKeyword | PublicKeyword) } ;
+        inline parser ConstructorAttribute = { introduced in "0.4.22" (ModifierInvocation | InternalKeyword | PayableKeyword | PublicKeyword) } ;
 
-        parser ConstructorAttributesList = { enabled from "0.4.22" (ConstructorAttribute +) } ;
+        parser ConstructorAttributesList = { introduced in "0.4.22" (ConstructorAttribute +) } ;
 
-        parser ConstructorDefinition = { enabled from "0.4.22" (ConstructorKeyword ParametersDeclaration (ConstructorAttributesList ?) Block) } ;
+        parser ConstructorDefinition = { introduced in "0.4.22" (ConstructorKeyword ParametersDeclaration (ConstructorAttributesList ?) Block) } ;
 
         parser ContinueStatement = (ContinueKeyword terminated_by Semicolon) ;
 
         parser ContractDefinition = (
-            { enabled from "0.6.0"  (AbstractKeyword ?) } ContractKeyword Identifier (InheritanceSpecifier ?) ((ContractMembersList ?) delimited_by OpenBrace and CloseBrace)
+            { introduced in "0.6.0" (AbstractKeyword ?) } ContractKeyword Identifier (InheritanceSpecifier ?) ((ContractMembersList ?) delimited_by OpenBrace and CloseBrace)
         ) ;
 
         inline parser ContractMember = (
             UsingDirective | FunctionDefinition | ModifierDefinition | StructDefinition | EnumDefinition | EventDefinition |  StateVariableDefinition |
-            { enabled from "0.4.22" ConstructorDefinition } |
-            { enabled from "0.6.0" (FallbackFunctionDefinition | ReceiveFunctionDefinition) } |
-            { disabled from "0.6.0" UnnamedFunctionDefinition } |
-            { enabled from "0.8.4" ErrorDefinition } |
-            { enabled from "0.8.8" UserDefinedValueTypeDefinition }
+            { introduced in "0.4.22" ConstructorDefinition } |
+            { introduced in "0.6.0"  (FallbackFunctionDefinition | ReceiveFunctionDefinition) } |
+            { removed in "0.6.0"     UnnamedFunctionDefinition } |
+            { introduced in "0.8.4"  ErrorDefinition } |
+            { introduced in "0.8.8"  UserDefinedValueTypeDefinition }
         ) ;
 
         parser ContractMembersList = (ContractMember +) ;
 
         inline parser ControlStatement = (
             IfStatement | ForStatement | WhileStatement | DoWhileStatement | ContinueStatement | BreakStatement | DeleteStatement | ReturnStatement | RevertStatement |
-            { enabled from "0.4.21" EmitStatement} |
-            { disabled from "0.5.0" ThrowStatement } |
-            { enabled from "0.6.0" TryStatement}
+            { introduced in "0.4.21" EmitStatement} |
+            { removed in "0.5.0"     ThrowStatement } |
+            { introduced in "0.6.0"  TryStatement}
         ) ;
 
         inline parser DataLocation = (
             MemoryKeyword | StorageKeyword |
-            { enabled from "0.5.0" CalldataKeyword}
+            { introduced in "0.5.0" CalldataKeyword}
         ) ;
 
         parser DeconstructionImport = ((DeconstructionImportSymbolsList delimited_by OpenBrace and CloseBrace) FromKeyword AsciiStringLiteral) ;
@@ -128,20 +257,20 @@ slang_grammar! {
 
         inline parser ElementaryType = (
             BoolKeyword | StringKeyword | AddressType | FixedBytesType | SignedIntegerType | UnsignedIntegerType | SignedFixedType | UnsignedFixedType |
-            { disabled from "0.8.0" ByteKeyword}
+            { removed in "0.8.0" ByteKeyword}
         ) ;
 
-        parser EmitStatement = { enabled from "0.4.21" ((EmitKeyword IdentifierPath ArgumentsDeclaration) terminated_by Semicolon) } ;
+        parser EmitStatement = { introduced in "0.4.21" ((EmitKeyword IdentifierPath ArgumentsDeclaration) terminated_by Semicolon) } ;
 
         parser EnumDefinition = (EnumKeyword Identifier ((IdentifiersList ?) delimited_by OpenBrace and CloseBrace)) ;
 
         inline parser EqualityComparisonOperator = (EqualEqual | BangEqual) ;
 
-        parser ErrorDefinition = { enabled from "0.8.4" ((ErrorKeyword Identifier ((ErrorParametersList ?) delimited_by OpenParen and CloseParen)) terminated_by Semicolon) } ;
+        parser ErrorDefinition = { introduced in "0.8.4" ((ErrorKeyword Identifier ((ErrorParametersList ?) delimited_by OpenParen and CloseParen)) terminated_by Semicolon) } ;
 
-        parser ErrorParameter = { enabled from "0.8.4" (TypeName (Identifier ?)) } ;
+        parser ErrorParameter = { introduced in "0.8.4" (TypeName (Identifier ?)) } ;
 
-        parser ErrorParametersList = { enabled from "0.8.4" (ErrorParameter separated_by Comma) } ;
+        parser ErrorParametersList = { introduced in "0.8.4" (ErrorParameter separated_by Comma) } ;
 
         parser EventDefinition = ((EventKeyword Identifier ((EventParametersList ?) delimited_by OpenParen and CloseParen) (AnonymousKeyword ?)) terminated_by Semicolon) ;
 
@@ -167,8 +296,8 @@ slang_grammar! {
                 left ShiftOperator as BinaryExpression,
                 left AddSubOperator as BinaryExpression,
                 left MulDivModOperator as BinaryExpression,
-                { disabled from "0.6.0" left ExponentiationOperator as BinaryExpression },
-                { enabled from "0.6.0" right ExponentiationOperator as BinaryExpression },
+                { removed in "0.6.0"    left ExponentiationOperator as BinaryExpression },
+                { introduced in "0.6.0" right ExponentiationOperator as BinaryExpression },
                 postfix UnaryPostfixOperator as UnaryPostfixExpression,
                 prefix UnaryPrefixOperator as UnaryPrefixExpression,
                 postfix FunctionCallOperator as FunctionCallExpression,
@@ -180,30 +309,30 @@ slang_grammar! {
 
         parser ExpressionStatement = (Expression terminated_by Semicolon) ;
 
-        inline parser FallbackFunctionAttribute = { enabled from "0.6.0" (ModifierInvocation | OverrideSpecifier | ExternalKeyword | PayableKeyword | PureKeyword | ViewKeyword | VirtualKeyword) } ;
+        inline parser FallbackFunctionAttribute = { introduced in "0.6.0" (ModifierInvocation | OverrideSpecifier | ExternalKeyword | PayableKeyword | PureKeyword | ViewKeyword | VirtualKeyword) } ;
 
-        parser FallbackFunctionAttributesList = { enabled from "0.6.0" (FallbackFunctionAttribute +) } ;
+        parser FallbackFunctionAttributesList = { introduced in "0.6.0" (FallbackFunctionAttribute +) } ;
 
-        parser FallbackFunctionDefinition = { enabled from "0.6.0" (FallbackKeyword ParametersDeclaration (FallbackFunctionAttributesList ?) (ReturnsDeclaration ?) (Semicolon | Block)) } ;
+        parser FallbackFunctionDefinition = { introduced in "0.6.0" (FallbackKeyword ParametersDeclaration (FallbackFunctionAttributesList ?) (ReturnsDeclaration ?) (Semicolon | Block)) } ;
 
         parser ForStatement = (ForKeyword (((SimpleStatement | Semicolon) (ExpressionStatement | Semicolon) (Expression ?)) delimited_by OpenParen and CloseParen) Statement) ;
 
         inline parser FunctionAttribute = (
             ModifierInvocation | OverrideSpecifier | ExternalKeyword | InternalKeyword | PayableKeyword | PrivateKeyword | PublicKeyword | PureKeyword | ViewKeyword |
-            { disabled from "0.5.0" ConstantKeyword } |
-            { enabled from "0.6.0" VirtualKeyword }
+            { removed in "0.5.0"    ConstantKeyword } |
+            { introduced in "0.6.0" VirtualKeyword }
          ) ;
 
         parser FunctionAttributesList = (FunctionAttribute +) ;
 
         inline parser FunctionCallOperator = (
-            { enabled from "0.6.2" (FunctionCallOptions ?) }
+            { introduced in "0.6.2" (FunctionCallOptions ?) }
             ArgumentsDeclaration
         ) ;
 
         parser FunctionCallOptions = (
-            { enabled from "0.6.2" and disabled from "0.8.0" (NamedArgumentsDeclaration +) } |
-            { enabled from "0.8.0"                           NamedArgumentsDeclaration }
+            { introduced in "0.6.2" and removed in "0.8.0" (NamedArgumentsDeclaration +) } |
+            { introduced in "0.8.0"                        NamedArgumentsDeclaration }
         ) ;
 
         parser FunctionDefinition = (FunctionKeyword (Identifier | FallbackKeyword | ReceiveKeyword) ParametersDeclaration (FunctionAttributesList ?) (ReturnsDeclaration ?) (Semicolon | Block)) ;
@@ -244,21 +373,21 @@ slang_grammar! {
 
         parser MappingKeyType = (
             (ElementaryType | IdentifierPath)
-            { enabled from "0.8.18" (Identifier ?) }
+            { introduced in "0.8.18" (Identifier ?) }
         ) ;
 
         parser MappingType = (MappingKeyword ((MappingKeyType EqualGreaterThan MappingValueType) delimited_by OpenParen and CloseParen)) ;
 
         parser MappingValueType = (
             TypeName
-            { enabled from "0.8.18" (Identifier ?) }
+            { introduced in "0.8.18" (Identifier ?) }
         ) ;
 
         inline parser MemberAccessOperator = (Period (Identifier | AddressKeyword)) ;
 
         inline parser ModifierAttribute = (
             OverrideSpecifier |
-            { enabled from "0.6.0" VirtualKeyword }
+            { introduced in "0.6.0" VirtualKeyword }
         ) ;
 
         parser ModifierAttributesList = (ModifierAttribute +) ;
@@ -281,13 +410,13 @@ slang_grammar! {
 
         inline parser NumberUnit = (
             DaysKeyword | EtherKeyword | HoursKeyword | MinutesKeyword | SecondsKeyword | WeeksKeyword | WeiKeyword |
-            { disabled from "0.5.0" YearsKeyword } |
-            { enabled from "0.6.11" GweiKeyword } |
-            { disabled from "0.7.0" ( FinneyKeyword | SzaboKeyword) }
+            { removed in "0.5.0"     YearsKeyword } |
+            { introduced in "0.6.11" GweiKeyword } |
+            { removed in "0.7.0"     (FinneyKeyword | SzaboKeyword) }
         ) ;
 
         parser NumericExpression = (
-            (HexLiteral { disabled from "0.5.0" (NumberUnit ?) }) |
+            (HexLiteral { removed in "0.5.0" (NumberUnit ?) }) |
             (DecimalLiteral (NumberUnit ?))
         ) ;
 
@@ -311,14 +440,14 @@ slang_grammar! {
 
         inline parser PrimaryExpression = (
             NewExpression | TupleExpression | ArrayExpression | BooleanExpression | NumericExpression | StringExpression | ElementaryType | Identifier |
-            { enabled from "0.5.3" TypeExpression }
+            { introduced in "0.5.3" TypeExpression }
         ) ;
 
-        inline parser ReceiveFunctionAttribute = { enabled from "0.6.0" (ModifierInvocation | OverrideSpecifier | ExternalKeyword | PayableKeyword | VirtualKeyword) } ;
+        inline parser ReceiveFunctionAttribute = { introduced in "0.6.0" (ModifierInvocation | OverrideSpecifier | ExternalKeyword | PayableKeyword | VirtualKeyword) } ;
 
-        parser ReceiveFunctionAttributesList = { enabled from "0.6.0" (ReceiveFunctionAttribute +) } ;
+        parser ReceiveFunctionAttributesList = { introduced in "0.6.0" (ReceiveFunctionAttribute +) } ;
 
-        parser ReceiveFunctionDefinition = { enabled from "0.6.0" (ReceiveKeyword ParametersDeclaration (ReceiveFunctionAttributesList ?) (Semicolon | Block)) } ;
+        parser ReceiveFunctionDefinition = { introduced in "0.6.0" (ReceiveKeyword ParametersDeclaration (ReceiveFunctionAttributesList ?) (Semicolon | Block)) } ;
 
         parser ReturnStatement = ((ReturnKeyword (Expression ?)) terminated_by Semicolon) ;
 
@@ -334,18 +463,18 @@ slang_grammar! {
 
         inline parser SourceUnitMember = (
               PragmaDirective | ImportDirective | ContractDefinition | InterfaceDefinition | LibraryDefinition |
-              { enabled from "0.6.0" (StructDefinition | EnumDefinition) } |
-              { enabled from "0.7.1" FunctionDefinition } |
-              { enabled from "0.7.4" ConstantDefinition } |
-              { enabled from "0.8.4" ErrorDefinition } |
-              { enabled from "0.8.8" UserDefinedValueTypeDefinition } |
-              { enabled from "0.8.13" UsingDirective }
+              { introduced in "0.6.0"  (StructDefinition | EnumDefinition) } |
+              { introduced in "0.7.1"  FunctionDefinition } |
+              { introduced in "0.7.4"  ConstantDefinition } |
+              { introduced in "0.8.4"  ErrorDefinition } |
+              { introduced in "0.8.8"  UserDefinedValueTypeDefinition } |
+              { introduced in "0.8.13" UsingDirective }
         ) ;
 
         parser SourceUnitMembersList = (SourceUnitMember +) ;
 
         inline parser StateVariableAttribute = (
-            OverrideSpecifier | ConstantKeyword | InternalKeyword | PrivateKeyword | PublicKeyword| { enabled from "0.6.5" ImmutableKeyword }
+            OverrideSpecifier | ConstantKeyword | InternalKeyword | PrivateKeyword | PublicKeyword| { introduced in "0.6.5" ImmutableKeyword }
         ) ;
 
         parser StateVariableAttributesList = (StateVariableAttribute +) ;
@@ -353,13 +482,13 @@ slang_grammar! {
         parser StateVariableDefinition = ((TypeName (StateVariableAttributesList ?) Identifier ((Equal Expression) ?)) terminated_by Semicolon) ;
 
         parser Statement = (
-            SimpleStatement | ControlStatement | AssemblyStatement | Block | { enabled from "0.8.0" UncheckedBlock }
+            SimpleStatement | ControlStatement | AssemblyStatement | Block | { introduced in "0.8.0" UncheckedBlock }
         ) ;
 
         parser StatementsList = (Statement +) ;
 
         inline parser StringExpression = (
-            HexStringLiteralsList | AsciiStringLiteralsList | { enabled from "0.7.0" UnicodeStringLiteralsList }
+            HexStringLiteralsList | AsciiStringLiteralsList | { introduced in "0.7.0" UnicodeStringLiteralsList }
         ) ;
 
         parser StructDefinition = (StructKeyword Identifier ((StructMembersList ?) delimited_by OpenBrace and CloseBrace)) ;
@@ -368,9 +497,9 @@ slang_grammar! {
 
         parser StructMembersList = (StructMember +) ;
 
-        parser ThrowStatement = { disabled from "0.5.0" (ThrowKeyword terminated_by Semicolon) } ;
+        parser ThrowStatement = { removed in "0.5.0" (ThrowKeyword terminated_by Semicolon) } ;
 
-        parser TryStatement = { enabled from "0.6.0" (TryKeyword Expression (ReturnsDeclaration ?) Block CatchClausesList) } ;
+        parser TryStatement = { introduced in "0.6.0" (TryKeyword Expression (ReturnsDeclaration ?) Block CatchClausesList) } ;
 
         parser TupleDeconstructionStatement = ((((TupleMembersList ?) delimited_by OpenParen and CloseParen) Equal Expression) terminated_by Semicolon) ;
 
@@ -382,7 +511,7 @@ slang_grammar! {
 
         parser TupleValuesList = ((Expression ?) separated_by Comma) ;
 
-        parser TypeExpression = { enabled from "0.5.3" (TypeKeyword (TypeName delimited_by OpenParen and CloseParen)) } ;
+        parser TypeExpression = { introduced in "0.5.3" (TypeKeyword (TypeName delimited_by OpenParen and CloseParen)) } ;
 
         precedence parser TypeName = (
             [
@@ -394,39 +523,39 @@ slang_grammar! {
         inline parser UnaryPostfixOperator = (PlusPlus | MinusMinus) ;
 
         inline parser UnaryPrefixOperator = (
-            PlusPlus | MinusMinus | Tilde | Bang | Minus | { disabled from "0.5.0" Plus }
+            PlusPlus | MinusMinus | Tilde | Bang | Minus | { removed in "0.5.0" Plus }
         ) ;
 
-        parser UncheckedBlock = { enabled from "0.8.0" (UncheckedKeyword Block) } ;
+        parser UncheckedBlock = { introduced in "0.8.0" (UncheckedKeyword Block) } ;
 
-        parser UnicodeStringLiteralsList = { enabled from "0.7.0" (UnicodeStringLiteral +) } ;
+        parser UnicodeStringLiteralsList = { introduced in "0.7.0" (UnicodeStringLiteral +) } ;
 
-        inline parser UnnamedFunctionAttribute = { disabled from "0.6.0" (ModifierInvocation | OverrideSpecifier | ExternalKeyword | PayableKeyword | PureKeyword | ViewKeyword) } ;
+        inline parser UnnamedFunctionAttribute = { removed in "0.6.0" (ModifierInvocation | OverrideSpecifier | ExternalKeyword | PayableKeyword | PureKeyword | ViewKeyword) } ;
 
-        parser UnnamedFunctionAttributesList = { disabled from "0.6.0" (UnnamedFunctionAttribute +) } ;
+        parser UnnamedFunctionAttributesList = { removed in "0.6.0" (UnnamedFunctionAttribute +) } ;
 
-        parser UnnamedFunctionDefinition = { disabled from "0.6.0" (FunctionKeyword ParametersDeclaration (UnnamedFunctionAttributesList ?) (Semicolon | Block)) } ;
+        parser UnnamedFunctionDefinition = { removed in "0.6.0" (FunctionKeyword ParametersDeclaration (UnnamedFunctionAttributesList ?) (Semicolon | Block)) } ;
 
-        parser UserDefinedValueTypeDefinition = { enabled from "0.8.8" ((TypeKeyword Identifier IsKeyword ElementaryType) terminated_by Semicolon) } ;
+        parser UserDefinedValueTypeDefinition = { introduced in "0.8.8" ((TypeKeyword Identifier IsKeyword ElementaryType) terminated_by Semicolon) } ;
 
         parser UsingDirective = ((UsingKeyword (UsingDirectivePath | UsingDirectiveDeconstruction) ForKeyword (Asterisk | TypeName) (GlobalKeyword ?)) terminated_by Semicolon) ;
 
         parser UsingDirectiveDeconstruction = (UsingDirectiveSymbolsList delimited_by OpenBrace and CloseBrace) ;
 
         inline parser UsingDirectiveOperator = {
-            enabled from "0.8.19" (Ampersand | Asterisk | BangEqual | Bar | Caret | EqualEqual | GreaterThan | GreaterThanEqual | LessThan | LessThanEqual | Minus | Percent | Plus | Slash | Tilde)
+            introduced in "0.8.19" (Ampersand | Asterisk | BangEqual | Bar | Caret | EqualEqual | GreaterThan | GreaterThanEqual | LessThan | LessThanEqual | Minus | Percent | Plus | Slash | Tilde)
         } ;
 
         parser UsingDirectivePath = IdentifierPath ;
 
         parser UsingDirectiveSymbol = (
-            IdentifierPath { enabled from "0.8.19" ((AsKeyword UsingDirectiveOperator) ?) }
+            IdentifierPath { introduced in "0.8.19" ((AsKeyword UsingDirectiveOperator) ?) }
         ) ;
 
         parser UsingDirectiveSymbolsList = (UsingDirectiveSymbol separated_by Comma) ;
 
         parser VariableDeclaration = (
-            ({ disabled from "0.5.0" VarKeyword } | TypeName) (DataLocation ?) Identifier
+            ({ removed in "0.5.0" VarKeyword } | TypeName) (DataLocation ?) Identifier
         ) ;
 
         parser VariableDeclarationStatement = ((VariableDeclaration ((Equal Expression) ?)) terminated_by Semicolon) ;
@@ -468,6 +597,22 @@ slang_grammar! {
 
     lexical context YulBlock = {
 
+        inline parser YulKeywordsOverAllVersions = (
+              BreakKeyword
+            | CaseKeyword
+            | ContinueKeyword
+            | DefaultKeyword
+            | FalseKeyword
+            | ForKeyword
+            | FunctionKeyword
+            | HexKeyword
+            | IfKeyword
+            | LeaveKeyword
+            | LetKeyword
+            | SwitchKeyword
+            | TrueKeyword
+        ) ;
+
         parser YulAssignmentStatement = (YulIdentifierPathsList ColonEqual YulExpression) ;
 
         parser YulBlock = ((YulStatementsList ?) delimited_by OpenBrace and CloseBrace) ;
@@ -501,7 +646,7 @@ slang_grammar! {
 
         parser YulIfStatement = (IfKeyword YulExpression YulBlock) ;
 
-        parser YulLeaveStatement = { enabled from "0.6.0" LeaveKeyword } ;
+        parser YulLeaveStatement = { introduced in "0.6.0" LeaveKeyword } ;
 
         inline parser YulLiteral = (TrueKeyword | FalseKeyword | YulHexLiteral | YulDecimalLiteral | HexStringLiteral | AsciiStringLiteral) ;
 
@@ -512,7 +657,7 @@ slang_grammar! {
         parser YulStatement = (
             YulBlock | YulFunctionDefinition | YulDeclarationStatement | YulAssignmentStatement | YulIfStatement |
             YulForStatement | YulSwitchStatement | YulBreakStatement | YulContinueStatement | YulExpression |
-            { enabled from "0.6.0" YulLeaveStatement }
+            { introduced in "0.6.0" YulLeaveStatement }
         ) ;
 
         parser YulStatementsList = (YulStatement +) ;
@@ -529,387 +674,283 @@ slang_grammar! {
      *         Scanners
      ********************************************/
 
-    scanner ABICoderKeyword = "abicoder" ;
-
-    scanner AbstractKeyword = { enabled from "0.6.0" "abstract" } ;
-
-    scanner AddressKeyword = "address" ;
-
-    scanner Ampersand = '&' ;
-
-    scanner AmpersandAmpersand = "&&" ;
-
-    scanner AmpersandEqual = "&=" ;
-
-    scanner AnonymousKeyword = "anonymous" ;
-
-    scanner AsKeyword = "as" ;
-
-    scanner AsciiEscape = ('\n' | '\r' | '"' | '\'' | '\\' | 'n' | 'r' | 't') ;
-
-    scanner AsciiStringLiteral = (SingleQuotedAsciiStringLiteral | DoubleQuotedAsciiStringLiteral) ;
-
-    scanner AssemblyKeyword = "assembly" ;
-
-    scanner Asterisk = '*' ;
-
-    scanner AsteriskAsterisk = "**" ;
-
-    scanner AsteriskEqual = "*=" ;
-
-    scanner Bang = '!' ;
-
-    scanner BangEqual = "!=" ;
-
-    scanner Bar = '|' ;
-
-    scanner BarBar = "||" ;
-
-    scanner BarEqual = "|=" ;
-
-    scanner BoolKeyword = "bool" ;
-
-    scanner BreakKeyword = "break" ;
-
-    scanner ByteKeyword = { disabled from "0.8.0" "byte" } ;
-
-    scanner CalldataKeyword = { enabled from "0.5.0" "calldata" } ;
-
-    scanner Caret = '^' ;
-
-    scanner CaretEqual = "^=" ;
-
-    scanner CaseKeyword = "case" ;
-
-    scanner CatchKeyword = { enabled from "0.6.0" "catch" } ;
-
-    scanner CloseBrace = '}' ;
-
-    scanner CloseBracket = ']' ;
-
-    scanner CloseParen = ')' ;
-
-    scanner Colon = ':' ;
-
-    scanner ColonEqual = ":=" ;
-
-    scanner Comma = ',' ;
-
-    scanner ConstantKeyword = "constant" ;
-
-    scanner ConstructorKeyword = { enabled from "0.4.22" "constructor" } ;
-
-    scanner ContinueKeyword = "continue" ;
-
-    scanner ContractKeyword = "contract" ;
-
-    scanner DaysKeyword = "days" ;
-
-    scanner DecimalDigits = ((('0' .. '9') +) (('_' (('0' .. '9') +)) *)) ;
-
-    scanner DecimalExponent = (('E' | 'e') ('-' ?) DecimalDigits) ;
-
-    scanner DecimalLiteral = (
-        (
-            (
-                DecimalDigits
-                (
-                    (
-                        '.'
-                        (
-                            { disabled from "0.5.0" (DecimalDigits ?)} |
-                            { enabled from "0.5.0" DecimalDigits }
-                        )
-                    )
-                ?)
-            ) |
-            (
-                '.'
-                DecimalDigits
-            )
-        )
-        (DecimalExponent ?)
-    ) ;
-
-    scanner DefaultKeyword = "default" ;
-
-    scanner DeleteKeyword = "delete" ;
-
-    scanner DoKeyword = "do" ;
-
-    scanner DoubleQuotedAsciiStringLiteral = ('"' ((EscapeSequence | ((' ' .. '!') | ('#' .. '[') | (']' .. '~'))) *) '"') ;
-
-    scanner DoubleQuotedHexStringLiteral = ("hex" '"' (HexStringContents ?) '"') ;
-
-    scanner DoubleQuotedUnicodeStringLiteral = { enabled from "0.7.0" ("unicode\"" ((EscapeSequence | (! "\n\r\"\\")) *) '"') } ;
-
-    scanner ElseKeyword = "else" ;
-
-    scanner EmitKeyword = { enabled from "0.4.21" "emit" } ;
+    // Trivia
 
     scanner EndOfLine = (('\r' ?) '\n') ;
+    scanner Whitespace = (('\t' | ' ') +) ;
+    scanner SingleLineComment = ("//" ((! "\n\r") *)) ;
+    scanner MultilineComment = ('/' '*' (((! '*') | ('*' (! '/'))) *) '*' '/') ;
 
-    scanner EnumKeyword = "enum" ;
+    // Delimiters
 
-    scanner Equal = '=' ;
+    scanner OpenBrace = '{' ;
+    scanner CloseBrace = '}' ;
 
+    scanner OpenBracket = '[' ;
+    scanner CloseBracket = ']' ;
+
+    scanner OpenParen = '(' ;
+    scanner CloseParen = ')' ;
+
+    // Punctuation
+
+    scanner Colon = ':' ;
+    scanner Comma = ',' ;
+    scanner MinusGreaterThan = "->" ;
+    scanner Period = '.' ;
+    scanner QuestionMark = '?' ;
+    scanner Semicolon = ';' ;
+
+    // Operators
+
+    scanner Ampersand = '&' ;
+    scanner AmpersandAmpersand = "&&" ;
+    scanner Asterisk = '*' ;
+    scanner AsteriskAsterisk = "**" ;
+    scanner Bang = '!' ;
+    scanner Bar = '|' ;
+    scanner BarBar = "||" ;
+    scanner Caret = '^' ;
+    scanner GreaterThan = '>' ;
+    scanner GreaterThanEqual = ">=" ;
+    scanner GreaterThanGreaterThan = ">>" ;
+    scanner GreaterThanGreaterThanGreaterThan = ">>>" ;
     scanner EqualEqual = "==" ;
-
     scanner EqualGreaterThan = "=>" ;
+    scanner LessThan = '<' ;
+    scanner LessThanEqual = "<=" ;
+    scanner LessThanLessThan = "<<" ;
+    scanner Minus = '-' ;
+    scanner MinusMinus = "--" ;
+    scanner Percent = '%' ;
+    scanner Plus = '+' ;
+    scanner PlusPlus = "++" ;
+    scanner Slash = '/' ;
+    scanner Tilde = '~' ;
 
-    scanner ErrorKeyword = { enabled from "0.8.4" "error" } ;
+    // Assignment Operators
 
-    scanner EscapeSequence = ('\\' (AsciiEscape | HexByteEscape | UnicodeEscape)) ;
+    scanner AmpersandEqual = "&=" ;
+    scanner AsteriskEqual = "*=" ;
+    scanner BangEqual = "!=" ;
+    scanner BarEqual = "|=" ;
+    scanner CaretEqual = "^=" ;
+    scanner ColonEqual = ":=" ;
+    scanner GreaterThanGreaterThanEqual = ">>=" ;
+    scanner GreaterThanGreaterThanGreaterThanEqual = ">>>=" ;
+    scanner Equal = '=' ;
+    scanner LessThanLessThanEqual = "<<=" ;
+    scanner MinusEqual = "-=" ;
+    scanner PercentEqual = "%=" ;
+    scanner PlusEqual = "+=" ;
+    scanner SlashEqual = "/=" ;
 
-    scanner EtherKeyword = "ether" ;
+    // Identifiers
 
-    scanner EventKeyword = "event" ;
+    scanner Identifier = RawIdentifier ;
+    scanner YulIdentifier = ( RawIdentifier ) ;
 
-    scanner ExperimentalKeyword = "experimental" ;
+    scanner IdentifierPart = (IdentifierStart | ('0' .. '9')) ;
+    scanner IdentifierStart = ('$' | ('A' .. 'Z') | '_' | ('a' .. 'z')) ;
+    scanner RawIdentifier = (IdentifierStart (IdentifierPart *)) ;
 
-    scanner ExternalKeyword = "external" ;
-
-    scanner FallbackKeyword = "fallback" ;
-
-    scanner FalseKeyword = "false" ;
-
-    scanner FinneyKeyword = { disabled from "0.7.0" "finney" } ;
+    // Constructed Identifiers (Typenames)
 
     scanner FixedBytesType = ("bytes" FixedBytesTypeSize) ;
+    scanner SignedFixedType = ("fixed" (FixedTypeSize ?)) ;
+    scanner SignedIntegerType = ("int" (IntegerTypeSize ?)) ;
+    scanner UnsignedFixedType = ("ufixed" (FixedTypeSize ?)) ;
+    scanner UnsignedIntegerType = ("uint" (IntegerTypeSize ?)) ;
 
     scanner FixedBytesTypeSize = (
         "1" | "10" | "11" | "12" | "13" | "14" | "15" | "16" | "17" | "18" | "19" | "2" | "20" | "21" | "22" | "23" |
         "24" | "25" | "26" | "27" | "28" | "29" | "3" | "30" | "31" | "32" | "4" | "5" | "6" | "7" | "8" | "9"
     ) ;
-
     scanner FixedTypeSize = ((('0' .. '9') +) 'x' (('0' .. '9') +)) ;
-
-    scanner ForKeyword = "for" ;
-
-    scanner FromKeyword = "from" ;
-
-    scanner FunctionKeyword = "function" ;
-
-    scanner GlobalKeyword = "global" ;
-
-    scanner GreaterThan = '>' ;
-
-    scanner GreaterThanEqual = ">=" ;
-
-    scanner GreaterThanGreaterThan = ">>" ;
-
-    scanner GreaterThanGreaterThanEqual = ">>=" ;
-
-    scanner GreaterThanGreaterThanGreaterThan = ">>>" ;
-
-    scanner GreaterThanGreaterThanGreaterThanEqual = ">>>=" ;
-
-    scanner GweiKeyword = { enabled from "0.6.11" "gwei" } ;
-
-    scanner HexByteEscape = ('x' (HexCharacter) (HexCharacter)) ;
-
-    scanner HexCharacter = (('0' .. '9') | ('A' .. 'F') | ('a' .. 'f')) ;
-
-    scanner HexLiteral = (("0x" | {disabled from "0.5.0" "0X"}) ((HexCharacter) +) (('_' ((HexCharacter) +)) *)) ;
-
-    scanner HexStringContents = ((HexCharacter) (HexCharacter) ((('_' ?) (HexCharacter) (HexCharacter)) *)) ;
-
-    scanner HexStringLiteral = (SingleQuotedHexStringLiteral | DoubleQuotedHexStringLiteral) ;
-
-    scanner HoursKeyword = "hours" ;
-
-    scanner Identifier = RawIdentifier ;
-
-    scanner IdentifierPart = (IdentifierStart | ('0' .. '9')) ;
-
-    scanner IdentifierStart = ('$' | ('A' .. 'Z') | '_' | ('a' .. 'z')) ;
-
-    scanner IfKeyword = "if" ;
-
-    scanner ImmutableKeyword = { enabled from "0.6.5" "immutable" } ;
-
-    scanner ImportKeyword = "import" ;
-
-    scanner IndexedKeyword = "indexed" ;
-
     scanner IntegerTypeSize = (
         "104" | "112" | "120" | "128" | "136" | "144" | "152" | "16" | "160" | "168" | "176" | "184" | "192" | "200" | "208" |
         "216" | "224" | "232" | "24" | "240" | "248" | "256" | "32" | "40" | "48" | "56" | "64" | "72" | "8" | "80" | "88" | "96"
     ) ;
 
-    scanner InterfaceKeyword = "interface" ;
-
-    scanner InternalKeyword = "internal" ;
-
-    scanner IsKeyword = "is" ;
-
-    // scanner KeywordInAnyVersion = (FixedBytesType | SignedFixedType | UnsignedFixedType | SignedIntegerType | UnsignedIntegerType | AddressKeyword | AnonymousKeyword | AsKeyword | AssemblyKeyword | BoolKeyword | BreakKeyword | CaseKeyword | ConstantKeyword | ContinueKeyword | ContractKeyword | DaysKeyword | DefaultKeyword | DeleteKeyword | DoKeyword | ElseKeyword | EnumKeyword | EtherKeyword | EventKeyword | ExternalKeyword | FalseKeyword | ForKeyword | FunctionKeyword | HoursKeyword | IfKeyword | ImportKeyword | IndexedKeyword | InterfaceKeyword | InternalKeyword | IsKeyword | LetKeyword | LibraryKeyword | MappingKeyword | MemoryKeyword | MinutesKeyword | ModifierKeyword | NewKeyword | PayableKeyword | PragmaKeyword | PrivateKeyword | PublicKeyword | PureKeyword | ReturnKeyword | ReturnsKeyword | SecondsKeyword | StorageKeyword | StringKeyword | StructKeyword | SwitchKeyword | TrueKeyword | UsingKeyword | ViewKeyword | WeeksKeyword | WeiKeyword | WhileKeyword) ;
-
-    // scanner KeywordInSomeVersion = (
-    //     { disabled from "0.5.0" (ByteKeyword | FinneyKeyword | SzaboKeyword | ThrowKeyword | VarKeyword | YearsKeyword) } |
-    //     { enabled from "0.5.0" and disabled from "0.6.0" (ByteKeyword | FinneyKeyword | SzaboKeyword | CalldataKeyword | ConstructorKeyword | EmitKeyword | OverrideKeyword | { enabled from "0.5.3" TypeKeyword }) } |
-    //     { enabled from "0.6.0" and disabled from "0.6.5" (ByteKeyword | FinneyKeyword | SzaboKeyword | CalldataKeyword | ConstructorKeyword | EmitKeyword | OverrideKeyword | TypeKeyword | AbstractKeyword | CatchKeyword | FallbackKeyword | ReceiveKeyword | TryKeyword | VirtualKeyword) } |
-    //     { enabled from "0.6.5" and disabled from "0.7.0" (ByteKeyword | FinneyKeyword | SzaboKeyword | CalldataKeyword | ConstructorKeyword | EmitKeyword | OverrideKeyword | TypeKeyword | AbstractKeyword | CatchKeyword | FallbackKeyword | ReceiveKeyword | TryKeyword | VirtualKeyword | ImmutableKeyword) } |
-    //     { enabled from "0.7.0" and disabled from "0.8.0" (ByteKeyword | CalldataKeyword | ConstructorKeyword | EmitKeyword | OverrideKeyword | TypeKeyword | AbstractKeyword | CatchKeyword | FallbackKeyword | ReceiveKeyword | TryKeyword | VirtualKeyword | ImmutableKeyword | GweiKeyword) } |
-    //     { enabled from "0.8.0" (CalldataKeyword | ConstructorKeyword | EmitKeyword | OverrideKeyword | TypeKeyword | AbstractKeyword | CatchKeyword | FallbackKeyword | ReceiveKeyword | TryKeyword | VirtualKeyword | ImmutableKeyword | GweiKeyword | UncheckedKeyword) }) ;
-
-    scanner LeaveKeyword = { enabled from "0.6.0" "leave" } ;
-
-    scanner LessThan = '<' ;
-
-    scanner LessThanEqual = "<=" ;
-
-    scanner LessThanLessThan = "<<" ;
-
-    scanner LessThanLessThanEqual = "<<=" ;
-
-    scanner LetKeyword = "let" ;
-
-    scanner LibraryKeyword = "library" ;
-
-    scanner MappingKeyword = "mapping" ;
-
-    scanner MemoryKeyword = "memory" ;
-
-    scanner Minus = '-' ;
-
-    scanner MinusEqual = "-=" ;
-
-    scanner MinusGreaterThan = "->" ;
-
-    scanner MinusMinus = "--" ;
-
-    scanner MinutesKeyword = "minutes" ;
-
-    scanner ModifierKeyword = "modifier" ;
-
-    scanner MultilineComment = ('/' '*' (((! '*') | ('*' (! '/'))) *) '*' '/') ;
-
-    scanner NewKeyword = "new" ;
-
-    scanner OpenBrace = '{' ;
-
-    scanner OpenBracket = '[' ;
-
-    scanner OpenParen = '(' ;
-
-    scanner OverrideKeyword = "override" ;
-
-    scanner PayableKeyword = "payable" ;
-
-    scanner Percent = '%' ;
-
-    scanner PercentEqual = "%=" ;
-
-    scanner Period = '.' ;
-
-    scanner Plus = '+' ;
-
-    scanner PlusEqual = "+=" ;
-
-    scanner PlusPlus = "++" ;
-
-    scanner PragmaKeyword = "pragma" ;
-
-    scanner PrivateKeyword = "private" ;
-
-    scanner PublicKeyword = "public" ;
-
-    scanner PureKeyword = "pure" ;
-
-    scanner QuestionMark = '?' ;
-
-    scanner RawIdentifier = (IdentifierStart (IdentifierPart *)) ;
-
-    scanner ReceiveKeyword = "receive" ;
-
-    // scanner ReservedWordInAnyVersion = ("abstract" | "after" | "byte" | "catch" | "final" | "finney" | "hex" | "in" | "inline" | "match" | "null" | "of" | "relocatable" | "static" | "szabo" | "throw" | "try" | "type" | "typeof" | "var" | "years") ;
-
-    // scanner ReservedWordInSomeVersion = { enabled from "0.5.0" ("alias" | "apply" | "auto" | "copyof" | "define" | "implements" | "macro" | "mutable" | "partial" | "promise" | "reference" | "sealed" | "sizeof" | "supports" | "typedef") } ;
-
-    scanner ReturnKeyword = "return" ;
-
-    scanner ReturnsKeyword = "returns" ;
-
-    scanner RevertKeyword = "revert" ;
-
-    scanner SecondsKeyword = "seconds" ;
-
-    scanner Semicolon = ';' ;
-
-    scanner SignedFixedType = ("fixed" (FixedTypeSize ?)) ;
-
-    scanner SignedIntegerType = ("int" (IntegerTypeSize ?)) ;
-
-    scanner SingleLineComment = ("//" ((! "\n\r") *)) ;
-
-    scanner SingleQuotedAsciiStringLiteral = ('\'' ((EscapeSequence | ((' ' .. '&') | ('(' .. '[') | (']' .. '~'))) *) '\'') ;
-
-    scanner SingleQuotedHexStringLiteral = ("hex" '\'' (HexStringContents ?) '\'') ;
-
-    scanner SingleQuotedUnicodeStringLiteral = { enabled from "0.7.0" ("unicode'" ((EscapeSequence | (! "\n\r'\\")) *) '\'') } ;
-
-    scanner Slash = '/' ;
-
-    scanner SlashEqual = "/=" ;
-
-    scanner SolidityKeyword = "solidity" ;
-
-    scanner StorageKeyword = "storage" ;
-
-    scanner StringKeyword = "string" ;
-
-    scanner StructKeyword = "struct" ;
-
-    scanner SwitchKeyword = "switch" ;
-
-    scanner SzaboKeyword = { disabled from "0.7.0" "szabo" } ;
-
-    scanner ThrowKeyword = { disabled from "0.5.0" "throw" } ;
-
-    scanner Tilde = '~' ;
-
-    scanner TrueKeyword = "true" ;
-
-    scanner TryKeyword = { enabled from "0.6.0" "try" } ;
-
-    scanner TypeKeyword = { enabled from "0.5.3" "type" } ;
-
-    scanner UncheckedKeyword = { enabled from "0.8.0" "unchecked" } ;
-
-    scanner UnicodeEscape = ('u' (HexCharacter) (HexCharacter) (HexCharacter) (HexCharacter)) ;
-
-    scanner UnicodeStringLiteral = { enabled from "0.7.0" (SingleQuotedUnicodeStringLiteral | DoubleQuotedUnicodeStringLiteral) } ;
-
-    scanner UnsignedFixedType = ("ufixed" (FixedTypeSize ?)) ;
-
-    scanner UnsignedIntegerType = ("uint" (IntegerTypeSize ?)) ;
-
-    scanner UsingKeyword = "using" ;
-
-    scanner VarKeyword = { disabled from "0.5.0" "var" } ;
+    // Literal Building Blocks
+
+    scanner DecimalDigit = ('0' .. '9') ;
+    scanner HexCharacter = (DecimalDigit | ('A' .. 'F') | ('a' .. 'f')) ;
+    scanner AsciiCharacterWithoutDoubleQuoteOrBackslash = ((' ' .. '!') | ('#' .. '[') | (']' .. '~')) ;
+    scanner AsciiCharacterWithoutSingleQuoteOrBackslash = ((' ' .. '&') | ('(' .. '[') | (']' .. '~')) ;
+
+    scanner EscapeSequence = ('\\' (AsciiEscape | HexByteEscape | UnicodeEscape)) ;
+    scanner AsciiEscape = ('\n' | '\r' | '"' | '\'' | '\\' | 'n' | 'r' | 't') ;
+    scanner HexByteEscape = ('x' HexCharacter HexCharacter) ;
+    scanner UnicodeEscape = ('u' HexCharacter HexCharacter HexCharacter HexCharacter) ;
+
+    // Ascii String Literals
+
+    scanner AsciiStringLiteral = (SingleQuotedAsciiStringLiteral | DoubleQuotedAsciiStringLiteral) ;
+    scanner DoubleQuotedAsciiStringLiteral = ("\"" ((EscapeSequence | AsciiCharacterWithoutDoubleQuoteOrBackslash) *) "\"") ;
+    scanner SingleQuotedAsciiStringLiteral = ("\'" ((EscapeSequence | AsciiCharacterWithoutSingleQuoteOrBackslash) *) "\'") ;
+
+    // Hex String Literals
+
+    scanner HexStringLiteral = (SingleQuotedHexStringLiteral | DoubleQuotedHexStringLiteral) ;
+    scanner DoubleQuotedHexStringLiteral = ("hex\"" (HexStringContents ?) "\"") ;
+    scanner SingleQuotedHexStringLiteral = ("hex\'" (HexStringContents ?) "\'") ;
+    scanner HexStringContents = (HexCharacter HexCharacter ((('_' ?) HexCharacter HexCharacter) *)) ;
+
+    // Unicode String Literals
+
+    scanner UnicodeStringLiteral = { introduced in "0.7.0" (SingleQuotedUnicodeStringLiteral | DoubleQuotedUnicodeStringLiteral) } ;
+    scanner DoubleQuotedUnicodeStringLiteral = { introduced in "0.7.0" ("unicode\"" ((EscapeSequence | (! "\n\r\"\\")) *) "\"") } ;
+    scanner SingleQuotedUnicodeStringLiteral = { introduced in "0.7.0" ("unicode\'" ((EscapeSequence | (! "\n\r\'\\")) *) "\'") } ;
+
+    // Numeric Literals
+
+    scanner DecimalLiteral = (
+        (
+            { removed in "0.5.0"    (DecimalDigits (("." (DecimalDigits ?) ) ?)) } |
+            { introduced in "0.5.0" (DecimalDigits (("." DecimalDigits     ) ?)) } |
+            ('.' DecimalDigits)
+        )
+        (DecimalExponent ?)
+    ) ;
+    scanner DecimalExponent = (('E' | 'e') ('-' ?) DecimalDigits) ;
+    scanner DecimalDigits = ((DecimalDigit +) (('_' (DecimalDigit +)) *)) ;
+    scanner HexLiteral = (("0x" | { removed in "0.5.0" "0X" }) (HexCharacter +) (('_' (HexCharacter +)) *)) ;
+
+    scanner YulDecimalLiteral = ("0" | (('1' .. '9') (DecimalDigit *))) ;
+    scanner YulHexLiteral = ("0x" (HexCharacter +)) ;
+
+    // Pragma Literals
 
     scanner VersionPragmaValue = (('*' | ('0' .. '9') | 'X' | 'x') +) ;
 
+    // Keywords
+
+    scanner ABICoderKeyword = "abicoder" ;
+    scanner AbstractKeyword = "abstract" ;
+    scanner AddressKeyword = "address" ;
+    scanner AfterKeyword = "after" ;
+    scanner AnonymousKeyword = "anonymous" ;
+    scanner AsKeyword = "as" ;
+    scanner AssemblyKeyword = "assembly" ;
+    scanner BoolKeyword = "bool" ;
+    scanner BreakKeyword = "break" ;
+    scanner ByteKeyword = "byte" ;
+    scanner CaseKeyword = "case" ;
+    scanner CatchKeyword = "catch" ;
+    scanner ConstantKeyword = "constant" ;
+    scanner ContinueKeyword = "continue" ;
+    scanner ContractKeyword = "contract" ;
+    scanner DaysKeyword = "days" ;
+    scanner DefaultKeyword = "default" ;
+    scanner DeleteKeyword = "delete" ;
+    scanner DoKeyword = "do" ;
+    scanner ElseKeyword = "else" ;
+    scanner EnumKeyword = "enum" ;
+    scanner EtherKeyword = "ether" ;
+    scanner EventKeyword = "event" ;
+    scanner ExperimentalKeyword = "experimental" ;
+    scanner ExternalKeyword = "external" ;
+    scanner FallbackKeyword = "fallback" ;
+    scanner FalseKeyword = "false" ;
+    scanner FinalKeyword = "final" ;
+    scanner FinneyKeyword = "finney" ;
+    scanner ForKeyword = "for" ;
+    scanner FromKeyword = "from" ;
+    scanner FunctionKeyword = "function" ;
+    scanner GlobalKeyword = "global" ;
+    scanner HexKeyword = "hex" ;
+    scanner HoursKeyword = "hours" ;
+    scanner IfKeyword = "if" ;
+    scanner ImportKeyword = "import" ;
+    scanner IndexedKeyword = "indexed" ;
+    scanner InKeyword = "in" ;
+    scanner InlineKeyword = "inline" ;
+    scanner InterfaceKeyword = "interface" ;
+    scanner InternalKeyword = "internal" ;
+    scanner IsKeyword = "is" ;
+    scanner LetKeyword = "let" ;
+    scanner LibraryKeyword = "library" ;
+    scanner MappingKeyword = "mapping" ;
+    scanner MatchKeyword =  "match" ;
+    scanner MemoryKeyword = "memory" ;
+    scanner MinutesKeyword = "minutes" ;
+    scanner ModifierKeyword = "modifier" ;
+    scanner NewKeyword = "new" ;
+    scanner NullKeyword = "null" ;
+    scanner OfKeyword = "of" ;
+    scanner OverrideKeyword = "override" ;
+    scanner PayableKeyword = "payable" ;
+    scanner PragmaKeyword = "pragma" ;
+    scanner PrivateKeyword = "private" ;
+    scanner PublicKeyword = "public" ;
+    scanner PureKeyword = "pure" ;
+    scanner ReceiveKeyword = "receive" ;
+    scanner RelocatableKeyword = "relocatable" ;
+    scanner ReturnKeyword = "return" ;
+    scanner ReturnsKeyword = "returns" ;
+    scanner RevertKeyword = "revert" ;
+    scanner SecondsKeyword = "seconds" ;
+    scanner SolidityKeyword = "solidity" ;
+    scanner StaticKeyword = "static" ;
+    scanner StorageKeyword = "storage" ;
+    scanner StringKeyword = "string" ;
+    scanner StructKeyword = "struct" ;
+    scanner SwitchKeyword = "switch" ;
+    scanner SzaboKeyword = "szabo" ;
+    scanner ThrowKeyword = "throw" ;
+    scanner TrueKeyword = "true" ;
+    scanner TypeofKeyword = "typeof" ;
+    scanner UsingKeyword = "using" ;
+    scanner VarKeyword = "var" ;
     scanner ViewKeyword = "view" ;
-
-    scanner VirtualKeyword = { enabled from "0.6.0" "virtual" } ;
-
     scanner WeeksKeyword = "weeks" ;
-
     scanner WeiKeyword = "wei" ;
-
     scanner WhileKeyword = "while" ;
+    scanner YearsKeyword = "years" ;
 
-    scanner Whitespace = (('\t' | ' ') +) ;
+    // Introduced in 0.4.21
+    scanner EmitKeyword = { introduced in "0.4.21" "emit" } ;
 
-    scanner YearsKeyword = { disabled from "0.5.0" "years" } ;
+    // Introduced in 0.4.22
+    scanner ConstructorKeyword = { introduced in "0.4.22" "constructor" } ;
 
-    scanner YulDecimalLiteral = ("0" | (('1' .. '9') (('0' .. '9') *))) ;
-    scanner YulHexLiteral = ("0x" ((HexCharacter) +)) ;
-    scanner YulIdentifier = ( RawIdentifier ) ;
+    // introduced in 0.5.0
+    scanner AliasKeyword =      { introduced in "0.5.0" "alias" } ;
+    scanner ApplyKeyword =      { introduced in "0.5.0" "apply" } ;
+    scanner AutoKeyword =       { introduced in "0.5.0" "auto" } ;
+    scanner CalldataKeyword =   { introduced in "0.5.0" "calldata" } ;
+    scanner CopyofKeyword =     { introduced in "0.5.0" "copyof" } ;
+    scanner DefineKeyword =     { introduced in "0.5.0" "define" } ;
+    scanner ImplementsKeyword = { introduced in "0.5.0" "implements" } ;
+    scanner MacroKeyword =      { introduced in "0.5.0" "macro" } ;
+    scanner MutableKeyword =    { introduced in "0.5.0" "mutable" } ;
+    scanner PartialKeyword =    { introduced in "0.5.0" "partial" } ;
+    scanner PromiseKeyword =    { introduced in "0.5.0" "promise" } ;
+    scanner ReferenceKeyword =  { introduced in "0.5.0" "reference" } ;
+    scanner SealedKeyword =     { introduced in "0.5.0" "sealed" } ;
+    scanner SizeofKeyword =     { introduced in "0.5.0" "sizeof" } ;
+    scanner SupportsKeyword =   { introduced in "0.5.0" "supports" } ;
+    scanner TypedefKeyword =    { introduced in "0.5.0" "typedef" } ;
 
-    // scanner YulKeyword = ({ disabled from "0.6.0" (BreakKeyword | CaseKeyword | ContinueKeyword | DefaultKeyword | FalseKeyword | ForKeyword | FunctionKeyword | IfKeyword | LetKeyword | SwitchKeyword | TrueKeyword) } | { enabled from "0.6.0" (BreakKeyword | CaseKeyword | ContinueKeyword | DefaultKeyword | FalseKeyword | ForKeyword | FunctionKeyword | IfKeyword | LeaveKeyword | LetKeyword | SwitchKeyword | TrueKeyword) }) ;
-    // scanner YulReservedWord = "hex" ;
+    // Introduced in 0.5.3
+    scanner TypeKeyword = { introduced in "0.5.3" "type" } ;
+
+    // Introduced in 0.6.0
+    scanner LeaveKeyword =   { introduced in "0.6.0" "leave" } ; // warning: used in yul
+    scanner TryKeyword =     { introduced in "0.6.0" "try" } ;
+    scanner VirtualKeyword = { introduced in "0.6.0" "virtual" } ;
+
+    // Introduced in 0.6.5
+    scanner ImmutableKeyword = { introduced in "0.6.5" "immutable" } ;
+
+    // Introduced in 0.6.11
+    scanner GweiKeyword = { introduced in "0.6.11" "gwei" } ;
+
+    // Introduced in 0.8.0
+    scanner UncheckedKeyword = { introduced in "0.8.0" "unchecked" } ;
+
+    // Introduced in 0.8.4
+    scanner ErrorKeyword = { introduced in "0.8.4" "error" } ;
 
 }

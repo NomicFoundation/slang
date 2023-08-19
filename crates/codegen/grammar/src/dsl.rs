@@ -414,7 +414,7 @@ macro_rules! slang_precedence_parser_operators {
     };
     // These do just enough to handle solidity 0.4.11 .. 0.8.20
     // TODO: fully general with `... and` syntax as in `slang_parser!`
-    ([ $operators:tt [ $($version:tt),* ] ] { enabled from $from:literal $mode:ident $operator:ident as $name:ident } $(, $($rest:tt)*)?) => {
+    ([ $operators:tt [ $($version:tt),* ] ] { introduced in $from:literal $mode:ident $operator:ident as $name:ident } $(, $($rest:tt)*)?) => {
         slang_precedence_parser_operators!(
             [
                 $operators
@@ -423,14 +423,14 @@ macro_rules! slang_precedence_parser_operators {
                     {
                         $crate::VersionQualityRange {
                             from: (semver::Version::parse($from).unwrap(), slang_location!()),
-                            quality: ($crate::VersionQuality::Enabled, slang_location!())
+                            quality: ($crate::VersionQuality::Introduced, slang_location!())
                         }
                     }
                 ]
             ]
             $mode $operator as $name $(, $($rest)*)?)
     };
-    ([ $operators:tt [ $($version:tt),* ]]  { disabled from $from:literal $mode:ident $operator:ident as $name:ident } $(, $($rest:tt)*)?) => {
+    ([ $operators:tt [ $($version:tt),* ]]  { removed in $from:literal $mode:ident $operator:ident as $name:ident } $(, $($rest:tt)*)?) => {
         slang_precedence_parser_operators!(
             [
                 $operators
@@ -439,7 +439,7 @@ macro_rules! slang_precedence_parser_operators {
                     {
                         $crate::VersionQualityRange {
                             from: (semver::Version::parse($from).unwrap(), slang_location!()),
-                            quality: ($crate::VersionQuality::Disabled, slang_location!())
+                            quality: ($crate::VersionQuality::Removed, slang_location!())
                         }
                     }
                 ]
@@ -525,18 +525,18 @@ macro_rules! slang_scanner {
 macro_rules! slang_dsl_versioned {
 
     // The qualities are explicit to avoid ambiguity and hence give better error messages
-    ($args:tt enabled $($rest:tt)+) => {
-        slang_dsl_versioned!($args Enabled $($rest)+)
+    ($args:tt introduced $($rest:tt)+) => {
+        slang_dsl_versioned!($args Introduced $($rest)+)
     };
-    ($args:tt disabled $($rest:tt)+) => {
-        slang_dsl_versioned!($args Disabled $($rest)+)
+    ($args:tt removed $($rest:tt)+) => {
+        slang_dsl_versioned!($args Removed $($rest)+)
     };
 
     ($args:tt and $($rest:tt)+) => {
         slang_dsl_versioned!($args $($rest)+)
     };
 
-    ([ $node_type:ident $dsl_macro:ident [ $($accum:tt),* ] ] $quality:ident from $from:literal $($rest:tt)+) => {
+    ([ $node_type:ident $dsl_macro:ident [ $($accum:tt),* ] ] $quality:ident in $from:literal $($rest:tt)+) => {
         slang_dsl_versioned!(
             [
                 $node_type
@@ -563,105 +563,3 @@ macro_rules! slang_dsl_versioned {
     };
 
 }
-
-// These are in preparation for parsing rust type definitions
-
-/*****************************************************
-macro_rules! struct_item_matcher {
-    // Unit-Struct
-    (
-        $( #[$meta:meta] )*
-        $vis:vis struct $name:ident;
-    ) => {
-        $( #[$meta] )*
-        $vis struct $name;
-    };
-
-    // Tuple-Struct
-    (
-        $( #[$meta:meta] )*
-        $vis:vis struct $name:ident (
-            $(
-                $( #[$field_meta:meta] )*
-                $field_vis:vis $field_ty:ty
-            ),*
-        $(,)? );
-    ) => {
-        $( #[$meta] )*
-        $vis struct $name (
-            $(
-                $( #[$field_meta] )*
-                $field_vis $field_ty
-            ),*
-        );
-    };
-
-    // Named-Struct
-    (
-        $( #[$meta:meta] )*
-        $vis:vis struct $name:ident {
-            $(
-                $( #[$field_meta:meta] )*
-                $field_vis:vis $field_name:ident : $field_ty:ty
-            ),*
-        $(,)? }
-    ) => {
-        $( #[$meta] )*
-        $vis struct $name {
-            $(
-                $( #[$field_meta] )*
-                $field_vis $field_name : $field_ty
-            ),*
-        }
-    }
-}
-
-macro_rules! enum_item_matcher {
-    // tuple variant
-    (@variant $variant:ident (
-        $(
-            $( #[$field_meta:meta] )*
-            $field_vis:vis $field_ty:ty
-        ),* $(,)?
-    //∨~~rest of input~~∨
-    ) $(, $($tt:tt)* )? ) => {
-        // process rest of the enum
-        $( enum_item_matcher!(@variant $( $tt )*) )?
-    };
-
-    // named variant
-    (@variant $variant:ident {
-        $(
-            $( #[$field_meta:meta] )*
-            $field_vis:vis $field_name:ident : $field_ty:ty
-        ),* $(,)?
-    //∨~~rest of input~~∨
-    } $(, $($tt:tt)* )? ) => {
-        // process rest of the enum
-        $( enum_item_matcher!(@variant $( $tt )*) )?
-    };
-
-    // unit variant
-    (@variant $variant:ident $(, $($tt:tt)* )? ) => {
-        // process rest of the enum
-        $( enum_item_matcher!(@variant $( $tt )*) )?
-    };
-
-    // trailing comma
-    (@variant ,) => {};
-
-    // base case
-    (@variant) => {};
-
-    // entry point
-    (
-        $( #[$meta:meta] )*
-        $vis:vis enum $name:ident {
-            $($tt:tt)*
-        }
-    ) => {
-        enum_item_matcher!(@variant $($tt)*)
-    };
-}
-
-*****************************************************/
