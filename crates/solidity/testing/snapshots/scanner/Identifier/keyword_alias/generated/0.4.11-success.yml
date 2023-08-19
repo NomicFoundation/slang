@@ -1,9 +1,0 @@
-# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
-
-Source: >
-  1  │ alias                                                                            │ 0..5
-
-Errors: []
-
-Tree:
-  - Identifier (Token): "alias" # 0..5
