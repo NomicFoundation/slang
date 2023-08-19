@@ -7,18 +7,19 @@ slang_grammar! {
         name = "Solidity" ;
 
         versions = [
-            "0.4.11" , "0.4.12" , "0.4.13" , "0.4.14" , "0.4.15" , "0.4.16" , "0.4.17" , "0.4.18" , "0.4.19" , "0.4.20" , "0.4.21" , "0.4.22" ,
-            "0.4.23" , "0.4.24" , "0.4.25" , "0.4.26" ,
+            "0.4.11" , "0.4.12" , "0.4.13" , "0.4.14" , "0.4.15" , "0.4.16" , "0.4.17" , "0.4.18" , "0.4.19" , "0.4.20" ,
+            "0.4.21" , "0.4.22" , "0.4.23" , "0.4.24" , "0.4.25" , "0.4.26" ,
 
-            "0.5.0" , "0.5.1" , "0.5.2" , "0.5.3" , "0.5.4" , "0.5.5" , "0.5.6" , "0.5.7" , "0.5.8" , "0.5.9" , "0.5.10" , "0.5.11" , "0.5.12" ,
-            "0.5.13" , "0.5.14" , "0.5.15" , "0.5.16" , "0.5.17" ,
+            "0.5.0" , "0.5.1" , "0.5.2" , "0.5.3" , "0.5.4" , "0.5.5" , "0.5.6" , "0.5.7" , "0.5.8" , "0.5.9" , "0.5.10" ,
+            "0.5.11" , "0.5.12" , "0.5.13" , "0.5.14" , "0.5.15" , "0.5.16" , "0.5.17" ,
 
-            "0.6.0" , "0.6.1" , "0.6.2" , "0.6.3" , "0.6.4" , "0.6.5" , "0.6.6" , "0.6.7" , "0.6.8" , "0.6.9" , "0.6.10" , "0.6.11" , "0.6.12" ,
+            "0.6.0" , "0.6.1" , "0.6.2" , "0.6.3" , "0.6.4" , "0.6.5" , "0.6.6" , "0.6.7" , "0.6.8" , "0.6.9" , "0.6.10" ,
+            "0.6.11" , "0.6.12" ,
 
             "0.7.0" , "0.7.1" , "0.7.2" , "0.7.3" , "0.7.4" , "0.7.5" , "0.7.6" ,
 
-            "0.8.0" , "0.8.1" , "0.8.2" , "0.8.3" , "0.8.4" , "0.8.5" , "0.8.6" , "0.8.7" , "0.8.8" , "0.8.9" , "0.8.10" , "0.8.11" , "0.8.12" ,
-            "0.8.13" , "0.8.14" , "0.8.15" , "0.8.16" , "0.8.17" , "0.8.18" , "0.8.19"
+            "0.8.0" , "0.8.1" , "0.8.2" , "0.8.3" , "0.8.4" , "0.8.5" , "0.8.6" , "0.8.7" , "0.8.8" , "0.8.9" , "0.8.10" ,
+            "0.8.11" , "0.8.12" , "0.8.13" , "0.8.14" , "0.8.15" , "0.8.16" , "0.8.17" , "0.8.18" , "0.8.19"
         ] ;
 
         leading trivia parser = LeadingTrivia ;
@@ -260,7 +261,7 @@ slang_grammar! {
             { removed in "0.8.0" ByteKeyword}
         ) ;
 
-        parser EmitStatement = { introduced in "0.4.21" ((EmitKeyword IdentifierPath ArgumentsDeclaration) terminated_by Semicolon) } ;
+        parser EmitStatement = { introduced in "0.5.12" ((EmitKeyword IdentifierPath ArgumentsDeclaration) terminated_by Semicolon) } ;
 
         parser EnumDefinition = (EnumKeyword Identifier ((IdentifiersList ?) delimited_by OpenBrace and CloseBrace)) ;
 
@@ -296,7 +297,7 @@ slang_grammar! {
                 left ShiftOperator as BinaryExpression,
                 left AddSubOperator as BinaryExpression,
                 left MulDivModOperator as BinaryExpression,
-                { removed in "0.6.0"    left ExponentiationOperator as BinaryExpression },
+                { removed in "0.6.0"    left  ExponentiationOperator as BinaryExpression },
                 { introduced in "0.6.0" right ExponentiationOperator as BinaryExpression },
                 postfix UnaryPostfixOperator as UnaryPostfixExpression,
                 prefix UnaryPrefixOperator as UnaryPrefixExpression,
@@ -332,7 +333,7 @@ slang_grammar! {
 
         parser FunctionCallOptions = (
             { introduced in "0.6.2" and removed in "0.8.0" (NamedArgumentsDeclaration +) } |
-            { introduced in "0.8.0"                        NamedArgumentsDeclaration }
+            { introduced in "0.8.0"                        NamedArgumentsDeclaration     }
         ) ;
 
         parser FunctionDefinition = (FunctionKeyword (Identifier | FallbackKeyword | ReceiveKeyword) ParametersDeclaration (FunctionAttributesList ?) (ReturnsDeclaration ?) (Semicolon | Block)) ;
@@ -607,10 +608,12 @@ slang_grammar! {
             | FunctionKeyword
             | HexKeyword
             | IfKeyword
-            | LeaveKeyword
             | LetKeyword
             | SwitchKeyword
             | TrueKeyword
+
+            // Introduced in 0.6.0
+            | LeaveKeyword
         ) ;
 
         parser YulAssignmentStatement = (YulIdentifierPathsList ColonEqual YulExpression) ;
@@ -756,20 +759,24 @@ slang_grammar! {
 
     // Constructed Identifiers (Typenames)
 
-    scanner FixedBytesType = ("bytes" FixedBytesTypeSize) ;
-    scanner SignedFixedType = ("fixed" (FixedTypeSize ?)) ;
-    scanner SignedIntegerType = ("int" (IntegerTypeSize ?)) ;
-    scanner UnsignedFixedType = ("ufixed" (FixedTypeSize ?)) ;
-    scanner UnsignedIntegerType = ("uint" (IntegerTypeSize ?)) ;
+    scanner FixedBytesType =      ("bytes"  FixedBytesTypeSize) ;
+    scanner SignedFixedType =     ("fixed"  (FixedTypeSize ?)) ;
+    scanner SignedIntegerType =   ("int"    (IntegerTypeSize ?)) ;
+    scanner UnsignedFixedType =   ("ufixed" (FixedTypeSize ?)) ;
+    scanner UnsignedIntegerType = ("uint"   (IntegerTypeSize ?)) ;
 
     scanner FixedBytesTypeSize = (
-        "1" | "10" | "11" | "12" | "13" | "14" | "15" | "16" | "17" | "18" | "19" | "2" | "20" | "21" | "22" | "23" |
-        "24" | "25" | "26" | "27" | "28" | "29" | "3" | "30" | "31" | "32" | "4" | "5" | "6" | "7" | "8" | "9"
+        "1"  | "2"  | "3"  | "4"  | "5"  | "6"  | "7"  | "8"  |
+        "9"  | "10" | "11" | "12" | "13" | "14" | "15" | "16" |
+        "17" | "18" | "19" | "20" | "21" | "22" | "23" | "24" |
+        "25" | "26" | "27" | "28" | "29" | "30" | "31" | "32"
     ) ;
     scanner FixedTypeSize = ((('0' .. '9') +) 'x' (('0' .. '9') +)) ;
     scanner IntegerTypeSize = (
-        "104" | "112" | "120" | "128" | "136" | "144" | "152" | "16" | "160" | "168" | "176" | "184" | "192" | "200" | "208" |
-        "216" | "224" | "232" | "24" | "240" | "248" | "256" | "32" | "40" | "48" | "56" | "64" | "72" | "8" | "80" | "88" | "96"
+        "8"   | "16"  | "24"  | "32"  | "40"  | "48"  | "56"  | "64"  |
+        "72"  | "80"  | "88"  | "96"  | "104" | "112" | "120" | "128" |
+        "136" | "144" | "152" | "160" | "168" | "176" | "184" | "192" |
+        "200" | "208" | "216" | "224" | "232" | "240" | "248" | "256"
     ) ;
 
     // Literal Building Blocks
@@ -900,6 +907,7 @@ slang_grammar! {
     scanner SzaboKeyword = "szabo" ;
     scanner ThrowKeyword = "throw" ;
     scanner TrueKeyword = "true" ;
+    scanner TypeKeyword = "type";
     scanner TypeofKeyword = "typeof" ;
     scanner UsingKeyword = "using" ;
     scanner VarKeyword = "var" ;
@@ -909,7 +917,8 @@ slang_grammar! {
     scanner WhileKeyword = "while" ;
     scanner YearsKeyword = "years" ;
 
-    // Introduced in 0.4.21
+    // introduced in 0.4.21
+    // WRONG, it is both a keyword AND identifier for some versions.
     scanner EmitKeyword = { introduced in "0.4.21" "emit" } ;
 
     // Introduced in 0.4.22
@@ -932,9 +941,6 @@ slang_grammar! {
     scanner SizeofKeyword =     { introduced in "0.5.0" "sizeof" } ;
     scanner SupportsKeyword =   { introduced in "0.5.0" "supports" } ;
     scanner TypedefKeyword =    { introduced in "0.5.0" "typedef" } ;
-
-    // Introduced in 0.5.3
-    scanner TypeKeyword = { introduced in "0.5.3" "type" } ;
 
     // Introduced in 0.6.0
     scanner LeaveKeyword =   { introduced in "0.6.0" "leave" } ; // warning: used in yul

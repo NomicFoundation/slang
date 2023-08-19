@@ -8853,11 +8853,6 @@ impl Language {
                 if helper.handle_next_result(stream, result) {
                     break;
                 }
-                let result =
-                    self.yul_block_parse_token_with_trivia(stream, TokenKind::LeaveKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
                 let result = self.yul_block_parse_token_with_trivia(stream, TokenKind::LetKeyword);
                 if helper.handle_next_result(stream, result) {
                     break;
@@ -8868,6 +8863,11 @@ impl Language {
                     break;
                 }
                 let result = self.yul_block_parse_token_with_trivia(stream, TokenKind::TrueKeyword);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result =
+                    self.yul_block_parse_token_with_trivia(stream, TokenKind::LeaveKeyword);
                 if helper.handle_next_result(stream, result) {
                     break;
                 }
