@@ -8919,7 +8919,7 @@ impl Language {
     strum_macros::Display,
     strum_macros::EnumString,
 )]
-#[cfg_attr( feature = "slang_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "language") )]
+#[cfg_attr(feature = "slang_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "language"))]
 #[cfg_attr(not(feature = "slang_napi_interfaces"), derive(Clone, Copy))]
 pub enum LexicalContext {
     Default,

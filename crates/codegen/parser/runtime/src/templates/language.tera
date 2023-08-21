@@ -1,5 +1,5 @@
 #[cfg(feature = "slang_napi_interfaces")]
-use { napi::bindgen_prelude::*, napi_derive::napi };
+use {napi::bindgen_prelude::*, napi_derive::napi};
 
 use semver::Version;
 
@@ -10,11 +10,11 @@ use super::{
     support::*,
 };
 
-#[cfg( feature = "slang_napi_interfaces" )]
+#[cfg(feature = "slang_napi_interfaces")]
 use super::napi::napi_parse_output::ParseOutput as NAPIParseOutput;
 
 #[derive(Debug)]
-#[cfg_attr( feature = "slang_napi_interfaces", napi(namespace = "language") )]
+#[cfg_attr(feature = "slang_napi_interfaces", napi(namespace = "language"))]
 pub struct Language {
     pub(crate) version: Version,
     {%- for version in code.referenced_versions -%}
@@ -27,12 +27,12 @@ pub enum Error {
     #[error("Unsupported {{ language_name }} language version '{0}'.")]
     UnsupportedLanguageVersion(Version),
 
-    #[cfg( feature = "slang_napi_interfaces" )]
+    #[cfg(feature = "slang_napi_interfaces")]
     #[error("Invalid semantic version '{0}'.")]
     InvalidSemanticVersion(String),
 }
 
-#[cfg( feature = "slang_napi_interfaces" )]
+#[cfg(feature = "slang_napi_interfaces")]
 impl From<Error> for napi::Error {
     fn from(value: Error) -> Self {
         napi::Error::from_reason(value.to_string())
@@ -41,16 +41,15 @@ impl From<Error> for napi::Error {
 
 impl Language {
     pub const SUPPORTED_VERSIONS: &[Version] = &[
-        {%- for version in versions -%}
+        {% for version in versions %}
             Version::new({{ version | split(pat=".") | join(sep=", ") }}),
-        {%- endfor -%}
+        {% endfor %}
     ];
 
     pub fn new(version: Version) -> std::result::Result<Self, Error> {
         if Self::SUPPORTED_VERSIONS.contains(&version) {
             Ok(Self {
-                {%- for version in code.referenced_versions -%}
-                    {# Separator #}
+                {%- for version in code.referenced_versions %}
                     version_is_at_least_{{ version | replace(from=".", to="_") }}: Version::new({{ version | split(pat=".") | join(sep=", ") }}) <= version,
                 {%- endfor -%}
                 version,
@@ -64,9 +63,7 @@ impl Language {
         &self.version
     }
 
-    {# Separator #}
-    {%- for context in code.scanner_contexts -%}
-        {# Separator #}
+    {% for context in code.scanner_contexts %}
         #[allow(dead_code)]
         fn {{ context.name | snake_case }}_parse_token_with_trivia(
             &self,
@@ -150,11 +147,9 @@ impl Language {
             }
 
             longest_match! {
-            {%- for name in context.compound_scanner_names -%}
-                {# Separator #}
+            {%- for name in context.compound_scanner_names %}
                 { {{ name }} = {{ name | snake_case }} }
-            {%- endfor -%}
-                {# Separator #}
+            {%- endfor %}
             }
 
             if longest_token.is_some() {
@@ -163,36 +158,25 @@ impl Language {
 
             longest_token
         }
-        {# Separator #}
-    {%- endfor -%}
-    {# Separator #}
+    {% endfor %}
 
     /********************************************
      *         Parser Functions
      ********************************************/
-    {# Separator #}
 
-    {%- for function in code.parser_functions -%}
-        {# Separator #}
+    {% for function in code.parser_functions %}
         #[allow(unused_assignments, unused_parens)]
         fn {{ function.0 | snake_case }}(&self, stream: &mut Stream) -> ParserResult { {{ function.1 }} }
-        {# Separator #}
-    {%- endfor -%}
-    {# Separator #}
+    {% endfor %}
 
     /********************************************
      *         Scanner Functions
      ********************************************/
 
-    {# Separator #}
-
-    {%- for function in code.scanner_functions -%}
-        {# Separator #}
+    {% for function in code.scanner_functions %}
         #[allow(unused_assignments, unused_parens)]
         fn {{ function.0 | snake_case }}(&self, stream: &mut Stream) -> bool { {{ function.1 }} }
-        {# Separator #}
-    {%- endfor -%}
-    {# Separator #}
+    {% endfor %}
 
     pub fn scan(&self, lexical_context: LexicalContext, input: &str) -> Option<TokenKind> {
         let mut stream = Stream::new(input);
@@ -223,8 +207,8 @@ impl Language {
     strum_macros::Display,
     strum_macros::EnumString,
 )]
-#[cfg_attr( feature = "slang_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "language") )]
-#[cfg_attr( not(feature = "slang_napi_interfaces"), derive(Clone, Copy))]
+#[cfg_attr(feature = "slang_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "language"))]
+#[cfg_attr(not(feature = "slang_napi_interfaces"), derive(Clone, Copy))]
 pub enum LexicalContext {
     {%- for context in code.scanner_contexts -%}
         {# Separator #}
@@ -232,7 +216,7 @@ pub enum LexicalContext {
     {%- endfor -%}
 }
 
-#[cfg( feature = "slang_napi_interfaces" )]
+#[cfg(feature = "slang_napi_interfaces")]
 #[napi(namespace = "language")]
 impl Language {
 
