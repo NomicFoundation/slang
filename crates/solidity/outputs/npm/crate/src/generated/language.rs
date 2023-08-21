@@ -6,11 +6,13 @@ use {napi::bindgen_prelude::*, napi_derive::napi};
 use semver::Version;
 
 use super::{
-    cst,
     kinds::{ProductionKind, RuleKind, TokenKind},
+    lexer::Lexer,
     parse_output::ParseOutput,
     support::*,
 };
+
+pub use super::kinds::LexicalContext;
 
 #[cfg(feature = "slang_napi_interfaces")]
 use super::napi::napi_parse_output::ParseOutput as NAPIParseOutput;
@@ -170,971 +172,12 @@ impl Language {
         stream: &mut Stream,
         kind: TokenKind,
     ) -> ParserResult {
-        let mut children = vec![];
-
-        let restore = stream.position();
-        if let ParserResult::Match(r#match) = self.leading_trivia(stream) {
-            children.extend(r#match.nodes);
-        } else {
-            stream.set_position(restore);
-        }
-
-        let start = stream.position();
-        if self.default_next_token(stream) != Some(kind) {
-            stream.set_position(restore);
-            return ParserResult::no_match(vec![kind]);
-        }
-        let end = stream.position();
-        children.push(cst::Node::token(kind, stream.content(start.utf8..end.utf8)));
-
-        let restore = stream.position();
-        if let ParserResult::Match(r#match) = self.trailing_trivia(stream) {
-            children.extend(r#match.nodes);
-        } else {
-            stream.set_position(restore);
-        }
-
-        return ParserResult::r#match(children, vec![]);
+        Lexer::parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(self, stream, kind)
     }
 
     #[allow(dead_code)]
     fn default_parse_token(&self, stream: &mut Stream, kind: TokenKind) -> ParserResult {
-        let start = stream.position();
-        if self.default_next_token(stream) != Some(kind) {
-            stream.set_position(start);
-            return ParserResult::no_match(vec![kind]);
-        }
-        let end = stream.position();
-        return ParserResult::r#match(
-            vec![cst::Node::token(kind, stream.content(start.utf8..end.utf8))],
-            vec![],
-        );
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    pub(crate) fn default_next_token(&self, stream: &mut Stream) -> Option<TokenKind> {
-        let save = stream.position();
-        let mut furthest_position = stream.position();
-        let mut longest_token = None;
-
-        if let Some(kind) = match stream.next() {
-            Some('a') => match stream.next() {
-                Some('b') => match stream.next() {
-                    Some('i') => scan_chars!(stream, 'c', 'o', 'd', 'e', 'r')
-                        .then_some(TokenKind::ABICoderKeyword),
-                    Some('s') => scan_chars!(stream, 't', 'r', 'a', 'c', 't')
-                        .then_some(TokenKind::AbstractKeyword),
-                    Some(_) => {
-                        stream.undo();
-                        None
-                    }
-                    None => None,
-                },
-                Some('d') => scan_chars!(stream, 'd', 'r', 'e', 's', 's')
-                    .then_some(TokenKind::AddressKeyword),
-                Some('f') => scan_chars!(stream, 't', 'e', 'r').then_some(TokenKind::AfterKeyword),
-                Some('l') => {
-                    if self.version_is_at_least_0_5_0 {
-                        scan_chars!(stream, 'i', 'a', 's').then_some(TokenKind::AliasKeyword)
-                    } else {
-                        None
-                    }
-                }
-                Some('n') => scan_chars!(stream, 'o', 'n', 'y', 'm', 'o', 'u', 's')
-                    .then_some(TokenKind::AnonymousKeyword),
-                Some('p') => {
-                    if self.version_is_at_least_0_5_0 {
-                        scan_chars!(stream, 'p', 'l', 'y').then_some(TokenKind::ApplyKeyword)
-                    } else {
-                        None
-                    }
-                }
-                Some('s') => match stream.next() {
-                    Some('s') => scan_chars!(stream, 'e', 'm', 'b', 'l', 'y')
-                        .then_some(TokenKind::AssemblyKeyword),
-                    Some(_) => {
-                        stream.undo();
-                        Some(TokenKind::AsKeyword)
-                    }
-                    None => Some(TokenKind::AsKeyword),
-                },
-                Some('u') => {
-                    if self.version_is_at_least_0_5_0 {
-                        scan_chars!(stream, 't', 'o').then_some(TokenKind::AutoKeyword)
-                    } else {
-                        None
-                    }
-                }
-                Some(_) => {
-                    stream.undo();
-                    None
-                }
-                None => None,
-            },
-            Some('b') => match stream.next() {
-                Some('o') => scan_chars!(stream, 'o', 'l').then_some(TokenKind::BoolKeyword),
-                Some('r') => scan_chars!(stream, 'e', 'a', 'k').then_some(TokenKind::BreakKeyword),
-                Some('y') => scan_chars!(stream, 't', 'e').then_some(TokenKind::ByteKeyword),
-                Some(_) => {
-                    stream.undo();
-                    None
-                }
-                None => None,
-            },
-            Some('c') => match stream.next() {
-                Some('a') => match stream.next() {
-                    Some('l') => {
-                        if self.version_is_at_least_0_5_0 {
-                            scan_chars!(stream, 'l', 'd', 'a', 't', 'a')
-                                .then_some(TokenKind::CalldataKeyword)
-                        } else {
-                            None
-                        }
-                    }
-                    Some('s') => scan_chars!(stream, 'e').then_some(TokenKind::CaseKeyword),
-                    Some('t') => scan_chars!(stream, 'c', 'h').then_some(TokenKind::CatchKeyword),
-                    Some(_) => {
-                        stream.undo();
-                        None
-                    }
-                    None => None,
-                },
-                Some('o') => match stream.next() {
-                    Some('n') => match stream.next() {
-                        Some('s') => {
-                            if scan_chars!(stream, 't') {
-                                match stream.next() {
-                                    Some('a') => scan_chars!(stream, 'n', 't')
-                                        .then_some(TokenKind::ConstantKeyword),
-                                    Some('r') => {
-                                        if self.version_is_at_least_0_4_22 {
-                                            scan_chars!(stream, 'u', 'c', 't', 'o', 'r')
-                                                .then_some(TokenKind::ConstructorKeyword)
-                                        } else {
-                                            None
-                                        }
-                                    }
-                                    Some(_) => {
-                                        stream.undo();
-                                        None
-                                    }
-                                    None => None,
-                                }
-                            } else {
-                                None
-                            }
-                        }
-                        Some('t') => match stream.next() {
-                            Some('i') => scan_chars!(stream, 'n', 'u', 'e')
-                                .then_some(TokenKind::ContinueKeyword),
-                            Some('r') => scan_chars!(stream, 'a', 'c', 't')
-                                .then_some(TokenKind::ContractKeyword),
-                            Some(_) => {
-                                stream.undo();
-                                None
-                            }
-                            None => None,
-                        },
-                        Some(_) => {
-                            stream.undo();
-                            None
-                        }
-                        None => None,
-                    },
-                    Some('p') => {
-                        if self.version_is_at_least_0_5_0 {
-                            scan_chars!(stream, 'y', 'o', 'f').then_some(TokenKind::CopyofKeyword)
-                        } else {
-                            None
-                        }
-                    }
-                    Some(_) => {
-                        stream.undo();
-                        None
-                    }
-                    None => None,
-                },
-                Some(_) => {
-                    stream.undo();
-                    None
-                }
-                None => None,
-            },
-            Some('d') => match stream.next() {
-                Some('a') => scan_chars!(stream, 'y', 's').then_some(TokenKind::DaysKeyword),
-                Some('e') => match stream.next() {
-                    Some('f') => match stream.next() {
-                        Some('a') => {
-                            scan_chars!(stream, 'u', 'l', 't').then_some(TokenKind::DefaultKeyword)
-                        }
-                        Some('i') => {
-                            if self.version_is_at_least_0_5_0 {
-                                scan_chars!(stream, 'n', 'e').then_some(TokenKind::DefineKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some(_) => {
-                            stream.undo();
-                            None
-                        }
-                        None => None,
-                    },
-                    Some('l') => {
-                        scan_chars!(stream, 'e', 't', 'e').then_some(TokenKind::DeleteKeyword)
-                    }
-                    Some(_) => {
-                        stream.undo();
-                        None
-                    }
-                    None => None,
-                },
-                Some('o') => Some(TokenKind::DoKeyword),
-                Some(_) => {
-                    stream.undo();
-                    None
-                }
-                None => None,
-            },
-            Some('e') => match stream.next() {
-                Some('l') => scan_chars!(stream, 's', 'e').then_some(TokenKind::ElseKeyword),
-                Some('m') => {
-                    if self.version_is_at_least_0_4_21 {
-                        scan_chars!(stream, 'i', 't').then_some(TokenKind::EmitKeyword)
-                    } else {
-                        None
-                    }
-                }
-                Some('n') => scan_chars!(stream, 'u', 'm').then_some(TokenKind::EnumKeyword),
-                Some('r') => {
-                    if self.version_is_at_least_0_8_4 {
-                        scan_chars!(stream, 'r', 'o', 'r').then_some(TokenKind::ErrorKeyword)
-                    } else {
-                        None
-                    }
-                }
-                Some('t') => scan_chars!(stream, 'h', 'e', 'r').then_some(TokenKind::EtherKeyword),
-                Some('v') => scan_chars!(stream, 'e', 'n', 't').then_some(TokenKind::EventKeyword),
-                Some('x') => match stream.next() {
-                    Some('p') => scan_chars!(stream, 'e', 'r', 'i', 'm', 'e', 'n', 't', 'a', 'l')
-                        .then_some(TokenKind::ExperimentalKeyword),
-                    Some('t') => scan_chars!(stream, 'e', 'r', 'n', 'a', 'l')
-                        .then_some(TokenKind::ExternalKeyword),
-                    Some(_) => {
-                        stream.undo();
-                        None
-                    }
-                    None => None,
-                },
-                Some(_) => {
-                    stream.undo();
-                    None
-                }
-                None => None,
-            },
-            Some('f') => match stream.next() {
-                Some('a') => {
-                    if scan_chars!(stream, 'l') {
-                        match stream.next() {
-                            Some('l') => scan_chars!(stream, 'b', 'a', 'c', 'k')
-                                .then_some(TokenKind::FallbackKeyword),
-                            Some('s') => {
-                                scan_chars!(stream, 'e').then_some(TokenKind::FalseKeyword)
-                            }
-                            Some(_) => {
-                                stream.undo();
-                                None
-                            }
-                            None => None,
-                        }
-                    } else {
-                        None
-                    }
-                }
-                Some('i') => {
-                    if scan_chars!(stream, 'n') {
-                        match stream.next() {
-                            Some('a') => {
-                                scan_chars!(stream, 'l').then_some(TokenKind::FinalKeyword)
-                            }
-                            Some('n') => {
-                                scan_chars!(stream, 'e', 'y').then_some(TokenKind::FinneyKeyword)
-                            }
-                            Some(_) => {
-                                stream.undo();
-                                None
-                            }
-                            None => None,
-                        }
-                    } else {
-                        None
-                    }
-                }
-                Some('o') => scan_chars!(stream, 'r').then_some(TokenKind::ForKeyword),
-                Some('r') => scan_chars!(stream, 'o', 'm').then_some(TokenKind::FromKeyword),
-                Some('u') => scan_chars!(stream, 'n', 'c', 't', 'i', 'o', 'n')
-                    .then_some(TokenKind::FunctionKeyword),
-                Some(_) => {
-                    stream.undo();
-                    None
-                }
-                None => None,
-            },
-            Some('g') => match stream.next() {
-                Some('l') => {
-                    scan_chars!(stream, 'o', 'b', 'a', 'l').then_some(TokenKind::GlobalKeyword)
-                }
-                Some('w') => {
-                    if self.version_is_at_least_0_6_11 {
-                        scan_chars!(stream, 'e', 'i').then_some(TokenKind::GweiKeyword)
-                    } else {
-                        None
-                    }
-                }
-                Some(_) => {
-                    stream.undo();
-                    None
-                }
-                None => None,
-            },
-            Some('h') => match stream.next() {
-                Some('e') => scan_chars!(stream, 'x').then_some(TokenKind::HexKeyword),
-                Some('o') => scan_chars!(stream, 'u', 'r', 's').then_some(TokenKind::HoursKeyword),
-                Some(_) => {
-                    stream.undo();
-                    None
-                }
-                None => None,
-            },
-            Some('i') => match stream.next() {
-                Some('f') => Some(TokenKind::IfKeyword),
-                Some('m') => match stream.next() {
-                    Some('m') => {
-                        if self.version_is_at_least_0_6_5 {
-                            scan_chars!(stream, 'u', 't', 'a', 'b', 'l', 'e')
-                                .then_some(TokenKind::ImmutableKeyword)
-                        } else {
-                            None
-                        }
-                    }
-                    Some('p') => match stream.next() {
-                        Some('l') => {
-                            if self.version_is_at_least_0_5_0 {
-                                scan_chars!(stream, 'e', 'm', 'e', 'n', 't', 's')
-                                    .then_some(TokenKind::ImplementsKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some('o') => {
-                            scan_chars!(stream, 'r', 't').then_some(TokenKind::ImportKeyword)
-                        }
-                        Some(_) => {
-                            stream.undo();
-                            None
-                        }
-                        None => None,
-                    },
-                    Some(_) => {
-                        stream.undo();
-                        None
-                    }
-                    None => None,
-                },
-                Some('n') => match stream.next() {
-                    Some('d') => {
-                        scan_chars!(stream, 'e', 'x', 'e', 'd').then_some(TokenKind::IndexedKeyword)
-                    }
-                    Some('l') => {
-                        scan_chars!(stream, 'i', 'n', 'e').then_some(TokenKind::InlineKeyword)
-                    }
-                    Some('t') => {
-                        if scan_chars!(stream, 'e', 'r') {
-                            match stream.next() {
-                                Some('f') => scan_chars!(stream, 'a', 'c', 'e')
-                                    .then_some(TokenKind::InterfaceKeyword),
-                                Some('n') => scan_chars!(stream, 'a', 'l')
-                                    .then_some(TokenKind::InternalKeyword),
-                                Some(_) => {
-                                    stream.undo();
-                                    None
-                                }
-                                None => None,
-                            }
-                        } else {
-                            None
-                        }
-                    }
-                    Some(_) => {
-                        stream.undo();
-                        Some(TokenKind::InKeyword)
-                    }
-                    None => Some(TokenKind::InKeyword),
-                },
-                Some('s') => Some(TokenKind::IsKeyword),
-                Some(_) => {
-                    stream.undo();
-                    None
-                }
-                None => None,
-            },
-            Some('l') => match stream.next() {
-                Some('e') => match stream.next() {
-                    Some('a') => {
-                        if self.version_is_at_least_0_6_0 {
-                            scan_chars!(stream, 'v', 'e').then_some(TokenKind::LeaveKeyword)
-                        } else {
-                            None
-                        }
-                    }
-                    Some('t') => Some(TokenKind::LetKeyword),
-                    Some(_) => {
-                        stream.undo();
-                        None
-                    }
-                    None => None,
-                },
-                Some('i') => scan_chars!(stream, 'b', 'r', 'a', 'r', 'y')
-                    .then_some(TokenKind::LibraryKeyword),
-                Some(_) => {
-                    stream.undo();
-                    None
-                }
-                None => None,
-            },
-            Some('m') => match stream.next() {
-                Some('a') => match stream.next() {
-                    Some('c') => {
-                        if self.version_is_at_least_0_5_0 {
-                            scan_chars!(stream, 'r', 'o').then_some(TokenKind::MacroKeyword)
-                        } else {
-                            None
-                        }
-                    }
-                    Some('p') => {
-                        scan_chars!(stream, 'p', 'i', 'n', 'g').then_some(TokenKind::MappingKeyword)
-                    }
-                    Some('t') => scan_chars!(stream, 'c', 'h').then_some(TokenKind::MatchKeyword),
-                    Some(_) => {
-                        stream.undo();
-                        None
-                    }
-                    None => None,
-                },
-                Some('e') => {
-                    scan_chars!(stream, 'm', 'o', 'r', 'y').then_some(TokenKind::MemoryKeyword)
-                }
-                Some('i') => scan_chars!(stream, 'n', 'u', 't', 'e', 's')
-                    .then_some(TokenKind::MinutesKeyword),
-                Some('o') => scan_chars!(stream, 'd', 'i', 'f', 'i', 'e', 'r')
-                    .then_some(TokenKind::ModifierKeyword),
-                Some('u') => {
-                    if self.version_is_at_least_0_5_0 {
-                        scan_chars!(stream, 't', 'a', 'b', 'l', 'e')
-                            .then_some(TokenKind::MutableKeyword)
-                    } else {
-                        None
-                    }
-                }
-                Some(_) => {
-                    stream.undo();
-                    None
-                }
-                None => None,
-            },
-            Some('n') => match stream.next() {
-                Some('e') => scan_chars!(stream, 'w').then_some(TokenKind::NewKeyword),
-                Some('u') => scan_chars!(stream, 'l', 'l').then_some(TokenKind::NullKeyword),
-                Some(_) => {
-                    stream.undo();
-                    None
-                }
-                None => None,
-            },
-            Some('o') => match stream.next() {
-                Some('f') => Some(TokenKind::OfKeyword),
-                Some('v') => scan_chars!(stream, 'e', 'r', 'r', 'i', 'd', 'e')
-                    .then_some(TokenKind::OverrideKeyword),
-                Some(_) => {
-                    stream.undo();
-                    None
-                }
-                None => None,
-            },
-            Some('p') => {
-                match stream.next() {
-                    Some('a') => match stream.next() {
-                        Some('r') => {
-                            if self.version_is_at_least_0_5_0 {
-                                scan_chars!(stream, 't', 'i', 'a', 'l')
-                                    .then_some(TokenKind::PartialKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some('y') => scan_chars!(stream, 'a', 'b', 'l', 'e')
-                            .then_some(TokenKind::PayableKeyword),
-                        Some(_) => {
-                            stream.undo();
-                            None
-                        }
-                        None => None,
-                    },
-                    Some('r') => match stream.next() {
-                        Some('a') => {
-                            scan_chars!(stream, 'g', 'm', 'a').then_some(TokenKind::PragmaKeyword)
-                        }
-                        Some('i') => scan_chars!(stream, 'v', 'a', 't', 'e')
-                            .then_some(TokenKind::PrivateKeyword),
-                        Some('o') => {
-                            if self.version_is_at_least_0_5_0 {
-                                scan_chars!(stream, 'm', 'i', 's', 'e')
-                                    .then_some(TokenKind::PromiseKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some(_) => {
-                            stream.undo();
-                            None
-                        }
-                        None => None,
-                    },
-                    Some('u') => match stream.next() {
-                        Some('b') => {
-                            scan_chars!(stream, 'l', 'i', 'c').then_some(TokenKind::PublicKeyword)
-                        }
-                        Some('r') => scan_chars!(stream, 'e').then_some(TokenKind::PureKeyword),
-                        Some(_) => {
-                            stream.undo();
-                            None
-                        }
-                        None => None,
-                    },
-                    Some(_) => {
-                        stream.undo();
-                        None
-                    }
-                    None => None,
-                }
-            }
-            Some('r') => {
-                if scan_chars!(stream, 'e') {
-                    match stream.next() {
-                        Some('c') => scan_chars!(stream, 'e', 'i', 'v', 'e')
-                            .then_some(TokenKind::ReceiveKeyword),
-                        Some('f') => {
-                            if self.version_is_at_least_0_5_0 {
-                                scan_chars!(stream, 'e', 'r', 'e', 'n', 'c', 'e')
-                                    .then_some(TokenKind::ReferenceKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some('l') => scan_chars!(stream, 'o', 'c', 'a', 't', 'a', 'b', 'l', 'e')
-                            .then_some(TokenKind::RelocatableKeyword),
-                        Some('t') => {
-                            if scan_chars!(stream, 'u', 'r', 'n') {
-                                match stream.next() {
-                                    Some('s') => Some(TokenKind::ReturnsKeyword),
-                                    Some(_) => {
-                                        stream.undo();
-                                        Some(TokenKind::ReturnKeyword)
-                                    }
-                                    None => Some(TokenKind::ReturnKeyword),
-                                }
-                            } else {
-                                None
-                            }
-                        }
-                        Some('v') => {
-                            scan_chars!(stream, 'e', 'r', 't').then_some(TokenKind::RevertKeyword)
-                        }
-                        Some(_) => {
-                            stream.undo();
-                            None
-                        }
-                        None => None,
-                    }
-                } else {
-                    None
-                }
-            }
-            Some('s') => match stream.next() {
-                Some('e') => match stream.next() {
-                    Some('a') => {
-                        if self.version_is_at_least_0_5_0 {
-                            scan_chars!(stream, 'l', 'e', 'd').then_some(TokenKind::SealedKeyword)
-                        } else {
-                            None
-                        }
-                    }
-                    Some('c') => {
-                        scan_chars!(stream, 'o', 'n', 'd', 's').then_some(TokenKind::SecondsKeyword)
-                    }
-                    Some(_) => {
-                        stream.undo();
-                        None
-                    }
-                    None => None,
-                },
-                Some('i') => {
-                    if self.version_is_at_least_0_5_0 {
-                        scan_chars!(stream, 'z', 'e', 'o', 'f').then_some(TokenKind::SizeofKeyword)
-                    } else {
-                        None
-                    }
-                }
-                Some('o') => scan_chars!(stream, 'l', 'i', 'd', 'i', 't', 'y')
-                    .then_some(TokenKind::SolidityKeyword),
-                Some('t') => match stream.next() {
-                    Some('a') => {
-                        scan_chars!(stream, 't', 'i', 'c').then_some(TokenKind::StaticKeyword)
-                    }
-                    Some('o') => {
-                        scan_chars!(stream, 'r', 'a', 'g', 'e').then_some(TokenKind::StorageKeyword)
-                    }
-                    Some('r') => match stream.next() {
-                        Some('i') => {
-                            scan_chars!(stream, 'n', 'g').then_some(TokenKind::StringKeyword)
-                        }
-                        Some('u') => {
-                            scan_chars!(stream, 'c', 't').then_some(TokenKind::StructKeyword)
-                        }
-                        Some(_) => {
-                            stream.undo();
-                            None
-                        }
-                        None => None,
-                    },
-                    Some(_) => {
-                        stream.undo();
-                        None
-                    }
-                    None => None,
-                },
-                Some('u') => {
-                    if self.version_is_at_least_0_5_0 {
-                        scan_chars!(stream, 'p', 'p', 'o', 'r', 't', 's')
-                            .then_some(TokenKind::SupportsKeyword)
-                    } else {
-                        None
-                    }
-                }
-                Some('w') => {
-                    scan_chars!(stream, 'i', 't', 'c', 'h').then_some(TokenKind::SwitchKeyword)
-                }
-                Some('z') => scan_chars!(stream, 'a', 'b', 'o').then_some(TokenKind::SzaboKeyword),
-                Some(_) => {
-                    stream.undo();
-                    None
-                }
-                None => None,
-            },
-            Some('t') => match stream.next() {
-                Some('h') => scan_chars!(stream, 'r', 'o', 'w').then_some(TokenKind::ThrowKeyword),
-                Some('r') => match stream.next() {
-                    Some('u') => scan_chars!(stream, 'e').then_some(TokenKind::TrueKeyword),
-                    Some('y') => {
-                        if self.version_is_at_least_0_6_0 {
-                            Some(TokenKind::TryKeyword)
-                        } else {
-                            None
-                        }
-                    }
-                    Some(_) => {
-                        stream.undo();
-                        None
-                    }
-                    None => None,
-                },
-                Some('y') => {
-                    if scan_chars!(stream, 'p', 'e') {
-                        match stream.next() {
-                            Some('d') => {
-                                if self.version_is_at_least_0_5_0 {
-                                    scan_chars!(stream, 'e', 'f')
-                                        .then_some(TokenKind::TypedefKeyword)
-                                } else {
-                                    None
-                                }
-                            }
-                            Some('o') => {
-                                scan_chars!(stream, 'f').then_some(TokenKind::TypeofKeyword)
-                            }
-                            Some(_) => {
-                                stream.undo();
-                                Some(TokenKind::TypeKeyword)
-                            }
-                            None => Some(TokenKind::TypeKeyword),
-                        }
-                    } else {
-                        None
-                    }
-                }
-                Some(_) => {
-                    stream.undo();
-                    None
-                }
-                None => None,
-            },
-            Some('u') => match stream.next() {
-                Some('n') => {
-                    if self.version_is_at_least_0_8_0 {
-                        scan_chars!(stream, 'c', 'h', 'e', 'c', 'k', 'e', 'd')
-                            .then_some(TokenKind::UncheckedKeyword)
-                    } else {
-                        None
-                    }
-                }
-                Some('s') => scan_chars!(stream, 'i', 'n', 'g').then_some(TokenKind::UsingKeyword),
-                Some(_) => {
-                    stream.undo();
-                    None
-                }
-                None => None,
-            },
-            Some('v') => match stream.next() {
-                Some('a') => scan_chars!(stream, 'r').then_some(TokenKind::VarKeyword),
-                Some('i') => match stream.next() {
-                    Some('e') => scan_chars!(stream, 'w').then_some(TokenKind::ViewKeyword),
-                    Some('r') => {
-                        if self.version_is_at_least_0_6_0 {
-                            scan_chars!(stream, 't', 'u', 'a', 'l')
-                                .then_some(TokenKind::VirtualKeyword)
-                        } else {
-                            None
-                        }
-                    }
-                    Some(_) => {
-                        stream.undo();
-                        None
-                    }
-                    None => None,
-                },
-                Some(_) => {
-                    stream.undo();
-                    None
-                }
-                None => None,
-            },
-            Some('w') => match stream.next() {
-                Some('e') => match stream.next() {
-                    Some('e') => scan_chars!(stream, 'k', 's').then_some(TokenKind::WeeksKeyword),
-                    Some('i') => Some(TokenKind::WeiKeyword),
-                    Some(_) => {
-                        stream.undo();
-                        None
-                    }
-                    None => None,
-                },
-                Some('h') => scan_chars!(stream, 'i', 'l', 'e').then_some(TokenKind::WhileKeyword),
-                Some(_) => {
-                    stream.undo();
-                    None
-                }
-                None => None,
-            },
-            Some('y') => scan_chars!(stream, 'e', 'a', 'r', 's').then_some(TokenKind::YearsKeyword),
-            Some(_) => {
-                stream.undo();
-                None
-            }
-            None => None,
-        } {
-            // Make sure that this is not the start of an identifier
-            if !self.identifier_part(stream) {
-                furthest_position = stream.position();
-                longest_token = Some(kind);
-            }
-        }
-        stream.set_position(save);
-
-        if let Some(kind) = match stream.next() {
-            Some('!') => match stream.next() {
-                Some('=') => Some(TokenKind::BangEqual),
-                Some(_) => {
-                    stream.undo();
-                    Some(TokenKind::Bang)
-                }
-                None => Some(TokenKind::Bang),
-            },
-            Some('%') => match stream.next() {
-                Some('=') => Some(TokenKind::PercentEqual),
-                Some(_) => {
-                    stream.undo();
-                    Some(TokenKind::Percent)
-                }
-                None => Some(TokenKind::Percent),
-            },
-            Some('&') => match stream.next() {
-                Some('&') => Some(TokenKind::AmpersandAmpersand),
-                Some('=') => Some(TokenKind::AmpersandEqual),
-                Some(_) => {
-                    stream.undo();
-                    Some(TokenKind::Ampersand)
-                }
-                None => Some(TokenKind::Ampersand),
-            },
-            Some('(') => Some(TokenKind::OpenParen),
-            Some(')') => Some(TokenKind::CloseParen),
-            Some('*') => match stream.next() {
-                Some('*') => Some(TokenKind::AsteriskAsterisk),
-                Some('=') => Some(TokenKind::AsteriskEqual),
-                Some(_) => {
-                    stream.undo();
-                    Some(TokenKind::Asterisk)
-                }
-                None => Some(TokenKind::Asterisk),
-            },
-            Some('+') => match stream.next() {
-                Some('+') => Some(TokenKind::PlusPlus),
-                Some('=') => Some(TokenKind::PlusEqual),
-                Some(_) => {
-                    stream.undo();
-                    Some(TokenKind::Plus)
-                }
-                None => Some(TokenKind::Plus),
-            },
-            Some(',') => Some(TokenKind::Comma),
-            Some('-') => match stream.next() {
-                Some('-') => Some(TokenKind::MinusMinus),
-                Some('=') => Some(TokenKind::MinusEqual),
-                Some(_) => {
-                    stream.undo();
-                    Some(TokenKind::Minus)
-                }
-                None => Some(TokenKind::Minus),
-            },
-            Some('.') => Some(TokenKind::Period),
-            Some('/') => match stream.next() {
-                Some('=') => Some(TokenKind::SlashEqual),
-                Some(_) => {
-                    stream.undo();
-                    Some(TokenKind::Slash)
-                }
-                None => Some(TokenKind::Slash),
-            },
-            Some(':') => Some(TokenKind::Colon),
-            Some(';') => Some(TokenKind::Semicolon),
-            Some('<') => match stream.next() {
-                Some('<') => match stream.next() {
-                    Some('=') => Some(TokenKind::LessThanLessThanEqual),
-                    Some(_) => {
-                        stream.undo();
-                        Some(TokenKind::LessThanLessThan)
-                    }
-                    None => Some(TokenKind::LessThanLessThan),
-                },
-                Some('=') => Some(TokenKind::LessThanEqual),
-                Some(_) => {
-                    stream.undo();
-                    Some(TokenKind::LessThan)
-                }
-                None => Some(TokenKind::LessThan),
-            },
-            Some('=') => match stream.next() {
-                Some('=') => Some(TokenKind::EqualEqual),
-                Some('>') => Some(TokenKind::EqualGreaterThan),
-                Some(_) => {
-                    stream.undo();
-                    Some(TokenKind::Equal)
-                }
-                None => Some(TokenKind::Equal),
-            },
-            Some('>') => match stream.next() {
-                Some('=') => Some(TokenKind::GreaterThanEqual),
-                Some('>') => match stream.next() {
-                    Some('=') => Some(TokenKind::GreaterThanGreaterThanEqual),
-                    Some('>') => match stream.next() {
-                        Some('=') => Some(TokenKind::GreaterThanGreaterThanGreaterThanEqual),
-                        Some(_) => {
-                            stream.undo();
-                            Some(TokenKind::GreaterThanGreaterThanGreaterThan)
-                        }
-                        None => Some(TokenKind::GreaterThanGreaterThanGreaterThan),
-                    },
-                    Some(_) => {
-                        stream.undo();
-                        Some(TokenKind::GreaterThanGreaterThan)
-                    }
-                    None => Some(TokenKind::GreaterThanGreaterThan),
-                },
-                Some(_) => {
-                    stream.undo();
-                    Some(TokenKind::GreaterThan)
-                }
-                None => Some(TokenKind::GreaterThan),
-            },
-            Some('?') => Some(TokenKind::QuestionMark),
-            Some('[') => Some(TokenKind::OpenBracket),
-            Some(']') => Some(TokenKind::CloseBracket),
-            Some('^') => match stream.next() {
-                Some('=') => Some(TokenKind::CaretEqual),
-                Some(_) => {
-                    stream.undo();
-                    Some(TokenKind::Caret)
-                }
-                None => Some(TokenKind::Caret),
-            },
-            Some('{') => Some(TokenKind::OpenBrace),
-            Some('|') => match stream.next() {
-                Some('=') => Some(TokenKind::BarEqual),
-                Some('|') => Some(TokenKind::BarBar),
-                Some(_) => {
-                    stream.undo();
-                    Some(TokenKind::Bar)
-                }
-                None => Some(TokenKind::Bar),
-            },
-            Some('}') => Some(TokenKind::CloseBrace),
-            Some('~') => Some(TokenKind::Tilde),
-            Some(_) => {
-                stream.undo();
-                None
-            }
-            None => None,
-        } {
-            furthest_position = stream.position();
-            longest_token = Some(kind);
-        }
-        stream.set_position(save);
-
-        macro_rules! longest_match {
-                ($( { $kind:ident = $function:ident } )*) => {
-                    $(
-                        if self.$function(stream) && stream.position() > furthest_position {
-                            furthest_position = stream.position();
-                            longest_token = Some(TokenKind::$kind);
-                        }
-                        stream.set_position(save);
-                    )*
-                };
-            }
-
-        longest_match! {
-            { AsciiStringLiteral = ascii_string_literal }
-            { DecimalLiteral = decimal_literal }
-            { EndOfLine = end_of_line }
-            { FixedBytesType = fixed_bytes_type }
-            { HexLiteral = hex_literal }
-            { HexStringLiteral = hex_string_literal }
-            { MultilineComment = multiline_comment }
-            { SignedFixedType = signed_fixed_type }
-            { SignedIntegerType = signed_integer_type }
-            { SingleLineComment = single_line_comment }
-            { UnicodeStringLiteral = unicode_string_literal }
-            { UnsignedFixedType = unsigned_fixed_type }
-            { UnsignedIntegerType = unsigned_integer_type }
-            { Whitespace = whitespace }
-            { Identifier = identifier }
-        }
-
-        if longest_token.is_some() {
-            stream.set_position(furthest_position);
-        }
-
-        longest_token
+        Lexer::parse_token::<{ LexicalContext::Default as u8 }>(self, stream, kind)
     }
 
     #[allow(dead_code)]
@@ -1143,119 +186,14 @@ impl Language {
         stream: &mut Stream,
         kind: TokenKind,
     ) -> ParserResult {
-        let mut children = vec![];
-
-        let restore = stream.position();
-        if let ParserResult::Match(r#match) = self.leading_trivia(stream) {
-            children.extend(r#match.nodes);
-        } else {
-            stream.set_position(restore);
-        }
-
-        let start = stream.position();
-        if self.version_pragma_next_token(stream) != Some(kind) {
-            stream.set_position(restore);
-            return ParserResult::no_match(vec![kind]);
-        }
-        let end = stream.position();
-        children.push(cst::Node::token(kind, stream.content(start.utf8..end.utf8)));
-
-        let restore = stream.position();
-        if let ParserResult::Match(r#match) = self.trailing_trivia(stream) {
-            children.extend(r#match.nodes);
-        } else {
-            stream.set_position(restore);
-        }
-
-        return ParserResult::r#match(children, vec![]);
+        Lexer::parse_token_with_trivia::<{ LexicalContext::VersionPragma as u8 }>(
+            self, stream, kind,
+        )
     }
 
     #[allow(dead_code)]
     fn version_pragma_parse_token(&self, stream: &mut Stream, kind: TokenKind) -> ParserResult {
-        let start = stream.position();
-        if self.version_pragma_next_token(stream) != Some(kind) {
-            stream.set_position(start);
-            return ParserResult::no_match(vec![kind]);
-        }
-        let end = stream.position();
-        return ParserResult::r#match(
-            vec![cst::Node::token(kind, stream.content(start.utf8..end.utf8))],
-            vec![],
-        );
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    pub(crate) fn version_pragma_next_token(&self, stream: &mut Stream) -> Option<TokenKind> {
-        let save = stream.position();
-        let mut furthest_position = stream.position();
-        let mut longest_token = None;
-
-        if let Some(kind) = scan_chars!(stream, 's', 'o', 'l', 'i', 'd', 'i', 't', 'y')
-            .then_some(TokenKind::SolidityKeyword)
-        {
-            // Make sure that this is not the start of an identifier
-            if !self.identifier_part(stream) {
-                furthest_position = stream.position();
-                longest_token = Some(kind);
-            }
-        }
-        stream.set_position(save);
-
-        if let Some(kind) = match stream.next() {
-            Some('-') => Some(TokenKind::Minus),
-            Some('.') => Some(TokenKind::Period),
-            Some('<') => match stream.next() {
-                Some('=') => Some(TokenKind::LessThanEqual),
-                Some(_) => {
-                    stream.undo();
-                    Some(TokenKind::LessThan)
-                }
-                None => Some(TokenKind::LessThan),
-            },
-            Some('=') => Some(TokenKind::Equal),
-            Some('>') => match stream.next() {
-                Some('=') => Some(TokenKind::GreaterThanEqual),
-                Some(_) => {
-                    stream.undo();
-                    Some(TokenKind::GreaterThan)
-                }
-                None => Some(TokenKind::GreaterThan),
-            },
-            Some('^') => Some(TokenKind::Caret),
-            Some('|') => scan_chars!(stream, '|').then_some(TokenKind::BarBar),
-            Some('~') => Some(TokenKind::Tilde),
-            Some(_) => {
-                stream.undo();
-                None
-            }
-            None => None,
-        } {
-            furthest_position = stream.position();
-            longest_token = Some(kind);
-        }
-        stream.set_position(save);
-
-        macro_rules! longest_match {
-                ($( { $kind:ident = $function:ident } )*) => {
-                    $(
-                        if self.$function(stream) && stream.position() > furthest_position {
-                            furthest_position = stream.position();
-                            longest_token = Some(TokenKind::$kind);
-                        }
-                        stream.set_position(save);
-                    )*
-                };
-            }
-
-        longest_match! {
-            { VersionPragmaValue = version_pragma_value }
-        }
-
-        if longest_token.is_some() {
-            stream.set_position(furthest_position);
-        }
-
-        longest_token
+        Lexer::parse_token::<{ LexicalContext::VersionPragma as u8 }>(self, stream, kind)
     }
 
     #[allow(dead_code)]
@@ -1264,164 +202,12 @@ impl Language {
         stream: &mut Stream,
         kind: TokenKind,
     ) -> ParserResult {
-        let mut children = vec![];
-
-        let restore = stream.position();
-        if let ParserResult::Match(r#match) = self.leading_trivia(stream) {
-            children.extend(r#match.nodes);
-        } else {
-            stream.set_position(restore);
-        }
-
-        let start = stream.position();
-        if self.yul_block_next_token(stream) != Some(kind) {
-            stream.set_position(restore);
-            return ParserResult::no_match(vec![kind]);
-        }
-        let end = stream.position();
-        children.push(cst::Node::token(kind, stream.content(start.utf8..end.utf8)));
-
-        let restore = stream.position();
-        if let ParserResult::Match(r#match) = self.trailing_trivia(stream) {
-            children.extend(r#match.nodes);
-        } else {
-            stream.set_position(restore);
-        }
-
-        return ParserResult::r#match(children, vec![]);
+        Lexer::parse_token_with_trivia::<{ LexicalContext::YulBlock as u8 }>(self, stream, kind)
     }
 
     #[allow(dead_code)]
     fn yul_block_parse_token(&self, stream: &mut Stream, kind: TokenKind) -> ParserResult {
-        let start = stream.position();
-        if self.yul_block_next_token(stream) != Some(kind) {
-            stream.set_position(start);
-            return ParserResult::no_match(vec![kind]);
-        }
-        let end = stream.position();
-        return ParserResult::r#match(
-            vec![cst::Node::token(kind, stream.content(start.utf8..end.utf8))],
-            vec![],
-        );
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    pub(crate) fn yul_block_next_token(&self, stream: &mut Stream) -> Option<TokenKind> {
-        let save = stream.position();
-        let mut furthest_position = stream.position();
-        let mut longest_token = None;
-
-        if let Some(kind) = match stream.next() {
-            Some('b') => scan_chars!(stream, 'r', 'e', 'a', 'k').then_some(TokenKind::BreakKeyword),
-            Some('c') => match stream.next() {
-                Some('a') => scan_chars!(stream, 's', 'e').then_some(TokenKind::CaseKeyword),
-                Some('o') => scan_chars!(stream, 'n', 't', 'i', 'n', 'u', 'e')
-                    .then_some(TokenKind::ContinueKeyword),
-                Some(_) => {
-                    stream.undo();
-                    None
-                }
-                None => None,
-            },
-            Some('d') => scan_chars!(stream, 'e', 'f', 'a', 'u', 'l', 't')
-                .then_some(TokenKind::DefaultKeyword),
-            Some('f') => match stream.next() {
-                Some('a') => scan_chars!(stream, 'l', 's', 'e').then_some(TokenKind::FalseKeyword),
-                Some('o') => scan_chars!(stream, 'r').then_some(TokenKind::ForKeyword),
-                Some('u') => scan_chars!(stream, 'n', 'c', 't', 'i', 'o', 'n')
-                    .then_some(TokenKind::FunctionKeyword),
-                Some(_) => {
-                    stream.undo();
-                    None
-                }
-                None => None,
-            },
-            Some('h') => scan_chars!(stream, 'e', 'x').then_some(TokenKind::HexKeyword),
-            Some('i') => scan_chars!(stream, 'f').then_some(TokenKind::IfKeyword),
-            Some('l') => {
-                if scan_chars!(stream, 'e') {
-                    match stream.next() {
-                        Some('a') => {
-                            if self.version_is_at_least_0_6_0 {
-                                scan_chars!(stream, 'v', 'e').then_some(TokenKind::LeaveKeyword)
-                            } else {
-                                None
-                            }
-                        }
-                        Some('t') => Some(TokenKind::LetKeyword),
-                        Some(_) => {
-                            stream.undo();
-                            None
-                        }
-                        None => None,
-                    }
-                } else {
-                    None
-                }
-            }
-            Some('s') => {
-                scan_chars!(stream, 'w', 'i', 't', 'c', 'h').then_some(TokenKind::SwitchKeyword)
-            }
-            Some('t') => scan_chars!(stream, 'r', 'u', 'e').then_some(TokenKind::TrueKeyword),
-            Some(_) => {
-                stream.undo();
-                None
-            }
-            None => None,
-        } {
-            // Make sure that this is not the start of an identifier
-            if !self.identifier_part(stream) {
-                furthest_position = stream.position();
-                longest_token = Some(kind);
-            }
-        }
-        stream.set_position(save);
-
-        if let Some(kind) = match stream.next() {
-            Some('(') => Some(TokenKind::OpenParen),
-            Some(')') => Some(TokenKind::CloseParen),
-            Some(',') => Some(TokenKind::Comma),
-            Some('-') => scan_chars!(stream, '>').then_some(TokenKind::MinusGreaterThan),
-            Some('.') => Some(TokenKind::Period),
-            Some(':') => scan_chars!(stream, '=').then_some(TokenKind::ColonEqual),
-            Some('{') => Some(TokenKind::OpenBrace),
-            Some('}') => Some(TokenKind::CloseBrace),
-            Some(_) => {
-                stream.undo();
-                None
-            }
-            None => None,
-        } {
-            furthest_position = stream.position();
-            longest_token = Some(kind);
-        }
-        stream.set_position(save);
-
-        macro_rules! longest_match {
-                ($( { $kind:ident = $function:ident } )*) => {
-                    $(
-                        if self.$function(stream) && stream.position() > furthest_position {
-                            furthest_position = stream.position();
-                            longest_token = Some(TokenKind::$kind);
-                        }
-                        stream.set_position(save);
-                    )*
-                };
-            }
-
-        longest_match! {
-            { AsciiStringLiteral = ascii_string_literal }
-            { HexStringLiteral = hex_string_literal }
-            { YulDecimalLiteral = yul_decimal_literal }
-            { YulHexLiteral = yul_hex_literal }
-            { YulIdentifier = yul_identifier }
-        }
-
-        if longest_token.is_some() {
-            stream.set_position(furthest_position);
-        }
-
-        longest_token
+        Lexer::parse_token::<{ LexicalContext::YulBlock as u8 }>(self, stream, kind)
     }
 
     /********************************************
@@ -8685,9 +7471,15 @@ impl Language {
     pub fn scan(&self, lexical_context: LexicalContext, input: &str) -> Option<TokenKind> {
         let mut stream = Stream::new(input);
         match lexical_context {
-            LexicalContext::Default => self.default_next_token(&mut stream),
-            LexicalContext::VersionPragma => self.version_pragma_next_token(&mut stream),
-            LexicalContext::YulBlock => self.yul_block_next_token(&mut stream),
+            LexicalContext::Default => {
+                Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, &mut stream)
+            }
+            LexicalContext::VersionPragma => {
+                Lexer::next_token::<{ LexicalContext::VersionPragma as u8 }>(self, &mut stream)
+            }
+            LexicalContext::YulBlock => {
+                Lexer::next_token::<{ LexicalContext::YulBlock as u8 }>(self, &mut stream)
+            }
         }
     }
 
@@ -8908,23 +7700,1153 @@ impl Language {
     }
 }
 
-#[derive(
-    Debug,
-    Eq,
-    Ord,
-    PartialEq,
-    PartialOrd,
-    serde::Serialize,
-    strum_macros::AsRefStr,
-    strum_macros::Display,
-    strum_macros::EnumString,
-)]
-#[cfg_attr(feature = "slang_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "language"))]
-#[cfg_attr(not(feature = "slang_napi_interfaces"), derive(Clone, Copy))]
-pub enum LexicalContext {
-    Default,
-    VersionPragma,
-    YulBlock,
+impl Lexer for Language {
+    fn leading_trivia(&self, stream: &mut Stream) -> ParserResult {
+        Language::leading_trivia(self, stream)
+    }
+
+    fn trailing_trivia(&self, stream: &mut Stream) -> ParserResult {
+        Language::trailing_trivia(self, stream)
+    }
+
+    fn next_token<const LEX_CTX: u8>(&self, stream: &mut Stream) -> Option<TokenKind> {
+        let save = stream.position();
+        let mut furthest_position = stream.position();
+        let mut longest_token = None;
+
+        match LexicalContext::from_repr(LEX_CTX).unwrap() {
+            LexicalContext::Default => {
+                macro_rules! longest_match {
+                        ($( { $kind:ident = $function:ident } )*) => {
+                            $(
+                                if self.$function(stream) && stream.position() > furthest_position {
+                                    furthest_position = stream.position();
+                                    longest_token = Some(TokenKind::$kind);
+                                }
+                                stream.set_position(save);
+                            )*
+                        };
+                    }
+
+                if let Some(kind) = match stream.next() {
+                    Some('a') => match stream.next() {
+                        Some('b') => match stream.next() {
+                            Some('i') => scan_chars!(stream, 'c', 'o', 'd', 'e', 'r')
+                                .then_some(TokenKind::ABICoderKeyword),
+                            Some('s') => scan_chars!(stream, 't', 'r', 'a', 'c', 't')
+                                .then_some(TokenKind::AbstractKeyword),
+                            Some(_) => {
+                                stream.undo();
+                                None
+                            }
+                            None => None,
+                        },
+                        Some('d') => scan_chars!(stream, 'd', 'r', 'e', 's', 's')
+                            .then_some(TokenKind::AddressKeyword),
+                        Some('f') => {
+                            scan_chars!(stream, 't', 'e', 'r').then_some(TokenKind::AfterKeyword)
+                        }
+                        Some('l') => {
+                            if self.version_is_at_least_0_5_0 {
+                                scan_chars!(stream, 'i', 'a', 's')
+                                    .then_some(TokenKind::AliasKeyword)
+                            } else {
+                                None
+                            }
+                        }
+                        Some('n') => scan_chars!(stream, 'o', 'n', 'y', 'm', 'o', 'u', 's')
+                            .then_some(TokenKind::AnonymousKeyword),
+                        Some('p') => {
+                            if self.version_is_at_least_0_5_0 {
+                                scan_chars!(stream, 'p', 'l', 'y')
+                                    .then_some(TokenKind::ApplyKeyword)
+                            } else {
+                                None
+                            }
+                        }
+                        Some('s') => match stream.next() {
+                            Some('s') => scan_chars!(stream, 'e', 'm', 'b', 'l', 'y')
+                                .then_some(TokenKind::AssemblyKeyword),
+                            Some(_) => {
+                                stream.undo();
+                                Some(TokenKind::AsKeyword)
+                            }
+                            None => Some(TokenKind::AsKeyword),
+                        },
+                        Some('u') => {
+                            if self.version_is_at_least_0_5_0 {
+                                scan_chars!(stream, 't', 'o').then_some(TokenKind::AutoKeyword)
+                            } else {
+                                None
+                            }
+                        }
+                        Some(_) => {
+                            stream.undo();
+                            None
+                        }
+                        None => None,
+                    },
+                    Some('b') => match stream.next() {
+                        Some('o') => {
+                            scan_chars!(stream, 'o', 'l').then_some(TokenKind::BoolKeyword)
+                        }
+                        Some('r') => {
+                            scan_chars!(stream, 'e', 'a', 'k').then_some(TokenKind::BreakKeyword)
+                        }
+                        Some('y') => {
+                            scan_chars!(stream, 't', 'e').then_some(TokenKind::ByteKeyword)
+                        }
+                        Some(_) => {
+                            stream.undo();
+                            None
+                        }
+                        None => None,
+                    },
+                    Some('c') => match stream.next() {
+                        Some('a') => match stream.next() {
+                            Some('l') => {
+                                if self.version_is_at_least_0_5_0 {
+                                    scan_chars!(stream, 'l', 'd', 'a', 't', 'a')
+                                        .then_some(TokenKind::CalldataKeyword)
+                                } else {
+                                    None
+                                }
+                            }
+                            Some('s') => scan_chars!(stream, 'e').then_some(TokenKind::CaseKeyword),
+                            Some('t') => {
+                                scan_chars!(stream, 'c', 'h').then_some(TokenKind::CatchKeyword)
+                            }
+                            Some(_) => {
+                                stream.undo();
+                                None
+                            }
+                            None => None,
+                        },
+                        Some('o') => match stream.next() {
+                            Some('n') => match stream.next() {
+                                Some('s') => {
+                                    if scan_chars!(stream, 't') {
+                                        match stream.next() {
+                                            Some('a') => scan_chars!(stream, 'n', 't')
+                                                .then_some(TokenKind::ConstantKeyword),
+                                            Some('r') => {
+                                                if self.version_is_at_least_0_4_22 {
+                                                    scan_chars!(stream, 'u', 'c', 't', 'o', 'r')
+                                                        .then_some(TokenKind::ConstructorKeyword)
+                                                } else {
+                                                    None
+                                                }
+                                            }
+                                            Some(_) => {
+                                                stream.undo();
+                                                None
+                                            }
+                                            None => None,
+                                        }
+                                    } else {
+                                        None
+                                    }
+                                }
+                                Some('t') => match stream.next() {
+                                    Some('i') => scan_chars!(stream, 'n', 'u', 'e')
+                                        .then_some(TokenKind::ContinueKeyword),
+                                    Some('r') => scan_chars!(stream, 'a', 'c', 't')
+                                        .then_some(TokenKind::ContractKeyword),
+                                    Some(_) => {
+                                        stream.undo();
+                                        None
+                                    }
+                                    None => None,
+                                },
+                                Some(_) => {
+                                    stream.undo();
+                                    None
+                                }
+                                None => None,
+                            },
+                            Some('p') => {
+                                if self.version_is_at_least_0_5_0 {
+                                    scan_chars!(stream, 'y', 'o', 'f')
+                                        .then_some(TokenKind::CopyofKeyword)
+                                } else {
+                                    None
+                                }
+                            }
+                            Some(_) => {
+                                stream.undo();
+                                None
+                            }
+                            None => None,
+                        },
+                        Some(_) => {
+                            stream.undo();
+                            None
+                        }
+                        None => None,
+                    },
+                    Some('d') => match stream.next() {
+                        Some('a') => {
+                            scan_chars!(stream, 'y', 's').then_some(TokenKind::DaysKeyword)
+                        }
+                        Some('e') => match stream.next() {
+                            Some('f') => match stream.next() {
+                                Some('a') => scan_chars!(stream, 'u', 'l', 't')
+                                    .then_some(TokenKind::DefaultKeyword),
+                                Some('i') => {
+                                    if self.version_is_at_least_0_5_0 {
+                                        scan_chars!(stream, 'n', 'e')
+                                            .then_some(TokenKind::DefineKeyword)
+                                    } else {
+                                        None
+                                    }
+                                }
+                                Some(_) => {
+                                    stream.undo();
+                                    None
+                                }
+                                None => None,
+                            },
+                            Some('l') => scan_chars!(stream, 'e', 't', 'e')
+                                .then_some(TokenKind::DeleteKeyword),
+                            Some(_) => {
+                                stream.undo();
+                                None
+                            }
+                            None => None,
+                        },
+                        Some('o') => Some(TokenKind::DoKeyword),
+                        Some(_) => {
+                            stream.undo();
+                            None
+                        }
+                        None => None,
+                    },
+                    Some('e') => {
+                        match stream.next() {
+                            Some('l') => {
+                                scan_chars!(stream, 's', 'e').then_some(TokenKind::ElseKeyword)
+                            }
+                            Some('m') => {
+                                if self.version_is_at_least_0_4_21 {
+                                    scan_chars!(stream, 'i', 't').then_some(TokenKind::EmitKeyword)
+                                } else {
+                                    None
+                                }
+                            }
+                            Some('n') => {
+                                scan_chars!(stream, 'u', 'm').then_some(TokenKind::EnumKeyword)
+                            }
+                            Some('r') => {
+                                if self.version_is_at_least_0_8_4 {
+                                    scan_chars!(stream, 'r', 'o', 'r')
+                                        .then_some(TokenKind::ErrorKeyword)
+                                } else {
+                                    None
+                                }
+                            }
+                            Some('t') => scan_chars!(stream, 'h', 'e', 'r')
+                                .then_some(TokenKind::EtherKeyword),
+                            Some('v') => scan_chars!(stream, 'e', 'n', 't')
+                                .then_some(TokenKind::EventKeyword),
+                            Some('x') => match stream.next() {
+                                Some('p') => {
+                                    scan_chars!(stream, 'e', 'r', 'i', 'm', 'e', 'n', 't', 'a', 'l')
+                                        .then_some(TokenKind::ExperimentalKeyword)
+                                }
+                                Some('t') => scan_chars!(stream, 'e', 'r', 'n', 'a', 'l')
+                                    .then_some(TokenKind::ExternalKeyword),
+                                Some(_) => {
+                                    stream.undo();
+                                    None
+                                }
+                                None => None,
+                            },
+                            Some(_) => {
+                                stream.undo();
+                                None
+                            }
+                            None => None,
+                        }
+                    }
+                    Some('f') => {
+                        match stream.next() {
+                            Some('a') => {
+                                if scan_chars!(stream, 'l') {
+                                    match stream.next() {
+                                        Some('l') => scan_chars!(stream, 'b', 'a', 'c', 'k')
+                                            .then_some(TokenKind::FallbackKeyword),
+                                        Some('s') => scan_chars!(stream, 'e')
+                                            .then_some(TokenKind::FalseKeyword),
+                                        Some(_) => {
+                                            stream.undo();
+                                            None
+                                        }
+                                        None => None,
+                                    }
+                                } else {
+                                    None
+                                }
+                            }
+                            Some('i') => {
+                                if scan_chars!(stream, 'n') {
+                                    match stream.next() {
+                                        Some('a') => scan_chars!(stream, 'l')
+                                            .then_some(TokenKind::FinalKeyword),
+                                        Some('n') => scan_chars!(stream, 'e', 'y')
+                                            .then_some(TokenKind::FinneyKeyword),
+                                        Some(_) => {
+                                            stream.undo();
+                                            None
+                                        }
+                                        None => None,
+                                    }
+                                } else {
+                                    None
+                                }
+                            }
+                            Some('o') => scan_chars!(stream, 'r').then_some(TokenKind::ForKeyword),
+                            Some('r') => {
+                                scan_chars!(stream, 'o', 'm').then_some(TokenKind::FromKeyword)
+                            }
+                            Some('u') => scan_chars!(stream, 'n', 'c', 't', 'i', 'o', 'n')
+                                .then_some(TokenKind::FunctionKeyword),
+                            Some(_) => {
+                                stream.undo();
+                                None
+                            }
+                            None => None,
+                        }
+                    }
+                    Some('g') => match stream.next() {
+                        Some('l') => scan_chars!(stream, 'o', 'b', 'a', 'l')
+                            .then_some(TokenKind::GlobalKeyword),
+                        Some('w') => {
+                            if self.version_is_at_least_0_6_11 {
+                                scan_chars!(stream, 'e', 'i').then_some(TokenKind::GweiKeyword)
+                            } else {
+                                None
+                            }
+                        }
+                        Some(_) => {
+                            stream.undo();
+                            None
+                        }
+                        None => None,
+                    },
+                    Some('h') => match stream.next() {
+                        Some('e') => scan_chars!(stream, 'x').then_some(TokenKind::HexKeyword),
+                        Some('o') => {
+                            scan_chars!(stream, 'u', 'r', 's').then_some(TokenKind::HoursKeyword)
+                        }
+                        Some(_) => {
+                            stream.undo();
+                            None
+                        }
+                        None => None,
+                    },
+                    Some('i') => match stream.next() {
+                        Some('f') => Some(TokenKind::IfKeyword),
+                        Some('m') => match stream.next() {
+                            Some('m') => {
+                                if self.version_is_at_least_0_6_5 {
+                                    scan_chars!(stream, 'u', 't', 'a', 'b', 'l', 'e')
+                                        .then_some(TokenKind::ImmutableKeyword)
+                                } else {
+                                    None
+                                }
+                            }
+                            Some('p') => match stream.next() {
+                                Some('l') => {
+                                    if self.version_is_at_least_0_5_0 {
+                                        scan_chars!(stream, 'e', 'm', 'e', 'n', 't', 's')
+                                            .then_some(TokenKind::ImplementsKeyword)
+                                    } else {
+                                        None
+                                    }
+                                }
+                                Some('o') => scan_chars!(stream, 'r', 't')
+                                    .then_some(TokenKind::ImportKeyword),
+                                Some(_) => {
+                                    stream.undo();
+                                    None
+                                }
+                                None => None,
+                            },
+                            Some(_) => {
+                                stream.undo();
+                                None
+                            }
+                            None => None,
+                        },
+                        Some('n') => match stream.next() {
+                            Some('d') => scan_chars!(stream, 'e', 'x', 'e', 'd')
+                                .then_some(TokenKind::IndexedKeyword),
+                            Some('l') => scan_chars!(stream, 'i', 'n', 'e')
+                                .then_some(TokenKind::InlineKeyword),
+                            Some('t') => {
+                                if scan_chars!(stream, 'e', 'r') {
+                                    match stream.next() {
+                                        Some('f') => scan_chars!(stream, 'a', 'c', 'e')
+                                            .then_some(TokenKind::InterfaceKeyword),
+                                        Some('n') => scan_chars!(stream, 'a', 'l')
+                                            .then_some(TokenKind::InternalKeyword),
+                                        Some(_) => {
+                                            stream.undo();
+                                            None
+                                        }
+                                        None => None,
+                                    }
+                                } else {
+                                    None
+                                }
+                            }
+                            Some(_) => {
+                                stream.undo();
+                                Some(TokenKind::InKeyword)
+                            }
+                            None => Some(TokenKind::InKeyword),
+                        },
+                        Some('s') => Some(TokenKind::IsKeyword),
+                        Some(_) => {
+                            stream.undo();
+                            None
+                        }
+                        None => None,
+                    },
+                    Some('l') => match stream.next() {
+                        Some('e') => match stream.next() {
+                            Some('a') => {
+                                if self.version_is_at_least_0_6_0 {
+                                    scan_chars!(stream, 'v', 'e').then_some(TokenKind::LeaveKeyword)
+                                } else {
+                                    None
+                                }
+                            }
+                            Some('t') => Some(TokenKind::LetKeyword),
+                            Some(_) => {
+                                stream.undo();
+                                None
+                            }
+                            None => None,
+                        },
+                        Some('i') => scan_chars!(stream, 'b', 'r', 'a', 'r', 'y')
+                            .then_some(TokenKind::LibraryKeyword),
+                        Some(_) => {
+                            stream.undo();
+                            None
+                        }
+                        None => None,
+                    },
+                    Some('m') => match stream.next() {
+                        Some('a') => match stream.next() {
+                            Some('c') => {
+                                if self.version_is_at_least_0_5_0 {
+                                    scan_chars!(stream, 'r', 'o').then_some(TokenKind::MacroKeyword)
+                                } else {
+                                    None
+                                }
+                            }
+                            Some('p') => scan_chars!(stream, 'p', 'i', 'n', 'g')
+                                .then_some(TokenKind::MappingKeyword),
+                            Some('t') => {
+                                scan_chars!(stream, 'c', 'h').then_some(TokenKind::MatchKeyword)
+                            }
+                            Some(_) => {
+                                stream.undo();
+                                None
+                            }
+                            None => None,
+                        },
+                        Some('e') => scan_chars!(stream, 'm', 'o', 'r', 'y')
+                            .then_some(TokenKind::MemoryKeyword),
+                        Some('i') => scan_chars!(stream, 'n', 'u', 't', 'e', 's')
+                            .then_some(TokenKind::MinutesKeyword),
+                        Some('o') => scan_chars!(stream, 'd', 'i', 'f', 'i', 'e', 'r')
+                            .then_some(TokenKind::ModifierKeyword),
+                        Some('u') => {
+                            if self.version_is_at_least_0_5_0 {
+                                scan_chars!(stream, 't', 'a', 'b', 'l', 'e')
+                                    .then_some(TokenKind::MutableKeyword)
+                            } else {
+                                None
+                            }
+                        }
+                        Some(_) => {
+                            stream.undo();
+                            None
+                        }
+                        None => None,
+                    },
+                    Some('n') => match stream.next() {
+                        Some('e') => scan_chars!(stream, 'w').then_some(TokenKind::NewKeyword),
+                        Some('u') => {
+                            scan_chars!(stream, 'l', 'l').then_some(TokenKind::NullKeyword)
+                        }
+                        Some(_) => {
+                            stream.undo();
+                            None
+                        }
+                        None => None,
+                    },
+                    Some('o') => match stream.next() {
+                        Some('f') => Some(TokenKind::OfKeyword),
+                        Some('v') => scan_chars!(stream, 'e', 'r', 'r', 'i', 'd', 'e')
+                            .then_some(TokenKind::OverrideKeyword),
+                        Some(_) => {
+                            stream.undo();
+                            None
+                        }
+                        None => None,
+                    },
+                    Some('p') => match stream.next() {
+                        Some('a') => match stream.next() {
+                            Some('r') => {
+                                if self.version_is_at_least_0_5_0 {
+                                    scan_chars!(stream, 't', 'i', 'a', 'l')
+                                        .then_some(TokenKind::PartialKeyword)
+                                } else {
+                                    None
+                                }
+                            }
+                            Some('y') => scan_chars!(stream, 'a', 'b', 'l', 'e')
+                                .then_some(TokenKind::PayableKeyword),
+                            Some(_) => {
+                                stream.undo();
+                                None
+                            }
+                            None => None,
+                        },
+                        Some('r') => match stream.next() {
+                            Some('a') => scan_chars!(stream, 'g', 'm', 'a')
+                                .then_some(TokenKind::PragmaKeyword),
+                            Some('i') => scan_chars!(stream, 'v', 'a', 't', 'e')
+                                .then_some(TokenKind::PrivateKeyword),
+                            Some('o') => {
+                                if self.version_is_at_least_0_5_0 {
+                                    scan_chars!(stream, 'm', 'i', 's', 'e')
+                                        .then_some(TokenKind::PromiseKeyword)
+                                } else {
+                                    None
+                                }
+                            }
+                            Some(_) => {
+                                stream.undo();
+                                None
+                            }
+                            None => None,
+                        },
+                        Some('u') => match stream.next() {
+                            Some('b') => scan_chars!(stream, 'l', 'i', 'c')
+                                .then_some(TokenKind::PublicKeyword),
+                            Some('r') => scan_chars!(stream, 'e').then_some(TokenKind::PureKeyword),
+                            Some(_) => {
+                                stream.undo();
+                                None
+                            }
+                            None => None,
+                        },
+                        Some(_) => {
+                            stream.undo();
+                            None
+                        }
+                        None => None,
+                    },
+                    Some('r') => {
+                        if scan_chars!(stream, 'e') {
+                            match stream.next() {
+                                Some('c') => scan_chars!(stream, 'e', 'i', 'v', 'e')
+                                    .then_some(TokenKind::ReceiveKeyword),
+                                Some('f') => {
+                                    if self.version_is_at_least_0_5_0 {
+                                        scan_chars!(stream, 'e', 'r', 'e', 'n', 'c', 'e')
+                                            .then_some(TokenKind::ReferenceKeyword)
+                                    } else {
+                                        None
+                                    }
+                                }
+                                Some('l') => {
+                                    scan_chars!(stream, 'o', 'c', 'a', 't', 'a', 'b', 'l', 'e')
+                                        .then_some(TokenKind::RelocatableKeyword)
+                                }
+                                Some('t') => {
+                                    if scan_chars!(stream, 'u', 'r', 'n') {
+                                        match stream.next() {
+                                            Some('s') => Some(TokenKind::ReturnsKeyword),
+                                            Some(_) => {
+                                                stream.undo();
+                                                Some(TokenKind::ReturnKeyword)
+                                            }
+                                            None => Some(TokenKind::ReturnKeyword),
+                                        }
+                                    } else {
+                                        None
+                                    }
+                                }
+                                Some('v') => scan_chars!(stream, 'e', 'r', 't')
+                                    .then_some(TokenKind::RevertKeyword),
+                                Some(_) => {
+                                    stream.undo();
+                                    None
+                                }
+                                None => None,
+                            }
+                        } else {
+                            None
+                        }
+                    }
+                    Some('s') => match stream.next() {
+                        Some('e') => match stream.next() {
+                            Some('a') => {
+                                if self.version_is_at_least_0_5_0 {
+                                    scan_chars!(stream, 'l', 'e', 'd')
+                                        .then_some(TokenKind::SealedKeyword)
+                                } else {
+                                    None
+                                }
+                            }
+                            Some('c') => scan_chars!(stream, 'o', 'n', 'd', 's')
+                                .then_some(TokenKind::SecondsKeyword),
+                            Some(_) => {
+                                stream.undo();
+                                None
+                            }
+                            None => None,
+                        },
+                        Some('i') => {
+                            if self.version_is_at_least_0_5_0 {
+                                scan_chars!(stream, 'z', 'e', 'o', 'f')
+                                    .then_some(TokenKind::SizeofKeyword)
+                            } else {
+                                None
+                            }
+                        }
+                        Some('o') => scan_chars!(stream, 'l', 'i', 'd', 'i', 't', 'y')
+                            .then_some(TokenKind::SolidityKeyword),
+                        Some('t') => match stream.next() {
+                            Some('a') => scan_chars!(stream, 't', 'i', 'c')
+                                .then_some(TokenKind::StaticKeyword),
+                            Some('o') => scan_chars!(stream, 'r', 'a', 'g', 'e')
+                                .then_some(TokenKind::StorageKeyword),
+                            Some('r') => match stream.next() {
+                                Some('i') => scan_chars!(stream, 'n', 'g')
+                                    .then_some(TokenKind::StringKeyword),
+                                Some('u') => scan_chars!(stream, 'c', 't')
+                                    .then_some(TokenKind::StructKeyword),
+                                Some(_) => {
+                                    stream.undo();
+                                    None
+                                }
+                                None => None,
+                            },
+                            Some(_) => {
+                                stream.undo();
+                                None
+                            }
+                            None => None,
+                        },
+                        Some('u') => {
+                            if self.version_is_at_least_0_5_0 {
+                                scan_chars!(stream, 'p', 'p', 'o', 'r', 't', 's')
+                                    .then_some(TokenKind::SupportsKeyword)
+                            } else {
+                                None
+                            }
+                        }
+                        Some('w') => scan_chars!(stream, 'i', 't', 'c', 'h')
+                            .then_some(TokenKind::SwitchKeyword),
+                        Some('z') => {
+                            scan_chars!(stream, 'a', 'b', 'o').then_some(TokenKind::SzaboKeyword)
+                        }
+                        Some(_) => {
+                            stream.undo();
+                            None
+                        }
+                        None => None,
+                    },
+                    Some('t') => match stream.next() {
+                        Some('h') => {
+                            scan_chars!(stream, 'r', 'o', 'w').then_some(TokenKind::ThrowKeyword)
+                        }
+                        Some('r') => match stream.next() {
+                            Some('u') => scan_chars!(stream, 'e').then_some(TokenKind::TrueKeyword),
+                            Some('y') => {
+                                if self.version_is_at_least_0_6_0 {
+                                    Some(TokenKind::TryKeyword)
+                                } else {
+                                    None
+                                }
+                            }
+                            Some(_) => {
+                                stream.undo();
+                                None
+                            }
+                            None => None,
+                        },
+                        Some('y') => {
+                            if scan_chars!(stream, 'p', 'e') {
+                                match stream.next() {
+                                    Some('d') => {
+                                        if self.version_is_at_least_0_5_0 {
+                                            scan_chars!(stream, 'e', 'f')
+                                                .then_some(TokenKind::TypedefKeyword)
+                                        } else {
+                                            None
+                                        }
+                                    }
+                                    Some('o') => {
+                                        scan_chars!(stream, 'f').then_some(TokenKind::TypeofKeyword)
+                                    }
+                                    Some(_) => {
+                                        stream.undo();
+                                        Some(TokenKind::TypeKeyword)
+                                    }
+                                    None => Some(TokenKind::TypeKeyword),
+                                }
+                            } else {
+                                None
+                            }
+                        }
+                        Some(_) => {
+                            stream.undo();
+                            None
+                        }
+                        None => None,
+                    },
+                    Some('u') => match stream.next() {
+                        Some('n') => {
+                            if self.version_is_at_least_0_8_0 {
+                                scan_chars!(stream, 'c', 'h', 'e', 'c', 'k', 'e', 'd')
+                                    .then_some(TokenKind::UncheckedKeyword)
+                            } else {
+                                None
+                            }
+                        }
+                        Some('s') => {
+                            scan_chars!(stream, 'i', 'n', 'g').then_some(TokenKind::UsingKeyword)
+                        }
+                        Some(_) => {
+                            stream.undo();
+                            None
+                        }
+                        None => None,
+                    },
+                    Some('v') => match stream.next() {
+                        Some('a') => scan_chars!(stream, 'r').then_some(TokenKind::VarKeyword),
+                        Some('i') => match stream.next() {
+                            Some('e') => scan_chars!(stream, 'w').then_some(TokenKind::ViewKeyword),
+                            Some('r') => {
+                                if self.version_is_at_least_0_6_0 {
+                                    scan_chars!(stream, 't', 'u', 'a', 'l')
+                                        .then_some(TokenKind::VirtualKeyword)
+                                } else {
+                                    None
+                                }
+                            }
+                            Some(_) => {
+                                stream.undo();
+                                None
+                            }
+                            None => None,
+                        },
+                        Some(_) => {
+                            stream.undo();
+                            None
+                        }
+                        None => None,
+                    },
+                    Some('w') => match stream.next() {
+                        Some('e') => match stream.next() {
+                            Some('e') => {
+                                scan_chars!(stream, 'k', 's').then_some(TokenKind::WeeksKeyword)
+                            }
+                            Some('i') => Some(TokenKind::WeiKeyword),
+                            Some(_) => {
+                                stream.undo();
+                                None
+                            }
+                            None => None,
+                        },
+                        Some('h') => {
+                            scan_chars!(stream, 'i', 'l', 'e').then_some(TokenKind::WhileKeyword)
+                        }
+                        Some(_) => {
+                            stream.undo();
+                            None
+                        }
+                        None => None,
+                    },
+                    Some('y') => {
+                        scan_chars!(stream, 'e', 'a', 'r', 's').then_some(TokenKind::YearsKeyword)
+                    }
+                    Some(_) => {
+                        stream.undo();
+                        None
+                    }
+                    None => None,
+                } {
+                    // Make sure that this is not the start of an identifier
+                    if !self.identifier_part(stream) {
+                        furthest_position = stream.position();
+                        longest_token = Some(kind);
+                    }
+                }
+                stream.set_position(save);
+
+                if let Some(kind) = match stream.next() {
+                    Some('!') => match stream.next() {
+                        Some('=') => Some(TokenKind::BangEqual),
+                        Some(_) => {
+                            stream.undo();
+                            Some(TokenKind::Bang)
+                        }
+                        None => Some(TokenKind::Bang),
+                    },
+                    Some('%') => match stream.next() {
+                        Some('=') => Some(TokenKind::PercentEqual),
+                        Some(_) => {
+                            stream.undo();
+                            Some(TokenKind::Percent)
+                        }
+                        None => Some(TokenKind::Percent),
+                    },
+                    Some('&') => match stream.next() {
+                        Some('&') => Some(TokenKind::AmpersandAmpersand),
+                        Some('=') => Some(TokenKind::AmpersandEqual),
+                        Some(_) => {
+                            stream.undo();
+                            Some(TokenKind::Ampersand)
+                        }
+                        None => Some(TokenKind::Ampersand),
+                    },
+                    Some('(') => Some(TokenKind::OpenParen),
+                    Some(')') => Some(TokenKind::CloseParen),
+                    Some('*') => match stream.next() {
+                        Some('*') => Some(TokenKind::AsteriskAsterisk),
+                        Some('=') => Some(TokenKind::AsteriskEqual),
+                        Some(_) => {
+                            stream.undo();
+                            Some(TokenKind::Asterisk)
+                        }
+                        None => Some(TokenKind::Asterisk),
+                    },
+                    Some('+') => match stream.next() {
+                        Some('+') => Some(TokenKind::PlusPlus),
+                        Some('=') => Some(TokenKind::PlusEqual),
+                        Some(_) => {
+                            stream.undo();
+                            Some(TokenKind::Plus)
+                        }
+                        None => Some(TokenKind::Plus),
+                    },
+                    Some(',') => Some(TokenKind::Comma),
+                    Some('-') => match stream.next() {
+                        Some('-') => Some(TokenKind::MinusMinus),
+                        Some('=') => Some(TokenKind::MinusEqual),
+                        Some(_) => {
+                            stream.undo();
+                            Some(TokenKind::Minus)
+                        }
+                        None => Some(TokenKind::Minus),
+                    },
+                    Some('.') => Some(TokenKind::Period),
+                    Some('/') => match stream.next() {
+                        Some('=') => Some(TokenKind::SlashEqual),
+                        Some(_) => {
+                            stream.undo();
+                            Some(TokenKind::Slash)
+                        }
+                        None => Some(TokenKind::Slash),
+                    },
+                    Some(':') => Some(TokenKind::Colon),
+                    Some(';') => Some(TokenKind::Semicolon),
+                    Some('<') => match stream.next() {
+                        Some('<') => match stream.next() {
+                            Some('=') => Some(TokenKind::LessThanLessThanEqual),
+                            Some(_) => {
+                                stream.undo();
+                                Some(TokenKind::LessThanLessThan)
+                            }
+                            None => Some(TokenKind::LessThanLessThan),
+                        },
+                        Some('=') => Some(TokenKind::LessThanEqual),
+                        Some(_) => {
+                            stream.undo();
+                            Some(TokenKind::LessThan)
+                        }
+                        None => Some(TokenKind::LessThan),
+                    },
+                    Some('=') => match stream.next() {
+                        Some('=') => Some(TokenKind::EqualEqual),
+                        Some('>') => Some(TokenKind::EqualGreaterThan),
+                        Some(_) => {
+                            stream.undo();
+                            Some(TokenKind::Equal)
+                        }
+                        None => Some(TokenKind::Equal),
+                    },
+                    Some('>') => match stream.next() {
+                        Some('=') => Some(TokenKind::GreaterThanEqual),
+                        Some('>') => match stream.next() {
+                            Some('=') => Some(TokenKind::GreaterThanGreaterThanEqual),
+                            Some('>') => match stream.next() {
+                                Some('=') => {
+                                    Some(TokenKind::GreaterThanGreaterThanGreaterThanEqual)
+                                }
+                                Some(_) => {
+                                    stream.undo();
+                                    Some(TokenKind::GreaterThanGreaterThanGreaterThan)
+                                }
+                                None => Some(TokenKind::GreaterThanGreaterThanGreaterThan),
+                            },
+                            Some(_) => {
+                                stream.undo();
+                                Some(TokenKind::GreaterThanGreaterThan)
+                            }
+                            None => Some(TokenKind::GreaterThanGreaterThan),
+                        },
+                        Some(_) => {
+                            stream.undo();
+                            Some(TokenKind::GreaterThan)
+                        }
+                        None => Some(TokenKind::GreaterThan),
+                    },
+                    Some('?') => Some(TokenKind::QuestionMark),
+                    Some('[') => Some(TokenKind::OpenBracket),
+                    Some(']') => Some(TokenKind::CloseBracket),
+                    Some('^') => match stream.next() {
+                        Some('=') => Some(TokenKind::CaretEqual),
+                        Some(_) => {
+                            stream.undo();
+                            Some(TokenKind::Caret)
+                        }
+                        None => Some(TokenKind::Caret),
+                    },
+                    Some('{') => Some(TokenKind::OpenBrace),
+                    Some('|') => match stream.next() {
+                        Some('=') => Some(TokenKind::BarEqual),
+                        Some('|') => Some(TokenKind::BarBar),
+                        Some(_) => {
+                            stream.undo();
+                            Some(TokenKind::Bar)
+                        }
+                        None => Some(TokenKind::Bar),
+                    },
+                    Some('}') => Some(TokenKind::CloseBrace),
+                    Some('~') => Some(TokenKind::Tilde),
+                    Some(_) => {
+                        stream.undo();
+                        None
+                    }
+                    None => None,
+                } {
+                    furthest_position = stream.position();
+                    longest_token = Some(kind);
+                }
+                stream.set_position(save);
+
+                longest_match! {
+                        { AsciiStringLiteral = ascii_string_literal }
+                        { DecimalLiteral = decimal_literal }
+                        { EndOfLine = end_of_line }
+                        { FixedBytesType = fixed_bytes_type }
+                        { HexLiteral = hex_literal }
+                        { HexStringLiteral = hex_string_literal }
+                        { MultilineComment = multiline_comment }
+                        { SignedFixedType = signed_fixed_type }
+                        { SignedIntegerType = signed_integer_type }
+                        { SingleLineComment = single_line_comment }
+                        { UnicodeStringLiteral = unicode_string_literal }
+                        { UnsignedFixedType = unsigned_fixed_type }
+                        { UnsignedIntegerType = unsigned_integer_type }
+                        { Whitespace = whitespace }
+                        { Identifier = identifier }
+                }
+            }
+            LexicalContext::VersionPragma => {
+                macro_rules! longest_match {
+                        ($( { $kind:ident = $function:ident } )*) => {
+                            $(
+                                if self.$function(stream) && stream.position() > furthest_position {
+                                    furthest_position = stream.position();
+                                    longest_token = Some(TokenKind::$kind);
+                                }
+                                stream.set_position(save);
+                            )*
+                        };
+                    }
+
+                if let Some(kind) = scan_chars!(stream, 's', 'o', 'l', 'i', 'd', 'i', 't', 'y')
+                    .then_some(TokenKind::SolidityKeyword)
+                {
+                    // Make sure that this is not the start of an identifier
+                    if !self.identifier_part(stream) {
+                        furthest_position = stream.position();
+                        longest_token = Some(kind);
+                    }
+                }
+                stream.set_position(save);
+
+                if let Some(kind) = match stream.next() {
+                    Some('-') => Some(TokenKind::Minus),
+                    Some('.') => Some(TokenKind::Period),
+                    Some('<') => match stream.next() {
+                        Some('=') => Some(TokenKind::LessThanEqual),
+                        Some(_) => {
+                            stream.undo();
+                            Some(TokenKind::LessThan)
+                        }
+                        None => Some(TokenKind::LessThan),
+                    },
+                    Some('=') => Some(TokenKind::Equal),
+                    Some('>') => match stream.next() {
+                        Some('=') => Some(TokenKind::GreaterThanEqual),
+                        Some(_) => {
+                            stream.undo();
+                            Some(TokenKind::GreaterThan)
+                        }
+                        None => Some(TokenKind::GreaterThan),
+                    },
+                    Some('^') => Some(TokenKind::Caret),
+                    Some('|') => scan_chars!(stream, '|').then_some(TokenKind::BarBar),
+                    Some('~') => Some(TokenKind::Tilde),
+                    Some(_) => {
+                        stream.undo();
+                        None
+                    }
+                    None => None,
+                } {
+                    furthest_position = stream.position();
+                    longest_token = Some(kind);
+                }
+                stream.set_position(save);
+
+                longest_match! {
+                        { VersionPragmaValue = version_pragma_value }
+                }
+            }
+            LexicalContext::YulBlock => {
+                macro_rules! longest_match {
+                        ($( { $kind:ident = $function:ident } )*) => {
+                            $(
+                                if self.$function(stream) && stream.position() > furthest_position {
+                                    furthest_position = stream.position();
+                                    longest_token = Some(TokenKind::$kind);
+                                }
+                                stream.set_position(save);
+                            )*
+                        };
+                    }
+
+                if let Some(kind) =
+                    match stream.next() {
+                        Some('b') => scan_chars!(stream, 'r', 'e', 'a', 'k')
+                            .then_some(TokenKind::BreakKeyword),
+                        Some('c') => match stream.next() {
+                            Some('a') => {
+                                scan_chars!(stream, 's', 'e').then_some(TokenKind::CaseKeyword)
+                            }
+                            Some('o') => scan_chars!(stream, 'n', 't', 'i', 'n', 'u', 'e')
+                                .then_some(TokenKind::ContinueKeyword),
+                            Some(_) => {
+                                stream.undo();
+                                None
+                            }
+                            None => None,
+                        },
+                        Some('d') => scan_chars!(stream, 'e', 'f', 'a', 'u', 'l', 't')
+                            .then_some(TokenKind::DefaultKeyword),
+                        Some('f') => match stream.next() {
+                            Some('a') => scan_chars!(stream, 'l', 's', 'e')
+                                .then_some(TokenKind::FalseKeyword),
+                            Some('o') => scan_chars!(stream, 'r').then_some(TokenKind::ForKeyword),
+                            Some('u') => scan_chars!(stream, 'n', 'c', 't', 'i', 'o', 'n')
+                                .then_some(TokenKind::FunctionKeyword),
+                            Some(_) => {
+                                stream.undo();
+                                None
+                            }
+                            None => None,
+                        },
+                        Some('h') => scan_chars!(stream, 'e', 'x').then_some(TokenKind::HexKeyword),
+                        Some('i') => scan_chars!(stream, 'f').then_some(TokenKind::IfKeyword),
+                        Some('l') => {
+                            if scan_chars!(stream, 'e') {
+                                match stream.next() {
+                                    Some('a') => {
+                                        if self.version_is_at_least_0_6_0 {
+                                            scan_chars!(stream, 'v', 'e')
+                                                .then_some(TokenKind::LeaveKeyword)
+                                        } else {
+                                            None
+                                        }
+                                    }
+                                    Some('t') => Some(TokenKind::LetKeyword),
+                                    Some(_) => {
+                                        stream.undo();
+                                        None
+                                    }
+                                    None => None,
+                                }
+                            } else {
+                                None
+                            }
+                        }
+                        Some('s') => scan_chars!(stream, 'w', 'i', 't', 'c', 'h')
+                            .then_some(TokenKind::SwitchKeyword),
+                        Some('t') => {
+                            scan_chars!(stream, 'r', 'u', 'e').then_some(TokenKind::TrueKeyword)
+                        }
+                        Some(_) => {
+                            stream.undo();
+                            None
+                        }
+                        None => None,
+                    }
+                {
+                    // Make sure that this is not the start of an identifier
+                    if !self.identifier_part(stream) {
+                        furthest_position = stream.position();
+                        longest_token = Some(kind);
+                    }
+                }
+                stream.set_position(save);
+
+                if let Some(kind) = match stream.next() {
+                    Some('(') => Some(TokenKind::OpenParen),
+                    Some(')') => Some(TokenKind::CloseParen),
+                    Some(',') => Some(TokenKind::Comma),
+                    Some('-') => scan_chars!(stream, '>').then_some(TokenKind::MinusGreaterThan),
+                    Some('.') => Some(TokenKind::Period),
+                    Some(':') => scan_chars!(stream, '=').then_some(TokenKind::ColonEqual),
+                    Some('{') => Some(TokenKind::OpenBrace),
+                    Some('}') => Some(TokenKind::CloseBrace),
+                    Some(_) => {
+                        stream.undo();
+                        None
+                    }
+                    None => None,
+                } {
+                    furthest_position = stream.position();
+                    longest_token = Some(kind);
+                }
+                stream.set_position(save);
+
+                longest_match! {
+                        { AsciiStringLiteral = ascii_string_literal }
+                        { HexStringLiteral = hex_string_literal }
+                        { YulDecimalLiteral = yul_decimal_literal }
+                        { YulHexLiteral = yul_hex_literal }
+                        { YulIdentifier = yul_identifier }
+                }
+            }
+        }
+
+        if longest_token.is_some() {
+            stream.set_position(furthest_position);
+        }
+
+        longest_token
+    }
 }
 
 #[cfg(feature = "slang_napi_interfaces")]

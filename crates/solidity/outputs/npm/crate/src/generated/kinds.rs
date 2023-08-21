@@ -517,3 +517,14 @@ pub enum TokenKind {
     YulHexLiteral,
     YulIdentifier,
 }
+
+#[derive(strum_macros::FromRepr)]
+/// The lexical context of the scanner.
+#[cfg_attr(feature = "slang_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "language"))]
+#[cfg_attr(not(feature = "slang_napi_interfaces"), derive(Clone, Copy))]
+#[repr(u8)] // This is used as a const argument, which only supports primitive types
+pub enum LexicalContext {
+    Default,
+    VersionPragma,
+    YulBlock,
+}

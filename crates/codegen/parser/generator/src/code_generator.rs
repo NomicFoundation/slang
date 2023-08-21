@@ -108,6 +108,7 @@ impl CodeGenerator {
         for file in &[
             "cst.rs",
             "cursor.rs",
+            "lexer.rs",
             "parse_error.rs",
             "parse_output.rs",
             "text_index.rs",

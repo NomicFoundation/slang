@@ -4,11 +4,13 @@ use {napi::bindgen_prelude::*, napi_derive::napi};
 use semver::Version;
 
 use super::{
-    cst,
     kinds::{RuleKind, TokenKind, ProductionKind},
     parse_output::ParseOutput,
     support::*,
+    lexer::Lexer,
 };
+
+pub use super::kinds::LexicalContext;
 
 #[cfg(feature = "slang_napi_interfaces")]
 use super::napi::napi_parse_output::ParseOutput as NAPIParseOutput;
@@ -71,92 +73,13 @@ impl Language {
             kind: TokenKind,
         ) -> ParserResult
         {
-            let mut children = vec![];
-
-            let restore = stream.position();
-            if let ParserResult::Match(r#match) = self.leading_trivia(stream) {
-                children.extend(r#match.nodes);
-            } else {
-                stream.set_position(restore);
-            }
-
-            let start = stream.position();
-            if self.{{ context.name | snake_case }}_next_token(stream) != Some(kind) {
-                stream.set_position(restore);
-                return ParserResult::no_match(vec![kind]);
-            }
-            let end = stream.position();
-            children.push(cst::Node::token(kind, stream.content(start.utf8..end.utf8)));
-
-            let restore = stream.position();
-            if let ParserResult::Match(r#match) = self.trailing_trivia(stream) {
-                children.extend(r#match.nodes);
-            } else {
-                stream.set_position(restore);
-            }
-
-            return ParserResult::r#match(children, vec![]);
+            Lexer::parse_token_with_trivia::<{ LexicalContext::{{ context.name }} as u8 }>(self, stream, kind)
         }
 
         #[allow(dead_code)]
         fn {{ context.name | snake_case }}_parse_token(&self, stream: &mut Stream, kind: TokenKind) -> ParserResult
         {
-            let start = stream.position();
-            if self.{{ context.name | snake_case }}_next_token(stream) != Some(kind) {
-                stream.set_position(start);
-                return ParserResult::no_match(vec![kind]);
-            }
-            let end = stream.position();
-            return ParserResult::r#match(
-                vec![cst::Node::token(kind, stream.content(start.utf8..end.utf8))],
-                vec![],
-            );
-        }
-
-        #[allow(unused_assignments, unused_parens)]
-        pub(crate) fn {{ context.name | snake_case }}_next_token(&self, stream: &mut Stream) -> Option<TokenKind> {
-            let save = stream.position();
-            let mut furthest_position = stream.position();
-            let mut longest_token = None;
-
-            if let Some(kind) = {{ context.alpha_literal_scanner }} {
-                // Make sure that this is not the start of an identifier
-                if !self.identifier_part(stream) {
-                    furthest_position = stream.position();
-                    longest_token = Some(kind);
-                }
-            }
-            stream.set_position(save);
-
-            if let Some(kind) = {{ context.non_alpha_literal_scanner }} {
-                furthest_position = stream.position();
-                longest_token = Some(kind);
-            }
-            stream.set_position(save);
-
-            macro_rules! longest_match {
-                ($( { $kind:ident = $function:ident } )*) => {
-                    $(
-                        if self.$function(stream) && stream.position() > furthest_position {
-                            furthest_position = stream.position();
-                            longest_token = Some(TokenKind::$kind);
-                        }
-                        stream.set_position(save);
-                    )*
-                };
-            }
-
-            longest_match! {
-            {%- for name in context.compound_scanner_names %}
-                { {{ name }} = {{ name | snake_case }} }
-            {%- endfor %}
-            }
-
-            if longest_token.is_some() {
-                stream.set_position(furthest_position);
-            }
-
-            longest_token
+            Lexer::parse_token::<{ LexicalContext::{{ context.name }} as u8 }>(self, stream, kind)
         }
     {% endfor %}
 
@@ -182,7 +105,8 @@ impl Language {
         let mut stream = Stream::new(input);
         match lexical_context {
             {%- for lexical_context in code.scanner_contexts -%}
-                LexicalContext::{{ lexical_context.name }} => self.{{ lexical_context.name | snake_case }}_next_token(&mut stream),
+                LexicalContext::{{ lexical_context.name }} =>
+                    Lexer::next_token::<{ LexicalContext::{{ lexical_context.name }} as u8 }>(self, &mut stream),
             {%- endfor -%}
         }
     }
@@ -196,24 +120,66 @@ impl Language {
     }
 }
 
-#[derive(
-    Debug,
-    Eq,
-    Ord,
-    PartialEq,
-    PartialOrd,
-    serde::Serialize,
-    strum_macros::AsRefStr,
-    strum_macros::Display,
-    strum_macros::EnumString,
-)]
-#[cfg_attr(feature = "slang_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "language"))]
-#[cfg_attr(not(feature = "slang_napi_interfaces"), derive(Clone, Copy))]
-pub enum LexicalContext {
-    {%- for context in code.scanner_contexts -%}
-        {# Separator #}
-        {{ context.name }},
-    {%- endfor -%}
+impl Lexer for Language {
+    fn leading_trivia(&self, stream: &mut Stream) -> ParserResult {
+        Language::leading_trivia(self, stream)
+    }
+
+    fn trailing_trivia(&self, stream: &mut Stream) -> ParserResult {
+        Language::trailing_trivia(self, stream)
+    }
+
+    fn next_token<const LEX_CTX: u8>(&self, stream: &mut Stream) -> Option<TokenKind> {
+        let save = stream.position();
+        let mut furthest_position = stream.position();
+        let mut longest_token = None;
+
+        match LexicalContext::from_repr(LEX_CTX).unwrap() {
+            {%- for context in code.scanner_contexts %}
+                LexicalContext::{{ context.name }} => {
+                    macro_rules! longest_match {
+                        ($( { $kind:ident = $function:ident } )*) => {
+                            $(
+                                if self.$function(stream) && stream.position() > furthest_position {
+                                    furthest_position = stream.position();
+                                    longest_token = Some(TokenKind::$kind);
+                                }
+                                stream.set_position(save);
+                            )*
+                        };
+                    }
+
+                    if let Some(kind) = {{ context.alpha_literal_scanner }} {
+                        // Make sure that this is not the start of an identifier
+                        if !self.identifier_part(stream) {
+                            furthest_position = stream.position();
+                            longest_token = Some(kind);
+                        }
+                    }
+                    stream.set_position(save);
+
+                    if let Some(kind) = {{ context.non_alpha_literal_scanner }} {
+                        furthest_position = stream.position();
+                        longest_token = Some(kind);
+                    }
+                    stream.set_position(save);
+
+
+                    longest_match! {
+                        {%- for name in context.compound_scanner_names %}
+                            { {{ name }} = {{ name | snake_case }} }
+                        {%- endfor %}
+                    }
+                },
+            {%- endfor %}
+        }
+
+        if longest_token.is_some() {
+                stream.set_position(furthest_position);
+        }
+
+        longest_token
+    }
 }
 
 #[cfg(feature = "slang_napi_interfaces")]

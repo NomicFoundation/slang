@@ -486,6 +486,7 @@ export namespace kinds {
   }
 }
 export namespace language {
+  /** The lexical context of the scanner. */
   export enum LexicalContext {
     Default = "Default",
     VersionPragma = "VersionPragma",
