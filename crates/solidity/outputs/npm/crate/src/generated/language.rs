@@ -23,7 +23,6 @@ pub struct Language {
     pub(crate) version_is_at_least_0_4_22: bool,
     pub(crate) version_is_at_least_0_5_0: bool,
     pub(crate) version_is_at_least_0_5_3: bool,
-    pub(crate) version_is_at_least_0_5_12: bool,
     pub(crate) version_is_at_least_0_6_0: bool,
     pub(crate) version_is_at_least_0_6_2: bool,
     pub(crate) version_is_at_least_0_6_5: bool,
@@ -75,7 +74,6 @@ impl Language {
                 version_is_at_least_0_4_22: Version::parse("0.4.22").unwrap() <= version,
                 version_is_at_least_0_5_0: Version::parse("0.5.0").unwrap() <= version,
                 version_is_at_least_0_5_3: Version::parse("0.5.3").unwrap() <= version,
-                version_is_at_least_0_5_12: Version::parse("0.5.12").unwrap() <= version,
                 version_is_at_least_0_6_0: Version::parse("0.6.0").unwrap() <= version,
                 version_is_at_least_0_6_2: Version::parse("0.6.2").unwrap() <= version,
                 version_is_at_least_0_6_5: Version::parse("0.6.5").unwrap() <= version,
@@ -3106,7 +3104,7 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     pub fn emit_statement(&self, stream: &mut Stream) -> ParserResult {
-        if self.version_is_at_least_0_5_12 {
+        if self.version_is_at_least_0_4_21 {
             {
                 let mut helper = SequenceHelper::new();
                 loop {
