@@ -153,7 +153,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn default_next_token(&self, stream: &mut Stream) -> Option<TokenKind> {
+    pub(crate) fn default_next_token(&self, stream: &mut Stream) -> Option<TokenKind> {
         let save = stream.position();
         let mut furthest_position = stream.position();
         let mut longest_token = TokenKind::SKIPPED; // just a marker
@@ -1576,7 +1576,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn version_pragma_next_token(&self, stream: &mut Stream) -> Option<TokenKind> {
+    pub(crate) fn version_pragma_next_token(&self, stream: &mut Stream) -> Option<TokenKind> {
         let save = stream.position();
         let mut furthest_position = stream.position();
         let mut longest_token = TokenKind::SKIPPED; // just a marker
@@ -1706,7 +1706,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn yul_block_next_token(&self, stream: &mut Stream) -> Option<TokenKind> {
+    pub(crate) fn yul_block_next_token(&self, stream: &mut Stream) -> Option<TokenKind> {
         let save = stream.position();
         let mut furthest_position = stream.position();
         let mut longest_token = TokenKind::SKIPPED; // just a marker
@@ -1907,7 +1907,7 @@ impl Language {
      ********************************************/
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn abi_coder_pragma(&self, stream: &mut Stream) -> ParserResult {
+    fn abi_coder_pragma(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -1929,7 +1929,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn add_sub_operator(&self, stream: &mut Stream) -> ParserResult {
+    fn add_sub_operator(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = ChoiceHelper::new(stream);
             loop {
@@ -1948,7 +1948,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn address_type(&self, stream: &mut Stream) -> ParserResult {
+    fn address_type(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = ChoiceHelper::new(stream);
             loop {
@@ -1985,12 +1985,12 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn and_operator(&self, stream: &mut Stream) -> ParserResult {
+    fn and_operator(&self, stream: &mut Stream) -> ParserResult {
         self.default_parse_token_with_trivia(stream, TokenKind::AmpersandAmpersand)
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn arguments_declaration(&self, stream: &mut Stream) -> ParserResult {
+    fn arguments_declaration(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -2029,7 +2029,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn array_expression(&self, stream: &mut Stream) -> ParserResult {
+    fn array_expression(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -2054,7 +2054,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn array_type_name_operator(&self, stream: &mut Stream) -> ParserResult {
+    fn array_type_name_operator(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -2078,7 +2078,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn array_values_list(&self, stream: &mut Stream) -> ParserResult {
+    fn array_values_list(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -2110,7 +2110,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn ascii_string_literals_list(&self, stream: &mut Stream) -> ParserResult {
+    fn ascii_string_literals_list(&self, stream: &mut Stream) -> ParserResult {
         OneOrMoreHelper::run(stream, |stream| {
             self.default_parse_token_with_trivia(stream, TokenKind::AsciiStringLiteral)
         })
@@ -2118,7 +2118,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn assembly_flags_list(&self, stream: &mut Stream) -> ParserResult {
+    fn assembly_flags_list(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -2157,7 +2157,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn assembly_statement(&self, stream: &mut Stream) -> ParserResult {
+    fn assembly_statement(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -2204,7 +2204,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn assignment_operator(&self, stream: &mut Stream) -> ParserResult {
+    fn assignment_operator(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = ChoiceHelper::new(stream);
             loop {
@@ -2271,22 +2271,22 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn bitwise_and_operator(&self, stream: &mut Stream) -> ParserResult {
+    fn bitwise_and_operator(&self, stream: &mut Stream) -> ParserResult {
         self.default_parse_token_with_trivia(stream, TokenKind::Ampersand)
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn bitwise_or_operator(&self, stream: &mut Stream) -> ParserResult {
+    fn bitwise_or_operator(&self, stream: &mut Stream) -> ParserResult {
         self.default_parse_token_with_trivia(stream, TokenKind::Bar)
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn bitwise_x_or_operator(&self, stream: &mut Stream) -> ParserResult {
+    fn bitwise_x_or_operator(&self, stream: &mut Stream) -> ParserResult {
         self.default_parse_token_with_trivia(stream, TokenKind::Caret)
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn block(&self, stream: &mut Stream) -> ParserResult {
+    fn block(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -2313,7 +2313,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn boolean_expression(&self, stream: &mut Stream) -> ParserResult {
+    fn boolean_expression(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = ChoiceHelper::new(stream);
             loop {
@@ -2332,7 +2332,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn break_statement(&self, stream: &mut Stream) -> ParserResult {
+    fn break_statement(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -2354,7 +2354,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn catch_clause(&self, stream: &mut Stream) -> ParserResult {
+    fn catch_clause(&self, stream: &mut Stream) -> ParserResult {
         if self.version_is_at_least_0_6_0 {
             {
                 let mut helper = SequenceHelper::new();
@@ -2383,7 +2383,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn catch_clause_error(&self, stream: &mut Stream) -> ParserResult {
+    fn catch_clause_error(&self, stream: &mut Stream) -> ParserResult {
         if self.version_is_at_least_0_6_0 {
             {
                 let mut helper = SequenceHelper::new();
@@ -2407,7 +2407,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn catch_clauses_list(&self, stream: &mut Stream) -> ParserResult {
+    fn catch_clauses_list(&self, stream: &mut Stream) -> ParserResult {
         if self.version_is_at_least_0_6_0 {
             OneOrMoreHelper::run(stream, |stream| self.catch_clause(stream))
         } else {
@@ -2417,7 +2417,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn conditional_operator(&self, stream: &mut Stream) -> ParserResult {
+    fn conditional_operator(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -2444,7 +2444,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn constant_definition(&self, stream: &mut Stream) -> ParserResult {
+    fn constant_definition(&self, stream: &mut Stream) -> ParserResult {
         if self.version_is_at_least_0_7_4 {
             {
                 let mut helper = SequenceHelper::new();
@@ -2496,7 +2496,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn constructor_attribute(&self, stream: &mut Stream) -> ParserResult {
+    fn constructor_attribute(&self, stream: &mut Stream) -> ParserResult {
         if self.version_is_at_least_0_4_22 {
             {
                 let mut helper = ChoiceHelper::new(stream);
@@ -2530,7 +2530,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn constructor_attributes_list(&self, stream: &mut Stream) -> ParserResult {
+    fn constructor_attributes_list(&self, stream: &mut Stream) -> ParserResult {
         if self.version_is_at_least_0_4_22 {
             OneOrMoreHelper::run(stream, |stream| self.constructor_attribute(stream))
         } else {
@@ -2540,7 +2540,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn constructor_definition(&self, stream: &mut Stream) -> ParserResult {
+    fn constructor_definition(&self, stream: &mut Stream) -> ParserResult {
         if self.version_is_at_least_0_4_22 {
             {
                 let mut helper = SequenceHelper::new();
@@ -2572,7 +2572,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn continue_statement(&self, stream: &mut Stream) -> ParserResult {
+    fn continue_statement(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -2594,7 +2594,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn contract_definition(&self, stream: &mut Stream) -> ParserResult {
+    fn contract_definition(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -2652,7 +2652,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn contract_member(&self, stream: &mut Stream) -> ParserResult {
+    fn contract_member(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = ChoiceHelper::new(stream);
             loop {
@@ -2735,13 +2735,13 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn contract_members_list(&self, stream: &mut Stream) -> ParserResult {
+    fn contract_members_list(&self, stream: &mut Stream) -> ParserResult {
         OneOrMoreHelper::run(stream, |stream| self.contract_member(stream))
             .with_kind(RuleKind::ContractMembersList)
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn control_statement(&self, stream: &mut Stream) -> ParserResult {
+    fn control_statement(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = ChoiceHelper::new(stream);
             loop {
@@ -2806,7 +2806,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn data_location(&self, stream: &mut Stream) -> ParserResult {
+    fn data_location(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = ChoiceHelper::new(stream);
             loop {
@@ -2833,7 +2833,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn deconstruction_import(&self, stream: &mut Stream) -> ParserResult {
+    fn deconstruction_import(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -2879,7 +2879,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn deconstruction_import_symbol(&self, stream: &mut Stream) -> ParserResult {
+    fn deconstruction_import_symbol(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -2915,7 +2915,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn deconstruction_import_symbols_list(&self, stream: &mut Stream) -> ParserResult {
+    fn deconstruction_import_symbols_list(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -2947,7 +2947,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn delete_statement(&self, stream: &mut Stream) -> ParserResult {
+    fn delete_statement(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -2981,7 +2981,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn do_while_statement(&self, stream: &mut Stream) -> ParserResult {
+    fn do_while_statement(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -3048,7 +3048,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn elementary_type(&self, stream: &mut Stream) -> ParserResult {
+    fn elementary_type(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = ChoiceHelper::new(stream);
             loop {
@@ -3103,7 +3103,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn emit_statement(&self, stream: &mut Stream) -> ParserResult {
+    fn emit_statement(&self, stream: &mut Stream) -> ParserResult {
         if self.version_is_at_least_0_4_21 {
             {
                 let mut helper = SequenceHelper::new();
@@ -3147,7 +3147,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn end_of_file_trivia(&self, stream: &mut Stream) -> ParserResult {
+    fn end_of_file_trivia(&self, stream: &mut Stream) -> ParserResult {
         OneOrMoreHelper::run(stream, |stream| {
             let mut helper = ChoiceHelper::new(stream);
             loop {
@@ -3175,7 +3175,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn enum_definition(&self, stream: &mut Stream) -> ParserResult {
+    fn enum_definition(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -3221,7 +3221,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn equality_comparison_operator(&self, stream: &mut Stream) -> ParserResult {
+    fn equality_comparison_operator(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = ChoiceHelper::new(stream);
             loop {
@@ -3240,7 +3240,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn error_definition(&self, stream: &mut Stream) -> ParserResult {
+    fn error_definition(&self, stream: &mut Stream) -> ParserResult {
         if self.version_is_at_least_0_8_4 {
             {
                 let mut helper = SequenceHelper::new();
@@ -3313,7 +3313,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn error_parameter(&self, stream: &mut Stream) -> ParserResult {
+    fn error_parameter(&self, stream: &mut Stream) -> ParserResult {
         if self.version_is_at_least_0_8_4 {
             {
                 let mut helper = SequenceHelper::new();
@@ -3337,7 +3337,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn error_parameters_list(&self, stream: &mut Stream) -> ParserResult {
+    fn error_parameters_list(&self, stream: &mut Stream) -> ParserResult {
         if self.version_is_at_least_0_8_4 {
             {
                 let mut helper = SequenceHelper::new();
@@ -3373,7 +3373,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn event_definition(&self, stream: &mut Stream) -> ParserResult {
+    fn event_definition(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -3447,7 +3447,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn event_parameter(&self, stream: &mut Stream) -> ParserResult {
+    fn event_parameter(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -3472,7 +3472,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn event_parameters_list(&self, stream: &mut Stream) -> ParserResult {
+    fn event_parameters_list(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -3504,7 +3504,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn experimental_pragma(&self, stream: &mut Stream) -> ParserResult {
+    fn experimental_pragma(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -3540,12 +3540,12 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn exponentiation_operator(&self, stream: &mut Stream) -> ParserResult {
+    fn exponentiation_operator(&self, stream: &mut Stream) -> ParserResult {
         self.default_parse_token_with_trivia(stream, TokenKind::AsteriskAsterisk)
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn expression(&self, stream: &mut Stream) -> ParserResult {
+    fn expression(&self, stream: &mut Stream) -> ParserResult {
         let parse_assignment_operator = |stream: &mut Stream| {
             PrecedenceHelper::to_precedence_result(RuleKind::BinaryExpression, 1u8, 2u8, {
                 let mut helper = ChoiceHelper::new(stream);
@@ -4123,7 +4123,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn expression_statement(&self, stream: &mut Stream) -> ParserResult {
+    fn expression_statement(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -4143,7 +4143,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn fallback_function_attribute(&self, stream: &mut Stream) -> ParserResult {
+    fn fallback_function_attribute(&self, stream: &mut Stream) -> ParserResult {
         if self.version_is_at_least_0_6_0 {
             {
                 let mut helper = ChoiceHelper::new(stream);
@@ -4191,7 +4191,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn fallback_function_attributes_list(&self, stream: &mut Stream) -> ParserResult {
+    fn fallback_function_attributes_list(&self, stream: &mut Stream) -> ParserResult {
         if self.version_is_at_least_0_6_0 {
             OneOrMoreHelper::run(stream, |stream| self.fallback_function_attribute(stream))
         } else {
@@ -4201,7 +4201,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn fallback_function_definition(&self, stream: &mut Stream) -> ParserResult {
+    fn fallback_function_definition(&self, stream: &mut Stream) -> ParserResult {
         if self.version_is_at_least_0_6_0 {
             {
                 let mut helper = SequenceHelper::new();
@@ -4253,7 +4253,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn for_statement(&self, stream: &mut Stream) -> ParserResult {
+    fn for_statement(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -4346,7 +4346,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn function_attribute(&self, stream: &mut Stream) -> ParserResult {
+    fn function_attribute(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = ChoiceHelper::new(stream);
             loop {
@@ -4411,13 +4411,13 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn function_attributes_list(&self, stream: &mut Stream) -> ParserResult {
+    fn function_attributes_list(&self, stream: &mut Stream) -> ParserResult {
         OneOrMoreHelper::run(stream, |stream| self.function_attribute(stream))
             .with_kind(RuleKind::FunctionAttributesList)
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn function_call_operator(&self, stream: &mut Stream) -> ParserResult {
+    fn function_call_operator(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -4438,7 +4438,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn function_call_options(&self, stream: &mut Stream) -> ParserResult {
+    fn function_call_options(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = ChoiceHelper::new(stream);
             loop {
@@ -4464,7 +4464,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn function_definition(&self, stream: &mut Stream) -> ParserResult {
+    fn function_definition(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -4536,7 +4536,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn function_type(&self, stream: &mut Stream) -> ParserResult {
+    fn function_type(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -4566,7 +4566,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn function_type_attribute(&self, stream: &mut Stream) -> ParserResult {
+    fn function_type_attribute(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = ChoiceHelper::new(stream);
             loop {
@@ -4609,13 +4609,13 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn function_type_attributes_list(&self, stream: &mut Stream) -> ParserResult {
+    fn function_type_attributes_list(&self, stream: &mut Stream) -> ParserResult {
         OneOrMoreHelper::run(stream, |stream| self.function_type_attribute(stream))
             .with_kind(RuleKind::FunctionTypeAttributesList)
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn hex_string_literals_list(&self, stream: &mut Stream) -> ParserResult {
+    fn hex_string_literals_list(&self, stream: &mut Stream) -> ParserResult {
         OneOrMoreHelper::run(stream, |stream| {
             self.default_parse_token_with_trivia(stream, TokenKind::HexStringLiteral)
         })
@@ -4623,7 +4623,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn identifier_path(&self, stream: &mut Stream) -> ParserResult {
+    fn identifier_path(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -4659,7 +4659,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn identifier_paths_list(&self, stream: &mut Stream) -> ParserResult {
+    fn identifier_paths_list(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -4691,7 +4691,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn identifiers_list(&self, stream: &mut Stream) -> ParserResult {
+    fn identifiers_list(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -4727,7 +4727,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn if_statement(&self, stream: &mut Stream) -> ParserResult {
+    fn if_statement(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -4786,7 +4786,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn import_directive(&self, stream: &mut Stream) -> ParserResult {
+    fn import_directive(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -4838,7 +4838,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn index_access_operator(&self, stream: &mut Stream) -> ParserResult {
+    fn index_access_operator(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -4892,7 +4892,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn inheritance_specifier(&self, stream: &mut Stream) -> ParserResult {
+    fn inheritance_specifier(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -4912,7 +4912,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn inheritance_type(&self, stream: &mut Stream) -> ParserResult {
+    fn inheritance_type(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -4932,7 +4932,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn inheritance_types_list(&self, stream: &mut Stream) -> ParserResult {
+    fn inheritance_types_list(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -4964,7 +4964,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn interface_definition(&self, stream: &mut Stream) -> ParserResult {
+    fn interface_definition(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -5015,13 +5015,13 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn interface_members_list(&self, stream: &mut Stream) -> ParserResult {
+    fn interface_members_list(&self, stream: &mut Stream) -> ParserResult {
         OneOrMoreHelper::run(stream, |stream| self.contract_member(stream))
             .with_kind(RuleKind::InterfaceMembersList)
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn leading_trivia(&self, stream: &mut Stream) -> ParserResult {
+    fn leading_trivia(&self, stream: &mut Stream) -> ParserResult {
         OneOrMoreHelper::run(stream, |stream| {
             let mut helper = ChoiceHelper::new(stream);
             loop {
@@ -5049,7 +5049,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn library_definition(&self, stream: &mut Stream) -> ParserResult {
+    fn library_definition(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -5095,13 +5095,13 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn library_members_list(&self, stream: &mut Stream) -> ParserResult {
+    fn library_members_list(&self, stream: &mut Stream) -> ParserResult {
         OneOrMoreHelper::run(stream, |stream| self.contract_member(stream))
             .with_kind(RuleKind::LibraryMembersList)
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn mapping_key_type(&self, stream: &mut Stream) -> ParserResult {
+    fn mapping_key_type(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -5137,7 +5137,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn mapping_type(&self, stream: &mut Stream) -> ParserResult {
+    fn mapping_type(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -5194,7 +5194,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn mapping_value_type(&self, stream: &mut Stream) -> ParserResult {
+    fn mapping_value_type(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -5216,7 +5216,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn member_access_operator(&self, stream: &mut Stream) -> ParserResult {
+    fn member_access_operator(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -5251,7 +5251,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn modifier_attribute(&self, stream: &mut Stream) -> ParserResult {
+    fn modifier_attribute(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = ChoiceHelper::new(stream);
             loop {
@@ -5273,13 +5273,13 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn modifier_attributes_list(&self, stream: &mut Stream) -> ParserResult {
+    fn modifier_attributes_list(&self, stream: &mut Stream) -> ParserResult {
         OneOrMoreHelper::run(stream, |stream| self.modifier_attribute(stream))
             .with_kind(RuleKind::ModifierAttributesList)
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn modifier_definition(&self, stream: &mut Stream) -> ParserResult {
+    fn modifier_definition(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -5329,7 +5329,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn modifier_invocation(&self, stream: &mut Stream) -> ParserResult {
+    fn modifier_invocation(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -5349,7 +5349,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn mul_div_mod_operator(&self, stream: &mut Stream) -> ParserResult {
+    fn mul_div_mod_operator(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = ChoiceHelper::new(stream);
             loop {
@@ -5372,7 +5372,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn named_argument(&self, stream: &mut Stream) -> ParserResult {
+    fn named_argument(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -5397,7 +5397,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn named_arguments_declaration(&self, stream: &mut Stream) -> ParserResult {
+    fn named_arguments_declaration(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -5424,7 +5424,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn named_arguments_list(&self, stream: &mut Stream) -> ParserResult {
+    fn named_arguments_list(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -5456,7 +5456,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn named_import(&self, stream: &mut Stream) -> ParserResult {
+    fn named_import(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -5493,7 +5493,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn new_expression(&self, stream: &mut Stream) -> ParserResult {
+    fn new_expression(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -5513,7 +5513,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn number_unit(&self, stream: &mut Stream) -> ParserResult {
+    fn number_unit(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = ChoiceHelper::new(stream);
             loop {
@@ -5590,7 +5590,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn numeric_expression(&self, stream: &mut Stream) -> ParserResult {
+    fn numeric_expression(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = ChoiceHelper::new(stream);
             loop {
@@ -5644,12 +5644,12 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn or_operator(&self, stream: &mut Stream) -> ParserResult {
+    fn or_operator(&self, stream: &mut Stream) -> ParserResult {
         self.default_parse_token_with_trivia(stream, TokenKind::BarBar)
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn order_comparison_operator(&self, stream: &mut Stream) -> ParserResult {
+    fn order_comparison_operator(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = ChoiceHelper::new(stream);
             loop {
@@ -5677,7 +5677,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn override_specifier(&self, stream: &mut Stream) -> ParserResult {
+    fn override_specifier(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -5718,7 +5718,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn parameter(&self, stream: &mut Stream) -> ParserResult {
+    fn parameter(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -5742,7 +5742,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn parameters_declaration(&self, stream: &mut Stream) -> ParserResult {
+    fn parameters_declaration(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -5769,7 +5769,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn parameters_list(&self, stream: &mut Stream) -> ParserResult {
+    fn parameters_list(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -5801,7 +5801,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn path_import(&self, stream: &mut Stream) -> ParserResult {
+    fn path_import(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -5837,7 +5837,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn positional_arguments_list(&self, stream: &mut Stream) -> ParserResult {
+    fn positional_arguments_list(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -5869,7 +5869,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn pragma_directive(&self, stream: &mut Stream) -> ParserResult {
+    fn pragma_directive(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -5921,7 +5921,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn primary_expression(&self, stream: &mut Stream) -> ParserResult {
+    fn primary_expression(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = ChoiceHelper::new(stream);
             loop {
@@ -5970,7 +5970,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn receive_function_attribute(&self, stream: &mut Stream) -> ParserResult {
+    fn receive_function_attribute(&self, stream: &mut Stream) -> ParserResult {
         if self.version_is_at_least_0_6_0 {
             {
                 let mut helper = ChoiceHelper::new(stream);
@@ -6008,7 +6008,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn receive_function_attributes_list(&self, stream: &mut Stream) -> ParserResult {
+    fn receive_function_attributes_list(&self, stream: &mut Stream) -> ParserResult {
         if self.version_is_at_least_0_6_0 {
             OneOrMoreHelper::run(stream, |stream| self.receive_function_attribute(stream))
         } else {
@@ -6018,7 +6018,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn receive_function_definition(&self, stream: &mut Stream) -> ParserResult {
+    fn receive_function_definition(&self, stream: &mut Stream) -> ParserResult {
         if self.version_is_at_least_0_6_0 {
             {
                 let mut helper = SequenceHelper::new();
@@ -6065,7 +6065,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn return_statement(&self, stream: &mut Stream) -> ParserResult {
+    fn return_statement(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -6101,7 +6101,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn returns_declaration(&self, stream: &mut Stream) -> ParserResult {
+    fn returns_declaration(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -6121,7 +6121,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn revert_statement(&self, stream: &mut Stream) -> ParserResult {
+    fn revert_statement(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -6160,7 +6160,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn shift_operator(&self, stream: &mut Stream) -> ParserResult {
+    fn shift_operator(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = ChoiceHelper::new(stream);
             loop {
@@ -6188,7 +6188,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn simple_statement(&self, stream: &mut Stream) -> ParserResult {
+    fn simple_statement(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = ChoiceHelper::new(stream);
             loop {
@@ -6211,7 +6211,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn solidity_keywords_over_all_versions(&self, stream: &mut Stream) -> ParserResult {
+    fn solidity_keywords_over_all_versions(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = ChoiceHelper::new(stream);
             loop {
@@ -6695,7 +6695,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn source_unit(&self, stream: &mut Stream) -> ParserResult {
+    fn source_unit(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -6717,7 +6717,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn source_unit_member(&self, stream: &mut Stream) -> ParserResult {
+    fn source_unit_member(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = ChoiceHelper::new(stream);
             loop {
@@ -6798,13 +6798,13 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn source_unit_members_list(&self, stream: &mut Stream) -> ParserResult {
+    fn source_unit_members_list(&self, stream: &mut Stream) -> ParserResult {
         OneOrMoreHelper::run(stream, |stream| self.source_unit_member(stream))
             .with_kind(RuleKind::SourceUnitMembersList)
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn state_variable_attribute(&self, stream: &mut Stream) -> ParserResult {
+    fn state_variable_attribute(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = ChoiceHelper::new(stream);
             loop {
@@ -6845,13 +6845,13 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn state_variable_attributes_list(&self, stream: &mut Stream) -> ParserResult {
+    fn state_variable_attributes_list(&self, stream: &mut Stream) -> ParserResult {
         OneOrMoreHelper::run(stream, |stream| self.state_variable_attribute(stream))
             .with_kind(RuleKind::StateVariableAttributesList)
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn state_variable_definition(&self, stream: &mut Stream) -> ParserResult {
+    fn state_variable_definition(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -6907,7 +6907,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn statement(&self, stream: &mut Stream) -> ParserResult {
+    fn statement(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = ChoiceHelper::new(stream);
             loop {
@@ -6941,13 +6941,13 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn statements_list(&self, stream: &mut Stream) -> ParserResult {
+    fn statements_list(&self, stream: &mut Stream) -> ParserResult {
         OneOrMoreHelper::run(stream, |stream| self.statement(stream))
             .with_kind(RuleKind::StatementsList)
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn string_expression(&self, stream: &mut Stream) -> ParserResult {
+    fn string_expression(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = ChoiceHelper::new(stream);
             loop {
@@ -6972,7 +6972,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn struct_definition(&self, stream: &mut Stream) -> ParserResult {
+    fn struct_definition(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -7018,7 +7018,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn struct_member(&self, stream: &mut Stream) -> ParserResult {
+    fn struct_member(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -7052,13 +7052,13 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn struct_members_list(&self, stream: &mut Stream) -> ParserResult {
+    fn struct_members_list(&self, stream: &mut Stream) -> ParserResult {
         OneOrMoreHelper::run(stream, |stream| self.struct_member(stream))
             .with_kind(RuleKind::StructMembersList)
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn throw_statement(&self, stream: &mut Stream) -> ParserResult {
+    fn throw_statement(&self, stream: &mut Stream) -> ParserResult {
         if !self.version_is_at_least_0_5_0 {
             {
                 let mut helper = SequenceHelper::new();
@@ -7084,7 +7084,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn trailing_trivia(&self, stream: &mut Stream) -> ParserResult {
+    fn trailing_trivia(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -7110,7 +7110,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn try_statement(&self, stream: &mut Stream) -> ParserResult {
+    fn try_statement(&self, stream: &mut Stream) -> ParserResult {
         if self.version_is_at_least_0_6_0 {
             {
                 let mut helper = SequenceHelper::new();
@@ -7145,7 +7145,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn tuple_deconstruction_statement(&self, stream: &mut Stream) -> ParserResult {
+    fn tuple_deconstruction_statement(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -7209,7 +7209,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn tuple_expression(&self, stream: &mut Stream) -> ParserResult {
+    fn tuple_expression(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -7234,7 +7234,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn tuple_member(&self, stream: &mut Stream) -> ParserResult {
+    fn tuple_member(&self, stream: &mut Stream) -> ParserResult {
         OptionalHelper::transform({
             let mut helper = ChoiceHelper::new(stream);
             loop {
@@ -7289,7 +7289,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn tuple_members_list(&self, stream: &mut Stream) -> ParserResult {
+    fn tuple_members_list(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -7321,7 +7321,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn tuple_values_list(&self, stream: &mut Stream) -> ParserResult {
+    fn tuple_values_list(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -7355,7 +7355,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn type_expression(&self, stream: &mut Stream) -> ParserResult {
+    fn type_expression(&self, stream: &mut Stream) -> ParserResult {
         if self.version_is_at_least_0_5_3 {
             {
                 let mut helper = SequenceHelper::new();
@@ -7398,7 +7398,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn type_name(&self, stream: &mut Stream) -> ParserResult {
+    fn type_name(&self, stream: &mut Stream) -> ParserResult {
         let parse_array_type_name_operator = |stream: &mut Stream| {
             PrecedenceHelper::to_precedence_result(RuleKind::ArrayTypeName, 1u8, 255u8, {
                 let mut helper = SequenceHelper::new();
@@ -7479,7 +7479,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn unary_postfix_operator(&self, stream: &mut Stream) -> ParserResult {
+    fn unary_postfix_operator(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = ChoiceHelper::new(stream);
             loop {
@@ -7498,7 +7498,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn unary_prefix_operator(&self, stream: &mut Stream) -> ParserResult {
+    fn unary_prefix_operator(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = ChoiceHelper::new(stream);
             loop {
@@ -7535,7 +7535,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn unchecked_block(&self, stream: &mut Stream) -> ParserResult {
+    fn unchecked_block(&self, stream: &mut Stream) -> ParserResult {
         if self.version_is_at_least_0_8_0 {
             {
                 let mut helper = SequenceHelper::new();
@@ -7559,7 +7559,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn unicode_string_literals_list(&self, stream: &mut Stream) -> ParserResult {
+    fn unicode_string_literals_list(&self, stream: &mut Stream) -> ParserResult {
         if self.version_is_at_least_0_7_0 {
             OneOrMoreHelper::run(stream, |stream| {
                 self.default_parse_token_with_trivia(stream, TokenKind::UnicodeStringLiteral)
@@ -7571,7 +7571,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn unnamed_function_attribute(&self, stream: &mut Stream) -> ParserResult {
+    fn unnamed_function_attribute(&self, stream: &mut Stream) -> ParserResult {
         if !self.version_is_at_least_0_6_0 {
             {
                 let mut helper = ChoiceHelper::new(stream);
@@ -7614,7 +7614,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn unnamed_function_attributes_list(&self, stream: &mut Stream) -> ParserResult {
+    fn unnamed_function_attributes_list(&self, stream: &mut Stream) -> ParserResult {
         if !self.version_is_at_least_0_6_0 {
             OneOrMoreHelper::run(stream, |stream| self.unnamed_function_attribute(stream))
         } else {
@@ -7624,7 +7624,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn unnamed_function_definition(&self, stream: &mut Stream) -> ParserResult {
+    fn unnamed_function_definition(&self, stream: &mut Stream) -> ParserResult {
         if !self.version_is_at_least_0_6_0 {
             {
                 let mut helper = SequenceHelper::new();
@@ -7671,7 +7671,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn user_defined_value_type_definition(&self, stream: &mut Stream) -> ParserResult {
+    fn user_defined_value_type_definition(&self, stream: &mut Stream) -> ParserResult {
         if self.version_is_at_least_0_8_8 {
             {
                 let mut helper = SequenceHelper::new();
@@ -7722,7 +7722,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn using_directive(&self, stream: &mut Stream) -> ParserResult {
+    fn using_directive(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -7798,7 +7798,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn using_directive_deconstruction(&self, stream: &mut Stream) -> ParserResult {
+    fn using_directive_deconstruction(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -7823,7 +7823,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn using_directive_operator(&self, stream: &mut Stream) -> ParserResult {
+    fn using_directive_operator(&self, stream: &mut Stream) -> ParserResult {
         if self.version_is_at_least_0_8_19 {
             {
                 let mut helper = ChoiceHelper::new(stream);
@@ -7902,13 +7902,13 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn using_directive_path(&self, stream: &mut Stream) -> ParserResult {
+    fn using_directive_path(&self, stream: &mut Stream) -> ParserResult {
         self.identifier_path(stream)
             .with_kind(RuleKind::UsingDirectivePath)
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn using_directive_symbol(&self, stream: &mut Stream) -> ParserResult {
+    fn using_directive_symbol(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -7942,7 +7942,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn using_directive_symbols_list(&self, stream: &mut Stream) -> ParserResult {
+    fn using_directive_symbols_list(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -7974,7 +7974,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn variable_declaration(&self, stream: &mut Stream) -> ParserResult {
+    fn variable_declaration(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -8015,7 +8015,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn variable_declaration_statement(&self, stream: &mut Stream) -> ParserResult {
+    fn variable_declaration_statement(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -8061,7 +8061,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn version_pragma(&self, stream: &mut Stream) -> ParserResult {
+    fn version_pragma(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -8081,7 +8081,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn version_pragma_expression(&self, stream: &mut Stream) -> ParserResult {
+    fn version_pragma_expression(&self, stream: &mut Stream) -> ParserResult {
         let parse_version_pragma_or_operator = |stream: &mut Stream| {
             PrecedenceHelper::to_precedence_result(
                 RuleKind::VersionPragmaBinaryExpression,
@@ -8226,23 +8226,23 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn version_pragma_expressions_list(&self, stream: &mut Stream) -> ParserResult {
+    fn version_pragma_expressions_list(&self, stream: &mut Stream) -> ParserResult {
         OneOrMoreHelper::run(stream, |stream| self.version_pragma_expression(stream))
             .with_kind(RuleKind::VersionPragmaExpressionsList)
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn version_pragma_or_operator(&self, stream: &mut Stream) -> ParserResult {
+    fn version_pragma_or_operator(&self, stream: &mut Stream) -> ParserResult {
         self.version_pragma_parse_token_with_trivia(stream, TokenKind::BarBar)
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn version_pragma_range_operator(&self, stream: &mut Stream) -> ParserResult {
+    fn version_pragma_range_operator(&self, stream: &mut Stream) -> ParserResult {
         self.version_pragma_parse_token_with_trivia(stream, TokenKind::Minus)
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn version_pragma_specifier(&self, stream: &mut Stream) -> ParserResult {
+    fn version_pragma_specifier(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -8282,7 +8282,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn version_pragma_unary_operator(&self, stream: &mut Stream) -> ParserResult {
+    fn version_pragma_unary_operator(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = ChoiceHelper::new(stream);
             loop {
@@ -8325,7 +8325,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn while_statement(&self, stream: &mut Stream) -> ParserResult {
+    fn while_statement(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -8367,7 +8367,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn yul_assignment_statement(&self, stream: &mut Stream) -> ParserResult {
+    fn yul_assignment_statement(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -8390,7 +8390,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn yul_block(&self, stream: &mut Stream) -> ParserResult {
+    fn yul_block(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -8417,19 +8417,19 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn yul_break_statement(&self, stream: &mut Stream) -> ParserResult {
+    fn yul_break_statement(&self, stream: &mut Stream) -> ParserResult {
         self.yul_block_parse_token_with_trivia(stream, TokenKind::BreakKeyword)
             .with_kind(RuleKind::YulBreakStatement)
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn yul_continue_statement(&self, stream: &mut Stream) -> ParserResult {
+    fn yul_continue_statement(&self, stream: &mut Stream) -> ParserResult {
         self.yul_block_parse_token_with_trivia(stream, TokenKind::ContinueKeyword)
             .with_kind(RuleKind::YulContinueStatement)
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn yul_declaration_statement(&self, stream: &mut Stream) -> ParserResult {
+    fn yul_declaration_statement(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -8466,7 +8466,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn yul_expression(&self, stream: &mut Stream) -> ParserResult {
+    fn yul_expression(&self, stream: &mut Stream) -> ParserResult {
         let parse_yul_function_call_operator = |stream: &mut Stream| {
             PrecedenceHelper::to_precedence_result(
                 RuleKind::YulFunctionCallExpression,
@@ -8545,7 +8545,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn yul_expressions_list(&self, stream: &mut Stream) -> ParserResult {
+    fn yul_expressions_list(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -8577,7 +8577,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn yul_for_statement(&self, stream: &mut Stream) -> ParserResult {
+    fn yul_for_statement(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -8606,7 +8606,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn yul_function_call_operator(&self, stream: &mut Stream) -> ParserResult {
+    fn yul_function_call_operator(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -8632,7 +8632,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn yul_function_definition(&self, stream: &mut Stream) -> ParserResult {
+    fn yul_function_definition(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -8665,7 +8665,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn yul_identifier_path(&self, stream: &mut Stream) -> ParserResult {
+    fn yul_identifier_path(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -8704,7 +8704,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn yul_identifier_paths_list(&self, stream: &mut Stream) -> ParserResult {
+    fn yul_identifier_paths_list(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -8736,7 +8736,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn yul_identifiers_list(&self, stream: &mut Stream) -> ParserResult {
+    fn yul_identifiers_list(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -8775,7 +8775,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn yul_if_statement(&self, stream: &mut Stream) -> ParserResult {
+    fn yul_if_statement(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -8798,7 +8798,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn yul_keywords_over_all_versions(&self, stream: &mut Stream) -> ParserResult {
+    fn yul_keywords_over_all_versions(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = ChoiceHelper::new(stream);
             loop {
@@ -8868,7 +8868,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn yul_leave_statement(&self, stream: &mut Stream) -> ParserResult {
+    fn yul_leave_statement(&self, stream: &mut Stream) -> ParserResult {
         if self.version_is_at_least_0_6_0 {
             self.yul_block_parse_token_with_trivia(stream, TokenKind::LeaveKeyword)
         } else {
@@ -8878,7 +8878,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn yul_literal(&self, stream: &mut Stream) -> ParserResult {
+    fn yul_literal(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = ChoiceHelper::new(stream);
             loop {
@@ -8918,7 +8918,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn yul_parameters_declaration(&self, stream: &mut Stream) -> ParserResult {
+    fn yul_parameters_declaration(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -8945,7 +8945,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn yul_returns_declaration(&self, stream: &mut Stream) -> ParserResult {
+    fn yul_returns_declaration(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -8965,7 +8965,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn yul_statement(&self, stream: &mut Stream) -> ParserResult {
+    fn yul_statement(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = ChoiceHelper::new(stream);
             loop {
@@ -9023,13 +9023,13 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn yul_statements_list(&self, stream: &mut Stream) -> ParserResult {
+    fn yul_statements_list(&self, stream: &mut Stream) -> ParserResult {
         OneOrMoreHelper::run(stream, |stream| self.yul_statement(stream))
             .with_kind(RuleKind::YulStatementsList)
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn yul_switch_case(&self, stream: &mut Stream) -> ParserResult {
+    fn yul_switch_case(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -9079,13 +9079,13 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn yul_switch_cases_list(&self, stream: &mut Stream) -> ParserResult {
+    fn yul_switch_cases_list(&self, stream: &mut Stream) -> ParserResult {
         OneOrMoreHelper::run(stream, |stream| self.yul_switch_case(stream))
             .with_kind(RuleKind::YulSwitchCasesList)
     }
 
     #[allow(unused_assignments, unused_parens)]
-    pub fn yul_switch_statement(&self, stream: &mut Stream) -> ParserResult {
+    fn yul_switch_statement(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
             loop {
@@ -9654,6 +9654,15 @@ impl Language {
         self.raw_identifier(stream)
     }
 
+    pub fn scan(&self, lexical_context: LexicalContext, input: &str) -> Option<TokenKind> {
+        let mut stream = Stream::new(input);
+        match lexical_context {
+            LexicalContext::Default => self.default_next_token(&mut stream),
+            LexicalContext::VersionPragma => self.version_pragma_next_token(&mut stream),
+            LexicalContext::YulBlock => self.yul_block_next_token(&mut stream),
+        }
+    }
+
     pub fn parse(&self, production_kind: ProductionKind, input: &str) -> ParseOutput {
         match production_kind {
             ProductionKind::ABICoderPragma => Self::abi_coder_pragma.parse(self, input),
@@ -9948,6 +9957,25 @@ impl Language {
     }
 }
 
+#[derive(
+    Debug,
+    Eq,
+    Ord,
+    PartialEq,
+    PartialOrd,
+    serde::Serialize,
+    strum_macros::AsRefStr,
+    strum_macros::Display,
+    strum_macros::EnumString,
+)]
+#[cfg_attr( feature = "slang_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "language") )]
+#[cfg_attr(not(feature = "slang_napi_interfaces"), derive(Clone, Copy))]
+pub enum LexicalContext {
+    Default,
+    VersionPragma,
+    YulBlock,
+}
+
 #[cfg(feature = "slang_napi_interfaces")]
 #[napi(namespace = "language")]
 impl Language {
@@ -9966,6 +9994,11 @@ impl Language {
     #[napi(js_name = "supportedVersions")]
     pub fn supported_versions_napi() -> Vec<String> {
         return Self::VERSIONS.iter().map(|v| v.to_string()).collect();
+    }
+
+    #[napi(js_name = "scan")]
+    pub fn scan_napi(&self, lexical_context: LexicalContext, input: String) -> Option<TokenKind> {
+        self.scan(lexical_context, input.as_str())
     }
 
     #[napi(js_name = "parse", ts_return_type = "ParseOutput")]

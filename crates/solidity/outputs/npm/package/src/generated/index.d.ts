@@ -576,10 +576,16 @@ export namespace kinds {
   }
 }
 export namespace language {
+  export enum LexicalContext {
+    Default = "Default",
+    VersionPragma = "VersionPragma",
+    YulBlock = "YulBlock",
+  }
   export class Language {
     constructor(version: string);
     get version(): string;
     static supportedVersions(): Array<string>;
+    scan(lexicalContext: LexicalContext, input: string): TokenKind | null;
     parse(productionKind: ProductionKind, input: string): ParseOutput;
   }
 }

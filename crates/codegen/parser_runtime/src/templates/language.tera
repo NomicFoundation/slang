@@ -121,7 +121,7 @@ impl Language {
         }
 
         #[allow(unused_assignments, unused_parens)]
-        pub fn {{ context.name | snake_case }}_next_token(&self, stream: &mut Stream) -> Option<TokenKind> {
+        pub(crate) fn {{ context.name | snake_case }}_next_token(&self, stream: &mut Stream) -> Option<TokenKind> {
             let save = stream.position();
             let mut furthest_position = stream.position();
             let mut longest_token = TokenKind::SKIPPED; // just a marker
@@ -180,7 +180,7 @@ impl Language {
     {%- for function in code.parser_functions -%}
         {# Separator #}
         #[allow(unused_assignments, unused_parens)]
-        pub fn {{ function.0 | snake_case }}(&self, stream: &mut Stream) -> ParserResult { {{ function.1 }} }
+        fn {{ function.0 | snake_case }}(&self, stream: &mut Stream) -> ParserResult { {{ function.1 }} }
         {# Separator #}
     {%- endfor -%}
     {# Separator #}
@@ -199,6 +199,15 @@ impl Language {
     {%- endfor -%}
     {# Separator #}
 
+    pub fn scan(&self, lexical_context: LexicalContext, input: &str) -> Option<TokenKind> {
+        let mut stream = Stream::new(input);
+        match lexical_context {
+            {%- for lexical_context in code.scanner_contexts -%}
+                LexicalContext::{{ lexical_context.name }} => self.{{ lexical_context.name | snake_case }}_next_token(&mut stream),
+            {%- endfor -%}
+        }
+    }
+
     pub fn parse(&self, production_kind: ProductionKind, input: &str) -> ParseOutput {
         match production_kind {
             {%- for function in code.parser_functions -%}
@@ -206,6 +215,26 @@ impl Language {
             {%- endfor -%}
         }
     }
+}
+
+#[derive(
+    Debug,
+    Eq,
+    Ord,
+    PartialEq,
+    PartialOrd,
+    serde::Serialize,
+    strum_macros::AsRefStr,
+    strum_macros::Display,
+    strum_macros::EnumString,
+)]
+#[cfg_attr( feature = "slang_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "language") )]
+#[cfg_attr( not(feature = "slang_napi_interfaces"), derive(Clone, Copy))]
+pub enum LexicalContext {
+    {%- for context in code.scanner_contexts -%}
+        {# Separator #}
+        {{ context.name }},
+    {%- endfor -%}
 }
 
 #[cfg( feature = "slang_napi_interfaces" )]
@@ -226,6 +255,11 @@ impl Language {
     #[napi(js_name = "supportedVersions")]
     pub fn supported_versions_napi() -> Vec<String> {
         return Self::VERSIONS.iter().map(|v| v.to_string()).collect();
+    }
+
+    #[napi(js_name = "scan")]
+    pub fn scan_napi(&self, lexical_context: LexicalContext, input: String) -> Option<TokenKind> {
+        self.scan(lexical_context, input.as_str())
     }
 
     #[napi(js_name = "parse", ts_return_type = "ParseOutput")]
