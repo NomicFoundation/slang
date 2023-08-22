@@ -1,0 +1,17 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ receive                                                                          │ 0..7
+
+Errors: # 1 total
+  - >
+    Error: Expected Identifier.
+       ╭─[crates/solidity/testing/snapshots/cst_output/Identifier/keyword_receive/input.sol:1:1]
+       │
+     1 │ receive
+       │ ───┬───  
+       │    ╰───── Error occurred here.
+    ───╯
+
+Tree:
+  - SKIPPED (Token): "receive" # 0..7

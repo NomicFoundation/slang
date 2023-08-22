@@ -1,0 +1,9 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ areturn                                                                          │ 0..7
+
+Errors: []
+
+Tree:
+  - Identifier (Token): "areturn" # 0..7

@@ -1,0 +1,17 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ 0x_1                                                                             │ 0..4
+
+Errors: # 1 total
+  - >
+    Error: Expected HexLiteral.
+       ╭─[crates/solidity/testing/snapshots/cst_output/HexLiteral/leading_underscore/input.sol:1:1]
+       │
+     1 │ 0x_1
+       │ ──┬─  
+       │   ╰─── Error occurred here.
+    ───╯
+
+Tree:
+  - SKIPPED (Token): "0x_1" # 0..4

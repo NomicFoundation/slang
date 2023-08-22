@@ -1,0 +1,9 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ int32                                                                            │ 0..5
+
+Errors: []
+
+Tree:
+  - SignedIntegerType (Token): "int32" # 0..5
