@@ -69,14 +69,14 @@ linear_scan() {
 }
 
 # Merge the "installable" and "installed" versions, as they're disjoint by solc-select
-VERSIONS=(
-  $(
-    {
-      solc-select install | tail -n +2
-      solc-select versions | awk '/^[0-9]+\.[0-9]+\.[0-9]+$/ {print $0}'
-    } \
-      | sort -V | uniq
-  )
+mapfile -t VERSIONS < <(
+  {
+    # Skip "Available versions to install:"
+    solc-select install | tail -n +2
+    # Skip (current) prefix by only selecting the versions
+    solc-select versions | awk '/^[0-9]+\.[0-9]+\.[0-9]+$/ {print $0}'
+  } \
+    | sort -V | uniq
 )
 
 if [ "$METHOD" = "scan" ]; then
