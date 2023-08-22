@@ -261,7 +261,7 @@ slang_grammar! {
             { removed in "0.8.0" ByteKeyword}
         ) ;
 
-        parser EmitStatement = { introduced in "0.5.12" ((EmitKeyword IdentifierPath ArgumentsDeclaration) terminated_by Semicolon) } ;
+        parser EmitStatement = { introduced in "0.4.21" ((EmitKeyword IdentifierPath ArgumentsDeclaration) terminated_by Semicolon) } ;
 
         parser EnumDefinition = (EnumKeyword Identifier ((IdentifiersList ?) delimited_by OpenBrace and CloseBrace)) ;
 
