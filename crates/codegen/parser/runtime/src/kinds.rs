@@ -12,7 +12,7 @@ use {napi::bindgen_prelude::*, napi_derive::napi};
     strum_macros::Display,
     strum_macros::EnumString,
 )]
-#[cfg_attr( feature = "slang_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "legacy") )]
+#[cfg_attr( feature = "slang_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "kinds") )]
 #[cfg_attr(not(feature = "slang_napi_interfaces"), derive(Clone, Copy))]
 pub enum TokenKind {
     SKIPPED,
@@ -30,7 +30,7 @@ pub enum TokenKind {
     strum_macros::Display,
     strum_macros::EnumString,
 )]
-#[cfg_attr( feature = "slang_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "legacy") )]
+#[cfg_attr( feature = "slang_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "kinds") )]
 #[cfg_attr(not(feature = "slang_napi_interfaces"), derive(Clone, Copy))]
 pub enum RuleKind {
     XXX,
@@ -47,7 +47,7 @@ pub enum RuleKind {
     strum_macros::Display,
     strum_macros::EnumString,
 )]
-#[cfg_attr( feature = "slang_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "legacy") )]
+#[cfg_attr( feature = "slang_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "kinds") )]
 #[cfg_attr(not(feature = "slang_napi_interfaces"), derive(Clone, Copy))]
 pub enum ProductionKind {
     XXX,

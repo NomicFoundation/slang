@@ -8,8 +8,8 @@ publish = false
 members = [
     "crates/codegen/ebnf",
     "crates/codegen/grammar",
-    "crates/codegen/parser_generator",
-    "crates/codegen/parser_runtime",
+    "crates/codegen/parser/generator",
+    "crates/codegen/parser/runtime",
     "crates/codegen/schema",
     "crates/codegen/spec",
     "crates/codegen/testing",
@@ -34,8 +34,8 @@ members = [
 #
 codegen_ebnf = { path = "crates/codegen/ebnf" }
 codegen_grammar = { path = "crates/codegen/grammar" }
-codegen_parser_runtime = { path = "crates/codegen/parser_runtime" }
-codegen_parser_generator = { path = "crates/codegen/parser_generator" }
+codegen_parser_generator = { path = "crates/codegen/parser/generator" }
+codegen_parser_runtime = { path = "crates/codegen/parser/runtime" }
 codegen_schema = { path = "crates/codegen/schema" }
 codegen_spec = { path = "crates/codegen/spec" }
 codegen_testing = { path = "crates/codegen/testing" }
