@@ -1,0 +1,16 @@
+[package]
+name = "codegen_parser_generator"
+version.workspace = true
+rust-version.workspace = true
+edition.workspace = true
+publish = false
+
+[dependencies]
+anyhow = { workspace = true }
+codegen_grammar = { workspace = true }
+infra_utils = { workspace = true }
+Inflector = { workspace = true }
+proc-macro2 = { workspace = true }
+quote = { workspace = true }
+semver = { workspace = true }
+serde = { workspace = true }

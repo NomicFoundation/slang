@@ -6,8 +6,9 @@ use std::str::FromStr;
 use anyhow::{bail, ensure, Context, Result};
 use semver::{Comparator, Op, Version};
 use slang_solidity::{
+    cst::Node,
+    kinds::{ProductionKind, RuleKind, TokenKind},
     language::Language,
-    syntax::nodes::{Node, ProductionKind, RuleKind, TokenKind},
 };
 
 use crate::node_extensions::NodeExtensions;
@@ -17,7 +18,7 @@ pub fn extract_version_pragmas(
     latest_version: &Version,
 ) -> Result<Vec<VersionPragma>> {
     let language = &Language::new(latest_version.to_owned())?;
-    let output = language.parse(ProductionKind::SourceUnit, source)?;
+    let output = language.parse(ProductionKind::SourceUnit, source);
 
     let mut cursor = output.parse_tree().cursor();
     let mut pragmas = vec![];

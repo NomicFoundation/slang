@@ -8,7 +8,7 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Expected ConstantKeyword or Identifier or InternalKeyword or OverrideKeyword or Period or PrivateKeyword or PublicKeyword.
+    Error: Expected ConstantKeyword or Identifier or InternalKeyword or OverrideKeyword or PrivateKeyword or PublicKeyword.
        ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/member_constructor_definition/input.sol:2:14]
        │
      2 │ ╭─▶   constructor() public {

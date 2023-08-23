@@ -5,8 +5,13 @@ Source: >
 
 Errors: # 1 total
   - >
-    InvalidProductionVersion(
-        ConstructorDefinition,
-    )
+    Error: Expected end of file.
+       ╭─[crates/solidity/testing/snapshots/cst_output/ConstructorDefinition/simple/input.sol:1:1]
+       │
+     1 │ constructor () {}
+       │ ────────┬────────  
+       │         ╰────────── Error occurred here.
+    ───╯
 
-Tree: null
+Tree:
+  - SKIPPED (Token): "constructor () {}" # 0..17

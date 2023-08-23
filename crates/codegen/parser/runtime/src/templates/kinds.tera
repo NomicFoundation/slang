@@ -1,0 +1,63 @@
+#[cfg(feature = "slang_napi_interfaces")]
+use { napi::bindgen_prelude::*, napi_derive::napi };
+
+#[derive(
+    Debug,
+    Eq,
+    Ord,
+    PartialEq,
+    PartialOrd,
+    serde::Serialize,
+    strum_macros::AsRefStr,
+    strum_macros::Display,
+    strum_macros::EnumString,
+)]
+#[cfg_attr( feature = "slang_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "kinds") )]
+#[cfg_attr( not(feature = "slang_napi_interfaces"), derive(Clone, Copy))]
+pub enum ProductionKind {
+    {%- for variant in code.production_kinds -%}
+        {# variant.documentation | indent(prefix = "/// ", first = true, blank = true) #}
+        {{ variant }},
+    {%- endfor -%}
+}
+
+#[derive(
+    Debug,
+    Eq,
+    Ord,
+    PartialEq,
+    PartialOrd,
+    serde::Serialize,
+    strum_macros::AsRefStr,
+    strum_macros::Display,
+    strum_macros::EnumString,
+)]
+#[cfg_attr( feature = "slang_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "kinds") )]
+#[cfg_attr( not(feature = "slang_napi_interfaces"), derive(Clone, Copy))]
+pub enum RuleKind {
+    {%- for variant in code.rule_kinds -%}
+        {# variant.documentation | indent(prefix = "/// ", first = true, blank = true) #}
+        {{ variant }},
+    {%- endfor -%}
+}
+
+#[derive(
+    Debug,
+    Eq,
+    Ord,
+    PartialEq,
+    PartialOrd,
+    serde::Serialize,
+    strum_macros::AsRefStr,
+    strum_macros::Display,
+    strum_macros::EnumString,
+)]
+#[cfg_attr( feature = "slang_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "kinds") )]
+#[cfg_attr( not(feature = "slang_napi_interfaces"), derive(Clone, Copy))]
+pub enum TokenKind {
+    SKIPPED,
+    {%- for variant in code.token_kinds -%}
+        {# variant.documentation | indent(prefix = "/// ", first = true, blank = true) #}
+        {{ variant }},
+    {%- endfor -%}
+}

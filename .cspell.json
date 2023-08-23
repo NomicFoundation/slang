@@ -17,6 +17,7 @@
     "nomicfoundation",
     "struct",
     "structs",
+    "tera",
     "ufixed",
     "usize"
   ]

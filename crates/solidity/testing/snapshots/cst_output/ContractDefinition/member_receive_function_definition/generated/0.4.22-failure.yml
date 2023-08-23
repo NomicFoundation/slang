@@ -1,0 +1,26 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract Sample {                                                                │ 0..17
+  2  │   receive() {                                                                    │ 18..31
+  3  │   }                                                                              │ 32..35
+  4  │ }                                                                                │ 36..37
+
+Errors: # 1 total
+  - >
+    Error: Expected AddressKeyword or BoolKeyword or ByteKeyword or CloseBrace or ConstructorKeyword or EnumKeyword or EventKeyword or FixedBytesType or FunctionKeyword or Identifier or MappingKeyword or ModifierKeyword or PayableKeyword or SignedFixedType or SignedIntegerType or StringKeyword or StructKeyword or UnsignedFixedType or UnsignedIntegerType or UsingKeyword.
+       ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/member_receive_function_definition/input.sol:2:1]
+       │
+     2 │ ╭─▶   receive() {
+       ┆ ┆   
+     4 │ ├─▶ }
+       │ │      
+       │ ╰────── Error occurred here.
+    ───╯
+
+Tree:
+  - ContractDefinition (Rule): # 0..37 "contract Sample {\n  receive() {\n  }\n}"
+      - ContractKeyword (Token): "contract" # 0..8
+      - Identifier (Token): "Sample" # 9..15
+      - OpenBrace (Token): "{" # 16..17
+      - SKIPPED (Token): "  receive() {\n  }\n}" # 18..37

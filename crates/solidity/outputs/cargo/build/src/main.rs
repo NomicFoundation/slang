@@ -1,8 +1,8 @@
 use anyhow::Result;
-use codegen_schema::types::LanguageDefinition;
-use codegen_syntax::SyntaxGeneratorExtensions;
+use codegen_grammar::Grammar;
+use codegen_parser_generator::code_generator::CodeGenerator;
 use infra_utils::cargo::CargoWorkspace;
-use solidity_language::SolidityLanguageExtensions;
+use solidity_language::GrammarConstructor;
 
 // Instead of the soure crate calling codegen APIs directly, it invokes this binary, which in turn calls the codegen APIs.
 // This indirection is needed because:
@@ -12,13 +12,8 @@ use solidity_language::SolidityLanguageExtensions;
 // 3) We want to avoid having dependencies from the source crate to codegen crates.
 //
 fn main() -> Result<()> {
-    let language = LanguageDefinition::load_solidity()?;
-
+    let grammar = Grammar::new();
     let crate_dir = CargoWorkspace::locate_source_crate("slang_solidity")?;
-
-    language.generate_legacy_rust_lib_sources(&crate_dir)?;
-
-    language.generate_syntax_lib_sources(&crate_dir)?;
-
+    CodeGenerator::write_source(&crate_dir.join("src/generated"), grammar)?;
     return Ok(());
 }

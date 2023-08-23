@@ -1,7 +1,5 @@
-mod legacy;
-
-pub mod language;
-pub mod syntax;
+mod generated;
+pub use generated::*;
 
 // Below are dependencies used by the CLI "main.rs", but not the API `lib.rs`.
 // However, we need to add a fake usage to suppress Cargo warnings about unused dependencies.

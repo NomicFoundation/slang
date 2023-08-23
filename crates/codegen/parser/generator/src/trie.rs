@@ -1,0 +1,121 @@
+use std::{collections::BTreeMap, fmt::Debug};
+
+use codegen_grammar::{ScannerDefinitionNode, ScannerDefinitionRef};
+use proc_macro2::TokenStream;
+use quote::{format_ident, quote};
+
+use super::parser_definition::VersionQualityRangeVecExtensions;
+
+#[derive(Clone, Debug, Default)]
+pub struct Trie {
+    pub subtries: BTreeMap<char, Self>,
+    pub key: Option<String>,
+    pub payload: Option<ScannerDefinitionRef>,
+}
+
+impl Trie {
+    pub fn new() -> Self {
+        Self {
+            subtries: BTreeMap::new(),
+            key: None,
+            payload: None,
+        }
+    }
+
+    pub fn insert(&mut self, key: &str, payload: ScannerDefinitionRef) {
+        let chars = key.chars().collect::<Vec<_>>();
+        let mut node = self;
+        for i in 0..chars.len() {
+            node = node.subtries.entry(chars[i]).or_insert_with(Self::new);
+        }
+        node.payload = Some(payload);
+        node.key = Some(key.to_string());
+    }
+
+    // Finds the next node that has either a payload or more than one subtrie
+    // It returns the path to that node and the node itself
+    pub fn next_interesting_node(&self, prefix: Option<char>) -> (Vec<char>, &Trie) {
+        let mut path = prefix.map(|c| vec![c]).unwrap_or_default();
+        let mut node = self;
+        while node.payload.is_none() && node.subtries.len() == 1 {
+            let (key, subtrie) = node.subtries.iter().next().unwrap();
+            path.push(*key);
+            node = subtrie;
+        }
+        (path, node)
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.subtries.is_empty() && self.payload.is_none()
+    }
+
+    pub fn to_scanner_code(&self) -> TokenStream {
+        let (path, trie) = self.next_interesting_node(None);
+
+        let branches = trie
+            .subtries
+            .iter()
+            .map(|(c, subtrie)| {
+                let child_code = subtrie.to_scanner_code();
+                quote! { Some(#c) => #child_code }
+            })
+            .collect::<Vec<_>>();
+
+        let leaf = if let Some(scanner_definition_ref) = &trie.payload {
+            let kind = format_ident!("{}", scanner_definition_ref.name());
+
+            if branches.is_empty() && !path.is_empty() {
+                // This is an optimisation for a common case
+                let leaf = quote! {
+                    if scan_chars!(stream, #(#path),*) {
+                         Some(TokenKind::#kind)
+                    } else {
+                        None
+                    }
+                };
+                return if let ScannerDefinitionNode::Versioned(_, version_quality_ranges, _) =
+                    scanner_definition_ref.node()
+                {
+                    version_quality_ranges.wrap_code(leaf, Some(quote! { None }))
+                } else {
+                    leaf
+                };
+            }
+
+            if let ScannerDefinitionNode::Versioned(_, version_quality_ranges, _) =
+                scanner_definition_ref.node()
+            {
+                version_quality_ranges
+                    .wrap_code(quote! { Some(TokenKind::#kind) }, Some(quote! { None }))
+            } else {
+                quote! { Some(TokenKind::#kind) }
+            }
+        } else {
+            quote! { None }
+        };
+
+        let trie_code = if branches.is_empty() {
+            leaf
+        } else {
+            quote! {
+                match stream.next() {
+                    #(#branches,)*
+                    Some(_) => { stream.undo(); #leaf }
+                    None => #leaf,
+                }
+            }
+        };
+
+        if path.is_empty() {
+            trie_code
+        } else {
+            quote! {
+                if scan_chars!(stream, #(#path),*) {
+                    #trie_code
+                } else {
+                    None
+                }
+            }
+        }
+    }
+}

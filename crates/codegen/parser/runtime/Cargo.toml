@@ -1,0 +1,18 @@
+[package]
+name = "codegen_parser_runtime"
+version.workspace = true
+rust-version.workspace = true
+edition.workspace = true
+publish = false
+
+[dependencies]
+ariadne = { workspace = true }
+napi = { workspace = true, optional = true }
+napi-derive = { workspace = true, optional = true }
+serde = { workspace = true }
+strum = { workspace = true }
+strum_macros = { workspace = true }
+
+[features]
+slang_napi_interfaces = ["dep:napi", "dep:napi-derive"]
+default = ["slang_napi_interfaces"]

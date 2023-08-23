@@ -5,4 +5,6 @@ mod doc_examples;
 #[cfg(test)]
 mod errors;
 #[cfg(test)]
+mod scanner;
+#[cfg(test)]
 mod versions;

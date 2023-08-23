@@ -6,7 +6,7 @@ use std::{
 use anyhow::Result;
 use indicatif::ProgressBar;
 use semver::Version;
-use slang_solidity::syntax::parser::ParseOutput;
+use slang_solidity::parse_output::ParseOutput;
 
 pub struct Reporter {
     progress_bar: ProgressBar,

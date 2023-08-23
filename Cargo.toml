@@ -7,8 +7,9 @@ publish = false
 [workspace]
 members = [
     "crates/codegen/ebnf",
-    "crates/codegen/syntax",
-    "crates/codegen/legacy_syntax_templates",
+    "crates/codegen/grammar",
+    "crates/codegen/parser/generator",
+    "crates/codegen/parser/runtime",
     "crates/codegen/schema",
     "crates/codegen/spec",
     "crates/codegen/testing",
@@ -32,10 +33,11 @@ members = [
 # Internal
 #
 codegen_ebnf = { path = "crates/codegen/ebnf" }
-codegen_legacy_syntax_templates = { path = "crates/codegen/legacy_syntax_templates" }
+codegen_grammar = { path = "crates/codegen/grammar" }
+codegen_parser_generator = { path = "crates/codegen/parser/generator" }
+codegen_parser_runtime = { path = "crates/codegen/parser/runtime" }
 codegen_schema = { path = "crates/codegen/schema" }
 codegen_spec = { path = "crates/codegen/spec" }
-codegen_syntax = { path = "crates/codegen/syntax" }
 codegen_testing = { path = "crates/codegen/testing" }
 infra_cli = { path = "crates/infra/cli" }
 infra_utils = { path = "crates/infra/utils" }
@@ -68,6 +70,7 @@ markdown = { version = "0.3.0" }
 napi = { version = "2.13.1", features = ["compat-mode", "napi8", "serde-json"] }
 napi-build = { version = "2.0.1" }
 napi-derive = { version = "2.13.0" }
+once_cell = { version = "1.8.0" }
 owo-colors = { version = "3.5.0", features = ["supports-colors"] }
 proc-macro2 = { version = "1.0.53" }
 quote = { version = "1.0.26" }

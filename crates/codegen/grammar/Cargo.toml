@@ -1,0 +1,10 @@
+[package]
+name = "codegen_grammar"
+version.workspace = true
+rust-version.workspace = true
+edition.workspace = true
+publish = false
+
+[dependencies]
+semver = { workspace = true }
+strum_macros = { workspace = true }

@@ -1,5 +1,6 @@
 import { Language } from "@nomicfoundation/slang/language";
-import { ProductionKind, RuleKind, RuleNode, TokenKind, TokenNode } from "@nomicfoundation/slang/syntax/nodes";
+import { RuleNode, TokenNode } from "@nomicfoundation/slang/cst";
+import { ProductionKind, RuleKind, TokenKind } from "@nomicfoundation/slang/kinds";
 
 test("simple contract", () => {
   const language = new Language("0.8.0");
