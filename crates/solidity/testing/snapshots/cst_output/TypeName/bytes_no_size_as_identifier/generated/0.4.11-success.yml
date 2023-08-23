@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ bytes                                                                            │ 0..5
+
+Errors: []
+
+Tree:
+  - TypeName (Rule): # 0..5 "bytes"
+      - IdentifierPath (Rule): # 0..5 "bytes"
+          - Identifier (Token): "bytes" # 0..5

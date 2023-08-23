@@ -1,0 +1,10 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ supports                                                                         │ 0..8
+
+Errors: []
+
+Tree:
+  - Expression (Rule): # 0..8 "supports"
+      - Identifier (Token): "supports" # 0..8

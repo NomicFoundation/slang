@@ -1,9 +1,0 @@
-# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
-
-Source: >
-  1  │ emit                                                                             │ 0..4
-
-Errors: []
-
-Tree:
-  - Identifier (Token): "emit" # 0..4

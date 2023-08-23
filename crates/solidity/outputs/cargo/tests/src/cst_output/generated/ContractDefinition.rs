@@ -14,6 +14,11 @@ fn empty_contract() -> Result<()> {
 }
 
 #[test]
+fn header_comment() -> Result<()> {
+    return run("ContractDefinition", "header_comment");
+}
+
+#[test]
 fn inheritence_specifier() -> Result<()> {
     return run("ContractDefinition", "inheritence_specifier");
 }

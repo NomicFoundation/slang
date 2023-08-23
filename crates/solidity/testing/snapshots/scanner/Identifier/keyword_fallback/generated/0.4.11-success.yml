@@ -1,9 +1,0 @@
-# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
-
-Source: >
-  1  │ fallback                                                                         │ 0..8
-
-Errors: []
-
-Tree:
-  - Identifier (Token): "fallback" # 0..8

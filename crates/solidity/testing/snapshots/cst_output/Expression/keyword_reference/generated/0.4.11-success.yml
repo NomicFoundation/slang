@@ -1,0 +1,10 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ reference                                                                        │ 0..9
+
+Errors: []
+
+Tree:
+  - Expression (Rule): # 0..9 "reference"
+      - Identifier (Token): "reference" # 0..9

@@ -1,0 +1,10 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ hex"1234567890abcdef"                                                            │ 0..21
+
+Errors: []
+
+Tree:
+  - HexStringLiteralsList (Rule): # 0..21 'hex"1234567890abcdef"'
+      - HexStringLiteral (Token): 'hex"1234567890abcdef"' # 0..21

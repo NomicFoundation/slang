@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ 0x                                                                               │ 0..2
+
+Errors: # 1 total
+  - >
+    Error: Expected DaysKeyword or EtherKeyword or FinneyKeyword or HoursKeyword or MinutesKeyword or SecondsKeyword or SzaboKeyword or WeeksKeyword or WeiKeyword.
+       ╭─[crates/solidity/testing/snapshots/cst_output/NumericExpression/hex_no_digits/input.sol:1:2]
+       │
+     1 │ 0x
+       │  ┬  
+       │  ╰── Error occurred here.
+    ───╯
+
+Tree:
+  - NumericExpression (Rule): # 0..2 "0x"
+      - DecimalLiteral (Token): "0" # 0..1
+      - SKIPPED (Token): "x" # 1..2

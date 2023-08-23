@@ -1,0 +1,10 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ sizeof                                                                           │ 0..6
+
+Errors: []
+
+Tree:
+  - Expression (Rule): # 0..6 "sizeof"
+      - Identifier (Token): "sizeof" # 0..6

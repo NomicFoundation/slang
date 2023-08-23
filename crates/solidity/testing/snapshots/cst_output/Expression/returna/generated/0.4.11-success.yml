@@ -1,0 +1,10 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ returna                                                                          │ 0..7
+
+Errors: []
+
+Tree:
+  - Expression (Rule): # 0..7 "returna"
+      - Identifier (Token): "returna" # 0..7

@@ -1,0 +1,10 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ int                                                                              │ 0..3
+
+Errors: []
+
+Tree:
+  - TypeName (Rule): # 0..3 "int"
+      - SignedIntegerType (Token): "int" # 0..3

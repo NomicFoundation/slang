@@ -1,9 +1,0 @@
-# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
-
-Source: >
-  1  │ promise                                                                          │ 0..7
-
-Errors: []
-
-Tree:
-  - Identifier (Token): "promise" # 0..7

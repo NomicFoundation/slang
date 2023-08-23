@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ 0x1__2                                                                           │ 0..6
+
+Errors: # 1 total
+  - >
+    Error: Expected DaysKeyword or EtherKeyword or FinneyKeyword or HoursKeyword or MinutesKeyword or SecondsKeyword or SzaboKeyword or WeeksKeyword or WeiKeyword or YearsKeyword.
+       ╭─[crates/solidity/testing/snapshots/cst_output/NumericExpression/hex_consecutive_underscores/input.sol:1:4]
+       │
+     1 │ 0x1__2
+       │    ─┬─  
+       │     ╰─── Error occurred here.
+    ───╯
+
+Tree:
+  - NumericExpression (Rule): # 0..6 "0x1__2"
+      - HexLiteral (Token): "0x1" # 0..3
+      - SKIPPED (Token): "__2" # 3..6
