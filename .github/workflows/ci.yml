@@ -1,4 +1,4 @@
-name: "check"
+name: "ci"
 
 on:
   # Run using manual triggers from GitHub UI:
@@ -15,5 +15,5 @@ on:
       - "main"
 
 jobs:
-  check:
-    uses: "./.github/workflows/_jobs_check.yml"
+  ci:
+    uses: "./.github/workflows/_jobs_ci.yml"

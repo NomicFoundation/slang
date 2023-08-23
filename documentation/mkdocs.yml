@@ -13,9 +13,7 @@ repo_url: "https://github.com/NomicFoundation/slang"
 edit_uri: "edit/main/documentation/public"
 
 docs_dir: "./public"
-site_dir: !ENV
-  - "SLANG_MKDOCS_DOCUMENTATION_SITE_DIR" # Allows CI to specify a custom directory to place built assets in.
-  - "./target/debug" # If that variable is not defined, place built assets here instead.
+site_dir: "./target/site" # _SLANG_MKDOCS_DOCUMENTATION_SITE_DIR_ (keep in sync)
 
 #
 # Footer:

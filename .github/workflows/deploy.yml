@@ -17,14 +17,14 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  check:
-    uses: "./.github/workflows/_jobs_check.yml"
+  ci:
+    uses: "./.github/workflows/_jobs_ci.yml"
 
   github-pages:
-    needs: "check"
+    needs: "ci"
     uses: "./.github/workflows/_jobs_github_pages.yml"
 
   publish:
-    needs: "check"
+    needs: "ci"
     uses: "./.github/workflows/_jobs_publish.yml"
     secrets: "inherit"

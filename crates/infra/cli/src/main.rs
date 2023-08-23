@@ -1,11 +1,12 @@
-mod commands;
-mod toolchains;
-mod utils;
+pub mod commands;
+pub mod toolchains;
+pub mod utils;
 
 use clap::Parser;
 
-use crate::{commands::AppController, utils::Terminal};
+use crate::{commands::CLI, utils::Terminal};
 
+#[allow(dead_code)] // as it is referenced from 'build.rs' of the same crate.
 fn main() {
     let std_hook = std::panic::take_hook();
 
@@ -18,6 +19,12 @@ fn main() {
         Terminal::failure();
     }));
 
-    AppController::parse().execute().unwrap();
+    CLI::parse().execute().unwrap();
     Terminal::success();
+}
+
+#[test]
+fn verify_clap_cli() {
+    // Catches problems earlier in the development cycle:
+    <CLI as clap::CommandFactory>::command().debug_assert();
 }

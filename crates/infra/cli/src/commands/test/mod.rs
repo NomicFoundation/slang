@@ -4,7 +4,7 @@ use infra_utils::commands::Command;
 
 use crate::utils::{ClapExtensions, OrderedCommand, Terminal};
 
-#[derive(Clone, Debug, Parser)]
+#[derive(Clone, Debug, Default, Parser)]
 pub struct TestController {
     #[clap(trailing_var_arg = true)]
     commands: Vec<TestCommand>,
@@ -12,12 +12,12 @@ pub struct TestController {
 
 impl TestController {
     pub fn execute(&self) -> Result<()> {
-        return TestCommand::execute_all(&self.commands);
+        return TestCommand::execute_in_order(&self.commands);
     }
 }
 
 #[derive(Clone, Debug, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
-pub enum TestCommand {
+enum TestCommand {
     /// Run 'cargo test' for all crates, features, and targets.
     Cargo,
     /// Run 'test' scripts in each NPM package in the repository.
@@ -26,7 +26,7 @@ pub enum TestCommand {
 
 impl OrderedCommand for TestCommand {
     fn execute(&self) -> Result<()> {
-        Terminal::step(self.clap_name());
+        Terminal::step(format!("test {name}", name = self.clap_name()));
 
         return match self {
             TestCommand::Cargo => test_cargo(),

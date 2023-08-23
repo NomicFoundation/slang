@@ -10,7 +10,7 @@ use crate::{
     utils::{ClapExtensions, OrderedCommand, Terminal},
 };
 
-#[derive(Clone, Debug, Parser)]
+#[derive(Clone, Debug, Default, Parser)]
 pub struct CheckController {
     #[clap(trailing_var_arg = true)]
     commands: Vec<CheckCommand>,
@@ -18,12 +18,12 @@ pub struct CheckController {
 
 impl CheckController {
     pub fn execute(&self) -> Result<()> {
-        return CheckCommand::execute_all(&self.commands);
+        return CheckCommand::execute_in_order(&self.commands);
     }
 }
 
 #[derive(Clone, Debug, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
-pub enum CheckCommand {
+enum CheckCommand {
     /// Run 'cargo check' for all crates, features, and targets.
     Cargo,
     /// Check NPM packages for any outdated codegen steps.
@@ -34,7 +34,7 @@ pub enum CheckCommand {
 
 impl OrderedCommand for CheckCommand {
     fn execute(&self) -> Result<()> {
-        Terminal::step(self.clap_name());
+        Terminal::step(format!("check {name}", name = self.clap_name()));
 
         return match self {
             CheckCommand::Cargo => check_cargo(),
@@ -53,13 +53,9 @@ fn check_cargo() -> Result<()> {
         .flag("--all-features");
 
     if GitHub::is_running_in_ci() {
-        command = command.property(
-            "--config",
-            format!(
-                "build.rustflags = {rustflags}",
-                rustflags = serde_json::to_string(&["--deny", "warnings"])?
-            ),
-        );
+        let rustflags = serde_json::to_string(&["--deny", "warnings"])?;
+
+        command = command.property("--config", format!("build.rustflags = {rustflags}"));
     }
 
     return command.run();

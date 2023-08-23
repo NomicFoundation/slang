@@ -9,14 +9,14 @@ use terminal_size::terminal_size;
 pub trait OrderedCommand: Clone + Ord + PartialEq + ValueEnum {
     fn execute(&self) -> Result<()>;
 
-    fn execute_all(commands: &Vec<Self>) -> Result<()> {
+    fn execute_in_order(commands: &Vec<Self>) -> Result<()> {
         let mut commands = commands.clone();
 
         if commands.is_empty() {
-            // Execute all tasks if none are provided:
+            // Execute all commands if none are provided:
             commands.extend(Self::value_variants().iter().cloned());
         } else {
-            // Sort and deduplicate user provided tasks by order of definition:
+            // Sort and deduplicate user provided commands by order of definition:
             commands.sort();
             commands.dedup();
         }

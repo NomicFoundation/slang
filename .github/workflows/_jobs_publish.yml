@@ -13,19 +13,45 @@ jobs:
     runs-on: "ubuntu-22.04"
 
     steps:
+      #
+      # _DEVCONTAINER_PREPARATION_STEPS_ (keep in sync)
+      # Cache is updated in the "ci" workflow, then reused here.
+      #
+
       - name: "Clone repository"
-        # Mark the repository as a safe directory in git: https://github.com/actions/checkout/issues/766
         uses: "actions/checkout@v3.4.0"
 
       - name: "Prepare Repository"
+        # Mark the repository as a safe directory in git: https://github.com/actions/checkout/issues/766
         run: "git config --global --add safe.directory $GITHUB_WORKSPACE"
 
+      - name: "Restore CI cache"
+        uses: "actions/cache/restore@v3.3.1"
+        with:
+          key: "ci-cache-${{ hashFiles('**/Cargo.lock', '**/package-lock.json', '**/Pipfile.lock') }}"
+          fail-on-cache-miss: true
+          path: |
+            **/.hermit/
+            **/node_modules/
+            **/target/
+
+      - name: "Build devcontainer"
+        uses: "./.devcontainer"
+        with:
+          entrypoint: "echo"
+
+      #
+      # Publish Changesets:
+      #
+
       - name: "scripts/bin/infra setup npm"
-        run: "scripts/bin/infra"
+        uses: "./.devcontainer"
+        with:
+          entrypoint: "scripts/bin/infra"
         env:
           SLANG_INFRA_CLI_EXTRA_ARGS: "setup npm"
 
-      - name: "scripts/bin/infra bump-version"
+      - name: "scripts/bin/infra publish changesets"
         id: "changesets"
         uses: "changesets/action@v1.4.1"
         with:
@@ -34,7 +60,7 @@ jobs:
           createGithubReleases: false
           version: "scripts/bin/infra"
         env:
-          SLANG_INFRA_CLI_EXTRA_ARGS: "bump-version"
+          SLANG_INFRA_CLI_EXTRA_ARGS: "publish changesets"
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
     outputs:
@@ -48,34 +74,34 @@ jobs:
     steps:
       #
       # _DEVCONTAINER_PREPARATION_STEPS_ (keep in sync)
-      # Cache is updated in the "check" workflow, then reused here.
+      # Cache is updated in the "ci" workflow, then reused here.
       #
 
       - name: "Clone repository"
-        # Mark the repository as a safe directory in git: https://github.com/actions/checkout/issues/766
         uses: "actions/checkout@v3.4.0"
 
       - name: "Prepare Repository"
+        # Mark the repository as a safe directory in git: https://github.com/actions/checkout/issues/766
         run: "git config --global --add safe.directory $GITHUB_WORKSPACE"
 
-      - name: "Restore hermit cache"
+      - name: "Restore CI cache"
         uses: "actions/cache/restore@v3.3.1"
         with:
-          path: ".hermit/"
-          key: "hermit-cache-${{ hashFiles('Cargo.lock', 'package-lock.json', 'Pipfile.lock') }}"
+          key: "ci-cache-${{ hashFiles('**/Cargo.lock', '**/package-lock.json', '**/Pipfile.lock') }}"
           fail-on-cache-miss: true
-
-      - name: "Restore build cache"
-        uses: "actions/cache/restore@v3.3.1"
-        with:
-          path: "**/target/"
-          key: "build-cache-${{ hashFiles('Cargo.lock', 'package-lock.json', 'Pipfile.lock') }}"
-          fail-on-cache-miss: true
+          path: |
+            **/.hermit/
+            **/node_modules/
+            **/target/
 
       - name: "Build devcontainer"
         uses: "./.devcontainer"
         with:
           entrypoint: "echo"
+
+      #
+      # Build and Publish:
+      #
 
       - name: "scripts/bin/infra setup cargo npm"
         uses: "./.devcontainer"
@@ -83,10 +109,6 @@ jobs:
           entrypoint: "scripts/bin/infra"
         env:
           SLANG_INFRA_CLI_EXTRA_ARGS: "setup cargo npm"
-
-      #
-      # Build and Publish:
-      #
 
       - name: "scripts/bin/infra publish npm"
         uses: "./.devcontainer"

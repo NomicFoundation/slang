@@ -1,7 +1,10 @@
 #!/bin/zsh
 
+repo_root="/workspaces/slang"
+
 # Hermit
-eval "$("/workspaces/slang/bin/hermit" shell-hooks --print --zsh)"
+eval "$("${repo_root}/bin/hermit" shell-hooks --print --zsh)"
 
 # ZSH Completions
 autoload -Uz compinit && compinit
+source "${repo_root}/crates/infra/cli/generated/infra.zsh-completions"

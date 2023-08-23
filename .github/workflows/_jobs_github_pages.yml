@@ -19,34 +19,34 @@ jobs:
     steps:
       #
       # _DEVCONTAINER_PREPARATION_STEPS_ (keep in sync)
-      # Cache is updated in the "check" workflow, then reused here.
+      # Cache is updated in the "ci" workflow, then reused here.
       #
 
       - name: "Clone repository"
-        # Mark the repository as a safe directory in git: https://github.com/actions/checkout/issues/766
         uses: "actions/checkout@v3.4.0"
 
       - name: "Prepare Repository"
+        # Mark the repository as a safe directory in git: https://github.com/actions/checkout/issues/766
         run: "git config --global --add safe.directory $GITHUB_WORKSPACE"
 
-      - name: "Restore hermit cache"
+      - name: "Restore CI cache"
         uses: "actions/cache/restore@v3.3.1"
         with:
-          path: ".hermit/"
-          key: "hermit-cache-${{ hashFiles('Cargo.lock', 'package-lock.json', 'Pipfile.lock') }}"
+          key: "ci-cache-${{ hashFiles('**/Cargo.lock', '**/package-lock.json', '**/Pipfile.lock') }}"
           fail-on-cache-miss: true
-
-      - name: "Restore build cache"
-        uses: "actions/cache/restore@v3.3.1"
-        with:
-          path: "**/target/"
-          key: "build-cache-${{ hashFiles('Cargo.lock', 'package-lock.json', 'Pipfile.lock') }}"
-          fail-on-cache-miss: true
+          path: |
+            **/.hermit/
+            **/node_modules/
+            **/target/
 
       - name: "Build devcontainer"
         uses: "./.devcontainer"
         with:
           entrypoint: "echo"
+
+      #
+      # Deploy to GitHub Pages:
+      #
 
       - name: "scripts/bin/infra setup pipenv"
         uses: "./.devcontainer"
@@ -55,17 +55,12 @@ jobs:
         env:
           SLANG_INFRA_CLI_EXTRA_ARGS: "setup pipenv"
 
-      #
-      # Deploy to GitHub Pages:
-      #
-
       - name: "scripts/bin/infra check mkdocs"
         uses: "./.devcontainer"
         with:
           entrypoint: "scripts/bin/infra"
         env:
           SLANG_INFRA_CLI_EXTRA_ARGS: "check mkdocs"
-          SLANG_MKDOCS_DOCUMENTATION_SITE_DIR: "documentation/target/release"
 
       - name: "Configure GitHub Pages"
         uses: "actions/configure-pages@v3.0.5"
@@ -73,7 +68,7 @@ jobs:
       - name: "Upload artifacts"
         uses: "actions/upload-pages-artifact@v1.0.7"
         with:
-          path: "documentation/target/release"
+          path: "documentation/target/site" # _SLANG_MKDOCS_DOCUMENTATION_SITE_DIR_ (keep in sync)
 
       - name: "Deploy to GitHub Pages"
         id: "deployment"

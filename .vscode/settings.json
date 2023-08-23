@@ -10,13 +10,6 @@
   },
   "rust-analyzer.check.allTargets": true,
   "rust-analyzer.check.features": "all",
-  "rust-analyzer.server.extraEnv": {
-    // _CARGO_CLI_ENV_VARS_ (keep In Sync)
-    "CARGO": "${workspaceFolder}/bin/cargo",
-    "RUSTC": "${workspaceFolder}/bin/rustc",
-    "RUSTFMT": "${workspaceFolder}/bin/rustfmt",
-    "RUSTUP": "${workspaceFolder}/bin/rustup"
-  },
   "rust-analyzer.server.path": "${workspaceFolder}/bin/rust-analyzer",
   "search.exclude": {
     // Packages and Dependencies
