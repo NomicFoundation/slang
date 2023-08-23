@@ -1,5 +1,7 @@
+#![allow(dead_code)]
+
 #[macro_use]
-pub mod support;
+mod support;
 
 pub mod cst;
 pub mod cursor;
