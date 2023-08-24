@@ -231,20 +231,21 @@ impl GrammarVisitor for CodeGenerator {
     }
 
     fn parser_definition_enter(&mut self, parser: &ParserDefinitionRef) {
+        // Have to set this regardless so that we can collect referenced scanners
         self.set_current_context(parser.context());
-        self.production_kinds.insert(parser.name());
-        self.rule_kinds.insert(parser.name());
-        let code = parser.to_parser_code();
-        self.parser_functions.push((
-            parser.name(),
-            if parser.is_inline() {
-                code
-            } else {
-                let rule_kind = format_ident!("{}", parser.name());
-                quote! { #code.with_kind(RuleKind::#rule_kind) }
-            }
-            .to_string(),
-        ));
+        if !parser.is_inline() {
+            self.production_kinds.insert(parser.name());
+            self.rule_kinds.insert(parser.name());
+            let code = parser.to_parser_code();
+            self.parser_functions.push((
+                parser.name(),
+                {
+                    let rule_kind = format_ident!("{}", parser.name());
+                    quote! { #code.with_kind(RuleKind::#rule_kind) }
+                }
+                .to_string(),
+            ));
+        }
     }
 
     fn precedence_parser_definition_enter(&mut self, parser: &PrecedenceParserDefinitionRef) {

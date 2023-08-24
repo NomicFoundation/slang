@@ -147,12 +147,16 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                         "Trivia productions can only reference trivia or token productions"
                     )
                 }
-                let function_name = format_ident!(
-                    "{snake_case}",
-                    snake_case = parser_definition.name().to_snake_case()
-                );
-                quote! {
-                    self.#function_name(stream)
+                if parser_definition.is_inline() {
+                    parser_definition.to_parser_code()
+                } else {
+                    let function_name = format_ident!(
+                        "{snake_case}",
+                        snake_case = parser_definition.name().to_snake_case()
+                    );
+                    quote! {
+                        self.#function_name(stream)
+                    }
                 }
             }
 

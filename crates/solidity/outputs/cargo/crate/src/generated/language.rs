@@ -1929,25 +1929,6 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn add_sub_operator(&self, stream: &mut Stream) -> ParserResult {
-        {
-            let mut helper = ChoiceHelper::new(stream);
-            loop {
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::Plus);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::Minus);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                break;
-            }
-            helper.result(stream)
-        }
-    }
-
-    #[allow(unused_assignments, unused_parens)]
     fn address_type(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = ChoiceHelper::new(stream);
@@ -1982,11 +1963,6 @@ impl Language {
             helper.result(stream)
         }
         .with_kind(RuleKind::AddressType)
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn and_operator(&self, stream: &mut Stream) -> ParserResult {
-        self.default_parse_token_with_trivia(stream, TokenKind::AmpersandAmpersand)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -2051,30 +2027,6 @@ impl Language {
             helper.result()
         }
         .with_kind(RuleKind::ArrayExpression)
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn array_type_name_operator(&self, stream: &mut Stream) -> ParserResult {
-        {
-            let mut helper = SequenceHelper::new();
-            loop {
-                if helper.handle_next_result(
-                    self.default_parse_token_with_trivia(stream, TokenKind::OpenBracket),
-                ) {
-                    break;
-                }
-                if helper.handle_next_result(OptionalHelper::transform(self.expression(stream))) {
-                    break;
-                }
-                if helper.handle_next_result(
-                    self.default_parse_token_with_trivia(stream, TokenKind::CloseBracket),
-                ) {
-                    break;
-                }
-                break;
-            }
-            helper.result()
-        }
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -2204,88 +2156,6 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn assignment_operator(&self, stream: &mut Stream) -> ParserResult {
-        {
-            let mut helper = ChoiceHelper::new(stream);
-            loop {
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::Equal);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::BarEqual);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::PlusEqual);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::MinusEqual);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::CaretEqual);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::SlashEqual);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::PercentEqual);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::AsteriskEqual);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result =
-                    self.default_parse_token_with_trivia(stream, TokenKind::AmpersandEqual);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result =
-                    self.default_parse_token_with_trivia(stream, TokenKind::LessThanLessThanEqual);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(
-                    stream,
-                    TokenKind::GreaterThanGreaterThanEqual,
-                );
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(
-                    stream,
-                    TokenKind::GreaterThanGreaterThanGreaterThanEqual,
-                );
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                break;
-            }
-            helper.result(stream)
-        }
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn bitwise_and_operator(&self, stream: &mut Stream) -> ParserResult {
-        self.default_parse_token_with_trivia(stream, TokenKind::Ampersand)
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn bitwise_or_operator(&self, stream: &mut Stream) -> ParserResult {
-        self.default_parse_token_with_trivia(stream, TokenKind::Bar)
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn bitwise_x_or_operator(&self, stream: &mut Stream) -> ParserResult {
-        self.default_parse_token_with_trivia(stream, TokenKind::Caret)
-    }
-
-    #[allow(unused_assignments, unused_parens)]
     fn block(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
@@ -2310,25 +2180,6 @@ impl Language {
             helper.result()
         }
         .with_kind(RuleKind::Block)
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn boolean_expression(&self, stream: &mut Stream) -> ParserResult {
-        {
-            let mut helper = ChoiceHelper::new(stream);
-            loop {
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::TrueKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::FalseKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                break;
-            }
-            helper.result(stream)
-        }
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -2417,33 +2268,6 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn conditional_operator(&self, stream: &mut Stream) -> ParserResult {
-        {
-            let mut helper = SequenceHelper::new();
-            loop {
-                if helper.handle_next_result(
-                    self.default_parse_token_with_trivia(stream, TokenKind::QuestionMark),
-                ) {
-                    break;
-                }
-                if helper.handle_next_result(self.expression(stream)) {
-                    break;
-                }
-                if helper.handle_next_result(
-                    self.default_parse_token_with_trivia(stream, TokenKind::Colon),
-                ) {
-                    break;
-                }
-                if helper.handle_next_result(self.expression(stream)) {
-                    break;
-                }
-                break;
-            }
-            helper.result()
-        }
-    }
-
-    #[allow(unused_assignments, unused_parens)]
     fn constant_definition(&self, stream: &mut Stream) -> ParserResult {
         if self.version_is_at_least_0_7_4 {
             {
@@ -2496,43 +2320,42 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn constructor_attribute(&self, stream: &mut Stream) -> ParserResult {
-        if self.version_is_at_least_0_4_22 {
-            {
-                let mut helper = ChoiceHelper::new(stream);
-                loop {
-                    let result = self.modifier_invocation(stream);
-                    if helper.handle_next_result(stream, result) {
-                        break;
-                    }
-                    let result =
-                        self.default_parse_token_with_trivia(stream, TokenKind::InternalKeyword);
-                    if helper.handle_next_result(stream, result) {
-                        break;
-                    }
-                    let result =
-                        self.default_parse_token_with_trivia(stream, TokenKind::PayableKeyword);
-                    if helper.handle_next_result(stream, result) {
-                        break;
-                    }
-                    let result =
-                        self.default_parse_token_with_trivia(stream, TokenKind::PublicKeyword);
-                    if helper.handle_next_result(stream, result) {
-                        break;
-                    }
-                    break;
-                }
-                helper.result(stream)
-            }
-        } else {
-            ParserResult::no_match(vec![])
-        }
-    }
-
-    #[allow(unused_assignments, unused_parens)]
     fn constructor_attributes_list(&self, stream: &mut Stream) -> ParserResult {
         if self.version_is_at_least_0_4_22 {
-            OneOrMoreHelper::run(stream, |stream| self.constructor_attribute(stream))
+            OneOrMoreHelper::run(stream, |stream| {
+                if self.version_is_at_least_0_4_22 {
+                    {
+                        let mut helper = ChoiceHelper::new(stream);
+                        loop {
+                            let result = self.modifier_invocation(stream);
+                            if helper.handle_next_result(stream, result) {
+                                break;
+                            }
+                            let result = self.default_parse_token_with_trivia(
+                                stream,
+                                TokenKind::InternalKeyword,
+                            );
+                            if helper.handle_next_result(stream, result) {
+                                break;
+                            }
+                            let result = self
+                                .default_parse_token_with_trivia(stream, TokenKind::PayableKeyword);
+                            if helper.handle_next_result(stream, result) {
+                                break;
+                            }
+                            let result = self
+                                .default_parse_token_with_trivia(stream, TokenKind::PublicKeyword);
+                            if helper.handle_next_result(stream, result) {
+                                break;
+                            }
+                            break;
+                        }
+                        helper.result(stream)
+                    }
+                } else {
+                    ParserResult::no_match(vec![])
+                }
+            })
         } else {
             ParserResult::no_match(vec![])
         }
@@ -2652,8 +2475,8 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn contract_member(&self, stream: &mut Stream) -> ParserResult {
-        {
+    fn contract_members_list(&self, stream: &mut Stream) -> ParserResult {
+        OneOrMoreHelper::run(stream, |stream| {
             let mut helper = ChoiceHelper::new(stream);
             loop {
                 let result = self.using_directive(stream);
@@ -2731,105 +2554,8 @@ impl Language {
                 break;
             }
             helper.result(stream)
-        }
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn contract_members_list(&self, stream: &mut Stream) -> ParserResult {
-        OneOrMoreHelper::run(stream, |stream| self.contract_member(stream))
-            .with_kind(RuleKind::ContractMembersList)
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn control_statement(&self, stream: &mut Stream) -> ParserResult {
-        {
-            let mut helper = ChoiceHelper::new(stream);
-            loop {
-                let result = self.if_statement(stream);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.for_statement(stream);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.while_statement(stream);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.do_while_statement(stream);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.continue_statement(stream);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.break_statement(stream);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.delete_statement(stream);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.return_statement(stream);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.revert_statement(stream);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                if self.version_is_at_least_0_4_21 {
-                    let result = self.emit_statement(stream);
-                    if helper.handle_next_result(stream, result) {
-                        break;
-                    }
-                }
-                if !self.version_is_at_least_0_5_0 {
-                    let result = self.throw_statement(stream);
-                    if helper.handle_next_result(stream, result) {
-                        break;
-                    }
-                }
-                if self.version_is_at_least_0_6_0 {
-                    let result = self.try_statement(stream);
-                    if helper.handle_next_result(stream, result) {
-                        break;
-                    }
-                }
-                break;
-            }
-            helper.result(stream)
-        }
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn data_location(&self, stream: &mut Stream) -> ParserResult {
-        {
-            let mut helper = ChoiceHelper::new(stream);
-            loop {
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::MemoryKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result =
-                    self.default_parse_token_with_trivia(stream, TokenKind::StorageKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                if self.version_is_at_least_0_5_0 {
-                    let result =
-                        self.default_parse_token_with_trivia(stream, TokenKind::CalldataKeyword);
-                    if helper.handle_next_result(stream, result) {
-                        break;
-                    }
-                }
-                break;
-            }
-            helper.result(stream)
-        }
+        })
+        .with_kind(RuleKind::ContractMembersList)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -3048,61 +2774,6 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn elementary_type(&self, stream: &mut Stream) -> ParserResult {
-        {
-            let mut helper = ChoiceHelper::new(stream);
-            loop {
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::BoolKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::StringKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.address_type(stream);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result =
-                    self.default_parse_token_with_trivia(stream, TokenKind::FixedBytesType);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result =
-                    self.default_parse_token_with_trivia(stream, TokenKind::SignedIntegerType);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result =
-                    self.default_parse_token_with_trivia(stream, TokenKind::UnsignedIntegerType);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result =
-                    self.default_parse_token_with_trivia(stream, TokenKind::SignedFixedType);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result =
-                    self.default_parse_token_with_trivia(stream, TokenKind::UnsignedFixedType);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                if !self.version_is_at_least_0_8_0 {
-                    let result =
-                        self.default_parse_token_with_trivia(stream, TokenKind::ByteKeyword);
-                    if helper.handle_next_result(stream, result) {
-                        break;
-                    }
-                }
-                break;
-            }
-            helper.result(stream)
-        }
-    }
-
-    #[allow(unused_assignments, unused_parens)]
     fn emit_statement(&self, stream: &mut Stream) -> ParserResult {
         if self.version_is_at_least_0_4_21 {
             {
@@ -3218,25 +2889,6 @@ impl Language {
             helper.result()
         }
         .with_kind(RuleKind::EnumDefinition)
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn equality_comparison_operator(&self, stream: &mut Stream) -> ParserResult {
-        {
-            let mut helper = ChoiceHelper::new(stream);
-            loop {
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::EqualEqual);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::BangEqual);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                break;
-            }
-            helper.result(stream)
-        }
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -3537,11 +3189,6 @@ impl Language {
             helper.result()
         }
         .with_kind(RuleKind::ExperimentalPragma)
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn exponentiation_operator(&self, stream: &mut Stream) -> ParserResult {
-        self.default_parse_token_with_trivia(stream, TokenKind::AsteriskAsterisk)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -3979,7 +3626,141 @@ impl Language {
             }
             helper.result(stream)
         };
-        let primary_expression_parser = |stream: &mut Stream| self.primary_expression(stream);
+        let primary_expression_parser = |stream: &mut Stream| {
+            let mut helper = ChoiceHelper::new(stream);
+            loop {
+                let result = self.new_expression(stream);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.tuple_expression(stream);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.array_expression(stream);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = {
+                    let mut helper = ChoiceHelper::new(stream);
+                    loop {
+                        let result =
+                            self.default_parse_token_with_trivia(stream, TokenKind::TrueKeyword);
+                        if helper.handle_next_result(stream, result) {
+                            break;
+                        }
+                        let result =
+                            self.default_parse_token_with_trivia(stream, TokenKind::FalseKeyword);
+                        if helper.handle_next_result(stream, result) {
+                            break;
+                        }
+                        break;
+                    }
+                    helper.result(stream)
+                };
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.numeric_expression(stream);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = {
+                    let mut helper = ChoiceHelper::new(stream);
+                    loop {
+                        let result = self.hex_string_literals_list(stream);
+                        if helper.handle_next_result(stream, result) {
+                            break;
+                        }
+                        let result = self.ascii_string_literals_list(stream);
+                        if helper.handle_next_result(stream, result) {
+                            break;
+                        }
+                        if self.version_is_at_least_0_7_0 {
+                            let result = self.unicode_string_literals_list(stream);
+                            if helper.handle_next_result(stream, result) {
+                                break;
+                            }
+                        }
+                        break;
+                    }
+                    helper.result(stream)
+                };
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = {
+                    let mut helper = ChoiceHelper::new(stream);
+                    loop {
+                        let result =
+                            self.default_parse_token_with_trivia(stream, TokenKind::BoolKeyword);
+                        if helper.handle_next_result(stream, result) {
+                            break;
+                        }
+                        let result =
+                            self.default_parse_token_with_trivia(stream, TokenKind::StringKeyword);
+                        if helper.handle_next_result(stream, result) {
+                            break;
+                        }
+                        let result = self.address_type(stream);
+                        if helper.handle_next_result(stream, result) {
+                            break;
+                        }
+                        let result =
+                            self.default_parse_token_with_trivia(stream, TokenKind::FixedBytesType);
+                        if helper.handle_next_result(stream, result) {
+                            break;
+                        }
+                        let result = self
+                            .default_parse_token_with_trivia(stream, TokenKind::SignedIntegerType);
+                        if helper.handle_next_result(stream, result) {
+                            break;
+                        }
+                        let result = self.default_parse_token_with_trivia(
+                            stream,
+                            TokenKind::UnsignedIntegerType,
+                        );
+                        if helper.handle_next_result(stream, result) {
+                            break;
+                        }
+                        let result = self
+                            .default_parse_token_with_trivia(stream, TokenKind::SignedFixedType);
+                        if helper.handle_next_result(stream, result) {
+                            break;
+                        }
+                        let result = self
+                            .default_parse_token_with_trivia(stream, TokenKind::UnsignedFixedType);
+                        if helper.handle_next_result(stream, result) {
+                            break;
+                        }
+                        if !self.version_is_at_least_0_8_0 {
+                            let result = self
+                                .default_parse_token_with_trivia(stream, TokenKind::ByteKeyword);
+                            if helper.handle_next_result(stream, result) {
+                                break;
+                            }
+                        }
+                        break;
+                    }
+                    helper.result(stream)
+                };
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.default_parse_token_with_trivia(stream, TokenKind::Identifier);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                if self.version_is_at_least_0_5_3 {
+                    let result = self.type_expression(stream);
+                    if helper.handle_next_result(stream, result) {
+                        break;
+                    }
+                }
+                break;
+            }
+            helper.result(stream)
+        };
         let postfix_operator_parser = |stream: &mut Stream| {
             let mut helper = ChoiceHelper::new(stream);
             loop {
@@ -4143,57 +3924,56 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn fallback_function_attribute(&self, stream: &mut Stream) -> ParserResult {
-        if self.version_is_at_least_0_6_0 {
-            {
-                let mut helper = ChoiceHelper::new(stream);
-                loop {
-                    let result = self.modifier_invocation(stream);
-                    if helper.handle_next_result(stream, result) {
-                        break;
-                    }
-                    let result = self.override_specifier(stream);
-                    if helper.handle_next_result(stream, result) {
-                        break;
-                    }
-                    let result =
-                        self.default_parse_token_with_trivia(stream, TokenKind::ExternalKeyword);
-                    if helper.handle_next_result(stream, result) {
-                        break;
-                    }
-                    let result =
-                        self.default_parse_token_with_trivia(stream, TokenKind::PayableKeyword);
-                    if helper.handle_next_result(stream, result) {
-                        break;
-                    }
-                    let result =
-                        self.default_parse_token_with_trivia(stream, TokenKind::PureKeyword);
-                    if helper.handle_next_result(stream, result) {
-                        break;
-                    }
-                    let result =
-                        self.default_parse_token_with_trivia(stream, TokenKind::ViewKeyword);
-                    if helper.handle_next_result(stream, result) {
-                        break;
-                    }
-                    let result =
-                        self.default_parse_token_with_trivia(stream, TokenKind::VirtualKeyword);
-                    if helper.handle_next_result(stream, result) {
-                        break;
-                    }
-                    break;
-                }
-                helper.result(stream)
-            }
-        } else {
-            ParserResult::no_match(vec![])
-        }
-    }
-
-    #[allow(unused_assignments, unused_parens)]
     fn fallback_function_attributes_list(&self, stream: &mut Stream) -> ParserResult {
         if self.version_is_at_least_0_6_0 {
-            OneOrMoreHelper::run(stream, |stream| self.fallback_function_attribute(stream))
+            OneOrMoreHelper::run(stream, |stream| {
+                if self.version_is_at_least_0_6_0 {
+                    {
+                        let mut helper = ChoiceHelper::new(stream);
+                        loop {
+                            let result = self.modifier_invocation(stream);
+                            if helper.handle_next_result(stream, result) {
+                                break;
+                            }
+                            let result = self.override_specifier(stream);
+                            if helper.handle_next_result(stream, result) {
+                                break;
+                            }
+                            let result = self.default_parse_token_with_trivia(
+                                stream,
+                                TokenKind::ExternalKeyword,
+                            );
+                            if helper.handle_next_result(stream, result) {
+                                break;
+                            }
+                            let result = self
+                                .default_parse_token_with_trivia(stream, TokenKind::PayableKeyword);
+                            if helper.handle_next_result(stream, result) {
+                                break;
+                            }
+                            let result = self
+                                .default_parse_token_with_trivia(stream, TokenKind::PureKeyword);
+                            if helper.handle_next_result(stream, result) {
+                                break;
+                            }
+                            let result = self
+                                .default_parse_token_with_trivia(stream, TokenKind::ViewKeyword);
+                            if helper.handle_next_result(stream, result) {
+                                break;
+                            }
+                            let result = self
+                                .default_parse_token_with_trivia(stream, TokenKind::VirtualKeyword);
+                            if helper.handle_next_result(stream, result) {
+                                break;
+                            }
+                            break;
+                        }
+                        helper.result(stream)
+                    }
+                } else {
+                    ParserResult::no_match(vec![])
+                }
+            })
         } else {
             ParserResult::no_match(vec![])
         }
@@ -4276,7 +4056,27 @@ impl Language {
                                 if helper.handle_next_result({
                                     let mut helper = ChoiceHelper::new(stream);
                                     loop {
-                                        let result = self.simple_statement(stream);
+                                        let result = {
+                                            let mut helper = ChoiceHelper::new(stream);
+                                            loop {
+                                                let result = self.expression_statement(stream);
+                                                if helper.handle_next_result(stream, result) {
+                                                    break;
+                                                }
+                                                let result =
+                                                    self.variable_declaration_statement(stream);
+                                                if helper.handle_next_result(stream, result) {
+                                                    break;
+                                                }
+                                                let result =
+                                                    self.tuple_deconstruction_statement(stream);
+                                                if helper.handle_next_result(stream, result) {
+                                                    break;
+                                                }
+                                                break;
+                                            }
+                                            helper.result(stream)
+                                        };
                                         if helper.handle_next_result(stream, result) {
                                             break;
                                         }
@@ -4346,8 +4146,8 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn function_attribute(&self, stream: &mut Stream) -> ParserResult {
-        {
+    fn function_attributes_list(&self, stream: &mut Stream) -> ParserResult {
+        OneOrMoreHelper::run(stream, |stream| {
             let mut helper = ChoiceHelper::new(stream);
             loop {
                 let result = self.modifier_invocation(stream);
@@ -4407,34 +4207,8 @@ impl Language {
                 break;
             }
             helper.result(stream)
-        }
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn function_attributes_list(&self, stream: &mut Stream) -> ParserResult {
-        OneOrMoreHelper::run(stream, |stream| self.function_attribute(stream))
-            .with_kind(RuleKind::FunctionAttributesList)
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn function_call_operator(&self, stream: &mut Stream) -> ParserResult {
-        {
-            let mut helper = SequenceHelper::new();
-            loop {
-                if self.version_is_at_least_0_6_2 {
-                    if helper.handle_next_result(OptionalHelper::transform(
-                        self.function_call_options(stream),
-                    )) {
-                        break;
-                    }
-                }
-                if helper.handle_next_result(self.arguments_declaration(stream)) {
-                    break;
-                }
-                break;
-            }
-            helper.result()
-        }
+        })
+        .with_kind(RuleKind::FunctionAttributesList)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -4566,8 +4340,8 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn function_type_attribute(&self, stream: &mut Stream) -> ParserResult {
-        {
+    fn function_type_attributes_list(&self, stream: &mut Stream) -> ParserResult {
+        OneOrMoreHelper::run(stream, |stream| {
             let mut helper = ChoiceHelper::new(stream);
             loop {
                 let result =
@@ -4605,13 +4379,8 @@ impl Language {
                 break;
             }
             helper.result(stream)
-        }
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn function_type_attributes_list(&self, stream: &mut Stream) -> ParserResult {
-        OneOrMoreHelper::run(stream, |stream| self.function_type_attribute(stream))
-            .with_kind(RuleKind::FunctionTypeAttributesList)
+        })
+        .with_kind(RuleKind::FunctionTypeAttributesList)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -4838,60 +4607,6 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn index_access_operator(&self, stream: &mut Stream) -> ParserResult {
-        {
-            let mut helper = SequenceHelper::new();
-            loop {
-                if helper.handle_next_result(
-                    self.default_parse_token_with_trivia(stream, TokenKind::OpenBracket),
-                ) {
-                    break;
-                }
-                if helper.handle_next_result({
-                    let mut helper = SequenceHelper::new();
-                    loop {
-                        if helper
-                            .handle_next_result(OptionalHelper::transform(self.expression(stream)))
-                        {
-                            break;
-                        }
-                        if helper.handle_next_result(OptionalHelper::transform({
-                            let mut helper = SequenceHelper::new();
-                            loop {
-                                if helper.handle_next_result(
-                                    self.default_parse_token_with_trivia(stream, TokenKind::Colon),
-                                ) {
-                                    break;
-                                }
-                                if helper.handle_next_result(OptionalHelper::transform(
-                                    self.expression(stream),
-                                )) {
-                                    break;
-                                }
-                                break;
-                            }
-                            helper.result()
-                        })) {
-                            break;
-                        }
-                        break;
-                    }
-                    helper.result()
-                }) {
-                    break;
-                }
-                if helper.handle_next_result(
-                    self.default_parse_token_with_trivia(stream, TokenKind::CloseBracket),
-                ) {
-                    break;
-                }
-                break;
-            }
-            helper.result()
-        }
-    }
-
-    #[allow(unused_assignments, unused_parens)]
     fn inheritance_specifier(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
@@ -5016,8 +4731,86 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn interface_members_list(&self, stream: &mut Stream) -> ParserResult {
-        OneOrMoreHelper::run(stream, |stream| self.contract_member(stream))
-            .with_kind(RuleKind::InterfaceMembersList)
+        OneOrMoreHelper::run(stream, |stream| {
+            let mut helper = ChoiceHelper::new(stream);
+            loop {
+                let result = self.using_directive(stream);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.function_definition(stream);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.modifier_definition(stream);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.struct_definition(stream);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.enum_definition(stream);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.event_definition(stream);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.state_variable_definition(stream);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                if self.version_is_at_least_0_4_22 {
+                    let result = self.constructor_definition(stream);
+                    if helper.handle_next_result(stream, result) {
+                        break;
+                    }
+                }
+                if self.version_is_at_least_0_6_0 {
+                    let result = {
+                        let mut helper = ChoiceHelper::new(stream);
+                        loop {
+                            let result = self.fallback_function_definition(stream);
+                            if helper.handle_next_result(stream, result) {
+                                break;
+                            }
+                            let result = self.receive_function_definition(stream);
+                            if helper.handle_next_result(stream, result) {
+                                break;
+                            }
+                            break;
+                        }
+                        helper.result(stream)
+                    };
+                    if helper.handle_next_result(stream, result) {
+                        break;
+                    }
+                }
+                if !self.version_is_at_least_0_6_0 {
+                    let result = self.unnamed_function_definition(stream);
+                    if helper.handle_next_result(stream, result) {
+                        break;
+                    }
+                }
+                if self.version_is_at_least_0_8_4 {
+                    let result = self.error_definition(stream);
+                    if helper.handle_next_result(stream, result) {
+                        break;
+                    }
+                }
+                if self.version_is_at_least_0_8_8 {
+                    let result = self.user_defined_value_type_definition(stream);
+                    if helper.handle_next_result(stream, result) {
+                        break;
+                    }
+                }
+                break;
+            }
+            helper.result(stream)
+        })
+        .with_kind(RuleKind::InterfaceMembersList)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -5096,8 +4889,86 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn library_members_list(&self, stream: &mut Stream) -> ParserResult {
-        OneOrMoreHelper::run(stream, |stream| self.contract_member(stream))
-            .with_kind(RuleKind::LibraryMembersList)
+        OneOrMoreHelper::run(stream, |stream| {
+            let mut helper = ChoiceHelper::new(stream);
+            loop {
+                let result = self.using_directive(stream);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.function_definition(stream);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.modifier_definition(stream);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.struct_definition(stream);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.enum_definition(stream);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.event_definition(stream);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                let result = self.state_variable_definition(stream);
+                if helper.handle_next_result(stream, result) {
+                    break;
+                }
+                if self.version_is_at_least_0_4_22 {
+                    let result = self.constructor_definition(stream);
+                    if helper.handle_next_result(stream, result) {
+                        break;
+                    }
+                }
+                if self.version_is_at_least_0_6_0 {
+                    let result = {
+                        let mut helper = ChoiceHelper::new(stream);
+                        loop {
+                            let result = self.fallback_function_definition(stream);
+                            if helper.handle_next_result(stream, result) {
+                                break;
+                            }
+                            let result = self.receive_function_definition(stream);
+                            if helper.handle_next_result(stream, result) {
+                                break;
+                            }
+                            break;
+                        }
+                        helper.result(stream)
+                    };
+                    if helper.handle_next_result(stream, result) {
+                        break;
+                    }
+                }
+                if !self.version_is_at_least_0_6_0 {
+                    let result = self.unnamed_function_definition(stream);
+                    if helper.handle_next_result(stream, result) {
+                        break;
+                    }
+                }
+                if self.version_is_at_least_0_8_4 {
+                    let result = self.error_definition(stream);
+                    if helper.handle_next_result(stream, result) {
+                        break;
+                    }
+                }
+                if self.version_is_at_least_0_8_8 {
+                    let result = self.user_defined_value_type_definition(stream);
+                    if helper.handle_next_result(stream, result) {
+                        break;
+                    }
+                }
+                break;
+            }
+            helper.result(stream)
+        })
+        .with_kind(RuleKind::LibraryMembersList)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -5108,7 +4979,75 @@ impl Language {
                 if helper.handle_next_result({
                     let mut helper = ChoiceHelper::new(stream);
                     loop {
-                        let result = self.elementary_type(stream);
+                        let result = {
+                            let mut helper = ChoiceHelper::new(stream);
+                            loop {
+                                let result = self.default_parse_token_with_trivia(
+                                    stream,
+                                    TokenKind::BoolKeyword,
+                                );
+                                if helper.handle_next_result(stream, result) {
+                                    break;
+                                }
+                                let result = self.default_parse_token_with_trivia(
+                                    stream,
+                                    TokenKind::StringKeyword,
+                                );
+                                if helper.handle_next_result(stream, result) {
+                                    break;
+                                }
+                                let result = self.address_type(stream);
+                                if helper.handle_next_result(stream, result) {
+                                    break;
+                                }
+                                let result = self.default_parse_token_with_trivia(
+                                    stream,
+                                    TokenKind::FixedBytesType,
+                                );
+                                if helper.handle_next_result(stream, result) {
+                                    break;
+                                }
+                                let result = self.default_parse_token_with_trivia(
+                                    stream,
+                                    TokenKind::SignedIntegerType,
+                                );
+                                if helper.handle_next_result(stream, result) {
+                                    break;
+                                }
+                                let result = self.default_parse_token_with_trivia(
+                                    stream,
+                                    TokenKind::UnsignedIntegerType,
+                                );
+                                if helper.handle_next_result(stream, result) {
+                                    break;
+                                }
+                                let result = self.default_parse_token_with_trivia(
+                                    stream,
+                                    TokenKind::SignedFixedType,
+                                );
+                                if helper.handle_next_result(stream, result) {
+                                    break;
+                                }
+                                let result = self.default_parse_token_with_trivia(
+                                    stream,
+                                    TokenKind::UnsignedFixedType,
+                                );
+                                if helper.handle_next_result(stream, result) {
+                                    break;
+                                }
+                                if !self.version_is_at_least_0_8_0 {
+                                    let result = self.default_parse_token_with_trivia(
+                                        stream,
+                                        TokenKind::ByteKeyword,
+                                    );
+                                    if helper.handle_next_result(stream, result) {
+                                        break;
+                                    }
+                                }
+                                break;
+                            }
+                            helper.result(stream)
+                        };
                         if helper.handle_next_result(stream, result) {
                             break;
                         }
@@ -5216,43 +5155,8 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn member_access_operator(&self, stream: &mut Stream) -> ParserResult {
-        {
-            let mut helper = SequenceHelper::new();
-            loop {
-                if helper.handle_next_result(
-                    self.default_parse_token_with_trivia(stream, TokenKind::Period),
-                ) {
-                    break;
-                }
-                if helper.handle_next_result({
-                    let mut helper = ChoiceHelper::new(stream);
-                    loop {
-                        let result =
-                            self.default_parse_token_with_trivia(stream, TokenKind::Identifier);
-                        if helper.handle_next_result(stream, result) {
-                            break;
-                        }
-                        let result =
-                            self.default_parse_token_with_trivia(stream, TokenKind::AddressKeyword);
-                        if helper.handle_next_result(stream, result) {
-                            break;
-                        }
-                        break;
-                    }
-                    helper.result(stream)
-                }) {
-                    break;
-                }
-                break;
-            }
-            helper.result()
-        }
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn modifier_attribute(&self, stream: &mut Stream) -> ParserResult {
-        {
+    fn modifier_attributes_list(&self, stream: &mut Stream) -> ParserResult {
+        OneOrMoreHelper::run(stream, |stream| {
             let mut helper = ChoiceHelper::new(stream);
             loop {
                 let result = self.override_specifier(stream);
@@ -5269,13 +5173,8 @@ impl Language {
                 break;
             }
             helper.result(stream)
-        }
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn modifier_attributes_list(&self, stream: &mut Stream) -> ParserResult {
-        OneOrMoreHelper::run(stream, |stream| self.modifier_attribute(stream))
-            .with_kind(RuleKind::ModifierAttributesList)
+        })
+        .with_kind(RuleKind::ModifierAttributesList)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -5346,29 +5245,6 @@ impl Language {
             helper.result()
         }
         .with_kind(RuleKind::ModifierInvocation)
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn mul_div_mod_operator(&self, stream: &mut Stream) -> ParserResult {
-        {
-            let mut helper = ChoiceHelper::new(stream);
-            loop {
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::Asterisk);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::Slash);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::Percent);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                break;
-            }
-            helper.result(stream)
-        }
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -5513,83 +5389,6 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn number_unit(&self, stream: &mut Stream) -> ParserResult {
-        {
-            let mut helper = ChoiceHelper::new(stream);
-            loop {
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::DaysKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::EtherKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::HoursKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result =
-                    self.default_parse_token_with_trivia(stream, TokenKind::MinutesKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result =
-                    self.default_parse_token_with_trivia(stream, TokenKind::SecondsKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::WeeksKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::WeiKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                if !self.version_is_at_least_0_5_0 {
-                    let result =
-                        self.default_parse_token_with_trivia(stream, TokenKind::YearsKeyword);
-                    if helper.handle_next_result(stream, result) {
-                        break;
-                    }
-                }
-                if self.version_is_at_least_0_6_11 {
-                    let result =
-                        self.default_parse_token_with_trivia(stream, TokenKind::GweiKeyword);
-                    if helper.handle_next_result(stream, result) {
-                        break;
-                    }
-                }
-                if !self.version_is_at_least_0_7_0 {
-                    let result = {
-                        let mut helper = ChoiceHelper::new(stream);
-                        loop {
-                            let result = self
-                                .default_parse_token_with_trivia(stream, TokenKind::FinneyKeyword);
-                            if helper.handle_next_result(stream, result) {
-                                break;
-                            }
-                            let result = self
-                                .default_parse_token_with_trivia(stream, TokenKind::SzaboKeyword);
-                            if helper.handle_next_result(stream, result) {
-                                break;
-                            }
-                            break;
-                        }
-                        helper.result(stream)
-                    };
-                    if helper.handle_next_result(stream, result) {
-                        break;
-                    }
-                }
-                break;
-            }
-            helper.result(stream)
-        }
-    }
-
-    #[allow(unused_assignments, unused_parens)]
     fn numeric_expression(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = ChoiceHelper::new(stream);
@@ -5603,9 +5402,106 @@ impl Language {
                             break;
                         }
                         if !self.version_is_at_least_0_5_0 {
-                            if helper.handle_next_result(OptionalHelper::transform(
-                                self.number_unit(stream),
-                            )) {
+                            if helper.handle_next_result(OptionalHelper::transform({
+                                let mut helper = ChoiceHelper::new(stream);
+                                loop {
+                                    let result = self.default_parse_token_with_trivia(
+                                        stream,
+                                        TokenKind::DaysKeyword,
+                                    );
+                                    if helper.handle_next_result(stream, result) {
+                                        break;
+                                    }
+                                    let result = self.default_parse_token_with_trivia(
+                                        stream,
+                                        TokenKind::EtherKeyword,
+                                    );
+                                    if helper.handle_next_result(stream, result) {
+                                        break;
+                                    }
+                                    let result = self.default_parse_token_with_trivia(
+                                        stream,
+                                        TokenKind::HoursKeyword,
+                                    );
+                                    if helper.handle_next_result(stream, result) {
+                                        break;
+                                    }
+                                    let result = self.default_parse_token_with_trivia(
+                                        stream,
+                                        TokenKind::MinutesKeyword,
+                                    );
+                                    if helper.handle_next_result(stream, result) {
+                                        break;
+                                    }
+                                    let result = self.default_parse_token_with_trivia(
+                                        stream,
+                                        TokenKind::SecondsKeyword,
+                                    );
+                                    if helper.handle_next_result(stream, result) {
+                                        break;
+                                    }
+                                    let result = self.default_parse_token_with_trivia(
+                                        stream,
+                                        TokenKind::WeeksKeyword,
+                                    );
+                                    if helper.handle_next_result(stream, result) {
+                                        break;
+                                    }
+                                    let result = self.default_parse_token_with_trivia(
+                                        stream,
+                                        TokenKind::WeiKeyword,
+                                    );
+                                    if helper.handle_next_result(stream, result) {
+                                        break;
+                                    }
+                                    if !self.version_is_at_least_0_5_0 {
+                                        let result = self.default_parse_token_with_trivia(
+                                            stream,
+                                            TokenKind::YearsKeyword,
+                                        );
+                                        if helper.handle_next_result(stream, result) {
+                                            break;
+                                        }
+                                    }
+                                    if self.version_is_at_least_0_6_11 {
+                                        let result = self.default_parse_token_with_trivia(
+                                            stream,
+                                            TokenKind::GweiKeyword,
+                                        );
+                                        if helper.handle_next_result(stream, result) {
+                                            break;
+                                        }
+                                    }
+                                    if !self.version_is_at_least_0_7_0 {
+                                        let result = {
+                                            let mut helper = ChoiceHelper::new(stream);
+                                            loop {
+                                                let result = self.default_parse_token_with_trivia(
+                                                    stream,
+                                                    TokenKind::FinneyKeyword,
+                                                );
+                                                if helper.handle_next_result(stream, result) {
+                                                    break;
+                                                }
+                                                let result = self.default_parse_token_with_trivia(
+                                                    stream,
+                                                    TokenKind::SzaboKeyword,
+                                                );
+                                                if helper.handle_next_result(stream, result) {
+                                                    break;
+                                                }
+                                                break;
+                                            }
+                                            helper.result(stream)
+                                        };
+                                        if helper.handle_next_result(stream, result) {
+                                            break;
+                                        }
+                                    }
+                                    break;
+                                }
+                                helper.result(stream)
+                            })) {
                                 break;
                             }
                         }
@@ -5624,9 +5520,104 @@ impl Language {
                         ) {
                             break;
                         }
-                        if helper
-                            .handle_next_result(OptionalHelper::transform(self.number_unit(stream)))
-                        {
+                        if helper.handle_next_result(OptionalHelper::transform({
+                            let mut helper = ChoiceHelper::new(stream);
+                            loop {
+                                let result = self.default_parse_token_with_trivia(
+                                    stream,
+                                    TokenKind::DaysKeyword,
+                                );
+                                if helper.handle_next_result(stream, result) {
+                                    break;
+                                }
+                                let result = self.default_parse_token_with_trivia(
+                                    stream,
+                                    TokenKind::EtherKeyword,
+                                );
+                                if helper.handle_next_result(stream, result) {
+                                    break;
+                                }
+                                let result = self.default_parse_token_with_trivia(
+                                    stream,
+                                    TokenKind::HoursKeyword,
+                                );
+                                if helper.handle_next_result(stream, result) {
+                                    break;
+                                }
+                                let result = self.default_parse_token_with_trivia(
+                                    stream,
+                                    TokenKind::MinutesKeyword,
+                                );
+                                if helper.handle_next_result(stream, result) {
+                                    break;
+                                }
+                                let result = self.default_parse_token_with_trivia(
+                                    stream,
+                                    TokenKind::SecondsKeyword,
+                                );
+                                if helper.handle_next_result(stream, result) {
+                                    break;
+                                }
+                                let result = self.default_parse_token_with_trivia(
+                                    stream,
+                                    TokenKind::WeeksKeyword,
+                                );
+                                if helper.handle_next_result(stream, result) {
+                                    break;
+                                }
+                                let result = self
+                                    .default_parse_token_with_trivia(stream, TokenKind::WeiKeyword);
+                                if helper.handle_next_result(stream, result) {
+                                    break;
+                                }
+                                if !self.version_is_at_least_0_5_0 {
+                                    let result = self.default_parse_token_with_trivia(
+                                        stream,
+                                        TokenKind::YearsKeyword,
+                                    );
+                                    if helper.handle_next_result(stream, result) {
+                                        break;
+                                    }
+                                }
+                                if self.version_is_at_least_0_6_11 {
+                                    let result = self.default_parse_token_with_trivia(
+                                        stream,
+                                        TokenKind::GweiKeyword,
+                                    );
+                                    if helper.handle_next_result(stream, result) {
+                                        break;
+                                    }
+                                }
+                                if !self.version_is_at_least_0_7_0 {
+                                    let result = {
+                                        let mut helper = ChoiceHelper::new(stream);
+                                        loop {
+                                            let result = self.default_parse_token_with_trivia(
+                                                stream,
+                                                TokenKind::FinneyKeyword,
+                                            );
+                                            if helper.handle_next_result(stream, result) {
+                                                break;
+                                            }
+                                            let result = self.default_parse_token_with_trivia(
+                                                stream,
+                                                TokenKind::SzaboKeyword,
+                                            );
+                                            if helper.handle_next_result(stream, result) {
+                                                break;
+                                            }
+                                            break;
+                                        }
+                                        helper.result(stream)
+                                    };
+                                    if helper.handle_next_result(stream, result) {
+                                        break;
+                                    }
+                                }
+                                break;
+                            }
+                            helper.result(stream)
+                        })) {
                             break;
                         }
                         break;
@@ -5641,39 +5632,6 @@ impl Language {
             helper.result(stream)
         }
         .with_kind(RuleKind::NumericExpression)
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn or_operator(&self, stream: &mut Stream) -> ParserResult {
-        self.default_parse_token_with_trivia(stream, TokenKind::BarBar)
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn order_comparison_operator(&self, stream: &mut Stream) -> ParserResult {
-        {
-            let mut helper = ChoiceHelper::new(stream);
-            loop {
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::LessThan);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::GreaterThan);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::LessThanEqual);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result =
-                    self.default_parse_token_with_trivia(stream, TokenKind::GreaterThanEqual);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                break;
-            }
-            helper.result(stream)
-        }
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -5725,8 +5683,32 @@ impl Language {
                 if helper.handle_next_result(self.type_name(stream)) {
                     break;
                 }
-                if helper.handle_next_result(OptionalHelper::transform(self.data_location(stream)))
-                {
+                if helper.handle_next_result(OptionalHelper::transform({
+                    let mut helper = ChoiceHelper::new(stream);
+                    loop {
+                        let result =
+                            self.default_parse_token_with_trivia(stream, TokenKind::MemoryKeyword);
+                        if helper.handle_next_result(stream, result) {
+                            break;
+                        }
+                        let result =
+                            self.default_parse_token_with_trivia(stream, TokenKind::StorageKeyword);
+                        if helper.handle_next_result(stream, result) {
+                            break;
+                        }
+                        if self.version_is_at_least_0_5_0 {
+                            let result = self.default_parse_token_with_trivia(
+                                stream,
+                                TokenKind::CalldataKeyword,
+                            );
+                            if helper.handle_next_result(stream, result) {
+                                break;
+                            }
+                        }
+                        break;
+                    }
+                    helper.result(stream)
+                })) {
                     break;
                 }
                 if helper.handle_next_result(OptionalHelper::transform(
@@ -5921,96 +5903,46 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn primary_expression(&self, stream: &mut Stream) -> ParserResult {
-        {
-            let mut helper = ChoiceHelper::new(stream);
-            loop {
-                let result = self.new_expression(stream);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.tuple_expression(stream);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.array_expression(stream);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.boolean_expression(stream);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.numeric_expression(stream);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.string_expression(stream);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.elementary_type(stream);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::Identifier);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                if self.version_is_at_least_0_5_3 {
-                    let result = self.type_expression(stream);
-                    if helper.handle_next_result(stream, result) {
-                        break;
-                    }
-                }
-                break;
-            }
-            helper.result(stream)
-        }
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn receive_function_attribute(&self, stream: &mut Stream) -> ParserResult {
-        if self.version_is_at_least_0_6_0 {
-            {
-                let mut helper = ChoiceHelper::new(stream);
-                loop {
-                    let result = self.modifier_invocation(stream);
-                    if helper.handle_next_result(stream, result) {
-                        break;
-                    }
-                    let result = self.override_specifier(stream);
-                    if helper.handle_next_result(stream, result) {
-                        break;
-                    }
-                    let result =
-                        self.default_parse_token_with_trivia(stream, TokenKind::ExternalKeyword);
-                    if helper.handle_next_result(stream, result) {
-                        break;
-                    }
-                    let result =
-                        self.default_parse_token_with_trivia(stream, TokenKind::PayableKeyword);
-                    if helper.handle_next_result(stream, result) {
-                        break;
-                    }
-                    let result =
-                        self.default_parse_token_with_trivia(stream, TokenKind::VirtualKeyword);
-                    if helper.handle_next_result(stream, result) {
-                        break;
-                    }
-                    break;
-                }
-                helper.result(stream)
-            }
-        } else {
-            ParserResult::no_match(vec![])
-        }
-    }
-
-    #[allow(unused_assignments, unused_parens)]
     fn receive_function_attributes_list(&self, stream: &mut Stream) -> ParserResult {
         if self.version_is_at_least_0_6_0 {
-            OneOrMoreHelper::run(stream, |stream| self.receive_function_attribute(stream))
+            OneOrMoreHelper::run(stream, |stream| {
+                if self.version_is_at_least_0_6_0 {
+                    {
+                        let mut helper = ChoiceHelper::new(stream);
+                        loop {
+                            let result = self.modifier_invocation(stream);
+                            if helper.handle_next_result(stream, result) {
+                                break;
+                            }
+                            let result = self.override_specifier(stream);
+                            if helper.handle_next_result(stream, result) {
+                                break;
+                            }
+                            let result = self.default_parse_token_with_trivia(
+                                stream,
+                                TokenKind::ExternalKeyword,
+                            );
+                            if helper.handle_next_result(stream, result) {
+                                break;
+                            }
+                            let result = self
+                                .default_parse_token_with_trivia(stream, TokenKind::PayableKeyword);
+                            if helper.handle_next_result(stream, result) {
+                                break;
+                            }
+                            let result = self
+                                .default_parse_token_with_trivia(stream, TokenKind::VirtualKeyword);
+                            if helper.handle_next_result(stream, result) {
+                                break;
+                            }
+                            break;
+                        }
+                        helper.result(stream)
+                    }
+                } else {
+                    ParserResult::no_match(vec![])
+                }
+            })
         } else {
             ParserResult::no_match(vec![])
         }
@@ -6160,541 +6092,6 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn shift_operator(&self, stream: &mut Stream) -> ParserResult {
-        {
-            let mut helper = ChoiceHelper::new(stream);
-            loop {
-                let result =
-                    self.default_parse_token_with_trivia(stream, TokenKind::LessThanLessThan);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result =
-                    self.default_parse_token_with_trivia(stream, TokenKind::GreaterThanGreaterThan);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(
-                    stream,
-                    TokenKind::GreaterThanGreaterThanGreaterThan,
-                );
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                break;
-            }
-            helper.result(stream)
-        }
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn simple_statement(&self, stream: &mut Stream) -> ParserResult {
-        {
-            let mut helper = ChoiceHelper::new(stream);
-            loop {
-                let result = self.expression_statement(stream);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.variable_declaration_statement(stream);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.tuple_deconstruction_statement(stream);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                break;
-            }
-            helper.result(stream)
-        }
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn solidity_keywords_over_all_versions(&self, stream: &mut Stream) -> ParserResult {
-        {
-            let mut helper = ChoiceHelper::new(stream);
-            loop {
-                let result =
-                    self.default_parse_token_with_trivia(stream, TokenKind::ABICoderKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result =
-                    self.default_parse_token_with_trivia(stream, TokenKind::AbstractKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result =
-                    self.default_parse_token_with_trivia(stream, TokenKind::AddressKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::AfterKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result =
-                    self.default_parse_token_with_trivia(stream, TokenKind::AnonymousKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::AsKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result =
-                    self.default_parse_token_with_trivia(stream, TokenKind::AssemblyKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::BoolKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::BreakKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::ByteKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::CaseKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::CatchKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result =
-                    self.default_parse_token_with_trivia(stream, TokenKind::ConstantKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result =
-                    self.default_parse_token_with_trivia(stream, TokenKind::ContinueKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result =
-                    self.default_parse_token_with_trivia(stream, TokenKind::ContractKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::DaysKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result =
-                    self.default_parse_token_with_trivia(stream, TokenKind::DefaultKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::DeleteKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::DoKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::ElseKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::EnumKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::EtherKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::EventKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result =
-                    self.default_parse_token_with_trivia(stream, TokenKind::ExperimentalKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result =
-                    self.default_parse_token_with_trivia(stream, TokenKind::ExternalKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result =
-                    self.default_parse_token_with_trivia(stream, TokenKind::FallbackKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::FalseKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::FinalKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::FinneyKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::ForKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::FromKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result =
-                    self.default_parse_token_with_trivia(stream, TokenKind::FunctionKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::GlobalKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::HexKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::HoursKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::IfKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::ImportKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result =
-                    self.default_parse_token_with_trivia(stream, TokenKind::IndexedKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::InKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::InlineKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result =
-                    self.default_parse_token_with_trivia(stream, TokenKind::InterfaceKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result =
-                    self.default_parse_token_with_trivia(stream, TokenKind::InternalKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::IsKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::LetKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result =
-                    self.default_parse_token_with_trivia(stream, TokenKind::LibraryKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result =
-                    self.default_parse_token_with_trivia(stream, TokenKind::MappingKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::MatchKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::MemoryKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result =
-                    self.default_parse_token_with_trivia(stream, TokenKind::MinutesKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result =
-                    self.default_parse_token_with_trivia(stream, TokenKind::ModifierKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::NewKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::NullKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::OfKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result =
-                    self.default_parse_token_with_trivia(stream, TokenKind::OverrideKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result =
-                    self.default_parse_token_with_trivia(stream, TokenKind::PayableKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::PragmaKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result =
-                    self.default_parse_token_with_trivia(stream, TokenKind::PrivateKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::PublicKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::PureKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result =
-                    self.default_parse_token_with_trivia(stream, TokenKind::ReceiveKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result =
-                    self.default_parse_token_with_trivia(stream, TokenKind::RelocatableKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::ReturnKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result =
-                    self.default_parse_token_with_trivia(stream, TokenKind::ReturnsKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::RevertKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result =
-                    self.default_parse_token_with_trivia(stream, TokenKind::SecondsKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result =
-                    self.default_parse_token_with_trivia(stream, TokenKind::SolidityKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::StaticKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result =
-                    self.default_parse_token_with_trivia(stream, TokenKind::StorageKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::StringKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::StructKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::SwitchKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::SzaboKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::ThrowKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::TrueKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::TypeofKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::UsingKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::VarKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::ViewKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::WeeksKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::WeiKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::WhileKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::YearsKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::EmitKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result =
-                    self.default_parse_token_with_trivia(stream, TokenKind::ConstructorKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::AliasKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::ApplyKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::AutoKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result =
-                    self.default_parse_token_with_trivia(stream, TokenKind::CalldataKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::CopyofKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::DefineKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result =
-                    self.default_parse_token_with_trivia(stream, TokenKind::ImplementsKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::MacroKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result =
-                    self.default_parse_token_with_trivia(stream, TokenKind::MutableKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result =
-                    self.default_parse_token_with_trivia(stream, TokenKind::PartialKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result =
-                    self.default_parse_token_with_trivia(stream, TokenKind::PromiseKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result =
-                    self.default_parse_token_with_trivia(stream, TokenKind::ReferenceKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::SealedKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::SizeofKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result =
-                    self.default_parse_token_with_trivia(stream, TokenKind::SupportsKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result =
-                    self.default_parse_token_with_trivia(stream, TokenKind::TypedefKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::TypeKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::LeaveKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::TryKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result =
-                    self.default_parse_token_with_trivia(stream, TokenKind::VirtualKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result =
-                    self.default_parse_token_with_trivia(stream, TokenKind::ImmutableKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::GweiKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result =
-                    self.default_parse_token_with_trivia(stream, TokenKind::UncheckedKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::ErrorKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                break;
-            }
-            helper.result(stream)
-        }
-    }
-
-    #[allow(unused_assignments, unused_parens)]
     fn source_unit(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
@@ -6717,8 +6114,8 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn source_unit_member(&self, stream: &mut Stream) -> ParserResult {
-        {
+    fn source_unit_members_list(&self, stream: &mut Stream) -> ParserResult {
+        OneOrMoreHelper::run(stream, |stream| {
             let mut helper = ChoiceHelper::new(stream);
             loop {
                 let result = self.pragma_directive(stream);
@@ -6794,18 +6191,13 @@ impl Language {
                 break;
             }
             helper.result(stream)
-        }
+        })
+        .with_kind(RuleKind::SourceUnitMembersList)
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn source_unit_members_list(&self, stream: &mut Stream) -> ParserResult {
-        OneOrMoreHelper::run(stream, |stream| self.source_unit_member(stream))
-            .with_kind(RuleKind::SourceUnitMembersList)
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn state_variable_attribute(&self, stream: &mut Stream) -> ParserResult {
-        {
+    fn state_variable_attributes_list(&self, stream: &mut Stream) -> ParserResult {
+        OneOrMoreHelper::run(stream, |stream| {
             let mut helper = ChoiceHelper::new(stream);
             loop {
                 let result = self.override_specifier(stream);
@@ -6841,13 +6233,8 @@ impl Language {
                 break;
             }
             helper.result(stream)
-        }
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn state_variable_attributes_list(&self, stream: &mut Stream) -> ParserResult {
-        OneOrMoreHelper::run(stream, |stream| self.state_variable_attribute(stream))
-            .with_kind(RuleKind::StateVariableAttributesList)
+        })
+        .with_kind(RuleKind::StateVariableAttributesList)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -6911,11 +6298,89 @@ impl Language {
         {
             let mut helper = ChoiceHelper::new(stream);
             loop {
-                let result = self.simple_statement(stream);
+                let result = {
+                    let mut helper = ChoiceHelper::new(stream);
+                    loop {
+                        let result = self.expression_statement(stream);
+                        if helper.handle_next_result(stream, result) {
+                            break;
+                        }
+                        let result = self.variable_declaration_statement(stream);
+                        if helper.handle_next_result(stream, result) {
+                            break;
+                        }
+                        let result = self.tuple_deconstruction_statement(stream);
+                        if helper.handle_next_result(stream, result) {
+                            break;
+                        }
+                        break;
+                    }
+                    helper.result(stream)
+                };
                 if helper.handle_next_result(stream, result) {
                     break;
                 }
-                let result = self.control_statement(stream);
+                let result = {
+                    let mut helper = ChoiceHelper::new(stream);
+                    loop {
+                        let result = self.if_statement(stream);
+                        if helper.handle_next_result(stream, result) {
+                            break;
+                        }
+                        let result = self.for_statement(stream);
+                        if helper.handle_next_result(stream, result) {
+                            break;
+                        }
+                        let result = self.while_statement(stream);
+                        if helper.handle_next_result(stream, result) {
+                            break;
+                        }
+                        let result = self.do_while_statement(stream);
+                        if helper.handle_next_result(stream, result) {
+                            break;
+                        }
+                        let result = self.continue_statement(stream);
+                        if helper.handle_next_result(stream, result) {
+                            break;
+                        }
+                        let result = self.break_statement(stream);
+                        if helper.handle_next_result(stream, result) {
+                            break;
+                        }
+                        let result = self.delete_statement(stream);
+                        if helper.handle_next_result(stream, result) {
+                            break;
+                        }
+                        let result = self.return_statement(stream);
+                        if helper.handle_next_result(stream, result) {
+                            break;
+                        }
+                        let result = self.revert_statement(stream);
+                        if helper.handle_next_result(stream, result) {
+                            break;
+                        }
+                        if self.version_is_at_least_0_4_21 {
+                            let result = self.emit_statement(stream);
+                            if helper.handle_next_result(stream, result) {
+                                break;
+                            }
+                        }
+                        if !self.version_is_at_least_0_5_0 {
+                            let result = self.throw_statement(stream);
+                            if helper.handle_next_result(stream, result) {
+                                break;
+                            }
+                        }
+                        if self.version_is_at_least_0_6_0 {
+                            let result = self.try_statement(stream);
+                            if helper.handle_next_result(stream, result) {
+                                break;
+                            }
+                        }
+                        break;
+                    }
+                    helper.result(stream)
+                };
                 if helper.handle_next_result(stream, result) {
                     break;
                 }
@@ -6944,31 +6409,6 @@ impl Language {
     fn statements_list(&self, stream: &mut Stream) -> ParserResult {
         OneOrMoreHelper::run(stream, |stream| self.statement(stream))
             .with_kind(RuleKind::StatementsList)
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn string_expression(&self, stream: &mut Stream) -> ParserResult {
-        {
-            let mut helper = ChoiceHelper::new(stream);
-            loop {
-                let result = self.hex_string_literals_list(stream);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.ascii_string_literals_list(stream);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                if self.version_is_at_least_0_7_0 {
-                    let result = self.unicode_string_literals_list(stream);
-                    if helper.handle_next_result(stream, result) {
-                        break;
-                    }
-                }
-                break;
-            }
-            helper.result(stream)
-        }
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -7244,9 +6684,36 @@ impl Language {
                         if helper.handle_next_result(self.type_name(stream)) {
                             break;
                         }
-                        if helper.handle_next_result(OptionalHelper::transform(
-                            self.data_location(stream),
-                        )) {
+                        if helper.handle_next_result(OptionalHelper::transform({
+                            let mut helper = ChoiceHelper::new(stream);
+                            loop {
+                                let result = self.default_parse_token_with_trivia(
+                                    stream,
+                                    TokenKind::MemoryKeyword,
+                                );
+                                if helper.handle_next_result(stream, result) {
+                                    break;
+                                }
+                                let result = self.default_parse_token_with_trivia(
+                                    stream,
+                                    TokenKind::StorageKeyword,
+                                );
+                                if helper.handle_next_result(stream, result) {
+                                    break;
+                                }
+                                if self.version_is_at_least_0_5_0 {
+                                    let result = self.default_parse_token_with_trivia(
+                                        stream,
+                                        TokenKind::CalldataKeyword,
+                                    );
+                                    if helper.handle_next_result(stream, result) {
+                                        break;
+                                    }
+                                }
+                                break;
+                            }
+                            helper.result(stream)
+                        })) {
                             break;
                         }
                         if helper.handle_next_result(
@@ -7264,9 +6731,36 @@ impl Language {
                 let result = {
                     let mut helper = SequenceHelper::new();
                     loop {
-                        if helper.handle_next_result(OptionalHelper::transform(
-                            self.data_location(stream),
-                        )) {
+                        if helper.handle_next_result(OptionalHelper::transform({
+                            let mut helper = ChoiceHelper::new(stream);
+                            loop {
+                                let result = self.default_parse_token_with_trivia(
+                                    stream,
+                                    TokenKind::MemoryKeyword,
+                                );
+                                if helper.handle_next_result(stream, result) {
+                                    break;
+                                }
+                                let result = self.default_parse_token_with_trivia(
+                                    stream,
+                                    TokenKind::StorageKeyword,
+                                );
+                                if helper.handle_next_result(stream, result) {
+                                    break;
+                                }
+                                if self.version_is_at_least_0_5_0 {
+                                    let result = self.default_parse_token_with_trivia(
+                                        stream,
+                                        TokenKind::CalldataKeyword,
+                                    );
+                                    if helper.handle_next_result(stream, result) {
+                                        break;
+                                    }
+                                }
+                                break;
+                            }
+                            helper.result(stream)
+                        })) {
                             break;
                         }
                         if helper.handle_next_result(
@@ -7433,7 +6927,61 @@ impl Language {
                 if helper.handle_next_result(stream, result) {
                     break;
                 }
-                let result = self.elementary_type(stream);
+                let result = {
+                    let mut helper = ChoiceHelper::new(stream);
+                    loop {
+                        let result =
+                            self.default_parse_token_with_trivia(stream, TokenKind::BoolKeyword);
+                        if helper.handle_next_result(stream, result) {
+                            break;
+                        }
+                        let result =
+                            self.default_parse_token_with_trivia(stream, TokenKind::StringKeyword);
+                        if helper.handle_next_result(stream, result) {
+                            break;
+                        }
+                        let result = self.address_type(stream);
+                        if helper.handle_next_result(stream, result) {
+                            break;
+                        }
+                        let result =
+                            self.default_parse_token_with_trivia(stream, TokenKind::FixedBytesType);
+                        if helper.handle_next_result(stream, result) {
+                            break;
+                        }
+                        let result = self
+                            .default_parse_token_with_trivia(stream, TokenKind::SignedIntegerType);
+                        if helper.handle_next_result(stream, result) {
+                            break;
+                        }
+                        let result = self.default_parse_token_with_trivia(
+                            stream,
+                            TokenKind::UnsignedIntegerType,
+                        );
+                        if helper.handle_next_result(stream, result) {
+                            break;
+                        }
+                        let result = self
+                            .default_parse_token_with_trivia(stream, TokenKind::SignedFixedType);
+                        if helper.handle_next_result(stream, result) {
+                            break;
+                        }
+                        let result = self
+                            .default_parse_token_with_trivia(stream, TokenKind::UnsignedFixedType);
+                        if helper.handle_next_result(stream, result) {
+                            break;
+                        }
+                        if !self.version_is_at_least_0_8_0 {
+                            let result = self
+                                .default_parse_token_with_trivia(stream, TokenKind::ByteKeyword);
+                            if helper.handle_next_result(stream, result) {
+                                break;
+                            }
+                        }
+                        break;
+                    }
+                    helper.result(stream)
+                };
                 if helper.handle_next_result(stream, result) {
                     break;
                 }
@@ -7479,62 +7027,6 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn unary_postfix_operator(&self, stream: &mut Stream) -> ParserResult {
-        {
-            let mut helper = ChoiceHelper::new(stream);
-            loop {
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::PlusPlus);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::MinusMinus);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                break;
-            }
-            helper.result(stream)
-        }
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn unary_prefix_operator(&self, stream: &mut Stream) -> ParserResult {
-        {
-            let mut helper = ChoiceHelper::new(stream);
-            loop {
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::PlusPlus);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::MinusMinus);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::Tilde);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::Bang);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.default_parse_token_with_trivia(stream, TokenKind::Minus);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                if !self.version_is_at_least_0_5_0 {
-                    let result = self.default_parse_token_with_trivia(stream, TokenKind::Plus);
-                    if helper.handle_next_result(stream, result) {
-                        break;
-                    }
-                }
-                break;
-            }
-            helper.result(stream)
-        }
-    }
-
-    #[allow(unused_assignments, unused_parens)]
     fn unchecked_block(&self, stream: &mut Stream) -> ParserResult {
         if self.version_is_at_least_0_8_0 {
             {
@@ -7571,52 +7063,51 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn unnamed_function_attribute(&self, stream: &mut Stream) -> ParserResult {
-        if !self.version_is_at_least_0_6_0 {
-            {
-                let mut helper = ChoiceHelper::new(stream);
-                loop {
-                    let result = self.modifier_invocation(stream);
-                    if helper.handle_next_result(stream, result) {
-                        break;
-                    }
-                    let result = self.override_specifier(stream);
-                    if helper.handle_next_result(stream, result) {
-                        break;
-                    }
-                    let result =
-                        self.default_parse_token_with_trivia(stream, TokenKind::ExternalKeyword);
-                    if helper.handle_next_result(stream, result) {
-                        break;
-                    }
-                    let result =
-                        self.default_parse_token_with_trivia(stream, TokenKind::PayableKeyword);
-                    if helper.handle_next_result(stream, result) {
-                        break;
-                    }
-                    let result =
-                        self.default_parse_token_with_trivia(stream, TokenKind::PureKeyword);
-                    if helper.handle_next_result(stream, result) {
-                        break;
-                    }
-                    let result =
-                        self.default_parse_token_with_trivia(stream, TokenKind::ViewKeyword);
-                    if helper.handle_next_result(stream, result) {
-                        break;
-                    }
-                    break;
-                }
-                helper.result(stream)
-            }
-        } else {
-            ParserResult::no_match(vec![])
-        }
-    }
-
-    #[allow(unused_assignments, unused_parens)]
     fn unnamed_function_attributes_list(&self, stream: &mut Stream) -> ParserResult {
         if !self.version_is_at_least_0_6_0 {
-            OneOrMoreHelper::run(stream, |stream| self.unnamed_function_attribute(stream))
+            OneOrMoreHelper::run(stream, |stream| {
+                if !self.version_is_at_least_0_6_0 {
+                    {
+                        let mut helper = ChoiceHelper::new(stream);
+                        loop {
+                            let result = self.modifier_invocation(stream);
+                            if helper.handle_next_result(stream, result) {
+                                break;
+                            }
+                            let result = self.override_specifier(stream);
+                            if helper.handle_next_result(stream, result) {
+                                break;
+                            }
+                            let result = self.default_parse_token_with_trivia(
+                                stream,
+                                TokenKind::ExternalKeyword,
+                            );
+                            if helper.handle_next_result(stream, result) {
+                                break;
+                            }
+                            let result = self
+                                .default_parse_token_with_trivia(stream, TokenKind::PayableKeyword);
+                            if helper.handle_next_result(stream, result) {
+                                break;
+                            }
+                            let result = self
+                                .default_parse_token_with_trivia(stream, TokenKind::PureKeyword);
+                            if helper.handle_next_result(stream, result) {
+                                break;
+                            }
+                            let result = self
+                                .default_parse_token_with_trivia(stream, TokenKind::ViewKeyword);
+                            if helper.handle_next_result(stream, result) {
+                                break;
+                            }
+                            break;
+                        }
+                        helper.result(stream)
+                    }
+                } else {
+                    ParserResult::no_match(vec![])
+                }
+            })
         } else {
             ParserResult::no_match(vec![])
         }
@@ -7697,7 +7188,75 @@ impl Language {
                             ) {
                                 break;
                             }
-                            if helper.handle_next_result(self.elementary_type(stream)) {
+                            if helper.handle_next_result({
+                                let mut helper = ChoiceHelper::new(stream);
+                                loop {
+                                    let result = self.default_parse_token_with_trivia(
+                                        stream,
+                                        TokenKind::BoolKeyword,
+                                    );
+                                    if helper.handle_next_result(stream, result) {
+                                        break;
+                                    }
+                                    let result = self.default_parse_token_with_trivia(
+                                        stream,
+                                        TokenKind::StringKeyword,
+                                    );
+                                    if helper.handle_next_result(stream, result) {
+                                        break;
+                                    }
+                                    let result = self.address_type(stream);
+                                    if helper.handle_next_result(stream, result) {
+                                        break;
+                                    }
+                                    let result = self.default_parse_token_with_trivia(
+                                        stream,
+                                        TokenKind::FixedBytesType,
+                                    );
+                                    if helper.handle_next_result(stream, result) {
+                                        break;
+                                    }
+                                    let result = self.default_parse_token_with_trivia(
+                                        stream,
+                                        TokenKind::SignedIntegerType,
+                                    );
+                                    if helper.handle_next_result(stream, result) {
+                                        break;
+                                    }
+                                    let result = self.default_parse_token_with_trivia(
+                                        stream,
+                                        TokenKind::UnsignedIntegerType,
+                                    );
+                                    if helper.handle_next_result(stream, result) {
+                                        break;
+                                    }
+                                    let result = self.default_parse_token_with_trivia(
+                                        stream,
+                                        TokenKind::SignedFixedType,
+                                    );
+                                    if helper.handle_next_result(stream, result) {
+                                        break;
+                                    }
+                                    let result = self.default_parse_token_with_trivia(
+                                        stream,
+                                        TokenKind::UnsignedFixedType,
+                                    );
+                                    if helper.handle_next_result(stream, result) {
+                                        break;
+                                    }
+                                    if !self.version_is_at_least_0_8_0 {
+                                        let result = self.default_parse_token_with_trivia(
+                                            stream,
+                                            TokenKind::ByteKeyword,
+                                        );
+                                        if helper.handle_next_result(stream, result) {
+                                            break;
+                                        }
+                                    }
+                                    break;
+                                }
+                                helper.result(stream)
+                            }) {
                                 break;
                             }
                             break;
@@ -7823,85 +7382,6 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn using_directive_operator(&self, stream: &mut Stream) -> ParserResult {
-        if self.version_is_at_least_0_8_19 {
-            {
-                let mut helper = ChoiceHelper::new(stream);
-                loop {
-                    let result = self.default_parse_token_with_trivia(stream, TokenKind::Ampersand);
-                    if helper.handle_next_result(stream, result) {
-                        break;
-                    }
-                    let result = self.default_parse_token_with_trivia(stream, TokenKind::Asterisk);
-                    if helper.handle_next_result(stream, result) {
-                        break;
-                    }
-                    let result = self.default_parse_token_with_trivia(stream, TokenKind::BangEqual);
-                    if helper.handle_next_result(stream, result) {
-                        break;
-                    }
-                    let result = self.default_parse_token_with_trivia(stream, TokenKind::Bar);
-                    if helper.handle_next_result(stream, result) {
-                        break;
-                    }
-                    let result = self.default_parse_token_with_trivia(stream, TokenKind::Caret);
-                    if helper.handle_next_result(stream, result) {
-                        break;
-                    }
-                    let result =
-                        self.default_parse_token_with_trivia(stream, TokenKind::EqualEqual);
-                    if helper.handle_next_result(stream, result) {
-                        break;
-                    }
-                    let result =
-                        self.default_parse_token_with_trivia(stream, TokenKind::GreaterThan);
-                    if helper.handle_next_result(stream, result) {
-                        break;
-                    }
-                    let result =
-                        self.default_parse_token_with_trivia(stream, TokenKind::GreaterThanEqual);
-                    if helper.handle_next_result(stream, result) {
-                        break;
-                    }
-                    let result = self.default_parse_token_with_trivia(stream, TokenKind::LessThan);
-                    if helper.handle_next_result(stream, result) {
-                        break;
-                    }
-                    let result =
-                        self.default_parse_token_with_trivia(stream, TokenKind::LessThanEqual);
-                    if helper.handle_next_result(stream, result) {
-                        break;
-                    }
-                    let result = self.default_parse_token_with_trivia(stream, TokenKind::Minus);
-                    if helper.handle_next_result(stream, result) {
-                        break;
-                    }
-                    let result = self.default_parse_token_with_trivia(stream, TokenKind::Percent);
-                    if helper.handle_next_result(stream, result) {
-                        break;
-                    }
-                    let result = self.default_parse_token_with_trivia(stream, TokenKind::Plus);
-                    if helper.handle_next_result(stream, result) {
-                        break;
-                    }
-                    let result = self.default_parse_token_with_trivia(stream, TokenKind::Slash);
-                    if helper.handle_next_result(stream, result) {
-                        break;
-                    }
-                    let result = self.default_parse_token_with_trivia(stream, TokenKind::Tilde);
-                    if helper.handle_next_result(stream, result) {
-                        break;
-                    }
-                    break;
-                }
-                helper.result(stream)
-            }
-        } else {
-            ParserResult::no_match(vec![])
-        }
-    }
-
-    #[allow(unused_assignments, unused_parens)]
     fn using_directive_path(&self, stream: &mut Stream) -> ParserResult {
         self.identifier_path(stream)
             .with_kind(RuleKind::UsingDirectivePath)
@@ -7924,7 +7404,122 @@ impl Language {
                             ) {
                                 break;
                             }
-                            if helper.handle_next_result(self.using_directive_operator(stream)) {
+                            if helper.handle_next_result(if self.version_is_at_least_0_8_19 {
+                                {
+                                    let mut helper = ChoiceHelper::new(stream);
+                                    loop {
+                                        let result = self.default_parse_token_with_trivia(
+                                            stream,
+                                            TokenKind::Ampersand,
+                                        );
+                                        if helper.handle_next_result(stream, result) {
+                                            break;
+                                        }
+                                        let result = self.default_parse_token_with_trivia(
+                                            stream,
+                                            TokenKind::Asterisk,
+                                        );
+                                        if helper.handle_next_result(stream, result) {
+                                            break;
+                                        }
+                                        let result = self.default_parse_token_with_trivia(
+                                            stream,
+                                            TokenKind::BangEqual,
+                                        );
+                                        if helper.handle_next_result(stream, result) {
+                                            break;
+                                        }
+                                        let result = self.default_parse_token_with_trivia(
+                                            stream,
+                                            TokenKind::Bar,
+                                        );
+                                        if helper.handle_next_result(stream, result) {
+                                            break;
+                                        }
+                                        let result = self.default_parse_token_with_trivia(
+                                            stream,
+                                            TokenKind::Caret,
+                                        );
+                                        if helper.handle_next_result(stream, result) {
+                                            break;
+                                        }
+                                        let result = self.default_parse_token_with_trivia(
+                                            stream,
+                                            TokenKind::EqualEqual,
+                                        );
+                                        if helper.handle_next_result(stream, result) {
+                                            break;
+                                        }
+                                        let result = self.default_parse_token_with_trivia(
+                                            stream,
+                                            TokenKind::GreaterThan,
+                                        );
+                                        if helper.handle_next_result(stream, result) {
+                                            break;
+                                        }
+                                        let result = self.default_parse_token_with_trivia(
+                                            stream,
+                                            TokenKind::GreaterThanEqual,
+                                        );
+                                        if helper.handle_next_result(stream, result) {
+                                            break;
+                                        }
+                                        let result = self.default_parse_token_with_trivia(
+                                            stream,
+                                            TokenKind::LessThan,
+                                        );
+                                        if helper.handle_next_result(stream, result) {
+                                            break;
+                                        }
+                                        let result = self.default_parse_token_with_trivia(
+                                            stream,
+                                            TokenKind::LessThanEqual,
+                                        );
+                                        if helper.handle_next_result(stream, result) {
+                                            break;
+                                        }
+                                        let result = self.default_parse_token_with_trivia(
+                                            stream,
+                                            TokenKind::Minus,
+                                        );
+                                        if helper.handle_next_result(stream, result) {
+                                            break;
+                                        }
+                                        let result = self.default_parse_token_with_trivia(
+                                            stream,
+                                            TokenKind::Percent,
+                                        );
+                                        if helper.handle_next_result(stream, result) {
+                                            break;
+                                        }
+                                        let result = self.default_parse_token_with_trivia(
+                                            stream,
+                                            TokenKind::Plus,
+                                        );
+                                        if helper.handle_next_result(stream, result) {
+                                            break;
+                                        }
+                                        let result = self.default_parse_token_with_trivia(
+                                            stream,
+                                            TokenKind::Slash,
+                                        );
+                                        if helper.handle_next_result(stream, result) {
+                                            break;
+                                        }
+                                        let result = self.default_parse_token_with_trivia(
+                                            stream,
+                                            TokenKind::Tilde,
+                                        );
+                                        if helper.handle_next_result(stream, result) {
+                                            break;
+                                        }
+                                        break;
+                                    }
+                                    helper.result(stream)
+                                }
+                            } else {
+                                ParserResult::no_match(vec![])
+                            }) {
                                 break;
                             }
                             break;
@@ -7998,8 +7593,32 @@ impl Language {
                 }) {
                     break;
                 }
-                if helper.handle_next_result(OptionalHelper::transform(self.data_location(stream)))
-                {
+                if helper.handle_next_result(OptionalHelper::transform({
+                    let mut helper = ChoiceHelper::new(stream);
+                    loop {
+                        let result =
+                            self.default_parse_token_with_trivia(stream, TokenKind::MemoryKeyword);
+                        if helper.handle_next_result(stream, result) {
+                            break;
+                        }
+                        let result =
+                            self.default_parse_token_with_trivia(stream, TokenKind::StorageKeyword);
+                        if helper.handle_next_result(stream, result) {
+                            break;
+                        }
+                        if self.version_is_at_least_0_5_0 {
+                            let result = self.default_parse_token_with_trivia(
+                                stream,
+                                TokenKind::CalldataKeyword,
+                            );
+                            if helper.handle_next_result(stream, result) {
+                                break;
+                            }
+                        }
+                        break;
+                    }
+                    helper.result(stream)
+                })) {
                     break;
                 }
                 if helper.handle_next_result(
@@ -8232,16 +7851,6 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn version_pragma_or_operator(&self, stream: &mut Stream) -> ParserResult {
-        self.version_pragma_parse_token_with_trivia(stream, TokenKind::BarBar)
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn version_pragma_range_operator(&self, stream: &mut Stream) -> ParserResult {
-        self.version_pragma_parse_token_with_trivia(stream, TokenKind::Minus)
-    }
-
-    #[allow(unused_assignments, unused_parens)]
     fn version_pragma_specifier(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut helper = SequenceHelper::new();
@@ -8279,49 +7888,6 @@ impl Language {
             helper.result()
         }
         .with_kind(RuleKind::VersionPragmaSpecifier)
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn version_pragma_unary_operator(&self, stream: &mut Stream) -> ParserResult {
-        {
-            let mut helper = ChoiceHelper::new(stream);
-            loop {
-                let result = self.version_pragma_parse_token_with_trivia(stream, TokenKind::Caret);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.version_pragma_parse_token_with_trivia(stream, TokenKind::Tilde);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.version_pragma_parse_token_with_trivia(stream, TokenKind::Equal);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result =
-                    self.version_pragma_parse_token_with_trivia(stream, TokenKind::LessThan);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result =
-                    self.version_pragma_parse_token_with_trivia(stream, TokenKind::GreaterThan);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result =
-                    self.version_pragma_parse_token_with_trivia(stream, TokenKind::LessThanEqual);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self
-                    .version_pragma_parse_token_with_trivia(stream, TokenKind::GreaterThanEqual);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                break;
-            }
-            helper.result(stream)
-        }
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -8499,7 +8065,47 @@ impl Language {
         let primary_expression_parser = |stream: &mut Stream| {
             let mut helper = ChoiceHelper::new(stream);
             loop {
-                let result = self.yul_literal(stream);
+                let result = {
+                    let mut helper = ChoiceHelper::new(stream);
+                    loop {
+                        let result =
+                            self.yul_block_parse_token_with_trivia(stream, TokenKind::TrueKeyword);
+                        if helper.handle_next_result(stream, result) {
+                            break;
+                        }
+                        let result =
+                            self.yul_block_parse_token_with_trivia(stream, TokenKind::FalseKeyword);
+                        if helper.handle_next_result(stream, result) {
+                            break;
+                        }
+                        let result = self
+                            .yul_block_parse_token_with_trivia(stream, TokenKind::YulHexLiteral);
+                        if helper.handle_next_result(stream, result) {
+                            break;
+                        }
+                        let result = self.yul_block_parse_token_with_trivia(
+                            stream,
+                            TokenKind::YulDecimalLiteral,
+                        );
+                        if helper.handle_next_result(stream, result) {
+                            break;
+                        }
+                        let result = self
+                            .yul_block_parse_token_with_trivia(stream, TokenKind::HexStringLiteral);
+                        if helper.handle_next_result(stream, result) {
+                            break;
+                        }
+                        let result = self.yul_block_parse_token_with_trivia(
+                            stream,
+                            TokenKind::AsciiStringLiteral,
+                        );
+                        if helper.handle_next_result(stream, result) {
+                            break;
+                        }
+                        break;
+                    }
+                    helper.result(stream)
+                };
                 if helper.handle_next_result(stream, result) {
                     break;
                 }
@@ -8603,32 +8209,6 @@ impl Language {
             helper.result()
         }
         .with_kind(RuleKind::YulForStatement)
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn yul_function_call_operator(&self, stream: &mut Stream) -> ParserResult {
-        {
-            let mut helper = SequenceHelper::new();
-            loop {
-                if helper.handle_next_result(
-                    self.yul_block_parse_token_with_trivia(stream, TokenKind::OpenParen),
-                ) {
-                    break;
-                }
-                if helper.handle_next_result(OptionalHelper::transform(
-                    self.yul_expressions_list(stream),
-                )) {
-                    break;
-                }
-                if helper.handle_next_result(
-                    self.yul_block_parse_token_with_trivia(stream, TokenKind::CloseParen),
-                ) {
-                    break;
-                }
-                break;
-            }
-            helper.result()
-        }
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -8798,76 +8378,6 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn yul_keywords_over_all_versions(&self, stream: &mut Stream) -> ParserResult {
-        {
-            let mut helper = ChoiceHelper::new(stream);
-            loop {
-                let result =
-                    self.yul_block_parse_token_with_trivia(stream, TokenKind::BreakKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.yul_block_parse_token_with_trivia(stream, TokenKind::CaseKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result =
-                    self.yul_block_parse_token_with_trivia(stream, TokenKind::ContinueKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result =
-                    self.yul_block_parse_token_with_trivia(stream, TokenKind::DefaultKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result =
-                    self.yul_block_parse_token_with_trivia(stream, TokenKind::FalseKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.yul_block_parse_token_with_trivia(stream, TokenKind::ForKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result =
-                    self.yul_block_parse_token_with_trivia(stream, TokenKind::FunctionKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.yul_block_parse_token_with_trivia(stream, TokenKind::HexKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.yul_block_parse_token_with_trivia(stream, TokenKind::IfKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.yul_block_parse_token_with_trivia(stream, TokenKind::LetKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result =
-                    self.yul_block_parse_token_with_trivia(stream, TokenKind::SwitchKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result = self.yul_block_parse_token_with_trivia(stream, TokenKind::TrueKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result =
-                    self.yul_block_parse_token_with_trivia(stream, TokenKind::LeaveKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                break;
-            }
-            helper.result(stream)
-        }
-    }
-
-    #[allow(unused_assignments, unused_parens)]
     fn yul_leave_statement(&self, stream: &mut Stream) -> ParserResult {
         if self.version_is_at_least_0_6_0 {
             self.yul_block_parse_token_with_trivia(stream, TokenKind::LeaveKeyword)
@@ -8875,46 +8385,6 @@ impl Language {
             ParserResult::no_match(vec![])
         }
         .with_kind(RuleKind::YulLeaveStatement)
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn yul_literal(&self, stream: &mut Stream) -> ParserResult {
-        {
-            let mut helper = ChoiceHelper::new(stream);
-            loop {
-                let result = self.yul_block_parse_token_with_trivia(stream, TokenKind::TrueKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result =
-                    self.yul_block_parse_token_with_trivia(stream, TokenKind::FalseKeyword);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result =
-                    self.yul_block_parse_token_with_trivia(stream, TokenKind::YulHexLiteral);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result =
-                    self.yul_block_parse_token_with_trivia(stream, TokenKind::YulDecimalLiteral);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result =
-                    self.yul_block_parse_token_with_trivia(stream, TokenKind::HexStringLiteral);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                let result =
-                    self.yul_block_parse_token_with_trivia(stream, TokenKind::AsciiStringLiteral);
-                if helper.handle_next_result(stream, result) {
-                    break;
-                }
-                break;
-            }
-            helper.result(stream)
-        }
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -9052,7 +8522,55 @@ impl Language {
                                 ) {
                                     break;
                                 }
-                                if helper.handle_next_result(self.yul_literal(stream)) {
+                                if helper.handle_next_result({
+                                    let mut helper = ChoiceHelper::new(stream);
+                                    loop {
+                                        let result = self.yul_block_parse_token_with_trivia(
+                                            stream,
+                                            TokenKind::TrueKeyword,
+                                        );
+                                        if helper.handle_next_result(stream, result) {
+                                            break;
+                                        }
+                                        let result = self.yul_block_parse_token_with_trivia(
+                                            stream,
+                                            TokenKind::FalseKeyword,
+                                        );
+                                        if helper.handle_next_result(stream, result) {
+                                            break;
+                                        }
+                                        let result = self.yul_block_parse_token_with_trivia(
+                                            stream,
+                                            TokenKind::YulHexLiteral,
+                                        );
+                                        if helper.handle_next_result(stream, result) {
+                                            break;
+                                        }
+                                        let result = self.yul_block_parse_token_with_trivia(
+                                            stream,
+                                            TokenKind::YulDecimalLiteral,
+                                        );
+                                        if helper.handle_next_result(stream, result) {
+                                            break;
+                                        }
+                                        let result = self.yul_block_parse_token_with_trivia(
+                                            stream,
+                                            TokenKind::HexStringLiteral,
+                                        );
+                                        if helper.handle_next_result(stream, result) {
+                                            break;
+                                        }
+                                        let result = self.yul_block_parse_token_with_trivia(
+                                            stream,
+                                            TokenKind::AsciiStringLiteral,
+                                        );
+                                        if helper.handle_next_result(stream, result) {
+                                            break;
+                                        }
+                                        break;
+                                    }
+                                    helper.result(stream)
+                                }) {
                                     break;
                                 }
                                 break;
@@ -9666,33 +9184,21 @@ impl Language {
     pub fn parse(&self, production_kind: ProductionKind, input: &str) -> ParseOutput {
         match production_kind {
             ProductionKind::ABICoderPragma => Self::abi_coder_pragma.parse(self, input),
-            ProductionKind::AddSubOperator => Self::add_sub_operator.parse(self, input),
             ProductionKind::AddressType => Self::address_type.parse(self, input),
-            ProductionKind::AndOperator => Self::and_operator.parse(self, input),
             ProductionKind::ArgumentsDeclaration => Self::arguments_declaration.parse(self, input),
             ProductionKind::ArrayExpression => Self::array_expression.parse(self, input),
-            ProductionKind::ArrayTypeNameOperator => {
-                Self::array_type_name_operator.parse(self, input)
-            }
             ProductionKind::ArrayValuesList => Self::array_values_list.parse(self, input),
             ProductionKind::AsciiStringLiteralsList => {
                 Self::ascii_string_literals_list.parse(self, input)
             }
             ProductionKind::AssemblyFlagsList => Self::assembly_flags_list.parse(self, input),
             ProductionKind::AssemblyStatement => Self::assembly_statement.parse(self, input),
-            ProductionKind::AssignmentOperator => Self::assignment_operator.parse(self, input),
-            ProductionKind::BitwiseAndOperator => Self::bitwise_and_operator.parse(self, input),
-            ProductionKind::BitwiseOrOperator => Self::bitwise_or_operator.parse(self, input),
-            ProductionKind::BitwiseXOrOperator => Self::bitwise_x_or_operator.parse(self, input),
             ProductionKind::Block => Self::block.parse(self, input),
-            ProductionKind::BooleanExpression => Self::boolean_expression.parse(self, input),
             ProductionKind::BreakStatement => Self::break_statement.parse(self, input),
             ProductionKind::CatchClause => Self::catch_clause.parse(self, input),
             ProductionKind::CatchClauseError => Self::catch_clause_error.parse(self, input),
             ProductionKind::CatchClausesList => Self::catch_clauses_list.parse(self, input),
-            ProductionKind::ConditionalOperator => Self::conditional_operator.parse(self, input),
             ProductionKind::ConstantDefinition => Self::constant_definition.parse(self, input),
-            ProductionKind::ConstructorAttribute => Self::constructor_attribute.parse(self, input),
             ProductionKind::ConstructorAttributesList => {
                 Self::constructor_attributes_list.parse(self, input)
             }
@@ -9701,10 +9207,7 @@ impl Language {
             }
             ProductionKind::ContinueStatement => Self::continue_statement.parse(self, input),
             ProductionKind::ContractDefinition => Self::contract_definition.parse(self, input),
-            ProductionKind::ContractMember => Self::contract_member.parse(self, input),
             ProductionKind::ContractMembersList => Self::contract_members_list.parse(self, input),
-            ProductionKind::ControlStatement => Self::control_statement.parse(self, input),
-            ProductionKind::DataLocation => Self::data_location.parse(self, input),
             ProductionKind::DeconstructionImport => Self::deconstruction_import.parse(self, input),
             ProductionKind::DeconstructionImportSymbol => {
                 Self::deconstruction_import_symbol.parse(self, input)
@@ -9714,13 +9217,9 @@ impl Language {
             }
             ProductionKind::DeleteStatement => Self::delete_statement.parse(self, input),
             ProductionKind::DoWhileStatement => Self::do_while_statement.parse(self, input),
-            ProductionKind::ElementaryType => Self::elementary_type.parse(self, input),
             ProductionKind::EmitStatement => Self::emit_statement.parse(self, input),
             ProductionKind::EndOfFileTrivia => Self::end_of_file_trivia.parse(self, input),
             ProductionKind::EnumDefinition => Self::enum_definition.parse(self, input),
-            ProductionKind::EqualityComparisonOperator => {
-                Self::equality_comparison_operator.parse(self, input)
-            }
             ProductionKind::ErrorDefinition => Self::error_definition.parse(self, input),
             ProductionKind::ErrorParameter => Self::error_parameter.parse(self, input),
             ProductionKind::ErrorParametersList => Self::error_parameters_list.parse(self, input),
@@ -9728,14 +9227,8 @@ impl Language {
             ProductionKind::EventParameter => Self::event_parameter.parse(self, input),
             ProductionKind::EventParametersList => Self::event_parameters_list.parse(self, input),
             ProductionKind::ExperimentalPragma => Self::experimental_pragma.parse(self, input),
-            ProductionKind::ExponentiationOperator => {
-                Self::exponentiation_operator.parse(self, input)
-            }
             ProductionKind::Expression => Self::expression.parse(self, input),
             ProductionKind::ExpressionStatement => Self::expression_statement.parse(self, input),
-            ProductionKind::FallbackFunctionAttribute => {
-                Self::fallback_function_attribute.parse(self, input)
-            }
             ProductionKind::FallbackFunctionAttributesList => {
                 Self::fallback_function_attributes_list.parse(self, input)
             }
@@ -9743,17 +9236,12 @@ impl Language {
                 Self::fallback_function_definition.parse(self, input)
             }
             ProductionKind::ForStatement => Self::for_statement.parse(self, input),
-            ProductionKind::FunctionAttribute => Self::function_attribute.parse(self, input),
             ProductionKind::FunctionAttributesList => {
                 Self::function_attributes_list.parse(self, input)
             }
-            ProductionKind::FunctionCallOperator => Self::function_call_operator.parse(self, input),
             ProductionKind::FunctionCallOptions => Self::function_call_options.parse(self, input),
             ProductionKind::FunctionDefinition => Self::function_definition.parse(self, input),
             ProductionKind::FunctionType => Self::function_type.parse(self, input),
-            ProductionKind::FunctionTypeAttribute => {
-                Self::function_type_attribute.parse(self, input)
-            }
             ProductionKind::FunctionTypeAttributesList => {
                 Self::function_type_attributes_list.parse(self, input)
             }
@@ -9765,7 +9253,6 @@ impl Language {
             ProductionKind::IdentifiersList => Self::identifiers_list.parse(self, input),
             ProductionKind::IfStatement => Self::if_statement.parse(self, input),
             ProductionKind::ImportDirective => Self::import_directive.parse(self, input),
-            ProductionKind::IndexAccessOperator => Self::index_access_operator.parse(self, input),
             ProductionKind::InheritanceSpecifier => Self::inheritance_specifier.parse(self, input),
             ProductionKind::InheritanceType => Self::inheritance_type.parse(self, input),
             ProductionKind::InheritanceTypesList => Self::inheritance_types_list.parse(self, input),
@@ -9777,14 +9264,11 @@ impl Language {
             ProductionKind::MappingKeyType => Self::mapping_key_type.parse(self, input),
             ProductionKind::MappingType => Self::mapping_type.parse(self, input),
             ProductionKind::MappingValueType => Self::mapping_value_type.parse(self, input),
-            ProductionKind::MemberAccessOperator => Self::member_access_operator.parse(self, input),
-            ProductionKind::ModifierAttribute => Self::modifier_attribute.parse(self, input),
             ProductionKind::ModifierAttributesList => {
                 Self::modifier_attributes_list.parse(self, input)
             }
             ProductionKind::ModifierDefinition => Self::modifier_definition.parse(self, input),
             ProductionKind::ModifierInvocation => Self::modifier_invocation.parse(self, input),
-            ProductionKind::MulDivModOperator => Self::mul_div_mod_operator.parse(self, input),
             ProductionKind::NamedArgument => Self::named_argument.parse(self, input),
             ProductionKind::NamedArgumentsDeclaration => {
                 Self::named_arguments_declaration.parse(self, input)
@@ -9792,12 +9276,7 @@ impl Language {
             ProductionKind::NamedArgumentsList => Self::named_arguments_list.parse(self, input),
             ProductionKind::NamedImport => Self::named_import.parse(self, input),
             ProductionKind::NewExpression => Self::new_expression.parse(self, input),
-            ProductionKind::NumberUnit => Self::number_unit.parse(self, input),
             ProductionKind::NumericExpression => Self::numeric_expression.parse(self, input),
-            ProductionKind::OrOperator => Self::or_operator.parse(self, input),
-            ProductionKind::OrderComparisonOperator => {
-                Self::order_comparison_operator.parse(self, input)
-            }
             ProductionKind::OverrideSpecifier => Self::override_specifier.parse(self, input),
             ProductionKind::Parameter => Self::parameter.parse(self, input),
             ProductionKind::ParametersDeclaration => {
@@ -9809,10 +9288,6 @@ impl Language {
                 Self::positional_arguments_list.parse(self, input)
             }
             ProductionKind::PragmaDirective => Self::pragma_directive.parse(self, input),
-            ProductionKind::PrimaryExpression => Self::primary_expression.parse(self, input),
-            ProductionKind::ReceiveFunctionAttribute => {
-                Self::receive_function_attribute.parse(self, input)
-            }
             ProductionKind::ReceiveFunctionAttributesList => {
                 Self::receive_function_attributes_list.parse(self, input)
             }
@@ -9822,18 +9297,9 @@ impl Language {
             ProductionKind::ReturnStatement => Self::return_statement.parse(self, input),
             ProductionKind::ReturnsDeclaration => Self::returns_declaration.parse(self, input),
             ProductionKind::RevertStatement => Self::revert_statement.parse(self, input),
-            ProductionKind::ShiftOperator => Self::shift_operator.parse(self, input),
-            ProductionKind::SimpleStatement => Self::simple_statement.parse(self, input),
-            ProductionKind::SolidityKeywordsOverAllVersions => {
-                Self::solidity_keywords_over_all_versions.parse(self, input)
-            }
             ProductionKind::SourceUnit => Self::source_unit.parse(self, input),
-            ProductionKind::SourceUnitMember => Self::source_unit_member.parse(self, input),
             ProductionKind::SourceUnitMembersList => {
                 Self::source_unit_members_list.parse(self, input)
-            }
-            ProductionKind::StateVariableAttribute => {
-                Self::state_variable_attribute.parse(self, input)
             }
             ProductionKind::StateVariableAttributesList => {
                 Self::state_variable_attributes_list.parse(self, input)
@@ -9843,7 +9309,6 @@ impl Language {
             }
             ProductionKind::Statement => Self::statement.parse(self, input),
             ProductionKind::StatementsList => Self::statements_list.parse(self, input),
-            ProductionKind::StringExpression => Self::string_expression.parse(self, input),
             ProductionKind::StructDefinition => Self::struct_definition.parse(self, input),
             ProductionKind::StructMember => Self::struct_member.parse(self, input),
             ProductionKind::StructMembersList => Self::struct_members_list.parse(self, input),
@@ -9859,14 +9324,9 @@ impl Language {
             ProductionKind::TupleValuesList => Self::tuple_values_list.parse(self, input),
             ProductionKind::TypeExpression => Self::type_expression.parse(self, input),
             ProductionKind::TypeName => Self::type_name.parse(self, input),
-            ProductionKind::UnaryPostfixOperator => Self::unary_postfix_operator.parse(self, input),
-            ProductionKind::UnaryPrefixOperator => Self::unary_prefix_operator.parse(self, input),
             ProductionKind::UncheckedBlock => Self::unchecked_block.parse(self, input),
             ProductionKind::UnicodeStringLiteralsList => {
                 Self::unicode_string_literals_list.parse(self, input)
-            }
-            ProductionKind::UnnamedFunctionAttribute => {
-                Self::unnamed_function_attribute.parse(self, input)
             }
             ProductionKind::UnnamedFunctionAttributesList => {
                 Self::unnamed_function_attributes_list.parse(self, input)
@@ -9880,9 +9340,6 @@ impl Language {
             ProductionKind::UsingDirective => Self::using_directive.parse(self, input),
             ProductionKind::UsingDirectiveDeconstruction => {
                 Self::using_directive_deconstruction.parse(self, input)
-            }
-            ProductionKind::UsingDirectiveOperator => {
-                Self::using_directive_operator.parse(self, input)
             }
             ProductionKind::UsingDirectivePath => Self::using_directive_path.parse(self, input),
             ProductionKind::UsingDirectiveSymbol => Self::using_directive_symbol.parse(self, input),
@@ -9900,17 +9357,8 @@ impl Language {
             ProductionKind::VersionPragmaExpressionsList => {
                 Self::version_pragma_expressions_list.parse(self, input)
             }
-            ProductionKind::VersionPragmaOrOperator => {
-                Self::version_pragma_or_operator.parse(self, input)
-            }
-            ProductionKind::VersionPragmaRangeOperator => {
-                Self::version_pragma_range_operator.parse(self, input)
-            }
             ProductionKind::VersionPragmaSpecifier => {
                 Self::version_pragma_specifier.parse(self, input)
-            }
-            ProductionKind::VersionPragmaUnaryOperator => {
-                Self::version_pragma_unary_operator.parse(self, input)
             }
             ProductionKind::WhileStatement => Self::while_statement.parse(self, input),
             ProductionKind::YulAssignmentStatement => {
@@ -9925,9 +9373,6 @@ impl Language {
             ProductionKind::YulExpression => Self::yul_expression.parse(self, input),
             ProductionKind::YulExpressionsList => Self::yul_expressions_list.parse(self, input),
             ProductionKind::YulForStatement => Self::yul_for_statement.parse(self, input),
-            ProductionKind::YulFunctionCallOperator => {
-                Self::yul_function_call_operator.parse(self, input)
-            }
             ProductionKind::YulFunctionDefinition => {
                 Self::yul_function_definition.parse(self, input)
             }
@@ -9937,11 +9382,7 @@ impl Language {
             }
             ProductionKind::YulIdentifiersList => Self::yul_identifiers_list.parse(self, input),
             ProductionKind::YulIfStatement => Self::yul_if_statement.parse(self, input),
-            ProductionKind::YulKeywordsOverAllVersions => {
-                Self::yul_keywords_over_all_versions.parse(self, input)
-            }
             ProductionKind::YulLeaveStatement => Self::yul_leave_statement.parse(self, input),
-            ProductionKind::YulLiteral => Self::yul_literal.parse(self, input),
             ProductionKind::YulParametersDeclaration => {
                 Self::yul_parameters_declaration.parse(self, input)
             }
