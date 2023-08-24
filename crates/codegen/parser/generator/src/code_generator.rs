@@ -234,8 +234,8 @@ impl GrammarVisitor for CodeGenerator {
         self.set_current_context(parser.context());
         if !parser.is_inline() {
             self.production_kinds.insert(parser.name());
+            self.rule_kinds.insert(parser.name());
         }
-        self.rule_kinds.insert(parser.name());
         let code = parser.to_parser_code();
         self.parser_functions.push((
             parser.name(),
