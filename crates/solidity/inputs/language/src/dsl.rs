@@ -682,7 +682,7 @@ slang_grammar! {
     scanner EndOfLine = (('\r' ?) '\n') ;
     scanner Whitespace = (('\t' | ' ') +) ;
     scanner SingleLineComment = ("//" ((! "\n\r") *)) ;
-    scanner MultilineComment = ('/' '*' (((! '*') | ('*' (! '/'))) *) '*' '/') ;
+    scanner MultilineComment = ('/' '*' (((! '*') | ('*' not followed by '/')) *) '*' '/') ;
 
     // Delimiters
 
@@ -793,20 +793,31 @@ slang_grammar! {
 
     // Ascii String Literals
 
-    scanner AsciiStringLiteral = (SingleQuotedAsciiStringLiteral | DoubleQuotedAsciiStringLiteral) ;
+    scanner AsciiStringLiteral = (
+        (SingleQuotedAsciiStringLiteral | DoubleQuotedAsciiStringLiteral)
+        not followed by IdentifierStart
+    ) ;
     scanner DoubleQuotedAsciiStringLiteral = ("\"" ((EscapeSequence | AsciiCharacterWithoutDoubleQuoteOrBackslash) *) "\"") ;
     scanner SingleQuotedAsciiStringLiteral = ("\'" ((EscapeSequence | AsciiCharacterWithoutSingleQuoteOrBackslash) *) "\'") ;
 
     // Hex String Literals
 
-    scanner HexStringLiteral = (SingleQuotedHexStringLiteral | DoubleQuotedHexStringLiteral) ;
+    scanner HexStringLiteral = (
+        (SingleQuotedHexStringLiteral | DoubleQuotedHexStringLiteral)
+        not followed by IdentifierStart
+    ) ;
     scanner DoubleQuotedHexStringLiteral = ("hex\"" (HexStringContents ?) "\"") ;
     scanner SingleQuotedHexStringLiteral = ("hex\'" (HexStringContents ?) "\'") ;
     scanner HexStringContents = (HexCharacter HexCharacter ((('_' ?) HexCharacter HexCharacter) *)) ;
 
     // Unicode String Literals
 
-    scanner UnicodeStringLiteral = { introduced in "0.7.0" (SingleQuotedUnicodeStringLiteral | DoubleQuotedUnicodeStringLiteral) } ;
+    scanner UnicodeStringLiteral = {
+        introduced in "0.7.0" (
+            (SingleQuotedUnicodeStringLiteral | DoubleQuotedUnicodeStringLiteral)
+            not followed by IdentifierStart
+        )
+    } ;
     scanner DoubleQuotedUnicodeStringLiteral = { introduced in "0.7.0" ("unicode\"" ((EscapeSequence | (! "\n\r\"\\")) *) "\"") } ;
     scanner SingleQuotedUnicodeStringLiteral = { introduced in "0.7.0" ("unicode\'" ((EscapeSequence | (! "\n\r\'\\")) *) "\'") } ;
 
@@ -824,10 +835,19 @@ slang_grammar! {
     ) ;
     scanner DecimalExponent = (('E' | 'e') ('-' ?) DecimalDigits) ;
     scanner DecimalDigits = ((DecimalDigit +) (('_' (DecimalDigit +)) *)) ;
-    scanner HexLiteral = (("0x" | { removed in "0.5.0" "0X" }) (HexCharacter +) (('_' (HexCharacter +)) *)) ;
+    scanner HexLiteral = (
+        (("0x" | { removed in "0.5.0" "0X" }) (HexCharacter +) (('_' (HexCharacter +)) *))
+        not followed by IdentifierStart
+    ) ;
 
-    scanner YulDecimalLiteral = ("0" | (('1' .. '9') (DecimalDigit *))) ;
-    scanner YulHexLiteral = ("0x" (HexCharacter +)) ;
+    scanner YulDecimalLiteral = (
+        ("0" | (('1' .. '9') (DecimalDigit *)))
+        not followed by IdentifierStart
+    ) ;
+    scanner YulHexLiteral = (
+        ("0x" (HexCharacter +))
+        not followed by IdentifierStart
+    ) ;
 
     // Pragma Literals
 
