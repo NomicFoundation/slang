@@ -92,8 +92,8 @@ impl<const MIN_COUNT: usize> RepetitionHelper<MIN_COUNT> {
 
                         ParserResult::PrattOperatorMatch(r#match) => {
                             current_match
-                                .nodes
-                                .extend(std::mem::take(&mut r#match.nodes));
+                                .elements
+                                .extend(std::mem::take(&mut r#match.elements));
                         }
 
                         ParserResult::IncompleteMatch(_) => {

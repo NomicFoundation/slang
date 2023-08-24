@@ -3194,7 +3194,7 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn expression(&self, stream: &mut Stream) -> ParserResult {
         let parse_assignment_operator = |stream: &mut Stream| {
-            PrecedenceHelper::to_precedence_result(RuleKind::BinaryExpression, 1u8, 2u8, {
+            PrecedenceHelper::to_binary_operator(RuleKind::BinaryExpression, 1u8, 1u8 + 1, {
                 let mut helper = ChoiceHelper::new(stream);
                 loop {
                     let result = self.default_parse_token_with_trivia(stream, TokenKind::Equal);
@@ -3264,7 +3264,7 @@ impl Language {
             })
         };
         let parse_conditional_operator = |stream: &mut Stream| {
-            PrecedenceHelper::to_precedence_result(RuleKind::ConditionalExpression, 3u8, 255u8, {
+            PrecedenceHelper::to_postfix_operator(RuleKind::ConditionalExpression, 3u8, {
                 let mut helper = SequenceHelper::new();
                 loop {
                     if helper.handle_next_result(
@@ -3289,23 +3289,23 @@ impl Language {
             })
         };
         let parse_or_operator = |stream: &mut Stream| {
-            PrecedenceHelper::to_precedence_result(
+            PrecedenceHelper::to_binary_operator(
                 RuleKind::BinaryExpression,
                 5u8,
-                6u8,
+                5u8 + 1,
                 self.default_parse_token_with_trivia(stream, TokenKind::BarBar),
             )
         };
         let parse_and_operator = |stream: &mut Stream| {
-            PrecedenceHelper::to_precedence_result(
+            PrecedenceHelper::to_binary_operator(
                 RuleKind::BinaryExpression,
                 7u8,
-                8u8,
+                7u8 + 1,
                 self.default_parse_token_with_trivia(stream, TokenKind::AmpersandAmpersand),
             )
         };
         let parse_equality_comparison_operator = |stream: &mut Stream| {
-            PrecedenceHelper::to_precedence_result(RuleKind::BinaryExpression, 9u8, 10u8, {
+            PrecedenceHelper::to_binary_operator(RuleKind::BinaryExpression, 9u8, 9u8 + 1, {
                 let mut helper = ChoiceHelper::new(stream);
                 loop {
                     let result =
@@ -3323,7 +3323,7 @@ impl Language {
             })
         };
         let parse_order_comparison_operator = |stream: &mut Stream| {
-            PrecedenceHelper::to_precedence_result(RuleKind::BinaryExpression, 11u8, 12u8, {
+            PrecedenceHelper::to_binary_operator(RuleKind::BinaryExpression, 11u8, 11u8 + 1, {
                 let mut helper = ChoiceHelper::new(stream);
                 loop {
                     let result = self.default_parse_token_with_trivia(stream, TokenKind::LessThan);
@@ -3351,31 +3351,31 @@ impl Language {
             })
         };
         let parse_bitwise_or_operator = |stream: &mut Stream| {
-            PrecedenceHelper::to_precedence_result(
+            PrecedenceHelper::to_binary_operator(
                 RuleKind::BinaryExpression,
                 13u8,
-                14u8,
+                13u8 + 1,
                 self.default_parse_token_with_trivia(stream, TokenKind::Bar),
             )
         };
         let parse_bitwise_x_or_operator = |stream: &mut Stream| {
-            PrecedenceHelper::to_precedence_result(
+            PrecedenceHelper::to_binary_operator(
                 RuleKind::BinaryExpression,
                 15u8,
-                16u8,
+                15u8 + 1,
                 self.default_parse_token_with_trivia(stream, TokenKind::Caret),
             )
         };
         let parse_bitwise_and_operator = |stream: &mut Stream| {
-            PrecedenceHelper::to_precedence_result(
+            PrecedenceHelper::to_binary_operator(
                 RuleKind::BinaryExpression,
                 17u8,
-                18u8,
+                17u8 + 1,
                 self.default_parse_token_with_trivia(stream, TokenKind::Ampersand),
             )
         };
         let parse_shift_operator = |stream: &mut Stream| {
-            PrecedenceHelper::to_precedence_result(RuleKind::BinaryExpression, 19u8, 20u8, {
+            PrecedenceHelper::to_binary_operator(RuleKind::BinaryExpression, 19u8, 19u8 + 1, {
                 let mut helper = ChoiceHelper::new(stream);
                 loop {
                     let result =
@@ -3401,7 +3401,7 @@ impl Language {
             })
         };
         let parse_add_sub_operator = |stream: &mut Stream| {
-            PrecedenceHelper::to_precedence_result(RuleKind::BinaryExpression, 21u8, 22u8, {
+            PrecedenceHelper::to_binary_operator(RuleKind::BinaryExpression, 21u8, 21u8 + 1, {
                 let mut helper = ChoiceHelper::new(stream);
                 loop {
                     let result = self.default_parse_token_with_trivia(stream, TokenKind::Plus);
@@ -3418,7 +3418,7 @@ impl Language {
             })
         };
         let parse_mul_div_mod_operator = |stream: &mut Stream| {
-            PrecedenceHelper::to_precedence_result(RuleKind::BinaryExpression, 23u8, 24u8, {
+            PrecedenceHelper::to_binary_operator(RuleKind::BinaryExpression, 23u8, 23u8 + 1, {
                 let mut helper = ChoiceHelper::new(stream);
                 loop {
                     let result = self.default_parse_token_with_trivia(stream, TokenKind::Asterisk);
@@ -3439,23 +3439,23 @@ impl Language {
             })
         };
         let parse_exponentiation_operator_removed_from_0_6_0 = |stream: &mut Stream| {
-            PrecedenceHelper::to_precedence_result(
+            PrecedenceHelper::to_binary_operator(
                 RuleKind::BinaryExpression,
                 25u8,
-                26u8,
+                25u8 + 1,
                 self.default_parse_token_with_trivia(stream, TokenKind::AsteriskAsterisk),
             )
         };
         let parse_exponentiation_operator_introduced_from_0_6_0 = |stream: &mut Stream| {
-            PrecedenceHelper::to_precedence_result(
+            PrecedenceHelper::to_binary_operator(
                 RuleKind::BinaryExpression,
-                28u8,
+                27u8 + 1,
                 27u8,
                 self.default_parse_token_with_trivia(stream, TokenKind::AsteriskAsterisk),
             )
         };
         let parse_unary_postfix_operator = |stream: &mut Stream| {
-            PrecedenceHelper::to_precedence_result(RuleKind::UnaryPostfixExpression, 29u8, 255u8, {
+            PrecedenceHelper::to_postfix_operator(RuleKind::UnaryPostfixExpression, 29u8, {
                 let mut helper = ChoiceHelper::new(stream);
                 loop {
                     let result = self.default_parse_token_with_trivia(stream, TokenKind::PlusPlus);
@@ -3473,7 +3473,7 @@ impl Language {
             })
         };
         let parse_unary_prefix_operator = |stream: &mut Stream| {
-            PrecedenceHelper::to_precedence_result(RuleKind::UnaryPrefixExpression, 255u8, 31u8, {
+            PrecedenceHelper::to_prefix_operator(RuleKind::UnaryPrefixExpression, 31u8, {
                 let mut helper = ChoiceHelper::new(stream);
                 loop {
                     let result = self.default_parse_token_with_trivia(stream, TokenKind::PlusPlus);
@@ -3509,7 +3509,7 @@ impl Language {
             })
         };
         let parse_function_call_operator = |stream: &mut Stream| {
-            PrecedenceHelper::to_precedence_result(RuleKind::FunctionCallExpression, 33u8, 255u8, {
+            PrecedenceHelper::to_postfix_operator(RuleKind::FunctionCallExpression, 33u8, {
                 let mut helper = SequenceHelper::new();
                 loop {
                     if self.version_is_at_least_0_6_2 {
@@ -3528,7 +3528,7 @@ impl Language {
             })
         };
         let parse_member_access_operator = |stream: &mut Stream| {
-            PrecedenceHelper::to_precedence_result(RuleKind::MemberAccessExpression, 35u8, 255u8, {
+            PrecedenceHelper::to_postfix_operator(RuleKind::MemberAccessExpression, 35u8, {
                 let mut helper = SequenceHelper::new();
                 loop {
                     if helper.handle_next_result(
@@ -3561,7 +3561,7 @@ impl Language {
             })
         };
         let parse_index_access_operator = |stream: &mut Stream| {
-            PrecedenceHelper::to_precedence_result(RuleKind::IndexAccessExpression, 37u8, 255u8, {
+            PrecedenceHelper::to_postfix_operator(RuleKind::IndexAccessExpression, 37u8, {
                 let mut helper = SequenceHelper::new();
                 loop {
                     if helper.handle_next_result(
@@ -6894,7 +6894,7 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn type_name(&self, stream: &mut Stream) -> ParserResult {
         let parse_array_type_name_operator = |stream: &mut Stream| {
-            PrecedenceHelper::to_precedence_result(RuleKind::ArrayTypeName, 1u8, 255u8, {
+            PrecedenceHelper::to_postfix_operator(RuleKind::ArrayTypeName, 1u8, {
                 let mut helper = SequenceHelper::new();
                 loop {
                     if helper.handle_next_result(
@@ -7702,73 +7702,66 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn version_pragma_expression(&self, stream: &mut Stream) -> ParserResult {
         let parse_version_pragma_or_operator = |stream: &mut Stream| {
-            PrecedenceHelper::to_precedence_result(
+            PrecedenceHelper::to_binary_operator(
                 RuleKind::VersionPragmaBinaryExpression,
                 1u8,
-                2u8,
+                1u8 + 1,
                 self.version_pragma_parse_token_with_trivia(stream, TokenKind::BarBar),
             )
         };
         let parse_version_pragma_range_operator = |stream: &mut Stream| {
-            PrecedenceHelper::to_precedence_result(
+            PrecedenceHelper::to_binary_operator(
                 RuleKind::VersionPragmaBinaryExpression,
                 3u8,
-                4u8,
+                3u8 + 1,
                 self.version_pragma_parse_token_with_trivia(stream, TokenKind::Minus),
             )
         };
         let parse_version_pragma_unary_operator = |stream: &mut Stream| {
-            PrecedenceHelper::to_precedence_result(
-                RuleKind::VersionPragmaUnaryExpression,
-                255u8,
-                5u8,
-                {
-                    let mut helper = ChoiceHelper::new(stream);
-                    loop {
-                        let result =
-                            self.version_pragma_parse_token_with_trivia(stream, TokenKind::Caret);
-                        if helper.handle_next_result(stream, result) {
-                            break;
-                        }
-                        let result =
-                            self.version_pragma_parse_token_with_trivia(stream, TokenKind::Tilde);
-                        if helper.handle_next_result(stream, result) {
-                            break;
-                        }
-                        let result =
-                            self.version_pragma_parse_token_with_trivia(stream, TokenKind::Equal);
-                        if helper.handle_next_result(stream, result) {
-                            break;
-                        }
-                        let result = self
-                            .version_pragma_parse_token_with_trivia(stream, TokenKind::LessThan);
-                        if helper.handle_next_result(stream, result) {
-                            break;
-                        }
-                        let result = self
-                            .version_pragma_parse_token_with_trivia(stream, TokenKind::GreaterThan);
-                        if helper.handle_next_result(stream, result) {
-                            break;
-                        }
-                        let result = self.version_pragma_parse_token_with_trivia(
-                            stream,
-                            TokenKind::LessThanEqual,
-                        );
-                        if helper.handle_next_result(stream, result) {
-                            break;
-                        }
-                        let result = self.version_pragma_parse_token_with_trivia(
-                            stream,
-                            TokenKind::GreaterThanEqual,
-                        );
-                        if helper.handle_next_result(stream, result) {
-                            break;
-                        }
+            PrecedenceHelper::to_prefix_operator(RuleKind::VersionPragmaUnaryExpression, 5u8, {
+                let mut helper = ChoiceHelper::new(stream);
+                loop {
+                    let result =
+                        self.version_pragma_parse_token_with_trivia(stream, TokenKind::Caret);
+                    if helper.handle_next_result(stream, result) {
                         break;
                     }
-                    helper.result(stream)
-                },
-            )
+                    let result =
+                        self.version_pragma_parse_token_with_trivia(stream, TokenKind::Tilde);
+                    if helper.handle_next_result(stream, result) {
+                        break;
+                    }
+                    let result =
+                        self.version_pragma_parse_token_with_trivia(stream, TokenKind::Equal);
+                    if helper.handle_next_result(stream, result) {
+                        break;
+                    }
+                    let result =
+                        self.version_pragma_parse_token_with_trivia(stream, TokenKind::LessThan);
+                    if helper.handle_next_result(stream, result) {
+                        break;
+                    }
+                    let result =
+                        self.version_pragma_parse_token_with_trivia(stream, TokenKind::GreaterThan);
+                    if helper.handle_next_result(stream, result) {
+                        break;
+                    }
+                    let result = self
+                        .version_pragma_parse_token_with_trivia(stream, TokenKind::LessThanEqual);
+                    if helper.handle_next_result(stream, result) {
+                        break;
+                    }
+                    let result = self.version_pragma_parse_token_with_trivia(
+                        stream,
+                        TokenKind::GreaterThanEqual,
+                    );
+                    if helper.handle_next_result(stream, result) {
+                        break;
+                    }
+                    break;
+                }
+                helper.result(stream)
+            })
         };
         let prefix_operator_parser = |stream: &mut Stream| {
             let mut helper = ChoiceHelper::new(stream);
@@ -8034,33 +8027,28 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn yul_expression(&self, stream: &mut Stream) -> ParserResult {
         let parse_yul_function_call_operator = |stream: &mut Stream| {
-            PrecedenceHelper::to_precedence_result(
-                RuleKind::YulFunctionCallExpression,
-                1u8,
-                255u8,
-                {
-                    let mut helper = SequenceHelper::new();
-                    loop {
-                        if helper.handle_next_result(
-                            self.yul_block_parse_token_with_trivia(stream, TokenKind::OpenParen),
-                        ) {
-                            break;
-                        }
-                        if helper.handle_next_result(OptionalHelper::transform(
-                            self.yul_expressions_list(stream),
-                        )) {
-                            break;
-                        }
-                        if helper.handle_next_result(
-                            self.yul_block_parse_token_with_trivia(stream, TokenKind::CloseParen),
-                        ) {
-                            break;
-                        }
+            PrecedenceHelper::to_postfix_operator(RuleKind::YulFunctionCallExpression, 1u8, {
+                let mut helper = SequenceHelper::new();
+                loop {
+                    if helper.handle_next_result(
+                        self.yul_block_parse_token_with_trivia(stream, TokenKind::OpenParen),
+                    ) {
                         break;
                     }
-                    helper.result()
-                },
-            )
+                    if helper.handle_next_result(OptionalHelper::transform(
+                        self.yul_expressions_list(stream),
+                    )) {
+                        break;
+                    }
+                    if helper.handle_next_result(
+                        self.yul_block_parse_token_with_trivia(stream, TokenKind::CloseParen),
+                    ) {
+                        break;
+                    }
+                    break;
+                }
+                helper.result()
+            })
         };
         let primary_expression_parser = |stream: &mut Stream| {
             let mut helper = ChoiceHelper::new(stream);

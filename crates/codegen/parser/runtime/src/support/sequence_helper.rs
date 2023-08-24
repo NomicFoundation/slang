@@ -1,4 +1,4 @@
-use super::parser_result::ParserResult;
+use super::parser_result::{ParserResult, PrattElement};
 
 pub struct SequenceHelper {
     result: ParserResult,
@@ -31,8 +31,10 @@ impl SequenceHelper {
                 }
 
                 ParserResult::PrattOperatorMatch(next_result) => {
-                    let mut children = vec![(0, std::mem::take(&mut running_result.nodes), 0)];
-                    children.extend(next_result.nodes);
+                    let mut children = vec![PrattElement::Expression {
+                        nodes: std::mem::take(&mut running_result.nodes),
+                    }];
+                    children.extend(next_result.elements);
                     self.result = ParserResult::pratt_operator_match(children);
                 }
 
@@ -60,19 +62,22 @@ impl SequenceHelper {
             ParserResult::PrattOperatorMatch(ref mut runnning_result) => match next_result {
                 ParserResult::Match(next_result) => {
                     if !next_result.nodes.is_empty() {
-                        runnning_result.nodes.push((0, next_result.nodes, 0));
+                        runnning_result.elements.push(PrattElement::Expression {
+                            nodes: next_result.nodes,
+                        });
                     }
                 }
 
                 ParserResult::PrattOperatorMatch(next_result) => {
-                    runnning_result.nodes.extend(next_result.nodes);
+                    runnning_result.elements.extend(next_result.elements);
                 }
 
                 ParserResult::IncompleteMatch(next_result) => {
                     self.result = ParserResult::incomplete_match(
-                        std::mem::take(&mut runnning_result.nodes)
+                        std::mem::take(&mut runnning_result.elements)
                             .into_iter()
-                            .map(|(_, n, _)| n)
+                            // TODO: Surely we don't need to clone these
+                            .map(|pratt_element| pratt_element.to_nodes())
                             .flatten()
                             .chain(next_result.nodes.into_iter())
                             .collect(),
@@ -82,9 +87,10 @@ impl SequenceHelper {
 
                 ParserResult::NoMatch(next_result) => {
                     self.result = ParserResult::incomplete_match(
-                        std::mem::take(&mut runnning_result.nodes)
+                        std::mem::take(&mut runnning_result.elements)
                             .into_iter()
-                            .map(|(_, n, _)| n)
+                            // TODO: Surely we don't need to clone these
+                            .map(|pratt_element| pratt_element.to_nodes())
                             .flatten()
                             .collect(),
                         next_result.tokens_that_would_have_allowed_more_progress,

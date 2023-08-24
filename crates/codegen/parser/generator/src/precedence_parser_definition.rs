@@ -51,7 +51,7 @@ impl PrecedenceParserDefinitionNodeExtensions for PrecedenceParserDefinitionNode
     //
     // Parse errors can only occur in this pass, so we can reuse
     // the exact same code as the normal parser, just making sure that the helpers in
-    // `ParserResult` and functions such as `incorporate_choice_result` treat `PrattOperatorMatch`
+    // `ParserResult` and the helpers such as `ChoiceHelper` handle `PrattOperatorMatch`
     // similarly to `Match`. The algebra is not complicated.
     //
     // This means that any parse error will return a CST in terms of this linear structure,
@@ -87,43 +87,68 @@ impl PrecedenceParserDefinitionNodeExtensions for PrecedenceParserDefinitionNode
 
         let mut binding_power = 1u8;
         for (version_quality_ranges, model, name, operator_definition) in self.operators.iter() {
-            let mut mop = |left_binding_power, right_binding_power| {
-                let operator_code = operator_definition
-                    .node()
-                    .to_parser_code(context_name, false);
-                let rule_kind = format_ident!("{}", name);
-                let closure_name = format_ident!(
-                    // Make a name that won't conflict with the parsers we define below
-                    "parse_{name}{version_tag}",
-                    version_tag = version_quality_ranges.disambiguating_name_suffix(),
-                    name = operator_definition.name().to_snake_case()
-                );
-                operator_closures.push(quote! {
-                    let #closure_name = |stream: &mut Stream|
-                        PrecedenceHelper::to_precedence_result(
-                            RuleKind::#rule_kind,
-                            #left_binding_power,
-                            #right_binding_power,
-                            #operator_code
-                        );
-                });
-                (
-                    quote! { #closure_name(stream) },
-                    version_quality_ranges.clone(),
-                )
-            };
+            let operator_code = operator_definition
+                .node()
+                .to_parser_code(context_name, false);
+            let rule_kind = format_ident!("{}", name);
+            let closure_name = format_ident!(
+                // Make a name that won't conflict with the parsers we define below
+                "parse_{name}{version_tag}",
+                version_tag = version_quality_ranges.disambiguating_name_suffix(),
+                name = operator_definition.name().to_snake_case()
+            );
+
+            let parser = (
+                quote! { #closure_name(stream) },
+                version_quality_ranges.clone(),
+            );
+
             match model {
                 PrecedenceOperatorModel::BinaryLeftAssociative => {
-                    binary_operator_parsers.push(mop(binding_power, binding_power + 1))
+                    operator_closures.push(quote! {
+                        let #closure_name = |stream: &mut Stream|
+                            PrecedenceHelper::to_binary_operator(
+                                RuleKind::#rule_kind,
+                                #binding_power,
+                                #binding_power + 1,
+                                #operator_code
+                            );
+                    });
+                    binary_operator_parsers.push(parser);
                 }
                 PrecedenceOperatorModel::BinaryRightAssociative => {
-                    binary_operator_parsers.push(mop(binding_power + 1, binding_power))
+                    operator_closures.push(quote! {
+                        let #closure_name = |stream: &mut Stream|
+                            PrecedenceHelper::to_binary_operator(
+                                RuleKind::#rule_kind,
+                                #binding_power + 1,
+                                #binding_power,
+                                #operator_code
+                            );
+                    });
+                    binary_operator_parsers.push(parser);
                 }
                 PrecedenceOperatorModel::Prefix => {
-                    prefix_operator_parsers.push(mop(255, binding_power))
+                    operator_closures.push(quote! {
+                        let #closure_name = |stream: &mut Stream|
+                            PrecedenceHelper::to_prefix_operator(
+                                RuleKind::#rule_kind,
+                                #binding_power,
+                                #operator_code
+                            );
+                    });
+                    prefix_operator_parsers.push(parser);
                 }
                 PrecedenceOperatorModel::Postfix => {
-                    postfix_operator_parsers.push(mop(binding_power, 255))
+                    operator_closures.push(quote! {
+                        let #closure_name = |stream: &mut Stream|
+                            PrecedenceHelper::to_postfix_operator(
+                                RuleKind::#rule_kind,
+                                #binding_power,
+                                #operator_code
+                            );
+                    });
+                    postfix_operator_parsers.push(parser);
                 }
             }
 
