@@ -111,24 +111,6 @@ macro_rules! scan_optional {
 }
 
 #[allow(unused_macros)]
-macro_rules! scan_difference {
-    ($stream:ident, $minuend:expr, $subtrahend:expr) => {{
-        let start = $stream.position();
-        ($minuend)
-            && ({
-                let end = $stream.position();
-                $stream.set_position(start);
-                if ($subtrahend) && (end == $stream.position()) {
-                    false
-                } else {
-                    $stream.set_position(end);
-                    true
-                }
-            })
-    }};
-}
-
-#[allow(unused_macros)]
 macro_rules! scan_not_followed_by {
     ($stream:ident, $scanner:expr, $not_followed_by:expr) => {
         ($scanner)

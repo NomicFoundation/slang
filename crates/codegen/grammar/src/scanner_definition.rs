@@ -30,6 +30,7 @@ pub enum ScannerDefinitionNode {
     Sequence(Vec<Self>, SourceLocation),
     Choice(Vec<Self>, SourceLocation),
     NoneOf(String, SourceLocation),
+    NotFollowedBy(Box<Self>, Box<Self>, SourceLocation),
     CharRange(char, char, SourceLocation),
     Literal(String, SourceLocation),
     ScannerDefinition(ScannerDefinitionRef, SourceLocation),
@@ -54,6 +55,11 @@ impl Visitable for ScannerDefinitionNode {
                 for node in nodes {
                     node.accept_visitor(visitor);
                 }
+            }
+
+            Self::NotFollowedBy(node, lookahead, _) => {
+                node.accept_visitor(visitor);
+                lookahead.accept_visitor(visitor);
             }
 
             Self::NoneOf(_, _)

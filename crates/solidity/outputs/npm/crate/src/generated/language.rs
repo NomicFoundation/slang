@@ -8691,37 +8691,44 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn decimal_literal(&self, stream: &mut Stream) -> bool {
-        scan_sequence!(
-            scan_choice!(
-                stream,
-                if !self.version_is_at_least_0_5_0 {
-                    scan_sequence!(
-                        self.decimal_digits(stream),
-                        scan_optional!(
-                            stream,
-                            scan_sequence!(
-                                scan_chars!(stream, '.'),
-                                scan_optional!(stream, self.decimal_digits(stream))
+        scan_not_followed_by!(
+            stream,
+            scan_sequence!(
+                scan_choice!(
+                    stream,
+                    if !self.version_is_at_least_0_5_0 {
+                        scan_sequence!(
+                            self.decimal_digits(stream),
+                            scan_optional!(
+                                stream,
+                                scan_sequence!(
+                                    scan_chars!(stream, '.'),
+                                    scan_optional!(stream, self.decimal_digits(stream))
+                                )
                             )
                         )
-                    )
-                } else {
-                    false
-                },
-                if self.version_is_at_least_0_5_0 {
-                    scan_sequence!(
-                        self.decimal_digits(stream),
-                        scan_optional!(
-                            stream,
-                            scan_sequence!(scan_chars!(stream, '.'), self.decimal_digits(stream))
+                    } else {
+                        false
+                    },
+                    if self.version_is_at_least_0_5_0 {
+                        scan_sequence!(
+                            self.decimal_digits(stream),
+                            scan_optional!(
+                                stream,
+                                scan_sequence!(
+                                    scan_chars!(stream, '.'),
+                                    self.decimal_digits(stream)
+                                )
+                            )
                         )
-                    )
-                } else {
-                    false
-                },
-                scan_sequence!(scan_chars!(stream, '.'), self.decimal_digits(stream))
+                    } else {
+                        false
+                    },
+                    scan_sequence!(scan_chars!(stream, '.'), self.decimal_digits(stream))
+                ),
+                scan_optional!(stream, self.decimal_exponent(stream))
             ),
-            scan_optional!(stream, self.decimal_exponent(stream))
+            self.identifier_start(stream)
         )
     }
 
