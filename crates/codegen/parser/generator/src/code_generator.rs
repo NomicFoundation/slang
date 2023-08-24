@@ -232,6 +232,9 @@ impl GrammarVisitor for CodeGenerator {
 
     fn parser_definition_enter(&mut self, parser: &ParserDefinitionRef) {
         self.set_current_context(parser.context());
+        if !parser.is_inline() {
+            self.production_kinds.insert(parser.name());
+        }
         self.production_kinds.insert(parser.name());
         self.rule_kinds.insert(parser.name());
         let code = parser.to_parser_code();
