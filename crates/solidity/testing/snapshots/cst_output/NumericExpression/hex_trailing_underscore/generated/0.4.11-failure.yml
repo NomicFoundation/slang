@@ -5,15 +5,13 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Expected DaysKeyword or EtherKeyword or FinneyKeyword or HoursKeyword or MinutesKeyword or SecondsKeyword or SzaboKeyword or WeeksKeyword or WeiKeyword or YearsKeyword.
-       ╭─[crates/solidity/testing/snapshots/cst_output/NumericExpression/hex_trailing_underscore/input.sol:1:4]
+    Error: Expected DecimalLiteral or HexLiteral.
+       ╭─[crates/solidity/testing/snapshots/cst_output/NumericExpression/hex_trailing_underscore/input.sol:1:1]
        │
      1 │ 0x1_
-       │    ┬  
-       │    ╰── Error occurred here.
+       │ ──┬─  
+       │   ╰─── Error occurred here.
     ───╯
 
 Tree:
-  - NumericExpression (Rule): # 0..4 "0x1_"
-      - HexLiteral (Token): "0x1" # 0..3
-      - SKIPPED (Token): "_" # 3..4
+  - SKIPPED (Token): "0x1_" # 0..4
