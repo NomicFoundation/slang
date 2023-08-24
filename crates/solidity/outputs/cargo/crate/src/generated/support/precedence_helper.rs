@@ -2,24 +2,22 @@
 
 use super::{
     super::{cst, kinds::RuleKind},
-    parser_result::ParserResult,
+    parser_result::{
+        ParserResult,
+        PrattElement::{self, *},
+    },
 };
 
 pub struct PrecedenceHelper;
 
 impl PrecedenceHelper {
-    pub fn to_precedence_result(
-        operator_kind: RuleKind,
-        left_binding_power: u8,
-        right_binding_power: u8,
-        result: ParserResult,
-    ) -> ParserResult {
+    pub fn to_prefix_operator(kind: RuleKind, right: u8, result: ParserResult) -> ParserResult {
         match result {
-            ParserResult::Match(r#match) => ParserResult::pratt_operator_match(vec![(
-                left_binding_power,
-                vec![cst::Node::rule(operator_kind, r#match.nodes)],
-                right_binding_power,
-            )]),
+            ParserResult::Match(r#match) => ParserResult::pratt_operator_match(vec![Prefix {
+                nodes: r#match.nodes,
+                kind,
+                right,
+            }]),
             ParserResult::PrattOperatorMatch(_) => {
                 unreachable!("This is already a PrattOperatorMatch")
             }
@@ -27,105 +25,220 @@ impl PrecedenceHelper {
         }
     }
 
+    pub fn to_postfix_operator(kind: RuleKind, left: u8, result: ParserResult) -> ParserResult {
+        match result {
+            ParserResult::Match(r#match) => ParserResult::pratt_operator_match(vec![Postfix {
+                nodes: r#match.nodes,
+                kind,
+                left,
+            }]),
+            ParserResult::PrattOperatorMatch(_) => {
+                unreachable!("This is already a PrattOperatorMatch")
+            }
+            _ => result,
+        }
+    }
+
+    pub fn to_binary_operator(
+        kind: RuleKind,
+        left: u8,
+        right: u8,
+        result: ParserResult,
+    ) -> ParserResult {
+        match result {
+            ParserResult::Match(r#match) => ParserResult::pratt_operator_match(vec![Binary {
+                nodes: r#match.nodes,
+                kind,
+                left,
+                right,
+            }]),
+            ParserResult::PrattOperatorMatch(_) => {
+                unreachable!("This is already a PrattOperatorMatch")
+            }
+            _ => result,
+        }
+    }
     pub fn reduce_precedence_result(
         child_kind: Option<RuleKind>,
         result: ParserResult,
     ) -> ParserResult {
+        // This requires some careful thinking. It could be more compact,
+        // but I'm favouring obviousness here. That is also why there are
+        // so many `unreachable!` - not only should they never be reached,
+        // they also tell the reader what invariants should apply.
+
+        // If the input is valid this should be correct by construction.
+
         match result {
             ParserResult::PrattOperatorMatch(pratt_operator_match) => {
-                let mut nodes = pratt_operator_match.nodes;
+                let mut pratt_elements = pratt_operator_match.elements;
 
                 let mut i = 0usize;
-                while nodes.len() > 1 {
-                    // prefixop* expr postfixop* ( binaryop prefixop* expr postfixop* )*
-                    // This requires some careful thinking
-                    let slice = &nodes[i..];
+                while pratt_elements.len() > 1 {
+                    // 1. Find the next, highest priority reducable operator
+                    // The elements are guaranteed to match the following:
+                    // `prefixop* expr postfixop* ( binaryop prefixop* expr postfixop* )*`
+
+                    let slice = &pratt_elements[i..];
                     match slice {
-                        [(0, _, 0), ..] => {
+                        [Expression { .. }, Postfix { .. }, ..] => {
                             i += 1;
                             continue;
                         }
-                        [_, (0, _, 0)] => {}
-                        [(_, _, 255), ..] => {}
-                        [(_, _, right1), (0, _, 0), (left2, _, _), ..] => {
-                            if right1 <= left2 {
+
+                        [Expression { .. }, Binary { .. }, ..] => {
+                            i += 1;
+                            continue;
+                        }
+
+                        [Prefix { right, .. }, Expression { .. }, Binary { left, .. }, ..] => {
+                            if right <= left {
                                 i += 2;
                                 continue;
+                            } else {
+                                /* Reduce */
                             }
                         }
-                        [(255, _, _), ..] => {
+
+                        [Prefix { right, .. }, Expression { .. }, Postfix { left, .. }, ..] => {
+                            if right <= left {
+                                i += 2;
+                                continue;
+                            } else {
+                                /* Reduce */
+                            }
+                        }
+
+                        [Prefix { .. }, Expression { .. }] => { /* Reduce */ }
+
+                        [Prefix { .. }, Prefix { .. }, ..] => {
                             i += 1;
                             continue;
                         }
-                        [(_, _, right1), (left2, _, _), ..] => {
-                            if right1 <= left2 {
-                                i += 1;
+
+                        [Binary { right, .. }, Expression { .. }, Binary { left, .. }, ..] => {
+                            if right <= left {
+                                i += 2;
                                 continue;
+                            } else {
+                                /* Reduce */
                             }
                         }
+
+                        [Binary { right, .. }, Expression { .. }, Postfix { left, .. }, ..] => {
+                            if right <= left {
+                                i += 2;
+                                continue;
+                            } else {
+                                /* Reduce */
+                            }
+                        }
+
+                        [Binary { .. }, Prefix { .. }, ..] => {
+                            i += 1;
+                            continue;
+                        }
+
+                        [Binary { .. }, Expression { .. }] => { /* Reduce */ }
+
+                        [Postfix { .. }, ..] => { /* Reduce */ }
 
                         _ => {
-                            unreachable!("This is a malformed pratt parser sequence: {:#?}", nodes)
+                            unreachable!(
+                                "Unmatched precedence pattern at index {} in: {:#?}",
+                                i, pratt_elements
+                            )
                         }
                     };
 
-                    let wrap_children = |nodes: Vec<cst::Node>| {
-                        if let Some(kind) = child_kind {
-                            vec![cst::Node::rule(kind, nodes)]
-                        } else {
-                            nodes
-                        }
-                    };
+                    // 2. Reduce the operator and it's child expressions to a new expression
 
-                    if nodes[i].1.len() != 1 {
-                        unreachable!("This is a malformed operator node ({}): {:#?}", i, nodes);
-                    }
+                    let make_expression =
+                        |left: Option<PrattElement>,
+                         kind: RuleKind,
+                         nodes: Vec<cst::Node>,
+                         right: Option<PrattElement>| {
+                            let wrap_children = |children: Vec<cst::Node>| {
+                                if children.is_empty() {
+                                    children
+                                } else if let Some(kind) = child_kind {
+                                    vec![cst::Node::rule(kind, children)]
+                                } else {
+                                    children
+                                }
+                            };
 
-                    if nodes[i].0 == 255 {
-                        // Prefix
-                        let expr = nodes.remove(i + 1);
-                        if let cst::Node::Rule(ref mut rule_node) = nodes[i].1[0] {
-                            let mut children = rule_node.children.clone();
-                            children.extend(wrap_children(expr.1));
-                            nodes[i] = (0, vec![cst::Node::rule(rule_node.kind, children)], 0);
-                        } else {
-                            unreachable!("This is a malformed operator node: not a RuleNode");
-                        }
-                    } else if nodes[i].2 == 255 {
-                        // Postfix
-                        let expr = nodes.remove(i - 1);
-                        i -= 1;
-                        if let cst::Node::Rule(ref mut rule_node) = nodes[i].1[0] {
-                            let mut children = rule_node.children.clone();
-                            for child in wrap_children(expr.1).into_iter().rev() {
-                                children.insert(0, child);
+                            let left_nodes = match left {
+                                Some(Expression { nodes }) => nodes,
+                                None => vec![],
+                                _ => unreachable!("Operator not preceeded by expression"),
+                            };
+
+                            let right_nodes = match right {
+                                Some(Expression { nodes }) => nodes,
+                                None => vec![],
+                                _ => unreachable!("Operator not followed by expression"),
+                            };
+
+                            let mut children = Vec::with_capacity(
+                                left_nodes.len() + nodes.len() + right_nodes.len(),
+                            );
+                            children.extend(wrap_children(left_nodes));
+                            children.extend(nodes);
+                            children.extend(wrap_children(right_nodes));
+                            Expression {
+                                nodes: vec![cst::Node::rule(kind, children)],
                             }
-                            nodes[i] = (0, vec![cst::Node::rule(rule_node.kind, children)], 0);
-                        } else {
-                            unreachable!("This is a malformed operator node: not a RuleNode");
+                        };
+
+                    match pratt_elements.remove(i) {
+                        Prefix { kind, nodes, .. } => {
+                            let expr = pratt_elements.remove(i);
+                            pratt_elements
+                                .insert(i, make_expression(None, kind, nodes, Some(expr)));
                         }
-                    } else {
-                        // Binary
-                        let expr_right = nodes.remove(i + 1);
-                        let expr_left = nodes.remove(i - 1);
-                        i -= 1;
-                        if let cst::Node::Rule(ref mut rule_node) = nodes[i].1[0] {
-                            let mut children = rule_node.children.clone();
-                            for child in wrap_children(expr_left.1).into_iter().rev() {
-                                children.insert(0, child);
-                            }
-                            children.extend(wrap_children(expr_right.1));
-                            nodes[i] = (0, vec![cst::Node::rule(rule_node.kind, children)], 0);
-                        } else {
-                            unreachable!("This is a malformed operator node: not a RuleNode");
+
+                        Postfix { kind, nodes, .. } => {
+                            let expr = pratt_elements.remove(i - 1);
+                            i -= 1;
+                            pratt_elements
+                                .insert(i, make_expression(Some(expr), kind, nodes, None));
+                        }
+
+                        Binary { kind, nodes, .. } => {
+                            let right_expr = pratt_elements.remove(i);
+                            let left_expr = pratt_elements.remove(i - 1);
+                            i -= 1;
+                            pratt_elements.insert(
+                                i,
+                                make_expression(Some(left_expr), kind, nodes, Some(right_expr)),
+                            );
+                        }
+
+                        Expression { .. } => {
+                            unreachable!(
+                                "Expected an operator at index {}: {:#?}",
+                                i, pratt_elements
+                            )
                         }
                     }
 
                     i = i.saturating_sub(1);
                 }
 
-                ParserResult::r#match(nodes.pop().unwrap().1, vec![])
+                // 3. Until we have a single expression.
+
+                if pratt_elements.len() != 1 {
+                    unreachable!("Expected a single element: {:#?}", pratt_elements)
+                }
+
+                if let Expression { nodes } = pratt_elements.pop().unwrap() {
+                    ParserResult::r#match(nodes, vec![])
+                } else {
+                    unreachable!("Expected an expression: {:#?}", pratt_elements)
+                }
             }
+
             result => result,
         }
     }

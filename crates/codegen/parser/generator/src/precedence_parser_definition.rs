@@ -98,15 +98,35 @@ impl PrecedenceParserDefinitionNodeExtensions for PrecedenceParserDefinitionNode
                     version_tag = version_quality_ranges.disambiguating_name_suffix(),
                     name = operator_definition.name().to_snake_case()
                 );
-                operator_closures.push(quote! {
-                    let #closure_name = |stream: &mut Stream|
-                        PrecedenceHelper::to_precedence_result(
-                            RuleKind::#rule_kind,
-                            #left_binding_power,
-                            #right_binding_power,
-                            #operator_code
-                        );
-                });
+                if left_binding_power == 255 {
+                    operator_closures.push(quote! {
+                        let #closure_name = |stream: &mut Stream|
+                            PrecedenceHelper::to_prefix_operator(
+                                RuleKind::#rule_kind,
+                                #right_binding_power,
+                                #operator_code
+                            );
+                    });
+                } else if right_binding_power == 255 {
+                    operator_closures.push(quote! {
+                        let #closure_name = |stream: &mut Stream|
+                            PrecedenceHelper::to_postfix_operator(
+                                RuleKind::#rule_kind,
+                                #left_binding_power,
+                                #operator_code
+                            );
+                    });
+                } else {
+                    operator_closures.push(quote! {
+                        let #closure_name = |stream: &mut Stream|
+                            PrecedenceHelper::to_binary_operator(
+                                RuleKind::#rule_kind,
+                                #left_binding_power,
+                                #right_binding_power,
+                                #operator_code
+                            );
+                    });
+                }
                 (
                     quote! { #closure_name(stream) },
                     version_quality_ranges.clone(),

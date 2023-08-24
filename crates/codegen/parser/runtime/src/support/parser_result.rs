@@ -22,8 +22,8 @@ impl ParserResult {
         ))
     }
 
-    pub fn pratt_operator_match(nodes: Vec<(u8, Vec<cst::Node>, u8)>) -> Self {
-        ParserResult::PrattOperatorMatch(PrattOperatorMatch::new(nodes))
+    pub fn pratt_operator_match(elements: Vec<PrattElement>) -> Self {
+        ParserResult::PrattOperatorMatch(PrattOperatorMatch::new(elements))
     }
 
     pub fn incomplete_match(
@@ -89,13 +89,49 @@ impl Match {
 }
 
 #[derive(PartialEq, Eq, Clone, Debug)]
+pub enum PrattElement {
+    Expression {
+        nodes: Vec<cst::Node>,
+    },
+    Prefix {
+        kind: RuleKind,
+        nodes: Vec<cst::Node>,
+        right: u8,
+    },
+    Binary {
+        kind: RuleKind,
+        nodes: Vec<cst::Node>,
+        left: u8,
+        right: u8,
+    },
+    Postfix {
+        kind: RuleKind,
+        nodes: Vec<cst::Node>,
+        left: u8,
+    },
+}
+
+impl PrattElement {
+    pub fn to_nodes(self) -> Vec<cst::Node> {
+        match self {
+            Self::Expression { nodes } => nodes.clone(),
+            Self::Binary { kind, nodes, .. }
+            | Self::Prefix { kind, nodes, .. }
+            | Self::Postfix { kind, nodes, .. } => {
+                vec![cst::Node::rule(kind, nodes)]
+            }
+        }
+    }
+}
+
+#[derive(PartialEq, Eq, Clone, Debug)]
 pub struct PrattOperatorMatch {
-    pub nodes: Vec<(u8, Vec<cst::Node>, u8)>,
+    pub elements: Vec<PrattElement>,
 }
 
 impl PrattOperatorMatch {
-    pub fn new(nodes: Vec<(u8, Vec<cst::Node>, u8)>) -> Self {
-        Self { nodes }
+    pub fn new(elements: Vec<PrattElement>) -> Self {
+        Self { elements }
     }
 }
 
