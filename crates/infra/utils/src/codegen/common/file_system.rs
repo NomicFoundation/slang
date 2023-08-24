@@ -1,8 +1,11 @@
 use std::path::Path;
 
 use anyhow::{bail, Context, Result};
+use cargo_emit::warning;
 
-use crate::{codegen::common::formatting::format_source_file, paths::PathExtensions};
+use crate::{
+    cargo::CargoWorkspace, codegen::common::formatting::format_source_file, paths::PathExtensions,
+};
 
 pub fn delete_file(file_path: &Path) -> Result<()> {
     return std::fs::remove_file(&file_path)
@@ -18,6 +21,10 @@ pub fn write_file(file_path: &Path, contents: &str) -> Result<()> {
     // To respect Cargo incrementability, don't touch the file if it is already up to date.
     if file_path.exists() && formatted == file_path.read_to_string()? {
         return Ok(());
+    }
+
+    if CargoWorkspace::is_running_inside_build_scripts() {
+        warning!("Updating: {}", file_path.strip_repo_root()?.unwrap_str());
     }
 
     return file_path.write_string(formatted);

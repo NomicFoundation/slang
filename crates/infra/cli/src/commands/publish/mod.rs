@@ -1,4 +1,5 @@
 mod cargo;
+mod changesets;
 mod github_release;
 mod lock_files;
 mod npm;
@@ -8,8 +9,8 @@ use clap::{Parser, ValueEnum};
 
 use crate::{
     commands::publish::{
-        cargo::publish_cargo, github_release::publish_github_release,
-        lock_files::publish_lock_files, npm::publish_npm,
+        cargo::publish_cargo, changesets::publish_changesets,
+        github_release::publish_github_release, lock_files::publish_lock_files, npm::publish_npm,
     },
     utils::{ClapExtensions, Terminal},
 };
@@ -20,7 +21,9 @@ pub struct PublishController {
 }
 
 #[derive(Clone, Debug, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
-pub enum PublishCommand {
+enum PublishCommand {
+    /// Consume pending changesets, update changelogs and package versions, then send a PR.
+    Changesets,
     /// Publish source packages to [npmjs.com].
     Npm,
     /// Publish source crates to [crates.io].
@@ -33,9 +36,10 @@ pub enum PublishCommand {
 
 impl PublishController {
     pub fn execute(&self) -> Result<()> {
-        Terminal::step(self.command.clap_name());
+        Terminal::step(format!("publish {name}", name = self.command.clap_name()));
 
         return match self.command {
+            PublishCommand::Changesets => publish_changesets(),
             PublishCommand::Npm => publish_npm(),
             PublishCommand::Cargo => publish_cargo(),
             PublishCommand::GithubRelease => publish_github_release(),

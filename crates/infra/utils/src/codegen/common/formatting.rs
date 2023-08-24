@@ -59,7 +59,7 @@ fn generate_header(file_path: &Path) -> String {
         "json" => format!(""),
         "html" | "md" => format!("<!-- {warning_line} -->"),
         "js" | "rs" | "ts" => format!("// {warning_line}"),
-        "yml" => format!("# {warning_line}"),
+        "yml" | "zsh-completions" => format!("# {warning_line}"),
         ext => panic!("Unsupported extension to generate a header for: {ext}"),
     };
 }
@@ -80,6 +80,10 @@ fn run_formatter(file_path: &Path, contents: &str) -> Result<String> {
         "rs" => run_rustfmt(contents),
         "html" | "md" | "yml" => {
             // We already generate formatted content for these, so no need to run expensive formatting.
+            Ok(contents.to_owned())
+        }
+        "zsh-completions" => {
+            // No formatters available for these (yet).
             Ok(contents.to_owned())
         }
         ext => {

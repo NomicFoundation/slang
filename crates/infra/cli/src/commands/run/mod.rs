@@ -13,7 +13,12 @@ pub struct RunController {
 }
 
 #[derive(Clone, Debug, ValueEnum)]
-pub enum RunCommand {
+enum RunCommand {
+    /*
+     *
+     * User-facing:
+     *
+     */
     /// Run the public 'slang_solidity' crate shapped to Cargo users.
     #[clap(name = "slang_solidity")]
     SlangSolidity,
@@ -21,6 +26,17 @@ pub enum RunCommand {
     /// Run smoke tests of the Solidity parser against source files from the Sanctuary repositories.
     #[clap(name = "solidity_testing_smoke")]
     SolidityTestingSmoke,
+
+    /*
+     *
+     * Hidden (for automation only):
+     *
+     */
+    #[clap(name = "solidity_cargo_build", hide = true)]
+    SolidityCargoBuild,
+
+    #[clap(name = "solidity_npm_build", hide = true)]
+    SolidityNpmBuild,
 }
 
 impl RunController {
@@ -28,7 +44,7 @@ impl RunController {
         let crate_name = self.command.clap_name();
         let crate_dir = CargoWorkspace::locate_source_crate(&crate_name)?;
 
-        Terminal::step(&crate_name);
+        Terminal::step(format!("run {crate_name}"));
 
         return Command::new("cargo")
             .arg("run")

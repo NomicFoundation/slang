@@ -7,6 +7,7 @@ publish = false
 
 [dependencies]
 anyhow = { workspace = true }
+cargo-emit = { workspace = true }
 codegen_grammar = { workspace = true }
 codegen_parser_generator = { workspace = true }
 infra_utils = { workspace = true }
