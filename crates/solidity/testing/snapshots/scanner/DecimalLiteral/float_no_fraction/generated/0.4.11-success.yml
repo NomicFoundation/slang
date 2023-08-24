@@ -1,9 +1,0 @@
-# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
-
-Source: >
-  1  │ 1.                                                                               │ 0..2
-
-Errors: []
-
-Tree:
-  - DecimalLiteral (Token): "1." # 0..2

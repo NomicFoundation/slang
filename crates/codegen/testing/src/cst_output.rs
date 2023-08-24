@@ -42,7 +42,12 @@ fn collect_parser_tests(data_dir: &Path) -> Result<BTreeMap<String, BTreeSet<Str
     let mut parser_tests = BTreeMap::<String, BTreeSet<String>>::new();
 
     for file in FileWalker::from_directory(data_dir).find_all()? {
-        if file.generated_dir().is_ok() {
+        if let Ok(generated_dir) = file.generated_dir() {
+            assert!(
+                generated_dir.unwrap_parent().join("input.sol").exists(),
+                "Each snapshot should have a matching input.sol test file: {file:?}",
+            );
+
             // skip generated files
             continue;
         }

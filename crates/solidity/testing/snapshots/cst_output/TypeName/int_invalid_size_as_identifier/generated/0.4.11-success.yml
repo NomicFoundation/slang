@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ int320                                                                           │ 0..6
+
+Errors: []
+
+Tree:
+  - TypeName (Rule): # 0..6 "int320"
+      - IdentifierPath (Rule): # 0..6 "int320"
+          - Identifier (Token): "int320" # 0..6

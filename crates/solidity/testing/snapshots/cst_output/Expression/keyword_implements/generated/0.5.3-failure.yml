@@ -1,0 +1,17 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ implements                                                                       │ 0..10
+
+Errors: # 1 total
+  - >
+    Error: Expected AddressKeyword or AsciiStringLiteral or BoolKeyword or ByteKeyword or DecimalLiteral or FalseKeyword or FixedBytesType or HexLiteral or HexStringLiteral or Identifier or NewKeyword or OpenBracket or OpenParen or PayableKeyword or SignedFixedType or SignedIntegerType or StringKeyword or TrueKeyword or TypeKeyword or UnsignedFixedType or UnsignedIntegerType.
+       ╭─[crates/solidity/testing/snapshots/cst_output/Expression/keyword_implements/input.sol:1:1]
+       │
+     1 │ implements
+       │ ─────┬────  
+       │      ╰────── Error occurred here.
+    ───╯
+
+Tree:
+  - SKIPPED (Token): "implements" # 0..10

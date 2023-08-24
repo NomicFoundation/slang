@@ -1,0 +1,10 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ implements                                                                       │ 0..10
+
+Errors: []
+
+Tree:
+  - Expression (Rule): # 0..10 "implements"
+      - Identifier (Token): "implements" # 0..10

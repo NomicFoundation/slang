@@ -1,0 +1,10 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ auto                                                                             │ 0..4
+
+Errors: []
+
+Tree:
+  - Expression (Rule): # 0..4 "auto"
+      - Identifier (Token): "auto" # 0..4

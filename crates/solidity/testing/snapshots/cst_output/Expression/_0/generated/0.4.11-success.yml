@@ -1,0 +1,10 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ _0                                                                               │ 0..2
+
+Errors: []
+
+Tree:
+  - Expression (Rule): # 0..2 "_0"
+      - Identifier (Token): "_0" # 0..2
