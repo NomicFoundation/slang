@@ -3194,7 +3194,7 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn expression(&self, stream: &mut Stream) -> ParserResult {
         let parse_assignment_operator = |stream: &mut Stream| {
-            PrecedenceHelper::to_binary_operator(RuleKind::BinaryExpression, 1u8, 2u8, {
+            PrecedenceHelper::to_binary_operator(RuleKind::BinaryExpression, 1u8, 1u8 + 1, {
                 let mut helper = ChoiceHelper::new(stream);
                 loop {
                     let result = self.default_parse_token_with_trivia(stream, TokenKind::Equal);
@@ -3292,7 +3292,7 @@ impl Language {
             PrecedenceHelper::to_binary_operator(
                 RuleKind::BinaryExpression,
                 5u8,
-                6u8,
+                5u8 + 1,
                 self.default_parse_token_with_trivia(stream, TokenKind::BarBar),
             )
         };
@@ -3300,12 +3300,12 @@ impl Language {
             PrecedenceHelper::to_binary_operator(
                 RuleKind::BinaryExpression,
                 7u8,
-                8u8,
+                7u8 + 1,
                 self.default_parse_token_with_trivia(stream, TokenKind::AmpersandAmpersand),
             )
         };
         let parse_equality_comparison_operator = |stream: &mut Stream| {
-            PrecedenceHelper::to_binary_operator(RuleKind::BinaryExpression, 9u8, 10u8, {
+            PrecedenceHelper::to_binary_operator(RuleKind::BinaryExpression, 9u8, 9u8 + 1, {
                 let mut helper = ChoiceHelper::new(stream);
                 loop {
                     let result =
@@ -3323,7 +3323,7 @@ impl Language {
             })
         };
         let parse_order_comparison_operator = |stream: &mut Stream| {
-            PrecedenceHelper::to_binary_operator(RuleKind::BinaryExpression, 11u8, 12u8, {
+            PrecedenceHelper::to_binary_operator(RuleKind::BinaryExpression, 11u8, 11u8 + 1, {
                 let mut helper = ChoiceHelper::new(stream);
                 loop {
                     let result = self.default_parse_token_with_trivia(stream, TokenKind::LessThan);
@@ -3354,7 +3354,7 @@ impl Language {
             PrecedenceHelper::to_binary_operator(
                 RuleKind::BinaryExpression,
                 13u8,
-                14u8,
+                13u8 + 1,
                 self.default_parse_token_with_trivia(stream, TokenKind::Bar),
             )
         };
@@ -3362,7 +3362,7 @@ impl Language {
             PrecedenceHelper::to_binary_operator(
                 RuleKind::BinaryExpression,
                 15u8,
-                16u8,
+                15u8 + 1,
                 self.default_parse_token_with_trivia(stream, TokenKind::Caret),
             )
         };
@@ -3370,12 +3370,12 @@ impl Language {
             PrecedenceHelper::to_binary_operator(
                 RuleKind::BinaryExpression,
                 17u8,
-                18u8,
+                17u8 + 1,
                 self.default_parse_token_with_trivia(stream, TokenKind::Ampersand),
             )
         };
         let parse_shift_operator = |stream: &mut Stream| {
-            PrecedenceHelper::to_binary_operator(RuleKind::BinaryExpression, 19u8, 20u8, {
+            PrecedenceHelper::to_binary_operator(RuleKind::BinaryExpression, 19u8, 19u8 + 1, {
                 let mut helper = ChoiceHelper::new(stream);
                 loop {
                     let result =
@@ -3401,7 +3401,7 @@ impl Language {
             })
         };
         let parse_add_sub_operator = |stream: &mut Stream| {
-            PrecedenceHelper::to_binary_operator(RuleKind::BinaryExpression, 21u8, 22u8, {
+            PrecedenceHelper::to_binary_operator(RuleKind::BinaryExpression, 21u8, 21u8 + 1, {
                 let mut helper = ChoiceHelper::new(stream);
                 loop {
                     let result = self.default_parse_token_with_trivia(stream, TokenKind::Plus);
@@ -3418,7 +3418,7 @@ impl Language {
             })
         };
         let parse_mul_div_mod_operator = |stream: &mut Stream| {
-            PrecedenceHelper::to_binary_operator(RuleKind::BinaryExpression, 23u8, 24u8, {
+            PrecedenceHelper::to_binary_operator(RuleKind::BinaryExpression, 23u8, 23u8 + 1, {
                 let mut helper = ChoiceHelper::new(stream);
                 loop {
                     let result = self.default_parse_token_with_trivia(stream, TokenKind::Asterisk);
@@ -3442,14 +3442,14 @@ impl Language {
             PrecedenceHelper::to_binary_operator(
                 RuleKind::BinaryExpression,
                 25u8,
-                26u8,
+                25u8 + 1,
                 self.default_parse_token_with_trivia(stream, TokenKind::AsteriskAsterisk),
             )
         };
         let parse_exponentiation_operator_introduced_from_0_6_0 = |stream: &mut Stream| {
             PrecedenceHelper::to_binary_operator(
                 RuleKind::BinaryExpression,
-                28u8,
+                27u8 + 1,
                 27u8,
                 self.default_parse_token_with_trivia(stream, TokenKind::AsteriskAsterisk),
             )
@@ -7705,7 +7705,7 @@ impl Language {
             PrecedenceHelper::to_binary_operator(
                 RuleKind::VersionPragmaBinaryExpression,
                 1u8,
-                2u8,
+                1u8 + 1,
                 self.version_pragma_parse_token_with_trivia(stream, TokenKind::BarBar),
             )
         };
@@ -7713,7 +7713,7 @@ impl Language {
             PrecedenceHelper::to_binary_operator(
                 RuleKind::VersionPragmaBinaryExpression,
                 3u8,
-                4u8,
+                3u8 + 1,
                 self.version_pragma_parse_token_with_trivia(stream, TokenKind::Minus),
             )
         };
