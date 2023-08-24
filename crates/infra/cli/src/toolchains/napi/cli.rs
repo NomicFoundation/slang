@@ -20,11 +20,7 @@ pub struct NapiCliOutput {
 pub struct NapiCli;
 
 impl NapiCli {
-    pub fn build(
-        output_dir: impl AsRef<Path>,
-        cargo_executable: impl Into<String>,
-        target: &BuildTarget,
-    ) -> Result<NapiCliOutput> {
+    pub fn build(output_dir: impl AsRef<Path>, target: &BuildTarget) -> Result<NapiCliOutput> {
         let output_dir = output_dir.as_ref();
         let package_dir = NapiResolver::main_package_dir();
         let crate_dir = NapiResolver::crate_dir();
@@ -44,9 +40,13 @@ impl NapiCli {
         }
 
         command = command
+            // Add platform triple to the binary file name. Example: "index.linux-x64-gnu.node"
             .flag("--platform")
+            // Generate string enums, for serialization and debugging:
             .flag("--no-const-enum")
-            .env("CARGO", cargo_executable);
+            // Codegen does not need to run during 'napi build' (when cross-compiling).
+            // We already run this expensive step during 'cargo check' validation.
+            .env("SLANG_SKIP_CODEGEN_DURING_NAPI_BUILD", "true");
 
         match target {
             BuildTarget::Debug => {

@@ -58,6 +58,9 @@ fn compile_all_targets() -> Result<Vec<PathBuf>> {
         .args(&targets)
         .run()?;
 
+    // Needed for cross-compiling windows targets:
+    CargoWorkspace::install_binary("cargo-xwin")?;
+
     let mut node_binaries = vec![];
 
     for target in targets {
@@ -70,19 +73,11 @@ fn compile_all_targets() -> Result<Vec<PathBuf>> {
 }
 
 fn compile_target(target: &BuildTarget) -> Result<NapiCliOutput> {
-    let cargo_executable = match target {
-        BuildTarget::ReleaseTarget(target) if target.contains("-windows-") => {
-            CargoWorkspace::install_binary("cargo-xwin")?;
-            "cargo-xwin"
-        }
-        _ => "cargo",
-    };
-
     let output_dir = NapiResolver::napi_output_dir(target);
 
     std::fs::create_dir_all(&output_dir)?;
 
-    return NapiCli::build(output_dir, cargo_executable, target);
+    return NapiCli::build(output_dir, target);
 }
 
 #[derive(Serialize)]

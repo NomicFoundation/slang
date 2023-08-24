@@ -146,13 +146,6 @@ fn spawn_with_defaults(command: &Command, stdio: impl Fn() -> Stdio) -> Result<C
         .args(&command.args)
         // First, inherit environment from parent process:
         .envs(vars())
-        // Then apply our default _CARGO_CLI_ENV_VARS_ (keep In Sync)
-        .envs([
-            ("CARGO", repo_root.join("bin/cargo")),
-            ("RUSTC", repo_root.join("bin/rustc")),
-            ("RUSTFMT", repo_root.join("bin/rustfmt")),
-            ("RUSTUP", repo_root.join("bin/rustup")),
-        ])
         // Then apply any user provided overrides:
         .envs(&command.environment)
         // Set up stdio:
@@ -218,7 +211,17 @@ impl Display for Command {
         parts.push(self.name.to_owned());
 
         for arg in &self.args {
-            parts.push(arg.to_owned());
+            let delimiter = if arg.contains(" ") {
+                if arg.contains("\"") {
+                    "'"
+                } else {
+                    "\""
+                }
+            } else {
+                ""
+            };
+
+            parts.push(format!("{delimiter}{arg}{delimiter}"));
         }
 
         return write!(formatter, "{}", parts.join(" "));

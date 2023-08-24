@@ -11,7 +11,7 @@ use infra_utils::{
 
 use crate::utils::{ClapExtensions, OrderedCommand, Terminal};
 
-#[derive(Clone, Debug, Parser)]
+#[derive(Clone, Debug, Default, Parser)]
 pub struct LintController {
     #[clap(trailing_var_arg = true)]
     commands: Vec<LintCommand>,
@@ -19,12 +19,12 @@ pub struct LintController {
 
 impl LintController {
     pub fn execute(&self) -> Result<()> {
-        return LintCommand::execute_all(&self.commands);
+        return LintCommand::execute_in_order(&self.commands);
     }
 }
 
 #[derive(Clone, Debug, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
-pub enum LintCommand {
+enum LintCommand {
     /// Format all Rust source files.
     CargoFmt,
     /// Check for spelling issues in Markdown files.
@@ -45,7 +45,7 @@ pub enum LintCommand {
 
 impl OrderedCommand for LintCommand {
     fn execute(&self) -> Result<()> {
-        Terminal::step(self.clap_name());
+        Terminal::step(format!("lint {name}", name = self.clap_name()));
 
         return match self {
             LintCommand::CargoFmt => run_cargo_fmt(),
@@ -118,7 +118,7 @@ fn run_markdown_lint() -> Result<()> {
 
 fn run_shellcheck() -> Result<()> {
     let bash_files = FileWalker::from_repo_root()
-        .find(["**/*.sh"])?
+        .find(["scripts/**"])?
         .into_iter()
         .map(|path| {
             println!("{}", path.display());

@@ -1,7 +1,8 @@
 use anyhow::Result;
+use cargo_emit::rerun_if_changed;
 use codegen_grammar::Grammar;
 use codegen_parser_generator::code_generator::CodeGenerator;
-use infra_utils::cargo::CargoWorkspace;
+use infra_utils::{cargo::CargoWorkspace, paths::PathExtensions};
 use solidity_language::GrammarConstructor;
 
 // Instead of the soure crate calling codegen APIs directly, it invokes this binary, which in turn calls the codegen APIs.
@@ -12,8 +13,23 @@ use solidity_language::GrammarConstructor;
 // 3) We want to avoid having dependencies from the source crate to codegen crates.
 //
 fn main() -> Result<()> {
-    let grammar = Grammar::new();
-    let crate_dir = CargoWorkspace::locate_source_crate("slang_solidity")?;
-    CodeGenerator::write_source(&crate_dir.join("src/generated"), grammar)?;
+    // Generate files in the source crate:
+
+    {
+        let grammar = Grammar::new();
+        let crate_dir = CargoWorkspace::locate_source_crate("slang_solidity")?;
+
+        CodeGenerator::write_source(&crate_dir.join("src/generated"), grammar)?;
+    }
+
+    // Instruct the caller source crate to rebuild itself if the this build crate changes:
+
+    {
+        let build_crate_dir = CargoWorkspace::locate_source_crate("solidity_cargo_build")?;
+
+        rerun_if_changed!(build_crate_dir.join("Cargo.toml").unwrap_str());
+        rerun_if_changed!(build_crate_dir.join("src").unwrap_str());
+    }
+
     return Ok(());
 }

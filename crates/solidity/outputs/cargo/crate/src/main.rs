@@ -79,3 +79,9 @@ fn execute_parse_command(file_path_string: String, version: Version, json: bool)
 
     return Ok(());
 }
+
+#[test]
+fn verify_clap_cli() {
+    // Catches problems earlier in the development cycle:
+    <CLI as clap::CommandFactory>::command().debug_assert();
+}

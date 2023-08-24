@@ -1,20 +1,23 @@
-use anyhow::Result;
-use infra_utils::{cargo::CargoWorkspace, commands::Command};
+use std::{env::var, process::Command};
 
-fn main() -> Result<()> {
-    execute_codegen_for_local_development()?;
+fn main() {
+    // Codegen does not need to run during 'napi build' (when cross-compiling).
+    // We already run this expensive step during 'cargo check' validation.
+    if var("SLANG_SKIP_CODEGEN_DURING_NAPI_BUILD").is_err() {
+        execute_codegen_for_local_development();
+    }
 
     napi_build::setup();
-
-    return Ok(());
 }
 
-fn execute_codegen_for_local_development() -> Result<()> {
-    let crate_dir = CargoWorkspace::locate_source_crate("solidity_npm_build")?;
+fn execute_codegen_for_local_development() {
+    let success = Command::new("infra")
+        .args(["run", "solidity_npm_build"])
+        .spawn()
+        .expect("Expected Cargo to spawn successfully.")
+        .wait()
+        .expect("Cargo failed to start.")
+        .success();
 
-    return Command::new("cargo")
-        .arg("run")
-        .property("--bin", "solidity_npm_build")
-        .current_dir(crate_dir) // Run in that directory, using its own 'target' dir to prevent locking.
-        .run();
+    assert!(success, "Failed to run codegen.");
 }
