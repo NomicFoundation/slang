@@ -38,6 +38,11 @@ impl ParserResult {
         ))
     }
 
+    /// Whenever a parser didn't run because it's disabled due to versioning. Shorthand for `no_match(vec![])`.
+    pub fn disabled() -> Self {
+        Self::no_match(vec![])
+    }
+
     pub fn no_match(tokens_that_would_have_allowed_more_progress: Vec<TokenKind>) -> Self {
         ParserResult::NoMatch(NoMatch::new(tokens_that_would_have_allowed_more_progress))
     }
@@ -75,6 +80,7 @@ impl ParserResult {
 #[derive(PartialEq, Eq, Clone, Debug)]
 pub struct Match {
     pub nodes: Vec<cst::Node>,
+    /// Tokens that would have allowed for more progress. Collected for the purposes of error reporting.
     pub tokens_that_would_have_allowed_more_progress: Vec<TokenKind>,
 }
 
@@ -140,6 +146,7 @@ impl PrattOperatorMatch {
 #[derive(PartialEq, Eq, Clone, Debug)]
 pub struct IncompleteMatch {
     pub nodes: Vec<cst::Node>,
+    /// Tokens that would have allowed for more progress. Collected for the purposes of error reporting.
     pub tokens_that_would_have_allowed_more_progress: Vec<TokenKind>,
 }
 
@@ -154,6 +161,9 @@ impl IncompleteMatch {
         }
     }
 
+    /// Advances the stream by the length of the nodes in this match.
+    ///
+    /// This is used whenever we "accept" the match, even though it's incomplete.
     pub fn consume_stream(&self, stream: &mut Stream) {
         for node in &self.nodes {
             for _ in 0..node.text_len().char {
@@ -162,21 +172,23 @@ impl IncompleteMatch {
         }
     }
 
-    pub fn is_better_match_than(&self, other: &IncompleteMatch) -> bool {
-        let first_size = self
-            .nodes
-            .iter()
-            .fold(0, |acc, node| acc + node.text_len().utf8);
-        let second_size = other
-            .nodes
-            .iter()
-            .fold(0, |acc, node| acc + node.text_len().utf8);
-        first_size > second_size
+    /// Whether this match covers more (not including skipped) bytes than the other.
+    pub fn covers_more_than(&self, other: &Self) -> bool {
+        let [self_match_len, other_match_len] = [self, other].map(|incomplete| {
+            incomplete
+                .nodes
+                .iter()
+                .map(|node| node.text_len().utf8)
+                .sum::<usize>()
+        });
+
+        self_match_len > other_match_len
     }
 }
 
 #[derive(PartialEq, Eq, Clone, Debug)]
 pub struct NoMatch {
+    /// Tokens that would have allowed for more progress. Collected for the purposes of error reporting.
     pub tokens_that_would_have_allowed_more_progress: Vec<TokenKind>,
 }
 
