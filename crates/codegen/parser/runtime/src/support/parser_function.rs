@@ -28,16 +28,16 @@ where
                 parse_tree: cst::Node::token(TokenKind::SKIPPED, input.to_string()),
                 errors: vec![ParseError::new_covering_range(
                     Default::default()..input.into(),
-                    no_match.tokens_that_would_have_allowed_more_progress,
+                    no_match.expected_tokens,
                 )],
             },
             ParserResult::IncompleteMatch(IncompleteMatch {
                 nodes,
-                tokens_that_would_have_allowed_more_progress,
+                expected_tokens,
             })
             | ParserResult::Match(Match {
                 nodes,
-                tokens_that_would_have_allowed_more_progress,
+                expected_tokens,
             }) => {
                 let topmost_rule = match &nodes[..] {
                     [cst::Node::Rule(rule)] => Rc::clone(&rule),
@@ -63,7 +63,7 @@ where
                         parse_tree: cst::Node::rule(topmost_rule.kind, new_children),
                         errors: vec![ParseError::new_covering_range(
                             start..input.into(),
-                            tokens_that_would_have_allowed_more_progress,
+                            expected_tokens,
                         )],
                     }
                 } else {

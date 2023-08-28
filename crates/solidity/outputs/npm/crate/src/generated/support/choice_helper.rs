@@ -39,9 +39,9 @@ impl ChoiceHelper {
             }
 
             // Still no match, extend the possible expected tokens.
-            (ParserResult::NoMatch(running), ParserResult::NoMatch(next)) => running
-                .tokens_that_would_have_allowed_more_progress
-                .extend(next.tokens_that_would_have_allowed_more_progress),
+            (ParserResult::NoMatch(running), ParserResult::NoMatch(next)) => {
+                running.expected_tokens.extend(next.expected_tokens)
+            }
             // Otherwise, we have some match and we ignore a missing next one.
             (ParserResult::IncompleteMatch(..), ParserResult::NoMatch(..)) => {}
 
