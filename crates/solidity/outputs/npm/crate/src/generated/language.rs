@@ -177,6 +177,17 @@ impl Language {
     }
 
     #[allow(dead_code)]
+    fn default_greedy_parse_token_with_trivia(
+        &self,
+        stream: &mut Stream,
+        terminator: TokenKind,
+    ) -> ParserResult {
+        Lexer::greedy_parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+            self, stream, terminator,
+        )
+    }
+
+    #[allow(dead_code)]
     fn default_skip_tokens_until(
         &self,
         stream: &mut Stream,
@@ -202,6 +213,17 @@ impl Language {
     }
 
     #[allow(dead_code)]
+    fn version_pragma_greedy_parse_token_with_trivia(
+        &self,
+        stream: &mut Stream,
+        terminator: TokenKind,
+    ) -> ParserResult {
+        Lexer::greedy_parse_token_with_trivia::<{ LexicalContext::VersionPragma as u8 }>(
+            self, stream, terminator,
+        )
+    }
+
+    #[allow(dead_code)]
     fn version_pragma_skip_tokens_until(
         &self,
         stream: &mut Stream,
@@ -222,6 +244,17 @@ impl Language {
         kind: TokenKind,
     ) -> ParserResult {
         Lexer::parse_token_with_trivia::<{ LexicalContext::YulBlock as u8 }>(self, stream, kind)
+    }
+
+    #[allow(dead_code)]
+    fn yul_block_greedy_parse_token_with_trivia(
+        &self,
+        stream: &mut Stream,
+        terminator: TokenKind,
+    ) -> ParserResult {
+        Lexer::greedy_parse_token_with_trivia::<{ LexicalContext::YulBlock as u8 }>(
+            self, stream, terminator,
+        )
     }
 
     #[allow(dead_code)]
@@ -412,7 +445,9 @@ impl Language {
                             self.default_skip_tokens_until(stream, TokenKind::Semicolon)
                         }),
                 )?;
-                seq.elem(self.default_parse_token_with_trivia(stream, TokenKind::Semicolon))?;
+                seq.elem(
+                    self.default_greedy_parse_token_with_trivia(stream, TokenKind::Semicolon),
+                )?;
                 seq.finish()
             })
         }
@@ -494,7 +529,9 @@ impl Language {
                             self.default_skip_tokens_until(stream, TokenKind::Semicolon)
                         }),
                     )?;
-                    seq.elem(self.default_parse_token_with_trivia(stream, TokenKind::Semicolon))?;
+                    seq.elem(
+                        self.default_greedy_parse_token_with_trivia(stream, TokenKind::Semicolon),
+                    )?;
                     seq.finish()
                 })
             }
@@ -569,7 +606,9 @@ impl Language {
                             self.default_skip_tokens_until(stream, TokenKind::Semicolon)
                         }),
                 )?;
-                seq.elem(self.default_parse_token_with_trivia(stream, TokenKind::Semicolon))?;
+                seq.elem(
+                    self.default_greedy_parse_token_with_trivia(stream, TokenKind::Semicolon),
+                )?;
                 seq.finish()
             })
         }
@@ -747,7 +786,9 @@ impl Language {
                         self.default_skip_tokens_until(stream, TokenKind::Semicolon)
                     }),
                 )?;
-                seq.elem(self.default_parse_token_with_trivia(stream, TokenKind::Semicolon))?;
+                seq.elem(
+                    self.default_greedy_parse_token_with_trivia(stream, TokenKind::Semicolon),
+                )?;
                 seq.finish()
             })
         }
@@ -792,7 +833,9 @@ impl Language {
                         self.default_skip_tokens_until(stream, TokenKind::Semicolon)
                     }),
                 )?;
-                seq.elem(self.default_parse_token_with_trivia(stream, TokenKind::Semicolon))?;
+                seq.elem(
+                    self.default_greedy_parse_token_with_trivia(stream, TokenKind::Semicolon),
+                )?;
                 seq.finish()
             })
         }
@@ -820,7 +863,9 @@ impl Language {
                             self.default_skip_tokens_until(stream, TokenKind::Semicolon)
                         }),
                     )?;
-                    seq.elem(self.default_parse_token_with_trivia(stream, TokenKind::Semicolon))?;
+                    seq.elem(
+                        self.default_greedy_parse_token_with_trivia(stream, TokenKind::Semicolon),
+                    )?;
                     seq.finish()
                 })
             }
@@ -911,7 +956,9 @@ impl Language {
                             self.default_skip_tokens_until(stream, TokenKind::Semicolon)
                         }),
                     )?;
-                    seq.elem(self.default_parse_token_with_trivia(stream, TokenKind::Semicolon))?;
+                    seq.elem(
+                        self.default_greedy_parse_token_with_trivia(stream, TokenKind::Semicolon),
+                    )?;
                     seq.finish()
                 })
             }
@@ -1008,7 +1055,9 @@ impl Language {
                         self.default_skip_tokens_until(stream, TokenKind::Semicolon)
                     }),
                 )?;
-                seq.elem(self.default_parse_token_with_trivia(stream, TokenKind::Semicolon))?;
+                seq.elem(
+                    self.default_greedy_parse_token_with_trivia(stream, TokenKind::Semicolon),
+                )?;
                 seq.finish()
             })
         }
@@ -1531,7 +1580,9 @@ impl Language {
                 seq.elem(self.expression(stream).try_recover_with(stream, |stream| {
                     self.default_skip_tokens_until(stream, TokenKind::Semicolon)
                 }))?;
-                seq.elem(self.default_parse_token_with_trivia(stream, TokenKind::Semicolon))?;
+                seq.elem(
+                    self.default_greedy_parse_token_with_trivia(stream, TokenKind::Semicolon),
+                )?;
                 seq.finish()
             })
         }
@@ -1956,7 +2007,9 @@ impl Language {
                         self.default_skip_tokens_until(stream, TokenKind::Semicolon)
                     }),
                 )?;
-                seq.elem(self.default_parse_token_with_trivia(stream, TokenKind::Semicolon))?;
+                seq.elem(
+                    self.default_greedy_parse_token_with_trivia(stream, TokenKind::Semicolon),
+                )?;
                 seq.finish()
             })
         }
@@ -2772,7 +2825,9 @@ impl Language {
                         self.default_skip_tokens_until(stream, TokenKind::Semicolon)
                     }),
                 )?;
-                seq.elem(self.default_parse_token_with_trivia(stream, TokenKind::Semicolon))?;
+                seq.elem(
+                    self.default_greedy_parse_token_with_trivia(stream, TokenKind::Semicolon),
+                )?;
                 seq.finish()
             })
         }
@@ -2864,7 +2919,9 @@ impl Language {
                         self.default_skip_tokens_until(stream, TokenKind::Semicolon)
                     }),
                 )?;
-                seq.elem(self.default_parse_token_with_trivia(stream, TokenKind::Semicolon))?;
+                seq.elem(
+                    self.default_greedy_parse_token_with_trivia(stream, TokenKind::Semicolon),
+                )?;
                 seq.finish()
             })
         }
@@ -2903,7 +2960,9 @@ impl Language {
                         self.default_skip_tokens_until(stream, TokenKind::Semicolon)
                     }),
                 )?;
-                seq.elem(self.default_parse_token_with_trivia(stream, TokenKind::Semicolon))?;
+                seq.elem(
+                    self.default_greedy_parse_token_with_trivia(stream, TokenKind::Semicolon),
+                )?;
                 seq.finish()
             })
         }
@@ -3035,7 +3094,9 @@ impl Language {
                         self.default_skip_tokens_until(stream, TokenKind::Semicolon)
                     }),
                 )?;
-                seq.elem(self.default_parse_token_with_trivia(stream, TokenKind::Semicolon))?;
+                seq.elem(
+                    self.default_greedy_parse_token_with_trivia(stream, TokenKind::Semicolon),
+                )?;
                 seq.finish()
             })
         }
@@ -3156,7 +3217,9 @@ impl Language {
                         self.default_skip_tokens_until(stream, TokenKind::Semicolon)
                     }),
                 )?;
-                seq.elem(self.default_parse_token_with_trivia(stream, TokenKind::Semicolon))?;
+                seq.elem(
+                    self.default_greedy_parse_token_with_trivia(stream, TokenKind::Semicolon),
+                )?;
                 seq.finish()
             })
         }
@@ -3180,7 +3243,9 @@ impl Language {
                                 self.default_skip_tokens_until(stream, TokenKind::Semicolon)
                             }),
                     )?;
-                    seq.elem(self.default_parse_token_with_trivia(stream, TokenKind::Semicolon))?;
+                    seq.elem(
+                        self.default_greedy_parse_token_with_trivia(stream, TokenKind::Semicolon),
+                    )?;
                     seq.finish()
                 })
             }
@@ -3260,7 +3325,9 @@ impl Language {
                         self.default_skip_tokens_until(stream, TokenKind::Semicolon)
                     }),
                 )?;
-                seq.elem(self.default_parse_token_with_trivia(stream, TokenKind::Semicolon))?;
+                seq.elem(
+                    self.default_greedy_parse_token_with_trivia(stream, TokenKind::Semicolon),
+                )?;
                 seq.finish()
             })
         }
@@ -3675,7 +3742,9 @@ impl Language {
                             self.default_skip_tokens_until(stream, TokenKind::Semicolon)
                         }),
                     )?;
-                    seq.elem(self.default_parse_token_with_trivia(stream, TokenKind::Semicolon))?;
+                    seq.elem(
+                        self.default_greedy_parse_token_with_trivia(stream, TokenKind::Semicolon),
+                    )?;
                     seq.finish()
                 })
             }
@@ -3735,7 +3804,9 @@ impl Language {
                         self.default_skip_tokens_until(stream, TokenKind::Semicolon)
                     }),
                 )?;
-                seq.elem(self.default_parse_token_with_trivia(stream, TokenKind::Semicolon))?;
+                seq.elem(
+                    self.default_greedy_parse_token_with_trivia(stream, TokenKind::Semicolon),
+                )?;
                 seq.finish()
             })
         }
@@ -3950,7 +4021,9 @@ impl Language {
                         self.default_skip_tokens_until(stream, TokenKind::Semicolon)
                     }),
                 )?;
-                seq.elem(self.default_parse_token_with_trivia(stream, TokenKind::Semicolon))?;
+                seq.elem(
+                    self.default_greedy_parse_token_with_trivia(stream, TokenKind::Semicolon),
+                )?;
                 seq.finish()
             })
         }

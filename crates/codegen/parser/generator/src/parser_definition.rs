@@ -194,8 +194,10 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                     "{context_name}_skip_tokens_until",
                     context_name = context_name.to_snake_case()
                 );
-                let parse_token =
-                    format_ident!("{}_parse_token_with_trivia", context_name.to_snake_case());
+                let greedy_parse = format_ident!(
+                    "{context_name}_greedy_parse_token_with_trivia",
+                    context_name = context_name.to_snake_case()
+                );
 
                 let parser = body.to_parser_code(context_name, is_trivia);
                 let body_parser = body
@@ -217,7 +219,7 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                     {
                         SequenceHelper::run(|mut seq| {
                             #body_parser
-                            seq.elem(self.#parse_token(stream, TokenKind::#terminator_token_kind))?;
+                            seq.elem(self.#greedy_parse(stream, TokenKind::#terminator_token_kind))?;
                             seq.finish()
                         })
                     }

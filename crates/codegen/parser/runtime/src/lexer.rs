@@ -1,6 +1,7 @@
 use crate::{
     cst,
     kinds::{LexicalContext, TokenKind},
+    parse_error::ParseError,
     support::{ParserResult, Stream},
     text_index::TextRange,
 };
@@ -65,6 +66,67 @@ pub trait Lexer {
         }
 
         ParserResult::r#match(children, vec![])
+    }
+
+    fn greedy_parse_token_with_trivia<const LEX_CTX: u8>(
+        &self,
+        stream: &mut Stream,
+        terminator: TokenKind,
+    ) -> ParserResult {
+        let mut children = vec![];
+
+        let restore = stream.position();
+        if let ParserResult::Match(r#match) = self.leading_trivia(stream) {
+            children.extend(r#match.nodes);
+        } else {
+            stream.set_position(restore);
+        }
+
+        let start = stream.position();
+        let found = loop {
+            let restore = stream.position();
+
+            match self.next_token::<LEX_CTX>(stream) {
+                // Keep eating tokens until we find the terminator
+                Some(kind) if kind != terminator => {}
+                // Terminator found, optionally include the skipped tokens
+                Some(terminator) => {
+                    if restore > start {
+                        stream.emit(ParseError {
+                            text_range: start..restore,
+                            tokens_that_would_have_allowed_more_progress: vec![terminator],
+                        });
+                        children.push(cst::Node::token(
+                            TokenKind::SKIPPED,
+                            stream.content(start.utf8..restore.utf8),
+                        ));
+                    }
+
+                    children.push(cst::Node::token(
+                        terminator,
+                        stream.content(restore.utf8..stream.position().utf8),
+                    ));
+                    break true;
+                }
+                // Not found till EOF
+                None => break false,
+            }
+        };
+
+        if !found {
+            stream.set_position(restore);
+
+            ParserResult::no_match(vec![terminator])
+        } else {
+            let restore = stream.position();
+            if let ParserResult::Match(r#match) = self.trailing_trivia(stream) {
+                children.extend(r#match.nodes);
+            } else {
+                stream.set_position(restore);
+            }
+
+            ParserResult::r#match(children, vec![])
+        }
     }
 
     fn skip_tokens_until<const LEX_CTX: u8>(

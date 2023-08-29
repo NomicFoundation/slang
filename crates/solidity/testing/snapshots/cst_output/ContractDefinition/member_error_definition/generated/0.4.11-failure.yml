@@ -7,13 +7,12 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Expected Equal or Semicolon.
+    Error: Expected Semicolon.
        ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/member_error_definition/input.sol:2:15]
        │
-     2 │ ╭─▶   error Error1();
-     3 │ ├─▶ }
-       │ │      
-       │ ╰────── Error occurred here.
+     2 │   error Error1();
+       │               ─┬  
+       │                ╰── Error occurred here.
     ───╯
 
 Tree:
@@ -21,10 +20,12 @@ Tree:
       - ContractKeyword (Token): "contract" # 0..8
       - Identifier (Token): "Sample" # 9..15
       - OpenBrace (Token): "{" # 16..17
-      - ContractMembersList (Rule): # 18..32 "  error Error1"
-          - StateVariableDefinition (Rule): # 18..32 "  error Error1"
+      - ContractMembersList (Rule): # 18..36 "  error Error1();\n"
+          - StateVariableDefinition (Rule): # 18..36 "  error Error1();\n"
               - TypeName (Rule): # 18..25 "  error"
                   - IdentifierPath (Rule): # 18..25 "  error"
                       - Identifier (Token): "error" # 20..25
               - Identifier (Token): "Error1" # 26..32
-      - SKIPPED (Token): "();\n}" # 32..37
+              - SKIPPED (Token): "()" # 32..34
+              - Semicolon (Token): ";" # 34..35
+      - CloseBrace (Token): "}" # 36..37
