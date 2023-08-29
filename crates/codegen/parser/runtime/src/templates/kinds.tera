@@ -1,5 +1,5 @@
 #[cfg(feature = "slang_napi_interfaces")]
-use { napi::bindgen_prelude::*, napi_derive::napi };
+use {napi::bindgen_prelude::*, napi_derive::napi};
 
 #[derive(
     Debug,
@@ -12,8 +12,8 @@ use { napi::bindgen_prelude::*, napi_derive::napi };
     strum_macros::Display,
     strum_macros::EnumString,
 )]
-#[cfg_attr( feature = "slang_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "kinds") )]
-#[cfg_attr( not(feature = "slang_napi_interfaces"), derive(Clone, Copy))]
+#[cfg_attr(feature = "slang_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "kinds"))]
+#[cfg_attr(not(feature = "slang_napi_interfaces"), derive(Clone, Copy))]
 pub enum ProductionKind {
     {%- for variant in code.production_kinds -%}
         {# variant.documentation | indent(prefix = "/// ", first = true, blank = true) #}
@@ -32,8 +32,8 @@ pub enum ProductionKind {
     strum_macros::Display,
     strum_macros::EnumString,
 )]
-#[cfg_attr( feature = "slang_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "kinds") )]
-#[cfg_attr( not(feature = "slang_napi_interfaces"), derive(Clone, Copy))]
+#[cfg_attr(feature = "slang_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "kinds"))]
+#[cfg_attr(not(feature = "slang_napi_interfaces"), derive(Clone, Copy))]
 pub enum RuleKind {
     {%- for variant in code.rule_kinds -%}
         {# variant.documentation | indent(prefix = "/// ", first = true, blank = true) #}
@@ -52,12 +52,23 @@ pub enum RuleKind {
     strum_macros::Display,
     strum_macros::EnumString,
 )]
-#[cfg_attr( feature = "slang_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "kinds") )]
-#[cfg_attr( not(feature = "slang_napi_interfaces"), derive(Clone, Copy))]
+#[cfg_attr(feature = "slang_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "kinds"))]
+#[cfg_attr(not(feature = "slang_napi_interfaces"), derive(Clone, Copy))]
 pub enum TokenKind {
     SKIPPED,
     {%- for variant in code.token_kinds -%}
         {# variant.documentation | indent(prefix = "/// ", first = true, blank = true) #}
         {{ variant }},
     {%- endfor -%}
+}
+
+#[derive(strum_macros::FromRepr)]
+/// The lexical context of the scanner.
+#[cfg_attr(feature = "slang_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "language"))]
+#[cfg_attr(not(feature = "slang_napi_interfaces"), derive(Clone, Copy))]
+#[repr(u8)] // This is used as a const argument, which only supports primitive types
+pub enum LexicalContext {
+    {%- for context in code.scanner_contexts %}
+        {{ context.name }},
+    {%- endfor %}
 }

@@ -1,20 +1,22 @@
 #[cfg(feature = "slang_napi_interfaces")]
-use { napi::bindgen_prelude::*, napi_derive::napi };
+use {napi::bindgen_prelude::*, napi_derive::napi};
 
 use semver::Version;
 
 use super::{
-    cst,
     kinds::{RuleKind, TokenKind, ProductionKind},
     parse_output::ParseOutput,
     support::*,
+    lexer::Lexer,
 };
 
-#[cfg( feature = "slang_napi_interfaces" )]
+pub use super::kinds::LexicalContext;
+
+#[cfg(feature = "slang_napi_interfaces")]
 use super::napi::napi_parse_output::ParseOutput as NAPIParseOutput;
 
 #[derive(Debug)]
-#[cfg_attr( feature = "slang_napi_interfaces", napi(namespace = "language") )]
+#[cfg_attr(feature = "slang_napi_interfaces", napi(namespace = "language"))]
 pub struct Language {
     pub(crate) version: Version,
     {%- for version in code.referenced_versions -%}
@@ -27,12 +29,12 @@ pub enum Error {
     #[error("Unsupported {{ language_name }} language version '{0}'.")]
     UnsupportedLanguageVersion(Version),
 
-    #[cfg( feature = "slang_napi_interfaces" )]
+    #[cfg(feature = "slang_napi_interfaces")]
     #[error("Invalid semantic version '{0}'.")]
     InvalidSemanticVersion(String),
 }
 
-#[cfg( feature = "slang_napi_interfaces" )]
+#[cfg(feature = "slang_napi_interfaces")]
 impl From<Error> for napi::Error {
     fn from(value: Error) -> Self {
         napi::Error::from_reason(value.to_string())
@@ -40,18 +42,17 @@ impl From<Error> for napi::Error {
 }
 
 impl Language {
-    const VERSIONS: &'static [&'static str] = &[
-        {%- for version in versions -%}
-            "{{ version }}",
-        {%- endfor -%}
+    pub const SUPPORTED_VERSIONS: &[Version] = &[
+        {% for version in versions %}
+            Version::new({{ version | split(pat=".") | join(sep=", ") }}),
+        {% endfor %}
     ];
 
     pub fn new(version: Version) -> std::result::Result<Self, Error> {
-        if Self::VERSIONS.contains(&version.to_string().as_str()) {
+        if Self::SUPPORTED_VERSIONS.contains(&version) {
             Ok(Self {
-                {%- for version in code.referenced_versions -%}
-                    {# Separator #}
-                    version_is_at_least_{{ version | replace(from=".", to="_") }}: Version::parse("{{ version }}").unwrap() <= version,
+                {%- for version in code.referenced_versions %}
+                    version_is_at_least_{{ version | replace(from=".", to="_") }}: Version::new({{ version | split(pat=".") | join(sep=", ") }}) <= version,
                 {%- endfor -%}
                 version,
             })
@@ -64,13 +65,7 @@ impl Language {
         &self.version
     }
 
-    pub fn supported_versions() -> Vec<Version> {
-        return Self::VERSIONS.iter().map(|v| Version::parse(v).unwrap()).collect();
-    }
-
-    {# Separator #}
-    {%- for context in code.scanner_contexts -%}
-        {# Separator #}
+    {% for context in code.scanner_contexts %}
         #[allow(dead_code)]
         fn {{ context.name | snake_case }}_parse_token_with_trivia(
             &self,
@@ -78,132 +73,40 @@ impl Language {
             kind: TokenKind,
         ) -> ParserResult
         {
-            let mut children = vec![];
-
-            let restore = stream.position();
-            if let ParserResult::Match(r#match) = self.leading_trivia(stream) {
-                children.extend(r#match.nodes);
-            } else {
-                stream.set_position(restore);
-            }
-
-            let start = stream.position();
-            if self.{{ context.name | snake_case }}_next_token(stream) != Some(kind) {
-                stream.set_position(restore);
-                return ParserResult::no_match(vec![kind]);
-            }
-            let end = stream.position();
-            children.push(cst::Node::token(kind, stream.content(start.utf8..end.utf8)));
-
-            let restore = stream.position();
-            if let ParserResult::Match(r#match) = self.trailing_trivia(stream) {
-                children.extend(r#match.nodes);
-            } else {
-                stream.set_position(restore);
-            }
-
-            return ParserResult::r#match(children, vec![]);
+            Lexer::parse_token_with_trivia::<{ LexicalContext::{{ context.name }} as u8 }>(self, stream, kind)
         }
 
         #[allow(dead_code)]
         fn {{ context.name | snake_case }}_parse_token(&self, stream: &mut Stream, kind: TokenKind) -> ParserResult
         {
-            let start = stream.position();
-            if self.{{ context.name | snake_case }}_next_token(stream) != Some(kind) {
-                stream.set_position(start);
-                return ParserResult::no_match(vec![kind]);
-            }
-            let end = stream.position();
-            return ParserResult::r#match(
-                vec![cst::Node::token(kind, stream.content(start.utf8..end.utf8))],
-                vec![],
-            );
+            Lexer::parse_token::<{ LexicalContext::{{ context.name }} as u8 }>(self, stream, kind)
         }
-
-        #[allow(unused_assignments, unused_parens)]
-        pub(crate) fn {{ context.name | snake_case }}_next_token(&self, stream: &mut Stream) -> Option<TokenKind> {
-            let save = stream.position();
-            let mut furthest_position = stream.position();
-            let mut longest_token = TokenKind::SKIPPED; // just a marker
-
-            if let Some(kind) = {{ context.alpha_literal_scanner }} {
-                // Make sure that this is not the start of an identifier
-                if !self.identifier_part(stream) {
-                    furthest_position = stream.position();
-                    longest_token = kind;
-                }
-            }
-            stream.set_position(save);
-            
-            if let Some(kind) = {{ context.non_alpha_literal_scanner }} {
-                furthest_position = stream.position();
-                longest_token = kind;
-            }
-            stream.set_position(save);
-
-            macro_rules! longest_match {
-                ($( { $kind:ident = $function:ident } )*) => {
-                    $(
-                        if self.$function(stream) && stream.position() > furthest_position {
-                            furthest_position = stream.position();
-                            longest_token = TokenKind::$kind;
-                        }
-                        stream.set_position(save);
-                    )*
-                };
-            }
-
-            longest_match! {
-            {%- for name in context.compound_scanner_names -%}
-                {# Separator #}
-                { {{ name }} = {{ name | snake_case }} }
-            {%- endfor -%}
-                {# Separator #}
-            }
-
-            if longest_token != TokenKind::SKIPPED {
-                stream.set_position(furthest_position);
-                Some(longest_token)
-            } else {
-                None
-            }
-        }
-        {# Separator #}
-    {%- endfor -%}
-    {# Separator #}
+    {% endfor %}
 
     /********************************************
      *         Parser Functions
      ********************************************/
-    {# Separator #}
 
-    {%- for function in code.parser_functions -%}
-        {# Separator #}
+    {% for function in code.parser_functions %}
         #[allow(unused_assignments, unused_parens)]
         fn {{ function.0 | snake_case }}(&self, stream: &mut Stream) -> ParserResult { {{ function.1 }} }
-        {# Separator #}
-    {%- endfor -%}
-    {# Separator #}
+    {% endfor %}
 
     /********************************************
      *         Scanner Functions
      ********************************************/
 
-    {# Separator #}
-
-    {%- for function in code.scanner_functions -%}
-        {# Separator #}
+    {% for function in code.scanner_functions %}
         #[allow(unused_assignments, unused_parens)]
         fn {{ function.0 | snake_case }}(&self, stream: &mut Stream) -> bool { {{ function.1 }} }
-        {# Separator #}
-    {%- endfor -%}
-    {# Separator #}
+    {% endfor %}
 
     pub fn scan(&self, lexical_context: LexicalContext, input: &str) -> Option<TokenKind> {
         let mut stream = Stream::new(input);
         match lexical_context {
             {%- for lexical_context in code.scanner_contexts -%}
-                LexicalContext::{{ lexical_context.name }} => self.{{ lexical_context.name | snake_case }}_next_token(&mut stream),
+                LexicalContext::{{ lexical_context.name }} =>
+                    Lexer::next_token::<{ LexicalContext::{{ lexical_context.name }} as u8 }>(self, &mut stream),
             {%- endfor -%}
         }
     }
@@ -217,27 +120,69 @@ impl Language {
     }
 }
 
-#[derive(
-    Debug,
-    Eq,
-    Ord,
-    PartialEq,
-    PartialOrd,
-    serde::Serialize,
-    strum_macros::AsRefStr,
-    strum_macros::Display,
-    strum_macros::EnumString,
-)]
-#[cfg_attr( feature = "slang_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "language") )]
-#[cfg_attr( not(feature = "slang_napi_interfaces"), derive(Clone, Copy))]
-pub enum LexicalContext {
-    {%- for context in code.scanner_contexts -%}
-        {# Separator #}
-        {{ context.name }},
-    {%- endfor -%}
+impl Lexer for Language {
+    fn leading_trivia(&self, stream: &mut Stream) -> ParserResult {
+        Language::leading_trivia(self, stream)
+    }
+
+    fn trailing_trivia(&self, stream: &mut Stream) -> ParserResult {
+        Language::trailing_trivia(self, stream)
+    }
+
+    fn next_token<const LEX_CTX: u8>(&self, stream: &mut Stream) -> Option<TokenKind> {
+        let save = stream.position();
+        let mut furthest_position = stream.position();
+        let mut longest_token = None;
+
+        match LexicalContext::from_repr(LEX_CTX).unwrap() {
+            {%- for context in code.scanner_contexts %}
+                LexicalContext::{{ context.name }} => {
+                    macro_rules! longest_match {
+                        ($( { $kind:ident = $function:ident } )*) => {
+                            $(
+                                if self.$function(stream) && stream.position() > furthest_position {
+                                    furthest_position = stream.position();
+                                    longest_token = Some(TokenKind::$kind);
+                                }
+                                stream.set_position(save);
+                            )*
+                        };
+                    }
+
+                    if let Some(kind) = {{ context.alpha_literal_scanner }} {
+                        // Make sure that this is not the start of an identifier
+                        if !self.identifier_part(stream) {
+                            furthest_position = stream.position();
+                            longest_token = Some(kind);
+                        }
+                    }
+                    stream.set_position(save);
+
+                    if let Some(kind) = {{ context.non_alpha_literal_scanner }} {
+                        furthest_position = stream.position();
+                        longest_token = Some(kind);
+                    }
+                    stream.set_position(save);
+
+
+                    longest_match! {
+                        {%- for name in context.compound_scanner_names %}
+                            { {{ name }} = {{ name | snake_case }} }
+                        {%- endfor %}
+                    }
+                },
+            {%- endfor %}
+        }
+
+        if longest_token.is_some() {
+                stream.set_position(furthest_position);
+        }
+
+        longest_token
+    }
 }
 
-#[cfg( feature = "slang_napi_interfaces" )]
+#[cfg(feature = "slang_napi_interfaces")]
 #[napi(namespace = "language")]
 impl Language {
 
@@ -254,7 +199,7 @@ impl Language {
 
     #[napi(js_name = "supportedVersions")]
     pub fn supported_versions_napi() -> Vec<String> {
-        return Self::VERSIONS.iter().map(|v| v.to_string()).collect();
+        return Self::SUPPORTED_VERSIONS.iter().map(|v| v.to_string()).collect();
     }
 
     #[napi(js_name = "scan")]

@@ -1,5 +1,6 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
+use std::mem;
 use std::ops::Range;
 
 use super::super::text_index::TextIndex;
@@ -7,8 +8,7 @@ use super::super::text_index::TextIndex;
 pub struct Stream<'s> {
     source: &'s str,
     position: TextIndex,
-    undo_position: TextIndex,
-    has_undo: bool,
+    undo_position: Option<TextIndex>,
 }
 
 impl<'s> Stream<'s> {
@@ -16,8 +16,7 @@ impl<'s> Stream<'s> {
         Self {
             source,
             position: Default::default(),
-            undo_position: Default::default(),
-            has_undo: false,
+            undo_position: None,
         }
     }
 
@@ -34,10 +33,9 @@ impl<'s> Stream<'s> {
     }
 
     pub fn next(&mut self) -> Option<char> {
-        self.has_undo = true;
-        self.undo_position = self.position;
-        let mut chars = self.source[self.position.utf8..].chars();
-        if let Some(c) = chars.next() {
+        self.undo_position = Some(self.position);
+
+        if let Some(c) = self.peek() {
             self.position.utf8 += c.len_utf8();
             self.position.utf16 += c.len_utf16();
             self.position.char += 1;
@@ -48,11 +46,8 @@ impl<'s> Stream<'s> {
     }
 
     pub fn undo(&mut self) {
-        if !self.has_undo {
-            panic!("No undo position");
-        }
-        self.position = self.undo_position;
-        self.has_undo = false;
+        let position = mem::take(&mut self.undo_position).expect("No undo position");
+        self.position = position;
     }
 
     pub fn content(&self, range: Range<usize>) -> String {
