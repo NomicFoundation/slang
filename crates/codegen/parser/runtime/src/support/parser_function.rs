@@ -50,6 +50,8 @@ where
                 };
 
                 let start = stream.position();
+
+                let errors = stream.into_errors();
                 // Mark the rest of the unconsumed stream as skipped and report an error
                 // NOTE: IncompleteMatch internally consumes the stream when picked via choice,
                 // so needs a separate check here.
@@ -58,18 +60,20 @@ where
                         cst::Node::token(TokenKind::SKIPPED, input[start.utf8..].to_string());
                     let mut new_children = topmost_rule.children.clone();
                     new_children.push(skipped_node);
+                    let mut errors = errors;
+                    errors.push(ParseError::new_covering_range(
+                        start..input.into(),
+                        expected_tokens,
+                    ));
 
                     ParseOutput {
                         parse_tree: cst::Node::rule(topmost_rule.kind, new_children),
-                        errors: vec![ParseError::new_covering_range(
-                            start..input.into(),
-                            expected_tokens,
-                        )],
+                        errors,
                     }
                 } else {
                     ParseOutput {
                         parse_tree: cst::Node::Rule(topmost_rule),
-                        errors: vec![],
+                        errors,
                     }
                 }
             }

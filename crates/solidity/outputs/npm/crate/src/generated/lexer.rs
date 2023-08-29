@@ -4,6 +4,7 @@ use crate::{
     cst,
     kinds::{LexicalContext, TokenKind},
     support::{ParserResult, Stream},
+    text_index::TextRange,
 };
 
 // Ensure that the `LexicalContext` enum is `repr(u8)`.
@@ -66,5 +67,34 @@ pub trait Lexer {
         }
 
         ParserResult::r#match(children, vec![])
+    }
+
+    fn skip_tokens_until<const LEX_CTX: u8>(
+        &self,
+        stream: &mut Stream,
+        expected: TokenKind,
+    ) -> Option<TextRange> {
+        let start = stream.position();
+
+        loop {
+            let restore = stream.position();
+
+            match self.next_token::<LEX_CTX>(stream) {
+                // Keep eating tokens until we find the expected one
+                Some(kind) if kind != expected => {}
+                // Token found, return the skipped range but don't consume the expected token
+                Some(..) => {
+                    stream.set_position(restore);
+
+                    break Some(start..restore);
+                }
+                // Not found till EOF
+                None => {
+                    stream.set_position(start);
+
+                    break None;
+                }
+            }
+        }
     }
 }

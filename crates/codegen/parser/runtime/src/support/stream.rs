@@ -1,12 +1,21 @@
 use std::mem;
 use std::ops::Range;
 
+use crate::parse_error::ParseError;
+
 use super::super::text_index::TextIndex;
 
 pub struct Stream<'s> {
     source: &'s str,
     position: TextIndex,
     undo_position: Option<TextIndex>,
+    errors: Vec<ParseError>,
+}
+
+#[derive(Copy, Clone)]
+pub struct Marker {
+    position: TextIndex,
+    err_len: usize,
 }
 
 impl<'s> Stream<'s> {
@@ -15,7 +24,30 @@ impl<'s> Stream<'s> {
             source,
             position: Default::default(),
             undo_position: None,
+            errors: vec![],
         }
+    }
+
+    pub fn mark(&self) -> Marker {
+        Marker {
+            position: self.position,
+            err_len: self.errors.len(),
+        }
+    }
+
+    pub fn rewind(&mut self, marker: Marker) {
+        assert!(marker.position <= self.position);
+
+        self.position = marker.position;
+        self.errors.truncate(marker.err_len);
+    }
+
+    pub fn emit(&mut self, error: ParseError) {
+        self.errors.push(error);
+    }
+
+    pub fn into_errors(self) -> Vec<ParseError> {
+        self.errors
     }
 
     pub fn position(&self) -> TextIndex {

@@ -8,7 +8,7 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Expected ConstantKeyword or Identifier or ImmutableKeyword or InternalKeyword or OverrideKeyword or PrivateKeyword or PublicKeyword.
+    Error: Expected ConstantKeyword or Identifier or ImmutableKeyword or InternalKeyword or OverrideKeyword or PrivateKeyword or PublicKeyword or Semicolon.
        ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/member_unnamed_function_definition/input.sol:2:14]
        │
      2 │ ╭─▶   function () {

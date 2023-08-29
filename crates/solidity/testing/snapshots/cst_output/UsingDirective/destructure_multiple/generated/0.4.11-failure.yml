@@ -9,8 +9,8 @@ Errors: # 1 total
        ╭─[crates/solidity/testing/snapshots/cst_output/UsingDirective/destructure_multiple/input.sol:1:11]
        │
      1 │ using {add as +, sub, mul, div as /} for Int global;
-       │           ─────────────────────┬────────────────────  
-       │                                ╰────────────────────── Error occurred here.
+       │           ────────────────────┬────────────────────  
+       │                               ╰────────────────────── Error occurred here.
     ───╯
 
 Tree:
@@ -22,4 +22,5 @@ Tree:
               - UsingDirectiveSymbol (Rule): # 7..10 "add"
                   - IdentifierPath (Rule): # 7..10 "add"
                       - Identifier (Token): "add" # 7..10
-      - SKIPPED (Token): " as +, sub, mul, div as /} for Int global;" # 10..52
+      - SKIPPED (Token): " as +, sub, mul, div as /} for Int global" # 10..51
+      - Semicolon (Token): ";" # 51..52

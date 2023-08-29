@@ -1,21 +1,20 @@
 use std::ops::ControlFlow;
 
-use super::{ParserResult, Stream};
-use crate::text_index::TextIndex;
+use super::{stream::Marker, ParserResult, Stream};
 
 /// Starting from a given position in the stream, this helper will try to pick (and remember) a best match. Settles on
 /// a first full match if possible, otherwise on the best incomplete match.
 #[must_use]
 pub struct ChoiceHelper {
     result: ParserResult,
-    start_position: TextIndex,
+    start_position: Marker,
 }
 
 impl ChoiceHelper {
     pub fn new(stream: &mut Stream) -> Self {
         Self {
             result: ParserResult::no_match(vec![]),
-            start_position: stream.position(),
+            start_position: stream.mark(),
         }
     }
 
@@ -129,7 +128,7 @@ impl<'a> Choice<'a> {
         if inner.is_done() {
             ControlFlow::Break(inner.take_result(stream))
         } else {
-            stream.set_position(inner.start_position);
+            stream.rewind(inner.start_position);
             ControlFlow::Continue(inner)
         }
     }

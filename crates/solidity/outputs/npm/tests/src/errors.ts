@@ -12,7 +12,7 @@ test("render error reports", () => {
 
   expect(report).toEqual(
     `
-Error: Expected Identifier.
+Error: Expected Identifier or Semicolon.
    ╭─[test.sol:1:16]
    │
  1 │ int256 constant

@@ -14,7 +14,7 @@ impl<const MIN_COUNT: usize> RepetitionHelper<MIN_COUNT> {
             unimplemented!("RepetitionHelper only supports min_count of 0 or 1")
         }
 
-        let save = stream.position();
+        let save = stream.mark();
         let mut accum = match parser(stream) {
             // First item parsed correctly
             result @ ParserResult::Match(_) => result,
@@ -28,7 +28,7 @@ impl<const MIN_COUNT: usize> RepetitionHelper<MIN_COUNT> {
             | ParserResult::NoMatch(NoMatch {
                 expected_tokens, ..
             }) if MIN_COUNT == 0 => {
-                stream.set_position(save);
+                stream.rewind(save);
                 return ParserResult::r#match(vec![], expected_tokens);
             }
             // Don't try repeating if we don't have a full match and we require at least one
@@ -36,7 +36,7 @@ impl<const MIN_COUNT: usize> RepetitionHelper<MIN_COUNT> {
         };
 
         loop {
-            let save = stream.position();
+            let save = stream.mark();
             let next_result = parser(stream);
 
             match (&mut accum, next_result) {
@@ -64,7 +64,7 @@ impl<const MIN_COUNT: usize> RepetitionHelper<MIN_COUNT> {
                     })
                     | ParserResult::NoMatch(NoMatch { expected_tokens }),
                 ) => {
-                    stream.set_position(save);
+                    stream.rewind(save);
                     running.expected_tokens = expected_tokens;
                     return accum;
                 }
@@ -73,7 +73,7 @@ impl<const MIN_COUNT: usize> RepetitionHelper<MIN_COUNT> {
                     ParserResult::PrattOperatorMatch(_),
                     ParserResult::IncompleteMatch(_) | ParserResult::NoMatch(_),
                 ) => {
-                    stream.set_position(save);
+                    stream.rewind(save);
                     return accum;
                 }
 

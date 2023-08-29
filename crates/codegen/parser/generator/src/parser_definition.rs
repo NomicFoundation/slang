@@ -181,9 +181,47 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
             )
             .to_parser_code(context_name, is_trivia),
 
-            Self::TerminatedBy(body, terminator, loc) => {
-                Self::Sequence(vec![*body.clone(), *terminator.clone()], *loc)
-                    .to_parser_code(context_name, is_trivia)
+            Self::TerminatedBy(body, terminator, _) => {
+                let terminator_scanner = match terminator.as_ref() {
+                    ParserDefinitionNode::ScannerDefinition(scanner, ..) => scanner,
+                    _ => unreachable!("Only tokens are permitted as terminators"),
+                };
+
+                let terminator_token_kind =
+                    format_ident!("{name}", name = terminator_scanner.name());
+
+                let skip_tokens_until = format_ident!(
+                    "{context_name}_skip_tokens_until",
+                    context_name = context_name.to_snake_case()
+                );
+                let parse_token =
+                    format_ident!("{}_parse_token_with_trivia", context_name.to_snake_case());
+
+                let parser = body.to_parser_code(context_name, is_trivia);
+                let body_parser = body
+                    .applicable_version_quality_ranges()
+                    .wrap_code(
+                        quote! {
+                            seq.elem(
+                                #parser
+                                    .try_recover_with(
+                                        stream,
+                                        |stream| self.#skip_tokens_until(stream, TokenKind::#terminator_token_kind)
+                                    )
+                            )?;
+                        },
+                        None,
+                    );
+
+                quote! {
+                    {
+                        SequenceHelper::run(|mut seq| {
+                            #body_parser
+                            seq.elem(self.#parse_token(stream, TokenKind::#terminator_token_kind))?;
+                            seq.finish()
+                        })
+                    }
+                }
             }
         }
     }

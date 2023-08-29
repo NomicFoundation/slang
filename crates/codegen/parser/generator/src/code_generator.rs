@@ -127,6 +127,7 @@ impl CodeGenerator {
             "support/choice_helper.rs",
             "support/precedence_helper.rs",
             "support/parser_result.rs",
+            "support/recovery.rs",
             "support/scanner_macros.rs",
             "support/stream.rs",
         ] {

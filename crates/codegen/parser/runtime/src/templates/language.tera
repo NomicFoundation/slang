@@ -6,6 +6,7 @@ use semver::Version;
 use super::{
     kinds::{RuleKind, TokenKind, ProductionKind},
     parse_output::ParseOutput,
+    text_index::TextRange,
     support::*,
     lexer::Lexer,
 };
@@ -74,6 +75,11 @@ impl Language {
         ) -> ParserResult
         {
             Lexer::parse_token_with_trivia::<{ LexicalContext::{{ context.name }} as u8 }>(self, stream, kind)
+        }
+
+        #[allow(dead_code)]
+        fn {{ context.name | snake_case }}_skip_tokens_until(&self, stream: &mut Stream, expected: TokenKind) -> Option<TextRange> {
+            Lexer::skip_tokens_until::<{ LexicalContext::{{ context.name }} as u8 }>(self, stream, expected)
         }
 
         #[allow(dead_code)]

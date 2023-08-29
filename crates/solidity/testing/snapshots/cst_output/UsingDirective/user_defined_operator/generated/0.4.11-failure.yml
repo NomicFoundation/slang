@@ -9,8 +9,8 @@ Errors: # 1 total
        ╭─[crates/solidity/testing/snapshots/cst_output/UsingDirective/user_defined_operator/input.sol:1:11]
        │
      1 │ using {div as /} for Int global;
-       │           ───────────┬──────────  
-       │                      ╰──────────── Error occurred here.
+       │           ──────────┬──────────  
+       │                     ╰──────────── Error occurred here.
     ───╯
 
 Tree:
@@ -22,4 +22,5 @@ Tree:
               - UsingDirectiveSymbol (Rule): # 7..10 "div"
                   - IdentifierPath (Rule): # 7..10 "div"
                       - Identifier (Token): "div" # 7..10
-      - SKIPPED (Token): " as /} for Int global;" # 10..32
+      - SKIPPED (Token): " as /} for Int global" # 10..31
+      - Semicolon (Token): ";" # 31..32
