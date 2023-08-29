@@ -161,22 +161,14 @@ impl PrecedenceParserDefinitionNodeExtensions for PrecedenceParserDefinitionNode
         fn make_sequence(parsers: Vec<TokenStream>) -> TokenStream {
             let parsers = parsers
                 .iter()
-                .map(|parser| {
-                    quote! {
-                        if helper.handle_next_result(#parser) {
-                            break;
-                        }
-                    }
-                })
+                .map(|parser| quote! { seq.elem(#parser)?; })
                 .collect::<Vec<_>>();
             quote! {
                 {
-                    let mut helper = SequenceHelper::new();
-                    loop {
+                    SequenceHelper::run(|mut seq| {
                         #(#parsers)*
-                        break;
-                    }
-                    helper.result()
+                        seq.finish()
+                    })
                 }
             }
         }
@@ -188,9 +180,7 @@ impl PrecedenceParserDefinitionNodeExtensions for PrecedenceParserDefinitionNode
                     version_quality_ranges.wrap_code(
                         quote! {
                             let result = #parser;
-                            if helper.handle_next_result(stream, result) {
-                                break;
-                            }
+                            choice.consider(result).pick_or_backtrack(stream)?;
                         },
                         None,
                     )
@@ -198,12 +188,10 @@ impl PrecedenceParserDefinitionNodeExtensions for PrecedenceParserDefinitionNode
                 .collect::<Vec<_>>();
             quote! {
                 {
-                    let mut helper = ChoiceHelper::new(stream);
-                    loop {
+                    ChoiceHelper::run(stream, |mut choice, stream| {
                         #(#parsers)*
-                        break;
-                    }
-                    helper.result(stream)
+                        choice.finish(stream)
+                    })
                 }
             }
         }

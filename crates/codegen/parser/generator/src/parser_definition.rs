@@ -15,7 +15,7 @@ impl ParserDefinitionExtensions for ParserDefinitionRef {
     fn to_parser_code(&self) -> TokenStream {
         self.node().applicable_version_quality_ranges().wrap_code(
             self.node().to_parser_code(self.context(), false),
-            Some(quote! { ParserResult::no_match(vec![]) }),
+            Some(quote! { ParserResult::disabled() }),
         )
     }
 }
@@ -65,24 +65,16 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                         .iter()
                         .map(|node| {
                             let parser = node.to_parser_code(context_name, is_trivia);
-                            node.applicable_version_quality_ranges().wrap_code(
-                                quote! {
-                                    if helper.handle_next_result(#parser) {
-                                        break;
-                                    }
-                                },
-                                None,
-                            )
+                            node.applicable_version_quality_ranges()
+                                .wrap_code(quote! { seq.elem(#parser)?; }, None)
                         })
                         .collect::<Vec<_>>();
                     quote! {
                         {
-                            let mut helper = SequenceHelper::new();
-                            loop {
+                            SequenceHelper::run(|mut seq| {
                                 #(#parsers)*
-                                break;
-                            }
-                            helper.result()
+                                seq.finish()
+                            })
                         }
                     }
                 }
@@ -96,9 +88,7 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                         node.applicable_version_quality_ranges().wrap_code(
                             quote! {
                                 let result = #parser;
-                                if helper.handle_next_result(stream, result) {
-                                    break;
-                                }
+                                choice.consider(result).pick_or_backtrack(stream)?;
                             },
                             None,
                         )
@@ -106,12 +96,10 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                     .collect::<Vec<_>>();
                 quote! {
                     {
-                        let mut helper = ChoiceHelper::new(stream);
-                        loop {
+                        ChoiceHelper::run(stream, |mut choice, stream| {
                             #(#parsers)*
-                            break;
-                        }
-                        helper.result(stream)
+                            choice.finish(stream)
+                        })
                     }
                 }
             }
