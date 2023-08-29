@@ -6,6 +6,7 @@ use semver::Version;
 use super::{
     kinds::{RuleKind, TokenKind, ProductionKind},
     parse_output::ParseOutput,
+    text_index::TextRange,
     support::*,
     lexer::Lexer,
 };
@@ -69,17 +70,27 @@ impl Language {
         #[allow(dead_code)]
         fn {{ context.name | snake_case }}_parse_token_with_trivia(
             &self,
-            stream: &mut Stream,
+            input: &mut ParserContext,
             kind: TokenKind,
         ) -> ParserResult
         {
-            Lexer::parse_token_with_trivia::<{ LexicalContext::{{ context.name }} as u8 }>(self, stream, kind)
+            Lexer::parse_token_with_trivia::<{ LexicalContext::{{ context.name }} as u8 }>(self, input, kind)
         }
 
         #[allow(dead_code)]
-        fn {{ context.name | snake_case }}_parse_token(&self, stream: &mut Stream, kind: TokenKind) -> ParserResult
+        fn {{ context.name | snake_case }}_greedy_parse_token_with_trivia(&self, input: &mut ParserContext, terminator: TokenKind) -> ParserResult {
+            Lexer::greedy_parse_token_with_trivia::<{ LexicalContext::{{ context.name }} as u8 }>(self, input, terminator)
+        }
+
+        #[allow(dead_code)]
+        fn {{ context.name | snake_case }}_skip_tokens_until(&self, input: &mut ParserContext, expected: TokenKind) -> Option<TextRange> {
+            Lexer::skip_tokens_until::<{ LexicalContext::{{ context.name }} as u8 }>(self, input, expected)
+        }
+
+        #[allow(dead_code)]
+        fn {{ context.name | snake_case }}_parse_token(&self, input: &mut ParserContext, kind: TokenKind) -> ParserResult
         {
-            Lexer::parse_token::<{ LexicalContext::{{ context.name }} as u8 }>(self, stream, kind)
+            Lexer::parse_token::<{ LexicalContext::{{ context.name }} as u8 }>(self, input, kind)
         }
     {% endfor %}
 
@@ -89,7 +100,7 @@ impl Language {
 
     {% for function in code.parser_functions %}
         #[allow(unused_assignments, unused_parens)]
-        fn {{ function.0 | snake_case }}(&self, stream: &mut Stream) -> ParserResult { {{ function.1 }} }
+        fn {{ function.0 | snake_case }}(&self, input: &mut ParserContext) -> ParserResult { {{ function.1 }} }
     {% endfor %}
 
     /********************************************
@@ -98,15 +109,15 @@ impl Language {
 
     {% for function in code.scanner_functions %}
         #[allow(unused_assignments, unused_parens)]
-        fn {{ function.0 | snake_case }}(&self, stream: &mut Stream) -> bool { {{ function.1 }} }
+        fn {{ function.0 | snake_case }}(&self, input: &mut ParserContext) -> bool { {{ function.1 }} }
     {% endfor %}
 
     pub fn scan(&self, lexical_context: LexicalContext, input: &str) -> Option<TokenKind> {
-        let mut stream = Stream::new(input);
+        let mut input = ParserContext::new(input);
         match lexical_context {
             {%- for lexical_context in code.scanner_contexts -%}
                 LexicalContext::{{ lexical_context.name }} =>
-                    Lexer::next_token::<{ LexicalContext::{{ lexical_context.name }} as u8 }>(self, &mut stream),
+                    Lexer::next_token::<{ LexicalContext::{{ lexical_context.name }} as u8 }>(self, &mut input),
             {%- endfor -%}
         }
     }
@@ -121,17 +132,17 @@ impl Language {
 }
 
 impl Lexer for Language {
-    fn leading_trivia(&self, stream: &mut Stream) -> ParserResult {
-        Language::leading_trivia(self, stream)
+    fn leading_trivia(&self, input: &mut ParserContext) -> ParserResult {
+        Language::leading_trivia(self, input)
     }
 
-    fn trailing_trivia(&self, stream: &mut Stream) -> ParserResult {
-        Language::trailing_trivia(self, stream)
+    fn trailing_trivia(&self, input: &mut ParserContext) -> ParserResult {
+        Language::trailing_trivia(self, input)
     }
 
-    fn next_token<const LEX_CTX: u8>(&self, stream: &mut Stream) -> Option<TokenKind> {
-        let save = stream.position();
-        let mut furthest_position = stream.position();
+    fn next_token<const LEX_CTX: u8>(&self, input: &mut ParserContext) -> Option<TokenKind> {
+        let save = input.position();
+        let mut furthest_position = input.position();
         let mut longest_token = None;
 
         match LexicalContext::from_repr(LEX_CTX).unwrap() {
@@ -140,29 +151,29 @@ impl Lexer for Language {
                     macro_rules! longest_match {
                         ($( { $kind:ident = $function:ident } )*) => {
                             $(
-                                if self.$function(stream) && stream.position() > furthest_position {
-                                    furthest_position = stream.position();
+                                if self.$function(input) && input.position() > furthest_position {
+                                    furthest_position = input.position();
                                     longest_token = Some(TokenKind::$kind);
                                 }
-                                stream.set_position(save);
+                                input.set_position(save);
                             )*
                         };
                     }
 
                     if let Some(kind) = {{ context.alpha_literal_scanner }} {
                         // Make sure that this is not the start of an identifier
-                        if !self.identifier_part(stream) {
-                            furthest_position = stream.position();
+                        if !self.identifier_part(input) {
+                            furthest_position = input.position();
                             longest_token = Some(kind);
                         }
                     }
-                    stream.set_position(save);
+                    input.set_position(save);
 
                     if let Some(kind) = {{ context.non_alpha_literal_scanner }} {
-                        furthest_position = stream.position();
+                        furthest_position = input.position();
                         longest_token = Some(kind);
                     }
-                    stream.set_position(save);
+                    input.set_position(save);
 
 
                     longest_match! {
@@ -175,7 +186,7 @@ impl Lexer for Language {
         }
 
         if longest_token.is_some() {
-                stream.set_position(furthest_position);
+                input.set_position(furthest_position);
         }
 
         longest_token

@@ -2,22 +2,21 @@
 
 use std::ops::ControlFlow;
 
-use super::{ParserResult, Stream};
-use crate::text_index::TextIndex;
+use super::{context::Marker, ParserContext, ParserResult};
 
-/// Starting from a given position in the stream, this helper will try to pick (and remember) a best match. Settles on
+/// Starting from a given position in the input, this helper will try to pick (and remember) a best match. Settles on
 /// a first full match if possible, otherwise on the best incomplete match.
 #[must_use]
 pub struct ChoiceHelper {
     result: ParserResult,
-    start_position: TextIndex,
+    start_position: Marker,
 }
 
 impl ChoiceHelper {
-    pub fn new(stream: &mut Stream) -> Self {
+    pub fn new(input: &mut ParserContext) -> Self {
         Self {
             result: ParserResult::no_match(vec![]),
-            start_position: stream.position(),
+            start_position: input.mark(),
         }
     }
 
@@ -66,46 +65,46 @@ impl ChoiceHelper {
     /// # use codegen_parser_runtime::support::{ParserResult, ChoiceHelper, Stream};
     /// # fn parse_something() -> ParserResult { ParserResult::r#match(vec![], vec![]) }
     /// # fn parse_another() -> ParserResult { ParserResult::r#match(vec![], vec![]) }
-    /// ChoiceHelper::run(stream, |mut choice| {
-    ///     choice.consider(parse_something()).pick_or_backtrack(stream)?;
-    ///     choice.consider(parse_another()).pick_or_backtrack(stream)?;
-    ///     choice.finish(stream)
+    /// ChoiceHelper::run(input, |mut choice| {
+    ///     choice.consider(parse_something()).pick_or_backtrack(input)?;
+    ///     choice.consider(parse_another()).pick_or_backtrack(input)?;
+    ///     choice.finish(input)
     /// });
     /// ```
     pub fn run(
-        stream: &mut Stream,
-        f: impl FnOnce(Self, &mut Stream) -> ControlFlow<ParserResult, Self>,
+        input: &mut ParserContext,
+        f: impl FnOnce(Self, &mut ParserContext) -> ControlFlow<ParserResult, Self>,
     ) -> ParserResult {
-        match f(ChoiceHelper::new(stream), stream) {
+        match f(ChoiceHelper::new(input), input) {
             ControlFlow::Break(result) => result,
-            ControlFlow::Continue(helper) => helper.unwrap_result(stream),
+            ControlFlow::Continue(helper) => helper.unwrap_result(input),
         }
     }
 
     /// Aggregates a choice result into the accumulator.
     ///
-    /// Returns a [`Choice`] struct that can be used to either pick the value or backtrack the stream.
+    /// Returns a [`Choice`] struct that can be used to either pick the value or backtrack the input.
     pub fn consider(&mut self, value: ParserResult) -> Choice<'_> {
         self.attempt_pick(value);
         Choice { helper: self }
     }
 
     /// Finishes the choice parse, returning the accumulated match.
-    pub fn finish(self, stream: &mut Stream) -> ControlFlow<ParserResult, Self> {
-        ControlFlow::Break(self.unwrap_result(stream))
+    pub fn finish(self, input: &mut ParserContext) -> ControlFlow<ParserResult, Self> {
+        ControlFlow::Break(self.unwrap_result(input))
     }
 
-    fn take_result(&mut self, stream: &mut Stream) -> ParserResult {
+    fn take_result(&mut self, input: &mut ParserContext) -> ParserResult {
         if let ParserResult::IncompleteMatch(incomplete_match) = &self.result {
-            incomplete_match.consume_stream(stream);
+            incomplete_match.consume_stream(input);
         }
 
         std::mem::replace(&mut self.result, ParserResult::no_match(vec![]))
     }
 
-    fn unwrap_result(self, stream: &mut Stream) -> ParserResult {
+    fn unwrap_result(self, input: &mut ParserContext) -> ParserResult {
         if let ParserResult::IncompleteMatch(incomplete_match) = &self.result {
-            incomplete_match.consume_stream(stream);
+            incomplete_match.consume_stream(input);
         }
         self.result
     }
@@ -113,7 +112,7 @@ impl ChoiceHelper {
 
 /// Helper struct that is created by calling [`ChoiceHelper::consider`].
 ///
-/// Ensures that the choice is always picked or the stream is backtracked by providing the method separately form the
+/// Ensures that the choice is always picked or the input is backtracked by providing the method separately form the
 /// [`ChoiceHelper`] struct.
 #[must_use]
 pub struct Choice<'a> {
@@ -121,17 +120,17 @@ pub struct Choice<'a> {
 }
 
 impl<'a> Choice<'a> {
-    /// Either breaks on the current choice if it's fulfilled or backtracks the stream.
+    /// Either breaks on the current choice if it's fulfilled or backtracks the input.
     pub fn pick_or_backtrack(
         self,
-        stream: &mut Stream,
+        input: &mut ParserContext,
     ) -> ControlFlow<ParserResult, &'a mut ChoiceHelper> {
         let inner = self.helper;
 
         if inner.is_done() {
-            ControlFlow::Break(inner.take_result(stream))
+            ControlFlow::Break(inner.take_result(input))
         } else {
-            stream.set_position(inner.start_position);
+            input.rewind(inner.start_position);
             ControlFlow::Continue(inner)
         }
     }

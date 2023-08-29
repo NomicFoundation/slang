@@ -120,6 +120,7 @@ impl CodeGenerator {
             "napi/napi_text_index.rs",
             "napi/mod.rs",
             "support/mod.rs",
+            "support/context.rs",
             "support/parser_function.rs",
             "support/optional_helper.rs",
             "support/sequence_helper.rs",
@@ -127,8 +128,8 @@ impl CodeGenerator {
             "support/choice_helper.rs",
             "support/precedence_helper.rs",
             "support/parser_result.rs",
+            "support/recovery.rs",
             "support/scanner_macros.rs",
-            "support/stream.rs",
         ] {
             codegen.copy_file(runtime_dir.join(file), output_dir.join(file))?;
         }

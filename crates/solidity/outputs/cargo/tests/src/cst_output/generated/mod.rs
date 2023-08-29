@@ -5,6 +5,8 @@ mod AsciiStringLiteralsList;
 #[allow(non_snake_case)]
 mod Block;
 #[allow(non_snake_case)]
+mod BreakStatement;
+#[allow(non_snake_case)]
 mod ConstantDefinition;
 #[allow(non_snake_case)]
 mod ConstructorDefinition;
@@ -41,9 +43,13 @@ mod PragmaDirective;
 #[allow(non_snake_case)]
 mod ReceiveFunctionDefinition;
 #[allow(non_snake_case)]
+mod ReturnStatement;
+#[allow(non_snake_case)]
 mod SourceUnit;
 #[allow(non_snake_case)]
 mod Statement;
+#[allow(non_snake_case)]
+mod StatementsList;
 #[allow(non_snake_case)]
 mod TupleDeconstructionStatement;
 #[allow(non_snake_case)]

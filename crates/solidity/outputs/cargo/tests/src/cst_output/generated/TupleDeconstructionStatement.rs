@@ -19,6 +19,11 @@ fn ignored_members() -> Result<()> {
 }
 
 #[test]
+fn invalid_termination() -> Result<()> {
+    return run("TupleDeconstructionStatement", "invalid_termination");
+}
+
+#[test]
 fn with_location() -> Result<()> {
     return run("TupleDeconstructionStatement", "with_location");
 }

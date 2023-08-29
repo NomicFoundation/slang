@@ -1,0 +1,36 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ return a + 2 * some invalid tokens                                               │ 0..34
+  2  │                                                                                  │ 35..35
+  3  │ ;                                                                                │ 36..37
+
+Errors: # 1 total
+  - >
+    Error: Expected Semicolon.
+       ╭─[crates/solidity/testing/snapshots/cst_output/ReturnStatement/invalid_terminator/input.sol:1:21]
+       │
+     1 │ ╭─▶ return a + 2 * some invalid tokens
+     2 │ ├─▶ 
+       │ │      
+       │ ╰────── Error occurred here.
+    ───╯
+
+Tree:
+  - ReturnStatement (Rule): # 0..38 "return a + 2 * some invalid tokens\n\n;\n"
+      - ReturnKeyword (Token): "return" # 0..6
+      - Expression (Rule): # 6..19 " a + 2 * some"
+          - BinaryExpression (Rule): # 6..19 " a + 2 * some"
+              - Expression (Rule): # 6..8 " a"
+                  - Identifier (Token): "a" # 7..8
+              - Plus (Token): "+" # 9..10
+              - Expression (Rule): # 10..19 " 2 * some"
+                  - BinaryExpression (Rule): # 10..19 " 2 * some"
+                      - Expression (Rule): # 10..12 " 2"
+                          - NumericExpression (Rule): # 10..12 " 2"
+                              - DecimalLiteral (Token): "2" # 11..12
+                      - Asterisk (Token): "*" # 13..14
+                      - Expression (Rule): # 14..19 " some"
+                          - Identifier (Token): "some" # 15..19
+      - SKIPPED (Token): "invalid tokens\n\n" # 20..36
+      - Semicolon (Token): ";" # 36..37

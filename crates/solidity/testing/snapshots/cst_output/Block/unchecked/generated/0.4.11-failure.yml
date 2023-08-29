@@ -3,22 +3,33 @@
 Source: >
   1  │ { unchecked { x = 1; } }                                                         │ 0..24
 
-Errors: # 1 total
+Errors: # 2 total
   - >
-    Error: Expected Ampersand or AmpersandAmpersand or AmpersandEqual or Asterisk or AsteriskAsterisk or AsteriskEqual or BangEqual or Bar or BarBar or BarEqual or Caret or CaretEqual or Equal or EqualEqual or GreaterThan or GreaterThanEqual or GreaterThanGreaterThan or GreaterThanGreaterThanEqual or GreaterThanGreaterThanGreaterThan or GreaterThanGreaterThanGreaterThanEqual or LessThan or LessThanEqual or LessThanLessThan or LessThanLessThanEqual or Minus or MinusEqual or Percent or PercentEqual or Plus or PlusEqual or Semicolon or Slash or SlashEqual.
-       ╭─[crates/solidity/testing/snapshots/cst_output/Block/unchecked/input.sol:1:12]
+    Error: Expected Semicolon.
+       ╭─[crates/solidity/testing/snapshots/cst_output/Block/unchecked/input.sol:1:13]
        │
      1 │ { unchecked { x = 1; } }
-       │            ──────┬──────  
-       │                  ╰──────── Error occurred here.
+       │             ───┬───  
+       │                ╰───── Error occurred here.
+    ───╯
+  - >
+    Error: Expected end of file.
+       ╭─[crates/solidity/testing/snapshots/cst_output/Block/unchecked/input.sol:1:23]
+       │
+     1 │ { unchecked { x = 1; } }
+       │                       ─┬  
+       │                        ╰── Error occurred here.
     ───╯
 
 Tree:
   - Block (Rule): # 0..24 "{ unchecked { x = 1; } }"
       - OpenBrace (Token): "{" # 0..1
-      - StatementsList (Rule): # 1..11 " unchecked"
-          - Statement (Rule): # 1..11 " unchecked"
-              - ExpressionStatement (Rule): # 1..11 " unchecked"
+      - StatementsList (Rule): # 1..20 " unchecked { x = 1;"
+          - Statement (Rule): # 1..20 " unchecked { x = 1;"
+              - ExpressionStatement (Rule): # 1..20 " unchecked { x = 1;"
                   - Expression (Rule): # 1..11 " unchecked"
                       - Identifier (Token): "unchecked" # 2..11
-      - SKIPPED (Token): " { x = 1; } }" # 11..24
+                  - SKIPPED (Token): "{ x = 1" # 12..19
+                  - Semicolon (Token): ";" # 19..20
+      - CloseBrace (Token): "}" # 21..22
+      - SKIPPED (Token): " }" # 22..24

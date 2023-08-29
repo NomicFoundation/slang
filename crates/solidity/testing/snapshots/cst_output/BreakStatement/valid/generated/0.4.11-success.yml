@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ break ;                                                                          │ 0..7
+
+Errors: []
+
+Tree:
+  - BreakStatement (Rule): # 0..8 "break ;\n"
+      - BreakKeyword (Token): "break" # 0..5
+      - Semicolon (Token): ";" # 6..7

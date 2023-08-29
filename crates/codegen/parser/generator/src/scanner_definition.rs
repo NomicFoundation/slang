@@ -56,28 +56,28 @@ impl ScannerDefinitionNodeExtensions for ScannerDefinitionNode {
 
             ScannerDefinitionNode::Optional(node, _) => {
                 let scanner = node.to_scanner_code();
-                quote! { scan_optional!(stream, #scanner) }
+                quote! { scan_optional!(input, #scanner) }
             }
 
             ScannerDefinitionNode::ZeroOrMore(node, _) => {
                 let scanner = node.to_scanner_code();
-                quote! { scan_zero_or_more!(stream, #scanner) }
+                quote! { scan_zero_or_more!(input, #scanner) }
             }
 
             ScannerDefinitionNode::OneOrMore(node, _) => {
                 let scanner = node.to_scanner_code();
-                quote! { scan_one_or_more!(stream, #scanner) }
+                quote! { scan_one_or_more!(input, #scanner) }
             }
 
             ScannerDefinitionNode::NoneOf(string, _) => {
                 let chars = string.chars();
-                quote! { scan_none_of!(stream, #(#chars),*) }
+                quote! { scan_none_of!(input, #(#chars),*) }
             }
 
             ScannerDefinitionNode::NotFollowedBy(node, lookahead, _) => {
                 let scanner = node.to_scanner_code();
                 let negative_lookahead_scanner = lookahead.to_scanner_code();
-                quote! { scan_not_followed_by!(stream, #scanner, #negative_lookahead_scanner) }
+                quote! { scan_not_followed_by!(input, #scanner, #negative_lookahead_scanner) }
             }
 
             ScannerDefinitionNode::Sequence(nodes, _) => {
@@ -105,27 +105,27 @@ impl ScannerDefinitionNodeExtensions for ScannerDefinitionNode {
                     .rev()
                     .map(|string| {
                         let chars = string.chars();
-                        quote! { scan_chars!(stream, #(#chars),*) }
+                        quote! { scan_chars!(input, #(#chars),*) }
                     })
                     .collect::<Vec<_>>();
                 scanners.extend(non_literal_scanners.into_iter());
-                quote! { scan_choice!(stream, #(#scanners),*) }
+                quote! { scan_choice!(input, #(#scanners),*) }
             }
 
             ScannerDefinitionNode::CharRange(from, to, _) => {
-                quote! { scan_char_range!(stream, #from, #to) }
+                quote! { scan_char_range!(input, #from, #to) }
             }
 
             ScannerDefinitionNode::Literal(string, _) => {
                 let chars = string.chars();
-                quote! { scan_chars!(stream, #(#chars),*) }
+                quote! { scan_chars!(input, #(#chars),*) }
             }
 
             ScannerDefinitionNode::ScannerDefinition(scanner_definition, _) => {
                 let name = scanner_definition.name();
                 let snake_case = name.to_snake_case();
                 let scanner_function_name = format_ident!("{snake_case}");
-                quote! { self.#scanner_function_name(stream) }
+                quote! { self.#scanner_function_name(input) }
             }
         }
     }

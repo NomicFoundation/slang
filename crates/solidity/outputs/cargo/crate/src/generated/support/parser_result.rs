@@ -2,7 +2,7 @@
 
 use super::{
     super::{cst, kinds::*},
-    stream::Stream,
+    context::ParserContext,
 };
 
 #[derive(PartialEq, Eq, Clone, Debug)]
@@ -146,10 +146,10 @@ impl IncompleteMatch {
     /// Advances the stream by the length of the nodes in this match.
     ///
     /// This is used whenever we "accept" the match, even though it's incomplete.
-    pub fn consume_stream(&self, stream: &mut Stream) {
+    pub fn consume_stream(&self, input: &mut ParserContext) {
         for node in &self.nodes {
             for _ in 0..node.text_len().char {
-                stream.next();
+                input.next();
             }
         }
     }
