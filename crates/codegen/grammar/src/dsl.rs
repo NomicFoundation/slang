@@ -281,7 +281,7 @@ macro_rules! slang_parser {
         )
     };
 
-    (( $b:tt delimited_by $o:tt and $c:tt )) => {
+    (( $b:tt delimited by $o:tt and $c:tt )) => {
         $crate::ParserDefinitionNode::DelimitedBy(
             Box::new(slang_parser!($o)),
             Box::new(slang_parser!($b)),
@@ -289,14 +289,14 @@ macro_rules! slang_parser {
             slang_location!()
         )
     };
-    (( $b:tt terminated_by $t:tt )) => {
+    (( $b:tt terminated by $t:tt )) => {
         $crate::ParserDefinitionNode::TerminatedBy(
             Box::new(slang_parser!($b)),
             Box::new(slang_parser!($t)),
             slang_location!()
         )
     };
-    (( $b:tt separated_by $s:tt )) => {
+    (( $b:tt separated by $s:tt )) => {
         $crate::ParserDefinitionNode::SeparatedBy(
             Box::new(slang_parser!($b)),
             Box::new(slang_parser!($s)),
@@ -496,6 +496,15 @@ macro_rules! slang_scanner {
             slang_location!()
         )
     };
+
+    (( $b:tt not followed by $nla:tt )) => {
+        $crate::ScannerDefinitionNode::NotFollowedBy(
+            Box::new(slang_scanner!($b)),
+            Box::new(slang_scanner!($nla)),
+            slang_location!()
+        )
+    };
+
 
     (( $first:tt | $($rest:tt)|+ )) => {
         $crate::ScannerDefinitionNode::Choice(

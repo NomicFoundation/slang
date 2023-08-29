@@ -74,6 +74,12 @@ impl ScannerDefinitionNodeExtensions for ScannerDefinitionNode {
                 quote! { scan_none_of!(stream, #(#chars),*) }
             }
 
+            ScannerDefinitionNode::NotFollowedBy(node, lookahead, _) => {
+                let scanner = node.to_scanner_code();
+                let negative_lookahead_scanner = lookahead.to_scanner_code();
+                quote! { scan_not_followed_by!(stream, #scanner, #negative_lookahead_scanner) }
+            }
+
             ScannerDefinitionNode::Sequence(nodes, _) => {
                 let scanners = nodes
                     .iter()

@@ -4440,10 +4440,14 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn ascii_string_literal(&self, stream: &mut Stream) -> bool {
-        scan_choice!(
+        scan_not_followed_by!(
             stream,
-            self.single_quoted_ascii_string_literal(stream),
-            self.double_quoted_ascii_string_literal(stream)
+            scan_choice!(
+                stream,
+                self.single_quoted_ascii_string_literal(stream),
+                self.double_quoted_ascii_string_literal(stream)
+            ),
+            self.identifier_start(stream)
         )
     }
 
@@ -4477,37 +4481,44 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn decimal_literal(&self, stream: &mut Stream) -> bool {
-        scan_sequence!(
-            scan_choice!(
-                stream,
-                if !self.version_is_at_least_0_5_0 {
-                    scan_sequence!(
-                        self.decimal_digits(stream),
-                        scan_optional!(
-                            stream,
-                            scan_sequence!(
-                                scan_chars!(stream, '.'),
-                                scan_optional!(stream, self.decimal_digits(stream))
+        scan_not_followed_by!(
+            stream,
+            scan_sequence!(
+                scan_choice!(
+                    stream,
+                    if !self.version_is_at_least_0_5_0 {
+                        scan_sequence!(
+                            self.decimal_digits(stream),
+                            scan_optional!(
+                                stream,
+                                scan_sequence!(
+                                    scan_chars!(stream, '.'),
+                                    scan_optional!(stream, self.decimal_digits(stream))
+                                )
                             )
                         )
-                    )
-                } else {
-                    false
-                },
-                if self.version_is_at_least_0_5_0 {
-                    scan_sequence!(
-                        self.decimal_digits(stream),
-                        scan_optional!(
-                            stream,
-                            scan_sequence!(scan_chars!(stream, '.'), self.decimal_digits(stream))
+                    } else {
+                        false
+                    },
+                    if self.version_is_at_least_0_5_0 {
+                        scan_sequence!(
+                            self.decimal_digits(stream),
+                            scan_optional!(
+                                stream,
+                                scan_sequence!(
+                                    scan_chars!(stream, '.'),
+                                    self.decimal_digits(stream)
+                                )
+                            )
                         )
-                    )
-                } else {
-                    false
-                },
-                scan_sequence!(scan_chars!(stream, '.'), self.decimal_digits(stream))
+                    } else {
+                        false
+                    },
+                    scan_sequence!(scan_chars!(stream, '.'), self.decimal_digits(stream))
+                ),
+                scan_optional!(stream, self.decimal_exponent(stream))
             ),
-            scan_optional!(stream, self.decimal_exponent(stream))
+            self.identifier_start(stream)
         )
     }
 
@@ -4654,24 +4665,28 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn hex_literal(&self, stream: &mut Stream) -> bool {
-        scan_sequence!(
-            scan_choice!(
-                stream,
-                scan_chars!(stream, '0', 'x'),
-                if !self.version_is_at_least_0_5_0 {
-                    scan_chars!(stream, '0', 'X')
-                } else {
-                    false
-                }
-            ),
-            scan_one_or_more!(stream, self.hex_character(stream)),
-            scan_zero_or_more!(
-                stream,
-                scan_sequence!(
-                    scan_chars!(stream, '_'),
-                    scan_one_or_more!(stream, self.hex_character(stream))
+        scan_not_followed_by!(
+            stream,
+            scan_sequence!(
+                scan_choice!(
+                    stream,
+                    scan_chars!(stream, '0', 'x'),
+                    if !self.version_is_at_least_0_5_0 {
+                        scan_chars!(stream, '0', 'X')
+                    } else {
+                        false
+                    }
+                ),
+                scan_one_or_more!(stream, self.hex_character(stream)),
+                scan_zero_or_more!(
+                    stream,
+                    scan_sequence!(
+                        scan_chars!(stream, '_'),
+                        scan_one_or_more!(stream, self.hex_character(stream))
+                    )
                 )
-            )
+            ),
+            self.identifier_start(stream)
         )
     }
 
@@ -4693,10 +4708,14 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn hex_string_literal(&self, stream: &mut Stream) -> bool {
-        scan_choice!(
+        scan_not_followed_by!(
             stream,
-            self.single_quoted_hex_string_literal(stream),
-            self.double_quoted_hex_string_literal(stream)
+            scan_choice!(
+                stream,
+                self.single_quoted_hex_string_literal(stream),
+                self.double_quoted_hex_string_literal(stream)
+            ),
+            self.identifier_start(stream)
         )
     }
 
@@ -4774,7 +4793,11 @@ impl Language {
                 scan_choice!(
                     stream,
                     scan_none_of!(stream, '*'),
-                    scan_sequence!(scan_chars!(stream, '*'), scan_none_of!(stream, '/'))
+                    scan_not_followed_by!(
+                        stream,
+                        scan_chars!(stream, '*'),
+                        scan_chars!(stream, '/')
+                    )
                 )
             ),
             scan_chars!(stream, '*'),
@@ -4873,10 +4896,14 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn unicode_string_literal(&self, stream: &mut Stream) -> bool {
         if self.version_is_at_least_0_7_0 {
-            scan_choice!(
+            scan_not_followed_by!(
                 stream,
-                self.single_quoted_unicode_string_literal(stream),
-                self.double_quoted_unicode_string_literal(stream)
+                scan_choice!(
+                    stream,
+                    self.single_quoted_unicode_string_literal(stream),
+                    self.double_quoted_unicode_string_literal(stream)
+                ),
+                self.identifier_start(stream)
             )
         } else {
             false
@@ -4923,21 +4950,29 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn yul_decimal_literal(&self, stream: &mut Stream) -> bool {
-        scan_choice!(
+        scan_not_followed_by!(
             stream,
-            scan_chars!(stream, '0'),
-            scan_sequence!(
-                scan_char_range!(stream, '1', '9'),
-                scan_zero_or_more!(stream, self.decimal_digit(stream))
-            )
+            scan_choice!(
+                stream,
+                scan_chars!(stream, '0'),
+                scan_sequence!(
+                    scan_char_range!(stream, '1', '9'),
+                    scan_zero_or_more!(stream, self.decimal_digit(stream))
+                )
+            ),
+            self.identifier_start(stream)
         )
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn yul_hex_literal(&self, stream: &mut Stream) -> bool {
-        scan_sequence!(
-            scan_chars!(stream, '0', 'x'),
-            scan_one_or_more!(stream, self.hex_character(stream))
+        scan_not_followed_by!(
+            stream,
+            scan_sequence!(
+                scan_chars!(stream, '0', 'x'),
+                scan_one_or_more!(stream, self.hex_character(stream))
+            ),
+            self.identifier_start(stream)
         )
     }
 

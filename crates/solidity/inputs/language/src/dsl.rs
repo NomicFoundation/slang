@@ -170,19 +170,19 @@ slang_grammar! {
 
         inline parser AndOperator = AmpersandAmpersand ;
 
-        parser ArgumentsDeclaration = (((PositionalArgumentsList | NamedArgumentsDeclaration) ?) delimited_by OpenParen and CloseParen) ;
+        parser ArgumentsDeclaration = (((PositionalArgumentsList | NamedArgumentsDeclaration) ?) delimited by OpenParen and CloseParen) ;
 
-        parser ArrayExpression = (ArrayValuesList delimited_by OpenBracket and CloseBracket) ;
+        parser ArrayExpression = (ArrayValuesList delimited by OpenBracket and CloseBracket) ;
 
-        inline parser ArrayTypeNameOperator = ((Expression ?) delimited_by OpenBracket and CloseBracket) ;
+        inline parser ArrayTypeNameOperator = ((Expression ?) delimited by OpenBracket and CloseBracket) ;
 
-        parser ArrayValuesList = (Expression separated_by Comma) ;
+        parser ArrayValuesList = (Expression separated by Comma) ;
 
         parser AsciiStringLiteralsList = (AsciiStringLiteral +) ;
 
-        parser AssemblyFlagsList = (AsciiStringLiteral separated_by Comma) ;
+        parser AssemblyFlagsList = (AsciiStringLiteral separated by Comma) ;
 
-        parser AssemblyStatement = (AssemblyKeyword (AsciiStringLiteral ?) ((AssemblyFlagsList delimited_by OpenParen and CloseParen) ?) YulBlock) ;
+        parser AssemblyStatement = (AssemblyKeyword (AsciiStringLiteral ?) ((AssemblyFlagsList delimited by OpenParen and CloseParen) ?) YulBlock) ;
 
         inline parser AssignmentOperator = (
             Equal | BarEqual | PlusEqual | MinusEqual | CaretEqual | SlashEqual | PercentEqual | AsteriskEqual | AmpersandEqual |
@@ -195,11 +195,11 @@ slang_grammar! {
 
         inline parser BitwiseXOrOperator = Caret ;
 
-        parser Block = ((StatementsList ?) delimited_by OpenBrace and CloseBrace) ;
+        parser Block = ((StatementsList ?) delimited by OpenBrace and CloseBrace) ;
 
         inline parser BooleanExpression = (TrueKeyword | FalseKeyword) ;
 
-        parser BreakStatement = (BreakKeyword terminated_by Semicolon) ;
+        parser BreakStatement = (BreakKeyword terminated by Semicolon) ;
 
         parser CatchClause = { introduced in "0.6.0" (CatchKeyword (CatchClauseError ?) Block) } ;
 
@@ -209,7 +209,7 @@ slang_grammar! {
 
         inline parser ConditionalOperator = (QuestionMark Expression Colon Expression) ;
 
-        parser ConstantDefinition = { introduced in "0.7.4" ((TypeName ConstantKeyword Identifier Equal Expression) terminated_by Semicolon) } ;
+        parser ConstantDefinition = { introduced in "0.7.4" ((TypeName ConstantKeyword Identifier Equal Expression) terminated by Semicolon) } ;
 
         inline parser ConstructorAttribute = { introduced in "0.4.22" (ModifierInvocation | InternalKeyword | PayableKeyword | PublicKeyword) } ;
 
@@ -217,10 +217,10 @@ slang_grammar! {
 
         parser ConstructorDefinition = { introduced in "0.4.22" (ConstructorKeyword ParametersDeclaration (ConstructorAttributesList ?) Block) } ;
 
-        parser ContinueStatement = (ContinueKeyword terminated_by Semicolon) ;
+        parser ContinueStatement = (ContinueKeyword terminated by Semicolon) ;
 
         parser ContractDefinition = (
-            { introduced in "0.6.0" (AbstractKeyword ?) } ContractKeyword Identifier (InheritanceSpecifier ?) ((ContractMembersList ?) delimited_by OpenBrace and CloseBrace)
+            { introduced in "0.6.0" (AbstractKeyword ?) } ContractKeyword Identifier (InheritanceSpecifier ?) ((ContractMembersList ?) delimited by OpenBrace and CloseBrace)
         ) ;
 
         inline parser ContractMember = (
@@ -246,38 +246,38 @@ slang_grammar! {
             { introduced in "0.5.0" CalldataKeyword}
         ) ;
 
-        parser DeconstructionImport = ((DeconstructionImportSymbolsList delimited_by OpenBrace and CloseBrace) FromKeyword AsciiStringLiteral) ;
+        parser DeconstructionImport = ((DeconstructionImportSymbolsList delimited by OpenBrace and CloseBrace) FromKeyword AsciiStringLiteral) ;
 
         parser DeconstructionImportSymbol = (Identifier ((AsKeyword Identifier) ?)) ;
 
-        parser DeconstructionImportSymbolsList = (DeconstructionImportSymbol separated_by Comma) ;
+        parser DeconstructionImportSymbolsList = (DeconstructionImportSymbol separated by Comma) ;
 
-        parser DeleteStatement = ((DeleteKeyword Expression) terminated_by Semicolon) ;
+        parser DeleteStatement = ((DeleteKeyword Expression) terminated by Semicolon) ;
 
-        parser DoWhileStatement = ((DoKeyword Statement WhileKeyword (Expression delimited_by OpenParen and CloseParen)) terminated_by Semicolon) ;
+        parser DoWhileStatement = ((DoKeyword Statement WhileKeyword (Expression delimited by OpenParen and CloseParen)) terminated by Semicolon) ;
 
         inline parser ElementaryType = (
             BoolKeyword | StringKeyword | AddressType | FixedBytesType | SignedIntegerType | UnsignedIntegerType | SignedFixedType | UnsignedFixedType |
             { removed in "0.8.0" ByteKeyword}
         ) ;
 
-        parser EmitStatement = { introduced in "0.4.21" ((EmitKeyword IdentifierPath ArgumentsDeclaration) terminated_by Semicolon) } ;
+        parser EmitStatement = { introduced in "0.4.21" ((EmitKeyword IdentifierPath ArgumentsDeclaration) terminated by Semicolon) } ;
 
-        parser EnumDefinition = (EnumKeyword Identifier ((IdentifiersList ?) delimited_by OpenBrace and CloseBrace)) ;
+        parser EnumDefinition = (EnumKeyword Identifier ((IdentifiersList ?) delimited by OpenBrace and CloseBrace)) ;
 
         inline parser EqualityComparisonOperator = (EqualEqual | BangEqual) ;
 
-        parser ErrorDefinition = { introduced in "0.8.4" ((ErrorKeyword Identifier ((ErrorParametersList ?) delimited_by OpenParen and CloseParen)) terminated_by Semicolon) } ;
+        parser ErrorDefinition = { introduced in "0.8.4" ((ErrorKeyword Identifier ((ErrorParametersList ?) delimited by OpenParen and CloseParen)) terminated by Semicolon) } ;
 
         parser ErrorParameter = { introduced in "0.8.4" (TypeName (Identifier ?)) } ;
 
-        parser ErrorParametersList = { introduced in "0.8.4" (ErrorParameter separated_by Comma) } ;
+        parser ErrorParametersList = { introduced in "0.8.4" (ErrorParameter separated by Comma) } ;
 
-        parser EventDefinition = ((EventKeyword Identifier ((EventParametersList ?) delimited_by OpenParen and CloseParen) (AnonymousKeyword ?)) terminated_by Semicolon) ;
+        parser EventDefinition = ((EventKeyword Identifier ((EventParametersList ?) delimited by OpenParen and CloseParen) (AnonymousKeyword ?)) terminated by Semicolon) ;
 
         parser EventParameter = (TypeName (IndexedKeyword ?) (Identifier ?)) ;
 
-        parser EventParametersList = (EventParameter separated_by Comma) ;
+        parser EventParametersList = (EventParameter separated by Comma) ;
 
         parser ExperimentalPragma = (ExperimentalKeyword (AsciiStringLiteral | Identifier)) ;
 
@@ -308,7 +308,7 @@ slang_grammar! {
             with primary expression PrimaryExpression
         ) ;
 
-        parser ExpressionStatement = (Expression terminated_by Semicolon) ;
+        parser ExpressionStatement = (Expression terminated by Semicolon) ;
 
         inline parser FallbackFunctionAttribute = { introduced in "0.6.0" (ModifierInvocation | OverrideSpecifier | ExternalKeyword | PayableKeyword | PureKeyword | ViewKeyword | VirtualKeyword) } ;
 
@@ -316,7 +316,7 @@ slang_grammar! {
 
         parser FallbackFunctionDefinition = { introduced in "0.6.0" (FallbackKeyword ParametersDeclaration (FallbackFunctionAttributesList ?) (ReturnsDeclaration ?) (Semicolon | Block)) } ;
 
-        parser ForStatement = (ForKeyword (((SimpleStatement | Semicolon) (ExpressionStatement | Semicolon) (Expression ?)) delimited_by OpenParen and CloseParen) Statement) ;
+        parser ForStatement = (ForKeyword (((SimpleStatement | Semicolon) (ExpressionStatement | Semicolon) (Expression ?)) delimited by OpenParen and CloseParen) Statement) ;
 
         inline parser FunctionAttribute = (
             ModifierInvocation | OverrideSpecifier | ExternalKeyword | InternalKeyword | PayableKeyword | PrivateKeyword | PublicKeyword | PureKeyword | ViewKeyword |
@@ -346,29 +346,29 @@ slang_grammar! {
 
         parser HexStringLiteralsList = (HexStringLiteral +) ;
 
-        parser IdentifierPath = (Identifier separated_by Period) ;
+        parser IdentifierPath = (Identifier separated by Period) ;
 
-        parser IdentifierPathsList = (IdentifierPath separated_by Comma) ;
+        parser IdentifierPathsList = (IdentifierPath separated by Comma) ;
 
-        parser IdentifiersList = (Identifier separated_by Comma) ;
+        parser IdentifiersList = (Identifier separated by Comma) ;
 
-        parser IfStatement = (IfKeyword (Expression delimited_by OpenParen and CloseParen) Statement ((ElseKeyword Statement) ?)) ;
+        parser IfStatement = (IfKeyword (Expression delimited by OpenParen and CloseParen) Statement ((ElseKeyword Statement) ?)) ;
 
-        parser ImportDirective = ((ImportKeyword (PathImport | NamedImport | DeconstructionImport)) terminated_by Semicolon) ;
+        parser ImportDirective = ((ImportKeyword (PathImport | NamedImport | DeconstructionImport)) terminated by Semicolon) ;
 
-        inline parser IndexAccessOperator = (((Expression ?) ((Colon (Expression ?)) ?)) delimited_by OpenBracket and CloseBracket) ;
+        inline parser IndexAccessOperator = (((Expression ?) ((Colon (Expression ?)) ?)) delimited by OpenBracket and CloseBracket) ;
 
         parser InheritanceSpecifier = (IsKeyword InheritanceTypesList) ;
 
         parser InheritanceType = (IdentifierPath (ArgumentsDeclaration ?)) ;
 
-        parser InheritanceTypesList = (InheritanceType separated_by Comma) ;
+        parser InheritanceTypesList = (InheritanceType separated by Comma) ;
 
-        parser InterfaceDefinition = (InterfaceKeyword Identifier (InheritanceSpecifier ?) ((InterfaceMembersList ?) delimited_by OpenBrace and CloseBrace)) ;
+        parser InterfaceDefinition = (InterfaceKeyword Identifier (InheritanceSpecifier ?) ((InterfaceMembersList ?) delimited by OpenBrace and CloseBrace)) ;
 
         parser InterfaceMembersList = (ContractMember +) ;
 
-        parser LibraryDefinition = (LibraryKeyword Identifier ((LibraryMembersList ?) delimited_by OpenBrace and CloseBrace)) ;
+        parser LibraryDefinition = (LibraryKeyword Identifier ((LibraryMembersList ?) delimited by OpenBrace and CloseBrace)) ;
 
         parser LibraryMembersList = (ContractMember +) ;
 
@@ -377,7 +377,7 @@ slang_grammar! {
             { introduced in "0.8.18" (Identifier ?) }
         ) ;
 
-        parser MappingType = (MappingKeyword ((MappingKeyType EqualGreaterThan MappingValueType) delimited_by OpenParen and CloseParen)) ;
+        parser MappingType = (MappingKeyword ((MappingKeyType EqualGreaterThan MappingValueType) delimited by OpenParen and CloseParen)) ;
 
         parser MappingValueType = (
             TypeName
@@ -401,9 +401,9 @@ slang_grammar! {
 
         parser NamedArgument = (Identifier Colon Expression) ;
 
-        parser NamedArgumentsDeclaration = ((NamedArgumentsList ?) delimited_by OpenBrace and CloseBrace) ;
+        parser NamedArgumentsDeclaration = ((NamedArgumentsList ?) delimited by OpenBrace and CloseBrace) ;
 
-        parser NamedArgumentsList = (NamedArgument separated_by Comma) ;
+        parser NamedArgumentsList = (NamedArgument separated by Comma) ;
 
         parser NamedImport = (Asterisk AsKeyword Identifier FromKeyword AsciiStringLiteral) ;
 
@@ -425,19 +425,19 @@ slang_grammar! {
 
         inline parser OrderComparisonOperator = (LessThan | GreaterThan | LessThanEqual | GreaterThanEqual) ;
 
-        parser OverrideSpecifier = (OverrideKeyword (((IdentifierPathsList ?) delimited_by OpenParen and CloseParen) ?)) ;
+        parser OverrideSpecifier = (OverrideKeyword (((IdentifierPathsList ?) delimited by OpenParen and CloseParen) ?)) ;
 
         parser Parameter = (TypeName (DataLocation ?) (Identifier ?)) ;
 
-        parser ParametersDeclaration = ((ParametersList ?) delimited_by OpenParen and CloseParen) ;
+        parser ParametersDeclaration = ((ParametersList ?) delimited by OpenParen and CloseParen) ;
 
-        parser ParametersList = (Parameter separated_by Comma) ;
+        parser ParametersList = (Parameter separated by Comma) ;
 
         parser PathImport = (AsciiStringLiteral ((AsKeyword Identifier) ?)) ;
 
-        parser PositionalArgumentsList = (Expression separated_by Comma) ;
+        parser PositionalArgumentsList = (Expression separated by Comma) ;
 
-        parser PragmaDirective = ((PragmaKeyword (ABICoderPragma | ExperimentalPragma | VersionPragma)) terminated_by Semicolon) ;
+        parser PragmaDirective = ((PragmaKeyword (ABICoderPragma | ExperimentalPragma | VersionPragma)) terminated by Semicolon) ;
 
         inline parser PrimaryExpression = (
             NewExpression | TupleExpression | ArrayExpression | BooleanExpression | NumericExpression | StringExpression | ElementaryType | Identifier |
@@ -450,11 +450,11 @@ slang_grammar! {
 
         parser ReceiveFunctionDefinition = { introduced in "0.6.0" (ReceiveKeyword ParametersDeclaration (ReceiveFunctionAttributesList ?) (Semicolon | Block)) } ;
 
-        parser ReturnStatement = ((ReturnKeyword (Expression ?)) terminated_by Semicolon) ;
+        parser ReturnStatement = ((ReturnKeyword (Expression ?)) terminated by Semicolon) ;
 
         parser ReturnsDeclaration = (ReturnsKeyword ParametersDeclaration) ;
 
-        parser RevertStatement = ((RevertKeyword (IdentifierPath ?) ArgumentsDeclaration) terminated_by Semicolon) ;
+        parser RevertStatement = ((RevertKeyword (IdentifierPath ?) ArgumentsDeclaration) terminated by Semicolon) ;
 
         inline parser ShiftOperator = (LessThanLessThan | GreaterThanGreaterThan | GreaterThanGreaterThanGreaterThan) ;
 
@@ -480,7 +480,7 @@ slang_grammar! {
 
         parser StateVariableAttributesList = (StateVariableAttribute +) ;
 
-        parser StateVariableDefinition = ((TypeName (StateVariableAttributesList ?) Identifier ((Equal Expression) ?)) terminated_by Semicolon) ;
+        parser StateVariableDefinition = ((TypeName (StateVariableAttributesList ?) Identifier ((Equal Expression) ?)) terminated by Semicolon) ;
 
         parser Statement = (
             SimpleStatement | ControlStatement | AssemblyStatement | Block | { introduced in "0.8.0" UncheckedBlock }
@@ -492,27 +492,27 @@ slang_grammar! {
             HexStringLiteralsList | AsciiStringLiteralsList | { introduced in "0.7.0" UnicodeStringLiteralsList }
         ) ;
 
-        parser StructDefinition = (StructKeyword Identifier ((StructMembersList ?) delimited_by OpenBrace and CloseBrace)) ;
+        parser StructDefinition = (StructKeyword Identifier ((StructMembersList ?) delimited by OpenBrace and CloseBrace)) ;
 
-        parser StructMember = ((TypeName Identifier) terminated_by Semicolon) ;
+        parser StructMember = ((TypeName Identifier) terminated by Semicolon) ;
 
         parser StructMembersList = (StructMember +) ;
 
-        parser ThrowStatement = { removed in "0.5.0" (ThrowKeyword terminated_by Semicolon) } ;
+        parser ThrowStatement = { removed in "0.5.0" (ThrowKeyword terminated by Semicolon) } ;
 
         parser TryStatement = { introduced in "0.6.0" (TryKeyword Expression (ReturnsDeclaration ?) Block CatchClausesList) } ;
 
-        parser TupleDeconstructionStatement = ((((TupleMembersList ?) delimited_by OpenParen and CloseParen) Equal Expression) terminated_by Semicolon) ;
+        parser TupleDeconstructionStatement = ((((TupleMembersList ?) delimited by OpenParen and CloseParen) Equal Expression) terminated by Semicolon) ;
 
-        parser TupleExpression = (TupleValuesList delimited_by OpenParen and CloseParen) ;
+        parser TupleExpression = (TupleValuesList delimited by OpenParen and CloseParen) ;
 
         parser TupleMember = (((TypeName (DataLocation ?) Identifier) | ((DataLocation ?) Identifier)) ?) ;
 
-        parser TupleMembersList = (TupleMember separated_by Comma) ;
+        parser TupleMembersList = (TupleMember separated by Comma) ;
 
-        parser TupleValuesList = ((Expression ?) separated_by Comma) ;
+        parser TupleValuesList = ((Expression ?) separated by Comma) ;
 
-        parser TypeExpression = { introduced in "0.5.3" (TypeKeyword (TypeName delimited_by OpenParen and CloseParen)) } ;
+        parser TypeExpression = { introduced in "0.5.3" (TypeKeyword (TypeName delimited by OpenParen and CloseParen)) } ;
 
         precedence parser TypeName = (
             [
@@ -537,11 +537,11 @@ slang_grammar! {
 
         parser UnnamedFunctionDefinition = { removed in "0.6.0" (FunctionKeyword ParametersDeclaration (UnnamedFunctionAttributesList ?) (Semicolon | Block)) } ;
 
-        parser UserDefinedValueTypeDefinition = { introduced in "0.8.8" ((TypeKeyword Identifier IsKeyword ElementaryType) terminated_by Semicolon) } ;
+        parser UserDefinedValueTypeDefinition = { introduced in "0.8.8" ((TypeKeyword Identifier IsKeyword ElementaryType) terminated by Semicolon) } ;
 
-        parser UsingDirective = ((UsingKeyword (UsingDirectivePath | UsingDirectiveDeconstruction) ForKeyword (Asterisk | TypeName) (GlobalKeyword ?)) terminated_by Semicolon) ;
+        parser UsingDirective = ((UsingKeyword (UsingDirectivePath | UsingDirectiveDeconstruction) ForKeyword (Asterisk | TypeName) (GlobalKeyword ?)) terminated by Semicolon) ;
 
-        parser UsingDirectiveDeconstruction = (UsingDirectiveSymbolsList delimited_by OpenBrace and CloseBrace) ;
+        parser UsingDirectiveDeconstruction = (UsingDirectiveSymbolsList delimited by OpenBrace and CloseBrace) ;
 
         inline parser UsingDirectiveOperator = {
             introduced in "0.8.19" (Ampersand | Asterisk | BangEqual | Bar | Caret | EqualEqual | GreaterThan | GreaterThanEqual | LessThan | LessThanEqual | Minus | Percent | Plus | Slash | Tilde)
@@ -553,15 +553,15 @@ slang_grammar! {
             IdentifierPath { introduced in "0.8.19" ((AsKeyword UsingDirectiveOperator) ?) }
         ) ;
 
-        parser UsingDirectiveSymbolsList = (UsingDirectiveSymbol separated_by Comma) ;
+        parser UsingDirectiveSymbolsList = (UsingDirectiveSymbol separated by Comma) ;
 
         parser VariableDeclaration = (
             ({ removed in "0.5.0" VarKeyword } | TypeName) (DataLocation ?) Identifier
         ) ;
 
-        parser VariableDeclarationStatement = ((VariableDeclaration ((Equal Expression) ?)) terminated_by Semicolon) ;
+        parser VariableDeclarationStatement = ((VariableDeclaration ((Equal Expression) ?)) terminated by Semicolon) ;
 
-        parser WhileStatement = (WhileKeyword (Expression delimited_by OpenParen and CloseParen) Statement) ;
+        parser WhileStatement = (WhileKeyword (Expression delimited by OpenParen and CloseParen) Statement) ;
 
         trivia parser EndOfFileTrivia = ((Whitespace | EndOfLine | MultilineComment | SingleLineComment) +) ;
 
@@ -590,7 +590,7 @@ slang_grammar! {
 
         inline parser VersionPragmaRangeOperator = Minus ;
 
-        parser VersionPragmaSpecifier = (VersionPragmaValue separated_by Period) ;
+        parser VersionPragmaSpecifier = (VersionPragmaValue separated by Period) ;
 
         inline parser VersionPragmaUnaryOperator = (Caret | Tilde | Equal | LessThan | GreaterThan | LessThanEqual | GreaterThanEqual) ;
 
@@ -618,7 +618,7 @@ slang_grammar! {
 
         parser YulAssignmentStatement = (YulIdentifierPathsList ColonEqual YulExpression) ;
 
-        parser YulBlock = ((YulStatementsList ?) delimited_by OpenBrace and CloseBrace) ;
+        parser YulBlock = ((YulStatementsList ?) delimited by OpenBrace and CloseBrace) ;
 
         parser YulBreakStatement = BreakKeyword ;
 
@@ -633,19 +633,19 @@ slang_grammar! {
             with primary expression (YulLiteral | YulIdentifierPath)
         ) ;
 
-        parser YulExpressionsList = (YulExpression separated_by Comma) ;
+        parser YulExpressionsList = (YulExpression separated by Comma) ;
 
         parser YulForStatement = (ForKeyword YulBlock YulExpression YulBlock YulBlock) ;
 
-        inline parser YulFunctionCallOperator = ((YulExpressionsList ?) delimited_by OpenParen and CloseParen) ;
+        inline parser YulFunctionCallOperator = ((YulExpressionsList ?) delimited by OpenParen and CloseParen) ;
 
         parser YulFunctionDefinition = (FunctionKeyword YulIdentifier YulParametersDeclaration (YulReturnsDeclaration ?) YulBlock) ;
 
-        parser YulIdentifierPath = (YulIdentifier separated_by Period) ;
+        parser YulIdentifierPath = (YulIdentifier separated by Period) ;
 
-        parser YulIdentifierPathsList = (YulIdentifierPath separated_by Comma) ;
+        parser YulIdentifierPathsList = (YulIdentifierPath separated by Comma) ;
 
-        parser YulIdentifiersList = (YulIdentifier separated_by Comma) ;
+        parser YulIdentifiersList = (YulIdentifier separated by Comma) ;
 
         parser YulIfStatement = (IfKeyword YulExpression YulBlock) ;
 
@@ -653,7 +653,7 @@ slang_grammar! {
 
         inline parser YulLiteral = (TrueKeyword | FalseKeyword | YulHexLiteral | YulDecimalLiteral | HexStringLiteral | AsciiStringLiteral) ;
 
-        parser YulParametersDeclaration = ((YulIdentifiersList ?) delimited_by OpenParen and CloseParen) ;
+        parser YulParametersDeclaration = ((YulIdentifiersList ?) delimited by OpenParen and CloseParen) ;
 
         parser YulReturnsDeclaration = (MinusGreaterThan YulIdentifiersList) ;
 
@@ -682,7 +682,7 @@ slang_grammar! {
     scanner EndOfLine = (('\r' ?) '\n') ;
     scanner Whitespace = (('\t' | ' ') +) ;
     scanner SingleLineComment = ("//" ((! "\n\r") *)) ;
-    scanner MultilineComment = ('/' '*' (((! '*') | ('*' (! '/'))) *) '*' '/') ;
+    scanner MultilineComment = ('/' '*' (((! '*') | ('*' not followed by '/')) *) '*' '/') ;
 
     // Delimiters
 
@@ -793,20 +793,31 @@ slang_grammar! {
 
     // Ascii String Literals
 
-    scanner AsciiStringLiteral = (SingleQuotedAsciiStringLiteral | DoubleQuotedAsciiStringLiteral) ;
+    scanner AsciiStringLiteral = (
+        (SingleQuotedAsciiStringLiteral | DoubleQuotedAsciiStringLiteral)
+        not followed by IdentifierStart
+    ) ;
     scanner DoubleQuotedAsciiStringLiteral = ("\"" ((EscapeSequence | AsciiCharacterWithoutDoubleQuoteOrBackslash) *) "\"") ;
     scanner SingleQuotedAsciiStringLiteral = ("\'" ((EscapeSequence | AsciiCharacterWithoutSingleQuoteOrBackslash) *) "\'") ;
 
     // Hex String Literals
 
-    scanner HexStringLiteral = (SingleQuotedHexStringLiteral | DoubleQuotedHexStringLiteral) ;
+    scanner HexStringLiteral = (
+        (SingleQuotedHexStringLiteral | DoubleQuotedHexStringLiteral)
+        not followed by IdentifierStart
+    ) ;
     scanner DoubleQuotedHexStringLiteral = ("hex\"" (HexStringContents ?) "\"") ;
     scanner SingleQuotedHexStringLiteral = ("hex\'" (HexStringContents ?) "\'") ;
     scanner HexStringContents = (HexCharacter HexCharacter ((('_' ?) HexCharacter HexCharacter) *)) ;
 
     // Unicode String Literals
 
-    scanner UnicodeStringLiteral = { introduced in "0.7.0" (SingleQuotedUnicodeStringLiteral | DoubleQuotedUnicodeStringLiteral) } ;
+    scanner UnicodeStringLiteral = {
+        introduced in "0.7.0" (
+            (SingleQuotedUnicodeStringLiteral | DoubleQuotedUnicodeStringLiteral)
+            not followed by IdentifierStart
+        )
+    } ;
     scanner DoubleQuotedUnicodeStringLiteral = { introduced in "0.7.0" ("unicode\"" ((EscapeSequence | (! "\n\r\"\\")) *) "\"") } ;
     scanner SingleQuotedUnicodeStringLiteral = { introduced in "0.7.0" ("unicode\'" ((EscapeSequence | (! "\n\r\'\\")) *) "\'") } ;
 
@@ -814,18 +825,29 @@ slang_grammar! {
 
     scanner DecimalLiteral = (
         (
-            { removed in "0.5.0"    (DecimalDigits (("." (DecimalDigits ?) ) ?)) } |
-            { introduced in "0.5.0" (DecimalDigits (("." DecimalDigits     ) ?)) } |
-            ('.' DecimalDigits)
-        )
-        (DecimalExponent ?)
+            (
+                { removed in "0.5.0"    (DecimalDigits (("." (DecimalDigits ?) ) ?)) } |
+                { introduced in "0.5.0" (DecimalDigits (("." DecimalDigits     ) ?)) } |
+                ('.' DecimalDigits)
+            )
+            (DecimalExponent ?)
+        ) not followed by IdentifierStart
     ) ;
     scanner DecimalExponent = (('E' | 'e') ('-' ?) DecimalDigits) ;
     scanner DecimalDigits = ((DecimalDigit +) (('_' (DecimalDigit +)) *)) ;
-    scanner HexLiteral = (("0x" | { removed in "0.5.0" "0X" }) (HexCharacter +) (('_' (HexCharacter +)) *)) ;
+    scanner HexLiteral = (
+        (("0x" | { removed in "0.5.0" "0X" }) (HexCharacter +) (('_' (HexCharacter +)) *))
+        not followed by IdentifierStart
+    ) ;
 
-    scanner YulDecimalLiteral = ("0" | (('1' .. '9') (DecimalDigit *))) ;
-    scanner YulHexLiteral = ("0x" (HexCharacter +)) ;
+    scanner YulDecimalLiteral = (
+        ("0" | (('1' .. '9') (DecimalDigit *)))
+        not followed by IdentifierStart
+    ) ;
+    scanner YulHexLiteral = (
+        ("0x" (HexCharacter +))
+        not followed by IdentifierStart
+    ) ;
 
     // Pragma Literals
 
