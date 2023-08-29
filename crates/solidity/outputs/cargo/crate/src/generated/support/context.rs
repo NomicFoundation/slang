@@ -7,7 +7,7 @@ use crate::parse_error::ParseError;
 
 use super::super::text_index::TextIndex;
 
-pub struct Stream<'s> {
+pub struct ParserContext<'s> {
     source: &'s str,
     position: TextIndex,
     undo_position: Option<TextIndex>,
@@ -20,7 +20,7 @@ pub struct Marker {
     err_len: usize,
 }
 
-impl<'s> Stream<'s> {
+impl<'s> ParserContext<'s> {
     pub fn new(source: &'s str) -> Self {
         Self {
             source,

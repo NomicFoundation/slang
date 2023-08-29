@@ -99,14 +99,14 @@ impl PrecedenceParserDefinitionNodeExtensions for PrecedenceParserDefinitionNode
             );
 
             let parser = (
-                quote! { #closure_name(stream) },
+                quote! { #closure_name(input) },
                 version_quality_ranges.clone(),
             );
 
             match model {
                 PrecedenceOperatorModel::BinaryLeftAssociative => {
                     operator_closures.push(quote! {
-                        let #closure_name = |stream: &mut Stream|
+                        let #closure_name = |input: &mut ParserContext|
                             PrecedenceHelper::to_binary_operator(
                                 RuleKind::#rule_kind,
                                 #binding_power,
@@ -118,7 +118,7 @@ impl PrecedenceParserDefinitionNodeExtensions for PrecedenceParserDefinitionNode
                 }
                 PrecedenceOperatorModel::BinaryRightAssociative => {
                     operator_closures.push(quote! {
-                        let #closure_name = |stream: &mut Stream|
+                        let #closure_name = |input: &mut ParserContext|
                             PrecedenceHelper::to_binary_operator(
                                 RuleKind::#rule_kind,
                                 #binding_power + 1,
@@ -130,7 +130,7 @@ impl PrecedenceParserDefinitionNodeExtensions for PrecedenceParserDefinitionNode
                 }
                 PrecedenceOperatorModel::Prefix => {
                     operator_closures.push(quote! {
-                        let #closure_name = |stream: &mut Stream|
+                        let #closure_name = |input: &mut ParserContext|
                             PrecedenceHelper::to_prefix_operator(
                                 RuleKind::#rule_kind,
                                 #binding_power,
@@ -141,7 +141,7 @@ impl PrecedenceParserDefinitionNodeExtensions for PrecedenceParserDefinitionNode
                 }
                 PrecedenceOperatorModel::Postfix => {
                     operator_closures.push(quote! {
-                        let #closure_name = |stream: &mut Stream|
+                        let #closure_name = |input: &mut ParserContext|
                             PrecedenceHelper::to_postfix_operator(
                                 RuleKind::#rule_kind,
                                 #binding_power,
@@ -180,7 +180,7 @@ impl PrecedenceParserDefinitionNodeExtensions for PrecedenceParserDefinitionNode
                     version_quality_ranges.wrap_code(
                         quote! {
                             let result = #parser;
-                            choice.consider(result).pick_or_backtrack(stream)?;
+                            choice.consider(result).pick_or_backtrack(input)?;
                         },
                         None,
                     )
@@ -188,9 +188,9 @@ impl PrecedenceParserDefinitionNodeExtensions for PrecedenceParserDefinitionNode
                 .collect::<Vec<_>>();
             quote! {
                 {
-                    ChoiceHelper::run(stream, |mut choice, stream| {
+                    ChoiceHelper::run(input, |mut choice, input| {
                         #(#parsers)*
-                        choice.finish(stream)
+                        choice.finish(input)
                     })
                 }
             }
@@ -200,44 +200,44 @@ impl PrecedenceParserDefinitionNodeExtensions for PrecedenceParserDefinitionNode
 
         if !prefix_operator_parsers.is_empty() {
             let prefix_operator_parser = make_choice(prefix_operator_parsers);
-            operator_closures.push(quote! { let prefix_operator_parser = |stream: &mut Stream| #prefix_operator_parser; });
+            operator_closures.push(quote! { let prefix_operator_parser = |input: &mut ParserContext| #prefix_operator_parser; });
             binary_operand_terms.push(
-                quote! { ZeroOrMoreHelper::run(stream, |stream| prefix_operator_parser(stream)) },
+                quote! { ZeroOrMoreHelper::run(input, |input| prefix_operator_parser(input)) },
             );
         }
 
         let primary_expression_parser = self.primary_expression.to_parser_code(context_name, false);
-        operator_closures.push(quote! { let primary_expression_parser = |stream: &mut Stream| #primary_expression_parser; });
-        binary_operand_terms.push(quote! {  primary_expression_parser(stream) });
+        operator_closures.push(quote! { let primary_expression_parser = |input: &mut ParserContext| #primary_expression_parser; });
+        binary_operand_terms.push(quote! {  primary_expression_parser(input) });
 
         if !postfix_operator_parsers.is_empty() {
             let postfix_operator_parser = make_choice(postfix_operator_parsers);
-            operator_closures.push(quote! { let postfix_operator_parser = |stream: &mut Stream| #postfix_operator_parser; });
+            operator_closures.push(quote! { let postfix_operator_parser = |input: &mut ParserContext| #postfix_operator_parser; });
             binary_operand_terms.push(
-                quote! { ZeroOrMoreHelper::run(stream, |stream| postfix_operator_parser(stream)) },
+                quote! { ZeroOrMoreHelper::run(input, |input| postfix_operator_parser(input)) },
             );
         }
 
         let binary_operand_parser = make_sequence(binary_operand_terms);
 
         if binary_operator_parsers.is_empty() {
-            operator_closures.push(quote! { let linear_expression_parser = |stream: &mut Stream| #binary_operand_parser; });
+            operator_closures.push(quote! { let linear_expression_parser = |input: &mut ParserContext| #binary_operand_parser; });
         } else {
-            operator_closures.push(quote! { let binary_operand_parser = |stream: &mut Stream| #binary_operand_parser; });
+            operator_closures.push(quote! { let binary_operand_parser = |input: &mut ParserContext| #binary_operand_parser; });
 
             let binary_operator_parser = make_choice(binary_operator_parsers);
-            operator_closures.push(quote! { let binary_operator_parser = |stream: &mut Stream| #binary_operator_parser; });
+            operator_closures.push(quote! { let binary_operator_parser = |input: &mut ParserContext| #binary_operator_parser; });
 
             let linear_expression_parser =
-                make_sequence(vec![quote! { binary_operand_parser(stream) }, {
+                make_sequence(vec![quote! { binary_operand_parser(input) }, {
                     let pairs = make_sequence(vec![
-                        quote! { binary_operator_parser(stream) },
-                        quote! { binary_operand_parser(stream)  },
+                        quote! { binary_operator_parser(input) },
+                        quote! { binary_operand_parser(input)  },
                     ]);
-                    quote! { ZeroOrMoreHelper::run(stream, |stream| #pairs) }
+                    quote! { ZeroOrMoreHelper::run(input, |input| #pairs) }
                 }]);
             operator_closures
-                .push(quote! { let linear_expression_parser = |stream: &mut Stream| #linear_expression_parser; });
+                .push(quote! { let linear_expression_parser = |input: &mut ParserContext| #linear_expression_parser; });
         }
 
         let expression_kind_literal = if let Some(kind) = expression_kind {
@@ -248,7 +248,7 @@ impl PrecedenceParserDefinitionNodeExtensions for PrecedenceParserDefinitionNode
 
         quote! {
             #(#operator_closures)*
-            PrecedenceHelper::reduce_precedence_result(#expression_kind_literal, linear_expression_parser(stream))
+            PrecedenceHelper::reduce_precedence_result(#expression_kind_literal, linear_expression_parser(input))
         }
     }
 }

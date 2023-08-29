@@ -4,23 +4,23 @@ use std::rc::Rc;
 
 use super::{
     super::{cst, kinds::TokenKind, parse_error::ParseError, parse_output::ParseOutput},
+    context::ParserContext,
     parser_result::*,
-    stream::Stream,
 };
 
 pub trait ParserFunction<L>
 where
-    Self: Fn(&L, &mut Stream) -> ParserResult,
+    Self: Fn(&L, &mut ParserContext) -> ParserResult,
 {
     fn parse(&self, language: &L, input: &str) -> ParseOutput;
 }
 
 impl<L, F> ParserFunction<L> for F
 where
-    F: Fn(&L, &mut Stream) -> ParserResult,
+    F: Fn(&L, &mut ParserContext) -> ParserResult,
 {
     fn parse(&self, language: &L, input: &str) -> ParseOutput {
-        let mut stream = Stream::new(input);
+        let mut stream = ParserContext::new(input);
         let result = self(language, &mut stream);
 
         let is_incomplete = matches!(result, ParserResult::IncompleteMatch(_));

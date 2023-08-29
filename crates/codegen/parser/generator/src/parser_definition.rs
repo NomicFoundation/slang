@@ -46,14 +46,14 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
             Self::ZeroOrMore(node, _) => {
                 let parser = node.to_parser_code(context_name, is_trivia);
                 quote! {
-                    ZeroOrMoreHelper::run(stream, |stream| #parser)
+                    ZeroOrMoreHelper::run(input, |input| #parser)
                 }
             }
 
             Self::OneOrMore(node, _) => {
                 let parser = node.to_parser_code(context_name, is_trivia);
                 quote! {
-                    OneOrMoreHelper::run(stream, |stream| #parser)
+                    OneOrMoreHelper::run(input, |input| #parser)
                 }
             }
 
@@ -88,7 +88,7 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                         node.applicable_version_quality_ranges().wrap_code(
                             quote! {
                                 let result = #parser;
-                                choice.consider(result).pick_or_backtrack(stream)?;
+                                choice.consider(result).pick_or_backtrack(input)?;
                             },
                             None,
                         )
@@ -96,9 +96,9 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                     .collect::<Vec<_>>();
                 quote! {
                     {
-                        ChoiceHelper::run(stream, |mut choice, stream| {
+                        ChoiceHelper::run(input, |mut choice, input| {
                             #(#parsers)*
-                            choice.finish(stream)
+                            choice.finish(input)
                         })
                     }
                 }
@@ -110,13 +110,13 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                     let function_name =
                         format_ident!("{}_parse_token", context_name.to_snake_case());
                     quote! {
-                        self.#function_name(stream, TokenKind::#kind)
+                        self.#function_name(input, TokenKind::#kind)
                     }
                 } else {
                     let function_name =
                         format_ident!("{}_parse_token_with_trivia", context_name.to_snake_case());
                     quote! {
-                        self.#function_name(stream, TokenKind::#kind)
+                        self.#function_name(input, TokenKind::#kind)
                     }
                 }
             }
@@ -126,7 +126,7 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                     "{snake_case}",
                     snake_case = trivia_parser_definition.name().to_snake_case()
                 );
-                quote! { self.#function_name(stream) }
+                quote! { self.#function_name(input) }
             }
 
             Self::ParserDefinition(parser_definition, _) => {
@@ -143,7 +143,7 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                         snake_case = parser_definition.name().to_snake_case()
                     );
                     quote! {
-                        self.#function_name(stream)
+                        self.#function_name(input)
                     }
                 }
             }
@@ -158,7 +158,7 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                     "{snake_case}",
                     snake_case = precedence_parser_definition.name().to_snake_case()
                 );
-                quote! { self.#function_name(stream) }
+                quote! { self.#function_name(input) }
             }
 
             Self::DelimitedBy(open, body, close, loc) => {
@@ -207,8 +207,8 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                             seq.elem(
                                 #parser
                                     .try_recover_with(
-                                        stream,
-                                        |stream| self.#skip_tokens_until(stream, TokenKind::#terminator_token_kind)
+                                        input,
+                                        |input| self.#skip_tokens_until(input, TokenKind::#terminator_token_kind)
                                     )
                             )?;
                         },
@@ -219,7 +219,7 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                     {
                         SequenceHelper::run(|mut seq| {
                             #body_parser
-                            seq.elem(self.#greedy_parse(stream, TokenKind::#terminator_token_kind))?;
+                            seq.elem(self.#greedy_parse(input, TokenKind::#terminator_token_kind))?;
                             seq.finish()
                         })
                     }
