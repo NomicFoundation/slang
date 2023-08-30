@@ -175,11 +175,23 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                     context_name = context_name.to_snake_case()
                 );
 
+                let delimiters = format_ident!(
+                    "{context_name}_delimiters",
+                    context_name = context_name.to_snake_case()
+                );
+
+                let context = format_ident!("{context_name}");
+
                 let parser = body.to_parser_code(context_name, is_trivia);
                 let body_parser = body.applicable_version_quality_ranges().wrap_code(
                     quote! {
-                        // TODO: Add the recover path
-                        seq.elem(#parser)?;
+                        seq.elem(#parser
+                            .recover_until_with_nested_delims(input,
+                                |input| Lexer::next_token::<{ LexicalContext::#context as u8 }>(self, input),
+                                TokenKind::#close_token,
+                                Self::#delimiters(),
+                            )
+                        )?;
                     },
                     None,
                 );
@@ -246,13 +258,11 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                     );
 
                 quote! {
-                    {
-                        SequenceHelper::run(|mut seq| {
-                            #body_parser
-                            seq.elem(self.#greedy_parse(input, TokenKind::#terminator_token_kind))?;
-                            seq.finish()
-                        })
-                    }
+                    SequenceHelper::run(|mut seq| {
+                        #body_parser
+                        seq.elem(self.#greedy_parse(input, TokenKind::#terminator_token_kind))?;
+                        seq.finish()
+                    })
                 }
             }
         }
