@@ -3,6 +3,7 @@
 use std::mem;
 use std::ops::Range;
 
+use crate::kinds::TokenKind;
 use crate::parse_error::ParseError;
 
 use super::super::text_index::TextIndex;
@@ -12,6 +13,7 @@ pub struct ParserContext<'s> {
     position: TextIndex,
     undo_position: Option<TextIndex>,
     errors: Vec<ParseError>,
+    closing_delimiters: Vec<TokenKind>,
 }
 
 #[derive(Copy, Clone)]
@@ -27,6 +29,7 @@ impl<'s> ParserContext<'s> {
             position: Default::default(),
             undo_position: None,
             errors: vec![],
+            closing_delimiters: vec![],
         }
     }
 
@@ -50,6 +53,19 @@ impl<'s> ParserContext<'s> {
 
     pub fn into_errors(self) -> Vec<ParseError> {
         self.errors
+    }
+
+    pub fn expect_closing(&mut self, closing_delim: TokenKind) {
+        self.closing_delimiters.push(closing_delim);
+    }
+
+    pub fn pop_closing(&mut self, closing_delim: TokenKind) {
+        let popped = self.closing_delimiters.pop();
+        assert_eq!(popped, Some(closing_delim));
+    }
+
+    pub fn closing_delimiters(&self) -> &[TokenKind] {
+        &self.closing_delimiters
     }
 
     pub fn position(&self) -> TextIndex {

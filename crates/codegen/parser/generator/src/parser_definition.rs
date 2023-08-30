@@ -176,14 +176,20 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                 );
 
                 let parser = body.to_parser_code(context_name, is_trivia);
-                let body_parser = body
-                    .applicable_version_quality_ranges()
-                    .wrap_code(quote! { seq.elem(#parser)?; }, None);
+                let body_parser = body.applicable_version_quality_ranges().wrap_code(
+                    quote! {
+                        // TODO: Add the recover path
+                        seq.elem(#parser)?;
+                    },
+                    None,
+                );
 
                 quote! {
                     SequenceHelper::run(|mut seq| {
                         seq.elem(self.#parse_token(input, TokenKind::#open_token))?;
+                        input.expect_closing(TokenKind::#close_token);
                         #body_parser
+                        input.pop_closing(TokenKind::#close_token);
                         seq.elem(self.#parse_token(input, TokenKind::#close_token))?;
                         seq.finish()
                     })
