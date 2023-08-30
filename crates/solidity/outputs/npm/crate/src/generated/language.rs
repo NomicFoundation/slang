@@ -202,6 +202,15 @@ impl Language {
     }
 
     #[allow(dead_code)]
+    const fn default_delimiters() -> &'static [(TokenKind, TokenKind)] {
+        &[
+            (TokenKind::OpenBrace, TokenKind::CloseBrace),
+            (TokenKind::OpenBracket, TokenKind::CloseBracket),
+            (TokenKind::OpenParen, TokenKind::CloseParen),
+        ]
+    }
+
+    #[allow(dead_code)]
     fn version_pragma_parse_token_with_trivia(
         &self,
         input: &mut ParserContext,
@@ -240,6 +249,11 @@ impl Language {
     }
 
     #[allow(dead_code)]
+    const fn version_pragma_delimiters() -> &'static [(TokenKind, TokenKind)] {
+        &[]
+    }
+
+    #[allow(dead_code)]
     fn yul_block_parse_token_with_trivia(
         &self,
         input: &mut ParserContext,
@@ -271,6 +285,14 @@ impl Language {
     #[allow(dead_code)]
     fn yul_block_parse_token(&self, input: &mut ParserContext, kind: TokenKind) -> ParserResult {
         Lexer::parse_token::<{ LexicalContext::YulBlock as u8 }>(self, input, kind)
+    }
+
+    #[allow(dead_code)]
+    const fn yul_block_delimiters() -> &'static [(TokenKind, TokenKind)] {
+        &[
+            (TokenKind::OpenBrace, TokenKind::CloseBrace),
+            (TokenKind::OpenParen, TokenKind::CloseParen),
+        ]
     }
 
     /********************************************

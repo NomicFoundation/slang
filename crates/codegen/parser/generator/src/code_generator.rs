@@ -53,6 +53,7 @@ struct ScannerContext {
     alpha_literal_scanner: String,
     non_alpha_literal_scanner: String,
     compound_scanner_names: Vec<&'static str>,
+    delimiters: BTreeMap<&'static str, &'static str>,
 }
 
 impl CodeGenerator {
@@ -139,18 +140,16 @@ impl CodeGenerator {
 
     fn set_current_context(&mut self, name: &'static str) {
         self.current_context_name = name;
-        if !self.scanner_contexts_map.contains_key(name) {
-            self.scanner_contexts_map.insert(
-                self.current_context_name,
-                ScannerContext {
-                    name,
-                    scanner_definitions: Default::default(),
-                    alpha_literal_scanner: "".to_string(),
-                    non_alpha_literal_scanner: "".to_string(),
-                    compound_scanner_names: vec![],
-                },
-            );
-        }
+        self.scanner_contexts_map
+            .entry(name)
+            .or_insert_with(|| ScannerContext {
+                name,
+                scanner_definitions: Default::default(),
+                alpha_literal_scanner: "".to_string(),
+                non_alpha_literal_scanner: "".to_string(),
+                compound_scanner_names: vec![],
+                delimiters: Default::default(),
+            });
     }
 }
 
@@ -291,6 +290,27 @@ impl GrammarVisitor for CodeGenerator {
                     .unwrap()
                     .scanner_definitions
                     .insert(scanner.name());
+            }
+            // Collect delimiters for each context
+            ParserDefinitionNode::DelimitedBy(open, _, close, _) => {
+                let (open, close) = match (open.as_ref(), close.as_ref()) {
+                    (
+                        ParserDefinitionNode::ScannerDefinition(open, ..),
+                        ParserDefinitionNode::ScannerDefinition(close, ..),
+                    ) => (open.name(), close.name()),
+                    _ => panic!("DelimitedBy must be delimited by scanners"),
+                };
+
+                let delimiters = &mut self
+                    .scanner_contexts_map
+                    .get_mut(&self.current_context_name)
+                    .unwrap()
+                    .delimiters;
+
+                if delimiters.get(close).is_some() {
+                    panic!("Cannot use a closing delimiter as an opening one");
+                }
+                delimiters.insert(open, close);
             }
             _ => {}
         };

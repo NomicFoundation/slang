@@ -92,6 +92,15 @@ impl Language {
         {
             Lexer::parse_token::<{ LexicalContext::{{ context.name }} as u8 }>(self, input, kind)
         }
+
+        #[allow(dead_code)]
+        const fn {{ context.name | snake_case }}_delimiters() -> &'static [(TokenKind, TokenKind)] {
+            &[
+                {%- for open, close in context.delimiters %}
+                    (TokenKind::{{ open }}, TokenKind::{{ close }}),
+                {%- endfor %}
+            ]
+        }
     {% endfor %}
 
     /********************************************
