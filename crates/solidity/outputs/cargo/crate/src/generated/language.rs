@@ -337,35 +337,31 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn arguments_declaration(&self, input: &mut ParserContext) -> ParserResult {
-        {
-            SequenceHelper::run(|mut seq| {
-                seq.elem(self.default_parse_token_with_trivia(input, TokenKind::OpenParen))?;
-                seq.elem(OptionalHelper::transform({
-                    ChoiceHelper::run(input, |mut choice, input| {
-                        let result = self.positional_arguments_list(input);
-                        choice.consider(result).pick_or_backtrack(input)?;
-                        let result = self.named_arguments_declaration(input);
-                        choice.consider(result).pick_or_backtrack(input)?;
-                        choice.finish(input)
-                    })
-                }))?;
-                seq.elem(self.default_parse_token_with_trivia(input, TokenKind::CloseParen))?;
-                seq.finish()
-            })
-        }
+        SequenceHelper::run(|mut seq| {
+            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::OpenParen))?;
+            seq.elem(OptionalHelper::transform({
+                ChoiceHelper::run(input, |mut choice, input| {
+                    let result = self.positional_arguments_list(input);
+                    choice.consider(result).pick_or_backtrack(input)?;
+                    let result = self.named_arguments_declaration(input);
+                    choice.consider(result).pick_or_backtrack(input)?;
+                    choice.finish(input)
+                })
+            }))?;
+            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::CloseParen))?;
+            seq.finish()
+        })
         .with_kind(RuleKind::ArgumentsDeclaration)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn array_expression(&self, input: &mut ParserContext) -> ParserResult {
-        {
-            SequenceHelper::run(|mut seq| {
-                seq.elem(self.default_parse_token_with_trivia(input, TokenKind::OpenBracket))?;
-                seq.elem(self.array_values_list(input))?;
-                seq.elem(self.default_parse_token_with_trivia(input, TokenKind::CloseBracket))?;
-                seq.finish()
-            })
-        }
+        SequenceHelper::run(|mut seq| {
+            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::OpenBracket))?;
+            seq.elem(self.array_values_list(input))?;
+            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::CloseBracket))?;
+            seq.finish()
+        })
         .with_kind(RuleKind::ArrayExpression)
     }
 
@@ -426,18 +422,12 @@ impl Language {
                 seq.elem(OptionalHelper::transform(
                     self.default_parse_token_with_trivia(input, TokenKind::AsciiStringLiteral),
                 ))?;
-                seq.elem(OptionalHelper::transform({
-                    SequenceHelper::run(|mut seq| {
-                        seq.elem(
-                            self.default_parse_token_with_trivia(input, TokenKind::OpenParen),
-                        )?;
-                        seq.elem(self.assembly_flags_list(input))?;
-                        seq.elem(
-                            self.default_parse_token_with_trivia(input, TokenKind::CloseParen),
-                        )?;
-                        seq.finish()
-                    })
-                }))?;
+                seq.elem(OptionalHelper::transform(SequenceHelper::run(|mut seq| {
+                    seq.elem(self.default_parse_token_with_trivia(input, TokenKind::OpenParen))?;
+                    seq.elem(self.assembly_flags_list(input))?;
+                    seq.elem(self.default_parse_token_with_trivia(input, TokenKind::CloseParen))?;
+                    seq.finish()
+                })))?;
                 seq.elem(self.yul_block(input))?;
                 seq.finish()
             })
@@ -447,14 +437,12 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn block(&self, input: &mut ParserContext) -> ParserResult {
-        {
-            SequenceHelper::run(|mut seq| {
-                seq.elem(self.default_parse_token_with_trivia(input, TokenKind::OpenBrace))?;
-                seq.elem(OptionalHelper::transform(self.statements_list(input)))?;
-                seq.elem(self.default_parse_token_with_trivia(input, TokenKind::CloseBrace))?;
-                seq.finish()
-            })
-        }
+        SequenceHelper::run(|mut seq| {
+            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::OpenBrace))?;
+            seq.elem(OptionalHelper::transform(self.statements_list(input)))?;
+            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::CloseBrace))?;
+            seq.finish()
+        })
         .with_kind(RuleKind::Block)
     }
 
@@ -642,18 +630,12 @@ impl Language {
                 seq.elem(self.default_parse_token_with_trivia(input, TokenKind::ContractKeyword))?;
                 seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Identifier))?;
                 seq.elem(OptionalHelper::transform(self.inheritance_specifier(input)))?;
-                seq.elem({
-                    SequenceHelper::run(|mut seq| {
-                        seq.elem(
-                            self.default_parse_token_with_trivia(input, TokenKind::OpenBrace),
-                        )?;
-                        seq.elem(OptionalHelper::transform(self.contract_members_list(input)))?;
-                        seq.elem(
-                            self.default_parse_token_with_trivia(input, TokenKind::CloseBrace),
-                        )?;
-                        seq.finish()
-                    })
-                })?;
+                seq.elem(SequenceHelper::run(|mut seq| {
+                    seq.elem(self.default_parse_token_with_trivia(input, TokenKind::OpenBrace))?;
+                    seq.elem(OptionalHelper::transform(self.contract_members_list(input)))?;
+                    seq.elem(self.default_parse_token_with_trivia(input, TokenKind::CloseBrace))?;
+                    seq.finish()
+                }))?;
                 seq.finish()
             })
         }
@@ -716,18 +698,12 @@ impl Language {
     fn deconstruction_import(&self, input: &mut ParserContext) -> ParserResult {
         {
             SequenceHelper::run(|mut seq| {
-                seq.elem({
-                    SequenceHelper::run(|mut seq| {
-                        seq.elem(
-                            self.default_parse_token_with_trivia(input, TokenKind::OpenBrace),
-                        )?;
-                        seq.elem(self.deconstruction_import_symbols_list(input))?;
-                        seq.elem(
-                            self.default_parse_token_with_trivia(input, TokenKind::CloseBrace),
-                        )?;
-                        seq.finish()
-                    })
-                })?;
+                seq.elem(SequenceHelper::run(|mut seq| {
+                    seq.elem(self.default_parse_token_with_trivia(input, TokenKind::OpenBrace))?;
+                    seq.elem(self.deconstruction_import_symbols_list(input))?;
+                    seq.elem(self.default_parse_token_with_trivia(input, TokenKind::CloseBrace))?;
+                    seq.finish()
+                }))?;
                 seq.elem(self.default_parse_token_with_trivia(input, TokenKind::FromKeyword))?;
                 seq.elem(
                     self.default_parse_token_with_trivia(input, TokenKind::AsciiStringLiteral),
@@ -823,20 +799,20 @@ impl Language {
                                     TokenKind::WhileKeyword,
                                 ),
                             )?;
-                            seq.elem({
-                                SequenceHelper::run(|mut seq| {
-                                    seq.elem(self.default_parse_token_with_trivia(
+                            seq.elem(SequenceHelper::run(|mut seq| {
+                                seq.elem(
+                                    self.default_parse_token_with_trivia(
                                         input,
                                         TokenKind::OpenParen,
-                                    ))?;
-                                    seq.elem(self.expression(input))?;
-                                    seq.elem(self.default_parse_token_with_trivia(
-                                        input,
-                                        TokenKind::CloseParen,
-                                    ))?;
-                                    seq.finish()
-                                })
-                            })?;
+                                    ),
+                                )?;
+                                seq.elem(self.expression(input))?;
+                                seq.elem(self.default_parse_token_with_trivia(
+                                    input,
+                                    TokenKind::CloseParen,
+                                ))?;
+                                seq.finish()
+                            }))?;
                             seq.finish()
                         })
                     }
@@ -908,18 +884,12 @@ impl Language {
             SequenceHelper::run(|mut seq| {
                 seq.elem(self.default_parse_token_with_trivia(input, TokenKind::EnumKeyword))?;
                 seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Identifier))?;
-                seq.elem({
-                    SequenceHelper::run(|mut seq| {
-                        seq.elem(
-                            self.default_parse_token_with_trivia(input, TokenKind::OpenBrace),
-                        )?;
-                        seq.elem(OptionalHelper::transform(self.identifiers_list(input)))?;
-                        seq.elem(
-                            self.default_parse_token_with_trivia(input, TokenKind::CloseBrace),
-                        )?;
-                        seq.finish()
-                    })
-                })?;
+                seq.elem(SequenceHelper::run(|mut seq| {
+                    seq.elem(self.default_parse_token_with_trivia(input, TokenKind::OpenBrace))?;
+                    seq.elem(OptionalHelper::transform(self.identifiers_list(input)))?;
+                    seq.elem(self.default_parse_token_with_trivia(input, TokenKind::CloseBrace))?;
+                    seq.finish()
+                }))?;
                 seq.finish()
             })
         }
@@ -942,22 +912,20 @@ impl Language {
                                     input,
                                     TokenKind::Identifier,
                                 ))?;
-                                seq.elem({
-                                    SequenceHelper::run(|mut seq| {
-                                        seq.elem(self.default_parse_token_with_trivia(
-                                            input,
-                                            TokenKind::OpenParen,
-                                        ))?;
-                                        seq.elem(OptionalHelper::transform(
-                                            self.error_parameters_list(input),
-                                        ))?;
-                                        seq.elem(self.default_parse_token_with_trivia(
-                                            input,
-                                            TokenKind::CloseParen,
-                                        ))?;
-                                        seq.finish()
-                                    })
-                                })?;
+                                seq.elem(SequenceHelper::run(|mut seq| {
+                                    seq.elem(self.default_parse_token_with_trivia(
+                                        input,
+                                        TokenKind::OpenParen,
+                                    ))?;
+                                    seq.elem(OptionalHelper::transform(
+                                        self.error_parameters_list(input),
+                                    ))?;
+                                    seq.elem(self.default_parse_token_with_trivia(
+                                        input,
+                                        TokenKind::CloseParen,
+                                    ))?;
+                                    seq.finish()
+                                }))?;
                                 seq.finish()
                             })
                         }
@@ -1035,22 +1003,22 @@ impl Language {
                             seq.elem(
                                 self.default_parse_token_with_trivia(input, TokenKind::Identifier),
                             )?;
-                            seq.elem({
-                                SequenceHelper::run(|mut seq| {
-                                    seq.elem(self.default_parse_token_with_trivia(
+                            seq.elem(SequenceHelper::run(|mut seq| {
+                                seq.elem(
+                                    self.default_parse_token_with_trivia(
                                         input,
                                         TokenKind::OpenParen,
-                                    ))?;
-                                    seq.elem(OptionalHelper::transform(
-                                        self.event_parameters_list(input),
-                                    ))?;
-                                    seq.elem(self.default_parse_token_with_trivia(
-                                        input,
-                                        TokenKind::CloseParen,
-                                    ))?;
-                                    seq.finish()
-                                })
-                            })?;
+                                    ),
+                                )?;
+                                seq.elem(OptionalHelper::transform(
+                                    self.event_parameters_list(input),
+                                ))?;
+                                seq.elem(self.default_parse_token_with_trivia(
+                                    input,
+                                    TokenKind::CloseParen,
+                                ))?;
+                                seq.finish()
+                            }))?;
                             seq.elem(OptionalHelper::transform(
                                 self.default_parse_token_with_trivia(
                                     input,
@@ -1374,7 +1342,9 @@ impl Language {
             })
         };
         let parse_index_access_operator = |input: &mut ParserContext| {
-            PrecedenceHelper::to_postfix_operator(RuleKind::IndexAccessExpression, 37u8, {
+            PrecedenceHelper::to_postfix_operator(
+                RuleKind::IndexAccessExpression,
+                37u8,
                 SequenceHelper::run(|mut seq| {
                     seq.elem(self.default_parse_token_with_trivia(input, TokenKind::OpenBracket))?;
                     seq.elem({
@@ -1397,8 +1367,8 @@ impl Language {
                     })?;
                     seq.elem(self.default_parse_token_with_trivia(input, TokenKind::CloseBracket))?;
                     seq.finish()
-                })
-            })
+                }),
+            )
         };
         let prefix_operator_parser = |input: &mut ParserContext| {
             ChoiceHelper::run(input, |mut choice, input| {
@@ -1658,59 +1628,51 @@ impl Language {
         {
             SequenceHelper::run(|mut seq| {
                 seq.elem(self.default_parse_token_with_trivia(input, TokenKind::ForKeyword))?;
-                seq.elem({
-                    SequenceHelper::run(|mut seq| {
-                        seq.elem(
-                            self.default_parse_token_with_trivia(input, TokenKind::OpenParen),
-                        )?;
-                        seq.elem({
-                            SequenceHelper::run(|mut seq| {
-                                seq.elem({
-                                    ChoiceHelper::run(input, |mut choice, input| {
-                                        let result = {
-                                            ChoiceHelper::run(input, |mut choice, input| {
-                                                let result = self.expression_statement(input);
-                                                choice.consider(result).pick_or_backtrack(input)?;
-                                                let result =
-                                                    self.variable_declaration_statement(input);
-                                                choice.consider(result).pick_or_backtrack(input)?;
-                                                let result =
-                                                    self.tuple_deconstruction_statement(input);
-                                                choice.consider(result).pick_or_backtrack(input)?;
-                                                choice.finish(input)
-                                            })
-                                        };
-                                        choice.consider(result).pick_or_backtrack(input)?;
-                                        let result = self.default_parse_token_with_trivia(
-                                            input,
-                                            TokenKind::Semicolon,
-                                        );
-                                        choice.consider(result).pick_or_backtrack(input)?;
-                                        choice.finish(input)
-                                    })
-                                })?;
-                                seq.elem({
-                                    ChoiceHelper::run(input, |mut choice, input| {
-                                        let result = self.expression_statement(input);
-                                        choice.consider(result).pick_or_backtrack(input)?;
-                                        let result = self.default_parse_token_with_trivia(
-                                            input,
-                                            TokenKind::Semicolon,
-                                        );
-                                        choice.consider(result).pick_or_backtrack(input)?;
-                                        choice.finish(input)
-                                    })
-                                })?;
-                                seq.elem(OptionalHelper::transform(self.expression(input)))?;
-                                seq.finish()
-                            })
-                        })?;
-                        seq.elem(
-                            self.default_parse_token_with_trivia(input, TokenKind::CloseParen),
-                        )?;
-                        seq.finish()
-                    })
-                })?;
+                seq.elem(SequenceHelper::run(|mut seq| {
+                    seq.elem(self.default_parse_token_with_trivia(input, TokenKind::OpenParen))?;
+                    seq.elem({
+                        SequenceHelper::run(|mut seq| {
+                            seq.elem({
+                                ChoiceHelper::run(input, |mut choice, input| {
+                                    let result = {
+                                        ChoiceHelper::run(input, |mut choice, input| {
+                                            let result = self.expression_statement(input);
+                                            choice.consider(result).pick_or_backtrack(input)?;
+                                            let result = self.variable_declaration_statement(input);
+                                            choice.consider(result).pick_or_backtrack(input)?;
+                                            let result = self.tuple_deconstruction_statement(input);
+                                            choice.consider(result).pick_or_backtrack(input)?;
+                                            choice.finish(input)
+                                        })
+                                    };
+                                    choice.consider(result).pick_or_backtrack(input)?;
+                                    let result = self.default_parse_token_with_trivia(
+                                        input,
+                                        TokenKind::Semicolon,
+                                    );
+                                    choice.consider(result).pick_or_backtrack(input)?;
+                                    choice.finish(input)
+                                })
+                            })?;
+                            seq.elem({
+                                ChoiceHelper::run(input, |mut choice, input| {
+                                    let result = self.expression_statement(input);
+                                    choice.consider(result).pick_or_backtrack(input)?;
+                                    let result = self.default_parse_token_with_trivia(
+                                        input,
+                                        TokenKind::Semicolon,
+                                    );
+                                    choice.consider(result).pick_or_backtrack(input)?;
+                                    choice.finish(input)
+                                })
+                            })?;
+                            seq.elem(OptionalHelper::transform(self.expression(input)))?;
+                            seq.finish()
+                        })
+                    })?;
+                    seq.elem(self.default_parse_token_with_trivia(input, TokenKind::CloseParen))?;
+                    seq.finish()
+                }))?;
                 seq.elem(self.statement(input))?;
                 seq.finish()
             })
@@ -1931,18 +1893,12 @@ impl Language {
         {
             SequenceHelper::run(|mut seq| {
                 seq.elem(self.default_parse_token_with_trivia(input, TokenKind::IfKeyword))?;
-                seq.elem({
-                    SequenceHelper::run(|mut seq| {
-                        seq.elem(
-                            self.default_parse_token_with_trivia(input, TokenKind::OpenParen),
-                        )?;
-                        seq.elem(self.expression(input))?;
-                        seq.elem(
-                            self.default_parse_token_with_trivia(input, TokenKind::CloseParen),
-                        )?;
-                        seq.finish()
-                    })
-                })?;
+                seq.elem(SequenceHelper::run(|mut seq| {
+                    seq.elem(self.default_parse_token_with_trivia(input, TokenKind::OpenParen))?;
+                    seq.elem(self.expression(input))?;
+                    seq.elem(self.default_parse_token_with_trivia(input, TokenKind::CloseParen))?;
+                    seq.finish()
+                }))?;
                 seq.elem(self.statement(input))?;
                 seq.elem(OptionalHelper::transform({
                     SequenceHelper::run(|mut seq| {
@@ -2046,20 +2002,14 @@ impl Language {
                 seq.elem(self.default_parse_token_with_trivia(input, TokenKind::InterfaceKeyword))?;
                 seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Identifier))?;
                 seq.elem(OptionalHelper::transform(self.inheritance_specifier(input)))?;
-                seq.elem({
-                    SequenceHelper::run(|mut seq| {
-                        seq.elem(
-                            self.default_parse_token_with_trivia(input, TokenKind::OpenBrace),
-                        )?;
-                        seq.elem(OptionalHelper::transform(
-                            self.interface_members_list(input),
-                        ))?;
-                        seq.elem(
-                            self.default_parse_token_with_trivia(input, TokenKind::CloseBrace),
-                        )?;
-                        seq.finish()
-                    })
-                })?;
+                seq.elem(SequenceHelper::run(|mut seq| {
+                    seq.elem(self.default_parse_token_with_trivia(input, TokenKind::OpenBrace))?;
+                    seq.elem(OptionalHelper::transform(
+                        self.interface_members_list(input),
+                    ))?;
+                    seq.elem(self.default_parse_token_with_trivia(input, TokenKind::CloseBrace))?;
+                    seq.finish()
+                }))?;
                 seq.finish()
             })
         }
@@ -2142,18 +2092,12 @@ impl Language {
             SequenceHelper::run(|mut seq| {
                 seq.elem(self.default_parse_token_with_trivia(input, TokenKind::LibraryKeyword))?;
                 seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Identifier))?;
-                seq.elem({
-                    SequenceHelper::run(|mut seq| {
-                        seq.elem(
-                            self.default_parse_token_with_trivia(input, TokenKind::OpenBrace),
-                        )?;
-                        seq.elem(OptionalHelper::transform(self.library_members_list(input)))?;
-                        seq.elem(
-                            self.default_parse_token_with_trivia(input, TokenKind::CloseBrace),
-                        )?;
-                        seq.finish()
-                    })
-                })?;
+                seq.elem(SequenceHelper::run(|mut seq| {
+                    seq.elem(self.default_parse_token_with_trivia(input, TokenKind::OpenBrace))?;
+                    seq.elem(OptionalHelper::transform(self.library_members_list(input)))?;
+                    seq.elem(self.default_parse_token_with_trivia(input, TokenKind::CloseBrace))?;
+                    seq.finish()
+                }))?;
                 seq.finish()
             })
         }
@@ -2287,28 +2231,22 @@ impl Language {
         {
             SequenceHelper::run(|mut seq| {
                 seq.elem(self.default_parse_token_with_trivia(input, TokenKind::MappingKeyword))?;
-                seq.elem({
-                    SequenceHelper::run(|mut seq| {
-                        seq.elem(
-                            self.default_parse_token_with_trivia(input, TokenKind::OpenParen),
-                        )?;
-                        seq.elem({
-                            SequenceHelper::run(|mut seq| {
-                                seq.elem(self.mapping_key_type(input))?;
-                                seq.elem(self.default_parse_token_with_trivia(
-                                    input,
-                                    TokenKind::EqualGreaterThan,
-                                ))?;
-                                seq.elem(self.mapping_value_type(input))?;
-                                seq.finish()
-                            })
-                        })?;
-                        seq.elem(
-                            self.default_parse_token_with_trivia(input, TokenKind::CloseParen),
-                        )?;
-                        seq.finish()
-                    })
-                })?;
+                seq.elem(SequenceHelper::run(|mut seq| {
+                    seq.elem(self.default_parse_token_with_trivia(input, TokenKind::OpenParen))?;
+                    seq.elem({
+                        SequenceHelper::run(|mut seq| {
+                            seq.elem(self.mapping_key_type(input))?;
+                            seq.elem(self.default_parse_token_with_trivia(
+                                input,
+                                TokenKind::EqualGreaterThan,
+                            ))?;
+                            seq.elem(self.mapping_value_type(input))?;
+                            seq.finish()
+                        })
+                    })?;
+                    seq.elem(self.default_parse_token_with_trivia(input, TokenKind::CloseParen))?;
+                    seq.finish()
+                }))?;
                 seq.finish()
             })
         }
@@ -2403,14 +2341,12 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn named_arguments_declaration(&self, input: &mut ParserContext) -> ParserResult {
-        {
-            SequenceHelper::run(|mut seq| {
-                seq.elem(self.default_parse_token_with_trivia(input, TokenKind::OpenBrace))?;
-                seq.elem(OptionalHelper::transform(self.named_arguments_list(input)))?;
-                seq.elem(self.default_parse_token_with_trivia(input, TokenKind::CloseBrace))?;
-                seq.finish()
-            })
-        }
+        SequenceHelper::run(|mut seq| {
+            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::OpenBrace))?;
+            seq.elem(OptionalHelper::transform(self.named_arguments_list(input)))?;
+            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::CloseBrace))?;
+            seq.finish()
+        })
         .with_kind(RuleKind::NamedArgumentsDeclaration)
     }
 
@@ -2636,18 +2572,12 @@ impl Language {
         {
             SequenceHelper::run(|mut seq| {
                 seq.elem(self.default_parse_token_with_trivia(input, TokenKind::OverrideKeyword))?;
-                seq.elem(OptionalHelper::transform({
-                    SequenceHelper::run(|mut seq| {
-                        seq.elem(
-                            self.default_parse_token_with_trivia(input, TokenKind::OpenParen),
-                        )?;
-                        seq.elem(OptionalHelper::transform(self.identifier_paths_list(input)))?;
-                        seq.elem(
-                            self.default_parse_token_with_trivia(input, TokenKind::CloseParen),
-                        )?;
-                        seq.finish()
-                    })
-                }))?;
+                seq.elem(OptionalHelper::transform(SequenceHelper::run(|mut seq| {
+                    seq.elem(self.default_parse_token_with_trivia(input, TokenKind::OpenParen))?;
+                    seq.elem(OptionalHelper::transform(self.identifier_paths_list(input)))?;
+                    seq.elem(self.default_parse_token_with_trivia(input, TokenKind::CloseParen))?;
+                    seq.finish()
+                })))?;
                 seq.finish()
             })
         }
@@ -2686,14 +2616,12 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn parameters_declaration(&self, input: &mut ParserContext) -> ParserResult {
-        {
-            SequenceHelper::run(|mut seq| {
-                seq.elem(self.default_parse_token_with_trivia(input, TokenKind::OpenParen))?;
-                seq.elem(OptionalHelper::transform(self.parameters_list(input)))?;
-                seq.elem(self.default_parse_token_with_trivia(input, TokenKind::CloseParen))?;
-                seq.finish()
-            })
-        }
+        SequenceHelper::run(|mut seq| {
+            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::OpenParen))?;
+            seq.elem(OptionalHelper::transform(self.parameters_list(input)))?;
+            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::CloseParen))?;
+            seq.finish()
+        })
         .with_kind(RuleKind::ParametersDeclaration)
     }
 
@@ -3139,18 +3067,12 @@ impl Language {
             SequenceHelper::run(|mut seq| {
                 seq.elem(self.default_parse_token_with_trivia(input, TokenKind::StructKeyword))?;
                 seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Identifier))?;
-                seq.elem({
-                    SequenceHelper::run(|mut seq| {
-                        seq.elem(
-                            self.default_parse_token_with_trivia(input, TokenKind::OpenBrace),
-                        )?;
-                        seq.elem(OptionalHelper::transform(self.struct_members_list(input)))?;
-                        seq.elem(
-                            self.default_parse_token_with_trivia(input, TokenKind::CloseBrace),
-                        )?;
-                        seq.finish()
-                    })
-                })?;
+                seq.elem(SequenceHelper::run(|mut seq| {
+                    seq.elem(self.default_parse_token_with_trivia(input, TokenKind::OpenBrace))?;
+                    seq.elem(OptionalHelper::transform(self.struct_members_list(input)))?;
+                    seq.elem(self.default_parse_token_with_trivia(input, TokenKind::CloseBrace))?;
+                    seq.finish()
+                }))?;
                 seq.finish()
             })
         }
@@ -3254,22 +3176,22 @@ impl Language {
                 seq.elem(
                     {
                         SequenceHelper::run(|mut seq| {
-                            seq.elem({
-                                SequenceHelper::run(|mut seq| {
-                                    seq.elem(self.default_parse_token_with_trivia(
+                            seq.elem(SequenceHelper::run(|mut seq| {
+                                seq.elem(
+                                    self.default_parse_token_with_trivia(
                                         input,
                                         TokenKind::OpenParen,
-                                    ))?;
-                                    seq.elem(OptionalHelper::transform(
-                                        self.tuple_members_list(input),
-                                    ))?;
-                                    seq.elem(self.default_parse_token_with_trivia(
-                                        input,
-                                        TokenKind::CloseParen,
-                                    ))?;
-                                    seq.finish()
-                                })
-                            })?;
+                                    ),
+                                )?;
+                                seq.elem(OptionalHelper::transform(
+                                    self.tuple_members_list(input),
+                                ))?;
+                                seq.elem(self.default_parse_token_with_trivia(
+                                    input,
+                                    TokenKind::CloseParen,
+                                ))?;
+                                seq.finish()
+                            }))?;
                             seq.elem(
                                 self.default_parse_token_with_trivia(input, TokenKind::Equal),
                             )?;
@@ -3290,14 +3212,12 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn tuple_expression(&self, input: &mut ParserContext) -> ParserResult {
-        {
-            SequenceHelper::run(|mut seq| {
-                seq.elem(self.default_parse_token_with_trivia(input, TokenKind::OpenParen))?;
-                seq.elem(self.tuple_values_list(input))?;
-                seq.elem(self.default_parse_token_with_trivia(input, TokenKind::CloseParen))?;
-                seq.finish()
-            })
-        }
+        SequenceHelper::run(|mut seq| {
+            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::OpenParen))?;
+            seq.elem(self.tuple_values_list(input))?;
+            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::CloseParen))?;
+            seq.finish()
+        })
         .with_kind(RuleKind::TupleExpression)
     }
 
@@ -3416,18 +3336,16 @@ impl Language {
             {
                 SequenceHelper::run(|mut seq| {
                     seq.elem(self.default_parse_token_with_trivia(input, TokenKind::TypeKeyword))?;
-                    seq.elem({
-                        SequenceHelper::run(|mut seq| {
-                            seq.elem(
-                                self.default_parse_token_with_trivia(input, TokenKind::OpenParen),
-                            )?;
-                            seq.elem(self.type_name(input))?;
-                            seq.elem(
-                                self.default_parse_token_with_trivia(input, TokenKind::CloseParen),
-                            )?;
-                            seq.finish()
-                        })
-                    })?;
+                    seq.elem(SequenceHelper::run(|mut seq| {
+                        seq.elem(
+                            self.default_parse_token_with_trivia(input, TokenKind::OpenParen),
+                        )?;
+                        seq.elem(self.type_name(input))?;
+                        seq.elem(
+                            self.default_parse_token_with_trivia(input, TokenKind::CloseParen),
+                        )?;
+                        seq.finish()
+                    }))?;
                     seq.finish()
                 })
             }
@@ -3440,14 +3358,16 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn type_name(&self, input: &mut ParserContext) -> ParserResult {
         let parse_array_type_name_operator = |input: &mut ParserContext| {
-            PrecedenceHelper::to_postfix_operator(RuleKind::ArrayTypeName, 1u8, {
+            PrecedenceHelper::to_postfix_operator(
+                RuleKind::ArrayTypeName,
+                1u8,
                 SequenceHelper::run(|mut seq| {
                     seq.elem(self.default_parse_token_with_trivia(input, TokenKind::OpenBracket))?;
                     seq.elem(OptionalHelper::transform(self.expression(input)))?;
                     seq.elem(self.default_parse_token_with_trivia(input, TokenKind::CloseBracket))?;
                     seq.finish()
-                })
-            })
+                }),
+            )
         };
         let primary_expression_parser = |input: &mut ParserContext| {
             ChoiceHelper::run(input, |mut choice, input| {
@@ -3763,14 +3683,12 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn using_directive_deconstruction(&self, input: &mut ParserContext) -> ParserResult {
-        {
-            SequenceHelper::run(|mut seq| {
-                seq.elem(self.default_parse_token_with_trivia(input, TokenKind::OpenBrace))?;
-                seq.elem(self.using_directive_symbols_list(input))?;
-                seq.elem(self.default_parse_token_with_trivia(input, TokenKind::CloseBrace))?;
-                seq.finish()
-            })
-        }
+        SequenceHelper::run(|mut seq| {
+            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::OpenBrace))?;
+            seq.elem(self.using_directive_symbols_list(input))?;
+            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::CloseBrace))?;
+            seq.finish()
+        })
         .with_kind(RuleKind::UsingDirectiveDeconstruction)
     }
 
@@ -4120,18 +4038,12 @@ impl Language {
         {
             SequenceHelper::run(|mut seq| {
                 seq.elem(self.default_parse_token_with_trivia(input, TokenKind::WhileKeyword))?;
-                seq.elem({
-                    SequenceHelper::run(|mut seq| {
-                        seq.elem(
-                            self.default_parse_token_with_trivia(input, TokenKind::OpenParen),
-                        )?;
-                        seq.elem(self.expression(input))?;
-                        seq.elem(
-                            self.default_parse_token_with_trivia(input, TokenKind::CloseParen),
-                        )?;
-                        seq.finish()
-                    })
-                })?;
+                seq.elem(SequenceHelper::run(|mut seq| {
+                    seq.elem(self.default_parse_token_with_trivia(input, TokenKind::OpenParen))?;
+                    seq.elem(self.expression(input))?;
+                    seq.elem(self.default_parse_token_with_trivia(input, TokenKind::CloseParen))?;
+                    seq.finish()
+                }))?;
                 seq.elem(self.statement(input))?;
                 seq.finish()
             })
@@ -4154,14 +4066,12 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn yul_block(&self, input: &mut ParserContext) -> ParserResult {
-        {
-            SequenceHelper::run(|mut seq| {
-                seq.elem(self.yul_block_parse_token_with_trivia(input, TokenKind::OpenBrace))?;
-                seq.elem(OptionalHelper::transform(self.yul_statements_list(input)))?;
-                seq.elem(self.yul_block_parse_token_with_trivia(input, TokenKind::CloseBrace))?;
-                seq.finish()
-            })
-        }
+        SequenceHelper::run(|mut seq| {
+            seq.elem(self.yul_block_parse_token_with_trivia(input, TokenKind::OpenBrace))?;
+            seq.elem(OptionalHelper::transform(self.yul_statements_list(input)))?;
+            seq.elem(self.yul_block_parse_token_with_trivia(input, TokenKind::CloseBrace))?;
+            seq.finish()
+        })
         .with_kind(RuleKind::YulBlock)
     }
 
@@ -4201,14 +4111,16 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn yul_expression(&self, input: &mut ParserContext) -> ParserResult {
         let parse_yul_function_call_operator = |input: &mut ParserContext| {
-            PrecedenceHelper::to_postfix_operator(RuleKind::YulFunctionCallExpression, 1u8, {
+            PrecedenceHelper::to_postfix_operator(
+                RuleKind::YulFunctionCallExpression,
+                1u8,
                 SequenceHelper::run(|mut seq| {
                     seq.elem(self.yul_block_parse_token_with_trivia(input, TokenKind::OpenParen))?;
                     seq.elem(OptionalHelper::transform(self.yul_expressions_list(input)))?;
                     seq.elem(self.yul_block_parse_token_with_trivia(input, TokenKind::CloseParen))?;
                     seq.finish()
-                })
-            })
+                }),
+            )
         };
         let primary_expression_parser = |input: &mut ParserContext| {
             ChoiceHelper::run(input, |mut choice, input| {
@@ -4401,14 +4313,12 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn yul_parameters_declaration(&self, input: &mut ParserContext) -> ParserResult {
-        {
-            SequenceHelper::run(|mut seq| {
-                seq.elem(self.yul_block_parse_token_with_trivia(input, TokenKind::OpenParen))?;
-                seq.elem(OptionalHelper::transform(self.yul_identifiers_list(input)))?;
-                seq.elem(self.yul_block_parse_token_with_trivia(input, TokenKind::CloseParen))?;
-                seq.finish()
-            })
-        }
+        SequenceHelper::run(|mut seq| {
+            seq.elem(self.yul_block_parse_token_with_trivia(input, TokenKind::OpenParen))?;
+            seq.elem(OptionalHelper::transform(self.yul_identifiers_list(input)))?;
+            seq.elem(self.yul_block_parse_token_with_trivia(input, TokenKind::CloseParen))?;
+            seq.finish()
+        })
         .with_kind(RuleKind::YulParametersDeclaration)
     }
 

@@ -161,9 +161,33 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                 quote! { self.#function_name(input) }
             }
 
-            Self::DelimitedBy(open, body, close, loc) => {
-                Self::Sequence(vec![*open.clone(), *body.clone(), *close.clone()], *loc)
-                    .to_parser_code(context_name, is_trivia)
+            Self::DelimitedBy(open, body, close, _) => {
+                let [open_token, close_token] = match (open.as_ref(), close.as_ref()) {
+                    (
+                        ParserDefinitionNode::ScannerDefinition(open, ..),
+                        ParserDefinitionNode::ScannerDefinition(close, ..),
+                    ) => [open, close].map(|scanner| format_ident!("{}", scanner.name())),
+                    _ => unreachable!("Only tokens are permitted as delimiters"),
+                };
+
+                let parse_token = format_ident!(
+                    "{context_name}_parse_token_with_trivia",
+                    context_name = context_name.to_snake_case()
+                );
+
+                let parser = body.to_parser_code(context_name, is_trivia);
+                let body_parser = body
+                    .applicable_version_quality_ranges()
+                    .wrap_code(quote! { seq.elem(#parser)?; }, None);
+
+                quote! {
+                    SequenceHelper::run(|mut seq| {
+                        seq.elem(self.#parse_token(input, TokenKind::#open_token))?;
+                        #body_parser
+                        seq.elem(self.#parse_token(input, TokenKind::#close_token))?;
+                        seq.finish()
+                    })
+                }
             }
 
             Self::SeparatedBy(body, separator, loc) => Self::Sequence(
