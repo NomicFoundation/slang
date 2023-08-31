@@ -42,14 +42,13 @@ impl ParserResult {
         input: &mut ParserContext,
         next_token: impl Fn(&mut ParserContext) -> Option<TokenKind>,
         expected: TokenKind,
-        delimiters: &[(TokenKind, TokenKind)],
+        delims: &[(TokenKind, TokenKind)],
     ) -> ParserResult {
         let start = input.position();
 
         match self {
             ParserResult::IncompleteMatch(result) => {
                 let mut stack = vec![];
-                result.consume_stream(input);
 
                 loop {
                     let save = input.position();
@@ -102,11 +101,14 @@ impl ParserResult {
                         Some(token) if stack.last() == Some(&token) => {
                             stack.pop();
                         }
-                        // Found a local opening delimiter, push onto stack
-                        Some(token) if delimiters.iter().any(|(open, _)| token == *open) => {
-                            stack.push(token);
+                        Some(token) => {
+                            // Found a local opening delimiter, push onto stack
+                            if let Some((_, close)) = delims.iter().find(|(op, _)| token == *op) {
+                                stack.push(*close);
+                            } else {
+                                // Keep eating (eventually hits EOF)
+                            }
                         }
-                        Some(..) => { /* Keep eating (eventually hits EOF) */ }
                         // EOF
                         None => {
                             // Undo the stream consumption

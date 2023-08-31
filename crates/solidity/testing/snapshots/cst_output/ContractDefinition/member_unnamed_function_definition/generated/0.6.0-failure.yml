@@ -12,10 +12,9 @@ Errors: # 1 total
        ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/member_unnamed_function_definition/input.sol:2:14]
        │
      2 │ ╭─▶   function () {
-       ┆ ┆   
-     4 │ ├─▶ }
-       │ │      
-       │ ╰────── Error occurred here.
+     3 │ ├─▶   }
+       │ │         
+       │ ╰───────── Error occurred here.
     ───╯
 
 Tree:
@@ -31,4 +30,5 @@ Tree:
                       - ParametersDeclaration (Rule): # 28..31 " ()"
                           - OpenParen (Token): "(" # 29..30
                           - CloseParen (Token): ")" # 30..31
-      - SKIPPED (Token): " {\n  }\n}" # 31..39
+      - SKIPPED (Token): " {\n  }\n" # 31..38
+      - CloseBrace (Token): "}" # 38..39
