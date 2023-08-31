@@ -15,14 +15,5 @@ cli_crate_dir="${REPO_ROOT:?}/crates/infra/cli"
 (
   # Run the CLI through the binary directly instead of 'cargo run'.
   # This way, 'CARGO_*' environment variables set for `infra_cli` don't propagate to child `cargo` commands:
-  cli_binary="${cli_crate_dir}/target/debug/infra_cli"
-
-  # Allow passing args from both the CLI (locally) and environment variables (CI workflows).
-  cli_args="${SLANG_INFRA_CLI_EXTRA_ARGS:-} $*"
-
-  # Clear extra args, in order not to propagate them to recursive calls:
-  SLANG_INFRA_CLI_EXTRA_ARGS=""
-
-  # shellcheck disable=SC2086
-  "${cli_binary}" ${cli_args}
+  "${cli_crate_dir}/target/debug/infra_cli" "$@"
 )
