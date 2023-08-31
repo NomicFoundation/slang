@@ -30,5 +30,20 @@ set -euo pipefail
 #
 
 {
+  # Components included in the minimal profile:
+  # - 'cargo'
+  # - 'rust-std'
+  # - 'rustc'
+  #
+  # Components only included in the default profile:
+  # - 'clippy'
+  # - 'rust-docs'
+  # - 'rustfmt'
+  #
+  # No need to install 'rust-docs' (large offline copy). Add the rest manually:
+  rustup install --no-self-update --profile "minimal" "${RUST_VERSION:?}"
+  rustup component add "clippy" "rustfmt"
+
+  # Make sure we chose the right version, if multiple toolchains are installed:
   rustup default "${RUST_VERSION:?}"
 }

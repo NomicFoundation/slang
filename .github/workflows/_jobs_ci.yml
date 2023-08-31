@@ -28,11 +28,9 @@ jobs:
             cache-main-
             cache-
           path: |
-            .hermit/rust/bin/
-            .hermit/rust/git/db/
-            .hermit/rust/registry/cache/
-            .hermit/rust/registry/index/
-            .hermit/sccache/
+            ~/.cache/hermit/
+            ~/.local/share/virtualenvs/
+            .hermit/
 
       #
       # Run all CI steps in order: _SLANG_INFRA_CI_STEPS_ORDERED_ (keep in sync)
@@ -53,8 +51,6 @@ jobs:
         with:
           key: "cache-${{ github.ref_name }}-${{ hashFiles('Cargo.lock') }}-${{ hashFiles('package-lock.json') }}"
           path: |
-            .hermit/rust/bin/
-            .hermit/rust/git/db/
-            .hermit/rust/registry/cache/
-            .hermit/rust/registry/index/
-            .hermit/sccache/
+            ~/.cache/hermit/
+            ~/.local/share/virtualenvs/
+            .hermit/
