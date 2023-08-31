@@ -90,14 +90,20 @@ fn generate_mod_file(
     let version_breaks_len = version_breaks.len();
     let version_breaks_str = version_breaks
         .iter()
-        .map(|version| format!("\"{version}\","))
+        .map(|version| {
+            format!(
+                "Version::new({}, {}, {}),",
+                version.major, version.minor, version.patch
+            )
+        })
         .collect::<String>();
 
     let contents = format!(
         "
+            use semver::Version;
             {module_declarations}
 
-            pub const VERSION_BREAKS: [&str; {version_breaks_len}] = [
+            pub const VERSION_BREAKS: [Version; {version_breaks_len}] = [
                 {version_breaks_str}
             ];
         ",
