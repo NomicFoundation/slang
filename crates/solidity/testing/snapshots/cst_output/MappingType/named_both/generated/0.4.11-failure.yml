@@ -6,11 +6,11 @@ Source: >
 Errors: # 1 total
   - >
     Error: Expected EqualGreaterThan.
-       ╭─[crates/solidity/testing/snapshots/cst_output/MappingType/named_both/input.sol:1:15]
+       ╭─[crates/solidity/testing/snapshots/cst_output/MappingType/named_both/input.sol:1:16]
        │
      1 │ mapping(string Foo => bytes32 Bar)
-       │               ─────────┬─────────  
-       │                        ╰─────────── Error occurred here.
+       │                ─────────┬────────  
+       │                         ╰────────── Error occurred here.
     ───╯
 
 Tree:
@@ -19,5 +19,5 @@ Tree:
       - OpenParen (Token): "(" # 7..8
       - MappingKeyType (Rule): # 8..14 "string"
           - StringKeyword (Token): "string" # 8..14
-      - SKIPPED (Token): " Foo => bytes32 Bar" # 14..33
+      - SKIPPED (Token): "Foo => bytes32 Bar" # 15..33
       - CloseParen (Token): ")" # 33..34

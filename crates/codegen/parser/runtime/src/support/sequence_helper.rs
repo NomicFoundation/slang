@@ -11,7 +11,7 @@ pub struct SequenceHelper {
     result: State,
 }
 
-#[derive(Default)]
+#[derive(Default, Debug)]
 enum State {
     #[default]
     Empty,

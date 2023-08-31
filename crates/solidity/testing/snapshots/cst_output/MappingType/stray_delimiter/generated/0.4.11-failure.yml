@@ -1,20 +1,20 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ mapping(string => bytes32 Bar)                                                   │ 0..30
+  1  │ mapping(string => bytes32] arg)                                                  │ 0..31
 
 Errors: # 1 total
   - >
     Error: Expected CloseParen or OpenBracket.
-       ╭─[crates/solidity/testing/snapshots/cst_output/MappingType/named_value/input.sol:1:27]
+       ╭─[crates/solidity/testing/snapshots/cst_output/MappingType/stray_delimiter/input.sol:1:26]
        │
-     1 │ mapping(string => bytes32 Bar)
-       │                           ─┬─  
-       │                            ╰─── Error occurred here.
+     1 │ mapping(string => bytes32] arg)
+       │                          ──┬──  
+       │                            ╰──── Error occurred here.
     ───╯
 
 Tree:
-  - MappingType (Rule): # 0..30 "mapping(string => bytes32 Bar)"
+  - MappingType (Rule): # 0..31 "mapping(string => bytes32] arg)"
       - MappingKeyword (Token): "mapping" # 0..7
       - OpenParen (Token): "(" # 7..8
       - MappingKeyType (Rule): # 8..14 "string"
@@ -23,5 +23,5 @@ Tree:
       - MappingValueType (Rule): # 17..25 " bytes32"
           - TypeName (Rule): # 17..25 " bytes32"
               - FixedBytesType (Token): "bytes32" # 18..25
-      - SKIPPED (Token): "Bar" # 26..29
-      - CloseParen (Token): ")" # 29..30
+      - SKIPPED (Token): "] arg" # 25..30
+      - CloseParen (Token): ")" # 30..31

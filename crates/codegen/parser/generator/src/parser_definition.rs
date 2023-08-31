@@ -188,6 +188,7 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                         seq.elem(#parser
                             .recover_until_with_nested_delims(input,
                                 |input| Lexer::next_token::<{ LexicalContext::#context as u8 }>(self, input),
+                                |input| Lexer::leading_trivia(self, input),
                                 TokenKind::#close_token,
                                 Self::#delimiters(),
                             )

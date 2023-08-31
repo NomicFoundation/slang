@@ -9,7 +9,7 @@ Source: >
 Errors: # 1 total
   - >
     Error: Expected ConstantKeyword or Identifier or InternalKeyword or OverrideKeyword or PrivateKeyword or PublicKeyword or Semicolon.
-       ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/member_unnamed_function_definition/input.sol:2:14]
+       ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/member_unnamed_function_definition/input.sol:2:15]
        │
      2 │ ╭─▶   function () {
      3 │ ├─▶   }
@@ -30,5 +30,5 @@ Tree:
                       - ParametersDeclaration (Rule): # 28..31 " ()"
                           - OpenParen (Token): "(" # 29..30
                           - CloseParen (Token): ")" # 30..31
-      - SKIPPED (Token): " {\n  }\n" # 31..38
+      - SKIPPED (Token): "{\n  }\n" # 32..38
       - CloseBrace (Token): "}" # 38..39

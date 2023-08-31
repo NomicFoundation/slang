@@ -353,6 +353,7 @@ impl Language {
                 .recover_until_with_nested_delims(
                     input,
                     |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
+                    |input| Lexer::leading_trivia(self, input),
                     TokenKind::CloseParen,
                     Self::default_delimiters(),
                 ),
@@ -374,6 +375,7 @@ impl Language {
                     .recover_until_with_nested_delims(
                         input,
                         |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
+                        |input| Lexer::leading_trivia(self, input),
                         TokenKind::CloseBracket,
                         Self::default_delimiters(),
                     ),
@@ -454,6 +456,7 @@ impl Language {
                                         self, input,
                                     )
                                 },
+                                |input| Lexer::leading_trivia(self, input),
                                 TokenKind::CloseParen,
                                 Self::default_delimiters(),
                             ),
@@ -479,6 +482,7 @@ impl Language {
                     .recover_until_with_nested_delims(
                         input,
                         |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
+                        |input| Lexer::leading_trivia(self, input),
                         TokenKind::CloseBrace,
                         Self::default_delimiters(),
                     ),
@@ -677,6 +681,7 @@ impl Language {
                                         self, input,
                                     )
                                 },
+                                |input| Lexer::leading_trivia(self, input),
                                 TokenKind::CloseBrace,
                                 Self::default_delimiters(),
                             ),
@@ -759,6 +764,7 @@ impl Language {
                                         self, input,
                                     )
                                 },
+                                |input| Lexer::leading_trivia(self, input),
                                 TokenKind::CloseBrace,
                                 Self::default_delimiters(),
                             ),
@@ -865,6 +871,7 @@ impl Language {
                                         self, input,
                                     )
                                 },
+                                |input| Lexer::leading_trivia(self, input),
                                 TokenKind::CloseParen,
                                 Self::default_delimiters(),
                             ))?;
@@ -951,6 +958,7 @@ impl Language {
                                         self, input,
                                     )
                                 },
+                                |input| Lexer::leading_trivia(self, input),
                                 TokenKind::CloseBrace,
                                 Self::default_delimiters(),
                             ),
@@ -967,7 +975,7 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn error_definition(&self, input: &mut ParserContext) -> ParserResult {
-        if self . version_is_at_least_0_8_4 { SequenceHelper :: run (| mut seq | { seq . elem ({ SequenceHelper :: run (| mut seq | { seq . elem (self . default_parse_token_with_trivia (input , TokenKind :: ErrorKeyword)) ? ; seq . elem (self . default_parse_token_with_trivia (input , TokenKind :: Identifier)) ? ; seq . elem (SequenceHelper :: run (| mut seq | { seq . elem (self . default_parse_token_with_trivia (input , TokenKind :: OpenParen)) ? ; input . expect_closing (TokenKind :: CloseParen) ; seq . elem (OptionalHelper :: transform (self . error_parameters_list (input)) . recover_until_with_nested_delims (input , | input | Lexer :: next_token :: < { LexicalContext :: Default as u8 } > (self , input) , TokenKind :: CloseParen , Self :: default_delimiters () ,)) ? ; input . pop_closing (TokenKind :: CloseParen) ; seq . elem (self . default_parse_token_with_trivia (input , TokenKind :: CloseParen)) ? ; seq . finish () })) ? ; seq . finish () }) } . try_recover_with (input , | input | self . default_skip_tokens_until (input , TokenKind :: Semicolon))) ? ; seq . elem (self . default_greedy_parse_token_with_trivia (input , TokenKind :: Semicolon)) ? ; seq . finish () }) } else { ParserResult :: disabled () } . with_kind (RuleKind :: ErrorDefinition)
+        if self . version_is_at_least_0_8_4 { SequenceHelper :: run (| mut seq | { seq . elem ({ SequenceHelper :: run (| mut seq | { seq . elem (self . default_parse_token_with_trivia (input , TokenKind :: ErrorKeyword)) ? ; seq . elem (self . default_parse_token_with_trivia (input , TokenKind :: Identifier)) ? ; seq . elem (SequenceHelper :: run (| mut seq | { seq . elem (self . default_parse_token_with_trivia (input , TokenKind :: OpenParen)) ? ; input . expect_closing (TokenKind :: CloseParen) ; seq . elem (OptionalHelper :: transform (self . error_parameters_list (input)) . recover_until_with_nested_delims (input , | input | Lexer :: next_token :: < { LexicalContext :: Default as u8 } > (self , input) , | input | Lexer :: leading_trivia (self , input) , TokenKind :: CloseParen , Self :: default_delimiters () ,)) ? ; input . pop_closing (TokenKind :: CloseParen) ; seq . elem (self . default_parse_token_with_trivia (input , TokenKind :: CloseParen)) ? ; seq . finish () })) ? ; seq . finish () }) } . try_recover_with (input , | input | self . default_skip_tokens_until (input , TokenKind :: Semicolon))) ? ; seq . elem (self . default_greedy_parse_token_with_trivia (input , TokenKind :: Semicolon)) ? ; seq . finish () }) } else { ParserResult :: disabled () } . with_kind (RuleKind :: ErrorDefinition)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -1038,6 +1046,7 @@ impl Language {
                                                 self, input,
                                             )
                                         },
+                                        |input| Lexer::leading_trivia(self, input),
                                         TokenKind::CloseParen,
                                         Self::default_delimiters(),
                                     ),
@@ -1400,6 +1409,7 @@ impl Language {
                             |input| {
                                 Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input)
                             },
+                            |input| Lexer::leading_trivia(self, input),
                             TokenKind::CloseBracket,
                             Self::default_delimiters(),
                         ),
@@ -1717,6 +1727,7 @@ impl Language {
                             |input| {
                                 Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input)
                             },
+                            |input| Lexer::leading_trivia(self, input),
                             TokenKind::CloseParen,
                             Self::default_delimiters(),
                         ),
@@ -1951,6 +1962,7 @@ impl Language {
                     seq.elem(self.expression(input).recover_until_with_nested_delims(
                         input,
                         |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
+                        |input| Lexer::leading_trivia(self, input),
                         TokenKind::CloseParen,
                         Self::default_delimiters(),
                     ))?;
@@ -2068,6 +2080,7 @@ impl Language {
                                         self, input,
                                     )
                                 },
+                                |input| Lexer::leading_trivia(self, input),
                                 TokenKind::CloseBrace,
                                 Self::default_delimiters(),
                             ),
@@ -2170,6 +2183,7 @@ impl Language {
                                         self, input,
                                     )
                                 },
+                                |input| Lexer::leading_trivia(self, input),
                                 TokenKind::CloseBrace,
                                 Self::default_delimiters(),
                             ),
@@ -2331,6 +2345,7 @@ impl Language {
                             |input| {
                                 Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input)
                             },
+                            |input| Lexer::leading_trivia(self, input),
                             TokenKind::CloseParen,
                             Self::default_delimiters(),
                         ),
@@ -2441,6 +2456,7 @@ impl Language {
                     .recover_until_with_nested_delims(
                         input,
                         |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
+                        |input| Lexer::leading_trivia(self, input),
                         TokenKind::CloseBrace,
                         Self::default_delimiters(),
                     ),
@@ -2686,6 +2702,7 @@ impl Language {
                                         self, input,
                                     )
                                 },
+                                |input| Lexer::leading_trivia(self, input),
                                 TokenKind::CloseParen,
                                 Self::default_delimiters(),
                             ),
@@ -2740,6 +2757,7 @@ impl Language {
                     .recover_until_with_nested_delims(
                         input,
                         |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
+                        |input| Lexer::leading_trivia(self, input),
                         TokenKind::CloseParen,
                         Self::default_delimiters(),
                     ),
@@ -3185,6 +3203,7 @@ impl Language {
                                         self, input,
                                     )
                                 },
+                                |input| Lexer::leading_trivia(self, input),
                                 TokenKind::CloseBrace,
                                 Self::default_delimiters(),
                             ),
@@ -3303,6 +3322,7 @@ impl Language {
                                                 self, input,
                                             )
                                         },
+                                        |input| Lexer::leading_trivia(self, input),
                                         TokenKind::CloseParen,
                                         Self::default_delimiters(),
                                     ),
@@ -3338,6 +3358,7 @@ impl Language {
                     .recover_until_with_nested_delims(
                         input,
                         |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
+                        |input| Lexer::leading_trivia(self, input),
                         TokenKind::CloseParen,
                         Self::default_delimiters(),
                     ),
@@ -3474,6 +3495,7 @@ impl Language {
                             |input| {
                                 Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input)
                             },
+                            |input| Lexer::leading_trivia(self, input),
                             TokenKind::CloseParen,
                             Self::default_delimiters(),
                         ))?;
@@ -3510,6 +3532,7 @@ impl Language {
                                         self, input,
                                     )
                                 },
+                                |input| Lexer::leading_trivia(self, input),
                                 TokenKind::CloseBracket,
                                 Self::default_delimiters(),
                             ),
@@ -3823,6 +3846,7 @@ impl Language {
                     .recover_until_with_nested_delims(
                         input,
                         |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
+                        |input| Lexer::leading_trivia(self, input),
                         TokenKind::CloseBrace,
                         Self::default_delimiters(),
                     ),
@@ -4181,6 +4205,7 @@ impl Language {
                     seq.elem(self.expression(input).recover_until_with_nested_delims(
                         input,
                         |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
+                        |input| Lexer::leading_trivia(self, input),
                         TokenKind::CloseParen,
                         Self::default_delimiters(),
                     ))?;
@@ -4220,6 +4245,7 @@ impl Language {
                         |input| {
                             Lexer::next_token::<{ LexicalContext::YulBlock as u8 }>(self, input)
                         },
+                        |input| Lexer::leading_trivia(self, input),
                         TokenKind::CloseBrace,
                         Self::yul_block_delimiters(),
                     ),
@@ -4282,6 +4308,7 @@ impl Language {
                                         self, input,
                                     )
                                 },
+                                |input| Lexer::leading_trivia(self, input),
                                 TokenKind::CloseParen,
                                 Self::yul_block_delimiters(),
                             ),
@@ -4493,6 +4520,7 @@ impl Language {
                         |input| {
                             Lexer::next_token::<{ LexicalContext::YulBlock as u8 }>(self, input)
                         },
+                        |input| Lexer::leading_trivia(self, input),
                         TokenKind::CloseParen,
                         Self::yul_block_delimiters(),
                     ),
