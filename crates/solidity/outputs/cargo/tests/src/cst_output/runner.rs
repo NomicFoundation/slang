@@ -39,15 +39,12 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
 
         let output = Language::new(version.to_owned())?.parse(production_kind, &source);
 
-        if Some(&output) == last_output.as_ref() {
+        let output = match last_output {
             // Skip this version if it produces the same output.
             // Note: comparing objects cheaply before expensive serialization.
-            continue;
-        }
-
-        last_output = Some(output);
-
-        let output = Language::new(version.to_owned())?.parse(production_kind, &source);
+            Some(ref last) if last == &output => continue,
+            _ => &*last_output.insert(output),
+        };
 
         let errors = output
             .errors()
