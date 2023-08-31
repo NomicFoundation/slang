@@ -6,6 +6,7 @@ use crate::parse_error::ParseError;
 use crate::support::ParserResult;
 use crate::text_index::{TextRange, TextRangeExtensions as _};
 
+use super::parser_result::SkippedUntil;
 use super::ParserContext;
 
 impl ParserResult {
@@ -46,32 +47,33 @@ impl ParserResult {
         let start = input.position();
 
         match self {
-            ParserResult::IncompleteMatch(mut result) => {
+            ParserResult::IncompleteMatch(result) => {
                 let mut stack = vec![];
+                result.consume_stream(input);
 
                 loop {
                     let save = input.position();
                     match next_token(input) {
                         // Found the expected token
                         Some(token) if stack.is_empty() && token == expected => {
-                            // TODO: Consume the stream?
-
                             // Don't consume the delimiter; parent will consume it
                             input.set_position(save);
 
                             let text_range = start..save;
-                            result.nodes.push(cst::Node::token(
-                                TokenKind::SKIPPED,
-                                input.content(text_range.utf8()),
-                            ));
+
                             input.emit(ParseError {
-                                text_range,
+                                text_range: text_range.clone(),
                                 tokens_that_would_have_allowed_more_progress: result
                                     .expected_tokens
                                     .clone(),
                             });
 
-                            return ParserResult::r#match(result.nodes, result.expected_tokens);
+                            return ParserResult::SkippedUntil(SkippedUntil {
+                                nodes: result.nodes,
+                                expected_tokens: vec![expected],
+                                skipped: input.content(text_range.utf8()),
+                                found: token,
+                            });
                         }
                         // Found a closing delimiter that's expected by the parent - unwind the parse stack
                         Some(token)
@@ -81,19 +83,20 @@ impl ParserResult {
                             input.set_position(save);
 
                             let text_range = start..save;
-                            result.nodes.push(cst::Node::token(
-                                TokenKind::SKIPPED,
-                                input.content(text_range.utf8()),
-                            ));
                             input.emit(ParseError {
-                                text_range,
+                                text_range: text_range.clone(),
                                 tokens_that_would_have_allowed_more_progress: result
                                     .expected_tokens
                                     .clone(),
                             });
 
                             // TODO: Unwind the parse stack, rather than returning match here
-                            return ParserResult::r#match(result.nodes, result.expected_tokens);
+                            return ParserResult::SkippedUntil(SkippedUntil {
+                                nodes: result.nodes,
+                                expected_tokens: vec![expected],
+                                skipped: input.content(text_range.utf8()),
+                                found: token,
+                            });
                         }
                         // Found the local closing delimiter, pop the stack
                         Some(token) if stack.last() == Some(&token) => {
@@ -103,24 +106,13 @@ impl ParserResult {
                         Some(token) if delimiters.iter().any(|(open, _)| token == *open) => {
                             stack.push(token);
                         }
-                        Some(..) => {} // Keep eating (eventually hits EOF)
+                        Some(..) => { /* Keep eating (eventually hits EOF) */ }
                         // EOF
                         None => {
-                            // TODO: Investigate whether we can fully consume here
+                            // Undo the stream consumption
+                            input.set_position(start);
 
-                            let text_range = start..save;
-                            result.nodes.push(cst::Node::token(
-                                TokenKind::SKIPPED,
-                                input.content(text_range.utf8()),
-                            ));
-                            input.emit(ParseError {
-                                text_range,
-                                tokens_that_would_have_allowed_more_progress: result
-                                    .expected_tokens
-                                    .clone(),
-                            });
-
-                            return ParserResult::r#match(result.nodes, result.expected_tokens);
+                            return ParserResult::IncompleteMatch(result);
                         }
                     }
                 }

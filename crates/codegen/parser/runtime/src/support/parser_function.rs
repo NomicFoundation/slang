@@ -38,6 +38,11 @@ where
             | ParserResult::Match(Match {
                 nodes,
                 expected_tokens,
+            })
+            | ParserResult::SkippedUntil(SkippedUntil {
+                nodes,
+                expected_tokens,
+                ..
             }) => {
                 let topmost_rule = match &nodes[..] {
                     [cst::Node::Rule(rule)] => Rc::clone(&rule),

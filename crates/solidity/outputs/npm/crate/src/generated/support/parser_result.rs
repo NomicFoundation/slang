@@ -11,6 +11,7 @@ pub enum ParserResult {
     PrattOperatorMatch(PrattOperatorMatch),
     IncompleteMatch(IncompleteMatch),
     NoMatch(NoMatch),
+    SkippedUntil(SkippedUntil),
 }
 
 impl ParserResult {
@@ -59,8 +60,14 @@ impl ParserResult {
                 vec![cst::Node::rule(new_kind, incomplete_match.nodes)],
                 incomplete_match.expected_tokens,
             ),
+            ParserResult::SkippedUntil(skipped) => ParserResult::SkippedUntil(SkippedUntil {
+                nodes: vec![cst::Node::rule(new_kind, skipped.nodes)],
+                ..skipped
+            }),
             ParserResult::NoMatch(_) => self,
-            _ => unreachable!("PrattOperatorMatch cannot be converted to a rule"),
+            ParserResult::PrattOperatorMatch(_) => {
+                unreachable!("PrattOperatorMatch cannot be converted to a rule")
+            }
         }
     }
 }
@@ -178,4 +185,15 @@ impl NoMatch {
     pub fn new(expected_tokens: Vec<TokenKind>) -> Self {
         Self { expected_tokens }
     }
+}
+
+#[derive(PartialEq, Eq, Clone, Debug)]
+pub struct SkippedUntil {
+    pub nodes: Vec<cst::Node>,
+    /// Skipped text following the last node
+    pub skipped: String,
+    /// At which token was the stream pointing at when we bailed
+    pub found: TokenKind,
+    /// Token we expected to find
+    pub expected_tokens: Vec<TokenKind>,
 }

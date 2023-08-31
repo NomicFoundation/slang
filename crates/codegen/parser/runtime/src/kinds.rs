@@ -36,6 +36,12 @@ pub enum RuleKind {
     XXX,
 }
 
+impl RuleKind {
+    pub fn is_trivia(&self) -> bool {
+        todo!()
+    }
+}
+
 #[derive(
     Debug,
     Eq,

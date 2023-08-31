@@ -53,6 +53,34 @@ impl Node {
         Cursor::new(self.clone())
     }
 
+    pub fn as_rule(&self) -> Option<&Rc<RuleNode>> {
+        match self {
+            Self::Rule(node) => Some(node),
+            _ => None,
+        }
+    }
+
+    pub fn as_token(&self) -> Option<&Rc<TokenNode>> {
+        match self {
+            Self::Token(node) => Some(node),
+            _ => None,
+        }
+    }
+
+    pub fn unwrap_rule(self) -> Option<Rc<RuleNode>> {
+        match self {
+            Self::Rule(node) => Some(node),
+            _ => None,
+        }
+    }
+
+    pub fn unwrap_token(self) -> Option<Rc<TokenNode>> {
+        match self {
+            Self::Token(node) => Some(node),
+            _ => None,
+        }
+    }
+
     pub fn as_token_with_kind(&self, kinds: &[TokenKind]) -> Option<&Rc<TokenNode>> {
         if let Node::Token(token_node) = self {
             if kinds.contains(&token_node.kind) {

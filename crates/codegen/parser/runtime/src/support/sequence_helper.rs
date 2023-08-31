@@ -1,6 +1,8 @@
-use std::ops::ControlFlow;
+use std::{ops::ControlFlow, rc::Rc};
 
-use super::parser_result::{ParserResult, PrattElement};
+use crate::{cst, kinds::TokenKind, support::parser_result::SkippedUntil};
+
+use super::parser_result::{Match, ParserResult, PrattElement};
 
 /// Keeps accumulating parses sequentially until it hits an incomplete or no match.
 #[must_use]
@@ -106,6 +108,52 @@ impl SequenceHelper {
                             .collect(),
                         next.expected_tokens,
                     ));
+                }
+                // Enter recovery mode
+                (ParserResult::Match(running), ParserResult::SkippedUntil(mut skipped)) => {
+                    running.nodes.extend(std::mem::take(&mut skipped.nodes));
+                    self.result = State::Running(ParserResult::SkippedUntil(SkippedUntil {
+                        nodes: std::mem::take(&mut running.nodes),
+                        ..skipped
+                    }));
+                }
+                (ParserResult::PrattOperatorMatch(_), ParserResult::SkippedUntil(_)) => todo!(),
+                // See if we can recover
+                (ParserResult::SkippedUntil(running), ParserResult::Match(next)) => {
+                    let tokens: Vec<_> =
+                        next.nodes.iter().filter_map(cst::Node::as_token).collect();
+                    let mut rules = next.nodes.iter().filter_map(cst::Node::as_rule);
+
+                    let is_single_token_with_trivia =
+                        tokens.len() == 1 && rules.all(|rule| rule.kind.is_trivia());
+                    let found_token = tokens.first().copied();
+
+                    // We can only recover if the next node is a single token (with trivia) that's expected by us
+                    // or an ancestor
+                    if is_single_token_with_trivia
+                        && found_token.map_or(false, |t| running.expected_tokens.contains(&t.kind))
+                    {
+                        running.nodes.push(cst::Node::token(
+                            TokenKind::SKIPPED,
+                            std::mem::take(&mut running.skipped),
+                        ));
+                        running
+                            .nodes
+                            .push(cst::Node::Token(Rc::clone(&found_token.unwrap())));
+
+                        self.result = State::Running(ParserResult::Match(Match {
+                            nodes: std::mem::take(&mut running.nodes),
+                            expected_tokens: next.expected_tokens,
+                        }));
+                    } else {
+                        // We can only finish recovery, not accumulate more nodes
+                        debug_assert!(self.is_done());
+                        return;
+                    }
+                }
+                // Otherwise, let the outer parse deal with that
+                (ParserResult::SkippedUntil(_), _) => {
+                    return;
                 }
             },
         }

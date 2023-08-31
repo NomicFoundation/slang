@@ -12,22 +12,21 @@ Errors: # 2 total
        ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/member_constructor_definition/input.sol:2:14]
        │
      2 │ ╭─▶   constructor() public {
-       ┆ ┆   
-     4 │ ├─▶ }
-       │ │      
-       │ ╰────── Error occurred here.
+     3 │ ├─▶   }
+       │ │         
+       │ ╰───────── Error occurred here.
     ───╯
   - >
-    Error: Expected CloseBrace or ConstantKeyword or Identifier or InternalKeyword or OverrideKeyword or PrivateKeyword or PublicKeyword or Semicolon.
-       ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/member_constructor_definition/input.sol:4:2]
+    Error: Expected end of file.
+       ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/member_constructor_definition/input.sol:4:1]
        │
      4 │ }
-       │  │ 
-       │  ╰─ Error occurred here.
+       │ ┬  
+       │ ╰── Error occurred here.
     ───╯
 
 Tree:
-  - ContractDefinition (Rule): # 0..48 "contract Sample {\n  constructor() public {\n  }\n}"
+  - ContractDefinition (Rule): # 0..47 "contract Sample {\n  constructor() public {\n  }\n"
       - ContractKeyword (Token): "contract" # 0..8
       - Identifier (Token): "Sample" # 9..15
       - OpenBrace (Token): "{" # 16..17
@@ -36,5 +35,6 @@ Tree:
               - TypeName (Rule): # 18..31 "  constructor"
                   - IdentifierPath (Rule): # 18..31 "  constructor"
                       - Identifier (Token): "constructor" # 20..31
-      - SKIPPED (Token): "() public {\n  }\n}" # 31..48
-      - SKIPPED (Token): "" # 48..48
+      - SKIPPED (Token): "() public {\n  " # 31..45
+      - CloseBrace (Token): "}" # 45..46
+      - SKIPPED (Token): "\n" # 46..47

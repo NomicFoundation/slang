@@ -30,6 +30,8 @@ pub struct CodeGenerator {
     rule_kinds: BTreeSet<&'static str>,
     token_kinds: BTreeSet<&'static str>,
     production_kinds: BTreeSet<&'static str>,
+    // TODO: Make it lexical context-dependent
+    trivia_kinds: BTreeSet<&'static str>,
 
     top_level_scanner_names: BTreeSet<&'static str>,
     scanner_functions: Vec<(&'static str, String)>, // (name of scanner, code)
@@ -219,7 +221,7 @@ impl GrammarVisitor for CodeGenerator {
         self.set_current_context(parser.context());
         self.production_kinds.insert(parser.name());
         self.rule_kinds.insert(parser.name());
-        self.production_kinds.insert(parser.name());
+        self.trivia_kinds.insert(parser.name());
         self.parser_functions.push((
             parser.name(),
             {

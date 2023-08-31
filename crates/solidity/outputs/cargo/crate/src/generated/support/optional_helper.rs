@@ -15,6 +15,7 @@ impl OptionalHelper {
             // ... otherwise we return the result as-is
             ParserResult::Match(_)
             | ParserResult::PrattOperatorMatch(_)
+            | ParserResult::SkippedUntil(_)
             | ParserResult::IncompleteMatch(_) => result,
         }
     }
