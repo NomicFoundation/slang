@@ -26,6 +26,8 @@ where
         let is_incomplete = matches!(result, ParserResult::IncompleteMatch(_));
 
         match result {
+            ParserResult::PrattOperatorMatch(..) => unreachable!("PrattOperatorMatch is internal"),
+
             ParserResult::NoMatch(no_match) => ParseOutput {
                 parse_tree: cst::Node::token(TokenKind::SKIPPED, input.to_string()),
                 errors: vec![ParseError::new_covering_range(
@@ -33,19 +35,25 @@ where
                     no_match.expected_tokens,
                 )],
             },
-            ParserResult::IncompleteMatch(IncompleteMatch {
-                nodes,
-                expected_tokens,
-            })
-            | ParserResult::Match(Match {
-                nodes,
-                expected_tokens,
-            })
-            | ParserResult::SkippedUntil(SkippedUntil {
-                nodes,
-                expected_tokens,
-                ..
-            }) => {
+            some_match => {
+                let (nodes, expected_tokens) = match some_match {
+                    ParserResult::PrattOperatorMatch(..) | ParserResult::NoMatch(..) => {
+                        unreachable!("Handled above")
+                    }
+                    ParserResult::Match(Match {
+                        nodes,
+                        expected_tokens,
+                    })
+                    | ParserResult::IncompleteMatch(IncompleteMatch {
+                        nodes,
+                        expected_tokens,
+                    }) => (nodes, expected_tokens),
+
+                    ParserResult::SkippedUntil(SkippedUntil {
+                        nodes, expected, ..
+                    }) => (nodes, vec![expected]),
+                };
+
                 let topmost_rule = match &nodes[..] {
                     [cst::Node::Rule(rule)] => Rc::clone(&rule),
                     [_] => unreachable!(
@@ -84,7 +92,6 @@ where
                     }
                 }
             }
-            ParserResult::PrattOperatorMatch(..) => unreachable!("PrattOperatorMatch is internal"),
         }
     }
 }

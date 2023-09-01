@@ -192,6 +192,6 @@ pub struct SkippedUntil {
     pub skipped: String,
     /// At which token was the stream pointing at when we bailed
     pub found: TokenKind,
-    /// Token we expected to find
-    pub expected_tokens: Vec<TokenKind>,
+    /// Token we expected to skip until
+    pub expected: TokenKind,
 }

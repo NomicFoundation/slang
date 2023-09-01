@@ -91,7 +91,7 @@ impl ParserResult {
 
                             return ParserResult::SkippedUntil(SkippedUntil {
                                 nodes: result.nodes,
-                                expected_tokens: vec![expected],
+                                expected,
                                 skipped: input.content(text_range.utf8()),
                                 found: token,
                             });
@@ -114,7 +114,7 @@ impl ParserResult {
                             // TODO: Unwind the parse stack, rather than returning match here
                             return ParserResult::SkippedUntil(SkippedUntil {
                                 nodes: result.nodes,
-                                expected_tokens: vec![expected],
+                                expected,
                                 skipped: input.content(text_range.utf8()),
                                 found: token,
                             });
@@ -168,7 +168,7 @@ impl ParserResult {
 
                             return ParserResult::SkippedUntil(SkippedUntil {
                                 nodes: result.nodes,
-                                expected_tokens: vec![expected],
+                                expected,
                                 skipped: input.content(text_range.utf8()),
                                 found: token,
                             });
@@ -191,7 +191,7 @@ impl ParserResult {
                             // TODO: Unwind the parse stack, rather than returning match here
                             return ParserResult::SkippedUntil(SkippedUntil {
                                 nodes: result.nodes,
-                                expected_tokens: vec![expected],
+                                expected,
                                 skipped: input.content(text_range.utf8()),
                                 found: token,
                             });
