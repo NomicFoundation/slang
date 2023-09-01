@@ -133,7 +133,7 @@ impl SequenceHelper {
                     // We can only recover if the next node is a single token (with trivia) that's expected by us
                     // or an ancestor
                     if is_single_token_with_trivia
-                        && found_token.map_or(false, |t| running.expected_tokens.contains(&t.kind))
+                        && found_token.map(|t| t.kind) == Some(running.expected)
                     {
                         running.nodes.push(cst::Node::token(
                             TokenKind::SKIPPED,
