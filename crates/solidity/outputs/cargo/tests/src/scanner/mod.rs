@@ -6,8 +6,7 @@ use slang_solidity::{
 
 #[test]
 fn test_next_token() {
-    let version = Version::parse("0.8.0").unwrap();
-    let language = Language::new(version).unwrap();
+    let language = Language::new(Version::new(0, 8, 0)).unwrap();
 
     for (s, k) in &[
         ("contract", ContractKeyword),
@@ -25,11 +24,10 @@ fn test_next_token() {
         ("// single line\n", SingleLineComment),
         ("/* multi-line\n   comment */ blah", MultilineComment),
         ("/* multi-line comment **/ blah", MultilineComment),
+        ("0ZZ", SKIPPED),
+        ("0xabZZ", SKIPPED),
+        ("'abc'ZZ", SKIPPED),
     ] {
         assert_eq!(language.scan(LexicalContext::Default, s), Some(*k));
     }
-
-    assert_eq!(language.scan(LexicalContext::Default, "0ZZ"), None);
-    assert_eq!(language.scan(LexicalContext::Default, "0xabZZ"), None);
-    assert_eq!(language.scan(LexicalContext::Default, "'abc'ZZ"), None);
 }
