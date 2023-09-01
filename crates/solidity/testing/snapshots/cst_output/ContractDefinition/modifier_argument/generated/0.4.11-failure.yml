@@ -14,31 +14,16 @@ Source: >
   11 │   }                                                                                                │ 381..384
   12 │ }                                                                                                  │ 385..386
 
-Errors: # 3 total
+Errors: # 1 total
   - >
-    Error: Expected Semicolon.
-       ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/modifier_argument/input.sol:7:15]
-       │
-     7 │ ╭─▶     unchecked {
-     8 │ ├─▶       freeWallets[msg.sender] += _mintAmount;
-       │ │                                                   
-       │ ╰─────────────────────────────────────────────────── Error occurred here.
-    ───╯
-  - >
-    Error: Expected ConstantKeyword or Identifier or InternalKeyword or OverrideKeyword or PrivateKeyword or PublicKeyword.
-        ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/modifier_argument/input.sol:10:14]
+    Error: Expected Ampersand or AmpersandAmpersand or AmpersandEqual or Asterisk or AsteriskAsterisk or AsteriskEqual or BangEqual or Bar or BarBar or BarEqual or Caret or CaretEqual or Equal or EqualEqual or GreaterThan or GreaterThanEqual or GreaterThanGreaterThan or GreaterThanGreaterThanEqual or GreaterThanGreaterThanGreaterThan or GreaterThanGreaterThanGreaterThanEqual or LessThan or LessThanEqual or LessThanLessThan or LessThanLessThanEqual or Minus or MinusEqual or Percent or PercentEqual or Plus or PlusEqual or Semicolon or Slash or SlashEqual.
+        ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/modifier_argument/input.sol:7:15]
         │
-     10 │     _safeMint(msg.sender, _mintAmount);
-        │              ────────────┬────────────  
-        │                          ╰────────────── Error occurred here.
-    ────╯
-  - >
-    Error: Expected end of file.
-        ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/modifier_argument/input.sol:12:1]
-        │
-     12 │ }
-        │ ─┬  
-        │  ╰── Error occurred here.
+      7 │ ╭─▶     unchecked {
+        ┆ ┆   
+     10 │ ├─▶     _safeMint(msg.sender, _mintAmount);
+        │ │                                             
+        │ ╰───────────────────────────────────────────── Error occurred here.
     ────╯
 
 Tree:
@@ -48,8 +33,8 @@ Tree:
       - ContractKeyword (Token): "contract" # 31..39
       - Identifier (Token): "TYREAI" # 40..46
       - OpenBrace (Token): "{" # 47..48
-      - ContractMembersList (Rule): # 49..381 "  function freeMint(uint256 _mintAmount) public mi..."
-          - FunctionDefinition (Rule): # 49..341 "  function freeMint(uint256 _mintAmount) public mi..."
+      - ContractMembersList (Rule): # 49..385 "  function freeMint(uint256 _mintAmount) public mi..."
+          - FunctionDefinition (Rule): # 49..385 "  function freeMint(uint256 _mintAmount) public mi..."
               - FunctionKeyword (Token): "function" # 51..59
               - Identifier (Token): "freeMint" # 60..68
               - ParametersDeclaration (Rule): # 68..89 "(uint256 _mintAmount)"
@@ -71,9 +56,9 @@ Tree:
                               - Expression (Rule): # 112..123 "_mintAmount"
                                   - Identifier (Token): "_mintAmount" # 112..123
                           - CloseParen (Token): ")" # 123..124
-              - Block (Rule): # 124..341 " {\n    if (!isFreeMint()) revert FreeMintOver();\n ..."
+              - Block (Rule): # 124..385 " {\n    if (!isFreeMint()) revert FreeMintOver();\n ..."
                   - OpenBrace (Token): "{" # 125..126
-                  - StatementsList (Rule): # 127..335 "    if (!isFreeMint()) revert FreeMintOver();\n    ..."
+                  - StatementsList (Rule): # 127..381 "    if (!isFreeMint()) revert FreeMintOver();\n    ..."
                       - Statement (Rule): # 127..173 "    if (!isFreeMint()) revert FreeMintOver();\n"
                           - IfStatement (Rule): # 127..173 "    if (!isFreeMint()) revert FreeMintOver();\n"
                               - IfKeyword (Token): "if" # 131..133
@@ -134,18 +119,11 @@ Tree:
                                           - OpenParen (Token): "(" # 268..269
                                           - CloseParen (Token): ")" # 269..270
                                       - Semicolon (Token): ";" # 270..271
-                      - Statement (Rule): # 272..335 "\n    unchecked {\n      freeWallets[msg.sender] += ..."
-                          - ExpressionStatement (Rule): # 272..335 "\n    unchecked {\n      freeWallets[msg.sender] += ..."
+                      - Statement (Rule): # 272..381 "\n    unchecked {\n      freeWallets[msg.sender] += ..."
+                          - ExpressionStatement (Rule): # 272..381 "\n    unchecked {\n      freeWallets[msg.sender] += ..."
                               - Expression (Rule): # 272..286 "\n    unchecked"
                                   - Identifier (Token): "unchecked" # 277..286
-                              - SKIPPED (Token): "{\n      freeWallets[msg.sender] += _mintAmount" # 287..333
-                              - Semicolon (Token): ";" # 333..334
-                  - CloseBrace (Token): "}" # 339..340
-          - StateVariableDefinition (Rule): # 341..381 "    _safeMint(msg.sender, _mintAmount);\n"
-              - TypeName (Rule): # 341..354 "    _safeMint"
-                  - IdentifierPath (Rule): # 341..354 "    _safeMint"
-                      - Identifier (Token): "_safeMint" # 345..354
-              - SKIPPED (Token): "(msg.sender, _mintAmount)" # 354..379
-              - Semicolon (Token): ";" # 379..380
-      - CloseBrace (Token): "}" # 383..384
-      - SKIPPED (Token): "}\n" # 385..387
+                              - SKIPPED (Token): "{\n      freeWallets[msg.sender] += _mintAmount;\n  ..." # 287..379
+                              - Semicolon (Token): ";" # 379..380
+                  - CloseBrace (Token): "}" # 383..384
+      - CloseBrace (Token): "}" # 385..386

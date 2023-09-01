@@ -3,9 +3,7 @@
 use crate::{
     cst,
     kinds::{LexicalContext, TokenKind},
-    parse_error::ParseError,
     support::{ParserContext, ParserResult},
-    text_index::TextRange,
 };
 
 // Ensure that the `LexicalContext` enum is `repr(u8)`.
@@ -72,95 +70,5 @@ pub trait Lexer {
         }
 
         ParserResult::r#match(children, vec![])
-    }
-
-    fn greedy_parse_token_with_trivia<const LEX_CTX: u8>(
-        &self,
-        input: &mut ParserContext,
-        terminator: TokenKind,
-    ) -> ParserResult {
-        let mut children = vec![];
-
-        let restore = input.position();
-        if let ParserResult::Match(r#match) = self.leading_trivia(input) {
-            children.extend(r#match.nodes);
-        } else {
-            input.set_position(restore);
-        }
-
-        let start = input.position();
-        let found = loop {
-            let restore = input.position();
-
-            match self.next_token::<LEX_CTX>(input) {
-                // Keep eating tokens until we find the terminator
-                Some(kind) if kind != terminator => {}
-                // Terminator found, optionally include the skipped tokens
-                Some(terminator) => {
-                    if restore > start {
-                        input.emit(ParseError {
-                            text_range: start..restore,
-                            tokens_that_would_have_allowed_more_progress: vec![terminator],
-                        });
-                        children.push(cst::Node::token(
-                            TokenKind::SKIPPED,
-                            input.content(start.utf8..restore.utf8),
-                        ));
-                    }
-
-                    children.push(cst::Node::token(
-                        terminator,
-                        input.content(restore.utf8..input.position().utf8),
-                    ));
-                    break true;
-                }
-                // Not found till EOF
-                None => break false,
-            }
-        };
-
-        if !found {
-            input.set_position(restore);
-
-            ParserResult::no_match(vec![terminator])
-        } else {
-            let restore = input.position();
-            if let ParserResult::Match(r#match) = self.trailing_trivia(input) {
-                children.extend(r#match.nodes);
-            } else {
-                input.set_position(restore);
-            }
-
-            ParserResult::r#match(children, vec![])
-        }
-    }
-
-    fn skip_tokens_until<const LEX_CTX: u8>(
-        &self,
-        input: &mut ParserContext,
-        expected: TokenKind,
-    ) -> Option<TextRange> {
-        let start = input.position();
-
-        loop {
-            let restore = input.position();
-
-            match self.next_token::<LEX_CTX>(input) {
-                // Keep eating tokens until we find the expected one
-                Some(kind) if kind != expected => {}
-                // Token found, return the skipped range but don't consume the expected token
-                Some(..) => {
-                    input.set_position(restore);
-
-                    break Some(start..restore);
-                }
-                // Not found till EOF
-                None => {
-                    input.set_position(start);
-
-                    break None;
-                }
-            }
-        }
     }
 }

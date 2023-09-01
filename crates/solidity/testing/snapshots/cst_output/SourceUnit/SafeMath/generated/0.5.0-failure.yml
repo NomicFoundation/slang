@@ -13,7 +13,7 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Expected AssemblyKeyword or BreakKeyword or CloseBrace or ContinueKeyword or DeleteKeyword or DoKeyword or ForKeyword or IfKeyword or OpenBrace or OpenParen or ReturnKeyword or RevertKeyword or ThrowKeyword or WhileKeyword.
+    Error: Expected AssemblyKeyword or BreakKeyword or CloseBrace or ContinueKeyword or DeleteKeyword or DoKeyword or EmitKeyword or ForKeyword or IfKeyword or OpenBrace or OpenParen or ReturnKeyword or RevertKeyword or WhileKeyword.
        ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/SafeMath/input.sol:3:5]
        │
      3 │ ╭─▶     unchecked {

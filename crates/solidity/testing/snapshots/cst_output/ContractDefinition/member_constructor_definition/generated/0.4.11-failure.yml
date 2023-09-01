@@ -8,8 +8,8 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Expected ConstantKeyword or Identifier or InternalKeyword or OverrideKeyword or PrivateKeyword or PublicKeyword or Semicolon.
-       ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/member_constructor_definition/input.sol:2:14]
+    Error: Expected CloseBrace or FunctionKeyword.
+       ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/member_constructor_definition/input.sol:2:3]
        │
      2 │ ╭─▶   constructor() public {
      3 │ ├─▶   }
@@ -22,10 +22,5 @@ Tree:
       - ContractKeyword (Token): "contract" # 0..8
       - Identifier (Token): "Sample" # 9..15
       - OpenBrace (Token): "{" # 16..17
-      - ContractMembersList (Rule): # 18..31 "  constructor"
-          - StateVariableDefinition (Rule): # 18..31 "  constructor"
-              - TypeName (Rule): # 18..31 "  constructor"
-                  - IdentifierPath (Rule): # 18..31 "  constructor"
-                      - Identifier (Token): "constructor" # 20..31
-      - SKIPPED (Token): "() public {\n  }\n" # 31..47
+      - SKIPPED (Token): "constructor() public {\n  }\n" # 20..47
       - CloseBrace (Token): "}" # 47..48

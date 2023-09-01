@@ -10,7 +10,6 @@ use super::{
     lexer::Lexer,
     parse_output::ParseOutput,
     support::*,
-    text_index::TextRange,
 };
 
 pub use super::kinds::LexicalContext;
@@ -177,26 +176,6 @@ impl Language {
     }
 
     #[allow(dead_code)]
-    fn default_greedy_parse_token_with_trivia(
-        &self,
-        input: &mut ParserContext,
-        terminator: TokenKind,
-    ) -> ParserResult {
-        Lexer::greedy_parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
-            self, input, terminator,
-        )
-    }
-
-    #[allow(dead_code)]
-    fn default_skip_tokens_until(
-        &self,
-        input: &mut ParserContext,
-        expected: TokenKind,
-    ) -> Option<TextRange> {
-        Lexer::skip_tokens_until::<{ LexicalContext::Default as u8 }>(self, input, expected)
-    }
-
-    #[allow(dead_code)]
     fn default_parse_token(&self, input: &mut ParserContext, kind: TokenKind) -> ParserResult {
         Lexer::parse_token::<{ LexicalContext::Default as u8 }>(self, input, kind)
     }
@@ -220,26 +199,6 @@ impl Language {
     }
 
     #[allow(dead_code)]
-    fn version_pragma_greedy_parse_token_with_trivia(
-        &self,
-        input: &mut ParserContext,
-        terminator: TokenKind,
-    ) -> ParserResult {
-        Lexer::greedy_parse_token_with_trivia::<{ LexicalContext::VersionPragma as u8 }>(
-            self, input, terminator,
-        )
-    }
-
-    #[allow(dead_code)]
-    fn version_pragma_skip_tokens_until(
-        &self,
-        input: &mut ParserContext,
-        expected: TokenKind,
-    ) -> Option<TextRange> {
-        Lexer::skip_tokens_until::<{ LexicalContext::VersionPragma as u8 }>(self, input, expected)
-    }
-
-    #[allow(dead_code)]
     fn version_pragma_parse_token(
         &self,
         input: &mut ParserContext,
@@ -260,26 +219,6 @@ impl Language {
         kind: TokenKind,
     ) -> ParserResult {
         Lexer::parse_token_with_trivia::<{ LexicalContext::YulBlock as u8 }>(self, input, kind)
-    }
-
-    #[allow(dead_code)]
-    fn yul_block_greedy_parse_token_with_trivia(
-        &self,
-        input: &mut ParserContext,
-        terminator: TokenKind,
-    ) -> ParserResult {
-        Lexer::greedy_parse_token_with_trivia::<{ LexicalContext::YulBlock as u8 }>(
-            self, input, terminator,
-        )
-    }
-
-    #[allow(dead_code)]
-    fn yul_block_skip_tokens_until(
-        &self,
-        input: &mut ParserContext,
-        expected: TokenKind,
-    ) -> Option<TextRange> {
-        Lexer::skip_tokens_until::<{ LexicalContext::YulBlock as u8 }>(self, input, expected)
     }
 
     #[allow(dead_code)]
@@ -499,11 +438,15 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             seq.elem(
                 self.default_parse_token_with_trivia(input, TokenKind::BreakKeyword)
-                    .try_recover_with(input, |input| {
-                        self.default_skip_tokens_until(input, TokenKind::Semicolon)
-                    }),
+                    .recover_until_with_nested_delims(
+                        input,
+                        |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
+                        |input| Lexer::leading_trivia(self, input),
+                        TokenKind::Semicolon,
+                        Self::default_delimiters(),
+                    ),
             )?;
-            seq.elem(self.default_greedy_parse_token_with_trivia(input, TokenKind::Semicolon))?;
+            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Semicolon))?;
             seq.finish()
         })
         .with_kind(RuleKind::BreakStatement)
@@ -576,11 +519,15 @@ impl Language {
                             seq.finish()
                         })
                     }
-                    .try_recover_with(input, |input| {
-                        self.default_skip_tokens_until(input, TokenKind::Semicolon)
-                    }),
+                    .recover_until_with_nested_delims(
+                        input,
+                        |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
+                        |input| Lexer::leading_trivia(self, input),
+                        TokenKind::Semicolon,
+                        Self::default_delimiters(),
+                    ),
                 )?;
-                seq.elem(self.default_greedy_parse_token_with_trivia(input, TokenKind::Semicolon))?;
+                seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Semicolon))?;
                 seq.finish()
             })
         } else {
@@ -647,11 +594,15 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             seq.elem(
                 self.default_parse_token_with_trivia(input, TokenKind::ContinueKeyword)
-                    .try_recover_with(input, |input| {
-                        self.default_skip_tokens_until(input, TokenKind::Semicolon)
-                    }),
+                    .recover_until_with_nested_delims(
+                        input,
+                        |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
+                        |input| Lexer::leading_trivia(self, input),
+                        TokenKind::Semicolon,
+                        Self::default_delimiters(),
+                    ),
             )?;
-            seq.elem(self.default_greedy_parse_token_with_trivia(input, TokenKind::Semicolon))?;
+            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Semicolon))?;
             seq.finish()
         })
         .with_kind(RuleKind::ContinueStatement)
@@ -836,11 +787,15 @@ impl Language {
                         seq.finish()
                     })
                 }
-                .try_recover_with(input, |input| {
-                    self.default_skip_tokens_until(input, TokenKind::Semicolon)
-                }),
+                .recover_until_with_nested_delims(
+                    input,
+                    |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
+                    |input| Lexer::leading_trivia(self, input),
+                    TokenKind::Semicolon,
+                    Self::default_delimiters(),
+                ),
             )?;
-            seq.elem(self.default_greedy_parse_token_with_trivia(input, TokenKind::Semicolon))?;
+            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Semicolon))?;
             seq.finish()
         })
         .with_kind(RuleKind::DeleteStatement)
@@ -884,11 +839,15 @@ impl Language {
                         seq.finish()
                     })
                 }
-                .try_recover_with(input, |input| {
-                    self.default_skip_tokens_until(input, TokenKind::Semicolon)
-                }),
+                .recover_until_with_nested_delims(
+                    input,
+                    |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
+                    |input| Lexer::leading_trivia(self, input),
+                    TokenKind::Semicolon,
+                    Self::default_delimiters(),
+                ),
             )?;
-            seq.elem(self.default_greedy_parse_token_with_trivia(input, TokenKind::Semicolon))?;
+            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Semicolon))?;
             seq.finish()
         })
         .with_kind(RuleKind::DoWhileStatement)
@@ -909,11 +868,15 @@ impl Language {
                             seq.finish()
                         })
                     }
-                    .try_recover_with(input, |input| {
-                        self.default_skip_tokens_until(input, TokenKind::Semicolon)
-                    }),
+                    .recover_until_with_nested_delims(
+                        input,
+                        |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
+                        |input| Lexer::leading_trivia(self, input),
+                        TokenKind::Semicolon,
+                        Self::default_delimiters(),
+                    ),
                 )?;
-                seq.elem(self.default_greedy_parse_token_with_trivia(input, TokenKind::Semicolon))?;
+                seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Semicolon))?;
                 seq.finish()
             })
         } else {
@@ -975,7 +938,7 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn error_definition(&self, input: &mut ParserContext) -> ParserResult {
-        if self . version_is_at_least_0_8_4 { SequenceHelper :: run (| mut seq | { seq . elem ({ SequenceHelper :: run (| mut seq | { seq . elem (self . default_parse_token_with_trivia (input , TokenKind :: ErrorKeyword)) ? ; seq . elem (self . default_parse_token_with_trivia (input , TokenKind :: Identifier)) ? ; seq . elem (SequenceHelper :: run (| mut seq | { seq . elem (self . default_parse_token_with_trivia (input , TokenKind :: OpenParen)) ? ; input . expect_closing (TokenKind :: CloseParen) ; seq . elem (OptionalHelper :: transform (self . error_parameters_list (input)) . recover_until_with_nested_delims (input , | input | Lexer :: next_token :: < { LexicalContext :: Default as u8 } > (self , input) , | input | Lexer :: leading_trivia (self , input) , TokenKind :: CloseParen , Self :: default_delimiters () ,)) ? ; input . pop_closing (TokenKind :: CloseParen) ; seq . elem (self . default_parse_token_with_trivia (input , TokenKind :: CloseParen)) ? ; seq . finish () })) ? ; seq . finish () }) } . try_recover_with (input , | input | self . default_skip_tokens_until (input , TokenKind :: Semicolon))) ? ; seq . elem (self . default_greedy_parse_token_with_trivia (input , TokenKind :: Semicolon)) ? ; seq . finish () }) } else { ParserResult :: disabled () } . with_kind (RuleKind :: ErrorDefinition)
+        if self . version_is_at_least_0_8_4 { SequenceHelper :: run (| mut seq | { seq . elem ({ SequenceHelper :: run (| mut seq | { seq . elem (self . default_parse_token_with_trivia (input , TokenKind :: ErrorKeyword)) ? ; seq . elem (self . default_parse_token_with_trivia (input , TokenKind :: Identifier)) ? ; seq . elem (SequenceHelper :: run (| mut seq | { seq . elem (self . default_parse_token_with_trivia (input , TokenKind :: OpenParen)) ? ; input . expect_closing (TokenKind :: CloseParen) ; seq . elem (OptionalHelper :: transform (self . error_parameters_list (input)) . recover_until_with_nested_delims (input , | input | Lexer :: next_token :: < { LexicalContext :: Default as u8 } > (self , input) , | input | Lexer :: leading_trivia (self , input) , TokenKind :: CloseParen , Self :: default_delimiters () ,)) ? ; input . pop_closing (TokenKind :: CloseParen) ; seq . elem (self . default_parse_token_with_trivia (input , TokenKind :: CloseParen)) ? ; seq . finish () })) ? ; seq . finish () }) } . recover_until_with_nested_delims (input , | input | Lexer :: next_token :: < { LexicalContext :: Default as u8 } > (self , input) , | input | Lexer :: leading_trivia (self , input) , TokenKind :: Semicolon , Self :: default_delimiters () ,)) ? ; seq . elem (self . default_parse_token_with_trivia (input , TokenKind :: Semicolon)) ? ; seq . finish () }) } else { ParserResult :: disabled () } . with_kind (RuleKind :: ErrorDefinition)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -1066,11 +1029,15 @@ impl Language {
                         seq.finish()
                     })
                 }
-                .try_recover_with(input, |input| {
-                    self.default_skip_tokens_until(input, TokenKind::Semicolon)
-                }),
+                .recover_until_with_nested_delims(
+                    input,
+                    |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
+                    |input| Lexer::leading_trivia(self, input),
+                    TokenKind::Semicolon,
+                    Self::default_delimiters(),
+                ),
             )?;
-            seq.elem(self.default_greedy_parse_token_with_trivia(input, TokenKind::Semicolon))?;
+            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Semicolon))?;
             seq.finish()
         })
         .with_kind(RuleKind::EventDefinition)
@@ -1591,10 +1558,14 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn expression_statement(&self, input: &mut ParserContext) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem(self.expression(input).try_recover_with(input, |input| {
-                self.default_skip_tokens_until(input, TokenKind::Semicolon)
-            }))?;
-            seq.elem(self.default_greedy_parse_token_with_trivia(input, TokenKind::Semicolon))?;
+            seq.elem(self.expression(input).recover_until_with_nested_delims(
+                input,
+                |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
+                |input| Lexer::leading_trivia(self, input),
+                TokenKind::Semicolon,
+                Self::default_delimiters(),
+            ))?;
+            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Semicolon))?;
             seq.finish()
         })
         .with_kind(RuleKind::ExpressionStatement)
@@ -2009,11 +1980,15 @@ impl Language {
                         seq.finish()
                     })
                 }
-                .try_recover_with(input, |input| {
-                    self.default_skip_tokens_until(input, TokenKind::Semicolon)
-                }),
+                .recover_until_with_nested_delims(
+                    input,
+                    |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
+                    |input| Lexer::leading_trivia(self, input),
+                    TokenKind::Semicolon,
+                    Self::default_delimiters(),
+                ),
             )?;
-            seq.elem(self.default_greedy_parse_token_with_trivia(input, TokenKind::Semicolon))?;
+            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Semicolon))?;
             seq.finish()
         })
         .with_kind(RuleKind::ImportDirective)
@@ -2852,11 +2827,15 @@ impl Language {
                         seq.finish()
                     })
                 }
-                .try_recover_with(input, |input| {
-                    self.default_skip_tokens_until(input, TokenKind::Semicolon)
-                }),
+                .recover_until_with_nested_delims(
+                    input,
+                    |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
+                    |input| Lexer::leading_trivia(self, input),
+                    TokenKind::Semicolon,
+                    Self::default_delimiters(),
+                ),
             )?;
-            seq.elem(self.default_greedy_parse_token_with_trivia(input, TokenKind::Semicolon))?;
+            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Semicolon))?;
             seq.finish()
         })
         .with_kind(RuleKind::PragmaDirective)
@@ -2939,11 +2918,15 @@ impl Language {
                         seq.finish()
                     })
                 }
-                .try_recover_with(input, |input| {
-                    self.default_skip_tokens_until(input, TokenKind::Semicolon)
-                }),
+                .recover_until_with_nested_delims(
+                    input,
+                    |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
+                    |input| Lexer::leading_trivia(self, input),
+                    TokenKind::Semicolon,
+                    Self::default_delimiters(),
+                ),
             )?;
-            seq.elem(self.default_greedy_parse_token_with_trivia(input, TokenKind::Semicolon))?;
+            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Semicolon))?;
             seq.finish()
         })
         .with_kind(RuleKind::ReturnStatement)
@@ -2975,11 +2958,15 @@ impl Language {
                         seq.finish()
                     })
                 }
-                .try_recover_with(input, |input| {
-                    self.default_skip_tokens_until(input, TokenKind::Semicolon)
-                }),
+                .recover_until_with_nested_delims(
+                    input,
+                    |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
+                    |input| Lexer::leading_trivia(self, input),
+                    TokenKind::Semicolon,
+                    Self::default_delimiters(),
+                ),
             )?;
-            seq.elem(self.default_greedy_parse_token_with_trivia(input, TokenKind::Semicolon))?;
+            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Semicolon))?;
             seq.finish()
         })
         .with_kind(RuleKind::RevertStatement)
@@ -3103,11 +3090,15 @@ impl Language {
                         seq.finish()
                     })
                 }
-                .try_recover_with(input, |input| {
-                    self.default_skip_tokens_until(input, TokenKind::Semicolon)
-                }),
+                .recover_until_with_nested_delims(
+                    input,
+                    |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
+                    |input| Lexer::leading_trivia(self, input),
+                    TokenKind::Semicolon,
+                    Self::default_delimiters(),
+                ),
             )?;
-            seq.elem(self.default_greedy_parse_token_with_trivia(input, TokenKind::Semicolon))?;
+            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Semicolon))?;
             seq.finish()
         })
         .with_kind(RuleKind::StateVariableDefinition)
@@ -3231,11 +3222,15 @@ impl Language {
                         seq.finish()
                     })
                 }
-                .try_recover_with(input, |input| {
-                    self.default_skip_tokens_until(input, TokenKind::Semicolon)
-                }),
+                .recover_until_with_nested_delims(
+                    input,
+                    |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
+                    |input| Lexer::leading_trivia(self, input),
+                    TokenKind::Semicolon,
+                    Self::default_delimiters(),
+                ),
             )?;
-            seq.elem(self.default_greedy_parse_token_with_trivia(input, TokenKind::Semicolon))?;
+            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Semicolon))?;
             seq.finish()
         })
         .with_kind(RuleKind::StructMember)
@@ -3253,11 +3248,17 @@ impl Language {
             SequenceHelper::run(|mut seq| {
                 seq.elem(
                     self.default_parse_token_with_trivia(input, TokenKind::ThrowKeyword)
-                        .try_recover_with(input, |input| {
-                            self.default_skip_tokens_until(input, TokenKind::Semicolon)
-                        }),
+                        .recover_until_with_nested_delims(
+                            input,
+                            |input| {
+                                Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input)
+                            },
+                            |input| Lexer::leading_trivia(self, input),
+                            TokenKind::Semicolon,
+                            Self::default_delimiters(),
+                        ),
                 )?;
-                seq.elem(self.default_greedy_parse_token_with_trivia(input, TokenKind::Semicolon))?;
+                seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Semicolon))?;
                 seq.finish()
             })
         } else {
@@ -3338,11 +3339,15 @@ impl Language {
                         seq.finish()
                     })
                 }
-                .try_recover_with(input, |input| {
-                    self.default_skip_tokens_until(input, TokenKind::Semicolon)
-                }),
+                .recover_until_with_nested_delims(
+                    input,
+                    |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
+                    |input| Lexer::leading_trivia(self, input),
+                    TokenKind::Semicolon,
+                    Self::default_delimiters(),
+                ),
             )?;
-            seq.elem(self.default_greedy_parse_token_with_trivia(input, TokenKind::Semicolon))?;
+            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Semicolon))?;
             seq.finish()
         })
         .with_kind(RuleKind::TupleDeconstructionStatement)
@@ -3776,11 +3781,15 @@ impl Language {
                             seq.finish()
                         })
                     }
-                    .try_recover_with(input, |input| {
-                        self.default_skip_tokens_until(input, TokenKind::Semicolon)
-                    }),
+                    .recover_until_with_nested_delims(
+                        input,
+                        |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
+                        |input| Lexer::leading_trivia(self, input),
+                        TokenKind::Semicolon,
+                        Self::default_delimiters(),
+                    ),
                 )?;
-                seq.elem(self.default_greedy_parse_token_with_trivia(input, TokenKind::Semicolon))?;
+                seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Semicolon))?;
                 seq.finish()
             })
         } else {
@@ -3826,11 +3835,15 @@ impl Language {
                         seq.finish()
                     })
                 }
-                .try_recover_with(input, |input| {
-                    self.default_skip_tokens_until(input, TokenKind::Semicolon)
-                }),
+                .recover_until_with_nested_delims(
+                    input,
+                    |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
+                    |input| Lexer::leading_trivia(self, input),
+                    TokenKind::Semicolon,
+                    Self::default_delimiters(),
+                ),
             )?;
-            seq.elem(self.default_greedy_parse_token_with_trivia(input, TokenKind::Semicolon))?;
+            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Semicolon))?;
             seq.finish()
         })
         .with_kind(RuleKind::UsingDirective)
@@ -4043,11 +4056,15 @@ impl Language {
                         seq.finish()
                     })
                 }
-                .try_recover_with(input, |input| {
-                    self.default_skip_tokens_until(input, TokenKind::Semicolon)
-                }),
+                .recover_until_with_nested_delims(
+                    input,
+                    |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
+                    |input| Lexer::leading_trivia(self, input),
+                    TokenKind::Semicolon,
+                    Self::default_delimiters(),
+                ),
             )?;
-            seq.elem(self.default_greedy_parse_token_with_trivia(input, TokenKind::Semicolon))?;
+            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Semicolon))?;
             seq.finish()
         })
         .with_kind(RuleKind::VariableDeclarationStatement)
