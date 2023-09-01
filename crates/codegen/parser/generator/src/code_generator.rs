@@ -30,7 +30,6 @@ pub struct CodeGenerator {
     rule_kinds: BTreeSet<&'static str>,
     token_kinds: BTreeSet<&'static str>,
     production_kinds: BTreeSet<&'static str>,
-    // TODO: Make it lexical context-dependent
     trivia_kinds: BTreeSet<&'static str>,
 
     top_level_scanner_names: BTreeSet<&'static str>,
