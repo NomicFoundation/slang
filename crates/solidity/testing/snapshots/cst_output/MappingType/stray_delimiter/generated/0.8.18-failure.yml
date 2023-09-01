@@ -14,7 +14,7 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - MappingType (Rule): # 0..31 "mapping(string => bytes32] arg)"
+  - MappingType (Rule): # 0..32 "mapping(string => bytes32] arg)\n"
       - MappingKeyword (Token): "mapping" # 0..7
       - OpenParen (Token): "(" # 7..8
       - MappingKeyType (Rule): # 8..14 "string"

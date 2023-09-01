@@ -1,4 +1,4 @@
-use std::{ops::ControlFlow, rc::Rc};
+use std::ops::ControlFlow;
 
 use crate::{cst, kinds::TokenKind, support::parser_result::SkippedUntil};
 
@@ -137,9 +137,7 @@ impl SequenceHelper {
                             TokenKind::SKIPPED,
                             std::mem::take(&mut running.skipped),
                         ));
-                        running
-                            .nodes
-                            .push(cst::Node::Token(Rc::clone(&found_token.unwrap())));
+                        running.nodes.extend(next.nodes);
 
                         self.result = State::Running(ParserResult::Match(Match {
                             nodes: std::mem::take(&mut running.nodes),
