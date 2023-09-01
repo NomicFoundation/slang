@@ -6601,11 +6601,19 @@ impl Lexer for Language {
             }
         }
 
-        if longest_token.is_some() {
-            input.set_position(furthest_position);
+        match longest_token {
+            Some(..) => {
+                input.set_position(furthest_position);
+                longest_token
+            }
+            // Skip a character if possible and if we didn't recognize a token
+            None if input.peek().is_some() => {
+                let _ = input.next();
+                Some(TokenKind::SKIPPED)
+            }
+            // EOF
+            None => None,
         }
-
-        longest_token
     }
 }
 

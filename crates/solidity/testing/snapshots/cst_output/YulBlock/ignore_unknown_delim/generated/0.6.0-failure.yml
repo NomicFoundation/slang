@@ -14,18 +14,17 @@ Errors: # 1 total
        ╭─[crates/solidity/testing/snapshots/cst_output/YulBlock/ignore_unknown_delim/input.sol:4:10]
        │
      4 │ ╭─▶        result := [mul(a, b)
-       ┆ ┆   
-     6 │ ├─▶ }
-       │ │       
-       │ ╰─────── Error occurred here.
+     5 │ ├─▶     }
+       │ │           
+       │ ╰─────────── Error occurred here.
     ───╯
 
 Tree:
   - YulBlock (Rule): # 0..85 "{\n\tfunction mult(a, b) -> result {\n\t\tresult := mul..."
       - OpenBrace (Token): "{" # 0..1
-      - YulStatementsList (Rule): # 2..66 "\tfunction mult(a, b) -> result {\n\t\tresult := mul(a..."
-          - YulStatement (Rule): # 2..66 "\tfunction mult(a, b) -> result {\n\t\tresult := mul(a..."
-              - YulFunctionDefinition (Rule): # 2..66 "\tfunction mult(a, b) -> result {\n\t\tresult := mul(a..."
+      - YulStatementsList (Rule): # 2..83 "\tfunction mult(a, b) -> result {\n\t\tresult := mul(a..."
+          - YulStatement (Rule): # 2..83 "\tfunction mult(a, b) -> result {\n\t\tresult := mul(a..."
+              - YulFunctionDefinition (Rule): # 2..83 "\tfunction mult(a, b) -> result {\n\t\tresult := mul(a..."
                   - FunctionKeyword (Token): "function" # 3..11
                   - YulIdentifier (Token): "mult" # 12..16
                   - YulParametersDeclaration (Rule): # 16..22 "(a, b)"
@@ -39,7 +38,7 @@ Tree:
                       - MinusGreaterThan (Token): "->" # 23..25
                       - YulIdentifiersList (Rule): # 25..32 " result"
                           - YulIdentifier (Token): "result" # 26..32
-                  - YulBlock (Rule): # 32..66 " {\n\t\tresult := mul(a, b)\n\t\tresult "
+                  - YulBlock (Rule): # 32..83 " {\n\t\tresult := mul(a, b)\n\t\tresult := [mul(a, b)\n\t}..."
                       - OpenBrace (Token): "{" # 33..34
                       - YulStatementsList (Rule): # 35..65 "\t\tresult := mul(a, b)\n\t\tresult"
                           - YulStatement (Rule): # 35..57 "\t\tresult := mul(a, b)\n"
@@ -67,4 +66,6 @@ Tree:
                               - YulExpression (Rule): # 57..65 "\t\tresult"
                                   - YulIdentifierPath (Rule): # 57..65 "\t\tresult"
                                       - YulIdentifier (Token): "result" # 59..65
-      - SKIPPED (Token): ":= [mul(a, b)\n\t}\n}\n" # 66..85
+                      - SKIPPED (Token): ":= [mul(a, b)\n\t" # 66..81
+                      - CloseBrace (Token): "}" # 81..82
+      - CloseBrace (Token): "}" # 83..84
