@@ -69,6 +69,8 @@ mod VariableDeclarationStatement;
 #[allow(non_snake_case)]
 mod VersionPragma;
 #[allow(non_snake_case)]
+mod YulBlock;
+#[allow(non_snake_case)]
 mod YulExpression;
 #[allow(non_snake_case)]
 mod YulStatement;
