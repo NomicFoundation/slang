@@ -38,7 +38,7 @@ pub enum RuleKind {
 
 impl RuleKind {
     pub fn is_trivia(&self) -> bool {
-        todo!()
+        unreachable!("Expanded by the template")
     }
 }
 
