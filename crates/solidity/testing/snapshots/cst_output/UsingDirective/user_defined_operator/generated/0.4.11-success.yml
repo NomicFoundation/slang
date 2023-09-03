@@ -3,18 +3,10 @@
 Source: >
   1  │ using {div as /} for Int global;                                                 │ 0..32
 
-Errors: # 1 total
-  - >
-    Error: Expected ForKeyword.
-       ╭─[crates/solidity/testing/snapshots/cst_output/UsingDirective/user_defined_operator/input.sol:1:7]
-       │
-     1 │ using {div as /} for Int global;
-       │       ────────────┬────────────  
-       │                   ╰────────────── Error occurred here.
-    ───╯
+Errors: []
 
 Tree:
-  - UsingDirective (Rule): # 0..43 "using {div as /} for Int global;"
+  - UsingDirective (Rule): # 0..32 "using {div as /} for Int global;"
       - UsingKeyword (Token): "using" # 0..5
       - UsingDirectiveDeconstruction (Rule): # 5..16 " {div as /}"
           - OpenBrace (Token): "{" # 6..7
@@ -24,5 +16,9 @@ Tree:
                       - Identifier (Token): "div" # 7..10
           - SKIPPED (Token): "as /" # 11..15
           - CloseBrace (Token): "}" # 15..16
-      - SKIPPED (Token): "for Int global;" # 17..42
-      - Semicolon (Token): "" # 42..43
+      - ForKeyword (Token): "for" # 17..20
+      - TypeName (Rule): # 20..24 " Int"
+          - IdentifierPath (Rule): # 20..24 " Int"
+              - Identifier (Token): "Int" # 21..24
+      - GlobalKeyword (Token): "global" # 25..31
+      - Semicolon (Token): ";" # 31..32

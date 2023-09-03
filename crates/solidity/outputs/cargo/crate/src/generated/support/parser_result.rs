@@ -255,3 +255,14 @@ pub struct SkippedUntil {
     /// Token we expected to skip until
     pub expected: TokenKind,
 }
+
+impl SkippedUntil {
+    pub fn matching_recursive(&self) -> usize {
+        self.nodes
+            .descendents()
+            .filter_map(cst::Node::as_token)
+            .filter(|tok| tok.kind != TokenKind::SKIPPED)
+            .map(|tok| tok.text.len())
+            .sum()
+    }
+}

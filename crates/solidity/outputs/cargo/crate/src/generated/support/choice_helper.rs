@@ -48,6 +48,8 @@ impl ChoiceHelper {
             }
             // Otherwise, we have some match and we ignore a missing next one.
             (ParserResult::IncompleteMatch(..), ParserResult::NoMatch(..)) => {}
+            (ParserResult::SkippedUntil(..), ParserResult::NoMatch(..)) => {}
+            (ParserResult::Match(..), ParserResult::NoMatch(..)) => {}
 
             // Try to improve our match.
             // If the match has been recovered and is not full, optimize for the greatest matching span.
@@ -76,6 +78,11 @@ impl ChoiceHelper {
             {
                 if next.matching_recursive() > running.matching_recursive() {
                     self.result = ParserResult::Match(next);
+                }
+            }
+            (ParserResult::SkippedUntil(running), ParserResult::SkippedUntil(next)) => {
+                if next.matching_recursive() > running.matching_recursive() {
+                    self.result = ParserResult::SkippedUntil(next);
                 }
             }
             // Otherwise, the next match will always be better.
@@ -131,9 +138,23 @@ impl ChoiceHelper {
     }
 
     fn unwrap_result(self, input: &mut ParserContext) -> ParserResult {
-        if let ParserResult::IncompleteMatch(incomplete_match) = &self.result {
-            incomplete_match.consume_stream(input);
+        // When finalizing a choice, we must advance the stream to the end of the match
+        if !self.is_done() {
+            match &self.result {
+                ParserResult::IncompleteMatch(incomplete_match) => {
+                    incomplete_match.consume_stream(input)
+                }
+                ParserResult::Match(match_) if !match_.is_full_recursive() => {
+                    for node in &match_.nodes {
+                        for _ in 0..node.text_len().char {
+                            input.next();
+                        }
+                    }
+                }
+                _ => {}
+            }
         }
+
         self.result
     }
 }

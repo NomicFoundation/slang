@@ -30,24 +30,28 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Expected CloseBrace or ConstructorKeyword or FallbackKeyword or ReceiveKeyword.
-        ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/function_multiple_delimiters/input.sol:19:3]
+    Error: Expected Semicolon.
+        ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/function_multiple_delimiters/input.sol:3:1]
         │
-     19 │ ╭─▶   function sendValue(address payable recipient, uint256 amount) internal {
+      3 │ ╭─▶   /**
         ┆ ┆   
-     25 │ ├─▶   }
-        │ │         
-        │ ╰───────── Error occurred here.
+     26 │ ├─▶ }
+        │ │       
+        │ ╰─────── Error occurred here.
     ────╯
 
 Tree:
-  - ContractDefinition (Rule): # 0..1304 "// SPDX-License-Identifier: MIT\ncontract ABC {\n  /..."
+  - ContractDefinition (Rule): # 0..2194 "// SPDX-License-Identifier: MIT\ncontract ABC {\n  /..."
       - LeadingTrivia (Rule): # 0..32 "// SPDX-License-Identifier: MIT\n"
           - SingleLineComment (Trivia): "// SPDX-License-Identifier: MIT" # 0..31
       - ContractKeyword (Token): "contract" # 32..40
       - Identifier (Token): "ABC" # 41..44
       - OpenBrace (Token): "{" # 45..46
-      - LeadingTrivia (Rule): # 47..928 "  /**\n   * @dev Replacement for Solidity's `transf..."
-          - MultilineComment (Trivia): "/**\n   * @dev Replacement for Solidity's `transfer..." # 49..925
-      - SKIPPED (Token): "function sendValue(address payable recipient, uint..." # 928..1302
-      - CloseBrace (Token): "}" # 1302..1303
+      - ContractMembersList (Rule): # 47..937 "  /**\n   * @dev Replacement for Solidity's `transf..."
+          - StateVariableDefinition (Rule): # 47..937 "  /**\n   * @dev Replacement for Solidity's `transf..."
+              - TypeName (Rule): # 47..936 "  /**\n   * @dev Replacement for Solidity's `transf..."
+                  - FunctionType (Rule): # 47..936 "  /**\n   * @dev Replacement for Solidity's `transf..."
+                      - LeadingTrivia (Rule): # 47..928 "  /**\n   * @dev Replacement for Solidity's `transf..."
+                          - MultilineComment (Trivia): "/**\n   * @dev Replacement for Solidity's `transfer..." # 49..925
+                      - FunctionKeyword (Token): "function" # 928..936
+      - SKIPPED (Token): "sendValue(address payable recipient, uint256 amoun..." # 937..2194

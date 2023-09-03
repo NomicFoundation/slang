@@ -8,19 +8,27 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Expected CloseBrace or ConstructorKeyword or FallbackKeyword or ReceiveKeyword.
-       ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/member_unnamed_function_definition/input.sol:2:3]
+    Error: Expected Semicolon.
+       ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/member_unnamed_function_definition/input.sol:2:1]
        │
      2 │ ╭─▶   function () {
-     3 │ ├─▶   }
-       │ │         
-       │ ╰───────── Error occurred here.
+       ┆ ┆   
+     4 │ ├─▶ }
+       │ │      
+       │ ╰────── Error occurred here.
     ───╯
 
 Tree:
-  - ContractDefinition (Rule): # 0..39 "contract Sample {\n  function () {\n  }\n}"
+  - ContractDefinition (Rule): # 0..53 "contract Sample {\n  function () {\n  }\n}..."
       - ContractKeyword (Token): "contract" # 0..8
       - Identifier (Token): "Sample" # 9..15
       - OpenBrace (Token): "{" # 16..17
-      - SKIPPED (Token): "function () {\n  }\n" # 20..38
-      - CloseBrace (Token): "}" # 38..39
+      - ContractMembersList (Rule): # 18..32 "  function () "
+          - StateVariableDefinition (Rule): # 18..32 "  function () "
+              - TypeName (Rule): # 18..31 "  function ()"
+                  - FunctionType (Rule): # 18..31 "  function ()"
+                      - FunctionKeyword (Token): "function" # 20..28
+                      - ParametersDeclaration (Rule): # 28..31 " ()"
+                          - OpenParen (Token): "(" # 29..30
+                          - CloseParen (Token): ")" # 30..31
+      - SKIPPED (Token): "{\n  }\n}" # 32..53

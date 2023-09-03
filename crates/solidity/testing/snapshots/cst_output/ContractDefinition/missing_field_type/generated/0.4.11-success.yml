@@ -5,20 +5,18 @@ Source: >
   2  │   field;                                                                         │ 16..24
   3  │ }                                                                                │ 25..26
 
-Errors: # 1 total
-  - >
-    Error: Expected CloseBrace or ConstructorKeyword or FallbackKeyword or ReceiveKeyword.
-       ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/missing_field_type/input.sol:2:3]
-       │
-     2 │   field;
-       │   ───┬───  
-       │      ╰───── Error occurred here.
-    ───╯
+Errors: []
 
 Tree:
   - ContractDefinition (Rule): # 0..27 "contract Test {\n  field;\n}\n"
       - ContractKeyword (Token): "contract" # 0..8
       - Identifier (Token): "Test" # 9..13
       - OpenBrace (Token): "{" # 14..15
-      - SKIPPED (Token): "field;\n" # 18..25
+      - ContractMembersList (Rule): # 16..25 "  field;\n"
+          - StateVariableDefinition (Rule): # 16..25 "  field;\n"
+              - TypeName (Rule): # 16..23 "  field"
+                  - IdentifierPath (Rule): # 16..23 "  field"
+                      - Identifier (Token): "field" # 18..23
+              - SKIPPED (Token): "" # 23..23
+              - Semicolon (Token): ";" # 23..24
       - CloseBrace (Token): "}" # 25..26
