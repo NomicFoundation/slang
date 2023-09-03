@@ -7,12 +7,12 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Expected ConstantKeyword or Identifier or ImmutableKeyword or InternalKeyword or OverrideKeyword or PrivateKeyword or PublicKeyword.
-       ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/missing_field_type/input.sol:2:8]
+    Error: Expected CloseBrace or ConstructorKeyword or FallbackKeyword or ReceiveKeyword.
+       ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/missing_field_type/input.sol:2:3]
        │
      2 │   field;
-       │        │ 
-       │        ╰─ Error occurred here.
+       │   ───┬───  
+       │      ╰───── Error occurred here.
     ───╯
 
 Tree:
@@ -20,11 +20,5 @@ Tree:
       - ContractKeyword (Token): "contract" # 0..8
       - Identifier (Token): "Test" # 9..13
       - OpenBrace (Token): "{" # 14..15
-      - ContractMembersList (Rule): # 16..25 "  field;\n"
-          - StateVariableDefinition (Rule): # 16..25 "  field;\n"
-              - TypeName (Rule): # 16..23 "  field"
-                  - IdentifierPath (Rule): # 16..23 "  field"
-                      - Identifier (Token): "field" # 18..23
-              - SKIPPED (Token): "" # 23..23
-              - Semicolon (Token): ";" # 23..24
+      - SKIPPED (Token): "field;\n" # 18..25
       - CloseBrace (Token): "}" # 25..26

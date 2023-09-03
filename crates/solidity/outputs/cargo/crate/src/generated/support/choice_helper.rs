@@ -22,17 +22,22 @@ impl ChoiceHelper {
 
     /// Whether the choice has found and settled on a full match.
     pub fn is_done(&self) -> bool {
-        matches!(
-            self.result,
-            ParserResult::Match(..) | ParserResult::PrattOperatorMatch(..)
-        )
+        match &self.result {
+            ParserResult::Match(r#match) if r#match.is_full_recursive() => true,
+            ParserResult::PrattOperatorMatch(..) => true,
+            _ => false,
+        }
     }
 
     /// Store the next result if it's a better match; otherwise, we retain the existing one.
     fn attempt_pick(&mut self, next_result: ParserResult) {
         match (&mut self.result, next_result) {
             // We settle for the first full match.
-            (ParserResult::Match(..) | ParserResult::PrattOperatorMatch(..), _) => {
+            (ParserResult::Match(running), _) if running.is_full_recursive() => {
+                debug_assert!(self.is_done());
+                return;
+            }
+            (ParserResult::PrattOperatorMatch(..), _) => {
                 debug_assert!(self.is_done());
                 return;
             }
@@ -45,6 +50,21 @@ impl ChoiceHelper {
             (ParserResult::IncompleteMatch(..), ParserResult::NoMatch(..)) => {}
 
             // Try to improve our match.
+            // If the match has been recovered and is not full, optimize for the greatest matching span.
+            (ParserResult::Match(running), ParserResult::Match(next))
+                if !running.is_full_recursive() =>
+            {
+                if next.matching_recursive() > running.matching_recursive() {
+                    self.result = ParserResult::Match(next);
+                }
+            }
+            (ParserResult::Match(running), ParserResult::IncompleteMatch(next))
+                if !running.is_full_recursive() =>
+            {
+                if next.matching_recursive() > running.matching_recursive() {
+                    self.result = ParserResult::IncompleteMatch(next);
+                }
+            }
             // If we only have incomplete matches and the next covers more bytes, then we take it...
             (ParserResult::IncompleteMatch(running), ParserResult::IncompleteMatch(next)) => {
                 if next.covers_more_than(&running) {

@@ -7,7 +7,7 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Expected CloseBrace or FunctionKeyword.
+    Error: Expected CloseBrace or ConstructorKeyword or FunctionKeyword.
        ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/missing_field_type/input.sol:2:3]
        │
      2 │   field;

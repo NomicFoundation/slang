@@ -28,15 +28,7 @@ Source: >
   25 │   }                                                                                                                                                            │ 1298..1301
   26 │ }                                                                                                                                                              │ 1302..1303
 
-Errors: # 1 total
-  - >
-    Error: Expected CloseParen or Comma.
-        ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/function_multiple_delimiters/input.sol:23:11]
-        │
-     23 │     (bool success, ) = recipient.call{ value: amount }("");
-        │           ────┬────  
-        │               ╰────── Error occurred here.
-    ────╯
+Errors: []
 
 Tree:
   - ContractDefinition (Rule): # 0..1304 "// SPDX-License-Identifier: MIT\ncontract ABC {\n  /..."
@@ -107,45 +99,44 @@ Tree:
                                           - CloseParen (Token): ")" # 1077..1078
                               - Semicolon (Token): ";" # 1078..1079
                       - Statement (Rule): # 1080..1214 "\n    // solhint-disable-next-line avoid-low-level-..."
-                          - ExpressionStatement (Rule): # 1080..1214 "\n    // solhint-disable-next-line avoid-low-level-..."
-                              - Expression (Rule): # 1080..1212 "\n    // solhint-disable-next-line avoid-low-level-..."
-                                  - BinaryExpression (Rule): # 1080..1212 "\n    // solhint-disable-next-line avoid-low-level-..."
-                                      - Expression (Rule): # 1080..1174 "\n    // solhint-disable-next-line avoid-low-level-..."
-                                          - TupleExpression (Rule): # 1080..1174 "\n    // solhint-disable-next-line avoid-low-level-..."
-                                              - LeadingTrivia (Rule): # 1080..1158 "\n    // solhint-disable-next-line avoid-low-level-..."
-                                                  - SingleLineComment (Trivia): "// solhint-disable-next-line avoid-low-level-calls..." # 1085..1153
-                                              - OpenParen (Token): "(" # 1158..1159
-                                              - TupleValuesList (Rule): # 1159..1163 "bool"
-                                                  - Expression (Rule): # 1159..1163 "bool"
-                                                      - BoolKeyword (Token): "bool" # 1159..1163
-                                              - SKIPPED (Token): "success, " # 1164..1173
-                                              - CloseParen (Token): ")" # 1173..1174
-                                      - Equal (Token): "=" # 1175..1176
-                                      - Expression (Rule): # 1176..1212 ' recipient.call{ value: amount }("")'
-                                          - FunctionCallExpression (Rule): # 1176..1212 ' recipient.call{ value: amount }("")'
-                                              - Expression (Rule): # 1176..1191 " recipient.call"
-                                                  - MemberAccessExpression (Rule): # 1176..1191 " recipient.call"
-                                                      - Expression (Rule): # 1176..1186 " recipient"
-                                                          - Identifier (Token): "recipient" # 1177..1186
-                                                      - Period (Token): "." # 1186..1187
-                                                      - Identifier (Token): "call" # 1187..1191
-                                              - FunctionCallOptions (Rule): # 1191..1208 "{ value: amount }"
-                                                  - NamedArgumentsDeclaration (Rule): # 1191..1208 "{ value: amount }"
-                                                      - OpenBrace (Token): "{" # 1191..1192
-                                                      - NamedArgumentsList (Rule): # 1192..1206 " value: amount"
-                                                          - NamedArgument (Rule): # 1192..1206 " value: amount"
-                                                              - Identifier (Token): "value" # 1193..1198
-                                                              - Colon (Token): ":" # 1198..1199
-                                                              - Expression (Rule): # 1199..1206 " amount"
-                                                                  - Identifier (Token): "amount" # 1200..1206
-                                                      - CloseBrace (Token): "}" # 1207..1208
-                                              - ArgumentsDeclaration (Rule): # 1208..1212 '("")'
-                                                  - OpenParen (Token): "(" # 1208..1209
-                                                  - PositionalArgumentsList (Rule): # 1209..1211 '""'
-                                                      - Expression (Rule): # 1209..1211 '""'
-                                                          - AsciiStringLiteralsList (Rule): # 1209..1211 '""'
-                                                              - AsciiStringLiteral (Token): '""' # 1209..1211
-                                                  - CloseParen (Token): ")" # 1211..1212
+                          - TupleDeconstructionStatement (Rule): # 1080..1214 "\n    // solhint-disable-next-line avoid-low-level-..."
+                              - LeadingTrivia (Rule): # 1080..1158 "\n    // solhint-disable-next-line avoid-low-level-..."
+                                  - SingleLineComment (Trivia): "// solhint-disable-next-line avoid-low-level-calls..." # 1085..1153
+                              - OpenParen (Token): "(" # 1158..1159
+                              - TupleMembersList (Rule): # 1159..1172 "bool success,"
+                                  - TupleMember (Rule): # 1159..1171 "bool success"
+                                      - TypeName (Rule): # 1159..1163 "bool"
+                                          - BoolKeyword (Token): "bool" # 1159..1163
+                                      - Identifier (Token): "success" # 1164..1171
+                                  - Comma (Token): "," # 1171..1172
+                                  - TupleMember (Rule): [] # 1172..1172
+                              - CloseParen (Token): ")" # 1173..1174
+                              - Equal (Token): "=" # 1175..1176
+                              - Expression (Rule): # 1176..1212 ' recipient.call{ value: amount }("")'
+                                  - FunctionCallExpression (Rule): # 1176..1212 ' recipient.call{ value: amount }("")'
+                                      - Expression (Rule): # 1176..1191 " recipient.call"
+                                          - MemberAccessExpression (Rule): # 1176..1191 " recipient.call"
+                                              - Expression (Rule): # 1176..1186 " recipient"
+                                                  - Identifier (Token): "recipient" # 1177..1186
+                                              - Period (Token): "." # 1186..1187
+                                              - Identifier (Token): "call" # 1187..1191
+                                      - FunctionCallOptions (Rule): # 1191..1208 "{ value: amount }"
+                                          - NamedArgumentsDeclaration (Rule): # 1191..1208 "{ value: amount }"
+                                              - OpenBrace (Token): "{" # 1191..1192
+                                              - NamedArgumentsList (Rule): # 1192..1206 " value: amount"
+                                                  - NamedArgument (Rule): # 1192..1206 " value: amount"
+                                                      - Identifier (Token): "value" # 1193..1198
+                                                      - Colon (Token): ":" # 1198..1199
+                                                      - Expression (Rule): # 1199..1206 " amount"
+                                                          - Identifier (Token): "amount" # 1200..1206
+                                              - CloseBrace (Token): "}" # 1207..1208
+                                      - ArgumentsDeclaration (Rule): # 1208..1212 '("")'
+                                          - OpenParen (Token): "(" # 1208..1209
+                                          - PositionalArgumentsList (Rule): # 1209..1211 '""'
+                                              - Expression (Rule): # 1209..1211 '""'
+                                                  - AsciiStringLiteralsList (Rule): # 1209..1211 '""'
+                                                      - AsciiStringLiteral (Token): '""' # 1209..1211
+                                          - CloseParen (Token): ")" # 1211..1212
                               - Semicolon (Token): ";" # 1212..1213
                       - Statement (Rule): # 1214..1298 '    require(success, "Address: unable to send valu...'
                           - ExpressionStatement (Rule): # 1214..1298 '    require(success, "Address: unable to send valu...'

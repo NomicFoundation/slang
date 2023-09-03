@@ -5,16 +5,16 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Expected CloseBrace or Comma.
-       ╭─[crates/solidity/testing/snapshots/cst_output/UsingDirective/destructure_multiple/input.sol:1:12]
+    Error: Expected ForKeyword.
+       ╭─[crates/solidity/testing/snapshots/cst_output/UsingDirective/destructure_multiple/input.sol:1:7]
        │
      1 │ using {add as +, sub, mul, div as /} for Int global;
-       │            ────────────┬───────────  
-       │                        ╰───────────── Error occurred here.
+       │       ──────────────────────┬──────────────────────  
+       │                             ╰──────────────────────── Error occurred here.
     ───╯
 
 Tree:
-  - UsingDirective (Rule): # 0..52 "using {add as +, sub, mul, div as /} for Int globa..."
+  - UsingDirective (Rule): # 0..83 "using {add as +, sub, mul, div as /} for Int globa..."
       - UsingKeyword (Token): "using" # 0..5
       - UsingDirectiveDeconstruction (Rule): # 5..36 " {add as +, sub, mul, div as /}"
           - OpenBrace (Token): "{" # 6..7
@@ -24,9 +24,5 @@ Tree:
                       - Identifier (Token): "add" # 7..10
           - SKIPPED (Token): "as +, sub, mul, div as /" # 11..35
           - CloseBrace (Token): "}" # 35..36
-      - ForKeyword (Token): "for" # 37..40
-      - TypeName (Rule): # 40..44 " Int"
-          - IdentifierPath (Rule): # 40..44 " Int"
-              - Identifier (Token): "Int" # 41..44
-      - GlobalKeyword (Token): "global" # 45..51
-      - Semicolon (Token): ";" # 51..52
+      - SKIPPED (Token): "for Int global;" # 37..82
+      - Semicolon (Token): "" # 82..83
