@@ -8,7 +8,16 @@ Source: >
   5  │ 	}                                                                               │ 80..82
   6  │ }                                                                                │ 83..84
 
-Errors: []
+Errors: # 1 total
+  - >
+    Error: Expected AsciiStringLiteral or BreakKeyword or CloseBrace or ContinueKeyword or FalseKeyword or ForKeyword or FunctionKeyword or HexStringLiteral or IfKeyword or LeaveKeyword or LetKeyword or OpenBrace or SwitchKeyword or TrueKeyword or YulDecimalLiteral or YulHexLiteral or YulIdentifier.
+       ╭─[crates/solidity/testing/snapshots/cst_output/YulBlock/ignore_unknown_delim/input.sol:4:10]
+       │
+     4 │ ╭─▶        result := [mul(a, b)
+     5 │ ├─▶     }
+       │ │           
+       │ ╰─────────── Error occurred here.
+    ───╯
 
 Tree:
   - YulBlock (Rule): # 0..85 "{\n\tfunction mult(a, b) -> result {\n\t\tresult := mul..."

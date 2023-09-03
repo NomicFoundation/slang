@@ -265,9 +265,9 @@ impl Language {
                         seq.finish()
                     })
                 };
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result = self.default_parse_token_with_trivia(input, TokenKind::PayableKeyword);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 choice.finish(input)
             })
         }
@@ -283,9 +283,9 @@ impl Language {
                 OptionalHelper::transform({
                     ChoiceHelper::run(input, |mut choice, input| {
                         let result = self.positional_arguments_list(input);
-                        choice.consider(result).pick_or_backtrack(input)?;
+                        choice.consider(input, result)?;
                         let result = self.named_arguments_declaration(input);
-                        choice.consider(result).pick_or_backtrack(input)?;
+                        choice.consider(input, result)?;
                         choice.finish(input)
                     })
                 })
@@ -544,16 +544,16 @@ impl Language {
                     {
                         ChoiceHelper::run(input, |mut choice, input| {
                             let result = self.modifier_invocation(input);
-                            choice.consider(result).pick_or_backtrack(input)?;
+                            choice.consider(input, result)?;
                             let result = self
                                 .default_parse_token_with_trivia(input, TokenKind::InternalKeyword);
-                            choice.consider(result).pick_or_backtrack(input)?;
+                            choice.consider(input, result)?;
                             let result = self
                                 .default_parse_token_with_trivia(input, TokenKind::PayableKeyword);
-                            choice.consider(result).pick_or_backtrack(input)?;
+                            choice.consider(input, result)?;
                             let result = self
                                 .default_parse_token_with_trivia(input, TokenKind::PublicKeyword);
-                            choice.consider(result).pick_or_backtrack(input)?;
+                            choice.consider(input, result)?;
                             choice.finish(input)
                         })
                     }
@@ -652,46 +652,46 @@ impl Language {
         OneOrMoreHelper::run(input, |input| {
             ChoiceHelper::run(input, |mut choice, input| {
                 let result = self.using_directive(input);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result = self.function_definition(input);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result = self.modifier_definition(input);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result = self.struct_definition(input);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result = self.enum_definition(input);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result = self.event_definition(input);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result = self.state_variable_definition(input);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 if self.version_is_at_least_0_4_22 {
                     let result = self.constructor_definition(input);
-                    choice.consider(result).pick_or_backtrack(input)?;
+                    choice.consider(input, result)?;
                 }
                 if self.version_is_at_least_0_6_0 {
                     let result = {
                         ChoiceHelper::run(input, |mut choice, input| {
                             let result = self.fallback_function_definition(input);
-                            choice.consider(result).pick_or_backtrack(input)?;
+                            choice.consider(input, result)?;
                             let result = self.receive_function_definition(input);
-                            choice.consider(result).pick_or_backtrack(input)?;
+                            choice.consider(input, result)?;
                             choice.finish(input)
                         })
                     };
-                    choice.consider(result).pick_or_backtrack(input)?;
+                    choice.consider(input, result)?;
                 }
                 if !self.version_is_at_least_0_6_0 {
                     let result = self.unnamed_function_definition(input);
-                    choice.consider(result).pick_or_backtrack(input)?;
+                    choice.consider(input, result)?;
                 }
                 if self.version_is_at_least_0_8_4 {
                     let result = self.error_definition(input);
-                    choice.consider(result).pick_or_backtrack(input)?;
+                    choice.consider(input, result)?;
                 }
                 if self.version_is_at_least_0_8_8 {
                     let result = self.user_defined_value_type_definition(input);
-                    choice.consider(result).pick_or_backtrack(input)?;
+                    choice.consider(input, result)?;
                 }
                 choice.finish(input)
             })
@@ -890,13 +890,13 @@ impl Language {
         OneOrMoreHelper::run(input, |input| {
             ChoiceHelper::run(input, |mut choice, input| {
                 let result = self.default_parse_token(input, TokenKind::Whitespace);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result = self.default_parse_token(input, TokenKind::EndOfLine);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result = self.default_parse_token(input, TokenKind::MultilineComment);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result = self.default_parse_token(input, TokenKind::SingleLineComment);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 choice.finish(input)
             })
         })
@@ -1089,10 +1089,10 @@ impl Language {
                     ChoiceHelper::run(input, |mut choice, input| {
                         let result = self
                             .default_parse_token_with_trivia(input, TokenKind::AsciiStringLiteral);
-                        choice.consider(result).pick_or_backtrack(input)?;
+                        choice.consider(input, result)?;
                         let result =
                             self.default_parse_token_with_trivia(input, TokenKind::Identifier);
-                        choice.consider(result).pick_or_backtrack(input)?;
+                        choice.consider(input, result)?;
                         choice.finish(input)
                     })
                 })?;
@@ -1108,39 +1108,39 @@ impl Language {
             PrecedenceHelper::to_binary_operator(RuleKind::BinaryExpression, 1u8, 1u8 + 1, {
                 ChoiceHelper::run(input, |mut choice, input| {
                     let result = self.default_parse_token_with_trivia(input, TokenKind::Equal);
-                    choice.consider(result).pick_or_backtrack(input)?;
+                    choice.consider(input, result)?;
                     let result = self.default_parse_token_with_trivia(input, TokenKind::BarEqual);
-                    choice.consider(result).pick_or_backtrack(input)?;
+                    choice.consider(input, result)?;
                     let result = self.default_parse_token_with_trivia(input, TokenKind::PlusEqual);
-                    choice.consider(result).pick_or_backtrack(input)?;
+                    choice.consider(input, result)?;
                     let result = self.default_parse_token_with_trivia(input, TokenKind::MinusEqual);
-                    choice.consider(result).pick_or_backtrack(input)?;
+                    choice.consider(input, result)?;
                     let result = self.default_parse_token_with_trivia(input, TokenKind::CaretEqual);
-                    choice.consider(result).pick_or_backtrack(input)?;
+                    choice.consider(input, result)?;
                     let result = self.default_parse_token_with_trivia(input, TokenKind::SlashEqual);
-                    choice.consider(result).pick_or_backtrack(input)?;
+                    choice.consider(input, result)?;
                     let result =
                         self.default_parse_token_with_trivia(input, TokenKind::PercentEqual);
-                    choice.consider(result).pick_or_backtrack(input)?;
+                    choice.consider(input, result)?;
                     let result =
                         self.default_parse_token_with_trivia(input, TokenKind::AsteriskEqual);
-                    choice.consider(result).pick_or_backtrack(input)?;
+                    choice.consider(input, result)?;
                     let result =
                         self.default_parse_token_with_trivia(input, TokenKind::AmpersandEqual);
-                    choice.consider(result).pick_or_backtrack(input)?;
+                    choice.consider(input, result)?;
                     let result = self
                         .default_parse_token_with_trivia(input, TokenKind::LessThanLessThanEqual);
-                    choice.consider(result).pick_or_backtrack(input)?;
+                    choice.consider(input, result)?;
                     let result = self.default_parse_token_with_trivia(
                         input,
                         TokenKind::GreaterThanGreaterThanEqual,
                     );
-                    choice.consider(result).pick_or_backtrack(input)?;
+                    choice.consider(input, result)?;
                     let result = self.default_parse_token_with_trivia(
                         input,
                         TokenKind::GreaterThanGreaterThanGreaterThanEqual,
                     );
-                    choice.consider(result).pick_or_backtrack(input)?;
+                    choice.consider(input, result)?;
                     choice.finish(input)
                 })
             })
@@ -1176,9 +1176,9 @@ impl Language {
             PrecedenceHelper::to_binary_operator(RuleKind::BinaryExpression, 9u8, 9u8 + 1, {
                 ChoiceHelper::run(input, |mut choice, input| {
                     let result = self.default_parse_token_with_trivia(input, TokenKind::EqualEqual);
-                    choice.consider(result).pick_or_backtrack(input)?;
+                    choice.consider(input, result)?;
                     let result = self.default_parse_token_with_trivia(input, TokenKind::BangEqual);
-                    choice.consider(result).pick_or_backtrack(input)?;
+                    choice.consider(input, result)?;
                     choice.finish(input)
                 })
             })
@@ -1187,16 +1187,16 @@ impl Language {
             PrecedenceHelper::to_binary_operator(RuleKind::BinaryExpression, 11u8, 11u8 + 1, {
                 ChoiceHelper::run(input, |mut choice, input| {
                     let result = self.default_parse_token_with_trivia(input, TokenKind::LessThan);
-                    choice.consider(result).pick_or_backtrack(input)?;
+                    choice.consider(input, result)?;
                     let result =
                         self.default_parse_token_with_trivia(input, TokenKind::GreaterThan);
-                    choice.consider(result).pick_or_backtrack(input)?;
+                    choice.consider(input, result)?;
                     let result =
                         self.default_parse_token_with_trivia(input, TokenKind::LessThanEqual);
-                    choice.consider(result).pick_or_backtrack(input)?;
+                    choice.consider(input, result)?;
                     let result =
                         self.default_parse_token_with_trivia(input, TokenKind::GreaterThanEqual);
-                    choice.consider(result).pick_or_backtrack(input)?;
+                    choice.consider(input, result)?;
                     choice.finish(input)
                 })
             })
@@ -1230,15 +1230,15 @@ impl Language {
                 ChoiceHelper::run(input, |mut choice, input| {
                     let result =
                         self.default_parse_token_with_trivia(input, TokenKind::LessThanLessThan);
-                    choice.consider(result).pick_or_backtrack(input)?;
+                    choice.consider(input, result)?;
                     let result = self
                         .default_parse_token_with_trivia(input, TokenKind::GreaterThanGreaterThan);
-                    choice.consider(result).pick_or_backtrack(input)?;
+                    choice.consider(input, result)?;
                     let result = self.default_parse_token_with_trivia(
                         input,
                         TokenKind::GreaterThanGreaterThanGreaterThan,
                     );
-                    choice.consider(result).pick_or_backtrack(input)?;
+                    choice.consider(input, result)?;
                     choice.finish(input)
                 })
             })
@@ -1247,9 +1247,9 @@ impl Language {
             PrecedenceHelper::to_binary_operator(RuleKind::BinaryExpression, 21u8, 21u8 + 1, {
                 ChoiceHelper::run(input, |mut choice, input| {
                     let result = self.default_parse_token_with_trivia(input, TokenKind::Plus);
-                    choice.consider(result).pick_or_backtrack(input)?;
+                    choice.consider(input, result)?;
                     let result = self.default_parse_token_with_trivia(input, TokenKind::Minus);
-                    choice.consider(result).pick_or_backtrack(input)?;
+                    choice.consider(input, result)?;
                     choice.finish(input)
                 })
             })
@@ -1258,11 +1258,11 @@ impl Language {
             PrecedenceHelper::to_binary_operator(RuleKind::BinaryExpression, 23u8, 23u8 + 1, {
                 ChoiceHelper::run(input, |mut choice, input| {
                     let result = self.default_parse_token_with_trivia(input, TokenKind::Asterisk);
-                    choice.consider(result).pick_or_backtrack(input)?;
+                    choice.consider(input, result)?;
                     let result = self.default_parse_token_with_trivia(input, TokenKind::Slash);
-                    choice.consider(result).pick_or_backtrack(input)?;
+                    choice.consider(input, result)?;
                     let result = self.default_parse_token_with_trivia(input, TokenKind::Percent);
-                    choice.consider(result).pick_or_backtrack(input)?;
+                    choice.consider(input, result)?;
                     choice.finish(input)
                 })
             })
@@ -1287,9 +1287,9 @@ impl Language {
             PrecedenceHelper::to_postfix_operator(RuleKind::UnaryPostfixExpression, 29u8, {
                 ChoiceHelper::run(input, |mut choice, input| {
                     let result = self.default_parse_token_with_trivia(input, TokenKind::PlusPlus);
-                    choice.consider(result).pick_or_backtrack(input)?;
+                    choice.consider(input, result)?;
                     let result = self.default_parse_token_with_trivia(input, TokenKind::MinusMinus);
-                    choice.consider(result).pick_or_backtrack(input)?;
+                    choice.consider(input, result)?;
                     choice.finish(input)
                 })
             })
@@ -1298,18 +1298,18 @@ impl Language {
             PrecedenceHelper::to_prefix_operator(RuleKind::UnaryPrefixExpression, 31u8, {
                 ChoiceHelper::run(input, |mut choice, input| {
                     let result = self.default_parse_token_with_trivia(input, TokenKind::PlusPlus);
-                    choice.consider(result).pick_or_backtrack(input)?;
+                    choice.consider(input, result)?;
                     let result = self.default_parse_token_with_trivia(input, TokenKind::MinusMinus);
-                    choice.consider(result).pick_or_backtrack(input)?;
+                    choice.consider(input, result)?;
                     let result = self.default_parse_token_with_trivia(input, TokenKind::Tilde);
-                    choice.consider(result).pick_or_backtrack(input)?;
+                    choice.consider(input, result)?;
                     let result = self.default_parse_token_with_trivia(input, TokenKind::Bang);
-                    choice.consider(result).pick_or_backtrack(input)?;
+                    choice.consider(input, result)?;
                     let result = self.default_parse_token_with_trivia(input, TokenKind::Minus);
-                    choice.consider(result).pick_or_backtrack(input)?;
+                    choice.consider(input, result)?;
                     if !self.version_is_at_least_0_5_0 {
                         let result = self.default_parse_token_with_trivia(input, TokenKind::Plus);
-                        choice.consider(result).pick_or_backtrack(input)?;
+                        choice.consider(input, result)?;
                     }
                     choice.finish(input)
                 })
@@ -1334,10 +1334,10 @@ impl Language {
                         ChoiceHelper::run(input, |mut choice, input| {
                             let result =
                                 self.default_parse_token_with_trivia(input, TokenKind::Identifier);
-                            choice.consider(result).pick_or_backtrack(input)?;
+                            choice.consider(input, result)?;
                             let result = self
                                 .default_parse_token_with_trivia(input, TokenKind::AddressKeyword);
-                            choice.consider(result).pick_or_backtrack(input)?;
+                            choice.consider(input, result)?;
                             choice.finish(input)
                         })
                     })?;
@@ -1390,85 +1390,85 @@ impl Language {
         let prefix_operator_parser = |input: &mut ParserContext| {
             ChoiceHelper::run(input, |mut choice, input| {
                 let result = parse_unary_prefix_operator(input);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 choice.finish(input)
             })
         };
         let primary_expression_parser = |input: &mut ParserContext| {
             ChoiceHelper::run(input, |mut choice, input| {
                 let result = self.new_expression(input);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result = self.tuple_expression(input);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result = self.array_expression(input);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result = {
                     ChoiceHelper::run(input, |mut choice, input| {
                         let result =
                             self.default_parse_token_with_trivia(input, TokenKind::TrueKeyword);
-                        choice.consider(result).pick_or_backtrack(input)?;
+                        choice.consider(input, result)?;
                         let result =
                             self.default_parse_token_with_trivia(input, TokenKind::FalseKeyword);
-                        choice.consider(result).pick_or_backtrack(input)?;
+                        choice.consider(input, result)?;
                         choice.finish(input)
                     })
                 };
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result = self.numeric_expression(input);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result = {
                     ChoiceHelper::run(input, |mut choice, input| {
                         let result = self.hex_string_literals_list(input);
-                        choice.consider(result).pick_or_backtrack(input)?;
+                        choice.consider(input, result)?;
                         let result = self.ascii_string_literals_list(input);
-                        choice.consider(result).pick_or_backtrack(input)?;
+                        choice.consider(input, result)?;
                         if self.version_is_at_least_0_7_0 {
                             let result = self.unicode_string_literals_list(input);
-                            choice.consider(result).pick_or_backtrack(input)?;
+                            choice.consider(input, result)?;
                         }
                         choice.finish(input)
                     })
                 };
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result = {
                     ChoiceHelper::run(input, |mut choice, input| {
                         let result =
                             self.default_parse_token_with_trivia(input, TokenKind::BoolKeyword);
-                        choice.consider(result).pick_or_backtrack(input)?;
+                        choice.consider(input, result)?;
                         let result =
                             self.default_parse_token_with_trivia(input, TokenKind::StringKeyword);
-                        choice.consider(result).pick_or_backtrack(input)?;
+                        choice.consider(input, result)?;
                         let result = self.address_type(input);
-                        choice.consider(result).pick_or_backtrack(input)?;
+                        choice.consider(input, result)?;
                         let result =
                             self.default_parse_token_with_trivia(input, TokenKind::FixedBytesType);
-                        choice.consider(result).pick_or_backtrack(input)?;
+                        choice.consider(input, result)?;
                         let result = self
                             .default_parse_token_with_trivia(input, TokenKind::SignedIntegerType);
-                        choice.consider(result).pick_or_backtrack(input)?;
+                        choice.consider(input, result)?;
                         let result = self
                             .default_parse_token_with_trivia(input, TokenKind::UnsignedIntegerType);
-                        choice.consider(result).pick_or_backtrack(input)?;
+                        choice.consider(input, result)?;
                         let result =
                             self.default_parse_token_with_trivia(input, TokenKind::SignedFixedType);
-                        choice.consider(result).pick_or_backtrack(input)?;
+                        choice.consider(input, result)?;
                         let result = self
                             .default_parse_token_with_trivia(input, TokenKind::UnsignedFixedType);
-                        choice.consider(result).pick_or_backtrack(input)?;
+                        choice.consider(input, result)?;
                         if !self.version_is_at_least_0_8_0 {
                             let result =
                                 self.default_parse_token_with_trivia(input, TokenKind::ByteKeyword);
-                            choice.consider(result).pick_or_backtrack(input)?;
+                            choice.consider(input, result)?;
                         }
                         choice.finish(input)
                     })
                 };
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result = self.default_parse_token_with_trivia(input, TokenKind::Identifier);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 if self.version_is_at_least_0_5_3 {
                     let result = self.type_expression(input);
-                    choice.consider(result).pick_or_backtrack(input)?;
+                    choice.consider(input, result)?;
                 }
                 choice.finish(input)
             })
@@ -1476,15 +1476,15 @@ impl Language {
         let postfix_operator_parser = |input: &mut ParserContext| {
             ChoiceHelper::run(input, |mut choice, input| {
                 let result = parse_conditional_operator(input);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result = parse_unary_postfix_operator(input);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result = parse_function_call_operator(input);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result = parse_member_access_operator(input);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result = parse_index_access_operator(input);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 choice.finish(input)
             })
         };
@@ -1503,34 +1503,34 @@ impl Language {
         let binary_operator_parser = |input: &mut ParserContext| {
             ChoiceHelper::run(input, |mut choice, input| {
                 let result = parse_assignment_operator(input);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result = parse_or_operator(input);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result = parse_and_operator(input);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result = parse_equality_comparison_operator(input);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result = parse_order_comparison_operator(input);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result = parse_bitwise_or_operator(input);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result = parse_bitwise_x_or_operator(input);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result = parse_bitwise_and_operator(input);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result = parse_shift_operator(input);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result = parse_add_sub_operator(input);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result = parse_mul_div_mod_operator(input);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 if !self.version_is_at_least_0_6_0 {
                     let result = parse_exponentiation_operator_removed_from_0_6_0(input);
-                    choice.consider(result).pick_or_backtrack(input)?;
+                    choice.consider(input, result)?;
                 }
                 if self.version_is_at_least_0_6_0 {
                     let result = parse_exponentiation_operator_introduced_from_0_6_0(input);
-                    choice.consider(result).pick_or_backtrack(input)?;
+                    choice.consider(input, result)?;
                 }
                 choice.finish(input)
             })
@@ -1579,24 +1579,24 @@ impl Language {
                     {
                         ChoiceHelper::run(input, |mut choice, input| {
                             let result = self.modifier_invocation(input);
-                            choice.consider(result).pick_or_backtrack(input)?;
+                            choice.consider(input, result)?;
                             let result = self.override_specifier(input);
-                            choice.consider(result).pick_or_backtrack(input)?;
+                            choice.consider(input, result)?;
                             let result = self
                                 .default_parse_token_with_trivia(input, TokenKind::ExternalKeyword);
-                            choice.consider(result).pick_or_backtrack(input)?;
+                            choice.consider(input, result)?;
                             let result = self
                                 .default_parse_token_with_trivia(input, TokenKind::PayableKeyword);
-                            choice.consider(result).pick_or_backtrack(input)?;
+                            choice.consider(input, result)?;
                             let result =
                                 self.default_parse_token_with_trivia(input, TokenKind::PureKeyword);
-                            choice.consider(result).pick_or_backtrack(input)?;
+                            choice.consider(input, result)?;
                             let result =
                                 self.default_parse_token_with_trivia(input, TokenKind::ViewKeyword);
-                            choice.consider(result).pick_or_backtrack(input)?;
+                            choice.consider(input, result)?;
                             let result = self
                                 .default_parse_token_with_trivia(input, TokenKind::VirtualKeyword);
-                            choice.consider(result).pick_or_backtrack(input)?;
+                            choice.consider(input, result)?;
                             choice.finish(input)
                         })
                     }
@@ -1627,9 +1627,9 @@ impl Language {
                         ChoiceHelper::run(input, |mut choice, input| {
                             let result =
                                 self.default_parse_token_with_trivia(input, TokenKind::Semicolon);
-                            choice.consider(result).pick_or_backtrack(input)?;
+                            choice.consider(input, result)?;
                             let result = self.block(input);
-                            choice.consider(result).pick_or_backtrack(input)?;
+                            choice.consider(input, result)?;
                             choice.finish(input)
                         })
                     })?;
@@ -1658,34 +1658,34 @@ impl Language {
                                         let result = {
                                             ChoiceHelper::run(input, |mut choice, input| {
                                                 let result = self.expression_statement(input);
-                                                choice.consider(result).pick_or_backtrack(input)?;
+                                                choice.consider(input, result)?;
                                                 let result =
                                                     self.variable_declaration_statement(input);
-                                                choice.consider(result).pick_or_backtrack(input)?;
+                                                choice.consider(input, result)?;
                                                 let result =
                                                     self.tuple_deconstruction_statement(input);
-                                                choice.consider(result).pick_or_backtrack(input)?;
+                                                choice.consider(input, result)?;
                                                 choice.finish(input)
                                             })
                                         };
-                                        choice.consider(result).pick_or_backtrack(input)?;
+                                        choice.consider(input, result)?;
                                         let result = self.default_parse_token_with_trivia(
                                             input,
                                             TokenKind::Semicolon,
                                         );
-                                        choice.consider(result).pick_or_backtrack(input)?;
+                                        choice.consider(input, result)?;
                                         choice.finish(input)
                                     })
                                 })?;
                                 seq.elem({
                                     ChoiceHelper::run(input, |mut choice, input| {
                                         let result = self.expression_statement(input);
-                                        choice.consider(result).pick_or_backtrack(input)?;
+                                        choice.consider(input, result)?;
                                         let result = self.default_parse_token_with_trivia(
                                             input,
                                             TokenKind::Semicolon,
                                         );
-                                        choice.consider(result).pick_or_backtrack(input)?;
+                                        choice.consider(input, result)?;
                                         choice.finish(input)
                                     })
                                 })?;
@@ -1719,34 +1719,34 @@ impl Language {
         OneOrMoreHelper::run(input, |input| {
             ChoiceHelper::run(input, |mut choice, input| {
                 let result = self.modifier_invocation(input);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result = self.override_specifier(input);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result =
                     self.default_parse_token_with_trivia(input, TokenKind::ExternalKeyword);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result =
                     self.default_parse_token_with_trivia(input, TokenKind::InternalKeyword);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result = self.default_parse_token_with_trivia(input, TokenKind::PayableKeyword);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result = self.default_parse_token_with_trivia(input, TokenKind::PrivateKeyword);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result = self.default_parse_token_with_trivia(input, TokenKind::PublicKeyword);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result = self.default_parse_token_with_trivia(input, TokenKind::PureKeyword);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result = self.default_parse_token_with_trivia(input, TokenKind::ViewKeyword);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 if !self.version_is_at_least_0_5_0 {
                     let result =
                         self.default_parse_token_with_trivia(input, TokenKind::ConstantKeyword);
-                    choice.consider(result).pick_or_backtrack(input)?;
+                    choice.consider(input, result)?;
                 }
                 if self.version_is_at_least_0_6_0 {
                     let result =
                         self.default_parse_token_with_trivia(input, TokenKind::VirtualKeyword);
-                    choice.consider(result).pick_or_backtrack(input)?;
+                    choice.consider(input, result)?;
                 }
                 choice.finish(input)
             })
@@ -1762,11 +1762,11 @@ impl Language {
                     let result = OneOrMoreHelper::run(input, |input| {
                         self.named_arguments_declaration(input)
                     });
-                    choice.consider(result).pick_or_backtrack(input)?;
+                    choice.consider(input, result)?;
                 }
                 if self.version_is_at_least_0_8_0 {
                     let result = self.named_arguments_declaration(input);
-                    choice.consider(result).pick_or_backtrack(input)?;
+                    choice.consider(input, result)?;
                 }
                 choice.finish(input)
             })
@@ -1783,13 +1783,13 @@ impl Language {
                     ChoiceHelper::run(input, |mut choice, input| {
                         let result =
                             self.default_parse_token_with_trivia(input, TokenKind::Identifier);
-                        choice.consider(result).pick_or_backtrack(input)?;
+                        choice.consider(input, result)?;
                         let result =
                             self.default_parse_token_with_trivia(input, TokenKind::FallbackKeyword);
-                        choice.consider(result).pick_or_backtrack(input)?;
+                        choice.consider(input, result)?;
                         let result =
                             self.default_parse_token_with_trivia(input, TokenKind::ReceiveKeyword);
-                        choice.consider(result).pick_or_backtrack(input)?;
+                        choice.consider(input, result)?;
                         choice.finish(input)
                     })
                 })?;
@@ -1802,9 +1802,9 @@ impl Language {
                     ChoiceHelper::run(input, |mut choice, input| {
                         let result =
                             self.default_parse_token_with_trivia(input, TokenKind::Semicolon);
-                        choice.consider(result).pick_or_backtrack(input)?;
+                        choice.consider(input, result)?;
                         let result = self.block(input);
-                        choice.consider(result).pick_or_backtrack(input)?;
+                        choice.consider(input, result)?;
                         choice.finish(input)
                     })
                 })?;
@@ -1836,20 +1836,20 @@ impl Language {
             ChoiceHelper::run(input, |mut choice, input| {
                 let result =
                     self.default_parse_token_with_trivia(input, TokenKind::InternalKeyword);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result =
                     self.default_parse_token_with_trivia(input, TokenKind::ExternalKeyword);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result = self.default_parse_token_with_trivia(input, TokenKind::PrivateKeyword);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result = self.default_parse_token_with_trivia(input, TokenKind::PublicKeyword);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result = self.default_parse_token_with_trivia(input, TokenKind::PureKeyword);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result = self.default_parse_token_with_trivia(input, TokenKind::ViewKeyword);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result = self.default_parse_token_with_trivia(input, TokenKind::PayableKeyword);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 choice.finish(input)
             })
         })
@@ -1969,11 +1969,11 @@ impl Language {
                         seq.elem({
                             ChoiceHelper::run(input, |mut choice, input| {
                                 let result = self.path_import(input);
-                                choice.consider(result).pick_or_backtrack(input)?;
+                                choice.consider(input, result)?;
                                 let result = self.named_import(input);
-                                choice.consider(result).pick_or_backtrack(input)?;
+                                choice.consider(input, result)?;
                                 let result = self.deconstruction_import(input);
-                                choice.consider(result).pick_or_backtrack(input)?;
+                                choice.consider(input, result)?;
                                 choice.finish(input)
                             })
                         })?;
@@ -2075,46 +2075,46 @@ impl Language {
         OneOrMoreHelper::run(input, |input| {
             ChoiceHelper::run(input, |mut choice, input| {
                 let result = self.using_directive(input);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result = self.function_definition(input);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result = self.modifier_definition(input);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result = self.struct_definition(input);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result = self.enum_definition(input);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result = self.event_definition(input);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result = self.state_variable_definition(input);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 if self.version_is_at_least_0_4_22 {
                     let result = self.constructor_definition(input);
-                    choice.consider(result).pick_or_backtrack(input)?;
+                    choice.consider(input, result)?;
                 }
                 if self.version_is_at_least_0_6_0 {
                     let result = {
                         ChoiceHelper::run(input, |mut choice, input| {
                             let result = self.fallback_function_definition(input);
-                            choice.consider(result).pick_or_backtrack(input)?;
+                            choice.consider(input, result)?;
                             let result = self.receive_function_definition(input);
-                            choice.consider(result).pick_or_backtrack(input)?;
+                            choice.consider(input, result)?;
                             choice.finish(input)
                         })
                     };
-                    choice.consider(result).pick_or_backtrack(input)?;
+                    choice.consider(input, result)?;
                 }
                 if !self.version_is_at_least_0_6_0 {
                     let result = self.unnamed_function_definition(input);
-                    choice.consider(result).pick_or_backtrack(input)?;
+                    choice.consider(input, result)?;
                 }
                 if self.version_is_at_least_0_8_4 {
                     let result = self.error_definition(input);
-                    choice.consider(result).pick_or_backtrack(input)?;
+                    choice.consider(input, result)?;
                 }
                 if self.version_is_at_least_0_8_8 {
                     let result = self.user_defined_value_type_definition(input);
-                    choice.consider(result).pick_or_backtrack(input)?;
+                    choice.consider(input, result)?;
                 }
                 choice.finish(input)
             })
@@ -2127,13 +2127,13 @@ impl Language {
         OneOrMoreHelper::run(input, |input| {
             ChoiceHelper::run(input, |mut choice, input| {
                 let result = self.default_parse_token(input, TokenKind::Whitespace);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result = self.default_parse_token(input, TokenKind::EndOfLine);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result = self.default_parse_token(input, TokenKind::MultilineComment);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result = self.default_parse_token(input, TokenKind::SingleLineComment);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 choice.finish(input)
             })
         })
@@ -2178,46 +2178,46 @@ impl Language {
         OneOrMoreHelper::run(input, |input| {
             ChoiceHelper::run(input, |mut choice, input| {
                 let result = self.using_directive(input);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result = self.function_definition(input);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result = self.modifier_definition(input);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result = self.struct_definition(input);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result = self.enum_definition(input);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result = self.event_definition(input);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result = self.state_variable_definition(input);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 if self.version_is_at_least_0_4_22 {
                     let result = self.constructor_definition(input);
-                    choice.consider(result).pick_or_backtrack(input)?;
+                    choice.consider(input, result)?;
                 }
                 if self.version_is_at_least_0_6_0 {
                     let result = {
                         ChoiceHelper::run(input, |mut choice, input| {
                             let result = self.fallback_function_definition(input);
-                            choice.consider(result).pick_or_backtrack(input)?;
+                            choice.consider(input, result)?;
                             let result = self.receive_function_definition(input);
-                            choice.consider(result).pick_or_backtrack(input)?;
+                            choice.consider(input, result)?;
                             choice.finish(input)
                         })
                     };
-                    choice.consider(result).pick_or_backtrack(input)?;
+                    choice.consider(input, result)?;
                 }
                 if !self.version_is_at_least_0_6_0 {
                     let result = self.unnamed_function_definition(input);
-                    choice.consider(result).pick_or_backtrack(input)?;
+                    choice.consider(input, result)?;
                 }
                 if self.version_is_at_least_0_8_4 {
                     let result = self.error_definition(input);
-                    choice.consider(result).pick_or_backtrack(input)?;
+                    choice.consider(input, result)?;
                 }
                 if self.version_is_at_least_0_8_8 {
                     let result = self.user_defined_value_type_definition(input);
-                    choice.consider(result).pick_or_backtrack(input)?;
+                    choice.consider(input, result)?;
                 }
                 choice.finish(input)
             })
@@ -2235,52 +2235,52 @@ impl Language {
                             ChoiceHelper::run(input, |mut choice, input| {
                                 let result = self
                                     .default_parse_token_with_trivia(input, TokenKind::BoolKeyword);
-                                choice.consider(result).pick_or_backtrack(input)?;
+                                choice.consider(input, result)?;
                                 let result = self.default_parse_token_with_trivia(
                                     input,
                                     TokenKind::StringKeyword,
                                 );
-                                choice.consider(result).pick_or_backtrack(input)?;
+                                choice.consider(input, result)?;
                                 let result = self.address_type(input);
-                                choice.consider(result).pick_or_backtrack(input)?;
+                                choice.consider(input, result)?;
                                 let result = self.default_parse_token_with_trivia(
                                     input,
                                     TokenKind::FixedBytesType,
                                 );
-                                choice.consider(result).pick_or_backtrack(input)?;
+                                choice.consider(input, result)?;
                                 let result = self.default_parse_token_with_trivia(
                                     input,
                                     TokenKind::SignedIntegerType,
                                 );
-                                choice.consider(result).pick_or_backtrack(input)?;
+                                choice.consider(input, result)?;
                                 let result = self.default_parse_token_with_trivia(
                                     input,
                                     TokenKind::UnsignedIntegerType,
                                 );
-                                choice.consider(result).pick_or_backtrack(input)?;
+                                choice.consider(input, result)?;
                                 let result = self.default_parse_token_with_trivia(
                                     input,
                                     TokenKind::SignedFixedType,
                                 );
-                                choice.consider(result).pick_or_backtrack(input)?;
+                                choice.consider(input, result)?;
                                 let result = self.default_parse_token_with_trivia(
                                     input,
                                     TokenKind::UnsignedFixedType,
                                 );
-                                choice.consider(result).pick_or_backtrack(input)?;
+                                choice.consider(input, result)?;
                                 if !self.version_is_at_least_0_8_0 {
                                     let result = self.default_parse_token_with_trivia(
                                         input,
                                         TokenKind::ByteKeyword,
                                     );
-                                    choice.consider(result).pick_or_backtrack(input)?;
+                                    choice.consider(input, result)?;
                                 }
                                 choice.finish(input)
                             })
                         };
-                        choice.consider(result).pick_or_backtrack(input)?;
+                        choice.consider(input, result)?;
                         let result = self.identifier_path(input);
-                        choice.consider(result).pick_or_backtrack(input)?;
+                        choice.consider(input, result)?;
                         choice.finish(input)
                     })
                 })?;
@@ -2356,11 +2356,11 @@ impl Language {
         OneOrMoreHelper::run(input, |input| {
             ChoiceHelper::run(input, |mut choice, input| {
                 let result = self.override_specifier(input);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 if self.version_is_at_least_0_6_0 {
                     let result =
                         self.default_parse_token_with_trivia(input, TokenKind::VirtualKeyword);
-                    choice.consider(result).pick_or_backtrack(input)?;
+                    choice.consider(input, result)?;
                 }
                 choice.finish(input)
             })
@@ -2384,9 +2384,9 @@ impl Language {
                     ChoiceHelper::run(input, |mut choice, input| {
                         let result =
                             self.default_parse_token_with_trivia(input, TokenKind::Semicolon);
-                        choice.consider(result).pick_or_backtrack(input)?;
+                        choice.consider(input, result)?;
                         let result = self.block(input);
-                        choice.consider(result).pick_or_backtrack(input)?;
+                        choice.consider(input, result)?;
                         choice.finish(input)
                     })
                 })?;
@@ -2506,50 +2506,50 @@ impl Language {
                                         input,
                                         TokenKind::DaysKeyword,
                                     );
-                                    choice.consider(result).pick_or_backtrack(input)?;
+                                    choice.consider(input, result)?;
                                     let result = self.default_parse_token_with_trivia(
                                         input,
                                         TokenKind::EtherKeyword,
                                     );
-                                    choice.consider(result).pick_or_backtrack(input)?;
+                                    choice.consider(input, result)?;
                                     let result = self.default_parse_token_with_trivia(
                                         input,
                                         TokenKind::HoursKeyword,
                                     );
-                                    choice.consider(result).pick_or_backtrack(input)?;
+                                    choice.consider(input, result)?;
                                     let result = self.default_parse_token_with_trivia(
                                         input,
                                         TokenKind::MinutesKeyword,
                                     );
-                                    choice.consider(result).pick_or_backtrack(input)?;
+                                    choice.consider(input, result)?;
                                     let result = self.default_parse_token_with_trivia(
                                         input,
                                         TokenKind::SecondsKeyword,
                                     );
-                                    choice.consider(result).pick_or_backtrack(input)?;
+                                    choice.consider(input, result)?;
                                     let result = self.default_parse_token_with_trivia(
                                         input,
                                         TokenKind::WeeksKeyword,
                                     );
-                                    choice.consider(result).pick_or_backtrack(input)?;
+                                    choice.consider(input, result)?;
                                     let result = self.default_parse_token_with_trivia(
                                         input,
                                         TokenKind::WeiKeyword,
                                     );
-                                    choice.consider(result).pick_or_backtrack(input)?;
+                                    choice.consider(input, result)?;
                                     if !self.version_is_at_least_0_5_0 {
                                         let result = self.default_parse_token_with_trivia(
                                             input,
                                             TokenKind::YearsKeyword,
                                         );
-                                        choice.consider(result).pick_or_backtrack(input)?;
+                                        choice.consider(input, result)?;
                                     }
                                     if self.version_is_at_least_0_6_11 {
                                         let result = self.default_parse_token_with_trivia(
                                             input,
                                             TokenKind::GweiKeyword,
                                         );
-                                        choice.consider(result).pick_or_backtrack(input)?;
+                                        choice.consider(input, result)?;
                                     }
                                     if !self.version_is_at_least_0_7_0 {
                                         let result = {
@@ -2558,16 +2558,16 @@ impl Language {
                                                     input,
                                                     TokenKind::FinneyKeyword,
                                                 );
-                                                choice.consider(result).pick_or_backtrack(input)?;
+                                                choice.consider(input, result)?;
                                                 let result = self.default_parse_token_with_trivia(
                                                     input,
                                                     TokenKind::SzaboKeyword,
                                                 );
-                                                choice.consider(result).pick_or_backtrack(input)?;
+                                                choice.consider(input, result)?;
                                                 choice.finish(input)
                                             })
                                         };
-                                        choice.consider(result).pick_or_backtrack(input)?;
+                                        choice.consider(input, result)?;
                                     }
                                     choice.finish(input)
                                 })
@@ -2576,7 +2576,7 @@ impl Language {
                         seq.finish()
                     })
                 };
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result = {
                     SequenceHelper::run(|mut seq| {
                         seq.elem(
@@ -2586,48 +2586,48 @@ impl Language {
                             ChoiceHelper::run(input, |mut choice, input| {
                                 let result = self
                                     .default_parse_token_with_trivia(input, TokenKind::DaysKeyword);
-                                choice.consider(result).pick_or_backtrack(input)?;
+                                choice.consider(input, result)?;
                                 let result = self.default_parse_token_with_trivia(
                                     input,
                                     TokenKind::EtherKeyword,
                                 );
-                                choice.consider(result).pick_or_backtrack(input)?;
+                                choice.consider(input, result)?;
                                 let result = self.default_parse_token_with_trivia(
                                     input,
                                     TokenKind::HoursKeyword,
                                 );
-                                choice.consider(result).pick_or_backtrack(input)?;
+                                choice.consider(input, result)?;
                                 let result = self.default_parse_token_with_trivia(
                                     input,
                                     TokenKind::MinutesKeyword,
                                 );
-                                choice.consider(result).pick_or_backtrack(input)?;
+                                choice.consider(input, result)?;
                                 let result = self.default_parse_token_with_trivia(
                                     input,
                                     TokenKind::SecondsKeyword,
                                 );
-                                choice.consider(result).pick_or_backtrack(input)?;
+                                choice.consider(input, result)?;
                                 let result = self.default_parse_token_with_trivia(
                                     input,
                                     TokenKind::WeeksKeyword,
                                 );
-                                choice.consider(result).pick_or_backtrack(input)?;
+                                choice.consider(input, result)?;
                                 let result = self
                                     .default_parse_token_with_trivia(input, TokenKind::WeiKeyword);
-                                choice.consider(result).pick_or_backtrack(input)?;
+                                choice.consider(input, result)?;
                                 if !self.version_is_at_least_0_5_0 {
                                     let result = self.default_parse_token_with_trivia(
                                         input,
                                         TokenKind::YearsKeyword,
                                     );
-                                    choice.consider(result).pick_or_backtrack(input)?;
+                                    choice.consider(input, result)?;
                                 }
                                 if self.version_is_at_least_0_6_11 {
                                     let result = self.default_parse_token_with_trivia(
                                         input,
                                         TokenKind::GweiKeyword,
                                     );
-                                    choice.consider(result).pick_or_backtrack(input)?;
+                                    choice.consider(input, result)?;
                                 }
                                 if !self.version_is_at_least_0_7_0 {
                                     let result = {
@@ -2636,16 +2636,16 @@ impl Language {
                                                 input,
                                                 TokenKind::FinneyKeyword,
                                             );
-                                            choice.consider(result).pick_or_backtrack(input)?;
+                                            choice.consider(input, result)?;
                                             let result = self.default_parse_token_with_trivia(
                                                 input,
                                                 TokenKind::SzaboKeyword,
                                             );
-                                            choice.consider(result).pick_or_backtrack(input)?;
+                                            choice.consider(input, result)?;
                                             choice.finish(input)
                                         })
                                     };
-                                    choice.consider(result).pick_or_backtrack(input)?;
+                                    choice.consider(input, result)?;
                                 }
                                 choice.finish(input)
                             })
@@ -2653,7 +2653,7 @@ impl Language {
                         seq.finish()
                     })
                 };
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 choice.finish(input)
             })
         }
@@ -2701,14 +2701,14 @@ impl Language {
                     ChoiceHelper::run(input, |mut choice, input| {
                         let result =
                             self.default_parse_token_with_trivia(input, TokenKind::MemoryKeyword);
-                        choice.consider(result).pick_or_backtrack(input)?;
+                        choice.consider(input, result)?;
                         let result =
                             self.default_parse_token_with_trivia(input, TokenKind::StorageKeyword);
-                        choice.consider(result).pick_or_backtrack(input)?;
+                        choice.consider(input, result)?;
                         if self.version_is_at_least_0_5_0 {
                             let result = self
                                 .default_parse_token_with_trivia(input, TokenKind::CalldataKeyword);
-                            choice.consider(result).pick_or_backtrack(input)?;
+                            choice.consider(input, result)?;
                         }
                         choice.finish(input)
                     })
@@ -2816,11 +2816,11 @@ impl Language {
                         seq.elem({
                             ChoiceHelper::run(input, |mut choice, input| {
                                 let result = self.abi_coder_pragma(input);
-                                choice.consider(result).pick_or_backtrack(input)?;
+                                choice.consider(input, result)?;
                                 let result = self.experimental_pragma(input);
-                                choice.consider(result).pick_or_backtrack(input)?;
+                                choice.consider(input, result)?;
                                 let result = self.version_pragma(input);
-                                choice.consider(result).pick_or_backtrack(input)?;
+                                choice.consider(input, result)?;
                                 choice.finish(input)
                             })
                         })?;
@@ -2849,18 +2849,18 @@ impl Language {
                     {
                         ChoiceHelper::run(input, |mut choice, input| {
                             let result = self.modifier_invocation(input);
-                            choice.consider(result).pick_or_backtrack(input)?;
+                            choice.consider(input, result)?;
                             let result = self.override_specifier(input);
-                            choice.consider(result).pick_or_backtrack(input)?;
+                            choice.consider(input, result)?;
                             let result = self
                                 .default_parse_token_with_trivia(input, TokenKind::ExternalKeyword);
-                            choice.consider(result).pick_or_backtrack(input)?;
+                            choice.consider(input, result)?;
                             let result = self
                                 .default_parse_token_with_trivia(input, TokenKind::PayableKeyword);
-                            choice.consider(result).pick_or_backtrack(input)?;
+                            choice.consider(input, result)?;
                             let result = self
                                 .default_parse_token_with_trivia(input, TokenKind::VirtualKeyword);
-                            choice.consider(result).pick_or_backtrack(input)?;
+                            choice.consider(input, result)?;
                             choice.finish(input)
                         })
                     }
@@ -2890,9 +2890,9 @@ impl Language {
                         ChoiceHelper::run(input, |mut choice, input| {
                             let result =
                                 self.default_parse_token_with_trivia(input, TokenKind::Semicolon);
-                            choice.consider(result).pick_or_backtrack(input)?;
+                            choice.consider(input, result)?;
                             let result = self.block(input);
-                            choice.consider(result).pick_or_backtrack(input)?;
+                            choice.consider(input, result)?;
                             choice.finish(input)
                         })
                     })?;
@@ -2991,46 +2991,46 @@ impl Language {
         OneOrMoreHelper::run(input, |input| {
             ChoiceHelper::run(input, |mut choice, input| {
                 let result = self.pragma_directive(input);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result = self.import_directive(input);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result = self.contract_definition(input);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result = self.interface_definition(input);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result = self.library_definition(input);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 if self.version_is_at_least_0_6_0 {
                     let result = {
                         ChoiceHelper::run(input, |mut choice, input| {
                             let result = self.struct_definition(input);
-                            choice.consider(result).pick_or_backtrack(input)?;
+                            choice.consider(input, result)?;
                             let result = self.enum_definition(input);
-                            choice.consider(result).pick_or_backtrack(input)?;
+                            choice.consider(input, result)?;
                             choice.finish(input)
                         })
                     };
-                    choice.consider(result).pick_or_backtrack(input)?;
+                    choice.consider(input, result)?;
                 }
                 if self.version_is_at_least_0_7_1 {
                     let result = self.function_definition(input);
-                    choice.consider(result).pick_or_backtrack(input)?;
+                    choice.consider(input, result)?;
                 }
                 if self.version_is_at_least_0_7_4 {
                     let result = self.constant_definition(input);
-                    choice.consider(result).pick_or_backtrack(input)?;
+                    choice.consider(input, result)?;
                 }
                 if self.version_is_at_least_0_8_4 {
                     let result = self.error_definition(input);
-                    choice.consider(result).pick_or_backtrack(input)?;
+                    choice.consider(input, result)?;
                 }
                 if self.version_is_at_least_0_8_8 {
                     let result = self.user_defined_value_type_definition(input);
-                    choice.consider(result).pick_or_backtrack(input)?;
+                    choice.consider(input, result)?;
                 }
                 if self.version_is_at_least_0_8_13 {
                     let result = self.using_directive(input);
-                    choice.consider(result).pick_or_backtrack(input)?;
+                    choice.consider(input, result)?;
                 }
                 choice.finish(input)
             })
@@ -3043,21 +3043,21 @@ impl Language {
         OneOrMoreHelper::run(input, |input| {
             ChoiceHelper::run(input, |mut choice, input| {
                 let result = self.override_specifier(input);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result =
                     self.default_parse_token_with_trivia(input, TokenKind::ConstantKeyword);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result =
                     self.default_parse_token_with_trivia(input, TokenKind::InternalKeyword);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result = self.default_parse_token_with_trivia(input, TokenKind::PrivateKeyword);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result = self.default_parse_token_with_trivia(input, TokenKind::PublicKeyword);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 if self.version_is_at_least_0_6_5 {
                     let result =
                         self.default_parse_token_with_trivia(input, TokenKind::ImmutableKeyword);
-                    choice.consider(result).pick_or_backtrack(input)?;
+                    choice.consider(input, result)?;
                 }
                 choice.finish(input)
             })
@@ -3111,58 +3111,58 @@ impl Language {
                 let result = {
                     ChoiceHelper::run(input, |mut choice, input| {
                         let result = self.expression_statement(input);
-                        choice.consider(result).pick_or_backtrack(input)?;
+                        choice.consider(input, result)?;
                         let result = self.variable_declaration_statement(input);
-                        choice.consider(result).pick_or_backtrack(input)?;
+                        choice.consider(input, result)?;
                         let result = self.tuple_deconstruction_statement(input);
-                        choice.consider(result).pick_or_backtrack(input)?;
+                        choice.consider(input, result)?;
                         choice.finish(input)
                     })
                 };
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result = {
                     ChoiceHelper::run(input, |mut choice, input| {
                         let result = self.if_statement(input);
-                        choice.consider(result).pick_or_backtrack(input)?;
+                        choice.consider(input, result)?;
                         let result = self.for_statement(input);
-                        choice.consider(result).pick_or_backtrack(input)?;
+                        choice.consider(input, result)?;
                         let result = self.while_statement(input);
-                        choice.consider(result).pick_or_backtrack(input)?;
+                        choice.consider(input, result)?;
                         let result = self.do_while_statement(input);
-                        choice.consider(result).pick_or_backtrack(input)?;
+                        choice.consider(input, result)?;
                         let result = self.continue_statement(input);
-                        choice.consider(result).pick_or_backtrack(input)?;
+                        choice.consider(input, result)?;
                         let result = self.break_statement(input);
-                        choice.consider(result).pick_or_backtrack(input)?;
+                        choice.consider(input, result)?;
                         let result = self.delete_statement(input);
-                        choice.consider(result).pick_or_backtrack(input)?;
+                        choice.consider(input, result)?;
                         let result = self.return_statement(input);
-                        choice.consider(result).pick_or_backtrack(input)?;
+                        choice.consider(input, result)?;
                         let result = self.revert_statement(input);
-                        choice.consider(result).pick_or_backtrack(input)?;
+                        choice.consider(input, result)?;
                         if self.version_is_at_least_0_4_21 {
                             let result = self.emit_statement(input);
-                            choice.consider(result).pick_or_backtrack(input)?;
+                            choice.consider(input, result)?;
                         }
                         if !self.version_is_at_least_0_5_0 {
                             let result = self.throw_statement(input);
-                            choice.consider(result).pick_or_backtrack(input)?;
+                            choice.consider(input, result)?;
                         }
                         if self.version_is_at_least_0_6_0 {
                             let result = self.try_statement(input);
-                            choice.consider(result).pick_or_backtrack(input)?;
+                            choice.consider(input, result)?;
                         }
                         choice.finish(input)
                     })
                 };
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result = self.assembly_statement(input);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result = self.block(input);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 if self.version_is_at_least_0_8_0 {
                     let result = self.unchecked_block(input);
-                    choice.consider(result).pick_or_backtrack(input)?;
+                    choice.consider(input, result)?;
                 }
                 choice.finish(input)
             })
@@ -3388,18 +3388,18 @@ impl Language {
                                     input,
                                     TokenKind::MemoryKeyword,
                                 );
-                                choice.consider(result).pick_or_backtrack(input)?;
+                                choice.consider(input, result)?;
                                 let result = self.default_parse_token_with_trivia(
                                     input,
                                     TokenKind::StorageKeyword,
                                 );
-                                choice.consider(result).pick_or_backtrack(input)?;
+                                choice.consider(input, result)?;
                                 if self.version_is_at_least_0_5_0 {
                                     let result = self.default_parse_token_with_trivia(
                                         input,
                                         TokenKind::CalldataKeyword,
                                     );
-                                    choice.consider(result).pick_or_backtrack(input)?;
+                                    choice.consider(input, result)?;
                                 }
                                 choice.finish(input)
                             })
@@ -3410,7 +3410,7 @@ impl Language {
                         seq.finish()
                     })
                 };
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result = {
                     SequenceHelper::run(|mut seq| {
                         seq.elem(OptionalHelper::transform({
@@ -3419,18 +3419,18 @@ impl Language {
                                     input,
                                     TokenKind::MemoryKeyword,
                                 );
-                                choice.consider(result).pick_or_backtrack(input)?;
+                                choice.consider(input, result)?;
                                 let result = self.default_parse_token_with_trivia(
                                     input,
                                     TokenKind::StorageKeyword,
                                 );
-                                choice.consider(result).pick_or_backtrack(input)?;
+                                choice.consider(input, result)?;
                                 if self.version_is_at_least_0_5_0 {
                                     let result = self.default_parse_token_with_trivia(
                                         input,
                                         TokenKind::CalldataKeyword,
                                     );
-                                    choice.consider(result).pick_or_backtrack(input)?;
+                                    choice.consider(input, result)?;
                                 }
                                 choice.finish(input)
                             })
@@ -3441,7 +3441,7 @@ impl Language {
                         seq.finish()
                     })
                 };
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 choice.finish(input)
             })
         })
@@ -3551,52 +3551,52 @@ impl Language {
         let primary_expression_parser = |input: &mut ParserContext| {
             ChoiceHelper::run(input, |mut choice, input| {
                 let result = self.function_type(input);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result = self.mapping_type(input);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result = {
                     ChoiceHelper::run(input, |mut choice, input| {
                         let result =
                             self.default_parse_token_with_trivia(input, TokenKind::BoolKeyword);
-                        choice.consider(result).pick_or_backtrack(input)?;
+                        choice.consider(input, result)?;
                         let result =
                             self.default_parse_token_with_trivia(input, TokenKind::StringKeyword);
-                        choice.consider(result).pick_or_backtrack(input)?;
+                        choice.consider(input, result)?;
                         let result = self.address_type(input);
-                        choice.consider(result).pick_or_backtrack(input)?;
+                        choice.consider(input, result)?;
                         let result =
                             self.default_parse_token_with_trivia(input, TokenKind::FixedBytesType);
-                        choice.consider(result).pick_or_backtrack(input)?;
+                        choice.consider(input, result)?;
                         let result = self
                             .default_parse_token_with_trivia(input, TokenKind::SignedIntegerType);
-                        choice.consider(result).pick_or_backtrack(input)?;
+                        choice.consider(input, result)?;
                         let result = self
                             .default_parse_token_with_trivia(input, TokenKind::UnsignedIntegerType);
-                        choice.consider(result).pick_or_backtrack(input)?;
+                        choice.consider(input, result)?;
                         let result =
                             self.default_parse_token_with_trivia(input, TokenKind::SignedFixedType);
-                        choice.consider(result).pick_or_backtrack(input)?;
+                        choice.consider(input, result)?;
                         let result = self
                             .default_parse_token_with_trivia(input, TokenKind::UnsignedFixedType);
-                        choice.consider(result).pick_or_backtrack(input)?;
+                        choice.consider(input, result)?;
                         if !self.version_is_at_least_0_8_0 {
                             let result =
                                 self.default_parse_token_with_trivia(input, TokenKind::ByteKeyword);
-                            choice.consider(result).pick_or_backtrack(input)?;
+                            choice.consider(input, result)?;
                         }
                         choice.finish(input)
                     })
                 };
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result = self.identifier_path(input);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 choice.finish(input)
             })
         };
         let postfix_operator_parser = |input: &mut ParserContext| {
             ChoiceHelper::run(input, |mut choice, input| {
                 let result = parse_array_type_name_operator(input);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 choice.finish(input)
             })
         };
@@ -3654,21 +3654,21 @@ impl Language {
                     {
                         ChoiceHelper::run(input, |mut choice, input| {
                             let result = self.modifier_invocation(input);
-                            choice.consider(result).pick_or_backtrack(input)?;
+                            choice.consider(input, result)?;
                             let result = self.override_specifier(input);
-                            choice.consider(result).pick_or_backtrack(input)?;
+                            choice.consider(input, result)?;
                             let result = self
                                 .default_parse_token_with_trivia(input, TokenKind::ExternalKeyword);
-                            choice.consider(result).pick_or_backtrack(input)?;
+                            choice.consider(input, result)?;
                             let result = self
                                 .default_parse_token_with_trivia(input, TokenKind::PayableKeyword);
-                            choice.consider(result).pick_or_backtrack(input)?;
+                            choice.consider(input, result)?;
                             let result =
                                 self.default_parse_token_with_trivia(input, TokenKind::PureKeyword);
-                            choice.consider(result).pick_or_backtrack(input)?;
+                            choice.consider(input, result)?;
                             let result =
                                 self.default_parse_token_with_trivia(input, TokenKind::ViewKeyword);
-                            choice.consider(result).pick_or_backtrack(input)?;
+                            choice.consider(input, result)?;
                             choice.finish(input)
                         })
                     }
@@ -3698,9 +3698,9 @@ impl Language {
                         ChoiceHelper::run(input, |mut choice, input| {
                             let result =
                                 self.default_parse_token_with_trivia(input, TokenKind::Semicolon);
-                            choice.consider(result).pick_or_backtrack(input)?;
+                            choice.consider(input, result)?;
                             let result = self.block(input);
-                            choice.consider(result).pick_or_backtrack(input)?;
+                            choice.consider(input, result)?;
                             choice.finish(input)
                         })
                     })?;
@@ -3735,45 +3735,45 @@ impl Language {
                                         input,
                                         TokenKind::BoolKeyword,
                                     );
-                                    choice.consider(result).pick_or_backtrack(input)?;
+                                    choice.consider(input, result)?;
                                     let result = self.default_parse_token_with_trivia(
                                         input,
                                         TokenKind::StringKeyword,
                                     );
-                                    choice.consider(result).pick_or_backtrack(input)?;
+                                    choice.consider(input, result)?;
                                     let result = self.address_type(input);
-                                    choice.consider(result).pick_or_backtrack(input)?;
+                                    choice.consider(input, result)?;
                                     let result = self.default_parse_token_with_trivia(
                                         input,
                                         TokenKind::FixedBytesType,
                                     );
-                                    choice.consider(result).pick_or_backtrack(input)?;
+                                    choice.consider(input, result)?;
                                     let result = self.default_parse_token_with_trivia(
                                         input,
                                         TokenKind::SignedIntegerType,
                                     );
-                                    choice.consider(result).pick_or_backtrack(input)?;
+                                    choice.consider(input, result)?;
                                     let result = self.default_parse_token_with_trivia(
                                         input,
                                         TokenKind::UnsignedIntegerType,
                                     );
-                                    choice.consider(result).pick_or_backtrack(input)?;
+                                    choice.consider(input, result)?;
                                     let result = self.default_parse_token_with_trivia(
                                         input,
                                         TokenKind::SignedFixedType,
                                     );
-                                    choice.consider(result).pick_or_backtrack(input)?;
+                                    choice.consider(input, result)?;
                                     let result = self.default_parse_token_with_trivia(
                                         input,
                                         TokenKind::UnsignedFixedType,
                                     );
-                                    choice.consider(result).pick_or_backtrack(input)?;
+                                    choice.consider(input, result)?;
                                     if !self.version_is_at_least_0_8_0 {
                                         let result = self.default_parse_token_with_trivia(
                                             input,
                                             TokenKind::ByteKeyword,
                                         );
-                                        choice.consider(result).pick_or_backtrack(input)?;
+                                        choice.consider(input, result)?;
                                     }
                                     choice.finish(input)
                                 })
@@ -3810,9 +3810,9 @@ impl Language {
                         seq.elem({
                             ChoiceHelper::run(input, |mut choice, input| {
                                 let result = self.using_directive_path(input);
-                                choice.consider(result).pick_or_backtrack(input)?;
+                                choice.consider(input, result)?;
                                 let result = self.using_directive_deconstruction(input);
-                                choice.consider(result).pick_or_backtrack(input)?;
+                                choice.consider(input, result)?;
                                 choice.finish(input)
                             })
                         })?;
@@ -3823,9 +3823,9 @@ impl Language {
                             ChoiceHelper::run(input, |mut choice, input| {
                                 let result = self
                                     .default_parse_token_with_trivia(input, TokenKind::Asterisk);
-                                choice.consider(result).pick_or_backtrack(input)?;
+                                choice.consider(input, result)?;
                                 let result = self.type_name(input);
-                                choice.consider(result).pick_or_backtrack(input)?;
+                                choice.consider(input, result)?;
                                 choice.finish(input)
                             })
                         })?;
@@ -3895,75 +3895,75 @@ impl Language {
                                             input,
                                             TokenKind::Ampersand,
                                         );
-                                        choice.consider(result).pick_or_backtrack(input)?;
+                                        choice.consider(input, result)?;
                                         let result = self.default_parse_token_with_trivia(
                                             input,
                                             TokenKind::Asterisk,
                                         );
-                                        choice.consider(result).pick_or_backtrack(input)?;
+                                        choice.consider(input, result)?;
                                         let result = self.default_parse_token_with_trivia(
                                             input,
                                             TokenKind::BangEqual,
                                         );
-                                        choice.consider(result).pick_or_backtrack(input)?;
+                                        choice.consider(input, result)?;
                                         let result = self
                                             .default_parse_token_with_trivia(input, TokenKind::Bar);
-                                        choice.consider(result).pick_or_backtrack(input)?;
+                                        choice.consider(input, result)?;
                                         let result = self.default_parse_token_with_trivia(
                                             input,
                                             TokenKind::Caret,
                                         );
-                                        choice.consider(result).pick_or_backtrack(input)?;
+                                        choice.consider(input, result)?;
                                         let result = self.default_parse_token_with_trivia(
                                             input,
                                             TokenKind::EqualEqual,
                                         );
-                                        choice.consider(result).pick_or_backtrack(input)?;
+                                        choice.consider(input, result)?;
                                         let result = self.default_parse_token_with_trivia(
                                             input,
                                             TokenKind::GreaterThan,
                                         );
-                                        choice.consider(result).pick_or_backtrack(input)?;
+                                        choice.consider(input, result)?;
                                         let result = self.default_parse_token_with_trivia(
                                             input,
                                             TokenKind::GreaterThanEqual,
                                         );
-                                        choice.consider(result).pick_or_backtrack(input)?;
+                                        choice.consider(input, result)?;
                                         let result = self.default_parse_token_with_trivia(
                                             input,
                                             TokenKind::LessThan,
                                         );
-                                        choice.consider(result).pick_or_backtrack(input)?;
+                                        choice.consider(input, result)?;
                                         let result = self.default_parse_token_with_trivia(
                                             input,
                                             TokenKind::LessThanEqual,
                                         );
-                                        choice.consider(result).pick_or_backtrack(input)?;
+                                        choice.consider(input, result)?;
                                         let result = self.default_parse_token_with_trivia(
                                             input,
                                             TokenKind::Minus,
                                         );
-                                        choice.consider(result).pick_or_backtrack(input)?;
+                                        choice.consider(input, result)?;
                                         let result = self.default_parse_token_with_trivia(
                                             input,
                                             TokenKind::Percent,
                                         );
-                                        choice.consider(result).pick_or_backtrack(input)?;
+                                        choice.consider(input, result)?;
                                         let result = self.default_parse_token_with_trivia(
                                             input,
                                             TokenKind::Plus,
                                         );
-                                        choice.consider(result).pick_or_backtrack(input)?;
+                                        choice.consider(input, result)?;
                                         let result = self.default_parse_token_with_trivia(
                                             input,
                                             TokenKind::Slash,
                                         );
-                                        choice.consider(result).pick_or_backtrack(input)?;
+                                        choice.consider(input, result)?;
                                         let result = self.default_parse_token_with_trivia(
                                             input,
                                             TokenKind::Tilde,
                                         );
-                                        choice.consider(result).pick_or_backtrack(input)?;
+                                        choice.consider(input, result)?;
                                         choice.finish(input)
                                     })
                                 }
@@ -4007,10 +4007,10 @@ impl Language {
                         if !self.version_is_at_least_0_5_0 {
                             let result =
                                 self.default_parse_token_with_trivia(input, TokenKind::VarKeyword);
-                            choice.consider(result).pick_or_backtrack(input)?;
+                            choice.consider(input, result)?;
                         }
                         let result = self.type_name(input);
-                        choice.consider(result).pick_or_backtrack(input)?;
+                        choice.consider(input, result)?;
                         choice.finish(input)
                     })
                 })?;
@@ -4018,14 +4018,14 @@ impl Language {
                     ChoiceHelper::run(input, |mut choice, input| {
                         let result =
                             self.default_parse_token_with_trivia(input, TokenKind::MemoryKeyword);
-                        choice.consider(result).pick_or_backtrack(input)?;
+                        choice.consider(input, result)?;
                         let result =
                             self.default_parse_token_with_trivia(input, TokenKind::StorageKeyword);
-                        choice.consider(result).pick_or_backtrack(input)?;
+                        choice.consider(input, result)?;
                         if self.version_is_at_least_0_5_0 {
                             let result = self
                                 .default_parse_token_with_trivia(input, TokenKind::CalldataKeyword);
-                            choice.consider(result).pick_or_backtrack(input)?;
+                            choice.consider(input, result)?;
                         }
                         choice.finish(input)
                     })
@@ -4107,25 +4107,25 @@ impl Language {
                 ChoiceHelper::run(input, |mut choice, input| {
                     let result =
                         self.version_pragma_parse_token_with_trivia(input, TokenKind::Caret);
-                    choice.consider(result).pick_or_backtrack(input)?;
+                    choice.consider(input, result)?;
                     let result =
                         self.version_pragma_parse_token_with_trivia(input, TokenKind::Tilde);
-                    choice.consider(result).pick_or_backtrack(input)?;
+                    choice.consider(input, result)?;
                     let result =
                         self.version_pragma_parse_token_with_trivia(input, TokenKind::Equal);
-                    choice.consider(result).pick_or_backtrack(input)?;
+                    choice.consider(input, result)?;
                     let result =
                         self.version_pragma_parse_token_with_trivia(input, TokenKind::LessThan);
-                    choice.consider(result).pick_or_backtrack(input)?;
+                    choice.consider(input, result)?;
                     let result =
                         self.version_pragma_parse_token_with_trivia(input, TokenKind::GreaterThan);
-                    choice.consider(result).pick_or_backtrack(input)?;
+                    choice.consider(input, result)?;
                     let result = self
                         .version_pragma_parse_token_with_trivia(input, TokenKind::LessThanEqual);
-                    choice.consider(result).pick_or_backtrack(input)?;
+                    choice.consider(input, result)?;
                     let result = self
                         .version_pragma_parse_token_with_trivia(input, TokenKind::GreaterThanEqual);
-                    choice.consider(result).pick_or_backtrack(input)?;
+                    choice.consider(input, result)?;
                     choice.finish(input)
                 })
             })
@@ -4133,7 +4133,7 @@ impl Language {
         let prefix_operator_parser = |input: &mut ParserContext| {
             ChoiceHelper::run(input, |mut choice, input| {
                 let result = parse_version_pragma_unary_operator(input);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 choice.finish(input)
             })
         };
@@ -4151,9 +4151,9 @@ impl Language {
         let binary_operator_parser = |input: &mut ParserContext| {
             ChoiceHelper::run(input, |mut choice, input| {
                 let result = parse_version_pragma_or_operator(input);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result = parse_version_pragma_range_operator(input);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 choice.finish(input)
             })
         };
@@ -4342,37 +4342,37 @@ impl Language {
                     ChoiceHelper::run(input, |mut choice, input| {
                         let result =
                             self.yul_block_parse_token_with_trivia(input, TokenKind::TrueKeyword);
-                        choice.consider(result).pick_or_backtrack(input)?;
+                        choice.consider(input, result)?;
                         let result =
                             self.yul_block_parse_token_with_trivia(input, TokenKind::FalseKeyword);
-                        choice.consider(result).pick_or_backtrack(input)?;
+                        choice.consider(input, result)?;
                         let result =
                             self.yul_block_parse_token_with_trivia(input, TokenKind::YulHexLiteral);
-                        choice.consider(result).pick_or_backtrack(input)?;
+                        choice.consider(input, result)?;
                         let result = self
                             .yul_block_parse_token_with_trivia(input, TokenKind::YulDecimalLiteral);
-                        choice.consider(result).pick_or_backtrack(input)?;
+                        choice.consider(input, result)?;
                         let result = self
                             .yul_block_parse_token_with_trivia(input, TokenKind::HexStringLiteral);
-                        choice.consider(result).pick_or_backtrack(input)?;
+                        choice.consider(input, result)?;
                         let result = self.yul_block_parse_token_with_trivia(
                             input,
                             TokenKind::AsciiStringLiteral,
                         );
-                        choice.consider(result).pick_or_backtrack(input)?;
+                        choice.consider(input, result)?;
                         choice.finish(input)
                     })
                 };
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result = self.yul_identifier_path(input);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 choice.finish(input)
             })
         };
         let postfix_operator_parser = |input: &mut ParserContext| {
             ChoiceHelper::run(input, |mut choice, input| {
                 let result = parse_yul_function_call_operator(input);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 choice.finish(input)
             })
         };
@@ -4568,28 +4568,28 @@ impl Language {
         {
             ChoiceHelper::run(input, |mut choice, input| {
                 let result = self.yul_block(input);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result = self.yul_function_definition(input);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result = self.yul_declaration_statement(input);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result = self.yul_assignment_statement(input);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result = self.yul_if_statement(input);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result = self.yul_for_statement(input);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result = self.yul_switch_statement(input);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result = self.yul_break_statement(input);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result = self.yul_continue_statement(input);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 let result = self.yul_expression(input);
-                choice.consider(result).pick_or_backtrack(input)?;
+                choice.consider(input, result)?;
                 if self.version_is_at_least_0_6_0 {
                     let result = self.yul_leave_statement(input);
-                    choice.consider(result).pick_or_backtrack(input)?;
+                    choice.consider(input, result)?;
                 }
                 choice.finish(input)
             })
@@ -4611,7 +4611,7 @@ impl Language {
                     ChoiceHelper::run(input, |mut choice, input| {
                         let result = self
                             .yul_block_parse_token_with_trivia(input, TokenKind::DefaultKeyword);
-                        choice.consider(result).pick_or_backtrack(input)?;
+                        choice.consider(input, result)?;
                         let result = {
                             SequenceHelper::run(|mut seq| {
                                 seq.elem(self.yul_block_parse_token_with_trivia(
@@ -4624,39 +4624,39 @@ impl Language {
                                             input,
                                             TokenKind::TrueKeyword,
                                         );
-                                        choice.consider(result).pick_or_backtrack(input)?;
+                                        choice.consider(input, result)?;
                                         let result = self.yul_block_parse_token_with_trivia(
                                             input,
                                             TokenKind::FalseKeyword,
                                         );
-                                        choice.consider(result).pick_or_backtrack(input)?;
+                                        choice.consider(input, result)?;
                                         let result = self.yul_block_parse_token_with_trivia(
                                             input,
                                             TokenKind::YulHexLiteral,
                                         );
-                                        choice.consider(result).pick_or_backtrack(input)?;
+                                        choice.consider(input, result)?;
                                         let result = self.yul_block_parse_token_with_trivia(
                                             input,
                                             TokenKind::YulDecimalLiteral,
                                         );
-                                        choice.consider(result).pick_or_backtrack(input)?;
+                                        choice.consider(input, result)?;
                                         let result = self.yul_block_parse_token_with_trivia(
                                             input,
                                             TokenKind::HexStringLiteral,
                                         );
-                                        choice.consider(result).pick_or_backtrack(input)?;
+                                        choice.consider(input, result)?;
                                         let result = self.yul_block_parse_token_with_trivia(
                                             input,
                                             TokenKind::AsciiStringLiteral,
                                         );
-                                        choice.consider(result).pick_or_backtrack(input)?;
+                                        choice.consider(input, result)?;
                                         choice.finish(input)
                                     })
                                 })?;
                                 seq.finish()
                             })
                         };
-                        choice.consider(result).pick_or_backtrack(input)?;
+                        choice.consider(input, result)?;
                         choice.finish(input)
                     })
                 })?;

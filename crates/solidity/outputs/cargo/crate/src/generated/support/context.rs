@@ -22,6 +22,12 @@ pub struct Marker {
     err_len: usize,
 }
 
+impl Marker {
+    pub fn err_len(&self) -> usize {
+        self.err_len
+    }
+}
+
 impl<'s> ParserContext<'s> {
     pub fn new(source: &'s str) -> Self {
         Self {
@@ -49,6 +55,13 @@ impl<'s> ParserContext<'s> {
 
     pub fn emit(&mut self, error: ParseError) {
         self.errors.push(error);
+    }
+
+    pub fn errors_since(&self, marker: Marker) -> &[ParseError] {
+        &self.errors[marker.err_len..]
+    }
+    pub fn extend_errors(&mut self, errors: Vec<ParseError>) {
+        self.errors.extend(errors);
     }
 
     pub fn into_errors(self) -> Vec<ParseError> {

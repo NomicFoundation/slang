@@ -1,5 +1,7 @@
 use std::ops::ControlFlow;
 
+use crate::parse_error::ParseError;
+
 use super::{context::Marker, ParserContext, ParserResult};
 
 /// Starting from a given position in the input, this helper will try to pick (and remember) a best match. Settles on
@@ -8,6 +10,7 @@ use super::{context::Marker, ParserContext, ParserResult};
 pub struct ChoiceHelper {
     result: ParserResult,
     start_position: Marker,
+    recovered_errors: Vec<ParseError>,
 }
 
 impl ChoiceHelper {
@@ -15,6 +18,7 @@ impl ChoiceHelper {
         Self {
             result: ParserResult::no_match(vec![]),
             start_position: input.mark(),
+            recovered_errors: vec![],
         }
     }
 
@@ -28,7 +32,9 @@ impl ChoiceHelper {
     }
 
     /// Store the next result if it's a better match; otherwise, we retain the existing one.
-    fn attempt_pick(&mut self, next_result: ParserResult) {
+    fn attempt_pick(&mut self, input: &mut ParserContext, next_result: ParserResult) {
+        let mut better_pick = false;
+
         match (&mut self.result, next_result) {
             // We settle for the first full match.
             (ParserResult::Match(running), _) if running.is_full_recursive() => {
@@ -56,6 +62,7 @@ impl ChoiceHelper {
             {
                 if next.matching_recursive() > running.matching_recursive() {
                     self.result = ParserResult::Match(next);
+                    better_pick = true;
                 }
             }
             (ParserResult::Match(running), ParserResult::IncompleteMatch(next))
@@ -69,6 +76,7 @@ impl ChoiceHelper {
             (ParserResult::IncompleteMatch(running), ParserResult::IncompleteMatch(next)) => {
                 if next.covers_more_than(&running) {
                     self.result = ParserResult::IncompleteMatch(next);
+                    better_pick = true;
                 }
             }
             (ParserResult::IncompleteMatch(running), ParserResult::Match(next))
@@ -76,15 +84,27 @@ impl ChoiceHelper {
             {
                 if next.matching_recursive() > running.matching_recursive() {
                     self.result = ParserResult::Match(next);
+                    better_pick = true;
                 }
             }
             (ParserResult::SkippedUntil(running), ParserResult::SkippedUntil(next)) => {
                 if next.matching_recursive() > running.matching_recursive() {
                     self.result = ParserResult::SkippedUntil(next);
+                    better_pick = true;
                 }
             }
             // Otherwise, the next match will always be better.
-            (_, next) => self.result = next,
+            (_, next) => {
+                self.result = next;
+                better_pick = true;
+            }
+        }
+
+        // Store currently accumulated errors if we had a better pick.
+        // We rewind the stream with each new consideration, so we need a way to come back
+        // to the errors that were accumulated at the time of the best pick.
+        if better_pick {
+            self.recovered_errors = input.errors_since(self.start_position).to_vec();
         }
     }
 
@@ -116,9 +136,19 @@ impl ChoiceHelper {
     /// Aggregates a choice result into the accumulator.
     ///
     /// Returns a [`Choice`] struct that can be used to either pick the value or backtrack the input.
-    pub fn consider(&mut self, value: ParserResult) -> Choice<'_> {
-        self.attempt_pick(value);
-        Choice { helper: self }
+    pub fn consider(
+        &mut self,
+        input: &mut ParserContext,
+        value: ParserResult,
+    ) -> ControlFlow<ParserResult, &mut ChoiceHelper> {
+        self.attempt_pick(input, value);
+
+        if self.is_done() {
+            ControlFlow::Break(self.take_result())
+        } else {
+            input.rewind(self.start_position);
+            ControlFlow::Continue(self)
+        }
     }
 
     /// Finishes the choice parse, returning the accumulated match.
@@ -148,37 +178,13 @@ impl ChoiceHelper {
                             input.next();
                         }
                     }
+                    // Inject the accumulated errors at the time of our best pick.
+                    input.extend_errors(self.recovered_errors);
                 }
                 _ => {}
             }
         }
 
         self.result
-    }
-}
-
-/// Helper struct that is created by calling [`ChoiceHelper::consider`].
-///
-/// Ensures that the choice is always picked or the input is backtracked by providing the method separately form the
-/// [`ChoiceHelper`] struct.
-#[must_use]
-pub struct Choice<'a> {
-    helper: &'a mut ChoiceHelper,
-}
-
-impl<'a> Choice<'a> {
-    /// Either breaks on the current choice if it's fulfilled or backtracks the input.
-    pub fn pick_or_backtrack(
-        self,
-        input: &mut ParserContext,
-    ) -> ControlFlow<ParserResult, &'a mut ChoiceHelper> {
-        let inner = self.helper;
-
-        if inner.is_done() {
-            ControlFlow::Break(inner.take_result())
-        } else {
-            input.rewind(inner.start_position);
-            ControlFlow::Continue(inner)
-        }
     }
 }

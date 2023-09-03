@@ -7,7 +7,7 @@ use super::{
     text_index::{TextIndex, TextRange},
 };
 
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 pub struct ParseError {
     pub(crate) text_range: TextRange,
     pub(crate) tokens_that_would_have_allowed_more_progress: Vec<TokenKind>,

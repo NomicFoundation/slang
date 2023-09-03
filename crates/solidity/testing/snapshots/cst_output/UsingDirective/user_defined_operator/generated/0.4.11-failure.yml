@@ -3,7 +3,15 @@
 Source: >
   1  │ using {div as /} for Int global;                                                 │ 0..32
 
-Errors: []
+Errors: # 1 total
+  - >
+    Error: Expected CloseBrace or Comma.
+       ╭─[crates/solidity/testing/snapshots/cst_output/UsingDirective/user_defined_operator/input.sol:1:12]
+       │
+     1 │ using {div as /} for Int global;
+       │            ──┬─  
+       │              ╰─── Error occurred here.
+    ───╯
 
 Tree:
   - UsingDirective (Rule): # 0..32 "using {div as /} for Int global;"
