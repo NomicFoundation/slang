@@ -69,6 +69,13 @@ impl ChoiceHelper {
                     self.result = ParserResult::IncompleteMatch(next);
                 }
             }
+            (ParserResult::IncompleteMatch(running), ParserResult::Match(next))
+                if !next.is_full_recursive() =>
+            {
+                if next.matching_recursive() > running.matching_recursive() {
+                    self.result = ParserResult::Match(next);
+                }
+            }
             // Otherwise, the next match will always be better.
             (_, next) => self.result = next,
         }
