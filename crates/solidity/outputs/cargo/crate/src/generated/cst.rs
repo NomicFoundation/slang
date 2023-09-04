@@ -26,18 +26,15 @@ pub enum Node {
     Token(Rc<TokenNode>),
 }
 
-#[allow(dead_code)]
 impl Node {
     pub fn rule(kind: RuleKind, children: Vec<Self>) -> Self {
-        let mut text_len = Default::default();
-        for child in &children {
-            text_len += child.text_len();
-        }
-        return Self::Rule(Rc::new(RuleNode {
+        let text_len = children.iter().map(Node::text_len).sum();
+
+        Self::Rule(Rc::new(RuleNode {
             kind,
             text_len,
-            children: children,
-        }));
+            children,
+        }))
     }
 
     pub fn token(kind: TokenKind, text: String) -> Self {

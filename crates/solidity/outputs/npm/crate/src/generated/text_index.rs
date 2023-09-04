@@ -72,6 +72,12 @@ impl Add for TextIndex {
     }
 }
 
+impl std::iter::Sum for TextIndex {
+    fn sum<I: Iterator<Item = Self>>(iter: I) -> Self {
+        iter.fold(Self::default(), Add::add)
+    }
+}
+
 impl Sub for TextIndex {
     type Output = Self;
 
