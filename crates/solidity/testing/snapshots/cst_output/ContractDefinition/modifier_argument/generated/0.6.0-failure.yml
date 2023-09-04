@@ -16,18 +16,18 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Expected Semicolon.
-        ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/modifier_argument/input.sol:3:1]
+    Error: Expected OpenParen.
+        ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/modifier_argument/input.sol:3:12]
         │
       3 │ ╭─▶   function freeMint(uint256 _mintAmount) public mintCompliance(_mintAmount) {
         ┆ ┆   
-     12 │ ├─▶ }
-        │ │       
-        │ ╰─────── Error occurred here.
+     11 │ ├─▶   }
+        │ │         
+        │ ╰───────── Error occurred here.
     ────╯
 
 Tree:
-  - ContractDefinition (Rule): # 0..398 "//SPDX-License-Identifier: MIT\ncontract TYREAI {\n ..."
+  - ContractDefinition (Rule): # 0..387 "//SPDX-License-Identifier: MIT\ncontract TYREAI {\n ..."
       - LeadingTrivia (Rule): # 0..31 "//SPDX-License-Identifier: MIT\n"
           - SingleLineComment (Trivia): "//SPDX-License-Identifier: MIT" # 0..30
       - ContractKeyword (Token): "contract" # 31..39
@@ -38,4 +38,5 @@ Tree:
               - TypeName (Rule): # 49..59 "  function"
                   - FunctionType (Rule): # 49..59 "  function"
                       - FunctionKeyword (Token): "function" # 51..59
-      - SKIPPED (Token): "freeMint(uint256 _mintAmount) public mintComplianc..." # 60..398
+      - SKIPPED (Token): "freeMint(uint256 _mintAmount) public mintComplianc..." # 60..385
+      - CloseBrace (Token): "}" # 385..386

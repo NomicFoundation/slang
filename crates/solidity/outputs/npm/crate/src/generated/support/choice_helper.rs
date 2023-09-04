@@ -183,6 +183,17 @@ impl ChoiceHelper {
                     // Inject the accumulated errors at the time of our best pick.
                     input.extend_errors(self.recovered_errors);
                 }
+                ParserResult::SkippedUntil(skipped) => {
+                    for node in &skipped.nodes {
+                        for _ in 0..node.text_len().char {
+                            input.next();
+                        }
+                    }
+                    for _ in skipped.skipped.chars() {
+                        input.next();
+                    }
+                    input.extend_errors(self.recovered_errors);
+                }
                 _ => {}
             }
         }

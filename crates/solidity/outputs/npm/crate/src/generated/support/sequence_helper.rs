@@ -145,10 +145,19 @@ impl SequenceHelper {
                             nodes: std::mem::take(&mut running.nodes),
                             expected_tokens: next.expected_tokens,
                         }));
+                    } else if is_single_token_with_trivia {
+                        running.nodes.push(cst::Node::token(
+                            TokenKind::SKIPPED,
+                            std::mem::take(&mut running.skipped),
+                        ));
+                        running.nodes.extend(next.nodes);
+
+                        self.result = State::Running(ParserResult::Match(Match {
+                            nodes: std::mem::take(&mut running.nodes),
+                            expected_tokens: next.expected_tokens,
+                        }));
                     } else {
-                        // We can only finish recovery, not accumulate more nodes
-                        debug_assert!(self.is_done());
-                        return;
+                        todo!()
                     }
                 }
                 // Otherwise, let the outer parse deal with that
