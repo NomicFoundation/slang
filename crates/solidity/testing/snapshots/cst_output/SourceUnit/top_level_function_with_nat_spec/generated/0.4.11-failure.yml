@@ -1,0 +1,61 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ pragma solidity >=0.7.0 <0.9.0;                                                                                │ 0..31
+  2  │                                                                                                                │ 32..32
+  3  │ // solhint-disable                                                                                             │ 33..51
+  4  │                                                                                                                │ 52..52
+  5  │ /**                                                                                                            │ 53..56
+  6  │  * @dev Reverts if `condition` is false, with a revert reason containing `errorCode`. Only codes up to 999 are │ 57..167
+  7  │  * supported.                                                                                                  │ 168..181
+  8  │  * Uses the default 'BAL' prefix for the error code                                                            │ 182..233
+  9  │  */                                                                                                            │ 234..237
+  10 │ function _require(bool condition, uint256 errorCode) pure {                                                    │ 238..297
+  11 │   if (!condition) _revert(errorCode);                                                                          │ 298..335
+  12 │ }                                                                                                              │ 336..337
+
+Errors: # 1 total
+  - >
+    Error: Expected EndOfLine or MultilineComment or SingleLineComment or Whitespace.
+        ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/top_level_function_with_nat_spec/input.sol:10:1]
+        │
+     10 │ ╭─▶ function _require(bool condition, uint256 errorCode) pure {
+        ┆ ┆   
+     12 │ ├─▶ }
+        │ │       
+        │ ╰─────── Error occurred here.
+    ────╯
+
+Tree:
+  - SourceUnit (Rule): # 0..338 "pragma solidity >=0.7.0 <0.9.0;\n\n// solhint-disabl..."
+      - SourceUnitMembersList (Rule): # 0..32 "pragma solidity >=0.7.0 <0.9.0;\n"
+          - PragmaDirective (Rule): # 0..32 "pragma solidity >=0.7.0 <0.9.0;\n"
+              - PragmaKeyword (Token): "pragma" # 0..6
+              - VersionPragma (Rule): # 6..30 " solidity >=0.7.0 <0.9.0"
+                  - SolidityKeyword (Token): "solidity" # 7..15
+                  - VersionPragmaExpressionsList (Rule): # 15..30 " >=0.7.0 <0.9.0"
+                      - VersionPragmaExpression (Rule): # 15..23 " >=0.7.0"
+                          - VersionPragmaUnaryExpression (Rule): # 15..23 " >=0.7.0"
+                              - GreaterThanEqual (Token): ">=" # 16..18
+                              - VersionPragmaExpression (Rule): # 18..23 "0.7.0"
+                                  - VersionPragmaSpecifier (Rule): # 18..23 "0.7.0"
+                                      - VersionPragmaValue (Token): "0" # 18..19
+                                      - Period (Token): "." # 19..20
+                                      - VersionPragmaValue (Token): "7" # 20..21
+                                      - Period (Token): "." # 21..22
+                                      - VersionPragmaValue (Token): "0" # 22..23
+                      - VersionPragmaExpression (Rule): # 23..30 " <0.9.0"
+                          - VersionPragmaUnaryExpression (Rule): # 23..30 " <0.9.0"
+                              - LessThan (Token): "<" # 24..25
+                              - VersionPragmaExpression (Rule): # 25..30 "0.9.0"
+                                  - VersionPragmaSpecifier (Rule): # 25..30 "0.9.0"
+                                      - VersionPragmaValue (Token): "0" # 25..26
+                                      - Period (Token): "." # 26..27
+                                      - VersionPragmaValue (Token): "9" # 27..28
+                                      - Period (Token): "." # 28..29
+                                      - VersionPragmaValue (Token): "0" # 29..30
+              - Semicolon (Token): ";" # 30..31
+      - EndOfFileTrivia (Rule): # 32..238 "\n// solhint-disable\n\n/**\n * @dev Reverts if `condi..."
+          - SingleLineComment (Trivia): "// solhint-disable" # 33..51
+          - MultilineComment (Trivia): "/**\n * @dev Reverts if `condition` is false, with ..." # 53..237
+      - SKIPPED (Token): "function _require(bool condition, uint256 errorCod..." # 238..338

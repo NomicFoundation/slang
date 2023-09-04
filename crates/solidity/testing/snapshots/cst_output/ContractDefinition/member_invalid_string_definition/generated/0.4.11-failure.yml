@@ -1,0 +1,20 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ pragma solidity ^0.8.9;                                                          │ 0..23
+  2  │                                                                                  │ 24..24
+  3  │ contract ArbClips {                                                              │ 25..44
+  4  │     string public clip = "[email protected]_CLIPS LFG";                          │ 45..101
+  5  │ }                                                                                │ 102..103
+
+Errors: # 1 total
+  - >
+    Error: Expected ContractKeyword.
+       ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/member_invalid_string_definition/input.sol:1:1]
+       │
+     1 │ ╭─▶ pragma solidity ^0.8.9;
+       ┆ ┆   
+    ───╯
+
+Tree:
+  - SKIPPED (Token): "pragma solidity ^0.8.9;\n\ncontract ArbClips {\n    s..." # 0..104

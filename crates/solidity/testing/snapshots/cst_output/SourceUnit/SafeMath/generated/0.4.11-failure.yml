@@ -1,0 +1,125 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ library SafeMath {                                                               │ 0..18
+  2  │   function tryAdd(uint256 a, uint256 b) internal pure returns (bool, uint256) {  │ 19..98
+  3  │     unchecked {                                                                  │ 99..114
+  4  │       uint256 c = a + b;                                                         │ 115..139
+  5  │       if (c < a) return (false, 0);                                              │ 140..175
+  6  │       return (true, c);                                                          │ 176..199
+  7  │     }                                                                            │ 200..205
+  8  │   }                                                                              │ 206..209
+  9  │ }                                                                                │ 210..211
+
+Errors: # 2 total
+  - >
+    Error: Expected Semicolon.
+       ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/SafeMath/input.sol:3:15]
+       │
+     3 │ ╭─▶     unchecked {
+     4 │ ├─▶       uint256 c = a + b;
+       │ │                              
+       │ ╰────────────────────────────── Error occurred here.
+    ───╯
+  - >
+    Error: Expected EndOfLine or MultilineComment or SingleLineComment or Whitespace.
+       ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/SafeMath/input.sol:9:1]
+       │
+     9 │ }
+       │ ─┬  
+       │  ╰── Error occurred here.
+    ───╯
+
+Tree:
+  - SourceUnit (Rule): # 0..212 "library SafeMath {\n  function tryAdd(uint256 a, ui..."
+      - SourceUnitMembersList (Rule): # 0..210 "library SafeMath {\n  function tryAdd(uint256 a, ui..."
+          - LibraryDefinition (Rule): # 0..210 "library SafeMath {\n  function tryAdd(uint256 a, ui..."
+              - LibraryKeyword (Token): "library" # 0..7
+              - Identifier (Token): "SafeMath" # 8..16
+              - OpenBrace (Token): "{" # 17..18
+              - LibraryMembersList (Rule): # 19..206 "  function tryAdd(uint256 a, uint256 b) internal p..."
+                  - FunctionDefinition (Rule): # 19..206 "  function tryAdd(uint256 a, uint256 b) internal p..."
+                      - FunctionKeyword (Token): "function" # 21..29
+                      - Identifier (Token): "tryAdd" # 30..36
+                      - ParametersDeclaration (Rule): # 36..58 "(uint256 a, uint256 b)"
+                          - OpenParen (Token): "(" # 36..37
+                          - ParametersList (Rule): # 37..57 "uint256 a, uint256 b"
+                              - Parameter (Rule): # 37..46 "uint256 a"
+                                  - TypeName (Rule): # 37..44 "uint256"
+                                      - UnsignedIntegerType (Token): "uint256" # 37..44
+                                  - Identifier (Token): "a" # 45..46
+                              - Comma (Token): "," # 46..47
+                              - Parameter (Rule): # 47..57 " uint256 b"
+                                  - TypeName (Rule): # 47..55 " uint256"
+                                      - UnsignedIntegerType (Token): "uint256" # 48..55
+                                  - Identifier (Token): "b" # 56..57
+                          - CloseParen (Token): ")" # 57..58
+                      - FunctionAttributesList (Rule): # 58..72 " internal pure"
+                          - InternalKeyword (Token): "internal" # 59..67
+                          - PureKeyword (Token): "pure" # 68..72
+                      - ReturnsDeclaration (Rule): # 72..96 " returns (bool, uint256)"
+                          - ReturnsKeyword (Token): "returns" # 73..80
+                          - ParametersDeclaration (Rule): # 80..96 " (bool, uint256)"
+                              - OpenParen (Token): "(" # 81..82
+                              - ParametersList (Rule): # 82..95 "bool, uint256"
+                                  - Parameter (Rule): # 82..86 "bool"
+                                      - TypeName (Rule): # 82..86 "bool"
+                                          - BoolKeyword (Token): "bool" # 82..86
+                                  - Comma (Token): "," # 86..87
+                                  - Parameter (Rule): # 87..95 " uint256"
+                                      - TypeName (Rule): # 87..95 " uint256"
+                                          - UnsignedIntegerType (Token): "uint256" # 88..95
+                              - CloseParen (Token): ")" # 95..96
+                      - Block (Rule): # 96..206 " {\n    unchecked {\n      uint256 c = a + b;\n      ..."
+                          - OpenBrace (Token): "{" # 97..98
+                          - StatementsList (Rule): # 99..200 "    unchecked {\n      uint256 c = a + b;\n      if ..."
+                              - Statement (Rule): # 99..140 "    unchecked {\n      uint256 c = a + b;\n"
+                                  - ExpressionStatement (Rule): # 99..140 "    unchecked {\n      uint256 c = a + b;\n"
+                                      - Expression (Rule): # 99..112 "    unchecked"
+                                          - Identifier (Token): "unchecked" # 103..112
+                                      - SKIPPED (Token): "{\n      uint256 c = a + b" # 113..138
+                                      - Semicolon (Token): ";" # 138..139
+                              - Statement (Rule): # 140..176 "      if (c < a) return (false, 0);\n"
+                                  - IfStatement (Rule): # 140..176 "      if (c < a) return (false, 0);\n"
+                                      - IfKeyword (Token): "if" # 146..148
+                                      - OpenParen (Token): "(" # 149..150
+                                      - Expression (Rule): # 150..155 "c < a"
+                                          - BinaryExpression (Rule): # 150..155 "c < a"
+                                              - Expression (Rule): # 150..151 "c"
+                                                  - Identifier (Token): "c" # 150..151
+                                              - LessThan (Token): "<" # 152..153
+                                              - Expression (Rule): # 153..155 " a"
+                                                  - Identifier (Token): "a" # 154..155
+                                      - CloseParen (Token): ")" # 155..156
+                                      - Statement (Rule): # 156..176 " return (false, 0);\n"
+                                          - ReturnStatement (Rule): # 156..176 " return (false, 0);\n"
+                                              - ReturnKeyword (Token): "return" # 157..163
+                                              - Expression (Rule): # 163..174 " (false, 0)"
+                                                  - TupleExpression (Rule): # 163..174 " (false, 0)"
+                                                      - OpenParen (Token): "(" # 164..165
+                                                      - TupleValuesList (Rule): # 165..173 "false, 0"
+                                                          - Expression (Rule): # 165..170 "false"
+                                                              - FalseKeyword (Token): "false" # 165..170
+                                                          - Comma (Token): "," # 170..171
+                                                          - Expression (Rule): # 171..173 " 0"
+                                                              - NumericExpression (Rule): # 171..173 " 0"
+                                                                  - DecimalLiteral (Token): "0" # 172..173
+                                                      - CloseParen (Token): ")" # 173..174
+                                              - Semicolon (Token): ";" # 174..175
+                              - Statement (Rule): # 176..200 "      return (true, c);\n"
+                                  - ReturnStatement (Rule): # 176..200 "      return (true, c);\n"
+                                      - ReturnKeyword (Token): "return" # 182..188
+                                      - Expression (Rule): # 188..198 " (true, c)"
+                                          - TupleExpression (Rule): # 188..198 " (true, c)"
+                                              - OpenParen (Token): "(" # 189..190
+                                              - TupleValuesList (Rule): # 190..197 "true, c"
+                                                  - Expression (Rule): # 190..194 "true"
+                                                      - TrueKeyword (Token): "true" # 190..194
+                                                  - Comma (Token): "," # 194..195
+                                                  - Expression (Rule): # 195..197 " c"
+                                                      - Identifier (Token): "c" # 196..197
+                                              - CloseParen (Token): ")" # 197..198
+                                      - Semicolon (Token): ";" # 198..199
+                          - CloseBrace (Token): "}" # 204..205
+              - CloseBrace (Token): "}" # 208..209
+      - SKIPPED (Token): "}\n" # 210..212

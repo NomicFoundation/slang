@@ -1,0 +1,168 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // SPDX-License-Identifier: MIT                                                                                                                                │ 0..31
+  2  │ contract ABC {                                                                                                                                                 │ 32..46
+  3  │   /**                                                                                                                                                          │ 47..52
+  4  │    * @dev Replacement for Solidity's `transfer`: sends `amount` wei to                                                                                         │ 53..123
+  5  │    * `recipient`, forwarding all available gas and reverting on errors.                                                                                        │ 124..195
+  6  │    *                                                                                                                                                           │ 196..200
+  7  │    * https://eips.ethereum.org/EIPS/eip-1884[EIP1884] increases the gas cost                                                                                   │ 201..277
+  8  │    * of certain opcodes, possibly making contracts go over the 2300 gas limit                                                                                  │ 278..355
+  9  │    * imposed by `transfer`, making them unable to receive funds via                                                                                            │ 356..423
+  10 │    * `transfer`. {sendValue} removes this limitation.                                                                                                          │ 424..477
+  11 │    *                                                                                                                                                           │ 478..482
+  12 │    * https://diligence.consensys.net/posts/2019/09/stop-using-soliditys-transfer-now/[Learn more].                                                             │ 483..581
+  13 │    *                                                                                                                                                           │ 582..586
+  14 │    * IMPORTANT: because control is transferred to `recipient`, care must be                                                                                    │ 587..662
+  15 │    * taken to not create reentrancy vulnerabilities. Consider using                                                                                            │ 663..730
+  16 │    * {ReentrancyGuard} or the                                                                                                                                  │ 731..760
+  17 │    * https://solidity.readthedocs.io/en/v0.5.11/security-considerations.html#use-the-checks-effects-interactions-pattern[checks-effects-interactions pattern]. │ 761..919
+  18 │    */                                                                                                                                                          │ 920..925
+  19 │   function sendValue(address payable recipient, uint256 amount) internal {                                                                                     │ 926..1000
+  20 │     require(address(this).balance >= amount, "Address: insufficient balance");                                                                                 │ 1001..1079
+  21 │                                                                                                                                                                │ 1080..1080
+  22 │     // solhint-disable-next-line avoid-low-level-calls, avoid-call-value                                                                                       │ 1081..1153
+  23 │     (bool success, ) = recipient.call{ value: amount }("");                                                                                                    │ 1154..1213
+  24 │     require(success, "Address: unable to send value, recipient may have reverted");                                                                            │ 1214..1297
+  25 │   }                                                                                                                                                            │ 1298..1301
+  26 │ }                                                                                                                                                              │ 1302..1303
+
+Errors: # 1 total
+  - >
+    Error: Expected CloseParen or Comma.
+        ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/function_multiple_delimiters/input.sol:23:11]
+        │
+     23 │     (bool success, ) = recipient.call{ value: amount }("");
+        │           ────┬────  
+        │               ╰────── Error occurred here.
+    ────╯
+
+Tree:
+  - ContractDefinition (Rule): # 0..1304 "// SPDX-License-Identifier: MIT\ncontract ABC {\n  /..."
+      - LeadingTrivia (Rule): # 0..32 "// SPDX-License-Identifier: MIT\n"
+          - SingleLineComment (Trivia): "// SPDX-License-Identifier: MIT" # 0..31
+      - ContractKeyword (Token): "contract" # 32..40
+      - Identifier (Token): "ABC" # 41..44
+      - OpenBrace (Token): "{" # 45..46
+      - ContractMembersList (Rule): # 47..1302 "  /**\n   * @dev Replacement for Solidity's `transf..."
+          - FunctionDefinition (Rule): # 47..1302 "  /**\n   * @dev Replacement for Solidity's `transf..."
+              - LeadingTrivia (Rule): # 47..928 "  /**\n   * @dev Replacement for Solidity's `transf..."
+                  - MultilineComment (Trivia): "/**\n   * @dev Replacement for Solidity's `transfer..." # 49..925
+              - FunctionKeyword (Token): "function" # 928..936
+              - Identifier (Token): "sendValue" # 937..946
+              - ParametersDeclaration (Rule): # 946..989 "(address payable recipient, uint256 amount)"
+                  - OpenParen (Token): "(" # 946..947
+                  - ParametersList (Rule): # 947..988 "address payable recipient, uint256 amount"
+                      - Parameter (Rule): # 947..972 "address payable recipient"
+                          - TypeName (Rule): # 947..962 "address payable"
+                              - AddressType (Rule): # 947..962 "address payable"
+                                  - AddressKeyword (Token): "address" # 947..954
+                                  - PayableKeyword (Token): "payable" # 955..962
+                          - Identifier (Token): "recipient" # 963..972
+                      - Comma (Token): "," # 972..973
+                      - Parameter (Rule): # 973..988 " uint256 amount"
+                          - TypeName (Rule): # 973..981 " uint256"
+                              - UnsignedIntegerType (Token): "uint256" # 974..981
+                          - Identifier (Token): "amount" # 982..988
+                  - CloseParen (Token): ")" # 988..989
+              - FunctionAttributesList (Rule): # 989..998 " internal"
+                  - InternalKeyword (Token): "internal" # 990..998
+              - Block (Rule): # 998..1302 ' {\n    require(address(this).balance >= amount, "A...'
+                  - OpenBrace (Token): "{" # 999..1000
+                  - StatementsList (Rule): # 1001..1298 '    require(address(this).balance >= amount, "Addr...'
+                      - Statement (Rule): # 1001..1080 '    require(address(this).balance >= amount, "Addr...'
+                          - ExpressionStatement (Rule): # 1001..1080 '    require(address(this).balance >= amount, "Addr...'
+                              - Expression (Rule): # 1001..1078 '    require(address(this).balance >= amount, "Addr...'
+                                  - FunctionCallExpression (Rule): # 1001..1078 '    require(address(this).balance >= amount, "Addr...'
+                                      - Expression (Rule): # 1001..1012 "    require"
+                                          - Identifier (Token): "require" # 1005..1012
+                                      - ArgumentsDeclaration (Rule): # 1012..1078 '(address(this).balance >= amount, "Address: insuff...'
+                                          - OpenParen (Token): "(" # 1012..1013
+                                          - PositionalArgumentsList (Rule): # 1013..1077 'address(this).balance >= amount, "Address: insuffi...'
+                                              - Expression (Rule): # 1013..1044 "address(this).balance >= amount"
+                                                  - BinaryExpression (Rule): # 1013..1044 "address(this).balance >= amount"
+                                                      - Expression (Rule): # 1013..1034 "address(this).balance"
+                                                          - MemberAccessExpression (Rule): # 1013..1034 "address(this).balance"
+                                                              - Expression (Rule): # 1013..1026 "address(this)"
+                                                                  - FunctionCallExpression (Rule): # 1013..1026 "address(this)"
+                                                                      - Expression (Rule): # 1013..1020 "address"
+                                                                          - AddressType (Rule): # 1013..1020 "address"
+                                                                              - AddressKeyword (Token): "address" # 1013..1020
+                                                                      - ArgumentsDeclaration (Rule): # 1020..1026 "(this)"
+                                                                          - OpenParen (Token): "(" # 1020..1021
+                                                                          - PositionalArgumentsList (Rule): # 1021..1025 "this"
+                                                                              - Expression (Rule): # 1021..1025 "this"
+                                                                                  - Identifier (Token): "this" # 1021..1025
+                                                                          - CloseParen (Token): ")" # 1025..1026
+                                                              - Period (Token): "." # 1026..1027
+                                                              - Identifier (Token): "balance" # 1027..1034
+                                                      - GreaterThanEqual (Token): ">=" # 1035..1037
+                                                      - Expression (Rule): # 1037..1044 " amount"
+                                                          - Identifier (Token): "amount" # 1038..1044
+                                              - Comma (Token): "," # 1044..1045
+                                              - Expression (Rule): # 1045..1077 ' "Address: insufficient balance"'
+                                                  - AsciiStringLiteralsList (Rule): # 1045..1077 ' "Address: insufficient balance"'
+                                                      - AsciiStringLiteral (Token): '"Address: insufficient balance"' # 1046..1077
+                                          - CloseParen (Token): ")" # 1077..1078
+                              - Semicolon (Token): ";" # 1078..1079
+                      - Statement (Rule): # 1080..1214 "\n    // solhint-disable-next-line avoid-low-level-..."
+                          - ExpressionStatement (Rule): # 1080..1214 "\n    // solhint-disable-next-line avoid-low-level-..."
+                              - Expression (Rule): # 1080..1212 "\n    // solhint-disable-next-line avoid-low-level-..."
+                                  - BinaryExpression (Rule): # 1080..1212 "\n    // solhint-disable-next-line avoid-low-level-..."
+                                      - Expression (Rule): # 1080..1174 "\n    // solhint-disable-next-line avoid-low-level-..."
+                                          - TupleExpression (Rule): # 1080..1174 "\n    // solhint-disable-next-line avoid-low-level-..."
+                                              - LeadingTrivia (Rule): # 1080..1158 "\n    // solhint-disable-next-line avoid-low-level-..."
+                                                  - SingleLineComment (Trivia): "// solhint-disable-next-line avoid-low-level-calls..." # 1085..1153
+                                              - OpenParen (Token): "(" # 1158..1159
+                                              - TupleValuesList (Rule): # 1159..1163 "bool"
+                                                  - Expression (Rule): # 1159..1163 "bool"
+                                                      - BoolKeyword (Token): "bool" # 1159..1163
+                                              - SKIPPED (Token): "success, " # 1164..1173
+                                              - CloseParen (Token): ")" # 1173..1174
+                                      - Equal (Token): "=" # 1175..1176
+                                      - Expression (Rule): # 1176..1212 ' recipient.call{ value: amount }("")'
+                                          - FunctionCallExpression (Rule): # 1176..1212 ' recipient.call{ value: amount }("")'
+                                              - Expression (Rule): # 1176..1191 " recipient.call"
+                                                  - MemberAccessExpression (Rule): # 1176..1191 " recipient.call"
+                                                      - Expression (Rule): # 1176..1186 " recipient"
+                                                          - Identifier (Token): "recipient" # 1177..1186
+                                                      - Period (Token): "." # 1186..1187
+                                                      - Identifier (Token): "call" # 1187..1191
+                                              - FunctionCallOptions (Rule): # 1191..1208 "{ value: amount }"
+                                                  - NamedArgumentsDeclaration (Rule): # 1191..1208 "{ value: amount }"
+                                                      - OpenBrace (Token): "{" # 1191..1192
+                                                      - NamedArgumentsList (Rule): # 1192..1206 " value: amount"
+                                                          - NamedArgument (Rule): # 1192..1206 " value: amount"
+                                                              - Identifier (Token): "value" # 1193..1198
+                                                              - Colon (Token): ":" # 1198..1199
+                                                              - Expression (Rule): # 1199..1206 " amount"
+                                                                  - Identifier (Token): "amount" # 1200..1206
+                                                      - CloseBrace (Token): "}" # 1207..1208
+                                              - ArgumentsDeclaration (Rule): # 1208..1212 '("")'
+                                                  - OpenParen (Token): "(" # 1208..1209
+                                                  - PositionalArgumentsList (Rule): # 1209..1211 '""'
+                                                      - Expression (Rule): # 1209..1211 '""'
+                                                          - AsciiStringLiteralsList (Rule): # 1209..1211 '""'
+                                                              - AsciiStringLiteral (Token): '""' # 1209..1211
+                                                  - CloseParen (Token): ")" # 1211..1212
+                              - Semicolon (Token): ";" # 1212..1213
+                      - Statement (Rule): # 1214..1298 '    require(success, "Address: unable to send valu...'
+                          - ExpressionStatement (Rule): # 1214..1298 '    require(success, "Address: unable to send valu...'
+                              - Expression (Rule): # 1214..1296 '    require(success, "Address: unable to send valu...'
+                                  - FunctionCallExpression (Rule): # 1214..1296 '    require(success, "Address: unable to send valu...'
+                                      - Expression (Rule): # 1214..1225 "    require"
+                                          - Identifier (Token): "require" # 1218..1225
+                                      - ArgumentsDeclaration (Rule): # 1225..1296 '(success, "Address: unable to send value, recipien...'
+                                          - OpenParen (Token): "(" # 1225..1226
+                                          - PositionalArgumentsList (Rule): # 1226..1295 'success, "Address: unable to send value, recipient...'
+                                              - Expression (Rule): # 1226..1233 "success"
+                                                  - Identifier (Token): "success" # 1226..1233
+                                              - Comma (Token): "," # 1233..1234
+                                              - Expression (Rule): # 1234..1295 ' "Address: unable to send value, recipient may hav...'
+                                                  - AsciiStringLiteralsList (Rule): # 1234..1295 ' "Address: unable to send value, recipient may hav...'
+                                                      - AsciiStringLiteral (Token): '"Address: unable to send value, recipient may have...' # 1235..1295
+                                          - CloseParen (Token): ")" # 1295..1296
+                              - Semicolon (Token): ";" # 1296..1297
+                  - CloseBrace (Token): "}" # 1300..1301
+      - CloseBrace (Token): "}" # 1302..1303

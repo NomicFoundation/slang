@@ -9,6 +9,11 @@ fn IERC20() -> Result<()> {
 }
 
 #[test]
+fn SafeMath() -> Result<()> {
+    return run("SourceUnit", "SafeMath");
+}
+
+#[test]
 fn empty_file() -> Result<()> {
     return run("SourceUnit", "empty_file");
 }
@@ -34,6 +39,16 @@ fn top_level_function() -> Result<()> {
 }
 
 #[test]
+fn top_level_function_with_nat_spec() -> Result<()> {
+    return run("SourceUnit", "top_level_function_with_nat_spec");
+}
+
+#[test]
 fn trailing_trivia() -> Result<()> {
     return run("SourceUnit", "trailing_trivia");
+}
+
+#[test]
+fn using_directive() -> Result<()> {
+    return run("SourceUnit", "using_directive");
 }

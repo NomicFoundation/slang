@@ -9,8 +9,18 @@ fn abstract_contract() -> Result<()> {
 }
 
 #[test]
+fn batchTransferERC721() -> Result<()> {
+    return run("ContractDefinition", "batchTransferERC721");
+}
+
+#[test]
 fn empty_contract() -> Result<()> {
     return run("ContractDefinition", "empty_contract");
+}
+
+#[test]
+fn function_multiple_delimiters() -> Result<()> {
+    return run("ContractDefinition", "function_multiple_delimiters");
 }
 
 #[test]
@@ -54,6 +64,11 @@ fn member_function_definition() -> Result<()> {
 }
 
 #[test]
+fn member_invalid_string_definition() -> Result<()> {
+    return run("ContractDefinition", "member_invalid_string_definition");
+}
+
+#[test]
 fn member_modifier_definition() -> Result<()> {
     return run("ContractDefinition", "member_modifier_definition");
 }
@@ -79,6 +94,14 @@ fn member_unnamed_function_definition() -> Result<()> {
 }
 
 #[test]
+fn member_unnamed_function_with_attrs_definition() -> Result<()> {
+    return run(
+        "ContractDefinition",
+        "member_unnamed_function_with_attrs_definition",
+    );
+}
+
+#[test]
 fn member_user_defined_value_type_definition() -> Result<()> {
     return run(
         "ContractDefinition",
@@ -94,6 +117,11 @@ fn member_using_directive() -> Result<()> {
 #[test]
 fn missing_field_type() -> Result<()> {
     return run("ContractDefinition", "missing_field_type");
+}
+
+#[test]
+fn modifier_argument() -> Result<()> {
+    return run("ContractDefinition", "modifier_argument");
 }
 
 #[test]

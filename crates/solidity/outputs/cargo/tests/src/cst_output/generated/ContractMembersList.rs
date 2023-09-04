@@ -9,6 +9,11 @@ fn constructor() -> Result<()> {
 }
 
 #[test]
+fn function_with_2d_array_argument() -> Result<()> {
+    return run("ContractMembersList", "function_with_2d_array_argument");
+}
+
+#[test]
 fn local_expression() -> Result<()> {
     return run("ContractMembersList", "local_expression");
 }

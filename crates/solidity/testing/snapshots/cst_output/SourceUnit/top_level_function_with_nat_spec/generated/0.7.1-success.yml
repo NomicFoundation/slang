@@ -1,0 +1,95 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ pragma solidity >=0.7.0 <0.9.0;                                                                                │ 0..31
+  2  │                                                                                                                │ 32..32
+  3  │ // solhint-disable                                                                                             │ 33..51
+  4  │                                                                                                                │ 52..52
+  5  │ /**                                                                                                            │ 53..56
+  6  │  * @dev Reverts if `condition` is false, with a revert reason containing `errorCode`. Only codes up to 999 are │ 57..167
+  7  │  * supported.                                                                                                  │ 168..181
+  8  │  * Uses the default 'BAL' prefix for the error code                                                            │ 182..233
+  9  │  */                                                                                                            │ 234..237
+  10 │ function _require(bool condition, uint256 errorCode) pure {                                                    │ 238..297
+  11 │   if (!condition) _revert(errorCode);                                                                          │ 298..335
+  12 │ }                                                                                                              │ 336..337
+
+Errors: []
+
+Tree:
+  - SourceUnit (Rule): # 0..338 "pragma solidity >=0.7.0 <0.9.0;\n\n// solhint-disabl..."
+      - SourceUnitMembersList (Rule): # 0..338 "pragma solidity >=0.7.0 <0.9.0;\n\n// solhint-disabl..."
+          - PragmaDirective (Rule): # 0..32 "pragma solidity >=0.7.0 <0.9.0;\n"
+              - PragmaKeyword (Token): "pragma" # 0..6
+              - VersionPragma (Rule): # 6..30 " solidity >=0.7.0 <0.9.0"
+                  - SolidityKeyword (Token): "solidity" # 7..15
+                  - VersionPragmaExpressionsList (Rule): # 15..30 " >=0.7.0 <0.9.0"
+                      - VersionPragmaExpression (Rule): # 15..23 " >=0.7.0"
+                          - VersionPragmaUnaryExpression (Rule): # 15..23 " >=0.7.0"
+                              - GreaterThanEqual (Token): ">=" # 16..18
+                              - VersionPragmaExpression (Rule): # 18..23 "0.7.0"
+                                  - VersionPragmaSpecifier (Rule): # 18..23 "0.7.0"
+                                      - VersionPragmaValue (Token): "0" # 18..19
+                                      - Period (Token): "." # 19..20
+                                      - VersionPragmaValue (Token): "7" # 20..21
+                                      - Period (Token): "." # 21..22
+                                      - VersionPragmaValue (Token): "0" # 22..23
+                      - VersionPragmaExpression (Rule): # 23..30 " <0.9.0"
+                          - VersionPragmaUnaryExpression (Rule): # 23..30 " <0.9.0"
+                              - LessThan (Token): "<" # 24..25
+                              - VersionPragmaExpression (Rule): # 25..30 "0.9.0"
+                                  - VersionPragmaSpecifier (Rule): # 25..30 "0.9.0"
+                                      - VersionPragmaValue (Token): "0" # 25..26
+                                      - Period (Token): "." # 26..27
+                                      - VersionPragmaValue (Token): "9" # 27..28
+                                      - Period (Token): "." # 28..29
+                                      - VersionPragmaValue (Token): "0" # 29..30
+              - Semicolon (Token): ";" # 30..31
+          - FunctionDefinition (Rule): # 32..338 "\n// solhint-disable\n\n/**\n * @dev Reverts if `condi..."
+              - LeadingTrivia (Rule): # 32..238 "\n// solhint-disable\n\n/**\n * @dev Reverts if `condi..."
+                  - SingleLineComment (Trivia): "// solhint-disable" # 33..51
+                  - MultilineComment (Trivia): "/**\n * @dev Reverts if `condition` is false, with ..." # 53..237
+              - FunctionKeyword (Token): "function" # 238..246
+              - Identifier (Token): "_require" # 247..255
+              - ParametersDeclaration (Rule): # 255..290 "(bool condition, uint256 errorCode)"
+                  - OpenParen (Token): "(" # 255..256
+                  - ParametersList (Rule): # 256..289 "bool condition, uint256 errorCode"
+                      - Parameter (Rule): # 256..270 "bool condition"
+                          - TypeName (Rule): # 256..260 "bool"
+                              - BoolKeyword (Token): "bool" # 256..260
+                          - Identifier (Token): "condition" # 261..270
+                      - Comma (Token): "," # 270..271
+                      - Parameter (Rule): # 271..289 " uint256 errorCode"
+                          - TypeName (Rule): # 271..279 " uint256"
+                              - UnsignedIntegerType (Token): "uint256" # 272..279
+                          - Identifier (Token): "errorCode" # 280..289
+                  - CloseParen (Token): ")" # 289..290
+              - FunctionAttributesList (Rule): # 290..295 " pure"
+                  - PureKeyword (Token): "pure" # 291..295
+              - Block (Rule): # 295..338 " {\n  if (!condition) _revert(errorCode);\n}\n"
+                  - OpenBrace (Token): "{" # 296..297
+                  - StatementsList (Rule): # 298..336 "  if (!condition) _revert(errorCode);\n"
+                      - Statement (Rule): # 298..336 "  if (!condition) _revert(errorCode);\n"
+                          - IfStatement (Rule): # 298..336 "  if (!condition) _revert(errorCode);\n"
+                              - IfKeyword (Token): "if" # 300..302
+                              - OpenParen (Token): "(" # 303..304
+                              - Expression (Rule): # 304..314 "!condition"
+                                  - UnaryPrefixExpression (Rule): # 304..314 "!condition"
+                                      - Bang (Token): "!" # 304..305
+                                      - Expression (Rule): # 305..314 "condition"
+                                          - Identifier (Token): "condition" # 305..314
+                              - CloseParen (Token): ")" # 314..315
+                              - Statement (Rule): # 315..336 " _revert(errorCode);\n"
+                                  - ExpressionStatement (Rule): # 315..336 " _revert(errorCode);\n"
+                                      - Expression (Rule): # 315..334 " _revert(errorCode)"
+                                          - FunctionCallExpression (Rule): # 315..334 " _revert(errorCode)"
+                                              - Expression (Rule): # 315..323 " _revert"
+                                                  - Identifier (Token): "_revert" # 316..323
+                                              - ArgumentsDeclaration (Rule): # 323..334 "(errorCode)"
+                                                  - OpenParen (Token): "(" # 323..324
+                                                  - PositionalArgumentsList (Rule): # 324..333 "errorCode"
+                                                      - Expression (Rule): # 324..333 "errorCode"
+                                                          - Identifier (Token): "errorCode" # 324..333
+                                                  - CloseParen (Token): ")" # 333..334
+                                      - Semicolon (Token): ";" # 334..335
+                  - CloseBrace (Token): "}" # 336..337

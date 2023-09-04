@@ -1,0 +1,56 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract Example {                                                                                         │ 0..18
+  2  │   function batchTransferERC721(address _to, IERC721 _collection, uint256[] calldata _ids) public isOwner { │ 19..125
+  3  │     // snip                                                                                                │ 126..137
+  4  │   }                                                                                                        │ 138..141
+  5  │ }                                                                                                          │ 142..143
+
+Errors: []
+
+Tree:
+  - ContractDefinition (Rule): # 0..144 "contract Example {\n  function batchTransferERC721(..."
+      - ContractKeyword (Token): "contract" # 0..8
+      - Identifier (Token): "Example" # 9..16
+      - OpenBrace (Token): "{" # 17..18
+      - ContractMembersList (Rule): # 19..142 "  function batchTransferERC721(address _to, IERC72..."
+          - FunctionDefinition (Rule): # 19..142 "  function batchTransferERC721(address _to, IERC72..."
+              - FunctionKeyword (Token): "function" # 21..29
+              - Identifier (Token): "batchTransferERC721" # 30..49
+              - ParametersDeclaration (Rule): # 49..108 "(address _to, IERC721 _collection, uint256[] calld..."
+                  - OpenParen (Token): "(" # 49..50
+                  - ParametersList (Rule): # 50..107 "address _to, IERC721 _collection, uint256[] callda..."
+                      - Parameter (Rule): # 50..61 "address _to"
+                          - TypeName (Rule): # 50..57 "address"
+                              - AddressType (Rule): # 50..57 "address"
+                                  - AddressKeyword (Token): "address" # 50..57
+                          - Identifier (Token): "_to" # 58..61
+                      - Comma (Token): "," # 61..62
+                      - Parameter (Rule): # 62..82 " IERC721 _collection"
+                          - TypeName (Rule): # 62..70 " IERC721"
+                              - IdentifierPath (Rule): # 62..70 " IERC721"
+                                  - Identifier (Token): "IERC721" # 63..70
+                          - Identifier (Token): "_collection" # 71..82
+                      - Comma (Token): "," # 82..83
+                      - Parameter (Rule): # 83..107 " uint256[] calldata _ids"
+                          - TypeName (Rule): # 83..93 " uint256[]"
+                              - ArrayTypeName (Rule): # 83..93 " uint256[]"
+                                  - TypeName (Rule): # 83..91 " uint256"
+                                      - UnsignedIntegerType (Token): "uint256" # 84..91
+                                  - OpenBracket (Token): "[" # 91..92
+                                  - CloseBracket (Token): "]" # 92..93
+                          - CalldataKeyword (Token): "calldata" # 94..102
+                          - Identifier (Token): "_ids" # 103..107
+                  - CloseParen (Token): ")" # 107..108
+              - FunctionAttributesList (Rule): # 108..123 " public isOwner"
+                  - PublicKeyword (Token): "public" # 109..115
+                  - ModifierInvocation (Rule): # 115..123 " isOwner"
+                      - IdentifierPath (Rule): # 115..123 " isOwner"
+                          - Identifier (Token): "isOwner" # 116..123
+              - Block (Rule): # 123..142 " {\n    // snip\n  }\n"
+                  - OpenBrace (Token): "{" # 124..125
+                  - LeadingTrivia (Rule): # 126..140 "    // snip\n  "
+                      - SingleLineComment (Trivia): "// snip" # 130..137
+                  - CloseBrace (Token): "}" # 140..141
+      - CloseBrace (Token): "}" # 142..143
