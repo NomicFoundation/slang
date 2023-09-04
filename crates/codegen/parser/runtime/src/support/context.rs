@@ -66,13 +66,14 @@ impl<'s> ParserContext<'s> {
         self.errors
     }
 
-    pub fn expect_closing(&mut self, closing_delim: TokenKind) {
+    /// Creates a RAII guard that will pop the closing delimiter when dropped.
+    pub(crate) fn open_delim<'a>(&'a mut self, closing_delim: TokenKind) -> DelimiterGuard<'a, 's> {
         self.closing_delimiters.push(closing_delim);
-    }
 
-    pub fn pop_closing(&mut self, closing_delim: TokenKind) {
-        let popped = self.closing_delimiters.pop();
-        assert_eq!(popped, Some(closing_delim));
+        DelimiterGuard {
+            input: self,
+            closing_delim,
+        }
     }
 
     pub fn closing_delimiters(&self) -> &[TokenKind] {
@@ -111,5 +112,23 @@ impl<'s> ParserContext<'s> {
 
     pub fn content(&self, range: Range<usize>) -> String {
         self.source[range].to_owned()
+    }
+}
+
+pub(crate) struct DelimiterGuard<'a, 's> {
+    pub(crate) input: &'a mut ParserContext<'s>,
+    closing_delim: TokenKind,
+}
+
+impl<'a, 's> Drop for DelimiterGuard<'a, 's> {
+    fn drop(&mut self) {
+        let popped = self.input.closing_delimiters.pop();
+        debug_assert_eq!(popped, Some(self.closing_delim));
+    }
+}
+
+impl<'a, 's> DelimiterGuard<'a, 's> {
+    pub(crate) fn ctx(&mut self) -> &mut ParserContext<'s> {
+        self.input
     }
 }

@@ -199,10 +199,11 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
 
                 quote! {
                     SequenceHelper::run(|mut seq| {
+                        let mut delim_guard = input.open_delim(TokenKind::#close_token);
+                        let input = delim_guard.ctx();
+
                         seq.elem(self.#parse_token(input, TokenKind::#open_token))?;
-                        input.expect_closing(TokenKind::#close_token);
                         #body_parser
-                        input.pop_closing(TokenKind::#close_token);
                         seq.elem(self.#parse_token(input, TokenKind::#close_token))?;
                         seq.finish()
                     })
