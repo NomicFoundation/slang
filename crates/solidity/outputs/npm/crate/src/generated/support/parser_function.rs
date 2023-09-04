@@ -92,6 +92,15 @@ where
                         errors,
                     }
                 } else {
+                    // Sanity check: Make sure that succesful parse is equivalent to not having any SKIPPED nodes
+                    debug_assert_eq!(
+                        errors.len() > 0,
+                        topmost_rule
+                            .children
+                            .descendents()
+                            .any(|x| x.as_token_with_kind(&[TokenKind::SKIPPED]).is_some())
+                    );
+
                     ParseOutput {
                         parse_tree: cst::Node::Rule(topmost_rule),
                         errors,
