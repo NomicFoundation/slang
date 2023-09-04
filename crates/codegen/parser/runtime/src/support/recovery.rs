@@ -67,7 +67,6 @@ impl ParserResult {
 
         match self {
             ParserResult::IncompleteMatch(mut result) => {
-                result.nodes.extend(leading_trivia);
                 let mut stack = vec![];
 
                 loop {
@@ -75,6 +74,8 @@ impl ParserResult {
                     match next_token(input) {
                         // Found the expected token
                         Some(token) if stack.is_empty() && token == expected => {
+                            result.nodes.extend(leading_trivia);
+
                             // Don't consume the delimiter; parent will consume it
                             input.set_position(save);
 
@@ -98,6 +99,8 @@ impl ParserResult {
                         Some(token)
                             if stack.is_empty() && input.closing_delimiters().contains(&token) =>
                         {
+                            result.nodes.extend(leading_trivia);
+
                             // Don't consume the delimiter; parent will consume it
                             input.set_position(save);
 
@@ -143,8 +146,6 @@ impl ParserResult {
             // We got a match but there are unexpected tokens, so try to recover from them
             ParserResult::Match(mut result) if peek_token() != Some(expected) => {
                 let mut stack = vec![];
-                result.nodes.extend(leading_trivia);
-                result.expected_tokens.push(expected);
 
                 loop {
                     let save = input.position();
@@ -152,6 +153,8 @@ impl ParserResult {
                     match next_token(input) {
                         // Found the expected token
                         Some(token) if stack.is_empty() && token == expected => {
+                            result.nodes.extend(leading_trivia);
+                            result.expected_tokens.push(expected);
                             // Don't consume the delimiter; parent will consume it
                             input.set_position(save);
 
@@ -175,6 +178,9 @@ impl ParserResult {
                         Some(token)
                             if stack.is_empty() && input.closing_delimiters().contains(&token) =>
                         {
+                            result.nodes.extend(leading_trivia);
+                            result.expected_tokens.push(expected);
+
                             // Don't consume the delimiter; parent will consume it
                             input.set_position(save);
 

@@ -17,7 +17,7 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - TupleDeconstructionStatement (Rule): # 0..40 "(a, b) = (123, 135)\n/**/\n{ throw; \n"
+  - TupleDeconstructionStatement (Rule): # 0..35 "(a, b) = (123, 135)\n/**/\n{ throw; \n"
       - OpenParen (Token): "(" # 0..1
       - TupleMembersList (Rule): # 1..5 "a, b"
           - TupleMember (Rule): # 1..2 "a"
@@ -39,6 +39,4 @@ Tree:
                       - NumericExpression (Rule): # 14..18 " 135"
                           - DecimalLiteral (Token): "135" # 15..18
               - CloseParen (Token): ")" # 18..19
-      - LeadingTrivia (Rule): # 20..25 "/**/\n"
-          - MultilineComment (Trivia): "/**/" # 20..24
-      - SKIPPED (Token): "{ throw; \n" # 25..40
+      - SKIPPED (Token): "/**/\n{ throw; \n" # 20..35
