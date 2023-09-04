@@ -22,9 +22,11 @@ jobs:
 
   github-pages:
     needs: "ci"
+    if: "${{ github.repository == 'NomicFoundation/slang' }}"
     uses: "./.github/workflows/_jobs_github_pages.yml"
 
   publish:
     needs: "ci"
+    if: "${{ github.repository == 'NomicFoundation/slang' }}"
     uses: "./.github/workflows/_jobs_publish.yml"
     secrets: "inherit"
