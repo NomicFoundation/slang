@@ -48,6 +48,7 @@ impl RunController {
 
         return Command::new("cargo")
             .arg("run")
+            .arg("--release")
             .property("--bin", &crate_name)
             .arg("--")
             .args(&self.args)
