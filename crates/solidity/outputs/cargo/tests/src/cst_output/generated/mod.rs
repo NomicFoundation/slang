@@ -21,6 +21,8 @@ mod EnumDefinition;
 #[allow(non_snake_case)]
 mod ErrorDefinition;
 #[allow(non_snake_case)]
+mod EventDefinition;
+#[allow(non_snake_case)]
 mod Expression;
 #[allow(non_snake_case)]
 mod FallbackFunctionDefinition;

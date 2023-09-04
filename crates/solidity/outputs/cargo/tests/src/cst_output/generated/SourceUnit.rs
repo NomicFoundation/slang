@@ -4,6 +4,11 @@ use crate::cst_output::runner::run;
 use anyhow::Result;
 
 #[test]
+fn IERC20() -> Result<()> {
+    return run("SourceUnit", "IERC20");
+}
+
+#[test]
 fn empty_file() -> Result<()> {
     return run("SourceUnit", "empty_file");
 }

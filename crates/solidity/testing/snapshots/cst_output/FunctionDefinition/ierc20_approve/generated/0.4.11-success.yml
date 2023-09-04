@@ -1,0 +1,37 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ function approve(address spender, uint256 amount) external returns (bool);       │ 0..74
+
+Errors: []
+
+Tree:
+  - FunctionDefinition (Rule): # 0..75 "function approve(address spender, uint256 amount) ..."
+      - FunctionKeyword (Token): "function" # 0..8
+      - Identifier (Token): "approve" # 9..16
+      - ParametersDeclaration (Rule): # 16..49 "(address spender, uint256 amount)"
+          - OpenParen (Token): "(" # 16..17
+          - ParametersList (Rule): # 17..48 "address spender, uint256 amount"
+              - Parameter (Rule): # 17..32 "address spender"
+                  - TypeName (Rule): # 17..24 "address"
+                      - AddressType (Rule): # 17..24 "address"
+                          - AddressKeyword (Token): "address" # 17..24
+                  - Identifier (Token): "spender" # 25..32
+              - Comma (Token): "," # 32..33
+              - Parameter (Rule): # 33..48 " uint256 amount"
+                  - TypeName (Rule): # 33..41 " uint256"
+                      - UnsignedIntegerType (Token): "uint256" # 34..41
+                  - Identifier (Token): "amount" # 42..48
+          - CloseParen (Token): ")" # 48..49
+      - FunctionAttributesList (Rule): # 49..58 " external"
+          - ExternalKeyword (Token): "external" # 50..58
+      - ReturnsDeclaration (Rule): # 58..73 " returns (bool)"
+          - ReturnsKeyword (Token): "returns" # 59..66
+          - ParametersDeclaration (Rule): # 66..73 " (bool)"
+              - OpenParen (Token): "(" # 67..68
+              - ParametersList (Rule): # 68..72 "bool"
+                  - Parameter (Rule): # 68..72 "bool"
+                      - TypeName (Rule): # 68..72 "bool"
+                          - BoolKeyword (Token): "bool" # 68..72
+              - CloseParen (Token): ")" # 72..73
+      - Semicolon (Token): ";" # 73..74
