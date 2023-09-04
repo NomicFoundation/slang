@@ -95,7 +95,7 @@ impl ChoiceHelper {
     ) -> ParserResult {
         match f(ChoiceHelper::new(input), input) {
             ControlFlow::Break(result) => result,
-            ControlFlow::Continue(helper) => helper.unwrap_result(input),
+            ControlFlow::Continue(..) => panic!("ChoiceHelper not finish()-ed in the run closure"),
         }
     }
 
@@ -112,10 +112,11 @@ impl ChoiceHelper {
         ControlFlow::Break(self.unwrap_result(input))
     }
 
-    fn take_result(&mut self, input: &mut ParserContext) -> ParserResult {
-        if let ParserResult::IncompleteMatch(incomplete_match) = &self.result {
-            incomplete_match.consume_stream(input);
-        }
+    fn take_result(&mut self) -> ParserResult {
+        assert!(
+            self.is_done(),
+            "We only short-circuit Choice when we have a full match"
+        );
 
         std::mem::replace(&mut self.result, ParserResult::no_match(vec![]))
     }
@@ -146,7 +147,7 @@ impl<'a> Choice<'a> {
         let inner = self.helper;
 
         if inner.is_done() {
-            ControlFlow::Break(inner.take_result(input))
+            ControlFlow::Break(inner.take_result())
         } else {
             input.rewind(inner.start_position);
             ControlFlow::Continue(inner)
