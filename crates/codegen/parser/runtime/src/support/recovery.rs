@@ -1,3 +1,4 @@
+use crate::cst;
 use crate::kinds::TokenKind;
 use crate::parse_error::ParseError;
 use crate::support::ParserResult;
@@ -6,7 +7,26 @@ use crate::text_index::TextRangeExtensions as _;
 use super::parser_result::SkippedUntil;
 use super::ParserContext;
 
+fn opt_parse(
+    input: &mut ParserContext,
+    parse: impl Fn(&mut ParserContext) -> ParserResult,
+) -> Vec<cst::Node> {
+    let start = input.position();
+    if let ParserResult::Match(r#match) = parse(input) {
+        r#match.nodes
+    } else {
+        input.set_position(start);
+        vec![]
+    }
+}
+
 impl ParserResult {
+    /// For partial matches (partial prefix match or if the next token after the match is not expected)
+    /// attempts to skip tokens until a given token is found or until we hit a delimiter that's expected
+    /// by an outer parse. Returns [`ParserResult::SkippedUntil`] on success.
+    ///
+    /// Respects nested delimiters, i.e. the `expected` token is only accepted if it's not nested inside.
+    /// Does not consume the `expected` token.
     pub fn recover_until_with_nested_delims(
         self,
         input: &mut ParserContext,
@@ -17,188 +37,81 @@ impl ParserResult {
     ) -> ParserResult {
         let before_recovery = input.position();
 
-        // Parse trivia so that we can compare the next relevant token to the expected
-        let leading_trivia = {
+        let mut peek_token_after_trivia = || {
             let start = input.position();
-            if let ParserResult::Match(leading_trivia) = leading_trivia(input) {
-                leading_trivia.nodes
-            } else {
-                input.set_position(start);
-                vec![]
-            }
+
+            opt_parse(input, &leading_trivia);
+            let token = next_token(input);
+
+            input.set_position(start);
+            token
         };
 
+        let (mut nodes, mut expected_tokens, is_incomplete) = match self {
+            ParserResult::IncompleteMatch(result) => (result.nodes, result.expected_tokens, true),
+            ParserResult::Match(result) if peek_token_after_trivia() != Some(expected) => {
+                (result.nodes, result.expected_tokens, false)
+            }
+            // No need to recover, so just return as-is.
+            _ => return self,
+        };
+
+        let leading_trivia = opt_parse(input, &leading_trivia);
         let start = input.position();
 
-        let mut peek_token = || {
-            let start = input.position();
-            let tok = next_token(input);
-            input.set_position(start);
-            tok
-        };
+        let mut local_delims = vec![];
+        loop {
+            let save = input.position();
+            match next_token(input) {
+                // If we're not skipping past a local delimited group (delimiter stack is empty),
+                // we can unwind on a token that's expected by us or by our ancestor.
+                Some(token)
+                    if local_delims.is_empty()
+                        && (token == expected || input.closing_delimiters().contains(&token)) =>
+                {
+                    nodes.extend(leading_trivia);
+                    if !is_incomplete {
+                        expected_tokens.push(expected);
+                    }
 
-        match self {
-            ParserResult::IncompleteMatch(mut result) => {
-                let mut stack = vec![];
+                    // Don't consume the delimiter; parent will consume it
+                    input.set_position(save);
 
-                loop {
-                    let save = input.position();
-                    match next_token(input) {
-                        // Found the expected token
-                        Some(token) if stack.is_empty() && token == expected => {
-                            result.nodes.extend(leading_trivia);
+                    let skipped_range = start..save;
+                    input.emit(ParseError {
+                        text_range: skipped_range.clone(),
+                        tokens_that_would_have_allowed_more_progress: expected_tokens.clone(),
+                    });
 
-                            // Don't consume the delimiter; parent will consume it
-                            input.set_position(save);
-
-                            let text_range = start..save;
-
-                            input.emit(ParseError {
-                                text_range: text_range.clone(),
-                                tokens_that_would_have_allowed_more_progress: result
-                                    .expected_tokens
-                                    .clone(),
-                            });
-
-                            return ParserResult::SkippedUntil(SkippedUntil {
-                                nodes: result.nodes,
-                                expected,
-                                skipped: input.content(text_range.utf8()),
-                                found: token,
-                            });
-                        }
-                        // Found a closing delimiter that's expected by the parent - unwind the parse stack
-                        Some(token)
-                            if stack.is_empty() && input.closing_delimiters().contains(&token) =>
-                        {
-                            result.nodes.extend(leading_trivia);
-
-                            // Don't consume the delimiter; parent will consume it
-                            input.set_position(save);
-
-                            let text_range = start..save;
-                            input.emit(ParseError {
-                                text_range: text_range.clone(),
-                                tokens_that_would_have_allowed_more_progress: result
-                                    .expected_tokens
-                                    .clone(),
-                            });
-
-                            // TODO: Unwind the parse stack, rather than returning match here
-                            return ParserResult::SkippedUntil(SkippedUntil {
-                                nodes: result.nodes,
-                                expected,
-                                skipped: input.content(text_range.utf8()),
-                                found: token,
-                            });
-                        }
-                        // Found the local closing delimiter, pop the stack
-                        Some(token) if stack.last() == Some(&token) => {
-                            stack.pop();
-                        }
-                        Some(token) => {
-                            // Found a local opening delimiter, push onto stack
-                            if let Some((_, close)) = delims.iter().find(|(op, _)| token == *op) {
-                                stack.push(*close);
-                            } else {
-                                // Keep eating (eventually hits EOF)
-                            }
-                        }
-                        // EOF
-                        None => {
-                            // Undo the stream consumption
-                            input.set_position(before_recovery);
-
-                            return ParserResult::IncompleteMatch(result);
-                        }
+                    return ParserResult::SkippedUntil(SkippedUntil {
+                        nodes,
+                        expected,
+                        skipped: input.content(skipped_range.utf8()),
+                        found: token,
+                    });
+                }
+                // Found the local closing delimiter, pop the stack
+                Some(token) if local_delims.last() == Some(&token) => {
+                    local_delims.pop();
+                }
+                Some(token) => {
+                    // Found a local opening delimiter, skip until we find a closing one
+                    if let Some((_, close)) = delims.iter().find(|(op, _)| token == *op) {
+                        local_delims.push(*close);
+                    } else {
+                        // Keep eating (eventually hits EOF)
                     }
                 }
-            }
-            // TODO: What to do about no match?
-            // We got a match but there are unexpected tokens, so try to recover from them
-            ParserResult::Match(mut result) if peek_token() != Some(expected) => {
-                let mut stack = vec![];
+                // EOF, revert any recovery attempt
+                None => {
+                    input.set_position(before_recovery);
 
-                loop {
-                    let save = input.position();
-
-                    match next_token(input) {
-                        // Found the expected token
-                        Some(token) if stack.is_empty() && token == expected => {
-                            result.nodes.extend(leading_trivia);
-                            result.expected_tokens.push(expected);
-                            // Don't consume the delimiter; parent will consume it
-                            input.set_position(save);
-
-                            let text_range = start..save;
-
-                            input.emit(ParseError {
-                                text_range: text_range.clone(),
-                                tokens_that_would_have_allowed_more_progress: result
-                                    .expected_tokens
-                                    .clone(),
-                            });
-
-                            return ParserResult::SkippedUntil(SkippedUntil {
-                                nodes: result.nodes,
-                                expected,
-                                skipped: input.content(text_range.utf8()),
-                                found: token,
-                            });
-                        }
-                        // Found a closing delimiter that's expected by the parent - unwind the parse stack
-                        Some(token)
-                            if stack.is_empty() && input.closing_delimiters().contains(&token) =>
-                        {
-                            result.nodes.extend(leading_trivia);
-                            result.expected_tokens.push(expected);
-
-                            // Don't consume the delimiter; parent will consume it
-                            input.set_position(save);
-
-                            let text_range = start..save;
-                            input.emit(ParseError {
-                                text_range: text_range.clone(),
-                                tokens_that_would_have_allowed_more_progress: result
-                                    .expected_tokens
-                                    .clone(),
-                            });
-
-                            // TODO: Unwind the parse stack, rather than returning match here
-                            return ParserResult::SkippedUntil(SkippedUntil {
-                                nodes: result.nodes,
-                                expected,
-                                skipped: input.content(text_range.utf8()),
-                                found: token,
-                            });
-                        }
-                        // Found the local closing delimiter, pop the stack
-                        Some(token) if stack.last() == Some(&token) => {
-                            stack.pop();
-                        }
-                        Some(token) => {
-                            // Found a local opening delimiter, push onto stack
-                            if let Some((_, close)) = delims.iter().find(|(op, _)| token == *op) {
-                                stack.push(*close);
-                            } else {
-                                // Keep eating (eventually hits EOF)
-                            }
-                        }
-                        // EOF
-                        None => {
-                            // Undo the stream consumption
-                            input.set_position(before_recovery);
-
-                            // Let the outer parser handle this
-                            return ParserResult::Match(result);
-                        }
+                    if is_incomplete {
+                        return ParserResult::incomplete_match(nodes, expected_tokens);
+                    } else {
+                        return ParserResult::r#match(nodes, expected_tokens);
                     }
                 }
-            }
-            result => {
-                // Undo the trivia parse
-                input.set_position(before_recovery);
-                result
             }
         }
     }
