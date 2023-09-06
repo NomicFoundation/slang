@@ -1,8 +1,8 @@
 use std::ops::ControlFlow;
 
-use crate::{cst, kinds::TokenKind, support::parser_result::SkippedUntil};
+use crate::{cst, kinds::TokenKind};
 
-use super::parser_result::{Match, ParserResult, PrattElement};
+use super::parser_result::{Match, ParserResult, PrattElement, SkippedUntil};
 
 /// Keeps accumulating parses sequentially until it hits an incomplete or no match.
 #[must_use]
