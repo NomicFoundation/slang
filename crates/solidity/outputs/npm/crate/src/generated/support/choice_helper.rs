@@ -74,6 +74,13 @@ impl ChoiceHelper {
                     self.result = ParserResult::IncompleteMatch(next);
                 }
             }
+            (ParserResult::Match(running), ParserResult::SkippedUntil(next))
+                if !running.is_full_recursive() =>
+            {
+                if next.matching_recursive() > running.matching_recursive() {
+                    self.result = ParserResult::SkippedUntil(next);
+                }
+            }
             // If we only have incomplete matches and the next covers more bytes, then we take it...
             (ParserResult::IncompleteMatch(running), ParserResult::IncompleteMatch(next)) => {
                 if next.covers_more_than(&running) {

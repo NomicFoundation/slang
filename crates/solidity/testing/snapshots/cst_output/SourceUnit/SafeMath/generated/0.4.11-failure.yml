@@ -13,10 +13,10 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Expected OpenParen.
-       ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/SafeMath/input.sol:2:12]
+    Error: Expected Ampersand or AmpersandAmpersand or AmpersandEqual or Asterisk or AsteriskAsterisk or AsteriskEqual or BangEqual or Bar or BarBar or BarEqual or Caret or CaretEqual or Equal or EqualEqual or GreaterThan or GreaterThanEqual or GreaterThanGreaterThan or GreaterThanGreaterThanEqual or GreaterThanGreaterThanGreaterThan or GreaterThanGreaterThanGreaterThanEqual or LessThan or LessThanEqual or LessThanLessThan or LessThanLessThanEqual or Minus or MinusEqual or Percent or PercentEqual or Plus or PlusEqual or Semicolon or Slash or SlashEqual.
+       ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/SafeMath/input.sol:3:15]
        │
-     2 │ ╭─▶   function tryAdd(uint256 a, uint256 b) internal pure returns (bool, uint256) {
+     3 │ ╭─▶     unchecked {
        ┆ ┆   
      8 │ ├─▶   }
        │ │         
@@ -30,8 +30,46 @@ Tree:
               - LibraryKeyword (Token): "library" # 0..7
               - Identifier (Token): "SafeMath" # 8..16
               - OpenBrace (Token): "{" # 17..18
-              - LibraryMembersList (Rule): # 19..29 "  function"
-                  - UnnamedFunctionDefinition (Rule): # 19..29 "  function"
+              - LibraryMembersList (Rule): # 19..210 "  function tryAdd(uint256 a, uint256 b) internal p..."
+                  - FunctionDefinition (Rule): # 19..210 "  function tryAdd(uint256 a, uint256 b) internal p..."
                       - FunctionKeyword (Token): "function" # 21..29
-              - SKIPPED (Token): "tryAdd(uint256 a, uint256 b) internal pure returns..." # 30..210
+                      - Identifier (Token): "tryAdd" # 30..36
+                      - ParametersDeclaration (Rule): # 36..58 "(uint256 a, uint256 b)"
+                          - OpenParen (Token): "(" # 36..37
+                          - ParametersList (Rule): # 37..57 "uint256 a, uint256 b"
+                              - Parameter (Rule): # 37..46 "uint256 a"
+                                  - TypeName (Rule): # 37..44 "uint256"
+                                      - UnsignedIntegerType (Token): "uint256" # 37..44
+                                  - Identifier (Token): "a" # 45..46
+                              - Comma (Token): "," # 46..47
+                              - Parameter (Rule): # 47..57 " uint256 b"
+                                  - TypeName (Rule): # 47..55 " uint256"
+                                      - UnsignedIntegerType (Token): "uint256" # 48..55
+                                  - Identifier (Token): "b" # 56..57
+                          - CloseParen (Token): ")" # 57..58
+                      - FunctionAttributesList (Rule): # 58..72 " internal pure"
+                          - InternalKeyword (Token): "internal" # 59..67
+                          - PureKeyword (Token): "pure" # 68..72
+                      - ReturnsDeclaration (Rule): # 72..96 " returns (bool, uint256)"
+                          - ReturnsKeyword (Token): "returns" # 73..80
+                          - ParametersDeclaration (Rule): # 80..96 " (bool, uint256)"
+                              - OpenParen (Token): "(" # 81..82
+                              - ParametersList (Rule): # 82..95 "bool, uint256"
+                                  - Parameter (Rule): # 82..86 "bool"
+                                      - TypeName (Rule): # 82..86 "bool"
+                                          - BoolKeyword (Token): "bool" # 82..86
+                                  - Comma (Token): "," # 86..87
+                                  - Parameter (Rule): # 87..95 " uint256"
+                                      - TypeName (Rule): # 87..95 " uint256"
+                                          - UnsignedIntegerType (Token): "uint256" # 88..95
+                              - CloseParen (Token): ")" # 95..96
+                      - Block (Rule): # 96..210 " {\n    unchecked {\n      uint256 c = a + b;\n      ..."
+                          - OpenBrace (Token): "{" # 97..98
+                          - StatementsList (Rule): # 99..113 "    unchecked "
+                              - Statement (Rule): # 99..113 "    unchecked "
+                                  - ExpressionStatement (Rule): # 99..113 "    unchecked "
+                                      - Expression (Rule): # 99..112 "    unchecked"
+                                          - Identifier (Token): "unchecked" # 103..112
+                          - SKIPPED (Token): "{\n      uint256 c = a + b;\n      if (c < a) return..." # 113..208
+                          - CloseBrace (Token): "}" # 208..209
               - CloseBrace (Token): "}" # 210..211
