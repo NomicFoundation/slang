@@ -110,6 +110,11 @@ fn missing_field_type() -> Result<()> {
 }
 
 #[test]
+fn recovery_testbed() -> Result<()> {
+    return run("ContractDefinition", "recovery_testbed");
+}
+
+#[test]
 fn unterminated_body() -> Result<()> {
     return run("ContractDefinition", "unterminated_body");
 }
