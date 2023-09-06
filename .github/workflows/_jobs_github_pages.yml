@@ -34,11 +34,9 @@ jobs:
             cache-main-
             cache-
           path: |
-            .hermit/rust/bin/
-            .hermit/rust/git/db/
-            .hermit/rust/registry/cache/
-            .hermit/rust/registry/index/
-            .hermit/sccache/
+            ~/.cache/hermit/
+            ~/.local/share/virtualenvs/
+            .hermit/
 
       #
       # Deploy to GitHub Pages:
