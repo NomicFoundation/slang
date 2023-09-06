@@ -2,7 +2,7 @@
 documentation/overrides/**/*.html
 
 # Tera Templates
-**/*.tera
+**/*.jinja2
 
 # Packages and Dependencies
 .hermit/

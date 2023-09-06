@@ -30,11 +30,9 @@ jobs:
             cache-main-
             cache-
           path: |
-            .hermit/rust/bin/
-            .hermit/rust/git/db/
-            .hermit/rust/registry/cache/
-            .hermit/rust/registry/index/
-            .hermit/sccache/
+            ~/.cache/hermit/
+            ~/.local/share/virtualenvs/
+            .hermit/
 
       #
       # Publish Changesets:
@@ -79,11 +77,9 @@ jobs:
             cache-main-
             cache-
           path: |
-            .hermit/rust/bin/
-            .hermit/rust/git/db/
-            .hermit/rust/registry/cache/
-            .hermit/rust/registry/index/
-            .hermit/sccache/
+            ~/.cache/hermit/
+            ~/.local/share/virtualenvs/
+            .hermit/
 
       #
       # Build and Publish:

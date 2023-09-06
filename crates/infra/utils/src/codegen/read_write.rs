@@ -28,7 +28,7 @@ impl CodegenReadWrite {
         let writer = CodegenWriteOnly::new()?;
 
         let tera = {
-            let templates_glob = input_dir.join("**/*.tera");
+            let templates_glob = input_dir.join("**/*.jinja2");
             let mut tera = Tera::new(templates_glob.unwrap_str())?;
 
             fn snake_case(
