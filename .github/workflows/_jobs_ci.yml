@@ -6,7 +6,7 @@ on:
 
 jobs:
   run:
-    runs-on: "ubuntu-22.04"
+    runs-on: "ubuntu-22.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
 
     steps:
       #
@@ -18,71 +18,39 @@ jobs:
       - name: "Clone repository"
         uses: "actions/checkout@v3.4.0"
 
-      - name: "Prepare Repository"
-        # Mark the repository as a safe directory in git: https://github.com/actions/checkout/issues/766
-        run: "git config --global --add safe.directory $GITHUB_WORKSPACE"
-
       - name: "Restore CI cache"
         if: "${{ github.ref_name != 'main' }}"
         uses: "actions/cache/restore@v3.3.1"
         with:
-          key: "ci-cache-${{ hashFiles('**/Cargo.lock', '**/package-lock.json', '**/Pipfile.lock') }}"
-          restore-keys: "ci-cache-"
+          key: "cache-${{ github.ref_name }}-${{ hashFiles('Cargo.lock') }}-${{ hashFiles('package-lock.json') }}"
+          restore-keys: |
+            cache-${{ github.ref_name }}-
+            cache-main-
+            cache-
           path: |
-            **/.hermit/
-            **/node_modules/
-            **/target/
-
-      - name: "Build devcontainer"
-        uses: "./.devcontainer"
-        with:
-          entrypoint: "echo"
+            ~/.cache/hermit/
+            ~/.local/share/virtualenvs/
+            .hermit/
 
       #
       # Run all CI steps in order: _SLANG_INFRA_CI_STEPS_ORDERED_ (keep in sync)
       #
 
-      - name: "scripts/bin/infra setup"
-        uses: "./.devcontainer"
-        with:
-          entrypoint: "scripts/bin/infra"
-        env:
-          SLANG_INFRA_CLI_EXTRA_ARGS: "setup"
-
-      - name: "scripts/bin/infra check"
-        uses: "./.devcontainer"
-        with:
-          entrypoint: "scripts/bin/infra"
-        env:
-          SLANG_INFRA_CLI_EXTRA_ARGS: "check"
-
-      - name: "scripts/bin/infra test"
-        uses: "./.devcontainer"
-        with:
-          entrypoint: "scripts/bin/infra"
-        env:
-          SLANG_INFRA_CLI_EXTRA_ARGS: "test"
-
-      - name: "scripts/bin/infra lint"
-        uses: "./.devcontainer"
-        with:
-          entrypoint: "scripts/bin/infra"
-        env:
-          SLANG_INFRA_CLI_EXTRA_ARGS: "lint"
+      - run: "scripts/bin/infra setup"
+      - run: "scripts/bin/infra check"
+      - run: "scripts/bin/infra test"
+      - run: "scripts/bin/infra lint"
 
       #
       # Update cache files:
       # _DEVCONTAINER_PREPARATION_STEPS_ (keep in sync)
       #
 
-      - name: "Repossess files from devcontainer user"
-        run: "sudo chown -R $USER:$USER $GITHUB_WORKSPACE"
-
-      - name: "Save CI cache"
+      - name: "Save cache"
         uses: "actions/cache/save@v3.3.1"
         with:
-          key: "ci-cache-${{ hashFiles('**/Cargo.lock', '**/package-lock.json', '**/Pipfile.lock') }}"
+          key: "cache-${{ github.ref_name }}-${{ hashFiles('Cargo.lock') }}-${{ hashFiles('package-lock.json') }}"
           path: |
-            **/.hermit/
-            **/node_modules/
-            **/target/
+            ~/.cache/hermit/
+            ~/.local/share/virtualenvs/
+            .hermit/

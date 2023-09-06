@@ -1,10 +1,8 @@
 {
   "editor.formatOnSave": true,
   "editor.rulers": [120],
-  "files.associations": {
-    "*.tera": "handlebars" // Allow syntax highlighting for template variables.
-  },
   "files.eol": "\n",
+  "files.insertFinalNewline": true,
   "files.readonlyInclude": {
     "**/generated/**": true
   },
@@ -23,7 +21,7 @@
     "**/Pipfile.lock": true
   },
   "triggerTaskOnSave.tasks": {
-    "Run Rust Analyzer Checks": ["**/*.tera"],
+    "Run Rust Analyzer Checks": ["**/*.rs.jinja2"],
     "Validate Solidity Definition": ["crates/solidity/inputs/language/definition/**/*.yml"]
   },
   "typescript.tsdk": "node_modules/typescript/lib",

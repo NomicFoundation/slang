@@ -74,7 +74,7 @@ impl CodeGenerator {
             }
             codegen.render(
                 Template { code },
-                runtime_dir.join("templates/kinds.tera"),
+                runtime_dir.join("templates/kinds.rs.jinja2"),
                 output_dir.join("kinds.rs"),
             )?;
         }
@@ -92,7 +92,7 @@ impl CodeGenerator {
                     language_name: grammar.name.clone(),
                     versions: grammar.versions.clone(),
                 },
-                runtime_dir.join("templates/language.tera"),
+                runtime_dir.join("templates/language.rs.jinja2"),
                 output_dir.join("language.rs"),
             )?;
         }
@@ -102,7 +102,7 @@ impl CodeGenerator {
             pub struct Template {}
             codegen.render(
                 Template {},
-                runtime_dir.join("templates/mod.tera"),
+                runtime_dir.join("templates/mod.rs.jinja2"),
                 output_dir.join("mod.rs"),
             )?;
         }

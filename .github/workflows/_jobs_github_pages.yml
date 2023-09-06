@@ -10,7 +10,7 @@ on:
 
 jobs:
   run:
-    runs-on: "ubuntu-22.04"
+    runs-on: "ubuntu-22.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
 
     environment:
       name: "github-pages"
@@ -25,42 +25,25 @@ jobs:
       - name: "Clone repository"
         uses: "actions/checkout@v3.4.0"
 
-      - name: "Prepare Repository"
-        # Mark the repository as a safe directory in git: https://github.com/actions/checkout/issues/766
-        run: "git config --global --add safe.directory $GITHUB_WORKSPACE"
-
       - name: "Restore CI cache"
         uses: "actions/cache/restore@v3.3.1"
         with:
-          key: "ci-cache-${{ hashFiles('**/Cargo.lock', '**/package-lock.json', '**/Pipfile.lock') }}"
-          fail-on-cache-miss: true
+          key: "cache-${{ github.ref_name }}-${{ hashFiles('Cargo.lock') }}-${{ hashFiles('package-lock.json') }}"
+          restore-keys: |
+            cache-${{ github.ref_name }}-
+            cache-main-
+            cache-
           path: |
-            **/.hermit/
-            **/node_modules/
-            **/target/
-
-      - name: "Build devcontainer"
-        uses: "./.devcontainer"
-        with:
-          entrypoint: "echo"
+            ~/.cache/hermit/
+            ~/.local/share/virtualenvs/
+            .hermit/
 
       #
       # Deploy to GitHub Pages:
       #
 
-      - name: "scripts/bin/infra setup pipenv"
-        uses: "./.devcontainer"
-        with:
-          entrypoint: "scripts/bin/infra"
-        env:
-          SLANG_INFRA_CLI_EXTRA_ARGS: "setup pipenv"
-
-      - name: "scripts/bin/infra check mkdocs"
-        uses: "./.devcontainer"
-        with:
-          entrypoint: "scripts/bin/infra"
-        env:
-          SLANG_INFRA_CLI_EXTRA_ARGS: "check mkdocs"
+      - run: "scripts/bin/infra setup pipenv"
+      - run: "scripts/bin/infra check mkdocs"
 
       - name: "Configure GitHub Pages"
         uses: "actions/configure-pages@v3.0.5"

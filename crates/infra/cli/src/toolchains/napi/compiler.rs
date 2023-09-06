@@ -90,7 +90,7 @@ fn process_generated_files(napi_output: &NapiCliOutput) -> Result<()> {
         CargoWorkspace::locate_source_crate("infra_cli")?.join("src/toolchains/napi");
     let mut codegen = Codegen::read_write(&templates_dir)?;
 
-    let template_path = templates_dir.join("napi_license_header.tera");
+    let template_path = templates_dir.join("napi_license_header.js.jinja2");
 
     for source in &napi_output.source_files {
         let contents = source.read_to_string()?;

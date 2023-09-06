@@ -21,6 +21,7 @@
         "NomicFoundation.hardhat-solidity",
         "redhat.vscode-yaml",
         "rust-lang.rust-analyzer",
+        "samuelcolvin.jinjahtml",
         "tamasfe.even-better-toml",
         "yzhang.markdown-all-in-one",
         // Formatting/Linting
