@@ -12,14 +12,14 @@ pub struct RunController {
     args: Vec<String>,
 }
 
-#[derive(Clone, Debug, ValueEnum)]
+#[derive(Clone, Debug, PartialEq, ValueEnum)]
 enum RunCommand {
     /*
      *
      * User-facing:
      *
      */
-    /// Run the public 'slang_solidity' crate shapped to Cargo users.
+    /// Run the public 'slang_solidity' crate shipped to Cargo users.
     #[clap(name = "slang_solidity")]
     SlangSolidity,
 
@@ -48,6 +48,11 @@ impl RunController {
 
         return Command::new("cargo")
             .arg("run")
+            .arg(if self.command == RunCommand::SolidityTestingSmoke {
+                "--release"
+            } else {
+                ""
+            })
             .property("--bin", &crate_name)
             .arg("--")
             .args(&self.args)
