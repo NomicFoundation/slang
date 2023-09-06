@@ -9,11 +9,6 @@ fn abstract_contract() -> Result<()> {
 }
 
 #[test]
-fn batchTransferERC721() -> Result<()> {
-    return run("ContractDefinition", "batchTransferERC721");
-}
-
-#[test]
 fn empty_contract() -> Result<()> {
     return run("ContractDefinition", "empty_contract");
 }
@@ -61,11 +56,6 @@ fn member_fallback_function_definition() -> Result<()> {
 #[test]
 fn member_function_definition() -> Result<()> {
     return run("ContractDefinition", "member_function_definition");
-}
-
-#[test]
-fn member_invalid_string_definition() -> Result<()> {
-    return run("ContractDefinition", "member_invalid_string_definition");
 }
 
 #[test]
@@ -117,11 +107,6 @@ fn member_using_directive() -> Result<()> {
 #[test]
 fn missing_field_type() -> Result<()> {
     return run("ContractDefinition", "missing_field_type");
-}
-
-#[test]
-fn modifier_argument() -> Result<()> {
-    return run("ContractDefinition", "modifier_argument");
 }
 
 #[test]

@@ -4,11 +4,6 @@ use crate::cst_output::runner::run;
 use anyhow::Result;
 
 #[test]
-fn IERC20() -> Result<()> {
-    return run("SourceUnit", "IERC20");
-}
-
-#[test]
 fn SafeMath() -> Result<()> {
     return run("SourceUnit", "SafeMath");
 }
@@ -36,11 +31,6 @@ fn partial_definition() -> Result<()> {
 #[test]
 fn top_level_function() -> Result<()> {
     return run("SourceUnit", "top_level_function");
-}
-
-#[test]
-fn top_level_function_with_nat_spec() -> Result<()> {
-    return run("SourceUnit", "top_level_function_with_nat_spec");
 }
 
 #[test]

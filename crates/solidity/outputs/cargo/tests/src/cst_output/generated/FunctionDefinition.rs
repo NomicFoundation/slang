@@ -9,11 +9,6 @@ fn constant_state_mutability() -> Result<()> {
 }
 
 #[test]
-fn ierc20_approve() -> Result<()> {
-    return run("FunctionDefinition", "ierc20_approve");
-}
-
-#[test]
-fn ierc20_transferFrom() -> Result<()> {
-    return run("FunctionDefinition", "ierc20_transferFrom");
+fn from_contextual_keyword() -> Result<()> {
+    return run("FunctionDefinition", "from_contextual_keyword");
 }

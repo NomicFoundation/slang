@@ -1,56 +1,37 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ // SPDX-License-Identifier: MIT                                                                                                                                │ 0..31
-  2  │ contract ABC {                                                                                                                                                 │ 32..46
-  3  │   /**                                                                                                                                                          │ 47..52
-  4  │    * @dev Replacement for Solidity's `transfer`: sends `amount` wei to                                                                                         │ 53..123
-  5  │    * `recipient`, forwarding all available gas and reverting on errors.                                                                                        │ 124..195
-  6  │    *                                                                                                                                                           │ 196..200
-  7  │    * https://eips.ethereum.org/EIPS/eip-1884[EIP1884] increases the gas cost                                                                                   │ 201..277
-  8  │    * of certain opcodes, possibly making contracts go over the 2300 gas limit                                                                                  │ 278..355
-  9  │    * imposed by `transfer`, making them unable to receive funds via                                                                                            │ 356..423
-  10 │    * `transfer`. {sendValue} removes this limitation.                                                                                                          │ 424..477
-  11 │    *                                                                                                                                                           │ 478..482
-  12 │    * https://diligence.consensys.net/posts/2019/09/stop-using-soliditys-transfer-now/[Learn more].                                                             │ 483..581
-  13 │    *                                                                                                                                                           │ 582..586
-  14 │    * IMPORTANT: because control is transferred to `recipient`, care must be                                                                                    │ 587..662
-  15 │    * taken to not create reentrancy vulnerabilities. Consider using                                                                                            │ 663..730
-  16 │    * {ReentrancyGuard} or the                                                                                                                                  │ 731..760
-  17 │    * https://solidity.readthedocs.io/en/v0.5.11/security-considerations.html#use-the-checks-effects-interactions-pattern[checks-effects-interactions pattern]. │ 761..919
-  18 │    */                                                                                                                                                          │ 920..925
-  19 │   function sendValue(address payable recipient, uint256 amount) internal {                                                                                     │ 926..1000
-  20 │     require(address(this).balance >= amount, "Address: insufficient balance");                                                                                 │ 1001..1079
-  21 │                                                                                                                                                                │ 1080..1080
-  22 │     // solhint-disable-next-line avoid-low-level-calls, avoid-call-value                                                                                       │ 1081..1153
-  23 │     (bool success, ) = recipient.call{ value: amount }("");                                                                                                    │ 1154..1213
-  24 │     require(success, "Address: unable to send value, recipient may have reverted");                                                                            │ 1214..1297
-  25 │   }                                                                                                                                                            │ 1298..1301
-  26 │ }                                                                                                                                                              │ 1302..1303
+  1  │ // SPDX-License-Identifier: MIT                                                     │ 0..31
+  2  │ contract ABC {                                                                      │ 32..46
+  3  │   function sendValue(address payable recipient, uint256 amount) internal {          │ 47..121
+  4  │     require(address(this).balance >= amount, "Address: insufficient balance");      │ 122..200
+  5  │                                                                                     │ 201..201
+  6  │     (bool success, ) = recipient.call{ value: amount }("");                         │ 202..261
+  7  │     require(success, "Address: unable to send value, recipient may have reverted"); │ 262..345
+  8  │   }                                                                                 │ 346..349
+  9  │ }                                                                                   │ 350..351
 
 Errors: # 1 total
   - >
     Error: Expected OpenParen.
-        ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/function_multiple_delimiters/input.sol:19:12]
-        │
-     19 │ ╭─▶   function sendValue(address payable recipient, uint256 amount) internal {
-        ┆ ┆   
-     25 │ ├─▶   }
-        │ │         
-        │ ╰───────── Error occurred here.
-    ────╯
+       ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/function_multiple_delimiters/input.sol:3:12]
+       │
+     3 │ ╭─▶   function sendValue(address payable recipient, uint256 amount) internal {
+       ┆ ┆   
+     8 │ ├─▶   }
+       │ │         
+       │ ╰───────── Error occurred here.
+    ───╯
 
 Tree:
-  - ContractDefinition (Rule): # 0..1304 "// SPDX-License-Identifier: MIT\ncontract ABC {\n  /..."
+  - ContractDefinition (Rule): # 0..352 "// SPDX-License-Identifier: MIT\ncontract ABC {\n  f..."
       - LeadingTrivia (Rule): # 0..32 "// SPDX-License-Identifier: MIT\n"
           - SingleLineComment (Trivia): "// SPDX-License-Identifier: MIT" # 0..31
       - ContractKeyword (Token): "contract" # 32..40
       - Identifier (Token): "ABC" # 41..44
       - OpenBrace (Token): "{" # 45..46
-      - ContractMembersList (Rule): # 47..936 "  /**\n   * @dev Replacement for Solidity's `transf..."
-          - UnnamedFunctionDefinition (Rule): # 47..936 "  /**\n   * @dev Replacement for Solidity's `transf..."
-              - LeadingTrivia (Rule): # 47..928 "  /**\n   * @dev Replacement for Solidity's `transf..."
-                  - MultilineComment (Trivia): "/**\n   * @dev Replacement for Solidity's `transfer..." # 49..925
-              - FunctionKeyword (Token): "function" # 928..936
-      - SKIPPED (Token): "sendValue(address payable recipient, uint256 amoun..." # 937..1302
-      - CloseBrace (Token): "}" # 1302..1303
+      - ContractMembersList (Rule): # 47..57 "  function"
+          - UnnamedFunctionDefinition (Rule): # 47..57 "  function"
+              - FunctionKeyword (Token): "function" # 49..57
+      - SKIPPED (Token): "sendValue(address payable recipient, uint256 amoun..." # 58..350
+      - CloseBrace (Token): "}" # 350..351
