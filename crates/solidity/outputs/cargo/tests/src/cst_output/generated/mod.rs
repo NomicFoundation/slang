@@ -54,6 +54,8 @@ mod Statement;
 #[allow(non_snake_case)]
 mod StatementsList;
 #[allow(non_snake_case)]
+mod StructDefinition;
+#[allow(non_snake_case)]
 mod TupleDeconstructionStatement;
 #[allow(non_snake_case)]
 mod TupleExpression;
