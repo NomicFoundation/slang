@@ -5,17 +5,56 @@ Source: >
   2  │ throw invalid ;                                                                  │ 1..16
   3  │ { 1 * 2; 3 * b invalid; }                                                        │ 17..42
 
-Errors: # 1 total
+Errors: # 2 total
   - >
-    Error: Expected AddressKeyword or AsciiStringLiteral or AssemblyKeyword or BoolKeyword or BreakKeyword or ByteKeyword or ContinueKeyword or DecimalLiteral or DeleteKeyword or DoKeyword or EmitKeyword or FalseKeyword or FixedBytesType or ForKeyword or FunctionKeyword or HexLiteral or HexStringLiteral or Identifier or IfKeyword or MappingKeyword or NewKeyword or OpenBrace or OpenBracket or OpenParen or PayableKeyword or ReturnKeyword or RevertKeyword or SignedFixedType or SignedIntegerType or StringKeyword or TrueKeyword or UnsignedFixedType or UnsignedIntegerType or WhileKeyword.
-       ╭─[crates/solidity/testing/snapshots/cst_output/StatementsList/invalid_termination/input.sol:1:1]
+    Error: Expected AddressKeyword or AsciiStringLiteral or BoolKeyword or ByteKeyword or DecimalLiteral or FalseKeyword or FixedBytesType or HexLiteral or HexStringLiteral or Identifier or NewKeyword or OpenBracket or OpenParen or PayableKeyword or Semicolon or SignedFixedType or SignedIntegerType or StringKeyword or TrueKeyword or UnsignedFixedType or UnsignedIntegerType.
+       ╭─[crates/solidity/testing/snapshots/cst_output/StatementsList/invalid_termination/input.sol:2:1]
        │
-     1 │ ╭─▶ 
-       ┆ ┆   
-     3 │ ├─▶ { 1 * 2; 3 * b invalid; }
-       │ │                               
-       │ ╰─────────────────────────────── Error occurred here.
+     2 │ throw invalid ;
+       │ ───────┬──────  
+       │        ╰──────── Error occurred here.
+    ───╯
+  - >
+    Error: Expected end of file.
+       ╭─[crates/solidity/testing/snapshots/cst_output/StatementsList/invalid_termination/input.sol:3:16]
+       │
+     3 │ { 1 * 2; 3 * b invalid; }
+       │                ───┬───  
+       │                   ╰───── Error occurred here.
     ───╯
 
 Tree:
-  - SKIPPED (Token): "\nthrow invalid ;\n{ 1 * 2; 3 * b invalid; }\n" # 0..43
+  - StatementsList (Rule): # 0..43 "\nthrow invalid ;\n{ 1 * 2; 3 * b invalid; }\n"
+      - Statement (Rule): # 0..17 "\nthrow invalid ;\n"
+          - ExpressionStatement (Rule): # 0..17 "\nthrow invalid ;\n"
+              - SKIPPED (Token): "throw invalid " # 1..15
+              - Semicolon (Token): ";" # 15..16
+      - Statement (Rule): # 17..43 "{ 1 * 2; 3 * b invalid; }\n"
+          - Block (Rule): # 17..43 "{ 1 * 2; 3 * b invalid; }\n"
+              - OpenBrace (Token): "{" # 17..18
+              - StatementsList (Rule): # 18..40 " 1 * 2; 3 * b invalid;"
+                  - Statement (Rule): # 18..25 " 1 * 2;"
+                      - ExpressionStatement (Rule): # 18..25 " 1 * 2;"
+                          - Expression (Rule): # 18..24 " 1 * 2"
+                              - BinaryExpression (Rule): # 18..24 " 1 * 2"
+                                  - Expression (Rule): # 18..20 " 1"
+                                      - NumericExpression (Rule): # 18..20 " 1"
+                                          - DecimalLiteral (Token): "1" # 19..20
+                                  - Asterisk (Token): "*" # 21..22
+                                  - Expression (Rule): # 22..24 " 2"
+                                      - NumericExpression (Rule): # 22..24 " 2"
+                                          - DecimalLiteral (Token): "2" # 23..24
+                          - Semicolon (Token): ";" # 24..25
+                  - Statement (Rule): # 25..40 " 3 * b invalid;"
+                      - ExpressionStatement (Rule): # 25..40 " 3 * b invalid;"
+                          - Expression (Rule): # 25..31 " 3 * b"
+                              - BinaryExpression (Rule): # 25..31 " 3 * b"
+                                  - Expression (Rule): # 25..27 " 3"
+                                      - NumericExpression (Rule): # 25..27 " 3"
+                                          - DecimalLiteral (Token): "3" # 26..27
+                                  - Asterisk (Token): "*" # 28..29
+                                  - Expression (Rule): # 29..31 " b"
+                                      - Identifier (Token): "b" # 30..31
+                          - SKIPPED (Token): "invalid" # 32..39
+                          - Semicolon (Token): ";" # 39..40
+              - CloseBrace (Token): "}" # 41..42

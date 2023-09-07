@@ -56,6 +56,24 @@ impl ChoiceHelper {
                 running.expected_tokens.extend(next.expected_tokens.clone());
                 false
             }
+            // TODO: Add a comment
+            (ParserResult::NoMatch(_), ParserResult::SkippedUntil(next)) => {
+                // HACK: Make this more elegant - either not require checking for trivia here
+                // or make it also work in the presence of comments
+                // NOTE: We currently overeagerly try to recover from NoMatch, leading to absurd recoveries
+                // such as parsing "using A for B;" as (almost entirely skipped) pragma directive, only because
+                // it ends with and matches ";".
+                // Once we have a better way to limit the recovery boundary to reasonable set of tokens
+                // such as ';' for contract members, we should move this check to `recovery.rs`
+                // to not rely on wholly skipped rules to serve as our recovery boundary.
+                let only_trivia = next
+                    .nodes
+                    .descendents()
+                    .filter_map(cst::Node::as_token)
+                    .all(|token| token.kind.is_whitespace());
+
+                !only_trivia && next.skipped.len() > 0
+            }
             // Otherwise, we have some match and we ignore a missing next one.
             (ParserResult::IncompleteMatch(..), ParserResult::NoMatch(..))
             | (ParserResult::SkippedUntil(..), ParserResult::NoMatch(..))

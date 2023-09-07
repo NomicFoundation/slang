@@ -49,10 +49,18 @@ impl ParserResult {
             token
         };
 
-        let (mut nodes, mut expected_tokens, is_incomplete) = match self {
-            ParserResult::IncompleteMatch(result) => (result.nodes, result.expected_tokens, true),
+        enum MatchKind {
+            Match,
+            Incomplete,
+            No,
+        }
+        let (mut nodes, mut expected_tokens, match_kind) = match self {
+            ParserResult::NoMatch(result) => (vec![], result.expected_tokens, MatchKind::No),
+            ParserResult::IncompleteMatch(result) => {
+                (result.nodes, result.expected_tokens, MatchKind::Incomplete)
+            }
             ParserResult::Match(result) if peek_token_after_trivia() != Some(expected) => {
-                (result.nodes, result.expected_tokens, false)
+                (result.nodes, result.expected_tokens, MatchKind::Match)
             }
             // No need to recover, so just return as-is.
             _ => return self,
@@ -71,15 +79,24 @@ impl ParserResult {
                     if local_delims.is_empty()
                         && (token == expected || input.closing_delimiters().contains(&token)) =>
                 {
+                    let skipped_range = start..save;
+
+                    // If there's no match and we only skipped through trivia, we didn't actually
+                    // recover, so return as-is to not attempt to recover.
+                    if skipped_range.is_empty() && matches!(match_kind, MatchKind::No) {
+                        input.set_position(before_recovery);
+                        return ParserResult::no_match(expected_tokens);
+                    }
+
                     nodes.extend(leading_trivia);
-                    if !is_incomplete {
+                    if matches!(match_kind, MatchKind::Match) {
+                    } else {
                         expected_tokens.push(expected);
                     }
 
                     // Don't consume the delimiter; parent will consume it
                     input.set_position(save);
 
-                    let skipped_range = start..save;
                     input.emit(ParseError {
                         text_range: skipped_range.clone(),
                         tokens_that_would_have_allowed_more_progress: expected_tokens.clone(),
@@ -108,10 +125,12 @@ impl ParserResult {
                 None => {
                     input.set_position(before_recovery);
 
-                    if is_incomplete {
-                        return ParserResult::incomplete_match(nodes, expected_tokens);
-                    } else {
-                        return ParserResult::r#match(nodes, expected_tokens);
+                    match match_kind {
+                        MatchKind::Match => return ParserResult::r#match(nodes, expected_tokens),
+                        MatchKind::Incomplete => {
+                            return ParserResult::incomplete_match(nodes, expected_tokens)
+                        }
+                        MatchKind::No => return ParserResult::no_match(expected_tokens),
                     }
                 }
             }

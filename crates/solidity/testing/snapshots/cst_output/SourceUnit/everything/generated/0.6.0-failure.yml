@@ -36,13 +36,11 @@ Errors: # 4 total
     ───╯
   - >
     Error: Expected PragmaKeyword or Semicolon.
-        ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/everything/input.sol:13:1]
+        ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/everything/input.sol:17:1]
         │
-     13 │ ╭─▶ struct S { }
-        ┆ ┆   
-     17 │ ├─▶ uint32 constant x = 0;
-        │ │                            
-        │ ╰──────────────────────────── Error occurred here.
+     17 │ uint32 constant x = 0;
+        │ ──────────┬──────────  
+        │           ╰──────────── Error occurred here.
     ────╯
   - >
     Error: Expected PragmaKeyword or Semicolon.
@@ -102,8 +100,18 @@ Tree:
               - Identifier (Token): "L" # 100..101
               - OpenBrace (Token): "{" # 102..103
               - CloseBrace (Token): "}" # 104..105
-          - PragmaDirective (Rule): # 106..156 "\nstruct S { }\n\nenum E { }\n\nuint32 constant x = 0;\n"
-              - SKIPPED (Token): "struct S { }\n\nenum E { }\n\nuint32 constant x = 0" # 107..154
+          - StructDefinition (Rule): # 106..120 "\nstruct S { }\n"
+              - StructKeyword (Token): "struct" # 107..113
+              - Identifier (Token): "S" # 114..115
+              - OpenBrace (Token): "{" # 116..117
+              - CloseBrace (Token): "}" # 118..119
+          - EnumDefinition (Rule): # 120..132 "\nenum E { }\n"
+              - EnumKeyword (Token): "enum" # 121..125
+              - Identifier (Token): "E" # 126..127
+              - OpenBrace (Token): "{" # 128..129
+              - CloseBrace (Token): "}" # 130..131
+          - PragmaDirective (Rule): # 132..156 "\nuint32 constant x = 0;\n"
+              - SKIPPED (Token): "uint32 constant x = 0" # 133..154
               - Semicolon (Token): ";" # 154..155
           - PragmaDirective (Rule): # 156..200 "\nfunction f() public { }\n\nerror E1(string);\n"
               - SKIPPED (Token): "function f() public { }\n\nerror E1(string)" # 157..198

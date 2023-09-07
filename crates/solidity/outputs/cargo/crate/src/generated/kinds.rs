@@ -529,6 +529,12 @@ pub enum TokenKind {
     YulIdentifier,
 }
 
+impl TokenKind {
+    pub fn is_whitespace(&self) -> bool {
+        matches!(self, TokenKind::Whitespace | TokenKind::EndOfLine)
+    }
+}
+
 #[derive(strum_macros::FromRepr)]
 /// The lexical context of the scanner.
 #[cfg_attr(feature = "slang_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "language"))]

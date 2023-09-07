@@ -5,7 +5,7 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Expected EqualGreaterThan.
+    Error: Expected CloseParen or EqualGreaterThan.
        ╭─[crates/solidity/testing/snapshots/cst_output/MappingType/named_key/input.sol:1:16]
        │
      1 │ mapping(string Foo => bytes32)

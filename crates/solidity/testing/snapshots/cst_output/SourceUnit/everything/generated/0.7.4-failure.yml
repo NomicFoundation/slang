@@ -25,7 +25,7 @@ Source: >
   22 │                                                                                  │ 200..200
   23 │ type T is bool;                                                                  │ 201..216
 
-Errors: # 4 total
+Errors: # 3 total
   - >
     Error: Expected PragmaKeyword or Semicolon.
        ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/everything/input.sol:5:1]
@@ -35,24 +35,12 @@ Errors: # 4 total
        │       ╰──────── Error occurred here.
     ───╯
   - >
-    Error: Expected PragmaKeyword or Semicolon.
-        ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/everything/input.sol:13:1]
+    Error: Expected ConstantKeyword or OpenBracket or Semicolon.
+        ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/everything/input.sol:21:7]
         │
-     13 │ ╭─▶ struct S { }
-        ┆ ┆   
-     17 │ ├─▶ uint32 constant x = 0;
-        │ │                            
-        │ ╰──────────────────────────── Error occurred here.
-    ────╯
-  - >
-    Error: Expected PragmaKeyword or Semicolon.
-        ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/everything/input.sol:19:1]
-        │
-     19 │ ╭─▶ function f() public { }
-        ┆ ┆   
-     21 │ ├─▶ error E1(string);
-        │ │                       
-        │ ╰─────────────────────── Error occurred here.
+     21 │ error E1(string);
+        │       ─────┬────  
+        │            ╰────── Error occurred here.
     ────╯
   - >
     Error: Expected PragmaKeyword or Semicolon.
@@ -102,11 +90,42 @@ Tree:
               - Identifier (Token): "L" # 100..101
               - OpenBrace (Token): "{" # 102..103
               - CloseBrace (Token): "}" # 104..105
-          - PragmaDirective (Rule): # 106..156 "\nstruct S { }\n\nenum E { }\n\nuint32 constant x = 0;\n"
-              - SKIPPED (Token): "struct S { }\n\nenum E { }\n\nuint32 constant x = 0" # 107..154
+          - StructDefinition (Rule): # 106..120 "\nstruct S { }\n"
+              - StructKeyword (Token): "struct" # 107..113
+              - Identifier (Token): "S" # 114..115
+              - OpenBrace (Token): "{" # 116..117
+              - CloseBrace (Token): "}" # 118..119
+          - EnumDefinition (Rule): # 120..132 "\nenum E { }\n"
+              - EnumKeyword (Token): "enum" # 121..125
+              - Identifier (Token): "E" # 126..127
+              - OpenBrace (Token): "{" # 128..129
+              - CloseBrace (Token): "}" # 130..131
+          - ConstantDefinition (Rule): # 132..156 "\nuint32 constant x = 0;\n"
+              - TypeName (Rule): # 132..139 "\nuint32"
+                  - UnsignedIntegerType (Token): "uint32" # 133..139
+              - ConstantKeyword (Token): "constant" # 140..148
+              - Identifier (Token): "x" # 149..150
+              - Equal (Token): "=" # 151..152
+              - Expression (Rule): # 152..154 " 0"
+                  - NumericExpression (Rule): # 152..154 " 0"
+                      - DecimalLiteral (Token): "0" # 153..154
               - Semicolon (Token): ";" # 154..155
-          - PragmaDirective (Rule): # 156..200 "\nfunction f() public { }\n\nerror E1(string);\n"
-              - SKIPPED (Token): "function f() public { }\n\nerror E1(string)" # 157..198
+          - FunctionDefinition (Rule): # 156..181 "\nfunction f() public { }\n"
+              - FunctionKeyword (Token): "function" # 157..165
+              - Identifier (Token): "f" # 166..167
+              - ParametersDeclaration (Rule): # 167..169 "()"
+                  - OpenParen (Token): "(" # 167..168
+                  - CloseParen (Token): ")" # 168..169
+              - FunctionAttributesList (Rule): # 169..176 " public"
+                  - PublicKeyword (Token): "public" # 170..176
+              - Block (Rule): # 176..181 " { }\n"
+                  - OpenBrace (Token): "{" # 177..178
+                  - CloseBrace (Token): "}" # 179..180
+          - ConstantDefinition (Rule): # 181..200 "\nerror E1(string);\n"
+              - TypeName (Rule): # 181..187 "\nerror"
+                  - IdentifierPath (Rule): # 181..187 "\nerror"
+                      - Identifier (Token): "error" # 182..187
+              - SKIPPED (Token): "E1(string)" # 188..198
               - Semicolon (Token): ";" # 198..199
           - PragmaDirective (Rule): # 200..217 "\ntype T is bool;\n"
               - SKIPPED (Token): "type T is bool" # 201..215

@@ -10,7 +10,7 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Expected AsciiStringLiteral or BreakKeyword or CloseBrace or ContinueKeyword or FalseKeyword or ForKeyword or FunctionKeyword or HexStringLiteral or IfKeyword or LeaveKeyword or LetKeyword or OpenBrace or SwitchKeyword or TrueKeyword or YulDecimalLiteral or YulHexLiteral or YulIdentifier.
+    Error: Expected AsciiStringLiteral or BreakKeyword or ContinueKeyword or FalseKeyword or ForKeyword or FunctionKeyword or HexStringLiteral or IfKeyword or LeaveKeyword or LetKeyword or OpenBrace or SwitchKeyword or TrueKeyword or YulDecimalLiteral or YulHexLiteral or YulIdentifier.
        ╭─[crates/solidity/testing/snapshots/cst_output/YulBlock/ignore_unknown_delim/input.sol:4:10]
        │
      4 │ ╭─▶        result := [mul(a, b)

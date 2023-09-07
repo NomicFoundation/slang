@@ -5,7 +5,7 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Expected CloseParen or Comma.
+    Error: Expected Comma.
        ╭─[crates/solidity/testing/snapshots/cst_output/FunctionDefinition/from_contextual_keyword/input.sol:1:31]
        │
      1 │ function transferFrom(address from, address to, uint256 amount) external returns (bool);

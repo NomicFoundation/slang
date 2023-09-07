@@ -25,7 +25,7 @@ Source: >
   22 │   bytes message;                                                                   │ 774..790
   23 │ }                                                                                  │ 791..792
 
-Errors: # 3 total
+Errors: # 2 total
   - >
     Error: Expected PragmaKeyword or Semicolon.
        ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/using_directive/input.sol:4:1]
@@ -42,20 +42,10 @@ Errors: # 3 total
        │ ──────────────────────┬──────────────────────  
        │                       ╰──────────────────────── Error occurred here.
     ───╯
-  - >
-    Error: Expected EndOfLine or MultilineComment or SingleLineComment or Whitespace.
-        ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/using_directive/input.sol:16:1]
-        │
-     16 │ ╭─▶ struct Envelope {
-        ┆ ┆   
-     23 │ ├─▶ }
-        │ │       
-        │ ╰─────── Error occurred here.
-    ────╯
 
 Tree:
   - SourceUnit (Rule): # 0..793 "// SPDX-License-Identifier: MIT\npragma solidity ^0..."
-      - SourceUnitMembersList (Rule): # 0..145 "// SPDX-License-Identifier: MIT\npragma solidity ^0..."
+      - SourceUnitMembersList (Rule): # 0..793 "// SPDX-License-Identifier: MIT\npragma solidity ^0..."
           - PragmaDirective (Rule): # 0..56 "// SPDX-License-Identifier: MIT\npragma solidity ^0..."
               - LeadingTrivia (Rule): # 0..32 "// SPDX-License-Identifier: MIT\n"
                   - SingleLineComment (Trivia): "// SPDX-License-Identifier: MIT" # 0..31
@@ -80,6 +70,44 @@ Tree:
           - PragmaDirective (Rule): # 98..145 "using TransactionUtils for Transaction global;\n"
               - SKIPPED (Token): "using TransactionUtils for Transaction global" # 98..143
               - Semicolon (Token): ";" # 143..144
-      - EndOfFileTrivia (Rule): # 145..643 "\n/**\n * @notice Object with the necessary informat..."
-          - MultilineComment (Trivia): "/**\n * @notice Object with the necessary informati..." # 146..642
-      - SKIPPED (Token): "struct Envelope {\n  uint256 nonce;\n  address origi..." # 643..793
+          - StructDefinition (Rule): # 145..793 "\n/**\n * @notice Object with the necessary informat..."
+              - LeadingTrivia (Rule): # 145..643 "\n/**\n * @notice Object with the necessary informat..."
+                  - MultilineComment (Trivia): "/**\n * @notice Object with the necessary informati..." # 146..642
+              - StructKeyword (Token): "struct" # 643..649
+              - Identifier (Token): "Envelope" # 650..658
+              - OpenBrace (Token): "{" # 659..660
+              - StructMembersList (Rule): # 661..791 "  uint256 nonce;\n  address origin;\n  address desti..."
+                  - StructMember (Rule): # 661..678 "  uint256 nonce;\n"
+                      - TypeName (Rule): # 661..670 "  uint256"
+                          - UnsignedIntegerType (Token): "uint256" # 663..670
+                      - Identifier (Token): "nonce" # 671..676
+                      - Semicolon (Token): ";" # 676..677
+                  - StructMember (Rule): # 678..696 "  address origin;\n"
+                      - TypeName (Rule): # 678..687 "  address"
+                          - AddressType (Rule): # 678..687 "  address"
+                              - AddressKeyword (Token): "address" # 680..687
+                      - Identifier (Token): "origin" # 688..694
+                      - Semicolon (Token): ";" # 694..695
+                  - StructMember (Rule): # 696..719 "  address destination;\n"
+                      - TypeName (Rule): # 696..705 "  address"
+                          - AddressType (Rule): # 696..705 "  address"
+                              - AddressKeyword (Token): "address" # 698..705
+                      - Identifier (Token): "destination" # 706..717
+                      - Semicolon (Token): ";" # 717..718
+                  - StructMember (Rule): # 719..744 "  uint256 originChainId;\n"
+                      - TypeName (Rule): # 719..728 "  uint256"
+                          - UnsignedIntegerType (Token): "uint256" # 721..728
+                      - Identifier (Token): "originChainId" # 729..742
+                      - Semicolon (Token): ";" # 742..743
+                  - StructMember (Rule): # 744..774 "  uint256 destinationChainId;\n"
+                      - TypeName (Rule): # 744..753 "  uint256"
+                          - UnsignedIntegerType (Token): "uint256" # 746..753
+                      - Identifier (Token): "destinationChainId" # 754..772
+                      - Semicolon (Token): ";" # 772..773
+                  - StructMember (Rule): # 774..791 "  bytes message;\n"
+                      - TypeName (Rule): # 774..781 "  bytes"
+                          - IdentifierPath (Rule): # 774..781 "  bytes"
+                              - Identifier (Token): "bytes" # 776..781
+                      - Identifier (Token): "message" # 782..789
+                      - Semicolon (Token): ";" # 789..790
+              - CloseBrace (Token): "}" # 791..792

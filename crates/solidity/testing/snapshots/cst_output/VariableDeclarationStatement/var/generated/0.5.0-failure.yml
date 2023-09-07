@@ -5,13 +5,15 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Expected AddressKeyword or BoolKeyword or ByteKeyword or FixedBytesType or FunctionKeyword or Identifier or MappingKeyword or PayableKeyword or SignedFixedType or SignedIntegerType or StringKeyword or UnsignedFixedType or UnsignedIntegerType.
+    Error: Expected AddressKeyword or BoolKeyword or ByteKeyword or FixedBytesType or FunctionKeyword or Identifier or MappingKeyword or PayableKeyword or Semicolon or SignedFixedType or SignedIntegerType or StringKeyword or UnsignedFixedType or UnsignedIntegerType.
        ╭─[crates/solidity/testing/snapshots/cst_output/VariableDeclarationStatement/var/input.sol:1:1]
        │
      1 │ var z = 0;
-       │ ─────┬────  
-       │      ╰────── Error occurred here.
+       │ ────┬────  
+       │     ╰────── Error occurred here.
     ───╯
 
 Tree:
-  - SKIPPED (Token): "var z = 0;" # 0..10
+  - VariableDeclarationStatement (Rule): # 0..10 "var z = 0;"
+      - SKIPPED (Token): "var z = 0" # 0..9
+      - Semicolon (Token): ";" # 9..10

@@ -5,13 +5,16 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Expected AddressKeyword or AsciiStringLiteral or AssemblyKeyword or BoolKeyword or BreakKeyword or ContinueKeyword or DecimalLiteral or DeleteKeyword or DoKeyword or EmitKeyword or FalseKeyword or FixedBytesType or ForKeyword or FunctionKeyword or HexLiteral or HexStringLiteral or Identifier or IfKeyword or MappingKeyword or NewKeyword or OpenBrace or OpenBracket or OpenParen or PayableKeyword or ReturnKeyword or RevertKeyword or SignedFixedType or SignedIntegerType or StringKeyword or TrueKeyword or TryKeyword or TypeKeyword or UncheckedKeyword or UnicodeStringLiteral or UnsignedFixedType or UnsignedIntegerType or WhileKeyword.
+    Error: Expected AddressKeyword or AsciiStringLiteral or BoolKeyword or DecimalLiteral or FalseKeyword or FixedBytesType or HexLiteral or HexStringLiteral or Identifier or NewKeyword or OpenBracket or OpenParen or PayableKeyword or Semicolon or SignedFixedType or SignedIntegerType or StringKeyword or TrueKeyword or TypeKeyword or UnicodeStringLiteral or UnsignedFixedType or UnsignedIntegerType.
        ╭─[crates/solidity/testing/snapshots/cst_output/Statement/throw/input.sol:1:1]
        │
      1 │ throw;
-       │ ───┬──  
-       │    ╰──── Error occurred here.
+       │ ──┬──  
+       │   ╰──── Error occurred here.
     ───╯
 
 Tree:
-  - SKIPPED (Token): "throw;" # 0..6
+  - Statement (Rule): # 0..6 "throw;"
+      - ExpressionStatement (Rule): # 0..6 "throw;"
+          - SKIPPED (Token): "throw" # 0..5
+          - Semicolon (Token): ";" # 5..6

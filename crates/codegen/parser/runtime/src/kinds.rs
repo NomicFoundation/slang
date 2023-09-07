@@ -19,6 +19,12 @@ pub enum TokenKind {
     XXX,
 }
 
+impl TokenKind {
+    pub fn is_whitespace(&self) -> bool {
+        unreachable!("Expanded by the template")
+    }
+}
+
 #[derive(
     Debug,
     Eq,

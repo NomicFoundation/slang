@@ -13,7 +13,7 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Expected Semicolon.
+    Error: Expected end of file.
        ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/function_multiple_delimiters/input.sol:6:38]
        │
      6 │     (bool success, ) = recipient.call{ value: amount }("");

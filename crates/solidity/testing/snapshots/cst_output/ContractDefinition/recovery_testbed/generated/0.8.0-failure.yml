@@ -16,7 +16,7 @@ Source: >
 
 Errors: # 3 total
   - >
-    Error: Expected CloseParen or Comma.
+    Error: Expected Comma.
        ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/recovery_testbed/input.sol:2:29]
        │
      2 │     function _transfer(address while) private {
@@ -24,22 +24,20 @@ Errors: # 3 total
        │                                  ╰──── Error occurred here.
     ───╯
   - >
-    Error: Expected AddressKeyword or AsciiStringLiteral or BoolKeyword or DecimalLiteral or FalseKeyword or FixedBytesType or HexLiteral or HexStringLiteral or Identifier or NewKeyword or OpenBracket or OpenParen or PayableKeyword or SignedFixedType or SignedIntegerType or StringKeyword or TrueKeyword or TypeKeyword or UnicodeStringLiteral or UnsignedFixedType or UnsignedIntegerType.
+    Error: Expected AddressKeyword or AsciiStringLiteral or BoolKeyword or CloseParen or DecimalLiteral or FalseKeyword or FixedBytesType or HexLiteral or HexStringLiteral or Identifier or NewKeyword or OpenBracket or OpenParen or PayableKeyword or SignedFixedType or SignedIntegerType or StringKeyword or TrueKeyword or TypeKeyword or UnicodeStringLiteral or UnsignedFixedType or UnsignedIntegerType.
        ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/recovery_testbed/input.sol:3:6]
        │
-     3 │ ╭─▶        if(while == pair && !_isExcludedFromFee[to]){
-       ┆ ┆   
-     6 │ ├─▶     }
-       │ │           
-       │ ╰─────────── Error occurred here.
+     3 │        if(while == pair && !_isExcludedFromFee[to]){
+       │           ────────────────────┬───────────────────  
+       │                               ╰───────────────────── Error occurred here.
     ───╯
   - >
-    Error: Expected Equal or Semicolon.
-        ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/recovery_testbed/input.sol:10:32]
+    Error: Expected AssemblyKeyword or ForKeyword or IfKeyword or OpenBrace or TryKeyword or UncheckedKeyword or WhileKeyword.
+        ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/recovery_testbed/input.sol:10:15]
         │
      10 │        unchecked { invalid sequence }
-        │                                     │ 
-        │                                     ╰─ Error occurred here.
+        │                    ────────┬────────  
+        │                            ╰────────── Error occurred here.
     ────╯
 
 Tree:
@@ -64,12 +62,29 @@ Tree:
                   - PrivateKeyword (Token): "private" # 55..62
               - Block (Rule): # 62..138 " {\n\t\tif(while == pair && !_isExcludedFromFee[to]){..."
                   - OpenBrace (Token): "{" # 63..64
-                  - StatementsList (Rule): # 65..70 "\t\tif("
-                      - Statement (Rule): # 65..70 "\t\tif("
-                          - IfStatement (Rule): # 65..70 "\t\tif("
+                  - StatementsList (Rule): # 65..135 "\t\tif(while == pair && !_isExcludedFromFee[to]){\n\t\t..."
+                      - Statement (Rule): # 65..135 "\t\tif(while == pair && !_isExcludedFromFee[to]){\n\t\t..."
+                          - IfStatement (Rule): # 65..135 "\t\tif(while == pair && !_isExcludedFromFee[to]){\n\t\t..."
                               - IfKeyword (Token): "if" # 67..69
                               - OpenParen (Token): "(" # 69..70
-                  - SKIPPED (Token): "while == pair && !_isExcludedFromFee[to]){\n\t\t\tuint..." # 70..136
+                              - SKIPPED (Token): "while == pair && !_isExcludedFromFee[to]" # 70..110
+                              - CloseParen (Token): ")" # 110..111
+                              - Statement (Rule): # 111..135 "{\n\t\t\tuint256 a = 1;\n\t\t}\n"
+                                  - Block (Rule): # 111..135 "{\n\t\t\tuint256 a = 1;\n\t\t}\n"
+                                      - OpenBrace (Token): "{" # 111..112
+                                      - StatementsList (Rule): # 113..131 "\t\t\tuint256 a = 1;\n"
+                                          - Statement (Rule): # 113..131 "\t\t\tuint256 a = 1;\n"
+                                              - VariableDeclarationStatement (Rule): # 113..131 "\t\t\tuint256 a = 1;\n"
+                                                  - VariableDeclaration (Rule): # 113..125 "\t\t\tuint256 a"
+                                                      - TypeName (Rule): # 113..123 "\t\t\tuint256"
+                                                          - UnsignedIntegerType (Token): "uint256" # 116..123
+                                                      - Identifier (Token): "a" # 124..125
+                                                  - Equal (Token): "=" # 126..127
+                                                  - Expression (Rule): # 127..129 " 1"
+                                                      - NumericExpression (Rule): # 127..129 " 1"
+                                                          - DecimalLiteral (Token): "1" # 128..129
+                                                  - Semicolon (Token): ";" # 129..130
+                                      - CloseBrace (Token): "}" # 133..134
                   - CloseBrace (Token): "}" # 136..137
           - FunctionDefinition (Rule): # 138..210 "\n\tfunction abc() {\n\t\tuint256 x = 0;\n\t\tunchecked { ..."
               - FunctionKeyword (Token): "function" # 140..148
@@ -96,15 +111,7 @@ Tree:
                               - UncheckedKeyword (Token): "unchecked" # 176..185
                               - Block (Rule): # 185..207 " { invalid sequence }\n"
                                   - OpenBrace (Token): "{" # 186..187
-                                  - StatementsList (Rule): # 187..205 " invalid sequence "
-                                      - Statement (Rule): # 187..205 " invalid sequence "
-                                          - VariableDeclarationStatement (Rule): # 187..205 " invalid sequence "
-                                              - VariableDeclaration (Rule): # 187..204 " invalid sequence"
-                                                  - TypeName (Rule): # 187..195 " invalid"
-                                                      - IdentifierPath (Rule): # 187..195 " invalid"
-                                                          - Identifier (Token): "invalid" # 188..195
-                                                  - Identifier (Token): "sequence" # 196..204
-                                  - SKIPPED (Token): "" # 205..205
+                                  - SKIPPED (Token): "invalid sequence " # 188..205
                                   - CloseBrace (Token): "}" # 205..206
                   - CloseBrace (Token): "}" # 208..209
       - CloseBrace (Token): "}" # 210..211
