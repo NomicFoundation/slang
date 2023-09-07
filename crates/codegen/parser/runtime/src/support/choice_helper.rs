@@ -33,9 +33,7 @@ impl ChoiceHelper {
 
     /// Store the next result if it's a better match; otherwise, we retain the existing one.
     fn attempt_pick(&mut self, input: &mut ParserContext, next_result: ParserResult) {
-        let mut better_pick = false;
-
-        match (&mut self.result, next_result) {
+        let better_pick = match (&mut self.result, &next_result) {
             // We settle for the first full match.
             (ParserResult::Match(running), _) if running.is_full_recursive() => {
                 debug_assert!(self.is_done());
@@ -48,70 +46,63 @@ impl ChoiceHelper {
 
             // Still no match, extend the possible expected tokens.
             (ParserResult::NoMatch(running), ParserResult::NoMatch(next)) => {
-                running.expected_tokens.extend(next.expected_tokens)
+                running.expected_tokens.extend(next.expected_tokens.clone());
+                false
             }
             // Otherwise, we have some match and we ignore a missing next one.
-            (ParserResult::IncompleteMatch(..), ParserResult::NoMatch(..)) => {}
-            (ParserResult::SkippedUntil(..), ParserResult::NoMatch(..)) => {}
-            (ParserResult::Match(..), ParserResult::NoMatch(..)) => {}
+            (ParserResult::IncompleteMatch(..), ParserResult::NoMatch(..))
+            | (ParserResult::SkippedUntil(..), ParserResult::NoMatch(..))
+            | (ParserResult::Match(..), ParserResult::NoMatch(..)) => false,
 
             // Try to improve our match.
             // If the match has been recovered and is not full, optimize for the greatest matching span.
             (ParserResult::Match(running), ParserResult::Match(next))
                 if !running.is_full_recursive() =>
             {
-                if next.matching_recursive() > running.matching_recursive() {
-                    self.result = ParserResult::Match(next);
-                    better_pick = true;
-                }
+                next.matching_recursive() > running.matching_recursive()
             }
+
             (ParserResult::Match(running), ParserResult::IncompleteMatch(next))
                 if !running.is_full_recursive() =>
             {
-                if next.matching_recursive() > running.matching_recursive() {
-                    self.result = ParserResult::IncompleteMatch(next);
-                }
+                next.matching_recursive() > running.matching_recursive()
             }
+
             (ParserResult::Match(running), ParserResult::SkippedUntil(next))
                 if !running.is_full_recursive() =>
             {
-                if next.matching_recursive() > running.matching_recursive() {
-                    self.result = ParserResult::SkippedUntil(next);
-                }
+                next.matching_recursive() > running.matching_recursive()
             }
+
             // If we only have incomplete matches and the next covers more bytes, then we take it...
             (ParserResult::IncompleteMatch(running), ParserResult::IncompleteMatch(next)) => {
-                if next.covers_more_than(&running) {
-                    self.result = ParserResult::IncompleteMatch(next);
-                    better_pick = true;
-                }
+                next.covers_more_than(&running)
             }
+
             (ParserResult::IncompleteMatch(running), ParserResult::Match(next))
                 if !next.is_full_recursive() =>
             {
-                if next.matching_recursive() > running.matching_recursive() {
-                    self.result = ParserResult::Match(next);
-                    better_pick = true;
-                }
+                next.matching_recursive() > running.matching_recursive()
             }
+
+            (ParserResult::IncompleteMatch(running), ParserResult::SkippedUntil(next)) => {
+                next.matching_recursive() > running.matching_recursive()
+            }
+
             (ParserResult::SkippedUntil(running), ParserResult::SkippedUntil(next)) => {
-                if next.matching_recursive() > running.matching_recursive() {
-                    self.result = ParserResult::SkippedUntil(next);
-                    better_pick = true;
-                }
+                next.matching_recursive() > running.matching_recursive()
             }
+
             // Otherwise, the next match will always be better.
-            (_, next) => {
-                self.result = next;
-                better_pick = true;
-            }
-        }
+            _ => true,
+        };
 
         // Store currently accumulated errors if we had a better pick.
         // We rewind the stream with each new consideration, so we need a way to come back
         // to the errors that were accumulated at the time of the best pick.
         if better_pick {
             self.recovered_errors = input.errors_since(self.start_position).to_vec();
+            self.result = next_result;
         }
     }
 
