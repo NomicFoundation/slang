@@ -1,10 +1,11 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
+use std::mem;
 use std::ops::ControlFlow;
 
-use crate::parse_error::ParseError;
+use crate::{cst, kinds::TokenKind, parse_error::ParseError, text_index::TextIndex};
 
-use super::{context::Marker, ParserContext, ParserResult};
+use super::{context::Marker, parser_result::DescendentsIter, ParserContext, ParserResult};
 
 /// Starting from a given position in the input, this helper will try to pick (and remember) a best match. Settles on
 /// a first full match if possible, otherwise on the best incomplete match.
@@ -12,6 +13,9 @@ use super::{context::Marker, ParserContext, ParserResult};
 pub struct ChoiceHelper {
     result: ParserResult,
     start_position: Marker,
+    // Because we backtrack after every non-final pick, we store the the progress
+    // and the emitted errors from the time of a best pick, so that we can return to it later.
+    last_progress: TextIndex,
     recovered_errors: Vec<ParseError>,
 }
 
@@ -21,6 +25,7 @@ impl ChoiceHelper {
             result: ParserResult::no_match(vec![]),
             start_position: input.mark(),
             recovered_errors: vec![],
+            last_progress: input.position(),
         }
     }
 
@@ -57,54 +62,19 @@ impl ChoiceHelper {
             | (ParserResult::Match(..), ParserResult::NoMatch(..)) => false,
 
             // Try to improve our match.
-            // If the match has been recovered and is not full, optimize for the greatest matching span.
-            (ParserResult::Match(running), ParserResult::Match(next))
-                if !running.is_full_recursive() =>
-            {
-                next.matching_recursive() > running.matching_recursive()
-            }
-
-            (ParserResult::Match(running), ParserResult::IncompleteMatch(next))
-                if !running.is_full_recursive() =>
-            {
-                next.matching_recursive() > running.matching_recursive()
-            }
-
-            (ParserResult::Match(running), ParserResult::SkippedUntil(next))
-                if !running.is_full_recursive() =>
-            {
-                next.matching_recursive() > running.matching_recursive()
-            }
-
-            // If we only have incomplete matches and the next covers more bytes, then we take it...
-            (ParserResult::IncompleteMatch(running), ParserResult::IncompleteMatch(next)) => {
-                next.covers_more_than(&running)
-            }
-
-            (ParserResult::IncompleteMatch(running), ParserResult::Match(next))
-                if !next.is_full_recursive() =>
-            {
-                next.matching_recursive() > running.matching_recursive()
-            }
-
-            (ParserResult::IncompleteMatch(running), ParserResult::SkippedUntil(next)) => {
-                next.matching_recursive() > running.matching_recursive()
-            }
-
-            (ParserResult::SkippedUntil(running), ParserResult::SkippedUntil(next)) => {
-                next.matching_recursive() > running.matching_recursive()
-            }
-
-            // Otherwise, the next match will always be better.
-            _ => true,
+            (_, ParserResult::Match(next)) if next.is_full_recursive() => true,
+            (_, ParserResult::PrattOperatorMatch(..)) => true,
+            // Optimize for matches that have a longer span of non-skipped tokens.
+            (cur, next) => total_not_skipped_span(cur) < total_not_skipped_span(next),
         };
 
         // Store currently accumulated errors if we had a better pick.
         // We rewind the stream with each new consideration, so we need a way to come back
         // to the errors that were accumulated at the time of the best pick.
         if better_pick {
-            self.recovered_errors = input.errors_since(self.start_position).to_vec();
             self.result = next_result;
+            self.recovered_errors = input.errors_since(self.start_position).to_vec();
+            self.last_progress = input.position();
         }
     }
 
@@ -129,7 +99,9 @@ impl ChoiceHelper {
     ) -> ParserResult {
         match f(ChoiceHelper::new(input), input) {
             ControlFlow::Break(result) => result,
-            ControlFlow::Continue(..) => panic!("ChoiceHelper not finish()-ed in the run closure"),
+            ControlFlow::Continue(..) => {
+                panic!("ChoiceHelper not `finish`()-ed in the `run` closure")
+            }
         }
     }
 
@@ -144,7 +116,7 @@ impl ChoiceHelper {
         self.attempt_pick(input, value);
 
         if self.is_done() {
-            ControlFlow::Break(self.take_result())
+            ControlFlow::Break(mem::take(&mut self.result))
         } else {
             input.rewind(self.start_position);
             ControlFlow::Continue(self)
@@ -153,49 +125,31 @@ impl ChoiceHelper {
 
     /// Finishes the choice parse, returning the accumulated match.
     pub fn finish(self, input: &mut ParserContext) -> ControlFlow<ParserResult, Self> {
-        ControlFlow::Break(self.unwrap_result(input))
+        assert!(!self.is_done());
+        // We didn't break early, so undo the rewind that has happened in the meantime.
+        input.set_position(self.last_progress);
+        input.extend_errors(self.recovered_errors);
+
+        ControlFlow::Break(self.result)
     }
+}
 
-    fn take_result(&mut self) -> ParserResult {
-        assert!(
-            self.is_done(),
-            "We only short-circuit Choice when we have a full match"
-        );
+/// Returns the total length of the span of tokens that were not skipped.
+pub fn total_not_skipped_span(result: &ParserResult) -> usize {
+    let nodes = match result {
+        ParserResult::Match(match_) => &match_.nodes,
+        ParserResult::IncompleteMatch(incomplete_match) => &incomplete_match.nodes,
+        ParserResult::SkippedUntil(skipped) => &skipped.nodes,
+        ParserResult::NoMatch(_) => &[][..],
+        ParserResult::PrattOperatorMatch(_) => unreachable!(
+            "PrattOperatorMatch is always considered a better pick, so it should never be considered here"
+        ),
+    };
 
-        std::mem::replace(&mut self.result, ParserResult::no_match(vec![]))
-    }
-
-    fn unwrap_result(self, input: &mut ParserContext) -> ParserResult {
-        // When finalizing a choice, we must advance the stream to the end of the match
-        if !self.is_done() {
-            match &self.result {
-                ParserResult::IncompleteMatch(incomplete_match) => {
-                    incomplete_match.consume_stream(input)
-                }
-                ParserResult::Match(match_) if !match_.is_full_recursive() => {
-                    for node in &match_.nodes {
-                        for _ in 0..node.text_len().char {
-                            input.next();
-                        }
-                    }
-                    // Inject the accumulated errors at the time of our best pick.
-                    input.extend_errors(self.recovered_errors);
-                }
-                ParserResult::SkippedUntil(skipped) => {
-                    for node in &skipped.nodes {
-                        for _ in 0..node.text_len().char {
-                            input.next();
-                        }
-                    }
-                    for _ in skipped.skipped.chars() {
-                        input.next();
-                    }
-                    input.extend_errors(self.recovered_errors);
-                }
-                _ => {}
-            }
-        }
-
-        self.result
-    }
+    nodes
+        .descendents()
+        .filter_map(cst::Node::as_token)
+        .filter(|tok| tok.kind != TokenKind::SKIPPED)
+        .map(|tok| tok.text.len())
+        .sum()
 }

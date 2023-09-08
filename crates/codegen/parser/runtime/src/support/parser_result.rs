@@ -1,7 +1,4 @@
-use super::{
-    super::{cst, kinds::*},
-    context::ParserContext,
-};
+use super::super::{cst, kinds::*};
 
 #[derive(PartialEq, Eq, Clone, Debug)]
 pub enum ParserResult {
@@ -10,6 +7,14 @@ pub enum ParserResult {
     IncompleteMatch(IncompleteMatch),
     NoMatch(NoMatch),
     SkippedUntil(SkippedUntil),
+}
+
+impl Default for ParserResult {
+    fn default() -> Self {
+        Self::NoMatch(NoMatch {
+            expected_tokens: vec![],
+        })
+    }
 }
 
 impl ParserResult {
@@ -124,15 +129,6 @@ impl Match {
             .descendents()
             .all(|node| node.as_token_with_kind(&[TokenKind::SKIPPED]).is_none())
     }
-
-    pub fn matching_recursive(&self) -> usize {
-        self.nodes
-            .descendents()
-            .filter_map(cst::Node::as_token)
-            .filter(|tok| tok.kind != TokenKind::SKIPPED)
-            .map(|tok| tok.text.len())
-            .sum()
-    }
 }
 
 #[derive(PartialEq, Eq, Clone, Debug)]
@@ -196,39 +192,6 @@ impl IncompleteMatch {
             expected_tokens,
         }
     }
-
-    /// Advances the stream by the length of the nodes in this match.
-    ///
-    /// This is used whenever we "accept" the match, even though it's incomplete.
-    pub fn consume_stream(&self, input: &mut ParserContext) {
-        for node in &self.nodes {
-            for _ in 0..node.text_len().char {
-                input.next();
-            }
-        }
-    }
-
-    /// Whether this match covers more (not including skipped) bytes than the other.
-    pub fn covers_more_than(&self, other: &Self) -> bool {
-        let [self_match_len, other_match_len] = [self, other].map(|incomplete| {
-            incomplete
-                .nodes
-                .iter()
-                .map(|node| node.text_len().utf8)
-                .sum::<usize>()
-        });
-
-        self_match_len > other_match_len
-    }
-
-    pub fn matching_recursive(&self) -> usize {
-        self.nodes
-            .descendents()
-            .filter_map(cst::Node::as_token)
-            .filter(|tok| tok.kind != TokenKind::SKIPPED)
-            .map(|tok| tok.text.len())
-            .sum()
-    }
 }
 
 #[derive(PartialEq, Eq, Clone, Debug)]
@@ -252,15 +215,4 @@ pub struct SkippedUntil {
     pub found: TokenKind,
     /// Token we expected to skip until
     pub expected: TokenKind,
-}
-
-impl SkippedUntil {
-    pub fn matching_recursive(&self) -> usize {
-        self.nodes
-            .descendents()
-            .filter_map(cst::Node::as_token)
-            .filter(|tok| tok.kind != TokenKind::SKIPPED)
-            .map(|tok| tok.text.len())
-            .sum()
-    }
 }
