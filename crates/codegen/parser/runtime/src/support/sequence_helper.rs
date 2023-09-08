@@ -117,51 +117,53 @@ impl SequenceHelper {
                         ..skipped
                     }));
                 }
-                (ParserResult::PrattOperatorMatch(_), ParserResult::SkippedUntil(_)) => todo!(),
-                // See if we can recover
+
+                (ParserResult::PrattOperatorMatch(_), ParserResult::SkippedUntil(_)) =>
+                    unreachable!("Error recovery happens outside precedence parsing"),
+
+                // Try to recover until we hit an expected boundary token.
+                // If the sequence is unwinding, then a subsequent non-empty match must mean that
+                // we found the expected token, so we can stop recovering.
                 (ParserResult::SkippedUntil(running), ParserResult::Match(next)) => {
+                    if next.nodes.is_empty() {
+                        return;
+                    }
+
                     let tokens: Vec<_> =
                         next.nodes.iter().filter_map(cst::Node::as_token).collect();
                     let mut rules = next.nodes.iter().filter_map(cst::Node::as_rule);
 
                     let is_single_token_with_trivia =
                         tokens.len() == 1 && rules.all(|rule| rule.kind.is_trivia());
-                    let found_token = tokens.first().copied();
+                    let next_token = tokens.first().map(|token| token.kind);
 
-                    // We can only recover if the next node is a single token (with trivia) that's expected by us
-                    // or an ancestor
-                    if is_single_token_with_trivia
-                        && found_token.map(|t| t.kind) == Some(running.expected)
-                    {
-                        running.nodes.push(cst::Node::token(
-                            TokenKind::SKIPPED,
-                            std::mem::take(&mut running.skipped),
-                        ));
-                        running.nodes.extend(next.nodes);
+                    // NOTE: We only support skipping to a single token (optionally with trivia)
+                    debug_assert!(is_single_token_with_trivia);
+                    debug_assert_eq!(next_token, Some(running.found));
 
-                        self.result = State::Running(ParserResult::Match(Match {
-                            nodes: std::mem::take(&mut running.nodes),
-                            expected_tokens: next.expected_tokens,
-                        }));
-                    } else if is_single_token_with_trivia {
-                        running.nodes.push(cst::Node::token(
-                            TokenKind::SKIPPED,
-                            std::mem::take(&mut running.skipped),
-                        ));
-                        running.nodes.extend(next.nodes);
+                    running.nodes.push(cst::Node::token(
+                        TokenKind::SKIPPED,
+                        std::mem::take(&mut running.skipped),
+                    ));
+                    running.nodes.extend(next.nodes);
 
-                        self.result = State::Running(ParserResult::Match(Match {
-                            nodes: std::mem::take(&mut running.nodes),
-                            expected_tokens: next.expected_tokens,
-                        }));
-                    } else {
-                        todo!()
-                    }
+                    self.result = State::Running(ParserResult::Match(Match {
+                        nodes: std::mem::take(&mut running.nodes),
+                        expected_tokens: next.expected_tokens,
+                    }));
                 }
-                // Otherwise, let the outer parse deal with that
-                (ParserResult::SkippedUntil(_), _) => {
+                // If the sequence is unwinding and and we didn't find a match, then it means
+                // that we recovered past it and we need to push the recovery up.
+                (ParserResult::SkippedUntil(_), ParserResult::NoMatch(next)) => {
+                    assert!(
+                        matches!(next.expected_tokens[..], [_]),
+                        "Only a single token parse can immediately follow SkippedUntil in sequences"
+                    );
                     return;
                 }
+                (ParserResult::SkippedUntil(_), _) => unreachable!(
+                    "Only a single token parse can immediately follow SkippedUntil in sequences and these can either be Match or NoMatch"
+                ),
             },
         }
     }
