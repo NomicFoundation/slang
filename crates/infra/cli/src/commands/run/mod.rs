@@ -46,18 +46,18 @@ impl RunController {
 
         Terminal::step(format!("run {crate_name}"));
 
-        return Command::new("cargo")
-            .arg("run")
-            .arg(if self.command == RunCommand::SolidityTestingSmoke {
-                "--release"
-            } else {
-                ""
-            })
+        let mut command = Command::new("cargo").arg("run");
+
+        if self.command == RunCommand::SolidityTestingSmoke {
+            command = command.flag("--release");
+        }
+
+        command
             .property("--bin", &crate_name)
             .arg("--")
             .args(&self.args)
             // Execute in the crate dir, to make use of a local './target' dir if it exists:
             .current_dir(crate_dir)
-            .run();
+            .run()
     }
 }
