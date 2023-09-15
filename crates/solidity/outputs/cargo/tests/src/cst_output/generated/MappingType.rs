@@ -19,6 +19,11 @@ fn named_value() -> Result<()> {
 }
 
 #[test]
+fn stray_delimiter() -> Result<()> {
+    return run("MappingType", "stray_delimiter");
+}
+
+#[test]
 fn unnamed() -> Result<()> {
     return run("MappingType", "unnamed");
 }

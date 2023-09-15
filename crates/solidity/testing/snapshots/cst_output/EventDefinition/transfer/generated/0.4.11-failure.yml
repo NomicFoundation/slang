@@ -1,0 +1,29 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ event Transfer(address indexed from, address indexed to, uint256 value);         │ 0..72
+
+Errors: # 1 total
+  - >
+    Error: Expected CloseParen or Comma.
+       ╭─[crates/solidity/testing/snapshots/cst_output/EventDefinition/transfer/input.sol:1:32]
+       │
+     1 │ event Transfer(address indexed from, address indexed to, uint256 value);
+       │                                ───────────────────┬───────────────────  
+       │                                                   ╰───────────────────── Error occurred here.
+    ───╯
+
+Tree:
+  - EventDefinition (Rule): # 0..73 "event Transfer(address indexed from, address index..."
+      - EventKeyword (Token): "event" # 0..5
+      - Identifier (Token): "Transfer" # 6..14
+      - OpenParen (Token): "(" # 14..15
+      - EventParametersList (Rule): # 15..30 "address indexed"
+          - EventParameter (Rule): # 15..30 "address indexed"
+              - TypeName (Rule): # 15..22 "address"
+                  - AddressType (Rule): # 15..22 "address"
+                      - AddressKeyword (Token): "address" # 15..22
+              - IndexedKeyword (Token): "indexed" # 23..30
+      - SKIPPED (Token): "from, address indexed to, uint256 value" # 31..70
+      - CloseParen (Token): ")" # 70..71
+      - Semicolon (Token): ";" # 71..72

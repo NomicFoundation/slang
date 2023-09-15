@@ -24,8 +24,11 @@ where
         let result = self(language, &mut stream);
 
         let is_incomplete = matches!(result, ParserResult::IncompleteMatch(_));
+        let is_recovering = matches!(result, ParserResult::SkippedUntil(_));
 
         match result {
+            ParserResult::PrattOperatorMatch(..) => unreachable!("PrattOperatorMatch is internal"),
+
             ParserResult::NoMatch(no_match) => ParseOutput {
                 parse_tree: cst::Node::token(TokenKind::SKIPPED, input.to_string()),
                 errors: vec![ParseError::new_covering_range(
@@ -33,14 +36,25 @@ where
                     no_match.expected_tokens,
                 )],
             },
-            ParserResult::IncompleteMatch(IncompleteMatch {
-                nodes,
-                expected_tokens,
-            })
-            | ParserResult::Match(Match {
-                nodes,
-                expected_tokens,
-            }) => {
+            some_match => {
+                let (nodes, expected_tokens) = match some_match {
+                    ParserResult::PrattOperatorMatch(..) | ParserResult::NoMatch(..) => {
+                        unreachable!("Handled above")
+                    }
+                    ParserResult::Match(Match {
+                        nodes,
+                        expected_tokens,
+                    })
+                    | ParserResult::IncompleteMatch(IncompleteMatch {
+                        nodes,
+                        expected_tokens,
+                    }) => (nodes, expected_tokens),
+
+                    ParserResult::SkippedUntil(SkippedUntil {
+                        nodes, expected, ..
+                    }) => (nodes, vec![expected]),
+                };
+
                 let topmost_rule = match &nodes[..] {
                     [cst::Node::Rule(rule)] => Rc::clone(&rule),
                     [_] => unreachable!(
@@ -57,7 +71,12 @@ where
                 // Mark the rest of the unconsumed stream as skipped and report an error
                 // NOTE: IncompleteMatch internally consumes the stream when picked via choice,
                 // so needs a separate check here.
-                if start.utf8 < input.len() || is_incomplete {
+                if start.utf8 < input.len() || is_incomplete || is_recovering {
+                    let start = if is_recovering {
+                        topmost_rule.text_len
+                    } else {
+                        start
+                    };
                     let skipped_node =
                         cst::Node::token(TokenKind::SKIPPED, input[start.utf8..].to_string());
                     let mut new_children = topmost_rule.children.clone();
@@ -73,13 +92,21 @@ where
                         errors,
                     }
                 } else {
+                    // Sanity check: Make sure that succesful parse is equivalent to not having any SKIPPED nodes
+                    debug_assert_eq!(
+                        errors.len() > 0,
+                        topmost_rule
+                            .children
+                            .descendents()
+                            .any(|x| x.as_token_with_kind(&[TokenKind::SKIPPED]).is_some())
+                    );
+
                     ParseOutput {
                         parse_tree: cst::Node::Rule(topmost_rule),
                         errors,
                     }
                 }
             }
-            ParserResult::PrattOperatorMatch(..) => unreachable!("PrattOperatorMatch is internal"),
         }
     }
 }

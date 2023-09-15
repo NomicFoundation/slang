@@ -1,0 +1,113 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // SPDX-License-Identifier: MIT                                                    │ 0..31
+  2  │ pragma solidity ^0.8.0;                                                            │ 32..55
+  3  │                                                                                    │ 56..56
+  4  │ using EnvelopeUtils for Envelope global;                                           │ 57..97
+  5  │ using TransactionUtils for Transaction global;                                     │ 98..144
+  6  │                                                                                    │ 145..145
+  7  │ /**                                                                                │ 146..149
+  8  │  * @notice Object with the necessary information to define a unique envelope       │ 150..226
+  9  │  * @param nonce sequential (unique) numeric indicator of the Envelope creation     │ 227..305
+  10 │  * @param origin address that originated the bridging of a message                 │ 306..372
+  11 │  * @param destination address where the message needs to be sent                   │ 373..437
+  12 │  * @param originChainId id of the chain where the message originated               │ 438..506
+  13 │  * @param destinationChainId id of the chain where the message needs to be bridged │ 507..589
+  14 │  * @param message bytes that needs to be bridged                                   │ 590..638
+  15 │  */                                                                                │ 639..642
+  16 │ struct Envelope {                                                                  │ 643..660
+  17 │   uint256 nonce;                                                                   │ 661..677
+  18 │   address origin;                                                                  │ 678..695
+  19 │   address destination;                                                             │ 696..718
+  20 │   uint256 originChainId;                                                           │ 719..743
+  21 │   uint256 destinationChainId;                                                      │ 744..773
+  22 │   bytes message;                                                                   │ 774..790
+  23 │ }                                                                                  │ 791..792
+
+Errors: []
+
+Tree:
+  - SourceUnit (Rule): # 0..793 "// SPDX-License-Identifier: MIT\npragma solidity ^0..."
+      - SourceUnitMembersList (Rule): # 0..793 "// SPDX-License-Identifier: MIT\npragma solidity ^0..."
+          - PragmaDirective (Rule): # 0..56 "// SPDX-License-Identifier: MIT\npragma solidity ^0..."
+              - LeadingTrivia (Rule): # 0..32 "// SPDX-License-Identifier: MIT\n"
+                  - SingleLineComment (Trivia): "// SPDX-License-Identifier: MIT" # 0..31
+              - PragmaKeyword (Token): "pragma" # 32..38
+              - VersionPragma (Rule): # 38..54 " solidity ^0.8.0"
+                  - SolidityKeyword (Token): "solidity" # 39..47
+                  - VersionPragmaExpressionsList (Rule): # 47..54 " ^0.8.0"
+                      - VersionPragmaExpression (Rule): # 47..54 " ^0.8.0"
+                          - VersionPragmaUnaryExpression (Rule): # 47..54 " ^0.8.0"
+                              - Caret (Token): "^" # 48..49
+                              - VersionPragmaExpression (Rule): # 49..54 "0.8.0"
+                                  - VersionPragmaSpecifier (Rule): # 49..54 "0.8.0"
+                                      - VersionPragmaValue (Token): "0" # 49..50
+                                      - Period (Token): "." # 50..51
+                                      - VersionPragmaValue (Token): "8" # 51..52
+                                      - Period (Token): "." # 52..53
+                                      - VersionPragmaValue (Token): "0" # 53..54
+              - Semicolon (Token): ";" # 54..55
+          - UsingDirective (Rule): # 56..98 "\nusing EnvelopeUtils for Envelope global;\n"
+              - UsingKeyword (Token): "using" # 57..62
+              - UsingDirectivePath (Rule): # 62..76 " EnvelopeUtils"
+                  - IdentifierPath (Rule): # 62..76 " EnvelopeUtils"
+                      - Identifier (Token): "EnvelopeUtils" # 63..76
+              - ForKeyword (Token): "for" # 77..80
+              - TypeName (Rule): # 80..89 " Envelope"
+                  - IdentifierPath (Rule): # 80..89 " Envelope"
+                      - Identifier (Token): "Envelope" # 81..89
+              - GlobalKeyword (Token): "global" # 90..96
+              - Semicolon (Token): ";" # 96..97
+          - UsingDirective (Rule): # 98..145 "using TransactionUtils for Transaction global;\n"
+              - UsingKeyword (Token): "using" # 98..103
+              - UsingDirectivePath (Rule): # 103..120 " TransactionUtils"
+                  - IdentifierPath (Rule): # 103..120 " TransactionUtils"
+                      - Identifier (Token): "TransactionUtils" # 104..120
+              - ForKeyword (Token): "for" # 121..124
+              - TypeName (Rule): # 124..136 " Transaction"
+                  - IdentifierPath (Rule): # 124..136 " Transaction"
+                      - Identifier (Token): "Transaction" # 125..136
+              - GlobalKeyword (Token): "global" # 137..143
+              - Semicolon (Token): ";" # 143..144
+          - StructDefinition (Rule): # 145..793 "\n/**\n * @notice Object with the necessary informat..."
+              - LeadingTrivia (Rule): # 145..643 "\n/**\n * @notice Object with the necessary informat..."
+                  - MultilineComment (Trivia): "/**\n * @notice Object with the necessary informati..." # 146..642
+              - StructKeyword (Token): "struct" # 643..649
+              - Identifier (Token): "Envelope" # 650..658
+              - OpenBrace (Token): "{" # 659..660
+              - StructMembersList (Rule): # 661..791 "  uint256 nonce;\n  address origin;\n  address desti..."
+                  - StructMember (Rule): # 661..678 "  uint256 nonce;\n"
+                      - TypeName (Rule): # 661..670 "  uint256"
+                          - UnsignedIntegerType (Token): "uint256" # 663..670
+                      - Identifier (Token): "nonce" # 671..676
+                      - Semicolon (Token): ";" # 676..677
+                  - StructMember (Rule): # 678..696 "  address origin;\n"
+                      - TypeName (Rule): # 678..687 "  address"
+                          - AddressType (Rule): # 678..687 "  address"
+                              - AddressKeyword (Token): "address" # 680..687
+                      - Identifier (Token): "origin" # 688..694
+                      - Semicolon (Token): ";" # 694..695
+                  - StructMember (Rule): # 696..719 "  address destination;\n"
+                      - TypeName (Rule): # 696..705 "  address"
+                          - AddressType (Rule): # 696..705 "  address"
+                              - AddressKeyword (Token): "address" # 698..705
+                      - Identifier (Token): "destination" # 706..717
+                      - Semicolon (Token): ";" # 717..718
+                  - StructMember (Rule): # 719..744 "  uint256 originChainId;\n"
+                      - TypeName (Rule): # 719..728 "  uint256"
+                          - UnsignedIntegerType (Token): "uint256" # 721..728
+                      - Identifier (Token): "originChainId" # 729..742
+                      - Semicolon (Token): ";" # 742..743
+                  - StructMember (Rule): # 744..774 "  uint256 destinationChainId;\n"
+                      - TypeName (Rule): # 744..753 "  uint256"
+                          - UnsignedIntegerType (Token): "uint256" # 746..753
+                      - Identifier (Token): "destinationChainId" # 754..772
+                      - Semicolon (Token): ";" # 772..773
+                  - StructMember (Rule): # 774..791 "  bytes message;\n"
+                      - TypeName (Rule): # 774..781 "  bytes"
+                          - IdentifierPath (Rule): # 774..781 "  bytes"
+                              - Identifier (Token): "bytes" # 776..781
+                      - Identifier (Token): "message" # 782..789
+                      - Semicolon (Token): ";" # 789..790
+              - CloseBrace (Token): "}" # 791..792

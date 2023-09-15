@@ -1,7 +1,4 @@
-use super::{
-    super::{cst, kinds::*},
-    context::ParserContext,
-};
+use super::super::{cst, kinds::*};
 
 #[derive(PartialEq, Eq, Clone, Debug)]
 pub enum ParserResult {
@@ -9,6 +6,15 @@ pub enum ParserResult {
     PrattOperatorMatch(PrattOperatorMatch),
     IncompleteMatch(IncompleteMatch),
     NoMatch(NoMatch),
+    SkippedUntil(SkippedUntil),
+}
+
+impl Default for ParserResult {
+    fn default() -> Self {
+        Self::NoMatch(NoMatch {
+            expected_tokens: vec![],
+        })
+    }
 }
 
 impl ParserResult {
@@ -57,8 +63,48 @@ impl ParserResult {
                 vec![cst::Node::rule(new_kind, incomplete_match.nodes)],
                 incomplete_match.expected_tokens,
             ),
+            ParserResult::SkippedUntil(skipped) => ParserResult::SkippedUntil(SkippedUntil {
+                nodes: vec![cst::Node::rule(new_kind, skipped.nodes)],
+                ..skipped
+            }),
             ParserResult::NoMatch(_) => self,
-            _ => unreachable!("PrattOperatorMatch cannot be converted to a rule"),
+            ParserResult::PrattOperatorMatch(_) => {
+                unreachable!("PrattOperatorMatch cannot be converted to a rule")
+            }
+        }
+    }
+}
+
+// DFS iterator over the descendents of a node.
+pub(crate) struct DescendentsUnordered<'a> {
+    stack: Vec<&'a cst::Node>,
+}
+
+impl<'a> Iterator for DescendentsUnordered<'a> {
+    type Item = &'a cst::Node;
+
+    fn next(&mut self) -> Option<&'a cst::Node> {
+        self.stack.pop().map(|node| {
+            if let Some(node) = node.as_rule() {
+                self.stack.extend(node.children.iter());
+            }
+
+            node
+        })
+    }
+}
+
+pub(crate) trait DescendentsIter<'a> {
+    fn descendents(self) -> DescendentsUnordered<'a>;
+}
+
+impl<'a, T> DescendentsIter<'a> for T
+where
+    T: IntoIterator<Item = &'a cst::Node> + 'a,
+{
+    fn descendents(self) -> DescendentsUnordered<'a> {
+        DescendentsUnordered {
+            stack: self.into_iter().collect(),
         }
     }
 }
@@ -76,6 +122,12 @@ impl Match {
             nodes,
             expected_tokens,
         }
+    }
+
+    pub fn is_full_recursive(&self) -> bool {
+        self.nodes
+            .descendents()
+            .all(|node| node.as_token_with_kind(&[TokenKind::SKIPPED]).is_none())
     }
 }
 
@@ -140,30 +192,6 @@ impl IncompleteMatch {
             expected_tokens,
         }
     }
-
-    /// Advances the stream by the length of the nodes in this match.
-    ///
-    /// This is used whenever we "accept" the match, even though it's incomplete.
-    pub fn consume_stream(&self, input: &mut ParserContext) {
-        for node in &self.nodes {
-            for _ in 0..node.text_len().char {
-                input.next();
-            }
-        }
-    }
-
-    /// Whether this match covers more (not including skipped) bytes than the other.
-    pub fn covers_more_than(&self, other: &Self) -> bool {
-        let [self_match_len, other_match_len] = [self, other].map(|incomplete| {
-            incomplete
-                .nodes
-                .iter()
-                .map(|node| node.text_len().utf8)
-                .sum::<usize>()
-        });
-
-        self_match_len > other_match_len
-    }
 }
 
 #[derive(PartialEq, Eq, Clone, Debug)]
@@ -176,4 +204,15 @@ impl NoMatch {
     pub fn new(expected_tokens: Vec<TokenKind>) -> Self {
         Self { expected_tokens }
     }
+}
+
+#[derive(PartialEq, Eq, Clone, Debug)]
+pub struct SkippedUntil {
+    pub nodes: Vec<cst::Node>,
+    /// Skipped text following the last node
+    pub skipped: String,
+    /// At which token was the stream pointing at when we bailed
+    pub found: TokenKind,
+    /// Token we expected to skip until
+    pub expected: TokenKind,
 }

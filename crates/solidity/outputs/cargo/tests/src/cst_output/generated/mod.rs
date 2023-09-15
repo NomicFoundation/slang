@@ -22,6 +22,8 @@ mod EnumDefinition;
 #[allow(non_snake_case)]
 mod ErrorDefinition;
 #[allow(non_snake_case)]
+mod EventDefinition;
+#[allow(non_snake_case)]
 mod Expression;
 #[allow(non_snake_case)]
 mod FallbackFunctionDefinition;
@@ -52,6 +54,8 @@ mod Statement;
 #[allow(non_snake_case)]
 mod StatementsList;
 #[allow(non_snake_case)]
+mod StructDefinition;
+#[allow(non_snake_case)]
 mod TupleDeconstructionStatement;
 #[allow(non_snake_case)]
 mod TupleExpression;
@@ -69,6 +73,8 @@ mod UsingDirectiveSymbol;
 mod VariableDeclarationStatement;
 #[allow(non_snake_case)]
 mod VersionPragma;
+#[allow(non_snake_case)]
+mod YulBlock;
 #[allow(non_snake_case)]
 mod YulExpression;
 #[allow(non_snake_case)]

@@ -14,6 +14,11 @@ fn empty_contract() -> Result<()> {
 }
 
 #[test]
+fn function_multiple_delimiters() -> Result<()> {
+    return run("ContractDefinition", "function_multiple_delimiters");
+}
+
+#[test]
 fn header_comment() -> Result<()> {
     return run("ContractDefinition", "header_comment");
 }
@@ -79,6 +84,14 @@ fn member_unnamed_function_definition() -> Result<()> {
 }
 
 #[test]
+fn member_unnamed_function_with_attrs_definition() -> Result<()> {
+    return run(
+        "ContractDefinition",
+        "member_unnamed_function_with_attrs_definition",
+    );
+}
+
+#[test]
 fn member_user_defined_value_type_definition() -> Result<()> {
     return run(
         "ContractDefinition",
@@ -94,6 +107,11 @@ fn member_using_directive() -> Result<()> {
 #[test]
 fn missing_field_type() -> Result<()> {
     return run("ContractDefinition", "missing_field_type");
+}
+
+#[test]
+fn recovery_testbed() -> Result<()> {
+    return run("ContractDefinition", "recovery_testbed");
 }
 
 #[test]

@@ -1,0 +1,56 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ {                                                                                │ 0..1
+  2  │ 	function mult(a, b) -> result {                                                 │ 2..34
+  3  │ 		result := mul(a, b)                                                            │ 35..56
+  4  │ 	}                                                                               │ 57..59
+  5  │ }                                                                                │ 60..61
+
+Errors: []
+
+Tree:
+  - YulBlock (Rule): # 0..62 "{\n\tfunction mult(a, b) -> result {\n\t\tresult := mul..."
+      - OpenBrace (Token): "{" # 0..1
+      - YulStatementsList (Rule): # 2..60 "\tfunction mult(a, b) -> result {\n\t\tresult := mul(a..."
+          - YulStatement (Rule): # 2..60 "\tfunction mult(a, b) -> result {\n\t\tresult := mul(a..."
+              - YulFunctionDefinition (Rule): # 2..60 "\tfunction mult(a, b) -> result {\n\t\tresult := mul(a..."
+                  - FunctionKeyword (Token): "function" # 3..11
+                  - YulIdentifier (Token): "mult" # 12..16
+                  - YulParametersDeclaration (Rule): # 16..22 "(a, b)"
+                      - OpenParen (Token): "(" # 16..17
+                      - YulIdentifiersList (Rule): # 17..21 "a, b"
+                          - YulIdentifier (Token): "a" # 17..18
+                          - Comma (Token): "," # 18..19
+                          - YulIdentifier (Token): "b" # 20..21
+                      - CloseParen (Token): ")" # 21..22
+                  - YulReturnsDeclaration (Rule): # 22..32 " -> result"
+                      - MinusGreaterThan (Token): "->" # 23..25
+                      - YulIdentifiersList (Rule): # 25..32 " result"
+                          - YulIdentifier (Token): "result" # 26..32
+                  - YulBlock (Rule): # 32..60 " {\n\t\tresult := mul(a, b)\n\t}\n"
+                      - OpenBrace (Token): "{" # 33..34
+                      - YulStatementsList (Rule): # 35..57 "\t\tresult := mul(a, b)\n"
+                          - YulStatement (Rule): # 35..57 "\t\tresult := mul(a, b)\n"
+                              - YulAssignmentStatement (Rule): # 35..57 "\t\tresult := mul(a, b)\n"
+                                  - YulIdentifierPathsList (Rule): # 35..43 "\t\tresult"
+                                      - YulIdentifierPath (Rule): # 35..43 "\t\tresult"
+                                          - YulIdentifier (Token): "result" # 37..43
+                                  - ColonEqual (Token): ":=" # 44..46
+                                  - YulExpression (Rule): # 46..57 " mul(a, b)\n"
+                                      - YulFunctionCallExpression (Rule): # 46..57 " mul(a, b)\n"
+                                          - YulExpression (Rule): # 46..50 " mul"
+                                              - YulIdentifierPath (Rule): # 46..50 " mul"
+                                                  - YulIdentifier (Token): "mul" # 47..50
+                                          - OpenParen (Token): "(" # 50..51
+                                          - YulExpressionsList (Rule): # 51..55 "a, b"
+                                              - YulExpression (Rule): # 51..52 "a"
+                                                  - YulIdentifierPath (Rule): # 51..52 "a"
+                                                      - YulIdentifier (Token): "a" # 51..52
+                                              - Comma (Token): "," # 52..53
+                                              - YulExpression (Rule): # 53..55 " b"
+                                                  - YulIdentifierPath (Rule): # 53..55 " b"
+                                                      - YulIdentifier (Token): "b" # 54..55
+                                          - CloseParen (Token): ")" # 55..56
+                      - CloseBrace (Token): "}" # 58..59
+      - CloseBrace (Token): "}" # 60..61

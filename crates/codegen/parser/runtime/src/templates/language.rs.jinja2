@@ -5,10 +5,9 @@ use semver::Version;
 
 use super::{
     kinds::{RuleKind, TokenKind, ProductionKind},
-    parse_output::ParseOutput,
-    text_index::TextRange,
-    support::*,
     lexer::Lexer,
+    parse_output::ParseOutput,
+    support::*,
 };
 
 pub use super::kinds::LexicalContext;
@@ -78,19 +77,18 @@ impl Language {
         }
 
         #[allow(dead_code)]
-        fn {{ context.name | snake_case }}_greedy_parse_token_with_trivia(&self, input: &mut ParserContext, terminator: TokenKind) -> ParserResult {
-            Lexer::greedy_parse_token_with_trivia::<{ LexicalContext::{{ context.name }} as u8 }>(self, input, terminator)
-        }
-
-        #[allow(dead_code)]
-        fn {{ context.name | snake_case }}_skip_tokens_until(&self, input: &mut ParserContext, expected: TokenKind) -> Option<TextRange> {
-            Lexer::skip_tokens_until::<{ LexicalContext::{{ context.name }} as u8 }>(self, input, expected)
-        }
-
-        #[allow(dead_code)]
         fn {{ context.name | snake_case }}_parse_token(&self, input: &mut ParserContext, kind: TokenKind) -> ParserResult
         {
             Lexer::parse_token::<{ LexicalContext::{{ context.name }} as u8 }>(self, input, kind)
+        }
+
+        #[allow(dead_code)]
+        const fn {{ context.name | snake_case }}_delimiters() -> &'static [(TokenKind, TokenKind)] {
+            &[
+                {%- for open, close in context.delimiters %}
+                    (TokenKind::{{ open }}, TokenKind::{{ close }}),
+                {%- endfor %}
+            ]
         }
     {% endfor %}
 

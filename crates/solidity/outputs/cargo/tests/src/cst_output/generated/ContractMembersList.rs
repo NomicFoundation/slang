@@ -7,3 +7,13 @@ use anyhow::Result;
 fn constructor() -> Result<()> {
     return run("ContractMembersList", "constructor");
 }
+
+#[test]
+fn local_expression() -> Result<()> {
+    return run("ContractMembersList", "local_expression");
+}
+
+#[test]
+fn mismatched_delimiter() -> Result<()> {
+    return run("ContractMembersList", "mismatched_delimiter");
+}

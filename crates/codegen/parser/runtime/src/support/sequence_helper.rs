@@ -1,6 +1,8 @@
 use std::ops::ControlFlow;
 
-use super::parser_result::{ParserResult, PrattElement};
+use crate::{cst, kinds::TokenKind};
+
+use super::parser_result::{Match, ParserResult, PrattElement, SkippedUntil};
 
 /// Keeps accumulating parses sequentially until it hits an incomplete or no match.
 #[must_use]
@@ -9,7 +11,7 @@ pub struct SequenceHelper {
     result: State,
 }
 
-#[derive(Default)]
+#[derive(Default, Debug)]
 enum State {
     #[default]
     Empty,
@@ -107,6 +109,61 @@ impl SequenceHelper {
                         next.expected_tokens,
                     ));
                 }
+                // Enter recovery mode
+                (ParserResult::Match(running), ParserResult::SkippedUntil(mut skipped)) => {
+                    running.nodes.extend(std::mem::take(&mut skipped.nodes));
+                    self.result = State::Running(ParserResult::SkippedUntil(SkippedUntil {
+                        nodes: std::mem::take(&mut running.nodes),
+                        ..skipped
+                    }));
+                }
+
+                (ParserResult::PrattOperatorMatch(_), ParserResult::SkippedUntil(_)) =>
+                    unreachable!("Error recovery happens outside precedence parsing"),
+
+                // Try to recover until we hit an expected boundary token.
+                // If the sequence is unwinding, then a subsequent non-empty match must mean that
+                // we found the expected token, so we can stop recovering.
+                (ParserResult::SkippedUntil(running), ParserResult::Match(next)) => {
+                    if next.nodes.is_empty() {
+                        return;
+                    }
+
+                    let tokens: Vec<_> =
+                        next.nodes.iter().filter_map(cst::Node::as_token).collect();
+                    let mut rules = next.nodes.iter().filter_map(cst::Node::as_rule);
+
+                    let is_single_token_with_trivia =
+                        tokens.len() == 1 && rules.all(|rule| rule.kind.is_trivia());
+                    let next_token = tokens.first().map(|token| token.kind);
+
+                    // NOTE: We only support skipping to a single token (optionally with trivia)
+                    debug_assert!(is_single_token_with_trivia);
+                    debug_assert_eq!(next_token, Some(running.found));
+
+                    running.nodes.push(cst::Node::token(
+                        TokenKind::SKIPPED,
+                        std::mem::take(&mut running.skipped),
+                    ));
+                    running.nodes.extend(next.nodes);
+
+                    self.result = State::Running(ParserResult::Match(Match {
+                        nodes: std::mem::take(&mut running.nodes),
+                        expected_tokens: next.expected_tokens,
+                    }));
+                }
+                // If the sequence is unwinding and and we didn't find a match, then it means
+                // that we recovered past it and we need to push the recovery up.
+                (ParserResult::SkippedUntil(_), ParserResult::NoMatch(next)) => {
+                    assert!(
+                        matches!(next.expected_tokens[..], [_]),
+                        "Only a single token parse can immediately follow SkippedUntil in sequences"
+                    );
+                    return;
+                }
+                (ParserResult::SkippedUntil(_), _) => unreachable!(
+                    "Only a single token parse can immediately follow SkippedUntil in sequences and these can either be Match or NoMatch"
+                ),
             },
         }
     }

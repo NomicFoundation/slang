@@ -4,6 +4,11 @@ use crate::cst_output::runner::run;
 use anyhow::Result;
 
 #[test]
+fn SafeMath() -> Result<()> {
+    return run("SourceUnit", "SafeMath");
+}
+
+#[test]
 fn empty_file() -> Result<()> {
     return run("SourceUnit", "empty_file");
 }
@@ -31,4 +36,9 @@ fn top_level_function() -> Result<()> {
 #[test]
 fn trailing_trivia() -> Result<()> {
     return run("SourceUnit", "trailing_trivia");
+}
+
+#[test]
+fn using_directive() -> Result<()> {
+    return run("SourceUnit", "using_directive");
 }

@@ -7,3 +7,8 @@ use anyhow::Result;
 fn constant_state_mutability() -> Result<()> {
     return run("FunctionDefinition", "constant_state_mutability");
 }
+
+#[test]
+fn from_contextual_keyword() -> Result<()> {
+    return run("FunctionDefinition", "from_contextual_keyword");
+}
