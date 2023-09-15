@@ -324,6 +324,17 @@ pub enum RuleKind {
     YulSwitchStatement,
 }
 
+impl RuleKind {
+    pub fn is_trivia(&self) -> bool {
+        match self {
+            Self::EndOfFileTrivia => true,
+            Self::LeadingTrivia => true,
+            Self::TrailingTrivia => true,
+            _ => false,
+        }
+    }
+}
+
 #[derive(
     Debug,
     Eq,

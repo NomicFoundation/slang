@@ -88,7 +88,7 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                         node.applicable_version_quality_ranges().wrap_code(
                             quote! {
                                 let result = #parser;
-                                choice.consider(result).pick_or_backtrack(input)?;
+                                choice.consider(input, result)?;
                             },
                             None,
                         )
@@ -161,9 +161,53 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                 quote! { self.#function_name(input) }
             }
 
-            Self::DelimitedBy(open, body, close, loc) => {
-                Self::Sequence(vec![*open.clone(), *body.clone(), *close.clone()], *loc)
-                    .to_parser_code(context_name, is_trivia)
+            Self::DelimitedBy(open, body, close, _) => {
+                let [open_token, close_token] = match (open.as_ref(), close.as_ref()) {
+                    (
+                        ParserDefinitionNode::ScannerDefinition(open, ..),
+                        ParserDefinitionNode::ScannerDefinition(close, ..),
+                    ) => [open, close].map(|scanner| format_ident!("{}", scanner.name())),
+                    _ => unreachable!("Only tokens are permitted as delimiters"),
+                };
+
+                let parse_token = format_ident!(
+                    "{context_name}_parse_token_with_trivia",
+                    context_name = context_name.to_snake_case()
+                );
+
+                let delimiters = format_ident!(
+                    "{context_name}_delimiters",
+                    context_name = context_name.to_snake_case()
+                );
+
+                let context = format_ident!("{context_name}");
+
+                let parser = body.to_parser_code(context_name, is_trivia);
+                let body_parser = body.applicable_version_quality_ranges().wrap_code(
+                    quote! {
+                        seq.elem(#parser
+                            .recover_until_with_nested_delims(input,
+                                |input| Lexer::next_token::<{ LexicalContext::#context as u8 }>(self, input),
+                                |input| Lexer::leading_trivia(self, input),
+                                TokenKind::#close_token,
+                                Self::#delimiters(),
+                            )
+                        )?;
+                    },
+                    None,
+                );
+
+                quote! {
+                    SequenceHelper::run(|mut seq| {
+                        let mut delim_guard = input.open_delim(TokenKind::#close_token);
+                        let input = delim_guard.ctx();
+
+                        seq.elem(self.#parse_token(input, TokenKind::#open_token))?;
+                        #body_parser
+                        seq.elem(self.#parse_token(input, TokenKind::#close_token))?;
+                        seq.finish()
+                    })
+                }
             }
 
             Self::SeparatedBy(body, separator, loc) => Self::Sequence(
@@ -190,39 +234,39 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                 let terminator_token_kind =
                     format_ident!("{name}", name = terminator_scanner.name());
 
-                let skip_tokens_until = format_ident!(
-                    "{context_name}_skip_tokens_until",
+                let context = format_ident!("{context_name}");
+
+                let delimiters = format_ident!(
+                    "{context_name}_delimiters",
                     context_name = context_name.to_snake_case()
                 );
-                let greedy_parse = format_ident!(
-                    "{context_name}_greedy_parse_token_with_trivia",
+
+                let parse_token = format_ident!(
+                    "{context_name}_parse_token_with_trivia",
                     context_name = context_name.to_snake_case()
                 );
 
                 let parser = body.to_parser_code(context_name, is_trivia);
-                let body_parser = body
-                    .applicable_version_quality_ranges()
-                    .wrap_code(
-                        quote! {
-                            seq.elem(
-                                #parser
-                                    .try_recover_with(
-                                        input,
-                                        |input| self.#skip_tokens_until(input, TokenKind::#terminator_token_kind)
-                                    )
-                            )?;
-                        },
-                        None,
-                    );
+                let body_parser = body.applicable_version_quality_ranges().wrap_code(
+                    quote! {
+                        seq.elem(#parser
+                            .recover_until_with_nested_delims(input,
+                                |input| Lexer::next_token::<{ LexicalContext::#context as u8 }>(self, input),
+                                |input| Lexer::leading_trivia(self, input),
+                                TokenKind::#terminator_token_kind,
+                                Self::#delimiters(),
+                            )
+                        )?;
+                    },
+                    None,
+                );
 
                 quote! {
-                    {
-                        SequenceHelper::run(|mut seq| {
-                            #body_parser
-                            seq.elem(self.#greedy_parse(input, TokenKind::#terminator_token_kind))?;
-                            seq.finish()
-                        })
-                    }
+                    SequenceHelper::run(|mut seq| {
+                        #body_parser
+                        seq.elem(self.#parse_token(input, TokenKind::#terminator_token_kind))?;
+                        seq.finish()
+                    })
                 }
             }
         }

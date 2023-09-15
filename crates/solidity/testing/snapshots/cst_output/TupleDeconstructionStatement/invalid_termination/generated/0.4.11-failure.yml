@@ -7,12 +7,13 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Expected Semicolon.
-       ╭─[crates/solidity/testing/snapshots/cst_output/TupleDeconstructionStatement/invalid_termination/input.sol:3:1]
+    Error: Expected Ampersand or AmpersandAmpersand or AmpersandEqual or Asterisk or AsteriskAsterisk or AsteriskEqual or BangEqual or Bar or BarBar or BarEqual or Caret or CaretEqual or Equal or EqualEqual or GreaterThan or GreaterThanEqual or GreaterThanGreaterThan or GreaterThanGreaterThanEqual or GreaterThanGreaterThanGreaterThan or GreaterThanGreaterThanGreaterThanEqual or LessThan or LessThanEqual or LessThanLessThan or LessThanLessThanEqual or Minus or MinusEqual or Percent or PercentEqual or Plus or PlusEqual or Semicolon or Slash or SlashEqual.
+       ╭─[crates/solidity/testing/snapshots/cst_output/TupleDeconstructionStatement/invalid_termination/input.sol:2:1]
        │
-     3 │ { throw;
-       │ ───┬───  
-       │    ╰───── Error occurred here.
+     2 │ ╭─▶ /**/
+     3 │ ├─▶ { throw;
+       │ │               
+       │ ╰─────────────── Error occurred here.
     ───╯
 
 Tree:
@@ -38,7 +39,4 @@ Tree:
                       - NumericExpression (Rule): # 14..18 " 135"
                           - DecimalLiteral (Token): "135" # 15..18
               - CloseParen (Token): ")" # 18..19
-      - LeadingTrivia (Rule): # 20..25 "/**/\n"
-          - MultilineComment (Trivia): "/**/" # 20..24
-      - SKIPPED (Token): "{ throw" # 25..32
-      - Semicolon (Token): ";" # 32..33
+      - SKIPPED (Token): "/**/\n{ throw; \n" # 20..35

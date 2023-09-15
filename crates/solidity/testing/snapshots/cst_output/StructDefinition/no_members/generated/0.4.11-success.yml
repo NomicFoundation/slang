@@ -1,0 +1,13 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ struct S { }                                                                     │ 0..12
+
+Errors: []
+
+Tree:
+  - StructDefinition (Rule): # 0..13 "struct S { }\n"
+      - StructKeyword (Token): "struct" # 0..6
+      - Identifier (Token): "S" # 7..8
+      - OpenBrace (Token): "{" # 9..10
+      - CloseBrace (Token): "}" # 11..12

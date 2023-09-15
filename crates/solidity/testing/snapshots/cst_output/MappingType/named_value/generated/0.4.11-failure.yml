@@ -6,11 +6,11 @@ Source: >
 Errors: # 1 total
   - >
     Error: Expected CloseParen or OpenBracket.
-       ╭─[crates/solidity/testing/snapshots/cst_output/MappingType/named_value/input.sol:1:26]
+       ╭─[crates/solidity/testing/snapshots/cst_output/MappingType/named_value/input.sol:1:27]
        │
      1 │ mapping(string => bytes32 Bar)
-       │                          ──┬──  
-       │                            ╰──── Error occurred here.
+       │                           ─┬─  
+       │                            ╰─── Error occurred here.
     ───╯
 
 Tree:
@@ -23,4 +23,5 @@ Tree:
       - MappingValueType (Rule): # 17..25 " bytes32"
           - TypeName (Rule): # 17..25 " bytes32"
               - FixedBytesType (Token): "bytes32" # 18..25
-      - SKIPPED (Token): " Bar)" # 25..30
+      - SKIPPED (Token): "Bar" # 26..29
+      - CloseParen (Token): ")" # 29..30

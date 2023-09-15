@@ -23,6 +23,8 @@ impl<const MIN_COUNT: usize> RepetitionHelper<MIN_COUNT> {
             // First item parsed correctly
             result @ ParserResult::Match(_) => result,
             result @ ParserResult::PrattOperatorMatch(_) => result,
+            // Or recovering, push it upwards
+            result @ ParserResult::SkippedUntil(_) => return result,
 
             // Couldn't get a full match but we allow 0 items - return an empty match
             // so the parse is considered valid but note the expected tokens
@@ -77,7 +79,21 @@ impl<const MIN_COUNT: usize> RepetitionHelper<MIN_COUNT> {
                     return accum;
                 }
 
-                (ParserResult::IncompleteMatch(..) | ParserResult::NoMatch(..), _) => {
+                (ParserResult::Match(running), ParserResult::SkippedUntil(mut skipped)) => {
+                    running.nodes.extend(std::mem::take(&mut skipped.nodes));
+                    skipped.nodes = std::mem::take(&mut running.nodes);
+
+                    return ParserResult::SkippedUntil(skipped);
+                }
+
+                (ParserResult::PrattOperatorMatch(..), ParserResult::SkippedUntil(_)) => todo!(),
+
+                (
+                    ParserResult::IncompleteMatch(..)
+                    | ParserResult::NoMatch(..)
+                    | ParserResult::SkippedUntil(..),
+                    _,
+                ) => {
                     unreachable!("Variants never constructed")
                 }
             }
