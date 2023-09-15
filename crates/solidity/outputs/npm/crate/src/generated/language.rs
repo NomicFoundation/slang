@@ -328,10 +328,11 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn array_values_list(&self, input: &mut ParserContext) -> ParserResult {
-        SeparatedHelper::run(
+        SeparatedHelper::run::<{ LexicalContext::Default as u8 }>(
             input,
             |input| self.expression(input),
-            |input| self.default_parse_token_with_trivia(input, TokenKind::Comma),
+            TokenKind::Comma,
+            self,
         )
         .with_kind(RuleKind::ArrayValuesList)
     }
@@ -346,10 +347,11 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn assembly_flags_list(&self, input: &mut ParserContext) -> ParserResult {
-        SeparatedHelper::run(
+        SeparatedHelper::run::<{ LexicalContext::Default as u8 }>(
             input,
             |input| self.default_parse_token_with_trivia(input, TokenKind::AsciiStringLiteral),
-            |input| self.default_parse_token_with_trivia(input, TokenKind::Comma),
+            TokenKind::Comma,
+            self,
         )
         .with_kind(RuleKind::AssemblyFlagsList)
     }
@@ -737,10 +739,11 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn deconstruction_import_symbols_list(&self, input: &mut ParserContext) -> ParserResult {
-        SeparatedHelper::run(
+        SeparatedHelper::run::<{ LexicalContext::Default as u8 }>(
             input,
             |input| self.deconstruction_import_symbol(input),
-            |input| self.default_parse_token_with_trivia(input, TokenKind::Comma),
+            TokenKind::Comma,
+            self,
         )
         .with_kind(RuleKind::DeconstructionImportSymbolsList)
     }
@@ -933,10 +936,11 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn error_parameters_list(&self, input: &mut ParserContext) -> ParserResult {
         if self.version_is_at_least_0_8_4 {
-            SeparatedHelper::run(
+            SeparatedHelper::run::<{ LexicalContext::Default as u8 }>(
                 input,
                 |input| self.error_parameter(input),
-                |input| self.default_parse_token_with_trivia(input, TokenKind::Comma),
+                TokenKind::Comma,
+                self,
             )
         } else {
             ParserResult::disabled()
@@ -1023,10 +1027,11 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn event_parameters_list(&self, input: &mut ParserContext) -> ParserResult {
-        SeparatedHelper::run(
+        SeparatedHelper::run::<{ LexicalContext::Default as u8 }>(
             input,
             |input| self.event_parameter(input),
-            |input| self.default_parse_token_with_trivia(input, TokenKind::Comma),
+            TokenKind::Comma,
+            self,
         )
         .with_kind(RuleKind::EventParametersList)
     }
@@ -1819,30 +1824,33 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn identifier_path(&self, input: &mut ParserContext) -> ParserResult {
-        SeparatedHelper::run(
+        SeparatedHelper::run::<{ LexicalContext::Default as u8 }>(
             input,
             |input| self.default_parse_token_with_trivia(input, TokenKind::Identifier),
-            |input| self.default_parse_token_with_trivia(input, TokenKind::Period),
+            TokenKind::Period,
+            self,
         )
         .with_kind(RuleKind::IdentifierPath)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn identifier_paths_list(&self, input: &mut ParserContext) -> ParserResult {
-        SeparatedHelper::run(
+        SeparatedHelper::run::<{ LexicalContext::Default as u8 }>(
             input,
             |input| self.identifier_path(input),
-            |input| self.default_parse_token_with_trivia(input, TokenKind::Comma),
+            TokenKind::Comma,
+            self,
         )
         .with_kind(RuleKind::IdentifierPathsList)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn identifiers_list(&self, input: &mut ParserContext) -> ParserResult {
-        SeparatedHelper::run(
+        SeparatedHelper::run::<{ LexicalContext::Default as u8 }>(
             input,
             |input| self.default_parse_token_with_trivia(input, TokenKind::Identifier),
-            |input| self.default_parse_token_with_trivia(input, TokenKind::Comma),
+            TokenKind::Comma,
+            self,
         )
         .with_kind(RuleKind::IdentifiersList)
     }
@@ -1945,10 +1953,11 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn inheritance_types_list(&self, input: &mut ParserContext) -> ParserResult {
-        SeparatedHelper::run(
+        SeparatedHelper::run::<{ LexicalContext::Default as u8 }>(
             input,
             |input| self.inheritance_type(input),
-            |input| self.default_parse_token_with_trivia(input, TokenKind::Comma),
+            TokenKind::Comma,
+            self,
         )
         .with_kind(RuleKind::InheritanceTypesList)
     }
@@ -2362,10 +2371,11 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn named_arguments_list(&self, input: &mut ParserContext) -> ParserResult {
-        SeparatedHelper::run(
+        SeparatedHelper::run::<{ LexicalContext::Default as u8 }>(
             input,
             |input| self.named_argument(input),
-            |input| self.default_parse_token_with_trivia(input, TokenKind::Comma),
+            TokenKind::Comma,
+            self,
         )
         .with_kind(RuleKind::NamedArgumentsList)
     }
@@ -2655,10 +2665,11 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn parameters_list(&self, input: &mut ParserContext) -> ParserResult {
-        SeparatedHelper::run(
+        SeparatedHelper::run::<{ LexicalContext::Default as u8 }>(
             input,
             |input| self.parameter(input),
-            |input| self.default_parse_token_with_trivia(input, TokenKind::Comma),
+            TokenKind::Comma,
+            self,
         )
         .with_kind(RuleKind::ParametersList)
     }
@@ -2689,10 +2700,11 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn positional_arguments_list(&self, input: &mut ParserContext) -> ParserResult {
-        SeparatedHelper::run(
+        SeparatedHelper::run::<{ LexicalContext::Default as u8 }>(
             input,
             |input| self.expression(input),
-            |input| self.default_parse_token_with_trivia(input, TokenKind::Comma),
+            TokenKind::Comma,
+            self,
         )
         .with_kind(RuleKind::PositionalArgumentsList)
     }
@@ -3343,20 +3355,22 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn tuple_members_list(&self, input: &mut ParserContext) -> ParserResult {
-        SeparatedHelper::run(
+        SeparatedHelper::run::<{ LexicalContext::Default as u8 }>(
             input,
             |input| self.tuple_member(input),
-            |input| self.default_parse_token_with_trivia(input, TokenKind::Comma),
+            TokenKind::Comma,
+            self,
         )
         .with_kind(RuleKind::TupleMembersList)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn tuple_values_list(&self, input: &mut ParserContext) -> ParserResult {
-        SeparatedHelper::run(
+        SeparatedHelper::run::<{ LexicalContext::Default as u8 }>(
             input,
             |input| OptionalHelper::transform(self.expression(input)),
-            |input| self.default_parse_token_with_trivia(input, TokenKind::Comma),
+            TokenKind::Comma,
+            self,
         )
         .with_kind(RuleKind::TupleValuesList)
     }
@@ -3859,10 +3873,11 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn using_directive_symbols_list(&self, input: &mut ParserContext) -> ParserResult {
-        SeparatedHelper::run(
+        SeparatedHelper::run::<{ LexicalContext::Default as u8 }>(
             input,
             |input| self.using_directive_symbol(input),
-            |input| self.default_parse_token_with_trivia(input, TokenKind::Comma),
+            TokenKind::Comma,
+            self,
         )
         .with_kind(RuleKind::UsingDirectiveSymbolsList)
     }
@@ -4054,12 +4069,13 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn version_pragma_specifier(&self, input: &mut ParserContext) -> ParserResult {
-        SeparatedHelper::run(
+        SeparatedHelper::run::<{ LexicalContext::VersionPragma as u8 }>(
             input,
             |input| {
                 self.version_pragma_parse_token_with_trivia(input, TokenKind::VersionPragmaValue)
             },
-            |input| self.version_pragma_parse_token_with_trivia(input, TokenKind::Period),
+            TokenKind::Period,
+            self,
         )
         .with_kind(RuleKind::VersionPragmaSpecifier)
     }
@@ -4247,10 +4263,11 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn yul_expressions_list(&self, input: &mut ParserContext) -> ParserResult {
-        SeparatedHelper::run(
+        SeparatedHelper::run::<{ LexicalContext::YulBlock as u8 }>(
             input,
             |input| self.yul_expression(input),
-            |input| self.yul_block_parse_token_with_trivia(input, TokenKind::Comma),
+            TokenKind::Comma,
+            self,
         )
         .with_kind(RuleKind::YulExpressionsList)
     }
@@ -4291,30 +4308,33 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn yul_identifier_path(&self, input: &mut ParserContext) -> ParserResult {
-        SeparatedHelper::run(
+        SeparatedHelper::run::<{ LexicalContext::YulBlock as u8 }>(
             input,
             |input| self.yul_block_parse_token_with_trivia(input, TokenKind::YulIdentifier),
-            |input| self.yul_block_parse_token_with_trivia(input, TokenKind::Period),
+            TokenKind::Period,
+            self,
         )
         .with_kind(RuleKind::YulIdentifierPath)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn yul_identifier_paths_list(&self, input: &mut ParserContext) -> ParserResult {
-        SeparatedHelper::run(
+        SeparatedHelper::run::<{ LexicalContext::YulBlock as u8 }>(
             input,
             |input| self.yul_identifier_path(input),
-            |input| self.yul_block_parse_token_with_trivia(input, TokenKind::Comma),
+            TokenKind::Comma,
+            self,
         )
         .with_kind(RuleKind::YulIdentifierPathsList)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn yul_identifiers_list(&self, input: &mut ParserContext) -> ParserResult {
-        SeparatedHelper::run(
+        SeparatedHelper::run::<{ LexicalContext::YulBlock as u8 }>(
             input,
             |input| self.yul_block_parse_token_with_trivia(input, TokenKind::YulIdentifier),
-            |input| self.yul_block_parse_token_with_trivia(input, TokenKind::Comma),
+            TokenKind::Comma,
+            self,
         )
         .with_kind(RuleKind::YulIdentifiersList)
     }

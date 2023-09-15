@@ -217,19 +217,16 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                 };
 
                 let separator_token_kind = format_ident!("{name}", name = separator_scanner.name());
-
-                let parse_token = format_ident!(
-                    "{context_name}_parse_token_with_trivia",
-                    context_name = context_name.to_snake_case()
-                );
+                let context = format_ident!("{context_name}");
 
                 let parser = body.to_parser_code(context_name, is_trivia);
 
                 quote! {
-                    SeparatedHelper::run(
+                    SeparatedHelper::run::<{ LexicalContext::#context as u8} >(
                         input,
                         |input| #parser,
-                        |input| self.#parse_token(input, TokenKind::#separator_token_kind),
+                        TokenKind::#separator_token_kind,
+                        self,
                     )
                 }
             }
