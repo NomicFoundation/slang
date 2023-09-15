@@ -8,10 +8,10 @@ Source: >
 Errors: # 1 total
   - >
     Error: Expected CloseBrace or Identifier.
-       ╭─[crates/solidity/testing/snapshots/cst_output/TupleDeconstructionStatement/invalid_termination/input.sol:3:2]
+       ╭─[crates/solidity/testing/snapshots/cst_output/TupleDeconstructionStatement/invalid_termination/input.sol:3:3]
        │
      3 │ { throw;
-       │  ───┬──  
+       │   ──┬──  
        │     ╰──── Error occurred here.
     ───╯
 
@@ -43,5 +43,5 @@ Tree:
                   - LeadingTrivia (Rule): # 20..25 "/**/\n"
                       - MultilineComment (Trivia): "/**/" # 20..24
                   - OpenBrace (Token): "{" # 25..26
-      - SKIPPED (Token): " throw" # 26..32
+      - SKIPPED (Token): "throw" # 27..32
       - Semicolon (Token): ";" # 32..33
