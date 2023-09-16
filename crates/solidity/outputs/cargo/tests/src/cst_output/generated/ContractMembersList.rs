@@ -17,3 +17,8 @@ fn local_expression() -> Result<()> {
 fn mismatched_delimiter() -> Result<()> {
     return run("ContractMembersList", "mismatched_delimiter");
 }
+
+#[test]
+fn separated_recovery() -> Result<()> {
+    return run("ContractMembersList", "separated_recovery");
+}
