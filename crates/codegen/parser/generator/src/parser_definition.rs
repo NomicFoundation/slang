@@ -222,7 +222,7 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                 let parser = body.to_parser_code(context_name, is_trivia);
 
                 quote! {
-                    SeparatedHelper::run::<{ LexicalContext::#context as u8} >(
+                    SeparatedHelper::run::<{ LexicalContext::#context as u8}, Self>(
                         input,
                         |input| #parser,
                         TokenKind::#separator_token_kind,
