@@ -138,6 +138,14 @@ impl Lexer for Language {
         Language::trailing_trivia(self, input)
     }
 
+    fn delimiters<const LEX_CTX: u8>() -> &'static [(TokenKind, TokenKind)] {
+        match LexicalContext::from_repr(LEX_CTX).unwrap() {
+            {%- for context in code.scanner_contexts %}
+                LexicalContext::{{ context.name }} => Self::{{ context.name | snake_case }}_delimiters(),
+            {%- endfor %}
+        }
+    }
+
     fn next_token<const LEX_CTX: u8>(&self, input: &mut ParserContext) -> Option<TokenKind> {
         let save = input.position();
         let mut furthest_position = input.position();
