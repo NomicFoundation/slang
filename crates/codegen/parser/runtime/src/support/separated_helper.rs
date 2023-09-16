@@ -1,6 +1,10 @@
-use crate::{cst, kinds::TokenKind, lexer::Lexer, support::parser_result::IncompleteMatch};
+use crate::{
+    cst, kinds::TokenKind, lexer::Lexer, parse_error::ParseError, text_index::TextRangeExtensions,
+};
 
-use super::{ParserContext, ParserResult};
+use super::{
+    parser_result::IncompleteMatch, skip_until_with_nested_delims, ParserContext, ParserResult,
+};
 
 pub struct SeparatedHelper;
 
@@ -69,12 +73,59 @@ impl SeparatedHelper {
                         }
                     }
                 }
+                // Body was partially parsed, so try to recover by skipping tokens until we see a separator
                 ParserResult::IncompleteMatch(incomplete) => {
                     accum.extend(incomplete.nodes);
-                    return ParserResult::IncompleteMatch(IncompleteMatch {
-                        nodes: accum,
-                        expected_tokens: incomplete.expected_tokens,
-                    });
+
+                    let start = input.position();
+
+                    let skipped = skip_until_with_nested_delims(
+                        input,
+                        |input| lexer.next_token::<LEX_CTX>(input),
+                        separator,
+                        <L as Lexer>::delimiters::<LEX_CTX>(),
+                    );
+
+                    match skipped {
+                        // A separator was found, so we can recover the incomplete match
+                        Some((found, skipped_range)) if found == separator => {
+                            accum.push(cst::Node::token(
+                                TokenKind::SKIPPED,
+                                input.content(skipped_range.utf8()),
+                            ));
+                            input.emit(ParseError {
+                                text_range: skipped_range,
+                                tokens_that_would_have_allowed_more_progress: incomplete
+                                    .expected_tokens,
+                            });
+
+                            match lexer.parse_token_with_trivia::<LEX_CTX>(input, separator) {
+                                ParserResult::Match(r#match) => {
+                                    accum.extend(r#match.nodes);
+                                    continue;
+                                }
+                                _ => unreachable!("We just checked that the separator matches"),
+                            }
+                        }
+                        // Didn't find a separator during recovery. It might've been the last of the
+                        // separatees, so we can't recover to not risk misparses.
+                        Some(..) => {
+                            // Undo the recovery attempt
+                            input.set_position(start);
+
+                            return ParserResult::IncompleteMatch(IncompleteMatch {
+                                nodes: accum,
+                                expected_tokens: incomplete.expected_tokens,
+                            });
+                        }
+                        // Separator wasn't found till EOF, so we can't recover
+                        None => {
+                            return ParserResult::IncompleteMatch(IncompleteMatch {
+                                nodes: accum,
+                                expected_tokens: incomplete.expected_tokens,
+                            });
+                        }
+                    }
                 }
                 ParserResult::NoMatch(no_match) => {
                     if accum.len() > 0 {
@@ -84,11 +135,17 @@ impl SeparatedHelper {
                     }
                 }
 
+                ParserResult::SkippedUntil(skipped) => {
+                    accum.extend(skipped.nodes);
+                    return ParserResult::SkippedUntil(super::parser_result::SkippedUntil {
+                        nodes: accum,
+                        ..skipped
+                    });
+                }
+
                 ParserResult::PrattOperatorMatch(..) => {
                     unreachable!("PrattOperatorMatch in SeparatedHelper")
                 }
-
-                ParserResult::SkippedUntil(..) => todo!(),
             }
         }
     }
