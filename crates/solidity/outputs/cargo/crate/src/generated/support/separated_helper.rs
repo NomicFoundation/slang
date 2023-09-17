@@ -10,19 +10,6 @@ use super::{
 
 pub struct SeparatedHelper;
 
-fn opt_parse(
-    input: &mut ParserContext,
-    parse: impl Fn(&mut ParserContext) -> ParserResult,
-) -> Vec<cst::Node> {
-    let start = input.position();
-    if let ParserResult::Match(r#match) = parse(input) {
-        r#match.nodes
-    } else {
-        input.set_position(start);
-        vec![]
-    }
-}
-
 impl SeparatedHelper {
     pub fn run<const LEX_CTX: u8, L: Lexer>(
         input: &mut ParserContext,
@@ -30,23 +17,18 @@ impl SeparatedHelper {
         separator: TokenKind,
         lexer: &L,
     ) -> ParserResult {
-        let peek_token_after_trivia = |input: &mut ParserContext| {
-            let start = input.position();
-
-            opt_parse(input, |input| lexer.leading_trivia(input));
-            let token = lexer.next_token::<LEX_CTX>(input);
-
-            input.set_position(start);
-            token
-        };
-
         let mut accum = vec![];
         loop {
             match body_parser(input) {
                 ParserResult::Match(r#match) => {
                     accum.extend(r#match.nodes);
 
-                    match peek_token_after_trivia(input) {
+                    // Parse the leading trivia so that we can peek the next significant token
+                    if let ParserResult::Match(r#match) = lexer.leading_trivia(input) {
+                        accum.extend(r#match.nodes);
+                    }
+
+                    match lexer.peek_token::<LEX_CTX>(input) {
                         Some(token) if token == separator => {
                             let separator =
                                 lexer.parse_token_with_trivia::<LEX_CTX>(input, separator);

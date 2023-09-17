@@ -124,8 +124,8 @@ Tree:
               - OverrideSpecifier (Rule): # 14..76 " override(some.ident unexpected tokens, ISomeInter..."
                   - OverrideKeyword (Token): "override" # 15..23
                   - OpenParen (Token): "(" # 23..24
-                  - IdentifierPathsList (Rule): # 24..34 "some.ident"
-                      - IdentifierPath (Rule): # 24..34 "some.ident"
+                  - IdentifierPathsList (Rule): # 24..35 "some.ident "
+                      - IdentifierPath (Rule): # 24..35 "some.ident "
                           - Identifier (Token): "some" # 24..28
                           - Period (Token): "." # 28..29
                           - Identifier (Token): "ident" # 29..34
@@ -238,7 +238,7 @@ Tree:
                                   - FunctionCallOptions (Rule): # 247..302 "{arg: 1 unexpected tokens, not: 2, recovered, yet:..."
                                       - NamedArgumentsDeclaration (Rule): # 247..302 "{arg: 1 unexpected tokens, not: 2, recovered, yet:..."
                                           - OpenBrace (Token): "{" # 247..248
-                                          - NamedArgumentsList (Rule): # 248..254 "arg: 1"
+                                          - NamedArgumentsList (Rule): # 248..255 "arg: 1 "
                                               - NamedArgument (Rule): # 248..254 "arg: 1"
                                                   - Identifier (Token): "arg" # 248..251
                                                   - Colon (Token): ":" # 251..252
