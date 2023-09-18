@@ -65,25 +65,25 @@ impl Language {
         &self.version
     }
 
-    {% for context in code.scanner_contexts %}
+    {% for context_name, context in code.scanner_contexts %}
         #[allow(dead_code)]
-        fn {{ context.name | snake_case }}_parse_token_with_trivia(
+        fn {{ context_name | snake_case }}_parse_token_with_trivia(
             &self,
             input: &mut ParserContext,
             kind: TokenKind,
         ) -> ParserResult
         {
-            Lexer::parse_token_with_trivia::<{ LexicalContext::{{ context.name }} as u8 }>(self, input, kind)
+            Lexer::parse_token_with_trivia::<{ LexicalContext::{{ context_name }} as u8 }>(self, input, kind)
         }
 
         #[allow(dead_code)]
-        fn {{ context.name | snake_case }}_parse_token(&self, input: &mut ParserContext, kind: TokenKind) -> ParserResult
+        fn {{ context_name | snake_case }}_parse_token(&self, input: &mut ParserContext, kind: TokenKind) -> ParserResult
         {
-            Lexer::parse_token::<{ LexicalContext::{{ context.name }} as u8 }>(self, input, kind)
+            Lexer::parse_token::<{ LexicalContext::{{ context_name }} as u8 }>(self, input, kind)
         }
 
         #[allow(dead_code)]
-        const fn {{ context.name | snake_case }}_delimiters() -> &'static [(TokenKind, TokenKind)] {
+        const fn {{ context_name | snake_case }}_delimiters() -> &'static [(TokenKind, TokenKind)] {
             &[
                 {%- for open, close in context.delimiters %}
                     (TokenKind::{{ open }}, TokenKind::{{ close }}),
@@ -113,9 +113,9 @@ impl Language {
     pub fn scan(&self, lexical_context: LexicalContext, input: &str) -> Option<TokenKind> {
         let mut input = ParserContext::new(input);
         match lexical_context {
-            {%- for lexical_context in code.scanner_contexts -%}
-                LexicalContext::{{ lexical_context.name }} =>
-                    Lexer::next_token::<{ LexicalContext::{{ lexical_context.name }} as u8 }>(self, &mut input),
+            {%- for context_name, context in code.scanner_contexts -%}
+                LexicalContext::{{ context_name }} =>
+                    Lexer::next_token::<{ LexicalContext::{{ context_name }} as u8 }>(self, &mut input),
             {%- endfor -%}
         }
     }
@@ -144,8 +144,8 @@ impl Lexer for Language {
         let mut longest_token = None;
 
         match LexicalContext::from_repr(LEX_CTX).unwrap() {
-            {%- for context in code.scanner_contexts %}
-                LexicalContext::{{ context.name }} => {
+            {%- for context_name, context in code.scanner_contexts %}
+                LexicalContext::{{ context_name }} => {
                     macro_rules! longest_match {
                         ($( { $kind:ident = $function:ident } )*) => {
                             $(

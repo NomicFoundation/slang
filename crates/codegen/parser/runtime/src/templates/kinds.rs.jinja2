@@ -79,7 +79,7 @@ pub enum TokenKind {
 #[cfg_attr(not(feature = "slang_napi_interfaces"), derive(Clone, Copy))]
 #[repr(u8)] // This is used as a const argument, which only supports primitive types
 pub enum LexicalContext {
-    {%- for context in code.scanner_contexts %}
-        {{ context.name }},
+    {%- for context_name, _context in code.scanner_contexts %}
+        {{ context_name }},
     {%- endfor %}
 }
