@@ -31,12 +31,13 @@ pub struct CodeGenerator {
     production_kinds: BTreeSet<&'static str>,
     trivia_kinds: BTreeSet<&'static str>,
 
-    top_level_scanner_names: BTreeSet<&'static str>,
     scanner_functions: BTreeMap<&'static str, String>, // (name of scanner, code)
     scanner_contexts: BTreeMap<&'static str, ScannerContext>,
 
     parser_functions: BTreeMap<&'static str, String>, // (name of parser, code)
 
+    #[serde(skip)]
+    top_level_scanner_names: BTreeSet<&'static str>,
     #[serde(skip)]
     all_scanners: BTreeMap<&'static str, ScannerDefinitionRef>,
     #[serde(skip)]
