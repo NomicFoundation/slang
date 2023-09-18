@@ -461,6 +461,14 @@ macro_rules! slang_scanner {
             slang_location!()
         )
     };
+    ( contextual $x:literal using $p:ident ) => {
+        $crate::ScannerDefinitionNode::ContextualKeyword(
+            $x,
+            Box::new(slang_scanner!($p)),
+            slang_location!()
+        )
+    };
+
     ( $x:ident ) => {
         ($x::instance(), slang_location!()).into()
     };

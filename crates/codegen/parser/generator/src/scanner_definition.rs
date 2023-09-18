@@ -1,6 +1,6 @@
 use std::collections::BTreeSet;
 
-use codegen_grammar::{ScannerDefinitionNode, ScannerDefinitionRef};
+use codegen_grammar::{ScannerDefinitionNode, ScannerDefinitionRef, VersionQualityRange};
 use inflector::Inflector;
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
@@ -10,6 +10,7 @@ use super::parser_definition::VersionQualityRangeVecExtensions;
 pub trait ScannerDefinitionExtensions {
     fn to_scanner_code(&self) -> TokenStream;
     fn literals(&self) -> Vec<String>;
+    fn as_contextual_keyword(&self) -> Option<ContextualKeywordScanner>;
 }
 
 impl ScannerDefinitionExtensions for ScannerDefinitionRef {
@@ -24,11 +25,15 @@ impl ScannerDefinitionExtensions for ScannerDefinitionRef {
             vec![]
         }
     }
+    fn as_contextual_keyword(&self) -> Option<ContextualKeywordScanner> {
+        self.node().as_contextual_keyword()
+    }
 }
 
 pub trait ScannerDefinitionNodeExtensions {
     fn to_scanner_code(&self) -> TokenStream;
     fn literals(&self, accum: &mut BTreeSet<String>) -> bool;
+    fn as_contextual_keyword(&self) -> Option<ContextualKeywordScanner>;
 }
 
 impl ScannerDefinitionNodeExtensions for ScannerDefinitionNode {
@@ -38,6 +43,10 @@ impl ScannerDefinitionNodeExtensions for ScannerDefinitionNode {
             ScannerDefinitionNode::Versioned(body, _, _) => body.literals(accum),
             ScannerDefinitionNode::Literal(string, _) => {
                 accum.insert(string.clone());
+                true
+            }
+            ScannerDefinitionNode::ContextualKeyword(string, ..) => {
+                accum.insert(string.to_string());
                 true
             }
             ScannerDefinitionNode::Choice(nodes, _) => nodes
@@ -121,6 +130,12 @@ impl ScannerDefinitionNodeExtensions for ScannerDefinitionNode {
                 quote! { scan_chars!(input, #(#chars),*) }
             }
 
+            ScannerDefinitionNode::ContextualKeyword(_value, _scanner, _) => {
+                // Contextual keywords are not independent scanners but rather
+                // upgraded to by the parser.
+                quote! { false }
+            }
+
             ScannerDefinitionNode::ScannerDefinition(scanner_definition, _) => {
                 let name = scanner_definition.name();
                 let snake_case = name.to_snake_case();
@@ -129,4 +144,61 @@ impl ScannerDefinitionNodeExtensions for ScannerDefinitionNode {
             }
         }
     }
+
+    /// Returns `Some` if the scanner definition defines a contextual keyword at some version,
+    /// `None` otherwise.
+    ///
+    /// The contextual keywords scanners are not ordinary, as they are only synthesized
+    /// from the underlying scanner when parsing, rather than scanned independently.
+    fn as_contextual_keyword(&self) -> Option<ContextualKeywordScanner> {
+        match self {
+            ScannerDefinitionNode::Versioned(node, version_quality_ranges, _) => {
+                match node.as_ref() {
+                    ScannerDefinitionNode::ContextualKeyword(literal, ident_scanner, _) => {
+                        let ident_scanner = match ident_scanner.as_ref() {
+                            ScannerDefinitionNode::ScannerDefinition(def, ..) => def.name(),
+                            _ => unreachable!("Contextual keywords must be defined using an underlying scanner definition"),
+                        };
+
+                        Some(ContextualKeywordScanner {
+                            ident_scanner,
+                            literal,
+                            version_quality_ranges: version_quality_ranges.clone(),
+                        })
+                    }
+                    _ => None,
+                }
+            }
+            ScannerDefinitionNode::Choice(nodes, _) => nodes
+                .iter()
+                .filter_map(Self::as_contextual_keyword)
+                .fold(None, |acc, item| {
+                    let Some(mut acc) = acc else { return Some(item) };
+
+                    assert_eq!(
+                        acc.ident_scanner, item.ident_scanner,
+                        "Contextual keywords must have the same underlying scanner definition"
+                    );
+                    assert_eq!(
+                        acc.literal, item.literal,
+                        "Contextual keyword definition must have the same literal"
+                    );
+
+                    acc.version_quality_ranges
+                        .extend(item.version_quality_ranges);
+
+                    Some(acc)
+                }),
+            _ => None,
+        }
+    }
+}
+
+pub struct ContextualKeywordScanner {
+    /// Name of the underlying scanner
+    pub ident_scanner: &'static str,
+    /// Literal of the contextual keyword
+    pub literal: &'static str,
+    /// Version ranges at which the literal is a contextual keyword
+    pub version_quality_ranges: Vec<VersionQualityRange>,
 }

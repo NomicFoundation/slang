@@ -1,10 +1,28 @@
 use std::{collections::BTreeMap, fmt::Debug};
 
-use codegen_grammar::{ScannerDefinitionNode, ScannerDefinitionRef};
+use codegen_grammar::{ScannerDefinitionNode, ScannerDefinitionRef, VersionQualityRange};
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
 
 use super::parser_definition::VersionQualityRangeVecExtensions;
+
+/// Returns concatenated version ranges for applicable scanners (excluding contextual keywords).
+// TODO: If the scanner def consists *solely* of contextual keywords, then we shouldn't
+// return a truthy/pass-through branch but rather return falsey/None below.
+fn version_ranges(scanner_def: &ScannerDefinitionNode) -> Vec<VersionQualityRange> {
+    match scanner_def {
+        ScannerDefinitionNode::Choice(nodes, _) => {
+            nodes.iter().flat_map(version_ranges).collect::<Vec<_>>()
+        }
+        ScannerDefinitionNode::Versioned(node, version_quality_ranges, _) => match node.as_ref() {
+            // Ignore versioned contextual keywords, as these are synthesized by the parser,
+            // rather than scanned independently.
+            ScannerDefinitionNode::ContextualKeyword(..) => vec![],
+            _ => version_quality_ranges.clone(),
+        },
+        _ => vec![],
+    }
+}
 
 #[derive(Clone, Debug, Default)]
 pub struct Trie {
@@ -64,26 +82,15 @@ impl Trie {
         let leaf = if let Some(scanner_definition_ref) = &trie.payload {
             let kind = format_ident!("{}", scanner_definition_ref.name());
 
+            let versioned = version_ranges(scanner_definition_ref.node());
+
             if branches.is_empty() && !path.is_empty() {
                 // This is an optimisation for a common case
                 let leaf = quote! { scan_chars!(input, #(#path),*).then_some(TokenKind::#kind) };
-                return if let ScannerDefinitionNode::Versioned(_, version_quality_ranges, _) =
-                    scanner_definition_ref.node()
-                {
-                    version_quality_ranges.wrap_code(leaf, Some(quote! { None }))
-                } else {
-                    leaf
-                };
+                return versioned.wrap_code(leaf, Some(quote! { None }));
             }
 
-            if let ScannerDefinitionNode::Versioned(_, version_quality_ranges, _) =
-                scanner_definition_ref.node()
-            {
-                version_quality_ranges
-                    .wrap_code(quote! { Some(TokenKind::#kind) }, Some(quote! { None }))
-            } else {
-                quote! { Some(TokenKind::#kind) }
-            }
+            versioned.wrap_code(quote! {Some (TokenKind::#kind)}, Some(quote! { None }))
         } else {
             quote! { None }
         };

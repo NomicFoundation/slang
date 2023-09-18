@@ -941,7 +941,10 @@ slang_grammar! {
 
     // introduced in 0.4.21
     // WRONG, it is both a keyword AND identifier for some versions.
-    scanner EmitKeyword = { introduced in "0.4.21" "emit" } ;
+    scanner EmitKeyword = (
+        { introduced in "0.4.21" and removed in "0.5.0" contextual "emit" using Identifier } |
+        { introduced in "0.5.0" "emit" }
+    ) ;
 
     // Introduced in 0.4.22
     scanner ConstructorKeyword = { introduced in "0.4.22" "constructor" } ;

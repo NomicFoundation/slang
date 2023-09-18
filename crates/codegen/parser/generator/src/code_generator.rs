@@ -17,9 +17,10 @@ use codegen_grammar::{
 };
 
 use super::{
-    parser_definition::ParserDefinitionExtensions,
+    parser_definition::{ParserDefinitionExtensions, VersionQualityRangeVecExtensions},
     precedence_parser_definition::PrecedenceParserDefinitionExtensions,
-    scanner_definition::ScannerDefinitionExtensions, trie::Trie,
+    scanner_definition::ScannerDefinitionExtensions,
+    trie::Trie,
 };
 
 #[derive(Default, Serialize)]
@@ -33,6 +34,10 @@ pub struct CodeGenerator {
 
     scanner_functions: BTreeMap<&'static str, String>, // (name of scanner, code)
     scanner_contexts: BTreeMap<&'static str, ScannerContext>,
+    /// Contextual keywords are not scanned directly but they also have
+    /// a dedicated token kind and are synthesized by the parser.
+    // (identifier scanner name -> (literal value, version range qualifier code)
+    contextual_keywords: BTreeMap<&'static str, (&'static str, String)>,
 
     parser_functions: BTreeMap<&'static str, String>, // (name of parser, code)
 
@@ -270,6 +275,21 @@ impl GrammarVisitor for CodeGenerator {
                     .unwrap()
                     .scanner_definitions
                     .insert(scanner.name());
+
+                if let Some(contextual_keyword) = scanner.as_contextual_keyword() {
+                    let keyword = format_ident!("{}", scanner.name());
+                    // NOTE: This does not support disjoint version ranges yet,
+                    // e.g. `0.4.21..0.5 or 0.6..0.7` (ranges are &&'ed together for now)
+                    let code = contextual_keyword
+                        .version_quality_ranges
+                        .wrap_code(quote! { Some(TokenKind::#keyword) }, Some(quote! { None }))
+                        .to_string();
+
+                    self.contextual_keywords.insert(
+                        contextual_keyword.ident_scanner,
+                        (contextual_keyword.literal, code),
+                    );
+                }
             }
             // Collect delimiters for each context
             ParserDefinitionNode::DelimitedBy(open, _, close, _) => {

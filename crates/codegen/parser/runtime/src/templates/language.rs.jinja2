@@ -130,6 +130,15 @@ impl Language {
 }
 
 impl Lexer for Language {
+    fn as_contextual_keyword(&self, value: &str, kind: TokenKind) -> Option<TokenKind> {
+        match (kind, value) {
+            {% for ident_scanner, kw_literal_and_version_qualifier in code.contextual_keywords %}
+            (TokenKind::{{ ident_scanner }}, "{{ kw_literal_and_version_qualifier.0 }}") => {{ kw_literal_and_version_qualifier.1 }},
+            {% endfor %}
+            _ => None
+        }
+    }
+
     fn leading_trivia(&self, input: &mut ParserContext) -> ParserResult {
         Language::leading_trivia(self, input)
     }

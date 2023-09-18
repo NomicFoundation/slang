@@ -33,6 +33,7 @@ pub enum ScannerDefinitionNode {
     NotFollowedBy(Box<Self>, Box<Self>, SourceLocation),
     CharRange(char, char, SourceLocation),
     Literal(String, SourceLocation),
+    ContextualKeyword(&'static str, Box<Self>, SourceLocation),
     ScannerDefinition(ScannerDefinitionRef, SourceLocation),
 }
 
@@ -65,6 +66,7 @@ impl Visitable for ScannerDefinitionNode {
             Self::NoneOf(_, _)
             | Self::CharRange(_, _, _)
             | Self::Literal(_, _)
+            | Self::ContextualKeyword(_, _, _)
             | Self::ScannerDefinition(_, _) => {}
         }
         visitor.scanner_definition_node_leave(self);

@@ -5047,6 +5047,20 @@ impl Language {
 }
 
 impl Lexer for Language {
+    fn as_contextual_keyword(&self, value: &str, kind: TokenKind) -> Option<TokenKind> {
+        match (kind, value) {
+            (TokenKind::Identifier, "emit") => {
+                if self.version_is_at_least_0_4_21 && !self.version_is_at_least_0_5_0 {
+                    Some(TokenKind::EmitKeyword)
+                } else {
+                    None
+                }
+            }
+
+            _ => None,
+        }
+    }
+
     fn leading_trivia(&self, input: &mut ParserContext) -> ParserResult {
         Language::leading_trivia(self, input)
     }
@@ -5262,7 +5276,7 @@ impl Lexer for Language {
                     Some('e') => match input.next() {
                         Some('l') => scan_chars!(input, 's', 'e').then_some(TokenKind::ElseKeyword),
                         Some('m') => {
-                            if self.version_is_at_least_0_4_21 {
+                            if self.version_is_at_least_0_5_0 {
                                 scan_chars!(input, 'i', 't').then_some(TokenKind::EmitKeyword)
                             } else {
                                 None

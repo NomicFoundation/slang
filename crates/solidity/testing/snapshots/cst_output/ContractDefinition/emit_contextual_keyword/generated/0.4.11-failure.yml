@@ -1,0 +1,55 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract Contract {                                                              │ 0..19
+  2  │ 	uint256 emit = 0;                                                               │ 20..38
+  3  │ 	function emit() {                                                               │ 39..57
+  4  │ 		emit Event();                                                                  │ 58..73
+  5  │ 	}                                                                               │ 74..76
+  6  │ }                                                                                │ 77..78
+
+Errors: # 1 total
+  - >
+    Error: Expected Equal or Semicolon.
+       ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/emit_contextual_keyword/input.sol:4:13]
+       │
+     4 │        emit Event();
+       │                  ─┬  
+       │                   ╰── Error occurred here.
+    ───╯
+
+Tree:
+  - ContractDefinition (Rule): # 0..79 "contract Contract {\n\tuint256 emit = 0;\n\tfunction e..."
+      - ContractKeyword (Token): "contract" # 0..8
+      - Identifier (Token): "Contract" # 9..17
+      - OpenBrace (Token): "{" # 18..19
+      - ContractMembersList (Rule): # 20..77 "\tuint256 emit = 0;\n\tfunction emit() {\n\t\temit Event..."
+          - StateVariableDefinition (Rule): # 20..39 "\tuint256 emit = 0;\n"
+              - TypeName (Rule): # 20..28 "\tuint256"
+                  - UnsignedIntegerType (Token): "uint256" # 21..28
+              - Identifier (Token): "emit" # 29..33
+              - Equal (Token): "=" # 34..35
+              - Expression (Rule): # 35..37 " 0"
+                  - NumericExpression (Rule): # 35..37 " 0"
+                      - DecimalLiteral (Token): "0" # 36..37
+              - Semicolon (Token): ";" # 37..38
+          - FunctionDefinition (Rule): # 39..77 "\tfunction emit() {\n\t\temit Event();\n\t}\n"
+              - FunctionKeyword (Token): "function" # 40..48
+              - Identifier (Token): "emit" # 49..53
+              - ParametersDeclaration (Rule): # 53..55 "()"
+                  - OpenParen (Token): "(" # 53..54
+                  - CloseParen (Token): ")" # 54..55
+              - Block (Rule): # 55..77 " {\n\t\temit Event();\n\t}\n"
+                  - OpenBrace (Token): "{" # 56..57
+                  - StatementsList (Rule): # 58..74 "\t\temit Event();\n"
+                      - Statement (Rule): # 58..74 "\t\temit Event();\n"
+                          - VariableDeclarationStatement (Rule): # 58..74 "\t\temit Event();\n"
+                              - VariableDeclaration (Rule): # 58..70 "\t\temit Event"
+                                  - TypeName (Rule): # 58..64 "\t\temit"
+                                      - IdentifierPath (Rule): # 58..64 "\t\temit"
+                                          - Identifier (Token): "emit" # 60..64
+                                  - Identifier (Token): "Event" # 65..70
+                              - SKIPPED (Token): "()" # 70..72
+                              - Semicolon (Token): ";" # 72..73
+                  - CloseBrace (Token): "}" # 75..76
+      - CloseBrace (Token): "}" # 77..78

@@ -1,0 +1,47 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract Contract {                                                              │ 0..19
+  2  │ 	uint256 emit = 0;                                                               │ 20..38
+  3  │ 	function emit() {                                                               │ 39..57
+  4  │ 		emit Event();                                                                  │ 58..73
+  5  │ 	}                                                                               │ 74..76
+  6  │ }                                                                                │ 77..78
+
+Errors: # 2 total
+  - >
+    Error: Expected ConstantKeyword or Identifier or InternalKeyword or OverrideKeyword or PrivateKeyword or PublicKeyword.
+       ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/emit_contextual_keyword/input.sol:2:10]
+       │
+     2 │     uint256 emit = 0;
+       │             ────┬───  
+       │                 ╰───── Error occurred here.
+    ───╯
+  - >
+    Error: Expected OpenParen.
+       ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/emit_contextual_keyword/input.sol:3:11]
+       │
+     3 │ ╭─▶     function emit() {
+       ┆ ┆   
+     5 │ ├─▶     }
+       │ │           
+       │ ╰─────────── Error occurred here.
+    ───╯
+
+Tree:
+  - ContractDefinition (Rule): # 0..79 "contract Contract {\n\tuint256 emit = 0;\n\tfunction e..."
+      - ContractKeyword (Token): "contract" # 0..8
+      - Identifier (Token): "Contract" # 9..17
+      - OpenBrace (Token): "{" # 18..19
+      - ContractMembersList (Rule): # 20..49 "\tuint256 emit = 0;\n\tfunction "
+          - StateVariableDefinition (Rule): # 20..39 "\tuint256 emit = 0;\n"
+              - TypeName (Rule): # 20..28 "\tuint256"
+                  - UnsignedIntegerType (Token): "uint256" # 21..28
+              - SKIPPED (Token): "emit = 0" # 29..37
+              - Semicolon (Token): ";" # 37..38
+          - StateVariableDefinition (Rule): # 39..49 "\tfunction "
+              - TypeName (Rule): # 39..48 "\tfunction"
+                  - FunctionType (Rule): # 39..48 "\tfunction"
+                      - FunctionKeyword (Token): "function" # 40..48
+      - SKIPPED (Token): "emit() {\n\t\temit Event();\n\t}\n" # 49..77
+      - CloseBrace (Token): "}" # 77..78
