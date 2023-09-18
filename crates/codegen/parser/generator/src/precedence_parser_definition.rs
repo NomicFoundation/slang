@@ -164,12 +164,10 @@ impl PrecedenceParserDefinitionNodeExtensions for PrecedenceParserDefinitionNode
                 .map(|parser| quote! { seq.elem(#parser)?; })
                 .collect::<Vec<_>>();
             quote! {
-                {
-                    SequenceHelper::run(|mut seq| {
-                        #(#parsers)*
-                        seq.finish()
-                    })
-                }
+                SequenceHelper::run(|mut seq| {
+                    #(#parsers)*
+                    seq.finish()
+                })
             }
         }
 
@@ -187,12 +185,10 @@ impl PrecedenceParserDefinitionNodeExtensions for PrecedenceParserDefinitionNode
                 })
                 .collect::<Vec<_>>();
             quote! {
-                {
-                    ChoiceHelper::run(input, |mut choice, input| {
-                        #(#parsers)*
-                        choice.finish(input)
-                    })
-                }
+                ChoiceHelper::run(input, |mut choice, input| {
+                    #(#parsers)*
+                    choice.finish(input)
+                })
             }
         }
 
