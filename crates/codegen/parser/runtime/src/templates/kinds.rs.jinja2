@@ -59,8 +59,8 @@ pub enum TokenKind {
 #[cfg_attr(feature = "slang_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "language"))]
 #[cfg_attr(not(feature = "slang_napi_interfaces"), derive(Clone, Copy))]
 pub enum LexicalContext {
-    {%- for context in code.scanner_contexts %}
-        {{ context.name }},
+    {%- for context_name, _context in code.scanner_contexts %}
+        {{ context_name }},
     {%- endfor %}
 }
 
@@ -74,11 +74,11 @@ pub trait IsLexicalContext {
 pub mod LexicalContextType {
     use super::{IsLexicalContext, LexicalContext};
 
-    {%- for context in code.scanner_contexts %}
-        pub struct {{ context.name }} {}
-        impl IsLexicalContext for {{ context.name }} {
+    {%- for context_name, _ in code.scanner_contexts %}
+        pub struct {{ context_name }} {}
+        impl IsLexicalContext for {{ context_name }} {
             fn value() -> LexicalContext {
-                LexicalContext::{{ context.name }}
+                LexicalContext::{{ context_name }}
             }
         }
     {%- endfor %}

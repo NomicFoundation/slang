@@ -1,5 +1,4 @@
 use std::collections::{BTreeMap, BTreeSet};
-use std::mem;
 use std::path::Path;
 
 use anyhow::Result;
@@ -30,21 +29,18 @@ pub struct CodeGenerator {
 
     top_level_scanner_names: BTreeSet<&'static str>,
     scanner_functions: BTreeMap<&'static str, String>, // (name of scanner, code)
-    scanner_contexts: Vec<ScannerContext>,
+    scanner_contexts: BTreeMap<&'static str, ScannerContext>,
 
     parser_functions: BTreeMap<&'static str, String>, // (name of parser, code)
 
-    #[serde(skip)]
-    scanner_contexts_map: BTreeMap<&'static str, ScannerContext>,
     #[serde(skip)]
     all_scanners: BTreeMap<&'static str, ScannerDefinitionRef>,
     #[serde(skip)]
     current_context_name: &'static str,
 }
 
-#[derive(Serialize)]
+#[derive(Default, Serialize)]
 struct ScannerContext {
-    name: &'static str,
     #[serde(skip)]
     scanner_definitions: BTreeSet<&'static str>,
     alpha_literal_scanner: String,
@@ -170,16 +166,7 @@ impl CodeGenerator {
 
     fn set_current_context(&mut self, name: &'static str) {
         self.current_context_name = name;
-        self.scanner_contexts_map
-            .entry(name)
-            .or_insert_with(|| ScannerContext {
-                name,
-                scanner_definitions: BTreeSet::default(),
-                alpha_literal_scanner: String::new(),
-                non_alpha_literal_scanner: String::new(),
-                compound_scanner_names: vec![],
-                delimiters: BTreeMap::default(),
-            });
+        self.scanner_contexts.entry(name).or_default();
     }
 }
 
@@ -194,7 +181,7 @@ impl GrammarVisitor for CodeGenerator {
             .map(|(name, scanner)| (*name, scanner.to_scanner_code().to_string()))
             .collect();
 
-        for context in self.scanner_contexts_map.values_mut() {
+        for context in self.scanner_contexts.values_mut() {
             let mut alpha_literal_trie = Trie::new();
             let mut non_alpha_literal_trie = Trie::new();
             let mut have_identifier_scanner = false;
@@ -228,10 +215,6 @@ impl GrammarVisitor for CodeGenerator {
                 context.compound_scanner_names.push("Identifier");
             }
         }
-
-        self.scanner_contexts = mem::take(&mut self.scanner_contexts_map)
-            .into_values()
-            .collect();
 
         // Just being anal about tidying up :)
         self.all_scanners.clear();
@@ -316,7 +299,7 @@ impl GrammarVisitor for CodeGenerator {
             ParserDefinitionNode::ScannerDefinition(scanner) => {
                 self.top_level_scanner_names.insert(scanner.name());
                 self.token_kinds.insert(scanner.name());
-                self.scanner_contexts_map
+                self.scanner_contexts
                     .get_mut(&self.current_context_name)
                     .unwrap()
                     .scanner_definitions
@@ -333,7 +316,7 @@ impl GrammarVisitor for CodeGenerator {
                 };
 
                 let delimiters = &mut self
-                    .scanner_contexts_map
+                    .scanner_contexts
                     .get_mut(&self.current_context_name)
                     .unwrap()
                     .delimiters;

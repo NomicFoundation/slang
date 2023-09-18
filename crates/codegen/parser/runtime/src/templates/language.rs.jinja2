@@ -94,9 +94,9 @@ impl Language {
     pub fn scan(&self, lexical_context: LexicalContext, input: &str) -> Option<TokenKind> {
         let mut input = ParserContext::new(input);
         match lexical_context {
-            {%- for lexical_context in code.scanner_contexts -%}
-                LexicalContext::{{ lexical_context.name }} =>
-                    Lexer::next_token::<LexicalContextType::{{ lexical_context.name }}>(self, &mut input),
+            {%- for context_name, context in code.scanner_contexts -%}
+                LexicalContext::{{ context_name }} =>
+                    Lexer::next_token::<LexicalContextType::{{ context_name }}>(self, &mut input),
             {%- endfor -%}
         }
     }
@@ -121,8 +121,8 @@ impl Lexer for Language {
 
     fn delimiters<LexCtx: IsLexicalContext>() -> &'static [(TokenKind, TokenKind)] {
         match LexCtx::value() {
-            {%- for context in code.scanner_contexts %}
-                LexicalContext::{{ context.name }} => &[
+            {%- for context_name, context in code.scanner_contexts %}
+                LexicalContext::{{ context_name }} => &[
                     {%- for open, close in context.delimiters %}
                         (TokenKind::{{ open }}, TokenKind::{{ close }}),
                     {%- endfor %}
@@ -137,8 +137,8 @@ impl Lexer for Language {
         let mut longest_token = None;
 
         match LexCtx::value() {
-            {%- for context in code.scanner_contexts %}
-                LexicalContext::{{ context.name }} => {
+            {%- for context_name, context in code.scanner_contexts %}
+                LexicalContext::{{ context_name }} => {
                     macro_rules! longest_match {
                         ($( { $kind:ident = $function:ident } )*) => {
                             $(
