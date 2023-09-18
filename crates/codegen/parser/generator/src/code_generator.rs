@@ -185,19 +185,18 @@ impl GrammarVisitor for CodeGenerator {
         for context in self.scanner_contexts.values_mut() {
             let mut alpha_literal_trie = Trie::new();
             let mut non_alpha_literal_trie = Trie::new();
-            let mut have_identifier_scanner = false;
+
+            // Dr Hackity McHackerson
+            // Identifier at the end so it doesn't grab other things.
+            // Not a problem when we switch to a DFA.
+            let have_identifier_scanner = context.scanner_definitions.remove("Identifier");
+
             for scanner_name in &context.scanner_definitions {
                 let scanner = &self.all_scanners[*scanner_name];
+
                 let literals = scanner.literals();
                 if literals.is_empty() {
-                    // Dr Hackity McHackerson
-                    // Identifier at the end so it doesn't grab other things.
-                    // Not a problem when we switch to a DFA.
-                    if scanner_name == &"Identifier" {
-                        have_identifier_scanner = true;
-                    } else {
-                        context.compound_scanner_names.push(scanner_name);
-                    }
+                    context.compound_scanner_names.push(scanner_name);
                 } else {
                     for literal in literals {
                         // This is good enough until we switch to a DFA
@@ -212,6 +211,7 @@ impl GrammarVisitor for CodeGenerator {
             context.alpha_literal_scanner = alpha_literal_trie.to_scanner_code().to_string();
             context.non_alpha_literal_scanner =
                 non_alpha_literal_trie.to_scanner_code().to_string();
+
             if have_identifier_scanner {
                 context.compound_scanner_names.push("Identifier");
             }
