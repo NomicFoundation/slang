@@ -13,6 +13,13 @@ use solidity_language::GrammarConstructor;
 // 3) We want to avoid having dependencies from the source crate to codegen crates.
 //
 fn main() -> Result<()> {
+    // The parser generator itself affects the build, so make sure we rerun the build script if it changes:
+    {
+        let codegen_dir = CargoWorkspace::locate_source_crate("codegen_parser_generator")?;
+
+        rerun_if_changed!(codegen_dir.unwrap_str());
+    }
+
     // Generate files in the source crate:
 
     {
