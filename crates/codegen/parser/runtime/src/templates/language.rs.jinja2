@@ -96,18 +96,18 @@ impl Language {
      *         Parser Functions
      ********************************************/
 
-    {% for function in code.parser_functions %}
+    {% for parser_name, parser_code in code.parser_functions %}
         #[allow(unused_assignments, unused_parens)]
-        fn {{ function.0 | snake_case }}(&self, input: &mut ParserContext) -> ParserResult { {{ function.1 }} }
+        fn {{ parser_name | snake_case }}(&self, input: &mut ParserContext) -> ParserResult { {{ parser_code }} }
     {% endfor %}
 
     /********************************************
      *         Scanner Functions
      ********************************************/
 
-    {% for function in code.scanner_functions %}
+    {% for scanner_name, scanner_code in code.scanner_functions %}
         #[allow(unused_assignments, unused_parens)]
-        fn {{ function.0 | snake_case }}(&self, input: &mut ParserContext) -> bool { {{ function.1 }} }
+        fn {{ scanner_name | snake_case }}(&self, input: &mut ParserContext) -> bool { {{ scanner_code }} }
     {% endfor %}
 
     pub fn scan(&self, lexical_context: LexicalContext, input: &str) -> Option<TokenKind> {
@@ -122,8 +122,8 @@ impl Language {
 
     pub fn parse(&self, production_kind: ProductionKind, input: &str) -> ParseOutput {
         match production_kind {
-            {%- for function in code.parser_functions -%}
-                ProductionKind::{{ function.0 }} => Self::{{ function.0 | snake_case }}.parse(self, input),
+            {%- for parser_name, _code in code.parser_functions -%}
+                ProductionKind::{{ parser_name }} => Self::{{ parser_name | snake_case }}.parse(self, input),
             {%- endfor -%}
         }
     }
