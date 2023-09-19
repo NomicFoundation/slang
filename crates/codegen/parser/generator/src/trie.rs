@@ -7,20 +7,29 @@ use quote::{format_ident, quote};
 use super::parser_definition::VersionQualityRangeVecExtensions;
 
 /// Returns concatenated version ranges for applicable scanners (excluding contextual keywords).
-// TODO: If the scanner def consists *solely* of contextual keywords, then we shouldn't
-// return a truthy/pass-through branch but rather return falsey/None below.
-fn version_ranges(scanner_def: &ScannerDefinitionNode) -> Vec<VersionQualityRange> {
+/// If the scanner consists only of contextual keywords, then `None` is returned.
+fn version_ranges(scanner_def: &ScannerDefinitionNode) -> Option<Vec<VersionQualityRange>> {
     match scanner_def {
-        ScannerDefinitionNode::Choice(nodes, _) => {
-            nodes.iter().flat_map(version_ranges).collect::<Vec<_>>()
-        }
         ScannerDefinitionNode::Versioned(node, version_quality_ranges, _) => match node.as_ref() {
             // Ignore versioned contextual keywords, as these are synthesized by the parser,
             // rather than scanned independently.
-            ScannerDefinitionNode::ContextualKeyword(..) => vec![],
-            _ => version_quality_ranges.clone(),
+            ScannerDefinitionNode::ContextualKeyword(..) => None,
+            _ => Some(version_quality_ranges.clone()),
         },
-        _ => vec![],
+        ScannerDefinitionNode::ContextualKeyword(..) => None,
+        ScannerDefinitionNode::Choice(nodes, _) => {
+            nodes
+                .iter()
+                .filter_map(version_ranges)
+                .fold(None, |acc, item| match acc {
+                    None => Some(item),
+                    Some(mut acc) => {
+                        acc.extend(item);
+                        Some(acc)
+                    }
+                })
+        }
+        _ => Some(vec![]),
     }
 }
 
@@ -87,10 +96,15 @@ impl Trie {
             if branches.is_empty() && !path.is_empty() {
                 // This is an optimisation for a common case
                 let leaf = quote! { scan_chars!(input, #(#path),*).then_some(TokenKind::#kind) };
-                return versioned.wrap_code(leaf, Some(quote! { None }));
+
+                return versioned
+                    .map(|range| range.wrap_code(leaf, Some(quote! { None })))
+                    .unwrap_or_else(|| quote! { None });
             }
 
-            versioned.wrap_code(quote! {Some (TokenKind::#kind)}, Some(quote! { None }))
+            versioned
+                .map(|range| range.wrap_code(quote! {Some (TokenKind::#kind)}, Some(quote! {None})))
+                .unwrap_or_else(|| quote! { None })
         } else {
             quote! { None }
         };

@@ -169,6 +169,18 @@ impl ScannerDefinitionNodeExtensions for ScannerDefinitionNode {
                     _ => None,
                 }
             }
+            ScannerDefinitionNode::ContextualKeyword(literal, ident_scanner, _) => {
+                let ident_scanner = match ident_scanner.as_ref() {
+                    ScannerDefinitionNode::ScannerDefinition(def, ..) => def.name(),
+                    _ => unreachable!("Contextual keywords must be defined using an underlying scanner definition"),
+                };
+
+                Some(ContextualKeywordScanner {
+                    ident_scanner,
+                    literal,
+                    version_quality_ranges: vec![],
+                })
+            }
             ScannerDefinitionNode::Choice(nodes, _) => nodes
                 .iter()
                 .filter_map(Self::as_contextual_keyword)
