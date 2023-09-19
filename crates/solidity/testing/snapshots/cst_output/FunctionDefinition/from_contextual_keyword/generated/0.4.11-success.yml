@@ -3,15 +3,7 @@
 Source: >
   1  │ function transferFrom(address from, address to, uint256 amount) external returns (bool); │ 0..88
 
-Errors: # 1 total
-  - >
-    Error: Expected CloseParen or Comma.
-       ╭─[crates/solidity/testing/snapshots/cst_output/FunctionDefinition/from_contextual_keyword/input.sol:1:31]
-       │
-     1 │ function transferFrom(address from, address to, uint256 amount) external returns (bool);
-       │                               ────────────────┬───────────────  
-       │                                               ╰───────────────── Error occurred here.
-    ───╯
+Errors: []
 
 Tree:
   - FunctionDefinition (Rule): # 0..89 "function transferFrom(address from, address to, ui..."
@@ -19,12 +11,23 @@ Tree:
       - Identifier (Token): "transferFrom" # 9..21
       - ParametersDeclaration (Rule): # 21..63 "(address from, address to, uint256 amount)"
           - OpenParen (Token): "(" # 21..22
-          - ParametersList (Rule): # 22..29 "address"
-              - Parameter (Rule): # 22..29 "address"
+          - ParametersList (Rule): # 22..62 "address from, address to, uint256 amount"
+              - Parameter (Rule): # 22..34 "address from"
                   - TypeName (Rule): # 22..29 "address"
                       - AddressType (Rule): # 22..29 "address"
                           - AddressKeyword (Token): "address" # 22..29
-          - SKIPPED (Token): "from, address to, uint256 amount" # 30..62
+                  - Identifier (Token): "from" # 30..34
+              - Comma (Token): "," # 34..35
+              - Parameter (Rule): # 35..46 " address to"
+                  - TypeName (Rule): # 35..43 " address"
+                      - AddressType (Rule): # 35..43 " address"
+                          - AddressKeyword (Token): "address" # 36..43
+                  - Identifier (Token): "to" # 44..46
+              - Comma (Token): "," # 46..47
+              - Parameter (Rule): # 47..62 " uint256 amount"
+                  - TypeName (Rule): # 47..55 " uint256"
+                      - UnsignedIntegerType (Token): "uint256" # 48..55
+                  - Identifier (Token): "amount" # 56..62
           - CloseParen (Token): ")" # 62..63
       - FunctionAttributesList (Rule): # 63..72 " external"
           - ExternalKeyword (Token): "external" # 64..72

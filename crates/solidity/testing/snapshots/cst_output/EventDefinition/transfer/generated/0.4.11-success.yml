@@ -1,0 +1,33 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ event Transfer(address indexed from, address indexed to, uint256 value);         │ 0..72
+
+Errors: []
+
+Tree:
+  - EventDefinition (Rule): # 0..73 "event Transfer(address indexed from, address index..."
+      - EventKeyword (Token): "event" # 0..5
+      - Identifier (Token): "Transfer" # 6..14
+      - OpenParen (Token): "(" # 14..15
+      - EventParametersList (Rule): # 15..70 "address indexed from, address indexed to, uint256 ..."
+          - EventParameter (Rule): # 15..35 "address indexed from"
+              - TypeName (Rule): # 15..22 "address"
+                  - AddressType (Rule): # 15..22 "address"
+                      - AddressKeyword (Token): "address" # 15..22
+              - IndexedKeyword (Token): "indexed" # 23..30
+              - Identifier (Token): "from" # 31..35
+          - Comma (Token): "," # 35..36
+          - EventParameter (Rule): # 36..55 " address indexed to"
+              - TypeName (Rule): # 36..44 " address"
+                  - AddressType (Rule): # 36..44 " address"
+                      - AddressKeyword (Token): "address" # 37..44
+              - IndexedKeyword (Token): "indexed" # 45..52
+              - Identifier (Token): "to" # 53..55
+          - Comma (Token): "," # 55..56
+          - EventParameter (Rule): # 56..70 " uint256 value"
+              - TypeName (Rule): # 56..64 " uint256"
+                  - UnsignedIntegerType (Token): "uint256" # 57..64
+              - Identifier (Token): "value" # 65..70
+      - CloseParen (Token): ")" # 70..71
+      - Semicolon (Token): ";" # 71..72

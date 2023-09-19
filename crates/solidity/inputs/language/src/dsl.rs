@@ -64,7 +64,6 @@ slang_grammar! {
             | FinalKeyword
             | FinneyKeyword
             | ForKeyword
-            | FromKeyword
             | FunctionKeyword
             | GlobalKeyword
             | HexKeyword
@@ -885,7 +884,6 @@ slang_grammar! {
     scanner FinalKeyword = "final" ;
     scanner FinneyKeyword = "finney" ;
     scanner ForKeyword = "for" ;
-    scanner FromKeyword = "from" ;
     scanner FunctionKeyword = "function" ;
     scanner GlobalKeyword = "global" ;
     scanner HexKeyword = "hex" ;
@@ -938,6 +936,11 @@ slang_grammar! {
     scanner WeiKeyword = "wei" ;
     scanner WhileKeyword = "while" ;
     scanner YearsKeyword = "years" ;
+
+    scanner FromKeyword = {
+        /* introduced in "0.2.1" but we support >0.4.11 */
+        contextual "from" using Identifier
+    } ;
 
     // introduced in 0.4.21
     scanner EmitKeyword = (

@@ -5057,6 +5057,8 @@ impl Lexer for Language {
                 }
             }
 
+            (TokenKind::Identifier, "from") => Some(TokenKind::FromKeyword),
+
             _ => None,
         }
     }
@@ -5315,53 +5317,53 @@ impl Lexer for Language {
                         }
                         None => None,
                     },
-                    Some('f') => match input.next() {
-                        Some('a') => {
-                            if scan_chars!(input, 'l') {
-                                match input.next() {
-                                    Some('l') => scan_chars!(input, 'b', 'a', 'c', 'k')
-                                        .then_some(TokenKind::FallbackKeyword),
-                                    Some('s') => {
-                                        scan_chars!(input, 'e').then_some(TokenKind::FalseKeyword)
+                    Some('f') => {
+                        match input.next() {
+                            Some('a') => {
+                                if scan_chars!(input, 'l') {
+                                    match input.next() {
+                                        Some('l') => scan_chars!(input, 'b', 'a', 'c', 'k')
+                                            .then_some(TokenKind::FallbackKeyword),
+                                        Some('s') => scan_chars!(input, 'e')
+                                            .then_some(TokenKind::FalseKeyword),
+                                        Some(_) => {
+                                            input.undo();
+                                            None
+                                        }
+                                        None => None,
                                     }
-                                    Some(_) => {
-                                        input.undo();
-                                        None
-                                    }
-                                    None => None,
+                                } else {
+                                    None
                                 }
-                            } else {
+                            }
+                            Some('i') => {
+                                if scan_chars!(input, 'n') {
+                                    match input.next() {
+                                        Some('a') => scan_chars!(input, 'l')
+                                            .then_some(TokenKind::FinalKeyword),
+                                        Some('n') => scan_chars!(input, 'e', 'y')
+                                            .then_some(TokenKind::FinneyKeyword),
+                                        Some(_) => {
+                                            input.undo();
+                                            None
+                                        }
+                                        None => None,
+                                    }
+                                } else {
+                                    None
+                                }
+                            }
+                            Some('o') => scan_chars!(input, 'r').then_some(TokenKind::ForKeyword),
+                            Some('r') => None,
+                            Some('u') => scan_chars!(input, 'n', 'c', 't', 'i', 'o', 'n')
+                                .then_some(TokenKind::FunctionKeyword),
+                            Some(_) => {
+                                input.undo();
                                 None
                             }
+                            None => None,
                         }
-                        Some('i') => {
-                            if scan_chars!(input, 'n') {
-                                match input.next() {
-                                    Some('a') => {
-                                        scan_chars!(input, 'l').then_some(TokenKind::FinalKeyword)
-                                    }
-                                    Some('n') => scan_chars!(input, 'e', 'y')
-                                        .then_some(TokenKind::FinneyKeyword),
-                                    Some(_) => {
-                                        input.undo();
-                                        None
-                                    }
-                                    None => None,
-                                }
-                            } else {
-                                None
-                            }
-                        }
-                        Some('o') => scan_chars!(input, 'r').then_some(TokenKind::ForKeyword),
-                        Some('r') => scan_chars!(input, 'o', 'm').then_some(TokenKind::FromKeyword),
-                        Some('u') => scan_chars!(input, 'n', 'c', 't', 'i', 'o', 'n')
-                            .then_some(TokenKind::FunctionKeyword),
-                        Some(_) => {
-                            input.undo();
-                            None
-                        }
-                        None => None,
-                    },
+                    }
                     Some('g') => match input.next() {
                         Some('l') => scan_chars!(input, 'o', 'b', 'a', 'l')
                             .then_some(TokenKind::GlobalKeyword),
