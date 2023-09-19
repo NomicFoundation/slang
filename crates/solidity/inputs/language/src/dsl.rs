@@ -66,7 +66,6 @@ slang_grammar! {
             | ForKeyword
             | FromKeyword
             | FunctionKeyword
-            | GlobalKeyword
             | HexKeyword
             | HoursKeyword
             | IfKeyword
@@ -160,6 +159,9 @@ slang_grammar! {
             // Introduced in 0.8.4
             | ErrorKeyword
             | RevertKeyword
+
+            // Introduced in 0.8.13
+            | GlobalKeyword
         ) ;
 
         parser ABICoderPragma = (ABICoderKeyword Identifier) ;
@@ -540,7 +542,7 @@ slang_grammar! {
 
         parser UserDefinedValueTypeDefinition = { introduced in "0.8.8" ((TypeKeyword Identifier IsKeyword ElementaryType) terminated by Semicolon) } ;
 
-        parser UsingDirective = ((UsingKeyword (UsingDirectivePath | UsingDirectiveDeconstruction) ForKeyword (Asterisk | TypeName) (GlobalKeyword ?)) terminated by Semicolon) ;
+        parser UsingDirective = ((UsingKeyword (UsingDirectivePath | UsingDirectiveDeconstruction) ForKeyword (Asterisk | TypeName) ({ introduced in "0.8.13" GlobalKeyword } ?)) terminated by Semicolon) ;
 
         parser UsingDirectiveDeconstruction = (UsingDirectiveSymbolsList delimited by OpenBrace and CloseBrace) ;
 
@@ -888,7 +890,6 @@ slang_grammar! {
     scanner ForKeyword = "for" ;
     scanner FromKeyword = "from" ;
     scanner FunctionKeyword = "function" ;
-    scanner GlobalKeyword = "global" ;
     scanner HexKeyword = "hex" ;
     scanner HoursKeyword = "hours" ;
     scanner IfKeyword = "if" ;
@@ -982,4 +983,6 @@ slang_grammar! {
     scanner ErrorKeyword =  { introduced in "0.8.4" "error" } ;
     scanner RevertKeyword = { introduced in "0.8.4" "revert" } ;
 
+    // Introduced in 0.8.13
+    scanner GlobalKeyword = { introduced in "0.8.13" "global" } ;
 }
