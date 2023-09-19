@@ -36,8 +36,8 @@ pub struct CodeGenerator {
     scanner_contexts: BTreeMap<&'static str, ScannerContext>,
     /// Contextual keywords are not scanned directly but they also have
     /// a dedicated token kind and are synthesized by the parser.
-    // (identifier scanner name -> (literal value, version range qualifier code)
-    contextual_keywords: BTreeMap<&'static str, (&'static str, String)>,
+    // ("<identifier_scanner_name>;<literal_value>" -> version range qualifier code)
+    contextual_keywords: BTreeMap<String, String>,
 
     parser_functions: BTreeMap<&'static str, String>, // (name of parser, code)
 
@@ -285,9 +285,11 @@ impl GrammarVisitor for CodeGenerator {
                         .wrap_code(quote! { Some(TokenKind::#keyword) }, Some(quote! { None }))
                         .to_string();
 
+                    // The real key is the (scanner_name, literal) tuple but we can't serialize that,
+                    // see https://github.com/Keats/tera/issues/522
                     self.contextual_keywords.insert(
-                        contextual_keyword.ident_scanner,
-                        (contextual_keyword.literal, code),
+                        [contextual_keyword.ident_scanner, contextual_keyword.literal].join(";"),
+                        code,
                     );
                 }
             }
