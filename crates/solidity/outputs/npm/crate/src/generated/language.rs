@@ -2886,8 +2886,6 @@ impl Language {
                 choice.consider(input, result)?;
                 let result = self.return_statement(input);
                 choice.consider(input, result)?;
-                let result = self.revert_statement(input);
-                choice.consider(input, result)?;
                 if self.version_is_at_least_0_4_21 {
                     let result = self.emit_statement(input);
                     choice.consider(input, result)?;
@@ -2898,6 +2896,10 @@ impl Language {
                 }
                 if self.version_is_at_least_0_6_0 {
                     let result = self.try_statement(input);
+                    choice.consider(input, result)?;
+                }
+                if self.version_is_at_least_0_8_4 {
+                    let result = self.revert_statement(input);
                     choice.consider(input, result)?;
                 }
                 choice.finish(input)
@@ -3492,7 +3494,11 @@ impl Language {
                         choice.finish(input)
                     }))?;
                     seq.elem(OptionalHelper::transform(
-                        self.default_parse_token_with_trivia(input, TokenKind::GlobalKeyword),
+                        if self.version_is_at_least_0_8_13 {
+                            self.default_parse_token_with_trivia(input, TokenKind::GlobalKeyword)
+                        } else {
+                            ParserResult::disabled()
+                        },
                     ))?;
                     seq.finish()
                 })
