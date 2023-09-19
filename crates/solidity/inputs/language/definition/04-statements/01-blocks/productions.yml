@@ -50,7 +50,6 @@
         - reference: "BreakStatement"
         - reference: "DeleteStatement"
         - reference: "ReturnStatement"
-        - reference: "RevertStatement"
         - reference: "ThrowStatement"
     0.4.21:
       choice:
@@ -63,7 +62,6 @@
         - reference: "BreakStatement"
         - reference: "DeleteStatement"
         - reference: "ReturnStatement"
-        - reference: "RevertStatement"
         - reference: "ThrowStatement"
         - reference: "EmitStatement"
     0.5.0:
@@ -77,11 +75,23 @@
         - reference: "BreakStatement"
         - reference: "DeleteStatement"
         - reference: "ReturnStatement"
-        - reference: "RevertStatement"
         - reference: "EmitStatement"
     0.6.0:
       choice:
         # added: "TryStatement"
+        - reference: "IfStatement"
+        - reference: "ForStatement"
+        - reference: "WhileStatement"
+        - reference: "DoWhileStatement"
+        - reference: "ContinueStatement"
+        - reference: "BreakStatement"
+        - reference: "DeleteStatement"
+        - reference: "ReturnStatement"
+        - reference: "EmitStatement"
+        - reference: "TryStatement"
+    0.8.4:
+      choice:
+        # added: "RevertStatement"
         - reference: "IfStatement"
         - reference: "ForStatement"
         - reference: "WhileStatement"

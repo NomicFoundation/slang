@@ -562,12 +562,13 @@
 
 - name: "RevertKeyword"
   kind: "Scanner"
-  unversioned:
-    trailingContext:
-      scanner:
-        terminal: "revert"
-      notFollowedBy:
-        reference: "IdentifierPart"
+  versioned:
+    0.8.4:
+      trailingContext:
+        scanner:
+          terminal: "revert"
+        notFollowedBy:
+          reference: "IdentifierPart"
 
 - name: "SecondsKeyword"
   kind: "Scanner"

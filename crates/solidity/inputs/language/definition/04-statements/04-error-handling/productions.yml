@@ -40,16 +40,17 @@
 
 - name: "RevertStatement"
   kind: "Parser"
-  unversioned:
-    terminatedBy:
-      parser:
-        sequence:
-          - reference: "RevertKeyword"
-          - optional:
-              reference: "IdentifierPath"
-          - reference: "ArgumentsDeclaration"
-      terminator:
-        reference: "Semicolon"
+  versioned:
+    0.8.4:
+      terminatedBy:
+        parser:
+          sequence:
+            - reference: "RevertKeyword"
+            - optional:
+                reference: "IdentifierPath"
+            - reference: "ArgumentsDeclaration"
+        terminator:
+          reference: "Semicolon"
 
 - name: "ThrowStatement"
   kind: "Parser"

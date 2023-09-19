@@ -105,7 +105,6 @@
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/07-keywords/receive-keyword/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/07-keywords/return-keyword/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/07-keywords/returns-keyword/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/07-keywords/revert-keyword/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/07-keywords/seconds-keyword/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/07-keywords/solidity-keyword/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/07-keywords/storage-keyword/unversioned.md"
@@ -298,10 +297,6 @@
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/04-statements/03-control-statements/return-statement/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/04-statements/03-control-statements/emit-statement/0.4.21.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/04-statements/03-control-statements/delete-statement/unversioned.md"
-
-### 4.4. Error Handling
-
---8<-- "crates/solidity/outputs/spec/generated/ebnf/04-statements/04-error-handling/revert-statement/unversioned.md"
 
 ## 5. Expressions
 
