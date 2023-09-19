@@ -9,6 +9,11 @@ fn abstract_contract() -> Result<()> {
 }
 
 #[test]
+fn contextual_keywords() -> Result<()> {
+    return run("ContractDefinition", "contextual_keywords");
+}
+
+#[test]
 fn emit_contextual_keyword() -> Result<()> {
     return run("ContractDefinition", "emit_contextual_keyword");
 }

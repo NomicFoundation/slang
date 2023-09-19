@@ -1,0 +1,95 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract Contract {                                                              │ 0..19
+  2  │     error MyError();                                                             │ 20..40
+  3  │                                                                                  │ 41..41
+  4  │     function deposit() public payable {                                          │ 42..81
+  5  │         uint256 error;                                                           │ 82..104
+  6  │         uint256 from;                                                            │ 105..126
+  7  │         uint256 revert;                                                          │ 127..150
+  8  │         uint256 global;                                                          │ 151..174
+  9  │                                                                                  │ 175..175
+  10 │         revert MyError();                                                        │ 176..201
+  11 │     }                                                                            │ 202..207
+  12 │ }                                                                                │ 208..209
+
+Errors: # 2 total
+  - >
+    Error: Expected Ampersand or AmpersandAmpersand or AmpersandEqual or Asterisk or AsteriskAsterisk or AsteriskEqual or BangEqual or Bar or BarBar or BarEqual or Caret or CaretEqual or Equal or EqualEqual or GreaterThan or GreaterThanEqual or GreaterThanGreaterThan or GreaterThanGreaterThanEqual or GreaterThanGreaterThanGreaterThan or GreaterThanGreaterThanGreaterThanEqual or LessThan or LessThanEqual or LessThanLessThan or LessThanLessThanEqual or Minus or MinusEqual or Percent or PercentEqual or Plus or PlusEqual or Semicolon or Slash or SlashEqual.
+       ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/contextual_keywords/input.sol:7:17]
+       │
+     7 │         uint256 revert;
+       │                 ───┬──  
+       │                    ╰──── Error occurred here.
+    ───╯
+  - >
+    Error: Expected Ampersand or AmpersandAmpersand or AmpersandEqual or Asterisk or AsteriskAsterisk or AsteriskEqual or BangEqual or Bar or BarBar or BarEqual or Caret or CaretEqual or Equal or EqualEqual or GreaterThan or GreaterThanEqual or GreaterThanGreaterThan or GreaterThanGreaterThanEqual or GreaterThanGreaterThanGreaterThan or GreaterThanGreaterThanGreaterThanEqual or LessThan or LessThanEqual or LessThanLessThan or LessThanLessThanEqual or Minus or MinusEqual or Percent or PercentEqual or Plus or PlusEqual or Semicolon or Slash or SlashEqual.
+       ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/contextual_keywords/input.sol:8:17]
+       │
+     8 │         uint256 global;
+       │                 ───┬──  
+       │                    ╰──── Error occurred here.
+    ───╯
+
+Tree:
+  - ContractDefinition (Rule): # 0..210 "contract Contract {\n    error MyError();\n\n    func..."
+      - ContractKeyword (Token): "contract" # 0..8
+      - Identifier (Token): "Contract" # 9..17
+      - OpenBrace (Token): "{" # 18..19
+      - ContractMembersList (Rule): # 20..208 "    error MyError();\n\n    function deposit() publi..."
+          - ErrorDefinition (Rule): # 20..41 "    error MyError();\n"
+              - ErrorKeyword (Token): "error" # 24..29
+              - Identifier (Token): "MyError" # 30..37
+              - OpenParen (Token): "(" # 37..38
+              - CloseParen (Token): ")" # 38..39
+              - Semicolon (Token): ";" # 39..40
+          - FunctionDefinition (Rule): # 41..208 "\n    function deposit() public payable {\n        u..."
+              - FunctionKeyword (Token): "function" # 46..54
+              - Identifier (Token): "deposit" # 55..62
+              - ParametersDeclaration (Rule): # 62..64 "()"
+                  - OpenParen (Token): "(" # 62..63
+                  - CloseParen (Token): ")" # 63..64
+              - FunctionAttributesList (Rule): # 64..79 " public payable"
+                  - PublicKeyword (Token): "public" # 65..71
+                  - PayableKeyword (Token): "payable" # 72..79
+              - Block (Rule): # 79..208 " {\n        uint256 error;\n        uint256 from;\n  ..."
+                  - OpenBrace (Token): "{" # 80..81
+                  - StatementsList (Rule): # 82..202 "        uint256 error;\n        uint256 from;\n     ..."
+                      - Statement (Rule): # 82..105 "        uint256 error;\n"
+                          - VariableDeclarationStatement (Rule): # 82..105 "        uint256 error;\n"
+                              - VariableDeclaration (Rule): # 82..103 "        uint256 error"
+                                  - TypeName (Rule): # 82..97 "        uint256"
+                                      - UnsignedIntegerType (Token): "uint256" # 90..97
+                                  - Identifier (Token): "error" # 98..103
+                              - Semicolon (Token): ";" # 103..104
+                      - Statement (Rule): # 105..127 "        uint256 from;\n"
+                          - VariableDeclarationStatement (Rule): # 105..127 "        uint256 from;\n"
+                              - VariableDeclaration (Rule): # 105..125 "        uint256 from"
+                                  - TypeName (Rule): # 105..120 "        uint256"
+                                      - UnsignedIntegerType (Token): "uint256" # 113..120
+                                  - Identifier (Token): "from" # 121..125
+                              - Semicolon (Token): ";" # 125..126
+                      - Statement (Rule): # 127..151 "        uint256 revert;\n"
+                          - ExpressionStatement (Rule): # 127..151 "        uint256 revert;\n"
+                              - Expression (Rule): # 127..142 "        uint256"
+                                  - UnsignedIntegerType (Token): "uint256" # 135..142
+                              - SKIPPED (Token): "revert" # 143..149
+                              - Semicolon (Token): ";" # 149..150
+                      - Statement (Rule): # 151..175 "        uint256 global;\n"
+                          - ExpressionStatement (Rule): # 151..175 "        uint256 global;\n"
+                              - Expression (Rule): # 151..166 "        uint256"
+                                  - UnsignedIntegerType (Token): "uint256" # 159..166
+                              - SKIPPED (Token): "global" # 167..173
+                              - Semicolon (Token): ";" # 173..174
+                      - Statement (Rule): # 175..202 "\n        revert MyError();\n"
+                          - RevertStatement (Rule): # 175..202 "\n        revert MyError();\n"
+                              - RevertKeyword (Token): "revert" # 184..190
+                              - IdentifierPath (Rule): # 190..198 " MyError"
+                                  - Identifier (Token): "MyError" # 191..198
+                              - ArgumentsDeclaration (Rule): # 198..200 "()"
+                                  - OpenParen (Token): "(" # 198..199
+                                  - CloseParen (Token): ")" # 199..200
+                              - Semicolon (Token): ";" # 200..201
+                  - CloseBrace (Token): "}" # 206..207
+      - CloseBrace (Token): "}" # 208..209
