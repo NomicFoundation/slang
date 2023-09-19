@@ -5,7 +5,7 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Expected GlobalKeyword or Semicolon.
+    Error: Expected Semicolon.
        ╭─[crates/solidity/testing/snapshots/cst_output/UsingDirective/destructure_single/input.sol:1:21]
        │
      1 │ using {add} for Int global;

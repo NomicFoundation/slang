@@ -534,7 +534,9 @@ slang_grammar! {
 
         parser UserDefinedValueTypeDefinition = { introduced in "0.8.8" ((TypeKeyword Identifier IsKeyword ElementaryType) terminated by Semicolon) } ;
 
-        parser UsingDirective = ((UsingKeyword (UsingDirectivePath | UsingDirectiveDeconstruction) ForKeyword (Asterisk | TypeName) (GlobalKeyword ?)) terminated by Semicolon) ;
+        parser UsingDirective = ((UsingKeyword (UsingDirectivePath | UsingDirectiveDeconstruction) ForKeyword (Asterisk | TypeName) (UsingDirectiveGlobalBinding ?)) terminated by Semicolon) ;
+
+        inline parser UsingDirectiveGlobalBinding = { introduced in "0.8.13" GlobalKeyword } ;
 
         parser UsingDirectiveDeconstruction = (UsingDirectiveSymbolsList delimited by OpenBrace and CloseBrace) ;
 

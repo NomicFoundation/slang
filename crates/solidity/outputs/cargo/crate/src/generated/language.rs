@@ -3494,7 +3494,11 @@ impl Language {
                         choice.finish(input)
                     }))?;
                     seq.elem(OptionalHelper::transform(
-                        self.default_parse_token_with_trivia(input, TokenKind::GlobalKeyword),
+                        if self.version_is_at_least_0_8_13 {
+                            self.default_parse_token_with_trivia(input, TokenKind::GlobalKeyword)
+                        } else {
+                            ParserResult::disabled()
+                        },
                     ))?;
                     seq.finish()
                 })

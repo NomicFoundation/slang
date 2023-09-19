@@ -13,7 +13,7 @@ Errors: # 2 total
        │                        ╰───────────── Error occurred here.
     ───╯
   - >
-    Error: Expected GlobalKeyword or Semicolon.
+    Error: Expected Semicolon.
        ╭─[crates/solidity/testing/snapshots/cst_output/UsingDirective/destructure_multiple/input.sol:1:46]
        │
      1 │ using {add as +, sub, mul, div as /} for Int global;
