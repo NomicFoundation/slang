@@ -229,10 +229,11 @@ slang_grammar! {
         parser ContractMembersList = (ContractMember +) ;
 
         inline parser ControlStatement = (
-            IfStatement | ForStatement | WhileStatement | DoWhileStatement | ContinueStatement | BreakStatement | DeleteStatement | ReturnStatement | RevertStatement |
-            { introduced in "0.4.21" EmitStatement} |
+            IfStatement | ForStatement | WhileStatement | DoWhileStatement | ContinueStatement | BreakStatement | DeleteStatement | ReturnStatement |
+            { introduced in "0.4.21" EmitStatement } |
             { removed in "0.5.0"     ThrowStatement } |
-            { introduced in "0.6.0"  TryStatement}
+            { introduced in "0.6.0"  TryStatement } |
+            { introduced in "0.8.4"  RevertStatement }
         ) ;
 
         inline parser DataLocation = (
