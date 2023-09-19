@@ -940,7 +940,6 @@ slang_grammar! {
     scanner YearsKeyword = "years" ;
 
     // introduced in 0.4.21
-    // WRONG, it is both a keyword AND identifier for some versions.
     scanner EmitKeyword = (
         { introduced in "0.4.21" and removed in "0.5.0" contextual "emit" using Identifier } |
         { introduced in "0.5.0" "emit" }
