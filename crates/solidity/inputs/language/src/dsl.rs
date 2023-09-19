@@ -65,7 +65,6 @@ slang_grammar! {
             | FinneyKeyword
             | ForKeyword
             | FunctionKeyword
-            | GlobalKeyword
             | HexKeyword
             | HoursKeyword
             | IfKeyword
@@ -96,7 +95,6 @@ slang_grammar! {
             | RelocatableKeyword
             | ReturnKeyword
             | ReturnsKeyword
-            | RevertKeyword
             | SecondsKeyword
             | SolidityKeyword
             | StaticKeyword
@@ -156,9 +154,6 @@ slang_grammar! {
 
             // Introduced in 0.8.0
             | UncheckedKeyword
-
-            // Introduced in 0.8.4
-            | ErrorKeyword
         ) ;
 
         parser ABICoderPragma = (ABICoderKeyword Identifier) ;
@@ -885,7 +880,6 @@ slang_grammar! {
     scanner FinneyKeyword = "finney" ;
     scanner ForKeyword = "for" ;
     scanner FunctionKeyword = "function" ;
-    scanner GlobalKeyword = "global" ;
     scanner HexKeyword = "hex" ;
     scanner HoursKeyword = "hours" ;
     scanner IfKeyword = "if" ;
@@ -916,7 +910,6 @@ slang_grammar! {
     scanner RelocatableKeyword = "relocatable" ;
     scanner ReturnKeyword = "return" ;
     scanner ReturnsKeyword = "returns" ;
-    scanner RevertKeyword = "revert" ;
     scanner SecondsKeyword = "seconds" ;
     scanner SolidityKeyword = "solidity" ;
     scanner StaticKeyword = "static" ;
@@ -984,6 +977,9 @@ slang_grammar! {
     scanner UncheckedKeyword = { introduced in "0.8.0" "unchecked" } ;
 
     // Introduced in 0.8.4
-    scanner ErrorKeyword = { introduced in "0.8.4" "error" } ;
+    scanner ErrorKeyword = { introduced in "0.8.4" contextual "error" using Identifier } ;
+    scanner RevertKeyword = { introduced in "0.8.4" contextual "revert" using Identifier } ;
 
+    // Introduced in 0.8.13
+    scanner GlobalKeyword = { introduced in "0.8.13" contextual "global" using Identifier } ;
 }

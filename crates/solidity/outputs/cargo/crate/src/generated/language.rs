@@ -5057,7 +5057,31 @@ impl Lexer for Language {
                 }
             }
 
+            (TokenKind::Identifier, "error") => {
+                if self.version_is_at_least_0_8_4 {
+                    Some(TokenKind::ErrorKeyword)
+                } else {
+                    None
+                }
+            }
+
             (TokenKind::Identifier, "from") => Some(TokenKind::FromKeyword),
+
+            (TokenKind::Identifier, "global") => {
+                if self.version_is_at_least_0_8_13 {
+                    Some(TokenKind::GlobalKeyword)
+                } else {
+                    None
+                }
+            }
+
+            (TokenKind::Identifier, "revert") => {
+                if self.version_is_at_least_0_8_4 {
+                    Some(TokenKind::RevertKeyword)
+                } else {
+                    None
+                }
+            }
 
             _ => None,
         }
@@ -5285,13 +5309,7 @@ impl Lexer for Language {
                             }
                         }
                         Some('n') => scan_chars!(input, 'u', 'm').then_some(TokenKind::EnumKeyword),
-                        Some('r') => {
-                            if self.version_is_at_least_0_8_4 {
-                                scan_chars!(input, 'r', 'o', 'r').then_some(TokenKind::ErrorKeyword)
-                            } else {
-                                None
-                            }
-                        }
+                        Some('r') => None,
                         Some('t') => {
                             scan_chars!(input, 'h', 'e', 'r').then_some(TokenKind::EtherKeyword)
                         }
@@ -5365,8 +5383,7 @@ impl Lexer for Language {
                         }
                     }
                     Some('g') => match input.next() {
-                        Some('l') => scan_chars!(input, 'o', 'b', 'a', 'l')
-                            .then_some(TokenKind::GlobalKeyword),
+                        Some('l') => None,
                         Some('w') => {
                             if self.version_is_at_least_0_6_11 {
                                 scan_chars!(input, 'e', 'i').then_some(TokenKind::GweiKeyword)
@@ -5628,8 +5645,7 @@ impl Lexer for Language {
                                         None
                                     }
                                 }
-                                Some('v') => scan_chars!(input, 'e', 'r', 't')
-                                    .then_some(TokenKind::RevertKeyword),
+                                Some('v') => None,
                                 Some(_) => {
                                     input.undo();
                                     None

@@ -14,23 +14,7 @@ Source: >
   11 │     }                                                                            │ 202..207
   12 │ }                                                                                │ 208..209
 
-Errors: # 2 total
-  - >
-    Error: Expected Ampersand or AmpersandAmpersand or AmpersandEqual or Asterisk or AsteriskAsterisk or AsteriskEqual or BangEqual or Bar or BarBar or BarEqual or Caret or CaretEqual or Equal or EqualEqual or GreaterThan or GreaterThanEqual or GreaterThanGreaterThan or GreaterThanGreaterThanEqual or GreaterThanGreaterThanGreaterThan or GreaterThanGreaterThanGreaterThanEqual or LessThan or LessThanEqual or LessThanLessThan or LessThanLessThanEqual or Minus or MinusEqual or Percent or PercentEqual or Plus or PlusEqual or Semicolon or Slash or SlashEqual.
-       ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/contextual_keywords/input.sol:7:17]
-       │
-     7 │         uint256 revert;
-       │                 ───┬──  
-       │                    ╰──── Error occurred here.
-    ───╯
-  - >
-    Error: Expected Ampersand or AmpersandAmpersand or AmpersandEqual or Asterisk or AsteriskAsterisk or AsteriskEqual or BangEqual or Bar or BarBar or BarEqual or Caret or CaretEqual or Equal or EqualEqual or GreaterThan or GreaterThanEqual or GreaterThanGreaterThan or GreaterThanGreaterThanEqual or GreaterThanGreaterThanGreaterThan or GreaterThanGreaterThanGreaterThanEqual or LessThan or LessThanEqual or LessThanLessThan or LessThanLessThanEqual or Minus or MinusEqual or Percent or PercentEqual or Plus or PlusEqual or Semicolon or Slash or SlashEqual.
-       ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/contextual_keywords/input.sol:8:17]
-       │
-     8 │         uint256 global;
-       │                 ───┬──  
-       │                    ╰──── Error occurred here.
-    ───╯
+Errors: []
 
 Tree:
   - ContractDefinition (Rule): # 0..210 "contract Contract {\n    error MyError();\n\n    func..."
@@ -71,16 +55,18 @@ Tree:
                                   - Identifier (Token): "from" # 121..125
                               - Semicolon (Token): ";" # 125..126
                       - Statement (Rule): # 127..151 "        uint256 revert;\n"
-                          - ExpressionStatement (Rule): # 127..151 "        uint256 revert;\n"
-                              - Expression (Rule): # 127..142 "        uint256"
-                                  - UnsignedIntegerType (Token): "uint256" # 135..142
-                              - SKIPPED (Token): "revert" # 143..149
+                          - VariableDeclarationStatement (Rule): # 127..151 "        uint256 revert;\n"
+                              - VariableDeclaration (Rule): # 127..149 "        uint256 revert"
+                                  - TypeName (Rule): # 127..142 "        uint256"
+                                      - UnsignedIntegerType (Token): "uint256" # 135..142
+                                  - Identifier (Token): "revert" # 143..149
                               - Semicolon (Token): ";" # 149..150
                       - Statement (Rule): # 151..175 "        uint256 global;\n"
-                          - ExpressionStatement (Rule): # 151..175 "        uint256 global;\n"
-                              - Expression (Rule): # 151..166 "        uint256"
-                                  - UnsignedIntegerType (Token): "uint256" # 159..166
-                              - SKIPPED (Token): "global" # 167..173
+                          - VariableDeclarationStatement (Rule): # 151..175 "        uint256 global;\n"
+                              - VariableDeclaration (Rule): # 151..173 "        uint256 global"
+                                  - TypeName (Rule): # 151..166 "        uint256"
+                                      - UnsignedIntegerType (Token): "uint256" # 159..166
+                                  - Identifier (Token): "global" # 167..173
                               - Semicolon (Token): ";" # 173..174
                       - Statement (Rule): # 175..202 "\n        revert MyError();\n"
                           - RevertStatement (Rule): # 175..202 "\n        revert MyError();\n"
