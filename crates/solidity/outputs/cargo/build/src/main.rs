@@ -37,7 +37,7 @@ fn main() -> Result<()> {
         rerun_if_changed!(crate_dir.join("Cargo.toml").unwrap_str());
         rerun_if_changed!(crate_dir.join("src").unwrap_str());
         // Emitting the `rerun-if-changed` for non-existent files always causes a rebuild, so first check if a build
-        // script event exists. It's worth noting that adding/removing one will trip up
+        // script event exists. It's worth noting that adding/removing one will trip this up.
         if crate_dir.join("build.rs").exists() {
             rerun_if_changed!(crate_dir.join("build.rs").unwrap_str());
         }
