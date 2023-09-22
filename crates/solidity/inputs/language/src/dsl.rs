@@ -66,7 +66,6 @@ slang_grammar! {
             | ForKeyword
             | FromKeyword
             | FunctionKeyword
-            | GlobalKeyword
             | HexKeyword
             | HoursKeyword
             | IfKeyword
@@ -97,7 +96,6 @@ slang_grammar! {
             | RelocatableKeyword
             | ReturnKeyword
             | ReturnsKeyword
-            | RevertKeyword
             | SecondsKeyword
             | SolidityKeyword
             | StaticKeyword
@@ -160,6 +158,10 @@ slang_grammar! {
 
             // Introduced in 0.8.4
             | ErrorKeyword
+            | RevertKeyword
+
+            // Introduced in 0.8.13
+            | GlobalKeyword
         ) ;
 
         parser ABICoderPragma = (ABICoderKeyword Identifier) ;
@@ -235,10 +237,11 @@ slang_grammar! {
         parser ContractMembersList = (ContractMember +) ;
 
         inline parser ControlStatement = (
-            IfStatement | ForStatement | WhileStatement | DoWhileStatement | ContinueStatement | BreakStatement | DeleteStatement | ReturnStatement | RevertStatement |
-            { introduced in "0.4.21" EmitStatement} |
+            IfStatement | ForStatement | WhileStatement | DoWhileStatement | ContinueStatement | BreakStatement | DeleteStatement | ReturnStatement |
+            { introduced in "0.4.21" EmitStatement } |
             { removed in "0.5.0"     ThrowStatement } |
-            { introduced in "0.6.0"  TryStatement}
+            { introduced in "0.6.0"  TryStatement } |
+            { introduced in "0.8.4"  RevertStatement }
         ) ;
 
         inline parser DataLocation = (
@@ -539,7 +542,7 @@ slang_grammar! {
 
         parser UserDefinedValueTypeDefinition = { introduced in "0.8.8" ((TypeKeyword Identifier IsKeyword ElementaryType) terminated by Semicolon) } ;
 
-        parser UsingDirective = ((UsingKeyword (UsingDirectivePath | UsingDirectiveDeconstruction) ForKeyword (Asterisk | TypeName) (GlobalKeyword ?)) terminated by Semicolon) ;
+        parser UsingDirective = ((UsingKeyword (UsingDirectivePath | UsingDirectiveDeconstruction) ForKeyword (Asterisk | TypeName) ({ introduced in "0.8.13" GlobalKeyword } ?)) terminated by Semicolon) ;
 
         parser UsingDirectiveDeconstruction = (UsingDirectiveSymbolsList delimited by OpenBrace and CloseBrace) ;
 
@@ -887,7 +890,6 @@ slang_grammar! {
     scanner ForKeyword = "for" ;
     scanner FromKeyword = "from" ;
     scanner FunctionKeyword = "function" ;
-    scanner GlobalKeyword = "global" ;
     scanner HexKeyword = "hex" ;
     scanner HoursKeyword = "hours" ;
     scanner IfKeyword = "if" ;
@@ -918,7 +920,6 @@ slang_grammar! {
     scanner RelocatableKeyword = "relocatable" ;
     scanner ReturnKeyword = "return" ;
     scanner ReturnsKeyword = "returns" ;
-    scanner RevertKeyword = "revert" ;
     scanner SecondsKeyword = "seconds" ;
     scanner SolidityKeyword = "solidity" ;
     scanner StaticKeyword = "static" ;
@@ -979,6 +980,9 @@ slang_grammar! {
     scanner UncheckedKeyword = { introduced in "0.8.0" "unchecked" } ;
 
     // Introduced in 0.8.4
-    scanner ErrorKeyword = { introduced in "0.8.4" "error" } ;
+    scanner ErrorKeyword =  { introduced in "0.8.4" "error" } ;
+    scanner RevertKeyword = { introduced in "0.8.4" "revert" } ;
 
+    // Introduced in 0.8.13
+    scanner GlobalKeyword = { introduced in "0.8.13" "global" } ;
 }

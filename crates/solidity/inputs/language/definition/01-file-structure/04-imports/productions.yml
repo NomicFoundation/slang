@@ -69,22 +69,38 @@
 
 - name: "UsingDirective"
   kind: "Parser"
-  unversioned:
-    terminatedBy:
-      parser:
-        sequence:
-          - reference: "UsingKeyword"
-          - choice:
-              - reference: "UsingDirectivePath"
-              - reference: "UsingDirectiveDeconstruction"
-          - reference: "ForKeyword"
-          - choice:
-              - reference: "Asterisk"
-              - reference: "TypeName"
-          - optional:
-              reference: "GlobalKeyword"
-      terminator:
-        reference: "Semicolon"
+  versioned:
+    0.4.11:
+      terminatedBy:
+        parser:
+          sequence:
+            - reference: "UsingKeyword"
+            - choice:
+                - reference: "UsingDirectivePath"
+                - reference: "UsingDirectiveDeconstruction"
+            - reference: "ForKeyword"
+            - choice:
+                - reference: "Asterisk"
+                - reference: "TypeName"
+        terminator:
+          reference: "Semicolon"
+    # Added an optional `global` keyword
+    0.8.13:
+      terminatedBy:
+        parser:
+          sequence:
+            - reference: "UsingKeyword"
+            - choice:
+                - reference: "UsingDirectivePath"
+                - reference: "UsingDirectiveDeconstruction"
+            - reference: "ForKeyword"
+            - choice:
+                - reference: "Asterisk"
+                - reference: "TypeName"
+            - optional:
+                reference: "GlobalKeyword"
+        terminator:
+          reference: "Semicolon"
 
 - name: "UsingDirectivePath"
   kind: "Parser"

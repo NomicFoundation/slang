@@ -2886,8 +2886,6 @@ impl Language {
                 choice.consider(input, result)?;
                 let result = self.return_statement(input);
                 choice.consider(input, result)?;
-                let result = self.revert_statement(input);
-                choice.consider(input, result)?;
                 if self.version_is_at_least_0_4_21 {
                     let result = self.emit_statement(input);
                     choice.consider(input, result)?;
@@ -2898,6 +2896,10 @@ impl Language {
                 }
                 if self.version_is_at_least_0_6_0 {
                     let result = self.try_statement(input);
+                    choice.consider(input, result)?;
+                }
+                if self.version_is_at_least_0_8_4 {
+                    let result = self.revert_statement(input);
                     choice.consider(input, result)?;
                 }
                 choice.finish(input)
@@ -3491,9 +3493,11 @@ impl Language {
                         choice.consider(input, result)?;
                         choice.finish(input)
                     }))?;
-                    seq.elem(OptionalHelper::transform(
-                        self.default_parse_token_with_trivia(input, TokenKind::GlobalKeyword),
-                    ))?;
+                    if self.version_is_at_least_0_8_13 {
+                        seq.elem(OptionalHelper::transform(
+                            self.default_parse_token_with_trivia(input, TokenKind::GlobalKeyword),
+                        ))?;
+                    }
                     seq.finish()
                 })
                 .recover_until_with_nested_delims(
@@ -5349,8 +5353,14 @@ impl Lexer for Language {
                         None => None,
                     },
                     Some('g') => match input.next() {
-                        Some('l') => scan_chars!(input, 'o', 'b', 'a', 'l')
-                            .then_some(TokenKind::GlobalKeyword),
+                        Some('l') => {
+                            if self.version_is_at_least_0_8_13 {
+                                scan_chars!(input, 'o', 'b', 'a', 'l')
+                                    .then_some(TokenKind::GlobalKeyword)
+                            } else {
+                                None
+                            }
+                        }
                         Some('w') => {
                             if self.version_is_at_least_0_6_11 {
                                 scan_chars!(input, 'e', 'i').then_some(TokenKind::GweiKeyword)
@@ -5612,8 +5622,14 @@ impl Lexer for Language {
                                         None
                                     }
                                 }
-                                Some('v') => scan_chars!(input, 'e', 'r', 't')
-                                    .then_some(TokenKind::RevertKeyword),
+                                Some('v') => {
+                                    if self.version_is_at_least_0_8_4 {
+                                        scan_chars!(input, 'e', 'r', 't')
+                                            .then_some(TokenKind::RevertKeyword)
+                                    } else {
+                                        None
+                                    }
+                                }
                                 Some(_) => {
                                     input.undo();
                                     None
