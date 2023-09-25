@@ -187,6 +187,7 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                                 |input| Lexer::leading_trivia(self, input),
                                 TokenKind::#close_token,
                                 Self::#delimiters(),
+                                RecoverFromNoMatch::Yes,
                             )
                         )?;
                     },
@@ -251,6 +252,7 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                                 |input| Lexer::leading_trivia(self, input),
                                 TokenKind::#terminator_token_kind,
                                 Self::#delimiters(),
+                                RecoverFromNoMatch::No,
                             )
                         )?;
                     },

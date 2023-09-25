@@ -286,6 +286,7 @@ impl Language {
                     |input| Lexer::leading_trivia(self, input),
                     TokenKind::CloseParen,
                     Self::default_delimiters(),
+                    RecoverFromNoMatch::Yes,
                 ),
             )?;
             seq.elem(self.default_parse_token_with_trivia(input, TokenKind::CloseParen))?;
@@ -308,6 +309,7 @@ impl Language {
                         |input| Lexer::leading_trivia(self, input),
                         TokenKind::CloseBracket,
                         Self::default_delimiters(),
+                        RecoverFromNoMatch::Yes,
                     ),
             )?;
             seq.elem(self.default_parse_token_with_trivia(input, TokenKind::CloseBracket))?;
@@ -379,6 +381,7 @@ impl Language {
                             |input| Lexer::leading_trivia(self, input),
                             TokenKind::CloseParen,
                             Self::default_delimiters(),
+                            RecoverFromNoMatch::Yes,
                         ),
                 )?;
                 seq.elem(self.default_parse_token_with_trivia(input, TokenKind::CloseParen))?;
@@ -404,6 +407,7 @@ impl Language {
                         |input| Lexer::leading_trivia(self, input),
                         TokenKind::CloseBrace,
                         Self::default_delimiters(),
+                        RecoverFromNoMatch::Yes,
                     ),
             )?;
             seq.elem(self.default_parse_token_with_trivia(input, TokenKind::CloseBrace))?;
@@ -423,6 +427,7 @@ impl Language {
                         |input| Lexer::leading_trivia(self, input),
                         TokenKind::Semicolon,
                         Self::default_delimiters(),
+                        RecoverFromNoMatch::No,
                     ),
             )?;
             seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Semicolon))?;
@@ -495,6 +500,7 @@ impl Language {
                         |input| Lexer::leading_trivia(self, input),
                         TokenKind::Semicolon,
                         Self::default_delimiters(),
+                        RecoverFromNoMatch::No,
                     ),
                 )?;
                 seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Semicolon))?;
@@ -566,6 +572,7 @@ impl Language {
                         |input| Lexer::leading_trivia(self, input),
                         TokenKind::Semicolon,
                         Self::default_delimiters(),
+                        RecoverFromNoMatch::No,
                     ),
             )?;
             seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Semicolon))?;
@@ -599,6 +606,7 @@ impl Language {
                             |input| Lexer::leading_trivia(self, input),
                             TokenKind::CloseBrace,
                             Self::default_delimiters(),
+                            RecoverFromNoMatch::Yes,
                         ),
                 )?;
                 seq.elem(self.default_parse_token_with_trivia(input, TokenKind::CloseBrace))?;
@@ -676,6 +684,7 @@ impl Language {
                             |input| Lexer::leading_trivia(self, input),
                             TokenKind::CloseBrace,
                             Self::default_delimiters(),
+                            RecoverFromNoMatch::Yes,
                         ),
                 )?;
                 seq.elem(self.default_parse_token_with_trivia(input, TokenKind::CloseBrace))?;
@@ -735,6 +744,7 @@ impl Language {
                     |input| Lexer::leading_trivia(self, input),
                     TokenKind::Semicolon,
                     Self::default_delimiters(),
+                    RecoverFromNoMatch::No,
                 ),
             )?;
             seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Semicolon))?;
@@ -765,6 +775,7 @@ impl Language {
                             |input| Lexer::leading_trivia(self, input),
                             TokenKind::CloseParen,
                             Self::default_delimiters(),
+                            RecoverFromNoMatch::Yes,
                         ))?;
                         seq.elem(
                             self.default_parse_token_with_trivia(input, TokenKind::CloseParen),
@@ -779,6 +790,7 @@ impl Language {
                     |input| Lexer::leading_trivia(self, input),
                     TokenKind::Semicolon,
                     Self::default_delimiters(),
+                    RecoverFromNoMatch::No,
                 ),
             )?;
             seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Semicolon))?;
@@ -806,6 +818,7 @@ impl Language {
                         |input| Lexer::leading_trivia(self, input),
                         TokenKind::Semicolon,
                         Self::default_delimiters(),
+                        RecoverFromNoMatch::No,
                     ),
                 )?;
                 seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Semicolon))?;
@@ -854,6 +867,7 @@ impl Language {
                             |input| Lexer::leading_trivia(self, input),
                             TokenKind::CloseBrace,
                             Self::default_delimiters(),
+                            RecoverFromNoMatch::Yes,
                         ),
                 )?;
                 seq.elem(self.default_parse_token_with_trivia(input, TokenKind::CloseBrace))?;
@@ -894,6 +908,7 @@ impl Language {
                                         |input| Lexer::leading_trivia(self, input),
                                         TokenKind::CloseParen,
                                         Self::default_delimiters(),
+                                        RecoverFromNoMatch::Yes,
                                     ),
                             )?;
                             seq.elem(
@@ -909,6 +924,7 @@ impl Language {
                         |input| Lexer::leading_trivia(self, input),
                         TokenKind::Semicolon,
                         Self::default_delimiters(),
+                        RecoverFromNoMatch::No,
                     ),
                 )?;
                 seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Semicolon))?;
@@ -981,6 +997,7 @@ impl Language {
                                     |input| Lexer::leading_trivia(self, input),
                                     TokenKind::CloseParen,
                                     Self::default_delimiters(),
+                                    RecoverFromNoMatch::Yes,
                                 ),
                         )?;
                         seq.elem(
@@ -999,6 +1016,7 @@ impl Language {
                     |input| Lexer::leading_trivia(self, input),
                     TokenKind::Semicolon,
                     Self::default_delimiters(),
+                    RecoverFromNoMatch::No,
                 ),
             )?;
             seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Semicolon))?;
@@ -1352,6 +1370,7 @@ impl Language {
                             |input| Lexer::leading_trivia(self, input),
                             TokenKind::CloseBracket,
                             Self::default_delimiters(),
+                            RecoverFromNoMatch::Yes,
                         ),
                     )?;
                     seq.elem(self.default_parse_token_with_trivia(input, TokenKind::CloseBracket))?;
@@ -1530,6 +1549,7 @@ impl Language {
                 |input| Lexer::leading_trivia(self, input),
                 TokenKind::Semicolon,
                 Self::default_delimiters(),
+                RecoverFromNoMatch::No,
             ))?;
             seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Semicolon))?;
             seq.finish()
@@ -1642,6 +1662,7 @@ impl Language {
                         |input| Lexer::leading_trivia(self, input),
                         TokenKind::CloseParen,
                         Self::default_delimiters(),
+                        RecoverFromNoMatch::Yes,
                     ),
                 )?;
                 seq.elem(self.default_parse_token_with_trivia(input, TokenKind::CloseParen))?;
@@ -1851,6 +1872,7 @@ impl Language {
                     |input| Lexer::leading_trivia(self, input),
                     TokenKind::CloseParen,
                     Self::default_delimiters(),
+                    RecoverFromNoMatch::Yes,
                 ))?;
                 seq.elem(self.default_parse_token_with_trivia(input, TokenKind::CloseParen))?;
                 seq.finish()
@@ -1891,6 +1913,7 @@ impl Language {
                     |input| Lexer::leading_trivia(self, input),
                     TokenKind::Semicolon,
                     Self::default_delimiters(),
+                    RecoverFromNoMatch::No,
                 ),
             )?;
             seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Semicolon))?;
@@ -1955,6 +1978,7 @@ impl Language {
                             |input| Lexer::leading_trivia(self, input),
                             TokenKind::CloseBrace,
                             Self::default_delimiters(),
+                            RecoverFromNoMatch::Yes,
                         ),
                 )?;
                 seq.elem(self.default_parse_token_with_trivia(input, TokenKind::CloseBrace))?;
@@ -2052,6 +2076,7 @@ impl Language {
                             |input| Lexer::leading_trivia(self, input),
                             TokenKind::CloseBrace,
                             Self::default_delimiters(),
+                            RecoverFromNoMatch::Yes,
                         ),
                 )?;
                 seq.elem(self.default_parse_token_with_trivia(input, TokenKind::CloseBrace))?;
@@ -2188,6 +2213,7 @@ impl Language {
                         |input| Lexer::leading_trivia(self, input),
                         TokenKind::CloseParen,
                         Self::default_delimiters(),
+                        RecoverFromNoMatch::Yes,
                     ),
                 )?;
                 seq.elem(self.default_parse_token_with_trivia(input, TokenKind::CloseParen))?;
@@ -2287,6 +2313,7 @@ impl Language {
                         |input| Lexer::leading_trivia(self, input),
                         TokenKind::CloseBrace,
                         Self::default_delimiters(),
+                        RecoverFromNoMatch::Yes,
                     ),
             )?;
             seq.elem(self.default_parse_token_with_trivia(input, TokenKind::CloseBrace))?;
@@ -2480,6 +2507,7 @@ impl Language {
                             |input| Lexer::leading_trivia(self, input),
                             TokenKind::CloseParen,
                             Self::default_delimiters(),
+                            RecoverFromNoMatch::Yes,
                         ),
                 )?;
                 seq.elem(self.default_parse_token_with_trivia(input, TokenKind::CloseParen))?;
@@ -2533,6 +2561,7 @@ impl Language {
                         |input| Lexer::leading_trivia(self, input),
                         TokenKind::CloseParen,
                         Self::default_delimiters(),
+                        RecoverFromNoMatch::Yes,
                     ),
             )?;
             seq.elem(self.default_parse_token_with_trivia(input, TokenKind::CloseParen))?;
@@ -2612,6 +2641,7 @@ impl Language {
                     |input| Lexer::leading_trivia(self, input),
                     TokenKind::Semicolon,
                     Self::default_delimiters(),
+                    RecoverFromNoMatch::No,
                 ),
             )?;
             seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Semicolon))?;
@@ -2692,6 +2722,7 @@ impl Language {
                     |input| Lexer::leading_trivia(self, input),
                     TokenKind::Semicolon,
                     Self::default_delimiters(),
+                    RecoverFromNoMatch::No,
                 ),
             )?;
             seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Semicolon))?;
@@ -2728,6 +2759,7 @@ impl Language {
                     |input| Lexer::leading_trivia(self, input),
                     TokenKind::Semicolon,
                     Self::default_delimiters(),
+                    RecoverFromNoMatch::No,
                 ),
             )?;
             seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Semicolon))?;
@@ -2848,6 +2880,7 @@ impl Language {
                     |input| Lexer::leading_trivia(self, input),
                     TokenKind::Semicolon,
                     Self::default_delimiters(),
+                    RecoverFromNoMatch::No,
                 ),
             )?;
             seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Semicolon))?;
@@ -2943,6 +2976,7 @@ impl Language {
                             |input| Lexer::leading_trivia(self, input),
                             TokenKind::CloseBrace,
                             Self::default_delimiters(),
+                            RecoverFromNoMatch::Yes,
                         ),
                 )?;
                 seq.elem(self.default_parse_token_with_trivia(input, TokenKind::CloseBrace))?;
@@ -2968,6 +3002,7 @@ impl Language {
                     |input| Lexer::leading_trivia(self, input),
                     TokenKind::Semicolon,
                     Self::default_delimiters(),
+                    RecoverFromNoMatch::No,
                 ),
             )?;
             seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Semicolon))?;
@@ -2996,6 +3031,7 @@ impl Language {
                             |input| Lexer::leading_trivia(self, input),
                             TokenKind::Semicolon,
                             Self::default_delimiters(),
+                            RecoverFromNoMatch::No,
                         ),
                 )?;
                 seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Semicolon))?;
@@ -3062,6 +3098,7 @@ impl Language {
                                     |input| Lexer::leading_trivia(self, input),
                                     TokenKind::CloseParen,
                                     Self::default_delimiters(),
+                                    RecoverFromNoMatch::Yes,
                                 ),
                         )?;
                         seq.elem(
@@ -3079,6 +3116,7 @@ impl Language {
                     |input| Lexer::leading_trivia(self, input),
                     TokenKind::Semicolon,
                     Self::default_delimiters(),
+                    RecoverFromNoMatch::No,
                 ),
             )?;
             seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Semicolon))?;
@@ -3101,6 +3139,7 @@ impl Language {
                         |input| Lexer::leading_trivia(self, input),
                         TokenKind::CloseParen,
                         Self::default_delimiters(),
+                        RecoverFromNoMatch::Yes,
                     ),
             )?;
             seq.elem(self.default_parse_token_with_trivia(input, TokenKind::CloseParen))?;
@@ -3209,6 +3248,7 @@ impl Language {
                         |input| Lexer::leading_trivia(self, input),
                         TokenKind::CloseParen,
                         Self::default_delimiters(),
+                        RecoverFromNoMatch::Yes,
                     ))?;
                     seq.elem(self.default_parse_token_with_trivia(input, TokenKind::CloseParen))?;
                     seq.finish()
@@ -3243,6 +3283,7 @@ impl Language {
                                 |input| Lexer::leading_trivia(self, input),
                                 TokenKind::CloseBracket,
                                 Self::default_delimiters(),
+                                RecoverFromNoMatch::Yes,
                             ),
                     )?;
                     seq.elem(self.default_parse_token_with_trivia(input, TokenKind::CloseBracket))?;
@@ -3460,6 +3501,7 @@ impl Language {
                         |input| Lexer::leading_trivia(self, input),
                         TokenKind::Semicolon,
                         Self::default_delimiters(),
+                        RecoverFromNoMatch::No,
                     ),
                 )?;
                 seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Semicolon))?;
@@ -3506,6 +3548,7 @@ impl Language {
                     |input| Lexer::leading_trivia(self, input),
                     TokenKind::Semicolon,
                     Self::default_delimiters(),
+                    RecoverFromNoMatch::No,
                 ),
             )?;
             seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Semicolon))?;
@@ -3528,6 +3571,7 @@ impl Language {
                         |input| Lexer::leading_trivia(self, input),
                         TokenKind::CloseBrace,
                         Self::default_delimiters(),
+                        RecoverFromNoMatch::Yes,
                     ),
             )?;
             seq.elem(self.default_parse_token_with_trivia(input, TokenKind::CloseBrace))?;
@@ -3681,6 +3725,7 @@ impl Language {
                     |input| Lexer::leading_trivia(self, input),
                     TokenKind::Semicolon,
                     Self::default_delimiters(),
+                    RecoverFromNoMatch::No,
                 ),
             )?;
             seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Semicolon))?;
@@ -3839,6 +3884,7 @@ impl Language {
                     |input| Lexer::leading_trivia(self, input),
                     TokenKind::CloseParen,
                     Self::default_delimiters(),
+                    RecoverFromNoMatch::Yes,
                 ))?;
                 seq.elem(self.default_parse_token_with_trivia(input, TokenKind::CloseParen))?;
                 seq.finish()
@@ -3876,6 +3922,7 @@ impl Language {
                         |input| Lexer::leading_trivia(self, input),
                         TokenKind::CloseBrace,
                         Self::yul_block_delimiters(),
+                        RecoverFromNoMatch::Yes,
                     ),
             )?;
             seq.elem(self.yul_block_parse_token_with_trivia(input, TokenKind::CloseBrace))?;
@@ -3933,6 +3980,7 @@ impl Language {
                                 |input| Lexer::leading_trivia(self, input),
                                 TokenKind::CloseParen,
                                 Self::yul_block_delimiters(),
+                                RecoverFromNoMatch::Yes,
                             ),
                     )?;
                     seq.elem(self.yul_block_parse_token_with_trivia(input, TokenKind::CloseParen))?;
@@ -4125,6 +4173,7 @@ impl Language {
                         |input| Lexer::leading_trivia(self, input),
                         TokenKind::CloseParen,
                         Self::yul_block_delimiters(),
+                        RecoverFromNoMatch::Yes,
                     ),
             )?;
             seq.elem(self.yul_block_parse_token_with_trivia(input, TokenKind::CloseParen))?;
