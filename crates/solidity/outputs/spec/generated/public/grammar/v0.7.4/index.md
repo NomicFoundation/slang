@@ -32,7 +32,7 @@
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/04-imports/deconstruction-import/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/04-imports/deconstruction-import-symbols-list/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/04-imports/deconstruction-import-symbol/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/04-imports/using-directive/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/04-imports/using-directive/0.4.11.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/04-imports/using-directive-path/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/04-imports/using-directive-deconstruction/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/04-imports/using-directive-symbols-list/unversioned.md"
@@ -82,7 +82,6 @@
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/07-keywords/for-keyword/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/07-keywords/from-keyword/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/07-keywords/function-keyword/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/07-keywords/global-keyword/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/07-keywords/gwei-keyword/0.6.11.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/07-keywords/hours-keyword/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/07-keywords/if-keyword/unversioned.md"
@@ -109,7 +108,6 @@
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/07-keywords/receive-keyword/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/07-keywords/return-keyword/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/07-keywords/returns-keyword/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/07-keywords/revert-keyword/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/07-keywords/seconds-keyword/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/07-keywords/solidity-keyword/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/07-keywords/storage-keyword/unversioned.md"
@@ -317,7 +315,6 @@
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/04-statements/04-error-handling/catch-clauses-list/0.6.0.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/04-statements/04-error-handling/catch-clause/0.6.0.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/04-statements/04-error-handling/catch-clause-error/0.6.0.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/04-statements/04-error-handling/revert-statement/unversioned.md"
 
 ## 5. Expressions
 
