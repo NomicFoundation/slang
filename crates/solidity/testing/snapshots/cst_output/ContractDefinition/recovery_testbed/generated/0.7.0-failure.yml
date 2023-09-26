@@ -14,7 +14,7 @@ Source: >
   11 │ 	}                                                                               │ 207..209
   12 │ }                                                                                │ 210..211
 
-Errors: # 3 total
+Errors: # 4 total
   - >
     Error: Expected CloseParen or Comma.
        ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/recovery_testbed/input.sol:2:29]
@@ -32,13 +32,20 @@ Errors: # 3 total
        │                               ╰───────────────────── Error occurred here.
     ───╯
   - >
-    Error: Expected Ampersand or AmpersandAmpersand or AmpersandEqual or Asterisk or AsteriskAsterisk or AsteriskEqual or BangEqual or Bar or BarBar or BarEqual or Caret or CaretEqual or Equal or EqualEqual or GreaterThan or GreaterThanEqual or GreaterThanGreaterThan or GreaterThanGreaterThanEqual or GreaterThanGreaterThanGreaterThan or GreaterThanGreaterThanGreaterThanEqual or LessThan or LessThanEqual or LessThanLessThan or LessThanLessThanEqual or Minus or MinusEqual or Percent or PercentEqual or Plus or PlusEqual or Semicolon or Slash or SlashEqual.
-        ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/recovery_testbed/input.sol:10:13]
+    Error: Expected Colon.
+        ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/recovery_testbed/input.sol:10:23]
         │
-     10 │ ╭─▶        unchecked { invalid sequence }
-     11 │ ├─▶     }
-        │ │           
-        │ ╰─────────── Error occurred here.
+     10 │        unchecked { invalid sequence }
+        │                            ────┬────  
+        │                                ╰────── Error occurred here.
+    ────╯
+  - >
+    Error: Expected OpenBrace or OpenParen.
+        ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/recovery_testbed/input.sol:11:2]
+        │
+     11 │     }
+        │     │ 
+        │     ╰─ Error occurred here.
     ────╯
 
 Tree:
@@ -52,7 +59,7 @@ Tree:
               - Identifier (Token): "_transfer" # 30..39
               - ParametersDeclaration (Rule): # 39..54 "(address while)"
                   - OpenParen (Token): "(" # 39..40
-                  - ParametersList (Rule): # 40..47 "address"
+                  - ParametersList (Rule): # 40..48 "address "
                       - Parameter (Rule): # 40..47 "address"
                           - TypeName (Rule): # 40..47 "address"
                               - AddressType (Rule): # 40..47 "address"
@@ -95,7 +102,7 @@ Tree:
                   - CloseParen (Token): ")" # 153..154
               - Block (Rule): # 154..210 " {\n\t\tuint256 x = 0;\n\t\tunchecked { invalid sequence..."
                   - OpenBrace (Token): "{" # 155..156
-                  - StatementsList (Rule): # 157..186 "\t\tuint256 x = 0;\n\t\tunchecked "
+                  - StatementsList (Rule): # 157..208 "\t\tuint256 x = 0;\n\t\tunchecked { invalid sequence }\n..."
                       - Statement (Rule): # 157..174 "\t\tuint256 x = 0;\n"
                           - VariableDeclarationStatement (Rule): # 157..174 "\t\tuint256 x = 0;\n"
                               - VariableDeclaration (Rule): # 157..168 "\t\tuint256 x"
@@ -107,10 +114,18 @@ Tree:
                                   - NumericExpression (Rule): # 170..172 " 0"
                                       - DecimalLiteral (Token): "0" # 171..172
                               - Semicolon (Token): ";" # 172..173
-                      - Statement (Rule): # 174..186 "\t\tunchecked "
-                          - ExpressionStatement (Rule): # 174..186 "\t\tunchecked "
-                              - Expression (Rule): # 174..185 "\t\tunchecked"
+                      - Statement (Rule): # 174..208 "\t\tunchecked { invalid sequence }\n\t"
+                          - ExpressionStatement (Rule): # 174..208 "\t\tunchecked { invalid sequence }\n\t"
+                              - Expression (Rule): # 174..207 "\t\tunchecked { invalid sequence }\n"
                                   - Identifier (Token): "unchecked" # 176..185
-                  - SKIPPED (Token): "{ invalid sequence }\n\t" # 186..208
+                                  - FunctionCallOptions (Rule): # 185..207 " { invalid sequence }\n"
+                                      - NamedArgumentsDeclaration (Rule): # 185..207 " { invalid sequence }\n"
+                                          - OpenBrace (Token): "{" # 186..187
+                                          - NamedArgumentsList (Rule): # 187..195 " invalid"
+                                              - NamedArgument (Rule): # 187..195 " invalid"
+                                                  - Identifier (Token): "invalid" # 188..195
+                                          - SKIPPED (Token): "sequence " # 196..205
+                                          - CloseBrace (Token): "}" # 205..206
+                  - SKIPPED (Token): "" # 208..208
                   - CloseBrace (Token): "}" # 208..209
       - CloseBrace (Token): "}" # 210..211

@@ -12,14 +12,14 @@ Tree:
           - OpenBrace (Token): "{" # 6..7
           - UsingDirectiveSymbolsList (Rule): # 7..15 "div as /"
               - UsingDirectiveSymbol (Rule): # 7..15 "div as /"
-                  - IdentifierPath (Rule): # 7..10 "div"
+                  - IdentifierPath (Rule): # 7..11 "div "
                       - Identifier (Token): "div" # 7..10
                   - AsKeyword (Token): "as" # 11..13
                   - Slash (Token): "/" # 14..15
           - CloseBrace (Token): "}" # 15..16
       - ForKeyword (Token): "for" # 17..20
-      - TypeName (Rule): # 20..24 " Int"
-          - IdentifierPath (Rule): # 20..24 " Int"
+      - TypeName (Rule): # 20..25 " Int "
+          - IdentifierPath (Rule): # 20..25 " Int "
               - Identifier (Token): "Int" # 21..24
       - GlobalKeyword (Token): "global" # 25..31
       - Semicolon (Token): ";" # 31..32

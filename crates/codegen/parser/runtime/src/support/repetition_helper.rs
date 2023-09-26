@@ -17,7 +17,6 @@ impl<const MIN_COUNT: usize> RepetitionHelper<MIN_COUNT> {
             unimplemented!("RepetitionHelper only supports min_count of 0 or 1")
         }
 
-        let save = input.mark();
         let mut accum = match parser(input) {
             // First item parsed correctly
             result @ ParserResult::Match(_) => result,
@@ -27,13 +26,9 @@ impl<const MIN_COUNT: usize> RepetitionHelper<MIN_COUNT> {
 
             // Couldn't get a full match but we allow 0 items - return an empty match
             // so the parse is considered valid but note the expected tokens
-            ParserResult::IncompleteMatch(IncompleteMatch {
-                expected_tokens, ..
-            })
-            | ParserResult::NoMatch(NoMatch {
+            ParserResult::NoMatch(NoMatch {
                 expected_tokens, ..
             }) if MIN_COUNT == 0 => {
-                input.rewind(save);
                 return ParserResult::r#match(vec![], expected_tokens);
             }
             // Don't try repeating if we don't have a full match and we require at least one

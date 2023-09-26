@@ -15,8 +15,8 @@ Tree:
       - ContractMembersList (Rule): # 18..35 "  using x for *;\n"
           - UsingDirective (Rule): # 18..35 "  using x for *;\n"
               - UsingKeyword (Token): "using" # 20..25
-              - UsingDirectivePath (Rule): # 25..27 " x"
-                  - IdentifierPath (Rule): # 25..27 " x"
+              - UsingDirectivePath (Rule): # 25..28 " x "
+                  - IdentifierPath (Rule): # 25..28 " x "
                       - Identifier (Token): "x" # 26..27
               - ForKeyword (Token): "for" # 28..31
               - Asterisk (Token): "*" # 32..33

@@ -21,6 +21,15 @@ pub trait Lexer {
     fn leading_trivia(&self, input: &mut ParserContext) -> ParserResult;
     #[doc(hidden)]
     fn trailing_trivia(&self, input: &mut ParserContext) -> ParserResult;
+    #[doc(hidden)]
+    fn delimiters<const LEX_CTX: u8>() -> &'static [(TokenKind, TokenKind)];
+
+    fn peek_token<const LEX_CTX: u8>(&self, input: &mut ParserContext) -> Option<TokenKind> {
+        let start = input.position();
+        let token = self.next_token::<LEX_CTX>(input);
+        input.set_position(start);
+        token
+    }
 
     fn parse_token<const LEX_CTX: u8>(
         &self,

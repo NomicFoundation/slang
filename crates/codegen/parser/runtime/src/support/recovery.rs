@@ -2,7 +2,7 @@ use crate::cst;
 use crate::kinds::TokenKind;
 use crate::parse_error::ParseError;
 use crate::support::ParserResult;
-use crate::text_index::TextRangeExtensions as _;
+use crate::text_index::{TextRange, TextRangeExtensions as _};
 
 use super::parser_result::SkippedUntil;
 use super::ParserContext;
@@ -83,63 +83,89 @@ impl ParserResult {
         };
 
         let leading_trivia = opt_parse(input, &leading_trivia);
-        let start = input.position();
 
-        let mut local_delims = vec![];
-        loop {
-            let save = input.position();
-            match next_token(input) {
-                // If we're not skipping past a local delimited group (delimiter stack is empty),
-                // we can unwind on a token that's expected by us or by our ancestor.
-                Some(token)
-                    if local_delims.is_empty()
-                        && (token == expected || input.closing_delimiters().contains(&token)) =>
-                {
-                    nodes.extend(leading_trivia);
-                    if matches!(result_kind, ParseResultKind::Match) {
-                        expected_tokens.push(expected);
+        match skip_until_with_nested_delims(input, next_token, expected, delims) {
+            Some((found, skipped_range)) => {
+                nodes.extend(leading_trivia);
+                if matches!(result_kind, ParseResultKind::Match) {
+                    expected_tokens.push(expected);
+                }
+
+                let skipped = input.content(skipped_range.utf8());
+
+                input.emit(ParseError {
+                    text_range: skipped_range,
+                    tokens_that_would_have_allowed_more_progress: expected_tokens.clone(),
+                });
+
+                return ParserResult::SkippedUntil(SkippedUntil {
+                    nodes,
+                    expected,
+                    skipped,
+                    found,
+                });
+            }
+            // Not found till EOF, revert any recovery attempt
+            None => {
+                input.set_position(before_recovery);
+
+                return match result_kind {
+                    ParseResultKind::Match => ParserResult::r#match(nodes, expected_tokens),
+                    ParseResultKind::Incomplete => {
+                        ParserResult::incomplete_match(nodes, expected_tokens)
                     }
+                    ParseResultKind::NoMatch => ParserResult::no_match(expected_tokens),
+                };
+            }
+        }
+    }
+}
 
-                    // Don't consume the delimiter; parent will consume it
-                    input.set_position(save);
+/// Skips tokens until a given token is found or until we hit a closing delimiter that's expected by an outer parse.
+/// Respects nested delimiters, i.e. the `expected` token is only accepted if it's not nested inside.
+/// Does not consume the `expected` token.
+///
+/// Returns the found token and the range of skipped tokens on success.
+pub fn skip_until_with_nested_delims(
+    input: &mut ParserContext,
+    next_token: impl Fn(&mut ParserContext) -> Option<TokenKind>,
+    until: TokenKind,
+    delims: &[(TokenKind, TokenKind)],
+) -> Option<(TokenKind, TextRange)> {
+    let start = input.position();
 
-                    let skipped_range = start..save;
-                    input.emit(ParseError {
-                        text_range: skipped_range.clone(),
-                        tokens_that_would_have_allowed_more_progress: expected_tokens.clone(),
-                    });
+    let mut local_delims = vec![];
+    loop {
+        let save = input.position();
+        match next_token(input) {
+            // If we're not skipping past a local delimited group (delimiter stack is empty),
+            // we can unwind on a token that's expected by us or by our ancestor.
+            Some(token)
+                if local_delims.is_empty()
+                    && (token == until || input.closing_delimiters().contains(&token)) =>
+            {
+                // Don't consume the delimiter; parent will consume it
+                input.set_position(save);
 
-                    return ParserResult::SkippedUntil(SkippedUntil {
-                        nodes,
-                        expected,
-                        skipped: input.content(skipped_range.utf8()),
-                        found: token,
-                    });
+                return Some((token, start..save));
+            }
+            // Found the local closing delimiter, pop the stack
+            Some(token) if local_delims.last() == Some(&token) => {
+                local_delims.pop();
+            }
+            Some(token) => {
+                // Found a local opening delimiter, skip until we find a closing one
+                if let Some((_, close)) = delims.iter().find(|(op, _)| token == *op) {
+                    local_delims.push(*close);
+                } else {
+                    // Keep eating (eventually hits EOF)
                 }
-                // Found the local closing delimiter, pop the stack
-                Some(token) if local_delims.last() == Some(&token) => {
-                    local_delims.pop();
-                }
-                Some(token) => {
-                    // Found a local opening delimiter, skip until we find a closing one
-                    if let Some((_, close)) = delims.iter().find(|(op, _)| token == *op) {
-                        local_delims.push(*close);
-                    } else {
-                        // Keep eating (eventually hits EOF)
-                    }
-                }
-                // EOF, revert any recovery attempt
-                None => {
-                    input.set_position(before_recovery);
+            }
+            // EOF, revert the cursor
+            None => {
+                input.set_position(start);
 
-                    return match result_kind {
-                        ParseResultKind::Match => ParserResult::r#match(nodes, expected_tokens),
-                        ParseResultKind::Incomplete => {
-                            ParserResult::incomplete_match(nodes, expected_tokens)
-                        }
-                        ParseResultKind::NoMatch => ParserResult::no_match(expected_tokens),
-                    };
-                }
+                return None;
             }
         }
     }

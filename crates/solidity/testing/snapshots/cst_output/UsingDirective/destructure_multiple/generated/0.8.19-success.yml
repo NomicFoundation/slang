@@ -12,7 +12,7 @@ Tree:
           - OpenBrace (Token): "{" # 6..7
           - UsingDirectiveSymbolsList (Rule): # 7..35 "add as +, sub, mul, div as /"
               - UsingDirectiveSymbol (Rule): # 7..15 "add as +"
-                  - IdentifierPath (Rule): # 7..10 "add"
+                  - IdentifierPath (Rule): # 7..11 "add "
                       - Identifier (Token): "add" # 7..10
                   - AsKeyword (Token): "as" # 11..13
                   - Plus (Token): "+" # 14..15
@@ -26,14 +26,14 @@ Tree:
                       - Identifier (Token): "mul" # 22..25
               - Comma (Token): "," # 25..26
               - UsingDirectiveSymbol (Rule): # 26..35 " div as /"
-                  - IdentifierPath (Rule): # 26..30 " div"
+                  - IdentifierPath (Rule): # 26..31 " div "
                       - Identifier (Token): "div" # 27..30
                   - AsKeyword (Token): "as" # 31..33
                   - Slash (Token): "/" # 34..35
           - CloseBrace (Token): "}" # 35..36
       - ForKeyword (Token): "for" # 37..40
-      - TypeName (Rule): # 40..44 " Int"
-          - IdentifierPath (Rule): # 40..44 " Int"
+      - TypeName (Rule): # 40..45 " Int "
+          - IdentifierPath (Rule): # 40..45 " Int "
               - Identifier (Token): "Int" # 41..44
       - GlobalKeyword (Token): "global" # 45..51
       - Semicolon (Token): ";" # 51..52

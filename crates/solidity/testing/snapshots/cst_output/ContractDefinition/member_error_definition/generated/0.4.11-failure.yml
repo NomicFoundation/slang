@@ -22,8 +22,8 @@ Tree:
       - OpenBrace (Token): "{" # 16..17
       - ContractMembersList (Rule): # 18..36 "  error Error1();\n"
           - StateVariableDefinition (Rule): # 18..36 "  error Error1();\n"
-              - TypeName (Rule): # 18..25 "  error"
-                  - IdentifierPath (Rule): # 18..25 "  error"
+              - TypeName (Rule): # 18..26 "  error "
+                  - IdentifierPath (Rule): # 18..26 "  error "
                       - Identifier (Token): "error" # 20..25
               - Identifier (Token): "Error1" # 26..32
               - SKIPPED (Token): "()" # 32..34
