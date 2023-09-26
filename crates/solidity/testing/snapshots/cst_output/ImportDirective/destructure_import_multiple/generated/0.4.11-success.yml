@@ -10,7 +10,7 @@ Tree:
       - ImportKeyword (Token): "import" # 0..6
       - DeconstructionImport (Rule): # 6..44 ' { A1 as A2, B1, C1 as C2 } from "foo"'
           - OpenBrace (Token): "{" # 7..8
-          - DeconstructionImportSymbolsList (Rule): # 8..31 " A1 as A2, B1, C1 as C2"
+          - DeconstructionImportSymbolsList (Rule): # 8..32 " A1 as A2, B1, C1 as C2 "
               - DeconstructionImportSymbol (Rule): # 8..17 " A1 as A2"
                   - Identifier (Token): "A1" # 9..11
                   - AsKeyword (Token): "as" # 12..14

@@ -206,21 +206,26 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                 }
             }
 
-            Self::SeparatedBy(body, separator, loc) => Self::Sequence(
-                vec![
-                    *body.clone(),
-                    Self::ZeroOrMore(
-                        Box::new(Self::Sequence(
-                            vec![*separator.clone(), *body.clone()],
-                            *loc,
-                        )),
-                        *loc,
-                    ),
-                ],
-                *loc,
-            )
-            .to_parser_code(context_name, is_trivia),
+            Self::SeparatedBy(body, separator, _) => {
+                let separator_scanner = match separator.as_ref() {
+                    ParserDefinitionNode::ScannerDefinition(scanner, ..) => scanner,
+                    _ => unreachable!("Only tokens are permitted as separators"),
+                };
 
+                let separator_token_kind = format_ident!("{name}", name = separator_scanner.name());
+                let context = format_ident!("{context_name}");
+
+                let parser = body.to_parser_code(context_name, is_trivia);
+
+                quote! {
+                    SeparatedHelper::run::<{ LexicalContext::#context as u8}, Self>(
+                        input,
+                        |input| #parser,
+                        TokenKind::#separator_token_kind,
+                        self,
+                    )
+                }
+            }
             Self::TerminatedBy(body, terminator, _) => {
                 let terminator_scanner = match terminator.as_ref() {
                     ParserDefinitionNode::ScannerDefinition(scanner, ..) => scanner,

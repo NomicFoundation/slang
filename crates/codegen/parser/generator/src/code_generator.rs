@@ -131,6 +131,7 @@ impl CodeGenerator {
             "support/precedence_helper.rs",
             "support/parser_result.rs",
             "support/recovery.rs",
+            "support/separated_helper.rs",
             "support/scanner_macros.rs",
         ] {
             codegen.copy_file(runtime_dir.join(file), output_dir.join(file))?;
