@@ -7,6 +7,18 @@ use crate::text_index::{TextRange, TextRangeExtensions as _};
 use super::parser_result::SkippedUntil;
 use super::ParserContext;
 
+/// An explicit parameter for the [`ParserResult::recover_until_with_nested_delims`] method.
+pub enum RecoverFromNoMatch {
+    Yes,
+    No,
+}
+
+impl RecoverFromNoMatch {
+    pub fn as_bool(&self) -> bool {
+        matches!(self, RecoverFromNoMatch::Yes)
+    }
+}
+
 fn opt_parse(
     input: &mut ParserContext,
     parse: impl Fn(&mut ParserContext) -> ParserResult,
@@ -34,6 +46,7 @@ impl ParserResult {
         leading_trivia: impl Fn(&mut ParserContext) -> ParserResult,
         expected: TokenKind,
         delims: &[(TokenKind, TokenKind)],
+        recover_from_no_match: RecoverFromNoMatch,
     ) -> ParserResult {
         let before_recovery = input.position();
 
@@ -47,10 +60,23 @@ impl ParserResult {
             token
         };
 
-        let (mut nodes, mut expected_tokens, is_incomplete) = match self {
-            ParserResult::IncompleteMatch(result) => (result.nodes, result.expected_tokens, true),
+        enum ParseResultKind {
+            Match,
+            Incomplete,
+            NoMatch,
+        }
+
+        let (mut nodes, mut expected_tokens, result_kind) = match self {
+            ParserResult::IncompleteMatch(result) => (
+                result.nodes,
+                result.expected_tokens,
+                ParseResultKind::Incomplete,
+            ),
             ParserResult::Match(result) if peek_token_after_trivia() != Some(expected) => {
-                (result.nodes, result.expected_tokens, false)
+                (result.nodes, result.expected_tokens, ParseResultKind::Match)
+            }
+            ParserResult::NoMatch(result) if recover_from_no_match.as_bool() => {
+                (vec![], result.expected_tokens, ParseResultKind::NoMatch)
             }
             // No need to recover, so just return as-is.
             _ => return self,
@@ -61,7 +87,7 @@ impl ParserResult {
         match skip_until_with_nested_delims(input, next_token, expected, delims) {
             Some((found, skipped_range)) => {
                 nodes.extend(leading_trivia);
-                if !is_incomplete {
+                if matches!(result_kind, ParseResultKind::Match) {
                     expected_tokens.push(expected);
                 }
 
@@ -83,11 +109,13 @@ impl ParserResult {
             None => {
                 input.set_position(before_recovery);
 
-                if is_incomplete {
-                    return ParserResult::incomplete_match(nodes, expected_tokens);
-                } else {
-                    return ParserResult::r#match(nodes, expected_tokens);
-                }
+                return match result_kind {
+                    ParseResultKind::Match => ParserResult::r#match(nodes, expected_tokens),
+                    ParseResultKind::Incomplete => {
+                        ParserResult::incomplete_match(nodes, expected_tokens)
+                    }
+                    ParseResultKind::NoMatch => ParserResult::no_match(expected_tokens),
+                };
             }
         }
     }
