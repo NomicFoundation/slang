@@ -1,5 +1,27 @@
 # changelog
 
+## 0.10.0
+
+### Minor Changes
+
+-   [#595](https://github.com/NomicFoundation/slang/pull/595) [`1a258c4`](https://github.com/NomicFoundation/slang/commit/1a258c49432eac06dac7055bc427e68af1fa3875) Thanks [@Xanewok](https://github.com/Xanewok)! - Attempt error recovery when parsing incomplete lists
+
+-   [#564](https://github.com/NomicFoundation/slang/pull/564) [`e326a06`](https://github.com/NomicFoundation/slang/commit/e326a064da559c974fbb7a199090e9e5a313abb8) Thanks [@AntonyBlakey](https://github.com/AntonyBlakey)! - Parsing operators with missing operands should no longer panic
+
+-   [#564](https://github.com/NomicFoundation/slang/pull/564) [`e326a06`](https://github.com/NomicFoundation/slang/commit/e326a064da559c974fbb7a199090e9e5a313abb8) Thanks [@AntonyBlakey](https://github.com/AntonyBlakey)! - Inline parse rules are no longer exposed to the API.
+
+-   [#564](https://github.com/NomicFoundation/slang/pull/564) [`e326a06`](https://github.com/NomicFoundation/slang/commit/e326a064da559c974fbb7a199090e9e5a313abb8) Thanks [@AntonyBlakey](https://github.com/AntonyBlakey)! - Scanners are no longer available as methods - use next_token instead
+
+-   [#564](https://github.com/NomicFoundation/slang/pull/564) [`e326a06`](https://github.com/NomicFoundation/slang/commit/e326a064da559c974fbb7a199090e9e5a313abb8) Thanks [@AntonyBlakey](https://github.com/AntonyBlakey)! - Scanners are now grouped into contexts to deal with contextual scanning
+
+### Patch Changes
+
+-   [#601](https://github.com/NomicFoundation/slang/pull/601) [`cbd2a79`](https://github.com/NomicFoundation/slang/commit/cbd2a79658849c0029bb6a5ccc0b086564c28fe0) Thanks [@Xanewok](https://github.com/Xanewok)! - Attempt parser error recovery between bracket delimiters
+
+-   [#599](https://github.com/NomicFoundation/slang/pull/599) [`4bbad48`](https://github.com/NomicFoundation/slang/commit/4bbad48d45ae7bde8a22198b33f790b7c792b319) Thanks [@Xanewok](https://github.com/Xanewok)! - Use correct versions for the `revert` and `global` keywords
+
+-   [#561](https://github.com/NomicFoundation/slang/pull/561) [`cb6a138`](https://github.com/NomicFoundation/slang/commit/cb6a1384cb6f04926def3e4c1fe7a0b12a67143c) Thanks [@Xanewok](https://github.com/Xanewok)! - Add preliminary documentation for the `solidity_language` Rust package
+
 ## 0.9.0
 
 ### Minor Changes
