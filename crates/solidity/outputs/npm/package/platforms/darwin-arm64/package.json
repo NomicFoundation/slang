@@ -1,6 +1,6 @@
 {
   "name": "@nomicfoundation/slang-darwin-arm64",
-  "version": "0.9.0",
+  "version": "0.10.0",
   "description": "Platform-specific binaries for @nomicfoundation/slang.",
   "homepage": "https://nomicfoundation.github.io/slang/",
   "license": "MIT",
