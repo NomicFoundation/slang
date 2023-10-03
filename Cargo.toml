@@ -5,6 +5,7 @@ edition = "2021"
 publish = false
 
 [workspace]
+resolver = "2"
 members = [
     "crates/codegen/ebnf",
     "crates/codegen/grammar",
