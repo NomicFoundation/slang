@@ -22,6 +22,8 @@
 
 -   [#561](https://github.com/NomicFoundation/slang/pull/561) [`cb6a138`](https://github.com/NomicFoundation/slang/commit/cb6a1384cb6f04926def3e4c1fe7a0b12a67143c) Thanks [@Xanewok](https://github.com/Xanewok)! - Add preliminary documentation for the `solidity_language` Rust package
 
+-   [#603](https://github.com/NomicFoundation/slang/pull/603) [`be59a10`](https://github.com/NomicFoundation/slang/commit/be59a10c937542f0413a34fd84d84ec4d4400f6d) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - upgrade to rust 1.72.0
+
 ## 0.9.0
 
 ### Minor Changes
