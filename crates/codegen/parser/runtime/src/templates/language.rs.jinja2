@@ -65,33 +65,6 @@ impl Language {
         &self.version
     }
 
-    {% for context in code.scanner_contexts %}
-        #[allow(dead_code)]
-        fn {{ context.name | snake_case }}_parse_token_with_trivia(
-            &self,
-            input: &mut ParserContext,
-            kind: TokenKind,
-        ) -> ParserResult
-        {
-            Lexer::parse_token_with_trivia::<{ LexicalContext::{{ context.name }} as u8 }>(self, input, kind)
-        }
-
-        #[allow(dead_code)]
-        fn {{ context.name | snake_case }}_parse_token(&self, input: &mut ParserContext, kind: TokenKind) -> ParserResult
-        {
-            Lexer::parse_token::<{ LexicalContext::{{ context.name }} as u8 }>(self, input, kind)
-        }
-
-        #[allow(dead_code)]
-        const fn {{ context.name | snake_case }}_delimiters() -> &'static [(TokenKind, TokenKind)] {
-            &[
-                {%- for open, close in context.delimiters %}
-                    (TokenKind::{{ open }}, TokenKind::{{ close }}),
-                {%- endfor %}
-            ]
-        }
-    {% endfor %}
-
     /********************************************
      *         Parser Functions
      ********************************************/
@@ -141,7 +114,11 @@ impl Lexer for Language {
     fn delimiters<const LEX_CTX: u8>() -> &'static [(TokenKind, TokenKind)] {
         match LexicalContext::from_repr(LEX_CTX).unwrap() {
             {%- for context in code.scanner_contexts %}
-                LexicalContext::{{ context.name }} => Self::{{ context.name | snake_case }}_delimiters(),
+                LexicalContext::{{ context.name }} => &[
+                    {%- for open, close in context.delimiters %}
+                        (TokenKind::{{ open }}, TokenKind::{{ close }}),
+                    {%- endfor %}
+                ],
             {%- endfor %}
         }
     }

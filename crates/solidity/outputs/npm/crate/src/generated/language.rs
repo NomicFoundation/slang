@@ -166,74 +166,6 @@ impl Language {
         &self.version
     }
 
-    #[allow(dead_code)]
-    fn default_parse_token_with_trivia(
-        &self,
-        input: &mut ParserContext,
-        kind: TokenKind,
-    ) -> ParserResult {
-        Lexer::parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(self, input, kind)
-    }
-
-    #[allow(dead_code)]
-    fn default_parse_token(&self, input: &mut ParserContext, kind: TokenKind) -> ParserResult {
-        Lexer::parse_token::<{ LexicalContext::Default as u8 }>(self, input, kind)
-    }
-
-    #[allow(dead_code)]
-    const fn default_delimiters() -> &'static [(TokenKind, TokenKind)] {
-        &[
-            (TokenKind::OpenBrace, TokenKind::CloseBrace),
-            (TokenKind::OpenBracket, TokenKind::CloseBracket),
-            (TokenKind::OpenParen, TokenKind::CloseParen),
-        ]
-    }
-
-    #[allow(dead_code)]
-    fn version_pragma_parse_token_with_trivia(
-        &self,
-        input: &mut ParserContext,
-        kind: TokenKind,
-    ) -> ParserResult {
-        Lexer::parse_token_with_trivia::<{ LexicalContext::VersionPragma as u8 }>(self, input, kind)
-    }
-
-    #[allow(dead_code)]
-    fn version_pragma_parse_token(
-        &self,
-        input: &mut ParserContext,
-        kind: TokenKind,
-    ) -> ParserResult {
-        Lexer::parse_token::<{ LexicalContext::VersionPragma as u8 }>(self, input, kind)
-    }
-
-    #[allow(dead_code)]
-    const fn version_pragma_delimiters() -> &'static [(TokenKind, TokenKind)] {
-        &[]
-    }
-
-    #[allow(dead_code)]
-    fn yul_block_parse_token_with_trivia(
-        &self,
-        input: &mut ParserContext,
-        kind: TokenKind,
-    ) -> ParserResult {
-        Lexer::parse_token_with_trivia::<{ LexicalContext::YulBlock as u8 }>(self, input, kind)
-    }
-
-    #[allow(dead_code)]
-    fn yul_block_parse_token(&self, input: &mut ParserContext, kind: TokenKind) -> ParserResult {
-        Lexer::parse_token::<{ LexicalContext::YulBlock as u8 }>(self, input, kind)
-    }
-
-    #[allow(dead_code)]
-    const fn yul_block_delimiters() -> &'static [(TokenKind, TokenKind)] {
-        &[
-            (TokenKind::OpenBrace, TokenKind::CloseBrace),
-            (TokenKind::OpenParen, TokenKind::CloseParen),
-        ]
-    }
-
     /********************************************
      *         Parser Functions
      ********************************************/
@@ -241,8 +173,18 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn abi_coder_pragma(&self, input: &mut ParserContext) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::ABICoderKeyword))?;
-            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Identifier))?;
+            seq.elem(
+                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::ABICoderKeyword,
+                ),
+            )?;
+            seq.elem(
+                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::Identifier,
+                ),
+            )?;
             seq.finish()
         })
         .with_kind(RuleKind::ABICoderPragma)
@@ -252,14 +194,25 @@ impl Language {
     fn address_type(&self, input: &mut ParserContext) -> ParserResult {
         ChoiceHelper::run(input, |mut choice, input| {
             let result = SequenceHelper::run(|mut seq| {
-                seq.elem(self.default_parse_token_with_trivia(input, TokenKind::AddressKeyword))?;
-                seq.elem(OptionalHelper::transform(
-                    self.default_parse_token_with_trivia(input, TokenKind::PayableKeyword),
-                ))?;
+                seq.elem(
+                    self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::AddressKeyword,
+                    ),
+                )?;
+                seq.elem(OptionalHelper::transform(self.parse_token_with_trivia::<{
+                    LexicalContext::Default as u8
+                }>(
+                    input,
+                    TokenKind::PayableKeyword,
+                )))?;
                 seq.finish()
             });
             choice.consider(input, result)?;
-            let result = self.default_parse_token_with_trivia(input, TokenKind::PayableKeyword);
+            let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                input,
+                TokenKind::PayableKeyword,
+            );
             choice.consider(input, result)?;
             choice.finish(input)
         })
@@ -271,7 +224,12 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             let mut delim_guard = input.open_delim(TokenKind::CloseParen);
             let input = delim_guard.ctx();
-            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::OpenParen))?;
+            seq.elem(
+                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::OpenParen,
+                ),
+            )?;
             seq.elem(
                 OptionalHelper::transform(ChoiceHelper::run(input, |mut choice, input| {
                     let result = self.positional_arguments_list(input);
@@ -285,11 +243,16 @@ impl Language {
                     |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
                     |input| Lexer::leading_trivia(self, input),
                     TokenKind::CloseParen,
-                    Self::default_delimiters(),
+                    Self::delimiters::<{ LexicalContext::Default as u8 }>(),
                     RecoverFromNoMatch::Yes,
                 ),
             )?;
-            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::CloseParen))?;
+            seq.elem(
+                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::CloseParen,
+                ),
+            )?;
             seq.finish()
         })
         .with_kind(RuleKind::ArgumentsDeclaration)
@@ -300,7 +263,12 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             let mut delim_guard = input.open_delim(TokenKind::CloseBracket);
             let input = delim_guard.ctx();
-            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::OpenBracket))?;
+            seq.elem(
+                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::OpenBracket,
+                ),
+            )?;
             seq.elem(
                 self.array_values_list(input)
                     .recover_until_with_nested_delims(
@@ -308,11 +276,16 @@ impl Language {
                         |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
                         |input| Lexer::leading_trivia(self, input),
                         TokenKind::CloseBracket,
-                        Self::default_delimiters(),
+                        Self::delimiters::<{ LexicalContext::Default as u8 }>(),
                         RecoverFromNoMatch::Yes,
                     ),
             )?;
-            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::CloseBracket))?;
+            seq.elem(
+                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::CloseBracket,
+                ),
+            )?;
             seq.finish()
         })
         .with_kind(RuleKind::ArrayExpression)
@@ -332,7 +305,10 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn ascii_string_literals_list(&self, input: &mut ParserContext) -> ParserResult {
         OneOrMoreHelper::run(input, |input| {
-            self.default_parse_token_with_trivia(input, TokenKind::AsciiStringLiteral)
+            self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                input,
+                TokenKind::AsciiStringLiteral,
+            )
         })
         .with_kind(RuleKind::AsciiStringLiteralsList)
     }
@@ -341,7 +317,12 @@ impl Language {
     fn assembly_flags_list(&self, input: &mut ParserContext) -> ParserResult {
         SeparatedHelper::run::<{ LexicalContext::Default as u8 }, Self>(
             input,
-            |input| self.default_parse_token_with_trivia(input, TokenKind::AsciiStringLiteral),
+            |input| {
+                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::AsciiStringLiteral,
+                )
+            },
             TokenKind::Comma,
             self,
         )
@@ -351,14 +332,27 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn assembly_statement(&self, input: &mut ParserContext) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::AssemblyKeyword))?;
-            seq.elem(OptionalHelper::transform(
-                self.default_parse_token_with_trivia(input, TokenKind::AsciiStringLiteral),
-            ))?;
+            seq.elem(
+                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::AssemblyKeyword,
+                ),
+            )?;
+            seq.elem(OptionalHelper::transform(self.parse_token_with_trivia::<{
+                LexicalContext::Default as u8
+            }>(
+                input,
+                TokenKind::AsciiStringLiteral,
+            )))?;
             seq.elem(OptionalHelper::transform(SequenceHelper::run(|mut seq| {
                 let mut delim_guard = input.open_delim(TokenKind::CloseParen);
                 let input = delim_guard.ctx();
-                seq.elem(self.default_parse_token_with_trivia(input, TokenKind::OpenParen))?;
+                seq.elem(
+                    self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::OpenParen,
+                    ),
+                )?;
                 seq.elem(
                     self.assembly_flags_list(input)
                         .recover_until_with_nested_delims(
@@ -368,11 +362,16 @@ impl Language {
                             },
                             |input| Lexer::leading_trivia(self, input),
                             TokenKind::CloseParen,
-                            Self::default_delimiters(),
+                            Self::delimiters::<{ LexicalContext::Default as u8 }>(),
                             RecoverFromNoMatch::Yes,
                         ),
                 )?;
-                seq.elem(self.default_parse_token_with_trivia(input, TokenKind::CloseParen))?;
+                seq.elem(
+                    self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::CloseParen,
+                    ),
+                )?;
                 seq.finish()
             })))?;
             seq.elem(self.yul_block(input))?;
@@ -386,7 +385,12 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             let mut delim_guard = input.open_delim(TokenKind::CloseBrace);
             let input = delim_guard.ctx();
-            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::OpenBrace))?;
+            seq.elem(
+                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::OpenBrace,
+                ),
+            )?;
             seq.elem(
                 OptionalHelper::transform(self.statements_list(input))
                     .recover_until_with_nested_delims(
@@ -394,11 +398,16 @@ impl Language {
                         |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
                         |input| Lexer::leading_trivia(self, input),
                         TokenKind::CloseBrace,
-                        Self::default_delimiters(),
+                        Self::delimiters::<{ LexicalContext::Default as u8 }>(),
                         RecoverFromNoMatch::Yes,
                     ),
             )?;
-            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::CloseBrace))?;
+            seq.elem(
+                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::CloseBrace,
+                ),
+            )?;
             seq.finish()
         })
         .with_kind(RuleKind::Block)
@@ -408,17 +417,25 @@ impl Language {
     fn break_statement(&self, input: &mut ParserContext) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(
-                self.default_parse_token_with_trivia(input, TokenKind::BreakKeyword)
-                    .recover_until_with_nested_delims(
-                        input,
-                        |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
-                        |input| Lexer::leading_trivia(self, input),
-                        TokenKind::Semicolon,
-                        Self::default_delimiters(),
-                        RecoverFromNoMatch::No,
-                    ),
+                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::BreakKeyword,
+                )
+                .recover_until_with_nested_delims(
+                    input,
+                    |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
+                    |input| Lexer::leading_trivia(self, input),
+                    TokenKind::Semicolon,
+                    Self::delimiters::<{ LexicalContext::Default as u8 }>(),
+                    RecoverFromNoMatch::No,
+                ),
             )?;
-            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Semicolon))?;
+            seq.elem(
+                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::Semicolon,
+                ),
+            )?;
             seq.finish()
         })
         .with_kind(RuleKind::BreakStatement)
@@ -428,7 +445,12 @@ impl Language {
     fn catch_clause(&self, input: &mut ParserContext) -> ParserResult {
         if self.version_is_at_least_0_6_0 {
             SequenceHelper::run(|mut seq| {
-                seq.elem(self.default_parse_token_with_trivia(input, TokenKind::CatchKeyword))?;
+                seq.elem(
+                    self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::CatchKeyword,
+                    ),
+                )?;
                 seq.elem(OptionalHelper::transform(self.catch_clause_error(input)))?;
                 seq.elem(self.block(input))?;
                 seq.finish()
@@ -443,9 +465,12 @@ impl Language {
     fn catch_clause_error(&self, input: &mut ParserContext) -> ParserResult {
         if self.version_is_at_least_0_6_0 {
             SequenceHelper::run(|mut seq| {
-                seq.elem(OptionalHelper::transform(
-                    self.default_parse_token_with_trivia(input, TokenKind::Identifier),
-                ))?;
+                seq.elem(OptionalHelper::transform(self.parse_token_with_trivia::<{
+                    LexicalContext::Default as u8
+                }>(
+                    input,
+                    TokenKind::Identifier,
+                )))?;
                 seq.elem(self.parameters_declaration(input))?;
                 seq.finish()
             })
@@ -473,12 +498,23 @@ impl Language {
                     SequenceHelper::run(|mut seq| {
                         seq.elem(self.type_name(input))?;
                         seq.elem(
-                            self.default_parse_token_with_trivia(input, TokenKind::ConstantKeyword),
+                            self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                                input,
+                                TokenKind::ConstantKeyword,
+                            ),
                         )?;
                         seq.elem(
-                            self.default_parse_token_with_trivia(input, TokenKind::Identifier),
+                            self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                                input,
+                                TokenKind::Identifier,
+                            ),
                         )?;
-                        seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Equal))?;
+                        seq.elem(
+                            self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                                input,
+                                TokenKind::Equal,
+                            ),
+                        )?;
                         seq.elem(self.expression(input))?;
                         seq.finish()
                     })
@@ -487,11 +523,16 @@ impl Language {
                         |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
                         |input| Lexer::leading_trivia(self, input),
                         TokenKind::Semicolon,
-                        Self::default_delimiters(),
+                        Self::delimiters::<{ LexicalContext::Default as u8 }>(),
                         RecoverFromNoMatch::No,
                     ),
                 )?;
-                seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Semicolon))?;
+                seq.elem(
+                    self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::Semicolon,
+                    ),
+                )?;
                 seq.finish()
             })
         } else {
@@ -508,14 +549,23 @@ impl Language {
                     ChoiceHelper::run(input, |mut choice, input| {
                         let result = self.modifier_invocation(input);
                         choice.consider(input, result)?;
-                        let result =
-                            self.default_parse_token_with_trivia(input, TokenKind::InternalKeyword);
+                        let result = self
+                            .parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                                input,
+                                TokenKind::InternalKeyword,
+                            );
                         choice.consider(input, result)?;
-                        let result =
-                            self.default_parse_token_with_trivia(input, TokenKind::PayableKeyword);
+                        let result = self
+                            .parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                                input,
+                                TokenKind::PayableKeyword,
+                            );
                         choice.consider(input, result)?;
-                        let result =
-                            self.default_parse_token_with_trivia(input, TokenKind::PublicKeyword);
+                        let result = self
+                            .parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                                input,
+                                TokenKind::PublicKeyword,
+                            );
                         choice.consider(input, result)?;
                         choice.finish(input)
                     })
@@ -534,7 +584,10 @@ impl Language {
         if self.version_is_at_least_0_4_22 {
             SequenceHelper::run(|mut seq| {
                 seq.elem(
-                    self.default_parse_token_with_trivia(input, TokenKind::ConstructorKeyword),
+                    self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::ConstructorKeyword,
+                    ),
                 )?;
                 seq.elem(self.parameters_declaration(input))?;
                 seq.elem(OptionalHelper::transform(
@@ -553,17 +606,25 @@ impl Language {
     fn continue_statement(&self, input: &mut ParserContext) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(
-                self.default_parse_token_with_trivia(input, TokenKind::ContinueKeyword)
-                    .recover_until_with_nested_delims(
-                        input,
-                        |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
-                        |input| Lexer::leading_trivia(self, input),
-                        TokenKind::Semicolon,
-                        Self::default_delimiters(),
-                        RecoverFromNoMatch::No,
-                    ),
+                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::ContinueKeyword,
+                )
+                .recover_until_with_nested_delims(
+                    input,
+                    |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
+                    |input| Lexer::leading_trivia(self, input),
+                    TokenKind::Semicolon,
+                    Self::delimiters::<{ LexicalContext::Default as u8 }>(),
+                    RecoverFromNoMatch::No,
+                ),
             )?;
-            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Semicolon))?;
+            seq.elem(
+                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::Semicolon,
+                ),
+            )?;
             seq.finish()
         })
         .with_kind(RuleKind::ContinueStatement)
@@ -573,17 +634,35 @@ impl Language {
     fn contract_definition(&self, input: &mut ParserContext) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             if self.version_is_at_least_0_6_0 {
-                seq.elem(OptionalHelper::transform(
-                    self.default_parse_token_with_trivia(input, TokenKind::AbstractKeyword),
-                ))?;
+                seq.elem(OptionalHelper::transform(self.parse_token_with_trivia::<{
+                    LexicalContext::Default as u8
+                }>(
+                    input,
+                    TokenKind::AbstractKeyword,
+                )))?;
             }
-            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::ContractKeyword))?;
-            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Identifier))?;
+            seq.elem(
+                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::ContractKeyword,
+                ),
+            )?;
+            seq.elem(
+                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::Identifier,
+                ),
+            )?;
             seq.elem(OptionalHelper::transform(self.inheritance_specifier(input)))?;
             seq.elem(SequenceHelper::run(|mut seq| {
                 let mut delim_guard = input.open_delim(TokenKind::CloseBrace);
                 let input = delim_guard.ctx();
-                seq.elem(self.default_parse_token_with_trivia(input, TokenKind::OpenBrace))?;
+                seq.elem(
+                    self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::OpenBrace,
+                    ),
+                )?;
                 seq.elem(
                     OptionalHelper::transform(self.contract_members_list(input))
                         .recover_until_with_nested_delims(
@@ -593,11 +672,16 @@ impl Language {
                             },
                             |input| Lexer::leading_trivia(self, input),
                             TokenKind::CloseBrace,
-                            Self::default_delimiters(),
+                            Self::delimiters::<{ LexicalContext::Default as u8 }>(),
                             RecoverFromNoMatch::Yes,
                         ),
                 )?;
-                seq.elem(self.default_parse_token_with_trivia(input, TokenKind::CloseBrace))?;
+                seq.elem(
+                    self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::CloseBrace,
+                    ),
+                )?;
                 seq.finish()
             }))?;
             seq.finish()
@@ -661,7 +745,12 @@ impl Language {
             seq.elem(SequenceHelper::run(|mut seq| {
                 let mut delim_guard = input.open_delim(TokenKind::CloseBrace);
                 let input = delim_guard.ctx();
-                seq.elem(self.default_parse_token_with_trivia(input, TokenKind::OpenBrace))?;
+                seq.elem(
+                    self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::OpenBrace,
+                    ),
+                )?;
                 seq.elem(
                     self.deconstruction_import_symbols_list(input)
                         .recover_until_with_nested_delims(
@@ -671,15 +760,30 @@ impl Language {
                             },
                             |input| Lexer::leading_trivia(self, input),
                             TokenKind::CloseBrace,
-                            Self::default_delimiters(),
+                            Self::delimiters::<{ LexicalContext::Default as u8 }>(),
                             RecoverFromNoMatch::Yes,
                         ),
                 )?;
-                seq.elem(self.default_parse_token_with_trivia(input, TokenKind::CloseBrace))?;
+                seq.elem(
+                    self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::CloseBrace,
+                    ),
+                )?;
                 seq.finish()
             }))?;
-            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::FromKeyword))?;
-            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::AsciiStringLiteral))?;
+            seq.elem(
+                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::FromKeyword,
+                ),
+            )?;
+            seq.elem(
+                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::AsciiStringLiteral,
+                ),
+            )?;
             seq.finish()
         })
         .with_kind(RuleKind::DeconstructionImport)
@@ -688,10 +792,25 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn deconstruction_import_symbol(&self, input: &mut ParserContext) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Identifier))?;
+            seq.elem(
+                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::Identifier,
+                ),
+            )?;
             seq.elem(OptionalHelper::transform(SequenceHelper::run(|mut seq| {
-                seq.elem(self.default_parse_token_with_trivia(input, TokenKind::AsKeyword))?;
-                seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Identifier))?;
+                seq.elem(
+                    self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::AsKeyword,
+                    ),
+                )?;
+                seq.elem(
+                    self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::Identifier,
+                    ),
+                )?;
                 seq.finish()
             })))?;
             seq.finish()
@@ -716,7 +835,10 @@ impl Language {
             seq.elem(
                 SequenceHelper::run(|mut seq| {
                     seq.elem(
-                        self.default_parse_token_with_trivia(input, TokenKind::DeleteKeyword),
+                        self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                            input,
+                            TokenKind::DeleteKeyword,
+                        ),
                     )?;
                     seq.elem(self.expression(input))?;
                     seq.finish()
@@ -726,11 +848,16 @@ impl Language {
                     |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
                     |input| Lexer::leading_trivia(self, input),
                     TokenKind::Semicolon,
-                    Self::default_delimiters(),
+                    Self::delimiters::<{ LexicalContext::Default as u8 }>(),
                     RecoverFromNoMatch::No,
                 ),
             )?;
-            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Semicolon))?;
+            seq.elem(
+                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::Semicolon,
+                ),
+            )?;
             seq.finish()
         })
         .with_kind(RuleKind::DeleteStatement)
@@ -741,14 +868,27 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             seq.elem(
                 SequenceHelper::run(|mut seq| {
-                    seq.elem(self.default_parse_token_with_trivia(input, TokenKind::DoKeyword))?;
+                    seq.elem(
+                        self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                            input,
+                            TokenKind::DoKeyword,
+                        ),
+                    )?;
                     seq.elem(self.statement(input))?;
-                    seq.elem(self.default_parse_token_with_trivia(input, TokenKind::WhileKeyword))?;
+                    seq.elem(
+                        self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                            input,
+                            TokenKind::WhileKeyword,
+                        ),
+                    )?;
                     seq.elem(SequenceHelper::run(|mut seq| {
                         let mut delim_guard = input.open_delim(TokenKind::CloseParen);
                         let input = delim_guard.ctx();
                         seq.elem(
-                            self.default_parse_token_with_trivia(input, TokenKind::OpenParen),
+                            self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                                input,
+                                TokenKind::OpenParen,
+                            ),
                         )?;
                         seq.elem(self.expression(input).recover_until_with_nested_delims(
                             input,
@@ -757,11 +897,14 @@ impl Language {
                             },
                             |input| Lexer::leading_trivia(self, input),
                             TokenKind::CloseParen,
-                            Self::default_delimiters(),
+                            Self::delimiters::<{ LexicalContext::Default as u8 }>(),
                             RecoverFromNoMatch::Yes,
                         ))?;
                         seq.elem(
-                            self.default_parse_token_with_trivia(input, TokenKind::CloseParen),
+                            self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                                input,
+                                TokenKind::CloseParen,
+                            ),
                         )?;
                         seq.finish()
                     }))?;
@@ -772,11 +915,16 @@ impl Language {
                     |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
                     |input| Lexer::leading_trivia(self, input),
                     TokenKind::Semicolon,
-                    Self::default_delimiters(),
+                    Self::delimiters::<{ LexicalContext::Default as u8 }>(),
                     RecoverFromNoMatch::No,
                 ),
             )?;
-            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Semicolon))?;
+            seq.elem(
+                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::Semicolon,
+                ),
+            )?;
             seq.finish()
         })
         .with_kind(RuleKind::DoWhileStatement)
@@ -789,7 +937,10 @@ impl Language {
                 seq.elem(
                     SequenceHelper::run(|mut seq| {
                         seq.elem(
-                            self.default_parse_token_with_trivia(input, TokenKind::EmitKeyword),
+                            self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                                input,
+                                TokenKind::EmitKeyword,
+                            ),
                         )?;
                         seq.elem(self.identifier_path(input))?;
                         seq.elem(self.arguments_declaration(input))?;
@@ -800,11 +951,16 @@ impl Language {
                         |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
                         |input| Lexer::leading_trivia(self, input),
                         TokenKind::Semicolon,
-                        Self::default_delimiters(),
+                        Self::delimiters::<{ LexicalContext::Default as u8 }>(),
                         RecoverFromNoMatch::No,
                     ),
                 )?;
-                seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Semicolon))?;
+                seq.elem(
+                    self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::Semicolon,
+                    ),
+                )?;
                 seq.finish()
             })
         } else {
@@ -817,13 +973,21 @@ impl Language {
     fn end_of_file_trivia(&self, input: &mut ParserContext) -> ParserResult {
         OneOrMoreHelper::run(input, |input| {
             ChoiceHelper::run(input, |mut choice, input| {
-                let result = self.default_parse_token(input, TokenKind::Whitespace);
+                let result = self
+                    .parse_token::<{ LexicalContext::Default as u8 }>(input, TokenKind::Whitespace);
                 choice.consider(input, result)?;
-                let result = self.default_parse_token(input, TokenKind::EndOfLine);
+                let result = self
+                    .parse_token::<{ LexicalContext::Default as u8 }>(input, TokenKind::EndOfLine);
                 choice.consider(input, result)?;
-                let result = self.default_parse_token(input, TokenKind::MultilineComment);
+                let result = self.parse_token::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::MultilineComment,
+                );
                 choice.consider(input, result)?;
-                let result = self.default_parse_token(input, TokenKind::SingleLineComment);
+                let result = self.parse_token::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::SingleLineComment,
+                );
                 choice.consider(input, result)?;
                 choice.finish(input)
             })
@@ -834,12 +998,27 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn enum_definition(&self, input: &mut ParserContext) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::EnumKeyword))?;
-            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Identifier))?;
+            seq.elem(
+                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::EnumKeyword,
+                ),
+            )?;
+            seq.elem(
+                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::Identifier,
+                ),
+            )?;
             seq.elem(SequenceHelper::run(|mut seq| {
                 let mut delim_guard = input.open_delim(TokenKind::CloseBrace);
                 let input = delim_guard.ctx();
-                seq.elem(self.default_parse_token_with_trivia(input, TokenKind::OpenBrace))?;
+                seq.elem(
+                    self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::OpenBrace,
+                    ),
+                )?;
                 seq.elem(
                     OptionalHelper::transform(self.identifiers_list(input))
                         .recover_until_with_nested_delims(
@@ -849,11 +1028,16 @@ impl Language {
                             },
                             |input| Lexer::leading_trivia(self, input),
                             TokenKind::CloseBrace,
-                            Self::default_delimiters(),
+                            Self::delimiters::<{ LexicalContext::Default as u8 }>(),
                             RecoverFromNoMatch::Yes,
                         ),
                 )?;
-                seq.elem(self.default_parse_token_with_trivia(input, TokenKind::CloseBrace))?;
+                seq.elem(
+                    self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::CloseBrace,
+                    ),
+                )?;
                 seq.finish()
             }))?;
             seq.finish()
@@ -868,16 +1052,25 @@ impl Language {
                 seq.elem(
                     SequenceHelper::run(|mut seq| {
                         seq.elem(
-                            self.default_parse_token_with_trivia(input, TokenKind::ErrorKeyword),
+                            self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                                input,
+                                TokenKind::ErrorKeyword,
+                            ),
                         )?;
                         seq.elem(
-                            self.default_parse_token_with_trivia(input, TokenKind::Identifier),
+                            self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                                input,
+                                TokenKind::Identifier,
+                            ),
                         )?;
                         seq.elem(SequenceHelper::run(|mut seq| {
                             let mut delim_guard = input.open_delim(TokenKind::CloseParen);
                             let input = delim_guard.ctx();
                             seq.elem(
-                                self.default_parse_token_with_trivia(input, TokenKind::OpenParen),
+                                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                                    input,
+                                    TokenKind::OpenParen,
+                                ),
                             )?;
                             seq.elem(
                                 OptionalHelper::transform(self.error_parameters_list(input))
@@ -890,12 +1083,15 @@ impl Language {
                                         },
                                         |input| Lexer::leading_trivia(self, input),
                                         TokenKind::CloseParen,
-                                        Self::default_delimiters(),
+                                        Self::delimiters::<{ LexicalContext::Default as u8 }>(),
                                         RecoverFromNoMatch::Yes,
                                     ),
                             )?;
                             seq.elem(
-                                self.default_parse_token_with_trivia(input, TokenKind::CloseParen),
+                                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                                    input,
+                                    TokenKind::CloseParen,
+                                ),
                             )?;
                             seq.finish()
                         }))?;
@@ -906,11 +1102,16 @@ impl Language {
                         |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
                         |input| Lexer::leading_trivia(self, input),
                         TokenKind::Semicolon,
-                        Self::default_delimiters(),
+                        Self::delimiters::<{ LexicalContext::Default as u8 }>(),
                         RecoverFromNoMatch::No,
                     ),
                 )?;
-                seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Semicolon))?;
+                seq.elem(
+                    self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::Semicolon,
+                    ),
+                )?;
                 seq.finish()
             })
         } else {
@@ -924,9 +1125,12 @@ impl Language {
         if self.version_is_at_least_0_8_4 {
             SequenceHelper::run(|mut seq| {
                 seq.elem(self.type_name(input))?;
-                seq.elem(OptionalHelper::transform(
-                    self.default_parse_token_with_trivia(input, TokenKind::Identifier),
-                ))?;
+                seq.elem(OptionalHelper::transform(self.parse_token_with_trivia::<{
+                    LexicalContext::Default as u8
+                }>(
+                    input,
+                    TokenKind::Identifier,
+                )))?;
                 seq.finish()
             })
         } else {
@@ -955,13 +1159,26 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             seq.elem(
                 SequenceHelper::run(|mut seq| {
-                    seq.elem(self.default_parse_token_with_trivia(input, TokenKind::EventKeyword))?;
-                    seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Identifier))?;
+                    seq.elem(
+                        self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                            input,
+                            TokenKind::EventKeyword,
+                        ),
+                    )?;
+                    seq.elem(
+                        self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                            input,
+                            TokenKind::Identifier,
+                        ),
+                    )?;
                     seq.elem(SequenceHelper::run(|mut seq| {
                         let mut delim_guard = input.open_delim(TokenKind::CloseParen);
                         let input = delim_guard.ctx();
                         seq.elem(
-                            self.default_parse_token_with_trivia(input, TokenKind::OpenParen),
+                            self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                                input,
+                                TokenKind::OpenParen,
+                            ),
                         )?;
                         seq.elem(
                             OptionalHelper::transform(self.event_parameters_list(input))
@@ -974,18 +1191,24 @@ impl Language {
                                     },
                                     |input| Lexer::leading_trivia(self, input),
                                     TokenKind::CloseParen,
-                                    Self::default_delimiters(),
+                                    Self::delimiters::<{ LexicalContext::Default as u8 }>(),
                                     RecoverFromNoMatch::Yes,
                                 ),
                         )?;
                         seq.elem(
-                            self.default_parse_token_with_trivia(input, TokenKind::CloseParen),
+                            self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                                input,
+                                TokenKind::CloseParen,
+                            ),
                         )?;
                         seq.finish()
                     }))?;
-                    seq.elem(OptionalHelper::transform(
-                        self.default_parse_token_with_trivia(input, TokenKind::AnonymousKeyword),
-                    ))?;
+                    seq.elem(OptionalHelper::transform(self.parse_token_with_trivia::<{
+                        LexicalContext::Default as u8
+                    }>(
+                        input,
+                        TokenKind::AnonymousKeyword,
+                    )))?;
                     seq.finish()
                 })
                 .recover_until_with_nested_delims(
@@ -993,11 +1216,16 @@ impl Language {
                     |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
                     |input| Lexer::leading_trivia(self, input),
                     TokenKind::Semicolon,
-                    Self::default_delimiters(),
+                    Self::delimiters::<{ LexicalContext::Default as u8 }>(),
                     RecoverFromNoMatch::No,
                 ),
             )?;
-            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Semicolon))?;
+            seq.elem(
+                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::Semicolon,
+                ),
+            )?;
             seq.finish()
         })
         .with_kind(RuleKind::EventDefinition)
@@ -1007,12 +1235,18 @@ impl Language {
     fn event_parameter(&self, input: &mut ParserContext) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(self.type_name(input))?;
-            seq.elem(OptionalHelper::transform(
-                self.default_parse_token_with_trivia(input, TokenKind::IndexedKeyword),
-            ))?;
-            seq.elem(OptionalHelper::transform(
-                self.default_parse_token_with_trivia(input, TokenKind::Identifier),
-            ))?;
+            seq.elem(OptionalHelper::transform(self.parse_token_with_trivia::<{
+                LexicalContext::Default as u8
+            }>(
+                input,
+                TokenKind::IndexedKeyword,
+            )))?;
+            seq.elem(OptionalHelper::transform(self.parse_token_with_trivia::<{
+                LexicalContext::Default as u8
+            }>(
+                input,
+                TokenKind::Identifier,
+            )))?;
             seq.finish()
         })
         .with_kind(RuleKind::EventParameter)
@@ -1032,12 +1266,22 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn experimental_pragma(&self, input: &mut ParserContext) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::ExperimentalKeyword))?;
+            seq.elem(
+                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::ExperimentalKeyword,
+                ),
+            )?;
             seq.elem(ChoiceHelper::run(input, |mut choice, input| {
-                let result =
-                    self.default_parse_token_with_trivia(input, TokenKind::AsciiStringLiteral);
+                let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::AsciiStringLiteral,
+                );
                 choice.consider(input, result)?;
-                let result = self.default_parse_token_with_trivia(input, TokenKind::Identifier);
+                let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::Identifier,
+                );
                 choice.consider(input, result)?;
                 choice.finish(input)
             }))?;
@@ -1054,36 +1298,62 @@ impl Language {
                 1u8,
                 1u8 + 1,
                 ChoiceHelper::run(input, |mut choice, input| {
-                    let result = self.default_parse_token_with_trivia(input, TokenKind::Equal);
+                    let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::Equal,
+                    );
                     choice.consider(input, result)?;
-                    let result = self.default_parse_token_with_trivia(input, TokenKind::BarEqual);
+                    let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::BarEqual,
+                    );
                     choice.consider(input, result)?;
-                    let result = self.default_parse_token_with_trivia(input, TokenKind::PlusEqual);
+                    let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::PlusEqual,
+                    );
                     choice.consider(input, result)?;
-                    let result = self.default_parse_token_with_trivia(input, TokenKind::MinusEqual);
+                    let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::MinusEqual,
+                    );
                     choice.consider(input, result)?;
-                    let result = self.default_parse_token_with_trivia(input, TokenKind::CaretEqual);
+                    let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::CaretEqual,
+                    );
                     choice.consider(input, result)?;
-                    let result = self.default_parse_token_with_trivia(input, TokenKind::SlashEqual);
+                    let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::SlashEqual,
+                    );
                     choice.consider(input, result)?;
-                    let result =
-                        self.default_parse_token_with_trivia(input, TokenKind::PercentEqual);
+                    let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::PercentEqual,
+                    );
                     choice.consider(input, result)?;
-                    let result =
-                        self.default_parse_token_with_trivia(input, TokenKind::AsteriskEqual);
+                    let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::AsteriskEqual,
+                    );
                     choice.consider(input, result)?;
-                    let result =
-                        self.default_parse_token_with_trivia(input, TokenKind::AmpersandEqual);
+                    let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::AmpersandEqual,
+                    );
                     choice.consider(input, result)?;
-                    let result = self
-                        .default_parse_token_with_trivia(input, TokenKind::LessThanLessThanEqual);
+                    let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::LessThanLessThanEqual,
+                    );
                     choice.consider(input, result)?;
-                    let result = self.default_parse_token_with_trivia(
+                    let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
                         input,
                         TokenKind::GreaterThanGreaterThanEqual,
                     );
                     choice.consider(input, result)?;
-                    let result = self.default_parse_token_with_trivia(
+                    let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
                         input,
                         TokenKind::GreaterThanGreaterThanGreaterThanEqual,
                     );
@@ -1097,9 +1367,19 @@ impl Language {
                 RuleKind::ConditionalExpression,
                 3u8,
                 SequenceHelper::run(|mut seq| {
-                    seq.elem(self.default_parse_token_with_trivia(input, TokenKind::QuestionMark))?;
+                    seq.elem(
+                        self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                            input,
+                            TokenKind::QuestionMark,
+                        ),
+                    )?;
                     seq.elem(self.expression(input))?;
-                    seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Colon))?;
+                    seq.elem(
+                        self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                            input,
+                            TokenKind::Colon,
+                        ),
+                    )?;
                     seq.elem(self.expression(input))?;
                     seq.finish()
                 }),
@@ -1110,7 +1390,10 @@ impl Language {
                 RuleKind::BinaryExpression,
                 5u8,
                 5u8 + 1,
-                self.default_parse_token_with_trivia(input, TokenKind::BarBar),
+                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::BarBar,
+                ),
             )
         };
         let parse_and_operator = |input: &mut ParserContext| {
@@ -1118,7 +1401,10 @@ impl Language {
                 RuleKind::BinaryExpression,
                 7u8,
                 7u8 + 1,
-                self.default_parse_token_with_trivia(input, TokenKind::AmpersandAmpersand),
+                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::AmpersandAmpersand,
+                ),
             )
         };
         let parse_equality_comparison_operator = |input: &mut ParserContext| {
@@ -1127,9 +1413,15 @@ impl Language {
                 9u8,
                 9u8 + 1,
                 ChoiceHelper::run(input, |mut choice, input| {
-                    let result = self.default_parse_token_with_trivia(input, TokenKind::EqualEqual);
+                    let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::EqualEqual,
+                    );
                     choice.consider(input, result)?;
-                    let result = self.default_parse_token_with_trivia(input, TokenKind::BangEqual);
+                    let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::BangEqual,
+                    );
                     choice.consider(input, result)?;
                     choice.finish(input)
                 }),
@@ -1141,16 +1433,25 @@ impl Language {
                 11u8,
                 11u8 + 1,
                 ChoiceHelper::run(input, |mut choice, input| {
-                    let result = self.default_parse_token_with_trivia(input, TokenKind::LessThan);
+                    let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::LessThan,
+                    );
                     choice.consider(input, result)?;
-                    let result =
-                        self.default_parse_token_with_trivia(input, TokenKind::GreaterThan);
+                    let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::GreaterThan,
+                    );
                     choice.consider(input, result)?;
-                    let result =
-                        self.default_parse_token_with_trivia(input, TokenKind::LessThanEqual);
+                    let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::LessThanEqual,
+                    );
                     choice.consider(input, result)?;
-                    let result =
-                        self.default_parse_token_with_trivia(input, TokenKind::GreaterThanEqual);
+                    let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::GreaterThanEqual,
+                    );
                     choice.consider(input, result)?;
                     choice.finish(input)
                 }),
@@ -1161,7 +1462,10 @@ impl Language {
                 RuleKind::BinaryExpression,
                 13u8,
                 13u8 + 1,
-                self.default_parse_token_with_trivia(input, TokenKind::Bar),
+                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::Bar,
+                ),
             )
         };
         let parse_bitwise_x_or_operator = |input: &mut ParserContext| {
@@ -1169,7 +1473,10 @@ impl Language {
                 RuleKind::BinaryExpression,
                 15u8,
                 15u8 + 1,
-                self.default_parse_token_with_trivia(input, TokenKind::Caret),
+                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::Caret,
+                ),
             )
         };
         let parse_bitwise_and_operator = |input: &mut ParserContext| {
@@ -1177,7 +1484,10 @@ impl Language {
                 RuleKind::BinaryExpression,
                 17u8,
                 17u8 + 1,
-                self.default_parse_token_with_trivia(input, TokenKind::Ampersand),
+                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::Ampersand,
+                ),
             )
         };
         let parse_shift_operator = |input: &mut ParserContext| {
@@ -1186,13 +1496,17 @@ impl Language {
                 19u8,
                 19u8 + 1,
                 ChoiceHelper::run(input, |mut choice, input| {
-                    let result =
-                        self.default_parse_token_with_trivia(input, TokenKind::LessThanLessThan);
+                    let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::LessThanLessThan,
+                    );
                     choice.consider(input, result)?;
-                    let result = self
-                        .default_parse_token_with_trivia(input, TokenKind::GreaterThanGreaterThan);
+                    let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::GreaterThanGreaterThan,
+                    );
                     choice.consider(input, result)?;
-                    let result = self.default_parse_token_with_trivia(
+                    let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
                         input,
                         TokenKind::GreaterThanGreaterThanGreaterThan,
                     );
@@ -1207,9 +1521,15 @@ impl Language {
                 21u8,
                 21u8 + 1,
                 ChoiceHelper::run(input, |mut choice, input| {
-                    let result = self.default_parse_token_with_trivia(input, TokenKind::Plus);
+                    let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::Plus,
+                    );
                     choice.consider(input, result)?;
-                    let result = self.default_parse_token_with_trivia(input, TokenKind::Minus);
+                    let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::Minus,
+                    );
                     choice.consider(input, result)?;
                     choice.finish(input)
                 }),
@@ -1221,11 +1541,20 @@ impl Language {
                 23u8,
                 23u8 + 1,
                 ChoiceHelper::run(input, |mut choice, input| {
-                    let result = self.default_parse_token_with_trivia(input, TokenKind::Asterisk);
+                    let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::Asterisk,
+                    );
                     choice.consider(input, result)?;
-                    let result = self.default_parse_token_with_trivia(input, TokenKind::Slash);
+                    let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::Slash,
+                    );
                     choice.consider(input, result)?;
-                    let result = self.default_parse_token_with_trivia(input, TokenKind::Percent);
+                    let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::Percent,
+                    );
                     choice.consider(input, result)?;
                     choice.finish(input)
                 }),
@@ -1236,7 +1565,10 @@ impl Language {
                 RuleKind::BinaryExpression,
                 25u8,
                 25u8 + 1,
-                self.default_parse_token_with_trivia(input, TokenKind::AsteriskAsterisk),
+                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::AsteriskAsterisk,
+                ),
             )
         };
         let parse_exponentiation_operator_introduced_from_0_6_0 = |input: &mut ParserContext| {
@@ -1244,7 +1576,10 @@ impl Language {
                 RuleKind::BinaryExpression,
                 27u8 + 1,
                 27u8,
-                self.default_parse_token_with_trivia(input, TokenKind::AsteriskAsterisk),
+                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::AsteriskAsterisk,
+                ),
             )
         };
         let parse_unary_postfix_operator = |input: &mut ParserContext| {
@@ -1252,9 +1587,15 @@ impl Language {
                 RuleKind::UnaryPostfixExpression,
                 29u8,
                 ChoiceHelper::run(input, |mut choice, input| {
-                    let result = self.default_parse_token_with_trivia(input, TokenKind::PlusPlus);
+                    let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::PlusPlus,
+                    );
                     choice.consider(input, result)?;
-                    let result = self.default_parse_token_with_trivia(input, TokenKind::MinusMinus);
+                    let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::MinusMinus,
+                    );
                     choice.consider(input, result)?;
                     choice.finish(input)
                 }),
@@ -1265,18 +1606,37 @@ impl Language {
                 RuleKind::UnaryPrefixExpression,
                 31u8,
                 ChoiceHelper::run(input, |mut choice, input| {
-                    let result = self.default_parse_token_with_trivia(input, TokenKind::PlusPlus);
+                    let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::PlusPlus,
+                    );
                     choice.consider(input, result)?;
-                    let result = self.default_parse_token_with_trivia(input, TokenKind::MinusMinus);
+                    let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::MinusMinus,
+                    );
                     choice.consider(input, result)?;
-                    let result = self.default_parse_token_with_trivia(input, TokenKind::Tilde);
+                    let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::Tilde,
+                    );
                     choice.consider(input, result)?;
-                    let result = self.default_parse_token_with_trivia(input, TokenKind::Bang);
+                    let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::Bang,
+                    );
                     choice.consider(input, result)?;
-                    let result = self.default_parse_token_with_trivia(input, TokenKind::Minus);
+                    let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::Minus,
+                    );
                     choice.consider(input, result)?;
                     if !self.version_is_at_least_0_5_0 {
-                        let result = self.default_parse_token_with_trivia(input, TokenKind::Plus);
+                        let result = self
+                            .parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                                input,
+                                TokenKind::Plus,
+                            );
                         choice.consider(input, result)?;
                     }
                     choice.finish(input)
@@ -1301,13 +1661,24 @@ impl Language {
                 RuleKind::MemberAccessExpression,
                 35u8,
                 SequenceHelper::run(|mut seq| {
-                    seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Period))?;
+                    seq.elem(
+                        self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                            input,
+                            TokenKind::Period,
+                        ),
+                    )?;
                     seq.elem(ChoiceHelper::run(input, |mut choice, input| {
-                        let result =
-                            self.default_parse_token_with_trivia(input, TokenKind::Identifier);
+                        let result = self
+                            .parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                                input,
+                                TokenKind::Identifier,
+                            );
                         choice.consider(input, result)?;
-                        let result =
-                            self.default_parse_token_with_trivia(input, TokenKind::AddressKeyword);
+                        let result = self
+                            .parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                                input,
+                                TokenKind::AddressKeyword,
+                            );
                         choice.consider(input, result)?;
                         choice.finish(input)
                     }))?;
@@ -1322,31 +1693,19 @@ impl Language {
                 SequenceHelper::run(|mut seq| {
                     let mut delim_guard = input.open_delim(TokenKind::CloseBracket);
                     let input = delim_guard.ctx();
-                    seq.elem(self.default_parse_token_with_trivia(input, TokenKind::OpenBracket))?;
                     seq.elem(
-                        SequenceHelper::run(|mut seq| {
-                            seq.elem(OptionalHelper::transform(self.expression(input)))?;
-                            seq.elem(OptionalHelper::transform(SequenceHelper::run(|mut seq| {
-                                seq.elem(
-                                    self.default_parse_token_with_trivia(input, TokenKind::Colon),
-                                )?;
-                                seq.elem(OptionalHelper::transform(self.expression(input)))?;
-                                seq.finish()
-                            })))?;
-                            seq.finish()
-                        })
-                        .recover_until_with_nested_delims(
+                        self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
                             input,
-                            |input| {
-                                Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input)
-                            },
-                            |input| Lexer::leading_trivia(self, input),
-                            TokenKind::CloseBracket,
-                            Self::default_delimiters(),
-                            RecoverFromNoMatch::Yes,
+                            TokenKind::OpenBracket,
                         ),
                     )?;
-                    seq.elem(self.default_parse_token_with_trivia(input, TokenKind::CloseBracket))?;
+                    seq . elem (SequenceHelper :: run (| mut seq | { seq . elem (OptionalHelper :: transform (self . expression (input))) ? ; seq . elem (OptionalHelper :: transform (SequenceHelper :: run (| mut seq | { seq . elem (self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: Colon)) ? ; seq . elem (OptionalHelper :: transform (self . expression (input))) ? ; seq . finish () }))) ? ; seq . finish () }) . recover_until_with_nested_delims (input , | input | Lexer :: next_token :: < { LexicalContext :: Default as u8 } > (self , input) , | input | Lexer :: leading_trivia (self , input) , TokenKind :: CloseBracket , Self :: delimiters :: < { LexicalContext :: Default as u8 } > () , RecoverFromNoMatch :: Yes ,)) ? ;
+                    seq.elem(
+                        self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                            input,
+                            TokenKind::CloseBracket,
+                        ),
+                    )?;
                     seq.finish()
                 }),
             )
@@ -1367,11 +1726,15 @@ impl Language {
                 let result = self.array_expression(input);
                 choice.consider(input, result)?;
                 let result = ChoiceHelper::run(input, |mut choice, input| {
-                    let result =
-                        self.default_parse_token_with_trivia(input, TokenKind::TrueKeyword);
+                    let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::TrueKeyword,
+                    );
                     choice.consider(input, result)?;
-                    let result =
-                        self.default_parse_token_with_trivia(input, TokenKind::FalseKeyword);
+                    let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::FalseKeyword,
+                    );
                     choice.consider(input, result)?;
                     choice.finish(input)
                 });
@@ -1391,38 +1754,58 @@ impl Language {
                 });
                 choice.consider(input, result)?;
                 let result = ChoiceHelper::run(input, |mut choice, input| {
-                    let result =
-                        self.default_parse_token_with_trivia(input, TokenKind::BoolKeyword);
+                    let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::BoolKeyword,
+                    );
                     choice.consider(input, result)?;
-                    let result =
-                        self.default_parse_token_with_trivia(input, TokenKind::StringKeyword);
+                    let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::StringKeyword,
+                    );
                     choice.consider(input, result)?;
                     let result = self.address_type(input);
                     choice.consider(input, result)?;
-                    let result =
-                        self.default_parse_token_with_trivia(input, TokenKind::FixedBytesType);
+                    let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::FixedBytesType,
+                    );
                     choice.consider(input, result)?;
-                    let result =
-                        self.default_parse_token_with_trivia(input, TokenKind::SignedIntegerType);
+                    let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::SignedIntegerType,
+                    );
                     choice.consider(input, result)?;
-                    let result =
-                        self.default_parse_token_with_trivia(input, TokenKind::UnsignedIntegerType);
+                    let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::UnsignedIntegerType,
+                    );
                     choice.consider(input, result)?;
-                    let result =
-                        self.default_parse_token_with_trivia(input, TokenKind::SignedFixedType);
+                    let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::SignedFixedType,
+                    );
                     choice.consider(input, result)?;
-                    let result =
-                        self.default_parse_token_with_trivia(input, TokenKind::UnsignedFixedType);
+                    let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::UnsignedFixedType,
+                    );
                     choice.consider(input, result)?;
                     if !self.version_is_at_least_0_8_0 {
-                        let result =
-                            self.default_parse_token_with_trivia(input, TokenKind::ByteKeyword);
+                        let result = self
+                            .parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                                input,
+                                TokenKind::ByteKeyword,
+                            );
                         choice.consider(input, result)?;
                     }
                     choice.finish(input)
                 });
                 choice.consider(input, result)?;
-                let result = self.default_parse_token_with_trivia(input, TokenKind::Identifier);
+                let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::Identifier,
+                );
                 choice.consider(input, result)?;
                 if self.version_is_at_least_0_5_3 {
                     let result = self.type_expression(input);
@@ -1521,10 +1904,15 @@ impl Language {
                 |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
                 |input| Lexer::leading_trivia(self, input),
                 TokenKind::Semicolon,
-                Self::default_delimiters(),
+                Self::delimiters::<{ LexicalContext::Default as u8 }>(),
                 RecoverFromNoMatch::No,
             ))?;
-            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Semicolon))?;
+            seq.elem(
+                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::Semicolon,
+                ),
+            )?;
             seq.finish()
         })
         .with_kind(RuleKind::ExpressionStatement)
@@ -1540,20 +1928,35 @@ impl Language {
                         choice.consider(input, result)?;
                         let result = self.override_specifier(input);
                         choice.consider(input, result)?;
-                        let result =
-                            self.default_parse_token_with_trivia(input, TokenKind::ExternalKeyword);
+                        let result = self
+                            .parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                                input,
+                                TokenKind::ExternalKeyword,
+                            );
                         choice.consider(input, result)?;
-                        let result =
-                            self.default_parse_token_with_trivia(input, TokenKind::PayableKeyword);
+                        let result = self
+                            .parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                                input,
+                                TokenKind::PayableKeyword,
+                            );
                         choice.consider(input, result)?;
-                        let result =
-                            self.default_parse_token_with_trivia(input, TokenKind::PureKeyword);
+                        let result = self
+                            .parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                                input,
+                                TokenKind::PureKeyword,
+                            );
                         choice.consider(input, result)?;
-                        let result =
-                            self.default_parse_token_with_trivia(input, TokenKind::ViewKeyword);
+                        let result = self
+                            .parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                                input,
+                                TokenKind::ViewKeyword,
+                            );
                         choice.consider(input, result)?;
-                        let result =
-                            self.default_parse_token_with_trivia(input, TokenKind::VirtualKeyword);
+                        let result = self
+                            .parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                                input,
+                                TokenKind::VirtualKeyword,
+                            );
                         choice.consider(input, result)?;
                         choice.finish(input)
                     })
@@ -1571,14 +1974,22 @@ impl Language {
     fn fallback_function_definition(&self, input: &mut ParserContext) -> ParserResult {
         if self.version_is_at_least_0_6_0 {
             SequenceHelper::run(|mut seq| {
-                seq.elem(self.default_parse_token_with_trivia(input, TokenKind::FallbackKeyword))?;
+                seq.elem(
+                    self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::FallbackKeyword,
+                    ),
+                )?;
                 seq.elem(self.parameters_declaration(input))?;
                 seq.elem(OptionalHelper::transform(
                     self.fallback_function_attributes_list(input),
                 ))?;
                 seq.elem(OptionalHelper::transform(self.returns_declaration(input)))?;
                 seq.elem(ChoiceHelper::run(input, |mut choice, input| {
-                    let result = self.default_parse_token_with_trivia(input, TokenKind::Semicolon);
+                    let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::Semicolon,
+                    );
                     choice.consider(input, result)?;
                     let result = self.block(input);
                     choice.consider(input, result)?;
@@ -1595,11 +2006,21 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn for_statement(&self, input: &mut ParserContext) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::ForKeyword))?;
+            seq.elem(
+                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::ForKeyword,
+                ),
+            )?;
             seq.elem(SequenceHelper::run(|mut seq| {
                 let mut delim_guard = input.open_delim(TokenKind::CloseParen);
                 let input = delim_guard.ctx();
-                seq.elem(self.default_parse_token_with_trivia(input, TokenKind::OpenParen))?;
+                seq.elem(
+                    self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::OpenParen,
+                    ),
+                )?;
                 seq.elem(
                     SequenceHelper::run(|mut seq| {
                         seq.elem(ChoiceHelper::run(input, |mut choice, input| {
@@ -1613,16 +2034,22 @@ impl Language {
                                 choice.finish(input)
                             });
                             choice.consider(input, result)?;
-                            let result =
-                                self.default_parse_token_with_trivia(input, TokenKind::Semicolon);
+                            let result = self
+                                .parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                                    input,
+                                    TokenKind::Semicolon,
+                                );
                             choice.consider(input, result)?;
                             choice.finish(input)
                         }))?;
                         seq.elem(ChoiceHelper::run(input, |mut choice, input| {
                             let result = self.expression_statement(input);
                             choice.consider(input, result)?;
-                            let result =
-                                self.default_parse_token_with_trivia(input, TokenKind::Semicolon);
+                            let result = self
+                                .parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                                    input,
+                                    TokenKind::Semicolon,
+                                );
                             choice.consider(input, result)?;
                             choice.finish(input)
                         }))?;
@@ -1634,11 +2061,16 @@ impl Language {
                         |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
                         |input| Lexer::leading_trivia(self, input),
                         TokenKind::CloseParen,
-                        Self::default_delimiters(),
+                        Self::delimiters::<{ LexicalContext::Default as u8 }>(),
                         RecoverFromNoMatch::Yes,
                     ),
                 )?;
-                seq.elem(self.default_parse_token_with_trivia(input, TokenKind::CloseParen))?;
+                seq.elem(
+                    self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::CloseParen,
+                    ),
+                )?;
                 seq.finish()
             }))?;
             seq.elem(self.statement(input))?;
@@ -1655,30 +2087,53 @@ impl Language {
                 choice.consider(input, result)?;
                 let result = self.override_specifier(input);
                 choice.consider(input, result)?;
-                let result =
-                    self.default_parse_token_with_trivia(input, TokenKind::ExternalKeyword);
+                let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::ExternalKeyword,
+                );
                 choice.consider(input, result)?;
-                let result =
-                    self.default_parse_token_with_trivia(input, TokenKind::InternalKeyword);
+                let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::InternalKeyword,
+                );
                 choice.consider(input, result)?;
-                let result = self.default_parse_token_with_trivia(input, TokenKind::PayableKeyword);
+                let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::PayableKeyword,
+                );
                 choice.consider(input, result)?;
-                let result = self.default_parse_token_with_trivia(input, TokenKind::PrivateKeyword);
+                let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::PrivateKeyword,
+                );
                 choice.consider(input, result)?;
-                let result = self.default_parse_token_with_trivia(input, TokenKind::PublicKeyword);
+                let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::PublicKeyword,
+                );
                 choice.consider(input, result)?;
-                let result = self.default_parse_token_with_trivia(input, TokenKind::PureKeyword);
+                let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::PureKeyword,
+                );
                 choice.consider(input, result)?;
-                let result = self.default_parse_token_with_trivia(input, TokenKind::ViewKeyword);
+                let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::ViewKeyword,
+                );
                 choice.consider(input, result)?;
                 if !self.version_is_at_least_0_5_0 {
-                    let result =
-                        self.default_parse_token_with_trivia(input, TokenKind::ConstantKeyword);
+                    let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::ConstantKeyword,
+                    );
                     choice.consider(input, result)?;
                 }
                 if self.version_is_at_least_0_6_0 {
-                    let result =
-                        self.default_parse_token_with_trivia(input, TokenKind::VirtualKeyword);
+                    let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::VirtualKeyword,
+                    );
                     choice.consider(input, result)?;
                 }
                 choice.finish(input)
@@ -1707,14 +2162,27 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn function_definition(&self, input: &mut ParserContext) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::FunctionKeyword))?;
+            seq.elem(
+                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::FunctionKeyword,
+                ),
+            )?;
             seq.elem(ChoiceHelper::run(input, |mut choice, input| {
-                let result = self.default_parse_token_with_trivia(input, TokenKind::Identifier);
+                let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::Identifier,
+                );
                 choice.consider(input, result)?;
-                let result =
-                    self.default_parse_token_with_trivia(input, TokenKind::FallbackKeyword);
+                let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::FallbackKeyword,
+                );
                 choice.consider(input, result)?;
-                let result = self.default_parse_token_with_trivia(input, TokenKind::ReceiveKeyword);
+                let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::ReceiveKeyword,
+                );
                 choice.consider(input, result)?;
                 choice.finish(input)
             }))?;
@@ -1724,7 +2192,10 @@ impl Language {
             ))?;
             seq.elem(OptionalHelper::transform(self.returns_declaration(input)))?;
             seq.elem(ChoiceHelper::run(input, |mut choice, input| {
-                let result = self.default_parse_token_with_trivia(input, TokenKind::Semicolon);
+                let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::Semicolon,
+                );
                 choice.consider(input, result)?;
                 let result = self.block(input);
                 choice.consider(input, result)?;
@@ -1738,7 +2209,12 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn function_type(&self, input: &mut ParserContext) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::FunctionKeyword))?;
+            seq.elem(
+                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::FunctionKeyword,
+                ),
+            )?;
             seq.elem(self.parameters_declaration(input))?;
             seq.elem(OptionalHelper::transform(
                 self.function_type_attributes_list(input),
@@ -1753,21 +2229,40 @@ impl Language {
     fn function_type_attributes_list(&self, input: &mut ParserContext) -> ParserResult {
         OneOrMoreHelper::run(input, |input| {
             ChoiceHelper::run(input, |mut choice, input| {
-                let result =
-                    self.default_parse_token_with_trivia(input, TokenKind::InternalKeyword);
+                let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::InternalKeyword,
+                );
                 choice.consider(input, result)?;
-                let result =
-                    self.default_parse_token_with_trivia(input, TokenKind::ExternalKeyword);
+                let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::ExternalKeyword,
+                );
                 choice.consider(input, result)?;
-                let result = self.default_parse_token_with_trivia(input, TokenKind::PrivateKeyword);
+                let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::PrivateKeyword,
+                );
                 choice.consider(input, result)?;
-                let result = self.default_parse_token_with_trivia(input, TokenKind::PublicKeyword);
+                let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::PublicKeyword,
+                );
                 choice.consider(input, result)?;
-                let result = self.default_parse_token_with_trivia(input, TokenKind::PureKeyword);
+                let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::PureKeyword,
+                );
                 choice.consider(input, result)?;
-                let result = self.default_parse_token_with_trivia(input, TokenKind::ViewKeyword);
+                let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::ViewKeyword,
+                );
                 choice.consider(input, result)?;
-                let result = self.default_parse_token_with_trivia(input, TokenKind::PayableKeyword);
+                let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::PayableKeyword,
+                );
                 choice.consider(input, result)?;
                 choice.finish(input)
             })
@@ -1778,7 +2273,10 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn hex_string_literals_list(&self, input: &mut ParserContext) -> ParserResult {
         OneOrMoreHelper::run(input, |input| {
-            self.default_parse_token_with_trivia(input, TokenKind::HexStringLiteral)
+            self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                input,
+                TokenKind::HexStringLiteral,
+            )
         })
         .with_kind(RuleKind::HexStringLiteralsList)
     }
@@ -1787,7 +2285,12 @@ impl Language {
     fn identifier_path(&self, input: &mut ParserContext) -> ParserResult {
         SeparatedHelper::run::<{ LexicalContext::Default as u8 }, Self>(
             input,
-            |input| self.default_parse_token_with_trivia(input, TokenKind::Identifier),
+            |input| {
+                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::Identifier,
+                )
+            },
             TokenKind::Period,
             self,
         )
@@ -1809,7 +2312,12 @@ impl Language {
     fn identifiers_list(&self, input: &mut ParserContext) -> ParserResult {
         SeparatedHelper::run::<{ LexicalContext::Default as u8 }, Self>(
             input,
-            |input| self.default_parse_token_with_trivia(input, TokenKind::Identifier),
+            |input| {
+                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::Identifier,
+                )
+            },
             TokenKind::Comma,
             self,
         )
@@ -1819,25 +2327,45 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn if_statement(&self, input: &mut ParserContext) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::IfKeyword))?;
+            seq.elem(
+                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::IfKeyword,
+                ),
+            )?;
             seq.elem(SequenceHelper::run(|mut seq| {
                 let mut delim_guard = input.open_delim(TokenKind::CloseParen);
                 let input = delim_guard.ctx();
-                seq.elem(self.default_parse_token_with_trivia(input, TokenKind::OpenParen))?;
+                seq.elem(
+                    self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::OpenParen,
+                    ),
+                )?;
                 seq.elem(self.expression(input).recover_until_with_nested_delims(
                     input,
                     |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
                     |input| Lexer::leading_trivia(self, input),
                     TokenKind::CloseParen,
-                    Self::default_delimiters(),
+                    Self::delimiters::<{ LexicalContext::Default as u8 }>(),
                     RecoverFromNoMatch::Yes,
                 ))?;
-                seq.elem(self.default_parse_token_with_trivia(input, TokenKind::CloseParen))?;
+                seq.elem(
+                    self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::CloseParen,
+                    ),
+                )?;
                 seq.finish()
             }))?;
             seq.elem(self.statement(input))?;
             seq.elem(OptionalHelper::transform(SequenceHelper::run(|mut seq| {
-                seq.elem(self.default_parse_token_with_trivia(input, TokenKind::ElseKeyword))?;
+                seq.elem(
+                    self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::ElseKeyword,
+                    ),
+                )?;
                 seq.elem(self.statement(input))?;
                 seq.finish()
             })))?;
@@ -1852,7 +2380,10 @@ impl Language {
             seq.elem(
                 SequenceHelper::run(|mut seq| {
                     seq.elem(
-                        self.default_parse_token_with_trivia(input, TokenKind::ImportKeyword),
+                        self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                            input,
+                            TokenKind::ImportKeyword,
+                        ),
                     )?;
                     seq.elem(ChoiceHelper::run(input, |mut choice, input| {
                         let result = self.path_import(input);
@@ -1870,11 +2401,16 @@ impl Language {
                     |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
                     |input| Lexer::leading_trivia(self, input),
                     TokenKind::Semicolon,
-                    Self::default_delimiters(),
+                    Self::delimiters::<{ LexicalContext::Default as u8 }>(),
                     RecoverFromNoMatch::No,
                 ),
             )?;
-            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Semicolon))?;
+            seq.elem(
+                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::Semicolon,
+                ),
+            )?;
             seq.finish()
         })
         .with_kind(RuleKind::ImportDirective)
@@ -1883,7 +2419,12 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn inheritance_specifier(&self, input: &mut ParserContext) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::IsKeyword))?;
+            seq.elem(
+                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::IsKeyword,
+                ),
+            )?;
             seq.elem(self.inheritance_types_list(input))?;
             seq.finish()
         })
@@ -1914,13 +2455,28 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn interface_definition(&self, input: &mut ParserContext) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::InterfaceKeyword))?;
-            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Identifier))?;
+            seq.elem(
+                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::InterfaceKeyword,
+                ),
+            )?;
+            seq.elem(
+                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::Identifier,
+                ),
+            )?;
             seq.elem(OptionalHelper::transform(self.inheritance_specifier(input)))?;
             seq.elem(SequenceHelper::run(|mut seq| {
                 let mut delim_guard = input.open_delim(TokenKind::CloseBrace);
                 let input = delim_guard.ctx();
-                seq.elem(self.default_parse_token_with_trivia(input, TokenKind::OpenBrace))?;
+                seq.elem(
+                    self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::OpenBrace,
+                    ),
+                )?;
                 seq.elem(
                     OptionalHelper::transform(self.interface_members_list(input))
                         .recover_until_with_nested_delims(
@@ -1930,11 +2486,16 @@ impl Language {
                             },
                             |input| Lexer::leading_trivia(self, input),
                             TokenKind::CloseBrace,
-                            Self::default_delimiters(),
+                            Self::delimiters::<{ LexicalContext::Default as u8 }>(),
                             RecoverFromNoMatch::Yes,
                         ),
                 )?;
-                seq.elem(self.default_parse_token_with_trivia(input, TokenKind::CloseBrace))?;
+                seq.elem(
+                    self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::CloseBrace,
+                    ),
+                )?;
                 seq.finish()
             }))?;
             seq.finish()
@@ -1996,13 +2557,21 @@ impl Language {
     fn leading_trivia(&self, input: &mut ParserContext) -> ParserResult {
         OneOrMoreHelper::run(input, |input| {
             ChoiceHelper::run(input, |mut choice, input| {
-                let result = self.default_parse_token(input, TokenKind::Whitespace);
+                let result = self
+                    .parse_token::<{ LexicalContext::Default as u8 }>(input, TokenKind::Whitespace);
                 choice.consider(input, result)?;
-                let result = self.default_parse_token(input, TokenKind::EndOfLine);
+                let result = self
+                    .parse_token::<{ LexicalContext::Default as u8 }>(input, TokenKind::EndOfLine);
                 choice.consider(input, result)?;
-                let result = self.default_parse_token(input, TokenKind::MultilineComment);
+                let result = self.parse_token::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::MultilineComment,
+                );
                 choice.consider(input, result)?;
-                let result = self.default_parse_token(input, TokenKind::SingleLineComment);
+                let result = self.parse_token::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::SingleLineComment,
+                );
                 choice.consider(input, result)?;
                 choice.finish(input)
             })
@@ -2013,12 +2582,27 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn library_definition(&self, input: &mut ParserContext) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::LibraryKeyword))?;
-            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Identifier))?;
+            seq.elem(
+                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::LibraryKeyword,
+                ),
+            )?;
+            seq.elem(
+                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::Identifier,
+                ),
+            )?;
             seq.elem(SequenceHelper::run(|mut seq| {
                 let mut delim_guard = input.open_delim(TokenKind::CloseBrace);
                 let input = delim_guard.ctx();
-                seq.elem(self.default_parse_token_with_trivia(input, TokenKind::OpenBrace))?;
+                seq.elem(
+                    self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::OpenBrace,
+                    ),
+                )?;
                 seq.elem(
                     OptionalHelper::transform(self.library_members_list(input))
                         .recover_until_with_nested_delims(
@@ -2028,11 +2612,16 @@ impl Language {
                             },
                             |input| Lexer::leading_trivia(self, input),
                             TokenKind::CloseBrace,
-                            Self::default_delimiters(),
+                            Self::delimiters::<{ LexicalContext::Default as u8 }>(),
                             RecoverFromNoMatch::Yes,
                         ),
                 )?;
-                seq.elem(self.default_parse_token_with_trivia(input, TokenKind::CloseBrace))?;
+                seq.elem(
+                    self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::CloseBrace,
+                    ),
+                )?;
                 seq.finish()
             }))?;
             seq.finish()
@@ -2095,32 +2684,49 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             seq.elem(ChoiceHelper::run(input, |mut choice, input| {
                 let result = ChoiceHelper::run(input, |mut choice, input| {
-                    let result =
-                        self.default_parse_token_with_trivia(input, TokenKind::BoolKeyword);
+                    let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::BoolKeyword,
+                    );
                     choice.consider(input, result)?;
-                    let result =
-                        self.default_parse_token_with_trivia(input, TokenKind::StringKeyword);
+                    let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::StringKeyword,
+                    );
                     choice.consider(input, result)?;
                     let result = self.address_type(input);
                     choice.consider(input, result)?;
-                    let result =
-                        self.default_parse_token_with_trivia(input, TokenKind::FixedBytesType);
+                    let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::FixedBytesType,
+                    );
                     choice.consider(input, result)?;
-                    let result =
-                        self.default_parse_token_with_trivia(input, TokenKind::SignedIntegerType);
+                    let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::SignedIntegerType,
+                    );
                     choice.consider(input, result)?;
-                    let result =
-                        self.default_parse_token_with_trivia(input, TokenKind::UnsignedIntegerType);
+                    let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::UnsignedIntegerType,
+                    );
                     choice.consider(input, result)?;
-                    let result =
-                        self.default_parse_token_with_trivia(input, TokenKind::SignedFixedType);
+                    let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::SignedFixedType,
+                    );
                     choice.consider(input, result)?;
-                    let result =
-                        self.default_parse_token_with_trivia(input, TokenKind::UnsignedFixedType);
+                    let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::UnsignedFixedType,
+                    );
                     choice.consider(input, result)?;
                     if !self.version_is_at_least_0_8_0 {
-                        let result =
-                            self.default_parse_token_with_trivia(input, TokenKind::ByteKeyword);
+                        let result = self
+                            .parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                                input,
+                                TokenKind::ByteKeyword,
+                            );
                         choice.consider(input, result)?;
                     }
                     choice.finish(input)
@@ -2131,9 +2737,12 @@ impl Language {
                 choice.finish(input)
             }))?;
             if self.version_is_at_least_0_8_18 {
-                seq.elem(OptionalHelper::transform(
-                    self.default_parse_token_with_trivia(input, TokenKind::Identifier),
-                ))?;
+                seq.elem(OptionalHelper::transform(self.parse_token_with_trivia::<{
+                    LexicalContext::Default as u8
+                }>(
+                    input,
+                    TokenKind::Identifier,
+                )))?;
             }
             seq.finish()
         })
@@ -2143,16 +2752,26 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn mapping_type(&self, input: &mut ParserContext) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::MappingKeyword))?;
+            seq.elem(
+                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::MappingKeyword,
+                ),
+            )?;
             seq.elem(SequenceHelper::run(|mut seq| {
                 let mut delim_guard = input.open_delim(TokenKind::CloseParen);
                 let input = delim_guard.ctx();
-                seq.elem(self.default_parse_token_with_trivia(input, TokenKind::OpenParen))?;
+                seq.elem(
+                    self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::OpenParen,
+                    ),
+                )?;
                 seq.elem(
                     SequenceHelper::run(|mut seq| {
                         seq.elem(self.mapping_key_type(input))?;
                         seq.elem(
-                            self.default_parse_token_with_trivia(
+                            self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
                                 input,
                                 TokenKind::EqualGreaterThan,
                             ),
@@ -2165,11 +2784,16 @@ impl Language {
                         |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
                         |input| Lexer::leading_trivia(self, input),
                         TokenKind::CloseParen,
-                        Self::default_delimiters(),
+                        Self::delimiters::<{ LexicalContext::Default as u8 }>(),
                         RecoverFromNoMatch::Yes,
                     ),
                 )?;
-                seq.elem(self.default_parse_token_with_trivia(input, TokenKind::CloseParen))?;
+                seq.elem(
+                    self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::CloseParen,
+                    ),
+                )?;
                 seq.finish()
             }))?;
             seq.finish()
@@ -2182,9 +2806,12 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             seq.elem(self.type_name(input))?;
             if self.version_is_at_least_0_8_18 {
-                seq.elem(OptionalHelper::transform(
-                    self.default_parse_token_with_trivia(input, TokenKind::Identifier),
-                ))?;
+                seq.elem(OptionalHelper::transform(self.parse_token_with_trivia::<{
+                    LexicalContext::Default as u8
+                }>(
+                    input,
+                    TokenKind::Identifier,
+                )))?;
             }
             seq.finish()
         })
@@ -2198,8 +2825,10 @@ impl Language {
                 let result = self.override_specifier(input);
                 choice.consider(input, result)?;
                 if self.version_is_at_least_0_6_0 {
-                    let result =
-                        self.default_parse_token_with_trivia(input, TokenKind::VirtualKeyword);
+                    let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::VirtualKeyword,
+                    );
                     choice.consider(input, result)?;
                 }
                 choice.finish(input)
@@ -2211,8 +2840,18 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn modifier_definition(&self, input: &mut ParserContext) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::ModifierKeyword))?;
-            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Identifier))?;
+            seq.elem(
+                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::ModifierKeyword,
+                ),
+            )?;
+            seq.elem(
+                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::Identifier,
+                ),
+            )?;
             seq.elem(OptionalHelper::transform(
                 self.parameters_declaration(input),
             ))?;
@@ -2220,7 +2859,10 @@ impl Language {
                 self.modifier_attributes_list(input),
             ))?;
             seq.elem(ChoiceHelper::run(input, |mut choice, input| {
-                let result = self.default_parse_token_with_trivia(input, TokenKind::Semicolon);
+                let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::Semicolon,
+                );
                 choice.consider(input, result)?;
                 let result = self.block(input);
                 choice.consider(input, result)?;
@@ -2244,8 +2886,18 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn named_argument(&self, input: &mut ParserContext) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Identifier))?;
-            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Colon))?;
+            seq.elem(
+                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::Identifier,
+                ),
+            )?;
+            seq.elem(
+                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::Colon,
+                ),
+            )?;
             seq.elem(self.expression(input))?;
             seq.finish()
         })
@@ -2257,7 +2909,12 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             let mut delim_guard = input.open_delim(TokenKind::CloseBrace);
             let input = delim_guard.ctx();
-            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::OpenBrace))?;
+            seq.elem(
+                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::OpenBrace,
+                ),
+            )?;
             seq.elem(
                 OptionalHelper::transform(self.named_arguments_list(input))
                     .recover_until_with_nested_delims(
@@ -2265,11 +2922,16 @@ impl Language {
                         |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
                         |input| Lexer::leading_trivia(self, input),
                         TokenKind::CloseBrace,
-                        Self::default_delimiters(),
+                        Self::delimiters::<{ LexicalContext::Default as u8 }>(),
                         RecoverFromNoMatch::Yes,
                     ),
             )?;
-            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::CloseBrace))?;
+            seq.elem(
+                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::CloseBrace,
+                ),
+            )?;
             seq.finish()
         })
         .with_kind(RuleKind::NamedArgumentsDeclaration)
@@ -2289,11 +2951,36 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn named_import(&self, input: &mut ParserContext) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Asterisk))?;
-            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::AsKeyword))?;
-            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Identifier))?;
-            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::FromKeyword))?;
-            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::AsciiStringLiteral))?;
+            seq.elem(
+                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::Asterisk,
+                ),
+            )?;
+            seq.elem(
+                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::AsKeyword,
+                ),
+            )?;
+            seq.elem(
+                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::Identifier,
+                ),
+            )?;
+            seq.elem(
+                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::FromKeyword,
+                ),
+            )?;
+            seq.elem(
+                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::AsciiStringLiteral,
+                ),
+            )?;
             seq.finish()
         })
         .with_kind(RuleKind::NamedImport)
@@ -2302,7 +2989,12 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn new_expression(&self, input: &mut ParserContext) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::NewKeyword))?;
+            seq.elem(
+                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::NewKeyword,
+                ),
+            )?;
             seq.elem(self.type_name(input))?;
             seq.finish()
         })
@@ -2311,140 +3003,27 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn numeric_expression(&self, input: &mut ParserContext) -> ParserResult {
-        ChoiceHelper::run(input, |mut choice, input| {
-            let result = SequenceHelper::run(|mut seq| {
-                seq.elem(self.default_parse_token_with_trivia(input, TokenKind::HexLiteral))?;
-                if !self.version_is_at_least_0_5_0 {
-                    seq.elem(OptionalHelper::transform(ChoiceHelper::run(
-                        input,
-                        |mut choice, input| {
-                            let result =
-                                self.default_parse_token_with_trivia(input, TokenKind::DaysKeyword);
-                            choice.consider(input, result)?;
-                            let result = self
-                                .default_parse_token_with_trivia(input, TokenKind::EtherKeyword);
-                            choice.consider(input, result)?;
-                            let result = self
-                                .default_parse_token_with_trivia(input, TokenKind::HoursKeyword);
-                            choice.consider(input, result)?;
-                            let result = self
-                                .default_parse_token_with_trivia(input, TokenKind::MinutesKeyword);
-                            choice.consider(input, result)?;
-                            let result = self
-                                .default_parse_token_with_trivia(input, TokenKind::SecondsKeyword);
-                            choice.consider(input, result)?;
-                            let result = self
-                                .default_parse_token_with_trivia(input, TokenKind::WeeksKeyword);
-                            choice.consider(input, result)?;
-                            let result =
-                                self.default_parse_token_with_trivia(input, TokenKind::WeiKeyword);
-                            choice.consider(input, result)?;
-                            if !self.version_is_at_least_0_5_0 {
-                                let result = self.default_parse_token_with_trivia(
-                                    input,
-                                    TokenKind::YearsKeyword,
-                                );
-                                choice.consider(input, result)?;
-                            }
-                            if self.version_is_at_least_0_6_11 {
-                                let result = self
-                                    .default_parse_token_with_trivia(input, TokenKind::GweiKeyword);
-                                choice.consider(input, result)?;
-                            }
-                            if !self.version_is_at_least_0_7_0 {
-                                let result = ChoiceHelper::run(input, |mut choice, input| {
-                                    let result = self.default_parse_token_with_trivia(
-                                        input,
-                                        TokenKind::FinneyKeyword,
-                                    );
-                                    choice.consider(input, result)?;
-                                    let result = self.default_parse_token_with_trivia(
-                                        input,
-                                        TokenKind::SzaboKeyword,
-                                    );
-                                    choice.consider(input, result)?;
-                                    choice.finish(input)
-                                });
-                                choice.consider(input, result)?;
-                            }
-                            choice.finish(input)
-                        },
-                    )))?;
-                }
-                seq.finish()
-            });
-            choice.consider(input, result)?;
-            let result = SequenceHelper::run(|mut seq| {
-                seq.elem(self.default_parse_token_with_trivia(input, TokenKind::DecimalLiteral))?;
-                seq.elem(OptionalHelper::transform(ChoiceHelper::run(
-                    input,
-                    |mut choice, input| {
-                        let result =
-                            self.default_parse_token_with_trivia(input, TokenKind::DaysKeyword);
-                        choice.consider(input, result)?;
-                        let result =
-                            self.default_parse_token_with_trivia(input, TokenKind::EtherKeyword);
-                        choice.consider(input, result)?;
-                        let result =
-                            self.default_parse_token_with_trivia(input, TokenKind::HoursKeyword);
-                        choice.consider(input, result)?;
-                        let result =
-                            self.default_parse_token_with_trivia(input, TokenKind::MinutesKeyword);
-                        choice.consider(input, result)?;
-                        let result =
-                            self.default_parse_token_with_trivia(input, TokenKind::SecondsKeyword);
-                        choice.consider(input, result)?;
-                        let result =
-                            self.default_parse_token_with_trivia(input, TokenKind::WeeksKeyword);
-                        choice.consider(input, result)?;
-                        let result =
-                            self.default_parse_token_with_trivia(input, TokenKind::WeiKeyword);
-                        choice.consider(input, result)?;
-                        if !self.version_is_at_least_0_5_0 {
-                            let result = self
-                                .default_parse_token_with_trivia(input, TokenKind::YearsKeyword);
-                            choice.consider(input, result)?;
-                        }
-                        if self.version_is_at_least_0_6_11 {
-                            let result =
-                                self.default_parse_token_with_trivia(input, TokenKind::GweiKeyword);
-                            choice.consider(input, result)?;
-                        }
-                        if !self.version_is_at_least_0_7_0 {
-                            let result = ChoiceHelper::run(input, |mut choice, input| {
-                                let result = self.default_parse_token_with_trivia(
-                                    input,
-                                    TokenKind::FinneyKeyword,
-                                );
-                                choice.consider(input, result)?;
-                                let result = self.default_parse_token_with_trivia(
-                                    input,
-                                    TokenKind::SzaboKeyword,
-                                );
-                                choice.consider(input, result)?;
-                                choice.finish(input)
-                            });
-                            choice.consider(input, result)?;
-                        }
-                        choice.finish(input)
-                    },
-                )))?;
-                seq.finish()
-            });
-            choice.consider(input, result)?;
-            choice.finish(input)
-        })
-        .with_kind(RuleKind::NumericExpression)
+        ChoiceHelper :: run (input , | mut choice , input | { let result = SequenceHelper :: run (| mut seq | { seq . elem (self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: HexLiteral)) ? ; if ! self . version_is_at_least_0_5_0 { seq . elem (OptionalHelper :: transform (ChoiceHelper :: run (input , | mut choice , input | { let result = self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: DaysKeyword) ; choice . consider (input , result) ? ; let result = self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: EtherKeyword) ; choice . consider (input , result) ? ; let result = self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: HoursKeyword) ; choice . consider (input , result) ? ; let result = self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: MinutesKeyword) ; choice . consider (input , result) ? ; let result = self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: SecondsKeyword) ; choice . consider (input , result) ? ; let result = self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: WeeksKeyword) ; choice . consider (input , result) ? ; let result = self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: WeiKeyword) ; choice . consider (input , result) ? ; if ! self . version_is_at_least_0_5_0 { let result = self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: YearsKeyword) ; choice . consider (input , result) ? ; } if self . version_is_at_least_0_6_11 { let result = self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: GweiKeyword) ; choice . consider (input , result) ? ; } if ! self . version_is_at_least_0_7_0 { let result = ChoiceHelper :: run (input , | mut choice , input | { let result = self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: FinneyKeyword) ; choice . consider (input , result) ? ; let result = self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: SzaboKeyword) ; choice . consider (input , result) ? ; choice . finish (input) }) ; choice . consider (input , result) ? ; } choice . finish (input) }))) ? ; } seq . finish () }) ; choice . consider (input , result) ? ; let result = SequenceHelper :: run (| mut seq | { seq . elem (self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: DecimalLiteral)) ? ; seq . elem (OptionalHelper :: transform (ChoiceHelper :: run (input , | mut choice , input | { let result = self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: DaysKeyword) ; choice . consider (input , result) ? ; let result = self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: EtherKeyword) ; choice . consider (input , result) ? ; let result = self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: HoursKeyword) ; choice . consider (input , result) ? ; let result = self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: MinutesKeyword) ; choice . consider (input , result) ? ; let result = self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: SecondsKeyword) ; choice . consider (input , result) ? ; let result = self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: WeeksKeyword) ; choice . consider (input , result) ? ; let result = self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: WeiKeyword) ; choice . consider (input , result) ? ; if ! self . version_is_at_least_0_5_0 { let result = self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: YearsKeyword) ; choice . consider (input , result) ? ; } if self . version_is_at_least_0_6_11 { let result = self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: GweiKeyword) ; choice . consider (input , result) ? ; } if ! self . version_is_at_least_0_7_0 { let result = ChoiceHelper :: run (input , | mut choice , input | { let result = self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: FinneyKeyword) ; choice . consider (input , result) ? ; let result = self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: SzaboKeyword) ; choice . consider (input , result) ? ; choice . finish (input) }) ; choice . consider (input , result) ? ; } choice . finish (input) }))) ? ; seq . finish () }) ; choice . consider (input , result) ? ; choice . finish (input) }) . with_kind (RuleKind :: NumericExpression)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn override_specifier(&self, input: &mut ParserContext) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::OverrideKeyword))?;
+            seq.elem(
+                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::OverrideKeyword,
+                ),
+            )?;
             seq.elem(OptionalHelper::transform(SequenceHelper::run(|mut seq| {
                 let mut delim_guard = input.open_delim(TokenKind::CloseParen);
                 let input = delim_guard.ctx();
-                seq.elem(self.default_parse_token_with_trivia(input, TokenKind::OpenParen))?;
+                seq.elem(
+                    self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::OpenParen,
+                    ),
+                )?;
                 seq.elem(
                     OptionalHelper::transform(self.identifier_paths_list(input))
                         .recover_until_with_nested_delims(
@@ -2454,11 +3033,16 @@ impl Language {
                             },
                             |input| Lexer::leading_trivia(self, input),
                             TokenKind::CloseParen,
-                            Self::default_delimiters(),
+                            Self::delimiters::<{ LexicalContext::Default as u8 }>(),
                             RecoverFromNoMatch::Yes,
                         ),
                 )?;
-                seq.elem(self.default_parse_token_with_trivia(input, TokenKind::CloseParen))?;
+                seq.elem(
+                    self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::CloseParen,
+                    ),
+                )?;
                 seq.finish()
             })))?;
             seq.finish()
@@ -2473,23 +3057,33 @@ impl Language {
             seq.elem(OptionalHelper::transform(ChoiceHelper::run(
                 input,
                 |mut choice, input| {
-                    let result =
-                        self.default_parse_token_with_trivia(input, TokenKind::MemoryKeyword);
+                    let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::MemoryKeyword,
+                    );
                     choice.consider(input, result)?;
-                    let result =
-                        self.default_parse_token_with_trivia(input, TokenKind::StorageKeyword);
+                    let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::StorageKeyword,
+                    );
                     choice.consider(input, result)?;
                     if self.version_is_at_least_0_5_0 {
-                        let result =
-                            self.default_parse_token_with_trivia(input, TokenKind::CalldataKeyword);
+                        let result = self
+                            .parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                                input,
+                                TokenKind::CalldataKeyword,
+                            );
                         choice.consider(input, result)?;
                     }
                     choice.finish(input)
                 },
             )))?;
-            seq.elem(OptionalHelper::transform(
-                self.default_parse_token_with_trivia(input, TokenKind::Identifier),
-            ))?;
+            seq.elem(OptionalHelper::transform(self.parse_token_with_trivia::<{
+                LexicalContext::Default as u8
+            }>(
+                input,
+                TokenKind::Identifier,
+            )))?;
             seq.finish()
         })
         .with_kind(RuleKind::Parameter)
@@ -2500,7 +3094,12 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             let mut delim_guard = input.open_delim(TokenKind::CloseParen);
             let input = delim_guard.ctx();
-            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::OpenParen))?;
+            seq.elem(
+                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::OpenParen,
+                ),
+            )?;
             seq.elem(
                 OptionalHelper::transform(self.parameters_list(input))
                     .recover_until_with_nested_delims(
@@ -2508,11 +3107,16 @@ impl Language {
                         |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
                         |input| Lexer::leading_trivia(self, input),
                         TokenKind::CloseParen,
-                        Self::default_delimiters(),
+                        Self::delimiters::<{ LexicalContext::Default as u8 }>(),
                         RecoverFromNoMatch::Yes,
                     ),
             )?;
-            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::CloseParen))?;
+            seq.elem(
+                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::CloseParen,
+                ),
+            )?;
             seq.finish()
         })
         .with_kind(RuleKind::ParametersDeclaration)
@@ -2532,10 +3136,25 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn path_import(&self, input: &mut ParserContext) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::AsciiStringLiteral))?;
+            seq.elem(
+                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::AsciiStringLiteral,
+                ),
+            )?;
             seq.elem(OptionalHelper::transform(SequenceHelper::run(|mut seq| {
-                seq.elem(self.default_parse_token_with_trivia(input, TokenKind::AsKeyword))?;
-                seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Identifier))?;
+                seq.elem(
+                    self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::AsKeyword,
+                    ),
+                )?;
+                seq.elem(
+                    self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::Identifier,
+                    ),
+                )?;
                 seq.finish()
             })))?;
             seq.finish()
@@ -2560,7 +3179,10 @@ impl Language {
             seq.elem(
                 SequenceHelper::run(|mut seq| {
                     seq.elem(
-                        self.default_parse_token_with_trivia(input, TokenKind::PragmaKeyword),
+                        self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                            input,
+                            TokenKind::PragmaKeyword,
+                        ),
                     )?;
                     seq.elem(ChoiceHelper::run(input, |mut choice, input| {
                         let result = self.abi_coder_pragma(input);
@@ -2578,11 +3200,16 @@ impl Language {
                     |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
                     |input| Lexer::leading_trivia(self, input),
                     TokenKind::Semicolon,
-                    Self::default_delimiters(),
+                    Self::delimiters::<{ LexicalContext::Default as u8 }>(),
                     RecoverFromNoMatch::No,
                 ),
             )?;
-            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Semicolon))?;
+            seq.elem(
+                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::Semicolon,
+                ),
+            )?;
             seq.finish()
         })
         .with_kind(RuleKind::PragmaDirective)
@@ -2598,14 +3225,23 @@ impl Language {
                         choice.consider(input, result)?;
                         let result = self.override_specifier(input);
                         choice.consider(input, result)?;
-                        let result =
-                            self.default_parse_token_with_trivia(input, TokenKind::ExternalKeyword);
+                        let result = self
+                            .parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                                input,
+                                TokenKind::ExternalKeyword,
+                            );
                         choice.consider(input, result)?;
-                        let result =
-                            self.default_parse_token_with_trivia(input, TokenKind::PayableKeyword);
+                        let result = self
+                            .parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                                input,
+                                TokenKind::PayableKeyword,
+                            );
                         choice.consider(input, result)?;
-                        let result =
-                            self.default_parse_token_with_trivia(input, TokenKind::VirtualKeyword);
+                        let result = self
+                            .parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                                input,
+                                TokenKind::VirtualKeyword,
+                            );
                         choice.consider(input, result)?;
                         choice.finish(input)
                     })
@@ -2623,13 +3259,21 @@ impl Language {
     fn receive_function_definition(&self, input: &mut ParserContext) -> ParserResult {
         if self.version_is_at_least_0_6_0 {
             SequenceHelper::run(|mut seq| {
-                seq.elem(self.default_parse_token_with_trivia(input, TokenKind::ReceiveKeyword))?;
+                seq.elem(
+                    self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::ReceiveKeyword,
+                    ),
+                )?;
                 seq.elem(self.parameters_declaration(input))?;
                 seq.elem(OptionalHelper::transform(
                     self.receive_function_attributes_list(input),
                 ))?;
                 seq.elem(ChoiceHelper::run(input, |mut choice, input| {
-                    let result = self.default_parse_token_with_trivia(input, TokenKind::Semicolon);
+                    let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::Semicolon,
+                    );
                     choice.consider(input, result)?;
                     let result = self.block(input);
                     choice.consider(input, result)?;
@@ -2649,7 +3293,10 @@ impl Language {
             seq.elem(
                 SequenceHelper::run(|mut seq| {
                     seq.elem(
-                        self.default_parse_token_with_trivia(input, TokenKind::ReturnKeyword),
+                        self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                            input,
+                            TokenKind::ReturnKeyword,
+                        ),
                     )?;
                     seq.elem(OptionalHelper::transform(self.expression(input)))?;
                     seq.finish()
@@ -2659,11 +3306,16 @@ impl Language {
                     |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
                     |input| Lexer::leading_trivia(self, input),
                     TokenKind::Semicolon,
-                    Self::default_delimiters(),
+                    Self::delimiters::<{ LexicalContext::Default as u8 }>(),
                     RecoverFromNoMatch::No,
                 ),
             )?;
-            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Semicolon))?;
+            seq.elem(
+                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::Semicolon,
+                ),
+            )?;
             seq.finish()
         })
         .with_kind(RuleKind::ReturnStatement)
@@ -2672,7 +3324,12 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn returns_declaration(&self, input: &mut ParserContext) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::ReturnsKeyword))?;
+            seq.elem(
+                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::ReturnsKeyword,
+                ),
+            )?;
             seq.elem(self.parameters_declaration(input))?;
             seq.finish()
         })
@@ -2685,7 +3342,10 @@ impl Language {
             seq.elem(
                 SequenceHelper::run(|mut seq| {
                     seq.elem(
-                        self.default_parse_token_with_trivia(input, TokenKind::RevertKeyword),
+                        self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                            input,
+                            TokenKind::RevertKeyword,
+                        ),
                     )?;
                     seq.elem(OptionalHelper::transform(self.identifier_path(input)))?;
                     seq.elem(self.arguments_declaration(input))?;
@@ -2696,11 +3356,16 @@ impl Language {
                     |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
                     |input| Lexer::leading_trivia(self, input),
                     TokenKind::Semicolon,
-                    Self::default_delimiters(),
+                    Self::delimiters::<{ LexicalContext::Default as u8 }>(),
                     RecoverFromNoMatch::No,
                 ),
             )?;
-            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Semicolon))?;
+            seq.elem(
+                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::Semicolon,
+                ),
+            )?;
             seq.finish()
         })
         .with_kind(RuleKind::RevertStatement)
@@ -2774,19 +3439,31 @@ impl Language {
             ChoiceHelper::run(input, |mut choice, input| {
                 let result = self.override_specifier(input);
                 choice.consider(input, result)?;
-                let result =
-                    self.default_parse_token_with_trivia(input, TokenKind::ConstantKeyword);
+                let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::ConstantKeyword,
+                );
                 choice.consider(input, result)?;
-                let result =
-                    self.default_parse_token_with_trivia(input, TokenKind::InternalKeyword);
+                let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::InternalKeyword,
+                );
                 choice.consider(input, result)?;
-                let result = self.default_parse_token_with_trivia(input, TokenKind::PrivateKeyword);
+                let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::PrivateKeyword,
+                );
                 choice.consider(input, result)?;
-                let result = self.default_parse_token_with_trivia(input, TokenKind::PublicKeyword);
+                let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::PublicKeyword,
+                );
                 choice.consider(input, result)?;
                 if self.version_is_at_least_0_6_5 {
-                    let result =
-                        self.default_parse_token_with_trivia(input, TokenKind::ImmutableKeyword);
+                    let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::ImmutableKeyword,
+                    );
                     choice.consider(input, result)?;
                 }
                 choice.finish(input)
@@ -2804,9 +3481,19 @@ impl Language {
                     seq.elem(OptionalHelper::transform(
                         self.state_variable_attributes_list(input),
                     ))?;
-                    seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Identifier))?;
+                    seq.elem(
+                        self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                            input,
+                            TokenKind::Identifier,
+                        ),
+                    )?;
                     seq.elem(OptionalHelper::transform(SequenceHelper::run(|mut seq| {
-                        seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Equal))?;
+                        seq.elem(
+                            self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                                input,
+                                TokenKind::Equal,
+                            ),
+                        )?;
                         seq.elem(self.expression(input))?;
                         seq.finish()
                     })))?;
@@ -2817,11 +3504,16 @@ impl Language {
                     |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
                     |input| Lexer::leading_trivia(self, input),
                     TokenKind::Semicolon,
-                    Self::default_delimiters(),
+                    Self::delimiters::<{ LexicalContext::Default as u8 }>(),
                     RecoverFromNoMatch::No,
                 ),
             )?;
-            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Semicolon))?;
+            seq.elem(
+                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::Semicolon,
+                ),
+            )?;
             seq.finish()
         })
         .with_kind(RuleKind::StateVariableDefinition)
@@ -2898,12 +3590,27 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn struct_definition(&self, input: &mut ParserContext) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::StructKeyword))?;
-            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Identifier))?;
+            seq.elem(
+                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::StructKeyword,
+                ),
+            )?;
+            seq.elem(
+                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::Identifier,
+                ),
+            )?;
             seq.elem(SequenceHelper::run(|mut seq| {
                 let mut delim_guard = input.open_delim(TokenKind::CloseBrace);
                 let input = delim_guard.ctx();
-                seq.elem(self.default_parse_token_with_trivia(input, TokenKind::OpenBrace))?;
+                seq.elem(
+                    self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::OpenBrace,
+                    ),
+                )?;
                 seq.elem(
                     OptionalHelper::transform(self.struct_members_list(input))
                         .recover_until_with_nested_delims(
@@ -2913,11 +3620,16 @@ impl Language {
                             },
                             |input| Lexer::leading_trivia(self, input),
                             TokenKind::CloseBrace,
-                            Self::default_delimiters(),
+                            Self::delimiters::<{ LexicalContext::Default as u8 }>(),
                             RecoverFromNoMatch::Yes,
                         ),
                 )?;
-                seq.elem(self.default_parse_token_with_trivia(input, TokenKind::CloseBrace))?;
+                seq.elem(
+                    self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::CloseBrace,
+                    ),
+                )?;
                 seq.finish()
             }))?;
             seq.finish()
@@ -2931,7 +3643,12 @@ impl Language {
             seq.elem(
                 SequenceHelper::run(|mut seq| {
                     seq.elem(self.type_name(input))?;
-                    seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Identifier))?;
+                    seq.elem(
+                        self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                            input,
+                            TokenKind::Identifier,
+                        ),
+                    )?;
                     seq.finish()
                 })
                 .recover_until_with_nested_delims(
@@ -2939,11 +3656,16 @@ impl Language {
                     |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
                     |input| Lexer::leading_trivia(self, input),
                     TokenKind::Semicolon,
-                    Self::default_delimiters(),
+                    Self::delimiters::<{ LexicalContext::Default as u8 }>(),
                     RecoverFromNoMatch::No,
                 ),
             )?;
-            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Semicolon))?;
+            seq.elem(
+                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::Semicolon,
+                ),
+            )?;
             seq.finish()
         })
         .with_kind(RuleKind::StructMember)
@@ -2960,19 +3682,25 @@ impl Language {
         if !self.version_is_at_least_0_5_0 {
             SequenceHelper::run(|mut seq| {
                 seq.elem(
-                    self.default_parse_token_with_trivia(input, TokenKind::ThrowKeyword)
-                        .recover_until_with_nested_delims(
-                            input,
-                            |input| {
-                                Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input)
-                            },
-                            |input| Lexer::leading_trivia(self, input),
-                            TokenKind::Semicolon,
-                            Self::default_delimiters(),
-                            RecoverFromNoMatch::No,
-                        ),
+                    self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::ThrowKeyword,
+                    )
+                    .recover_until_with_nested_delims(
+                        input,
+                        |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
+                        |input| Lexer::leading_trivia(self, input),
+                        TokenKind::Semicolon,
+                        Self::delimiters::<{ LexicalContext::Default as u8 }>(),
+                        RecoverFromNoMatch::No,
+                    ),
                 )?;
-                seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Semicolon))?;
+                seq.elem(
+                    self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::Semicolon,
+                    ),
+                )?;
                 seq.finish()
             })
         } else {
@@ -2984,13 +3712,21 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn trailing_trivia(&self, input: &mut ParserContext) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem(OptionalHelper::transform(
-                self.default_parse_token(input, TokenKind::Whitespace),
-            ))?;
-            seq.elem(OptionalHelper::transform(
-                self.default_parse_token(input, TokenKind::SingleLineComment),
-            ))?;
-            seq.elem(self.default_parse_token(input, TokenKind::EndOfLine))?;
+            seq.elem(OptionalHelper::transform(self.parse_token::<{
+                LexicalContext::Default as u8
+            }>(
+                input,
+                TokenKind::Whitespace,
+            )))?;
+            seq.elem(OptionalHelper::transform(self.parse_token::<{
+                LexicalContext::Default as u8
+            }>(
+                input,
+                TokenKind::SingleLineComment,
+            )))?;
+            seq.elem(
+                self.parse_token::<{ LexicalContext::Default as u8 }>(input, TokenKind::EndOfLine),
+            )?;
             seq.finish()
         })
         .with_kind(RuleKind::TrailingTrivia)
@@ -3000,7 +3736,12 @@ impl Language {
     fn try_statement(&self, input: &mut ParserContext) -> ParserResult {
         if self.version_is_at_least_0_6_0 {
             SequenceHelper::run(|mut seq| {
-                seq.elem(self.default_parse_token_with_trivia(input, TokenKind::TryKeyword))?;
+                seq.elem(
+                    self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::TryKeyword,
+                    ),
+                )?;
                 seq.elem(self.expression(input))?;
                 seq.elem(OptionalHelper::transform(self.returns_declaration(input)))?;
                 seq.elem(self.block(input))?;
@@ -3022,7 +3763,10 @@ impl Language {
                         let mut delim_guard = input.open_delim(TokenKind::CloseParen);
                         let input = delim_guard.ctx();
                         seq.elem(
-                            self.default_parse_token_with_trivia(input, TokenKind::OpenParen),
+                            self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                                input,
+                                TokenKind::OpenParen,
+                            ),
                         )?;
                         seq.elem(
                             OptionalHelper::transform(self.tuple_members_list(input))
@@ -3035,16 +3779,24 @@ impl Language {
                                     },
                                     |input| Lexer::leading_trivia(self, input),
                                     TokenKind::CloseParen,
-                                    Self::default_delimiters(),
+                                    Self::delimiters::<{ LexicalContext::Default as u8 }>(),
                                     RecoverFromNoMatch::Yes,
                                 ),
                         )?;
                         seq.elem(
-                            self.default_parse_token_with_trivia(input, TokenKind::CloseParen),
+                            self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                                input,
+                                TokenKind::CloseParen,
+                            ),
                         )?;
                         seq.finish()
                     }))?;
-                    seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Equal))?;
+                    seq.elem(
+                        self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                            input,
+                            TokenKind::Equal,
+                        ),
+                    )?;
                     seq.elem(self.expression(input))?;
                     seq.finish()
                 })
@@ -3053,11 +3805,16 @@ impl Language {
                     |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
                     |input| Lexer::leading_trivia(self, input),
                     TokenKind::Semicolon,
-                    Self::default_delimiters(),
+                    Self::delimiters::<{ LexicalContext::Default as u8 }>(),
                     RecoverFromNoMatch::No,
                 ),
             )?;
-            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Semicolon))?;
+            seq.elem(
+                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::Semicolon,
+                ),
+            )?;
             seq.finish()
         })
         .with_kind(RuleKind::TupleDeconstructionStatement)
@@ -3068,7 +3825,12 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             let mut delim_guard = input.open_delim(TokenKind::CloseParen);
             let input = delim_guard.ctx();
-            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::OpenParen))?;
+            seq.elem(
+                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::OpenParen,
+                ),
+            )?;
             seq.elem(
                 self.tuple_values_list(input)
                     .recover_until_with_nested_delims(
@@ -3076,11 +3838,16 @@ impl Language {
                         |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
                         |input| Lexer::leading_trivia(self, input),
                         TokenKind::CloseParen,
-                        Self::default_delimiters(),
+                        Self::delimiters::<{ LexicalContext::Default as u8 }>(),
                         RecoverFromNoMatch::Yes,
                     ),
             )?;
-            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::CloseParen))?;
+            seq.elem(
+                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::CloseParen,
+                ),
+            )?;
             seq.finish()
         })
         .with_kind(RuleKind::TupleExpression)
@@ -3094,21 +3861,35 @@ impl Language {
                 seq.elem(OptionalHelper::transform(ChoiceHelper::run(
                     input,
                     |mut choice, input| {
-                        let result =
-                            self.default_parse_token_with_trivia(input, TokenKind::MemoryKeyword);
+                        let result = self
+                            .parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                                input,
+                                TokenKind::MemoryKeyword,
+                            );
                         choice.consider(input, result)?;
-                        let result =
-                            self.default_parse_token_with_trivia(input, TokenKind::StorageKeyword);
+                        let result = self
+                            .parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                                input,
+                                TokenKind::StorageKeyword,
+                            );
                         choice.consider(input, result)?;
                         if self.version_is_at_least_0_5_0 {
                             let result = self
-                                .default_parse_token_with_trivia(input, TokenKind::CalldataKeyword);
+                                .parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                                    input,
+                                    TokenKind::CalldataKeyword,
+                                );
                             choice.consider(input, result)?;
                         }
                         choice.finish(input)
                     },
                 )))?;
-                seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Identifier))?;
+                seq.elem(
+                    self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::Identifier,
+                    ),
+                )?;
                 seq.finish()
             });
             choice.consider(input, result)?;
@@ -3116,21 +3897,35 @@ impl Language {
                 seq.elem(OptionalHelper::transform(ChoiceHelper::run(
                     input,
                     |mut choice, input| {
-                        let result =
-                            self.default_parse_token_with_trivia(input, TokenKind::MemoryKeyword);
+                        let result = self
+                            .parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                                input,
+                                TokenKind::MemoryKeyword,
+                            );
                         choice.consider(input, result)?;
-                        let result =
-                            self.default_parse_token_with_trivia(input, TokenKind::StorageKeyword);
+                        let result = self
+                            .parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                                input,
+                                TokenKind::StorageKeyword,
+                            );
                         choice.consider(input, result)?;
                         if self.version_is_at_least_0_5_0 {
                             let result = self
-                                .default_parse_token_with_trivia(input, TokenKind::CalldataKeyword);
+                                .parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                                    input,
+                                    TokenKind::CalldataKeyword,
+                                );
                             choice.consider(input, result)?;
                         }
                         choice.finish(input)
                     },
                 )))?;
-                seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Identifier))?;
+                seq.elem(
+                    self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::Identifier,
+                    ),
+                )?;
                 seq.finish()
             });
             choice.consider(input, result)?;
@@ -3165,20 +3960,35 @@ impl Language {
     fn type_expression(&self, input: &mut ParserContext) -> ParserResult {
         if self.version_is_at_least_0_5_3 {
             SequenceHelper::run(|mut seq| {
-                seq.elem(self.default_parse_token_with_trivia(input, TokenKind::TypeKeyword))?;
+                seq.elem(
+                    self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::TypeKeyword,
+                    ),
+                )?;
                 seq.elem(SequenceHelper::run(|mut seq| {
                     let mut delim_guard = input.open_delim(TokenKind::CloseParen);
                     let input = delim_guard.ctx();
-                    seq.elem(self.default_parse_token_with_trivia(input, TokenKind::OpenParen))?;
+                    seq.elem(
+                        self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                            input,
+                            TokenKind::OpenParen,
+                        ),
+                    )?;
                     seq.elem(self.type_name(input).recover_until_with_nested_delims(
                         input,
                         |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
                         |input| Lexer::leading_trivia(self, input),
                         TokenKind::CloseParen,
-                        Self::default_delimiters(),
+                        Self::delimiters::<{ LexicalContext::Default as u8 }>(),
                         RecoverFromNoMatch::Yes,
                     ))?;
-                    seq.elem(self.default_parse_token_with_trivia(input, TokenKind::CloseParen))?;
+                    seq.elem(
+                        self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                            input,
+                            TokenKind::CloseParen,
+                        ),
+                    )?;
                     seq.finish()
                 }))?;
                 seq.finish()
@@ -3198,7 +4008,12 @@ impl Language {
                 SequenceHelper::run(|mut seq| {
                     let mut delim_guard = input.open_delim(TokenKind::CloseBracket);
                     let input = delim_guard.ctx();
-                    seq.elem(self.default_parse_token_with_trivia(input, TokenKind::OpenBracket))?;
+                    seq.elem(
+                        self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                            input,
+                            TokenKind::OpenBracket,
+                        ),
+                    )?;
                     seq.elem(
                         OptionalHelper::transform(self.expression(input))
                             .recover_until_with_nested_delims(
@@ -3210,11 +4025,16 @@ impl Language {
                                 },
                                 |input| Lexer::leading_trivia(self, input),
                                 TokenKind::CloseBracket,
-                                Self::default_delimiters(),
+                                Self::delimiters::<{ LexicalContext::Default as u8 }>(),
                                 RecoverFromNoMatch::Yes,
                             ),
                     )?;
-                    seq.elem(self.default_parse_token_with_trivia(input, TokenKind::CloseBracket))?;
+                    seq.elem(
+                        self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                            input,
+                            TokenKind::CloseBracket,
+                        ),
+                    )?;
                     seq.finish()
                 }),
             )
@@ -3226,32 +4046,49 @@ impl Language {
                 let result = self.mapping_type(input);
                 choice.consider(input, result)?;
                 let result = ChoiceHelper::run(input, |mut choice, input| {
-                    let result =
-                        self.default_parse_token_with_trivia(input, TokenKind::BoolKeyword);
+                    let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::BoolKeyword,
+                    );
                     choice.consider(input, result)?;
-                    let result =
-                        self.default_parse_token_with_trivia(input, TokenKind::StringKeyword);
+                    let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::StringKeyword,
+                    );
                     choice.consider(input, result)?;
                     let result = self.address_type(input);
                     choice.consider(input, result)?;
-                    let result =
-                        self.default_parse_token_with_trivia(input, TokenKind::FixedBytesType);
+                    let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::FixedBytesType,
+                    );
                     choice.consider(input, result)?;
-                    let result =
-                        self.default_parse_token_with_trivia(input, TokenKind::SignedIntegerType);
+                    let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::SignedIntegerType,
+                    );
                     choice.consider(input, result)?;
-                    let result =
-                        self.default_parse_token_with_trivia(input, TokenKind::UnsignedIntegerType);
+                    let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::UnsignedIntegerType,
+                    );
                     choice.consider(input, result)?;
-                    let result =
-                        self.default_parse_token_with_trivia(input, TokenKind::SignedFixedType);
+                    let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::SignedFixedType,
+                    );
                     choice.consider(input, result)?;
-                    let result =
-                        self.default_parse_token_with_trivia(input, TokenKind::UnsignedFixedType);
+                    let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::UnsignedFixedType,
+                    );
                     choice.consider(input, result)?;
                     if !self.version_is_at_least_0_8_0 {
-                        let result =
-                            self.default_parse_token_with_trivia(input, TokenKind::ByteKeyword);
+                        let result = self
+                            .parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                                input,
+                                TokenKind::ByteKeyword,
+                            );
                         choice.consider(input, result)?;
                     }
                     choice.finish(input)
@@ -3289,7 +4126,12 @@ impl Language {
     fn unchecked_block(&self, input: &mut ParserContext) -> ParserResult {
         if self.version_is_at_least_0_8_0 {
             SequenceHelper::run(|mut seq| {
-                seq.elem(self.default_parse_token_with_trivia(input, TokenKind::UncheckedKeyword))?;
+                seq.elem(
+                    self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::UncheckedKeyword,
+                    ),
+                )?;
                 seq.elem(self.block(input))?;
                 seq.finish()
             })
@@ -3303,7 +4145,10 @@ impl Language {
     fn unicode_string_literals_list(&self, input: &mut ParserContext) -> ParserResult {
         if self.version_is_at_least_0_7_0 {
             OneOrMoreHelper::run(input, |input| {
-                self.default_parse_token_with_trivia(input, TokenKind::UnicodeStringLiteral)
+                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::UnicodeStringLiteral,
+                )
             })
         } else {
             ParserResult::disabled()
@@ -3321,17 +4166,29 @@ impl Language {
                         choice.consider(input, result)?;
                         let result = self.override_specifier(input);
                         choice.consider(input, result)?;
-                        let result =
-                            self.default_parse_token_with_trivia(input, TokenKind::ExternalKeyword);
+                        let result = self
+                            .parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                                input,
+                                TokenKind::ExternalKeyword,
+                            );
                         choice.consider(input, result)?;
-                        let result =
-                            self.default_parse_token_with_trivia(input, TokenKind::PayableKeyword);
+                        let result = self
+                            .parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                                input,
+                                TokenKind::PayableKeyword,
+                            );
                         choice.consider(input, result)?;
-                        let result =
-                            self.default_parse_token_with_trivia(input, TokenKind::PureKeyword);
+                        let result = self
+                            .parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                                input,
+                                TokenKind::PureKeyword,
+                            );
                         choice.consider(input, result)?;
-                        let result =
-                            self.default_parse_token_with_trivia(input, TokenKind::ViewKeyword);
+                        let result = self
+                            .parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                                input,
+                                TokenKind::ViewKeyword,
+                            );
                         choice.consider(input, result)?;
                         choice.finish(input)
                     })
@@ -3349,13 +4206,21 @@ impl Language {
     fn unnamed_function_definition(&self, input: &mut ParserContext) -> ParserResult {
         if !self.version_is_at_least_0_6_0 {
             SequenceHelper::run(|mut seq| {
-                seq.elem(self.default_parse_token_with_trivia(input, TokenKind::FunctionKeyword))?;
+                seq.elem(
+                    self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::FunctionKeyword,
+                    ),
+                )?;
                 seq.elem(self.parameters_declaration(input))?;
                 seq.elem(OptionalHelper::transform(
                     self.unnamed_function_attributes_list(input),
                 ))?;
                 seq.elem(ChoiceHelper::run(input, |mut choice, input| {
-                    let result = self.default_parse_token_with_trivia(input, TokenKind::Semicolon);
+                    let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::Semicolon,
+                    );
                     choice.consider(input, result)?;
                     let result = self.block(input);
                     choice.consider(input, result)?;
@@ -3376,47 +4241,74 @@ impl Language {
                 seq.elem(
                     SequenceHelper::run(|mut seq| {
                         seq.elem(
-                            self.default_parse_token_with_trivia(input, TokenKind::TypeKeyword),
+                            self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                                input,
+                                TokenKind::TypeKeyword,
+                            ),
                         )?;
                         seq.elem(
-                            self.default_parse_token_with_trivia(input, TokenKind::Identifier),
+                            self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                                input,
+                                TokenKind::Identifier,
+                            ),
                         )?;
                         seq.elem(
-                            self.default_parse_token_with_trivia(input, TokenKind::IsKeyword),
+                            self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                                input,
+                                TokenKind::IsKeyword,
+                            ),
                         )?;
                         seq.elem(ChoiceHelper::run(input, |mut choice, input| {
-                            let result =
-                                self.default_parse_token_with_trivia(input, TokenKind::BoolKeyword);
+                            let result = self
+                                .parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                                    input,
+                                    TokenKind::BoolKeyword,
+                                );
                             choice.consider(input, result)?;
                             let result = self
-                                .default_parse_token_with_trivia(input, TokenKind::StringKeyword);
+                                .parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                                    input,
+                                    TokenKind::StringKeyword,
+                                );
                             choice.consider(input, result)?;
                             let result = self.address_type(input);
                             choice.consider(input, result)?;
                             let result = self
-                                .default_parse_token_with_trivia(input, TokenKind::FixedBytesType);
-                            choice.consider(input, result)?;
-                            let result = self.default_parse_token_with_trivia(
-                                input,
-                                TokenKind::SignedIntegerType,
-                            );
-                            choice.consider(input, result)?;
-                            let result = self.default_parse_token_with_trivia(
-                                input,
-                                TokenKind::UnsignedIntegerType,
-                            );
+                                .parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                                    input,
+                                    TokenKind::FixedBytesType,
+                                );
                             choice.consider(input, result)?;
                             let result = self
-                                .default_parse_token_with_trivia(input, TokenKind::SignedFixedType);
+                                .parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                                    input,
+                                    TokenKind::SignedIntegerType,
+                                );
                             choice.consider(input, result)?;
-                            let result = self.default_parse_token_with_trivia(
-                                input,
-                                TokenKind::UnsignedFixedType,
-                            );
+                            let result = self
+                                .parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                                    input,
+                                    TokenKind::UnsignedIntegerType,
+                                );
+                            choice.consider(input, result)?;
+                            let result = self
+                                .parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                                    input,
+                                    TokenKind::SignedFixedType,
+                                );
+                            choice.consider(input, result)?;
+                            let result = self
+                                .parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                                    input,
+                                    TokenKind::UnsignedFixedType,
+                                );
                             choice.consider(input, result)?;
                             if !self.version_is_at_least_0_8_0 {
                                 let result = self
-                                    .default_parse_token_with_trivia(input, TokenKind::ByteKeyword);
+                                    .parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                                        input,
+                                        TokenKind::ByteKeyword,
+                                    );
                                 choice.consider(input, result)?;
                             }
                             choice.finish(input)
@@ -3428,11 +4320,16 @@ impl Language {
                         |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
                         |input| Lexer::leading_trivia(self, input),
                         TokenKind::Semicolon,
-                        Self::default_delimiters(),
+                        Self::delimiters::<{ LexicalContext::Default as u8 }>(),
                         RecoverFromNoMatch::No,
                     ),
                 )?;
-                seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Semicolon))?;
+                seq.elem(
+                    self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::Semicolon,
+                    ),
+                )?;
                 seq.finish()
             })
         } else {
@@ -3446,7 +4343,12 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             seq.elem(
                 SequenceHelper::run(|mut seq| {
-                    seq.elem(self.default_parse_token_with_trivia(input, TokenKind::UsingKeyword))?;
+                    seq.elem(
+                        self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                            input,
+                            TokenKind::UsingKeyword,
+                        ),
+                    )?;
                     seq.elem(ChoiceHelper::run(input, |mut choice, input| {
                         let result = self.using_directive_path(input);
                         choice.consider(input, result)?;
@@ -3454,19 +4356,30 @@ impl Language {
                         choice.consider(input, result)?;
                         choice.finish(input)
                     }))?;
-                    seq.elem(self.default_parse_token_with_trivia(input, TokenKind::ForKeyword))?;
+                    seq.elem(
+                        self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                            input,
+                            TokenKind::ForKeyword,
+                        ),
+                    )?;
                     seq.elem(ChoiceHelper::run(input, |mut choice, input| {
-                        let result =
-                            self.default_parse_token_with_trivia(input, TokenKind::Asterisk);
+                        let result = self
+                            .parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                                input,
+                                TokenKind::Asterisk,
+                            );
                         choice.consider(input, result)?;
                         let result = self.type_name(input);
                         choice.consider(input, result)?;
                         choice.finish(input)
                     }))?;
                     if self.version_is_at_least_0_8_13 {
-                        seq.elem(OptionalHelper::transform(
-                            self.default_parse_token_with_trivia(input, TokenKind::GlobalKeyword),
-                        ))?;
+                        seq.elem(OptionalHelper::transform(self.parse_token_with_trivia::<{
+                            LexicalContext::Default as u8
+                        }>(
+                            input,
+                            TokenKind::GlobalKeyword,
+                        )))?;
                     }
                     seq.finish()
                 })
@@ -3475,11 +4388,16 @@ impl Language {
                     |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
                     |input| Lexer::leading_trivia(self, input),
                     TokenKind::Semicolon,
-                    Self::default_delimiters(),
+                    Self::delimiters::<{ LexicalContext::Default as u8 }>(),
                     RecoverFromNoMatch::No,
                 ),
             )?;
-            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Semicolon))?;
+            seq.elem(
+                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::Semicolon,
+                ),
+            )?;
             seq.finish()
         })
         .with_kind(RuleKind::UsingDirective)
@@ -3490,7 +4408,12 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             let mut delim_guard = input.open_delim(TokenKind::CloseBrace);
             let input = delim_guard.ctx();
-            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::OpenBrace))?;
+            seq.elem(
+                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::OpenBrace,
+                ),
+            )?;
             seq.elem(
                 self.using_directive_symbols_list(input)
                     .recover_until_with_nested_delims(
@@ -3498,11 +4421,16 @@ impl Language {
                         |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
                         |input| Lexer::leading_trivia(self, input),
                         TokenKind::CloseBrace,
-                        Self::default_delimiters(),
+                        Self::delimiters::<{ LexicalContext::Default as u8 }>(),
                         RecoverFromNoMatch::Yes,
                     ),
             )?;
-            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::CloseBrace))?;
+            seq.elem(
+                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::CloseBrace,
+                ),
+            )?;
             seq.finish()
         })
         .with_kind(RuleKind::UsingDirectiveDeconstruction)
@@ -3520,55 +4448,103 @@ impl Language {
             seq.elem(self.identifier_path(input))?;
             if self.version_is_at_least_0_8_19 {
                 seq.elem(OptionalHelper::transform(SequenceHelper::run(|mut seq| {
-                    seq.elem(self.default_parse_token_with_trivia(input, TokenKind::AsKeyword))?;
+                    seq.elem(
+                        self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                            input,
+                            TokenKind::AsKeyword,
+                        ),
+                    )?;
                     seq.elem(if self.version_is_at_least_0_8_19 {
                         ChoiceHelper::run(input, |mut choice, input| {
-                            let result =
-                                self.default_parse_token_with_trivia(input, TokenKind::Ampersand);
-                            choice.consider(input, result)?;
-                            let result =
-                                self.default_parse_token_with_trivia(input, TokenKind::Asterisk);
-                            choice.consider(input, result)?;
-                            let result =
-                                self.default_parse_token_with_trivia(input, TokenKind::BangEqual);
-                            choice.consider(input, result)?;
-                            let result =
-                                self.default_parse_token_with_trivia(input, TokenKind::Bar);
-                            choice.consider(input, result)?;
-                            let result =
-                                self.default_parse_token_with_trivia(input, TokenKind::Caret);
-                            choice.consider(input, result)?;
-                            let result =
-                                self.default_parse_token_with_trivia(input, TokenKind::EqualEqual);
-                            choice.consider(input, result)?;
-                            let result =
-                                self.default_parse_token_with_trivia(input, TokenKind::GreaterThan);
-                            choice.consider(input, result)?;
-                            let result = self.default_parse_token_with_trivia(
-                                input,
-                                TokenKind::GreaterThanEqual,
-                            );
-                            choice.consider(input, result)?;
-                            let result =
-                                self.default_parse_token_with_trivia(input, TokenKind::LessThan);
+                            let result = self
+                                .parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                                    input,
+                                    TokenKind::Ampersand,
+                                );
                             choice.consider(input, result)?;
                             let result = self
-                                .default_parse_token_with_trivia(input, TokenKind::LessThanEqual);
+                                .parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                                    input,
+                                    TokenKind::Asterisk,
+                                );
                             choice.consider(input, result)?;
-                            let result =
-                                self.default_parse_token_with_trivia(input, TokenKind::Minus);
+                            let result = self
+                                .parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                                    input,
+                                    TokenKind::BangEqual,
+                                );
                             choice.consider(input, result)?;
-                            let result =
-                                self.default_parse_token_with_trivia(input, TokenKind::Percent);
+                            let result = self
+                                .parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                                    input,
+                                    TokenKind::Bar,
+                                );
                             choice.consider(input, result)?;
-                            let result =
-                                self.default_parse_token_with_trivia(input, TokenKind::Plus);
+                            let result = self
+                                .parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                                    input,
+                                    TokenKind::Caret,
+                                );
                             choice.consider(input, result)?;
-                            let result =
-                                self.default_parse_token_with_trivia(input, TokenKind::Slash);
+                            let result = self
+                                .parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                                    input,
+                                    TokenKind::EqualEqual,
+                                );
                             choice.consider(input, result)?;
-                            let result =
-                                self.default_parse_token_with_trivia(input, TokenKind::Tilde);
+                            let result = self
+                                .parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                                    input,
+                                    TokenKind::GreaterThan,
+                                );
+                            choice.consider(input, result)?;
+                            let result = self
+                                .parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                                    input,
+                                    TokenKind::GreaterThanEqual,
+                                );
+                            choice.consider(input, result)?;
+                            let result = self
+                                .parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                                    input,
+                                    TokenKind::LessThan,
+                                );
+                            choice.consider(input, result)?;
+                            let result = self
+                                .parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                                    input,
+                                    TokenKind::LessThanEqual,
+                                );
+                            choice.consider(input, result)?;
+                            let result = self
+                                .parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                                    input,
+                                    TokenKind::Minus,
+                                );
+                            choice.consider(input, result)?;
+                            let result = self
+                                .parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                                    input,
+                                    TokenKind::Percent,
+                                );
+                            choice.consider(input, result)?;
+                            let result = self
+                                .parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                                    input,
+                                    TokenKind::Plus,
+                                );
+                            choice.consider(input, result)?;
+                            let result = self
+                                .parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                                    input,
+                                    TokenKind::Slash,
+                                );
+                            choice.consider(input, result)?;
+                            let result = self
+                                .parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                                    input,
+                                    TokenKind::Tilde,
+                                );
                             choice.consider(input, result)?;
                             choice.finish(input)
                         })
@@ -3599,7 +4575,10 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             seq.elem(ChoiceHelper::run(input, |mut choice, input| {
                 if !self.version_is_at_least_0_5_0 {
-                    let result = self.default_parse_token_with_trivia(input, TokenKind::VarKeyword);
+                    let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::VarKeyword,
+                    );
                     choice.consider(input, result)?;
                 }
                 let result = self.type_name(input);
@@ -3609,21 +4588,33 @@ impl Language {
             seq.elem(OptionalHelper::transform(ChoiceHelper::run(
                 input,
                 |mut choice, input| {
-                    let result =
-                        self.default_parse_token_with_trivia(input, TokenKind::MemoryKeyword);
+                    let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::MemoryKeyword,
+                    );
                     choice.consider(input, result)?;
-                    let result =
-                        self.default_parse_token_with_trivia(input, TokenKind::StorageKeyword);
+                    let result = self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::StorageKeyword,
+                    );
                     choice.consider(input, result)?;
                     if self.version_is_at_least_0_5_0 {
-                        let result =
-                            self.default_parse_token_with_trivia(input, TokenKind::CalldataKeyword);
+                        let result = self
+                            .parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                                input,
+                                TokenKind::CalldataKeyword,
+                            );
                         choice.consider(input, result)?;
                     }
                     choice.finish(input)
                 },
             )))?;
-            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Identifier))?;
+            seq.elem(
+                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::Identifier,
+                ),
+            )?;
             seq.finish()
         })
         .with_kind(RuleKind::VariableDeclaration)
@@ -3636,7 +4627,12 @@ impl Language {
                 SequenceHelper::run(|mut seq| {
                     seq.elem(self.variable_declaration(input))?;
                     seq.elem(OptionalHelper::transform(SequenceHelper::run(|mut seq| {
-                        seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Equal))?;
+                        seq.elem(
+                            self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                                input,
+                                TokenKind::Equal,
+                            ),
+                        )?;
                         seq.elem(self.expression(input))?;
                         seq.finish()
                     })))?;
@@ -3647,11 +4643,16 @@ impl Language {
                     |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
                     |input| Lexer::leading_trivia(self, input),
                     TokenKind::Semicolon,
-                    Self::default_delimiters(),
+                    Self::delimiters::<{ LexicalContext::Default as u8 }>(),
                     RecoverFromNoMatch::No,
                 ),
             )?;
-            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::Semicolon))?;
+            seq.elem(
+                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::Semicolon,
+                ),
+            )?;
             seq.finish()
         })
         .with_kind(RuleKind::VariableDeclarationStatement)
@@ -3661,7 +4662,10 @@ impl Language {
     fn version_pragma(&self, input: &mut ParserContext) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(
-                self.version_pragma_parse_token_with_trivia(input, TokenKind::SolidityKeyword),
+                self.parse_token_with_trivia::<{ LexicalContext::VersionPragma as u8 }>(
+                    input,
+                    TokenKind::SolidityKeyword,
+                ),
             )?;
             seq.elem(self.version_pragma_expressions_list(input))?;
             seq.finish()
@@ -3676,7 +4680,10 @@ impl Language {
                 RuleKind::VersionPragmaBinaryExpression,
                 1u8,
                 1u8 + 1,
-                self.version_pragma_parse_token_with_trivia(input, TokenKind::BarBar),
+                self.parse_token_with_trivia::<{ LexicalContext::VersionPragma as u8 }>(
+                    input,
+                    TokenKind::BarBar,
+                ),
             )
         };
         let parse_version_pragma_range_operator = |input: &mut ParserContext| {
@@ -3684,7 +4691,10 @@ impl Language {
                 RuleKind::VersionPragmaBinaryExpression,
                 3u8,
                 3u8 + 1,
-                self.version_pragma_parse_token_with_trivia(input, TokenKind::Minus),
+                self.parse_token_with_trivia::<{ LexicalContext::VersionPragma as u8 }>(
+                    input,
+                    TokenKind::Minus,
+                ),
             )
         };
         let parse_version_pragma_unary_operator = |input: &mut ParserContext| {
@@ -3692,26 +4702,47 @@ impl Language {
                 RuleKind::VersionPragmaUnaryExpression,
                 5u8,
                 ChoiceHelper::run(input, |mut choice, input| {
-                    let result =
-                        self.version_pragma_parse_token_with_trivia(input, TokenKind::Caret);
-                    choice.consider(input, result)?;
-                    let result =
-                        self.version_pragma_parse_token_with_trivia(input, TokenKind::Tilde);
-                    choice.consider(input, result)?;
-                    let result =
-                        self.version_pragma_parse_token_with_trivia(input, TokenKind::Equal);
-                    choice.consider(input, result)?;
-                    let result =
-                        self.version_pragma_parse_token_with_trivia(input, TokenKind::LessThan);
-                    choice.consider(input, result)?;
-                    let result =
-                        self.version_pragma_parse_token_with_trivia(input, TokenKind::GreaterThan);
+                    let result = self
+                        .parse_token_with_trivia::<{ LexicalContext::VersionPragma as u8 }>(
+                            input,
+                            TokenKind::Caret,
+                        );
                     choice.consider(input, result)?;
                     let result = self
-                        .version_pragma_parse_token_with_trivia(input, TokenKind::LessThanEqual);
+                        .parse_token_with_trivia::<{ LexicalContext::VersionPragma as u8 }>(
+                            input,
+                            TokenKind::Tilde,
+                        );
                     choice.consider(input, result)?;
                     let result = self
-                        .version_pragma_parse_token_with_trivia(input, TokenKind::GreaterThanEqual);
+                        .parse_token_with_trivia::<{ LexicalContext::VersionPragma as u8 }>(
+                            input,
+                            TokenKind::Equal,
+                        );
+                    choice.consider(input, result)?;
+                    let result = self
+                        .parse_token_with_trivia::<{ LexicalContext::VersionPragma as u8 }>(
+                            input,
+                            TokenKind::LessThan,
+                        );
+                    choice.consider(input, result)?;
+                    let result = self
+                        .parse_token_with_trivia::<{ LexicalContext::VersionPragma as u8 }>(
+                            input,
+                            TokenKind::GreaterThan,
+                        );
+                    choice.consider(input, result)?;
+                    let result = self
+                        .parse_token_with_trivia::<{ LexicalContext::VersionPragma as u8 }>(
+                            input,
+                            TokenKind::LessThanEqual,
+                        );
+                    choice.consider(input, result)?;
+                    let result = self
+                        .parse_token_with_trivia::<{ LexicalContext::VersionPragma as u8 }>(
+                            input,
+                            TokenKind::GreaterThanEqual,
+                        );
                     choice.consider(input, result)?;
                     choice.finish(input)
                 }),
@@ -3775,7 +4806,10 @@ impl Language {
         SeparatedHelper::run::<{ LexicalContext::VersionPragma as u8 }, Self>(
             input,
             |input| {
-                self.version_pragma_parse_token_with_trivia(input, TokenKind::VersionPragmaValue)
+                self.parse_token_with_trivia::<{ LexicalContext::VersionPragma as u8 }>(
+                    input,
+                    TokenKind::VersionPragmaValue,
+                )
             },
             TokenKind::Period,
             self,
@@ -3786,20 +4820,35 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn while_statement(&self, input: &mut ParserContext) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem(self.default_parse_token_with_trivia(input, TokenKind::WhileKeyword))?;
+            seq.elem(
+                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                    input,
+                    TokenKind::WhileKeyword,
+                ),
+            )?;
             seq.elem(SequenceHelper::run(|mut seq| {
                 let mut delim_guard = input.open_delim(TokenKind::CloseParen);
                 let input = delim_guard.ctx();
-                seq.elem(self.default_parse_token_with_trivia(input, TokenKind::OpenParen))?;
+                seq.elem(
+                    self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::OpenParen,
+                    ),
+                )?;
                 seq.elem(self.expression(input).recover_until_with_nested_delims(
                     input,
                     |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
                     |input| Lexer::leading_trivia(self, input),
                     TokenKind::CloseParen,
-                    Self::default_delimiters(),
+                    Self::delimiters::<{ LexicalContext::Default as u8 }>(),
                     RecoverFromNoMatch::Yes,
                 ))?;
-                seq.elem(self.default_parse_token_with_trivia(input, TokenKind::CloseParen))?;
+                seq.elem(
+                    self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
+                        input,
+                        TokenKind::CloseParen,
+                    ),
+                )?;
                 seq.finish()
             }))?;
             seq.elem(self.statement(input))?;
@@ -3812,7 +4861,12 @@ impl Language {
     fn yul_assignment_statement(&self, input: &mut ParserContext) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(self.yul_identifier_paths_list(input))?;
-            seq.elem(self.yul_block_parse_token_with_trivia(input, TokenKind::ColonEqual))?;
+            seq.elem(
+                self.parse_token_with_trivia::<{ LexicalContext::YulBlock as u8 }>(
+                    input,
+                    TokenKind::ColonEqual,
+                ),
+            )?;
             seq.elem(self.yul_expression(input))?;
             seq.finish()
         })
@@ -3824,7 +4878,12 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             let mut delim_guard = input.open_delim(TokenKind::CloseBrace);
             let input = delim_guard.ctx();
-            seq.elem(self.yul_block_parse_token_with_trivia(input, TokenKind::OpenBrace))?;
+            seq.elem(
+                self.parse_token_with_trivia::<{ LexicalContext::YulBlock as u8 }>(
+                    input,
+                    TokenKind::OpenBrace,
+                ),
+            )?;
             seq.elem(
                 OptionalHelper::transform(self.yul_statements_list(input))
                     .recover_until_with_nested_delims(
@@ -3834,11 +4893,16 @@ impl Language {
                         },
                         |input| Lexer::leading_trivia(self, input),
                         TokenKind::CloseBrace,
-                        Self::yul_block_delimiters(),
+                        Self::delimiters::<{ LexicalContext::YulBlock as u8 }>(),
                         RecoverFromNoMatch::Yes,
                     ),
             )?;
-            seq.elem(self.yul_block_parse_token_with_trivia(input, TokenKind::CloseBrace))?;
+            seq.elem(
+                self.parse_token_with_trivia::<{ LexicalContext::YulBlock as u8 }>(
+                    input,
+                    TokenKind::CloseBrace,
+                ),
+            )?;
             seq.finish()
         })
         .with_kind(RuleKind::YulBlock)
@@ -3846,23 +4910,39 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn yul_break_statement(&self, input: &mut ParserContext) -> ParserResult {
-        self.yul_block_parse_token_with_trivia(input, TokenKind::BreakKeyword)
-            .with_kind(RuleKind::YulBreakStatement)
+        self.parse_token_with_trivia::<{ LexicalContext::YulBlock as u8 }>(
+            input,
+            TokenKind::BreakKeyword,
+        )
+        .with_kind(RuleKind::YulBreakStatement)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn yul_continue_statement(&self, input: &mut ParserContext) -> ParserResult {
-        self.yul_block_parse_token_with_trivia(input, TokenKind::ContinueKeyword)
-            .with_kind(RuleKind::YulContinueStatement)
+        self.parse_token_with_trivia::<{ LexicalContext::YulBlock as u8 }>(
+            input,
+            TokenKind::ContinueKeyword,
+        )
+        .with_kind(RuleKind::YulContinueStatement)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn yul_declaration_statement(&self, input: &mut ParserContext) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem(self.yul_block_parse_token_with_trivia(input, TokenKind::LetKeyword))?;
+            seq.elem(
+                self.parse_token_with_trivia::<{ LexicalContext::YulBlock as u8 }>(
+                    input,
+                    TokenKind::LetKeyword,
+                ),
+            )?;
             seq.elem(self.yul_identifier_paths_list(input))?;
             seq.elem(OptionalHelper::transform(SequenceHelper::run(|mut seq| {
-                seq.elem(self.yul_block_parse_token_with_trivia(input, TokenKind::ColonEqual))?;
+                seq.elem(
+                    self.parse_token_with_trivia::<{ LexicalContext::YulBlock as u8 }>(
+                        input,
+                        TokenKind::ColonEqual,
+                    ),
+                )?;
                 seq.elem(self.yul_expression(input))?;
                 seq.finish()
             })))?;
@@ -3880,7 +4960,12 @@ impl Language {
                 SequenceHelper::run(|mut seq| {
                     let mut delim_guard = input.open_delim(TokenKind::CloseParen);
                     let input = delim_guard.ctx();
-                    seq.elem(self.yul_block_parse_token_with_trivia(input, TokenKind::OpenParen))?;
+                    seq.elem(
+                        self.parse_token_with_trivia::<{ LexicalContext::YulBlock as u8 }>(
+                            input,
+                            TokenKind::OpenParen,
+                        ),
+                    )?;
                     seq.elem(
                         OptionalHelper::transform(self.yul_expressions_list(input))
                             .recover_until_with_nested_delims(
@@ -3892,11 +4977,16 @@ impl Language {
                                 },
                                 |input| Lexer::leading_trivia(self, input),
                                 TokenKind::CloseParen,
-                                Self::yul_block_delimiters(),
+                                Self::delimiters::<{ LexicalContext::YulBlock as u8 }>(),
                                 RecoverFromNoMatch::Yes,
                             ),
                     )?;
-                    seq.elem(self.yul_block_parse_token_with_trivia(input, TokenKind::CloseParen))?;
+                    seq.elem(
+                        self.parse_token_with_trivia::<{ LexicalContext::YulBlock as u8 }>(
+                            input,
+                            TokenKind::CloseParen,
+                        ),
+                    )?;
                     seq.finish()
                 }),
             )
@@ -3904,23 +4994,41 @@ impl Language {
         let primary_expression_parser = |input: &mut ParserContext| {
             ChoiceHelper::run(input, |mut choice, input| {
                 let result = ChoiceHelper::run(input, |mut choice, input| {
-                    let result =
-                        self.yul_block_parse_token_with_trivia(input, TokenKind::TrueKeyword);
-                    choice.consider(input, result)?;
-                    let result =
-                        self.yul_block_parse_token_with_trivia(input, TokenKind::FalseKeyword);
-                    choice.consider(input, result)?;
-                    let result =
-                        self.yul_block_parse_token_with_trivia(input, TokenKind::YulHexLiteral);
-                    choice.consider(input, result)?;
-                    let result =
-                        self.yul_block_parse_token_with_trivia(input, TokenKind::YulDecimalLiteral);
-                    choice.consider(input, result)?;
-                    let result =
-                        self.yul_block_parse_token_with_trivia(input, TokenKind::HexStringLiteral);
+                    let result = self
+                        .parse_token_with_trivia::<{ LexicalContext::YulBlock as u8 }>(
+                            input,
+                            TokenKind::TrueKeyword,
+                        );
                     choice.consider(input, result)?;
                     let result = self
-                        .yul_block_parse_token_with_trivia(input, TokenKind::AsciiStringLiteral);
+                        .parse_token_with_trivia::<{ LexicalContext::YulBlock as u8 }>(
+                            input,
+                            TokenKind::FalseKeyword,
+                        );
+                    choice.consider(input, result)?;
+                    let result = self
+                        .parse_token_with_trivia::<{ LexicalContext::YulBlock as u8 }>(
+                            input,
+                            TokenKind::YulHexLiteral,
+                        );
+                    choice.consider(input, result)?;
+                    let result = self
+                        .parse_token_with_trivia::<{ LexicalContext::YulBlock as u8 }>(
+                            input,
+                            TokenKind::YulDecimalLiteral,
+                        );
+                    choice.consider(input, result)?;
+                    let result = self
+                        .parse_token_with_trivia::<{ LexicalContext::YulBlock as u8 }>(
+                            input,
+                            TokenKind::HexStringLiteral,
+                        );
+                    choice.consider(input, result)?;
+                    let result = self
+                        .parse_token_with_trivia::<{ LexicalContext::YulBlock as u8 }>(
+                            input,
+                            TokenKind::AsciiStringLiteral,
+                        );
                     choice.consider(input, result)?;
                     choice.finish(input)
                 });
@@ -3967,7 +5075,12 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn yul_for_statement(&self, input: &mut ParserContext) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem(self.yul_block_parse_token_with_trivia(input, TokenKind::ForKeyword))?;
+            seq.elem(
+                self.parse_token_with_trivia::<{ LexicalContext::YulBlock as u8 }>(
+                    input,
+                    TokenKind::ForKeyword,
+                ),
+            )?;
             seq.elem(self.yul_block(input))?;
             seq.elem(self.yul_expression(input))?;
             seq.elem(self.yul_block(input))?;
@@ -3980,8 +5093,18 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn yul_function_definition(&self, input: &mut ParserContext) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem(self.yul_block_parse_token_with_trivia(input, TokenKind::FunctionKeyword))?;
-            seq.elem(self.yul_block_parse_token_with_trivia(input, TokenKind::YulIdentifier))?;
+            seq.elem(
+                self.parse_token_with_trivia::<{ LexicalContext::YulBlock as u8 }>(
+                    input,
+                    TokenKind::FunctionKeyword,
+                ),
+            )?;
+            seq.elem(
+                self.parse_token_with_trivia::<{ LexicalContext::YulBlock as u8 }>(
+                    input,
+                    TokenKind::YulIdentifier,
+                ),
+            )?;
             seq.elem(self.yul_parameters_declaration(input))?;
             seq.elem(OptionalHelper::transform(
                 self.yul_returns_declaration(input),
@@ -3996,7 +5119,12 @@ impl Language {
     fn yul_identifier_path(&self, input: &mut ParserContext) -> ParserResult {
         SeparatedHelper::run::<{ LexicalContext::YulBlock as u8 }, Self>(
             input,
-            |input| self.yul_block_parse_token_with_trivia(input, TokenKind::YulIdentifier),
+            |input| {
+                self.parse_token_with_trivia::<{ LexicalContext::YulBlock as u8 }>(
+                    input,
+                    TokenKind::YulIdentifier,
+                )
+            },
             TokenKind::Period,
             self,
         )
@@ -4018,7 +5146,12 @@ impl Language {
     fn yul_identifiers_list(&self, input: &mut ParserContext) -> ParserResult {
         SeparatedHelper::run::<{ LexicalContext::YulBlock as u8 }, Self>(
             input,
-            |input| self.yul_block_parse_token_with_trivia(input, TokenKind::YulIdentifier),
+            |input| {
+                self.parse_token_with_trivia::<{ LexicalContext::YulBlock as u8 }>(
+                    input,
+                    TokenKind::YulIdentifier,
+                )
+            },
             TokenKind::Comma,
             self,
         )
@@ -4028,7 +5161,12 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn yul_if_statement(&self, input: &mut ParserContext) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem(self.yul_block_parse_token_with_trivia(input, TokenKind::IfKeyword))?;
+            seq.elem(
+                self.parse_token_with_trivia::<{ LexicalContext::YulBlock as u8 }>(
+                    input,
+                    TokenKind::IfKeyword,
+                ),
+            )?;
             seq.elem(self.yul_expression(input))?;
             seq.elem(self.yul_block(input))?;
             seq.finish()
@@ -4039,7 +5177,10 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn yul_leave_statement(&self, input: &mut ParserContext) -> ParserResult {
         if self.version_is_at_least_0_6_0 {
-            self.yul_block_parse_token_with_trivia(input, TokenKind::LeaveKeyword)
+            self.parse_token_with_trivia::<{ LexicalContext::YulBlock as u8 }>(
+                input,
+                TokenKind::LeaveKeyword,
+            )
         } else {
             ParserResult::disabled()
         }
@@ -4051,7 +5192,12 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             let mut delim_guard = input.open_delim(TokenKind::CloseParen);
             let input = delim_guard.ctx();
-            seq.elem(self.yul_block_parse_token_with_trivia(input, TokenKind::OpenParen))?;
+            seq.elem(
+                self.parse_token_with_trivia::<{ LexicalContext::YulBlock as u8 }>(
+                    input,
+                    TokenKind::OpenParen,
+                ),
+            )?;
             seq.elem(
                 OptionalHelper::transform(self.yul_identifiers_list(input))
                     .recover_until_with_nested_delims(
@@ -4061,11 +5207,16 @@ impl Language {
                         },
                         |input| Lexer::leading_trivia(self, input),
                         TokenKind::CloseParen,
-                        Self::yul_block_delimiters(),
+                        Self::delimiters::<{ LexicalContext::YulBlock as u8 }>(),
                         RecoverFromNoMatch::Yes,
                     ),
             )?;
-            seq.elem(self.yul_block_parse_token_with_trivia(input, TokenKind::CloseParen))?;
+            seq.elem(
+                self.parse_token_with_trivia::<{ LexicalContext::YulBlock as u8 }>(
+                    input,
+                    TokenKind::CloseParen,
+                ),
+            )?;
             seq.finish()
         })
         .with_kind(RuleKind::YulParametersDeclaration)
@@ -4074,7 +5225,12 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn yul_returns_declaration(&self, input: &mut ParserContext) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem(self.yul_block_parse_token_with_trivia(input, TokenKind::MinusGreaterThan))?;
+            seq.elem(
+                self.parse_token_with_trivia::<{ LexicalContext::YulBlock as u8 }>(
+                    input,
+                    TokenKind::MinusGreaterThan,
+                ),
+            )?;
             seq.elem(self.yul_identifiers_list(input))?;
             seq.finish()
         })
@@ -4123,33 +5279,54 @@ impl Language {
     fn yul_switch_case(&self, input: &mut ParserContext) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(ChoiceHelper::run(input, |mut choice, input| {
-                let result =
-                    self.yul_block_parse_token_with_trivia(input, TokenKind::DefaultKeyword);
+                let result = self.parse_token_with_trivia::<{ LexicalContext::YulBlock as u8 }>(
+                    input,
+                    TokenKind::DefaultKeyword,
+                );
                 choice.consider(input, result)?;
                 let result = SequenceHelper::run(|mut seq| {
                     seq.elem(
-                        self.yul_block_parse_token_with_trivia(input, TokenKind::CaseKeyword),
+                        self.parse_token_with_trivia::<{ LexicalContext::YulBlock as u8 }>(
+                            input,
+                            TokenKind::CaseKeyword,
+                        ),
                     )?;
                     seq.elem(ChoiceHelper::run(input, |mut choice, input| {
-                        let result =
-                            self.yul_block_parse_token_with_trivia(input, TokenKind::TrueKeyword);
-                        choice.consider(input, result)?;
-                        let result =
-                            self.yul_block_parse_token_with_trivia(input, TokenKind::FalseKeyword);
-                        choice.consider(input, result)?;
-                        let result =
-                            self.yul_block_parse_token_with_trivia(input, TokenKind::YulHexLiteral);
+                        let result = self
+                            .parse_token_with_trivia::<{ LexicalContext::YulBlock as u8 }>(
+                                input,
+                                TokenKind::TrueKeyword,
+                            );
                         choice.consider(input, result)?;
                         let result = self
-                            .yul_block_parse_token_with_trivia(input, TokenKind::YulDecimalLiteral);
+                            .parse_token_with_trivia::<{ LexicalContext::YulBlock as u8 }>(
+                                input,
+                                TokenKind::FalseKeyword,
+                            );
                         choice.consider(input, result)?;
                         let result = self
-                            .yul_block_parse_token_with_trivia(input, TokenKind::HexStringLiteral);
+                            .parse_token_with_trivia::<{ LexicalContext::YulBlock as u8 }>(
+                                input,
+                                TokenKind::YulHexLiteral,
+                            );
                         choice.consider(input, result)?;
-                        let result = self.yul_block_parse_token_with_trivia(
-                            input,
-                            TokenKind::AsciiStringLiteral,
-                        );
+                        let result = self
+                            .parse_token_with_trivia::<{ LexicalContext::YulBlock as u8 }>(
+                                input,
+                                TokenKind::YulDecimalLiteral,
+                            );
+                        choice.consider(input, result)?;
+                        let result = self
+                            .parse_token_with_trivia::<{ LexicalContext::YulBlock as u8 }>(
+                                input,
+                                TokenKind::HexStringLiteral,
+                            );
+                        choice.consider(input, result)?;
+                        let result = self
+                            .parse_token_with_trivia::<{ LexicalContext::YulBlock as u8 }>(
+                                input,
+                                TokenKind::AsciiStringLiteral,
+                            );
                         choice.consider(input, result)?;
                         choice.finish(input)
                     }))?;
@@ -4173,7 +5350,12 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn yul_switch_statement(&self, input: &mut ParserContext) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem(self.yul_block_parse_token_with_trivia(input, TokenKind::SwitchKeyword))?;
+            seq.elem(
+                self.parse_token_with_trivia::<{ LexicalContext::YulBlock as u8 }>(
+                    input,
+                    TokenKind::SwitchKeyword,
+                ),
+            )?;
             seq.elem(self.yul_expression(input))?;
             seq.elem(self.yul_switch_cases_list(input))?;
             seq.finish()
@@ -4999,9 +6181,16 @@ impl Lexer for Language {
 
     fn delimiters<const LEX_CTX: u8>() -> &'static [(TokenKind, TokenKind)] {
         match LexicalContext::from_repr(LEX_CTX).unwrap() {
-            LexicalContext::Default => Self::default_delimiters(),
-            LexicalContext::VersionPragma => Self::version_pragma_delimiters(),
-            LexicalContext::YulBlock => Self::yul_block_delimiters(),
+            LexicalContext::Default => &[
+                (TokenKind::OpenBrace, TokenKind::CloseBrace),
+                (TokenKind::OpenBracket, TokenKind::CloseBracket),
+                (TokenKind::OpenParen, TokenKind::CloseParen),
+            ],
+            LexicalContext::VersionPragma => &[],
+            LexicalContext::YulBlock => &[
+                (TokenKind::OpenBrace, TokenKind::CloseBrace),
+                (TokenKind::OpenParen, TokenKind::CloseParen),
+            ],
         }
     }
 
