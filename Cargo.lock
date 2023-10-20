@@ -1600,7 +1600,6 @@ dependencies = [
  "codegen_grammar",
  "codegen_schema",
  "infra_utils",
- "once_cell",
  "semver",
 ]
 

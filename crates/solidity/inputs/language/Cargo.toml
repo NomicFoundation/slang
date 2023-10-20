@@ -18,5 +18,4 @@ anyhow = { workspace = true }
 bson = { workspace = true }
 codegen_schema = { workspace = true }
 codegen_grammar = { workspace = true }
-once_cell = { workspace = true }
 semver = { workspace = true }
