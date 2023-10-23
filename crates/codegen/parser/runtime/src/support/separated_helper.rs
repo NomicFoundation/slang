@@ -38,21 +38,12 @@ impl SeparatedHelper {
                                 _ => unreachable!("We just checked that the separator matches"),
                             }
                         }
-                        // Heuristic: lists (separated-by) are often in a delimited group, so if we
-                        // see a closing delimiter, we assume that we're done and don't recover.
-                        Some(token) if input.closing_delimiters().contains(&token) => {
-                            return ParserResult::r#match(accum, vec![separator]);
-                        }
-                        // Otherwise, we try to recover from unexpected tokens until we see a separator
-                        Some(..) => {
-                            // TODO: Attempt recovery: sometimes the list is not in a delimited group,
-                            // so don't attempt to recover for now to not risk misparses
-                            return ParserResult::r#match(accum, vec![separator]);
-                        }
-                        // EOF
-                        None => {
-                            return ParserResult::r#match(accum, vec![separator]);
-                        }
+
+                        // Unrecognized, return the accumulated matches.
+                        // NOTE: We can't correctly attempt recovery until #600 lands, otherwise we'd risk misparses,
+                        // as we need to stop at certain synchronizing tokens (and we can't reliably scan until
+                        // a delimiter, as not every list is enclosed in a delimited group).
+                        Some(..) | None => return ParserResult::r#match(accum, vec![separator]),
                     }
                 }
                 // Body was partially parsed, so try to recover by skipping tokens until we see a separator
@@ -89,19 +80,13 @@ impl SeparatedHelper {
                                 _ => unreachable!("We just checked that the separator matches"),
                             }
                         }
+
                         // Didn't find a separator during recovery. It might've been the last of the
                         // separatees, so we can't recover to not risk misparses.
-                        Some(..) => {
+                        Some(..) | None => {
                             // Undo the recovery attempt
                             input.set_position(start);
 
-                            return ParserResult::IncompleteMatch(IncompleteMatch {
-                                nodes: accum,
-                                expected_tokens: incomplete.expected_tokens,
-                            });
-                        }
-                        // Separator wasn't found till EOF, so we can't recover
-                        None => {
                             return ParserResult::IncompleteMatch(IncompleteMatch {
                                 nodes: accum,
                                 expected_tokens: incomplete.expected_tokens,
