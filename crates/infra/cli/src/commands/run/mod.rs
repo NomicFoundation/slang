@@ -54,6 +54,7 @@ impl RunController {
 
         command
             .property("--bin", &crate_name)
+            .flag("--offline")
             .arg("--")
             .args(&self.args)
             // Execute in the crate dir, to make use of a local './target' dir if it exists:

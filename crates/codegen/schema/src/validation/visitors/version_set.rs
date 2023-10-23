@@ -1,9 +1,11 @@
 use std::{
     cmp::{max, min},
     fmt::Display,
+    iter::once,
     ops::Range,
 };
 
+use itertools::Itertools;
 use semver::Version;
 
 pub type VersionRange = Range<Version>;
@@ -14,120 +16,127 @@ pub struct VersionSet {
 }
 
 impl VersionSet {
-    pub fn from(ranges: Vec<VersionRange>) -> Self {
+    pub fn empty() -> Self {
+        return Self { ranges: vec![] };
+    }
+
+    pub fn from_range(range: VersionRange) -> Self {
+        let mut instance = Self::empty();
+
+        instance.add(&range);
+
+        return instance;
+    }
+
+    #[cfg(test)]
+    fn from_ranges(ranges: Vec<VersionRange>) -> Self {
+        let mut instance = Self::empty();
+
         for range in &ranges {
-            // End is always exclusive:
-            assert!(range.start < range.end, "Invalid range: {range:?}");
+            instance.add(range);
         }
 
-        return Self { ranges };
-    }
-
-    pub fn empty() -> Self {
-        return Self::from(vec![]);
-    }
-
-    pub fn range(range: VersionRange) -> Self {
-        return Self::from(vec![range]);
+        return instance;
     }
 
     pub fn is_empty(&self) -> bool {
         return self.ranges.is_empty();
     }
 
-    pub fn union(&self, other: &Self) -> Self {
-        let mut first_iter = self.ranges.iter().peekable();
-        let mut second_iter = other.ranges.iter().peekable();
-        let mut results = Vec::new();
-
-        loop {
-            let first = if let Some(first) = first_iter.peek() {
-                first
-            } else {
-                break;
-            };
-
-            let second = if let Some(second) = second_iter.peek() {
-                second
-            } else {
-                break;
-            };
-
-            if first.end < second.start {
-                // first fully exists before second, take it:
-                results.push(first_iter.next().unwrap().to_owned());
-                break;
-            }
-
-            if second.end < first.start {
-                // second fully exists before first, take it:
-                results.push(second_iter.next().unwrap().to_owned());
-                break;
-            }
-
-            // overlap, take the union:
-            let lower = min(first.start.to_owned(), second.start.to_owned());
-            let upper = max(first.end.to_owned(), second.end.to_owned());
-
-            first_iter.next().unwrap();
-            second_iter.next().unwrap();
-
-            results.push(lower..upper);
+    pub fn add(&mut self, range: &VersionRange) {
+        if range.is_empty() {
+            return;
         }
 
-        results.extend(first_iter.cloned());
-        results.extend(second_iter.cloned());
+        let mut result = vec![];
 
-        return Self::from(results);
+        // Iterate on both (existing and new) in-order, combining them if they overlap:
+        let mut input_iter = self
+            .ranges
+            .iter()
+            .chain(once(range))
+            .sorted_by_key(|range| &range.start);
+
+        let mut current = input_iter.next().unwrap().to_owned();
+
+        for next in input_iter {
+            if current.end < next.start {
+                // current fully exists before next:
+                result.push(current);
+                current = next.to_owned();
+            } else {
+                // current and next overlap, combine them:
+                current = Range {
+                    start: min(&current.start, &next.start).to_owned(),
+                    end: max(&current.end, &next.end).to_owned(),
+                };
+            }
+        }
+
+        result.push(current);
+        self.ranges = result;
+    }
+
+    pub fn union(&self, other: &Self) -> Self {
+        let mut result = self.to_owned();
+
+        for range in &other.ranges {
+            result.add(range);
+        }
+
+        return result;
     }
 
     pub fn difference(&self, other: &Self) -> Self {
-        let mut first_iter = self.ranges.iter().peekable();
+        let mut result = vec![];
+
+        let mut first_iter = self.ranges.iter().cloned().peekable();
         let mut second_iter = other.ranges.iter().peekable();
-        let mut results = Vec::new();
 
         loop {
-            let first = if let Some(first) = first_iter.peek() {
-                first
-            } else {
+            let (Some(first), Some(second)) = (first_iter.peek_mut(), second_iter.peek()) else {
                 break;
             };
 
-            let second = if let Some(second) = second_iter.peek() {
-                second
-            } else {
-                break;
-            };
-
-            if first.end < second.start {
-                // first fully exists before second, take it:
-                results.push(first_iter.next().unwrap().to_owned());
-                break;
+            if first.end <= second.start {
+                // first fully exists before second: take it, and advance first:
+                result.push(first_iter.next().unwrap());
+                continue;
             }
 
-            if second.end < first.start {
-                // second fully exists before first, drop it:
-                second_iter.next().unwrap();
-                break;
+            if second.end <= first.start {
+                // second fully exists before first: advance second:
+                second_iter.next();
+                continue;
             }
+
+            // first and second overlap:
 
             if first.start < second.start {
                 // take part of first that exists before second:
-                results.push(first.start.to_owned()..second.start.to_owned());
-            } else if first.end > second.end {
-                // take part of first that exists after second:
-                results.push(second.end.to_owned()..first.end.to_owned());
-            } else {
-                // first fully exists within second, do nothing:
+                result.push(Range {
+                    start: first.start.to_owned(),
+                    end: second.start.to_owned(),
+                });
             }
 
-            first_iter.next().unwrap();
-            second_iter.next().unwrap();
+            if first.end <= second.end {
+                // first ends before second: advance first, as it's been fully processed:
+                first_iter.next();
+                continue;
+            }
+
+            // keep part of first that exists after second:
+            first.start = second.end.to_owned();
+
+            // advance second, as it's been fully processed:
+            second_iter.next();
         }
 
-        results.extend(first_iter.cloned());
+        // Take anything remaining in first:
+        result.extend(first_iter);
 
-        return Self::from(results);
+        return Self { ranges: result };
     }
 
     pub fn max_version() -> Version {
@@ -162,5 +171,146 @@ impl Display for VersionSet {
         }
 
         return Ok(());
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn empty_ranges() {
+        let set = VersionSet::from_ranges(vec![
+            Version::new(1, 0, 0)..Version::new(2, 0, 0),
+            Version::new(3, 0, 0)..Version::new(3, 0, 0),
+            Version::new(4, 0, 0)..Version::new(5, 0, 0),
+        ]);
+
+        assert_eq!(set.to_string(), "1.0.0..2.0.0 | 4.0.0..5.0.0");
+    }
+
+    #[test]
+    fn connected_ranges_in_order() {
+        let set = VersionSet::from_ranges(vec![
+            Version::new(1, 0, 0)..Version::new(2, 0, 0),
+            Version::new(2, 0, 0)..Version::new(3, 0, 0),
+            Version::new(3, 0, 0)..Version::new(4, 0, 0),
+        ]);
+
+        assert_eq!(set.to_string(), "1.0.0..4.0.0");
+    }
+
+    #[test]
+    fn connected_ranges_out_of_order() {
+        let set = VersionSet::from_ranges(vec![
+            Version::new(1, 0, 0)..Version::new(2, 0, 0),
+            Version::new(3, 0, 0)..Version::new(4, 0, 0),
+            Version::new(2, 0, 0)..Version::new(3, 0, 0),
+        ]);
+
+        assert_eq!(set.to_string(), "1.0.0..4.0.0");
+    }
+
+    #[test]
+    fn disconnected_ranges_in_order() {
+        let set = VersionSet::from_ranges(vec![
+            Version::new(1, 0, 0)..Version::new(2, 0, 0),
+            Version::new(3, 0, 0)..Version::new(4, 0, 0),
+            Version::new(5, 0, 0)..Version::new(6, 0, 0),
+        ]);
+
+        assert_eq!(
+            set.to_string(),
+            "1.0.0..2.0.0 | 3.0.0..4.0.0 | 5.0.0..6.0.0"
+        );
+    }
+
+    #[test]
+    fn disconnected_ranges_out_of_order() {
+        let set = VersionSet::from_ranges(vec![
+            Version::new(1, 0, 0)..Version::new(2, 0, 0),
+            Version::new(5, 0, 0)..Version::new(6, 0, 0),
+            Version::new(3, 0, 0)..Version::new(4, 0, 0),
+        ]);
+
+        assert_eq!(
+            set.to_string(),
+            "1.0.0..2.0.0 | 3.0.0..4.0.0 | 5.0.0..6.0.0"
+        );
+    }
+
+    #[test]
+    fn overlap_with_multiple() {
+        let set = VersionSet::from_ranges(vec![
+            Version::new(1, 0, 0)..Version::new(2, 0, 0),
+            Version::new(3, 0, 0)..Version::new(4, 0, 0),
+            Version::new(5, 0, 0)..Version::new(6, 0, 0),
+            Version::new(1, 0, 0)..Version::new(5, 0, 0),
+        ]);
+
+        assert_eq!(set.to_string(), "1.0.0..6.0.0");
+    }
+
+    #[test]
+    fn difference_between_same_sets_is_empty() {
+        let first = VersionSet::from_ranges(vec![Version::new(1, 0, 0)..Version::new(2, 0, 0)]);
+
+        let second = VersionSet::from_ranges(vec![Version::new(1, 0, 0)..Version::new(2, 0, 0)]);
+
+        assert!(first.difference(&second).is_empty());
+    }
+
+    #[test]
+    fn difference_between_connected_sets() {
+        let first = VersionSet::from_ranges(vec![Version::new(1, 0, 0)..Version::new(5, 0, 0)]);
+
+        let second = VersionSet::from_ranges(vec![Version::new(3, 0, 0)..Version::new(8, 0, 0)]);
+
+        assert_eq!(first.difference(&second).to_string(), "1.0.0..3.0.0");
+
+        assert_eq!(second.difference(&first).to_string(), "5.0.0..8.0.0");
+    }
+
+    #[test]
+    fn difference_between_disconnected_sets() {
+        let first = VersionSet::from_ranges(vec![Version::new(1, 0, 0)..Version::new(4, 0, 0)]);
+
+        let second = VersionSet::from_ranges(vec![Version::new(6, 0, 0)..Version::new(10, 0, 0)]);
+
+        assert_eq!(first.difference(&second).to_string(), "1.0.0..4.0.0");
+
+        assert_eq!(second.difference(&first).to_string(), "6.0.0..10.0.0");
+    }
+
+    #[test]
+    fn difference_between_contained_sets() {
+        let first = VersionSet::from_ranges(vec![Version::new(1, 0, 0)..Version::new(8, 0, 0)]);
+
+        let second = VersionSet::from_ranges(vec![Version::new(3, 0, 0)..Version::new(5, 0, 0)]);
+
+        assert_eq!(
+            first.difference(&second).to_string(),
+            "1.0.0..3.0.0 | 5.0.0..8.0.0"
+        );
+
+        assert!(second.difference(&first).is_empty());
+    }
+
+    #[test]
+    fn difference_between_multiple_contained_sets() {
+        let first = VersionSet::from_ranges(vec![
+            Version::new(1, 0, 0)..Version::new(2, 0, 0),
+            Version::new(3, 0, 0)..Version::new(4, 0, 0),
+            Version::new(5, 0, 0)..Version::new(6, 0, 0),
+        ]);
+
+        let second = VersionSet::from_ranges(vec![Version::new(0, 0, 0)..Version::new(7, 0, 0)]);
+
+        assert!(first.difference(&second).is_empty());
+
+        assert_eq!(
+            second.difference(&first).to_string(),
+            "0.0.0..1.0.0 | 2.0.0..3.0.0 | 4.0.0..5.0.0 | 6.0.0..7.0.0"
+        );
     }
 }

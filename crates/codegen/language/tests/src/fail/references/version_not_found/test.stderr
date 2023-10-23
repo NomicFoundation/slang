@@ -1,0 +1,5 @@
+error: Version '3.0.0' does not exist in the language definition.
+  --> src/fail/references/version_not_found/test.rs:17:81
+   |
+17 |                         field_1 = Optional(kind = Terminal([Two]), enabled_in = "3.0.0"),
+   |                                                                                 ^^^^^^^
