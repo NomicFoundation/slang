@@ -31,8 +31,8 @@ fn check_unreachabable_items(analysis: &mut Analysis) {
 
     let mut queue = vec![&*language.root_item];
 
-    collect_trivia_tokens(&language.leading_trivia, &mut queue);
-    collect_trivia_tokens(&language.trailing_trivia, &mut queue);
+    collect_trivia(&language.leading_trivia, &mut queue);
+    collect_trivia(&language.trailing_trivia, &mut queue);
 
     let mut visited = queue.iter().cloned().collect::<HashSet<_>>();
 
@@ -53,18 +53,18 @@ fn check_unreachabable_items(analysis: &mut Analysis) {
     }
 }
 
-fn collect_trivia_tokens<'l>(parser: &'l TriviaParser, tokens: &mut Vec<&'l Identifier>) {
+fn collect_trivia<'l>(parser: &'l TriviaParser, acc: &mut Vec<&'l Identifier>) {
     match parser {
         TriviaParser::Sequence { parsers } | TriviaParser::Choice { parsers } => {
             for parser in parsers {
-                collect_trivia_tokens(parser, tokens);
+                collect_trivia(parser, acc);
             }
         }
         TriviaParser::ZeroOrMore { parser } | TriviaParser::Optional { parser } => {
-            collect_trivia_tokens(parser, tokens);
+            collect_trivia(parser, acc);
         }
-        TriviaParser::Token { token } => {
-            tokens.push(token);
+        TriviaParser::Trivia { trivia } => {
+            acc.push(trivia);
         }
     };
 }

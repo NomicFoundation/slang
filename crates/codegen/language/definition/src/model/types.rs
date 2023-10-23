@@ -54,6 +54,7 @@ mod wrapper {
 
         Precedence { item: PrecedenceItem },
 
+        Trivia { item: TriviaItem },
         Keyword { item: KeywordItem },
         Token { item: TokenItem },
 
@@ -67,7 +68,7 @@ mod wrapper {
         pub enabled_in: Option<Version>,
         pub disabled_in: Option<Version>,
 
-        pub error_recovery: Option<Vec<ErrorRecovery>>,
+        pub error_recovery: Option<FieldsErrorRecovery>,
         pub fields: IndexMap<Identifier, Field>,
     }
 
@@ -88,7 +89,7 @@ mod wrapper {
         pub enabled_in: Option<Version>,
         pub disabled_in: Option<Version>,
 
-        pub error_recovery: Option<Vec<ErrorRecovery>>,
+        pub error_recovery: Option<FieldsErrorRecovery>,
         pub fields: IndexMap<Identifier, Field>,
     }
 
@@ -140,7 +141,7 @@ mod wrapper {
         pub enabled_in: Option<Version>,
         pub disabled_in: Option<Version>,
 
-        pub error_recovery: Option<Vec<ErrorRecovery>>,
+        pub error_recovery: Option<FieldsErrorRecovery>,
         pub fields: IndexMap<Identifier, Field>,
     }
 
@@ -158,6 +159,18 @@ mod wrapper {
 
         pub enabled_in: Option<Version>,
         pub disabled_in: Option<Version>,
+    }
+
+    #[derive(Debug, Eq, PartialEq, Serialize)]
+    pub struct FieldsErrorRecovery {
+        pub terminator: Option<Identifier>,
+        pub delimiters: Option<FieldDelimiters>,
+    }
+
+    #[derive(Debug, Eq, PartialEq, Serialize)]
+    pub struct FieldDelimiters {
+        pub open: Identifier,
+        pub close: Identifier,
     }
 
     #[derive(Debug, Eq, PartialEq, Serialize)]
@@ -180,12 +193,6 @@ mod wrapper {
     }
 
     #[derive(Debug, Eq, PartialEq, Serialize)]
-    pub enum ErrorRecovery {
-        Delimiters { open: Identifier, close: Identifier },
-        Terminator { terminator: Identifier },
-    }
-
-    #[derive(Debug, Eq, PartialEq, Serialize)]
     pub enum TriviaParser {
         Sequence { parsers: Vec<TriviaParser> },
         Choice { parsers: Vec<TriviaParser> },
@@ -193,7 +200,14 @@ mod wrapper {
         ZeroOrMore { parser: Box<TriviaParser> },
         Optional { parser: Box<TriviaParser> },
 
-        Token { token: Identifier },
+        Trivia { trivia: Identifier },
+    }
+
+    #[derive(Debug, Eq, PartialEq, Serialize)]
+    pub struct TriviaItem {
+        pub name: Identifier,
+
+        pub scanner: Scanner,
     }
 
     #[derive(Debug, Eq, PartialEq, Serialize)]

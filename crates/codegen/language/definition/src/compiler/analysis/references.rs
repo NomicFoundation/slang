@@ -7,7 +7,7 @@ use crate::{
     spanned::{
         EnumItem, EnumVariant, Field, FieldKind, FragmentItem, Item, ItemKind, KeywordItem,
         PrecedenceExpression, PrecedenceItem, PrecedenceOperator, PrimaryExpression, RepeatedItem,
-        Scanner, SeparatedItem, StructItem, TokenDefinition, TokenItem, TriviaParser,
+        Scanner, SeparatedItem, StructItem, TokenDefinition, TokenItem, TriviaItem, TriviaParser,
     },
     Identifier,
 };
@@ -30,8 +30,8 @@ pub fn analyze_references(analysis: &mut Analysis) {
         ReferenceFilter::NonTerminals,
     );
 
-    check_trivium(analysis, &language.leading_trivia, &enablement);
-    check_trivium(analysis, &language.trailing_trivia, &enablement);
+    check_trivia_parser(analysis, &language.leading_trivia, &enablement);
+    check_trivia_parser(analysis, &language.trailing_trivia, &enablement);
 
     for item in language.items() {
         check_item(analysis, item, &enablement);
@@ -54,6 +54,9 @@ fn check_item(analysis: &mut Analysis, item: &Item, enablement: &VersionRange) {
         }
         Item::Precedence { item } => {
             check_precedence(analysis, item, &enablement);
+        }
+        Item::Trivia { item } => {
+            check_trivia(analysis, item, &enablement);
         }
         Item::Keyword { item } => {
             check_keyword(analysis, item, &enablement);
@@ -257,20 +260,26 @@ fn check_field_kind(
     };
 }
 
-fn check_trivium(analysis: &mut Analysis, parser: &TriviaParser, enablement: &VersionRange) {
+fn check_trivia_parser(analysis: &mut Analysis, parser: &TriviaParser, enablement: &VersionRange) {
     match parser {
         TriviaParser::Sequence { parsers } | TriviaParser::Choice { parsers } => {
             for parser in parsers {
-                check_trivium(analysis, parser, &enablement);
+                check_trivia_parser(analysis, parser, &enablement);
             }
         }
         TriviaParser::ZeroOrMore { parser } | TriviaParser::Optional { parser } => {
-            check_trivium(analysis, parser, &enablement);
+            check_trivia_parser(analysis, parser, &enablement);
         }
-        TriviaParser::Token { token } => {
-            check_reference(analysis, None, token, &enablement, ReferenceFilter::Tokens);
+        TriviaParser::Trivia { trivia } => {
+            check_reference(analysis, None, trivia, &enablement, ReferenceFilter::Trivia);
         }
     };
+}
+
+fn check_trivia(analysis: &mut Analysis, item: &TriviaItem, enablement: &VersionRange) {
+    let TriviaItem { name, scanner } = item;
+
+    check_scanner(analysis, Some(name), &scanner, &enablement);
 }
 
 fn check_keyword(analysis: &mut Analysis, item: &KeywordItem, enablement: &VersionRange) {
@@ -485,32 +494,34 @@ enum ReferenceFilter {
     NonTerminals,
     Terminals,
 
+    Trivia,
     Tokens,
+
     Fragments,
 }
 
 impl ReferenceFilter {
     fn apply(&self, target_kind: &ItemKind) -> bool {
-        // A bit explicit here on purpose, to make sure we review
-        // this list whenever filters or items are changed:
-
-        return match target_kind {
+        match target_kind {
             ItemKind::Struct
             | ItemKind::Enum
             | ItemKind::Repeated
             | ItemKind::Separated
-            | ItemKind::Precedence => match self {
-                Self::Nodes | Self::NonTerminals => true,
-                Self::Terminals | Self::Tokens | Self::Fragments => false,
-            },
-            ItemKind::Keyword | ItemKind::Token => match self {
-                Self::Nodes | Self::Terminals | Self::Tokens => true,
-                Self::NonTerminals | Self::Fragments => false,
-            },
-            ItemKind::Fragment => match self {
-                Self::Fragments => true,
-                Self::Nodes | Self::NonTerminals | Self::Terminals | Self::Tokens => false,
-            },
+            | ItemKind::Precedence => {
+                return matches!(self, Self::Nodes | Self::NonTerminals);
+            }
+            ItemKind::Trivia => {
+                return matches!(self, Self::Nodes | Self::Trivia);
+            }
+            ItemKind::Keyword => {
+                return matches!(self, Self::Nodes | Self::Terminals);
+            }
+            ItemKind::Token => {
+                return matches!(self, Self::Nodes | Self::Terminals | Self::Tokens);
+            }
+            ItemKind::Fragment => {
+                return matches!(self, Self::Fragments);
+            }
         };
     }
 }

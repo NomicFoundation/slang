@@ -105,8 +105,9 @@ fn get_item_name(item: &Item) -> &Spanned<Identifier> {
         Item::Repeated { item } => &item.name,
         Item::Separated { item } => &item.name,
         Item::Precedence { item } => &item.name,
-        Item::Token { item } => &item.name,
+        Item::Trivia { item } => &item.name,
         Item::Keyword { item } => &item.name,
+        Item::Token { item } => &item.name,
         Item::Fragment { item } => &item.name,
     }
 }
@@ -138,6 +139,9 @@ fn calculate_defined_in(analysis: &mut Analysis, item: &Item) -> VersionSet {
             &item.enabled_in,
             &item.disabled_in,
         )),
+        Item::Trivia { item: _ } => {
+            VersionSet::from_range(calculate_enablement(analysis, &None, &None))
+        }
         Item::Keyword { item } => VersionSet::from_range(calculate_enablement(
             analysis,
             &item.enabled_in,
