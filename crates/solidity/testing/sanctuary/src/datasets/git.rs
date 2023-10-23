@@ -24,7 +24,7 @@ impl Dataset for GitDataset {
     }
 
     fn prepare(&self) -> Result<Vec<PathBuf>> {
-        let dataset_dir = CargoWorkspace::locate_source_crate("solidity_testing_smoke")?
+        let dataset_dir = CargoWorkspace::locate_source_crate("solidity_testing_sanctuary")?
             .join("target/git-datasets")
             .join(self.name);
 
