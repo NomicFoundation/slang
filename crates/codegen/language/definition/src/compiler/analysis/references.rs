@@ -89,8 +89,18 @@ fn check_enum(analysis: &mut Analysis, item: &EnumItem, enablement: &VersionRang
         name,
         enabled_in,
         disabled_in,
+        default_variant,
         variants,
     } = item;
+
+    if !variants
+        .iter()
+        .any(|variant| variant.name == *default_variant)
+    {
+        analysis
+            .errors
+            .add(default_variant, &Errors::VariantDoesNotExist);
+    }
 
     let enablement = update_enablement(analysis, enablement, &enabled_in, &disabled_in);
 
@@ -162,9 +172,20 @@ fn check_precedence(analysis: &mut Analysis, item: &PrecedenceItem, enablement: 
         name,
         enabled_in,
         disabled_in,
+        default_primary_expression,
         precedence_expressions,
         primary_expressions,
     } = item;
+
+    if !primary_expressions
+        .iter()
+        .any(|primary_expression| primary_expression.expression == *default_primary_expression)
+    {
+        analysis.errors.add(
+            default_primary_expression,
+            &Errors::PrimaryExpressionDoesNotExist,
+        );
+    }
 
     let enablement = update_enablement(analysis, &enablement, &enabled_in, &disabled_in);
 
@@ -528,6 +549,10 @@ impl ReferenceFilter {
 
 #[derive(thiserror::Error, Debug)]
 enum Errors<'err> {
+    #[error("Variant does not exist.")]
+    VariantDoesNotExist,
+    #[error("Primary expression does not exist.")]
+    PrimaryExpressionDoesNotExist,
     #[error("Version '{0}' does not exist in the language definition.")]
     VersionNotFound(&'err Version),
     #[error("Version '{0}' must be less than corresponding version '{1}'.")]

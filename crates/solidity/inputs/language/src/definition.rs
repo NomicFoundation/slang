@@ -42,6 +42,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Enum(
                             name = SourceUnitMember,
+                            default_variant = Contract,
                             variants = [
                                 EnumVariant(
                                     name = Pragma,
@@ -123,6 +124,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Enum(
                             name = Pragma,
+                            default_variant = Version,
                             variants = [
                                 EnumVariant(
                                     name = ABICoder,
@@ -187,6 +189,7 @@ codegen_language_macros::compile!(Language(
                                     )]
                                 )
                             ],
+                            default_primary_expression = VersionPragmaSpecifier,
                             primary_expressions =
                                 [PrimaryExpression(expression = VersionPragmaSpecifier)]
                         ),
@@ -222,6 +225,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Enum(
                             name = ImportSymbol,
+                            default_variant = Path,
                             variants = [
                                 EnumVariant(
                                     name = Path,
@@ -297,6 +301,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Enum(
                             name = UsingSymbol,
+                            default_variant = Path,
                             variants = [
                                 EnumVariant(
                                     name = Path,
@@ -359,6 +364,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Enum(
                             name = UsingTarget,
+                            default_variant = Asterisk,
                             variants = [
                                 EnumVariant(
                                     name = TypeName,
@@ -1404,6 +1410,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Enum(
                             name = ContractMember,
+                            default_variant = StateVariable,
                             variants = [
                                 EnumVariant(
                                     name = Using,
@@ -1626,6 +1633,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Enum(
                             name = StateVariableAttribute,
+                            default_variant = Public,
                             variants = [
                                 EnumVariant(
                                     name = Override,
@@ -1707,6 +1715,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Enum(
                             name = FunctionAttribute,
+                            default_variant = Public,
                             variants = [
                                 EnumVariant(
                                     name = Modifier,
@@ -1783,6 +1792,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Enum(
                             name = FunctionBody,
+                            default_variant = Semicolon,
                             variants = [
                                 EnumVariant(
                                     name = Block,
@@ -1813,6 +1823,7 @@ codegen_language_macros::compile!(Language(
                         Enum(
                             name = ConstructorAttribute,
                             enabled_in = "0.4.22",
+                            default_variant = Public,
                             variants = [
                                 EnumVariant(
                                     name = Modifier,
@@ -1851,6 +1862,7 @@ codegen_language_macros::compile!(Language(
                         Enum(
                             name = UnnamedFunctionAttribute,
                             disabled_in = "0.6.0",
+                            default_variant = View,
                             variants = [
                                 EnumVariant(
                                     name = Modifier,
@@ -1898,6 +1910,7 @@ codegen_language_macros::compile!(Language(
                         Enum(
                             name = FallbackFunctionAttribute,
                             enabled_in = "0.6.0",
+                            default_variant = View,
                             variants = [
                                 EnumVariant(
                                     name = Modifier,
@@ -1948,6 +1961,7 @@ codegen_language_macros::compile!(Language(
                         Enum(
                             name = ReceiveFunctionAttribute,
                             enabled_in = "0.6.0",
+                            default_variant = Virtual,
                             variants = [
                                 EnumVariant(
                                     name = Modifier,
@@ -1993,6 +2007,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Enum(
                             name = ModifierAttribute,
+                            default_variant = Virtual,
                             variants = [
                                 EnumVariant(
                                     name = Override,
@@ -2143,6 +2158,7 @@ codegen_language_macros::compile!(Language(
                                     )
                                 )]
                             )],
+                            default_primary_expression = ElementaryType,
                             primary_expressions = [
                                 PrimaryExpression(expression = FunctionType),
                                 PrimaryExpression(expression = MappingType),
@@ -2166,6 +2182,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Enum(
                             name = FunctionTypeAttribute,
+                            default_variant = Public,
                             variants = [
                                 EnumVariant(
                                     name = Internal,
@@ -2222,6 +2239,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Enum(
                             name = MappingKeyType,
+                            default_variant = ElementaryType,
                             variants = [
                                 EnumVariant(
                                     name = ElementaryType,
@@ -2248,6 +2266,7 @@ codegen_language_macros::compile!(Language(
                     items = [
                         Enum(
                             name = ElementaryType,
+                            default_variant = Bool,
                             variants = [
                                 EnumVariant(
                                     name = Bool,
@@ -2290,6 +2309,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Enum(
                             name = AddressType,
+                            default_variant = Address,
                             variants = [
                                 EnumVariant(
                                     name = Address,
@@ -2331,6 +2351,7 @@ codegen_language_macros::compile!(Language(
                         Repeated(name = Statements, repeated = Statement, allow_empty = true),
                         Enum(
                             name = Statement,
+                            default_variant = Block,
                             variants = [
                                 EnumVariant(
                                     name = TupleDeconstruction,
@@ -2463,6 +2484,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Enum(
                             name = TupleMember,
+                            default_variant = Typed,
                             variants = [
                                 EnumVariant(
                                     name = Typed,
@@ -2496,6 +2518,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Enum(
                             name = VariableDeclarationType,
+                            default_variant = Typed,
                             variants = [
                                 EnumVariant(
                                     name = Typed,
@@ -2517,6 +2540,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Enum(
                             name = StorageLocation,
+                            default_variant = Memory,
                             variants = [
                                 EnumVariant(
                                     name = Memory,
@@ -2578,6 +2602,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Enum(
                             name = ForStatementInitialization,
+                            default_variant = Semicolon,
                             variants = [
                                 EnumVariant(
                                     name = Expression,
@@ -2602,6 +2627,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Enum(
                             name = ForStatementCondition,
+                            default_variant = Semicolon,
                             variants = [
                                 EnumVariant(
                                     name = Expression,
@@ -2963,6 +2989,7 @@ codegen_language_macros::compile!(Language(
                                     )]
                                 )
                             ],
+                            default_primary_expression = Identifier,
                             primary_expressions = [
                                 PrimaryExpression(expression = NewExpression),
                                 PrimaryExpression(expression = TupleExpression),
@@ -2993,6 +3020,7 @@ codegen_language_macros::compile!(Language(
                     items = [
                         Enum(
                             name = FunctionCallOptions,
+                            default_variant = None,
                             variants = [
                                 EnumVariant(
                                     name = Multiple,
@@ -3012,6 +3040,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Enum(
                             name = ArgumentsDeclaration,
+                            default_variant = Positional,
                             variants = [
                                 EnumVariant(
                                     name = Positional,
@@ -3150,6 +3179,7 @@ codegen_language_macros::compile!(Language(
                     items = [
                         Enum(
                             name = NumberExpression,
+                            default_variant = Decimal,
                             variants = [
                                 EnumVariant(
                                     name = Hex,
@@ -3274,6 +3304,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Enum(
                             name = NumberUnit,
+                            default_variant = Seconds,
                             variants = [
                                 EnumVariant(
                                     name = Wei,
@@ -3337,6 +3368,7 @@ codegen_language_macros::compile!(Language(
                     items = [
                         Enum(
                             name = StringExpression,
+                            default_variant = Ascii,
                             variants = [
                                 EnumVariant(
                                     name = Hex,
@@ -3621,6 +3653,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Enum(
                             name = YulStatement,
+                            default_variant = Block,
                             variants = [
                                 EnumVariant(
                                     name = Block,
@@ -3779,6 +3812,7 @@ codegen_language_macros::compile!(Language(
                         Repeated(name = YulSwitchCases, repeated = YulSwitchCase),
                         Enum(
                             name = YulSwitchCase,
+                            default_variant = Default,
                             variants = [
                                 EnumVariant(
                                     name = Default,
@@ -3820,6 +3854,7 @@ codegen_language_macros::compile!(Language(
                                     )
                                 )]
                             )],
+                            default_primary_expression = YulLiteral,
                             primary_expressions = [
                                 PrimaryExpression(expression = YulLiteral),
                                 PrimaryExpression(expression = YulIdentifierPath)
@@ -3847,6 +3882,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Enum(
                             name = YulLiteral,
+                            default_variant = Decimal,
                             variants = [
                                 EnumVariant(
                                     name = True,

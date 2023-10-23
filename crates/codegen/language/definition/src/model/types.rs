@@ -79,6 +79,7 @@ mod wrapper {
         pub enabled_in: Option<Version>,
         pub disabled_in: Option<Version>,
 
+        pub default_variant: Identifier,
         pub variants: Vec<EnumVariant>,
     }
 
@@ -124,6 +125,8 @@ mod wrapper {
         pub disabled_in: Option<Version>,
 
         pub precedence_expressions: Vec<PrecedenceExpression>,
+
+        pub default_primary_expression: Identifier,
         pub primary_expressions: Vec<PrimaryExpression>,
     }
 
