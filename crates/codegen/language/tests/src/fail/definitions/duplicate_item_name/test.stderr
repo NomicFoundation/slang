@@ -1,0 +1,5 @@
+error: An item with the name 'Bar1' already exists.
+  --> src/fail/definitions/duplicate_item_name/test.rs:15:31
+   |
+15 |                 Struct(name = Bar1, fields = (field = Required(NonTerminal(Bar2)))),
+   |                               ^^^^

@@ -80,7 +80,7 @@ where
                 let location = location.field("unversioned");
 
                 let first_version = language.versions[0].to_owned();
-                let version_set = VersionSet::range(first_version..max_version);
+                let version_set = VersionSet::from_range(first_version..max_version);
 
                 if visitor.visit_version(&version_set, &location, reporter) {
                     instance.receive(visitor, language, location, reporter);
@@ -101,7 +101,7 @@ where
                     if let Some(value) = instance {
                         let location = location.field(range.start.to_string());
 
-                        let version_set = VersionSet::range(range);
+                        let version_set = VersionSet::from_range(range);
 
                         if visitor.visit_version(&version_set, &location, reporter) {
                             value.receive(visitor, language, location, reporter);

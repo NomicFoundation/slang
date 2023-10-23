@@ -6,7 +6,10 @@
 //!
 //! Call the [`SolidityLanguageExtensions::load_solidity`] method to load the precompiled language definition.
 
+mod definition;
 mod dsl;
+
+pub use definition::*;
 pub use dsl::*;
 
 use anyhow::Result;

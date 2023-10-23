@@ -1,0 +1,5 @@
+error: Reference to unknown item 'Unknown'.
+  --> src/fail/references/unknown_reference/test.rs:18:54
+   |
+18 |                         field_2 = Required(Terminal([Unknown]))
+   |                                                      ^^^^^^^

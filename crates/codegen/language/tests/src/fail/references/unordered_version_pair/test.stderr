@@ -1,0 +1,5 @@
+error: Version '3.0.0' must be less than corresponding version '2.0.0'.
+  --> src/fail/references/unordered_version_pair/test.rs:19:42
+   |
+19 | ...                   enabled_in = "3.0.0",
+   |                                    ^^^^^^^
