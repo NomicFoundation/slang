@@ -463,6 +463,7 @@ dependencies = [
  "anyhow",
  "indexmap 1.9.3",
  "infra_utils",
+ "itertools",
  "schemars",
  "semver",
  "serde",

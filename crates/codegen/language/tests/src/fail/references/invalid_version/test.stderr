@@ -10,7 +10,7 @@ error: Reference 'Baz' is not defined in versions '1.0.0..2.0.0'.
 24 | ...                   kind = Terminal([Baz]),
    |                                        ^^^
 
-error: Reference 'Baz' is not defined in versions '1.0.0..2.0.0'.
+error: Reference 'Baz' is not defined in versions '1.0.0..2.0.0 | 3.0.0..MAX'.
   --> src/fail/references/invalid_version/test.rs:29:46
    |
 29 | ...                   kind = Terminal([Baz])

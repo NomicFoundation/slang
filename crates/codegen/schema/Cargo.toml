@@ -9,6 +9,7 @@ publish = false
 anyhow = { workspace = true }
 infra_utils = { workspace = true }
 indexmap = { workspace = true }
+itertools = { workspace = true }
 schemars = { workspace = true }
 semver = { workspace = true }
 serde = { workspace = true }

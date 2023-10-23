@@ -1,3 +1,4 @@
+use itertools::Itertools;
 use semver::Version;
 use std::{
     cmp::{max, min},
@@ -45,17 +46,17 @@ impl VersionRange {
 impl Display for VersionRange {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         if self.inclusive_start == MAX_VERSION {
-            write!(f, "MAX")?;
+            "MAX".fmt(f)?;
         } else {
-            write!(f, "{}", self.inclusive_start)?;
+            self.inclusive_start.fmt(f)?;
         }
 
-        write!(f, "..")?;
+        "..".fmt(f)?;
 
         if self.exclusive_end == MAX_VERSION {
-            write!(f, "MAX")?;
+            "MAX".fmt(f)?;
         } else {
-            write!(f, "{}", self.exclusive_end)?;
+            self.exclusive_end.fmt(f)?;
         }
 
         return Ok(());
@@ -99,103 +100,270 @@ impl VersionSet {
             return;
         }
 
-        let mut first_iter = self.ranges.iter().peekable();
-        let mut second_iter = once(range).into_iter().peekable();
-        let mut ranges = vec![];
+        let mut result = vec![];
 
-        loop {
-            let (Some(first), Some(second)) = (first_iter.peek(), second_iter.peek()) else {
-                break;
-            };
+        // Iterate on both (existing and new) in-order, combining them if they overlap:
+        let mut input_iter = self
+            .ranges
+            .iter()
+            .chain(once(range))
+            .sorted_by_key(|range| &range.inclusive_start);
 
-            if first.exclusive_end < second.inclusive_start {
-                // first fully exists before second, take it:
-                ranges.push(first_iter.next().unwrap().to_owned());
-                break;
+        let mut current = input_iter.next().unwrap().to_owned();
+
+        for next in input_iter {
+            if current.exclusive_end < next.inclusive_start {
+                // current fully exists before next:
+                result.push(current);
+                current = next.to_owned();
+            } else {
+                // current and next overlap, combine them:
+                current = VersionRange::between(
+                    min(&current.inclusive_start, &next.inclusive_start),
+                    max(&current.exclusive_end, &next.exclusive_end),
+                );
             }
-
-            if second.exclusive_end < first.inclusive_start {
-                // second fully exists before first, take it:
-                ranges.push(second_iter.next().unwrap().to_owned());
-                break;
-            }
-
-            // overlap, take the union:
-            let lower = min(&first.inclusive_start, &second.inclusive_start);
-            let upper = max(&first.exclusive_end, &second.exclusive_end);
-
-            first_iter.next().unwrap();
-            second_iter.next().unwrap();
-
-            ranges.push(VersionRange::between(lower, upper));
         }
 
-        ranges.extend(first_iter.cloned());
-        ranges.extend(second_iter.cloned());
-
-        self.ranges = ranges;
+        result.push(current);
+        self.ranges = result;
     }
 
     pub fn difference(&self, other: &Self) -> Self {
-        let mut first_iter = self.ranges.iter().peekable();
+        let mut result = vec![];
+
+        let mut first_iter = self.ranges.iter().cloned().peekable();
         let mut second_iter = other.ranges.iter().peekable();
-        let mut ranges = vec![];
 
         loop {
-            let (Some(first), Some(second)) = (first_iter.peek(), second_iter.peek()) else {
+            let (Some(first), Some(second)) = (first_iter.peek_mut(), second_iter.peek()) else {
                 break;
             };
 
-            if first.exclusive_end < second.inclusive_start {
-                // first fully exists before second, take it:
-                ranges.push(first_iter.next().unwrap().to_owned());
-                break;
+            if first.exclusive_end <= second.inclusive_start {
+                // first fully exists before second: take it, and advance first:
+                result.push(first_iter.next().unwrap());
+                continue;
             }
 
-            if second.exclusive_end < first.inclusive_start {
-                // second fully exists before first, drop it:
-                second_iter.next().unwrap();
-                break;
+            if second.exclusive_end <= first.inclusive_start {
+                // second fully exists before first: advance second:
+                second_iter.next();
+                continue;
             }
+
+            // first and second overlap:
 
             if first.inclusive_start < second.inclusive_start {
                 // take part of first that exists before second:
-                ranges.push(VersionRange::between(
+                result.push(VersionRange::between(
                     &first.inclusive_start,
                     &second.inclusive_start,
                 ));
-            } else if first.exclusive_end > second.exclusive_end {
-                // take part of first that exists after second:
-                ranges.push(VersionRange::between(
-                    &second.exclusive_end,
-                    &first.exclusive_end,
-                ));
-            } else {
-                // first fully exists within second, do nothing:
             }
 
-            first_iter.next().unwrap();
-            second_iter.next().unwrap();
+            if first.exclusive_end <= second.exclusive_end {
+                // first ends before second: advance first, as it's been fully processed:
+                first_iter.next();
+                continue;
+            }
+
+            // keep part of first that exists after second:
+            first.inclusive_start = second.exclusive_end.to_owned();
+
+            // advance second, as it's been fully processed:
+            second_iter.next();
         }
 
-        ranges.extend(first_iter.cloned());
+        // Take anything remaining in first:
+        result.extend(first_iter);
 
-        return Self { ranges };
+        return Self { ranges: result };
     }
 }
 
 impl Display for VersionSet {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let mut iter = self.ranges.iter().peekable();
+        if self.is_empty() {
+            return "{EMPTY}".fmt(f);
+        }
 
-        while let Some(range) = iter.next() {
-            write!(f, "{range}")?;
-
-            if iter.peek().is_some() {
-                write!(f, " | ")?;
+        for (i, range) in self.ranges.iter().enumerate() {
+            if i > 0 {
+                " | ".fmt(f)?;
             }
+
+            range.fmt(f)?;
         }
 
         return Ok(());
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn empty_ranges() {
+        let set = VersionSet::from_ranges([
+            VersionRange::between(&Version::new(1, 0, 0), &Version::new(2, 0, 0)),
+            VersionRange::between(&Version::new(3, 0, 0), &Version::new(3, 0, 0)),
+            VersionRange::between(&Version::new(4, 0, 0), &Version::new(5, 0, 0)),
+        ]);
+
+        assert_eq!(set.to_string(), "1.0.0..2.0.0 | 4.0.0..5.0.0");
+    }
+
+    #[test]
+    fn connected_ranges_in_order() {
+        let set = VersionSet::from_ranges([
+            VersionRange::between(&Version::new(1, 0, 0), &Version::new(2, 0, 0)),
+            VersionRange::between(&Version::new(2, 0, 0), &Version::new(3, 0, 0)),
+            VersionRange::between(&Version::new(3, 0, 0), &Version::new(4, 0, 0)),
+        ]);
+
+        assert_eq!(set.to_string(), "1.0.0..4.0.0");
+    }
+
+    #[test]
+    fn connected_ranges_out_of_order() {
+        let set = VersionSet::from_ranges([
+            VersionRange::between(&Version::new(1, 0, 0), &Version::new(2, 0, 0)),
+            VersionRange::between(&Version::new(3, 0, 0), &Version::new(4, 0, 0)),
+            VersionRange::between(&Version::new(2, 0, 0), &Version::new(3, 0, 0)),
+        ]);
+
+        assert_eq!(set.to_string(), "1.0.0..4.0.0");
+    }
+
+    #[test]
+    fn disconnected_ranges_in_order() {
+        let set = VersionSet::from_ranges([
+            VersionRange::between(&Version::new(1, 0, 0), &Version::new(2, 0, 0)),
+            VersionRange::between(&Version::new(3, 0, 0), &Version::new(4, 0, 0)),
+            VersionRange::between(&Version::new(5, 0, 0), &Version::new(6, 0, 0)),
+        ]);
+
+        assert_eq!(
+            set.to_string(),
+            "1.0.0..2.0.0 | 3.0.0..4.0.0 | 5.0.0..6.0.0"
+        );
+    }
+
+    #[test]
+    fn disconnected_ranges_out_of_order() {
+        let set = VersionSet::from_ranges([
+            VersionRange::between(&Version::new(1, 0, 0), &Version::new(2, 0, 0)),
+            VersionRange::between(&Version::new(5, 0, 0), &Version::new(6, 0, 0)),
+            VersionRange::between(&Version::new(3, 0, 0), &Version::new(4, 0, 0)),
+        ]);
+
+        assert_eq!(
+            set.to_string(),
+            "1.0.0..2.0.0 | 3.0.0..4.0.0 | 5.0.0..6.0.0"
+        );
+    }
+
+    #[test]
+    fn overlap_with_multiple() {
+        let set = VersionSet::from_ranges([
+            VersionRange::between(&Version::new(1, 0, 0), &Version::new(2, 0, 0)),
+            VersionRange::between(&Version::new(3, 0, 0), &Version::new(4, 0, 0)),
+            VersionRange::between(&Version::new(5, 0, 0), &Version::new(6, 0, 0)),
+            VersionRange::between(&Version::new(1, 0, 0), &Version::new(5, 0, 0)),
+        ]);
+
+        assert_eq!(set.to_string(), "1.0.0..6.0.0");
+    }
+
+    #[test]
+    fn difference_between_same_sets_is_empty() {
+        let first = VersionSet::from_range(VersionRange::between(
+            &Version::new(1, 0, 0),
+            &Version::new(2, 0, 0),
+        ));
+
+        let second = VersionSet::from_range(VersionRange::between(
+            &Version::new(1, 0, 0),
+            &Version::new(2, 0, 0),
+        ));
+
+        assert!(first.difference(&second).is_empty());
+    }
+
+    #[test]
+    fn difference_between_connected_sets() {
+        let first = VersionSet::from_range(VersionRange::between(
+            &Version::new(1, 0, 0),
+            &Version::new(5, 0, 0),
+        ));
+
+        let second = VersionSet::from_range(VersionRange::between(
+            &Version::new(3, 0, 0),
+            &Version::new(8, 0, 0),
+        ));
+
+        assert_eq!(first.difference(&second).to_string(), "1.0.0..3.0.0");
+
+        assert_eq!(second.difference(&first).to_string(), "5.0.0..8.0.0");
+    }
+
+    #[test]
+    fn difference_between_disconnected_sets() {
+        let first = VersionSet::from_range(VersionRange::between(
+            &Version::new(1, 0, 0),
+            &Version::new(4, 0, 0),
+        ));
+
+        let second = VersionSet::from_range(VersionRange::between(
+            &Version::new(6, 0, 0),
+            &Version::new(10, 0, 0),
+        ));
+
+        assert_eq!(first.difference(&second).to_string(), "1.0.0..4.0.0");
+
+        assert_eq!(second.difference(&first).to_string(), "6.0.0..10.0.0");
+    }
+
+    #[test]
+    fn difference_between_contained_sets() {
+        let first = VersionSet::from_range(VersionRange::between(
+            &Version::new(1, 0, 0),
+            &Version::new(8, 0, 0),
+        ));
+
+        let second = VersionSet::from_range(VersionRange::between(
+            &Version::new(3, 0, 0),
+            &Version::new(5, 0, 0),
+        ));
+
+        assert_eq!(
+            first.difference(&second).to_string(),
+            "1.0.0..3.0.0 | 5.0.0..8.0.0"
+        );
+
+        assert!(second.difference(&first).is_empty());
+    }
+
+    #[test]
+    fn difference_between_multiple_contained_sets() {
+        let first = VersionSet::from_ranges([
+            VersionRange::between(&Version::new(1, 0, 0), &Version::new(2, 0, 0)),
+            VersionRange::between(&Version::new(3, 0, 0), &Version::new(4, 0, 0)),
+            VersionRange::between(&Version::new(5, 0, 0), &Version::new(6, 0, 0)),
+        ]);
+
+        let second = VersionSet::from_range(VersionRange::between(
+            &Version::new(0, 0, 0),
+            &Version::new(7, 0, 0),
+        ));
+
+        assert!(first.difference(&second).is_empty());
+
+        assert_eq!(
+            second.difference(&first).to_string(),
+            "0.0.0..1.0.0 | 2.0.0..3.0.0 | 4.0.0..5.0.0 | 6.0.0..7.0.0"
+        );
     }
 }
