@@ -1,0 +1,5 @@
+error: Item 'Bar1' is already defined.
+  --> src/fail/definitions/duplicate_item_name/test.rs:15:31
+   |
+15 |                 Struct(name = Bar1, fields = (field = Required(NonTerminal(Bar2)))),
+   |                               ^^^^

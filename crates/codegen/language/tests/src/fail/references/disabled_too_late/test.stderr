@@ -1,0 +1,5 @@
+error: Parent scope is disabled in '3.0.0'.
+  --> src/fail/references/disabled_too_late/test.rs:30:90
+   |
+30 |                         (field_1 = Optional(reference = Terminal([Three]), disabled_in = "4.0.0"))
+   |                                                                                          ^^^^^^^

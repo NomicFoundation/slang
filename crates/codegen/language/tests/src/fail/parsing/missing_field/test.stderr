@@ -1,0 +1,13 @@
+error: Expected field: 'sections'.
+  --> src/fail/parsing/missing_field/test.rs:3:1
+   |
+3  | / codegen_language_macros::compile!(
+4  | |     name = Foo,
+5  | |     root_item = Bar,
+6  | |     leading_trivia = Sequence([]),
+...  |
+9  | |     // sections = []
+10 | | );
+   | |_^
+   |
+   = note: this error originates in the macro `codegen_language_macros::compile` (in Nightly builds, run with -Z macro-backtrace for more info)

@@ -16,7 +16,9 @@ infra_utils = { workspace = true }
 [dependencies]
 anyhow = { workspace = true }
 bson = { workspace = true }
-codegen_schema = { workspace = true }
 codegen_grammar = { workspace = true }
+codegen_language_definition = { workspace = true }
+codegen_language_macros = { workspace = true }
+codegen_schema = { workspace = true }
 once_cell = { workspace = true }
 semver = { workspace = true }

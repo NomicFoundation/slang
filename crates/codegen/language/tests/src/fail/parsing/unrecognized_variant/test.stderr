@@ -1,0 +1,5 @@
+error: Expected a variant: 'Struct' or 'Enum' or 'Repeated' or 'Separated' or 'Precedence' or 'Keyword' or 'Token' or 'Fragment'
+  --> src/fail/parsing/unrecognized_variant/test.rs:19:49
+   |
+19 |             Topic(title = "Topic Two", items = [Unrecognized(true)])
+   |                                                 ^^^^^^^^^^^^

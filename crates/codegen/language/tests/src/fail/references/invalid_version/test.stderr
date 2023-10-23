@@ -1,0 +1,17 @@
+error: Reference 'Baz' is not defined in versions '3.0.0..MAX'.
+  --> src/fail/references/invalid_version/test.rs:19:51
+   |
+19 | ...                   reference = Terminal([Baz]),
+   |                                             ^^^
+
+error: Reference 'Baz' is not defined in versions '1.0.0..2.0.0'.
+  --> src/fail/references/invalid_version/test.rs:24:51
+   |
+24 | ...                   reference = Terminal([Baz]),
+   |                                             ^^^
+
+error: Reference 'Baz' is not defined in versions '1.0.0..2.0.0'.
+  --> src/fail/references/invalid_version/test.rs:29:51
+   |
+29 | ...                   reference = Terminal([Baz])
+   |                                             ^^^

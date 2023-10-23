@@ -1,0 +1,5 @@
+error: Expression 'Op1' is already defined under a different item.
+  --> src/fail/definitions/duplicate_operator_name/test.rs:41:47
+   |
+41 | ...                   expression_name = Op1,
+   |                                         ^^^
