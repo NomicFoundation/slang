@@ -72,13 +72,15 @@ impl VersionSet {
         return Self { ranges: vec![] };
     }
 
-    pub fn single(range: VersionRange) -> Self {
+    pub fn from_range(range: VersionRange) -> Self {
         let mut instance = Self::empty();
+
         instance.add(&range);
+
         return instance;
     }
 
-    pub fn union(ranges: impl IntoIterator<Item = VersionRange>) -> Self {
+    pub fn from_ranges(ranges: impl IntoIterator<Item = VersionRange>) -> Self {
         let mut instance = Self::empty();
 
         for range in ranges.into_iter() {
@@ -102,15 +104,7 @@ impl VersionSet {
         let mut ranges = vec![];
 
         loop {
-            let first = if let Some(first) = first_iter.peek() {
-                first
-            } else {
-                break;
-            };
-
-            let second = if let Some(second) = second_iter.peek() {
-                second
-            } else {
+            let (Some(first), Some(second)) = (first_iter.peek(), second_iter.peek()) else {
                 break;
             };
 
@@ -148,15 +142,7 @@ impl VersionSet {
         let mut ranges = vec![];
 
         loop {
-            let first = if let Some(first) = first_iter.peek() {
-                first
-            } else {
-                break;
-            };
-
-            let second = if let Some(second) = second_iter.peek() {
-                second
-            } else {
+            let (Some(first), Some(second)) = (first_iter.peek(), second_iter.peek()) else {
                 break;
             };
 

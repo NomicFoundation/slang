@@ -15,11 +15,11 @@ codegen_language_macros::compile!(Language(
                     name = One,
                     fields = (
                         field_1 = Optional(
-                            reference = Terminal([Two]),
+                            kind = Terminal([Two]),
                             enabled_in = "3.0.0",
                             disabled_in = "2.0.0"
                         ),
-                        field_2 = Optional(reference = Terminal([Two]))
+                        field_2 = Optional(kind = Terminal([Two]))
                     )
                 ),
                 Token(

@@ -3,7 +3,13 @@ mod reachability;
 mod references;
 
 use crate::{
-    compiler::versions::VersionSet,
+    compiler::{
+        analysis::{
+            definitions::analyze_definitions, reachability::analyze_reachability,
+            references::analyze_references,
+        },
+        versions::VersionSet,
+    },
     internals::{ErrorsCollection, ParseOutput, Spanned},
     spanned::{Item, ItemKind, Language},
     Identifier,
@@ -44,21 +50,21 @@ impl Analysis {
             return analysis;
         }
 
-        analysis.analyze_definitions();
+        analyze_definitions(&mut analysis);
 
         // Early return if there are already errors, to prevent producing noise from later analysis:
         if analysis.errors.has_errors() {
             return analysis;
         }
 
-        analysis.analyze_references();
+        analyze_references(&mut analysis);
 
         // Early return if there are already errors, to prevent producing noise from later analysis:
         if analysis.errors.has_errors() {
             return analysis;
         }
 
-        analysis.analyze_reachability();
+        analyze_reachability(&mut analysis);
 
         return analysis;
     }

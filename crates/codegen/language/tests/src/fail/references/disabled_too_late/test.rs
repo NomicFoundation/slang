@@ -15,19 +15,18 @@ codegen_language_macros::compile!(Language(
                     name = One,
                     fields = (
                         field_1 = Optional(
-                            reference = NonTerminal(Two),
+                            kind = NonTerminal(Two),
                             enabled_in = "2.0.0",
                             disabled_in = "3.0.0"
                         ),
-                        field_2 = Optional(reference = Terminal([Three]))
+                        field_2 = Optional(kind = Terminal([Three]))
                     )
                 ),
                 Struct(
                     name = Two,
                     enabled_in = "2.0.0",
                     disabled_in = "3.0.0",
-                    fields =
-                        (field_1 = Optional(reference = Terminal([Three]), disabled_in = "4.0.0"))
+                    fields = (field_1 = Optional(kind = Terminal([Three]), disabled_in = "4.0.0"))
                 ),
                 Token(
                     name = Three,

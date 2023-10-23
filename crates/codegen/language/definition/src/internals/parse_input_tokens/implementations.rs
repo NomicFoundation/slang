@@ -48,7 +48,7 @@ impl ParseInputTokens for Identifier {
     }
 }
 
-impl<K: ParseInputTokens + std::hash::Hash + std::cmp::Eq, V: ParseInputTokens> ParseInputTokens
+impl<K: ParseInputTokens + std::hash::Hash + Eq, V: ParseInputTokens> ParseInputTokens
     for IndexMap<Spanned<K>, Spanned<V>>
 {
     fn parse_value(input: ParseStream, errors: &mut ErrorsCollection) -> Result<Self> {
@@ -56,9 +56,7 @@ impl<K: ParseInputTokens + std::hash::Hash + std::cmp::Eq, V: ParseInputTokens> 
     }
 }
 
-impl<T: ParseInputTokens + std::hash::Hash + std::cmp::Ord> ParseInputTokens
-    for IndexSet<Spanned<T>>
-{
+impl<T: ParseInputTokens + std::hash::Hash + Ord> ParseInputTokens for IndexSet<Spanned<T>> {
     fn parse_value(input: ParseStream, errors: &mut ErrorsCollection) -> Result<Self> {
         let sequence: Vec<Spanned<T>> = ParseHelpers::sequence(input, errors)?;
 

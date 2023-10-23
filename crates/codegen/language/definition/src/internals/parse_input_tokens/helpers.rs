@@ -54,7 +54,7 @@ impl ParseHelpers {
         };
     }
 
-    pub fn map<K: ParseInputTokens + std::hash::Hash + std::cmp::Eq, V: ParseInputTokens>(
+    pub fn map<K: ParseInputTokens + std::hash::Hash + Eq, V: ParseInputTokens>(
         input: ParseStream,
         errors: &mut ErrorsCollection,
     ) -> Result<IndexMap<Spanned<K>, Spanned<V>>> {

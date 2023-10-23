@@ -1,5 +1,6 @@
 use proc_macro2::Span;
 use serde::Serialize;
+use std::cmp::Ordering;
 
 #[derive(Clone, Debug)]
 pub struct Spanned<T> {
@@ -34,7 +35,7 @@ where
     }
 }
 
-impl<T: std::cmp::Eq> std::cmp::Eq for Spanned<T> {}
+impl<T: Eq> Eq for Spanned<T> {}
 
 impl<T: std::hash::Hash> std::hash::Hash for Spanned<T> {
     fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
@@ -42,20 +43,20 @@ impl<T: std::hash::Hash> std::hash::Hash for Spanned<T> {
     }
 }
 
-impl<T: std::cmp::Ord> std::cmp::Ord for Spanned<T> {
-    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+impl<T: Ord> Ord for Spanned<T> {
+    fn cmp(&self, other: &Self) -> Ordering {
         return self.value.cmp(&other.value);
     }
 }
 
-impl<T: std::cmp::PartialEq> std::cmp::PartialEq for Spanned<T> {
+impl<T: PartialEq> PartialEq for Spanned<T> {
     fn eq(&self, other: &Self) -> bool {
         return self.value == other.value;
     }
 }
 
-impl<T: std::cmp::PartialOrd> std::cmp::PartialOrd for Spanned<T> {
-    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+impl<T: PartialOrd> PartialOrd for Spanned<T> {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
         return self.value.partial_cmp(&other.value);
     }
 }

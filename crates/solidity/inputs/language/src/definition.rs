@@ -114,6 +114,7 @@ codegen_language_macros::compile!(Language(
                     items = [
                         Struct(
                             name = PragmaDirective,
+                            error_recovery = [Terminator(semicolon)],
                             fields = (
                                 pragma_keyword = Required(Terminal([PragmaKeyword])),
                                 pragma = Required(NonTerminal(Pragma)),
@@ -212,6 +213,7 @@ codegen_language_macros::compile!(Language(
                     items = [
                         Struct(
                             name = ImportDirective,
+                            error_recovery = [Terminator(semicolon)],
                             fields = (
                                 import_keyword = Required(Terminal([ImportKeyword])),
                                 symbol = Required(NonTerminal(ImportSymbol)),
@@ -225,7 +227,7 @@ codegen_language_macros::compile!(Language(
                                     name = Path,
                                     fields = (
                                         path = Required(Terminal([AsciiStringLiteral])),
-                                        alias = Optional(reference = NonTerminal(ImportAlias))
+                                        alias = Optional(kind = NonTerminal(ImportAlias))
                                     )
                                 ),
                                 EnumVariant(
@@ -239,6 +241,8 @@ codegen_language_macros::compile!(Language(
                                 ),
                                 EnumVariant(
                                     name = Deconstruction,
+                                    error_recovery =
+                                        [Delimiters(open = open_brace, close = close_brace)],
                                     fields = (
                                         open_brace = Required(Terminal([OpenBrace])),
                                         fields = Required(NonTerminal(ImportDeconstructionFields)),
@@ -259,7 +263,7 @@ codegen_language_macros::compile!(Language(
                             name = ImportDeconstructionField,
                             fields = (
                                 name = Required(Terminal([Identifier])),
-                                alias = Optional(reference = NonTerminal(ImportAlias))
+                                alias = Optional(kind = NonTerminal(ImportAlias))
                             )
                         ),
                         Struct(
@@ -276,13 +280,14 @@ codegen_language_macros::compile!(Language(
                     items = [
                         Struct(
                             name = UsingDirective,
+                            error_recovery = [Terminator(semicolon)],
                             fields = (
                                 using_keyword = Required(Terminal([UsingKeyword])),
                                 symbol = Required(NonTerminal(UsingSymbol)),
                                 for_keyword = Required(Terminal([ForKeyword])),
                                 target = Required(NonTerminal(UsingTarget)),
                                 global_keyword = Optional(
-                                    reference = Terminal([GlobalKeyword]),
+                                    kind = Terminal([GlobalKeyword]),
                                     enabled_in = "0.8.13"
                                 ),
                                 semicolon = Required(Terminal([Semicolon]))
@@ -298,6 +303,8 @@ codegen_language_macros::compile!(Language(
                                 EnumVariant(
                                     name = Deconstruction,
                                     enabled_in = "0.8.13",
+                                    error_recovery =
+                                        [Delimiters(open = open_brace, close = close_brace)],
                                     fields = (
                                         open_brace = Required(Terminal([OpenBrace])),
                                         fields = Required(NonTerminal(UsingDeconstructionFields)),
@@ -318,10 +325,8 @@ codegen_language_macros::compile!(Language(
                             enabled_in = "0.8.13",
                             fields = (
                                 name = Required(NonTerminal(IdentifierPath)),
-                                alias = Optional(
-                                    reference = NonTerminal(UsingAlias),
-                                    enabled_in = "0.8.19"
-                                )
+                                alias =
+                                    Optional(kind = NonTerminal(UsingAlias), enabled_in = "0.8.19")
                             )
                         ),
                         Struct(
@@ -1070,32 +1075,26 @@ codegen_language_macros::compile!(Language(
                     items = [
                         Token(
                             name = OpenParen,
-                            is_open_delimiter_for = CloseParen,
                             definitions = [TokenDefinition(scanner = Atom("("))]
                         ),
                         Token(
                             name = CloseParen,
-                            is_close_delimiter_for = OpenParen,
                             definitions = [TokenDefinition(scanner = Atom(")"))]
                         ),
                         Token(
                             name = OpenBracket,
-                            is_open_delimiter_for = CloseBracket,
                             definitions = [TokenDefinition(scanner = Atom("["))]
                         ),
                         Token(
                             name = CloseBracket,
-                            is_close_delimiter_for = OpenBracket,
                             definitions = [TokenDefinition(scanner = Atom("]"))]
                         ),
                         Token(
                             name = OpenBrace,
-                            is_open_delimiter_for = CloseBrace,
                             definitions = [TokenDefinition(scanner = Atom("{"))]
                         ),
                         Token(
                             name = CloseBrace,
-                            is_close_delimiter_for = OpenBrace,
                             definitions = [TokenDefinition(scanner = Atom("}"))]
                         ),
                         Token(
@@ -1112,7 +1111,6 @@ codegen_language_macros::compile!(Language(
                         ),
                         Token(
                             name = Semicolon,
-                            is_terminator = true,
                             definitions = [TokenDefinition(scanner = Atom(";"))]
                         ),
                         Token(
@@ -1367,15 +1365,15 @@ codegen_language_macros::compile!(Language(
                     items = [
                         Struct(
                             name = ContractDefinition,
+                            error_recovery = [Delimiters(open = open_brace, close = close_brace)],
                             fields = (
                                 abstract_keyword = Optional(
-                                    reference = Terminal([AbstractKeyword]),
+                                    kind = Terminal([AbstractKeyword]),
                                     enabled_in = "0.6.0"
                                 ),
                                 contract_keyword = Required(Terminal([ContractKeyword])),
                                 name = Required(Terminal([Identifier])),
-                                inheritence =
-                                    Optional(reference = NonTerminal(InheritanceSpecifier)),
+                                inheritence = Optional(kind = NonTerminal(InheritanceSpecifier)),
                                 open_brace = Required(Terminal([OpenBrace])),
                                 members = Required(NonTerminal(ContractMembers)),
                                 close_brace = Required(Terminal([CloseBrace]))
@@ -1397,7 +1395,7 @@ codegen_language_macros::compile!(Language(
                             name = InheritanceType,
                             fields = (
                                 type_name = Required(NonTerminal(IdentifierPath)),
-                                arguments = Optional(reference = NonTerminal(ArgumentsDeclaration))
+                                arguments = Optional(kind = NonTerminal(ArgumentsDeclaration))
                             )
                         ),
                         Repeated(
@@ -1483,11 +1481,11 @@ codegen_language_macros::compile!(Language(
                     items = [
                         Struct(
                             name = InterfaceDefinition,
+                            error_recovery = [Delimiters(open = open_brace, close = close_brace)],
                             fields = (
                                 interface_keyword = Required(Terminal([InterfaceKeyword])),
                                 name = Required(Terminal([Identifier])),
-                                inheritence =
-                                    Optional(reference = NonTerminal(InheritanceSpecifier)),
+                                inheritence = Optional(kind = NonTerminal(InheritanceSpecifier)),
                                 open_brace = Required(Terminal([OpenBrace])),
                                 members = Required(NonTerminal(InterfaceMembers)),
                                 close_brace = Required(Terminal([CloseBrace]))
@@ -1505,6 +1503,7 @@ codegen_language_macros::compile!(Language(
                     items = [
                         Struct(
                             name = LibraryDefinition,
+                            error_recovery = [Delimiters(open = open_brace, close = close_brace)],
                             fields = (
                                 library_keyword = Required(Terminal([LibraryKeyword])),
                                 name = Required(Terminal([Identifier])),
@@ -1525,6 +1524,7 @@ codegen_language_macros::compile!(Language(
                     items = [
                         Struct(
                             name = StructDefinition,
+                            error_recovery = [Delimiters(open = open_brace, close = close_brace)],
                             fields = (
                                 struct_keyword = Required(Terminal([StructKeyword])),
                                 name = Required(Terminal([Identifier])),
@@ -1540,6 +1540,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Struct(
                             name = StructMember,
+                            error_recovery = [Terminator(semicolon)],
                             fields = (
                                 type_name = Required(NonTerminal(TypeName)),
                                 name = Required(Terminal([Identifier])),
@@ -1553,6 +1554,7 @@ codegen_language_macros::compile!(Language(
                     items = [
                         Struct(
                             name = EnumDefinition,
+                            error_recovery = [Delimiters(open = open_brace, close = close_brace)],
                             fields = (
                                 enum_keyword = Required(Terminal([EnumKeyword])),
                                 name = Required(Terminal([Identifier])),
@@ -1574,6 +1576,7 @@ codegen_language_macros::compile!(Language(
                     items = [Struct(
                         name = ConstantDefinition,
                         enabled_in = "0.7.4",
+                        error_recovery = [Terminator(semicolon)],
                         fields = (
                             type_name = Required(NonTerminal(TypeName)),
                             constant_keyword = Required(Terminal([ConstantKeyword])),
@@ -1589,12 +1592,12 @@ codegen_language_macros::compile!(Language(
                     items = [
                         Struct(
                             name = StateVariableDefinition,
+                            error_recovery = [Terminator(semicolon)],
                             fields = (
                                 type_name = Required(NonTerminal(TypeName)),
                                 attributes = Required(NonTerminal(StateVariableAttributes)),
                                 name = Required(Terminal([Identifier])),
-                                value =
-                                    Optional(reference = NonTerminal(StateVariableDefinitionValue)),
+                                value = Optional(kind = NonTerminal(StateVariableDefinitionValue)),
                                 semicolon = Required(Terminal([Semicolon]))
                             )
                         ),
@@ -1656,12 +1659,13 @@ codegen_language_macros::compile!(Language(
                                 ])),
                                 parameters = Required(NonTerminal(ParametersDeclaration)),
                                 attributes = Required(NonTerminal(FunctionAttributes)),
-                                returns = Optional(reference = NonTerminal(ReturnsDeclaration)),
+                                returns = Optional(kind = NonTerminal(ReturnsDeclaration)),
                                 body = Required(NonTerminal(FunctionBody))
                             )
                         ),
                         Struct(
                             name = ParametersDeclaration,
+                            error_recovery = [Delimiters(open = open_paren, close = close_paren)],
                             fields = (
                                 open_paren = Required(Terminal([OpenParen])),
                                 parameters = Required(NonTerminal(Parameters)),
@@ -1678,9 +1682,8 @@ codegen_language_macros::compile!(Language(
                             name = Parameter,
                             fields = (
                                 type_name = Required(NonTerminal(TypeName)),
-                                storage_location =
-                                    Optional(reference = NonTerminal(StorageLocation)),
-                                name = Optional(reference = Terminal([Identifier]))
+                                storage_location = Optional(kind = NonTerminal(StorageLocation)),
+                                name = Optional(kind = Terminal([Identifier]))
                             )
                         ),
                         Repeated(
@@ -1741,6 +1744,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Struct(
                             name = OverrideSpecifier,
+                            error_recovery = [Delimiters(open = open_paren, close = close_paren)],
                             fields = (
                                 override_keyword = Required(Terminal([OverrideKeyword])),
                                 open_paren = Required(Terminal([OpenParen])),
@@ -1864,7 +1868,7 @@ codegen_language_macros::compile!(Language(
                                 fallback_keyword = Required(Terminal([FallbackKeyword])),
                                 parameters = Required(NonTerminal(ParametersDeclaration)),
                                 attributes = Required(NonTerminal(FallbackFunctionAttributes)),
-                                returns = Optional(reference = NonTerminal(ReturnsDeclaration)),
+                                returns = Optional(kind = NonTerminal(ReturnsDeclaration)),
                                 body = Required(NonTerminal(FunctionBody))
                             )
                         ),
@@ -1960,8 +1964,7 @@ codegen_language_macros::compile!(Language(
                             fields = (
                                 modifier_keyword = Required(Terminal([ModifierKeyword])),
                                 name = Required(Terminal([Identifier])),
-                                parameters =
-                                    Optional(reference = NonTerminal(ParametersDeclaration)),
+                                parameters = Optional(kind = NonTerminal(ParametersDeclaration)),
                                 attributes = Required(NonTerminal(ModifierAttributes)),
                                 body = Required(NonTerminal(FunctionBody))
                             )
@@ -1989,7 +1992,7 @@ codegen_language_macros::compile!(Language(
                             name = ModifierInvocation,
                             fields = (
                                 name = Required(NonTerminal(IdentifierPath)),
-                                arguments = Optional(reference = NonTerminal(ArgumentsDeclaration))
+                                arguments = Optional(kind = NonTerminal(ArgumentsDeclaration))
                             )
                         )
                     ]
@@ -1999,18 +2002,19 @@ codegen_language_macros::compile!(Language(
                     items = [
                         Struct(
                             name = EventDefinition,
+                            error_recovery = [Terminator(semicolon)],
                             fields = (
                                 event_keyword = Required(Terminal([EventKeyword])),
                                 name = Required(Terminal([Identifier])),
                                 parameters =
-                                    Optional(reference = NonTerminal(EventParametersDeclaration)),
-                                anonymous_keyword =
-                                    Optional(reference = Terminal([AnonymousKeyword])),
+                                    Optional(kind = NonTerminal(EventParametersDeclaration)),
+                                anonymous_keyword = Optional(kind = Terminal([AnonymousKeyword])),
                                 semicolon = Required(Terminal([Semicolon]))
                             )
                         ),
                         Struct(
                             name = EventParametersDeclaration,
+                            error_recovery = [Delimiters(open = open_paren, close = close_paren)],
                             fields = (
                                 open_paren = Required(Terminal([OpenParen])),
                                 parameters = Required(NonTerminal(EventParameters)),
@@ -2027,8 +2031,8 @@ codegen_language_macros::compile!(Language(
                             name = EventParameter,
                             fields = (
                                 type_name = Required(NonTerminal(TypeName)),
-                                indexed_keyword = Optional(reference = Terminal([IndexedKeyword])),
-                                name = Optional(reference = Terminal([Identifier]))
+                                indexed_keyword = Optional(kind = Terminal([IndexedKeyword])),
+                                name = Optional(kind = Terminal([Identifier]))
                             )
                         )
                     ]
@@ -2038,6 +2042,7 @@ codegen_language_macros::compile!(Language(
                     items = [Struct(
                         name = UserDefinedValueTypeDefinition,
                         enabled_in = "0.8.8",
+                        error_recovery = [Terminator(semicolon)],
                         fields = (
                             type_keyword = Required(Terminal([TypeKeyword])),
                             name = Required(Terminal([Identifier])),
@@ -2053,6 +2058,7 @@ codegen_language_macros::compile!(Language(
                         Struct(
                             name = ErrorDefinition,
                             enabled_in = "0.8.4",
+                            error_recovery = [Terminator(semicolon)],
                             fields = (
                                 error_keyword = Required(Terminal([ErrorKeyword])),
                                 name = Required(Terminal([Identifier])),
@@ -2063,6 +2069,7 @@ codegen_language_macros::compile!(Language(
                         Struct(
                             name = ErrorParametersDeclaration,
                             enabled_in = "0.8.4",
+                            error_recovery = [Delimiters(open = open_paren, close = close_paren)],
                             fields = (
                                 open_paren = Required(Terminal([OpenParen])),
                                 parameters = Required(NonTerminal(ErrorParameters)),
@@ -2081,7 +2088,7 @@ codegen_language_macros::compile!(Language(
                             enabled_in = "0.8.4",
                             fields = (
                                 type_name = Required(NonTerminal(TypeName)),
-                                name = Optional(reference = Terminal([Identifier]))
+                                name = Optional(kind = Terminal([Identifier]))
                             )
                         )
                     ]
@@ -2100,9 +2107,11 @@ codegen_language_macros::compile!(Language(
                                 name = ArrayTypeName,
                                 operators = [PrecedenceOperator(
                                     model = Postfix,
+                                    error_recovery =
+                                        [Delimiters(open = open_bracket, close = close_bracket)],
                                     fields = (
                                         open_bracket = Required(Terminal([OpenBracket])),
-                                        index = Optional(reference = NonTerminal(Expression)),
+                                        index = Optional(kind = NonTerminal(Expression)),
                                         close_bracket = Required(Terminal([CloseBracket]))
                                     )
                                 )]
@@ -2120,7 +2129,7 @@ codegen_language_macros::compile!(Language(
                                 function_keyword = Required(Terminal([FunctionKeyword])),
                                 parameters = Required(NonTerminal(ParametersDeclaration)),
                                 attributes = Required(NonTerminal(FunctionTypeAttributes)),
-                                returns = Optional(reference = NonTerminal(ReturnsDeclaration))
+                                returns = Optional(kind = NonTerminal(ReturnsDeclaration))
                             )
                         ),
                         Repeated(
@@ -2163,6 +2172,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Struct(
                             name = MappingType,
+                            error_recovery = [Delimiters(open = open_paren, close = close_paren)],
                             fields = (
                                 mapping_keyword = Required(Terminal([MappingKeyword])),
                                 open_paren = Required(Terminal([OpenParen])),
@@ -2176,10 +2186,8 @@ codegen_language_macros::compile!(Language(
                             name = MappingKey,
                             fields = (
                                 key_type = Required(NonTerminal(MappingKeyType)),
-                                name = Optional(
-                                    reference = Terminal([Identifier]),
-                                    enabled_in = "0.8.18"
-                                )
+                                name =
+                                    Optional(kind = Terminal([Identifier]), enabled_in = "0.8.18")
                             )
                         ),
                         Enum(
@@ -2199,10 +2207,8 @@ codegen_language_macros::compile!(Language(
                             name = MappingValue,
                             fields = (
                                 type_name = Required(NonTerminal(TypeName)),
-                                name = Optional(
-                                    reference = Terminal([Identifier]),
-                                    enabled_in = "0.8.18"
-                                )
+                                name =
+                                    Optional(kind = Terminal([Identifier]), enabled_in = "0.8.18")
                             )
                         )
                     ]
@@ -2260,7 +2266,7 @@ codegen_language_macros::compile!(Language(
                                     fields = (
                                         address_keyword = Required(Terminal([AddressKeyword])),
                                         payable_keyword =
-                                            Optional(reference = Terminal([PayableKeyword]))
+                                            Optional(kind = Terminal([PayableKeyword]))
                                     )
                                 ),
                                 EnumVariant(
@@ -2282,6 +2288,7 @@ codegen_language_macros::compile!(Language(
                     items = [
                         Struct(
                             name = Block,
+                            error_recovery = [Delimiters(open = open_brace, close = close_brace)],
                             fields = (
                                 open_brace = Required(Terminal([OpenBrace])),
                                 statements = Required(NonTerminal(Statements)),
@@ -2384,6 +2391,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Struct(
                             name = ExpressionStatement,
+                            error_recovery = [Terminator(semicolon)],
                             fields = (
                                 expression = Required(NonTerminal(Expression)),
                                 semicolon = Required(Terminal([Semicolon]))
@@ -2396,6 +2404,10 @@ codegen_language_macros::compile!(Language(
                     items = [
                         Struct(
                             name = TupleDeconstructionStatement,
+                            error_recovery = [
+                                Terminator(semicolon),
+                                Delimiters(open = open_paren, close = close_paren)
+                            ],
                             fields = (
                                 open_paren = Required(Terminal([OpenParen])),
                                 members = Required(NonTerminal(TupleMembersDeconstruction)),
@@ -2413,7 +2425,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Struct(
                             name = TupleMemberDeconstruction,
-                            fields = (member = Optional(reference = NonTerminal(TupleMember)))
+                            fields = (member = Optional(kind = NonTerminal(TupleMember)))
                         ),
                         Enum(
                             name = TupleMember,
@@ -2423,7 +2435,7 @@ codegen_language_macros::compile!(Language(
                                     fields = (
                                         type_name = Required(NonTerminal(TypeName)),
                                         storage_location =
-                                            Optional(reference = NonTerminal(StorageLocation)),
+                                            Optional(kind = NonTerminal(StorageLocation)),
                                         name = Required(Terminal([Identifier]))
                                     )
                                 ),
@@ -2431,7 +2443,7 @@ codegen_language_macros::compile!(Language(
                                     name = Untyped,
                                     fields = (
                                         storage_location =
-                                            Optional(reference = NonTerminal(StorageLocation)),
+                                            Optional(kind = NonTerminal(StorageLocation)),
                                         name = Required(Terminal([Identifier]))
                                     )
                                 )
@@ -2439,12 +2451,12 @@ codegen_language_macros::compile!(Language(
                         ),
                         Struct(
                             name = VariableDeclarationStatement,
+                            error_recovery = [Terminator(semicolon)],
                             fields = (
                                 variable_type = Required(NonTerminal(VariableDeclarationType)),
-                                storage_location =
-                                    Optional(reference = NonTerminal(StorageLocation)),
+                                storage_location = Optional(kind = NonTerminal(StorageLocation)),
                                 name = Required(Terminal([Identifier])),
-                                value = Optional(reference = NonTerminal(VariableDeclarationValue)),
+                                value = Optional(kind = NonTerminal(VariableDeclarationValue)),
                                 semicolon = Required(Terminal([Semicolon]))
                             )
                         ),
@@ -2494,30 +2506,32 @@ codegen_language_macros::compile!(Language(
                     items = [
                         Struct(
                             name = IfStatement,
+                            error_recovery = [Delimiters(open = open_paren, close = close_paren)],
                             fields = (
                                 if_keyword = Required(Terminal([IfKeyword])),
                                 open_paren = Required(Terminal([OpenParen])),
                                 condition = Required(NonTerminal(Expression)),
                                 close_paren = Required(Terminal([CloseParen])),
                                 body = Required(NonTerminal(Statement)),
-                                else_branch = Optional(reference = NonTerminal(ElseBranch))
+                                else_branch = Optional(kind = NonTerminal(ElseBranch))
                             )
                         ),
                         Struct(
                             name = ElseBranch,
                             fields = (
-                                else_keyword = Optional(reference = Terminal([ElseKeyword])),
-                                body = Optional(reference = NonTerminal(Statement))
+                                else_keyword = Optional(kind = Terminal([ElseKeyword])),
+                                body = Optional(kind = NonTerminal(Statement))
                             )
                         ),
                         Struct(
                             name = ForStatement,
+                            error_recovery = [Delimiters(open = open_paren, close = close_paren)],
                             fields = (
                                 for_keyword = Required(Terminal([ForKeyword])),
                                 open_paren = Required(Terminal([OpenParen])),
                                 initialization = Required(NonTerminal(ForStatementInitialization)),
                                 condition = Required(NonTerminal(ForStatementCondition)),
-                                iterator = Optional(reference = NonTerminal(Expression)),
+                                iterator = Optional(kind = NonTerminal(Expression)),
                                 close_paren = Required(Terminal([CloseParen])),
                                 body = Required(NonTerminal(Statement))
                             )
@@ -2562,6 +2576,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Struct(
                             name = WhileStatement,
+                            error_recovery = [Delimiters(open = open_paren, close = close_paren)],
                             fields = (
                                 while_keyword = Required(Terminal([WhileKeyword])),
                                 open_paren = Required(Terminal([OpenParen])),
@@ -2572,6 +2587,10 @@ codegen_language_macros::compile!(Language(
                         ),
                         Struct(
                             name = DoWhileStatement,
+                            error_recovery = [
+                                Terminator(semicolon),
+                                Delimiters(open = open_paren, close = close_paren)
+                            ],
                             fields = (
                                 do_keyword = Required(Terminal([DoKeyword])),
                                 body = Required(NonTerminal(Statement)),
@@ -2584,6 +2603,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Struct(
                             name = ContinueStatement,
+                            error_recovery = [Terminator(semicolon)],
                             fields = (
                                 continue_keyword = Required(Terminal([ContinueKeyword])),
                                 semicolon = Required(Terminal([Semicolon]))
@@ -2591,6 +2611,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Struct(
                             name = BreakStatement,
+                            error_recovery = [Terminator(semicolon)],
                             fields = (
                                 break_keyword = Required(Terminal([BreakKeyword])),
                                 semicolon = Required(Terminal([Semicolon]))
@@ -2598,15 +2619,17 @@ codegen_language_macros::compile!(Language(
                         ),
                         Struct(
                             name = ReturnStatement,
+                            error_recovery = [Terminator(semicolon)],
                             fields = (
                                 return_keyword = Required(Terminal([ReturnKeyword])),
-                                expression = Optional(reference = NonTerminal(Expression)),
+                                expression = Optional(kind = NonTerminal(Expression)),
                                 semicolon = Required(Terminal([Semicolon]))
                             )
                         ),
                         Struct(
                             name = EmitStatement,
                             enabled_in = "0.4.21",
+                            error_recovery = [Terminator(semicolon)],
                             fields = (
                                 emit_keyword = Required(Terminal([EmitKeyword])),
                                 event = Required(NonTerminal(IdentifierPath)),
@@ -2616,6 +2639,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Struct(
                             name = DeleteStatement,
+                            error_recovery = [Terminator(semicolon)],
                             fields = (
                                 delete_keyword = Required(Terminal([DeleteKeyword])),
                                 expression = Required(NonTerminal(Expression)),
@@ -2633,7 +2657,7 @@ codegen_language_macros::compile!(Language(
                             fields = (
                                 try_keyword = Required(Terminal([TryKeyword])),
                                 expression = Required(NonTerminal(Expression)),
-                                returns = Optional(reference = NonTerminal(ReturnsDeclaration)),
+                                returns = Optional(kind = NonTerminal(ReturnsDeclaration)),
                                 body = Required(NonTerminal(Block)),
                                 catch_clauses = Required(NonTerminal(CatchClauses))
                             )
@@ -2648,7 +2672,7 @@ codegen_language_macros::compile!(Language(
                             enabled_in = "0.6.0",
                             fields = (
                                 catch_keyword = Required(Terminal([CatchKeyword])),
-                                error = Optional(reference = NonTerminal(CatchClauseError)),
+                                error = Optional(kind = NonTerminal(CatchClauseError)),
                                 body = Required(NonTerminal(Block))
                             )
                         ),
@@ -2656,16 +2680,17 @@ codegen_language_macros::compile!(Language(
                             name = CatchClauseError,
                             enabled_in = "0.6.0",
                             fields = (
-                                name = Optional(reference = Terminal([Identifier])),
+                                name = Optional(kind = Terminal([Identifier])),
                                 parameters = Required(NonTerminal(ParametersDeclaration))
                             )
                         ),
                         Struct(
                             name = RevertStatement,
                             enabled_in = "0.8.4",
+                            error_recovery = [Terminator(semicolon)],
                             fields = (
                                 revert_keyword = Required(Terminal([RevertKeyword])),
-                                error = Optional(reference = NonTerminal(IdentifierPath)),
+                                error = Optional(kind = NonTerminal(IdentifierPath)),
                                 arguments = Required(NonTerminal(ArgumentsDeclaration)),
                                 semicolon = Required(Terminal([Semicolon]))
                             )
@@ -2673,6 +2698,7 @@ codegen_language_macros::compile!(Language(
                         Struct(
                             name = ThrowStatement,
                             disabled_in = "0.5.0",
+                            error_recovery = [Terminator(semicolon)],
                             fields = (
                                 throw_keyword = Required(Terminal([ThrowKeyword])),
                                 semicolon = Required(Terminal([Semicolon]))
@@ -2878,10 +2904,14 @@ codegen_language_macros::compile!(Language(
                                     name = IndexAccessExpression,
                                     operators = [PrecedenceOperator(
                                         model = Postfix,
+                                        error_recovery = [Delimiters(
+                                            open = open_bracket,
+                                            close = close_bracket
+                                        )],
                                         fields = (
                                             open_bracket = Required(Terminal([OpenBracket])),
-                                            start = Optional(reference = NonTerminal(Expression)),
-                                            end = Optional(reference = NonTerminal(IndexAccessEnd)),
+                                            start = Optional(kind = NonTerminal(Expression)),
+                                            end = Optional(kind = NonTerminal(IndexAccessEnd)),
                                             close_bracket = Required(Terminal([CloseBracket]))
                                         )
                                     )]
@@ -2907,7 +2937,7 @@ codegen_language_macros::compile!(Language(
                             name = IndexAccessEnd,
                             fields = (
                                 colon = Required(Terminal([Colon])),
-                                end = Optional(reference = NonTerminal(Expression))
+                                end = Optional(kind = NonTerminal(Expression))
                             )
                         )
                     ]
@@ -2928,9 +2958,8 @@ codegen_language_macros::compile!(Language(
                                 EnumVariant(
                                     name = Single,
                                     enabled_in = "0.8.0",
-                                    fields = (options = Optional(
-                                        reference = NonTerminal(NamedArgumentsDeclaration)
-                                    ))
+                                    fields = (options =
+                                        Optional(kind = NonTerminal(NamedArgumentsDeclaration)))
                                 ),
                                 EnumVariant(name = None, disabled_in = "0.6.2", fields = ())
                             ]
@@ -2940,6 +2969,8 @@ codegen_language_macros::compile!(Language(
                             variants = [
                                 EnumVariant(
                                     name = Positional,
+                                    error_recovery =
+                                        [Delimiters(open = open_paren, close = close_paren)],
                                     fields = (
                                         open_paren = Required(Terminal([OpenParen])),
                                         arguments = Required(NonTerminal(PositionalArguments)),
@@ -2948,11 +2979,12 @@ codegen_language_macros::compile!(Language(
                                 ),
                                 EnumVariant(
                                     name = Named,
+                                    error_recovery =
+                                        [Delimiters(open = open_paren, close = close_paren)],
                                     fields = (
                                         open_paren = Required(Terminal([OpenParen])),
-                                        arguments = Optional(
-                                            reference = NonTerminal(NamedArgumentsDeclaration)
-                                        ),
+                                        arguments =
+                                            Optional(kind = NonTerminal(NamedArgumentsDeclaration)),
                                         close_paren = Required(Terminal([CloseParen]))
                                     )
                                 )
@@ -2973,6 +3005,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Struct(
                             name = NamedArgumentsDeclaration,
+                            error_recovery = [Delimiters(open = open_brace, close = close_brace)],
                             fields = (
                                 open_brace = Required(Terminal([OpenBrace])),
                                 arguments = Required(NonTerminal(NamedArguments)),
@@ -3001,6 +3034,7 @@ codegen_language_macros::compile!(Language(
                         Struct(
                             name = TypeExpression,
                             enabled_in = "0.5.3",
+                            error_recovery = [Delimiters(open = open_paren, close = close_paren)],
                             fields = (
                                 type_keyword = Required(Terminal([TypeKeyword])),
                                 open_paren = Required(Terminal([OpenParen])),
@@ -3017,6 +3051,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Struct(
                             name = TupleExpression,
+                            error_recovery = [Delimiters(open = open_paren, close = close_paren)],
                             fields = (
                                 open_paren = Required(Terminal([OpenParen])),
                                 items = Required(NonTerminal(TupleValues)),
@@ -3030,10 +3065,12 @@ codegen_language_macros::compile!(Language(
                         ),
                         Struct(
                             name = TupleValue,
-                            fields = (expression = Optional(reference = NonTerminal(Expression)))
+                            fields = (expression = Optional(kind = NonTerminal(Expression)))
                         ),
                         Struct(
                             name = ArrayExpression,
+                            error_recovery =
+                                [Delimiters(open = open_bracket, close = close_bracket)],
                             fields = (
                                 open_bracket = Required(Terminal([OpenBracket])),
                                 items = Required(NonTerminal(ArrayValues)),
@@ -3058,7 +3095,7 @@ codegen_language_macros::compile!(Language(
                                     fields = (
                                         literal = Required(Terminal([HexLiteral])),
                                         unit = Optional(
-                                            reference = NonTerminal(NumberUnit),
+                                            kind = NonTerminal(NumberUnit),
                                             disabled_in = "0.5.0"
                                         )
                                     )
@@ -3067,7 +3104,7 @@ codegen_language_macros::compile!(Language(
                                     name = Decimal,
                                     fields = (
                                         literal = Required(Terminal([DecimalLiteral])),
-                                        unit = Optional(reference = NonTerminal(NumberUnit))
+                                        unit = Optional(kind = NonTerminal(NumberUnit))
                                     )
                                 )
                             ]
@@ -3476,13 +3513,14 @@ codegen_language_macros::compile!(Language(
                             name = AssemblyStatement,
                             fields = (
                                 assembly_keyword = Required(Terminal([AssemblyKeyword])),
-                                label = Optional(reference = Terminal([AsciiStringLiteral])),
-                                flags = Optional(reference = NonTerminal(AssemblyFlagsDeclaration)),
+                                label = Optional(kind = Terminal([AsciiStringLiteral])),
+                                flags = Optional(kind = NonTerminal(AssemblyFlagsDeclaration)),
                                 body = Required(NonTerminal(YulBlock))
                             )
                         ),
                         Struct(
                             name = AssemblyFlagsDeclaration,
+                            error_recovery = [Delimiters(open = open_paren, close = close_paren)],
                             fields = (
                                 open_paren = Required(Terminal([OpenParen])),
                                 flags = Required(NonTerminal(AssemblyFlags)),
@@ -3497,6 +3535,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Struct(
                             name = YulBlock,
+                            error_recovery = [Delimiters(open = open_paren, close = close_paren)],
                             fields = (
                                 open_paren = Required(Terminal([OpenParen])),
                                 statements = Required(NonTerminal(YulStatements)),
@@ -3569,12 +3608,13 @@ codegen_language_macros::compile!(Language(
                                 function_keyword = Required(Terminal([YulFunctionKeyword])),
                                 name = Required(Terminal([YulIdentifier])),
                                 parameters = Required(NonTerminal(YulParametersDeclaration)),
-                                returns = Optional(reference = NonTerminal(YulReturnsDeclaration)),
+                                returns = Optional(kind = NonTerminal(YulReturnsDeclaration)),
                                 body = Required(NonTerminal(YulBlock))
                             )
                         ),
                         Struct(
                             name = YulParametersDeclaration,
+                            error_recovery = [Delimiters(open = open_paren, close = close_paren)],
                             fields = (
                                 open_paren = Required(Terminal([OpenParen])),
                                 parameters = Required(NonTerminal(YulParameters)),
@@ -3604,8 +3644,7 @@ codegen_language_macros::compile!(Language(
                             fields = (
                                 let_keyword = Required(Terminal([YulLetKeyword])),
                                 names = Required(NonTerminal(YulIdentifierPaths)),
-                                value =
-                                    Optional(reference = NonTerminal(YulVariableDeclarationValue))
+                                value = Optional(kind = NonTerminal(YulVariableDeclarationValue))
                             )
                         ),
                         Struct(
@@ -3695,6 +3734,8 @@ codegen_language_macros::compile!(Language(
                                 name = YulFunctionCallExpression,
                                 operators = [PrecedenceOperator(
                                     model = Postfix,
+                                    error_recovery =
+                                        [Delimiters(open = open_paren, close = close_paren)],
                                     fields = (
                                         open_paren = Required(Terminal([OpenParen])),
                                         arguments = Required(NonTerminal(YulArguments)),

@@ -1,17 +1,17 @@
 error: Reference 'Baz' is not defined in versions '3.0.0..MAX'.
-  --> src/fail/references/invalid_version/test.rs:19:51
+  --> src/fail/references/invalid_version/test.rs:19:46
    |
-19 | ...                   reference = Terminal([Baz]),
-   |                                             ^^^
+19 | ...                   kind = Terminal([Baz]),
+   |                                        ^^^
 
 error: Reference 'Baz' is not defined in versions '1.0.0..2.0.0'.
-  --> src/fail/references/invalid_version/test.rs:24:51
+  --> src/fail/references/invalid_version/test.rs:24:46
    |
-24 | ...                   reference = Terminal([Baz]),
-   |                                             ^^^
+24 | ...                   kind = Terminal([Baz]),
+   |                                        ^^^
 
 error: Reference 'Baz' is not defined in versions '1.0.0..2.0.0'.
-  --> src/fail/references/invalid_version/test.rs:29:51
+  --> src/fail/references/invalid_version/test.rs:29:46
    |
-29 | ...                   reference = Terminal([Baz])
-   |                                             ^^^
+29 | ...                   kind = Terminal([Baz])
+   |                                        ^^^

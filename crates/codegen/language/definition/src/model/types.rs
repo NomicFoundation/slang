@@ -67,6 +67,7 @@ mod wrapper {
         pub enabled_in: Option<Version>,
         pub disabled_in: Option<Version>,
 
+        pub error_recovery: Option<Vec<ErrorRecovery>>,
         pub fields: IndexMap<Identifier, Field>,
     }
 
@@ -87,6 +88,7 @@ mod wrapper {
         pub enabled_in: Option<Version>,
         pub disabled_in: Option<Version>,
 
+        pub error_recovery: Option<Vec<ErrorRecovery>>,
         pub fields: IndexMap<Identifier, Field>,
     }
 
@@ -138,6 +140,7 @@ mod wrapper {
         pub enabled_in: Option<Version>,
         pub disabled_in: Option<Version>,
 
+        pub error_recovery: Option<Vec<ErrorRecovery>>,
         pub fields: IndexMap<Identifier, Field>,
     }
 
@@ -160,10 +163,10 @@ mod wrapper {
     #[derive(Debug, Eq, PartialEq, Serialize)]
     pub enum Field {
         Required {
-            reference: FieldReference,
+            kind: FieldKind,
         },
         Optional {
-            reference: FieldReference,
+            kind: FieldKind,
 
             enabled_in: Option<Version>,
             disabled_in: Option<Version>,
@@ -171,9 +174,15 @@ mod wrapper {
     }
 
     #[derive(Debug, Eq, PartialEq, Serialize)]
-    pub enum FieldReference {
+    pub enum FieldKind {
         NonTerminal { item: Identifier },
         Terminal { items: IndexSet<Identifier> },
+    }
+
+    #[derive(Debug, Eq, PartialEq, Serialize)]
+    pub enum ErrorRecovery {
+        Delimiters { open: Identifier, close: Identifier },
+        Terminator { terminator: Identifier },
     }
 
     #[derive(Debug, Eq, PartialEq, Serialize)]
@@ -222,10 +231,6 @@ mod wrapper {
     #[derive(Debug, Eq, PartialEq, Serialize)]
     pub struct TokenItem {
         pub name: Identifier,
-
-        pub is_terminator: Option<bool>,
-        pub is_open_delimiter_for: Option<Identifier>,
-        pub is_close_delimiter_for: Option<Identifier>,
 
         pub definitions: Vec<TokenDefinition>,
     }

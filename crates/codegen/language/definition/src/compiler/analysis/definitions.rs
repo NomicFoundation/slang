@@ -10,148 +10,166 @@ use crate::{
 use semver::Version;
 use std::{collections::HashSet, fmt::Debug};
 
-impl Analysis {
-    pub fn analyze_definitions(&mut self) {
-        self.collect_top_level_items();
+pub fn analyze_definitions(analysis: &mut Analysis) {
+    collect_top_level_items(analysis);
 
-        self.check_enum_items();
-        self.check_precedence_items();
-    }
+    check_enum_items(analysis);
+    check_precedence_items(analysis);
+}
 
-    fn collect_top_level_items(&mut self) {
-        for item in self.language.clone().items() {
-            let name = match item {
-                Item::Struct { item } => &item.name,
-                Item::Enum { item } => &item.name,
-                Item::Repeated { item } => &item.name,
-                Item::Separated { item } => &item.name,
-                Item::Precedence { item } => &item.name,
-                Item::Token { item } => &item.name,
-                Item::Keyword { item } => &item.name,
-                Item::Fragment { item } => &item.name,
-            };
+fn collect_top_level_items(analysis: &mut Analysis) {
+    for item in analysis.language.clone().items() {
+        let name = get_item_name(item);
+        let defined_in = calculate_defined_in(analysis, item);
 
-            let defined_in = self.calculate_defined_in(item);
-
-            if self.metadata.contains_key(&**name) {
-                self.errors.add(name, &Errors::ExistingItem(name));
-            }
-
-            self.metadata.insert(
-                (**name).to_owned(),
-                ItemMetadata {
-                    name: name.clone(),
-                    kind: item.into(),
-
-                    defined_in,
-                    used_in: VersionSet::empty(),
-
-                    referenced_from: Vec::new(),
-                    referenced_items: Vec::new(),
-                },
-            );
+        if analysis.metadata.contains_key(&**name) {
+            analysis.errors.add(name, &Errors::ExistingItem(name));
         }
+
+        analysis.metadata.insert(
+            (**name).to_owned(),
+            ItemMetadata {
+                name: name.clone(),
+                kind: item.into(),
+
+                defined_in,
+                used_in: VersionSet::empty(),
+
+                referenced_from: Vec::new(),
+                referenced_items: Vec::new(),
+            },
+        );
     }
+}
 
-    fn check_enum_items(&mut self) {
-        for item in self.language.clone().items() {
-            let Item::Enum { item } = item else {
-                continue;
-            };
+fn check_enum_items(analysis: &mut Analysis) {
+    for item in analysis.language.clone().items() {
+        let Item::Enum { item } = item else {
+            continue;
+        };
 
-            let mut variants = HashSet::new();
+        let mut variants = HashSet::new();
 
-            for variant in &item.variants {
-                let name = &variant.name;
-                if !variants.insert(&**name) {
-                    self.errors.add(name, &Errors::ExistingVariant(name));
-                }
+        for variant in &item.variants {
+            let name = &variant.name;
+            if !variants.insert(&**name) {
+                analysis.errors.add(name, &Errors::ExistingVariant(name));
             }
         }
     }
+}
 
-    fn check_precedence_items(&mut self) {
-        // Make sure that all expressions have unique names across the entire language, since they produce their own kinds.
-        // However, they cannot be referenced from anywhere else, so no need to add them to top-level definitions.
-        let mut all_expressions = HashSet::new();
+fn check_precedence_items(analysis: &mut Analysis) {
+    // Make sure that all expressions have unique names across the entire language, since they produce their own kinds.
+    // However, they cannot be referenced from anywhere else, so no need to add them to top-level definitions.
+    let mut all_expressions = HashSet::new();
 
-        for item in self.language.clone().items() {
-            let Item::Precedence { item } = item else {
-                continue;
-            };
+    for item in analysis.language.clone().items() {
+        let Item::Precedence { item } = item else {
+            continue;
+        };
 
-            // Additionally, make sure that both precedence and primary expressions under
-            // the same precedence item are unique, as they will produce enum variants.
-            let mut current_expressions = HashSet::new();
+        // Additionally, make sure that both precedence and primary expressions under
+        // the same precedence item are unique, as they will produce enum variants.
+        let mut current_expressions = HashSet::new();
 
-            for precedence_expression in &item.precedence_expressions {
-                let name = &precedence_expression.name;
-                if self.metadata.contains_key(&**name) {
-                    self.errors.add(name, &Errors::ExistingItem(name));
-                }
-
-                if !all_expressions.insert(name) {
-                    self.errors.add(name, &Errors::ExistingExpression(name));
-                }
-
-                current_expressions.insert(name);
+        for precedence_expression in &item.precedence_expressions {
+            let name = &precedence_expression.name;
+            if analysis.metadata.contains_key(&**name) {
+                analysis.errors.add(name, &Errors::ExistingItem(name));
             }
 
-            for primary_expression in &item.primary_expressions {
-                let expression = &primary_expression.expression;
+            if !all_expressions.insert(name) {
+                analysis.errors.add(name, &Errors::ExistingExpression(name));
+            }
 
-                if !current_expressions.insert(expression) {
-                    self.errors
-                        .add(expression, &Errors::ExistingExpression(expression));
-                }
+            current_expressions.insert(name);
+        }
+
+        for primary_expression in &item.primary_expressions {
+            let expression = &primary_expression.expression;
+
+            if !current_expressions.insert(expression) {
+                analysis
+                    .errors
+                    .add(expression, &Errors::ExistingExpression(expression));
             }
         }
     }
+}
 
-    fn calculate_defined_in(&self, item: &Item) -> VersionSet {
-        return match item {
-            Item::Struct { item } => {
-                VersionSet::single(self.calculate_enablement(&item.enabled_in, &item.disabled_in))
-            }
-            Item::Enum { item } => {
-                VersionSet::single(self.calculate_enablement(&item.enabled_in, &item.disabled_in))
-            }
-            Item::Repeated { item } => {
-                VersionSet::single(self.calculate_enablement(&item.enabled_in, &item.disabled_in))
-            }
-            Item::Separated { item } => {
-                VersionSet::single(self.calculate_enablement(&item.enabled_in, &item.disabled_in))
-            }
-            Item::Precedence { item } => {
-                VersionSet::single(self.calculate_enablement(&item.enabled_in, &item.disabled_in))
-            }
-            Item::Keyword { item } => {
-                VersionSet::single(self.calculate_enablement(&item.enabled_in, &item.disabled_in))
-            }
-            Item::Token { item } => VersionSet::union(item.definitions.iter().map(|definition| {
-                self.calculate_enablement(&definition.enabled_in, &definition.disabled_in)
-            })),
-            Item::Fragment { item } => {
-                VersionSet::single(self.calculate_enablement(&item.enabled_in, &item.disabled_in))
-            }
-        };
+fn get_item_name(item: &Item) -> &Spanned<Identifier> {
+    match item {
+        Item::Struct { item } => &item.name,
+        Item::Enum { item } => &item.name,
+        Item::Repeated { item } => &item.name,
+        Item::Separated { item } => &item.name,
+        Item::Precedence { item } => &item.name,
+        Item::Token { item } => &item.name,
+        Item::Keyword { item } => &item.name,
+        Item::Fragment { item } => &item.name,
     }
+}
 
-    fn calculate_enablement(
-        &self,
-        enabled_in: &Option<Spanned<Version>>,
-        disabled_in: &Option<Spanned<Version>>,
-    ) -> VersionRange {
-        let enabled_in = match enabled_in {
-            Some(enabled_in) => enabled_in,
-            None => &self.language.versions[0],
-        };
+fn calculate_defined_in(analysis: &mut Analysis, item: &Item) -> VersionSet {
+    return match item {
+        Item::Struct { item } => VersionSet::from_range(calculate_enablement(
+            analysis,
+            &item.enabled_in,
+            &item.disabled_in,
+        )),
+        Item::Enum { item } => VersionSet::from_range(calculate_enablement(
+            analysis,
+            &item.enabled_in,
+            &item.disabled_in,
+        )),
+        Item::Repeated { item } => VersionSet::from_range(calculate_enablement(
+            analysis,
+            &item.enabled_in,
+            &item.disabled_in,
+        )),
+        Item::Separated { item } => VersionSet::from_range(calculate_enablement(
+            analysis,
+            &item.enabled_in,
+            &item.disabled_in,
+        )),
+        Item::Precedence { item } => VersionSet::from_range(calculate_enablement(
+            analysis,
+            &item.enabled_in,
+            &item.disabled_in,
+        )),
+        Item::Keyword { item } => VersionSet::from_range(calculate_enablement(
+            analysis,
+            &item.enabled_in,
+            &item.disabled_in,
+        )),
+        Item::Token { item } => {
+            VersionSet::from_ranges(item.definitions.iter().map(|definition| {
+                calculate_enablement(analysis, &definition.enabled_in, &definition.disabled_in)
+            }))
+        }
+        Item::Fragment { item } => VersionSet::from_range(calculate_enablement(
+            analysis,
+            &item.enabled_in,
+            &item.disabled_in,
+        )),
+    };
+}
 
-        return match disabled_in {
-            Some(disabled_in) => VersionRange::between(enabled_in, disabled_in),
-            None => VersionRange::starting_from(enabled_in),
-        };
-    }
+fn calculate_enablement(
+    analysis: &mut Analysis,
+    enabled_in: &Option<Spanned<Version>>,
+    disabled_in: &Option<Spanned<Version>>,
+) -> VersionRange {
+    let enabled_in = match enabled_in {
+        Some(enabled_in) => enabled_in,
+        None => &analysis.language.versions[0],
+    };
+
+    return match disabled_in {
+        Some(disabled_in) => VersionRange::between(enabled_in, disabled_in),
+        None => VersionRange::starting_from(enabled_in),
+    };
 }
 
 #[derive(thiserror::Error, Debug)]

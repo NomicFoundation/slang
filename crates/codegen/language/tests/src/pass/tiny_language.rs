@@ -1,6 +1,6 @@
 use codegen_language_definition::{
-    Field, FieldReference, Item, Language, Scanner, Section, StructItem, TokenDefinition,
-    TokenItem, Topic, TriviaParser,
+    Field, FieldKind, Item, Language, Scanner, Section, StructItem, TokenDefinition, TokenItem,
+    Topic, TriviaParser,
 };
 use semver::Version;
 
@@ -63,11 +63,12 @@ fn definition() {
                                 name: "Foo".into(),
                                 enabled_in: None,
                                 disabled_in: None,
+                                error_recovery: None,
                                 fields: [
                                     (
                                         "bar".into(),
                                         Field::Required {
-                                            reference: FieldReference::Terminal {
+                                            kind: FieldKind::Terminal {
                                                 items: ["Bar".into()].into()
                                             }
                                         }
@@ -76,7 +77,7 @@ fn definition() {
                                     (
                                         "baz".into(),
                                         Field::Required {
-                                            reference: FieldReference::Terminal {
+                                            kind: FieldKind::Terminal {
                                                 items: ["Baz".into()].into()
                                             }
                                         }
@@ -85,7 +86,7 @@ fn definition() {
                                     (
                                         "baz_again".into(),
                                         Field::Required {
-                                            reference: FieldReference::Terminal {
+                                            kind: FieldKind::Terminal {
                                                 items: ["Baz".into()].into()
                                             }
                                         }
@@ -99,9 +100,6 @@ fn definition() {
                         Item::Token {
                             item: TokenItem {
                                 name: "Bar".into(),
-                                is_terminator: None,
-                                is_open_delimiter_for: None,
-                                is_close_delimiter_for: None,
                                 definitions: [TokenDefinition {
                                     enabled_in: None,
                                     disabled_in: None,
@@ -114,9 +112,6 @@ fn definition() {
                         Item::Token {
                             item: TokenItem {
                                 name: "Baz".into(),
-                                is_terminator: None,
-                                is_open_delimiter_for: None,
-                                is_close_delimiter_for: None,
                                 definitions: [TokenDefinition {
                                     enabled_in: None,
                                     disabled_in: None,
