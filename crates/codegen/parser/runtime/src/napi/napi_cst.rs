@@ -47,6 +47,7 @@ impl RuleNode {
             .collect()
     }
 
+    #[napi(getter)]
     pub fn cursor(&self) -> Cursor {
         Cursor::new(RustNode::Rule(self.0.clone()).cursor())
     }
@@ -74,6 +75,7 @@ impl TokenNode {
         self.0.text.clone()
     }
 
+    #[napi(getter)]
     pub fn cursor(&self) -> Cursor {
         Cursor::new(RustNode::Token(self.0.clone()).cursor())
     }

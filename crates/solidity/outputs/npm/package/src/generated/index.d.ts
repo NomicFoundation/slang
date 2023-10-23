@@ -510,12 +510,14 @@ export namespace cst {
     get kind(): RuleKind;
     get textLength(): TextIndex;
     get children(): Array<RuleNode | TokenNode>;
+    get cursor(): Cursor;
   }
   export class TokenNode {
     get type(): NodeType.Token;
     get kind(): TokenKind;
     get textLength(): TextIndex;
     get text(): string;
+    get cursor(): Cursor;
   }
 }
 export namespace cursor {
