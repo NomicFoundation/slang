@@ -1,5 +1,11 @@
 # changelog
 
+## 0.10.1
+
+### Patch Changes
+
+-   [#615](https://github.com/NomicFoundation/slang/pull/615) [`06cbbe8`](https://github.com/NomicFoundation/slang/commit/06cbbe88bc68928ad44046a96c31ad6e53fbf76c) Thanks [@AntonyBlakey](https://github.com/AntonyBlakey)! - `cursor` method is now exposed in Typescript API
+
 ## 0.10.0
 
 ### Minor Changes
