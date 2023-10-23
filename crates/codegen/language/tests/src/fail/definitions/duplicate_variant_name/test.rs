@@ -10,11 +10,14 @@ codegen_language_macros::compile!(Language(
         title = "Section One",
         topics = [Topic(
             title = "Topic One",
-            items = [Token(
+            items = [Enum(
                 name = Bar,
-                definitions = [TokenDefinition(scanner = Atom("bar"))]
-            )],
-            unrecognized_field = true
+                variants = [
+                    EnumVariant(name = Variant1, fields = ()),
+                    EnumVariant(name = Variant2, fields = ()),
+                    EnumVariant(name = Variant1, fields = ())
+                ]
+            )]
         )]
     )]
 ));

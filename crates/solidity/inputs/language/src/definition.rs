@@ -1,6 +1,6 @@
 pub use solidity::SolidityDefinition;
 
-codegen_language_macros::compile!(
+codegen_language_macros::compile!(Language(
     name = Solidity,
     root_item = SourceUnit,
     leading_trivia = ZeroOrMore(Choice([
@@ -43,63 +43,63 @@ codegen_language_macros::compile!(
                         Enum(
                             name = SourceUnitMember,
                             variants = [
-                                Variant(
+                                EnumVariant(
                                     name = Pragma,
                                     fields = (directive = Required(NonTerminal(PragmaDirective)))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Import,
                                     fields = (directive = Required(NonTerminal(ImportDirective)))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Contract,
                                     fields =
                                         (definition = Required(NonTerminal(ContractDefinition)))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Interface,
                                     fields =
                                         (definition = Required(NonTerminal(InterfaceDefinition)))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Library,
                                     fields =
                                         (definition = Required(NonTerminal(LibraryDefinition)))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Struct,
                                     enabled_in = "0.6.0",
                                     fields = (definition = Required(NonTerminal(StructDefinition)))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Enum,
                                     enabled_in = "0.6.0",
                                     fields = (definition = Required(NonTerminal(EnumDefinition)))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Function,
                                     enabled_in = "0.7.1",
                                     fields =
                                         (definition = Required(NonTerminal(FunctionDefinition)))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Constant,
                                     enabled_in = "0.7.4",
                                     fields =
                                         (definition = Required(NonTerminal(ConstantDefinition)))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Error,
                                     enabled_in = "0.8.4",
                                     fields = (definition = Required(NonTerminal(ErrorDefinition)))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = UserDefinedValueType,
                                     enabled_in = "0.8.8",
                                     fields = (definition =
                                         Required(NonTerminal(UserDefinedValueTypeDefinition)))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Using,
                                     enabled_in = "0.8.13",
                                     fields = (directive = Required(NonTerminal(UsingDirective)))
@@ -123,14 +123,14 @@ codegen_language_macros::compile!(
                         Enum(
                             name = Pragma,
                             variants = [
-                                Variant(
+                                EnumVariant(
                                     name = ABICoder,
                                     fields = (
                                         abicoder_keyword = Required(Terminal([AbicoderKeyword])),
                                         version = Required(Terminal([Identifier]))
                                     )
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Experimental,
                                     fields = (
                                         experimental_keyword =
@@ -139,7 +139,7 @@ codegen_language_macros::compile!(
                                             Required(Terminal([AsciiStringLiteral, Identifier]))
                                     )
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Version,
                                     fields = (
                                         solidity_keyword = Required(Terminal([SolidityKeyword])),
@@ -155,36 +155,39 @@ codegen_language_macros::compile!(
                         ),
                         Precedence(
                             name = VersionPragmaExpression,
-                            operators = [
-                                Operator(
-                                    expression_name = VersionPragmaBinaryExpression,
-                                    model = BinaryLeftAssociative,
-                                    fields = (operator = Required(Terminal([BarBar])))
+                            precedence_expressions = [
+                                PrecedenceExpression(
+                                    name = VersionPragmaOrExpression,
+                                    operators = [PrecedenceOperator(
+                                        model = BinaryLeftAssociative,
+                                        fields = (operator = Required(Terminal([BarBar])))
+                                    )]
                                 ),
-                                Operator(
-                                    expression_name = VersionPragmaBinaryExpression,
-                                    model = BinaryLeftAssociative,
-                                    fields = (operator = Required(Terminal([Minus])))
+                                PrecedenceExpression(
+                                    name = VersionPragmaRangeExpression,
+                                    operators = [PrecedenceOperator(
+                                        model = BinaryLeftAssociative,
+                                        fields = (operator = Required(Terminal([Minus])))
+                                    )]
                                 ),
-                                Operator(
-                                    expression_name = VersionPragmaPrefixExpression,
-                                    model = Prefix,
-                                    fields = (operator = Required(Terminal([
-                                        Caret,
-                                        Tilde,
-                                        Equal,
-                                        LessThan,
-                                        GreaterThan,
-                                        LessThanEqual,
-                                        GreaterThanEqual
-                                    ])))
+                                PrecedenceExpression(
+                                    name = VersionPragmaPrefixExpression,
+                                    operators = [PrecedenceOperator(
+                                        model = Prefix,
+                                        fields = (operator = Required(Terminal([
+                                            Caret,
+                                            Tilde,
+                                            Equal,
+                                            LessThan,
+                                            GreaterThan,
+                                            LessThanEqual,
+                                            GreaterThanEqual
+                                        ])))
+                                    )]
                                 )
                             ],
-                            primary_expressions = [Variant(
-                                name = VersionPragmaSpecifier,
-                                fields =
-                                    (specifier = Required(NonTerminal(VersionPragmaSpecifier)))
-                            )]
+                            primary_expressions =
+                                [PrimaryExpression(expression = VersionPragmaSpecifier)]
                         ),
                         Separated(
                             name = VersionPragmaSpecifier,
@@ -218,14 +221,14 @@ codegen_language_macros::compile!(
                         Enum(
                             name = ImportSymbol,
                             variants = [
-                                Variant(
+                                EnumVariant(
                                     name = Path,
                                     fields = (
                                         path = Required(Terminal([AsciiStringLiteral])),
                                         alias = Optional(reference = NonTerminal(ImportAlias))
                                     )
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Named,
                                     fields = (
                                         asterisk = Required(Terminal([Asterisk])),
@@ -234,7 +237,7 @@ codegen_language_macros::compile!(
                                         path = Required(Terminal([AsciiStringLiteral]))
                                     )
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Deconstruction,
                                     fields = (
                                         open_brace = Required(Terminal([OpenBrace])),
@@ -288,11 +291,11 @@ codegen_language_macros::compile!(
                         Enum(
                             name = UsingSymbol,
                             variants = [
-                                Variant(
+                                EnumVariant(
                                     name = Path,
                                     fields = (path = Required(NonTerminal(IdentifierPath)))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Deconstruction,
                                     enabled_in = "0.8.13",
                                     fields = (
@@ -348,11 +351,11 @@ codegen_language_macros::compile!(
                         Enum(
                             name = UsingTarget,
                             variants = [
-                                Variant(
+                                EnumVariant(
                                     name = TypeName,
                                     fields = (type_name = Required(NonTerminal(TypeName)))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Asterisk,
                                     fields = (asterisk = Required(Terminal([Asterisk])))
                                 )
@@ -1405,67 +1408,67 @@ codegen_language_macros::compile!(
                         Enum(
                             name = ContractMember,
                             variants = [
-                                Variant(
+                                EnumVariant(
                                     name = Using,
                                     fields = (directive = Required(NonTerminal(UsingDirective)))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Function,
                                     fields =
                                         (definition = Required(NonTerminal(FunctionDefinition)))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Constructor,
                                     enabled_in = "0.4.22",
                                     fields =
                                         (definition = Required(NonTerminal(ConstructorDefinition)))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = ReceiveFunction,
                                     enabled_in = "0.6.0",
                                     fields = (definition =
                                         Required(NonTerminal(ReceiveFunctionDefinition)))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = FallbackFunction,
                                     enabled_in = "0.6.0",
                                     fields = (definition =
                                         Required(NonTerminal(FallbackFunctionDefinition)))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = UnnamedFunction,
                                     disabled_in = "0.6.0",
                                     fields = (definition =
                                         Required(NonTerminal(UnnamedFunctionDefinition)))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Modifier,
                                     fields =
                                         (definition = Required(NonTerminal(ModifierDefinition)))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Struct,
                                     fields = (definition = Required(NonTerminal(StructDefinition)))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Enum,
                                     fields = (definition = Required(NonTerminal(EnumDefinition)))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Event,
                                     fields = (definition = Required(NonTerminal(EventDefinition)))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = StateVariable,
                                     fields = (definition =
                                         Required(NonTerminal(StateVariableDefinition)))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Error,
                                     enabled_in = "0.8.4",
                                     fields = (definition = Required(NonTerminal(ErrorDefinition)))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = UserDefinedValueType,
                                     enabled_in = "0.8.8",
                                     fields = (definition =
@@ -1610,27 +1613,27 @@ codegen_language_macros::compile!(
                         Enum(
                             name = StateVariableAttribute,
                             variants = [
-                                Variant(
+                                EnumVariant(
                                     name = Override,
                                     fields = (specifier = Required(NonTerminal(OverrideSpecifier)))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Constant,
                                     fields = (keyword = Required(Terminal([ConstantKeyword])))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Internal,
                                     fields = (keyword = Required(Terminal([InternalKeyword])))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Private,
                                     fields = (keyword = Required(Terminal([PrivateKeyword])))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Public,
                                     fields = (keyword = Required(Terminal([PublicKeyword])))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Immutable,
                                     enabled_in = "0.6.5",
                                     fields = (keyword = Required(Terminal([ImmutableKeyword])))
@@ -1688,48 +1691,48 @@ codegen_language_macros::compile!(
                         Enum(
                             name = FunctionAttribute,
                             variants = [
-                                Variant(
+                                EnumVariant(
                                     name = Modifier,
                                     fields = (modifier = Required(NonTerminal(ModifierInvocation)))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Override,
                                     fields = (specifier = Required(NonTerminal(OverrideSpecifier)))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Constant,
                                     disabled_in = "0.5.0",
                                     fields = (keyword = Required(Terminal([ConstantKeyword])))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = External,
                                     fields = (keyword = Required(Terminal([ExternalKeyword])))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Internal,
                                     fields = (keyword = Required(Terminal([InternalKeyword])))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Payable,
                                     fields = (keyword = Required(Terminal([PayableKeyword])))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Private,
                                     fields = (keyword = Required(Terminal([PrivateKeyword])))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Public,
                                     fields = (keyword = Required(Terminal([PublicKeyword])))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Pure,
                                     fields = (keyword = Required(Terminal([PureKeyword])))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = View,
                                     fields = (keyword = Required(Terminal([ViewKeyword])))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Virtual,
                                     enabled_in = "0.6.0",
                                     fields = (keyword = Required(Terminal([VirtualKeyword])))
@@ -1760,11 +1763,11 @@ codegen_language_macros::compile!(
                         Enum(
                             name = FunctionBody,
                             variants = [
-                                Variant(
+                                EnumVariant(
                                     name = Block,
                                     fields = (block = Required(NonTerminal(Block)))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = None,
                                     fields = (semicolon = Required(Terminal([Semicolon])))
                                 )
@@ -1790,19 +1793,19 @@ codegen_language_macros::compile!(
                             name = ConstructorAttribute,
                             enabled_in = "0.4.22",
                             variants = [
-                                Variant(
+                                EnumVariant(
                                     name = Modifier,
                                     fields = (modifier = Required(NonTerminal(ModifierInvocation)))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Override,
                                     fields = (specifier = Required(NonTerminal(OverrideSpecifier)))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Payable,
                                     fields = (keyword = Required(Terminal([PayableKeyword])))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Public,
                                     fields = (keyword = Required(Terminal([PublicKeyword])))
                                 )
@@ -1828,27 +1831,27 @@ codegen_language_macros::compile!(
                             name = UnnamedFunctionAttribute,
                             disabled_in = "0.6.0",
                             variants = [
-                                Variant(
+                                EnumVariant(
                                     name = Modifier,
                                     fields = (modifier = Required(NonTerminal(ModifierInvocation)))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Override,
                                     fields = (specifier = Required(NonTerminal(OverrideSpecifier)))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = External,
                                     fields = (keyword = Required(Terminal([ExternalKeyword])))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Payable,
                                     fields = (keyword = Required(Terminal([PayableKeyword])))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Pure,
                                     fields = (keyword = Required(Terminal([PureKeyword])))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = View,
                                     fields = (keyword = Required(Terminal([ViewKeyword])))
                                 )
@@ -1875,31 +1878,31 @@ codegen_language_macros::compile!(
                             name = FallbackFunctionAttribute,
                             enabled_in = "0.6.0",
                             variants = [
-                                Variant(
+                                EnumVariant(
                                     name = Modifier,
                                     fields = (modifier = Required(NonTerminal(ModifierInvocation)))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Override,
                                     fields = (specifier = Required(NonTerminal(OverrideSpecifier)))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = External,
                                     fields = (keyword = Required(Terminal([ExternalKeyword])))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Payable,
                                     fields = (keyword = Required(Terminal([PayableKeyword])))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Pure,
                                     fields = (keyword = Required(Terminal([PureKeyword])))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = View,
                                     fields = (keyword = Required(Terminal([ViewKeyword])))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Virtual,
                                     fields = (keyword = Required(Terminal([VirtualKeyword])))
                                 )
@@ -1925,23 +1928,23 @@ codegen_language_macros::compile!(
                             name = ReceiveFunctionAttribute,
                             enabled_in = "0.6.0",
                             variants = [
-                                Variant(
+                                EnumVariant(
                                     name = Modifier,
                                     fields = (modifier = Required(NonTerminal(ModifierInvocation)))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Override,
                                     fields = (specifier = Required(NonTerminal(OverrideSpecifier)))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = External,
                                     fields = (keyword = Required(Terminal([ExternalKeyword])))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Payable,
                                     fields = (keyword = Required(Terminal([PayableKeyword])))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Virtual,
                                     fields = (keyword = Required(Terminal([VirtualKeyword])))
                                 )
@@ -1971,11 +1974,11 @@ codegen_language_macros::compile!(
                         Enum(
                             name = ModifierAttribute,
                             variants = [
-                                Variant(
+                                EnumVariant(
                                     name = Override,
                                     fields = (specifier = Required(NonTerminal(OverrideSpecifier)))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Virtual,
                                     enabled_in = "0.6.0",
                                     fields = (keyword = Required(Terminal([VirtualKeyword])))
@@ -2093,32 +2096,22 @@ codegen_language_macros::compile!(
                     items = [
                         Precedence(
                             name = TypeName,
-                            operators = [Operator(
-                                expression_name = ArrayTypeName,
-                                model = Postfix,
-                                fields = (
-                                    open_bracket = Required(Terminal([OpenBracket])),
-                                    index = Optional(reference = NonTerminal(Expression)),
-                                    close_bracket = Required(Terminal([CloseBracket]))
-                                )
+                            precedence_expressions = [PrecedenceExpression(
+                                name = ArrayTypeName,
+                                operators = [PrecedenceOperator(
+                                    model = Postfix,
+                                    fields = (
+                                        open_bracket = Required(Terminal([OpenBracket])),
+                                        index = Optional(reference = NonTerminal(Expression)),
+                                        close_bracket = Required(Terminal([CloseBracket]))
+                                    )
+                                )]
                             )],
                             primary_expressions = [
-                                Variant(
-                                    name = FunctionType,
-                                    fields = (type_name = Required(NonTerminal(FunctionType)))
-                                ),
-                                Variant(
-                                    name = MappingType,
-                                    fields = (type_name = Required(NonTerminal(MappingType)))
-                                ),
-                                Variant(
-                                    name = ElementaryType,
-                                    fields = (type_name = Required(NonTerminal(ElementaryType)))
-                                ),
-                                Variant(
-                                    name = IdentifierPath,
-                                    fields = (type_name = Required(NonTerminal(IdentifierPath)))
-                                )
+                                PrimaryExpression(expression = FunctionType),
+                                PrimaryExpression(expression = MappingType),
+                                PrimaryExpression(expression = ElementaryType),
+                                PrimaryExpression(expression = IdentifierPath)
                             ]
                         ),
                         Struct(
@@ -2138,31 +2131,31 @@ codegen_language_macros::compile!(
                         Enum(
                             name = FunctionTypeAttribute,
                             variants = [
-                                Variant(
+                                EnumVariant(
                                     name = Internal,
                                     fields = (keyword = Required(Terminal([InternalKeyword])))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = External,
                                     fields = (keyword = Required(Terminal([ExternalKeyword])))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Private,
                                     fields = (keyword = Required(Terminal([PrivateKeyword])))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Public,
                                     fields = (keyword = Required(Terminal([PublicKeyword])))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Pure,
                                     fields = (keyword = Required(Terminal([PureKeyword])))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = View,
                                     fields = (keyword = Required(Terminal([ViewKeyword])))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Payable,
                                     fields = (keyword = Required(Terminal([PayableKeyword])))
                                 )
@@ -2192,11 +2185,11 @@ codegen_language_macros::compile!(
                         Enum(
                             name = MappingKeyType,
                             variants = [
-                                Variant(
+                                EnumVariant(
                                     name = ElementaryType,
                                     fields = (type_name = Required(NonTerminal(ElementaryType)))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = IdentifierPath,
                                     fields = (type_name = Required(NonTerminal(IdentifierPath)))
                                 )
@@ -2220,40 +2213,40 @@ codegen_language_macros::compile!(
                         Enum(
                             name = ElementaryType,
                             variants = [
-                                Variant(
+                                EnumVariant(
                                     name = Bool,
                                     fields = (type_name = Required(Terminal([BoolKeyword])))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Byte,
                                     disabled_in = "0.8.0",
                                     fields = (type_name = Required(Terminal([ByteKeyword])))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = String,
                                     fields = (type_name = Required(Terminal([StringKeyword])))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Address,
                                     fields = (type_name = Required(NonTerminal(AddressType)))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = ByteArray,
                                     fields = (type_name = Required(Terminal([BytesKeyword])))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = SignedInteger,
                                     fields = (type_name = Required(Terminal([IntKeyword])))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = UnsignedInteger,
                                     fields = (type_name = Required(Terminal([UintKeyword])))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = SignedFixedPointNumber,
                                     fields = (type_name = Required(Terminal([FixedKeyword])))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = UnsignedFixedPointNumber,
                                     fields = (type_name = Required(Terminal([UfixedKeyword])))
                                 )
@@ -2262,7 +2255,7 @@ codegen_language_macros::compile!(
                         Enum(
                             name = AddressType,
                             variants = [
-                                Variant(
+                                EnumVariant(
                                     name = Address,
                                     fields = (
                                         address_keyword = Required(Terminal([AddressKeyword])),
@@ -2270,7 +2263,7 @@ codegen_language_macros::compile!(
                                             Optional(reference = Terminal([PayableKeyword]))
                                     )
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Payable,
                                     fields =
                                         (payable_keyword = Required(Terminal([PayableKeyword])))
@@ -2299,82 +2292,82 @@ codegen_language_macros::compile!(
                         Enum(
                             name = Statement,
                             variants = [
-                                Variant(
+                                EnumVariant(
                                     name = TupleDeconstruction,
                                     fields = (statement =
                                         Required(NonTerminal(TupleDeconstructionStatement)))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = VariableDeclaration,
                                     fields = (statement =
                                         Required(NonTerminal(VariableDeclarationStatement)))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = If,
                                     fields = (statement = Required(NonTerminal(IfStatement)))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = For,
                                     fields = (statement = Required(NonTerminal(ForStatement)))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = While,
                                     fields = (statement = Required(NonTerminal(WhileStatement)))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = DoWhile,
                                     fields = (statement = Required(NonTerminal(DoWhileStatement)))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Continue,
                                     fields = (statement = Required(NonTerminal(ContinueStatement)))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Break,
                                     fields = (statement = Required(NonTerminal(BreakStatement)))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Delete,
                                     fields = (statement = Required(NonTerminal(DeleteStatement)))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Return,
                                     fields = (statement = Required(NonTerminal(ReturnStatement)))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Throw,
                                     disabled_in = "0.5.0",
                                     fields = (statement = Required(NonTerminal(ThrowStatement)))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Emit,
                                     enabled_in = "0.4.21",
                                     fields = (statement = Required(NonTerminal(EmitStatement)))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Try,
                                     enabled_in = "0.6.0",
                                     fields = (statement = Required(NonTerminal(TryStatement)))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Revert,
                                     enabled_in = "0.8.4",
                                     fields = (statement = Required(NonTerminal(RevertStatement)))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Assembly,
                                     fields = (statement = Required(NonTerminal(AssemblyStatement)))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Block,
                                     fields = (block = Required(NonTerminal(Block)))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = UncheckedBlock,
                                     enabled_in = "0.8.0",
                                     fields = (block = Required(NonTerminal(UncheckedBlock)))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Expression,
                                     fields =
                                         (statement = Required(NonTerminal(ExpressionStatement)))
@@ -2425,7 +2418,7 @@ codegen_language_macros::compile!(
                         Enum(
                             name = TupleMember,
                             variants = [
-                                Variant(
+                                EnumVariant(
                                     name = Typed,
                                     fields = (
                                         type_name = Required(NonTerminal(TypeName)),
@@ -2434,7 +2427,7 @@ codegen_language_macros::compile!(
                                         name = Required(Terminal([Identifier]))
                                     )
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Untyped,
                                     fields = (
                                         storage_location =
@@ -2458,11 +2451,11 @@ codegen_language_macros::compile!(
                         Enum(
                             name = VariableDeclarationType,
                             variants = [
-                                Variant(
+                                EnumVariant(
                                     name = Typed,
                                     fields = (type_name = Required(NonTerminal(TypeName)))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Untyped,
                                     disabled_in = "0.5.0",
                                     fields = (type_name = Required(Terminal([VarKeyword])))
@@ -2479,15 +2472,15 @@ codegen_language_macros::compile!(
                         Enum(
                             name = StorageLocation,
                             variants = [
-                                Variant(
+                                EnumVariant(
                                     name = Memory,
                                     fields = (keyword = Required(Terminal([MemoryKeyword])))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Storage,
                                     fields = (keyword = Required(Terminal([StorageKeyword])))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = CallData,
                                     enabled_in = "0.5.0",
                                     fields = (keyword = Required(Terminal([CallDataKeyword])))
@@ -2532,22 +2525,22 @@ codegen_language_macros::compile!(
                         Enum(
                             name = ForStatementInitialization,
                             variants = [
-                                Variant(
+                                EnumVariant(
                                     name = Expression,
                                     fields =
                                         (statement = Required(NonTerminal(ExpressionStatement)))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = VariableDeclaration,
                                     fields = (statement =
                                         Required(NonTerminal(VariableDeclarationStatement)))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = TupleDeconstruction,
                                     fields = (statement =
                                         Required(NonTerminal(TupleDeconstructionStatement)))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = None,
                                     fields = (semicolon = Required(Terminal([Semicolon])))
                                 )
@@ -2556,12 +2549,12 @@ codegen_language_macros::compile!(
                         Enum(
                             name = ForStatementCondition,
                             variants = [
-                                Variant(
+                                EnumVariant(
                                     name = Expression,
                                     fields =
                                         (statement = Required(NonTerminal(ExpressionStatement)))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = None,
                                     fields = (semicolon = Required(Terminal([Semicolon])))
                                 )
@@ -2697,200 +2690,217 @@ codegen_language_macros::compile!(
                     items = [
                         Precedence(
                             name = Expression,
-                            operators = [
-                                Operator(
-                                    expression_name = BinaryExpression,
-                                    model = BinaryLeftAssociative,
-                                    fields = (operator = Required(Terminal([
-                                        Equal,
-                                        BarEqual,
-                                        PlusEqual,
-                                        MinusEqual,
-                                        CaretEqual,
-                                        SlashEqual,
-                                        PercentEqual,
-                                        AsteriskEqual,
-                                        AmpersandEqual,
-                                        LessThanLessThanEqual,
-                                        GreaterThanGreaterThanEqual,
-                                        GreaterThanGreaterThanGreaterThanEqual
-                                    ])))
+                            precedence_expressions = [
+                                PrecedenceExpression(
+                                    name = AssignmentExpression,
+                                    operators = [PrecedenceOperator(
+                                        model = BinaryLeftAssociative,
+                                        fields = (operator = Required(Terminal([
+                                            Equal,
+                                            BarEqual,
+                                            PlusEqual,
+                                            MinusEqual,
+                                            CaretEqual,
+                                            SlashEqual,
+                                            PercentEqual,
+                                            AsteriskEqual,
+                                            AmpersandEqual,
+                                            LessThanLessThanEqual,
+                                            GreaterThanGreaterThanEqual,
+                                            GreaterThanGreaterThanGreaterThanEqual
+                                        ])))
+                                    )]
                                 ),
-                                Operator(
-                                    expression_name = ConditionalExpression,
-                                    model = Postfix,
-                                    fields = (
-                                        question_mark = Required(Terminal([QuestionMark])),
-                                        true_expression = Required(NonTerminal(Expression)),
-                                        colon = Required(Terminal([Colon])),
-                                        false_expression = Required(NonTerminal(Expression))
-                                    )
+                                PrecedenceExpression(
+                                    name = ConditionalExpression,
+                                    operators = [PrecedenceOperator(
+                                        model = Postfix,
+                                        fields = (
+                                            question_mark = Required(Terminal([QuestionMark])),
+                                            true_expression = Required(NonTerminal(Expression)),
+                                            colon = Required(Terminal([Colon])),
+                                            false_expression = Required(NonTerminal(Expression))
+                                        )
+                                    )]
                                 ),
-                                Operator(
-                                    expression_name = BinaryExpression,
-                                    model = BinaryLeftAssociative,
-                                    fields = (operator = Required(Terminal([BarBar])))
+                                PrecedenceExpression(
+                                    name = OrExpression,
+                                    operators = [PrecedenceOperator(
+                                        model = BinaryLeftAssociative,
+                                        fields = (operator = Required(Terminal([BarBar])))
+                                    )]
                                 ),
-                                Operator(
-                                    expression_name = BinaryExpression,
-                                    model = BinaryLeftAssociative,
-                                    fields = (operator = Required(Terminal([AmpersandAmpersand])))
+                                PrecedenceExpression(
+                                    name = AndExpression,
+                                    operators = [PrecedenceOperator(
+                                        model = BinaryLeftAssociative,
+                                        fields =
+                                            (operator = Required(Terminal([AmpersandAmpersand])))
+                                    )]
                                 ),
-                                Operator(
-                                    expression_name = BinaryExpression,
-                                    model = BinaryLeftAssociative,
-                                    fields =
-                                        (operator = Required(Terminal([EqualEqual, BangEqual])))
+                                PrecedenceExpression(
+                                    name = EqualityExpression,
+                                    operators = [PrecedenceOperator(
+                                        model = BinaryLeftAssociative,
+                                        fields = (operator =
+                                            Required(Terminal([EqualEqual, BangEqual])))
+                                    )]
                                 ),
-                                Operator(
-                                    expression_name = BinaryExpression,
-                                    model = BinaryLeftAssociative,
-                                    fields = (operator = Required(Terminal([
-                                        LessThan,
-                                        GreaterThan,
-                                        LessThanEqual,
-                                        GreaterThanEqual
-                                    ])))
+                                PrecedenceExpression(
+                                    name = ComparisonExpression,
+                                    operators = [PrecedenceOperator(
+                                        model = BinaryLeftAssociative,
+                                        fields = (operator = Required(Terminal([
+                                            LessThan,
+                                            GreaterThan,
+                                            LessThanEqual,
+                                            GreaterThanEqual
+                                        ])))
+                                    )]
                                 ),
-                                Operator(
-                                    expression_name = BinaryExpression,
-                                    model = BinaryLeftAssociative,
-                                    fields = (operator = Required(Terminal([Bar])))
+                                PrecedenceExpression(
+                                    name = BitwiseOrExpression,
+                                    operators = [PrecedenceOperator(
+                                        model = BinaryLeftAssociative,
+                                        fields = (operator = Required(Terminal([Bar])))
+                                    )]
                                 ),
-                                Operator(
-                                    expression_name = BinaryExpression,
-                                    model = BinaryLeftAssociative,
-                                    fields = (operator = Required(Terminal([Caret])))
+                                PrecedenceExpression(
+                                    name = BitwiseXorExpression,
+                                    operators = [PrecedenceOperator(
+                                        model = BinaryLeftAssociative,
+                                        fields = (operator = Required(Terminal([Caret])))
+                                    )]
                                 ),
-                                Operator(
-                                    expression_name = BinaryExpression,
-                                    model = BinaryLeftAssociative,
-                                    fields = (operator = Required(Terminal([Ampersand])))
+                                PrecedenceExpression(
+                                    name = BitwiseAndExpression,
+                                    operators = [PrecedenceOperator(
+                                        model = BinaryLeftAssociative,
+                                        fields = (operator = Required(Terminal([Ampersand])))
+                                    )]
                                 ),
-                                Operator(
-                                    expression_name = BinaryExpression,
-                                    model = BinaryLeftAssociative,
-                                    fields = (operator = Required(Terminal([
-                                        LessThanLessThan,
-                                        GreaterThanGreaterThan,
-                                        GreaterThanGreaterThanGreaterThan
-                                    ])))
+                                PrecedenceExpression(
+                                    name = ShiftExpression,
+                                    operators = [PrecedenceOperator(
+                                        model = BinaryLeftAssociative,
+                                        fields = (operator = Required(Terminal([
+                                            LessThanLessThan,
+                                            GreaterThanGreaterThan,
+                                            GreaterThanGreaterThanGreaterThan
+                                        ])))
+                                    )]
                                 ),
-                                Operator(
-                                    expression_name = BinaryExpression,
-                                    model = BinaryLeftAssociative,
-                                    fields = (operator = Required(Terminal([Plus, Minus])))
+                                PrecedenceExpression(
+                                    name = AdditiveExpression,
+                                    operators = [PrecedenceOperator(
+                                        model = BinaryLeftAssociative,
+                                        fields = (operator = Required(Terminal([Plus, Minus])))
+                                    )]
                                 ),
-                                Operator(
-                                    expression_name = BinaryExpression,
-                                    model = BinaryLeftAssociative,
-                                    fields =
-                                        (operator = Required(Terminal([Asterisk, Slash, Percent])))
+                                PrecedenceExpression(
+                                    name = MultiplicativeExpression,
+                                    operators = [PrecedenceOperator(
+                                        model = BinaryLeftAssociative,
+                                        fields = (operator =
+                                            Required(Terminal([Asterisk, Slash, Percent])))
+                                    )]
                                 ),
-                                Operator(
-                                    // Before '0.6.0', it was left-associative:
-                                    expression_name = BinaryExpression,
-                                    model = BinaryLeftAssociative,
-                                    disabled_in = "0.6.0",
-                                    fields = (operator = Required(Terminal([AsteriskAsterisk])))
+                                PrecedenceExpression(
+                                    name = ExponentiationExpression,
+                                    operators = [
+                                        // Before '0.6.0', it was left-associative:
+                                        PrecedenceOperator(
+                                            model = BinaryLeftAssociative,
+                                            disabled_in = "0.6.0",
+                                            fields =
+                                                (operator = Required(Terminal([AsteriskAsterisk])))
+                                        ),
+                                        // In '0.6.0', it became right-associative:
+                                        PrecedenceOperator(
+                                            model = BinaryRightAssociative,
+                                            enabled_in = "0.6.0",
+                                            fields =
+                                                (operator = Required(Terminal([AsteriskAsterisk])))
+                                        )
+                                    ]
                                 ),
-                                Operator(
-                                    // After '0.6.0', it became right-associative:
-                                    expression_name = BinaryExpression,
-                                    model = BinaryRightAssociative,
-                                    enabled_in = "0.6.0",
-                                    fields = (operator = Required(Terminal([AsteriskAsterisk])))
+                                PrecedenceExpression(
+                                    name = PostfixExpression,
+                                    operators = [PrecedenceOperator(
+                                        model = Postfix,
+                                        fields =
+                                            (operator = Required(Terminal([PlusPlus, MinusMinus])))
+                                    )]
                                 ),
-                                Operator(
-                                    expression_name = PostfixExpression,
-                                    model = Postfix,
-                                    fields =
-                                        (operator = Required(Terminal([PlusPlus, MinusMinus])))
+                                PrecedenceExpression(
+                                    name = PrefixExpression,
+                                    operators = [
+                                        // Before '0.5.0', 'Plus' was supported:
+                                        PrecedenceOperator(
+                                            model = Prefix,
+                                            disabled_in = "0.5.0",
+                                            fields = (operator = Required(Terminal([
+                                                PlusPlus, MinusMinus, Tilde, Bang, Minus, Plus
+                                            ])))
+                                        ),
+                                        // In '0.5.0', 'Plus' was removed:
+                                        PrecedenceOperator(
+                                            model = Prefix,
+                                            enabled_in = "0.5.0",
+                                            fields = (operator = Required(Terminal([
+                                                PlusPlus, MinusMinus, Tilde, Bang, Minus
+                                            ])))
+                                        )
+                                    ]
                                 ),
-                                Operator(
-                                    // Before '0.5.0', 'Plus' was supported:
-                                    expression_name = PrefixExpression,
-                                    model = Prefix,
-                                    disabled_in = "0.5.0",
-                                    fields = (operator = Required(Terminal([
-                                        PlusPlus, MinusMinus, Tilde, Bang, Minus, Plus
-                                    ])))
+                                PrecedenceExpression(
+                                    name = FunctionCallExpression,
+                                    operators = [PrecedenceOperator(
+                                        model = Postfix,
+                                        fields = (
+                                            options = Required(NonTerminal(FunctionCallOptions)),
+                                            arguments = Required(NonTerminal(ArgumentsDeclaration))
+                                        )
+                                    )]
                                 ),
-                                Operator(
-                                    // After '0.5.0', 'Plus' was removed:
-                                    expression_name = PrefixExpression,
-                                    model = Prefix,
-                                    enabled_in = "0.5.0",
-                                    fields = (operator = Required(Terminal([
-                                        PlusPlus, MinusMinus, Tilde, Bang, Minus
-                                    ])))
+                                PrecedenceExpression(
+                                    name = MemberAccessExpression,
+                                    operators = [PrecedenceOperator(
+                                        model = Postfix,
+                                        fields = (
+                                            period = Required(Terminal([Period])),
+                                            member =
+                                                Required(Terminal([Identifier, AddressKeyword]))
+                                        )
+                                    )]
                                 ),
-                                Operator(
-                                    expression_name = FunctionCallExpression,
-                                    model = Postfix,
-                                    fields = (
-                                        options = Required(NonTerminal(FunctionCallOptions)),
-                                        arguments = Required(NonTerminal(ArgumentsDeclaration))
-                                    )
-                                ),
-                                Operator(
-                                    expression_name = MemberAccessExpression,
-                                    model = Postfix,
-                                    fields = (
-                                        period = Required(Terminal([Period])),
-                                        member = Required(Terminal([Identifier, AddressKeyword]))
-                                    )
-                                ),
-                                Operator(
-                                    expression_name = IndexAccessExpression,
-                                    model = Postfix,
-                                    fields = (
-                                        open_bracket = Required(Terminal([OpenBracket])),
-                                        start = Optional(reference = NonTerminal(Expression)),
-                                        end = Optional(reference = NonTerminal(IndexAccessEnd)),
-                                        close_bracket = Required(Terminal([CloseBracket]))
-                                    )
+                                PrecedenceExpression(
+                                    name = IndexAccessExpression,
+                                    operators = [PrecedenceOperator(
+                                        model = Postfix,
+                                        fields = (
+                                            open_bracket = Required(Terminal([OpenBracket])),
+                                            start = Optional(reference = NonTerminal(Expression)),
+                                            end = Optional(reference = NonTerminal(IndexAccessEnd)),
+                                            close_bracket = Required(Terminal([CloseBracket]))
+                                        )
+                                    )]
                                 )
                             ],
                             primary_expressions = [
-                                Variant(
-                                    name = NewExpression,
-                                    fields = (expression = Required(NonTerminal(NewExpression)))
+                                PrimaryExpression(expression = NewExpression),
+                                PrimaryExpression(expression = TupleExpression),
+                                PrimaryExpression(
+                                    expression = TypeExpression,
+                                    enabled_in = "0.5.3"
                                 ),
-                                Variant(
-                                    name = TupleExpression,
-                                    fields = (expression = Required(NonTerminal(TupleExpression)))
-                                ),
-                                Variant(
-                                    name = TypeExpression,
-                                    enabled_in = "0.5.3",
-                                    fields = (expression = Required(NonTerminal(TypeExpression)))
-                                ),
-                                Variant(
-                                    name = ArrayExpression,
-                                    fields = (expression = Required(NonTerminal(ArrayExpression)))
-                                ),
-                                Variant(
-                                    name = NumberExpression,
-                                    fields = (expression = Required(NonTerminal(NumberExpression)))
-                                ),
-                                Variant(
-                                    name = StringExpression,
-                                    fields = (expression = Required(NonTerminal(StringExpression)))
-                                ),
-                                Variant(
-                                    name = ElementaryType,
-                                    fields = (expression = Required(NonTerminal(ElementaryType)))
-                                ),
-                                Variant(
-                                    name = BooleanExpression,
-                                    fields = (expression =
-                                        Required(Terminal([TrueKeyword, FalseKeyword])))
-                                ),
-                                Variant(
-                                    name = Identifier,
-                                    fields = (expression = Required(Terminal([Identifier])))
-                                )
+                                PrimaryExpression(expression = ArrayExpression),
+                                PrimaryExpression(expression = NumberExpression),
+                                PrimaryExpression(expression = StringExpression),
+                                PrimaryExpression(expression = ElementaryType),
+                                PrimaryExpression(expression = TrueKeyword),
+                                PrimaryExpression(expression = FalseKeyword),
+                                PrimaryExpression(expression = Identifier)
                             ]
                         ),
                         Struct(
@@ -2908,27 +2918,27 @@ codegen_language_macros::compile!(
                         Enum(
                             name = FunctionCallOptions,
                             variants = [
-                                Variant(name = None, disabled_in = "0.6.2", fields = ()),
-                                Variant(
+                                EnumVariant(
                                     name = Multiple,
                                     enabled_in = "0.6.2",
                                     disabled_in = "0.8.0",
                                     fields = (options =
                                         Required(NonTerminal(NamedArgumentsDeclarations)))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Single,
                                     enabled_in = "0.8.0",
                                     fields = (options = Optional(
                                         reference = NonTerminal(NamedArgumentsDeclaration)
                                     ))
-                                )
+                                ),
+                                EnumVariant(name = None, disabled_in = "0.6.2", fields = ())
                             ]
                         ),
                         Enum(
                             name = ArgumentsDeclaration,
                             variants = [
-                                Variant(
+                                EnumVariant(
                                     name = Positional,
                                     fields = (
                                         open_paren = Required(Terminal([OpenParen])),
@@ -2936,7 +2946,7 @@ codegen_language_macros::compile!(
                                         close_paren = Required(Terminal([CloseParen]))
                                     )
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Named,
                                     fields = (
                                         open_paren = Required(Terminal([OpenParen])),
@@ -3043,7 +3053,7 @@ codegen_language_macros::compile!(
                         Enum(
                             name = NumberExpression,
                             variants = [
-                                Variant(
+                                EnumVariant(
                                     name = Hex,
                                     fields = (
                                         literal = Required(Terminal([HexLiteral])),
@@ -3053,7 +3063,7 @@ codegen_language_macros::compile!(
                                         )
                                     )
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Decimal,
                                     fields = (
                                         literal = Required(Terminal([DecimalLiteral])),
@@ -3167,50 +3177,50 @@ codegen_language_macros::compile!(
                         Enum(
                             name = NumberUnit,
                             variants = [
-                                Variant(
+                                EnumVariant(
                                     name = Wei, // 1e-18 ETH
                                     fields = (keyword = Required(Terminal([WeiKeyword])))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Gwei, // 1e-9 ETH
                                     enabled_in = "0.6.11",
                                     fields = (keyword = Required(Terminal([GweiKeyword])))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Szabo, // 1e-6 ETH
                                     disabled_in = "0.7.0",
                                     fields = (keyword = Required(Terminal([SzaboKeyword])))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Finney, // 1e-3 ETH
                                     disabled_in = "0.7.0",
                                     fields = (keyword = Required(Terminal([FinneyKeyword])))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Ether, // 1 ETH
                                     fields = (keyword = Required(Terminal([EtherKeyword])))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Seconds,
                                     fields = (keyword = Required(Terminal([SecondsKeyword])))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Minutes,
                                     fields = (keyword = Required(Terminal([MinutesKeyword])))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Hours,
                                     fields = (keyword = Required(Terminal([HoursKeyword])))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Days,
                                     fields = (keyword = Required(Terminal([DaysKeyword])))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Weeks,
                                     fields = (keyword = Required(Terminal([WeeksKeyword])))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Years,
                                     disabled_in = "0.5.0",
                                     fields = (keyword = Required(Terminal([YearsKeyword])))
@@ -3225,16 +3235,16 @@ codegen_language_macros::compile!(
                         Enum(
                             name = StringExpression,
                             variants = [
-                                Variant(
+                                EnumVariant(
                                     name = Hex,
                                     fields = (literals = Required(NonTerminal(HexStringLiterals)))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Ascii,
                                     fields =
                                         (literals = Required(NonTerminal(AsciiStringLiterals)))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Unicode,
                                     enabled_in = "0.7.0",
                                     fields =
@@ -3501,53 +3511,53 @@ codegen_language_macros::compile!(
                         Enum(
                             name = YulStatement,
                             variants = [
-                                Variant(
+                                EnumVariant(
                                     name = Block,
                                     fields = (block = Required(NonTerminal(YulBlock)))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Function,
                                     fields =
                                         (definition = Required(NonTerminal(YulFunctionDefinition)))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = VariableDeclaration,
                                     fields = (statement =
                                         Required(NonTerminal(YulVariableDeclarationStatement)))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Assignment,
                                     fields =
                                         (statement = Required(NonTerminal(YulAssignmentStatement)))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = If,
                                     fields = (statement = Required(NonTerminal(YulIfStatement)))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = For,
                                     fields = (statement = Required(NonTerminal(YulForStatement)))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Switch,
                                     fields =
                                         (statement = Required(NonTerminal(YulSwitchStatement)))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Leave,
                                     enabled_in = "0.6.0",
                                     fields = (statement = Required(NonTerminal(YulLeaveStatement)))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Break,
                                     fields = (statement = Required(NonTerminal(YulBreakStatement)))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Continue,
                                     fields =
                                         (statement = Required(NonTerminal(YulContinueStatement)))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Expression,
                                     fields = (expression = Required(NonTerminal(YulExpression)))
                                 )
@@ -3656,14 +3666,14 @@ codegen_language_macros::compile!(
                         Enum(
                             name = YulSwitchCase,
                             variants = [
-                                Variant(
+                                EnumVariant(
                                     name = Default,
                                     fields = (
                                         default_keyword = Required(Terminal([YulDefaultKeyword])),
                                         body = Required(NonTerminal(YulBlock))
                                     )
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Case,
                                     fields = (
                                         case_keyword = Required(Terminal([YulCaseKeyword])),
@@ -3681,25 +3691,20 @@ codegen_language_macros::compile!(
                     items = [
                         Precedence(
                             name = YulExpression,
-                            operators = [Operator(
-                                expression_name = YulFunctionCallExpression,
-                                model = Postfix,
-                                fields = (
-                                    open_paren = Required(Terminal([OpenParen])),
-                                    arguments = Required(NonTerminal(YulArguments)),
-                                    close_paren = Required(Terminal([CloseParen]))
-                                )
+                            precedence_expressions = [PrecedenceExpression(
+                                name = YulFunctionCallExpression,
+                                operators = [PrecedenceOperator(
+                                    model = Postfix,
+                                    fields = (
+                                        open_paren = Required(Terminal([OpenParen])),
+                                        arguments = Required(NonTerminal(YulArguments)),
+                                        close_paren = Required(Terminal([CloseParen]))
+                                    )
+                                )]
                             )],
                             primary_expressions = [
-                                Variant(
-                                    name = YulLiteral,
-                                    fields = (expression = Required(NonTerminal(YulLiteral)))
-                                ),
-                                Variant(
-                                    name = YulIdentifierPath,
-                                    fields =
-                                        (expression = Required(NonTerminal(YulIdentifierPath)))
-                                )
+                                PrimaryExpression(expression = YulLiteral),
+                                PrimaryExpression(expression = YulIdentifierPath)
                             ]
                         ),
                         Separated(
@@ -3725,24 +3730,27 @@ codegen_language_macros::compile!(
                         Enum(
                             name = YulLiteral,
                             variants = [
-                                Variant(
-                                    name = Boolean,
-                                    fields = (literal =
-                                        Required(Terminal([YulTrueKeyword, YulFalseKeyword])))
+                                EnumVariant(
+                                    name = True,
+                                    fields = (literal = Required(Terminal([YulTrueKeyword])))
                                 ),
-                                Variant(
+                                EnumVariant(
+                                    name = False,
+                                    fields = (literal = Required(Terminal([YulFalseKeyword])))
+                                ),
+                                EnumVariant(
                                     name = Decimal,
                                     fields = (literal = Required(Terminal([YulDecimalLiteral])))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = Hex,
                                     fields = (literal = Required(Terminal([YulHexLiteral])))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = HexString,
                                     fields = (literal = Required(Terminal([HexStringLiteral])))
                                 ),
-                                Variant(
+                                EnumVariant(
                                     name = AsciiString,
                                     fields = (literal = Required(Terminal([AsciiStringLiteral])))
                                 )
@@ -3854,4 +3862,4 @@ codegen_language_macros::compile!(
             ]
         )
     ]
-);
+));

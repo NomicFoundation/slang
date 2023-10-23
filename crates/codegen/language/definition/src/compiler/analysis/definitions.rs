@@ -7,14 +7,15 @@ use crate::{
     spanned::Item,
     Identifier,
 };
-use indexmap::IndexSet;
 use semver::Version;
 use std::{collections::HashSet, fmt::Debug};
 
 impl Analysis {
     pub fn analyze_definitions(&mut self) {
         self.collect_top_level_items();
-        self.check_inner_definitions();
+
+        self.check_enum_items();
+        self.check_precedence_items();
     }
 
     fn collect_top_level_items(&mut self) {
@@ -32,7 +33,9 @@ impl Analysis {
 
             let defined_in = self.calculate_defined_in(item);
 
-            self.check_existing_item(name);
+            if self.metadata.contains_key(&**name) {
+                self.errors.add(name, &Errors::ExistingItem(name));
+            }
 
             self.metadata.insert(
                 (**name).to_owned(),
@@ -50,62 +53,58 @@ impl Analysis {
         }
     }
 
-    fn check_inner_definitions(&mut self) {
-        // Multiple operators can have the same name, but under the same item.
-        // Check if they conflict with top level items, or operators under different items.
-        // They cannot be referenced from anywhere else, so no need to add them to top-level definitions.
-        let mut all_expressions = HashSet::new();
-
+    fn check_enum_items(&mut self) {
         for item in self.language.clone().items() {
-            match item {
-                Item::Enum { item } => {
-                    let mut current_variants = HashSet::new();
-
-                    for variant in &item.variants {
-                        let name = &variant.name;
-                        if !current_variants.insert(&**name) {
-                            self.errors.add(name, &Errors::VariantAlreadyDefined(name));
-                        }
-                    }
-                }
-
-                Item::Precedence { item } => {
-                    let mut expression_names: IndexSet<_> = item
-                        .operators
-                        .iter()
-                        .map(|operator| &operator.expression_name)
-                        .collect();
-
-                    for expression_name in &expression_names {
-                        self.check_existing_item(&expression_name);
-
-                        if !all_expressions.insert(expression_name.to_owned()) {
-                            self.errors.add(
-                                *expression_name,
-                                &Errors::ExpressionAlreadyDefined(expression_name),
-                            );
-                        }
-                    }
-
-                    for primary_expression in &item.primary_expressions {
-                        let expression_name = &primary_expression.name;
-                        if !expression_names.insert(expression_name) {
-                            self.errors.add(
-                                expression_name,
-                                &Errors::VariantAlreadyDefined(expression_name),
-                            );
-                        }
-                    }
-                }
-
-                _ => {}
+            let Item::Enum { item } = item else {
+                continue;
             };
+
+            let mut variants = HashSet::new();
+
+            for variant in &item.variants {
+                let name = &variant.name;
+                if !variants.insert(&**name) {
+                    self.errors.add(name, &Errors::ExistingVariant(name));
+                }
+            }
         }
     }
 
-    fn check_existing_item(&mut self, name: &Spanned<Identifier>) {
-        if self.metadata.contains_key(&**name) {
-            self.errors.add(name, &Errors::ItemAlreadyDefined(name));
+    fn check_precedence_items(&mut self) {
+        // Make sure that all expressions have unique names across the entire language, since they produce their own kinds.
+        // However, they cannot be referenced from anywhere else, so no need to add them to top-level definitions.
+        let mut all_expressions = HashSet::new();
+
+        for item in self.language.clone().items() {
+            let Item::Precedence { item } = item else {
+                continue;
+            };
+
+            // Additionally, make sure that both precedence and primary expressions under
+            // the same precedence item are unique, as they will produce enum variants.
+            let mut current_expressions = HashSet::new();
+
+            for precedence_expression in &item.precedence_expressions {
+                let name = &precedence_expression.name;
+                if self.metadata.contains_key(&**name) {
+                    self.errors.add(name, &Errors::ExistingItem(name));
+                }
+
+                if !all_expressions.insert(name) {
+                    self.errors.add(name, &Errors::ExistingExpression(name));
+                }
+
+                current_expressions.insert(name);
+            }
+
+            for primary_expression in &item.primary_expressions {
+                let expression = &primary_expression.expression;
+
+                if !current_expressions.insert(expression) {
+                    self.errors
+                        .add(expression, &Errors::ExistingExpression(expression));
+                }
+            }
         }
     }
 
@@ -129,15 +128,9 @@ impl Analysis {
             Item::Keyword { item } => {
                 VersionSet::single(self.calculate_enablement(&item.enabled_in, &item.disabled_in))
             }
-            Item::Token { item } => {
-                let mut defined_in = VersionSet::empty();
-                for definition in &item.definitions {
-                    defined_in.add(
-                        &self.calculate_enablement(&definition.enabled_in, &definition.disabled_in),
-                    );
-                }
-                return defined_in;
-            }
+            Item::Token { item } => VersionSet::union(item.definitions.iter().map(|definition| {
+                self.calculate_enablement(&definition.enabled_in, &definition.disabled_in)
+            })),
             Item::Fragment { item } => {
                 VersionSet::single(self.calculate_enablement(&item.enabled_in, &item.disabled_in))
             }
@@ -163,10 +156,10 @@ impl Analysis {
 
 #[derive(thiserror::Error, Debug)]
 enum Errors<'err> {
-    #[error("Item '{0}' is already defined.")]
-    ItemAlreadyDefined(&'err Identifier),
-    #[error("Variant '{0}' is already defined.")]
-    VariantAlreadyDefined(&'err Identifier),
-    #[error("Expression '{0}' is already defined under a different item.")]
-    ExpressionAlreadyDefined(&'err Identifier),
+    #[error("An item with the name '{0}' already exists.")]
+    ExistingItem(&'err Identifier),
+    #[error("A variant with the name '{0}' already exists.")]
+    ExistingVariant(&'err Identifier),
+    #[error("An expression with the name '{0}' already exists.")]
+    ExistingExpression(&'err Identifier),
 }

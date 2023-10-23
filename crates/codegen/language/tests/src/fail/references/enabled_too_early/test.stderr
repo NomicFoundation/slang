@@ -1,5 +1,5 @@
 error: Parent scope is enabled in '2.0.0'.
-  --> src/fail/references/enabled_too_early/test.rs:25:94
+  --> src/fail/references/enabled_too_early/test.rs:30:89
    |
-25 |                     fields = (field_1 = Optional(reference = Terminal([Three]), enabled_in = "1.0.0"))
-   |                                                                                              ^^^^^^^
+30 |                         (field_1 = Optional(reference = Terminal([Three]), enabled_in = "1.0.0"))
+   |                                                                                         ^^^^^^^

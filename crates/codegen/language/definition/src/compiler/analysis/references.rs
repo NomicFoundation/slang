@@ -5,9 +5,9 @@ use crate::{
     },
     internals::Spanned,
     spanned::{
-        EnumItem, Field, FieldReference, FragmentItem, Item, ItemKind, KeywordItem, Operator,
-        PrecedenceItem, RepeatedItem, Scanner, SeparatedItem, StructItem, TokenDefinition,
-        TokenItem, TriviaParser, Variant,
+        EnumItem, EnumVariant, Field, FieldReference, FragmentItem, Item, ItemKind, KeywordItem,
+        PrecedenceExpression, PrecedenceItem, PrecedenceOperator, PrimaryExpression, RepeatedItem,
+        Scanner, SeparatedItem, StructItem, TokenDefinition, TokenItem, TriviaParser,
     },
     Identifier,
 };
@@ -91,7 +91,16 @@ impl Analysis {
         let enablement = self.update_enablement(enablement, &enabled_in, &disabled_in);
 
         for variant in variants {
-            self.check_variant(Some(name), variant, &enablement);
+            let EnumVariant {
+                name: _,
+                enabled_in,
+                disabled_in,
+                fields,
+            } = &**variant;
+
+            let enablement = self.update_enablement(&enablement, &enabled_in, &disabled_in);
+
+            self.check_fields(Some(name), &fields, &enablement);
         }
     }
 
@@ -130,56 +139,40 @@ impl Analysis {
             name,
             enabled_in,
             disabled_in,
-            operators,
+            precedence_expressions,
             primary_expressions,
         } = item;
 
         let enablement = self.update_enablement(&enablement, &enabled_in, &disabled_in);
 
-        for operator in operators {
-            self.check_operator(Some(name), operator, &enablement);
+        for precedence_expression in precedence_expressions {
+            let PrecedenceExpression { name: _, operators } = &**precedence_expression;
+
+            for operator in operators {
+                let PrecedenceOperator {
+                    model: _,
+                    enabled_in,
+                    disabled_in,
+                    fields,
+                } = &**operator;
+
+                let enablement = self.update_enablement(&enablement, &enabled_in, &disabled_in);
+
+                self.check_fields(Some(name), &fields, &enablement);
+            }
         }
 
         for primary_expression in primary_expressions {
-            self.check_variant(Some(name), primary_expression, &enablement);
+            let PrimaryExpression {
+                expression,
+                enabled_in,
+                disabled_in,
+            } = &**primary_expression;
+
+            let enablement = self.update_enablement(&enablement, &enabled_in, &disabled_in);
+
+            self.check_reference(Some(name), &expression, &enablement, ReferenceFilter::Nodes);
         }
-    }
-
-    fn check_operator(
-        &mut self,
-        source: Option<&Identifier>,
-        operator: &Operator,
-        enablement: &VersionRange,
-    ) {
-        let Operator {
-            expression_name: _,
-            model: _,
-            enabled_in,
-            disabled_in,
-            fields,
-        } = operator;
-
-        let enablement = self.update_enablement(&enablement, &enabled_in, &disabled_in);
-
-        self.check_fields(source, fields, &enablement);
-    }
-
-    fn check_variant(
-        &mut self,
-        source: Option<&Identifier>,
-        variant: &Variant,
-        enablement: &VersionRange,
-    ) {
-        let Variant {
-            name: _,
-            enabled_in,
-            disabled_in,
-            fields,
-        } = variant;
-
-        let enablement = self.update_enablement(&enablement, &enabled_in, &disabled_in);
-
-        self.check_fields(source, fields, &enablement);
     }
 
     fn check_fields(

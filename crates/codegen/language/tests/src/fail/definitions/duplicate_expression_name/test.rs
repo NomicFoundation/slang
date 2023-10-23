@@ -10,11 +10,15 @@ codegen_language_macros::compile!(Language(
         title = "Section One",
         topics = [Topic(
             title = "Topic One",
-            items = [Token(
+            items = [Precedence(
                 name = Bar,
-                definitions = [TokenDefinition(scanner = Atom("bar"))]
-            )],
-            unrecognized_field = true
+                precedence_expressions = [
+                    PrecedenceExpression(name = Expression1, operators = []),
+                    PrecedenceExpression(name = Expression2, operators = []),
+                    PrecedenceExpression(name = Expression1, operators = [])
+                ],
+                primary_expressions = []
+            )]
         )]
     )]
 ));

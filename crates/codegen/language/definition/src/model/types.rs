@@ -77,7 +77,17 @@ mod wrapper {
         pub enabled_in: Option<Version>,
         pub disabled_in: Option<Version>,
 
-        pub variants: Vec<Variant>,
+        pub variants: Vec<EnumVariant>,
+    }
+
+    #[derive(Debug, Eq, PartialEq, Serialize)]
+    pub struct EnumVariant {
+        pub name: Identifier,
+
+        pub enabled_in: Option<Version>,
+        pub disabled_in: Option<Version>,
+
+        pub fields: IndexMap<Identifier, Field>,
     }
 
     #[derive(Debug, Eq, PartialEq, Serialize)]
@@ -110,13 +120,19 @@ mod wrapper {
         pub enabled_in: Option<Version>,
         pub disabled_in: Option<Version>,
 
-        pub operators: Vec<Operator>,
-        pub primary_expressions: Vec<Variant>,
+        pub precedence_expressions: Vec<PrecedenceExpression>,
+        pub primary_expressions: Vec<PrimaryExpression>,
     }
 
     #[derive(Debug, Eq, PartialEq, Serialize)]
-    pub struct Operator {
-        pub expression_name: Identifier,
+    pub struct PrecedenceExpression {
+        pub name: Identifier,
+
+        pub operators: Vec<PrecedenceOperator>,
+    }
+
+    #[derive(Debug, Eq, PartialEq, Serialize)]
+    pub struct PrecedenceOperator {
         pub model: OperatorModel,
 
         pub enabled_in: Option<Version>,
@@ -134,13 +150,11 @@ mod wrapper {
     }
 
     #[derive(Debug, Eq, PartialEq, Serialize)]
-    pub struct Variant {
-        pub name: Identifier,
+    pub struct PrimaryExpression {
+        pub expression: Identifier,
 
         pub enabled_in: Option<Version>,
         pub disabled_in: Option<Version>,
-
-        pub fields: IndexMap<Identifier, Field>,
     }
 
     #[derive(Debug, Eq, PartialEq, Serialize)]

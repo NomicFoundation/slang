@@ -78,6 +78,16 @@ impl VersionSet {
         return instance;
     }
 
+    pub fn union(ranges: impl IntoIterator<Item = VersionRange>) -> Self {
+        let mut instance = Self::empty();
+
+        for range in ranges.into_iter() {
+            instance.add(&range);
+        }
+
+        return instance;
+    }
+
     pub fn is_empty(&self) -> bool {
         return self.ranges.is_empty();
     }

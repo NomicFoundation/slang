@@ -23,7 +23,7 @@ impl Parse for ParseOutput {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         let mut errors = ErrorsCollection::new();
 
-        match Language::parse_value(input, &mut errors) {
+        match Language::parse_named_value(input, &mut errors) {
             Ok(language) => {
                 return Ok(Self { language, errors });
             }

@@ -1,6 +1,6 @@
 #![allow(unused_crate_dependencies)]
 
-codegen_language_macros::compile!(
+codegen_language_macros::compile!(Language(
     name = Foo,
     root_item = Bar1,
     leading_trivia = Sequence([]),
@@ -17,6 +17,6 @@ codegen_language_macros::compile!(
             ]
         )]
     )]
-);
+));
 
 fn main() {}

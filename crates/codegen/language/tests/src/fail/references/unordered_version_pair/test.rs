@@ -1,6 +1,6 @@
 #![allow(unused_crate_dependencies)]
 
-codegen_language_macros::compile!(
+codegen_language_macros::compile!(Language(
     name = Foo,
     root_item = One,
     leading_trivia = Sequence([]),
@@ -14,7 +14,11 @@ codegen_language_macros::compile!(
                 Struct(
                     name = One,
                     fields = (
-                        field_1 = Optional(reference = Terminal([Two]), enabled_in = "3.0.0", disabled_in = "2.0.0"),
+                        field_1 = Optional(
+                            reference = Terminal([Two]),
+                            enabled_in = "3.0.0",
+                            disabled_in = "2.0.0"
+                        ),
                         field_2 = Optional(reference = Terminal([Two]))
                     )
                 ),
@@ -25,6 +29,6 @@ codegen_language_macros::compile!(
             ]
         )]
     )]
-);
+));
 
 fn main() {}

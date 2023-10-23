@@ -4,7 +4,7 @@ use codegen_language_definition::{
 };
 use semver::Version;
 
-codegen_language_macros::compile!(
+codegen_language_macros::compile!(Language(
     name = Tiny,
     root_item = Foo,
     leading_trivia = Sequence([]),
@@ -34,7 +34,7 @@ codegen_language_macros::compile!(
             ]
         )]
     )]
-);
+));
 
 #[test]
 fn definition() {
