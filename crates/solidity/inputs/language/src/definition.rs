@@ -417,658 +417,1418 @@ codegen_language_macros::compile!(Language(
                         Keyword(
                             name = AbicoderKeyword,
                             identifier = Identifier,
-                            value = Atom("abicoder")
+                            definitions = [KeywordDefinition(
+                                unreserved_in = "0.4.11",
+                                value = Atom("abicoder")
+                            )]
                         ),
                         Keyword(
                             name = AbstractKeyword,
                             identifier = Identifier,
-                            enabled_in = "0.6.0",
-                            value = Atom("abstract")
+                            definitions = [KeywordDefinition(
+                                enabled_in = "0.6.0",
+                                value = Atom("abstract")
+                            )]
                         ),
                         Keyword(
                             name = AddressKeyword,
                             identifier = Identifier,
-                            value = Atom("address")
+                            definitions = [KeywordDefinition(value = Atom("address"))]
                         ),
                         Keyword(
                             name = AfterKeyword,
                             identifier = Identifier,
-                            disabled_in = "0.4.11",
-                            value = Atom("after")
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                value = Atom("after")
+                            )]
                         ),
                         Keyword(
                             name = AliasKeyword,
                             identifier = Identifier,
-                            disabled_in = "0.4.11",
-                            reserved_in = "0.5.0",
-                            value = Atom("alias")
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                reserved_in = "0.5.0",
+                                value = Atom("alias")
+                            )]
                         ),
                         Keyword(
                             name = AnonymousKeyword,
                             identifier = Identifier,
-                            value = Atom("anonymous")
+                            definitions = [KeywordDefinition(value = Atom("anonymous"))]
                         ),
                         Keyword(
                             name = ApplyKeyword,
                             identifier = Identifier,
-                            disabled_in = "0.4.11",
-                            reserved_in = "0.5.0",
-                            value = Atom("apply")
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                reserved_in = "0.5.0",
+                                value = Atom("apply")
+                            )]
                         ),
                         Keyword(
                             name = AsKeyword,
                             identifier = Identifier,
-                            value = Atom("as")
+                            definitions = [KeywordDefinition(value = Atom("as"))]
                         ),
                         Keyword(
                             name = AssemblyKeyword,
                             identifier = Identifier,
-                            value = Atom("assembly")
+                            definitions = [KeywordDefinition(value = Atom("assembly"))]
                         ),
                         Keyword(
                             name = AutoKeyword,
                             identifier = Identifier,
-                            disabled_in = "0.4.11",
-                            reserved_in = "0.5.0",
-                            value = Atom("auto")
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                reserved_in = "0.5.0",
+                                value = Atom("auto")
+                            )]
                         ),
                         Keyword(
                             name = BoolKeyword,
                             identifier = Identifier,
-                            value = Atom("bool")
+                            definitions = [KeywordDefinition(value = Atom("bool"))]
                         ),
                         Keyword(
                             name = BreakKeyword,
                             identifier = Identifier,
-                            value = Atom("break")
+                            definitions = [KeywordDefinition(value = Atom("break"))]
                         ),
                         Keyword(
                             name = ByteKeyword,
                             identifier = Identifier,
-                            disabled_in = "0.8.0",
-                            value = Atom("byte")
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.8.0",
+                                value = Atom("byte")
+                            )]
                         ),
                         Keyword(
                             name = BytesKeyword,
                             identifier = Identifier,
-                            value = Sequence([
-                                Atom("bytes"),
-                                Range(inclusive_start = 1, inclusive_end = 32, increment = 1)
-                            ])
+                            definitions = [KeywordDefinition(
+                                value = Sequence([
+                                    Atom("bytes"),
+                                    Choice([
+                                        Atom("1"),
+                                        Atom("2"),
+                                        Atom("3"),
+                                        Atom("4"),
+                                        Atom("5"),
+                                        Atom("6"),
+                                        Atom("7"),
+                                        Atom("8"),
+                                        Atom("9"),
+                                        Atom("10"),
+                                        Atom("11"),
+                                        Atom("12"),
+                                        Atom("13"),
+                                        Atom("14"),
+                                        Atom("15"),
+                                        Atom("16"),
+                                        Atom("17"),
+                                        Atom("18"),
+                                        Atom("19"),
+                                        Atom("20"),
+                                        Atom("21"),
+                                        Atom("22"),
+                                        Atom("23"),
+                                        Atom("24"),
+                                        Atom("25"),
+                                        Atom("26"),
+                                        Atom("27"),
+                                        Atom("28"),
+                                        Atom("29"),
+                                        Atom("30"),
+                                        Atom("31"),
+                                        Atom("32")
+                                    ])
+                                ])
+                            )]
                         ),
                         Keyword(
                             name = CallDataKeyword,
                             identifier = Identifier,
-                            enabled_in = "0.5.0",
-                            value = Atom("calldata")
+                            definitions = [KeywordDefinition(
+                                enabled_in = "0.5.0",
+                                reserved_in = "0.5.0",
+                                value = Atom("calldata")
+                            )]
                         ),
                         Keyword(
                             name = CaseKeyword,
                             identifier = Identifier,
-                            disabled_in = "0.4.11",
-                            value = Atom("case")
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                value = Atom("case")
+                            )]
                         ),
                         Keyword(
                             name = CatchKeyword,
                             identifier = Identifier,
-                            enabled_in = "0.6.0",
-                            value = Atom("catch")
+                            definitions = [KeywordDefinition(
+                                enabled_in = "0.6.0",
+                                value = Atom("catch")
+                            )]
                         ),
                         Keyword(
                             name = ConstantKeyword,
                             identifier = Identifier,
-                            value = Atom("constant")
+                            definitions = [KeywordDefinition(value = Atom("constant"))]
                         ),
                         Keyword(
                             name = ConstructorKeyword,
                             identifier = Identifier,
-                            enabled_in = "0.4.22",
-                            value = Atom("constructor")
+                            definitions = [KeywordDefinition(
+                                enabled_in = "0.4.22",
+                                reserved_in = "0.5.0",
+                                value = Atom("constructor")
+                            )]
                         ),
                         Keyword(
                             name = ContinueKeyword,
                             identifier = Identifier,
-                            value = Atom("continue")
+                            definitions = [KeywordDefinition(value = Atom("continue"))]
                         ),
                         Keyword(
                             name = ContractKeyword,
                             identifier = Identifier,
-                            value = Atom("contract")
+                            definitions = [KeywordDefinition(value = Atom("contract"))]
                         ),
                         Keyword(
                             name = CopyOfKeyword,
                             identifier = Identifier,
-                            disabled_in = "0.4.11",
-                            reserved_in = "0.5.0",
-                            value = Atom("copyof")
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                reserved_in = "0.5.0",
+                                value = Atom("copyof")
+                            )]
                         ),
                         Keyword(
                             name = DaysKeyword,
                             identifier = Identifier,
-                            value = Atom("days")
+                            definitions = [KeywordDefinition(value = Atom("days"))]
                         ),
                         Keyword(
                             name = DefaultKeyword,
                             identifier = Identifier,
-                            disabled_in = "0.4.11",
-                            value = Atom("default")
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                value = Atom("default")
+                            )]
                         ),
                         Keyword(
                             name = DefineKeyword,
                             identifier = Identifier,
-                            disabled_in = "0.4.11",
-                            reserved_in = "0.5.0",
-                            value = Atom("define")
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                reserved_in = "0.5.0",
+                                value = Atom("define")
+                            )]
                         ),
                         Keyword(
                             name = DeleteKeyword,
                             identifier = Identifier,
-                            value = Atom("delete")
+                            definitions = [KeywordDefinition(value = Atom("delete"))]
                         ),
                         Keyword(
                             name = DoKeyword,
                             identifier = Identifier,
-                            value = Atom("do")
+                            definitions = [KeywordDefinition(value = Atom("do"))]
                         ),
                         Keyword(
                             name = ElseKeyword,
                             identifier = Identifier,
-                            value = Atom("else")
+                            definitions = [KeywordDefinition(value = Atom("else"))]
                         ),
                         Keyword(
                             name = EmitKeyword,
                             identifier = Identifier,
-                            enabled_in = "0.4.21",
-                            value = Atom("emit")
+                            definitions = [KeywordDefinition(
+                                enabled_in = "0.4.21",
+                                reserved_in = "0.5.0",
+                                value = Atom("emit")
+                            )]
                         ),
                         Keyword(
                             name = EnumKeyword,
                             identifier = Identifier,
-                            value = Atom("enum")
+                            definitions = [KeywordDefinition(value = Atom("enum"))]
                         ),
                         Keyword(
                             name = ErrorKeyword,
                             identifier = Identifier,
-                            enabled_in = "0.8.4",
-                            value = Atom("error")
+                            definitions = [KeywordDefinition(
+                                enabled_in = "0.8.4",
+                                unreserved_in = "0.4.11",
+                                value = Atom("error")
+                            )]
                         ),
                         Keyword(
                             name = EtherKeyword,
                             identifier = Identifier,
-                            value = Atom("ether")
+                            definitions = [KeywordDefinition(value = Atom("ether"))]
                         ),
                         Keyword(
                             name = EventKeyword,
                             identifier = Identifier,
-                            value = Atom("event")
+                            definitions = [KeywordDefinition(value = Atom("event"))]
                         ),
                         Keyword(
                             name = ExperimentalKeyword,
                             identifier = Identifier,
-                            value = Atom("experimental")
+                            definitions = [KeywordDefinition(
+                                unreserved_in = "0.4.11",
+                                value = Atom("experimental")
+                            )]
                         ),
                         Keyword(
                             name = ExternalKeyword,
                             identifier = Identifier,
-                            value = Atom("external")
+                            definitions = [KeywordDefinition(value = Atom("external"))]
                         ),
                         Keyword(
                             name = FallbackKeyword,
                             identifier = Identifier,
-                            value = Atom("fallback")
+                            definitions = [KeywordDefinition(
+                                reserved_in = "0.6.0",
+                                value = Atom("fallback")
+                            )]
                         ),
                         Keyword(
                             name = FalseKeyword,
                             identifier = Identifier,
-                            value = Atom("false")
+                            definitions = [KeywordDefinition(value = Atom("false"))]
                         ),
                         Keyword(
                             name = FinalKeyword,
                             identifier = Identifier,
-                            disabled_in = "0.4.11",
-                            value = Atom("final")
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                value = Atom("final")
+                            )]
                         ),
                         Keyword(
                             name = FinneyKeyword,
                             identifier = Identifier,
-                            disabled_in = "0.7.0",
-                            value = Atom("finney")
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.7.0",
+                                unreserved_in = "0.7.0",
+                                value = Atom("finney")
+                            )]
                         ),
                         Keyword(
                             name = FixedKeyword,
                             identifier = Identifier,
-                            value = Sequence([
-                                Atom("fixed"),
-                                Optional(Sequence([
-                                    Range(inclusive_start = 8, inclusive_end = 256, increment = 8),
-                                    Atom("x"),
-                                    Range(inclusive_start = 0, inclusive_end = 80, increment = 1)
-                                ]))
-                            ])
+                            definitions = [
+                                KeywordDefinition(value = Atom("fixed")),
+                                KeywordDefinition(
+                                    value = Sequence([
+                                        Atom("fixed"),
+                                        Choice([
+                                            Atom("8"),
+                                            Atom("16"),
+                                            Atom("24"),
+                                            Atom("32"),
+                                            Atom("40"),
+                                            Atom("48"),
+                                            Atom("56"),
+                                            Atom("64"),
+                                            Atom("72"),
+                                            Atom("80"),
+                                            Atom("88"),
+                                            Atom("96"),
+                                            Atom("104"),
+                                            Atom("112"),
+                                            Atom("120"),
+                                            Atom("128"),
+                                            Atom("136"),
+                                            Atom("144"),
+                                            Atom("152"),
+                                            Atom("160"),
+                                            Atom("168"),
+                                            Atom("176")
+                                        ]),
+                                        Atom("x"),
+                                        Choice([
+                                            Atom("8"),
+                                            Atom("16"),
+                                            Atom("24"),
+                                            Atom("32"),
+                                            Atom("40"),
+                                            Atom("48"),
+                                            Atom("56"),
+                                            Atom("64"),
+                                            Atom("72"),
+                                            Atom("80")
+                                        ])
+                                    ])
+                                ),
+                                KeywordDefinition(
+                                    value = Sequence([
+                                        Atom("fixed"),
+                                        Choice([
+                                            Atom("184x8"),
+                                            Atom("184x16"),
+                                            Atom("184x24"),
+                                            Atom("184x32"),
+                                            Atom("184x40"),
+                                            Atom("184x48"),
+                                            Atom("184x56"),
+                                            Atom("184x64"),
+                                            Atom("184x72"),
+                                            Atom("192x8"),
+                                            Atom("192x16"),
+                                            Atom("192x24"),
+                                            Atom("192x32"),
+                                            Atom("192x40"),
+                                            Atom("192x48"),
+                                            Atom("192x56"),
+                                            Atom("192x64"),
+                                            Atom("200x8"),
+                                            Atom("200x16"),
+                                            Atom("200x24"),
+                                            Atom("200x32"),
+                                            Atom("200x40"),
+                                            Atom("200x48"),
+                                            Atom("200x56"),
+                                            Atom("208x8"),
+                                            Atom("208x16"),
+                                            Atom("208x24"),
+                                            Atom("208x32"),
+                                            Atom("208x40"),
+                                            Atom("208x48"),
+                                            Atom("216x8"),
+                                            Atom("216x16"),
+                                            Atom("216x24"),
+                                            Atom("216x32"),
+                                            Atom("216x40"),
+                                            Atom("224x8"),
+                                            Atom("224x16"),
+                                            Atom("224x24"),
+                                            Atom("224x32"),
+                                            Atom("232x8"),
+                                            Atom("232x16"),
+                                            Atom("232x24"),
+                                            Atom("240x8"),
+                                            Atom("240x16"),
+                                            Atom("248x8")
+                                        ])
+                                    ])
+                                ),
+                                KeywordDefinition(
+                                    reserved_in = "0.4.14",
+                                    value = Sequence([
+                                        Atom("fixed"),
+                                        Choice([
+                                            Atom("184x80"),
+                                            Atom("192x72"),
+                                            Atom("192x80"),
+                                            Atom("200x64"),
+                                            Atom("200x72"),
+                                            Atom("200x80"),
+                                            Atom("208x56"),
+                                            Atom("208x64"),
+                                            Atom("208x72"),
+                                            Atom("208x80"),
+                                            Atom("216x48"),
+                                            Atom("216x56"),
+                                            Atom("216x64"),
+                                            Atom("216x72"),
+                                            Atom("216x80"),
+                                            Atom("224x40"),
+                                            Atom("224x48"),
+                                            Atom("224x56"),
+                                            Atom("224x64"),
+                                            Atom("224x72"),
+                                            Atom("224x80"),
+                                            Atom("232x32"),
+                                            Atom("232x40"),
+                                            Atom("232x48"),
+                                            Atom("232x56"),
+                                            Atom("232x64"),
+                                            Atom("232x72"),
+                                            Atom("232x80"),
+                                            Atom("240x24"),
+                                            Atom("240x32"),
+                                            Atom("240x40"),
+                                            Atom("240x48"),
+                                            Atom("240x56"),
+                                            Atom("240x64"),
+                                            Atom("240x72"),
+                                            Atom("240x80"),
+                                            Atom("248x16"),
+                                            Atom("248x24"),
+                                            Atom("248x32"),
+                                            Atom("248x40"),
+                                            Atom("248x48"),
+                                            Atom("248x56"),
+                                            Atom("248x64"),
+                                            Atom("248x72"),
+                                            Atom("248x80"),
+                                            Atom("256x8"),
+                                            Atom("256x16"),
+                                            Atom("256x24"),
+                                            Atom("256x32"),
+                                            Atom("256x40"),
+                                            Atom("256x48"),
+                                            Atom("256x56"),
+                                            Atom("256x64"),
+                                            Atom("256x72"),
+                                            Atom("256x80")
+                                        ])
+                                    ])
+                                ),
+                                KeywordDefinition(
+                                    reserved_in = "0.4.14",
+                                    value = Sequence([
+                                        Atom("fixed"),
+                                        Choice([
+                                            Atom("8"),
+                                            Atom("16"),
+                                            Atom("24"),
+                                            Atom("32"),
+                                            Atom("40"),
+                                            Atom("48"),
+                                            Atom("56"),
+                                            Atom("64"),
+                                            Atom("72"),
+                                            Atom("80"),
+                                            Atom("88"),
+                                            Atom("96"),
+                                            Atom("104"),
+                                            Atom("112"),
+                                            Atom("120"),
+                                            Atom("128"),
+                                            Atom("136"),
+                                            Atom("144"),
+                                            Atom("152"),
+                                            Atom("160"),
+                                            Atom("168"),
+                                            Atom("176"),
+                                            Atom("184"),
+                                            Atom("192"),
+                                            Atom("200"),
+                                            Atom("208"),
+                                            Atom("216"),
+                                            Atom("224"),
+                                            Atom("232"),
+                                            Atom("240"),
+                                            Atom("248"),
+                                            Atom("256")
+                                        ]),
+                                        Atom("x"),
+                                        Choice([
+                                            Atom("0"),
+                                            Atom("1"),
+                                            Atom("2"),
+                                            Atom("3"),
+                                            Atom("4"),
+                                            Atom("5"),
+                                            Atom("6"),
+                                            Atom("7"),
+                                            Atom("9"),
+                                            Atom("10"),
+                                            Atom("11"),
+                                            Atom("12"),
+                                            Atom("13"),
+                                            Atom("14"),
+                                            Atom("15"),
+                                            Atom("17"),
+                                            Atom("18"),
+                                            Atom("19"),
+                                            Atom("20"),
+                                            Atom("21"),
+                                            Atom("22"),
+                                            Atom("23"),
+                                            Atom("25"),
+                                            Atom("26"),
+                                            Atom("27"),
+                                            Atom("28"),
+                                            Atom("29"),
+                                            Atom("30"),
+                                            Atom("31"),
+                                            Atom("33"),
+                                            Atom("34"),
+                                            Atom("35"),
+                                            Atom("36"),
+                                            Atom("37"),
+                                            Atom("38"),
+                                            Atom("39"),
+                                            Atom("41"),
+                                            Atom("42"),
+                                            Atom("43"),
+                                            Atom("44"),
+                                            Atom("45"),
+                                            Atom("46"),
+                                            Atom("47"),
+                                            Atom("49"),
+                                            Atom("50"),
+                                            Atom("51"),
+                                            Atom("52"),
+                                            Atom("53"),
+                                            Atom("54"),
+                                            Atom("55"),
+                                            Atom("57"),
+                                            Atom("58"),
+                                            Atom("59"),
+                                            Atom("60"),
+                                            Atom("61"),
+                                            Atom("62"),
+                                            Atom("63"),
+                                            Atom("65"),
+                                            Atom("66"),
+                                            Atom("67"),
+                                            Atom("68"),
+                                            Atom("69"),
+                                            Atom("70"),
+                                            Atom("71"),
+                                            Atom("73"),
+                                            Atom("74"),
+                                            Atom("75"),
+                                            Atom("76"),
+                                            Atom("77"),
+                                            Atom("78"),
+                                            Atom("79")
+                                        ])
+                                    ])
+                                )
+                            ]
                         ),
                         Keyword(
                             name = ForKeyword,
                             identifier = Identifier,
-                            value = Atom("for")
+                            definitions = [KeywordDefinition(value = Atom("for"))]
                         ),
                         Keyword(
                             name = FromKeyword,
                             identifier = Identifier,
-                            value = Atom("from")
+                            definitions = [KeywordDefinition(
+                                unreserved_in = "0.4.11",
+                                value = Atom("from")
+                            )]
                         ),
                         Keyword(
                             name = FunctionKeyword,
                             identifier = Identifier,
-                            value = Atom("function")
+                            definitions = [KeywordDefinition(value = Atom("function"))]
                         ),
                         Keyword(
                             name = GlobalKeyword,
                             identifier = Identifier,
-                            enabled_in = "0.8.13",
-                            value = Atom("global")
+                            definitions = [KeywordDefinition(
+                                enabled_in = "0.8.13",
+                                unreserved_in = "0.4.11",
+                                value = Atom("global")
+                            )]
                         ),
                         Keyword(
                             name = GweiKeyword,
                             identifier = Identifier,
-                            enabled_in = "0.6.11",
-                            value = Atom("gwei")
+                            definitions = [KeywordDefinition(
+                                enabled_in = "0.6.11",
+                                reserved_in = "0.7.0",
+                                value = Atom("gwei")
+                            )]
                         ),
                         Keyword(
                             name = HexKeyword,
                             identifier = Identifier,
-                            disabled_in = "0.4.11",
-                            value = Atom("hex")
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                value = Atom("hex")
+                            )]
                         ),
                         Keyword(
                             name = HoursKeyword,
                             identifier = Identifier,
-                            value = Atom("hours")
+                            definitions = [KeywordDefinition(value = Atom("hours"))]
                         ),
                         Keyword(
                             name = IfKeyword,
                             identifier = Identifier,
-                            value = Atom("if")
+                            definitions = [KeywordDefinition(value = Atom("if"))]
                         ),
                         Keyword(
                             name = ImmutableKeyword,
                             identifier = Identifier,
-                            enabled_in = "0.6.5",
-                            value = Atom("immutable")
+                            definitions = [KeywordDefinition(
+                                enabled_in = "0.6.5",
+                                reserved_in = "0.5.0",
+                                value = Atom("immutable")
+                            )]
                         ),
                         Keyword(
                             name = ImplementsKeyword,
                             identifier = Identifier,
-                            disabled_in = "0.4.11",
-                            reserved_in = "0.5.0",
-                            value = Atom("implements")
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                reserved_in = "0.5.0",
+                                value = Atom("implements")
+                            )]
                         ),
                         Keyword(
                             name = ImportKeyword,
                             identifier = Identifier,
-                            value = Atom("import")
+                            definitions = [KeywordDefinition(value = Atom("import"))]
                         ),
                         Keyword(
                             name = IndexedKeyword,
                             identifier = Identifier,
-                            value = Atom("indexed")
+                            definitions = [KeywordDefinition(value = Atom("indexed"))]
                         ),
                         Keyword(
                             name = InKeyword,
                             identifier = Identifier,
-                            disabled_in = "0.4.11",
-                            value = Atom("in")
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                value = Atom("in")
+                            )]
                         ),
                         Keyword(
                             name = InlineKeyword,
                             identifier = Identifier,
-                            disabled_in = "0.4.11",
-                            value = Atom("inline")
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                value = Atom("inline")
+                            )]
                         ),
                         Keyword(
                             name = InterfaceKeyword,
                             identifier = Identifier,
-                            value = Atom("interface")
+                            definitions = [KeywordDefinition(value = Atom("interface"))]
                         ),
                         Keyword(
                             name = InternalKeyword,
                             identifier = Identifier,
-                            value = Atom("internal")
+                            definitions = [KeywordDefinition(value = Atom("internal"))]
                         ),
                         Keyword(
                             name = IntKeyword,
                             identifier = Identifier,
-                            value = Sequence([
-                                Atom("int"),
-                                Optional(Range(
-                                    inclusive_start = 8,
-                                    inclusive_end = 256,
-                                    increment = 8
-                                ))
-                            ])
+                            definitions = [KeywordDefinition(
+                                value = Sequence([
+                                    Atom("int"),
+                                    Optional(Choice([
+                                        Atom("8"),
+                                        Atom("16"),
+                                        Atom("24"),
+                                        Atom("32"),
+                                        Atom("40"),
+                                        Atom("48"),
+                                        Atom("56"),
+                                        Atom("64"),
+                                        Atom("72"),
+                                        Atom("80"),
+                                        Atom("88"),
+                                        Atom("96"),
+                                        Atom("104"),
+                                        Atom("112"),
+                                        Atom("120"),
+                                        Atom("128"),
+                                        Atom("136"),
+                                        Atom("144"),
+                                        Atom("152"),
+                                        Atom("160"),
+                                        Atom("168"),
+                                        Atom("176"),
+                                        Atom("184"),
+                                        Atom("192"),
+                                        Atom("200"),
+                                        Atom("208"),
+                                        Atom("216"),
+                                        Atom("224"),
+                                        Atom("232"),
+                                        Atom("240"),
+                                        Atom("248"),
+                                        Atom("256")
+                                    ]))
+                                ])
+                            )]
                         ),
                         Keyword(
                             name = IsKeyword,
                             identifier = Identifier,
-                            value = Atom("is")
+                            definitions = [KeywordDefinition(value = Atom("is"))]
                         ),
                         Keyword(
                             name = LetKeyword,
                             identifier = Identifier,
-                            disabled_in = "0.4.11",
-                            value = Atom("let")
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                value = Atom("let")
+                            )]
                         ),
                         Keyword(
                             name = LibraryKeyword,
                             identifier = Identifier,
-                            value = Atom("library")
+                            definitions = [KeywordDefinition(value = Atom("library"))]
                         ),
                         Keyword(
                             name = MacroKeyword,
                             identifier = Identifier,
-                            disabled_in = "0.4.11",
-                            reserved_in = "0.5.0",
-                            value = Atom("macro")
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                reserved_in = "0.5.0",
+                                value = Atom("macro")
+                            )]
                         ),
                         Keyword(
                             name = MappingKeyword,
                             identifier = Identifier,
-                            value = Atom("mapping")
+                            definitions = [KeywordDefinition(value = Atom("mapping"))]
                         ),
                         Keyword(
                             name = MatchKeyword,
                             identifier = Identifier,
-                            disabled_in = "0.4.11",
-                            value = Atom("match")
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                value = Atom("match")
+                            )]
                         ),
                         Keyword(
                             name = MemoryKeyword,
                             identifier = Identifier,
-                            value = Atom("memory")
+                            definitions = [KeywordDefinition(value = Atom("memory"))]
                         ),
                         Keyword(
                             name = MinutesKeyword,
                             identifier = Identifier,
-                            value = Atom("minutes")
+                            definitions = [KeywordDefinition(value = Atom("minutes"))]
                         ),
                         Keyword(
                             name = ModifierKeyword,
                             identifier = Identifier,
-                            value = Atom("modifier")
+                            definitions = [KeywordDefinition(value = Atom("modifier"))]
                         ),
                         Keyword(
                             name = MutableKeyword,
                             identifier = Identifier,
-                            disabled_in = "0.4.11",
-                            reserved_in = "0.5.0",
-                            value = Atom("mutable")
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                reserved_in = "0.5.0",
+                                value = Atom("mutable")
+                            )]
                         ),
                         Keyword(
                             name = NewKeyword,
                             identifier = Identifier,
-                            value = Atom("new")
+                            definitions = [KeywordDefinition(value = Atom("new"))]
                         ),
                         Keyword(
                             name = NullKeyword,
                             identifier = Identifier,
-                            disabled_in = "0.4.11",
-                            value = Atom("null")
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                value = Atom("null")
+                            )]
                         ),
                         Keyword(
                             name = OfKeyword,
                             identifier = Identifier,
-                            disabled_in = "0.4.11",
-                            value = Atom("of")
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                value = Atom("of")
+                            )]
                         ),
                         Keyword(
                             name = OverrideKeyword,
                             identifier = Identifier,
-                            value = Atom("override")
+                            definitions = [KeywordDefinition(
+                                reserved_in = "0.5.0",
+                                value = Atom("override")
+                            )]
                         ),
                         Keyword(
                             name = PartialKeyword,
                             identifier = Identifier,
-                            disabled_in = "0.4.11",
-                            reserved_in = "0.5.0",
-                            value = Atom("partial")
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                reserved_in = "0.5.0",
+                                value = Atom("partial")
+                            )]
                         ),
                         Keyword(
                             name = PayableKeyword,
                             identifier = Identifier,
-                            value = Atom("payable")
+                            definitions = [KeywordDefinition(value = Atom("payable"))]
                         ),
                         Keyword(
                             name = PragmaKeyword,
                             identifier = Identifier,
-                            value = Atom("pragma")
+                            definitions = [KeywordDefinition(value = Atom("pragma"))]
                         ),
                         Keyword(
                             name = PrivateKeyword,
                             identifier = Identifier,
-                            value = Atom("private")
+                            definitions = [KeywordDefinition(value = Atom("private"))]
                         ),
                         Keyword(
                             name = PromiseKeyword,
                             identifier = Identifier,
-                            disabled_in = "0.4.11",
-                            reserved_in = "0.5.0",
-                            value = Atom("promise")
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                reserved_in = "0.5.0",
+                                value = Atom("promise")
+                            )]
                         ),
                         Keyword(
                             name = PublicKeyword,
                             identifier = Identifier,
-                            value = Atom("public")
+                            definitions = [KeywordDefinition(value = Atom("public"))]
                         ),
                         Keyword(
                             name = PureKeyword,
                             identifier = Identifier,
-                            value = Atom("pure")
+                            definitions = [KeywordDefinition(value = Atom("pure"))]
                         ),
                         Keyword(
                             name = ReceiveKeyword,
                             identifier = Identifier,
-                            value = Atom("receive")
+                            definitions = [KeywordDefinition(
+                                reserved_in = "0.6.0",
+                                value = Atom("receive")
+                            )]
                         ),
                         Keyword(
                             name = ReferenceKeyword,
                             identifier = Identifier,
-                            disabled_in = "0.4.11",
-                            reserved_in = "0.5.0",
-                            value = Atom("reference")
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                reserved_in = "0.5.0",
+                                value = Atom("reference")
+                            )]
                         ),
                         Keyword(
                             name = RelocatableKeyword,
                             identifier = Identifier,
-                            disabled_in = "0.4.11",
-                            value = Atom("relocatable")
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                value = Atom("relocatable")
+                            )]
                         ),
                         Keyword(
                             name = ReturnKeyword,
                             identifier = Identifier,
-                            value = Atom("return")
+                            definitions = [KeywordDefinition(value = Atom("return"))]
                         ),
                         Keyword(
                             name = ReturnsKeyword,
                             identifier = Identifier,
-                            value = Atom("returns")
+                            definitions = [KeywordDefinition(value = Atom("returns"))]
                         ),
                         Keyword(
                             name = RevertKeyword,
                             identifier = Identifier,
-                            enabled_in = "0.8.4",
-                            value = Atom("revert")
+                            definitions = [KeywordDefinition(
+                                enabled_in = "0.8.4",
+                                unreserved_in = "0.4.11",
+                                value = Atom("revert")
+                            )]
                         ),
                         Keyword(
                             name = SealedKeyword,
                             identifier = Identifier,
-                            disabled_in = "0.4.11",
-                            reserved_in = "0.5.0",
-                            value = Atom("sealed")
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                reserved_in = "0.5.0",
+                                value = Atom("sealed")
+                            )]
                         ),
                         Keyword(
                             name = SecondsKeyword,
                             identifier = Identifier,
-                            value = Atom("seconds")
+                            definitions = [KeywordDefinition(value = Atom("seconds"))]
                         ),
                         Keyword(
                             name = SizeOfKeyword,
                             identifier = Identifier,
-                            disabled_in = "0.4.11",
-                            reserved_in = "0.5.0",
-                            value = Atom("sizeof")
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                reserved_in = "0.5.0",
+                                value = Atom("sizeof")
+                            )]
                         ),
                         Keyword(
                             name = SolidityKeyword,
                             identifier = Identifier,
-                            value = Atom("solidity")
+                            definitions = [KeywordDefinition(
+                                unreserved_in = "0.4.11",
+                                value = Atom("solidity")
+                            )]
                         ),
                         Keyword(
                             name = StaticKeyword,
                             identifier = Identifier,
-                            disabled_in = "0.4.11",
-                            value = Atom("static")
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                value = Atom("static")
+                            )]
                         ),
                         Keyword(
                             name = StorageKeyword,
                             identifier = Identifier,
-                            value = Atom("storage")
+                            definitions = [KeywordDefinition(value = Atom("storage"))]
                         ),
                         Keyword(
                             name = StringKeyword,
                             identifier = Identifier,
-                            value = Atom("string")
+                            definitions = [KeywordDefinition(value = Atom("string"))]
                         ),
                         Keyword(
                             name = StructKeyword,
                             identifier = Identifier,
-                            value = Atom("struct")
+                            definitions = [KeywordDefinition(value = Atom("struct"))]
                         ),
                         Keyword(
                             name = SupportsKeyword,
                             identifier = Identifier,
-                            disabled_in = "0.4.11",
-                            reserved_in = "0.5.0",
-                            value = Atom("supports")
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                reserved_in = "0.5.0",
+                                value = Atom("supports")
+                            )]
                         ),
                         Keyword(
                             name = SwitchKeyword,
                             identifier = Identifier,
-                            disabled_in = "0.4.11",
-                            value = Atom("switch")
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                value = Atom("switch")
+                            )]
                         ),
                         Keyword(
                             name = SzaboKeyword,
                             identifier = Identifier,
-                            disabled_in = "0.7.0",
-                            value = Atom("szabo")
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.7.0",
+                                unreserved_in = "0.7.0",
+                                value = Atom("szabo")
+                            )]
                         ),
                         Keyword(
                             name = ThrowKeyword,
                             identifier = Identifier,
-                            disabled_in = "0.5.0",
-                            value = Atom("throw")
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.5.0",
+                                value = Atom("throw")
+                            )]
                         ),
                         Keyword(
                             name = TrueKeyword,
                             identifier = Identifier,
-                            value = Atom("true")
+                            definitions = [KeywordDefinition(value = Atom("true"))]
                         ),
                         Keyword(
                             name = TryKeyword,
                             identifier = Identifier,
-                            enabled_in = "0.6.0",
-                            value = Atom("try")
+                            definitions =
+                                [KeywordDefinition(enabled_in = "0.6.0", value = Atom("try"))]
                         ),
                         Keyword(
                             name = TypeDefKeyword,
                             identifier = Identifier,
-                            disabled_in = "0.4.11",
-                            reserved_in = "0.5.0",
-                            value = Atom("typedef")
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                reserved_in = "0.5.0",
+                                value = Atom("typedef")
+                            )]
                         ),
                         Keyword(
                             name = TypeKeyword,
                             identifier = Identifier,
-                            enabled_in = "0.5.3",
-                            value = Atom("type")
+                            definitions = [KeywordDefinition(
+                                enabled_in = "0.5.3",
+                                value = Atom("type")
+                            )]
                         ),
                         Keyword(
                             name = TypeOfKeyword,
                             identifier = Identifier,
-                            disabled_in = "0.4.11",
-                            value = Atom("typeof")
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                value = Atom("typeof")
+                            )]
                         ),
                         Keyword(
                             name = UfixedKeyword,
                             identifier = Identifier,
-                            value = Sequence([
-                                Atom("ufixed"),
-                                Optional(Sequence([
-                                    Range(inclusive_start = 8, inclusive_end = 256, increment = 8),
-                                    Atom("x"),
-                                    Range(inclusive_start = 0, inclusive_end = 80, increment = 1)
-                                ]))
-                            ])
+                            definitions = [
+                                KeywordDefinition(value = Atom("ufixed")),
+                                KeywordDefinition(
+                                    value = Sequence([
+                                        Atom("ufixed"),
+                                        Choice([
+                                            Atom("8"),
+                                            Atom("16"),
+                                            Atom("24"),
+                                            Atom("32"),
+                                            Atom("40"),
+                                            Atom("48"),
+                                            Atom("56"),
+                                            Atom("64"),
+                                            Atom("72"),
+                                            Atom("80"),
+                                            Atom("88"),
+                                            Atom("96"),
+                                            Atom("104"),
+                                            Atom("112"),
+                                            Atom("120"),
+                                            Atom("128"),
+                                            Atom("136"),
+                                            Atom("144"),
+                                            Atom("152"),
+                                            Atom("160"),
+                                            Atom("168"),
+                                            Atom("176")
+                                        ]),
+                                        Atom("x"),
+                                        Choice([
+                                            Atom("8"),
+                                            Atom("16"),
+                                            Atom("24"),
+                                            Atom("32"),
+                                            Atom("40"),
+                                            Atom("48"),
+                                            Atom("56"),
+                                            Atom("64"),
+                                            Atom("72"),
+                                            Atom("80")
+                                        ])
+                                    ])
+                                ),
+                                KeywordDefinition(
+                                    value = Sequence([
+                                        Atom("ufixed"),
+                                        Choice([
+                                            Atom("184x8"),
+                                            Atom("184x16"),
+                                            Atom("184x24"),
+                                            Atom("184x32"),
+                                            Atom("184x40"),
+                                            Atom("184x48"),
+                                            Atom("184x56"),
+                                            Atom("184x64"),
+                                            Atom("184x72"),
+                                            Atom("192x8"),
+                                            Atom("192x16"),
+                                            Atom("192x24"),
+                                            Atom("192x32"),
+                                            Atom("192x40"),
+                                            Atom("192x48"),
+                                            Atom("192x56"),
+                                            Atom("192x64"),
+                                            Atom("200x8"),
+                                            Atom("200x16"),
+                                            Atom("200x24"),
+                                            Atom("200x32"),
+                                            Atom("200x40"),
+                                            Atom("200x48"),
+                                            Atom("200x56"),
+                                            Atom("208x8"),
+                                            Atom("208x16"),
+                                            Atom("208x24"),
+                                            Atom("208x32"),
+                                            Atom("208x40"),
+                                            Atom("208x48"),
+                                            Atom("216x8"),
+                                            Atom("216x16"),
+                                            Atom("216x24"),
+                                            Atom("216x32"),
+                                            Atom("216x40"),
+                                            Atom("224x8"),
+                                            Atom("224x16"),
+                                            Atom("224x24"),
+                                            Atom("224x32"),
+                                            Atom("232x8"),
+                                            Atom("232x16"),
+                                            Atom("232x24"),
+                                            Atom("240x8"),
+                                            Atom("240x16"),
+                                            Atom("248x8")
+                                        ])
+                                    ])
+                                ),
+                                KeywordDefinition(
+                                    reserved_in = "0.4.14",
+                                    value = Sequence([
+                                        Atom("ufixed"),
+                                        Choice([
+                                            Atom("184x80"),
+                                            Atom("192x72"),
+                                            Atom("192x80"),
+                                            Atom("200x64"),
+                                            Atom("200x72"),
+                                            Atom("200x80"),
+                                            Atom("208x56"),
+                                            Atom("208x64"),
+                                            Atom("208x72"),
+                                            Atom("208x80"),
+                                            Atom("216x48"),
+                                            Atom("216x56"),
+                                            Atom("216x64"),
+                                            Atom("216x72"),
+                                            Atom("216x80"),
+                                            Atom("224x40"),
+                                            Atom("224x48"),
+                                            Atom("224x56"),
+                                            Atom("224x64"),
+                                            Atom("224x72"),
+                                            Atom("224x80"),
+                                            Atom("232x32"),
+                                            Atom("232x40"),
+                                            Atom("232x48"),
+                                            Atom("232x56"),
+                                            Atom("232x64"),
+                                            Atom("232x72"),
+                                            Atom("232x80"),
+                                            Atom("240x24"),
+                                            Atom("240x32"),
+                                            Atom("240x40"),
+                                            Atom("240x48"),
+                                            Atom("240x56"),
+                                            Atom("240x64"),
+                                            Atom("240x72"),
+                                            Atom("240x80"),
+                                            Atom("248x16"),
+                                            Atom("248x24"),
+                                            Atom("248x32"),
+                                            Atom("248x40"),
+                                            Atom("248x48"),
+                                            Atom("248x56"),
+                                            Atom("248x64"),
+                                            Atom("248x72"),
+                                            Atom("248x80"),
+                                            Atom("256x8"),
+                                            Atom("256x16"),
+                                            Atom("256x24"),
+                                            Atom("256x32"),
+                                            Atom("256x40"),
+                                            Atom("256x48"),
+                                            Atom("256x56"),
+                                            Atom("256x64"),
+                                            Atom("256x72"),
+                                            Atom("256x80")
+                                        ])
+                                    ])
+                                ),
+                                KeywordDefinition(
+                                    reserved_in = "0.4.14",
+                                    value = Sequence([
+                                        Atom("ufixed"),
+                                        Choice([
+                                            Atom("8"),
+                                            Atom("16"),
+                                            Atom("24"),
+                                            Atom("32"),
+                                            Atom("40"),
+                                            Atom("48"),
+                                            Atom("56"),
+                                            Atom("64"),
+                                            Atom("72"),
+                                            Atom("80"),
+                                            Atom("88"),
+                                            Atom("96"),
+                                            Atom("104"),
+                                            Atom("112"),
+                                            Atom("120"),
+                                            Atom("128"),
+                                            Atom("136"),
+                                            Atom("144"),
+                                            Atom("152"),
+                                            Atom("160"),
+                                            Atom("168"),
+                                            Atom("176"),
+                                            Atom("184"),
+                                            Atom("192"),
+                                            Atom("200"),
+                                            Atom("208"),
+                                            Atom("216"),
+                                            Atom("224"),
+                                            Atom("232"),
+                                            Atom("240"),
+                                            Atom("248"),
+                                            Atom("256")
+                                        ]),
+                                        Atom("x"),
+                                        Choice([
+                                            Atom("0"),
+                                            Atom("1"),
+                                            Atom("2"),
+                                            Atom("3"),
+                                            Atom("4"),
+                                            Atom("5"),
+                                            Atom("6"),
+                                            Atom("7"),
+                                            Atom("9"),
+                                            Atom("10"),
+                                            Atom("11"),
+                                            Atom("12"),
+                                            Atom("13"),
+                                            Atom("14"),
+                                            Atom("15"),
+                                            Atom("17"),
+                                            Atom("18"),
+                                            Atom("19"),
+                                            Atom("20"),
+                                            Atom("21"),
+                                            Atom("22"),
+                                            Atom("23"),
+                                            Atom("25"),
+                                            Atom("26"),
+                                            Atom("27"),
+                                            Atom("28"),
+                                            Atom("29"),
+                                            Atom("30"),
+                                            Atom("31"),
+                                            Atom("33"),
+                                            Atom("34"),
+                                            Atom("35"),
+                                            Atom("36"),
+                                            Atom("37"),
+                                            Atom("38"),
+                                            Atom("39"),
+                                            Atom("41"),
+                                            Atom("42"),
+                                            Atom("43"),
+                                            Atom("44"),
+                                            Atom("45"),
+                                            Atom("46"),
+                                            Atom("47"),
+                                            Atom("49"),
+                                            Atom("50"),
+                                            Atom("51"),
+                                            Atom("52"),
+                                            Atom("53"),
+                                            Atom("54"),
+                                            Atom("55"),
+                                            Atom("57"),
+                                            Atom("58"),
+                                            Atom("59"),
+                                            Atom("60"),
+                                            Atom("61"),
+                                            Atom("62"),
+                                            Atom("63"),
+                                            Atom("65"),
+                                            Atom("66"),
+                                            Atom("67"),
+                                            Atom("68"),
+                                            Atom("69"),
+                                            Atom("70"),
+                                            Atom("71"),
+                                            Atom("73"),
+                                            Atom("74"),
+                                            Atom("75"),
+                                            Atom("76"),
+                                            Atom("77"),
+                                            Atom("78"),
+                                            Atom("79")
+                                        ])
+                                    ])
+                                )
+                            ]
                         ),
                         Keyword(
                             name = UintKeyword,
                             identifier = Identifier,
-                            value = Sequence([
-                                Atom("uint"),
-                                Optional(Range(
-                                    inclusive_start = 8,
-                                    inclusive_end = 256,
-                                    increment = 8
-                                ))
-                            ])
+                            definitions = [KeywordDefinition(
+                                value = Sequence([
+                                    Atom("uint"),
+                                    Optional(Choice([
+                                        Atom("8"),
+                                        Atom("16"),
+                                        Atom("24"),
+                                        Atom("32"),
+                                        Atom("40"),
+                                        Atom("48"),
+                                        Atom("56"),
+                                        Atom("64"),
+                                        Atom("72"),
+                                        Atom("80"),
+                                        Atom("88"),
+                                        Atom("96"),
+                                        Atom("104"),
+                                        Atom("112"),
+                                        Atom("120"),
+                                        Atom("128"),
+                                        Atom("136"),
+                                        Atom("144"),
+                                        Atom("152"),
+                                        Atom("160"),
+                                        Atom("168"),
+                                        Atom("176"),
+                                        Atom("184"),
+                                        Atom("192"),
+                                        Atom("200"),
+                                        Atom("208"),
+                                        Atom("216"),
+                                        Atom("224"),
+                                        Atom("232"),
+                                        Atom("240"),
+                                        Atom("248"),
+                                        Atom("256")
+                                    ]))
+                                ])
+                            )]
                         ),
                         Keyword(
                             name = UncheckedKeyword,
                             identifier = Identifier,
-                            enabled_in = "0.8.0",
-                            value = Atom("unchecked")
+                            definitions = [KeywordDefinition(
+                                enabled_in = "0.8.0",
+                                reserved_in = "0.5.0",
+                                value = Atom("unchecked")
+                            )]
                         ),
                         Keyword(
                             name = UsingKeyword,
                             identifier = Identifier,
-                            value = Atom("using")
+                            definitions = [KeywordDefinition(value = Atom("using"))]
                         ),
                         Keyword(
                             name = VarKeyword,
                             identifier = Identifier,
-                            disabled_in = "0.5.0",
-                            value = Atom("var")
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.5.0",
+                                value = Atom("var")
+                            )]
                         ),
                         Keyword(
                             name = ViewKeyword,
                             identifier = Identifier,
-                            value = Atom("view")
+                            definitions = [KeywordDefinition(value = Atom("view"))]
                         ),
                         Keyword(
                             name = VirtualKeyword,
                             identifier = Identifier,
-                            enabled_in = "0.6.0",
-                            value = Atom("virtual")
+                            definitions = [KeywordDefinition(
+                                enabled_in = "0.6.0",
+                                reserved_in = "0.6.0",
+                                value = Atom("virtual")
+                            )]
                         ),
                         Keyword(
                             name = WeeksKeyword,
                             identifier = Identifier,
-                            value = Atom("weeks")
+                            definitions = [KeywordDefinition(value = Atom("weeks"))]
                         ),
                         Keyword(
                             name = WeiKeyword,
                             identifier = Identifier,
-                            value = Atom("wei")
+                            definitions = [KeywordDefinition(value = Atom("wei"))]
                         ),
                         Keyword(
                             name = WhileKeyword,
                             identifier = Identifier,
-                            value = Atom("while")
+                            definitions = [KeywordDefinition(value = Atom("while"))]
                         ),
                         Keyword(
                             name = YearsKeyword,
                             identifier = Identifier,
-                            disabled_in = "0.5.0",
-                            value = Atom("years")
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.5.0",
+                                value = Atom("years")
+                            )]
                         )
                     ]
                 ),
@@ -3945,71 +4705,1613 @@ codegen_language_macros::compile!(Language(
                     lexical_context = Yul,
                     items = [
                         Keyword(
+                            name = YulAbstractKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                unreserved_in = "0.7.1",
+                                value = Atom("abstract")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulAddressKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                value = Atom("address")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulAfterKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                unreserved_in = "0.7.1",
+                                value = Atom("after")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulAliasKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                reserved_in = "0.5.0",
+                                unreserved_in = "0.7.1",
+                                value = Atom("alias")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulAnonymousKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                unreserved_in = "0.7.1",
+                                value = Atom("anonymous")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulApplyKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                reserved_in = "0.5.0",
+                                unreserved_in = "0.7.1",
+                                value = Atom("apply")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulAsKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                unreserved_in = "0.7.1",
+                                value = Atom("as")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulAssemblyKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                unreserved_in = "0.7.1",
+                                value = Atom("assembly")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulAutoKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                reserved_in = "0.5.0",
+                                unreserved_in = "0.7.1",
+                                value = Atom("auto")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulBoolKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                unreserved_in = "0.5.10",
+                                value = Atom("bool")
+                            )]
+                        ),
+                        Keyword(
                             name = YulBreakKeyword,
                             identifier = YulIdentifier,
-                            value = Atom("break")
+                            definitions = [KeywordDefinition(value = Atom("break"))]
+                        ),
+                        Keyword(
+                            name = YulByteKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                value = Atom("byte")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulBytesKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                unreserved_in = "0.7.1",
+                                value = Sequence([
+                                    Atom("bytes"),
+                                    Choice([
+                                        Atom("1"),
+                                        Atom("2"),
+                                        Atom("3"),
+                                        Atom("4"),
+                                        Atom("5"),
+                                        Atom("6"),
+                                        Atom("7"),
+                                        Atom("8"),
+                                        Atom("9"),
+                                        Atom("10"),
+                                        Atom("11"),
+                                        Atom("12"),
+                                        Atom("13"),
+                                        Atom("14"),
+                                        Atom("15"),
+                                        Atom("16"),
+                                        Atom("17"),
+                                        Atom("18"),
+                                        Atom("19"),
+                                        Atom("20"),
+                                        Atom("21"),
+                                        Atom("22"),
+                                        Atom("23"),
+                                        Atom("24"),
+                                        Atom("25"),
+                                        Atom("26"),
+                                        Atom("27"),
+                                        Atom("28"),
+                                        Atom("29"),
+                                        Atom("30"),
+                                        Atom("31"),
+                                        Atom("32")
+                                    ])
+                                ])
+                            )]
+                        ),
+                        Keyword(
+                            name = YulCallDataKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                reserved_in = "0.5.0",
+                                unreserved_in = "0.7.1",
+                                value = Atom("calldata")
+                            )]
                         ),
                         Keyword(
                             name = YulCaseKeyword,
                             identifier = YulIdentifier,
-                            value = Atom("case")
+                            definitions = [KeywordDefinition(value = Atom("case"))]
+                        ),
+                        Keyword(
+                            name = YulCatchKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                unreserved_in = "0.7.1",
+                                value = Atom("catch")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulConstantKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                unreserved_in = "0.7.1",
+                                value = Atom("constant")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulConstructorKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                reserved_in = "0.5.0",
+                                unreserved_in = "0.7.1",
+                                value = Atom("constructor")
+                            )]
                         ),
                         Keyword(
                             name = YulContinueKeyword,
                             identifier = YulIdentifier,
-                            value = Atom("continue")
+                            definitions = [KeywordDefinition(value = Atom("continue"))]
+                        ),
+                        Keyword(
+                            name = YulContractKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                unreserved_in = "0.7.1",
+                                value = Atom("contract")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulCopyOfKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                reserved_in = "0.5.0",
+                                unreserved_in = "0.7.1",
+                                value = Atom("copyof")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulDaysKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                unreserved_in = "0.7.1",
+                                value = Atom("days")
+                            )]
                         ),
                         Keyword(
                             name = YulDefaultKeyword,
                             identifier = YulIdentifier,
-                            value = Atom("default")
+                            definitions = [KeywordDefinition(value = Atom("default"))]
+                        ),
+                        Keyword(
+                            name = YulDefineKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                reserved_in = "0.5.0",
+                                unreserved_in = "0.7.1",
+                                value = Atom("define")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulDeleteKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                unreserved_in = "0.7.1",
+                                value = Atom("delete")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulDoKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                unreserved_in = "0.7.1",
+                                value = Atom("do")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulElseKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                unreserved_in = "0.7.1",
+                                value = Atom("else")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulEmitKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                reserved_in = "0.5.0",
+                                unreserved_in = "0.7.1",
+                                value = Atom("emit")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulEnumKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                unreserved_in = "0.7.1",
+                                value = Atom("enum")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulEtherKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                unreserved_in = "0.7.1",
+                                value = Atom("ether")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulEventKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                unreserved_in = "0.7.1",
+                                value = Atom("event")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulExternalKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                unreserved_in = "0.7.1",
+                                value = Atom("external")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulFallbackKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                reserved_in = "0.6.0",
+                                unreserved_in = "0.7.1",
+                                value = Atom("fallback")
+                            )]
                         ),
                         Keyword(
                             name = YulFalseKeyword,
                             identifier = YulIdentifier,
-                            value = Atom("false")
+                            definitions = [KeywordDefinition(value = Atom("false"))]
+                        ),
+                        Keyword(
+                            name = YulFinalKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                unreserved_in = "0.7.1",
+                                value = Atom("final")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulFinneyKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                unreserved_in = "0.7.0",
+                                value = Atom("finney")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulFixedKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [
+                                KeywordDefinition(
+                                    disabled_in = "0.4.11",
+                                    unreserved_in = "0.7.1",
+                                    value = Atom("fixed")
+                                ),
+                                KeywordDefinition(
+                                    disabled_in = "0.4.11",
+                                    unreserved_in = "0.7.1",
+                                    value = Sequence([
+                                        Atom("fixed"),
+                                        Choice([
+                                            Atom("8"),
+                                            Atom("16"),
+                                            Atom("24"),
+                                            Atom("32"),
+                                            Atom("40"),
+                                            Atom("48"),
+                                            Atom("56"),
+                                            Atom("64"),
+                                            Atom("72"),
+                                            Atom("80"),
+                                            Atom("88"),
+                                            Atom("96"),
+                                            Atom("104"),
+                                            Atom("112"),
+                                            Atom("120"),
+                                            Atom("128"),
+                                            Atom("136"),
+                                            Atom("144"),
+                                            Atom("152"),
+                                            Atom("160"),
+                                            Atom("168"),
+                                            Atom("176")
+                                        ]),
+                                        Atom("x"),
+                                        Choice([
+                                            Atom("8"),
+                                            Atom("16"),
+                                            Atom("24"),
+                                            Atom("32"),
+                                            Atom("40"),
+                                            Atom("48"),
+                                            Atom("56"),
+                                            Atom("64"),
+                                            Atom("72"),
+                                            Atom("80")
+                                        ])
+                                    ])
+                                ),
+                                KeywordDefinition(
+                                    disabled_in = "0.4.11",
+                                    unreserved_in = "0.7.1",
+                                    value = Sequence([
+                                        Atom("fixed"),
+                                        Choice([
+                                            Atom("184x8"),
+                                            Atom("184x16"),
+                                            Atom("184x24"),
+                                            Atom("184x32"),
+                                            Atom("184x40"),
+                                            Atom("184x48"),
+                                            Atom("184x56"),
+                                            Atom("184x64"),
+                                            Atom("184x72"),
+                                            Atom("192x8"),
+                                            Atom("192x16"),
+                                            Atom("192x24"),
+                                            Atom("192x32"),
+                                            Atom("192x40"),
+                                            Atom("192x48"),
+                                            Atom("192x56"),
+                                            Atom("192x64"),
+                                            Atom("200x8"),
+                                            Atom("200x16"),
+                                            Atom("200x24"),
+                                            Atom("200x32"),
+                                            Atom("200x40"),
+                                            Atom("200x48"),
+                                            Atom("200x56"),
+                                            Atom("208x8"),
+                                            Atom("208x16"),
+                                            Atom("208x24"),
+                                            Atom("208x32"),
+                                            Atom("208x40"),
+                                            Atom("208x48"),
+                                            Atom("216x8"),
+                                            Atom("216x16"),
+                                            Atom("216x24"),
+                                            Atom("216x32"),
+                                            Atom("216x40"),
+                                            Atom("224x8"),
+                                            Atom("224x16"),
+                                            Atom("224x24"),
+                                            Atom("224x32"),
+                                            Atom("232x8"),
+                                            Atom("232x16"),
+                                            Atom("232x24"),
+                                            Atom("240x8"),
+                                            Atom("240x16"),
+                                            Atom("248x8")
+                                        ])
+                                    ])
+                                ),
+                                KeywordDefinition(
+                                    disabled_in = "0.4.11",
+                                    reserved_in = "0.4.14",
+                                    unreserved_in = "0.7.1",
+                                    value = Sequence([
+                                        Atom("fixed"),
+                                        Choice([
+                                            Atom("184x80"),
+                                            Atom("192x72"),
+                                            Atom("192x80"),
+                                            Atom("200x64"),
+                                            Atom("200x72"),
+                                            Atom("200x80"),
+                                            Atom("208x56"),
+                                            Atom("208x64"),
+                                            Atom("208x72"),
+                                            Atom("208x80"),
+                                            Atom("216x48"),
+                                            Atom("216x56"),
+                                            Atom("216x64"),
+                                            Atom("216x72"),
+                                            Atom("216x80"),
+                                            Atom("224x40"),
+                                            Atom("224x48"),
+                                            Atom("224x56"),
+                                            Atom("224x64"),
+                                            Atom("224x72"),
+                                            Atom("224x80"),
+                                            Atom("232x32"),
+                                            Atom("232x40"),
+                                            Atom("232x48"),
+                                            Atom("232x56"),
+                                            Atom("232x64"),
+                                            Atom("232x72"),
+                                            Atom("232x80"),
+                                            Atom("240x24"),
+                                            Atom("240x32"),
+                                            Atom("240x40"),
+                                            Atom("240x48"),
+                                            Atom("240x56"),
+                                            Atom("240x64"),
+                                            Atom("240x72"),
+                                            Atom("240x80"),
+                                            Atom("248x16"),
+                                            Atom("248x24"),
+                                            Atom("248x32"),
+                                            Atom("248x40"),
+                                            Atom("248x48"),
+                                            Atom("248x56"),
+                                            Atom("248x64"),
+                                            Atom("248x72"),
+                                            Atom("248x80"),
+                                            Atom("256x8"),
+                                            Atom("256x16"),
+                                            Atom("256x24"),
+                                            Atom("256x32"),
+                                            Atom("256x40"),
+                                            Atom("256x48"),
+                                            Atom("256x56"),
+                                            Atom("256x64"),
+                                            Atom("256x72"),
+                                            Atom("256x80")
+                                        ])
+                                    ])
+                                ),
+                                KeywordDefinition(
+                                    disabled_in = "0.4.11",
+                                    reserved_in = "0.4.14",
+                                    unreserved_in = "0.7.1",
+                                    value = Sequence([
+                                        Atom("fixed"),
+                                        Choice([
+                                            Atom("8"),
+                                            Atom("16"),
+                                            Atom("24"),
+                                            Atom("32"),
+                                            Atom("40"),
+                                            Atom("48"),
+                                            Atom("56"),
+                                            Atom("64"),
+                                            Atom("72"),
+                                            Atom("80"),
+                                            Atom("88"),
+                                            Atom("96"),
+                                            Atom("104"),
+                                            Atom("112"),
+                                            Atom("120"),
+                                            Atom("128"),
+                                            Atom("136"),
+                                            Atom("144"),
+                                            Atom("152"),
+                                            Atom("160"),
+                                            Atom("168"),
+                                            Atom("176"),
+                                            Atom("184"),
+                                            Atom("192"),
+                                            Atom("200"),
+                                            Atom("208"),
+                                            Atom("216"),
+                                            Atom("224"),
+                                            Atom("232"),
+                                            Atom("240"),
+                                            Atom("248"),
+                                            Atom("256")
+                                        ]),
+                                        Atom("x"),
+                                        Choice([
+                                            Atom("0"),
+                                            Atom("1"),
+                                            Atom("2"),
+                                            Atom("3"),
+                                            Atom("4"),
+                                            Atom("5"),
+                                            Atom("6"),
+                                            Atom("7"),
+                                            Atom("9"),
+                                            Atom("10"),
+                                            Atom("11"),
+                                            Atom("12"),
+                                            Atom("13"),
+                                            Atom("14"),
+                                            Atom("15"),
+                                            Atom("17"),
+                                            Atom("18"),
+                                            Atom("19"),
+                                            Atom("20"),
+                                            Atom("21"),
+                                            Atom("22"),
+                                            Atom("23"),
+                                            Atom("25"),
+                                            Atom("26"),
+                                            Atom("27"),
+                                            Atom("28"),
+                                            Atom("29"),
+                                            Atom("30"),
+                                            Atom("31"),
+                                            Atom("33"),
+                                            Atom("34"),
+                                            Atom("35"),
+                                            Atom("36"),
+                                            Atom("37"),
+                                            Atom("38"),
+                                            Atom("39"),
+                                            Atom("41"),
+                                            Atom("42"),
+                                            Atom("43"),
+                                            Atom("44"),
+                                            Atom("45"),
+                                            Atom("46"),
+                                            Atom("47"),
+                                            Atom("49"),
+                                            Atom("50"),
+                                            Atom("51"),
+                                            Atom("52"),
+                                            Atom("53"),
+                                            Atom("54"),
+                                            Atom("55"),
+                                            Atom("57"),
+                                            Atom("58"),
+                                            Atom("59"),
+                                            Atom("60"),
+                                            Atom("61"),
+                                            Atom("62"),
+                                            Atom("63"),
+                                            Atom("65"),
+                                            Atom("66"),
+                                            Atom("67"),
+                                            Atom("68"),
+                                            Atom("69"),
+                                            Atom("70"),
+                                            Atom("71"),
+                                            Atom("73"),
+                                            Atom("74"),
+                                            Atom("75"),
+                                            Atom("76"),
+                                            Atom("77"),
+                                            Atom("78"),
+                                            Atom("79")
+                                        ])
+                                    ])
+                                )
+                            ]
                         ),
                         Keyword(
                             name = YulForKeyword,
                             identifier = YulIdentifier,
-                            value = Atom("for")
+                            definitions = [KeywordDefinition(value = Atom("for"))]
                         ),
                         Keyword(
                             name = YulFunctionKeyword,
                             identifier = YulIdentifier,
-                            value = Atom("function")
+                            definitions = [KeywordDefinition(value = Atom("function"))]
+                        ),
+                        Keyword(
+                            name = YulGweiKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                reserved_in = "0.7.0",
+                                unreserved_in = "0.7.1",
+                                value = Atom("gwei")
+                            )]
                         ),
                         Keyword(
                             name = YulHexKeyword,
                             identifier = YulIdentifier,
-                            disabled_in = "0.4.11",
-                            value = Atom("hex")
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                value = Atom("hex")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulHoursKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                unreserved_in = "0.7.1",
+                                value = Atom("hours")
+                            )]
                         ),
                         Keyword(
                             name = YulIfKeyword,
                             identifier = YulIdentifier,
-                            value = Atom("if")
+                            definitions = [KeywordDefinition(value = Atom("if"))]
+                        ),
+                        Keyword(
+                            name = YulImmutableKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                reserved_in = "0.5.0",
+                                unreserved_in = "0.7.1",
+                                value = Atom("immutable")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulImplementsKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                reserved_in = "0.5.0",
+                                unreserved_in = "0.7.1",
+                                value = Atom("implements")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulImportKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                unreserved_in = "0.7.1",
+                                value = Atom("import")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulIndexedKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                unreserved_in = "0.7.1",
+                                value = Atom("indexed")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulInKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                unreserved_in = "0.6.8",
+                                value = Atom("in")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulInlineKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                unreserved_in = "0.7.1",
+                                value = Atom("inline")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulInterfaceKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                unreserved_in = "0.7.1",
+                                value = Atom("interface")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulInternalKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                unreserved_in = "0.7.1",
+                                value = Atom("internal")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulIntKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                unreserved_in = "0.7.1",
+                                value = Sequence([
+                                    Atom("int"),
+                                    Optional(Choice([
+                                        Atom("8"),
+                                        Atom("16"),
+                                        Atom("24"),
+                                        Atom("32"),
+                                        Atom("40"),
+                                        Atom("48"),
+                                        Atom("56"),
+                                        Atom("64"),
+                                        Atom("72"),
+                                        Atom("80"),
+                                        Atom("88"),
+                                        Atom("96"),
+                                        Atom("104"),
+                                        Atom("112"),
+                                        Atom("120"),
+                                        Atom("128"),
+                                        Atom("136"),
+                                        Atom("144"),
+                                        Atom("152"),
+                                        Atom("160"),
+                                        Atom("168"),
+                                        Atom("176"),
+                                        Atom("184"),
+                                        Atom("192"),
+                                        Atom("200"),
+                                        Atom("208"),
+                                        Atom("216"),
+                                        Atom("224"),
+                                        Atom("232"),
+                                        Atom("240"),
+                                        Atom("248"),
+                                        Atom("256")
+                                    ]))
+                                ])
+                            )]
+                        ),
+                        Keyword(
+                            name = YulIsKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                unreserved_in = "0.7.1",
+                                value = Atom("is")
+                            )]
                         ),
                         Keyword(
                             name = YulLeaveKeyword,
                             identifier = YulIdentifier,
-                            enabled_in = "0.6.0",
-                            value = Atom("leave")
+                            definitions = [KeywordDefinition(
+                                enabled_in = "0.6.0",
+                                reserved_in = "0.7.1",
+                                value = Atom("leave")
+                            )]
                         ),
                         Keyword(
                             name = YulLetKeyword,
                             identifier = YulIdentifier,
-                            value = Atom("let")
+                            definitions = [KeywordDefinition(value = Atom("let"))]
+                        ),
+                        Keyword(
+                            name = YulLibraryKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                unreserved_in = "0.7.1",
+                                value = Atom("library")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulMacroKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                reserved_in = "0.5.0",
+                                unreserved_in = "0.7.1",
+                                value = Atom("macro")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulMappingKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                unreserved_in = "0.7.1",
+                                value = Atom("mapping")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulMatchKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                unreserved_in = "0.7.1",
+                                value = Atom("match")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulMemoryKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                unreserved_in = "0.7.1",
+                                value = Atom("memory")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulMinutesKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                unreserved_in = "0.7.1",
+                                value = Atom("minutes")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulModifierKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                unreserved_in = "0.7.1",
+                                value = Atom("modifier")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulMutableKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                reserved_in = "0.5.0",
+                                unreserved_in = "0.7.1",
+                                value = Atom("mutable")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulNewKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                unreserved_in = "0.7.1",
+                                value = Atom("new")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulNullKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                unreserved_in = "0.7.1",
+                                value = Atom("null")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulOfKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                unreserved_in = "0.7.1",
+                                value = Atom("of")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulOverrideKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                reserved_in = "0.5.0",
+                                unreserved_in = "0.7.1",
+                                value = Atom("override")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulPartialKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                reserved_in = "0.5.0",
+                                unreserved_in = "0.7.1",
+                                value = Atom("partial")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulPayableKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                unreserved_in = "0.7.1",
+                                value = Atom("payable")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulPragmaKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                unreserved_in = "0.7.1",
+                                value = Atom("pragma")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulPrivateKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                unreserved_in = "0.7.1",
+                                value = Atom("private")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulPromiseKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                reserved_in = "0.5.0",
+                                unreserved_in = "0.7.1",
+                                value = Atom("promise")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulPublicKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                unreserved_in = "0.7.1",
+                                value = Atom("public")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulPureKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                unreserved_in = "0.7.1",
+                                value = Atom("pure")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulReceiveKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                reserved_in = "0.6.0",
+                                unreserved_in = "0.7.1",
+                                value = Atom("receive")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulReferenceKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                reserved_in = "0.5.0",
+                                unreserved_in = "0.7.1",
+                                value = Atom("reference")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulRelocatableKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                unreserved_in = "0.7.1",
+                                value = Atom("relocatable")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulReturnKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                value = Atom("return")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulReturnsKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                unreserved_in = "0.7.1",
+                                value = Atom("returns")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulRevertKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                value = Atom("revert")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulSealedKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                reserved_in = "0.5.0",
+                                unreserved_in = "0.7.1",
+                                value = Atom("sealed")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulSecondsKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                unreserved_in = "0.7.1",
+                                value = Atom("seconds")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulSizeOfKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                reserved_in = "0.5.0",
+                                unreserved_in = "0.7.1",
+                                value = Atom("sizeof")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulStaticKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                unreserved_in = "0.7.1",
+                                value = Atom("static")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulStorageKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                unreserved_in = "0.7.1",
+                                value = Atom("storage")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulStringKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                unreserved_in = "0.7.1",
+                                value = Atom("string")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulStructKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                unreserved_in = "0.7.1",
+                                value = Atom("struct")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulSupportsKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                reserved_in = "0.5.0",
+                                unreserved_in = "0.7.1",
+                                value = Atom("supports")
+                            )]
                         ),
                         Keyword(
                             name = YulSwitchKeyword,
                             identifier = YulIdentifier,
-                            value = Atom("switch")
+                            definitions = [KeywordDefinition(value = Atom("switch"))]
+                        ),
+                        Keyword(
+                            name = YulSzaboKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                unreserved_in = "0.7.0",
+                                value = Atom("szabo")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulThrowKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                unreserved_in = "0.7.1",
+                                value = Atom("throw")
+                            )]
                         ),
                         Keyword(
                             name = YulTrueKeyword,
                             identifier = YulIdentifier,
-                            value = Atom("true")
+                            definitions = [KeywordDefinition(value = Atom("true"))]
+                        ),
+                        Keyword(
+                            name = YulTryKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                unreserved_in = "0.7.1",
+                                value = Atom("try")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulTypeDefKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                reserved_in = "0.5.0",
+                                unreserved_in = "0.7.1",
+                                value = Atom("typedef")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulTypeKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                unreserved_in = "0.7.1",
+                                value = Atom("type")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulTypeOfKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                unreserved_in = "0.7.1",
+                                value = Atom("typeof")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulUfixedKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [
+                                KeywordDefinition(
+                                    disabled_in = "0.4.11",
+                                    unreserved_in = "0.7.1",
+                                    value = Atom("ufixed")
+                                ),
+                                KeywordDefinition(
+                                    disabled_in = "0.4.11",
+                                    unreserved_in = "0.7.1",
+                                    value = Sequence([
+                                        Atom("ufixed"),
+                                        Choice([
+                                            Atom("8"),
+                                            Atom("16"),
+                                            Atom("24"),
+                                            Atom("32"),
+                                            Atom("40"),
+                                            Atom("48"),
+                                            Atom("56"),
+                                            Atom("64"),
+                                            Atom("72"),
+                                            Atom("80"),
+                                            Atom("88"),
+                                            Atom("96"),
+                                            Atom("104"),
+                                            Atom("112"),
+                                            Atom("120"),
+                                            Atom("128"),
+                                            Atom("136"),
+                                            Atom("144"),
+                                            Atom("152"),
+                                            Atom("160"),
+                                            Atom("168"),
+                                            Atom("176")
+                                        ]),
+                                        Atom("x"),
+                                        Choice([
+                                            Atom("8"),
+                                            Atom("16"),
+                                            Atom("24"),
+                                            Atom("32"),
+                                            Atom("40"),
+                                            Atom("48"),
+                                            Atom("56"),
+                                            Atom("64"),
+                                            Atom("72"),
+                                            Atom("80")
+                                        ])
+                                    ])
+                                ),
+                                KeywordDefinition(
+                                    disabled_in = "0.4.11",
+                                    unreserved_in = "0.7.1",
+                                    value = Sequence([
+                                        Atom("ufixed"),
+                                        Choice([
+                                            Atom("184x8"),
+                                            Atom("184x16"),
+                                            Atom("184x24"),
+                                            Atom("184x32"),
+                                            Atom("184x40"),
+                                            Atom("184x48"),
+                                            Atom("184x56"),
+                                            Atom("184x64"),
+                                            Atom("184x72"),
+                                            Atom("192x8"),
+                                            Atom("192x16"),
+                                            Atom("192x24"),
+                                            Atom("192x32"),
+                                            Atom("192x40"),
+                                            Atom("192x48"),
+                                            Atom("192x56"),
+                                            Atom("192x64"),
+                                            Atom("200x8"),
+                                            Atom("200x16"),
+                                            Atom("200x24"),
+                                            Atom("200x32"),
+                                            Atom("200x40"),
+                                            Atom("200x48"),
+                                            Atom("200x56"),
+                                            Atom("208x8"),
+                                            Atom("208x16"),
+                                            Atom("208x24"),
+                                            Atom("208x32"),
+                                            Atom("208x40"),
+                                            Atom("208x48"),
+                                            Atom("216x8"),
+                                            Atom("216x16"),
+                                            Atom("216x24"),
+                                            Atom("216x32"),
+                                            Atom("216x40"),
+                                            Atom("224x8"),
+                                            Atom("224x16"),
+                                            Atom("224x24"),
+                                            Atom("224x32"),
+                                            Atom("232x8"),
+                                            Atom("232x16"),
+                                            Atom("232x24"),
+                                            Atom("240x8"),
+                                            Atom("240x16"),
+                                            Atom("248x8")
+                                        ])
+                                    ])
+                                ),
+                                KeywordDefinition(
+                                    disabled_in = "0.4.11",
+                                    reserved_in = "0.4.14",
+                                    unreserved_in = "0.7.1",
+                                    value = Sequence([
+                                        Atom("ufixed"),
+                                        Choice([
+                                            Atom("184x80"),
+                                            Atom("192x72"),
+                                            Atom("192x80"),
+                                            Atom("200x64"),
+                                            Atom("200x72"),
+                                            Atom("200x80"),
+                                            Atom("208x56"),
+                                            Atom("208x64"),
+                                            Atom("208x72"),
+                                            Atom("208x80"),
+                                            Atom("216x48"),
+                                            Atom("216x56"),
+                                            Atom("216x64"),
+                                            Atom("216x72"),
+                                            Atom("216x80"),
+                                            Atom("224x40"),
+                                            Atom("224x48"),
+                                            Atom("224x56"),
+                                            Atom("224x64"),
+                                            Atom("224x72"),
+                                            Atom("224x80"),
+                                            Atom("232x32"),
+                                            Atom("232x40"),
+                                            Atom("232x48"),
+                                            Atom("232x56"),
+                                            Atom("232x64"),
+                                            Atom("232x72"),
+                                            Atom("232x80"),
+                                            Atom("240x24"),
+                                            Atom("240x32"),
+                                            Atom("240x40"),
+                                            Atom("240x48"),
+                                            Atom("240x56"),
+                                            Atom("240x64"),
+                                            Atom("240x72"),
+                                            Atom("240x80"),
+                                            Atom("248x16"),
+                                            Atom("248x24"),
+                                            Atom("248x32"),
+                                            Atom("248x40"),
+                                            Atom("248x48"),
+                                            Atom("248x56"),
+                                            Atom("248x64"),
+                                            Atom("248x72"),
+                                            Atom("248x80"),
+                                            Atom("256x8"),
+                                            Atom("256x16"),
+                                            Atom("256x24"),
+                                            Atom("256x32"),
+                                            Atom("256x40"),
+                                            Atom("256x48"),
+                                            Atom("256x56"),
+                                            Atom("256x64"),
+                                            Atom("256x72"),
+                                            Atom("256x80")
+                                        ])
+                                    ])
+                                ),
+                                KeywordDefinition(
+                                    disabled_in = "0.4.11",
+                                    reserved_in = "0.4.14",
+                                    unreserved_in = "0.7.1",
+                                    value = Sequence([
+                                        Atom("ufixed"),
+                                        Choice([
+                                            Atom("8"),
+                                            Atom("16"),
+                                            Atom("24"),
+                                            Atom("32"),
+                                            Atom("40"),
+                                            Atom("48"),
+                                            Atom("56"),
+                                            Atom("64"),
+                                            Atom("72"),
+                                            Atom("80"),
+                                            Atom("88"),
+                                            Atom("96"),
+                                            Atom("104"),
+                                            Atom("112"),
+                                            Atom("120"),
+                                            Atom("128"),
+                                            Atom("136"),
+                                            Atom("144"),
+                                            Atom("152"),
+                                            Atom("160"),
+                                            Atom("168"),
+                                            Atom("176"),
+                                            Atom("184"),
+                                            Atom("192"),
+                                            Atom("200"),
+                                            Atom("208"),
+                                            Atom("216"),
+                                            Atom("224"),
+                                            Atom("232"),
+                                            Atom("240"),
+                                            Atom("248"),
+                                            Atom("256")
+                                        ]),
+                                        Atom("x"),
+                                        Choice([
+                                            Atom("0"),
+                                            Atom("1"),
+                                            Atom("2"),
+                                            Atom("3"),
+                                            Atom("4"),
+                                            Atom("5"),
+                                            Atom("6"),
+                                            Atom("7"),
+                                            Atom("9"),
+                                            Atom("10"),
+                                            Atom("11"),
+                                            Atom("12"),
+                                            Atom("13"),
+                                            Atom("14"),
+                                            Atom("15"),
+                                            Atom("17"),
+                                            Atom("18"),
+                                            Atom("19"),
+                                            Atom("20"),
+                                            Atom("21"),
+                                            Atom("22"),
+                                            Atom("23"),
+                                            Atom("25"),
+                                            Atom("26"),
+                                            Atom("27"),
+                                            Atom("28"),
+                                            Atom("29"),
+                                            Atom("30"),
+                                            Atom("31"),
+                                            Atom("33"),
+                                            Atom("34"),
+                                            Atom("35"),
+                                            Atom("36"),
+                                            Atom("37"),
+                                            Atom("38"),
+                                            Atom("39"),
+                                            Atom("41"),
+                                            Atom("42"),
+                                            Atom("43"),
+                                            Atom("44"),
+                                            Atom("45"),
+                                            Atom("46"),
+                                            Atom("47"),
+                                            Atom("49"),
+                                            Atom("50"),
+                                            Atom("51"),
+                                            Atom("52"),
+                                            Atom("53"),
+                                            Atom("54"),
+                                            Atom("55"),
+                                            Atom("57"),
+                                            Atom("58"),
+                                            Atom("59"),
+                                            Atom("60"),
+                                            Atom("61"),
+                                            Atom("62"),
+                                            Atom("63"),
+                                            Atom("65"),
+                                            Atom("66"),
+                                            Atom("67"),
+                                            Atom("68"),
+                                            Atom("69"),
+                                            Atom("70"),
+                                            Atom("71"),
+                                            Atom("73"),
+                                            Atom("74"),
+                                            Atom("75"),
+                                            Atom("76"),
+                                            Atom("77"),
+                                            Atom("78"),
+                                            Atom("79")
+                                        ])
+                                    ])
+                                )
+                            ]
+                        ),
+                        Keyword(
+                            name = YulUintKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                unreserved_in = "0.7.1",
+                                value = Sequence([
+                                    Atom("uint"),
+                                    Optional(Choice([
+                                        Atom("8"),
+                                        Atom("16"),
+                                        Atom("24"),
+                                        Atom("32"),
+                                        Atom("40"),
+                                        Atom("48"),
+                                        Atom("56"),
+                                        Atom("64"),
+                                        Atom("72"),
+                                        Atom("80"),
+                                        Atom("88"),
+                                        Atom("96"),
+                                        Atom("104"),
+                                        Atom("112"),
+                                        Atom("120"),
+                                        Atom("128"),
+                                        Atom("136"),
+                                        Atom("144"),
+                                        Atom("152"),
+                                        Atom("160"),
+                                        Atom("168"),
+                                        Atom("176"),
+                                        Atom("184"),
+                                        Atom("192"),
+                                        Atom("200"),
+                                        Atom("208"),
+                                        Atom("216"),
+                                        Atom("224"),
+                                        Atom("232"),
+                                        Atom("240"),
+                                        Atom("248"),
+                                        Atom("256")
+                                    ]))
+                                ])
+                            )]
+                        ),
+                        Keyword(
+                            name = YulUncheckedKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                reserved_in = "0.5.0",
+                                unreserved_in = "0.7.1",
+                                value = Atom("unchecked")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulUsingKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                unreserved_in = "0.7.1",
+                                value = Atom("using")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulVarKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                unreserved_in = "0.6.5",
+                                value = Atom("var")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulViewKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                unreserved_in = "0.7.1",
+                                value = Atom("view")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulVirtualKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                reserved_in = "0.6.0",
+                                unreserved_in = "0.7.1",
+                                value = Atom("virtual")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulWeeksKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                unreserved_in = "0.7.1",
+                                value = Atom("weeks")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulWeiKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                unreserved_in = "0.7.1",
+                                value = Atom("wei")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulWhileKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                unreserved_in = "0.7.1",
+                                value = Atom("while")
+                            )]
+                        ),
+                        Keyword(
+                            name = YulYearsKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                disabled_in = "0.4.11",
+                                unreserved_in = "0.7.1",
+                                value = Atom("years")
+                            )]
                         )
                     ]
                 )

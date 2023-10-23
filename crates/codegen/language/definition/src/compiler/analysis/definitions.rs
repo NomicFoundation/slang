@@ -1,11 +1,8 @@
 use crate::{
-    compiler::{
-        analysis::{Analysis, ItemMetadata},
-        versions::{VersionRange, VersionSet},
-    },
+    compiler::analysis::{Analysis, ItemMetadata},
     internals::Spanned,
-    spanned::Item,
-    Identifier,
+    model::{spanned::Item, Identifier},
+    utils::{VersionRange, VersionSet},
 };
 use semver::Version;
 use std::{collections::HashSet, fmt::Debug};
@@ -142,11 +139,11 @@ fn calculate_defined_in(analysis: &mut Analysis, item: &Item) -> VersionSet {
         Item::Trivia { item: _ } => {
             VersionSet::from_range(calculate_enablement(analysis, &None, &None))
         }
-        Item::Keyword { item } => VersionSet::from_range(calculate_enablement(
-            analysis,
-            &item.enabled_in,
-            &item.disabled_in,
-        )),
+        Item::Keyword { item } => {
+            VersionSet::from_ranges(item.definitions.iter().map(|definition| {
+                calculate_enablement(analysis, &definition.enabled_in, &definition.disabled_in)
+            }))
+        }
         Item::Token { item } => {
             VersionSet::from_ranges(item.definitions.iter().map(|definition| {
                 calculate_enablement(analysis, &definition.enabled_in, &definition.disabled_in)

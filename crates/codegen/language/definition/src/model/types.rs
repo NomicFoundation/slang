@@ -6,7 +6,7 @@ pub use self::wrapper::*;
 /// More information: https://github.com/rust-lang/rust/issues/54726
 #[codegen_language_internal_macros::derive_internals]
 mod wrapper {
-    use crate::Identifier;
+    use crate::model::Identifier;
     use indexmap::{IndexMap, IndexSet};
     use semver::Version;
     use serde::Serialize;
@@ -218,6 +218,11 @@ mod wrapper {
         pub name: Identifier,
         pub identifier: Identifier,
 
+        pub definitions: Vec<KeywordDefinition>,
+    }
+
+    #[derive(Debug, Eq, PartialEq, Serialize)]
+    pub struct KeywordDefinition {
         pub enabled_in: Option<Version>,
         pub disabled_in: Option<Version>,
 
@@ -229,20 +234,10 @@ mod wrapper {
 
     #[derive(Debug, Eq, PartialEq, Serialize)]
     pub enum KeywordValue {
-        Sequence {
-            values: Vec<KeywordValue>,
-        },
-        Optional {
-            value: Box<KeywordValue>,
-        },
-        Range {
-            inclusive_start: usize,
-            inclusive_end: usize,
-            increment: usize,
-        },
-        Atom {
-            atom: String,
-        },
+        Sequence { values: Vec<KeywordValue> },
+        Optional { value: Box<KeywordValue> },
+        Choice { values: Vec<KeywordValue> },
+        Atom { atom: String },
     }
 
     #[derive(Debug, Eq, PartialEq, Serialize)]

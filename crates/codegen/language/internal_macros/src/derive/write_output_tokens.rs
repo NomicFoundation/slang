@@ -25,7 +25,7 @@ fn derive_struct(name: &Ident, fields: &Vec<Field>) -> TokenStream {
         #( let #keys = self.#keys.write_output_tokens(); )*
 
         return quote::quote! {
-            codegen_language_definition::#name {
+            codegen_language_definition::model::#name {
                 #( #keys: ##keys ),*
             }
         };
@@ -41,7 +41,7 @@ fn derive_enum(name: &Ident, variants: &Vec<Variant>) -> TokenStream {
                 return quote! {
                     Self::#variant_name => {
                         return quote::quote! {
-                            codegen_language_definition::#name::#variant_name
+                            codegen_language_definition::model::#name::#variant_name
                         };
                     }
                 };
@@ -56,7 +56,7 @@ fn derive_enum(name: &Ident, variants: &Vec<Variant>) -> TokenStream {
                         #( let #keys = #keys.write_output_tokens(); )*
 
                         return quote::quote! {
-                            codegen_language_definition::#name::#variant_name {
+                            codegen_language_definition::model::#name::#variant_name {
                                 #( #keys: ##keys ),*
                             }
                         };

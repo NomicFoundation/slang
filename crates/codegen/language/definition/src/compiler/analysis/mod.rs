@@ -3,16 +3,16 @@ mod reachability;
 mod references;
 
 use crate::{
-    compiler::{
-        analysis::{
-            definitions::analyze_definitions, reachability::analyze_reachability,
-            references::analyze_references,
-        },
-        versions::VersionSet,
+    compiler::analysis::{
+        definitions::analyze_definitions, reachability::analyze_reachability,
+        references::analyze_references,
     },
     internals::{ErrorsCollection, ParseOutput, Spanned},
-    spanned::{Item, ItemKind, Language},
-    Identifier,
+    model::{
+        spanned::{Item, ItemKind, Language},
+        Identifier,
+    },
+    utils::VersionSet,
 };
 use indexmap::IndexMap;
 use proc_macro2::Span;

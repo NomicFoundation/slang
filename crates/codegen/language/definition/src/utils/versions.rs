@@ -41,6 +41,10 @@ impl VersionRange {
     pub fn is_empty(&self) -> bool {
         return self.inclusive_start == self.exclusive_end;
     }
+
+    pub fn contains(&self, version: &Version) -> bool {
+        return &self.inclusive_start <= version && version < &self.exclusive_end;
+    }
 }
 
 impl Display for VersionRange {

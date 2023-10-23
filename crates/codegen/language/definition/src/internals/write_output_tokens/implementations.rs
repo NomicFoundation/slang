@@ -1,6 +1,6 @@
 use crate::{
     internals::{Spanned, WriteOutputTokens},
-    Identifier,
+    model::Identifier,
 };
 use indexmap::{IndexMap, IndexSet};
 use proc_macro2::{Literal, TokenStream};

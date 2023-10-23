@@ -23,7 +23,7 @@ impl LanguageEmitter {
                 pub struct #definition_struct;
 
                 impl #definition_struct {
-                    pub fn create() -> codegen_language_definition::Language {
+                    pub fn create() -> codegen_language_definition::model::Language {
                         return #definition;
                     }
                 }
