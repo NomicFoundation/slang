@@ -10,15 +10,22 @@ codegen_language_macros::compile!(Language(
         title = "Section One",
         topics = [Topic(
             title = "Topic One",
-            items = [Precedence(
-                name = Bar,
-                precedence_expressions = [
-                    PrecedenceExpression(name = Expression1, operators = []),
-                    PrecedenceExpression(name = Expression2, operators = []),
-                    PrecedenceExpression(name = Expression1, operators = [])
-                ],
-                primary_expressions = []
-            )]
+            items = [
+                Precedence(
+                    name = Bar,
+                    precedence_expressions = [
+                        PrecedenceExpression(name = Expression1, operators = []),
+                        PrecedenceExpression(name = Expression2, operators = []),
+                        PrecedenceExpression(name = Expression1, operators = [])
+                    ],
+                    default_primary_expression = Baz,
+                    primary_expressions = [PrimaryExpression(expression = Baz)]
+                ),
+                Token(
+                    name = Baz,
+                    definitions = [TokenDefinition(scanner = Atom("baz"))]
+                )
+            ]
         )]
     )]
 ));

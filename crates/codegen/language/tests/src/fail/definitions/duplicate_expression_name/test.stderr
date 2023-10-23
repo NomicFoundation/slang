@@ -1,5 +1,5 @@
 error: An expression with the name 'Expression1' already exists.
-  --> src/fail/definitions/duplicate_expression_name/test.rs:18:49
+  --> src/fail/definitions/duplicate_expression_name/test.rs:19:53
    |
-18 |                     PrecedenceExpression(name = Expression1, operators = [])
-   |                                                 ^^^^^^^^^^^
+19 |                         PrecedenceExpression(name = Expression1, operators = [])
+   |                                                     ^^^^^^^^^^^

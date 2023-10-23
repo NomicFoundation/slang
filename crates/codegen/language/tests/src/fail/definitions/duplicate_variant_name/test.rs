@@ -12,6 +12,7 @@ codegen_language_macros::compile!(Language(
             title = "Topic One",
             items = [Enum(
                 name = Bar,
+                default_variant = Variant1,
                 variants = [
                     EnumVariant(name = Variant1, fields = ()),
                     EnumVariant(name = Variant2, fields = ()),
