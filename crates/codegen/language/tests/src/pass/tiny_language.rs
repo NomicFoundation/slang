@@ -1,6 +1,6 @@
 use codegen_language_definition::{
     Field, FieldReference, Item, Language, Scanner, Section, StructItem, TokenDefinition,
-    TokenItem, Topic, Trivium,
+    TokenItem, Topic, TriviaParser,
 };
 use semver::Version;
 
@@ -43,8 +43,8 @@ fn definition() {
         Language {
             name: "Tiny".into(),
             root_item: "Foo".into(),
-            leading_trivia: Trivium::Sequence { trivia: [].into() },
-            trailing_trivia: Trivium::Sequence { trivia: [].into() },
+            leading_trivia: TriviaParser::Sequence { parsers: [].into() },
+            trailing_trivia: TriviaParser::Sequence { parsers: [].into() },
             versions: [
                 Version::parse("1.0.0").unwrap(),
                 Version::parse("2.0.0").unwrap(),
@@ -59,7 +59,7 @@ fn definition() {
                     lexical_context: None,
                     items: [
                         Item::Struct {
-                            definition: StructItem {
+                            item: StructItem {
                                 name: "Foo".into(),
                                 enabled_in: None,
                                 disabled_in: None,
@@ -97,7 +97,7 @@ fn definition() {
                         }
                         .into(),
                         Item::Token {
-                            definition: TokenItem {
+                            item: TokenItem {
                                 name: "Bar".into(),
                                 is_terminator: None,
                                 is_open_delimiter_for: None,
@@ -112,7 +112,7 @@ fn definition() {
                         }
                         .into(),
                         Item::Token {
-                            definition: TokenItem {
+                            item: TokenItem {
                                 name: "Baz".into(),
                                 is_terminator: None,
                                 is_open_delimiter_for: None,

@@ -37,7 +37,7 @@ codegen_language_macros::compile!(
                         ),
                         Repeated(
                             name = SourceUnitMembers,
-                            repeated = NonTerminal(SourceUnitMember),
+                            repeated = SourceUnitMember,
                             allow_empty = true
                         ),
                         Enum(
@@ -151,7 +151,7 @@ codegen_language_macros::compile!(
                         ),
                         Repeated(
                             name = VersionPragmaExpressions,
-                            repeated = NonTerminal(VersionPragmaExpression)
+                            repeated = VersionPragmaExpression
                         ),
                         Precedence(
                             name = VersionPragmaExpression,
@@ -188,14 +188,14 @@ codegen_language_macros::compile!(
                         ),
                         Separated(
                             name = VersionPragmaSpecifier,
-                            separated = Terminal([VersionPragmaValue]),
-                            separator = Terminal([Period])
+                            separated = VersionPragmaValue,
+                            separator = Period
                         ),
                         Token(
                             name = VersionPragmaValue,
                             definitions = [TokenDefinition(
                                 scanner = OneOrMore(Choice([
-                                    Range(inclusive_start = '0', exclusive_end = '9'),
+                                    Range(inclusive_start = '0', inclusive_end = '9'),
                                     Atom("x"),
                                     Atom("X"),
                                     Atom("*")
@@ -248,8 +248,8 @@ codegen_language_macros::compile!(
                         ),
                         Separated(
                             name = ImportDeconstructionFields,
-                            separated = NonTerminal(ImportDeconstructionField),
-                            separator = Terminal([Comma]),
+                            separated = ImportDeconstructionField,
+                            separator = Comma,
                             allow_empty = true
                         ),
                         Struct(
@@ -305,8 +305,8 @@ codegen_language_macros::compile!(
                         ),
                         Separated(
                             name = UsingDeconstructionFields,
-                            separated = NonTerminal(UsingDeconstructionField),
-                            separator = Terminal([Comma]),
+                            separated = UsingDeconstructionField,
+                            separator = Comma,
                             enabled_in = "0.8.13",
                             allow_empty = true
                         ),
@@ -1387,8 +1387,8 @@ codegen_language_macros::compile!(
                         ),
                         Separated(
                             name = InheritanceTypes,
-                            separated = NonTerminal(InheritanceType),
-                            separator = Terminal([Comma])
+                            separated = InheritanceType,
+                            separator = Comma
                         ),
                         Struct(
                             name = InheritanceType,
@@ -1399,7 +1399,7 @@ codegen_language_macros::compile!(
                         ),
                         Repeated(
                             name = ContractMembers,
-                            repeated = NonTerminal(ContractMember),
+                            repeated = ContractMember,
                             allow_empty = true
                         ),
                         Enum(
@@ -1492,7 +1492,7 @@ codegen_language_macros::compile!(
                         ),
                         Repeated(
                             name = InterfaceMembers,
-                            repeated = NonTerminal(ContractMember),
+                            repeated = ContractMember,
                             allow_empty = true
                         )
                     ]
@@ -1512,7 +1512,7 @@ codegen_language_macros::compile!(
                         ),
                         Repeated(
                             name = LibraryMembers,
-                            repeated = NonTerminal(ContractMember),
+                            repeated = ContractMember,
                             allow_empty = true
                         )
                     ]
@@ -1532,7 +1532,7 @@ codegen_language_macros::compile!(
                         ),
                         Repeated(
                             name = StructMembers,
-                            repeated = NonTerminal(StructMember),
+                            repeated = StructMember,
                             allow_empty = true
                         ),
                         Struct(
@@ -1560,8 +1560,8 @@ codegen_language_macros::compile!(
                         ),
                         Separated(
                             name = EnumMembers,
-                            separated = Terminal([Identifier]),
-                            separator = Terminal([Comma]),
+                            separated = Identifier,
+                            separator = Comma,
                             allow_empty = true
                         )
                     ]
@@ -1604,7 +1604,7 @@ codegen_language_macros::compile!(
                         ),
                         Repeated(
                             name = StateVariableAttributes,
-                            repeated = NonTerminal(StateVariableAttribute),
+                            repeated = StateVariableAttribute,
                             allow_empty = true
                         ),
                         Enum(
@@ -1667,8 +1667,8 @@ codegen_language_macros::compile!(
                         ),
                         Separated(
                             name = Parameters,
-                            separated = NonTerminal(Parameter),
-                            separator = Terminal([Comma]),
+                            separated = Parameter,
+                            separator = Comma,
                             allow_empty = true
                         ),
                         Struct(
@@ -1682,7 +1682,7 @@ codegen_language_macros::compile!(
                         ),
                         Repeated(
                             name = FunctionAttributes,
-                            repeated = NonTerminal(FunctionAttribute),
+                            repeated = FunctionAttribute,
                             allow_empty = true
                         ),
                         Enum(
@@ -1747,8 +1747,8 @@ codegen_language_macros::compile!(
                         ),
                         Separated(
                             name = OverridePaths,
-                            separated = NonTerminal(IdentifierPath),
-                            separator = Terminal([Comma])
+                            separated = IdentifierPath,
+                            separator = Comma
                         ),
                         Struct(
                             name = ReturnsDeclaration,
@@ -1761,12 +1761,12 @@ codegen_language_macros::compile!(
                             name = FunctionBody,
                             variants = [
                                 Variant(
-                                    name = Semicolon,
-                                    fields = (semicolon = Required(Terminal([Semicolon])))
-                                ),
-                                Variant(
                                     name = Block,
                                     fields = (block = Required(NonTerminal(Block)))
+                                ),
+                                Variant(
+                                    name = None,
+                                    fields = (semicolon = Required(Terminal([Semicolon])))
                                 )
                             ]
                         ),
@@ -1782,7 +1782,7 @@ codegen_language_macros::compile!(
                         ),
                         Repeated(
                             name = ConstructorAttributes,
-                            repeated = NonTerminal(ConstructorAttribute),
+                            repeated = ConstructorAttribute,
                             enabled_in = "0.4.22",
                             allow_empty = true
                         ),
@@ -1820,7 +1820,7 @@ codegen_language_macros::compile!(
                         ),
                         Repeated(
                             name = UnnamedFunctionAttributes,
-                            repeated = NonTerminal(UnnamedFunctionAttribute),
+                            repeated = UnnamedFunctionAttribute,
                             disabled_in = "0.6.0",
                             allow_empty = true
                         ),
@@ -1867,7 +1867,7 @@ codegen_language_macros::compile!(
                         ),
                         Repeated(
                             name = FallbackFunctionAttributes,
-                            repeated = NonTerminal(FallbackFunctionAttribute),
+                            repeated = FallbackFunctionAttribute,
                             enabled_in = "0.6.0",
                             allow_empty = true
                         ),
@@ -1917,7 +1917,7 @@ codegen_language_macros::compile!(
                         ),
                         Repeated(
                             name = ReceiveFunctionAttributes,
-                            repeated = NonTerminal(ReceiveFunctionAttribute),
+                            repeated = ReceiveFunctionAttribute,
                             enabled_in = "0.6.0",
                             allow_empty = true
                         ),
@@ -1965,7 +1965,7 @@ codegen_language_macros::compile!(
                         ),
                         Repeated(
                             name = ModifierAttributes,
-                            repeated = NonTerminal(ModifierAttribute),
+                            repeated = ModifierAttribute,
                             allow_empty = true
                         ),
                         Enum(
@@ -2016,8 +2016,8 @@ codegen_language_macros::compile!(
                         ),
                         Separated(
                             name = EventParameters,
-                            separated = NonTerminal(EventParameter),
-                            separator = Terminal([Comma]),
+                            separated = EventParameter,
+                            separator = Comma,
                             allow_empty = true
                         ),
                         Struct(
@@ -2068,8 +2068,8 @@ codegen_language_macros::compile!(
                         ),
                         Separated(
                             name = ErrorParameters,
-                            separated = NonTerminal(ErrorParameter),
-                            separator = Terminal([Comma]),
+                            separated = ErrorParameter,
+                            separator = Comma,
                             enabled_in = "0.8.4",
                             allow_empty = true
                         ),
@@ -2132,7 +2132,7 @@ codegen_language_macros::compile!(
                         ),
                         Repeated(
                             name = FunctionTypeAttributes,
-                            repeated = NonTerminal(FunctionTypeAttribute),
+                            repeated = FunctionTypeAttribute,
                             allow_empty = true
                         ),
                         Enum(
@@ -2295,11 +2295,7 @@ codegen_language_macros::compile!(
                                 close_brace = Required(Terminal([CloseBrace]))
                             )
                         ),
-                        Repeated(
-                            name = Statements,
-                            repeated = NonTerminal(Statement),
-                            allow_empty = true
-                        ),
+                        Repeated(name = Statements, repeated = Statement, allow_empty = true),
                         Enum(
                             name = Statement,
                             variants = [
@@ -2418,8 +2414,8 @@ codegen_language_macros::compile!(
                         ),
                         Separated(
                             name = TupleMembersDeconstruction,
-                            separated = NonTerminal(TupleMemberDeconstruction),
-                            separator = Terminal([Comma]),
+                            separated = TupleMemberDeconstruction,
+                            separator = Comma,
                             allow_empty = true
                         ),
                         Struct(
@@ -2526,16 +2522,15 @@ codegen_language_macros::compile!(
                             fields = (
                                 for_keyword = Required(Terminal([ForKeyword])),
                                 open_paren = Required(Terminal([OpenParen])),
-                                initialization = Required(NonTerminal(ForInitialization)),
-                                condition = Optional(reference = NonTerminal(Expression)),
-                                semicolon = Required(Terminal([Semicolon])),
+                                initialization = Required(NonTerminal(ForStatementInitialization)),
+                                condition = Required(NonTerminal(ForStatementCondition)),
                                 iterator = Optional(reference = NonTerminal(Expression)),
                                 close_paren = Required(Terminal([CloseParen])),
                                 body = Required(NonTerminal(Statement))
                             )
                         ),
                         Enum(
-                            name = ForInitialization,
+                            name = ForStatementInitialization,
                             variants = [
                                 Variant(
                                     name = Expression,
@@ -2551,6 +2546,20 @@ codegen_language_macros::compile!(
                                     name = TupleDeconstruction,
                                     fields = (statement =
                                         Required(NonTerminal(TupleDeconstructionStatement)))
+                                ),
+                                Variant(
+                                    name = None,
+                                    fields = (semicolon = Required(Terminal([Semicolon])))
+                                )
+                            ]
+                        ),
+                        Enum(
+                            name = ForStatementCondition,
+                            variants = [
+                                Variant(
+                                    name = Expression,
+                                    fields =
+                                        (statement = Required(NonTerminal(ExpressionStatement)))
                                 ),
                                 Variant(
                                     name = None,
@@ -2638,7 +2647,7 @@ codegen_language_macros::compile!(
                         ),
                         Repeated(
                             name = CatchClauses,
-                            repeated = NonTerminal(CatchClause),
+                            repeated = CatchClause,
                             enabled_in = "0.6.0"
                         ),
                         Struct(
@@ -2941,13 +2950,13 @@ codegen_language_macros::compile!(
                         ),
                         Separated(
                             name = PositionalArguments,
-                            separated = NonTerminal(Expression),
-                            separator = Terminal([Comma]),
+                            separated = Expression,
+                            separator = Comma,
                             allow_empty = true
                         ),
                         Repeated(
                             name = NamedArgumentsDeclarations,
-                            repeated = NonTerminal(NamedArgumentsDeclaration),
+                            repeated = NamedArgumentsDeclaration,
                             enabled_in = "0.6.2",
                             disabled_in = "0.8.0",
                             allow_empty = true
@@ -2962,8 +2971,8 @@ codegen_language_macros::compile!(
                         ),
                         Separated(
                             name = NamedArguments,
-                            separated = NonTerminal(NamedArgument),
-                            separator = Terminal([Comma]),
+                            separated = NamedArgument,
+                            separator = Comma,
                             allow_empty = true
                         ),
                         Struct(
@@ -3006,8 +3015,8 @@ codegen_language_macros::compile!(
                         ),
                         Separated(
                             name = TupleValues,
-                            separated = NonTerminal(TupleValue),
-                            separator = Terminal([Comma])
+                            separated = TupleValue,
+                            separator = Comma
                         ),
                         Struct(
                             name = TupleValue,
@@ -3023,8 +3032,8 @@ codegen_language_macros::compile!(
                         ),
                         Separated(
                             name = ArrayValues,
-                            separated = NonTerminal(Expression),
-                            separator = Terminal([Comma])
+                            separated = Expression,
+                            separator = Comma
                         )
                     ]
                 ),
@@ -3140,10 +3149,10 @@ codegen_language_macros::compile!(
                         Fragment(
                             name = DecimalDigits,
                             scanner = Sequence([
-                                OneOrMore(Range(inclusive_start = '0', exclusive_end = '9')),
+                                OneOrMore(Range(inclusive_start = '0', inclusive_end = '9')),
                                 ZeroOrMore(Sequence([
                                     Atom("_"),
-                                    OneOrMore(Range(inclusive_start = '0', exclusive_end = '9'))
+                                    OneOrMore(Range(inclusive_start = '0', inclusive_end = '9'))
                                 ]))
                             ])
                         ),
@@ -3233,10 +3242,7 @@ codegen_language_macros::compile!(
                                 )
                             ]
                         ),
-                        Repeated(
-                            name = HexStringLiterals,
-                            repeated = Terminal([HexStringLiteral])
-                        ),
+                        Repeated(name = HexStringLiterals, repeated = HexStringLiteral),
                         Token(
                             name = HexStringLiteral,
                             definitions = [TokenDefinition(
@@ -3280,15 +3286,12 @@ codegen_language_macros::compile!(
                         Fragment(
                             name = HexCharacter,
                             scanner = Choice([
-                                Range(inclusive_start = '0', exclusive_end = '9'),
-                                Range(inclusive_start = 'a', exclusive_end = 'f'),
-                                Range(inclusive_start = 'A', exclusive_end = 'F')
+                                Range(inclusive_start = '0', inclusive_end = '9'),
+                                Range(inclusive_start = 'a', inclusive_end = 'f'),
+                                Range(inclusive_start = 'A', inclusive_end = 'F')
                             ])
                         ),
-                        Repeated(
-                            name = AsciiStringLiterals,
-                            repeated = Terminal([AsciiStringLiteral])
-                        ),
+                        Repeated(name = AsciiStringLiterals, repeated = AsciiStringLiteral),
                         Token(
                             name = AsciiStringLiteral,
                             definitions = [TokenDefinition(
@@ -3307,9 +3310,9 @@ codegen_language_macros::compile!(
                                 Atom("'"),
                                 ZeroOrMore(Choice([
                                     Fragment(EscapeSequence),
-                                    Range(inclusive_start = ' ', exclusive_end = '&'),
-                                    Range(inclusive_start = '(', exclusive_end = '['),
-                                    Range(inclusive_start = ']', exclusive_end = '~')
+                                    Range(inclusive_start = ' ', inclusive_end = '&'),
+                                    Range(inclusive_start = '(', inclusive_end = '['),
+                                    Range(inclusive_start = ']', inclusive_end = '~')
                                 ])),
                                 Atom("'")
                             ])
@@ -3320,16 +3323,16 @@ codegen_language_macros::compile!(
                                 Atom("\""),
                                 ZeroOrMore(Choice([
                                     Fragment(EscapeSequence),
-                                    Range(inclusive_start = ' ', exclusive_end = '!'),
-                                    Range(inclusive_start = '#', exclusive_end = '['),
-                                    Range(inclusive_start = ']', exclusive_end = '~')
+                                    Range(inclusive_start = ' ', inclusive_end = '!'),
+                                    Range(inclusive_start = '#', inclusive_end = '['),
+                                    Range(inclusive_start = ']', inclusive_end = '~')
                                 ])),
                                 Atom("\"")
                             ])
                         ),
                         Repeated(
                             name = UnicodeStringLiterals,
-                            repeated = Terminal([UnicodeStringLiteral]),
+                            repeated = UnicodeStringLiteral,
                             enabled_in = "0.7.0"
                         ),
                         Token(
@@ -3418,8 +3421,8 @@ codegen_language_macros::compile!(
                     items = [
                         Separated(
                             name = IdentifierPath,
-                            separated = Terminal([Identifier]),
-                            separator = Terminal([Period])
+                            separated = Identifier,
+                            separator = Period
                         ),
                         Token(
                             name = Identifier,
@@ -3437,15 +3440,15 @@ codegen_language_macros::compile!(
                             scanner = Choice([
                                 Atom("_"),
                                 Atom("$"),
-                                Range(inclusive_start = 'a', exclusive_end = 'z'),
-                                Range(inclusive_start = 'A', exclusive_end = 'Z')
+                                Range(inclusive_start = 'a', inclusive_end = 'z'),
+                                Range(inclusive_start = 'A', inclusive_end = 'Z')
                             ])
                         ),
                         Fragment(
                             name = IdentifierPart,
                             scanner = Choice([
                                 Fragment(IdentifierStart),
-                                Range(inclusive_start = '0', exclusive_end = '9')
+                                Range(inclusive_start = '0', inclusive_end = '9')
                             ])
                         )
                     ]
@@ -3478,8 +3481,8 @@ codegen_language_macros::compile!(
                         ),
                         Separated(
                             name = AssemblyFlags,
-                            separated = Terminal([AsciiStringLiteral]),
-                            separator = Terminal([Comma]),
+                            separated = AsciiStringLiteral,
+                            separator = Comma,
                             allow_empty = true
                         ),
                         Struct(
@@ -3492,7 +3495,7 @@ codegen_language_macros::compile!(
                         ),
                         Repeated(
                             name = YulStatements,
-                            repeated = NonTerminal(YulStatement),
+                            repeated = YulStatement,
                             allow_empty = true
                         ),
                         Enum(
@@ -3570,8 +3573,8 @@ codegen_language_macros::compile!(
                         ),
                         Separated(
                             name = YulParameters,
-                            separated = Terminal([YulIdentifier]),
-                            separator = Terminal([Comma]),
+                            separated = YulIdentifier,
+                            separator = Comma,
                             allow_empty = true
                         ),
                         Struct(
@@ -3583,8 +3586,8 @@ codegen_language_macros::compile!(
                         ),
                         Separated(
                             name = YulReturnVariables,
-                            separated = Terminal([YulIdentifier]),
-                            separator = Terminal([Comma])
+                            separated = YulIdentifier,
+                            separator = Comma
                         ),
                         Struct(
                             name = YulVariableDeclarationStatement,
@@ -3649,7 +3652,7 @@ codegen_language_macros::compile!(
                                 cases = Required(NonTerminal(YulSwitchCases))
                             )
                         ),
-                        Repeated(name = YulSwitchCases, repeated = NonTerminal(YulSwitchCase)),
+                        Repeated(name = YulSwitchCases, repeated = YulSwitchCase),
                         Enum(
                             name = YulSwitchCase,
                             variants = [
@@ -3701,19 +3704,19 @@ codegen_language_macros::compile!(
                         ),
                         Separated(
                             name = YulArguments,
-                            separated = NonTerminal(YulExpression),
-                            separator = Terminal([Comma]),
+                            separated = YulExpression,
+                            separator = Comma,
                             allow_empty = true
                         ),
                         Separated(
                             name = YulIdentifierPaths,
-                            separated = NonTerminal(YulIdentifierPath),
-                            separator = Terminal([Comma])
+                            separated = YulIdentifierPath,
+                            separator = Comma
                         ),
                         Separated(
                             name = YulIdentifierPath,
-                            separated = Terminal([YulIdentifier]),
-                            separator = Terminal([Period])
+                            separated = YulIdentifier,
+                            separator = Period
                         ),
                         Token(
                             name = YulIdentifier,
@@ -3752,10 +3755,10 @@ codegen_language_macros::compile!(
                                     scanner = Choice([
                                         Atom("0"),
                                         Sequence([
-                                            Range(inclusive_start = '1', exclusive_end = '9'),
+                                            Range(inclusive_start = '1', inclusive_end = '9'),
                                             ZeroOrMore(Range(
                                                 inclusive_start = '0',
-                                                exclusive_end = '9'
+                                                inclusive_end = '9'
                                             ))
                                         ])
                                     ]),

@@ -19,8 +19,8 @@ mod wrapper {
 
         pub root_item: Identifier,
 
-        pub leading_trivia: Trivium,
-        pub trailing_trivia: Trivium,
+        pub leading_trivia: TriviaParser,
+        pub trailing_trivia: TriviaParser,
 
         pub versions: IndexSet<Version>,
 
@@ -46,18 +46,18 @@ mod wrapper {
     #[strum_discriminants(name(ItemKind))]
     #[strum_discriminants(derive(Display, EnumIter))]
     pub enum Item {
-        Struct { definition: StructItem },
-        Enum { definition: EnumItem },
+        Struct { item: StructItem },
+        Enum { item: EnumItem },
 
-        Repeated { definition: RepeatedItem },
-        Separated { definition: SeparatedItem },
+        Repeated { item: RepeatedItem },
+        Separated { item: SeparatedItem },
 
-        Precedence { definition: PrecedenceItem },
+        Precedence { item: PrecedenceItem },
 
-        Keyword { definition: KeywordItem },
-        Token { definition: TokenItem },
+        Keyword { item: KeywordItem },
+        Token { item: TokenItem },
 
-        Fragment { definition: FragmentItem },
+        Fragment { item: FragmentItem },
     }
 
     #[derive(Debug, Eq, PartialEq, Serialize)]
@@ -83,7 +83,7 @@ mod wrapper {
     #[derive(Debug, Eq, PartialEq, Serialize)]
     pub struct RepeatedItem {
         pub name: Identifier,
-        pub repeated: FieldReference,
+        pub repeated: Identifier,
 
         pub enabled_in: Option<Version>,
         pub disabled_in: Option<Version>,
@@ -94,8 +94,8 @@ mod wrapper {
     #[derive(Debug, Eq, PartialEq, Serialize)]
     pub struct SeparatedItem {
         pub name: Identifier,
-        pub separated: FieldReference,
-        pub separator: FieldReference,
+        pub separated: Identifier,
+        pub separator: Identifier,
 
         pub enabled_in: Option<Version>,
         pub disabled_in: Option<Version>,
@@ -163,14 +163,14 @@ mod wrapper {
     }
 
     #[derive(Debug, Eq, PartialEq, Serialize)]
-    pub enum Trivium {
-        Sequence { trivia: Vec<Trivium> },
-        Choice { trivia: Vec<Trivium> },
+    pub enum TriviaParser {
+        Sequence { parsers: Vec<TriviaParser> },
+        Choice { parsers: Vec<TriviaParser> },
 
-        ZeroOrMore { trivium: Box<Trivium> },
-        Optional { trivium: Box<Trivium> },
+        ZeroOrMore { parser: Box<TriviaParser> },
+        Optional { parser: Box<TriviaParser> },
 
-        Token { reference: Identifier },
+        Token { token: Identifier },
     }
 
     #[derive(Debug, Eq, PartialEq, Serialize)]
@@ -256,7 +256,7 @@ mod wrapper {
         },
         Range {
             inclusive_start: char,
-            exclusive_end: char,
+            inclusive_end: char,
         },
         Atom {
             atom: String,

@@ -20,14 +20,14 @@ impl Analysis {
     fn collect_top_level_items(&mut self) {
         for item in self.language.clone().items() {
             let name = match item {
-                Item::Struct { definition } => &definition.name,
-                Item::Enum { definition } => &definition.name,
-                Item::Repeated { definition } => &definition.name,
-                Item::Separated { definition } => &definition.name,
-                Item::Precedence { definition } => &definition.name,
-                Item::Token { definition } => &definition.name,
-                Item::Keyword { definition } => &definition.name,
-                Item::Fragment { definition } => &definition.name,
+                Item::Struct { item } => &item.name,
+                Item::Enum { item } => &item.name,
+                Item::Repeated { item } => &item.name,
+                Item::Separated { item } => &item.name,
+                Item::Precedence { item } => &item.name,
+                Item::Token { item } => &item.name,
+                Item::Keyword { item } => &item.name,
+                Item::Fragment { item } => &item.name,
             };
 
             let defined_in = self.calculate_defined_in(item);
@@ -58,10 +58,10 @@ impl Analysis {
 
         for item in self.language.clone().items() {
             match item {
-                Item::Enum { definition } => {
+                Item::Enum { item } => {
                     let mut current_variants = HashSet::new();
 
-                    for variant in &definition.variants {
+                    for variant in &item.variants {
                         let name = &variant.name;
                         if !current_variants.insert(&**name) {
                             self.errors.add(name, &Errors::VariantAlreadyDefined(name));
@@ -69,8 +69,8 @@ impl Analysis {
                     }
                 }
 
-                Item::Precedence { definition } => {
-                    let mut expression_names: IndexSet<_> = definition
+                Item::Precedence { item } => {
+                    let mut expression_names: IndexSet<_> = item
                         .operators
                         .iter()
                         .map(|operator| &operator.expression_name)
@@ -87,7 +87,7 @@ impl Analysis {
                         }
                     }
 
-                    for primary_expression in &definition.primary_expressions {
+                    for primary_expression in &item.primary_expressions {
                         let expression_name = &primary_expression.name;
                         if !expression_names.insert(expression_name) {
                             self.errors.add(
@@ -111,42 +111,36 @@ impl Analysis {
 
     fn calculate_defined_in(&self, item: &Item) -> VersionSet {
         return match item {
-            Item::Struct { definition } => VersionSet::single(
-                self.calculate_enablement(&definition.enabled_in, &definition.disabled_in),
-            ),
-            Item::Enum { definition } => VersionSet::single(
-                self.calculate_enablement(&definition.enabled_in, &definition.disabled_in),
-            ),
-            Item::Repeated { definition } => VersionSet::single(
-                self.calculate_enablement(&definition.enabled_in, &definition.disabled_in),
-            ),
-            Item::Separated { definition } => VersionSet::single(
-                self.calculate_enablement(&definition.enabled_in, &definition.disabled_in),
-            ),
-            Item::Precedence { definition } => VersionSet::single(
-                self.calculate_enablement(&definition.enabled_in, &definition.disabled_in),
-            ),
-            Item::Keyword { definition } => VersionSet::single(
-                self.calculate_enablement(&definition.enabled_in, &definition.disabled_in),
-            ),
-            Item::Token { definition } => {
-                definition
-                    .definitions
-                    .iter()
-                    .fold(VersionSet::empty(), |acc, definition| {
-                        let mut acc = acc;
-                        acc.add(
-                            &self.calculate_enablement(
-                                &definition.enabled_in,
-                                &definition.disabled_in,
-                            ),
-                        );
-                        return acc;
-                    })
+            Item::Struct { item } => {
+                VersionSet::single(self.calculate_enablement(&item.enabled_in, &item.disabled_in))
             }
-            Item::Fragment { definition } => VersionSet::single(
-                self.calculate_enablement(&definition.enabled_in, &definition.disabled_in),
-            ),
+            Item::Enum { item } => {
+                VersionSet::single(self.calculate_enablement(&item.enabled_in, &item.disabled_in))
+            }
+            Item::Repeated { item } => {
+                VersionSet::single(self.calculate_enablement(&item.enabled_in, &item.disabled_in))
+            }
+            Item::Separated { item } => {
+                VersionSet::single(self.calculate_enablement(&item.enabled_in, &item.disabled_in))
+            }
+            Item::Precedence { item } => {
+                VersionSet::single(self.calculate_enablement(&item.enabled_in, &item.disabled_in))
+            }
+            Item::Keyword { item } => {
+                VersionSet::single(self.calculate_enablement(&item.enabled_in, &item.disabled_in))
+            }
+            Item::Token { item } => {
+                let mut defined_in = VersionSet::empty();
+                for definition in &item.definitions {
+                    defined_in.add(
+                        &self.calculate_enablement(&definition.enabled_in, &definition.disabled_in),
+                    );
+                }
+                return defined_in;
+            }
+            Item::Fragment { item } => {
+                VersionSet::single(self.calculate_enablement(&item.enabled_in, &item.disabled_in))
+            }
         };
     }
 

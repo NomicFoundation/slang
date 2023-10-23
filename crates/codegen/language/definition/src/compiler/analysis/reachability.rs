@@ -1,6 +1,6 @@
 use crate::{
     compiler::{analysis::Analysis, versions::VersionSet},
-    spanned::Trivium,
+    spanned::TriviaParser,
     Identifier,
 };
 use std::collections::HashSet;
@@ -53,25 +53,25 @@ impl Analysis {
     }
 }
 
-fn collect_tokens<'l>(trivium: &'l Trivium, tokens: &mut Vec<&'l Identifier>) {
-    match trivium {
-        Trivium::Sequence { trivia } | Trivium::Choice { trivia } => {
-            for trivium in trivia {
-                collect_tokens(trivium, tokens);
+fn collect_tokens<'l>(parser: &'l TriviaParser, tokens: &mut Vec<&'l Identifier>) {
+    match parser {
+        TriviaParser::Sequence { parsers } | TriviaParser::Choice { parsers } => {
+            for parser in parsers {
+                collect_tokens(parser, tokens);
             }
         }
-        Trivium::ZeroOrMore { trivium } | Trivium::Optional { trivium } => {
-            collect_tokens(trivium, tokens);
+        TriviaParser::ZeroOrMore { parser } | TriviaParser::Optional { parser } => {
+            collect_tokens(parser, tokens);
         }
-        Trivium::Token { reference } => {
-            tokens.push(reference);
+        TriviaParser::Token { token } => {
+            tokens.push(token);
         }
     };
 }
 
 #[derive(thiserror::Error, Debug)]
 enum Errors<'err> {
-    #[error("Item '{0}' is not used/referenced in versions: {1}")]
+    #[error("Item '{0}' is not used in versions: {1}")]
     UnusedVersion(&'err Identifier, &'err VersionSet),
     #[error("Item '{0}' is not reachable from grammar root.")]
     Unreachable(&'err Identifier),

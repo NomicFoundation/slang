@@ -7,7 +7,7 @@ use crate::{
     spanned::{
         EnumItem, Field, FieldReference, FragmentItem, Item, ItemKind, KeywordItem, Operator,
         PrecedenceItem, RepeatedItem, Scanner, SeparatedItem, StructItem, TokenDefinition,
-        TokenItem, Trivium, Variant,
+        TokenItem, TriviaParser, Variant,
     },
     Identifier,
 };
@@ -40,53 +40,53 @@ impl Analysis {
 
     fn check_item(&mut self, item: &Item, enablement: &VersionRange) {
         match item {
-            Item::Struct { definition } => {
-                self.check_struct(definition, &enablement);
+            Item::Struct { item } => {
+                self.check_struct(item, &enablement);
             }
-            Item::Enum { definition } => {
-                self.check_enum(definition, &enablement);
+            Item::Enum { item } => {
+                self.check_enum(item, &enablement);
             }
-            Item::Repeated { definition } => {
-                self.check_repeated(definition, &enablement);
+            Item::Repeated { item } => {
+                self.check_repeated(item, &enablement);
             }
-            Item::Separated { definition } => {
-                self.check_separated(definition, &enablement);
+            Item::Separated { item } => {
+                self.check_separated(item, &enablement);
             }
-            Item::Precedence { definition } => {
-                self.check_precedence(definition, &enablement);
+            Item::Precedence { item } => {
+                self.check_precedence(item, &enablement);
             }
-            Item::Keyword { definition } => {
-                self.check_keyword(definition, &enablement);
+            Item::Keyword { item } => {
+                self.check_keyword(item, &enablement);
             }
-            Item::Token { definition } => {
-                self.check_token(definition, &enablement);
+            Item::Token { item } => {
+                self.check_token(item, &enablement);
             }
-            Item::Fragment { definition } => {
-                self.check_fragment(definition, &enablement);
+            Item::Fragment { item } => {
+                self.check_fragment(item, &enablement);
             }
         }
     }
 
-    fn check_struct(&mut self, definition: &StructItem, enablement: &VersionRange) {
+    fn check_struct(&mut self, item: &StructItem, enablement: &VersionRange) {
         let StructItem {
             name,
             enabled_in,
             disabled_in,
             fields,
-        } = definition;
+        } = item;
 
         let enablement = self.update_enablement(enablement, &enabled_in, &disabled_in);
 
         self.check_fields(Some(name), fields, &enablement);
     }
 
-    fn check_enum(&mut self, definition: &EnumItem, enablement: &VersionRange) {
+    fn check_enum(&mut self, item: &EnumItem, enablement: &VersionRange) {
         let EnumItem {
             name,
             enabled_in,
             disabled_in,
             variants,
-        } = definition;
+        } = item;
 
         let enablement = self.update_enablement(enablement, &enabled_in, &disabled_in);
 
@@ -95,21 +95,21 @@ impl Analysis {
         }
     }
 
-    fn check_repeated(&mut self, definition: &RepeatedItem, enablement: &VersionRange) {
+    fn check_repeated(&mut self, item: &RepeatedItem, enablement: &VersionRange) {
         let RepeatedItem {
             name,
             repeated,
             allow_empty: _,
             enabled_in,
             disabled_in,
-        } = definition;
+        } = item;
 
         let enablement = self.update_enablement(&enablement, &enabled_in, &disabled_in);
 
-        self.check_field_reference(Some(name), repeated, &enablement);
+        self.check_reference(Some(name), repeated, &enablement, ReferenceFilter::Nodes);
     }
 
-    fn check_separated(&mut self, definition: &SeparatedItem, enablement: &VersionRange) {
+    fn check_separated(&mut self, item: &SeparatedItem, enablement: &VersionRange) {
         let SeparatedItem {
             name,
             separated,
@@ -117,22 +117,22 @@ impl Analysis {
             allow_empty: _,
             enabled_in,
             disabled_in,
-        } = definition;
+        } = item;
 
         let enablement = self.update_enablement(&enablement, &enabled_in, &disabled_in);
 
-        self.check_field_reference(Some(name), separated, &enablement);
-        self.check_field_reference(Some(name), separator, &enablement);
+        self.check_reference(Some(name), separated, &enablement, ReferenceFilter::Nodes);
+        self.check_reference(Some(name), separator, &enablement, ReferenceFilter::Tokens);
     }
 
-    fn check_precedence(&mut self, definition: &PrecedenceItem, enablement: &VersionRange) {
+    fn check_precedence(&mut self, item: &PrecedenceItem, enablement: &VersionRange) {
         let PrecedenceItem {
             name,
             enabled_in,
             disabled_in,
             operators,
             primary_expressions,
-        } = definition;
+        } = item;
 
         let enablement = self.update_enablement(&enablement, &enabled_in, &disabled_in);
 
@@ -224,23 +224,23 @@ impl Analysis {
         };
     }
 
-    fn check_trivium(&mut self, trivium: &Trivium, enablement: &VersionRange) {
-        match trivium {
-            Trivium::Sequence { trivia } | Trivium::Choice { trivia } => {
-                for trivium in trivia {
-                    self.check_trivium(trivium, &enablement);
+    fn check_trivium(&mut self, parser: &TriviaParser, enablement: &VersionRange) {
+        match parser {
+            TriviaParser::Sequence { parsers } | TriviaParser::Choice { parsers } => {
+                for parser in parsers {
+                    self.check_trivium(parser, &enablement);
                 }
             }
-            Trivium::ZeroOrMore { trivium } | Trivium::Optional { trivium } => {
-                self.check_trivium(trivium, &enablement);
+            TriviaParser::ZeroOrMore { parser } | TriviaParser::Optional { parser } => {
+                self.check_trivium(parser, &enablement);
             }
-            Trivium::Token { reference } => {
-                self.check_reference(None, reference, &enablement, ReferenceFilter::Tokens);
+            TriviaParser::Token { token } => {
+                self.check_reference(None, token, &enablement, ReferenceFilter::Tokens);
             }
         };
     }
 
-    fn check_keyword(&mut self, definition: &KeywordItem, enablement: &VersionRange) {
+    fn check_keyword(&mut self, item: &KeywordItem, enablement: &VersionRange) {
         let KeywordItem {
             name,
             identifier,
@@ -249,7 +249,7 @@ impl Analysis {
             reserved_in,
             unreserved_in,
             value: _,
-        } = definition;
+        } = item;
 
         let enablement = self.update_enablement(&enablement, &enabled_in, &disabled_in);
 
@@ -258,14 +258,14 @@ impl Analysis {
         self.check_version_pair(reserved_in, unreserved_in);
     }
 
-    fn check_token(&mut self, definition: &TokenItem, enablement: &VersionRange) {
+    fn check_token(&mut self, item: &TokenItem, enablement: &VersionRange) {
         let TokenItem {
             name,
             is_terminator: _,
             is_open_delimiter_for,
             is_close_delimiter_for,
             definitions,
-        } = definition;
+        } = item;
 
         if let Some(is_open_delimiter_for) = is_open_delimiter_for {
             self.check_reference(
@@ -298,13 +298,13 @@ impl Analysis {
         }
     }
 
-    fn check_fragment(&mut self, definition: &FragmentItem, enablement: &VersionRange) {
+    fn check_fragment(&mut self, item: &FragmentItem, enablement: &VersionRange) {
         let FragmentItem {
             name,
             enabled_in,
             disabled_in,
             scanner,
-        } = definition;
+        } = item;
 
         let enablement = self.update_enablement(&enablement, &enabled_in, &disabled_in);
 
@@ -331,7 +331,7 @@ impl Analysis {
             Scanner::Not { chars: _ }
             | Scanner::Range {
                 inclusive_start: _,
-                exclusive_end: _,
+                inclusive_end: _,
             }
             | Scanner::Atom { atom: _ } => {
                 // Nothing to check for now.
@@ -456,6 +456,8 @@ impl Analysis {
 
 #[derive(Debug, Display, PartialEq, Eq)]
 enum ReferenceFilter {
+    Nodes,
+
     NonTerminals,
     Terminals,
 
@@ -465,19 +467,26 @@ enum ReferenceFilter {
 
 impl ReferenceFilter {
     fn apply(&self, target_kind: &ItemKind) -> bool {
-        return match (self, target_kind) {
-            (
-                Self::NonTerminals,
-                ItemKind::Struct
-                | ItemKind::Enum
-                | ItemKind::Precedence
-                | ItemKind::Repeated
-                | ItemKind::Separated,
-            )
-            | (Self::Terminals, ItemKind::Token | ItemKind::Keyword)
-            | (Self::Tokens, ItemKind::Token) => true,
-            (Self::Fragments, ItemKind::Fragment) => true,
-            _ => false,
+        // A bit explicit here on purpose, to make sure we review
+        // this list whenever filters or items are changed:
+
+        return match target_kind {
+            ItemKind::Struct
+            | ItemKind::Enum
+            | ItemKind::Repeated
+            | ItemKind::Separated
+            | ItemKind::Precedence => match self {
+                Self::Nodes | Self::NonTerminals => true,
+                Self::Terminals | Self::Tokens | Self::Fragments => false,
+            },
+            ItemKind::Keyword | ItemKind::Token => match self {
+                Self::Nodes | Self::Terminals | Self::Tokens => true,
+                Self::NonTerminals | Self::Fragments => false,
+            },
+            ItemKind::Fragment => match self {
+                Self::Fragments => true,
+                Self::Nodes | Self::NonTerminals | Self::Terminals | Self::Tokens => false,
+            },
         };
     }
 }
