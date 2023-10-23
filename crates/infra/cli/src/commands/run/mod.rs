@@ -19,24 +19,40 @@ enum RunCommand {
      * User-facing:
      *
      */
-    /// Run the public 'slang_solidity' crate shipped to Cargo users.
+    /// Runs the public 'slang_solidity' crate shipped to Cargo users.
     #[clap(name = "slang_solidity")]
     SlangSolidity,
-
-    /// Run smoke tests of the Solidity parser against source files from the Sanctuary repositories.
-    #[clap(name = "solidity_testing_smoke")]
-    SolidityTestingSmoke,
+    /// Runs the Solidity parser against source files from the Sanctuary repositories.
+    #[clap(name = "solidity_testing_sanctuary")]
+    SolidityTestingSanctuary,
 
     /*
      *
      * Hidden (for automation only):
      *
      */
+    /// Runs codegen for the Rust parser crate.
     #[clap(name = "solidity_cargo_build", hide = true)]
     SolidityCargoBuild,
-
+    /// Runs codegen for the NAPI parser crate.
     #[clap(name = "solidity_npm_build", hide = true)]
     SolidityNpmBuild,
+}
+
+impl RunCommand {
+    fn should_run_in_release_mode(&self) -> bool {
+        match self {
+            Self::SolidityTestingSanctuary => {
+                // This crate parses tens of thousands of Solidity files:
+                // It is worth spending the extra time to recompiling its dependenceis.
+                return true;
+            }
+            Self::SlangSolidity | Self::SolidityCargoBuild | Self::SolidityNpmBuild => {
+                // These run during local development. Just build in debug mode.
+                return false;
+            }
+        };
+    }
 }
 
 impl RunController {
@@ -48,7 +64,7 @@ impl RunController {
 
         let mut command = Command::new("cargo").arg("run");
 
-        if self.command == RunCommand::SolidityTestingSmoke {
+        if self.command.should_run_in_release_mode() {
             command = command.flag("--release");
         }
 

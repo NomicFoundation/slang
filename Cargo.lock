@@ -1713,7 +1713,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "solidity_testing_smoke"
+name = "solidity_testing_sanctuary"
 version = "0.10.0"
 dependencies = [
  "anyhow",
