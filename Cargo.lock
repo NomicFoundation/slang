@@ -1666,7 +1666,6 @@ dependencies = [
  "codegen_language_macros",
  "codegen_schema",
  "infra_utils",
- "once_cell",
  "semver",
 ]
 

@@ -80,7 +80,6 @@ markdown = { version = "0.3.0" }
 napi = { version = "2.13.1", features = ["compat-mode", "napi8", "serde-json"] }
 napi-build = { version = "2.0.1" }
 napi-derive = { version = "2.13.0" }
-once_cell = { version = "1.8.0" }
 owo-colors = { version = "3.5.0", features = ["supports-colors"] }
 proc-macro2 = { version = "1.0.53" }
 quote = { version = "1.0.26" }

@@ -174,23 +174,18 @@ macro_rules! slang_grammar_lexical_context {
 #[macro_export]
 macro_rules! slang_grammar_definition {
     ($context:ident $trait:ident $trait_ref:ident $node_type:ident $dsl_macro:ident $is_inline:tt $name:ident $value:tt) => {
-        #[derive(Debug)]
+        #[derive(Debug, Default)]
         struct $name {
-            node: once_cell::unsync::OnceCell<$crate::$node_type>,
+            node: ::std::cell::OnceCell<$crate::$node_type>,
         }
 
         impl $name {
             const SOURCE_LOCATION: $crate::SourceLocation = slang_location!();
             const NAME: &str = stringify!($name);
-            const INSTANCE: once_cell::unsync::OnceCell<std::rc::Rc<Self>> =
-                once_cell::unsync::OnceCell::new();
+            const INSTANCE: ::std::cell::OnceCell<std::rc::Rc<Self>> = ::std::cell::OnceCell::new();
             fn instance() -> $crate::$trait_ref {
                 Self::INSTANCE
-                    .get_or_init(|| {
-                        std::rc::Rc::new(Self {
-                            node: once_cell::unsync::OnceCell::new(),
-                        })
-                    })
+                    .get_or_init(::std::default::Default::default)
                     .clone()
             }
         }
