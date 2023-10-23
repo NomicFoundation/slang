@@ -34,7 +34,7 @@ enum RunCommand {
     /// Runs codegen for the Rust parser crate.
     #[clap(name = "solidity_cargo_build", hide = true)]
     SolidityCargoBuild,
-    /// Runs codegen for the NAPI parser crate.
+    /// Runs codegen for the NAPI-exposed parser crate.
     #[clap(name = "solidity_npm_build", hide = true)]
     SolidityNpmBuild,
 }
@@ -44,7 +44,7 @@ impl RunCommand {
         match self {
             Self::SolidityTestingSanctuary => {
                 // This crate parses tens of thousands of Solidity files:
-                // It is worth spending the extra time to recompiling its dependenceis.
+                // It is worth spending the extra time to recompiling its dependencies.
                 return true;
             }
             Self::SlangSolidity | Self::SolidityCargoBuild | Self::SolidityNpmBuild => {
