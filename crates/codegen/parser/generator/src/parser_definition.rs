@@ -34,7 +34,7 @@ pub trait ParserDefinitionNodeExtensions {
 impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
     fn to_parser_code(&self, context_name: &'static str, is_trivia: bool) -> TokenStream {
         let context = format_ident!("{context_name}");
-        let lex_ctx = quote! { LexicalContext::#context as u8 };
+        let lex_ctx = quote! { LexicalContextType::#context };
 
         match self {
             Self::Versioned(body, _, _) => body.to_parser_code(context_name, is_trivia),
@@ -113,7 +113,7 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                 };
 
                 quote! {
-                    self.#parse_token::<{#lex_ctx}>(input, TokenKind::#kind)
+                    self.#parse_token::<#lex_ctx>(input, TokenKind::#kind)
                 }
             }
 
@@ -167,7 +167,7 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                 let body_parser = body.applicable_version_quality_ranges().wrap_code(
                     quote! {
                         seq.elem(#parser
-                            .recover_until_with_nested_delims::<{#lex_ctx}, Self>(input,
+                            .recover_until_with_nested_delims::<#lex_ctx, Self>(input,
                                 self,
                                 TokenKind::#close_delim,
                                 RecoverFromNoMatch::Yes,
@@ -182,9 +182,9 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                         let mut delim_guard = input.open_delim(TokenKind::#close_delim);
                         let input = delim_guard.ctx();
 
-                        seq.elem(self.parse_token_with_trivia::<{#lex_ctx}>(input, TokenKind::#open_delim))?;
+                        seq.elem(self.parse_token_with_trivia::<#lex_ctx>(input, TokenKind::#open_delim))?;
                         #body_parser
-                        seq.elem(self.parse_token_with_trivia::<{#lex_ctx}>(input, TokenKind::#close_delim))?;
+                        seq.elem(self.parse_token_with_trivia::<#lex_ctx>(input, TokenKind::#close_delim))?;
                         seq.finish()
                     })
                 }
@@ -201,7 +201,7 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                 let parser = body.to_parser_code(context_name, is_trivia);
 
                 quote! {
-                    SeparatedHelper::run::<{#lex_ctx}, Self>(
+                    SeparatedHelper::run::<#lex_ctx, Self>(
                         input,
                         |input| #parser,
                         TokenKind::#separator,
@@ -221,7 +221,7 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                 let body_parser = body.applicable_version_quality_ranges().wrap_code(
                     quote! {
                         seq.elem(#parser
-                            .recover_until_with_nested_delims::<{#lex_ctx}, Self>(input,
+                            .recover_until_with_nested_delims::<#lex_ctx, Self>(input,
                                 self,
                                 TokenKind::#terminator,
                                 RecoverFromNoMatch::No,
@@ -234,7 +234,7 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                 quote! {
                     SequenceHelper::run(|mut seq| {
                         #body_parser
-                        seq.elem(self.parse_token_with_trivia::<{#lex_ctx}>(input, TokenKind::#terminator))?;
+                        seq.elem(self.parse_token_with_trivia::<#lex_ctx>(input, TokenKind::#terminator))?;
                         seq.finish()
                     })
                 }

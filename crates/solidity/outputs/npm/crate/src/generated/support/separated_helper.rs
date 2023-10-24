@@ -1,7 +1,11 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 use crate::{
-    cst, kinds::TokenKind, lexer::Lexer, parse_error::ParseError, text_index::TextRangeExtensions,
+    cst,
+    kinds::{IsLexicalContext, TokenKind},
+    lexer::Lexer,
+    parse_error::ParseError,
+    text_index::TextRangeExtensions,
 };
 
 use super::{
@@ -11,7 +15,7 @@ use super::{
 pub struct SeparatedHelper;
 
 impl SeparatedHelper {
-    pub fn run<const LEX_CTX: u8, L: Lexer>(
+    pub fn run<LexCtx: IsLexicalContext, L: Lexer>(
         input: &mut ParserContext,
         body_parser: impl Fn(&mut ParserContext) -> ParserResult,
         separator: TokenKind,
@@ -28,10 +32,10 @@ impl SeparatedHelper {
                         accum.extend(r#match.nodes);
                     }
 
-                    match lexer.peek_token::<LEX_CTX>(input) {
+                    match lexer.peek_token::<LexCtx>(input) {
                         Some(token) if token == separator => {
                             let separator =
-                                lexer.parse_token_with_trivia::<LEX_CTX>(input, separator);
+                                lexer.parse_token_with_trivia::<LexCtx>(input, separator);
                             match separator {
                                 ParserResult::Match(r#match) => {
                                     accum.extend(r#match.nodes);
@@ -56,9 +60,9 @@ impl SeparatedHelper {
 
                     let skipped = skip_until_with_nested_delims(
                         input,
-                        |input| lexer.next_token::<LEX_CTX>(input),
+                        |input| lexer.next_token::<LexCtx>(input),
                         separator,
-                        <L as Lexer>::delimiters::<LEX_CTX>(),
+                        <L as Lexer>::delimiters::<LexCtx>(),
                     );
 
                     match skipped {
@@ -74,7 +78,7 @@ impl SeparatedHelper {
                                     .expected_tokens,
                             });
 
-                            match lexer.parse_token_with_trivia::<LEX_CTX>(input, separator) {
+                            match lexer.parse_token_with_trivia::<LexCtx>(input, separator) {
                                 ParserResult::Match(r#match) => {
                                     accum.extend(r#match.nodes);
                                     continue;

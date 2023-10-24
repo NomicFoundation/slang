@@ -1,5 +1,5 @@
 use crate::cst;
-use crate::kinds::TokenKind;
+use crate::kinds::{IsLexicalContext, TokenKind};
 use crate::lexer::Lexer;
 use crate::parse_error::ParseError;
 use crate::support::ParserResult;
@@ -40,14 +40,14 @@ impl ParserResult {
     ///
     /// Respects nested delimiters, i.e. the `expected` token is only accepted if it's not nested inside.
     /// Does not consume the `expected` token.
-    pub fn recover_until_with_nested_delims<const LEX_CTX: u8, L: Lexer>(
+    pub fn recover_until_with_nested_delims<LexCtx: IsLexicalContext, L: Lexer>(
         self,
         input: &mut ParserContext,
         lexer: &L,
         expected: TokenKind,
         recover_from_no_match: RecoverFromNoMatch,
     ) -> ParserResult {
-        let delims = L::delimiters::<LEX_CTX>();
+        let delims = L::delimiters::<LexCtx>();
 
         let before_recovery = input.position();
 
@@ -55,7 +55,7 @@ impl ParserResult {
             let start = input.position();
 
             opt_parse(input, |input| lexer.leading_trivia(input));
-            let token = lexer.next_token::<LEX_CTX>(input);
+            let token = lexer.next_token::<LexCtx>(input);
 
             input.set_position(start);
             token
@@ -87,7 +87,7 @@ impl ParserResult {
 
         match skip_until_with_nested_delims(
             input,
-            |input| lexer.next_token::<LEX_CTX>(input),
+            |input| lexer.next_token::<LexCtx>(input),
             expected,
             delims,
         ) {
