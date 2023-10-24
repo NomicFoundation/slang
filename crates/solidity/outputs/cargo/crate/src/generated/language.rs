@@ -238,12 +238,10 @@ impl Language {
                     choice.consider(input, result)?;
                     choice.finish(input)
                 }))
-                .recover_until_with_nested_delims(
+                .recover_until_with_nested_delims::<{ LexicalContext::Default as u8 }, Self>(
                     input,
-                    |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
-                    |input| Lexer::leading_trivia(self, input),
+                    self,
                     TokenKind::CloseParen,
-                    Self::delimiters::<{ LexicalContext::Default as u8 }>(),
                     RecoverFromNoMatch::Yes,
                 ),
             )?;
@@ -271,12 +269,10 @@ impl Language {
             )?;
             seq.elem(
                 self.array_values_list(input)
-                    .recover_until_with_nested_delims(
+                    .recover_until_with_nested_delims::<{ LexicalContext::Default as u8 }, Self>(
                         input,
-                        |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
-                        |input| Lexer::leading_trivia(self, input),
+                        self,
                         TokenKind::CloseBracket,
-                        Self::delimiters::<{ LexicalContext::Default as u8 }>(),
                         RecoverFromNoMatch::Yes,
                     ),
             )?;
@@ -331,53 +327,7 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn assembly_statement(&self, input: &mut ParserContext) -> ParserResult {
-        SequenceHelper::run(|mut seq| {
-            seq.elem(
-                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
-                    input,
-                    TokenKind::AssemblyKeyword,
-                ),
-            )?;
-            seq.elem(OptionalHelper::transform(self.parse_token_with_trivia::<{
-                LexicalContext::Default as u8
-            }>(
-                input,
-                TokenKind::AsciiStringLiteral,
-            )))?;
-            seq.elem(OptionalHelper::transform(SequenceHelper::run(|mut seq| {
-                let mut delim_guard = input.open_delim(TokenKind::CloseParen);
-                let input = delim_guard.ctx();
-                seq.elem(
-                    self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
-                        input,
-                        TokenKind::OpenParen,
-                    ),
-                )?;
-                seq.elem(
-                    self.assembly_flags_list(input)
-                        .recover_until_with_nested_delims(
-                            input,
-                            |input| {
-                                Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input)
-                            },
-                            |input| Lexer::leading_trivia(self, input),
-                            TokenKind::CloseParen,
-                            Self::delimiters::<{ LexicalContext::Default as u8 }>(),
-                            RecoverFromNoMatch::Yes,
-                        ),
-                )?;
-                seq.elem(
-                    self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
-                        input,
-                        TokenKind::CloseParen,
-                    ),
-                )?;
-                seq.finish()
-            })))?;
-            seq.elem(self.yul_block(input))?;
-            seq.finish()
-        })
-        .with_kind(RuleKind::AssemblyStatement)
+        SequenceHelper :: run (| mut seq | { seq . elem (self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: AssemblyKeyword)) ? ; seq . elem (OptionalHelper :: transform (self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: AsciiStringLiteral))) ? ; seq . elem (OptionalHelper :: transform (SequenceHelper :: run (| mut seq | { let mut delim_guard = input . open_delim (TokenKind :: CloseParen) ; let input = delim_guard . ctx () ; seq . elem (self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: OpenParen)) ? ; seq . elem (self . assembly_flags_list (input) . recover_until_with_nested_delims :: < { LexicalContext :: Default as u8 } , Self > (input , self , TokenKind :: CloseParen , RecoverFromNoMatch :: Yes ,)) ? ; seq . elem (self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: CloseParen)) ? ; seq . finish () }))) ? ; seq . elem (self . yul_block (input)) ? ; seq . finish () }) . with_kind (RuleKind :: AssemblyStatement)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -393,12 +343,10 @@ impl Language {
             )?;
             seq.elem(
                 OptionalHelper::transform(self.statements_list(input))
-                    .recover_until_with_nested_delims(
+                    .recover_until_with_nested_delims::<{ LexicalContext::Default as u8 }, Self>(
                         input,
-                        |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
-                        |input| Lexer::leading_trivia(self, input),
+                        self,
                         TokenKind::CloseBrace,
-                        Self::delimiters::<{ LexicalContext::Default as u8 }>(),
                         RecoverFromNoMatch::Yes,
                     ),
             )?;
@@ -421,12 +369,10 @@ impl Language {
                     input,
                     TokenKind::BreakKeyword,
                 )
-                .recover_until_with_nested_delims(
+                .recover_until_with_nested_delims::<{ LexicalContext::Default as u8 }, Self>(
                     input,
-                    |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
-                    |input| Lexer::leading_trivia(self, input),
+                    self,
                     TokenKind::Semicolon,
-                    Self::delimiters::<{ LexicalContext::Default as u8 }>(),
                     RecoverFromNoMatch::No,
                 ),
             )?;
@@ -518,12 +464,10 @@ impl Language {
                         seq.elem(self.expression(input))?;
                         seq.finish()
                     })
-                    .recover_until_with_nested_delims(
+                    .recover_until_with_nested_delims::<{ LexicalContext::Default as u8 }, Self>(
                         input,
-                        |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
-                        |input| Lexer::leading_trivia(self, input),
+                        self,
                         TokenKind::Semicolon,
-                        Self::delimiters::<{ LexicalContext::Default as u8 }>(),
                         RecoverFromNoMatch::No,
                     ),
                 )?;
@@ -610,12 +554,10 @@ impl Language {
                     input,
                     TokenKind::ContinueKeyword,
                 )
-                .recover_until_with_nested_delims(
+                .recover_until_with_nested_delims::<{ LexicalContext::Default as u8 }, Self>(
                     input,
-                    |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
-                    |input| Lexer::leading_trivia(self, input),
+                    self,
                     TokenKind::Semicolon,
-                    Self::delimiters::<{ LexicalContext::Default as u8 }>(),
                     RecoverFromNoMatch::No,
                 ),
             )?;
@@ -632,61 +574,7 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn contract_definition(&self, input: &mut ParserContext) -> ParserResult {
-        SequenceHelper::run(|mut seq| {
-            if self.version_is_at_least_0_6_0 {
-                seq.elem(OptionalHelper::transform(self.parse_token_with_trivia::<{
-                    LexicalContext::Default as u8
-                }>(
-                    input,
-                    TokenKind::AbstractKeyword,
-                )))?;
-            }
-            seq.elem(
-                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
-                    input,
-                    TokenKind::ContractKeyword,
-                ),
-            )?;
-            seq.elem(
-                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
-                    input,
-                    TokenKind::Identifier,
-                ),
-            )?;
-            seq.elem(OptionalHelper::transform(self.inheritance_specifier(input)))?;
-            seq.elem(SequenceHelper::run(|mut seq| {
-                let mut delim_guard = input.open_delim(TokenKind::CloseBrace);
-                let input = delim_guard.ctx();
-                seq.elem(
-                    self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
-                        input,
-                        TokenKind::OpenBrace,
-                    ),
-                )?;
-                seq.elem(
-                    OptionalHelper::transform(self.contract_members_list(input))
-                        .recover_until_with_nested_delims(
-                            input,
-                            |input| {
-                                Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input)
-                            },
-                            |input| Lexer::leading_trivia(self, input),
-                            TokenKind::CloseBrace,
-                            Self::delimiters::<{ LexicalContext::Default as u8 }>(),
-                            RecoverFromNoMatch::Yes,
-                        ),
-                )?;
-                seq.elem(
-                    self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
-                        input,
-                        TokenKind::CloseBrace,
-                    ),
-                )?;
-                seq.finish()
-            }))?;
-            seq.finish()
-        })
-        .with_kind(RuleKind::ContractDefinition)
+        SequenceHelper :: run (| mut seq | { if self . version_is_at_least_0_6_0 { seq . elem (OptionalHelper :: transform (self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: AbstractKeyword))) ? ; } seq . elem (self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: ContractKeyword)) ? ; seq . elem (self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: Identifier)) ? ; seq . elem (OptionalHelper :: transform (self . inheritance_specifier (input))) ? ; seq . elem (SequenceHelper :: run (| mut seq | { let mut delim_guard = input . open_delim (TokenKind :: CloseBrace) ; let input = delim_guard . ctx () ; seq . elem (self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: OpenBrace)) ? ; seq . elem (OptionalHelper :: transform (self . contract_members_list (input)) . recover_until_with_nested_delims :: < { LexicalContext :: Default as u8 } , Self > (input , self , TokenKind :: CloseBrace , RecoverFromNoMatch :: Yes ,)) ? ; seq . elem (self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: CloseBrace)) ? ; seq . finish () })) ? ; seq . finish () }) . with_kind (RuleKind :: ContractDefinition)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -741,52 +629,7 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn deconstruction_import(&self, input: &mut ParserContext) -> ParserResult {
-        SequenceHelper::run(|mut seq| {
-            seq.elem(SequenceHelper::run(|mut seq| {
-                let mut delim_guard = input.open_delim(TokenKind::CloseBrace);
-                let input = delim_guard.ctx();
-                seq.elem(
-                    self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
-                        input,
-                        TokenKind::OpenBrace,
-                    ),
-                )?;
-                seq.elem(
-                    self.deconstruction_import_symbols_list(input)
-                        .recover_until_with_nested_delims(
-                            input,
-                            |input| {
-                                Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input)
-                            },
-                            |input| Lexer::leading_trivia(self, input),
-                            TokenKind::CloseBrace,
-                            Self::delimiters::<{ LexicalContext::Default as u8 }>(),
-                            RecoverFromNoMatch::Yes,
-                        ),
-                )?;
-                seq.elem(
-                    self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
-                        input,
-                        TokenKind::CloseBrace,
-                    ),
-                )?;
-                seq.finish()
-            }))?;
-            seq.elem(
-                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
-                    input,
-                    TokenKind::FromKeyword,
-                ),
-            )?;
-            seq.elem(
-                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
-                    input,
-                    TokenKind::AsciiStringLiteral,
-                ),
-            )?;
-            seq.finish()
-        })
-        .with_kind(RuleKind::DeconstructionImport)
+        SequenceHelper :: run (| mut seq | { seq . elem (SequenceHelper :: run (| mut seq | { let mut delim_guard = input . open_delim (TokenKind :: CloseBrace) ; let input = delim_guard . ctx () ; seq . elem (self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: OpenBrace)) ? ; seq . elem (self . deconstruction_import_symbols_list (input) . recover_until_with_nested_delims :: < { LexicalContext :: Default as u8 } , Self > (input , self , TokenKind :: CloseBrace , RecoverFromNoMatch :: Yes ,)) ? ; seq . elem (self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: CloseBrace)) ? ; seq . finish () })) ? ; seq . elem (self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: FromKeyword)) ? ; seq . elem (self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: AsciiStringLiteral)) ? ; seq . finish () }) . with_kind (RuleKind :: DeconstructionImport)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -843,12 +686,10 @@ impl Language {
                     seq.elem(self.expression(input))?;
                     seq.finish()
                 })
-                .recover_until_with_nested_delims(
+                .recover_until_with_nested_delims::<{ LexicalContext::Default as u8 }, Self>(
                     input,
-                    |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
-                    |input| Lexer::leading_trivia(self, input),
+                    self,
                     TokenKind::Semicolon,
-                    Self::delimiters::<{ LexicalContext::Default as u8 }>(),
                     RecoverFromNoMatch::No,
                 ),
             )?;
@@ -865,69 +706,7 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn do_while_statement(&self, input: &mut ParserContext) -> ParserResult {
-        SequenceHelper::run(|mut seq| {
-            seq.elem(
-                SequenceHelper::run(|mut seq| {
-                    seq.elem(
-                        self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
-                            input,
-                            TokenKind::DoKeyword,
-                        ),
-                    )?;
-                    seq.elem(self.statement(input))?;
-                    seq.elem(
-                        self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
-                            input,
-                            TokenKind::WhileKeyword,
-                        ),
-                    )?;
-                    seq.elem(SequenceHelper::run(|mut seq| {
-                        let mut delim_guard = input.open_delim(TokenKind::CloseParen);
-                        let input = delim_guard.ctx();
-                        seq.elem(
-                            self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
-                                input,
-                                TokenKind::OpenParen,
-                            ),
-                        )?;
-                        seq.elem(self.expression(input).recover_until_with_nested_delims(
-                            input,
-                            |input| {
-                                Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input)
-                            },
-                            |input| Lexer::leading_trivia(self, input),
-                            TokenKind::CloseParen,
-                            Self::delimiters::<{ LexicalContext::Default as u8 }>(),
-                            RecoverFromNoMatch::Yes,
-                        ))?;
-                        seq.elem(
-                            self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
-                                input,
-                                TokenKind::CloseParen,
-                            ),
-                        )?;
-                        seq.finish()
-                    }))?;
-                    seq.finish()
-                })
-                .recover_until_with_nested_delims(
-                    input,
-                    |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
-                    |input| Lexer::leading_trivia(self, input),
-                    TokenKind::Semicolon,
-                    Self::delimiters::<{ LexicalContext::Default as u8 }>(),
-                    RecoverFromNoMatch::No,
-                ),
-            )?;
-            seq.elem(
-                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
-                    input,
-                    TokenKind::Semicolon,
-                ),
-            )?;
-            seq.finish()
-        })
-        .with_kind(RuleKind::DoWhileStatement)
+        SequenceHelper :: run (| mut seq | { seq . elem (SequenceHelper :: run (| mut seq | { seq . elem (self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: DoKeyword)) ? ; seq . elem (self . statement (input)) ? ; seq . elem (self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: WhileKeyword)) ? ; seq . elem (SequenceHelper :: run (| mut seq | { let mut delim_guard = input . open_delim (TokenKind :: CloseParen) ; let input = delim_guard . ctx () ; seq . elem (self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: OpenParen)) ? ; seq . elem (self . expression (input) . recover_until_with_nested_delims :: < { LexicalContext :: Default as u8 } , Self > (input , self , TokenKind :: CloseParen , RecoverFromNoMatch :: Yes ,)) ? ; seq . elem (self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: CloseParen)) ? ; seq . finish () })) ? ; seq . finish () }) . recover_until_with_nested_delims :: < { LexicalContext :: Default as u8 } , Self > (input , self , TokenKind :: Semicolon , RecoverFromNoMatch :: No ,)) ? ; seq . elem (self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: Semicolon)) ? ; seq . finish () }) . with_kind (RuleKind :: DoWhileStatement)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -946,12 +725,10 @@ impl Language {
                         seq.elem(self.arguments_declaration(input))?;
                         seq.finish()
                     })
-                    .recover_until_with_nested_delims(
+                    .recover_until_with_nested_delims::<{ LexicalContext::Default as u8 }, Self>(
                         input,
-                        |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
-                        |input| Lexer::leading_trivia(self, input),
+                        self,
                         TokenKind::Semicolon,
-                        Self::delimiters::<{ LexicalContext::Default as u8 }>(),
                         RecoverFromNoMatch::No,
                     ),
                 )?;
@@ -997,127 +774,12 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn enum_definition(&self, input: &mut ParserContext) -> ParserResult {
-        SequenceHelper::run(|mut seq| {
-            seq.elem(
-                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
-                    input,
-                    TokenKind::EnumKeyword,
-                ),
-            )?;
-            seq.elem(
-                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
-                    input,
-                    TokenKind::Identifier,
-                ),
-            )?;
-            seq.elem(SequenceHelper::run(|mut seq| {
-                let mut delim_guard = input.open_delim(TokenKind::CloseBrace);
-                let input = delim_guard.ctx();
-                seq.elem(
-                    self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
-                        input,
-                        TokenKind::OpenBrace,
-                    ),
-                )?;
-                seq.elem(
-                    OptionalHelper::transform(self.identifiers_list(input))
-                        .recover_until_with_nested_delims(
-                            input,
-                            |input| {
-                                Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input)
-                            },
-                            |input| Lexer::leading_trivia(self, input),
-                            TokenKind::CloseBrace,
-                            Self::delimiters::<{ LexicalContext::Default as u8 }>(),
-                            RecoverFromNoMatch::Yes,
-                        ),
-                )?;
-                seq.elem(
-                    self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
-                        input,
-                        TokenKind::CloseBrace,
-                    ),
-                )?;
-                seq.finish()
-            }))?;
-            seq.finish()
-        })
-        .with_kind(RuleKind::EnumDefinition)
+        SequenceHelper :: run (| mut seq | { seq . elem (self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: EnumKeyword)) ? ; seq . elem (self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: Identifier)) ? ; seq . elem (SequenceHelper :: run (| mut seq | { let mut delim_guard = input . open_delim (TokenKind :: CloseBrace) ; let input = delim_guard . ctx () ; seq . elem (self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: OpenBrace)) ? ; seq . elem (OptionalHelper :: transform (self . identifiers_list (input)) . recover_until_with_nested_delims :: < { LexicalContext :: Default as u8 } , Self > (input , self , TokenKind :: CloseBrace , RecoverFromNoMatch :: Yes ,)) ? ; seq . elem (self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: CloseBrace)) ? ; seq . finish () })) ? ; seq . finish () }) . with_kind (RuleKind :: EnumDefinition)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn error_definition(&self, input: &mut ParserContext) -> ParserResult {
-        if self.version_is_at_least_0_8_4 {
-            SequenceHelper::run(|mut seq| {
-                seq.elem(
-                    SequenceHelper::run(|mut seq| {
-                        seq.elem(
-                            self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
-                                input,
-                                TokenKind::ErrorKeyword,
-                            ),
-                        )?;
-                        seq.elem(
-                            self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
-                                input,
-                                TokenKind::Identifier,
-                            ),
-                        )?;
-                        seq.elem(SequenceHelper::run(|mut seq| {
-                            let mut delim_guard = input.open_delim(TokenKind::CloseParen);
-                            let input = delim_guard.ctx();
-                            seq.elem(
-                                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
-                                    input,
-                                    TokenKind::OpenParen,
-                                ),
-                            )?;
-                            seq.elem(
-                                OptionalHelper::transform(self.error_parameters_list(input))
-                                    .recover_until_with_nested_delims(
-                                        input,
-                                        |input| {
-                                            Lexer::next_token::<{ LexicalContext::Default as u8 }>(
-                                                self, input,
-                                            )
-                                        },
-                                        |input| Lexer::leading_trivia(self, input),
-                                        TokenKind::CloseParen,
-                                        Self::delimiters::<{ LexicalContext::Default as u8 }>(),
-                                        RecoverFromNoMatch::Yes,
-                                    ),
-                            )?;
-                            seq.elem(
-                                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
-                                    input,
-                                    TokenKind::CloseParen,
-                                ),
-                            )?;
-                            seq.finish()
-                        }))?;
-                        seq.finish()
-                    })
-                    .recover_until_with_nested_delims(
-                        input,
-                        |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
-                        |input| Lexer::leading_trivia(self, input),
-                        TokenKind::Semicolon,
-                        Self::delimiters::<{ LexicalContext::Default as u8 }>(),
-                        RecoverFromNoMatch::No,
-                    ),
-                )?;
-                seq.elem(
-                    self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
-                        input,
-                        TokenKind::Semicolon,
-                    ),
-                )?;
-                seq.finish()
-            })
-        } else {
-            ParserResult::disabled()
-        }
-        .with_kind(RuleKind::ErrorDefinition)
+        if self . version_is_at_least_0_8_4 { SequenceHelper :: run (| mut seq | { seq . elem (SequenceHelper :: run (| mut seq | { seq . elem (self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: ErrorKeyword)) ? ; seq . elem (self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: Identifier)) ? ; seq . elem (SequenceHelper :: run (| mut seq | { let mut delim_guard = input . open_delim (TokenKind :: CloseParen) ; let input = delim_guard . ctx () ; seq . elem (self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: OpenParen)) ? ; seq . elem (OptionalHelper :: transform (self . error_parameters_list (input)) . recover_until_with_nested_delims :: < { LexicalContext :: Default as u8 } , Self > (input , self , TokenKind :: CloseParen , RecoverFromNoMatch :: Yes ,)) ? ; seq . elem (self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: CloseParen)) ? ; seq . finish () })) ? ; seq . finish () }) . recover_until_with_nested_delims :: < { LexicalContext :: Default as u8 } , Self > (input , self , TokenKind :: Semicolon , RecoverFromNoMatch :: No ,)) ? ; seq . elem (self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: Semicolon)) ? ; seq . finish () }) } else { ParserResult :: disabled () } . with_kind (RuleKind :: ErrorDefinition)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -1156,79 +818,7 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn event_definition(&self, input: &mut ParserContext) -> ParserResult {
-        SequenceHelper::run(|mut seq| {
-            seq.elem(
-                SequenceHelper::run(|mut seq| {
-                    seq.elem(
-                        self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
-                            input,
-                            TokenKind::EventKeyword,
-                        ),
-                    )?;
-                    seq.elem(
-                        self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
-                            input,
-                            TokenKind::Identifier,
-                        ),
-                    )?;
-                    seq.elem(SequenceHelper::run(|mut seq| {
-                        let mut delim_guard = input.open_delim(TokenKind::CloseParen);
-                        let input = delim_guard.ctx();
-                        seq.elem(
-                            self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
-                                input,
-                                TokenKind::OpenParen,
-                            ),
-                        )?;
-                        seq.elem(
-                            OptionalHelper::transform(self.event_parameters_list(input))
-                                .recover_until_with_nested_delims(
-                                    input,
-                                    |input| {
-                                        Lexer::next_token::<{ LexicalContext::Default as u8 }>(
-                                            self, input,
-                                        )
-                                    },
-                                    |input| Lexer::leading_trivia(self, input),
-                                    TokenKind::CloseParen,
-                                    Self::delimiters::<{ LexicalContext::Default as u8 }>(),
-                                    RecoverFromNoMatch::Yes,
-                                ),
-                        )?;
-                        seq.elem(
-                            self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
-                                input,
-                                TokenKind::CloseParen,
-                            ),
-                        )?;
-                        seq.finish()
-                    }))?;
-                    seq.elem(OptionalHelper::transform(self.parse_token_with_trivia::<{
-                        LexicalContext::Default as u8
-                    }>(
-                        input,
-                        TokenKind::AnonymousKeyword,
-                    )))?;
-                    seq.finish()
-                })
-                .recover_until_with_nested_delims(
-                    input,
-                    |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
-                    |input| Lexer::leading_trivia(self, input),
-                    TokenKind::Semicolon,
-                    Self::delimiters::<{ LexicalContext::Default as u8 }>(),
-                    RecoverFromNoMatch::No,
-                ),
-            )?;
-            seq.elem(
-                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
-                    input,
-                    TokenKind::Semicolon,
-                ),
-            )?;
-            seq.finish()
-        })
-        .with_kind(RuleKind::EventDefinition)
+        SequenceHelper :: run (| mut seq | { seq . elem (SequenceHelper :: run (| mut seq | { seq . elem (self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: EventKeyword)) ? ; seq . elem (self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: Identifier)) ? ; seq . elem (SequenceHelper :: run (| mut seq | { let mut delim_guard = input . open_delim (TokenKind :: CloseParen) ; let input = delim_guard . ctx () ; seq . elem (self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: OpenParen)) ? ; seq . elem (OptionalHelper :: transform (self . event_parameters_list (input)) . recover_until_with_nested_delims :: < { LexicalContext :: Default as u8 } , Self > (input , self , TokenKind :: CloseParen , RecoverFromNoMatch :: Yes ,)) ? ; seq . elem (self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: CloseParen)) ? ; seq . finish () })) ? ; seq . elem (OptionalHelper :: transform (self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: AnonymousKeyword))) ? ; seq . finish () }) . recover_until_with_nested_delims :: < { LexicalContext :: Default as u8 } , Self > (input , self , TokenKind :: Semicolon , RecoverFromNoMatch :: No ,)) ? ; seq . elem (self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: Semicolon)) ? ; seq . finish () }) . with_kind (RuleKind :: EventDefinition)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -1699,7 +1289,7 @@ impl Language {
                             TokenKind::OpenBracket,
                         ),
                     )?;
-                    seq . elem (SequenceHelper :: run (| mut seq | { seq . elem (OptionalHelper :: transform (self . expression (input))) ? ; seq . elem (OptionalHelper :: transform (SequenceHelper :: run (| mut seq | { seq . elem (self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: Colon)) ? ; seq . elem (OptionalHelper :: transform (self . expression (input))) ? ; seq . finish () }))) ? ; seq . finish () }) . recover_until_with_nested_delims (input , | input | Lexer :: next_token :: < { LexicalContext :: Default as u8 } > (self , input) , | input | Lexer :: leading_trivia (self , input) , TokenKind :: CloseBracket , Self :: delimiters :: < { LexicalContext :: Default as u8 } > () , RecoverFromNoMatch :: Yes ,)) ? ;
+                    seq . elem (SequenceHelper :: run (| mut seq | { seq . elem (OptionalHelper :: transform (self . expression (input))) ? ; seq . elem (OptionalHelper :: transform (SequenceHelper :: run (| mut seq | { seq . elem (self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: Colon)) ? ; seq . elem (OptionalHelper :: transform (self . expression (input))) ? ; seq . finish () }))) ? ; seq . finish () }) . recover_until_with_nested_delims :: < { LexicalContext :: Default as u8 } , Self > (input , self , TokenKind :: CloseBracket , RecoverFromNoMatch :: Yes ,)) ? ;
                     seq.elem(
                         self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
                             input,
@@ -1899,14 +1489,15 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn expression_statement(&self, input: &mut ParserContext) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem(self.expression(input).recover_until_with_nested_delims(
-                input,
-                |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
-                |input| Lexer::leading_trivia(self, input),
-                TokenKind::Semicolon,
-                Self::delimiters::<{ LexicalContext::Default as u8 }>(),
-                RecoverFromNoMatch::No,
-            ))?;
+            seq.elem(
+                self.expression(input)
+                    .recover_until_with_nested_delims::<{ LexicalContext::Default as u8 }, Self>(
+                        input,
+                        self,
+                        TokenKind::Semicolon,
+                        RecoverFromNoMatch::No,
+                    ),
+            )?;
             seq.elem(
                 self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
                     input,
@@ -2056,12 +1647,10 @@ impl Language {
                         seq.elem(OptionalHelper::transform(self.expression(input)))?;
                         seq.finish()
                     })
-                    .recover_until_with_nested_delims(
+                    .recover_until_with_nested_delims::<{ LexicalContext::Default as u8 }, Self>(
                         input,
-                        |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
-                        |input| Lexer::leading_trivia(self, input),
+                        self,
                         TokenKind::CloseParen,
-                        Self::delimiters::<{ LexicalContext::Default as u8 }>(),
                         RecoverFromNoMatch::Yes,
                     ),
                 )?;
@@ -2326,52 +1915,7 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn if_statement(&self, input: &mut ParserContext) -> ParserResult {
-        SequenceHelper::run(|mut seq| {
-            seq.elem(
-                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
-                    input,
-                    TokenKind::IfKeyword,
-                ),
-            )?;
-            seq.elem(SequenceHelper::run(|mut seq| {
-                let mut delim_guard = input.open_delim(TokenKind::CloseParen);
-                let input = delim_guard.ctx();
-                seq.elem(
-                    self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
-                        input,
-                        TokenKind::OpenParen,
-                    ),
-                )?;
-                seq.elem(self.expression(input).recover_until_with_nested_delims(
-                    input,
-                    |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
-                    |input| Lexer::leading_trivia(self, input),
-                    TokenKind::CloseParen,
-                    Self::delimiters::<{ LexicalContext::Default as u8 }>(),
-                    RecoverFromNoMatch::Yes,
-                ))?;
-                seq.elem(
-                    self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
-                        input,
-                        TokenKind::CloseParen,
-                    ),
-                )?;
-                seq.finish()
-            }))?;
-            seq.elem(self.statement(input))?;
-            seq.elem(OptionalHelper::transform(SequenceHelper::run(|mut seq| {
-                seq.elem(
-                    self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
-                        input,
-                        TokenKind::ElseKeyword,
-                    ),
-                )?;
-                seq.elem(self.statement(input))?;
-                seq.finish()
-            })))?;
-            seq.finish()
-        })
-        .with_kind(RuleKind::IfStatement)
+        SequenceHelper :: run (| mut seq | { seq . elem (self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: IfKeyword)) ? ; seq . elem (SequenceHelper :: run (| mut seq | { let mut delim_guard = input . open_delim (TokenKind :: CloseParen) ; let input = delim_guard . ctx () ; seq . elem (self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: OpenParen)) ? ; seq . elem (self . expression (input) . recover_until_with_nested_delims :: < { LexicalContext :: Default as u8 } , Self > (input , self , TokenKind :: CloseParen , RecoverFromNoMatch :: Yes ,)) ? ; seq . elem (self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: CloseParen)) ? ; seq . finish () })) ? ; seq . elem (self . statement (input)) ? ; seq . elem (OptionalHelper :: transform (SequenceHelper :: run (| mut seq | { seq . elem (self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: ElseKeyword)) ? ; seq . elem (self . statement (input)) ? ; seq . finish () }))) ? ; seq . finish () }) . with_kind (RuleKind :: IfStatement)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -2396,12 +1940,10 @@ impl Language {
                     }))?;
                     seq.finish()
                 })
-                .recover_until_with_nested_delims(
+                .recover_until_with_nested_delims::<{ LexicalContext::Default as u8 }, Self>(
                     input,
-                    |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
-                    |input| Lexer::leading_trivia(self, input),
+                    self,
                     TokenKind::Semicolon,
-                    Self::delimiters::<{ LexicalContext::Default as u8 }>(),
                     RecoverFromNoMatch::No,
                 ),
             )?;
@@ -2454,53 +1996,7 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn interface_definition(&self, input: &mut ParserContext) -> ParserResult {
-        SequenceHelper::run(|mut seq| {
-            seq.elem(
-                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
-                    input,
-                    TokenKind::InterfaceKeyword,
-                ),
-            )?;
-            seq.elem(
-                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
-                    input,
-                    TokenKind::Identifier,
-                ),
-            )?;
-            seq.elem(OptionalHelper::transform(self.inheritance_specifier(input)))?;
-            seq.elem(SequenceHelper::run(|mut seq| {
-                let mut delim_guard = input.open_delim(TokenKind::CloseBrace);
-                let input = delim_guard.ctx();
-                seq.elem(
-                    self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
-                        input,
-                        TokenKind::OpenBrace,
-                    ),
-                )?;
-                seq.elem(
-                    OptionalHelper::transform(self.interface_members_list(input))
-                        .recover_until_with_nested_delims(
-                            input,
-                            |input| {
-                                Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input)
-                            },
-                            |input| Lexer::leading_trivia(self, input),
-                            TokenKind::CloseBrace,
-                            Self::delimiters::<{ LexicalContext::Default as u8 }>(),
-                            RecoverFromNoMatch::Yes,
-                        ),
-                )?;
-                seq.elem(
-                    self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
-                        input,
-                        TokenKind::CloseBrace,
-                    ),
-                )?;
-                seq.finish()
-            }))?;
-            seq.finish()
-        })
-        .with_kind(RuleKind::InterfaceDefinition)
+        SequenceHelper :: run (| mut seq | { seq . elem (self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: InterfaceKeyword)) ? ; seq . elem (self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: Identifier)) ? ; seq . elem (OptionalHelper :: transform (self . inheritance_specifier (input))) ? ; seq . elem (SequenceHelper :: run (| mut seq | { let mut delim_guard = input . open_delim (TokenKind :: CloseBrace) ; let input = delim_guard . ctx () ; seq . elem (self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: OpenBrace)) ? ; seq . elem (OptionalHelper :: transform (self . interface_members_list (input)) . recover_until_with_nested_delims :: < { LexicalContext :: Default as u8 } , Self > (input , self , TokenKind :: CloseBrace , RecoverFromNoMatch :: Yes ,)) ? ; seq . elem (self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: CloseBrace)) ? ; seq . finish () })) ? ; seq . finish () }) . with_kind (RuleKind :: InterfaceDefinition)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -2581,52 +2077,7 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn library_definition(&self, input: &mut ParserContext) -> ParserResult {
-        SequenceHelper::run(|mut seq| {
-            seq.elem(
-                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
-                    input,
-                    TokenKind::LibraryKeyword,
-                ),
-            )?;
-            seq.elem(
-                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
-                    input,
-                    TokenKind::Identifier,
-                ),
-            )?;
-            seq.elem(SequenceHelper::run(|mut seq| {
-                let mut delim_guard = input.open_delim(TokenKind::CloseBrace);
-                let input = delim_guard.ctx();
-                seq.elem(
-                    self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
-                        input,
-                        TokenKind::OpenBrace,
-                    ),
-                )?;
-                seq.elem(
-                    OptionalHelper::transform(self.library_members_list(input))
-                        .recover_until_with_nested_delims(
-                            input,
-                            |input| {
-                                Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input)
-                            },
-                            |input| Lexer::leading_trivia(self, input),
-                            TokenKind::CloseBrace,
-                            Self::delimiters::<{ LexicalContext::Default as u8 }>(),
-                            RecoverFromNoMatch::Yes,
-                        ),
-                )?;
-                seq.elem(
-                    self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
-                        input,
-                        TokenKind::CloseBrace,
-                    ),
-                )?;
-                seq.finish()
-            }))?;
-            seq.finish()
-        })
-        .with_kind(RuleKind::LibraryDefinition)
+        SequenceHelper :: run (| mut seq | { seq . elem (self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: LibraryKeyword)) ? ; seq . elem (self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: Identifier)) ? ; seq . elem (SequenceHelper :: run (| mut seq | { let mut delim_guard = input . open_delim (TokenKind :: CloseBrace) ; let input = delim_guard . ctx () ; seq . elem (self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: OpenBrace)) ? ; seq . elem (OptionalHelper :: transform (self . library_members_list (input)) . recover_until_with_nested_delims :: < { LexicalContext :: Default as u8 } , Self > (input , self , TokenKind :: CloseBrace , RecoverFromNoMatch :: Yes ,)) ? ; seq . elem (self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: CloseBrace)) ? ; seq . finish () })) ? ; seq . finish () }) . with_kind (RuleKind :: LibraryDefinition)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -2779,12 +2230,10 @@ impl Language {
                         seq.elem(self.mapping_value_type(input))?;
                         seq.finish()
                     })
-                    .recover_until_with_nested_delims(
+                    .recover_until_with_nested_delims::<{ LexicalContext::Default as u8 }, Self>(
                         input,
-                        |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
-                        |input| Lexer::leading_trivia(self, input),
+                        self,
                         TokenKind::CloseParen,
-                        Self::delimiters::<{ LexicalContext::Default as u8 }>(),
                         RecoverFromNoMatch::Yes,
                     ),
                 )?;
@@ -2917,12 +2366,10 @@ impl Language {
             )?;
             seq.elem(
                 OptionalHelper::transform(self.named_arguments_list(input))
-                    .recover_until_with_nested_delims(
+                    .recover_until_with_nested_delims::<{ LexicalContext::Default as u8 }, Self>(
                         input,
-                        |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
-                        |input| Lexer::leading_trivia(self, input),
+                        self,
                         TokenKind::CloseBrace,
-                        Self::delimiters::<{ LexicalContext::Default as u8 }>(),
                         RecoverFromNoMatch::Yes,
                     ),
             )?;
@@ -3008,46 +2455,7 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn override_specifier(&self, input: &mut ParserContext) -> ParserResult {
-        SequenceHelper::run(|mut seq| {
-            seq.elem(
-                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
-                    input,
-                    TokenKind::OverrideKeyword,
-                ),
-            )?;
-            seq.elem(OptionalHelper::transform(SequenceHelper::run(|mut seq| {
-                let mut delim_guard = input.open_delim(TokenKind::CloseParen);
-                let input = delim_guard.ctx();
-                seq.elem(
-                    self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
-                        input,
-                        TokenKind::OpenParen,
-                    ),
-                )?;
-                seq.elem(
-                    OptionalHelper::transform(self.identifier_paths_list(input))
-                        .recover_until_with_nested_delims(
-                            input,
-                            |input| {
-                                Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input)
-                            },
-                            |input| Lexer::leading_trivia(self, input),
-                            TokenKind::CloseParen,
-                            Self::delimiters::<{ LexicalContext::Default as u8 }>(),
-                            RecoverFromNoMatch::Yes,
-                        ),
-                )?;
-                seq.elem(
-                    self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
-                        input,
-                        TokenKind::CloseParen,
-                    ),
-                )?;
-                seq.finish()
-            })))?;
-            seq.finish()
-        })
-        .with_kind(RuleKind::OverrideSpecifier)
+        SequenceHelper :: run (| mut seq | { seq . elem (self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: OverrideKeyword)) ? ; seq . elem (OptionalHelper :: transform (SequenceHelper :: run (| mut seq | { let mut delim_guard = input . open_delim (TokenKind :: CloseParen) ; let input = delim_guard . ctx () ; seq . elem (self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: OpenParen)) ? ; seq . elem (OptionalHelper :: transform (self . identifier_paths_list (input)) . recover_until_with_nested_delims :: < { LexicalContext :: Default as u8 } , Self > (input , self , TokenKind :: CloseParen , RecoverFromNoMatch :: Yes ,)) ? ; seq . elem (self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: CloseParen)) ? ; seq . finish () }))) ? ; seq . finish () }) . with_kind (RuleKind :: OverrideSpecifier)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -3102,12 +2510,10 @@ impl Language {
             )?;
             seq.elem(
                 OptionalHelper::transform(self.parameters_list(input))
-                    .recover_until_with_nested_delims(
+                    .recover_until_with_nested_delims::<{ LexicalContext::Default as u8 }, Self>(
                         input,
-                        |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
-                        |input| Lexer::leading_trivia(self, input),
+                        self,
                         TokenKind::CloseParen,
-                        Self::delimiters::<{ LexicalContext::Default as u8 }>(),
                         RecoverFromNoMatch::Yes,
                     ),
             )?;
@@ -3195,12 +2601,10 @@ impl Language {
                     }))?;
                     seq.finish()
                 })
-                .recover_until_with_nested_delims(
+                .recover_until_with_nested_delims::<{ LexicalContext::Default as u8 }, Self>(
                     input,
-                    |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
-                    |input| Lexer::leading_trivia(self, input),
+                    self,
                     TokenKind::Semicolon,
-                    Self::delimiters::<{ LexicalContext::Default as u8 }>(),
                     RecoverFromNoMatch::No,
                 ),
             )?;
@@ -3301,12 +2705,10 @@ impl Language {
                     seq.elem(OptionalHelper::transform(self.expression(input)))?;
                     seq.finish()
                 })
-                .recover_until_with_nested_delims(
+                .recover_until_with_nested_delims::<{ LexicalContext::Default as u8 }, Self>(
                     input,
-                    |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
-                    |input| Lexer::leading_trivia(self, input),
+                    self,
                     TokenKind::Semicolon,
-                    Self::delimiters::<{ LexicalContext::Default as u8 }>(),
                     RecoverFromNoMatch::No,
                 ),
             )?;
@@ -3351,12 +2753,10 @@ impl Language {
                     seq.elem(self.arguments_declaration(input))?;
                     seq.finish()
                 })
-                .recover_until_with_nested_delims(
+                .recover_until_with_nested_delims::<{ LexicalContext::Default as u8 }, Self>(
                     input,
-                    |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
-                    |input| Lexer::leading_trivia(self, input),
+                    self,
                     TokenKind::Semicolon,
-                    Self::delimiters::<{ LexicalContext::Default as u8 }>(),
                     RecoverFromNoMatch::No,
                 ),
             )?;
@@ -3499,12 +2899,10 @@ impl Language {
                     })))?;
                     seq.finish()
                 })
-                .recover_until_with_nested_delims(
+                .recover_until_with_nested_delims::<{ LexicalContext::Default as u8 }, Self>(
                     input,
-                    |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
-                    |input| Lexer::leading_trivia(self, input),
+                    self,
                     TokenKind::Semicolon,
-                    Self::delimiters::<{ LexicalContext::Default as u8 }>(),
                     RecoverFromNoMatch::No,
                 ),
             )?;
@@ -3589,52 +2987,7 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn struct_definition(&self, input: &mut ParserContext) -> ParserResult {
-        SequenceHelper::run(|mut seq| {
-            seq.elem(
-                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
-                    input,
-                    TokenKind::StructKeyword,
-                ),
-            )?;
-            seq.elem(
-                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
-                    input,
-                    TokenKind::Identifier,
-                ),
-            )?;
-            seq.elem(SequenceHelper::run(|mut seq| {
-                let mut delim_guard = input.open_delim(TokenKind::CloseBrace);
-                let input = delim_guard.ctx();
-                seq.elem(
-                    self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
-                        input,
-                        TokenKind::OpenBrace,
-                    ),
-                )?;
-                seq.elem(
-                    OptionalHelper::transform(self.struct_members_list(input))
-                        .recover_until_with_nested_delims(
-                            input,
-                            |input| {
-                                Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input)
-                            },
-                            |input| Lexer::leading_trivia(self, input),
-                            TokenKind::CloseBrace,
-                            Self::delimiters::<{ LexicalContext::Default as u8 }>(),
-                            RecoverFromNoMatch::Yes,
-                        ),
-                )?;
-                seq.elem(
-                    self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
-                        input,
-                        TokenKind::CloseBrace,
-                    ),
-                )?;
-                seq.finish()
-            }))?;
-            seq.finish()
-        })
-        .with_kind(RuleKind::StructDefinition)
+        SequenceHelper :: run (| mut seq | { seq . elem (self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: StructKeyword)) ? ; seq . elem (self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: Identifier)) ? ; seq . elem (SequenceHelper :: run (| mut seq | { let mut delim_guard = input . open_delim (TokenKind :: CloseBrace) ; let input = delim_guard . ctx () ; seq . elem (self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: OpenBrace)) ? ; seq . elem (OptionalHelper :: transform (self . struct_members_list (input)) . recover_until_with_nested_delims :: < { LexicalContext :: Default as u8 } , Self > (input , self , TokenKind :: CloseBrace , RecoverFromNoMatch :: Yes ,)) ? ; seq . elem (self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: CloseBrace)) ? ; seq . finish () })) ? ; seq . finish () }) . with_kind (RuleKind :: StructDefinition)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -3651,12 +3004,10 @@ impl Language {
                     )?;
                     seq.finish()
                 })
-                .recover_until_with_nested_delims(
+                .recover_until_with_nested_delims::<{ LexicalContext::Default as u8 }, Self>(
                     input,
-                    |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
-                    |input| Lexer::leading_trivia(self, input),
+                    self,
                     TokenKind::Semicolon,
-                    Self::delimiters::<{ LexicalContext::Default as u8 }>(),
                     RecoverFromNoMatch::No,
                 ),
             )?;
@@ -3686,12 +3037,10 @@ impl Language {
                         input,
                         TokenKind::ThrowKeyword,
                     )
-                    .recover_until_with_nested_delims(
+                    .recover_until_with_nested_delims::<{ LexicalContext::Default as u8 }, Self>(
                         input,
-                        |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
-                        |input| Lexer::leading_trivia(self, input),
+                        self,
                         TokenKind::Semicolon,
-                        Self::delimiters::<{ LexicalContext::Default as u8 }>(),
                         RecoverFromNoMatch::No,
                     ),
                 )?;
@@ -3756,68 +3105,7 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn tuple_deconstruction_statement(&self, input: &mut ParserContext) -> ParserResult {
-        SequenceHelper::run(|mut seq| {
-            seq.elem(
-                SequenceHelper::run(|mut seq| {
-                    seq.elem(SequenceHelper::run(|mut seq| {
-                        let mut delim_guard = input.open_delim(TokenKind::CloseParen);
-                        let input = delim_guard.ctx();
-                        seq.elem(
-                            self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
-                                input,
-                                TokenKind::OpenParen,
-                            ),
-                        )?;
-                        seq.elem(
-                            OptionalHelper::transform(self.tuple_members_list(input))
-                                .recover_until_with_nested_delims(
-                                    input,
-                                    |input| {
-                                        Lexer::next_token::<{ LexicalContext::Default as u8 }>(
-                                            self, input,
-                                        )
-                                    },
-                                    |input| Lexer::leading_trivia(self, input),
-                                    TokenKind::CloseParen,
-                                    Self::delimiters::<{ LexicalContext::Default as u8 }>(),
-                                    RecoverFromNoMatch::Yes,
-                                ),
-                        )?;
-                        seq.elem(
-                            self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
-                                input,
-                                TokenKind::CloseParen,
-                            ),
-                        )?;
-                        seq.finish()
-                    }))?;
-                    seq.elem(
-                        self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
-                            input,
-                            TokenKind::Equal,
-                        ),
-                    )?;
-                    seq.elem(self.expression(input))?;
-                    seq.finish()
-                })
-                .recover_until_with_nested_delims(
-                    input,
-                    |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
-                    |input| Lexer::leading_trivia(self, input),
-                    TokenKind::Semicolon,
-                    Self::delimiters::<{ LexicalContext::Default as u8 }>(),
-                    RecoverFromNoMatch::No,
-                ),
-            )?;
-            seq.elem(
-                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
-                    input,
-                    TokenKind::Semicolon,
-                ),
-            )?;
-            seq.finish()
-        })
-        .with_kind(RuleKind::TupleDeconstructionStatement)
+        SequenceHelper :: run (| mut seq | { seq . elem (SequenceHelper :: run (| mut seq | { seq . elem (SequenceHelper :: run (| mut seq | { let mut delim_guard = input . open_delim (TokenKind :: CloseParen) ; let input = delim_guard . ctx () ; seq . elem (self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: OpenParen)) ? ; seq . elem (OptionalHelper :: transform (self . tuple_members_list (input)) . recover_until_with_nested_delims :: < { LexicalContext :: Default as u8 } , Self > (input , self , TokenKind :: CloseParen , RecoverFromNoMatch :: Yes ,)) ? ; seq . elem (self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: CloseParen)) ? ; seq . finish () })) ? ; seq . elem (self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: Equal)) ? ; seq . elem (self . expression (input)) ? ; seq . finish () }) . recover_until_with_nested_delims :: < { LexicalContext :: Default as u8 } , Self > (input , self , TokenKind :: Semicolon , RecoverFromNoMatch :: No ,)) ? ; seq . elem (self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: Semicolon)) ? ; seq . finish () }) . with_kind (RuleKind :: TupleDeconstructionStatement)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -3833,12 +3121,10 @@ impl Language {
             )?;
             seq.elem(
                 self.tuple_values_list(input)
-                    .recover_until_with_nested_delims(
+                    .recover_until_with_nested_delims::<{ LexicalContext::Default as u8 }, Self>(
                         input,
-                        |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
-                        |input| Lexer::leading_trivia(self, input),
+                        self,
                         TokenKind::CloseParen,
-                        Self::delimiters::<{ LexicalContext::Default as u8 }>(),
                         RecoverFromNoMatch::Yes,
                     ),
             )?;
@@ -3958,45 +3244,7 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn type_expression(&self, input: &mut ParserContext) -> ParserResult {
-        if self.version_is_at_least_0_5_3 {
-            SequenceHelper::run(|mut seq| {
-                seq.elem(
-                    self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
-                        input,
-                        TokenKind::TypeKeyword,
-                    ),
-                )?;
-                seq.elem(SequenceHelper::run(|mut seq| {
-                    let mut delim_guard = input.open_delim(TokenKind::CloseParen);
-                    let input = delim_guard.ctx();
-                    seq.elem(
-                        self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
-                            input,
-                            TokenKind::OpenParen,
-                        ),
-                    )?;
-                    seq.elem(self.type_name(input).recover_until_with_nested_delims(
-                        input,
-                        |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
-                        |input| Lexer::leading_trivia(self, input),
-                        TokenKind::CloseParen,
-                        Self::delimiters::<{ LexicalContext::Default as u8 }>(),
-                        RecoverFromNoMatch::Yes,
-                    ))?;
-                    seq.elem(
-                        self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
-                            input,
-                            TokenKind::CloseParen,
-                        ),
-                    )?;
-                    seq.finish()
-                }))?;
-                seq.finish()
-            })
-        } else {
-            ParserResult::disabled()
-        }
-        .with_kind(RuleKind::TypeExpression)
+        if self . version_is_at_least_0_5_3 { SequenceHelper :: run (| mut seq | { seq . elem (self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: TypeKeyword)) ? ; seq . elem (SequenceHelper :: run (| mut seq | { let mut delim_guard = input . open_delim (TokenKind :: CloseParen) ; let input = delim_guard . ctx () ; seq . elem (self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: OpenParen)) ? ; seq . elem (self . type_name (input) . recover_until_with_nested_delims :: < { LexicalContext :: Default as u8 } , Self > (input , self , TokenKind :: CloseParen , RecoverFromNoMatch :: Yes ,)) ? ; seq . elem (self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: CloseParen)) ? ; seq . finish () })) ? ; seq . finish () }) } else { ParserResult :: disabled () } . with_kind (RuleKind :: TypeExpression)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -4014,21 +3262,7 @@ impl Language {
                             TokenKind::OpenBracket,
                         ),
                     )?;
-                    seq.elem(
-                        OptionalHelper::transform(self.expression(input))
-                            .recover_until_with_nested_delims(
-                                input,
-                                |input| {
-                                    Lexer::next_token::<{ LexicalContext::Default as u8 }>(
-                                        self, input,
-                                    )
-                                },
-                                |input| Lexer::leading_trivia(self, input),
-                                TokenKind::CloseBracket,
-                                Self::delimiters::<{ LexicalContext::Default as u8 }>(),
-                                RecoverFromNoMatch::Yes,
-                            ),
-                    )?;
+                    seq . elem (OptionalHelper :: transform (self . expression (input)) . recover_until_with_nested_delims :: < { LexicalContext :: Default as u8 } , Self > (input , self , TokenKind :: CloseBracket , RecoverFromNoMatch :: Yes ,)) ? ;
                     seq.elem(
                         self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
                             input,
@@ -4315,12 +3549,10 @@ impl Language {
                         }))?;
                         seq.finish()
                     })
-                    .recover_until_with_nested_delims(
+                    .recover_until_with_nested_delims::<{ LexicalContext::Default as u8 }, Self>(
                         input,
-                        |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
-                        |input| Lexer::leading_trivia(self, input),
+                        self,
                         TokenKind::Semicolon,
-                        Self::delimiters::<{ LexicalContext::Default as u8 }>(),
                         RecoverFromNoMatch::No,
                     ),
                 )?;
@@ -4383,12 +3615,10 @@ impl Language {
                     }
                     seq.finish()
                 })
-                .recover_until_with_nested_delims(
+                .recover_until_with_nested_delims::<{ LexicalContext::Default as u8 }, Self>(
                     input,
-                    |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
-                    |input| Lexer::leading_trivia(self, input),
+                    self,
                     TokenKind::Semicolon,
-                    Self::delimiters::<{ LexicalContext::Default as u8 }>(),
                     RecoverFromNoMatch::No,
                 ),
             )?;
@@ -4416,12 +3646,10 @@ impl Language {
             )?;
             seq.elem(
                 self.using_directive_symbols_list(input)
-                    .recover_until_with_nested_delims(
+                    .recover_until_with_nested_delims::<{ LexicalContext::Default as u8 }, Self>(
                         input,
-                        |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
-                        |input| Lexer::leading_trivia(self, input),
+                        self,
                         TokenKind::CloseBrace,
-                        Self::delimiters::<{ LexicalContext::Default as u8 }>(),
                         RecoverFromNoMatch::Yes,
                     ),
             )?;
@@ -4638,12 +3866,10 @@ impl Language {
                     })))?;
                     seq.finish()
                 })
-                .recover_until_with_nested_delims(
+                .recover_until_with_nested_delims::<{ LexicalContext::Default as u8 }, Self>(
                     input,
-                    |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
-                    |input| Lexer::leading_trivia(self, input),
+                    self,
                     TokenKind::Semicolon,
-                    Self::delimiters::<{ LexicalContext::Default as u8 }>(),
                     RecoverFromNoMatch::No,
                 ),
             )?;
@@ -4819,42 +4045,7 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn while_statement(&self, input: &mut ParserContext) -> ParserResult {
-        SequenceHelper::run(|mut seq| {
-            seq.elem(
-                self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
-                    input,
-                    TokenKind::WhileKeyword,
-                ),
-            )?;
-            seq.elem(SequenceHelper::run(|mut seq| {
-                let mut delim_guard = input.open_delim(TokenKind::CloseParen);
-                let input = delim_guard.ctx();
-                seq.elem(
-                    self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
-                        input,
-                        TokenKind::OpenParen,
-                    ),
-                )?;
-                seq.elem(self.expression(input).recover_until_with_nested_delims(
-                    input,
-                    |input| Lexer::next_token::<{ LexicalContext::Default as u8 }>(self, input),
-                    |input| Lexer::leading_trivia(self, input),
-                    TokenKind::CloseParen,
-                    Self::delimiters::<{ LexicalContext::Default as u8 }>(),
-                    RecoverFromNoMatch::Yes,
-                ))?;
-                seq.elem(
-                    self.parse_token_with_trivia::<{ LexicalContext::Default as u8 }>(
-                        input,
-                        TokenKind::CloseParen,
-                    ),
-                )?;
-                seq.finish()
-            }))?;
-            seq.elem(self.statement(input))?;
-            seq.finish()
-        })
-        .with_kind(RuleKind::WhileStatement)
+        SequenceHelper :: run (| mut seq | { seq . elem (self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: WhileKeyword)) ? ; seq . elem (SequenceHelper :: run (| mut seq | { let mut delim_guard = input . open_delim (TokenKind :: CloseParen) ; let input = delim_guard . ctx () ; seq . elem (self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: OpenParen)) ? ; seq . elem (self . expression (input) . recover_until_with_nested_delims :: < { LexicalContext :: Default as u8 } , Self > (input , self , TokenKind :: CloseParen , RecoverFromNoMatch :: Yes ,)) ? ; seq . elem (self . parse_token_with_trivia :: < { LexicalContext :: Default as u8 } > (input , TokenKind :: CloseParen)) ? ; seq . finish () })) ? ; seq . elem (self . statement (input)) ? ; seq . finish () }) . with_kind (RuleKind :: WhileStatement)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -4886,14 +4077,10 @@ impl Language {
             )?;
             seq.elem(
                 OptionalHelper::transform(self.yul_statements_list(input))
-                    .recover_until_with_nested_delims(
+                    .recover_until_with_nested_delims::<{ LexicalContext::YulBlock as u8 }, Self>(
                         input,
-                        |input| {
-                            Lexer::next_token::<{ LexicalContext::YulBlock as u8 }>(self, input)
-                        },
-                        |input| Lexer::leading_trivia(self, input),
+                        self,
                         TokenKind::CloseBrace,
-                        Self::delimiters::<{ LexicalContext::YulBlock as u8 }>(),
                         RecoverFromNoMatch::Yes,
                     ),
             )?;
@@ -4966,21 +4153,7 @@ impl Language {
                             TokenKind::OpenParen,
                         ),
                     )?;
-                    seq.elem(
-                        OptionalHelper::transform(self.yul_expressions_list(input))
-                            .recover_until_with_nested_delims(
-                                input,
-                                |input| {
-                                    Lexer::next_token::<{ LexicalContext::YulBlock as u8 }>(
-                                        self, input,
-                                    )
-                                },
-                                |input| Lexer::leading_trivia(self, input),
-                                TokenKind::CloseParen,
-                                Self::delimiters::<{ LexicalContext::YulBlock as u8 }>(),
-                                RecoverFromNoMatch::Yes,
-                            ),
-                    )?;
+                    seq . elem (OptionalHelper :: transform (self . yul_expressions_list (input)) . recover_until_with_nested_delims :: < { LexicalContext :: YulBlock as u8 } , Self > (input , self , TokenKind :: CloseParen , RecoverFromNoMatch :: Yes ,)) ? ;
                     seq.elem(
                         self.parse_token_with_trivia::<{ LexicalContext::YulBlock as u8 }>(
                             input,
@@ -5200,14 +4373,10 @@ impl Language {
             )?;
             seq.elem(
                 OptionalHelper::transform(self.yul_identifiers_list(input))
-                    .recover_until_with_nested_delims(
+                    .recover_until_with_nested_delims::<{ LexicalContext::YulBlock as u8 }, Self>(
                         input,
-                        |input| {
-                            Lexer::next_token::<{ LexicalContext::YulBlock as u8 }>(self, input)
-                        },
-                        |input| Lexer::leading_trivia(self, input),
+                        self,
                         TokenKind::CloseParen,
-                        Self::delimiters::<{ LexicalContext::YulBlock as u8 }>(),
                         RecoverFromNoMatch::Yes,
                     ),
             )?;

@@ -167,11 +167,9 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                 let body_parser = body.applicable_version_quality_ranges().wrap_code(
                     quote! {
                         seq.elem(#parser
-                            .recover_until_with_nested_delims(input,
-                                |input| Lexer::next_token::<{#lex_ctx}>(self, input),
-                                |input| Lexer::leading_trivia(self, input),
+                            .recover_until_with_nested_delims::<{#lex_ctx}, Self>(input,
+                                self,
                                 TokenKind::#close_delim,
-                                Self::delimiters::<{#lex_ctx}>(),
                                 RecoverFromNoMatch::Yes,
                             )
                         )?;
@@ -223,11 +221,9 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                 let body_parser = body.applicable_version_quality_ranges().wrap_code(
                     quote! {
                         seq.elem(#parser
-                            .recover_until_with_nested_delims(input,
-                                |input| Lexer::next_token::<{#lex_ctx}>(self, input),
-                                |input| Lexer::leading_trivia(self, input),
+                            .recover_until_with_nested_delims::<{#lex_ctx}, Self>(input,
+                                self,
                                 TokenKind::#terminator,
-                                Self::delimiters::<{#lex_ctx}>(),
                                 RecoverFromNoMatch::No,
                             )
                         )?;

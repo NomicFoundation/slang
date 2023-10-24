@@ -2,6 +2,7 @@
 
 use crate::cst;
 use crate::kinds::TokenKind;
+use crate::lexer::Lexer;
 use crate::parse_error::ParseError;
 use crate::support::ParserResult;
 use crate::text_index::{TextRange, TextRangeExtensions as _};
@@ -41,22 +42,22 @@ impl ParserResult {
     ///
     /// Respects nested delimiters, i.e. the `expected` token is only accepted if it's not nested inside.
     /// Does not consume the `expected` token.
-    pub fn recover_until_with_nested_delims(
+    pub fn recover_until_with_nested_delims<const LEX_CTX: u8, L: Lexer>(
         self,
         input: &mut ParserContext,
-        next_token: impl Fn(&mut ParserContext) -> Option<TokenKind>,
-        leading_trivia: impl Fn(&mut ParserContext) -> ParserResult,
+        lexer: &L,
         expected: TokenKind,
-        delims: &[(TokenKind, TokenKind)],
         recover_from_no_match: RecoverFromNoMatch,
     ) -> ParserResult {
+        let delims = L::delimiters::<LEX_CTX>();
+
         let before_recovery = input.position();
 
         let mut peek_token_after_trivia = || {
             let start = input.position();
 
-            opt_parse(input, &leading_trivia);
-            let token = next_token(input);
+            opt_parse(input, |input| lexer.leading_trivia(input));
+            let token = lexer.next_token::<LEX_CTX>(input);
 
             input.set_position(start);
             token
@@ -84,9 +85,14 @@ impl ParserResult {
             _ => return self,
         };
 
-        let leading_trivia = opt_parse(input, &leading_trivia);
+        let leading_trivia = opt_parse(input, |input| lexer.leading_trivia(input));
 
-        match skip_until_with_nested_delims(input, next_token, expected, delims) {
+        match skip_until_with_nested_delims(
+            input,
+            |input| lexer.next_token::<LEX_CTX>(input),
+            expected,
+            delims,
+        ) {
             Some((found, skipped_range)) => {
                 nodes.extend(leading_trivia);
                 if matches!(result_kind, ParseResultKind::Match) {
@@ -100,24 +106,24 @@ impl ParserResult {
                     tokens_that_would_have_allowed_more_progress: expected_tokens.clone(),
                 });
 
-                return ParserResult::SkippedUntil(SkippedUntil {
+                ParserResult::SkippedUntil(SkippedUntil {
                     nodes,
                     expected,
                     skipped,
                     found,
-                });
+                })
             }
             // Not found till EOF, revert any recovery attempt
             None => {
                 input.set_position(before_recovery);
 
-                return match result_kind {
+                match result_kind {
                     ParseResultKind::Match => ParserResult::r#match(nodes, expected_tokens),
                     ParseResultKind::Incomplete => {
                         ParserResult::incomplete_match(nodes, expected_tokens)
                     }
                     ParseResultKind::NoMatch => ParserResult::no_match(expected_tokens),
-                };
+                }
             }
         }
     }
