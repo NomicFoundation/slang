@@ -167,7 +167,7 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                 let body_parser = body.applicable_version_quality_ranges().wrap_code(
                     quote! {
                         seq.elem(#parser
-                            .recover_until_with_nested_delims::<#lex_ctx, Self>(input,
+                            .recover_until_with_nested_delims::<_, #lex_ctx>(input,
                                 self,
                                 TokenKind::#close_delim,
                                 RecoverFromNoMatch::Yes,
@@ -201,11 +201,11 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                 let parser = body.to_parser_code(context_name, is_trivia);
 
                 quote! {
-                    SeparatedHelper::run::<#lex_ctx, Self>(
+                    SeparatedHelper::run::<_, #lex_ctx>(
                         input,
+                        self,
                         |input| #parser,
                         TokenKind::#separator,
-                        self,
                     )
                 }
             }
@@ -221,7 +221,7 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                 let body_parser = body.applicable_version_quality_ranges().wrap_code(
                     quote! {
                         seq.elem(#parser
-                            .recover_until_with_nested_delims::<#lex_ctx, Self>(input,
+                            .recover_until_with_nested_delims::<_, #lex_ctx>(input,
                                 self,
                                 TokenKind::#terminator,
                                 RecoverFromNoMatch::No,

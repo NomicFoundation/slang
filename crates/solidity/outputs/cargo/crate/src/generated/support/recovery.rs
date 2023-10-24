@@ -42,15 +42,13 @@ impl ParserResult {
     ///
     /// Respects nested delimiters, i.e. the `expected` token is only accepted if it's not nested inside.
     /// Does not consume the `expected` token.
-    pub fn recover_until_with_nested_delims<LexCtx: IsLexicalContext, L: Lexer>(
+    pub fn recover_until_with_nested_delims<L: Lexer, LexCtx: IsLexicalContext>(
         self,
         input: &mut ParserContext,
         lexer: &L,
         expected: TokenKind,
         recover_from_no_match: RecoverFromNoMatch,
     ) -> ParserResult {
-        let delims = L::delimiters::<LexCtx>();
-
         let before_recovery = input.position();
 
         let mut peek_token_after_trivia = || {
@@ -87,12 +85,7 @@ impl ParserResult {
 
         let leading_trivia = opt_parse(input, |input| lexer.leading_trivia(input));
 
-        match skip_until_with_nested_delims(
-            input,
-            |input| lexer.next_token::<LexCtx>(input),
-            expected,
-            delims,
-        ) {
+        match skip_until_with_nested_delims::<_, LexCtx>(input, lexer, expected) {
             Some((found, skipped_range)) => {
                 nodes.extend(leading_trivia);
                 if matches!(result_kind, ParseResultKind::Match) {
@@ -134,18 +127,19 @@ impl ParserResult {
 /// Does not consume the `expected` token.
 ///
 /// Returns the found token and the range of skipped tokens on success.
-pub fn skip_until_with_nested_delims(
+pub fn skip_until_with_nested_delims<L: Lexer, LexCtx: IsLexicalContext>(
     input: &mut ParserContext,
-    next_token: impl Fn(&mut ParserContext) -> Option<TokenKind>,
+    lexer: &L,
     until: TokenKind,
-    delims: &[(TokenKind, TokenKind)],
 ) -> Option<(TokenKind, TextRange)> {
+    let delims = L::delimiters::<LexCtx>();
+
     let start = input.position();
 
     let mut local_delims = vec![];
     loop {
         let save = input.position();
-        match next_token(input) {
+        match lexer.next_token::<LexCtx>(input) {
             // If we're not skipping past a local delimited group (delimiter stack is empty),
             // we can unwind on a token that's expected by us or by our ancestor.
             Some(token)

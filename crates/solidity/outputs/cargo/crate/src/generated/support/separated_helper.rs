@@ -5,21 +5,22 @@ use crate::{
     kinds::{IsLexicalContext, TokenKind},
     lexer::Lexer,
     parse_error::ParseError,
+    support::{
+        parser_result::{ParserResult, SkippedUntil},
+        recovery::skip_until_with_nested_delims,
+        ParserContext,
+    },
     text_index::TextRangeExtensions,
-};
-
-use super::{
-    parser_result::IncompleteMatch, skip_until_with_nested_delims, ParserContext, ParserResult,
 };
 
 pub struct SeparatedHelper;
 
 impl SeparatedHelper {
-    pub fn run<LexCtx: IsLexicalContext, L: Lexer>(
+    pub fn run<L: Lexer, LexCtx: IsLexicalContext>(
         input: &mut ParserContext,
+        lexer: &L,
         body_parser: impl Fn(&mut ParserContext) -> ParserResult,
         separator: TokenKind,
-        lexer: &L,
     ) -> ParserResult {
         let mut accum = vec![];
         loop {
@@ -58,14 +59,7 @@ impl SeparatedHelper {
 
                     let start = input.position();
 
-                    let skipped = skip_until_with_nested_delims(
-                        input,
-                        |input| lexer.next_token::<LexCtx>(input),
-                        separator,
-                        <L as Lexer>::delimiters::<LexCtx>(),
-                    );
-
-                    match skipped {
+                    match skip_until_with_nested_delims::<_, LexCtx>(input, lexer, separator) {
                         // A separator was found, so we can recover the incomplete match
                         Some((found, skipped_range)) if found == separator => {
                             accum.push(cst::Node::token(
@@ -93,10 +87,10 @@ impl SeparatedHelper {
                             // Undo the recovery attempt
                             input.set_position(start);
 
-                            return ParserResult::IncompleteMatch(IncompleteMatch {
-                                nodes: accum,
-                                expected_tokens: incomplete.expected_tokens,
-                            });
+                            return ParserResult::incomplete_match(
+                                accum,
+                                incomplete.expected_tokens,
+                            );
                         }
                     }
                 }
@@ -110,7 +104,8 @@ impl SeparatedHelper {
 
                 ParserResult::SkippedUntil(skipped) => {
                     accum.extend(skipped.nodes);
-                    return ParserResult::SkippedUntil(super::parser_result::SkippedUntil {
+
+                    return ParserResult::SkippedUntil(SkippedUntil {
                         nodes: accum,
                         ..skipped
                     });

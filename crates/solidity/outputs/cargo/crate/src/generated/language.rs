@@ -230,7 +230,7 @@ impl Language {
                     choice.consider(input, result)?;
                     choice.finish(input)
                 }))
-                .recover_until_with_nested_delims::<LexicalContextType::Default, Self>(
+                .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                     input,
                     self,
                     TokenKind::CloseParen,
@@ -257,7 +257,7 @@ impl Language {
             ))?;
             seq.elem(
                 self.array_values_list(input)
-                    .recover_until_with_nested_delims::<LexicalContextType::Default, Self>(
+                    .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
                         self,
                         TokenKind::CloseBracket,
@@ -275,11 +275,11 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn array_values_list(&self, input: &mut ParserContext) -> ParserResult {
-        SeparatedHelper::run::<LexicalContextType::Default, Self>(
+        SeparatedHelper::run::<_, LexicalContextType::Default>(
             input,
+            self,
             |input| self.expression(input),
             TokenKind::Comma,
-            self,
         )
         .with_kind(RuleKind::ArrayValuesList)
     }
@@ -297,8 +297,9 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn assembly_flags_list(&self, input: &mut ParserContext) -> ParserResult {
-        SeparatedHelper::run::<LexicalContextType::Default, Self>(
+        SeparatedHelper::run::<_, LexicalContextType::Default>(
             input,
+            self,
             |input| {
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
@@ -306,7 +307,6 @@ impl Language {
                 )
             },
             TokenKind::Comma,
-            self,
         )
         .with_kind(RuleKind::AssemblyFlagsList)
     }
@@ -333,7 +333,7 @@ impl Language {
                 ))?;
                 seq.elem(
                     self.assembly_flags_list(input)
-                        .recover_until_with_nested_delims::<LexicalContextType::Default, Self>(
+                        .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                             input,
                             self,
                             TokenKind::CloseParen,
@@ -363,7 +363,7 @@ impl Language {
             ))?;
             seq.elem(
                 OptionalHelper::transform(self.statements_list(input))
-                    .recover_until_with_nested_delims::<LexicalContextType::Default, Self>(
+                    .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
                         self,
                         TokenKind::CloseBrace,
@@ -387,7 +387,7 @@ impl Language {
                     input,
                     TokenKind::BreakKeyword,
                 )
-                .recover_until_with_nested_delims::<LexicalContextType::Default, Self>(
+                .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                     input,
                     self,
                     TokenKind::Semicolon,
@@ -472,7 +472,7 @@ impl Language {
                         seq.elem(self.expression(input))?;
                         seq.finish()
                     })
-                    .recover_until_with_nested_delims::<LexicalContextType::Default, Self>(
+                    .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
                         self,
                         TokenKind::Semicolon,
@@ -555,7 +555,7 @@ impl Language {
                     input,
                     TokenKind::ContinueKeyword,
                 )
-                .recover_until_with_nested_delims::<LexicalContextType::Default, Self>(
+                .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                     input,
                     self,
                     TokenKind::Semicolon,
@@ -600,7 +600,7 @@ impl Language {
                 ))?;
                 seq.elem(
                     OptionalHelper::transform(self.contract_members_list(input))
-                        .recover_until_with_nested_delims::<LexicalContextType::Default, Self>(
+                        .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
                         self,
                         TokenKind::CloseBrace,
@@ -680,7 +680,7 @@ impl Language {
                 ))?;
                 seq.elem(
                     self.deconstruction_import_symbols_list(input)
-                        .recover_until_with_nested_delims::<LexicalContextType::Default, Self>(
+                        .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                             input,
                             self,
                             TokenKind::CloseBrace,
@@ -731,11 +731,11 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn deconstruction_import_symbols_list(&self, input: &mut ParserContext) -> ParserResult {
-        SeparatedHelper::run::<LexicalContextType::Default, Self>(
+        SeparatedHelper::run::<_, LexicalContextType::Default>(
             input,
+            self,
             |input| self.deconstruction_import_symbol(input),
             TokenKind::Comma,
-            self,
         )
         .with_kind(RuleKind::DeconstructionImportSymbolsList)
     }
@@ -752,7 +752,7 @@ impl Language {
                     seq.elem(self.expression(input))?;
                     seq.finish()
                 })
-                .recover_until_with_nested_delims::<LexicalContextType::Default, Self>(
+                .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                     input,
                     self,
                     TokenKind::Semicolon,
@@ -770,7 +770,56 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn do_while_statement(&self, input: &mut ParserContext) -> ParserResult {
-        SequenceHelper :: run (| mut seq | { seq . elem (SequenceHelper :: run (| mut seq | { seq . elem (self . parse_token_with_trivia :: < LexicalContextType :: Default > (input , TokenKind :: DoKeyword)) ? ; seq . elem (self . statement (input)) ? ; seq . elem (self . parse_token_with_trivia :: < LexicalContextType :: Default > (input , TokenKind :: WhileKeyword)) ? ; seq . elem (SequenceHelper :: run (| mut seq | { let mut delim_guard = input . open_delim (TokenKind :: CloseParen) ; let input = delim_guard . ctx () ; seq . elem (self . parse_token_with_trivia :: < LexicalContextType :: Default > (input , TokenKind :: OpenParen)) ? ; seq . elem (self . expression (input) . recover_until_with_nested_delims :: < LexicalContextType :: Default , Self > (input , self , TokenKind :: CloseParen , RecoverFromNoMatch :: Yes ,)) ? ; seq . elem (self . parse_token_with_trivia :: < LexicalContextType :: Default > (input , TokenKind :: CloseParen)) ? ; seq . finish () })) ? ; seq . finish () }) . recover_until_with_nested_delims :: < LexicalContextType :: Default , Self > (input , self , TokenKind :: Semicolon , RecoverFromNoMatch :: No ,)) ? ; seq . elem (self . parse_token_with_trivia :: < LexicalContextType :: Default > (input , TokenKind :: Semicolon)) ? ; seq . finish () }) . with_kind (RuleKind :: DoWhileStatement)
+        SequenceHelper::run(|mut seq| {
+            seq.elem(
+                SequenceHelper::run(|mut seq| {
+                    seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        input,
+                        TokenKind::DoKeyword,
+                    ))?;
+                    seq.elem(self.statement(input))?;
+                    seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        input,
+                        TokenKind::WhileKeyword,
+                    ))?;
+                    seq.elem(SequenceHelper::run(|mut seq| {
+                        let mut delim_guard = input.open_delim(TokenKind::CloseParen);
+                        let input = delim_guard.ctx();
+                        seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            input,
+                            TokenKind::OpenParen,
+                        ))?;
+                        seq.elem(
+                            self.expression(input)
+                                .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
+                                    input,
+                                    self,
+                                    TokenKind::CloseParen,
+                                    RecoverFromNoMatch::Yes,
+                                ),
+                        )?;
+                        seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            input,
+                            TokenKind::CloseParen,
+                        ))?;
+                        seq.finish()
+                    }))?;
+                    seq.finish()
+                })
+                .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
+                    input,
+                    self,
+                    TokenKind::Semicolon,
+                    RecoverFromNoMatch::No,
+                ),
+            )?;
+            seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
+                input,
+                TokenKind::Semicolon,
+            ))?;
+            seq.finish()
+        })
+        .with_kind(RuleKind::DoWhileStatement)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -787,7 +836,7 @@ impl Language {
                         seq.elem(self.arguments_declaration(input))?;
                         seq.finish()
                     })
-                    .recover_until_with_nested_delims::<LexicalContextType::Default, Self>(
+                    .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
                         self,
                         TokenKind::Semicolon,
@@ -850,7 +899,7 @@ impl Language {
                 ))?;
                 seq.elem(
                     OptionalHelper::transform(self.identifiers_list(input))
-                        .recover_until_with_nested_delims::<LexicalContextType::Default, Self>(
+                        .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
                         self,
                         TokenKind::CloseBrace,
@@ -870,7 +919,7 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn error_definition(&self, input: &mut ParserContext) -> ParserResult {
-        if self . version_is_at_least_0_8_4 { SequenceHelper :: run (| mut seq | { seq . elem (SequenceHelper :: run (| mut seq | { seq . elem (self . parse_token_with_trivia :: < LexicalContextType :: Default > (input , TokenKind :: ErrorKeyword)) ? ; seq . elem (self . parse_token_with_trivia :: < LexicalContextType :: Default > (input , TokenKind :: Identifier)) ? ; seq . elem (SequenceHelper :: run (| mut seq | { let mut delim_guard = input . open_delim (TokenKind :: CloseParen) ; let input = delim_guard . ctx () ; seq . elem (self . parse_token_with_trivia :: < LexicalContextType :: Default > (input , TokenKind :: OpenParen)) ? ; seq . elem (OptionalHelper :: transform (self . error_parameters_list (input)) . recover_until_with_nested_delims :: < LexicalContextType :: Default , Self > (input , self , TokenKind :: CloseParen , RecoverFromNoMatch :: Yes ,)) ? ; seq . elem (self . parse_token_with_trivia :: < LexicalContextType :: Default > (input , TokenKind :: CloseParen)) ? ; seq . finish () })) ? ; seq . finish () }) . recover_until_with_nested_delims :: < LexicalContextType :: Default , Self > (input , self , TokenKind :: Semicolon , RecoverFromNoMatch :: No ,)) ? ; seq . elem (self . parse_token_with_trivia :: < LexicalContextType :: Default > (input , TokenKind :: Semicolon)) ? ; seq . finish () }) } else { ParserResult :: disabled () } . with_kind (RuleKind :: ErrorDefinition)
+        if self . version_is_at_least_0_8_4 { SequenceHelper :: run (| mut seq | { seq . elem (SequenceHelper :: run (| mut seq | { seq . elem (self . parse_token_with_trivia :: < LexicalContextType :: Default > (input , TokenKind :: ErrorKeyword)) ? ; seq . elem (self . parse_token_with_trivia :: < LexicalContextType :: Default > (input , TokenKind :: Identifier)) ? ; seq . elem (SequenceHelper :: run (| mut seq | { let mut delim_guard = input . open_delim (TokenKind :: CloseParen) ; let input = delim_guard . ctx () ; seq . elem (self . parse_token_with_trivia :: < LexicalContextType :: Default > (input , TokenKind :: OpenParen)) ? ; seq . elem (OptionalHelper :: transform (self . error_parameters_list (input)) . recover_until_with_nested_delims :: < _ , LexicalContextType :: Default > (input , self , TokenKind :: CloseParen , RecoverFromNoMatch :: Yes ,)) ? ; seq . elem (self . parse_token_with_trivia :: < LexicalContextType :: Default > (input , TokenKind :: CloseParen)) ? ; seq . finish () })) ? ; seq . finish () }) . recover_until_with_nested_delims :: < _ , LexicalContextType :: Default > (input , self , TokenKind :: Semicolon , RecoverFromNoMatch :: No ,)) ? ; seq . elem (self . parse_token_with_trivia :: < LexicalContextType :: Default > (input , TokenKind :: Semicolon)) ? ; seq . finish () }) } else { ParserResult :: disabled () } . with_kind (RuleKind :: ErrorDefinition)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -895,11 +944,11 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn error_parameters_list(&self, input: &mut ParserContext) -> ParserResult {
         if self.version_is_at_least_0_8_4 {
-            SeparatedHelper::run::<LexicalContextType::Default, Self>(
+            SeparatedHelper::run::<_, LexicalContextType::Default>(
                 input,
+                self,
                 |input| self.error_parameter(input),
                 TokenKind::Comma,
-                self,
             )
         } else {
             ParserResult::disabled()
@@ -909,7 +958,61 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn event_definition(&self, input: &mut ParserContext) -> ParserResult {
-        SequenceHelper :: run (| mut seq | { seq . elem (SequenceHelper :: run (| mut seq | { seq . elem (self . parse_token_with_trivia :: < LexicalContextType :: Default > (input , TokenKind :: EventKeyword)) ? ; seq . elem (self . parse_token_with_trivia :: < LexicalContextType :: Default > (input , TokenKind :: Identifier)) ? ; seq . elem (SequenceHelper :: run (| mut seq | { let mut delim_guard = input . open_delim (TokenKind :: CloseParen) ; let input = delim_guard . ctx () ; seq . elem (self . parse_token_with_trivia :: < LexicalContextType :: Default > (input , TokenKind :: OpenParen)) ? ; seq . elem (OptionalHelper :: transform (self . event_parameters_list (input)) . recover_until_with_nested_delims :: < LexicalContextType :: Default , Self > (input , self , TokenKind :: CloseParen , RecoverFromNoMatch :: Yes ,)) ? ; seq . elem (self . parse_token_with_trivia :: < LexicalContextType :: Default > (input , TokenKind :: CloseParen)) ? ; seq . finish () })) ? ; seq . elem (OptionalHelper :: transform (self . parse_token_with_trivia :: < LexicalContextType :: Default > (input , TokenKind :: AnonymousKeyword))) ? ; seq . finish () }) . recover_until_with_nested_delims :: < LexicalContextType :: Default , Self > (input , self , TokenKind :: Semicolon , RecoverFromNoMatch :: No ,)) ? ; seq . elem (self . parse_token_with_trivia :: < LexicalContextType :: Default > (input , TokenKind :: Semicolon)) ? ; seq . finish () }) . with_kind (RuleKind :: EventDefinition)
+        SequenceHelper::run(|mut seq| {
+            seq.elem(
+                SequenceHelper::run(|mut seq| {
+                    seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        input,
+                        TokenKind::EventKeyword,
+                    ))?;
+                    seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        input,
+                        TokenKind::Identifier,
+                    ))?;
+                    seq.elem(SequenceHelper::run(|mut seq| {
+                        let mut delim_guard = input.open_delim(TokenKind::CloseParen);
+                        let input = delim_guard.ctx();
+                        seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            input,
+                            TokenKind::OpenParen,
+                        ))?;
+                        seq.elem(
+                            OptionalHelper::transform(self.event_parameters_list(input))
+                                .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
+                                input,
+                                self,
+                                TokenKind::CloseParen,
+                                RecoverFromNoMatch::Yes,
+                            ),
+                        )?;
+                        seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            input,
+                            TokenKind::CloseParen,
+                        ))?;
+                        seq.finish()
+                    }))?;
+                    seq.elem(OptionalHelper::transform(
+                        self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            input,
+                            TokenKind::AnonymousKeyword,
+                        ),
+                    ))?;
+                    seq.finish()
+                })
+                .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
+                    input,
+                    self,
+                    TokenKind::Semicolon,
+                    RecoverFromNoMatch::No,
+                ),
+            )?;
+            seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
+                input,
+                TokenKind::Semicolon,
+            ))?;
+            seq.finish()
+        })
+        .with_kind(RuleKind::EventDefinition)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -935,11 +1038,11 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn event_parameters_list(&self, input: &mut ParserContext) -> ParserResult {
-        SeparatedHelper::run::<LexicalContextType::Default, Self>(
+        SeparatedHelper::run::<_, LexicalContextType::Default>(
             input,
+            self,
             |input| self.event_parameter(input),
             TokenKind::Comma,
-            self,
         )
         .with_kind(RuleKind::EventParametersList)
     }
@@ -1379,7 +1482,7 @@ impl Language {
                             })))?;
                             seq.finish()
                         })
-                        .recover_until_with_nested_delims::<LexicalContextType::Default, Self>(
+                        .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                             input,
                             self,
                             TokenKind::CloseBracket,
@@ -1584,7 +1687,7 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             seq.elem(
                 self.expression(input)
-                    .recover_until_with_nested_delims::<LexicalContextType::Default, Self>(
+                    .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
                         self,
                         TokenKind::Semicolon,
@@ -1727,7 +1830,7 @@ impl Language {
                         seq.elem(OptionalHelper::transform(self.expression(input)))?;
                         seq.finish()
                     })
-                    .recover_until_with_nested_delims::<LexicalContextType::Default, Self>(
+                    .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
                         self,
                         TokenKind::CloseParen,
@@ -1946,8 +2049,9 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn identifier_path(&self, input: &mut ParserContext) -> ParserResult {
-        SeparatedHelper::run::<LexicalContextType::Default, Self>(
+        SeparatedHelper::run::<_, LexicalContextType::Default>(
             input,
+            self,
             |input| {
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
@@ -1955,26 +2059,26 @@ impl Language {
                 )
             },
             TokenKind::Period,
-            self,
         )
         .with_kind(RuleKind::IdentifierPath)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn identifier_paths_list(&self, input: &mut ParserContext) -> ParserResult {
-        SeparatedHelper::run::<LexicalContextType::Default, Self>(
+        SeparatedHelper::run::<_, LexicalContextType::Default>(
             input,
+            self,
             |input| self.identifier_path(input),
             TokenKind::Comma,
-            self,
         )
         .with_kind(RuleKind::IdentifierPathsList)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn identifiers_list(&self, input: &mut ParserContext) -> ParserResult {
-        SeparatedHelper::run::<LexicalContextType::Default, Self>(
+        SeparatedHelper::run::<_, LexicalContextType::Default>(
             input,
+            self,
             |input| {
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
@@ -1982,7 +2086,6 @@ impl Language {
                 )
             },
             TokenKind::Comma,
-            self,
         )
         .with_kind(RuleKind::IdentifiersList)
     }
@@ -2003,7 +2106,7 @@ impl Language {
                 ))?;
                 seq.elem(
                     self.expression(input)
-                        .recover_until_with_nested_delims::<LexicalContextType::Default, Self>(
+                        .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                             input,
                             self,
                             TokenKind::CloseParen,
@@ -2050,7 +2153,7 @@ impl Language {
                     }))?;
                     seq.finish()
                 })
-                .recover_until_with_nested_delims::<LexicalContextType::Default, Self>(
+                .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                     input,
                     self,
                     TokenKind::Semicolon,
@@ -2091,11 +2194,11 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn inheritance_types_list(&self, input: &mut ParserContext) -> ParserResult {
-        SeparatedHelper::run::<LexicalContextType::Default, Self>(
+        SeparatedHelper::run::<_, LexicalContextType::Default>(
             input,
+            self,
             |input| self.inheritance_type(input),
             TokenKind::Comma,
-            self,
         )
         .with_kind(RuleKind::InheritanceTypesList)
     }
@@ -2121,7 +2224,7 @@ impl Language {
                 ))?;
                 seq.elem(
                     OptionalHelper::transform(self.interface_members_list(input))
-                        .recover_until_with_nested_delims::<LexicalContextType::Default, Self>(
+                        .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
                         self,
                         TokenKind::CloseBrace,
@@ -2233,7 +2336,7 @@ impl Language {
                 ))?;
                 seq.elem(
                     OptionalHelper::transform(self.library_members_list(input))
-                        .recover_until_with_nested_delims::<LexicalContextType::Default, Self>(
+                        .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
                         self,
                         TokenKind::CloseBrace,
@@ -2394,7 +2497,7 @@ impl Language {
                         seq.elem(self.mapping_value_type(input))?;
                         seq.finish()
                     })
-                    .recover_until_with_nested_delims::<LexicalContextType::Default, Self>(
+                    .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
                         self,
                         TokenKind::CloseParen,
@@ -2520,7 +2623,7 @@ impl Language {
             ))?;
             seq.elem(
                 OptionalHelper::transform(self.named_arguments_list(input))
-                    .recover_until_with_nested_delims::<LexicalContextType::Default, Self>(
+                    .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                     input,
                     self,
                     TokenKind::CloseBrace,
@@ -2538,11 +2641,11 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn named_arguments_list(&self, input: &mut ParserContext) -> ParserResult {
-        SeparatedHelper::run::<LexicalContextType::Default, Self>(
+        SeparatedHelper::run::<_, LexicalContextType::Default>(
             input,
+            self,
             |input| self.named_argument(input),
             TokenKind::Comma,
-            self,
         )
         .with_kind(RuleKind::NamedArgumentsList)
     }
@@ -2787,7 +2890,7 @@ impl Language {
                 ))?;
                 seq.elem(
                     OptionalHelper::transform(self.identifier_paths_list(input))
-                        .recover_until_with_nested_delims::<LexicalContextType::Default, Self>(
+                        .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
                         self,
                         TokenKind::CloseParen,
@@ -2854,7 +2957,7 @@ impl Language {
             ))?;
             seq.elem(
                 OptionalHelper::transform(self.parameters_list(input))
-                    .recover_until_with_nested_delims::<LexicalContextType::Default, Self>(
+                    .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
                         self,
                         TokenKind::CloseParen,
@@ -2872,11 +2975,11 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn parameters_list(&self, input: &mut ParserContext) -> ParserResult {
-        SeparatedHelper::run::<LexicalContextType::Default, Self>(
+        SeparatedHelper::run::<_, LexicalContextType::Default>(
             input,
+            self,
             |input| self.parameter(input),
             TokenKind::Comma,
-            self,
         )
         .with_kind(RuleKind::ParametersList)
     }
@@ -2906,11 +3009,11 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn positional_arguments_list(&self, input: &mut ParserContext) -> ParserResult {
-        SeparatedHelper::run::<LexicalContextType::Default, Self>(
+        SeparatedHelper::run::<_, LexicalContextType::Default>(
             input,
+            self,
             |input| self.expression(input),
             TokenKind::Comma,
-            self,
         )
         .with_kind(RuleKind::PositionalArgumentsList)
     }
@@ -2935,7 +3038,7 @@ impl Language {
                     }))?;
                     seq.finish()
                 })
-                .recover_until_with_nested_delims::<LexicalContextType::Default, Self>(
+                .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                     input,
                     self,
                     TokenKind::Semicolon,
@@ -3030,7 +3133,7 @@ impl Language {
                     seq.elem(OptionalHelper::transform(self.expression(input)))?;
                     seq.finish()
                 })
-                .recover_until_with_nested_delims::<LexicalContextType::Default, Self>(
+                .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                     input,
                     self,
                     TokenKind::Semicolon,
@@ -3072,7 +3175,7 @@ impl Language {
                     seq.elem(self.arguments_declaration(input))?;
                     seq.finish()
                 })
-                .recover_until_with_nested_delims::<LexicalContextType::Default, Self>(
+                .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                     input,
                     self,
                     TokenKind::Semicolon,
@@ -3212,7 +3315,7 @@ impl Language {
                     })))?;
                     seq.finish()
                 })
-                .recover_until_with_nested_delims::<LexicalContextType::Default, Self>(
+                .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                     input,
                     self,
                     TokenKind::Semicolon,
@@ -3316,7 +3419,7 @@ impl Language {
                 ))?;
                 seq.elem(
                     OptionalHelper::transform(self.struct_members_list(input))
-                        .recover_until_with_nested_delims::<LexicalContextType::Default, Self>(
+                        .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
                         self,
                         TokenKind::CloseBrace,
@@ -3346,7 +3449,7 @@ impl Language {
                     ))?;
                     seq.finish()
                 })
-                .recover_until_with_nested_delims::<LexicalContextType::Default, Self>(
+                .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                     input,
                     self,
                     TokenKind::Semicolon,
@@ -3377,7 +3480,7 @@ impl Language {
                         input,
                         TokenKind::ThrowKeyword,
                     )
-                    .recover_until_with_nested_delims::<LexicalContextType::Default, Self>(
+                    .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
                         self,
                         TokenKind::Semicolon,
@@ -3436,7 +3539,52 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn tuple_deconstruction_statement(&self, input: &mut ParserContext) -> ParserResult {
-        SequenceHelper :: run (| mut seq | { seq . elem (SequenceHelper :: run (| mut seq | { seq . elem (SequenceHelper :: run (| mut seq | { let mut delim_guard = input . open_delim (TokenKind :: CloseParen) ; let input = delim_guard . ctx () ; seq . elem (self . parse_token_with_trivia :: < LexicalContextType :: Default > (input , TokenKind :: OpenParen)) ? ; seq . elem (OptionalHelper :: transform (self . tuple_members_list (input)) . recover_until_with_nested_delims :: < LexicalContextType :: Default , Self > (input , self , TokenKind :: CloseParen , RecoverFromNoMatch :: Yes ,)) ? ; seq . elem (self . parse_token_with_trivia :: < LexicalContextType :: Default > (input , TokenKind :: CloseParen)) ? ; seq . finish () })) ? ; seq . elem (self . parse_token_with_trivia :: < LexicalContextType :: Default > (input , TokenKind :: Equal)) ? ; seq . elem (self . expression (input)) ? ; seq . finish () }) . recover_until_with_nested_delims :: < LexicalContextType :: Default , Self > (input , self , TokenKind :: Semicolon , RecoverFromNoMatch :: No ,)) ? ; seq . elem (self . parse_token_with_trivia :: < LexicalContextType :: Default > (input , TokenKind :: Semicolon)) ? ; seq . finish () }) . with_kind (RuleKind :: TupleDeconstructionStatement)
+        SequenceHelper::run(|mut seq| {
+            seq.elem(
+                SequenceHelper::run(|mut seq| {
+                    seq.elem(SequenceHelper::run(|mut seq| {
+                        let mut delim_guard = input.open_delim(TokenKind::CloseParen);
+                        let input = delim_guard.ctx();
+                        seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            input,
+                            TokenKind::OpenParen,
+                        ))?;
+                        seq.elem(
+                            OptionalHelper::transform(self.tuple_members_list(input))
+                                .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
+                                input,
+                                self,
+                                TokenKind::CloseParen,
+                                RecoverFromNoMatch::Yes,
+                            ),
+                        )?;
+                        seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            input,
+                            TokenKind::CloseParen,
+                        ))?;
+                        seq.finish()
+                    }))?;
+                    seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        input,
+                        TokenKind::Equal,
+                    ))?;
+                    seq.elem(self.expression(input))?;
+                    seq.finish()
+                })
+                .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
+                    input,
+                    self,
+                    TokenKind::Semicolon,
+                    RecoverFromNoMatch::No,
+                ),
+            )?;
+            seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
+                input,
+                TokenKind::Semicolon,
+            ))?;
+            seq.finish()
+        })
+        .with_kind(RuleKind::TupleDeconstructionStatement)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -3450,7 +3598,7 @@ impl Language {
             ))?;
             seq.elem(
                 self.tuple_values_list(input)
-                    .recover_until_with_nested_delims::<LexicalContextType::Default, Self>(
+                    .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
                         self,
                         TokenKind::CloseParen,
@@ -3541,22 +3689,22 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn tuple_members_list(&self, input: &mut ParserContext) -> ParserResult {
-        SeparatedHelper::run::<LexicalContextType::Default, Self>(
+        SeparatedHelper::run::<_, LexicalContextType::Default>(
             input,
+            self,
             |input| self.tuple_member(input),
             TokenKind::Comma,
-            self,
         )
         .with_kind(RuleKind::TupleMembersList)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn tuple_values_list(&self, input: &mut ParserContext) -> ParserResult {
-        SeparatedHelper::run::<LexicalContextType::Default, Self>(
+        SeparatedHelper::run::<_, LexicalContextType::Default>(
             input,
+            self,
             |input| OptionalHelper::transform(self.expression(input)),
             TokenKind::Comma,
-            self,
         )
         .with_kind(RuleKind::TupleValuesList)
     }
@@ -3578,7 +3726,7 @@ impl Language {
                     ))?;
                     seq.elem(
                         self.type_name(input)
-                            .recover_until_with_nested_delims::<LexicalContextType::Default, Self>(
+                            .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                                 input,
                                 self,
                                 TokenKind::CloseParen,
@@ -3614,7 +3762,7 @@ impl Language {
                     ))?;
                     seq.elem(
                         OptionalHelper::transform(self.expression(input))
-                            .recover_until_with_nested_delims::<LexicalContextType::Default, Self>(
+                            .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                             input,
                             self,
                             TokenKind::CloseBracket,
@@ -3890,7 +4038,7 @@ impl Language {
                         }))?;
                         seq.finish()
                     })
-                    .recover_until_with_nested_delims::<LexicalContextType::Default, Self>(
+                    .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
                         self,
                         TokenKind::Semicolon,
@@ -3949,7 +4097,7 @@ impl Language {
                     }
                     seq.finish()
                 })
-                .recover_until_with_nested_delims::<LexicalContextType::Default, Self>(
+                .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                     input,
                     self,
                     TokenKind::Semicolon,
@@ -3976,7 +4124,7 @@ impl Language {
             ))?;
             seq.elem(
                 self.using_directive_symbols_list(input)
-                    .recover_until_with_nested_delims::<LexicalContextType::Default, Self>(
+                    .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
                         self,
                         TokenKind::CloseBrace,
@@ -4115,11 +4263,11 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn using_directive_symbols_list(&self, input: &mut ParserContext) -> ParserResult {
-        SeparatedHelper::run::<LexicalContextType::Default, Self>(
+        SeparatedHelper::run::<_, LexicalContextType::Default>(
             input,
+            self,
             |input| self.using_directive_symbol(input),
             TokenKind::Comma,
-            self,
         )
         .with_kind(RuleKind::UsingDirectiveSymbolsList)
     }
@@ -4187,7 +4335,7 @@ impl Language {
                     })))?;
                     seq.finish()
                 })
-                .recover_until_with_nested_delims::<LexicalContextType::Default, Self>(
+                .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                     input,
                     self,
                     TokenKind::Semicolon,
@@ -4341,8 +4489,9 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn version_pragma_specifier(&self, input: &mut ParserContext) -> ParserResult {
-        SeparatedHelper::run::<LexicalContextType::VersionPragma, Self>(
+        SeparatedHelper::run::<_, LexicalContextType::VersionPragma>(
             input,
+            self,
             |input| {
                 self.parse_token_with_trivia::<LexicalContextType::VersionPragma>(
                     input,
@@ -4350,7 +4499,6 @@ impl Language {
                 )
             },
             TokenKind::Period,
-            self,
         )
         .with_kind(RuleKind::VersionPragmaSpecifier)
     }
@@ -4371,7 +4519,7 @@ impl Language {
                 ))?;
                 seq.elem(
                     self.expression(input)
-                        .recover_until_with_nested_delims::<LexicalContextType::Default, Self>(
+                        .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                             input,
                             self,
                             TokenKind::CloseParen,
@@ -4419,7 +4567,7 @@ impl Language {
             )?;
             seq.elem(
                 OptionalHelper::transform(self.yul_statements_list(input))
-                    .recover_until_with_nested_delims::<LexicalContextType::YulBlock, Self>(
+                    .recover_until_with_nested_delims::<_, LexicalContextType::YulBlock>(
                     input,
                     self,
                     TokenKind::CloseBrace,
@@ -4494,7 +4642,7 @@ impl Language {
                     )?;
                     seq.elem(
                         OptionalHelper::transform(self.yul_expressions_list(input))
-                            .recover_until_with_nested_delims::<LexicalContextType::YulBlock, Self>(
+                            .recover_until_with_nested_delims::<_, LexicalContextType::YulBlock>(
                             input,
                             self,
                             TokenKind::CloseParen,
@@ -4577,11 +4725,11 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn yul_expressions_list(&self, input: &mut ParserContext) -> ParserResult {
-        SeparatedHelper::run::<LexicalContextType::YulBlock, Self>(
+        SeparatedHelper::run::<_, LexicalContextType::YulBlock>(
             input,
+            self,
             |input| self.yul_expression(input),
             TokenKind::Comma,
-            self,
         )
         .with_kind(RuleKind::YulExpressionsList)
     }
@@ -4631,8 +4779,9 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn yul_identifier_path(&self, input: &mut ParserContext) -> ParserResult {
-        SeparatedHelper::run::<LexicalContextType::YulBlock, Self>(
+        SeparatedHelper::run::<_, LexicalContextType::YulBlock>(
             input,
+            self,
             |input| {
                 self.parse_token_with_trivia::<LexicalContextType::YulBlock>(
                     input,
@@ -4640,26 +4789,26 @@ impl Language {
                 )
             },
             TokenKind::Period,
-            self,
         )
         .with_kind(RuleKind::YulIdentifierPath)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn yul_identifier_paths_list(&self, input: &mut ParserContext) -> ParserResult {
-        SeparatedHelper::run::<LexicalContextType::YulBlock, Self>(
+        SeparatedHelper::run::<_, LexicalContextType::YulBlock>(
             input,
+            self,
             |input| self.yul_identifier_path(input),
             TokenKind::Comma,
-            self,
         )
         .with_kind(RuleKind::YulIdentifierPathsList)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn yul_identifiers_list(&self, input: &mut ParserContext) -> ParserResult {
-        SeparatedHelper::run::<LexicalContextType::YulBlock, Self>(
+        SeparatedHelper::run::<_, LexicalContextType::YulBlock>(
             input,
+            self,
             |input| {
                 self.parse_token_with_trivia::<LexicalContextType::YulBlock>(
                     input,
@@ -4667,7 +4816,6 @@ impl Language {
                 )
             },
             TokenKind::Comma,
-            self,
         )
         .with_kind(RuleKind::YulIdentifiersList)
     }
@@ -4714,7 +4862,7 @@ impl Language {
             )?;
             seq.elem(
                 OptionalHelper::transform(self.yul_identifiers_list(input))
-                    .recover_until_with_nested_delims::<LexicalContextType::YulBlock, Self>(
+                    .recover_until_with_nested_delims::<_, LexicalContextType::YulBlock>(
                     input,
                     self,
                     TokenKind::CloseParen,
