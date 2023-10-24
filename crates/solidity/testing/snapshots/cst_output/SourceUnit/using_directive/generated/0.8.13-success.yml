@@ -50,23 +50,23 @@ Tree:
               - Semicolon (Token): ";" # 54..55
           - UsingDirective (Rule): # 56..98 "\nusing EnvelopeUtils for Envelope global;\n"
               - UsingKeyword (Token): "using" # 57..62
-              - UsingDirectivePath (Rule): # 62..77 " EnvelopeUtils "
-                  - IdentifierPath (Rule): # 62..77 " EnvelopeUtils "
+              - UsingDirectivePath (Rule): # 62..76 " EnvelopeUtils"
+                  - IdentifierPath (Rule): # 62..76 " EnvelopeUtils"
                       - Identifier (Token): "EnvelopeUtils" # 63..76
               - ForKeyword (Token): "for" # 77..80
-              - TypeName (Rule): # 80..90 " Envelope "
-                  - IdentifierPath (Rule): # 80..90 " Envelope "
+              - TypeName (Rule): # 80..89 " Envelope"
+                  - IdentifierPath (Rule): # 80..89 " Envelope"
                       - Identifier (Token): "Envelope" # 81..89
               - GlobalKeyword (Token): "global" # 90..96
               - Semicolon (Token): ";" # 96..97
           - UsingDirective (Rule): # 98..145 "using TransactionUtils for Transaction global;\n"
               - UsingKeyword (Token): "using" # 98..103
-              - UsingDirectivePath (Rule): # 103..121 " TransactionUtils "
-                  - IdentifierPath (Rule): # 103..121 " TransactionUtils "
+              - UsingDirectivePath (Rule): # 103..120 " TransactionUtils"
+                  - IdentifierPath (Rule): # 103..120 " TransactionUtils"
                       - Identifier (Token): "TransactionUtils" # 104..120
               - ForKeyword (Token): "for" # 121..124
-              - TypeName (Rule): # 124..137 " Transaction "
-                  - IdentifierPath (Rule): # 124..137 " Transaction "
+              - TypeName (Rule): # 124..136 " Transaction"
+                  - IdentifierPath (Rule): # 124..136 " Transaction"
                       - Identifier (Token): "Transaction" # 125..136
               - GlobalKeyword (Token): "global" # 137..143
               - Semicolon (Token): ";" # 143..144
@@ -105,8 +105,8 @@ Tree:
                       - Identifier (Token): "destinationChainId" # 754..772
                       - Semicolon (Token): ";" # 772..773
                   - StructMember (Rule): # 774..791 "  bytes message;\n"
-                      - TypeName (Rule): # 774..782 "  bytes "
-                          - IdentifierPath (Rule): # 774..782 "  bytes "
+                      - TypeName (Rule): # 774..781 "  bytes"
+                          - IdentifierPath (Rule): # 774..781 "  bytes"
                               - Identifier (Token): "bytes" # 776..781
                       - Identifier (Token): "message" # 782..789
                       - Semicolon (Token): ";" # 789..790

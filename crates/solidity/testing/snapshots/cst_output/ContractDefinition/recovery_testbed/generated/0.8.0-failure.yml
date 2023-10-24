@@ -51,7 +51,7 @@ Tree:
               - Identifier (Token): "_transfer" # 30..39
               - ParametersDeclaration (Rule): # 39..54 "(address while)"
                   - OpenParen (Token): "(" # 39..40
-                  - ParametersList (Rule): # 40..48 "address "
+                  - ParametersList (Rule): # 40..47 "address"
                       - Parameter (Rule): # 40..47 "address"
                           - TypeName (Rule): # 40..47 "address"
                               - AddressType (Rule): # 40..47 "address"
@@ -115,8 +115,8 @@ Tree:
                                       - Statement (Rule): # 187..205 " invalid sequence "
                                           - VariableDeclarationStatement (Rule): # 187..205 " invalid sequence "
                                               - VariableDeclaration (Rule): # 187..204 " invalid sequence"
-                                                  - TypeName (Rule): # 187..196 " invalid "
-                                                      - IdentifierPath (Rule): # 187..196 " invalid "
+                                                  - TypeName (Rule): # 187..195 " invalid"
+                                                      - IdentifierPath (Rule): # 187..195 " invalid"
                                                           - Identifier (Token): "invalid" # 188..195
                                                   - Identifier (Token): "sequence" # 196..204
                                   - SKIPPED (Token): "" # 205..205

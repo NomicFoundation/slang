@@ -51,16 +51,6 @@ impl ParserResult {
     ) -> ParserResult {
         let before_recovery = input.position();
 
-        let mut peek_token_after_trivia = || {
-            let start = input.position();
-
-            opt_parse(input, |input| lexer.leading_trivia(input));
-            let token = lexer.next_token::<LexCtx>(input);
-
-            input.set_position(start);
-            token
-        };
-
         enum ParseResultKind {
             Match,
             Incomplete,
@@ -73,7 +63,9 @@ impl ParserResult {
                 result.expected_tokens,
                 ParseResultKind::Incomplete,
             ),
-            ParserResult::Match(result) if peek_token_after_trivia() != Some(expected) => {
+            ParserResult::Match(result)
+                if lexer.peek_token_with_trivia::<LexCtx>(input) != Some(expected) =>
+            {
                 (result.nodes, result.expected_tokens, ParseResultKind::Match)
             }
             ParserResult::NoMatch(result) if recover_from_no_match.as_bool() => {

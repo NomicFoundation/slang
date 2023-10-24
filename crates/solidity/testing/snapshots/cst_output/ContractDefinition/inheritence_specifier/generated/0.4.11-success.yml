@@ -9,9 +9,9 @@ Tree:
   - ContractDefinition (Rule): # 0..41 "contract Sample is Foo, Bar(1, 2), Baz {}"
       - ContractKeyword (Token): "contract" # 0..8
       - Identifier (Token): "Sample" # 9..15
-      - InheritanceSpecifier (Rule): # 15..39 " is Foo, Bar(1, 2), Baz "
+      - InheritanceSpecifier (Rule): # 15..38 " is Foo, Bar(1, 2), Baz"
           - IsKeyword (Token): "is" # 16..18
-          - InheritanceTypesList (Rule): # 18..39 " Foo, Bar(1, 2), Baz "
+          - InheritanceTypesList (Rule): # 18..38 " Foo, Bar(1, 2), Baz"
               - InheritanceType (Rule): # 18..22 " Foo"
                   - IdentifierPath (Rule): # 18..22 " Foo"
                       - Identifier (Token): "Foo" # 19..22
@@ -31,8 +31,8 @@ Tree:
                                   - DecimalLiteral (Token): "2" # 31..32
                       - CloseParen (Token): ")" # 32..33
               - Comma (Token): "," # 33..34
-              - InheritanceType (Rule): # 34..39 " Baz "
-                  - IdentifierPath (Rule): # 34..39 " Baz "
+              - InheritanceType (Rule): # 34..38 " Baz"
+                  - IdentifierPath (Rule): # 34..38 " Baz"
                       - Identifier (Token): "Baz" # 35..38
       - OpenBrace (Token): "{" # 39..40
       - CloseBrace (Token): "}" # 40..41

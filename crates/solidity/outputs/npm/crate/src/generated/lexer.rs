@@ -16,8 +16,10 @@ pub trait Lexer {
     #[doc(hidden)]
     fn trailing_trivia(&self, input: &mut ParserContext) -> ParserResult;
     #[doc(hidden)]
+    /// Returns valid grouping delimiters in the given lexical context.
     fn delimiters<LexCtx: IsLexicalContext>() -> &'static [(TokenKind, TokenKind)];
 
+    /// Peeks the next token, including trivia. Does not advance the input.
     fn peek_token<LexCtx: IsLexicalContext>(&self, input: &mut ParserContext) -> Option<TokenKind> {
         let start = input.position();
         let token = self.next_token::<LexCtx>(input);
@@ -25,6 +27,21 @@ pub trait Lexer {
         token
     }
 
+    /// Peeks the next significant (i.e. non-trivia) token. Does not advance the input.
+    fn peek_token_with_trivia<LexCtx: IsLexicalContext>(
+        &self,
+        input: &mut ParserContext,
+    ) -> Option<TokenKind> {
+        let start = input.position();
+
+        let _ = self.leading_trivia(input);
+        let token = self.next_token::<LexCtx>(input);
+
+        input.set_position(start);
+        token
+    }
+
+    /// Attempts to consume the next expected token. Advances the input only if the token matches.
     fn parse_token<LexCtx: IsLexicalContext>(
         &self,
         input: &mut ParserContext,
@@ -43,6 +60,8 @@ pub trait Lexer {
         )
     }
 
+    /// Attempts to consume the next significant token including both leading and trailing trivia.
+    /// Advances the input only if the token matches.
     fn parse_token_with_trivia<LexCtx: IsLexicalContext>(
         &self,
         input: &mut ParserContext,

@@ -18,7 +18,7 @@ Tree:
       - EventKeyword (Token): "event" # 0..5
       - Identifier (Token): "Transfer" # 6..14
       - OpenParen (Token): "(" # 14..15
-      - EventParametersList (Rule): # 15..31 "address indexed "
+      - EventParametersList (Rule): # 15..30 "address indexed"
           - EventParameter (Rule): # 15..30 "address indexed"
               - TypeName (Rule): # 15..22 "address"
                   - AddressType (Rule): # 15..22 "address"

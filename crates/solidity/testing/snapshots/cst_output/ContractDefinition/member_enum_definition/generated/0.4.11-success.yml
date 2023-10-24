@@ -21,7 +21,7 @@ Tree:
               - EnumKeyword (Token): "enum" # 20..24
               - Identifier (Token): "State" # 25..30
               - OpenBrace (Token): "{" # 31..32
-              - IdentifiersList (Rule): # 33..55 "    A,\n    B,\n    C\n  "
+              - IdentifiersList (Rule): # 33..53 "    A,\n    B,\n    C\n"
                   - Identifier (Token): "A" # 37..38
                   - Comma (Token): "," # 38..39
                   - Identifier (Token): "B" # 44..45

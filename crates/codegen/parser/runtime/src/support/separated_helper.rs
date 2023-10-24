@@ -26,16 +26,9 @@ impl SeparatedHelper {
                 ParserResult::Match(r#match) => {
                     accum.extend(r#match.nodes);
 
-                    // Parse the leading trivia so that we can peek the next significant token
-                    if let ParserResult::Match(r#match) = lexer.leading_trivia(input) {
-                        accum.extend(r#match.nodes);
-                    }
-
-                    match lexer.peek_token::<LexCtx>(input) {
+                    match lexer.peek_token_with_trivia::<LexCtx>(input) {
                         Some(token) if token == separator => {
-                            let separator =
-                                lexer.parse_token_with_trivia::<LexCtx>(input, separator);
-                            match separator {
+                            match lexer.parse_token_with_trivia::<LexCtx>(input, separator) {
                                 ParserResult::Match(r#match) => {
                                     accum.extend(r#match.nodes);
                                     continue;
