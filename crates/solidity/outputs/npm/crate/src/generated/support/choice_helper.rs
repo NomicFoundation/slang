@@ -13,7 +13,7 @@ use super::{context::Marker, parser_result::DescendentsIter, ParserContext, Pars
 pub struct ChoiceHelper {
     result: ParserResult,
     start_position: Marker,
-    // Because we backtrack after every non-final pick, we store the the progress
+    // Because we backtrack after every non-final pick, we store the progress
     // and the emitted errors from the time of a best pick, so that we can return to it later.
     last_progress: TextIndex,
     recovered_errors: Vec<ParseError>,
