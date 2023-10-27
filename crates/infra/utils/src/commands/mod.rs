@@ -3,6 +3,7 @@ use std::{
     env::vars,
     fmt::{Display, Formatter},
     io::Write,
+    os::unix::process::ExitStatusExt,
     path::{Path, PathBuf},
     process::{Child, Command as StdCommand, ExitStatus, Output, Stdio},
 };
@@ -176,11 +177,9 @@ fn extract_output(command: &Command, output: Output) -> Result<String> {
             let stderr = String::from_utf8(output.stderr)
                 .with_context(|| format!("Failed to read stderr: {command}"))?;
 
-            return Err(error)
-                .with_context(|| format!("stdout:\n{}", stdout))
-                .with_context(|| format!("stderr:\n{}", stderr));
+            return Err(error).with_context(|| format!("stdout:\n{stdout}\n\nstderr:\n{stderr}"));
         }
-    }
+    };
 }
 
 fn check_status(command: &Command, status: ExitStatus) -> Result<()> {
@@ -188,8 +187,15 @@ fn check_status(command: &Command, status: ExitStatus) -> Result<()> {
         return Ok(());
     } else {
         bail!(
-            "Command failed with code '{code}': {command}",
-            code = status.code().unwrap_or(-1)
+            "Command failed with code '{code}' and signal '{signal}':\n{command}",
+            code = match status.code() {
+                Some(code) => code.to_string(),
+                None => "UNKNOWN".to_owned(),
+            },
+            signal = match status.signal() {
+                Some(signal) => signal.to_string(),
+                None => "UNKNOWN".to_owned(),
+            },
         );
     }
 }

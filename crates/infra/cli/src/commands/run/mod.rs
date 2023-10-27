@@ -25,6 +25,9 @@ enum RunCommand {
     /// Runs the Solidity parser against source files from the Sanctuary repositories.
     #[clap(name = "solidity_testing_sanctuary")]
     SolidityTestingSanctuary,
+    /// Runs compatability tests between our language definition and 'solc' actual output.
+    #[clap(name = "solidity_testing_solc")]
+    SolidityTestingSolc,
 
     /*
      *
@@ -47,7 +50,10 @@ impl RunCommand {
                 // It is worth spending the extra time to recompiling its dependencies.
                 return true;
             }
-            Self::SlangSolidity | Self::SolidityCargoBuild | Self::SolidityNpmBuild => {
+            Self::SlangSolidity
+            | Self::SolidityCargoBuild
+            | Self::SolidityNpmBuild
+            | Self::SolidityTestingSolc => {
                 // These run during local development. Just build in debug mode.
                 return false;
             }

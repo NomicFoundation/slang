@@ -1,4 +1,4 @@
-use codegen_language_definition::{
+use codegen_language_definition::model::{
     Field, FieldKind, Item, Language, Scanner, Section, StructItem, TokenDefinition, TokenItem,
     Topic, TriviaParser,
 };

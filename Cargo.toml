@@ -30,6 +30,7 @@ members = [
     "crates/solidity/outputs/spec",
     "crates/solidity/testing/sanctuary",
     "crates/solidity/testing/snapshots",
+    "crates/solidity/testing/solc",
     "crates/solidity/testing/utils",
 ]
 
@@ -60,6 +61,7 @@ solidity_npm_package = { path = "crates/solidity/outputs/npm/package" }
 solidity_spec = { path = "crates/solidity/outputs/spec" }
 solidity_testing_sanctuary = { path = "crates/solidity/testing/sanctuary" }
 solidity_testing_snapshots = { path = "crates/solidity/testing/snapshots" }
+solidity_testing_solc = { path = "crates/solidity/testing/solc" }
 solidity_testing_utils = { path = "crates/solidity/testing/utils" }
 #
 # External
@@ -85,6 +87,7 @@ proc-macro2 = { version = "1.0.53" }
 quote = { version = "1.0.26" }
 rayon = { version = "1.7.0" }
 regex = { version = "1.9.1" }
+reqwest = { version = "0.11.22", features = ["blocking"] }
 schemars = { version = "0.8.12", features = ["derive", "preserve_order"] }
 semver = { version = "1.0.17", features = ["serde"] }
 serde = { version = "1.0.158", features = ["derive", "rc"] }

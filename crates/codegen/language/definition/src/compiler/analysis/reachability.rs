@@ -1,7 +1,7 @@
 use crate::{
-    compiler::{analysis::Analysis, versions::VersionSet},
-    spanned::TriviaParser,
-    Identifier,
+    compiler::analysis::Analysis,
+    model::{spanned::TriviaParser, Identifier},
+    utils::VersionSet,
 };
 use std::collections::HashSet;
 

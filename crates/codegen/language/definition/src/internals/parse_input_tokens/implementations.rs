@@ -3,7 +3,7 @@ use crate::{
         parse_input_tokens::ParseHelpers, Error, ErrorsCollection, ParseInputTokens, Result,
         Spanned,
     },
-    Identifier,
+    model::Identifier,
 };
 use indexmap::{IndexMap, IndexSet};
 use infra_utils::paths::PathExtensions;

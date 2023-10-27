@@ -1,15 +1,16 @@
 use crate::{
-    compiler::{
-        analysis::Analysis,
-        versions::{VersionRange, VersionSet},
-    },
+    compiler::analysis::Analysis,
     internals::Spanned,
-    spanned::{
-        EnumItem, EnumVariant, Field, FieldKind, FragmentItem, Item, ItemKind, KeywordItem,
-        PrecedenceExpression, PrecedenceItem, PrecedenceOperator, PrimaryExpression, RepeatedItem,
-        Scanner, SeparatedItem, StructItem, TokenDefinition, TokenItem, TriviaItem, TriviaParser,
+    model::{
+        spanned::{
+            EnumItem, EnumVariant, Field, FieldKind, FragmentItem, Item, ItemKind,
+            KeywordDefinition, KeywordItem, PrecedenceExpression, PrecedenceItem,
+            PrecedenceOperator, PrimaryExpression, RepeatedItem, Scanner, SeparatedItem,
+            StructItem, TokenDefinition, TokenItem, TriviaItem, TriviaParser,
+        },
+        Identifier,
     },
-    Identifier,
+    utils::{VersionRange, VersionSet},
 };
 use indexmap::IndexMap;
 use itertools::Itertools;
@@ -307,14 +308,8 @@ fn check_keyword(analysis: &mut Analysis, item: &KeywordItem, enablement: &Versi
     let KeywordItem {
         name,
         identifier,
-        enabled_in,
-        disabled_in,
-        reserved_in,
-        unreserved_in,
-        value: _,
+        definitions,
     } = item;
-
-    let enablement = update_enablement(analysis, &enablement, &enabled_in, &disabled_in);
 
     check_reference(
         analysis,
@@ -324,7 +319,19 @@ fn check_keyword(analysis: &mut Analysis, item: &KeywordItem, enablement: &Versi
         ReferenceFilter::Tokens,
     );
 
-    check_version_pair(analysis, reserved_in, unreserved_in);
+    for definition in definitions {
+        let KeywordDefinition {
+            enabled_in,
+            disabled_in,
+            reserved_in,
+            unreserved_in,
+            value: _,
+        } = &**definition;
+
+        let _ = update_enablement(analysis, &enablement, &enabled_in, &disabled_in);
+
+        check_version_pair(analysis, reserved_in, unreserved_in);
+    }
 }
 
 fn check_token(analysis: &mut Analysis, item: &TokenItem, enablement: &VersionRange) {

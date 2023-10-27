@@ -80,7 +80,8 @@ _arguments "${_arguments_options[@]}" \
 '-h[Print help (see more with '\''--help'\'')]' \
 '--help[Print help (see more with '\''--help'\'')]' \
 ':command:((slang_solidity\:"Runs the public '\''slang_solidity'\'' crate shipped to Cargo users"
-solidity_testing_sanctuary\:"Runs the Solidity parser against source files from the Sanctuary repositories"))' \
+solidity_testing_sanctuary\:"Runs the Solidity parser against source files from the Sanctuary repositories"
+solidity_testing_solc\:"Runs compatability tests between our language definition and '\''solc'\'' actual output"))' \
 '*::args:' \
 && ret=0
 ;;
