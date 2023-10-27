@@ -4,30 +4,20 @@ use std::rc::Rc;
 
 use super::{cst::*, cursor::Cursor};
 
-#[allow(unused_variables)]
 pub trait Visitor<E> {
-    fn rule_enter(
-        &mut self,
-        node: &Rc<RuleNode>,
-        cursor: &Cursor,
-    ) -> Result<VisitorEntryResponse, E> {
+    fn rule_enter(&mut self, _: &Rc<RuleNode>, _: &Cursor) -> Result<VisitorEntryResponse, E> {
         Ok(VisitorEntryResponse::StepIn)
     }
 
-    fn rule_exit(
-        &mut self,
-        node: &Rc<RuleNode>,
-        cursor: &Cursor,
-    ) -> Result<VisitorExitResponse, E> {
+    fn rule_exit(&mut self, _: &Rc<RuleNode>, _: &Cursor) -> Result<VisitorExitResponse, E> {
         Ok(VisitorExitResponse::Continue)
     }
 
-    fn token(&mut self, node: &Rc<TokenNode>, cursor: &Cursor) -> Result<VisitorExitResponse, E> {
+    fn token(&mut self, _: &Rc<TokenNode>, _: &Cursor) -> Result<VisitorExitResponse, E> {
         Ok(VisitorExitResponse::Continue)
     }
 }
 
-#[allow(dead_code)]
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub enum VisitorEntryResponse {
     Quit,
@@ -35,14 +25,12 @@ pub enum VisitorEntryResponse {
     StepOver,
 }
 
-#[allow(dead_code)]
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub enum VisitorExitResponse {
     Quit,
     Continue,
 }
 
-#[allow(dead_code)]
 impl Cursor {
     pub fn drive_visitor<E, V: Visitor<E>>(
         &mut self,

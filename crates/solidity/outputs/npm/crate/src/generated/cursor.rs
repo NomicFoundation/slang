@@ -37,7 +37,6 @@ pub struct Cursor {
     is_completed: bool,
 }
 
-#[allow(dead_code)]
 impl Cursor {
     pub(crate) fn new(node: Node) -> Self {
         Self {
