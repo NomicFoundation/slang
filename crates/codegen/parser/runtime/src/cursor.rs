@@ -1,6 +1,6 @@
 //! A cursor that can traverse a CST in a DFS pre-order fashion.
 
-use std::rc::Rc;
+use std::{iter::FusedIterator, rc::Rc};
 
 use super::{
     cst::{Node, RuleNode, TokenNode},
@@ -69,6 +69,24 @@ pub struct Cursor {
     /// If `true`, the cursor cannot be moved.
     is_completed: bool,
 }
+
+impl Iterator for Cursor {
+    type Item = Node;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        let cur = self.node();
+
+        if self.is_completed {
+            None
+        } else {
+            self.go_to_next();
+            Some(cur)
+        }
+    }
+}
+
+// Once the cursor `is_completed`, it cannot be moved and doesn't yield any more nodes.
+impl FusedIterator for Cursor {}
 
 impl Cursor {
     pub(crate) fn new(node: Node) -> Self {
