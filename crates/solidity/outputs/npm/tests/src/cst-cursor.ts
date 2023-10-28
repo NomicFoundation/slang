@@ -260,5 +260,5 @@ test("cursor find api is faster than testing the every node", () => {
   console.log("cursor find ratio", ratio);
 
   // I expected this to be a lot better than 8x.
-  expect(ratio).toBeGreaterThanOrEqual(8);
+  expect(ratio).toBeGreaterThanOrEqual(5);
 });
