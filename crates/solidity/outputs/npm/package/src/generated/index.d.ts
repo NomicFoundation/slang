@@ -496,8 +496,8 @@ export namespace language {
     constructor(version: string);
     get version(): string;
     static supportedVersions(): Array<string>;
-    scan(lexicalContext: LexicalContext, input: string): TokenKind | null;
-    parse(productionKind: ProductionKind, input: string): ParseOutput;
+    scan(lexicalContext: LexicalContext, input: string): kinds.TokenKind | null;
+    parse(productionKind: kinds.ProductionKind, input: string): parse_output.ParseOutput;
   }
 }
 export namespace cst {
@@ -507,30 +507,30 @@ export namespace cst {
   }
   export class RuleNode {
     get type(): NodeType.Rule;
-    get kind(): RuleKind;
-    get textLength(): TextIndex;
-    get children(): Array<RuleNode | TokenNode>;
-    get cursor(): Cursor;
+    get kind(): kinds.RuleKind;
+    get textLength(): text_index.TextIndex;
+    get children(): Array<cst.RuleNode | cst.TokenNode>;
+    get cursor(): cursor.Cursor;
   }
   export class TokenNode {
     get type(): NodeType.Token;
-    get kind(): TokenKind;
-    get textLength(): TextIndex;
+    get kind(): kinds.TokenKind;
+    get textLength(): text_index.TextIndex;
     get text(): string;
-    get cursor(): Cursor;
+    get cursor(): cursor.Cursor;
   }
 }
 export namespace cursor {
   export class Cursor {
-    get reset(): void;
-    get complete(): void;
+    reset(): void;
+    complete(): void;
     clone(): Cursor;
     spawn(): Cursor;
     get isCompleted(): boolean;
-    get node(): RuleNode | TokenNode;
-    get textOffset(): TextIndex;
-    get textRange(): TextRange;
-    get pathRuleNodes(): Array<RuleNode>;
+    get node(): cst.RuleNode | cst.TokenNode;
+    get textOffset(): text_index.TextIndex;
+    get textRange(): text_index.TextRange;
+    get pathRuleNodes(): Array<cst.RuleNode>;
     goToNext(): boolean;
     goToNextNonDescendent(): boolean;
     goToPrevious(): boolean;
@@ -540,20 +540,20 @@ export namespace cursor {
     goToNthChild(childNumber: number): boolean;
     goToNextSibling(): boolean;
     goToPreviousSibling(): boolean;
-    findTokenWithKind(kinds: Array<TokenKind>): TokenNode | null;
-    findRuleWithKind(kinds: Array<RuleKind>): RuleNode | null;
+    findTokenWithKind(kinds: Array<kinds.TokenKind>): cst.TokenNode | null;
+    findRuleWithKind(kinds: Array<kinds.RuleKind>): cst.RuleNode | null;
   }
 }
 export namespace parse_error {
   export class ParseError {
-    get textRange(): TextRange;
+    get textRange(): text_index.TextRange;
     toErrorReport(sourceId: string, source: string, withColour: boolean): string;
   }
 }
 export namespace parse_output {
   export class ParseOutput {
-    get parseTree(): RuleNode | TokenNode;
-    get errors(): Array<ParseError>;
+    get parseTree(): cst.RuleNode | cst.TokenNode;
+    get errors(): Array<parse_error.ParseError>;
     get isValid(): boolean;
   }
 }

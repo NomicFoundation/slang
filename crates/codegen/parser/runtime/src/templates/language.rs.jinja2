@@ -227,13 +227,17 @@ impl Language {
         return Self::SUPPORTED_VERSIONS.iter().map(|v| v.to_string()).collect();
     }
 
-    #[napi(js_name = "scan")]
+    #[napi(js_name = "scan", ts_return_type = "kinds.TokenKind | null")]
     pub fn scan_napi(&self, lexical_context: LexicalContext, input: String) -> Option<TokenKind> {
         self.scan(lexical_context, input.as_str())
     }
 
-    #[napi(js_name = "parse", ts_return_type = "ParseOutput")]
-    pub fn parse_napi(&self, production_kind: ProductionKind, input: String) -> NAPIParseOutput {
+    #[napi(js_name = "parse", ts_return_type = "parse_output.ParseOutput")]
+    pub fn parse_napi(
+        &self, 
+        #[napi(ts_arg_type = "kinds.ProductionKind")] production_kind: ProductionKind,
+        input: String
+    ) -> NAPIParseOutput {
         self.parse(production_kind, input.as_str()).into()
     }
 
