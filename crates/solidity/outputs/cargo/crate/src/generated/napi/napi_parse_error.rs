@@ -17,7 +17,7 @@ impl From<RustParseError> for ParseError {
 
 #[napi(namespace = "parse_error")]
 impl ParseError {
-    #[napi(getter)]
+    #[napi(getter, ts_return_type = "text_index.TextRange")]
     pub fn text_range(&self) -> TextRange {
         self.0.text_range().into()
     }

@@ -30,17 +30,21 @@ impl RuleNode {
         NodeType::Rule
     }
 
-    #[napi(getter)]
+    #[napi(getter, ts_return_type = "kinds.RuleKind")]
     pub fn kind(&self) -> RuleKind {
         self.0.kind
     }
 
-    #[napi(getter, js_name = "textLength")]
+    #[napi(
+        getter,
+        js_name = "textLength",
+        ts_return_type = "text_index.TextIndex"
+    )]
     pub fn text_len(&self) -> TextIndex {
         (&self.0.text_len).into()
     }
 
-    #[napi(getter, ts_return_type = "Array<RuleNode | TokenNode>")]
+    #[napi(getter, ts_return_type = "Array<cst.RuleNode | cst.TokenNode>")]
     pub fn children(&self, env: Env) -> Vec<JsObject> {
         self.0
             .children
@@ -49,7 +53,7 @@ impl RuleNode {
             .collect()
     }
 
-    #[napi(getter)]
+    #[napi(getter, ts_return_type = "cursor.Cursor")]
     pub fn cursor(&self) -> Cursor {
         Cursor::new(RustNode::Rule(self.0.clone()).cursor())
     }
@@ -62,11 +66,15 @@ impl TokenNode {
         NodeType::Token
     }
 
-    #[napi(getter)]
+    #[napi(getter, ts_return_type = "kinds.TokenKind")]
     pub fn kind(&self) -> TokenKind {
         self.0.kind
     }
-    #[napi(getter, js_name = "textLength")]
+    #[napi(
+        getter,
+        js_name = "textLength",
+        ts_return_type = "text_index.TextIndex"
+    )]
     pub fn text_len(&self) -> TextIndex {
         let text_len: RustTextIndex = (&self.0.text).into();
         (&text_len).into()
@@ -77,7 +85,7 @@ impl TokenNode {
         self.0.text.clone()
     }
 
-    #[napi(getter)]
+    #[napi(getter, ts_return_type = "cursor.Cursor")]
     pub fn cursor(&self) -> Cursor {
         Cursor::new(RustNode::Token(self.0.clone()).cursor())
     }

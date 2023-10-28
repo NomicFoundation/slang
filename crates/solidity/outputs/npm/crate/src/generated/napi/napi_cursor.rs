@@ -18,12 +18,12 @@ impl Cursor {
         Self(Box::new(cursor))
     }
 
-    #[napi(getter)]
+    #[napi]
     pub fn reset(&mut self) {
         self.0.reset()
     }
 
-    #[napi(getter)]
+    #[napi]
     pub fn complete(&mut self) {
         self.0.complete()
     }
@@ -43,22 +43,22 @@ impl Cursor {
         self.0.is_completed()
     }
 
-    #[napi(getter, ts_return_type = "RuleNode | TokenNode")]
+    #[napi(getter, ts_return_type = "cst.RuleNode | cst.TokenNode")]
     pub fn node(&self, env: Env) -> JsObject {
         self.0.node().to_js(&env)
     }
 
-    #[napi(getter)]
+    #[napi(getter, ts_return_type = "text_index.TextIndex")]
     pub fn text_offset(&self) -> TextIndex {
         (&self.0.text_offset()).into()
     }
 
-    #[napi(getter)]
+    #[napi(getter, ts_return_type = "text_index.TextRange")]
     pub fn text_range(&self) -> TextRange {
         (&self.0.text_range()).into()
     }
 
-    #[napi(getter, ts_return_type = "Array<RuleNode>")]
+    #[napi(getter, ts_return_type = "Array<cst.RuleNode>")]
     pub fn path_rule_nodes(&self, env: Env) -> Vec<JsObject> {
         self.0
             .path_rule_nodes()
@@ -113,8 +113,12 @@ impl Cursor {
     }
 
     // TODO: find_matching (taking JS function)
-    #[napi(ts_return_type = "TokenNode | null")]
-    pub fn find_token_with_kind(&mut self, kinds: Vec<TokenKind>, env: Env) -> Option<JsObject> {
+    #[napi(ts_return_type = "cst.TokenNode | null")]
+    pub fn find_token_with_kind(
+        &mut self,
+        #[napi(ts_arg_type = "Array<kinds.TokenKind>")] kinds: Vec<TokenKind>,
+        env: Env,
+    ) -> Option<JsObject> {
         self.0
             .find_token_with_kind(&kinds[..])
             .map(|token_node| token_node.to_js(&env))
@@ -122,8 +126,12 @@ impl Cursor {
 
     // TODO: find_token_matching (taking JS function)
 
-    #[napi(ts_return_type = "RuleNode | null")]
-    pub fn find_rule_with_kind(&mut self, kinds: Vec<RuleKind>, env: Env) -> Option<JsObject> {
+    #[napi(ts_return_type = "cst.RuleNode | null")]
+    pub fn find_rule_with_kind(
+        &mut self,
+        #[napi(ts_arg_type = "Array<kinds.RuleKind>")] kinds: Vec<RuleKind>,
+        env: Env,
+    ) -> Option<JsObject> {
         self.0
             .find_rule_with_kind(&kinds[..])
             .map(|token_node| token_node.to_js(&env))
