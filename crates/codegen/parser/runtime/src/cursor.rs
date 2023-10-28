@@ -369,31 +369,19 @@ impl Cursor {
     }
 
     pub fn find_token_with_kind(&mut self, kinds: &[TokenKind]) -> Option<Rc<TokenNode>> {
-        while !self.is_completed {
-            if let Some(token_node) = self.current.node.as_token_with_kind(kinds).cloned() {
-                return Some(token_node);
-            }
-            self.go_to_next();
-        }
-
-        None
+        self.find_map(|node| node.as_token_with_kind(kinds).cloned())
     }
 
     pub fn find_token_matching<F: Fn(&Rc<TokenNode>) -> bool>(
         &mut self,
         predicate: F,
     ) -> Option<Rc<TokenNode>> {
-        while !self.is_completed {
-            if let Some(token_node) = self.current.node.as_token_matching(&predicate) {
-                return Some(token_node.clone());
-            }
-            self.go_to_next();
-        }
-
-        None
+        self.find_map(|node| node.as_token_matching(&predicate).cloned())
     }
 
     pub fn find_rule_with_kind(&mut self, kinds: &[RuleKind]) -> Option<Rc<RuleNode>> {
+        // TODO: It doesn't seem to work the same way?
+        // self.find_map(|node| node.as_rule_with_kind(kinds).cloned())
         while !self.is_completed {
             if let Some(rule_node) = self.current.node.as_rule_with_kind(kinds) {
                 return Some(rule_node.clone());
@@ -408,13 +396,6 @@ impl Cursor {
         &mut self,
         predicate: F,
     ) -> Option<Rc<RuleNode>> {
-        while !self.is_completed {
-            if let Some(rule_node) = self.current.node.as_rule_matching(&predicate) {
-                return Some(rule_node.clone());
-            }
-            self.go_to_next();
-        }
-
-        None
+        self.find_map(|node| node.as_rule_matching(&predicate).cloned())
     }
 }
