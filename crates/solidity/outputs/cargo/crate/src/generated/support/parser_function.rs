@@ -97,7 +97,8 @@ where
                         errors.len() > 0,
                         topmost_rule
                             .children
-                            .descendents()
+                            .iter()
+                            .flat_map(cst::Node::cursor)
                             .any(|x| x.as_token_with_kind(&[TokenKind::SKIPPED]).is_some())
                     );
 
