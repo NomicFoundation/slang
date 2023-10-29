@@ -383,6 +383,8 @@ impl Cursor {
 
     pub fn find_rule_with_kind(&mut self, kinds: &[RuleKind]) -> Option<Rc<RuleNode>> {
         // TODO: It doesn't seem to work the same way?
+        // Make sure the iterator impl preserves the current behaviour, i.e. first `next` returns
+        // the first node, but doesn't advance it yet.
         // self.find_map(|node| node.as_rule_with_kind(kinds).cloned())
         while !self.is_completed {
             if let Some(rule_node) = self.current.node.as_rule_with_kind(kinds) {
