@@ -288,10 +288,11 @@ impl Cursor {
             if let Some(child_node) = parent.rule_node.children.get(child_number).cloned() {
                 // Sum up the length of the children before this child
                 // TODO: it might sometimes be quicker to start from the end (like `go_to_last_child`)
-                let mut text_offset = parent.text_offset;
-                for child in &parent.rule_node.children[..child_number] {
-                    text_offset += child.text_len();
-                }
+                let text_offset = parent.text_offset
+                    + parent.rule_node.children[..child_number]
+                        .iter()
+                        .map(|child| child.text_len())
+                        .sum();
 
                 self.path.push(parent);
                 self.current = NodePtr {
