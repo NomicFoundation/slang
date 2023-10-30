@@ -3,15 +3,23 @@ use std::rc::Rc;
 use super::{cst::*, cursor::Cursor};
 
 pub trait Visitor<E> {
-    fn rule_enter(&mut self, _: &Rc<RuleNode>, _: &Cursor) -> Result<VisitorEntryResponse, E> {
+    fn rule_enter(
+        &mut self,
+        _node: &Rc<RuleNode>,
+        _cursor: &Cursor,
+    ) -> Result<VisitorEntryResponse, E> {
         Ok(VisitorEntryResponse::StepIn)
     }
 
-    fn rule_exit(&mut self, _: &Rc<RuleNode>, _: &Cursor) -> Result<VisitorExitResponse, E> {
+    fn rule_exit(
+        &mut self,
+        _node: &Rc<RuleNode>,
+        _cursor: &Cursor,
+    ) -> Result<VisitorExitResponse, E> {
         Ok(VisitorExitResponse::Continue)
     }
 
-    fn token(&mut self, _: &Rc<TokenNode>, _: &Cursor) -> Result<VisitorExitResponse, E> {
+    fn token(&mut self, _node: &Rc<TokenNode>, _cursor: &Cursor) -> Result<VisitorExitResponse, E> {
         Ok(VisitorExitResponse::Continue)
     }
 }
