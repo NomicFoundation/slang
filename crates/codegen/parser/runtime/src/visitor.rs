@@ -2,7 +2,11 @@ use std::rc::Rc;
 
 use super::{cst::*, cursor::Cursor};
 
+/// A Visitor pattern for traversing the CST.
+///
+/// The trait supports fallible iteration, i.e. the visitor can early return an error from the visit.
 pub trait Visitor<E> {
+    /// Called when the [`Visitor`] enters a [`RuleNode`].
     fn rule_enter(
         &mut self,
         _node: &Rc<RuleNode>,
@@ -11,6 +15,7 @@ pub trait Visitor<E> {
         Ok(VisitorEntryResponse::StepIn)
     }
 
+    /// Called when the [`Visitor`] exits a [`RuleNode`].
     fn rule_exit(
         &mut self,
         _node: &Rc<RuleNode>,
@@ -19,6 +24,7 @@ pub trait Visitor<E> {
         Ok(VisitorExitResponse::Continue)
     }
 
+    /// Called when the [`Visitor`] enters a [`TokenNode`].
     fn token(&mut self, _node: &Rc<TokenNode>, _cursor: &Cursor) -> Result<VisitorExitResponse, E> {
         Ok(VisitorExitResponse::Continue)
     }
