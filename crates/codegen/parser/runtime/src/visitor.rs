@@ -1,3 +1,4 @@
+use std::ops::ControlFlow;
 use std::rc::Rc;
 
 use super::{cst::*, cursor::Cursor};
@@ -11,75 +12,65 @@ pub trait Visitor<E> {
         &mut self,
         _node: &Rc<RuleNode>,
         _cursor: &Cursor,
-    ) -> Result<VisitorEntryResponse, E> {
-        Ok(VisitorEntryResponse::StepIn)
+    ) -> Result<ControlFlow<(), Step>, E> {
+        Ok(ControlFlow::Continue(Step::In))
     }
 
     /// Called when the [`Visitor`] exits a [`RuleNode`].
-    fn rule_exit(
-        &mut self,
-        _node: &Rc<RuleNode>,
-        _cursor: &Cursor,
-    ) -> Result<VisitorExitResponse, E> {
-        Ok(VisitorExitResponse::Continue)
+    fn rule_exit(&mut self, _node: &Rc<RuleNode>, _cursor: &Cursor) -> Result<ControlFlow<()>, E> {
+        Ok(ControlFlow::Continue(()))
     }
 
     /// Called when the [`Visitor`] enters a [`TokenNode`].
-    fn token(&mut self, _node: &Rc<TokenNode>, _cursor: &Cursor) -> Result<VisitorExitResponse, E> {
-        Ok(VisitorExitResponse::Continue)
+    fn token(&mut self, _node: &Rc<TokenNode>, _cursor: &Cursor) -> Result<ControlFlow<()>, E> {
+        Ok(ControlFlow::Continue(()))
     }
 }
 
-#[derive(Copy, Clone, Debug, PartialEq, Eq)]
-pub enum VisitorEntryResponse {
-    Quit,
-    StepIn,
-    StepOver,
-}
-
-#[derive(Copy, Clone, Debug, PartialEq, Eq)]
-pub enum VisitorExitResponse {
-    Quit,
-    Continue,
+/// Whether the [`Visitor`] should should enter the children of a [`RuleNode`] or not.
+pub enum Step {
+    In,
+    Over,
 }
 
 impl Cursor {
     pub fn drive_visitor<E, V: Visitor<E>>(
         &mut self,
         visitor: &mut V,
-    ) -> Result<VisitorExitResponse, E> {
+    ) -> Result<ControlFlow<()>, E> {
         if self.is_completed() {
-            return Ok(VisitorExitResponse::Continue);
+            return Ok(ControlFlow::Continue(()));
         }
+
         loop {
             // Node clone is cheap because it's just an enum around an Rc
             match self.node() {
                 Node::Rule(rule_node) => {
                     match visitor.rule_enter(&rule_node, self)? {
-                        VisitorEntryResponse::Quit => return Ok(VisitorExitResponse::Quit),
-                        VisitorEntryResponse::StepIn => {
+                        ControlFlow::Break(()) => return Ok(ControlFlow::Break(())),
+                        ControlFlow::Continue(Step::In) => {
                             if self.go_to_first_child() {
                                 self.drive_visitor(visitor)?;
                                 self.go_to_parent();
                             }
                         }
-                        VisitorEntryResponse::StepOver => {}
+                        ControlFlow::Continue(Step::Over) => {}
                     }
-                    if visitor.rule_exit(&rule_node, self)? == VisitorExitResponse::Quit {
-                        return Ok(VisitorExitResponse::Quit);
+                    if visitor.rule_exit(&rule_node, self)? == ControlFlow::Break(()) {
+                        return Ok(ControlFlow::Break(()));
                     }
                 }
 
                 Node::Token(token_node) => {
-                    if visitor.token(&token_node, self)? == VisitorExitResponse::Quit {
-                        return Ok(VisitorExitResponse::Quit);
+                    if visitor.token(&token_node, self)? == ControlFlow::Break(()) {
+                        return Ok(ControlFlow::Break(()));
                     }
                 }
             }
+
             if !self.go_to_next_sibling() {
-                break;
+                return Ok(ControlFlow::Continue(()));
             }
         }
-        Ok(VisitorExitResponse::Continue)
     }
 }
