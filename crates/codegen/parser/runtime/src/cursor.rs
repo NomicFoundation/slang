@@ -74,11 +74,10 @@ impl Iterator for Cursor {
     type Item = Node;
 
     fn next(&mut self) -> Option<Self::Item> {
-        let cur = self.node();
-
         if self.is_completed {
             None
         } else {
+            let cur = self.node();
             self.go_to_next();
             Some(cur)
         }
@@ -366,36 +365,51 @@ impl Cursor {
         None
     }
 
-    pub fn find_token_with_kind(&mut self, kinds: &[TokenKind]) -> Option<Rc<TokenNode>> {
-        self.find_map(|node| node.as_token_with_kind(kinds).cloned())
-    }
-
-    pub fn find_token_matching<F: Fn(&Rc<TokenNode>) -> bool>(
-        &mut self,
-        predicate: F,
-    ) -> Option<Rc<TokenNode>> {
-        self.find_map(|node| node.as_token_matching(&predicate).cloned())
-    }
-
-    pub fn find_rule_with_kind(&mut self, kinds: &[RuleKind]) -> Option<Rc<RuleNode>> {
-        // TODO: It doesn't seem to work the same way?
-        // Make sure the iterator impl preserves the current behaviour, i.e. first `next` returns
-        // the first node, but doesn't advance it yet.
-        // self.find_map(|node| node.as_rule_with_kind(kinds).cloned())
+    /// In contract to `Iterator::find_*`, this does not consume the first item when found.
+    fn find_noconsume<F: Fn(&Node) -> Option<R>, R>(&mut self, predicate: F) -> Option<R> {
         while !self.is_completed {
-            if let Some(rule_node) = self.current.node.as_rule_with_kind(kinds) {
-                return Some(rule_node.clone());
+            match predicate(&self.current.node) {
+                Some(result) => return Some(result),
+                _ => {
+                    self.go_to_next();
+                }
             }
-            self.go_to_next();
         }
 
         None
     }
 
+    /// Finds the first token with either of the given kinds.
+    ///
+    /// Does not consume the iterator if the first item matches.
+    pub fn find_token_with_kind(&mut self, kinds: &[TokenKind]) -> Option<Rc<TokenNode>> {
+        self.find_noconsume(|node| node.as_token_with_kind(kinds).cloned())
+    }
+
+    /// Finds the first token node matching the given predicate.
+    ///
+    /// Does not consume the iterator if the first item matches.
+    pub fn find_token_matching<F: Fn(&Rc<TokenNode>) -> bool>(
+        &mut self,
+        predicate: F,
+    ) -> Option<Rc<TokenNode>> {
+        self.find_noconsume(|node| node.as_token_matching(&predicate).cloned())
+    }
+
+    /// Finds the first rule node with either of the given kinds.
+    ///
+    /// Does not consume the iterator if the first item matches.
+    pub fn find_rule_with_kind(&mut self, kinds: &[RuleKind]) -> Option<Rc<RuleNode>> {
+        self.find_noconsume(|node| node.as_rule_with_kind(kinds).cloned())
+    }
+
+    /// Finds the first rule node matching the given predicate.
+    ///
+    /// Does not consume the iterator if the first item matches.
     pub fn find_rule_matching<F: Fn(&Rc<RuleNode>) -> bool>(
         &mut self,
         predicate: F,
     ) -> Option<Rc<RuleNode>> {
-        self.find_map(|node| node.as_rule_matching(&predicate).cloned())
+        self.find_noconsume(|node| node.as_rule_matching(&predicate).cloned())
     }
 }
