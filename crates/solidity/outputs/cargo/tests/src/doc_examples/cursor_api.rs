@@ -2,6 +2,7 @@ use anyhow::Result;
 use semver::Version;
 
 use slang_solidity::{
+    cst::Node,
     kinds::{ProductionKind, RuleKind, TokenKind},
     language::Language,
 };
@@ -89,4 +90,43 @@ fn cursor_api_using_iter() -> Result<()> {
     assert!(matches!(&contract_names[..], [single] if single == "Foo"));
 
     return Ok(());
+}
+
+#[test]
+fn cursor_as_iter() -> Result<()> {
+    let language = Language::new(Version::parse("0.8.0")?)?;
+    let parse_output = language.parse(ProductionKind::ContractDefinition, "contract Foo {}");
+
+    let mut cursor = parse_output.parse_tree().cursor();
+    assert!(
+        matches!(cursor.next(), Some(Node::Rule(rule)) if rule.kind == RuleKind::ContractDefinition)
+    );
+    assert!(
+        matches!(cursor.next(), Some(Node::Token(token)) if token.kind == TokenKind::ContractKeyword)
+    );
+    assert!(
+        matches!(cursor.next(), Some(Node::Rule(rule)) if rule.kind == RuleKind::LeadingTrivia)
+    );
+    assert!(
+        matches!(cursor.next(), Some(Node::Token(token)) if token.kind == TokenKind::Whitespace)
+    );
+    assert!(
+        matches!(cursor.next(), Some(Node::Token(token)) if token.kind == TokenKind::Identifier && token.text == "Foo")
+    );
+    assert!(
+        matches!(cursor.next(), Some(Node::Rule(rule)) if rule.kind == RuleKind::LeadingTrivia)
+    );
+    assert!(
+        matches!(cursor.next(), Some(Node::Token(token)) if token.kind == TokenKind::Whitespace)
+    );
+    assert!(
+        matches!(cursor.next(), Some(Node::Token(token)) if token.kind == TokenKind::OpenBrace)
+    );
+    assert!(
+        matches!(cursor.next(), Some(Node::Token(token)) if token.kind == TokenKind::CloseBrace)
+    );
+
+    assert_eq!(cursor.next(), None);
+
+    Ok(())
 }
