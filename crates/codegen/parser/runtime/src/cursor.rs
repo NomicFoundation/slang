@@ -8,17 +8,17 @@ use super::{
     text_index::{TextIndex, TextRange},
 };
 
-/// A [`NodePtr`] that points to a [`RuleNode`].
+/// A [`PathNode`] that points to a [`RuleNode`].
 #[derive(Clone, Debug, PartialEq, Eq)]
-struct RuleNodePtr {
+struct PathRuleNode {
     rule_node: Rc<RuleNode>,
     child_number: usize,
     text_offset: TextIndex,
 }
 
-impl RuleNodePtr {
-    fn into_node_ptr(self) -> NodePtr {
-        NodePtr {
+impl PathRuleNode {
+    fn into_path_node(self) -> PathNode {
+        PathNode {
             node: Node::Rule(self.rule_node),
             child_number: self.child_number,
             text_offset: self.text_offset,
@@ -28,7 +28,7 @@ impl RuleNodePtr {
 
 /// A pointer to a [`Node`] in a CST, used by the [`Cursor`] to implement the traversal.
 #[derive(Clone, Debug, PartialEq, Eq)]
-struct NodePtr {
+struct PathNode {
     /// The node the cursor is currently pointing to.
     node: Node,
     /// The index of the current child node in the parent's children.
@@ -38,16 +38,16 @@ struct NodePtr {
     text_offset: TextIndex,
 }
 
-impl NodePtr {
+impl PathNode {
     fn text_range(&self) -> TextRange {
         let start = self.text_offset;
         let end = start + self.node.text_len();
         start..end
     }
 
-    fn to_rule_node_ptr(&self) -> Option<RuleNodePtr> {
+    fn to_path_rule_node(&self) -> Option<PathRuleNode> {
         if let Node::Rule(rule_node) = &self.node {
-            Some(RuleNodePtr {
+            Some(PathRuleNode {
                 rule_node: rule_node.clone(),
                 child_number: self.child_number,
                 text_offset: self.text_offset,
@@ -63,8 +63,10 @@ impl NodePtr {
 /// Nodes are visited in a DFS pre-order traversal.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Cursor {
-    path: Vec<RuleNodePtr>,
-    current: NodePtr,
+    /// The list of ancestor rule nodes that the `current` node is a part of.
+    path: Vec<PathRuleNode>,
+    /// The node the cursor is currently pointing to.
+    current: PathNode,
     /// Whether the cursor is completed, i.e. at the root node as a result of traversal (or when `complete`d).
     /// If `true`, the cursor cannot be moved.
     is_completed: bool,
@@ -88,7 +90,7 @@ impl Cursor {
     pub(crate) fn new(node: Node) -> Self {
         Self {
             path: vec![],
-            current: NodePtr {
+            current: PathNode {
                 node,
                 child_number: 0,
                 text_offset: Default::default(),
@@ -106,7 +108,7 @@ impl Cursor {
     /// Completes the cursor, setting it to the root node.
     pub fn complete(&mut self) {
         if let Some(root) = self.path.drain(..).next() {
-            self.current = root.into_node_ptr();
+            self.current = root.into_path_node();
         }
         self.is_completed = true;
     }
@@ -205,7 +207,7 @@ impl Cursor {
     pub fn go_to_parent(&mut self) -> bool {
         match self.path.pop() {
             Some(parent) => {
-                self.current = parent.into_node_ptr();
+                self.current = parent.into_path_node();
 
                 true
             }
@@ -226,9 +228,9 @@ impl Cursor {
         }
 
         // If the current cursor is a node and it has children, go to first children
-        if let Some(parent) = self.current.to_rule_node_ptr() {
+        if let Some(parent) = self.current.to_path_rule_node() {
             if let Some(child_node) = parent.rule_node.children.first().cloned() {
-                self.current = NodePtr {
+                self.current = PathNode {
                     node: child_node,
                     text_offset: parent.text_offset,
                     child_number: 0,
@@ -251,7 +253,7 @@ impl Cursor {
             return false;
         }
 
-        if let Some(parent) = self.current.to_rule_node_ptr() {
+        if let Some(parent) = self.current.to_path_rule_node() {
             let child_number = parent.rule_node.children.len() - 1;
             if let Some(child_node) = parent.rule_node.children.get(child_number).cloned() {
                 // This is cheaper than summing up the length of the children
@@ -260,7 +262,7 @@ impl Cursor {
 
                 self.path.push(parent);
 
-                self.current = NodePtr {
+                self.current = PathNode {
                     node: child_node,
                     text_offset,
                     child_number,
@@ -281,7 +283,7 @@ impl Cursor {
             return false;
         }
 
-        if let Some(parent) = self.current.to_rule_node_ptr() {
+        if let Some(parent) = self.current.to_path_rule_node() {
             if let Some(child_node) = parent.rule_node.children.get(child_number).cloned() {
                 // Sum up the length of the children before this child
                 // TODO: it might sometimes be quicker to start from the end (like `go_to_last_child`)
@@ -292,7 +294,7 @@ impl Cursor {
                         .sum();
 
                 self.path.push(parent);
-                self.current = NodePtr {
+                self.current = PathNode {
                     node: child_node,
                     text_offset,
                     child_number,
@@ -316,7 +318,7 @@ impl Cursor {
         if let Some(parent_path_element) = self.path.last() {
             let new_child_number = self.current.child_number + 1;
             if let Some(new_child) = parent_path_element.rule_node.children.get(new_child_number) {
-                self.current = NodePtr {
+                self.current = PathNode {
                     node: new_child.clone(),
                     text_offset: self.current.text_offset + self.current.node.text_len(),
                     child_number: new_child_number,
@@ -342,7 +344,7 @@ impl Cursor {
                 let new_child_number = self.current.child_number + 1;
                 let new_child = parent_path_element.rule_node.children[new_child_number].clone();
 
-                self.current = NodePtr {
+                self.current = PathNode {
                     node: new_child,
                     text_offset: self.current.text_offset - self.current.node.text_len(),
                     child_number: new_child_number,
