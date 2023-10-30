@@ -98,35 +98,29 @@ fn cursor_as_iter() -> Result<()> {
     let parse_output = language.parse(ProductionKind::ContractDefinition, "contract Foo {}");
 
     let mut cursor = parse_output.parse_tree().cursor();
-    assert!(
-        matches!(cursor.next(), Some(Node::Rule(rule)) if rule.kind == RuleKind::ContractDefinition)
-    );
-    assert!(
-        matches!(cursor.next(), Some(Node::Token(token)) if token.kind == TokenKind::ContractKeyword)
-    );
-    assert!(
-        matches!(cursor.next(), Some(Node::Rule(rule)) if rule.kind == RuleKind::LeadingTrivia)
-    );
-    assert!(
-        matches!(cursor.next(), Some(Node::Token(token)) if token.kind == TokenKind::Whitespace)
-    );
-    assert!(
-        matches!(cursor.next(), Some(Node::Token(token)) if token.kind == TokenKind::Identifier && token.text == "Foo")
-    );
-    assert!(
-        matches!(cursor.next(), Some(Node::Rule(rule)) if rule.kind == RuleKind::LeadingTrivia)
-    );
-    assert!(
-        matches!(cursor.next(), Some(Node::Token(token)) if token.kind == TokenKind::Whitespace)
-    );
-    assert!(
-        matches!(cursor.next(), Some(Node::Token(token)) if token.kind == TokenKind::OpenBrace)
-    );
-    assert!(
-        matches!(cursor.next(), Some(Node::Token(token)) if token.kind == TokenKind::CloseBrace)
+    assert_eq!(
+        cursor.node().as_rule().unwrap().kind,
+        RuleKind::ContractDefinition
     );
 
-    assert_eq!(cursor.next(), None);
+    macro_rules! assert_next_is {
+        ($pattern:pat $(if $guard:expr)? $(,)?) => {
+            assert!(matches!(cursor.next(), $pattern $(if $guard)?));
+        };
+    }
+
+    assert_next_is!(Some(Node::Rule(rule)) if rule.kind == RuleKind::ContractDefinition);
+    {
+        assert_next_is!(Some(Node::Token(token)) if token.kind == TokenKind::ContractKeyword);
+        assert_next_is!(Some(Node::Rule(rule)) if rule.kind == RuleKind::LeadingTrivia);
+        assert_next_is!(Some(Node::Token(token)) if token.kind == TokenKind::Whitespace);
+        assert_next_is!(Some(Node::Token(token)) if token.kind == TokenKind::Identifier && token.text == "Foo");
+        assert_next_is!(Some(Node::Rule(rule)) if rule.kind == RuleKind::LeadingTrivia);
+        assert_next_is!(Some(Node::Token(token)) if token.kind == TokenKind::Whitespace);
+        assert_next_is!(Some(Node::Token(token)) if token.kind == TokenKind::OpenBrace);
+        assert_next_is!(Some(Node::Token(token)) if token.kind == TokenKind::CloseBrace);
+    }
+    assert_next_is!(None);
 
     Ok(())
 }
