@@ -65,11 +65,13 @@ impl OrderedCommand for LintCommand {
 }
 
 fn run_clippy() -> Result<()> {
-    Command::new("cargo")
-        .flag("clippy")
-        .flag("--")
-        .flag("--verbose")
-        .run()
+    let mut clippy = Command::new("cargo").flag("clippy").flag("--");
+
+    if GitHub::is_running_in_ci() {
+        clippy = clippy.property("-D", "warnings");
+    }
+
+    clippy.run()
 }
 
 fn run_cargo_fmt() -> Result<()> {
