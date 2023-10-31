@@ -131,11 +131,11 @@ fn run_with_defaults(command: &Command) -> Result<()> {
         .wait()
         .with_context(|| format!("Failed to wait for status: {command}"))?;
 
-    check_status(command, status).map_err(|error| {
+    return check_status(command, status).map_err(|error| {
         // Print error and exit process, to skip printing irrelevant backtraces from the parent process:
         eprintln!("{error}");
         std::process::exit(1);
-    })
+    });
 }
 
 fn spawn_with_defaults(command: &Command, stdio: impl Fn() -> Stdio) -> Result<Child> {
