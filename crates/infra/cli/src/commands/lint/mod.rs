@@ -76,7 +76,6 @@ fn run_cargo_fmt() -> Result<()> {
 }
 
 fn run_clippy() -> Result<()> {
-    // To help with gradual adoption, we don't exit on failure and ignore some errors for now.
     let makeshift_config = std::fs::read_to_string(Path::repo_path(".clippy_allowed_lints"))?;
     let allowed_lints = makeshift_config
         .lines()
