@@ -59,7 +59,8 @@ npm\:"Run '\''test'\'' scripts in each NPM package in the repository"))' \
 _arguments "${_arguments_options[@]}" \
 '-h[Print help (see more with '\''--help'\'')]' \
 '--help[Print help (see more with '\''--help'\'')]' \
-'*::commands:((cargo-fmt\:"Format all Rust source files"
+'*::commands:((clippy\:"Lints all Rust source files"
+cargo-fmt\:"Format all Rust source files"
 cspell\:"Check for spelling issues in Markdown files"
 prettier\:"Format all non-Rust source files"
 markdown-link-check\:"Check for broken links in Markdown files"

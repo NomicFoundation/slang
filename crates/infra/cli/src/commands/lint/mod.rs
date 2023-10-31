@@ -25,6 +25,9 @@ impl LintController {
 
 #[derive(Clone, Debug, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
 enum LintCommand {
+    /// Lints all Rust source files.
+    // Automatically applied lints may need to be formatted again, so we run this before formatting.
+    Clippy,
     /// Format all Rust source files.
     CargoFmt,
     /// Check for spelling issues in Markdown files.
@@ -48,6 +51,7 @@ impl OrderedCommand for LintCommand {
         Terminal::step(format!("lint {name}", name = self.clap_name()));
 
         return match self {
+            LintCommand::Clippy => run_clippy(),
             LintCommand::CargoFmt => run_cargo_fmt(),
             LintCommand::Cspell => run_cspell(),
             LintCommand::Prettier => run_prettier(),
@@ -58,6 +62,16 @@ impl OrderedCommand for LintCommand {
             LintCommand::Yamllint => run_yamllint(),
         };
     }
+}
+
+fn run_clippy() -> Result<()> {
+    let mut clippy = Command::new("cargo").flag("clippy").flag("--");
+
+    if GitHub::is_running_in_ci() {
+        clippy = clippy.property("-D", "warnings");
+    }
+
+    clippy.run()
 }
 
 fn run_cargo_fmt() -> Result<()> {
