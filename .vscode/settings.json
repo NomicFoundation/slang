@@ -9,6 +9,8 @@
   "rust-analyzer.check.allTargets": true,
   "rust-analyzer.check.features": "all",
   "rust-analyzer.server.path": "${workspaceFolder}/bin/rust-analyzer",
+  "rust-analyzer.check.command": "clippy",
+  "rust-analyzer.checkOnSave": true,
   "search.exclude": {
     // Packages and Dependencies
     "**/.hermit/": true,
