@@ -8,7 +8,6 @@ use infra_utils::{
     github::GitHub,
     paths::{FileWalker, PathExtensions},
 };
-use itertools::Itertools;
 
 use crate::utils::{ClapExtensions, OrderedCommand, Terminal};
 
@@ -66,23 +65,11 @@ impl OrderedCommand for LintCommand {
 }
 
 fn run_clippy() -> Result<()> {
-    let makeshift_config = std::fs::read_to_string(Path::repo_path(".clippy_allowed_lints"))?;
-    let allowed_lints = makeshift_config
-        .lines()
-        .map(str::trim)
-        .filter(|line| !line.starts_with('#') && !line.is_empty())
-        .unique();
-
-    let mut clippy = Command::new("cargo")
+    Command::new("cargo")
         .flag("clippy")
         .flag("--")
-        .flag("--verbose");
-
-    for lint in allowed_lints {
-        clippy = clippy.property("-A", format!("clippy::{}", lint));
-    }
-
-    clippy.run()
+        .flag("--verbose")
+        .run()
 }
 
 fn run_cargo_fmt() -> Result<()> {
