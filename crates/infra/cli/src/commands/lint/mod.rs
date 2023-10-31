@@ -93,9 +93,7 @@ fn run_clippy() -> Result<()> {
         clippy = clippy.property("-A", format!("clippy::{}", lint));
     }
 
-    let _ = clippy.run();
-
-    Ok(())
+    clippy.run()
 }
 
 fn run_cspell() -> Result<()> {
