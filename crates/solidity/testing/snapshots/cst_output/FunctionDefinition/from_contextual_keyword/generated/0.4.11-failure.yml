@@ -19,7 +19,7 @@ Tree:
       - Identifier (Token): "transferFrom" # 9..21
       - ParametersDeclaration (Rule): # 21..63 "(address from, address to, uint256 amount)"
           - OpenParen (Token): "(" # 21..22
-          - ParametersList (Rule): # 22..30 "address "
+          - ParametersList (Rule): # 22..29 "address"
               - Parameter (Rule): # 22..29 "address"
                   - TypeName (Rule): # 22..29 "address"
                       - AddressType (Rule): # 22..29 "address"

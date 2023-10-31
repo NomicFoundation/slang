@@ -108,8 +108,8 @@ Tree:
               - OverrideSpecifier (Rule): # 14..76 " override(some.ident unexpected tokens, ISomeInter..."
                   - OverrideKeyword (Token): "override" # 15..23
                   - OpenParen (Token): "(" # 23..24
-                  - IdentifierPathsList (Rule): # 24..35 "some.ident "
-                      - IdentifierPath (Rule): # 24..35 "some.ident "
+                  - IdentifierPathsList (Rule): # 24..34 "some.ident"
+                      - IdentifierPath (Rule): # 24..34 "some.ident"
                           - Identifier (Token): "some" # 24..28
                           - Period (Token): "." # 28..29
                           - Identifier (Token): "ident" # 29..34

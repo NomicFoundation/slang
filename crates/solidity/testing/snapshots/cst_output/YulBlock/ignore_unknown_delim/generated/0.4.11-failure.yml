@@ -34,17 +34,17 @@ Tree:
                           - Comma (Token): "," # 18..19
                           - YulIdentifier (Token): "b" # 20..21
                       - CloseParen (Token): ")" # 21..22
-                  - YulReturnsDeclaration (Rule): # 22..33 " -> result "
+                  - YulReturnsDeclaration (Rule): # 22..32 " -> result"
                       - MinusGreaterThan (Token): "->" # 23..25
-                      - YulIdentifiersList (Rule): # 25..33 " result "
+                      - YulIdentifiersList (Rule): # 25..32 " result"
                           - YulIdentifier (Token): "result" # 26..32
-                  - YulBlock (Rule): # 33..83 "{\n\t\tresult := mul(a, b)\n\t\tresult := [mul(a, b)\n\t}\n"
+                  - YulBlock (Rule): # 32..83 " {\n\t\tresult := mul(a, b)\n\t\tresult := [mul(a, b)\n\t}..."
                       - OpenBrace (Token): "{" # 33..34
-                      - YulStatementsList (Rule): # 35..66 "\t\tresult := mul(a, b)\n\t\tresult "
+                      - YulStatementsList (Rule): # 35..65 "\t\tresult := mul(a, b)\n\t\tresult"
                           - YulStatement (Rule): # 35..57 "\t\tresult := mul(a, b)\n"
                               - YulAssignmentStatement (Rule): # 35..57 "\t\tresult := mul(a, b)\n"
-                                  - YulIdentifierPathsList (Rule): # 35..44 "\t\tresult "
-                                      - YulIdentifierPath (Rule): # 35..44 "\t\tresult "
+                                  - YulIdentifierPathsList (Rule): # 35..43 "\t\tresult"
+                                      - YulIdentifierPath (Rule): # 35..43 "\t\tresult"
                                           - YulIdentifier (Token): "result" # 37..43
                                   - ColonEqual (Token): ":=" # 44..46
                                   - YulExpression (Rule): # 46..57 " mul(a, b)\n"
@@ -62,9 +62,9 @@ Tree:
                                                   - YulIdentifierPath (Rule): # 53..55 " b"
                                                       - YulIdentifier (Token): "b" # 54..55
                                           - CloseParen (Token): ")" # 55..56
-                          - YulStatement (Rule): # 57..66 "\t\tresult "
-                              - YulExpression (Rule): # 57..66 "\t\tresult "
-                                  - YulIdentifierPath (Rule): # 57..66 "\t\tresult "
+                          - YulStatement (Rule): # 57..65 "\t\tresult"
+                              - YulExpression (Rule): # 57..65 "\t\tresult"
+                                  - YulIdentifierPath (Rule): # 57..65 "\t\tresult"
                                       - YulIdentifier (Token): "result" # 59..65
                       - SKIPPED (Token): ":= [mul(a, b)\n\t" # 66..81
                       - CloseBrace (Token): "}" # 81..82

@@ -11,11 +11,11 @@ Tree:
       - VersionPragmaExpressionsList (Rule): # 8..30 " ^1.0.0 || 2.0.0-3.0.0"
           - VersionPragmaExpression (Rule): # 8..30 " ^1.0.0 || 2.0.0-3.0.0"
               - VersionPragmaBinaryExpression (Rule): # 8..30 " ^1.0.0 || 2.0.0-3.0.0"
-                  - VersionPragmaExpression (Rule): # 8..16 " ^1.0.0 "
-                      - VersionPragmaUnaryExpression (Rule): # 8..16 " ^1.0.0 "
+                  - VersionPragmaExpression (Rule): # 8..15 " ^1.0.0"
+                      - VersionPragmaUnaryExpression (Rule): # 8..15 " ^1.0.0"
                           - Caret (Token): "^" # 9..10
-                          - VersionPragmaExpression (Rule): # 10..16 "1.0.0 "
-                              - VersionPragmaSpecifier (Rule): # 10..16 "1.0.0 "
+                          - VersionPragmaExpression (Rule): # 10..15 "1.0.0"
+                              - VersionPragmaSpecifier (Rule): # 10..15 "1.0.0"
                                   - VersionPragmaValue (Token): "1" # 10..11
                                   - Period (Token): "." # 11..12
                                   - VersionPragmaValue (Token): "0" # 12..13

@@ -11,8 +11,8 @@ Tree:
       - VersionPragmaExpressionsList (Rule): # 8..22 " 0.6.0 - 0.7.0"
           - VersionPragmaExpression (Rule): # 8..22 " 0.6.0 - 0.7.0"
               - VersionPragmaBinaryExpression (Rule): # 8..22 " 0.6.0 - 0.7.0"
-                  - VersionPragmaExpression (Rule): # 8..15 " 0.6.0 "
-                      - VersionPragmaSpecifier (Rule): # 8..15 " 0.6.0 "
+                  - VersionPragmaExpression (Rule): # 8..14 " 0.6.0"
+                      - VersionPragmaSpecifier (Rule): # 8..14 " 0.6.0"
                           - VersionPragmaValue (Token): "0" # 9..10
                           - Period (Token): "." # 10..11
                           - VersionPragmaValue (Token): "6" # 11..12

@@ -63,7 +63,15 @@ pub enum ProductionKind {
 #[derive(strum_macros::FromRepr)]
 #[cfg_attr(feature = "slang_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "language"))]
 #[cfg_attr(not(feature = "slang_napi_interfaces"), derive(Clone, Copy))]
-#[repr(u8)] // This is used as a const fn argument, which only supports primitive types
 pub enum LexicalContext {
     XXX,
 }
+
+/// Marker trait for type-level [`LexicalContext`] variants.
+pub trait IsLexicalContext {
+    /// Returns a run-time [`LexicalContext`] value.
+    fn value() -> LexicalContext;
+}
+
+#[allow(non_snake_case)]
+pub mod LexicalContextType {}
