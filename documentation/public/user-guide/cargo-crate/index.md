@@ -57,10 +57,10 @@ The below example uses a cursor to collect the names of all contracts in a sourc
 ## Visitor API
 
 The `Visitor` trait allows callers to implement a visitor that will be called for each node in the tree.
-The `VisitorEntryResponse` enum allows callers to control the traversal behavior.
+The `std::ops::ControlFlow` enum coupled with the `Step` enum allows callers to control the traversal behavior.
 
-For example, if the visitor is only interested in the top-level nodes, it can return `VisitorEntryResponse::StepOver` to skip the children of the current node.
-If the visitor is interested in the children of the current node, it can return `VisitorEntryResponse::StepIn` to visit them.
+For example, if the visitor is only interested in the top-level nodes, it can return `ControlFlow::Continue(Step::Over)` to skip the children of the current node.
+If the visitor is interested in the children of the current node, it can return `ControlFlow::Continue(Step::In)` to visit them.
 
 The below example defines a visitor that collects the names of all contracts in a source file, and returns them as a `Vec<String>`:
 

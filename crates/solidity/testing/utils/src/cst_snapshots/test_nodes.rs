@@ -1,10 +1,10 @@
+use std::ops::ControlFlow;
 use std::rc::Rc;
 
 use anyhow::Result;
 use slang_solidity::{
     cst::Node, cst::RuleNode, cst::TokenNode, cursor::Cursor, kinds::RuleKind, kinds::TokenKind,
-    text_index::TextRange, visitor::Visitor, visitor::VisitorEntryResponse,
-    visitor::VisitorExitResponse,
+    text_index::TextRange, visitor::Step, visitor::Visitor,
 };
 
 #[derive(Debug)]
@@ -29,21 +29,17 @@ impl Visitor<()> for TestNodeBuilder {
         &mut self,
         _node: &Rc<RuleNode>,
         _cursor: &Cursor,
-    ) -> std::result::Result<VisitorEntryResponse, ()> {
+    ) -> Result<ControlFlow<(), Step>, ()> {
         self.stack.push(vec![]);
-        Ok(VisitorEntryResponse::StepIn)
+        Ok(ControlFlow::Continue(Step::In))
     }
 
-    fn rule_exit(
-        &mut self,
-        node: &Rc<RuleNode>,
-        cursor: &Cursor,
-    ) -> std::result::Result<VisitorExitResponse, ()> {
+    fn rule_exit(&mut self, node: &Rc<RuleNode>, cursor: &Cursor) -> Result<ControlFlow<()>, ()> {
         let children = self.stack.pop().unwrap();
 
         if (node.kind == RuleKind::LeadingTrivia) | (node.kind == RuleKind::TrailingTrivia) {
             if children.is_empty() {
-                return Ok(VisitorExitResponse::Continue);
+                return Ok(ControlFlow::Continue(()));
             }
         }
 
@@ -54,14 +50,10 @@ impl Visitor<()> for TestNodeBuilder {
         };
         self.stack.last_mut().unwrap().push(new_node);
 
-        Ok(VisitorExitResponse::Continue)
+        Ok(ControlFlow::Continue(()))
     }
 
-    fn token(
-        &mut self,
-        node: &Rc<TokenNode>,
-        cursor: &Cursor,
-    ) -> std::result::Result<VisitorExitResponse, ()> {
+    fn token(&mut self, node: &Rc<TokenNode>, cursor: &Cursor) -> Result<ControlFlow<()>, ()> {
         if !Self::is_whitespace(node) {
             let kind = if Self::is_comment(node) {
                 TestNodeKind::Trivia(node.kind)
@@ -77,7 +69,7 @@ impl Visitor<()> for TestNodeBuilder {
             self.stack.last_mut().unwrap().push(new_node);
         }
 
-        Ok(VisitorExitResponse::Continue)
+        Ok(ControlFlow::Continue(()))
     }
 }
 

@@ -3,7 +3,7 @@ use std::ops::ControlFlow;
 
 use crate::{cst, kinds::TokenKind, parse_error::ParseError, text_index::TextIndex};
 
-use super::{context::Marker, parser_result::DescendentsIter, ParserContext, ParserResult};
+use super::{context::Marker, ParserContext, ParserResult};
 
 /// Starting from a given position in the input, this helper will try to pick (and remember) a best match. Settles on
 /// a first full match if possible, otherwise on the best incomplete match.
@@ -145,9 +145,11 @@ pub fn total_not_skipped_span(result: &ParserResult) -> usize {
     };
 
     nodes
-        .descendents()
-        .filter_map(cst::Node::as_token)
-        .filter(|tok| tok.kind != TokenKind::SKIPPED)
-        .map(|tok| tok.text.len())
+        .iter()
+        .flat_map(cst::Node::cursor)
+        .filter_map(|node| match node {
+            cst::Node::Token(token) if token.kind != TokenKind::SKIPPED => Some(token.text.len()),
+            _ => None,
+        })
         .sum()
 }

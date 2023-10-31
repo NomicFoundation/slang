@@ -75,40 +75,6 @@ impl ParserResult {
     }
 }
 
-// DFS iterator over the descendents of a node.
-pub(crate) struct DescendentsUnordered<'a> {
-    stack: Vec<&'a cst::Node>,
-}
-
-impl<'a> Iterator for DescendentsUnordered<'a> {
-    type Item = &'a cst::Node;
-
-    fn next(&mut self) -> Option<&'a cst::Node> {
-        self.stack.pop().map(|node| {
-            if let Some(node) = node.as_rule() {
-                self.stack.extend(node.children.iter());
-            }
-
-            node
-        })
-    }
-}
-
-pub(crate) trait DescendentsIter<'a> {
-    fn descendents(self) -> DescendentsUnordered<'a>;
-}
-
-impl<'a, T> DescendentsIter<'a> for T
-where
-    T: IntoIterator<Item = &'a cst::Node> + 'a,
-{
-    fn descendents(self) -> DescendentsUnordered<'a> {
-        DescendentsUnordered {
-            stack: self.into_iter().collect(),
-        }
-    }
-}
-
 #[derive(PartialEq, Eq, Clone, Debug)]
 pub struct Match {
     pub nodes: Vec<cst::Node>,
@@ -126,7 +92,8 @@ impl Match {
 
     pub fn is_full_recursive(&self) -> bool {
         self.nodes
-            .descendents()
+            .iter()
+            .flat_map(cst::Node::cursor)
             .all(|node| node.as_token_with_kind(&[TokenKind::SKIPPED]).is_none())
     }
 }

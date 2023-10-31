@@ -1,3 +1,4 @@
+use std::ops::ControlFlow;
 use std::rc::Rc;
 
 use anyhow::{bail, ensure, Error, Result};
@@ -8,7 +9,7 @@ use slang_solidity::{
     cursor::Cursor,
     kinds::{ProductionKind, RuleKind, TokenKind},
     language::Language,
-    visitor::{Visitor, VisitorEntryResponse},
+    visitor::{Step, Visitor},
 };
 
 struct ContractCollector {
@@ -20,7 +21,7 @@ impl Visitor<Error> for ContractCollector {
         &mut self,
         node: &Rc<RuleNode>,
         _cursor: &Cursor,
-    ) -> Result<VisitorEntryResponse> {
+    ) -> Result<ControlFlow<(), Step>> {
         if node.kind == RuleKind::ContractDefinition {
             if let Node::Token(token) = &node.children[2] {
                 ensure!(token.kind == TokenKind::Identifier);
@@ -28,10 +29,11 @@ impl Visitor<Error> for ContractCollector {
             } else {
                 bail!("Expected contract identifier: {node:?}");
             };
-            return Ok(VisitorEntryResponse::StepOver);
+
+            return Ok(ControlFlow::Continue(Step::Over));
         }
 
-        return Ok(VisitorEntryResponse::StepIn);
+        Ok(ControlFlow::Continue(Step::In))
     }
 }
 
