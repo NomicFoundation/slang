@@ -8,6 +8,7 @@ use infra_utils::{
     github::GitHub,
     paths::{FileWalker, PathExtensions},
 };
+use itertools::Itertools;
 
 use crate::utils::{ClapExtensions, OrderedCommand, Terminal};
 
@@ -75,13 +76,25 @@ fn run_cargo_fmt() -> Result<()> {
 }
 
 fn run_clippy() -> Result<()> {
-    // To help with gradual adoption, we don't exit on failure and ignore errors for now.
-    let _ = Command::new("cargo")
+    // To help with gradual adoption, we don't exit on failure and ignore some errors for now.
+    let makeshift_config = std::fs::read_to_string(Path::repo_path(".clippy_allowed_lints"))?;
+    let allowed_lints = makeshift_config
+        .lines()
+        .map(str::trim)
+        .filter(|line| !line.starts_with('#') && !line.is_empty())
+        .unique();
+
+    let mut clippy = Command::new("cargo")
         .flag("clippy")
         .flag("--")
         .flag("--verbose")
-        .exit_on_failure(false)
-        .run();
+        .exit_on_failure(false);
+
+    for lint in allowed_lints {
+        clippy = clippy.property("-A", format!("clippy::{}", lint));
+    }
+
+    let _ = clippy.run();
 
     Ok(())
 }

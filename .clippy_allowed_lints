@@ -1,0 +1,39 @@
+# This is a list of allowed Clippy rules for the purposes of gradual migration.
+# Unfortunately, Clippy doesn't support allowing lints in a configuration file, so we roll our own.
+# See https://doc.rust-lang.org/stable/clippy/configuration.html
+
+borrow_interior_mutable_const
+cmp_owned
+collapsible_if
+comparison_chain
+declare_interior_mutable_const
+enum_variant_names
+expect_fun_call
+explicit_auto_deref
+from_over_into
+inherent_to_string
+into_iter_on_ref
+len_without_is_empty
+len_zero
+manual_range_contains
+match_like_matches_macro
+needless_borrow
+needless_range_loop
+needless_return
+new_without_default
+println_empty_string
+ptr_arg
+redundant_closure
+redundant_pattern
+redundant_static_lifetimes
+should_implement_trait
+single_char_add_str
+single_char_pattern
+to_string_in_format_args
+upper_case_acronyms
+useless_asref
+useless_conversion
+useless_format
+write_literal
+writeln_empty_string
+wrong_self_convention
