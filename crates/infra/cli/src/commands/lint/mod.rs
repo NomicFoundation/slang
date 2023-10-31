@@ -87,8 +87,7 @@ fn run_clippy() -> Result<()> {
     let mut clippy = Command::new("cargo")
         .flag("clippy")
         .flag("--")
-        .flag("--verbose")
-        .exit_on_failure(false);
+        .flag("--verbose");
 
     for lint in allowed_lints {
         clippy = clippy.property("-A", format!("clippy::{}", lint));
