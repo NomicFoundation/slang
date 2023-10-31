@@ -65,16 +65,6 @@ impl OrderedCommand for LintCommand {
     }
 }
 
-fn run_cargo_fmt() -> Result<()> {
-    let mut command = Command::new("cargo-fmt").flag("--all").flag("--verbose");
-
-    if GitHub::is_running_in_ci() {
-        command = command.flag("--check");
-    }
-
-    return command.run();
-}
-
 fn run_clippy() -> Result<()> {
     let makeshift_config = std::fs::read_to_string(Path::repo_path(".clippy_allowed_lints"))?;
     let allowed_lints = makeshift_config
@@ -93,6 +83,16 @@ fn run_clippy() -> Result<()> {
     }
 
     clippy.run()
+}
+
+fn run_cargo_fmt() -> Result<()> {
+    let mut command = Command::new("cargo-fmt").flag("--all").flag("--verbose");
+
+    if GitHub::is_running_in_ci() {
+        command = command.flag("--check");
+    }
+
+    return command.run();
 }
 
 fn run_cspell() -> Result<()> {
