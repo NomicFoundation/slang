@@ -23,6 +23,8 @@ pub struct Command {
     args: Vec<String>,
     environment: HashMap<String, String>,
     current_dir: Option<PathBuf>,
+    /// Whether the command failure should cause the entire process to exit.
+    exit_on_failure: bool,
 }
 
 impl Command {
@@ -32,6 +34,7 @@ impl Command {
             args: vec![],
             environment: HashMap::new(),
             current_dir: None,
+            exit_on_failure: true,
         };
     }
 
@@ -75,6 +78,15 @@ impl Command {
         }
 
         return self;
+    }
+
+    /// Whether the command failure should cause the entire process to exit.
+    ///
+    /// Defaults to `true`.
+    pub fn exit_on_failure(mut self, exit_on_failure: bool) -> Self {
+        self.exit_on_failure = exit_on_failure;
+
+        self
     }
 
     pub fn evaluate(&self) -> Result<String> {
@@ -131,11 +143,15 @@ fn run_with_defaults(command: &Command) -> Result<()> {
         .wait()
         .with_context(|| format!("Failed to wait for status: {command}"))?;
 
-    return check_status(command, status).map_err(|error| {
+    check_status(command, status).map_err(|error| {
         // Print error and exit process, to skip printing irrelevant backtraces from the parent process:
         eprintln!("{error}");
-        std::process::exit(1);
-    });
+        if command.exit_on_failure {
+            std::process::exit(1);
+        } else {
+            error
+        }
+    })
 }
 
 fn spawn_with_defaults(command: &Command, stdio: impl Fn() -> Stdio) -> Result<Child> {

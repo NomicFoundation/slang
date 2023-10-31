@@ -25,6 +25,9 @@ impl LintController {
 
 #[derive(Clone, Debug, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
 enum LintCommand {
+    /// Lints all Rust source files.
+    // Automatically applied lints may need to be formatted again, so we run this before formatting.
+    Clippy,
     /// Format all Rust source files.
     CargoFmt,
     /// Check for spelling issues in Markdown files.
@@ -48,6 +51,7 @@ impl OrderedCommand for LintCommand {
         Terminal::step(format!("lint {name}", name = self.clap_name()));
 
         return match self {
+            LintCommand::Clippy => run_clippy(),
             LintCommand::CargoFmt => run_cargo_fmt(),
             LintCommand::Cspell => run_cspell(),
             LintCommand::Prettier => run_prettier(),
@@ -68,6 +72,18 @@ fn run_cargo_fmt() -> Result<()> {
     }
 
     return command.run();
+}
+
+fn run_clippy() -> Result<()> {
+    // To help with gradual adoption, we don't exit on failure and ignore errors for now.
+    let _ = Command::new("cargo")
+        .flag("clippy")
+        .flag("--")
+        .flag("--verbose")
+        .exit_on_failure(false)
+        .run();
+
+    Ok(())
 }
 
 fn run_cspell() -> Result<()> {
