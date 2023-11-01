@@ -78,7 +78,7 @@ This is useful for tokens like `DecimalLiteral` and `HexLiteral` who can have mu
 or disabled in certain versions of the language.
 
 All definitions have a unique `Scanner`, and they can be combined in the same trie/FSM to produce a single token at each
-position in the input. Afterwards, the scanner can compare the definition's `enabled_in` and `disabled_in` properties
+position in the input. Afterwards, the scanner can compare the definition's `enabled` property
 with the current language version, adding an error if they don't match, but continue parsing anyway.
 
 ### Keyword Items
@@ -93,13 +93,13 @@ Second, because keywords can also overlap with identifiers, each keyword has a `
 identifier token they can match. Instead of being part of same trie/FSM as tokens, whenever we want to scan a keyword,
 we try to scan its identifier instead. Afterwards, we check if its contents match one of the values of the keyword.
 
-Third, they have two additional `reserved_in` and `unreserved_in` properties. We should use these when we scan identifiers,
+Third, they have two additional `reserved` property. We should use these when we scan identifiers,
 to make sure that the resulting identifier doesn't match a reserved keyword, and if so, we should report an error, but
 continue parsing.
 
-Unique to Solidity, keywords can be `reserved_in` versions before or after the versions they are `enabled_in`. They can also be
-`unreserved_in` versions before or after the versions they are `disabled_in`. So we have to have these additional checks,
-to be able to catch cases like when a certain input can both be a keyword and an identifier, or neither.
+Unique to Solidity, keywords can be `reserved` in versions before or after the versions they are `enabled` in. They can
+also be not `reserved` in versions before or after the versions they stop being `enabled` in. So we have to have these
+additional checks, to be able to catch cases like when a certain input can both be a keyword and an identifier, or neither.
 
 We should also be able to generate a public API `is_keyword(TerminalKind)` for users to conveniently detect them if needed.
 
@@ -113,9 +113,6 @@ Previously, we used to create many `LeadingTrivia` and `TrailingTrivia` nodes th
 is wasteful memory-wise, it is also unnatural/unexpected to wrap whitespace in non-terminal nodes. Instead, I propose
 treating them like any other token, and storing them as siblings to the tokens they belong to (in-order). Not only this
 is simpler, it is also more efficient, and is natural to how input is consumed and produced.
-
-We should also be able to generate public APIs `is_leading_trivia(TerminalKind)` and `is_trailing_trivia(TerminalKind)`
-for users to conveniently detect them if needed.
 
 ### Fragment Items
 
@@ -132,14 +129,13 @@ Their fields match 1-1 with the item fields. The struct name contributes a `NonT
 
 Each field can be either `Required(T)` or `Optional(T)`. Required fields are always present and parsed. Optional fields
 can be omitted if they don't exist, and are represented with Rust's `Option<T>` type (or TypeScript `T | undefined`).
-However, optional fields have additional `enabled_in` and `disabled_in` properties. After parsing optional fields,
-we should compare them with the current language version, and produce errors if they don't match, but continue parsing normally.
+However, optional fields have an additional `enabled` property. After parsing optional fields, we should compare them
+with the current language version, and produce errors if they don't match, but continue parsing normally.
 
 The type of each field can be a `NonTerminal(T)` or `Terminal(Set<T>)`. A non-terminal field refers to another item, and
 holds its type. A terminal field refers to one or more terminal items (all valid in this position), and is of type `TerminalNode`.
 
-Additionally, the struct also stores the CST node that holds its contents. The idea is for the parser to attempt
-constructing both the CST and the AST nodes in one pass.
+Additionally, the struct also stores the CST node that holds its contents:
 
 ```rust title="Definition"
 Struct(
@@ -162,57 +158,23 @@ pub struct ParametersDeclaration {
 }
 ```
 
-```rust title="Parser Pseudo-Code"
-fn parse_parameters_declaration(input) -> ParametersDeclaration {
-    let mut cst = NonTerminalNode::new(NonTerminalKind::ParametersDeclaration);
-
-    // Parses any leading trivia, the 'OpenParen' token, and any trailing trivia
-    // Add all of them to the 'cst' parent node (in order)
-    // Then return a reference to the 'OpenParen' token
-    let open_paren = parse_terminal(input, TerminalKind::OpenParen, &mut cst);
-
-    // Parses and returns the 'Parameters' AST node.
-    let parameters = parse_parameters(input);
-    cst.children.push(parameters.cst.clone());
-
-    // Parses any leading trivia, the 'CloseParen' token, and any trailing trivia
-    // Add all of them to the 'cst' parent node (in order)
-    // Then return a reference to the 'CloseParen' token
-    let close_paren = parse_terminal(input, TerminalKind::CloseParen, &mut cst);
-
-    return ParametersDeclaration {
-        open_paren,
-        parameters,
-        close_paren,
-
-        cst,
-    };
-}
-```
-
 ### Enum Items
 
-Enums represent an ordered choice of multiple variants (possibilities). The enum name contributes a `NonTerminalKind`,
-but not its variants (they only exist in the AST, and don't affect the CST at all).
+Enums represent an ordered choice operator of multiple variants (possibilities). The enum name itself does NOT contribute
+a `NonTerminalKind`, since it will always result in one of its variants (each with a unique `TerminalKind` or a `NonTerminalKind`.
+They only exist in the AST, and don't affect the CST at all.
 
 We attempt to parse each variant (in-order), and choose the first one that succeeds. However, each variant can have
-additional `enabled_in` and `disabled_in` properties. We should always try to parse the variants that are valid in the
-current version first, and if not, still parse the rest, but produce an error afterwards. The fields of each variant are
-parsed similar to a struct fields (example above).
+an additional `enabled` property. We should always try to parse the variants that are valid in the current version first,
+and if not, still parse the rest, but produce an error afterwards. The fields of each variant are parsed similar to a
+struct fields (example above).
 
 ```rust title="Definition"
 Enum(
     name = FunctionBody,
-    default_variant = Semicolon,
     variants = [
-        EnumVariant(
-            name = Block,
-            fields = (block = Required(NonTerminal(Block)))
-        ),
-        EnumVariant(
-            name = Semicolon,
-            fields = (semicolon = Required(Terminal([Semicolon])))
-        )
+        EnumVariant(name = Block, reference = Block),
+        EnumVariant(name = Semicolon, reference = Semicolon)
     ]
 )
 ```
@@ -291,15 +253,15 @@ This is perhaps the most complex non-terminal. It still uses the same PRATT algo
 adapted for the new AST types. It has two lists:
 
 First, a list of `precedence_expressions`, with each expression having a list of operators. Each operator has its own
-versioning (`enabled_in` and `disabled_in` properties), a list of fields, and a model (prefix/postfix/binary).
+versioning (`enabled` property), a list of fields, and a model (prefix/postfix/binary).
 
 The operators from all expressions are flattened and combined in the parent PRATT parser. That grouping is only used to
 indicate that some operators can produce the same `PrecedenceExpression` name. However, we should exclude operators that
 don't match the current language version. This is useful for things like `ExponentiationExpression` where it has two
 operators with different associativity, but defined in enabled/disabled in different versions.
 
-Second, a list of `primary_expressions`, with their own versioning (`enabled_in` and `disabled_in` properties) as well.
-We should try to parse them as an ordered choice (similar to `EnumItem`), and produce an error if the version doesn't match afterwards.
+Second, a list of `primary_expressions`, with their own versioning (`enabled` property) as well.
+We should try to parse them as an operator (similar to `EnumItem`), and produce an error if the version doesn't match afterwards.
 
 It is important to note that the item name doesn't contribute a `NonTerminalKind`, but each `PrecedenceExpression` under it contributes one.
 
@@ -333,7 +295,6 @@ Precedence(
             )]
         )
     )],
-    default_primary_expression = Identifier,
     primary_expressions = [
         PrimaryExpression(expression = Identifier),
         PrimaryExpression(expression = NumberLiteral),
@@ -387,28 +348,10 @@ pub struct NegationExpression {
 
 ## Error Recovery
 
-This is a newly introduced feature which I'm less familiar with, so I'm looking for validation on whether the ideas below
-are possible (in a reasonable time), or if we should look for a better solution:
-
-I believe it is important to provide the AST, even if there are errors in the input. This is because we want to avoid forcing users
-to implement their analysis twice; Once for invalid/partial input using the CST, and again for correct input using the AST.
-
 For the CST, I think the current algorithms work well, and we should be able to keep them. Unrecognized (skipped) input
 is grouped into one token, and we can just add it as-is to the `cst` node under its AST node.
 
-For the AST, I think we can generate/implement a `GenerateMissing` trait for each type. If parsing fails at any point, and
-there are remaining fields in the parser that need constructing, we can call it as we are unwinding the stack. It will:
-
--   For terminals, generate a token containing an empty string value and `TerminalKind::MISSING`.
--   For repeated/separated items, create an empty `Vec<>`.
--   For enums, it will create an instance of the variant specified in `default_variant`.
--   For expressions, it will create an instance of the expression specified in `default_primary_expression`.
--   For other non-terminal fields, call the same trait recursively.
-
-This also plays well with existing CST error-recovery mechanisms we have in place. By having the untyped cst node
-in each AST type, it can be incomplete if there are errors, and have `TerminalKind::UNRECOGNIZED` nodes, which is completely
-fine. Users can get and iterate on that, and also reconstruct the complete input from the raw input tokens. The
-`TerminalKind::MISSING` tokens don't need to be added to the CST at all, so that it remains true to input.
+During AST construction, we will simply check for `TerminalKind::UNRECOGNIZED` nodes, and skip construction if there are any.
 
 ## Public API Changes
 
@@ -416,23 +359,15 @@ Based on the above, I propose the following changes to the current public API:
 
 -   Rename `TokenKind` to `TerminalKind`, since it will also refer to trivia.
 -   Rename `RuleKind` to `NonTerminalKind`, since "rule" is ambiguous.
--   Rename `TerminalKind::SKIPPED`to `UNRECOGNIZED` for clarity, and add `TerminalKind::MISSING` for partial AST nodes.
+-   Rename `TerminalKind::SKIPPED`to `UNRECOGNIZED` for clarity.
 -   Hide `LexicalContext` and `fn scan(TokenKind)` from the public API, as it is a short-term workaround,
     and will be replaced later when we have language embedding.
--   Replace `fn parse(NonTerminalKind)` with a set of typed functions `fn parse_foo() -> ParseResult<Foo>` that return
-    AST nodes directly. Users can still call `foo_node.cst` to get the CST if needed.
--   Remove `ProductionKind` completely, since it is no longer needed.
--   Since `EndOFFileTrivia` no longer exists, `fn parse_foo() -> ParseResult<Foo>` should collect any remaining trivia
-    at the end of the input, and include it in the `ParseResult` returned, for any kind of node, not just `SourceUnit`.
+-   Remove `ProductionKind` completely, since it is no longer needed. We only need to expose `fn parse(NonTerminalKind)`.
+-   Since `EndOFFileTrivia` no longer exists, `ParseResult` should collect any remaining trivia at the end of the input,
+    and include it in the `ParseResult` returned, for any kind of node, not just `SourceUnit`.
 
 ## Visitors and Cursors
 
 The current CST visitors/cursors should still work as-is, since the CST tree will be unchanged. However, the new AST types
 allow us in the future to produce typed visitors and traits with named functions for every node type, similar to a lot of
 other AST processing libraries. I want to at least produce an immutable `Visitor` and a mutable `Rewriter`.
-
-## Open Questions
-
--   How would terminators and delimiters (the new `error_recovery` field) affect this? Is it possible to still use it
-    along the suggested `GenerateMissing` trait above?
--   Can we add scope graph metadata to AST nodes directly, since it will always be available? Is there anything else needed?
