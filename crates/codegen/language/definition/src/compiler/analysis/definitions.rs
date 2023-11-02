@@ -1,11 +1,13 @@
 use crate::{
     compiler::analysis::{Analysis, ItemMetadata},
     internals::Spanned,
-    model::{spanned::Item, Identifier},
-    utils::{VersionRange, VersionSet},
+    model::{
+        spanned::{Item, VersionSpecifier},
+        Identifier,
+    },
+    utils::VersionSet,
 };
-use semver::Version;
-use std::{collections::HashSet, fmt::Debug};
+use std::collections::HashSet;
 
 pub fn analyze_definitions(analysis: &mut Analysis) {
     collect_top_level_items(analysis);
@@ -15,7 +17,9 @@ pub fn analyze_definitions(analysis: &mut Analysis) {
 }
 
 fn collect_top_level_items(analysis: &mut Analysis) {
-    for item in analysis.language.clone().items() {
+    let language = analysis.language.clone();
+
+    for item in language.items() {
         let name = get_item_name(item);
         let defined_in = calculate_defined_in(analysis, item);
 
@@ -30,7 +34,7 @@ fn collect_top_level_items(analysis: &mut Analysis) {
                 kind: item.into(),
 
                 defined_in,
-                used_in: VersionSet::empty(),
+                used_in: VersionSet::new(),
 
                 referenced_from: Vec::new(),
                 referenced_items: Vec::new(),
@@ -110,67 +114,51 @@ fn get_item_name(item: &Item) -> &Spanned<Identifier> {
 }
 
 fn calculate_defined_in(analysis: &mut Analysis, item: &Item) -> VersionSet {
-    return match item {
-        Item::Struct { item } => VersionSet::from_range(calculate_enablement(
-            analysis,
-            &item.enabled_in,
-            &item.disabled_in,
-        )),
-        Item::Enum { item } => VersionSet::from_range(calculate_enablement(
-            analysis,
-            &item.enabled_in,
-            &item.disabled_in,
-        )),
-        Item::Repeated { item } => VersionSet::from_range(calculate_enablement(
-            analysis,
-            &item.enabled_in,
-            &item.disabled_in,
-        )),
-        Item::Separated { item } => VersionSet::from_range(calculate_enablement(
-            analysis,
-            &item.enabled_in,
-            &item.disabled_in,
-        )),
-        Item::Precedence { item } => VersionSet::from_range(calculate_enablement(
-            analysis,
-            &item.enabled_in,
-            &item.disabled_in,
-        )),
+    let mut defined_in = VersionSet::new();
+
+    let mut try_add_specifier = |specifier: &Option<Spanned<VersionSpecifier>>| {
+        if let Some(specifier) = specifier {
+            analysis.add_specifier(&mut defined_in, specifier);
+        } else {
+            analysis.add_all_versions(&mut defined_in);
+        }
+    };
+
+    match item {
+        Item::Struct { item } => {
+            try_add_specifier(&item.enabled);
+        }
+        Item::Enum { item } => {
+            try_add_specifier(&item.enabled);
+        }
+        Item::Repeated { item } => {
+            try_add_specifier(&item.enabled);
+        }
+        Item::Separated { item } => {
+            try_add_specifier(&item.enabled);
+        }
+        Item::Precedence { item } => {
+            try_add_specifier(&item.enabled);
+        }
         Item::Trivia { item: _ } => {
-            VersionSet::from_range(calculate_enablement(analysis, &None, &None))
+            try_add_specifier(&None);
         }
         Item::Keyword { item } => {
-            VersionSet::from_ranges(item.definitions.iter().map(|definition| {
-                calculate_enablement(analysis, &definition.enabled_in, &definition.disabled_in)
-            }))
+            for definition in &item.definitions {
+                try_add_specifier(&definition.enabled);
+            }
         }
         Item::Token { item } => {
-            VersionSet::from_ranges(item.definitions.iter().map(|definition| {
-                calculate_enablement(analysis, &definition.enabled_in, &definition.disabled_in)
-            }))
+            for definition in &item.definitions {
+                try_add_specifier(&definition.enabled)
+            }
         }
-        Item::Fragment { item } => VersionSet::from_range(calculate_enablement(
-            analysis,
-            &item.enabled_in,
-            &item.disabled_in,
-        )),
-    };
-}
-
-fn calculate_enablement(
-    analysis: &mut Analysis,
-    enabled_in: &Option<Spanned<Version>>,
-    disabled_in: &Option<Spanned<Version>>,
-) -> VersionRange {
-    let enabled_in = match enabled_in {
-        Some(enabled_in) => enabled_in,
-        None => &analysis.language.versions[0],
+        Item::Fragment { item } => {
+            try_add_specifier(&item.enabled);
+        }
     };
 
-    return match disabled_in {
-        Some(disabled_in) => VersionRange::between(enabled_in, disabled_in),
-        None => VersionRange::starting_from(enabled_in),
-    };
+    return defined_in;
 }
 
 #[derive(thiserror::Error, Debug)]

@@ -1,6 +1,7 @@
 mod definitions;
 mod reachability;
 mod references;
+mod utils;
 
 use crate::{
     compiler::analysis::{

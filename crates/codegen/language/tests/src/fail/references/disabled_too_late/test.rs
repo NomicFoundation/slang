@@ -16,17 +16,16 @@ codegen_language_macros::compile!(Language(
                     fields = (
                         field_1 = Optional(
                             kind = NonTerminal(Two),
-                            enabled_in = "2.0.0",
-                            disabled_in = "3.0.0"
+                            enabled = Range(from = "2.0.0", till = "3.0.0")
                         ),
                         field_2 = Optional(kind = Terminal([Three]))
                     )
                 ),
                 Struct(
                     name = Two,
-                    enabled_in = "2.0.0",
-                    disabled_in = "3.0.0",
-                    fields = (field_1 = Optional(kind = Terminal([Three]), disabled_in = "4.0.0"))
+                    enabled = Range(from = "2.0.0", till = "3.0.0"),
+                    fields =
+                        (field_1 = Optional(kind = Terminal([Three]), enabled = Till("4.0.0")))
                 ),
                 Token(
                     name = Three,

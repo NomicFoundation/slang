@@ -1,7 +1,6 @@
 use crate::utils::{ApiInput, Binary, InputSource};
-use codegen_language_definition::{
-    model::{Item, KeywordDefinition, KeywordItem, Language},
-    utils::VersionRange,
+use codegen_language_definition::model::{
+    Item, KeywordDefinition, KeywordItem, Language, VersionSpecifier,
 };
 use indicatif::{ProgressBar, ProgressStyle};
 use rayon::prelude::{IntoParallelRefIterator, ParallelIterator};
@@ -95,7 +94,7 @@ fn generate_test_cases(language: &Language) -> Vec<TestCase> {
 struct TestCase {
     item: String,
     variation: String,
-    reservation: VersionRange,
+    reserved_in: HashSet<Version>,
 
     source: String,
 }
@@ -140,20 +139,41 @@ impl TestCase {
             }
         };
 
-        let reserved_in = match definition.reserved_in.as_ref() {
-            Some(reserved_in) => reserved_in,
-            None => language.versions.first().unwrap(),
-        };
+        let mut reserved_in = HashSet::new();
 
-        let reservation = match definition.unreserved_in.as_ref() {
-            Some(unreserved_in) => VersionRange::between(reserved_in, unreserved_in),
-            None => VersionRange::starting_from(reserved_in),
+        match definition.reserved.as_ref() {
+            None => {
+                reserved_in.extend(language.versions.iter().cloned());
+            }
+            Some(specifier) => {
+                match specifier {
+                    VersionSpecifier::Never => {
+                        // Do Nothing
+                    }
+                    VersionSpecifier::From { from } => {
+                        reserved_in
+                            .extend(language.versions.iter().filter(|v| &from <= v).cloned());
+                    }
+                    VersionSpecifier::Till { till } => {
+                        reserved_in.extend(language.versions.iter().filter(|v| v < &till).cloned());
+                    }
+                    VersionSpecifier::Range { from, till } => {
+                        reserved_in.extend(
+                            language
+                                .versions
+                                .iter()
+                                .filter(|v| &from <= v && v < &till)
+                                .cloned(),
+                        );
+                    }
+                };
+            }
         };
 
         return Self {
             item: item.name.to_string(),
             variation,
-            reservation,
+            reserved_in,
 
             source,
         };
@@ -165,7 +185,7 @@ impl TestCase {
 
         for binary in binaries {
             let success = self.test_version(binary);
-            let is_reserved = self.reservation.contains(&binary.version);
+            let is_reserved = self.reserved_in.contains(&binary.version);
 
             if success != is_reserved {
                 // Language definition is correct.

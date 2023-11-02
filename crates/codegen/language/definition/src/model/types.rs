@@ -65,8 +65,7 @@ mod wrapper {
     pub struct StructItem {
         pub name: Identifier,
 
-        pub enabled_in: Option<Version>,
-        pub disabled_in: Option<Version>,
+        pub enabled: Option<VersionSpecifier>,
 
         pub error_recovery: Option<FieldsErrorRecovery>,
         pub fields: IndexMap<Identifier, Field>,
@@ -76,8 +75,7 @@ mod wrapper {
     pub struct EnumItem {
         pub name: Identifier,
 
-        pub enabled_in: Option<Version>,
-        pub disabled_in: Option<Version>,
+        pub enabled: Option<VersionSpecifier>,
 
         pub default_variant: Identifier,
         pub variants: Vec<EnumVariant>,
@@ -87,8 +85,7 @@ mod wrapper {
     pub struct EnumVariant {
         pub name: Identifier,
 
-        pub enabled_in: Option<Version>,
-        pub disabled_in: Option<Version>,
+        pub enabled: Option<VersionSpecifier>,
 
         pub error_recovery: Option<FieldsErrorRecovery>,
         pub fields: IndexMap<Identifier, Field>,
@@ -99,8 +96,7 @@ mod wrapper {
         pub name: Identifier,
         pub repeated: Identifier,
 
-        pub enabled_in: Option<Version>,
-        pub disabled_in: Option<Version>,
+        pub enabled: Option<VersionSpecifier>,
 
         pub allow_empty: Option<bool>,
     }
@@ -111,8 +107,7 @@ mod wrapper {
         pub separated: Identifier,
         pub separator: Identifier,
 
-        pub enabled_in: Option<Version>,
-        pub disabled_in: Option<Version>,
+        pub enabled: Option<VersionSpecifier>,
 
         pub allow_empty: Option<bool>,
     }
@@ -121,8 +116,7 @@ mod wrapper {
     pub struct PrecedenceItem {
         pub name: Identifier,
 
-        pub enabled_in: Option<Version>,
-        pub disabled_in: Option<Version>,
+        pub enabled: Option<VersionSpecifier>,
 
         pub precedence_expressions: Vec<PrecedenceExpression>,
 
@@ -141,8 +135,7 @@ mod wrapper {
     pub struct PrecedenceOperator {
         pub model: OperatorModel,
 
-        pub enabled_in: Option<Version>,
-        pub disabled_in: Option<Version>,
+        pub enabled: Option<VersionSpecifier>,
 
         pub error_recovery: Option<FieldsErrorRecovery>,
         pub fields: IndexMap<Identifier, Field>,
@@ -160,8 +153,7 @@ mod wrapper {
     pub struct PrimaryExpression {
         pub expression: Identifier,
 
-        pub enabled_in: Option<Version>,
-        pub disabled_in: Option<Version>,
+        pub enabled: Option<VersionSpecifier>,
     }
 
     #[derive(Debug, Eq, PartialEq, Serialize)]
@@ -184,8 +176,7 @@ mod wrapper {
         Optional {
             kind: FieldKind,
 
-            enabled_in: Option<Version>,
-            disabled_in: Option<Version>,
+            enabled: Option<VersionSpecifier>,
         },
     }
 
@@ -223,11 +214,8 @@ mod wrapper {
 
     #[derive(Debug, Eq, PartialEq, Serialize)]
     pub struct KeywordDefinition {
-        pub enabled_in: Option<Version>,
-        pub disabled_in: Option<Version>,
-
-        pub reserved_in: Option<Version>,
-        pub unreserved_in: Option<Version>,
+        pub enabled: Option<VersionSpecifier>,
+        pub reserved: Option<VersionSpecifier>,
 
         pub value: KeywordValue,
     }
@@ -249,8 +237,7 @@ mod wrapper {
 
     #[derive(Debug, Eq, PartialEq, Serialize)]
     pub struct TokenDefinition {
-        pub enabled_in: Option<Version>,
-        pub disabled_in: Option<Version>,
+        pub enabled: Option<VersionSpecifier>,
 
         pub scanner: Scanner,
     }
@@ -259,8 +246,7 @@ mod wrapper {
     pub struct FragmentItem {
         pub name: Identifier,
 
-        pub enabled_in: Option<Version>,
-        pub disabled_in: Option<Version>,
+        pub enabled: Option<VersionSpecifier>,
 
         pub scanner: Scanner,
     }
@@ -299,5 +285,13 @@ mod wrapper {
         Fragment {
             reference: Identifier,
         },
+    }
+
+    #[derive(Debug, Eq, PartialEq, Serialize)]
+    pub enum VersionSpecifier {
+        Never,
+        From { from: Version },
+        Till { till: Version },
+        Range { from: Version, till: Version },
     }
 }
