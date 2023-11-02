@@ -77,7 +77,6 @@ mod wrapper {
 
         pub enabled: Option<VersionSpecifier>,
 
-        pub default_variant: Identifier,
         pub variants: Vec<EnumVariant>,
     }
 
@@ -119,8 +118,6 @@ mod wrapper {
         pub enabled: Option<VersionSpecifier>,
 
         pub precedence_expressions: Vec<PrecedenceExpression>,
-
-        pub default_primary_expression: Identifier,
         pub primary_expressions: Vec<PrimaryExpression>,
     }
 
