@@ -86,8 +86,7 @@ mod wrapper {
 
         pub enabled: Option<VersionSpecifier>,
 
-        pub error_recovery: Option<FieldsErrorRecovery>,
-        pub fields: IndexMap<Identifier, Field>,
+        pub reference: Identifier,
     }
 
     #[derive(Debug, Eq, PartialEq, Serialize)]

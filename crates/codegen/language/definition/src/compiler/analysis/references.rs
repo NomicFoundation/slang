@@ -99,13 +99,18 @@ fn check_enum(analysis: &mut Analysis, item: &EnumItem, enablement: &VersionSet)
         let EnumVariant {
             name: _,
             enabled,
-            error_recovery: _,
-            fields,
+            reference,
         } = &**variant;
 
         let enablement = update_enablement(analysis, &enablement, &enabled);
 
-        check_fields(analysis, Some(name), &fields, &enablement);
+        check_reference(
+            analysis,
+            Some(name),
+            reference,
+            &enablement,
+            ReferenceFilter::Nodes,
+        );
     }
 }
 

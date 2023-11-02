@@ -15,11 +15,7 @@ codegen_language_macros::compile!(Language(
             Trivia(SingleLineComment),
             Trivia(MultilineComment)
         ])),
-        Choice([
-            Trivia(EndOfLine),
-            EndOfInput
-
-        ])
+        Choice([Trivia(EndOfLine), EndOfInput])
     ]),
     versions = [
         "0.4.11", "0.4.12", "0.4.13", "0.4.14", "0.4.15", "0.4.16", "0.4.17", "0.4.18", "0.4.19",
@@ -50,66 +46,45 @@ codegen_language_macros::compile!(Language(
                         Enum(
                             name = SourceUnitMember,
                             variants = [
-                                EnumVariant(
-                                    name = Pragma,
-                                    fields = (directive = Required(NonTerminal(PragmaDirective)))
-                                ),
-                                EnumVariant(
-                                    name = Import,
-                                    fields = (directive = Required(NonTerminal(ImportDirective)))
-                                ),
-                                EnumVariant(
-                                    name = Contract,
-                                    fields =
-                                        (definition = Required(NonTerminal(ContractDefinition)))
-                                ),
-                                EnumVariant(
-                                    name = Interface,
-                                    fields =
-                                        (definition = Required(NonTerminal(InterfaceDefinition)))
-                                ),
-                                EnumVariant(
-                                    name = Library,
-                                    fields =
-                                        (definition = Required(NonTerminal(LibraryDefinition)))
-                                ),
+                                EnumVariant(name = Pragma, reference = PragmaDirective),
+                                EnumVariant(name = Import, reference = ImportDirective),
+                                EnumVariant(name = Contract, reference = ContractDefinition),
+                                EnumVariant(name = Interface, reference = InterfaceDefinition),
+                                EnumVariant(name = Library, reference = LibraryDefinition),
                                 EnumVariant(
                                     name = Struct,
                                     enabled = From("0.6.0"),
-                                    fields = (definition = Required(NonTerminal(StructDefinition)))
+                                    reference = StructDefinition
                                 ),
                                 EnumVariant(
                                     name = Enum,
                                     enabled = From("0.6.0"),
-                                    fields = (definition = Required(NonTerminal(EnumDefinition)))
+                                    reference = EnumDefinition
                                 ),
                                 EnumVariant(
                                     name = Function,
                                     enabled = From("0.7.1"),
-                                    fields =
-                                        (definition = Required(NonTerminal(FunctionDefinition)))
+                                    reference = FunctionDefinition
                                 ),
                                 EnumVariant(
                                     name = Constant,
                                     enabled = From("0.7.4"),
-                                    fields =
-                                        (definition = Required(NonTerminal(ConstantDefinition)))
+                                    reference = ConstantDefinition
                                 ),
                                 EnumVariant(
                                     name = Error,
                                     enabled = From("0.8.4"),
-                                    fields = (definition = Required(NonTerminal(ErrorDefinition)))
+                                    reference = ErrorDefinition
                                 ),
                                 EnumVariant(
                                     name = UserDefinedValueType,
                                     enabled = From("0.8.8"),
-                                    fields = (definition =
-                                        Required(NonTerminal(UserDefinedValueTypeDefinition)))
+                                    reference = UserDefinedValueTypeDefinition
                                 ),
                                 EnumVariant(
                                     name = Using,
                                     enabled = From("0.8.13"),
-                                    fields = (directive = Required(NonTerminal(UsingDirective)))
+                                    reference = UsingDirective
                                 )
                             ]
                         )
@@ -131,31 +106,31 @@ codegen_language_macros::compile!(Language(
                         Enum(
                             name = Pragma,
                             variants = [
-                                EnumVariant(
-                                    name = ABICoder,
-                                    fields = (
-                                        abicoder_keyword = Required(Terminal([AbicoderKeyword])),
-                                        version = Required(Terminal([Identifier]))
-                                    )
-                                ),
-                                EnumVariant(
-                                    name = Experimental,
-                                    fields = (
-                                        experimental_keyword =
-                                            Required(Terminal([ExperimentalKeyword])),
-                                        feature =
-                                            Required(Terminal([AsciiStringLiteral, Identifier]))
-                                    )
-                                ),
-                                EnumVariant(
-                                    name = Version,
-                                    fields = (
-                                        solidity_keyword = Required(Terminal([SolidityKeyword])),
-                                        expressions =
-                                            Required(NonTerminal(VersionPragmaExpressions))
-                                    )
-                                )
+                                EnumVariant(name = ABICoder, reference = ABICoderPragma),
+                                EnumVariant(name = Experimental, reference = ExperimentalPragma),
+                                EnumVariant(name = Version, reference = VersionPragma)
                             ]
+                        ),
+                        Struct(
+                            name = ABICoderPragma,
+                            fields = (
+                                abicoder_keyword = Required(Terminal([AbicoderKeyword])),
+                                version = Required(Terminal([Identifier]))
+                            )
+                        ),
+                        Struct(
+                            name = ExperimentalPragma,
+                            fields = (
+                                experimental_keyword = Required(Terminal([ExperimentalKeyword])),
+                                feature = Required(Terminal([AsciiStringLiteral, Identifier]))
+                            )
+                        ),
+                        Struct(
+                            name = VersionPragma,
+                            fields = (
+                                solidity_keyword = Required(Terminal([SolidityKeyword])),
+                                expressions = Required(NonTerminal(VersionPragmaExpressions))
+                            )
                         ),
                         Repeated(
                             name = VersionPragmaExpressions,
@@ -230,37 +205,43 @@ codegen_language_macros::compile!(Language(
                         Enum(
                             name = ImportSymbol,
                             variants = [
-                                EnumVariant(
-                                    name = Path,
-                                    fields = (
-                                        path = Required(Terminal([AsciiStringLiteral])),
-                                        alias = Optional(kind = NonTerminal(ImportAlias))
-                                    )
-                                ),
-                                EnumVariant(
-                                    name = Named,
-                                    fields = (
-                                        asterisk = Required(Terminal([Asterisk])),
-                                        alias = Required(NonTerminal(ImportAlias)),
-                                        from_keyword = Required(Terminal([FromKeyword])),
-                                        path = Required(Terminal([AsciiStringLiteral]))
-                                    )
-                                ),
+                                EnumVariant(name = Path, reference = PathImportSymbol),
+                                EnumVariant(name = Named, reference = NamedImportSymbol),
                                 EnumVariant(
                                     name = Deconstruction,
-                                    error_recovery = FieldsErrorRecovery(
-                                        delimiters =
-                                            FieldDelimiters(open = open_brace, close = close_brace)
-                                    ),
-                                    fields = (
-                                        open_brace = Required(Terminal([OpenBrace])),
-                                        fields = Required(NonTerminal(ImportDeconstructionFields)),
-                                        close_brace = Required(Terminal([CloseBrace])),
-                                        from_keyword = Required(Terminal([FromKeyword])),
-                                        path = Required(Terminal([AsciiStringLiteral]))
-                                    )
+                                    reference = ImportSymbolDeconstruction
                                 )
                             ]
+                        ),
+                        Struct(
+                            name = PathImportSymbol,
+                            fields = (
+                                path = Required(Terminal([AsciiStringLiteral])),
+                                alias = Optional(kind = NonTerminal(ImportAlias))
+                            )
+                        ),
+                        Struct(
+                            name = NamedImportSymbol,
+                            fields = (
+                                asterisk = Required(Terminal([Asterisk])),
+                                alias = Required(NonTerminal(ImportAlias)),
+                                from_keyword = Required(Terminal([FromKeyword])),
+                                path = Required(Terminal([AsciiStringLiteral]))
+                            )
+                        ),
+                        Struct(
+                            name = ImportSymbolDeconstruction,
+                            error_recovery = FieldsErrorRecovery(
+                                delimiters =
+                                    FieldDelimiters(open = open_brace, close = close_brace)
+                            ),
+                            fields = (
+                                open_brace = Required(Terminal([OpenBrace])),
+                                fields = Required(NonTerminal(ImportDeconstructionFields)),
+                                close_brace = Required(Terminal([CloseBrace])),
+                                from_keyword = Required(Terminal([FromKeyword])),
+                                path = Required(Terminal([AsciiStringLiteral]))
+                            )
                         ),
                         Separated(
                             name = ImportDeconstructionFields,
@@ -305,24 +286,26 @@ codegen_language_macros::compile!(Language(
                         Enum(
                             name = UsingSymbol,
                             variants = [
-                                EnumVariant(
-                                    name = Path,
-                                    fields = (path = Required(NonTerminal(IdentifierPath)))
-                                ),
+                                EnumVariant(name = Path, reference = IdentifierPath),
                                 EnumVariant(
                                     name = Deconstruction,
                                     enabled = From("0.8.13"),
-                                    error_recovery = FieldsErrorRecovery(
-                                        delimiters =
-                                            FieldDelimiters(open = open_brace, close = close_brace)
-                                    ),
-                                    fields = (
-                                        open_brace = Required(Terminal([OpenBrace])),
-                                        fields = Required(NonTerminal(UsingDeconstructionFields)),
-                                        close_brace = Required(Terminal([CloseBrace]))
-                                    )
+                                    reference = UsingSymbolDeconstruction
                                 )
                             ]
+                        ),
+                        Struct(
+                            name = UsingSymbolDeconstruction,
+                            enabled = From("0.8.13"),
+                            error_recovery = FieldsErrorRecovery(
+                                delimiters =
+                                    FieldDelimiters(open = open_brace, close = close_brace)
+                            ),
+                            fields = (
+                                open_brace = Required(Terminal([OpenBrace])),
+                                fields = Required(NonTerminal(UsingDeconstructionFields)),
+                                close_brace = Required(Terminal([CloseBrace]))
+                            )
                         ),
                         Separated(
                             name = UsingDeconstructionFields,
@@ -369,14 +352,8 @@ codegen_language_macros::compile!(Language(
                         Enum(
                             name = UsingTarget,
                             variants = [
-                                EnumVariant(
-                                    name = TypeName,
-                                    fields = (type_name = Required(NonTerminal(TypeName)))
-                                ),
-                                EnumVariant(
-                                    name = Asterisk,
-                                    fields = (asterisk = Required(Terminal([Asterisk])))
-                                )
+                                EnumVariant(name = TypeName, reference = TypeName),
+                                EnumVariant(name = Asterisk, reference = Asterisk)
                             ]
                         )
                     ]
@@ -2142,71 +2119,45 @@ codegen_language_macros::compile!(Language(
                         Enum(
                             name = ContractMember,
                             variants = [
-                                EnumVariant(
-                                    name = Using,
-                                    fields = (directive = Required(NonTerminal(UsingDirective)))
-                                ),
-                                EnumVariant(
-                                    name = Function,
-                                    fields =
-                                        (definition = Required(NonTerminal(FunctionDefinition)))
-                                ),
+                                EnumVariant(name = Using, reference = UsingDirective),
+                                EnumVariant(name = Function, reference = FunctionDefinition),
                                 EnumVariant(
                                     name = Constructor,
                                     enabled = From("0.4.22"),
-                                    fields =
-                                        (definition = Required(NonTerminal(ConstructorDefinition)))
+                                    reference = ConstructorDefinition
                                 ),
                                 EnumVariant(
                                     name = ReceiveFunction,
                                     enabled = From("0.6.0"),
-                                    fields = (definition =
-                                        Required(NonTerminal(ReceiveFunctionDefinition)))
+                                    reference = ReceiveFunctionDefinition
                                 ),
                                 EnumVariant(
                                     name = FallbackFunction,
                                     enabled = From("0.6.0"),
-                                    fields = (definition =
-                                        Required(NonTerminal(FallbackFunctionDefinition)))
+                                    reference = FallbackFunctionDefinition
                                 ),
                                 EnumVariant(
                                     name = UnnamedFunction,
                                     enabled = Till("0.6.0"),
-                                    fields = (definition =
-                                        Required(NonTerminal(UnnamedFunctionDefinition)))
+                                    reference = UnnamedFunctionDefinition
                                 ),
-                                EnumVariant(
-                                    name = Modifier,
-                                    fields =
-                                        (definition = Required(NonTerminal(ModifierDefinition)))
-                                ),
-                                EnumVariant(
-                                    name = Struct,
-                                    fields = (definition = Required(NonTerminal(StructDefinition)))
-                                ),
-                                EnumVariant(
-                                    name = Enum,
-                                    fields = (definition = Required(NonTerminal(EnumDefinition)))
-                                ),
-                                EnumVariant(
-                                    name = Event,
-                                    fields = (definition = Required(NonTerminal(EventDefinition)))
-                                ),
+                                EnumVariant(name = Modifier, reference = ModifierDefinition),
+                                EnumVariant(name = Struct, reference = StructDefinition),
+                                EnumVariant(name = Enum, reference = EnumDefinition),
+                                EnumVariant(name = Event, reference = EventDefinition),
                                 EnumVariant(
                                     name = StateVariable,
-                                    fields = (definition =
-                                        Required(NonTerminal(StateVariableDefinition)))
+                                    reference = StateVariableDefinition
                                 ),
                                 EnumVariant(
                                     name = Error,
                                     enabled = From("0.8.4"),
-                                    fields = (definition = Required(NonTerminal(ErrorDefinition)))
+                                    reference = ErrorDefinition
                                 ),
                                 EnumVariant(
                                     name = UserDefinedValueType,
                                     enabled = From("0.8.8"),
-                                    fields = (definition =
-                                        Required(NonTerminal(UserDefinedValueTypeDefinition)))
+                                    reference = UserDefinedValueTypeDefinition
                                 )
                             ]
                         )
@@ -2364,30 +2315,15 @@ codegen_language_macros::compile!(Language(
                         Enum(
                             name = StateVariableAttribute,
                             variants = [
-                                EnumVariant(
-                                    name = Override,
-                                    fields = (specifier = Required(NonTerminal(OverrideSpecifier)))
-                                ),
-                                EnumVariant(
-                                    name = Constant,
-                                    fields = (keyword = Required(Terminal([ConstantKeyword])))
-                                ),
-                                EnumVariant(
-                                    name = Internal,
-                                    fields = (keyword = Required(Terminal([InternalKeyword])))
-                                ),
-                                EnumVariant(
-                                    name = Private,
-                                    fields = (keyword = Required(Terminal([PrivateKeyword])))
-                                ),
-                                EnumVariant(
-                                    name = Public,
-                                    fields = (keyword = Required(Terminal([PublicKeyword])))
-                                ),
+                                EnumVariant(name = Override, reference = OverrideSpecifier),
+                                EnumVariant(name = Constant, reference = ConstantKeyword),
+                                EnumVariant(name = Internal, reference = InternalKeyword),
+                                EnumVariant(name = Private, reference = PrivateKeyword),
+                                EnumVariant(name = Public, reference = PublicKeyword),
                                 EnumVariant(
                                     name = Immutable,
                                     enabled = From("0.6.5"),
-                                    fields = (keyword = Required(Terminal([ImmutableKeyword])))
+                                    reference = ImmutableKeyword
                                 )
                             ]
                         )
@@ -2445,51 +2381,24 @@ codegen_language_macros::compile!(Language(
                         Enum(
                             name = FunctionAttribute,
                             variants = [
-                                EnumVariant(
-                                    name = Modifier,
-                                    fields = (modifier = Required(NonTerminal(ModifierInvocation)))
-                                ),
-                                EnumVariant(
-                                    name = Override,
-                                    fields = (specifier = Required(NonTerminal(OverrideSpecifier)))
-                                ),
+                                EnumVariant(name = Modifier, reference = ModifierInvocation),
+                                EnumVariant(name = Override, reference = OverrideSpecifier),
                                 EnumVariant(
                                     name = Constant,
                                     enabled = Till("0.5.0"),
-                                    fields = (keyword = Required(Terminal([ConstantKeyword])))
+                                    reference = ConstantKeyword
                                 ),
-                                EnumVariant(
-                                    name = External,
-                                    fields = (keyword = Required(Terminal([ExternalKeyword])))
-                                ),
-                                EnumVariant(
-                                    name = Internal,
-                                    fields = (keyword = Required(Terminal([InternalKeyword])))
-                                ),
-                                EnumVariant(
-                                    name = Payable,
-                                    fields = (keyword = Required(Terminal([PayableKeyword])))
-                                ),
-                                EnumVariant(
-                                    name = Private,
-                                    fields = (keyword = Required(Terminal([PrivateKeyword])))
-                                ),
-                                EnumVariant(
-                                    name = Public,
-                                    fields = (keyword = Required(Terminal([PublicKeyword])))
-                                ),
-                                EnumVariant(
-                                    name = Pure,
-                                    fields = (keyword = Required(Terminal([PureKeyword])))
-                                ),
-                                EnumVariant(
-                                    name = View,
-                                    fields = (keyword = Required(Terminal([ViewKeyword])))
-                                ),
+                                EnumVariant(name = External, reference = ExternalKeyword),
+                                EnumVariant(name = Internal, reference = InternalKeyword),
+                                EnumVariant(name = Payable, reference = PayableKeyword),
+                                EnumVariant(name = Private, reference = PrivateKeyword),
+                                EnumVariant(name = Public, reference = PublicKeyword),
+                                EnumVariant(name = Pure, reference = PureKeyword),
+                                EnumVariant(name = View, reference = ViewKeyword),
                                 EnumVariant(
                                     name = Virtual,
                                     enabled = From("0.6.0"),
-                                    fields = (keyword = Required(Terminal([VirtualKeyword])))
+                                    reference = VirtualKeyword
                                 )
                             ]
                         ),
@@ -2521,14 +2430,8 @@ codegen_language_macros::compile!(Language(
                         Enum(
                             name = FunctionBody,
                             variants = [
-                                EnumVariant(
-                                    name = Block,
-                                    fields = (block = Required(NonTerminal(Block)))
-                                ),
-                                EnumVariant(
-                                    name = Semicolon,
-                                    fields = (semicolon = Required(Terminal([Semicolon])))
-                                )
+                                EnumVariant(name = Block, reference = Block),
+                                EnumVariant(name = Semicolon, reference = Semicolon)
                             ]
                         ),
                         Struct(
@@ -2551,22 +2454,10 @@ codegen_language_macros::compile!(Language(
                             name = ConstructorAttribute,
                             enabled = From("0.4.22"),
                             variants = [
-                                EnumVariant(
-                                    name = Modifier,
-                                    fields = (modifier = Required(NonTerminal(ModifierInvocation)))
-                                ),
-                                EnumVariant(
-                                    name = Override,
-                                    fields = (specifier = Required(NonTerminal(OverrideSpecifier)))
-                                ),
-                                EnumVariant(
-                                    name = Payable,
-                                    fields = (keyword = Required(Terminal([PayableKeyword])))
-                                ),
-                                EnumVariant(
-                                    name = Public,
-                                    fields = (keyword = Required(Terminal([PublicKeyword])))
-                                )
+                                EnumVariant(name = Modifier, reference = ModifierInvocation),
+                                EnumVariant(name = Override, reference = OverrideSpecifier),
+                                EnumVariant(name = Payable, reference = PayableKeyword),
+                                EnumVariant(name = Public, reference = PublicKeyword)
                             ]
                         ),
                         Struct(
@@ -2589,30 +2480,12 @@ codegen_language_macros::compile!(Language(
                             name = UnnamedFunctionAttribute,
                             enabled = Till("0.6.0"),
                             variants = [
-                                EnumVariant(
-                                    name = Modifier,
-                                    fields = (modifier = Required(NonTerminal(ModifierInvocation)))
-                                ),
-                                EnumVariant(
-                                    name = Override,
-                                    fields = (specifier = Required(NonTerminal(OverrideSpecifier)))
-                                ),
-                                EnumVariant(
-                                    name = External,
-                                    fields = (keyword = Required(Terminal([ExternalKeyword])))
-                                ),
-                                EnumVariant(
-                                    name = Payable,
-                                    fields = (keyword = Required(Terminal([PayableKeyword])))
-                                ),
-                                EnumVariant(
-                                    name = Pure,
-                                    fields = (keyword = Required(Terminal([PureKeyword])))
-                                ),
-                                EnumVariant(
-                                    name = View,
-                                    fields = (keyword = Required(Terminal([ViewKeyword])))
-                                )
+                                EnumVariant(name = Modifier, reference = ModifierInvocation),
+                                EnumVariant(name = Override, reference = OverrideSpecifier),
+                                EnumVariant(name = External, reference = ExternalKeyword),
+                                EnumVariant(name = Payable, reference = PayableKeyword),
+                                EnumVariant(name = Pure, reference = PureKeyword),
+                                EnumVariant(name = View, reference = ViewKeyword)
                             ]
                         ),
                         Struct(
@@ -2636,34 +2509,13 @@ codegen_language_macros::compile!(Language(
                             name = FallbackFunctionAttribute,
                             enabled = From("0.6.0"),
                             variants = [
-                                EnumVariant(
-                                    name = Modifier,
-                                    fields = (modifier = Required(NonTerminal(ModifierInvocation)))
-                                ),
-                                EnumVariant(
-                                    name = Override,
-                                    fields = (specifier = Required(NonTerminal(OverrideSpecifier)))
-                                ),
-                                EnumVariant(
-                                    name = External,
-                                    fields = (keyword = Required(Terminal([ExternalKeyword])))
-                                ),
-                                EnumVariant(
-                                    name = Payable,
-                                    fields = (keyword = Required(Terminal([PayableKeyword])))
-                                ),
-                                EnumVariant(
-                                    name = Pure,
-                                    fields = (keyword = Required(Terminal([PureKeyword])))
-                                ),
-                                EnumVariant(
-                                    name = View,
-                                    fields = (keyword = Required(Terminal([ViewKeyword])))
-                                ),
-                                EnumVariant(
-                                    name = Virtual,
-                                    fields = (keyword = Required(Terminal([VirtualKeyword])))
-                                )
+                                EnumVariant(name = Modifier, reference = ModifierInvocation),
+                                EnumVariant(name = Override, reference = OverrideSpecifier),
+                                EnumVariant(name = External, reference = ExternalKeyword),
+                                EnumVariant(name = Payable, reference = PayableKeyword),
+                                EnumVariant(name = Pure, reference = PureKeyword),
+                                EnumVariant(name = View, reference = ViewKeyword),
+                                EnumVariant(name = Virtual, reference = VirtualKeyword)
                             ]
                         ),
                         Struct(
@@ -2686,26 +2538,11 @@ codegen_language_macros::compile!(Language(
                             name = ReceiveFunctionAttribute,
                             enabled = From("0.6.0"),
                             variants = [
-                                EnumVariant(
-                                    name = Modifier,
-                                    fields = (modifier = Required(NonTerminal(ModifierInvocation)))
-                                ),
-                                EnumVariant(
-                                    name = Override,
-                                    fields = (specifier = Required(NonTerminal(OverrideSpecifier)))
-                                ),
-                                EnumVariant(
-                                    name = External,
-                                    fields = (keyword = Required(Terminal([ExternalKeyword])))
-                                ),
-                                EnumVariant(
-                                    name = Payable,
-                                    fields = (keyword = Required(Terminal([PayableKeyword])))
-                                ),
-                                EnumVariant(
-                                    name = Virtual,
-                                    fields = (keyword = Required(Terminal([VirtualKeyword])))
-                                )
+                                EnumVariant(name = Modifier, reference = ModifierInvocation),
+                                EnumVariant(name = Override, reference = OverrideSpecifier),
+                                EnumVariant(name = External, reference = ExternalKeyword),
+                                EnumVariant(name = Payable, reference = PayableKeyword),
+                                EnumVariant(name = Virtual, reference = VirtualKeyword)
                             ]
                         )
                     ]
@@ -2731,14 +2568,11 @@ codegen_language_macros::compile!(Language(
                         Enum(
                             name = ModifierAttribute,
                             variants = [
-                                EnumVariant(
-                                    name = Override,
-                                    fields = (specifier = Required(NonTerminal(OverrideSpecifier)))
-                                ),
+                                EnumVariant(name = Override, reference = OverrideSpecifier),
                                 EnumVariant(
                                     name = Virtual,
                                     enabled = From("0.6.0"),
-                                    fields = (keyword = Required(Terminal([VirtualKeyword])))
+                                    reference = VirtualKeyword
                                 )
                             ]
                         ),
@@ -2904,34 +2738,13 @@ codegen_language_macros::compile!(Language(
                         Enum(
                             name = FunctionTypeAttribute,
                             variants = [
-                                EnumVariant(
-                                    name = Internal,
-                                    fields = (keyword = Required(Terminal([InternalKeyword])))
-                                ),
-                                EnumVariant(
-                                    name = External,
-                                    fields = (keyword = Required(Terminal([ExternalKeyword])))
-                                ),
-                                EnumVariant(
-                                    name = Private,
-                                    fields = (keyword = Required(Terminal([PrivateKeyword])))
-                                ),
-                                EnumVariant(
-                                    name = Public,
-                                    fields = (keyword = Required(Terminal([PublicKeyword])))
-                                ),
-                                EnumVariant(
-                                    name = Pure,
-                                    fields = (keyword = Required(Terminal([PureKeyword])))
-                                ),
-                                EnumVariant(
-                                    name = View,
-                                    fields = (keyword = Required(Terminal([ViewKeyword])))
-                                ),
-                                EnumVariant(
-                                    name = Payable,
-                                    fields = (keyword = Required(Terminal([PayableKeyword])))
-                                )
+                                EnumVariant(name = Internal, reference = InternalKeyword),
+                                EnumVariant(name = External, reference = ExternalKeyword),
+                                EnumVariant(name = Private, reference = PrivateKeyword),
+                                EnumVariant(name = Public, reference = PublicKeyword),
+                                EnumVariant(name = Pure, reference = PureKeyword),
+                                EnumVariant(name = View, reference = ViewKeyword),
+                                EnumVariant(name = Payable, reference = PayableKeyword)
                             ]
                         ),
                         Struct(
@@ -2962,14 +2775,8 @@ codegen_language_macros::compile!(Language(
                         Enum(
                             name = MappingKeyType,
                             variants = [
-                                EnumVariant(
-                                    name = ElementaryType,
-                                    fields = (type_name = Required(NonTerminal(ElementaryType)))
-                                ),
-                                EnumVariant(
-                                    name = IdentifierPath,
-                                    fields = (type_name = Required(NonTerminal(IdentifierPath)))
-                                )
+                                EnumVariant(name = ElementaryType, reference = ElementaryType),
+                                EnumVariant(name = IdentifierPath, reference = IdentifierPath)
                             ]
                         ),
                         Struct(
@@ -2990,62 +2797,34 @@ codegen_language_macros::compile!(Language(
                         Enum(
                             name = ElementaryType,
                             variants = [
-                                EnumVariant(
-                                    name = Bool,
-                                    fields = (type_name = Required(Terminal([BoolKeyword])))
-                                ),
+                                EnumVariant(name = Bool, reference = BoolKeyword),
                                 EnumVariant(
                                     name = Byte,
                                     enabled = Till("0.8.0"),
-                                    fields = (type_name = Required(Terminal([ByteKeyword])))
+                                    reference = ByteKeyword
                                 ),
-                                EnumVariant(
-                                    name = String,
-                                    fields = (type_name = Required(Terminal([StringKeyword])))
-                                ),
-                                EnumVariant(
-                                    name = Address,
-                                    fields = (type_name = Required(NonTerminal(AddressType)))
-                                ),
-                                EnumVariant(
-                                    name = ByteArray,
-                                    fields = (type_name = Required(Terminal([BytesKeyword])))
-                                ),
-                                EnumVariant(
-                                    name = SignedInteger,
-                                    fields = (type_name = Required(Terminal([IntKeyword])))
-                                ),
-                                EnumVariant(
-                                    name = UnsignedInteger,
-                                    fields = (type_name = Required(Terminal([UintKeyword])))
-                                ),
+                                EnumVariant(name = String, reference = StringKeyword),
+                                EnumVariant(name = Address, reference = AddressType),
+                                EnumVariant(name = Payable, reference = PayableKeyword),
+                                EnumVariant(name = ByteArray, reference = BytesKeyword),
+                                EnumVariant(name = SignedInteger, reference = IntKeyword),
+                                EnumVariant(name = UnsignedInteger, reference = UintKeyword),
                                 EnumVariant(
                                     name = SignedFixedPointNumber,
-                                    fields = (type_name = Required(Terminal([FixedKeyword])))
+                                    reference = FixedKeyword
                                 ),
                                 EnumVariant(
                                     name = UnsignedFixedPointNumber,
-                                    fields = (type_name = Required(Terminal([UfixedKeyword])))
+                                    reference = UfixedKeyword
                                 )
                             ]
                         ),
-                        Enum(
+                        Struct(
                             name = AddressType,
-                            variants = [
-                                EnumVariant(
-                                    name = Address,
-                                    fields = (
-                                        address_keyword = Required(Terminal([AddressKeyword])),
-                                        payable_keyword =
-                                            Optional(kind = Terminal([PayableKeyword]))
-                                    )
-                                ),
-                                EnumVariant(
-                                    name = Payable,
-                                    fields =
-                                        (payable_keyword = Required(Terminal([PayableKeyword])))
-                                )
-                            ]
+                            fields = (
+                                address_keyword = Required(Terminal([AddressKeyword])),
+                                payable_keyword = Optional(kind = Terminal([PayableKeyword]))
+                            )
                         )
                     ]
                 )
@@ -3075,84 +2854,48 @@ codegen_language_macros::compile!(Language(
                             variants = [
                                 EnumVariant(
                                     name = TupleDeconstruction,
-                                    fields = (statement =
-                                        Required(NonTerminal(TupleDeconstructionStatement)))
+                                    reference = TupleDeconstructionStatement
                                 ),
                                 EnumVariant(
                                     name = VariableDeclaration,
-                                    fields = (statement =
-                                        Required(NonTerminal(VariableDeclarationStatement)))
+                                    reference = VariableDeclarationStatement
                                 ),
-                                EnumVariant(
-                                    name = If,
-                                    fields = (statement = Required(NonTerminal(IfStatement)))
-                                ),
-                                EnumVariant(
-                                    name = For,
-                                    fields = (statement = Required(NonTerminal(ForStatement)))
-                                ),
-                                EnumVariant(
-                                    name = While,
-                                    fields = (statement = Required(NonTerminal(WhileStatement)))
-                                ),
-                                EnumVariant(
-                                    name = DoWhile,
-                                    fields = (statement = Required(NonTerminal(DoWhileStatement)))
-                                ),
-                                EnumVariant(
-                                    name = Continue,
-                                    fields = (statement = Required(NonTerminal(ContinueStatement)))
-                                ),
-                                EnumVariant(
-                                    name = Break,
-                                    fields = (statement = Required(NonTerminal(BreakStatement)))
-                                ),
-                                EnumVariant(
-                                    name = Delete,
-                                    fields = (statement = Required(NonTerminal(DeleteStatement)))
-                                ),
-                                EnumVariant(
-                                    name = Return,
-                                    fields = (statement = Required(NonTerminal(ReturnStatement)))
-                                ),
+                                EnumVariant(name = If, reference = IfStatement),
+                                EnumVariant(name = For, reference = ForStatement),
+                                EnumVariant(name = While, reference = WhileStatement),
+                                EnumVariant(name = DoWhile, reference = DoWhileStatement),
+                                EnumVariant(name = Continue, reference = ContinueStatement),
+                                EnumVariant(name = Break, reference = BreakStatement),
+                                EnumVariant(name = Delete, reference = DeleteStatement),
+                                EnumVariant(name = Return, reference = ReturnStatement),
                                 EnumVariant(
                                     name = Throw,
                                     enabled = Till("0.5.0"),
-                                    fields = (statement = Required(NonTerminal(ThrowStatement)))
+                                    reference = ThrowStatement
                                 ),
                                 EnumVariant(
                                     name = Emit,
                                     enabled = From("0.4.21"),
-                                    fields = (statement = Required(NonTerminal(EmitStatement)))
+                                    reference = EmitStatement
                                 ),
                                 EnumVariant(
                                     name = Try,
                                     enabled = From("0.6.0"),
-                                    fields = (statement = Required(NonTerminal(TryStatement)))
+                                    reference = TryStatement
                                 ),
                                 EnumVariant(
                                     name = Revert,
                                     enabled = From("0.8.4"),
-                                    fields = (statement = Required(NonTerminal(RevertStatement)))
+                                    reference = RevertStatement
                                 ),
-                                EnumVariant(
-                                    name = Assembly,
-                                    fields = (statement = Required(NonTerminal(AssemblyStatement)))
-                                ),
-                                EnumVariant(
-                                    name = Block,
-                                    fields = (block = Required(NonTerminal(Block)))
-                                ),
+                                EnumVariant(name = Assembly, reference = AssemblyStatement),
+                                EnumVariant(name = Block, reference = Block),
                                 EnumVariant(
                                     name = UncheckedBlock,
                                     enabled = From("0.8.0"),
-                                    fields = (block = Required(NonTerminal(UncheckedBlock)))
+                                    reference = UncheckedBlock
                                 ),
-                                EnumVariant(
-                                    name = Expression,
-                                    fields =
-                                        (statement = Required(NonTerminal(ExpressionStatement)))
-                                )
+                                EnumVariant(name = Expression, reference = ExpressionStatement)
                             ]
                         ),
                         Struct(
@@ -3205,24 +2948,24 @@ codegen_language_macros::compile!(Language(
                         Enum(
                             name = TupleMember,
                             variants = [
-                                EnumVariant(
-                                    name = Typed,
-                                    fields = (
-                                        type_name = Required(NonTerminal(TypeName)),
-                                        storage_location =
-                                            Optional(kind = NonTerminal(StorageLocation)),
-                                        name = Required(Terminal([Identifier]))
-                                    )
-                                ),
-                                EnumVariant(
-                                    name = Untyped,
-                                    fields = (
-                                        storage_location =
-                                            Optional(kind = NonTerminal(StorageLocation)),
-                                        name = Required(Terminal([Identifier]))
-                                    )
-                                )
+                                EnumVariant(name = Typed, reference = TypedTupleMember),
+                                EnumVariant(name = Untyped, reference = UntypedTupleMember)
                             ]
+                        ),
+                        Struct(
+                            name = TypedTupleMember,
+                            fields = (
+                                type_name = Required(NonTerminal(TypeName)),
+                                storage_location = Optional(kind = NonTerminal(StorageLocation)),
+                                name = Required(Terminal([Identifier]))
+                            )
+                        ),
+                        Struct(
+                            name = UntypedTupleMember,
+                            fields = (
+                                storage_location = Optional(kind = NonTerminal(StorageLocation)),
+                                name = Required(Terminal([Identifier]))
+                            )
                         ),
                         Struct(
                             name = VariableDeclarationStatement,
@@ -3238,14 +2981,11 @@ codegen_language_macros::compile!(Language(
                         Enum(
                             name = VariableDeclarationType,
                             variants = [
-                                EnumVariant(
-                                    name = Typed,
-                                    fields = (type_name = Required(NonTerminal(TypeName)))
-                                ),
+                                EnumVariant(name = Typed, reference = TypeName),
                                 EnumVariant(
                                     name = Untyped,
                                     enabled = Till("0.5.0"),
-                                    fields = (type_name = Required(Terminal([VarKeyword])))
+                                    reference = VarKeyword
                                 )
                             ]
                         ),
@@ -3259,18 +2999,12 @@ codegen_language_macros::compile!(Language(
                         Enum(
                             name = StorageLocation,
                             variants = [
-                                EnumVariant(
-                                    name = Memory,
-                                    fields = (keyword = Required(Terminal([MemoryKeyword])))
-                                ),
-                                EnumVariant(
-                                    name = Storage,
-                                    fields = (keyword = Required(Terminal([StorageKeyword])))
-                                ),
+                                EnumVariant(name = Memory, reference = MemoryKeyword),
+                                EnumVariant(name = Storage, reference = StorageKeyword),
                                 EnumVariant(
                                     name = CallData,
                                     enabled = From("0.5.0"),
-                                    fields = (keyword = Required(Terminal([CallDataKeyword])))
+                                    reference = CallDataKeyword
                                 )
                             ]
                         )
@@ -3320,39 +3054,23 @@ codegen_language_macros::compile!(Language(
                         Enum(
                             name = ForStatementInitialization,
                             variants = [
-                                EnumVariant(
-                                    name = Expression,
-                                    fields =
-                                        (statement = Required(NonTerminal(ExpressionStatement)))
-                                ),
+                                EnumVariant(name = Expression, reference = ExpressionStatement),
                                 EnumVariant(
                                     name = VariableDeclaration,
-                                    fields = (statement =
-                                        Required(NonTerminal(VariableDeclarationStatement)))
+                                    reference = VariableDeclarationStatement
                                 ),
                                 EnumVariant(
                                     name = TupleDeconstruction,
-                                    fields = (statement =
-                                        Required(NonTerminal(TupleDeconstructionStatement)))
+                                    reference = TupleDeconstructionStatement
                                 ),
-                                EnumVariant(
-                                    name = Semicolon,
-                                    fields = (semicolon = Required(Terminal([Semicolon])))
-                                )
+                                EnumVariant(name = Semicolon, reference = Semicolon)
                             ]
                         ),
                         Enum(
                             name = ForStatementCondition,
                             variants = [
-                                EnumVariant(
-                                    name = Expression,
-                                    fields =
-                                        (statement = Required(NonTerminal(ExpressionStatement)))
-                                ),
-                                EnumVariant(
-                                    name = Semicolon,
-                                    fields = (semicolon = Required(Terminal([Semicolon])))
-                                )
+                                EnumVariant(name = Expression, reference = ExpressionStatement),
+                                EnumVariant(name = Semicolon, reference = Semicolon)
                             ]
                         ),
                         Struct(
@@ -3669,7 +3387,10 @@ codegen_language_macros::compile!(Language(
                                     operators = [PrecedenceOperator(
                                         model = Postfix,
                                         fields = (
-                                            options = Required(NonTerminal(FunctionCallOptions)),
+                                            options = Optional(
+                                                kind = NonTerminal(FunctionCallOptions),
+                                                enabled = From("0.6.2")
+                                            ),
                                             arguments = Required(NonTerminal(ArgumentsDeclaration))
                                         )
                                     )]
@@ -3712,7 +3433,8 @@ codegen_language_macros::compile!(Language(
                                     enabled = From("0.5.3")
                                 ),
                                 PrimaryExpression(expression = ArrayExpression),
-                                PrimaryExpression(expression = NumberExpression),
+                                PrimaryExpression(expression = HexNumberExpression),
+                                PrimaryExpression(expression = DecimalNumberExpression),
                                 PrimaryExpression(expression = StringExpression),
                                 PrimaryExpression(expression = ElementaryType),
                                 PrimaryExpression(expression = TrueKeyword),
@@ -3734,20 +3456,18 @@ codegen_language_macros::compile!(Language(
                     items = [
                         Enum(
                             name = FunctionCallOptions,
+                            enabled = From("0.6.2"),
                             variants = [
                                 EnumVariant(
                                     name = Multiple,
                                     enabled = Range(from = "0.6.2", till = "0.8.0"),
-                                    fields = (options =
-                                        Required(NonTerminal(NamedArgumentsDeclarations)))
+                                    reference = NamedArgumentGroups
                                 ),
                                 EnumVariant(
                                     name = Single,
                                     enabled = From("0.8.0"),
-                                    fields = (options =
-                                        Optional(kind = NonTerminal(NamedArgumentsDeclaration)))
-                                ),
-                                EnumVariant(name = None, enabled = Till("0.6.2"), fields = ())
+                                    reference = NamedArgumentGroup
+                                )
                             ]
                         ),
                         Enum(
@@ -3755,30 +3475,22 @@ codegen_language_macros::compile!(Language(
                             variants = [
                                 EnumVariant(
                                     name = Positional,
-                                    error_recovery = FieldsErrorRecovery(
-                                        delimiters =
-                                            FieldDelimiters(open = open_paren, close = close_paren)
-                                    ),
-                                    fields = (
-                                        open_paren = Required(Terminal([OpenParen])),
-                                        arguments = Required(NonTerminal(PositionalArguments)),
-                                        close_paren = Required(Terminal([CloseParen]))
-                                    )
+                                    reference = PositionalArgumentsDeclaration
                                 ),
-                                EnumVariant(
-                                    name = Named,
-                                    error_recovery = FieldsErrorRecovery(
-                                        delimiters =
-                                            FieldDelimiters(open = open_paren, close = close_paren)
-                                    ),
-                                    fields = (
-                                        open_paren = Required(Terminal([OpenParen])),
-                                        arguments =
-                                            Optional(kind = NonTerminal(NamedArgumentsDeclaration)),
-                                        close_paren = Required(Terminal([CloseParen]))
-                                    )
-                                )
+                                EnumVariant(name = Named, reference = NamedArgumentsDeclaration)
                             ]
+                        ),
+                        Struct(
+                            name = PositionalArgumentsDeclaration,
+                            error_recovery = FieldsErrorRecovery(
+                                delimiters =
+                                    FieldDelimiters(open = open_paren, close = close_paren)
+                            ),
+                            fields = (
+                                open_paren = Required(Terminal([OpenParen])),
+                                arguments = Required(NonTerminal(PositionalArguments)),
+                                close_paren = Required(Terminal([CloseParen]))
+                            )
                         ),
                         Separated(
                             name = PositionalArguments,
@@ -3786,14 +3498,25 @@ codegen_language_macros::compile!(Language(
                             separator = Comma,
                             allow_empty = true
                         ),
-                        Repeated(
-                            name = NamedArgumentsDeclarations,
-                            repeated = NamedArgumentsDeclaration,
-                            enabled = Range(from = "0.6.2", till = "0.8.0"),
-                            allow_empty = true
-                        ),
                         Struct(
                             name = NamedArgumentsDeclaration,
+                            error_recovery = FieldsErrorRecovery(
+                                delimiters =
+                                    FieldDelimiters(open = open_paren, close = close_paren)
+                            ),
+                            fields = (
+                                open_paren = Required(Terminal([OpenParen])),
+                                arguments = Optional(kind = NonTerminal(NamedArgumentGroup)),
+                                close_paren = Required(Terminal([CloseParen]))
+                            )
+                        ),
+                        Repeated(
+                            name = NamedArgumentGroups,
+                            repeated = NamedArgumentGroup,
+                            enabled = Range(from = "0.6.2", till = "0.8.0")
+                        ),
+                        Struct(
+                            name = NamedArgumentGroup,
                             error_recovery = FieldsErrorRecovery(
                                 delimiters =
                                     FieldDelimiters(open = open_brace, close = close_brace)
@@ -3887,27 +3610,22 @@ codegen_language_macros::compile!(Language(
                 Topic(
                     title = "Numbers",
                     items = [
-                        Enum(
-                            name = NumberExpression,
-                            variants = [
-                                EnumVariant(
-                                    name = Hex,
-                                    fields = (
-                                        literal = Required(Terminal([HexLiteral])),
-                                        unit = Optional(
-                                            kind = NonTerminal(NumberUnit),
-                                            enabled = Till("0.5.0")
-                                        )
-                                    )
-                                ),
-                                EnumVariant(
-                                    name = Decimal,
-                                    fields = (
-                                        literal = Required(Terminal([DecimalLiteral])),
-                                        unit = Optional(kind = NonTerminal(NumberUnit))
-                                    )
+                        Struct(
+                            name = HexNumberExpression,
+                            fields = (
+                                literal = Required(Terminal([HexLiteral])),
+                                unit = Optional(
+                                    kind = NonTerminal(NumberUnit),
+                                    enabled = Till("0.5.0")
                                 )
-                            ]
+                            )
+                        ),
+                        Struct(
+                            name = DecimalNumberExpression,
+                            fields = (
+                                literal = Required(Terminal([DecimalLiteral])),
+                                unit = Optional(kind = NonTerminal(NumberUnit))
+                            )
                         ),
                         Token(
                             name = HexLiteral,
@@ -4015,57 +3733,36 @@ codegen_language_macros::compile!(Language(
                             name = NumberUnit,
                             variants = [
                                 // 1e-18 ETH
-                                EnumVariant(
-                                    name = Wei,
-                                    fields = (keyword = Required(Terminal([WeiKeyword])))
-                                ),
+                                EnumVariant(name = Wei, reference = WeiKeyword),
                                 // 1e-9 ETH
                                 EnumVariant(
                                     name = Gwei,
                                     enabled = From("0.6.11"),
-                                    fields = (keyword = Required(Terminal([GweiKeyword])))
+                                    reference = GweiKeyword
                                 ),
                                 // 1e-6 ETH
                                 EnumVariant(
                                     name = Szabo,
                                     enabled = Till("0.7.0"),
-                                    fields = (keyword = Required(Terminal([SzaboKeyword])))
+                                    reference = SzaboKeyword
                                 ),
                                 // 1e-3 ETH
                                 EnumVariant(
                                     name = Finney,
                                     enabled = Till("0.7.0"),
-                                    fields = (keyword = Required(Terminal([FinneyKeyword])))
+                                    reference = FinneyKeyword
                                 ),
                                 // 1 ETH
-                                EnumVariant(
-                                    name = Ether,
-                                    fields = (keyword = Required(Terminal([EtherKeyword])))
-                                ),
-                                EnumVariant(
-                                    name = Seconds,
-                                    fields = (keyword = Required(Terminal([SecondsKeyword])))
-                                ),
-                                EnumVariant(
-                                    name = Minutes,
-                                    fields = (keyword = Required(Terminal([MinutesKeyword])))
-                                ),
-                                EnumVariant(
-                                    name = Hours,
-                                    fields = (keyword = Required(Terminal([HoursKeyword])))
-                                ),
-                                EnumVariant(
-                                    name = Days,
-                                    fields = (keyword = Required(Terminal([DaysKeyword])))
-                                ),
-                                EnumVariant(
-                                    name = Weeks,
-                                    fields = (keyword = Required(Terminal([WeeksKeyword])))
-                                ),
+                                EnumVariant(name = Ether, reference = EtherKeyword),
+                                EnumVariant(name = Seconds, reference = SecondsKeyword),
+                                EnumVariant(name = Minutes, reference = MinutesKeyword),
+                                EnumVariant(name = Hours, reference = HoursKeyword),
+                                EnumVariant(name = Days, reference = DaysKeyword),
+                                EnumVariant(name = Weeks, reference = WeeksKeyword),
                                 EnumVariant(
                                     name = Years,
                                     enabled = Till("0.5.0"),
-                                    fields = (keyword = Required(Terminal([YearsKeyword])))
+                                    reference = YearsKeyword
                                 )
                             ]
                         )
@@ -4077,20 +3774,12 @@ codegen_language_macros::compile!(Language(
                         Enum(
                             name = StringExpression,
                             variants = [
-                                EnumVariant(
-                                    name = Hex,
-                                    fields = (literals = Required(NonTerminal(HexStringLiterals)))
-                                ),
-                                EnumVariant(
-                                    name = Ascii,
-                                    fields =
-                                        (literals = Required(NonTerminal(AsciiStringLiterals)))
-                                ),
+                                EnumVariant(name = Hex, reference = HexStringLiterals),
+                                EnumVariant(name = Ascii, reference = AsciiStringLiterals),
                                 EnumVariant(
                                     name = Unicode,
                                     enabled = From("0.7.0"),
-                                    fields =
-                                        (literals = Required(NonTerminal(UnicodeStringLiterals)))
+                                    reference = UnicodeStringLiterals
                                 )
                             ]
                         ),
@@ -4361,56 +4050,24 @@ codegen_language_macros::compile!(Language(
                         Enum(
                             name = YulStatement,
                             variants = [
-                                EnumVariant(
-                                    name = Block,
-                                    fields = (block = Required(NonTerminal(YulBlock)))
-                                ),
-                                EnumVariant(
-                                    name = Function,
-                                    fields =
-                                        (definition = Required(NonTerminal(YulFunctionDefinition)))
-                                ),
+                                EnumVariant(name = Block, reference = YulBlock),
+                                EnumVariant(name = Function, reference = YulFunctionDefinition),
                                 EnumVariant(
                                     name = VariableDeclaration,
-                                    fields = (statement =
-                                        Required(NonTerminal(YulVariableDeclarationStatement)))
+                                    reference = YulVariableDeclarationStatement
                                 ),
-                                EnumVariant(
-                                    name = Assignment,
-                                    fields =
-                                        (statement = Required(NonTerminal(YulAssignmentStatement)))
-                                ),
-                                EnumVariant(
-                                    name = If,
-                                    fields = (statement = Required(NonTerminal(YulIfStatement)))
-                                ),
-                                EnumVariant(
-                                    name = For,
-                                    fields = (statement = Required(NonTerminal(YulForStatement)))
-                                ),
-                                EnumVariant(
-                                    name = Switch,
-                                    fields =
-                                        (statement = Required(NonTerminal(YulSwitchStatement)))
-                                ),
+                                EnumVariant(name = Assignment, reference = YulAssignmentStatement),
+                                EnumVariant(name = If, reference = YulIfStatement),
+                                EnumVariant(name = For, reference = YulForStatement),
+                                EnumVariant(name = Switch, reference = YulSwitchStatement),
                                 EnumVariant(
                                     name = Leave,
                                     enabled = From("0.6.0"),
-                                    fields = (statement = Required(NonTerminal(YulLeaveStatement)))
+                                    reference = YulLeaveStatement
                                 ),
-                                EnumVariant(
-                                    name = Break,
-                                    fields = (statement = Required(NonTerminal(YulBreakStatement)))
-                                ),
-                                EnumVariant(
-                                    name = Continue,
-                                    fields =
-                                        (statement = Required(NonTerminal(YulContinueStatement)))
-                                ),
-                                EnumVariant(
-                                    name = Expression,
-                                    fields = (expression = Required(NonTerminal(YulExpression)))
-                                )
+                                EnumVariant(name = Break, reference = YulBreakStatement),
+                                EnumVariant(name = Continue, reference = YulContinueStatement),
+                                EnumVariant(name = Expression, reference = YulExpression)
                             ]
                         ),
                         Struct(
@@ -4519,22 +4176,24 @@ codegen_language_macros::compile!(Language(
                         Enum(
                             name = YulSwitchCase,
                             variants = [
-                                EnumVariant(
-                                    name = Default,
-                                    fields = (
-                                        default_keyword = Required(Terminal([YulDefaultKeyword])),
-                                        body = Required(NonTerminal(YulBlock))
-                                    )
-                                ),
-                                EnumVariant(
-                                    name = Case,
-                                    fields = (
-                                        case_keyword = Required(Terminal([YulCaseKeyword])),
-                                        value = Required(NonTerminal(YulLiteral)),
-                                        body = Required(NonTerminal(YulBlock))
-                                    )
-                                )
+                                EnumVariant(name = Default, reference = YulDefaultCase),
+                                EnumVariant(name = Value, reference = YulValueCase)
                             ]
+                        ),
+                        Struct(
+                            name = YulDefaultCase,
+                            fields = (
+                                default_keyword = Required(Terminal([YulDefaultKeyword])),
+                                body = Required(NonTerminal(YulBlock))
+                            )
+                        ),
+                        Struct(
+                            name = YulValueCase,
+                            fields = (
+                                case_keyword = Required(Terminal([YulCaseKeyword])),
+                                value = Required(NonTerminal(YulLiteral)),
+                                body = Required(NonTerminal(YulBlock))
+                            )
                         )
                     ]
                 ),
@@ -4587,30 +4246,12 @@ codegen_language_macros::compile!(Language(
                         Enum(
                             name = YulLiteral,
                             variants = [
-                                EnumVariant(
-                                    name = True,
-                                    fields = (literal = Required(Terminal([YulTrueKeyword])))
-                                ),
-                                EnumVariant(
-                                    name = False,
-                                    fields = (literal = Required(Terminal([YulFalseKeyword])))
-                                ),
-                                EnumVariant(
-                                    name = Decimal,
-                                    fields = (literal = Required(Terminal([YulDecimalLiteral])))
-                                ),
-                                EnumVariant(
-                                    name = Hex,
-                                    fields = (literal = Required(Terminal([YulHexLiteral])))
-                                ),
-                                EnumVariant(
-                                    name = HexString,
-                                    fields = (literal = Required(Terminal([HexStringLiteral])))
-                                ),
-                                EnumVariant(
-                                    name = AsciiString,
-                                    fields = (literal = Required(Terminal([AsciiStringLiteral])))
-                                )
+                                EnumVariant(name = True, reference = YulTrueKeyword),
+                                EnumVariant(name = False, reference = YulFalseKeyword),
+                                EnumVariant(name = Decimal, reference = YulDecimalLiteral),
+                                EnumVariant(name = Hex, reference = YulHexLiteral),
+                                EnumVariant(name = HexString, reference = HexStringLiteral),
+                                EnumVariant(name = AsciiString, reference = AsciiStringLiteral)
                             ]
                         ),
                         Token(

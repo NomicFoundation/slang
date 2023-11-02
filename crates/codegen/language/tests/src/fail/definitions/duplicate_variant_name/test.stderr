@@ -1,5 +1,5 @@
 error: A variant with the name 'Variant1' already exists.
-  --> src/fail/definitions/duplicate_variant_name/test.rs:18:40
+  --> src/fail/definitions/duplicate_variant_name/test.rs:19:44
    |
-18 |                     EnumVariant(name = Variant1, fields = ())
-   |                                        ^^^^^^^^
+19 |                         EnumVariant(name = Variant1, reference = Baz)
+   |                                            ^^^^^^^^
