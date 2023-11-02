@@ -6,12 +6,12 @@ macro_rules! slang_grammar {
             slang_grammar_top_level_clause! { $($idents)+ $value }
         )*
 
-        pub trait GrammarConstructor {
-            fn new() -> std::rc::Rc<$crate::Grammar>;
+        pub trait GrammarConstructorDslV1 {
+            fn from_dsl_v1() -> std::rc::Rc<$crate::Grammar>;
         }
 
-        impl GrammarConstructor for $crate::Grammar {
-            fn new() -> std::rc::Rc<$crate::Grammar> {
+        impl GrammarConstructorDslV1 for $crate::Grammar {
+            fn from_dsl_v1() -> std::rc::Rc<$crate::Grammar> {
                 let name = slang_grammar_top_level_config! {
                     name
                     $( $($idents)+ = $value ; )*

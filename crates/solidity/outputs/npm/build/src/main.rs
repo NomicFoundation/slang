@@ -4,7 +4,7 @@ use cargo_emit::rerun_if_changed;
 use codegen_grammar::Grammar;
 use codegen_parser_generator::code_generator::CodeGenerator;
 use infra_utils::{cargo::CargoWorkspace, paths::PathExtensions};
-use solidity_language::GrammarConstructor;
+use solidity_language::GrammarConstructorDslV1;
 
 // Instead of the soure crate calling codegen APIs directly in the build script, it invokes this binary, which in turn
 // calls the codegen APIs (and hence why it's emitting `cargo:` directives).
@@ -17,7 +17,7 @@ use solidity_language::GrammarConstructor;
 fn main() -> Result<()> {
     // Generate files in the source crate:
     {
-        let grammar = Grammar::new();
+        let grammar = Grammar::from_dsl_v1();
         let crate_dir = CargoWorkspace::locate_source_crate("solidity_npm_crate")?;
 
         CodeGenerator::write_source(&crate_dir.join("src/generated"), grammar)?;
