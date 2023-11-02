@@ -17,8 +17,8 @@ Tree:
   - Statement (Rule): # 0..21 "try a.b() {} catch {}"
       - VariableDeclarationStatement (Rule): # 0..5 "try a"
           - VariableDeclaration (Rule): # 0..5 "try a"
-              - TypeName (Rule): # 0..4 "try "
-                  - IdentifierPath (Rule): # 0..4 "try "
+              - TypeName (Rule): # 0..3 "try"
+                  - IdentifierPath (Rule): # 0..3 "try"
                       - Identifier (Token): "try" # 0..3
               - Identifier (Token): "a" # 4..5
       - SKIPPED (Token): ".b() {} catch {}" # 5..21

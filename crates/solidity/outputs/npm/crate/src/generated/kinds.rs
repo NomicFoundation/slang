@@ -533,9 +533,37 @@ pub enum TokenKind {
 /// The lexical context of the scanner.
 #[cfg_attr(feature = "slang_napi_interfaces", /* derives `Clone` and `Copy` */ napi(string_enum, namespace = "language"))]
 #[cfg_attr(not(feature = "slang_napi_interfaces"), derive(Clone, Copy))]
-#[repr(u8)] // This is used as a const argument, which only supports primitive types
 pub enum LexicalContext {
     Default,
     VersionPragma,
     YulBlock,
+}
+
+/// Marker trait for type-level [`LexicalContext`] variants.
+pub trait IsLexicalContext {
+    /// Returns a run-time [`LexicalContext`] value.
+    fn value() -> LexicalContext;
+}
+
+#[allow(non_snake_case)]
+pub mod LexicalContextType {
+    use super::*;
+    pub struct Default {}
+    impl IsLexicalContext for Default {
+        fn value() -> LexicalContext {
+            LexicalContext::Default
+        }
+    }
+    pub struct VersionPragma {}
+    impl IsLexicalContext for VersionPragma {
+        fn value() -> LexicalContext {
+            LexicalContext::VersionPragma
+        }
+    }
+    pub struct YulBlock {}
+    impl IsLexicalContext for YulBlock {
+        fn value() -> LexicalContext {
+            LexicalContext::YulBlock
+        }
+    }
 }

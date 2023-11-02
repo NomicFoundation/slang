@@ -4,7 +4,7 @@ use {napi::bindgen_prelude::*, napi_derive::napi};
 use semver::Version;
 
 use super::{
-    kinds::{RuleKind, TokenKind, ProductionKind},
+    kinds::{RuleKind, TokenKind, ProductionKind, IsLexicalContext, LexicalContextType},
     lexer::Lexer,
     parse_output::ParseOutput,
     support::*,
@@ -65,33 +65,6 @@ impl Language {
         &self.version
     }
 
-    {% for context in code.scanner_contexts %}
-        #[allow(dead_code)]
-        fn {{ context.name | snake_case }}_parse_token_with_trivia(
-            &self,
-            input: &mut ParserContext,
-            kind: TokenKind,
-        ) -> ParserResult
-        {
-            Lexer::parse_token_with_trivia::<{ LexicalContext::{{ context.name }} as u8 }>(self, input, kind)
-        }
-
-        #[allow(dead_code)]
-        fn {{ context.name | snake_case }}_parse_token(&self, input: &mut ParserContext, kind: TokenKind) -> ParserResult
-        {
-            Lexer::parse_token::<{ LexicalContext::{{ context.name }} as u8 }>(self, input, kind)
-        }
-
-        #[allow(dead_code)]
-        const fn {{ context.name | snake_case }}_delimiters() -> &'static [(TokenKind, TokenKind)] {
-            &[
-                {%- for open, close in context.delimiters %}
-                    (TokenKind::{{ open }}, TokenKind::{{ close }}),
-                {%- endfor %}
-            ]
-        }
-    {% endfor %}
-
     /********************************************
      *         Parser Functions
      ********************************************/
@@ -115,7 +88,7 @@ impl Language {
         match lexical_context {
             {%- for lexical_context in code.scanner_contexts -%}
                 LexicalContext::{{ lexical_context.name }} =>
-                    Lexer::next_token::<{ LexicalContext::{{ lexical_context.name }} as u8 }>(self, &mut input),
+                    Lexer::next_token::<LexicalContextType::{{ lexical_context.name }}>(self, &mut input),
             {%- endfor -%}
         }
     }
@@ -138,20 +111,24 @@ impl Lexer for Language {
         Language::trailing_trivia(self, input)
     }
 
-    fn delimiters<const LEX_CTX: u8>() -> &'static [(TokenKind, TokenKind)] {
-        match LexicalContext::from_repr(LEX_CTX).unwrap() {
+    fn delimiters<LexCtx: IsLexicalContext>() -> &'static [(TokenKind, TokenKind)] {
+        match LexCtx::value() {
             {%- for context in code.scanner_contexts %}
-                LexicalContext::{{ context.name }} => Self::{{ context.name | snake_case }}_delimiters(),
+                LexicalContext::{{ context.name }} => &[
+                    {%- for open, close in context.delimiters %}
+                        (TokenKind::{{ open }}, TokenKind::{{ close }}),
+                    {%- endfor %}
+                ],
             {%- endfor %}
         }
     }
 
-    fn next_token<const LEX_CTX: u8>(&self, input: &mut ParserContext) -> Option<TokenKind> {
+    fn next_token<LexCtx: IsLexicalContext>(&self, input: &mut ParserContext) -> Option<TokenKind> {
         let save = input.position();
         let mut furthest_position = input.position();
         let mut longest_token = None;
 
-        match LexicalContext::from_repr(LEX_CTX).unwrap() {
+        match LexCtx::value() {
             {%- for context in code.scanner_contexts %}
                 LexicalContext::{{ context.name }} => {
                     macro_rules! longest_match {

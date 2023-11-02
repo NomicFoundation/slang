@@ -7,7 +7,7 @@ Errors: []
 
 Tree:
   - UsingDirectiveSymbol (Rule): # 0..12 "foo.bar as /"
-      - IdentifierPath (Rule): # 0..8 "foo.bar "
+      - IdentifierPath (Rule): # 0..7 "foo.bar"
           - Identifier (Token): "foo" # 0..3
           - Period (Token): "." # 3..4
           - Identifier (Token): "bar" # 4..7

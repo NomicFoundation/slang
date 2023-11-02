@@ -1,7 +1,8 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 use crate::cst;
-use crate::kinds::TokenKind;
+use crate::kinds::{IsLexicalContext, TokenKind};
+use crate::lexer::Lexer;
 use crate::parse_error::ParseError;
 use crate::support::ParserResult;
 use crate::text_index::{TextRange, TextRangeExtensions as _};
@@ -41,26 +42,14 @@ impl ParserResult {
     ///
     /// Respects nested delimiters, i.e. the `expected` token is only accepted if it's not nested inside.
     /// Does not consume the `expected` token.
-    pub fn recover_until_with_nested_delims(
+    pub fn recover_until_with_nested_delims<L: Lexer, LexCtx: IsLexicalContext>(
         self,
         input: &mut ParserContext,
-        next_token: impl Fn(&mut ParserContext) -> Option<TokenKind>,
-        leading_trivia: impl Fn(&mut ParserContext) -> ParserResult,
+        lexer: &L,
         expected: TokenKind,
-        delims: &[(TokenKind, TokenKind)],
         recover_from_no_match: RecoverFromNoMatch,
     ) -> ParserResult {
         let before_recovery = input.position();
-
-        let mut peek_token_after_trivia = || {
-            let start = input.position();
-
-            opt_parse(input, &leading_trivia);
-            let token = next_token(input);
-
-            input.set_position(start);
-            token
-        };
 
         enum ParseResultKind {
             Match,
@@ -74,7 +63,9 @@ impl ParserResult {
                 result.expected_tokens,
                 ParseResultKind::Incomplete,
             ),
-            ParserResult::Match(result) if peek_token_after_trivia() != Some(expected) => {
+            ParserResult::Match(result)
+                if lexer.peek_token_with_trivia::<LexCtx>(input) != Some(expected) =>
+            {
                 (result.nodes, result.expected_tokens, ParseResultKind::Match)
             }
             ParserResult::NoMatch(result) if recover_from_no_match.as_bool() => {
@@ -84,9 +75,9 @@ impl ParserResult {
             _ => return self,
         };
 
-        let leading_trivia = opt_parse(input, &leading_trivia);
+        let leading_trivia = opt_parse(input, |input| lexer.leading_trivia(input));
 
-        match skip_until_with_nested_delims(input, next_token, expected, delims) {
+        match skip_until_with_nested_delims::<_, LexCtx>(input, lexer, expected) {
             Some((found, skipped_range)) => {
                 nodes.extend(leading_trivia);
                 if matches!(result_kind, ParseResultKind::Match) {
@@ -100,24 +91,24 @@ impl ParserResult {
                     tokens_that_would_have_allowed_more_progress: expected_tokens.clone(),
                 });
 
-                return ParserResult::SkippedUntil(SkippedUntil {
+                ParserResult::SkippedUntil(SkippedUntil {
                     nodes,
                     expected,
                     skipped,
                     found,
-                });
+                })
             }
             // Not found till EOF, revert any recovery attempt
             None => {
                 input.set_position(before_recovery);
 
-                return match result_kind {
+                match result_kind {
                     ParseResultKind::Match => ParserResult::r#match(nodes, expected_tokens),
                     ParseResultKind::Incomplete => {
                         ParserResult::incomplete_match(nodes, expected_tokens)
                     }
                     ParseResultKind::NoMatch => ParserResult::no_match(expected_tokens),
-                };
+                }
             }
         }
     }
@@ -128,18 +119,19 @@ impl ParserResult {
 /// Does not consume the `expected` token.
 ///
 /// Returns the found token and the range of skipped tokens on success.
-pub fn skip_until_with_nested_delims(
+pub fn skip_until_with_nested_delims<L: Lexer, LexCtx: IsLexicalContext>(
     input: &mut ParserContext,
-    next_token: impl Fn(&mut ParserContext) -> Option<TokenKind>,
+    lexer: &L,
     until: TokenKind,
-    delims: &[(TokenKind, TokenKind)],
 ) -> Option<(TokenKind, TextRange)> {
+    let delims = L::delimiters::<LexCtx>();
+
     let start = input.position();
 
     let mut local_delims = vec![];
     loop {
         let save = input.position();
-        match next_token(input) {
+        match lexer.next_token::<LexCtx>(input) {
             // If we're not skipping past a local delimited group (delimiter stack is empty),
             // we can unwind on a token that's expected by us or by our ancestor.
             Some(token)

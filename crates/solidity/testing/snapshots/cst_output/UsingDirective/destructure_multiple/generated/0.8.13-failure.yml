@@ -18,15 +18,15 @@ Tree:
       - UsingKeyword (Token): "using" # 0..5
       - UsingDirectiveDeconstruction (Rule): # 5..36 " {add as +, sub, mul, div as /}"
           - OpenBrace (Token): "{" # 6..7
-          - UsingDirectiveSymbolsList (Rule): # 7..11 "add "
-              - UsingDirectiveSymbol (Rule): # 7..11 "add "
-                  - IdentifierPath (Rule): # 7..11 "add "
+          - UsingDirectiveSymbolsList (Rule): # 7..10 "add"
+              - UsingDirectiveSymbol (Rule): # 7..10 "add"
+                  - IdentifierPath (Rule): # 7..10 "add"
                       - Identifier (Token): "add" # 7..10
           - SKIPPED (Token): "as +, sub, mul, div as /" # 11..35
           - CloseBrace (Token): "}" # 35..36
       - ForKeyword (Token): "for" # 37..40
-      - TypeName (Rule): # 40..45 " Int "
-          - IdentifierPath (Rule): # 40..45 " Int "
+      - TypeName (Rule): # 40..44 " Int"
+          - IdentifierPath (Rule): # 40..44 " Int"
               - Identifier (Token): "Int" # 41..44
       - GlobalKeyword (Token): "global" # 45..51
       - Semicolon (Token): ";" # 51..52

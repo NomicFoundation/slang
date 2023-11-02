@@ -6,17 +6,17 @@ Source: >
 Errors: # 1 total
   - >
     Error: Expected Period.
-       ╭─[crates/solidity/testing/snapshots/cst_output/UsingDirectiveSymbol/identifier_path_as_operator/input.sol:1:9]
+       ╭─[crates/solidity/testing/snapshots/cst_output/UsingDirectiveSymbol/identifier_path_as_operator/input.sol:1:8]
        │
      1 │ foo.bar as /
-       │         ──┬─  
-       │           ╰─── Error occurred here.
+       │        ──┬──  
+       │          ╰──── Error occurred here.
     ───╯
 
 Tree:
   - UsingDirectiveSymbol (Rule): # 0..12 "foo.bar as /"
-      - IdentifierPath (Rule): # 0..8 "foo.bar "
+      - IdentifierPath (Rule): # 0..7 "foo.bar"
           - Identifier (Token): "foo" # 0..3
           - Period (Token): "." # 3..4
           - Identifier (Token): "bar" # 4..7
-      - SKIPPED (Token): "as /" # 8..12
+      - SKIPPED (Token): " as /" # 7..12
