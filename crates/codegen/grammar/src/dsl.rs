@@ -182,11 +182,14 @@ macro_rules! slang_grammar_definition {
         impl $name {
             const SOURCE_LOCATION: $crate::SourceLocation = slang_location!();
             const NAME: &str = stringify!($name);
-            const INSTANCE: ::std::cell::OnceCell<std::rc::Rc<Self>> = ::std::cell::OnceCell::new();
             fn instance() -> $crate::$trait_ref {
-                Self::INSTANCE
-                    .get_or_init(::std::default::Default::default)
-                    .clone()
+                use ::std::rc::Rc;
+
+                thread_local! {
+                    static INSTANCE: Rc<$name> = Rc::default();
+                }
+
+                INSTANCE.with(Rc::clone)
             }
         }
 
