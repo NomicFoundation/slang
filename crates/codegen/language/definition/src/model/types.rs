@@ -192,6 +192,7 @@ mod wrapper {
         Optional { parser: Box<TriviaParser> },
 
         Trivia { trivia: Identifier },
+        EndOfInput,
     }
 
     #[derive(Debug, Eq, PartialEq, Serialize)]

@@ -263,6 +263,7 @@ fn check_trivia_parser(analysis: &mut Analysis, parser: &TriviaParser, enablemen
         TriviaParser::Trivia { trivia } => {
             check_reference(analysis, None, trivia, &enablement, ReferenceFilter::Trivia);
         }
+        TriviaParser::EndOfInput => {}
     };
 }
 

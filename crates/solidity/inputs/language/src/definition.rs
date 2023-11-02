@@ -10,9 +10,16 @@ codegen_language_macros::compile!(Language(
         Trivia(MultilineComment)
     ])),
     trailing_trivia = Sequence([
-        Optional(Trivia(Whitespace)),
-        Optional(Trivia(SingleLineComment)),
-        Optional(Trivia(EndOfLine))
+        ZeroOrMore(Choice([
+            Trivia(Whitespace),
+            Trivia(SingleLineComment),
+            Trivia(MultilineComment)
+        ])),
+        Choice([
+            Trivia(EndOfLine),
+            EndOfInput
+
+        ])
     ]),
     versions = [
         "0.4.11", "0.4.12", "0.4.13", "0.4.14", "0.4.15", "0.4.16", "0.4.17", "0.4.18", "0.4.19",
