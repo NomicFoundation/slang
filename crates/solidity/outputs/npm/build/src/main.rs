@@ -20,7 +20,7 @@ fn main() -> Result<()> {
         let grammar = Grammar::from_dsl_v1();
         let crate_dir = CargoWorkspace::locate_source_crate("solidity_npm_crate")?;
 
-        CodeGenerator::write_source(&crate_dir.join("src/generated"), grammar)?;
+        CodeGenerator::write_source(&crate_dir.join("src/generated"), &grammar)?;
     }
 
     // This build script is not directly depended on by the caller source crate, so we need to manually
