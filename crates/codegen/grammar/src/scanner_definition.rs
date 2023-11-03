@@ -1,11 +1,9 @@
+use std::fmt::Debug;
 use std::rc::Rc;
 
 use super::*;
 
-pub trait ScannerDefinition
-where
-    Self: std::fmt::Debug,
-{
+pub trait ScannerDefinition: Debug {
     fn name(&self) -> &'static str;
     fn node(&self) -> &ScannerDefinitionNode;
 }

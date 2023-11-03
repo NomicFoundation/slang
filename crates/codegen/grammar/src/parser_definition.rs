@@ -1,11 +1,9 @@
+use std::fmt::Debug;
 use std::rc::Rc;
 
 use super::*;
 
-pub trait ParserDefinition
-where
-    Self: std::fmt::Debug,
-{
+pub trait ParserDefinition: Debug {
     fn name(&self) -> &'static str;
     fn node(&self) -> &ParserDefinitionNode;
     fn context(&self) -> &'static str;
@@ -22,10 +20,7 @@ impl Visitable for ParserDefinitionRef {
     }
 }
 
-pub trait TriviaParserDefinition
-where
-    Self: std::fmt::Debug,
-{
+pub trait TriviaParserDefinition: Debug {
     fn name(&self) -> &'static str;
     fn node(&self) -> &ParserDefinitionNode;
     fn context(&self) -> &'static str;

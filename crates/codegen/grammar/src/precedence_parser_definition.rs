@@ -1,12 +1,9 @@
+use std::fmt::Debug;
 use std::rc::Rc;
 
 use super::*;
 
-#[allow(dead_code)]
-pub trait PrecedenceParserDefinition
-where
-    Self: std::fmt::Debug,
-{
+pub trait PrecedenceParserDefinition: Debug {
     fn name(&self) -> &'static str;
     fn node(&self) -> &PrecedenceParserDefinitionNode;
     fn context(&self) -> &'static str;
