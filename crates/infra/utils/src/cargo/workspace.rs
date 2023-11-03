@@ -102,13 +102,6 @@ impl CargoWorkspace {
     pub fn get_command(subcommand: impl AsRef<str>) -> Result<Command> {
         let mut command = Command::new("cargo")
             .arg(subcommand.as_ref())
-            .flag(
-                // Cargo will periodically try to update its manifest/local cache from internet before running these
-                // commands. This periodically means 1min+ interruptions for local development, and even blocking
-                // development completely if you are working offline. Using '--offline' prevents that, making sure
-                // that the command always reuses the dependencies already downloaded by 'infra setup'.
-                "--offline",
-            )
             .flag("--all")
             .flag("--all-targets")
             .flag("--all-features");
