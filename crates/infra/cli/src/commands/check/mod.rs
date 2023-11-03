@@ -45,7 +45,7 @@ impl OrderedCommand for CheckCommand {
 }
 
 fn check_cargo() -> Result<()> {
-    return CargoWorkspace::get_check_command("check")?.run();
+    return CargoWorkspace::get_command("check")?.run();
 }
 
 fn check_npm() -> Result<()> {

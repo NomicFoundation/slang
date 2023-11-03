@@ -99,20 +99,30 @@ impl CargoWorkspace {
         return cargo_toml.write_string(updated_contents);
     }
 
-    pub fn get_check_command(subcommand: impl AsRef<str>) -> Result<Command> {
+    pub fn get_command(subcommand: impl AsRef<str>) -> Result<Command> {
         let mut command = Command::new("cargo")
             .arg(subcommand.as_ref())
-            .flag("--offline")
+            .flag(
+                // Cargo will periodically try to update its manifest/local cache from internet before running these
+                // commands. This periodically means 1min+ interruptions for local development, and even blocking
+                // development completely if you are working offline. Using '--offline' prevents that, making sure
+                // that the command always reuses the dependencies already downloaded by 'infra setup'.
+                "--offline",
+            )
             .flag("--all")
             .flag("--all-targets")
             .flag("--all-features");
 
         if GitHub::is_running_in_ci() {
             // Using `$RUSTFLAGS' or '--' overrides any rustflags from `.cargo/config.toml'.
-            // Using this syntax instead, as it is concatinated with the existing flags:
-            let rustflags = serde_json::to_string(&["--deny", "warnings"])?;
-
-            command = command.property("--config", format!("build.rustflags = {rustflags}"));
+            // Using this syntax instead, as it is concatenated with the existing flags:
+            command = command.property(
+                "--config",
+                format!(
+                    "build.rustflags = {rustflags}",
+                    rustflags = serde_json::to_string(&["--deny", "warnings"])?,
+                ),
+            );
         }
 
         return Ok(command);
