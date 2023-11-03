@@ -16,8 +16,7 @@ codegen_language_macros::compile!(Language(
                     fields = (
                         field_1 = Optional(
                             kind = Terminal([Two]),
-                            enabled_in = "3.0.0",
-                            disabled_in = "2.0.0"
+                            enabled = Range(from = "3.0.0", till = "2.0.0")
                         ),
                         field_2 = Optional(kind = Terminal([Two]))
                     )

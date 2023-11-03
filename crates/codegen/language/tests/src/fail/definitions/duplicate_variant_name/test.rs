@@ -10,15 +10,20 @@ codegen_language_macros::compile!(Language(
         title = "Section One",
         topics = [Topic(
             title = "Topic One",
-            items = [Enum(
-                name = Bar,
-                default_variant = Variant1,
-                variants = [
-                    EnumVariant(name = Variant1, fields = ()),
-                    EnumVariant(name = Variant2, fields = ()),
-                    EnumVariant(name = Variant1, fields = ())
-                ]
-            )]
+            items = [
+                Enum(
+                    name = Bar,
+                    variants = [
+                        EnumVariant(name = Variant1, reference = Baz),
+                        EnumVariant(name = Variant2, reference = Baz),
+                        EnumVariant(name = Variant1, reference = Baz)
+                    ]
+                ),
+                Token(
+                    name = Baz,
+                    definitions = [TokenDefinition(scanner = Atom("baz"))]
+                )
+            ]
         )]
     )]
 ));

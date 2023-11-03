@@ -17,12 +17,12 @@ codegen_language_macros::compile!(Language(
                         field_1 = Optional(
                             // should have been disabled in "3.0.0"
                             kind = Terminal([Baz]),
-                            enabled_in = "2.0.0"
+                            enabled = From("2.0.0")
                         ),
                         field_2 = Optional(
                             // should have been enabled in "2.0.0"
                             kind = Terminal([Baz]),
-                            disabled_in = "3.0.0"
+                            enabled = Till("3.0.0")
                         ),
                         field_3 = Optional(
                             // should have been enabled in "2.0.0" and disabled in "3.0.0"
@@ -31,16 +31,14 @@ codegen_language_macros::compile!(Language(
                         field_4 = Optional(
                             // correct
                             kind = Terminal([Baz]),
-                            enabled_in = "2.0.0",
-                            disabled_in = "3.0.0"
+                            enabled = Range(from = "2.0.0", till = "3.0.0")
                         )
                     )
                 ),
                 Token(
                     name = Baz,
                     definitions = [TokenDefinition(
-                        enabled_in = "2.0.0",
-                        disabled_in = "3.0.0",
+                        enabled = Range(from = "2.0.0", till = "3.0.0"),
                         scanner = Atom("baz")
                     )]
                 )

@@ -66,6 +66,7 @@ fn collect_trivia<'l>(parser: &'l TriviaParser, acc: &mut Vec<&'l Identifier>) {
         TriviaParser::Trivia { trivia } => {
             acc.push(trivia);
         }
+        TriviaParser::EndOfInput => {}
     };
 }
 

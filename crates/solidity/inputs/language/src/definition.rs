@@ -10,9 +10,12 @@ codegen_language_macros::compile!(Language(
         Trivia(MultilineComment)
     ])),
     trailing_trivia = Sequence([
-        Optional(Trivia(Whitespace)),
-        Optional(Trivia(SingleLineComment)),
-        Optional(Trivia(EndOfLine))
+        ZeroOrMore(Choice([
+            Trivia(Whitespace),
+            Trivia(SingleLineComment),
+            Trivia(MultilineComment)
+        ])),
+        Choice([Trivia(EndOfLine), EndOfInput])
     ]),
     versions = [
         "0.4.11", "0.4.12", "0.4.13", "0.4.14", "0.4.15", "0.4.16", "0.4.17", "0.4.18", "0.4.19",
@@ -42,68 +45,46 @@ codegen_language_macros::compile!(Language(
                         ),
                         Enum(
                             name = SourceUnitMember,
-                            default_variant = Contract,
                             variants = [
-                                EnumVariant(
-                                    name = Pragma,
-                                    fields = (directive = Required(NonTerminal(PragmaDirective)))
-                                ),
-                                EnumVariant(
-                                    name = Import,
-                                    fields = (directive = Required(NonTerminal(ImportDirective)))
-                                ),
-                                EnumVariant(
-                                    name = Contract,
-                                    fields =
-                                        (definition = Required(NonTerminal(ContractDefinition)))
-                                ),
-                                EnumVariant(
-                                    name = Interface,
-                                    fields =
-                                        (definition = Required(NonTerminal(InterfaceDefinition)))
-                                ),
-                                EnumVariant(
-                                    name = Library,
-                                    fields =
-                                        (definition = Required(NonTerminal(LibraryDefinition)))
-                                ),
+                                EnumVariant(name = Pragma, reference = PragmaDirective),
+                                EnumVariant(name = Import, reference = ImportDirective),
+                                EnumVariant(name = Contract, reference = ContractDefinition),
+                                EnumVariant(name = Interface, reference = InterfaceDefinition),
+                                EnumVariant(name = Library, reference = LibraryDefinition),
                                 EnumVariant(
                                     name = Struct,
-                                    enabled_in = "0.6.0",
-                                    fields = (definition = Required(NonTerminal(StructDefinition)))
+                                    enabled = From("0.6.0"),
+                                    reference = StructDefinition
                                 ),
                                 EnumVariant(
                                     name = Enum,
-                                    enabled_in = "0.6.0",
-                                    fields = (definition = Required(NonTerminal(EnumDefinition)))
+                                    enabled = From("0.6.0"),
+                                    reference = EnumDefinition
                                 ),
                                 EnumVariant(
                                     name = Function,
-                                    enabled_in = "0.7.1",
-                                    fields =
-                                        (definition = Required(NonTerminal(FunctionDefinition)))
+                                    enabled = From("0.7.1"),
+                                    reference = FunctionDefinition
                                 ),
                                 EnumVariant(
                                     name = Constant,
-                                    enabled_in = "0.7.4",
-                                    fields =
-                                        (definition = Required(NonTerminal(ConstantDefinition)))
+                                    enabled = From("0.7.4"),
+                                    reference = ConstantDefinition
                                 ),
                                 EnumVariant(
                                     name = Error,
-                                    enabled_in = "0.8.4",
-                                    fields = (definition = Required(NonTerminal(ErrorDefinition)))
+                                    enabled = From("0.8.4"),
+                                    reference = ErrorDefinition
                                 ),
                                 EnumVariant(
                                     name = UserDefinedValueType,
-                                    enabled_in = "0.8.8",
-                                    fields = (definition =
-                                        Required(NonTerminal(UserDefinedValueTypeDefinition)))
+                                    enabled = From("0.8.8"),
+                                    reference = UserDefinedValueTypeDefinition
                                 ),
                                 EnumVariant(
                                     name = Using,
-                                    enabled_in = "0.8.13",
-                                    fields = (directive = Required(NonTerminal(UsingDirective)))
+                                    enabled = From("0.8.13"),
+                                    reference = UsingDirective
                                 )
                             ]
                         )
@@ -124,33 +105,32 @@ codegen_language_macros::compile!(Language(
                         ),
                         Enum(
                             name = Pragma,
-                            default_variant = Version,
                             variants = [
-                                EnumVariant(
-                                    name = ABICoder,
-                                    fields = (
-                                        abicoder_keyword = Required(Terminal([AbicoderKeyword])),
-                                        version = Required(Terminal([Identifier]))
-                                    )
-                                ),
-                                EnumVariant(
-                                    name = Experimental,
-                                    fields = (
-                                        experimental_keyword =
-                                            Required(Terminal([ExperimentalKeyword])),
-                                        feature =
-                                            Required(Terminal([AsciiStringLiteral, Identifier]))
-                                    )
-                                ),
-                                EnumVariant(
-                                    name = Version,
-                                    fields = (
-                                        solidity_keyword = Required(Terminal([SolidityKeyword])),
-                                        expressions =
-                                            Required(NonTerminal(VersionPragmaExpressions))
-                                    )
-                                )
+                                EnumVariant(name = ABICoder, reference = ABICoderPragma),
+                                EnumVariant(name = Experimental, reference = ExperimentalPragma),
+                                EnumVariant(name = Version, reference = VersionPragma)
                             ]
+                        ),
+                        Struct(
+                            name = ABICoderPragma,
+                            fields = (
+                                abicoder_keyword = Required(Terminal([AbicoderKeyword])),
+                                version = Required(Terminal([Identifier]))
+                            )
+                        ),
+                        Struct(
+                            name = ExperimentalPragma,
+                            fields = (
+                                experimental_keyword = Required(Terminal([ExperimentalKeyword])),
+                                feature = Required(Terminal([AsciiStringLiteral, Identifier]))
+                            )
+                        ),
+                        Struct(
+                            name = VersionPragma,
+                            fields = (
+                                solidity_keyword = Required(Terminal([SolidityKeyword])),
+                                expressions = Required(NonTerminal(VersionPragmaExpressions))
+                            )
                         ),
                         Repeated(
                             name = VersionPragmaExpressions,
@@ -189,7 +169,6 @@ codegen_language_macros::compile!(Language(
                                     )]
                                 )
                             ],
-                            default_primary_expression = VersionPragmaSpecifier,
                             primary_expressions =
                                 [PrimaryExpression(expression = VersionPragmaSpecifier)]
                         ),
@@ -225,39 +204,44 @@ codegen_language_macros::compile!(Language(
                         ),
                         Enum(
                             name = ImportSymbol,
-                            default_variant = Path,
                             variants = [
-                                EnumVariant(
-                                    name = Path,
-                                    fields = (
-                                        path = Required(Terminal([AsciiStringLiteral])),
-                                        alias = Optional(kind = NonTerminal(ImportAlias))
-                                    )
-                                ),
-                                EnumVariant(
-                                    name = Named,
-                                    fields = (
-                                        asterisk = Required(Terminal([Asterisk])),
-                                        alias = Required(NonTerminal(ImportAlias)),
-                                        from_keyword = Required(Terminal([FromKeyword])),
-                                        path = Required(Terminal([AsciiStringLiteral]))
-                                    )
-                                ),
+                                EnumVariant(name = Path, reference = PathImportSymbol),
+                                EnumVariant(name = Named, reference = NamedImportSymbol),
                                 EnumVariant(
                                     name = Deconstruction,
-                                    error_recovery = FieldsErrorRecovery(
-                                        delimiters =
-                                            FieldDelimiters(open = open_brace, close = close_brace)
-                                    ),
-                                    fields = (
-                                        open_brace = Required(Terminal([OpenBrace])),
-                                        fields = Required(NonTerminal(ImportDeconstructionFields)),
-                                        close_brace = Required(Terminal([CloseBrace])),
-                                        from_keyword = Required(Terminal([FromKeyword])),
-                                        path = Required(Terminal([AsciiStringLiteral]))
-                                    )
+                                    reference = ImportSymbolDeconstruction
                                 )
                             ]
+                        ),
+                        Struct(
+                            name = PathImportSymbol,
+                            fields = (
+                                path = Required(Terminal([AsciiStringLiteral])),
+                                alias = Optional(kind = NonTerminal(ImportAlias))
+                            )
+                        ),
+                        Struct(
+                            name = NamedImportSymbol,
+                            fields = (
+                                asterisk = Required(Terminal([Asterisk])),
+                                alias = Required(NonTerminal(ImportAlias)),
+                                from_keyword = Required(Terminal([FromKeyword])),
+                                path = Required(Terminal([AsciiStringLiteral]))
+                            )
+                        ),
+                        Struct(
+                            name = ImportSymbolDeconstruction,
+                            error_recovery = FieldsErrorRecovery(
+                                delimiters =
+                                    FieldDelimiters(open = open_brace, close = close_brace)
+                            ),
+                            fields = (
+                                open_brace = Required(Terminal([OpenBrace])),
+                                fields = Required(NonTerminal(ImportDeconstructionFields)),
+                                close_brace = Required(Terminal([CloseBrace])),
+                                from_keyword = Required(Terminal([FromKeyword])),
+                                path = Required(Terminal([AsciiStringLiteral]))
+                            )
                         ),
                         Separated(
                             name = ImportDeconstructionFields,
@@ -294,53 +278,56 @@ codegen_language_macros::compile!(Language(
                                 target = Required(NonTerminal(UsingTarget)),
                                 global_keyword = Optional(
                                     kind = Terminal([GlobalKeyword]),
-                                    enabled_in = "0.8.13"
+                                    enabled = From("0.8.13")
                                 ),
                                 semicolon = Required(Terminal([Semicolon]))
                             )
                         ),
                         Enum(
                             name = UsingSymbol,
-                            default_variant = Path,
                             variants = [
-                                EnumVariant(
-                                    name = Path,
-                                    fields = (path = Required(NonTerminal(IdentifierPath)))
-                                ),
+                                EnumVariant(name = Path, reference = IdentifierPath),
                                 EnumVariant(
                                     name = Deconstruction,
-                                    enabled_in = "0.8.13",
-                                    error_recovery = FieldsErrorRecovery(
-                                        delimiters =
-                                            FieldDelimiters(open = open_brace, close = close_brace)
-                                    ),
-                                    fields = (
-                                        open_brace = Required(Terminal([OpenBrace])),
-                                        fields = Required(NonTerminal(UsingDeconstructionFields)),
-                                        close_brace = Required(Terminal([CloseBrace]))
-                                    )
+                                    enabled = From("0.8.13"),
+                                    reference = UsingSymbolDeconstruction
                                 )
                             ]
+                        ),
+                        Struct(
+                            name = UsingSymbolDeconstruction,
+                            enabled = From("0.8.13"),
+                            error_recovery = FieldsErrorRecovery(
+                                delimiters =
+                                    FieldDelimiters(open = open_brace, close = close_brace)
+                            ),
+                            fields = (
+                                open_brace = Required(Terminal([OpenBrace])),
+                                fields = Required(NonTerminal(UsingDeconstructionFields)),
+                                close_brace = Required(Terminal([CloseBrace]))
+                            )
                         ),
                         Separated(
                             name = UsingDeconstructionFields,
                             separated = UsingDeconstructionField,
                             separator = Comma,
-                            enabled_in = "0.8.13",
+                            enabled = From("0.8.13"),
                             allow_empty = true
                         ),
                         Struct(
                             name = UsingDeconstructionField,
-                            enabled_in = "0.8.13",
+                            enabled = From("0.8.13"),
                             fields = (
                                 name = Required(NonTerminal(IdentifierPath)),
-                                alias =
-                                    Optional(kind = NonTerminal(UsingAlias), enabled_in = "0.8.19")
+                                alias = Optional(
+                                    kind = NonTerminal(UsingAlias),
+                                    enabled = From("0.8.19")
+                                )
                             )
                         ),
                         Struct(
                             name = UsingAlias,
-                            enabled_in = "0.8.19",
+                            enabled = From("0.8.19"),
                             fields = (
                                 as_keyword = Required(Terminal([AsKeyword])),
                                 operator = Required(Terminal([
@@ -364,16 +351,9 @@ codegen_language_macros::compile!(Language(
                         ),
                         Enum(
                             name = UsingTarget,
-                            default_variant = Asterisk,
                             variants = [
-                                EnumVariant(
-                                    name = TypeName,
-                                    fields = (type_name = Required(NonTerminal(TypeName)))
-                                ),
-                                EnumVariant(
-                                    name = Asterisk,
-                                    fields = (asterisk = Required(Terminal([Asterisk])))
-                                )
+                                EnumVariant(name = TypeName, reference = TypeName),
+                                EnumVariant(name = Asterisk, reference = Asterisk)
                             ]
                         )
                     ]
@@ -418,7 +398,7 @@ codegen_language_macros::compile!(Language(
                             name = AbicoderKeyword,
                             identifier = Identifier,
                             definitions = [KeywordDefinition(
-                                unreserved_in = "0.4.11",
+                                reserved = Never,
                                 value = Atom("abicoder")
                             )]
                         ),
@@ -426,7 +406,7 @@ codegen_language_macros::compile!(Language(
                             name = AbstractKeyword,
                             identifier = Identifier,
                             definitions = [KeywordDefinition(
-                                enabled_in = "0.6.0",
+                                enabled = From("0.6.0"),
                                 value = Atom("abstract")
                             )]
                         ),
@@ -438,17 +418,15 @@ codegen_language_macros::compile!(Language(
                         Keyword(
                             name = AfterKeyword,
                             identifier = Identifier,
-                            definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                value = Atom("after")
-                            )]
+                            definitions =
+                                [KeywordDefinition(enabled = Never, value = Atom("after"))]
                         ),
                         Keyword(
                             name = AliasKeyword,
                             identifier = Identifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                reserved_in = "0.5.0",
+                                enabled = Never,
+                                reserved = From("0.5.0"),
                                 value = Atom("alias")
                             )]
                         ),
@@ -461,8 +439,8 @@ codegen_language_macros::compile!(Language(
                             name = ApplyKeyword,
                             identifier = Identifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                reserved_in = "0.5.0",
+                                enabled = Never,
+                                reserved = From("0.5.0"),
                                 value = Atom("apply")
                             )]
                         ),
@@ -480,8 +458,8 @@ codegen_language_macros::compile!(Language(
                             name = AutoKeyword,
                             identifier = Identifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                reserved_in = "0.5.0",
+                                enabled = Never,
+                                reserved = From("0.5.0"),
                                 value = Atom("auto")
                             )]
                         ),
@@ -499,7 +477,7 @@ codegen_language_macros::compile!(Language(
                             name = ByteKeyword,
                             identifier = Identifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.8.0",
+                                enabled = Till("0.8.0"),
                                 value = Atom("byte")
                             )]
                         ),
@@ -550,24 +528,22 @@ codegen_language_macros::compile!(Language(
                             name = CallDataKeyword,
                             identifier = Identifier,
                             definitions = [KeywordDefinition(
-                                enabled_in = "0.5.0",
-                                reserved_in = "0.5.0",
+                                enabled = From("0.5.0"),
+                                reserved = From("0.5.0"),
                                 value = Atom("calldata")
                             )]
                         ),
                         Keyword(
                             name = CaseKeyword,
                             identifier = Identifier,
-                            definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                value = Atom("case")
-                            )]
+                            definitions =
+                                [KeywordDefinition(enabled = Never, value = Atom("case"))]
                         ),
                         Keyword(
                             name = CatchKeyword,
                             identifier = Identifier,
                             definitions = [KeywordDefinition(
-                                enabled_in = "0.6.0",
+                                enabled = From("0.6.0"),
                                 value = Atom("catch")
                             )]
                         ),
@@ -580,8 +556,8 @@ codegen_language_macros::compile!(Language(
                             name = ConstructorKeyword,
                             identifier = Identifier,
                             definitions = [KeywordDefinition(
-                                enabled_in = "0.4.22",
-                                reserved_in = "0.5.0",
+                                enabled = From("0.4.22"),
+                                reserved = From("0.5.0"),
                                 value = Atom("constructor")
                             )]
                         ),
@@ -599,8 +575,8 @@ codegen_language_macros::compile!(Language(
                             name = CopyOfKeyword,
                             identifier = Identifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                reserved_in = "0.5.0",
+                                enabled = Never,
+                                reserved = From("0.5.0"),
                                 value = Atom("copyof")
                             )]
                         ),
@@ -612,17 +588,15 @@ codegen_language_macros::compile!(Language(
                         Keyword(
                             name = DefaultKeyword,
                             identifier = Identifier,
-                            definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                value = Atom("default")
-                            )]
+                            definitions =
+                                [KeywordDefinition(enabled = Never, value = Atom("default"))]
                         ),
                         Keyword(
                             name = DefineKeyword,
                             identifier = Identifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                reserved_in = "0.5.0",
+                                enabled = Never,
+                                reserved = From("0.5.0"),
                                 value = Atom("define")
                             )]
                         ),
@@ -645,8 +619,8 @@ codegen_language_macros::compile!(Language(
                             name = EmitKeyword,
                             identifier = Identifier,
                             definitions = [KeywordDefinition(
-                                enabled_in = "0.4.21",
-                                reserved_in = "0.5.0",
+                                enabled = From("0.4.21"),
+                                reserved = From("0.5.0"),
                                 value = Atom("emit")
                             )]
                         ),
@@ -659,8 +633,8 @@ codegen_language_macros::compile!(Language(
                             name = ErrorKeyword,
                             identifier = Identifier,
                             definitions = [KeywordDefinition(
-                                enabled_in = "0.8.4",
-                                unreserved_in = "0.4.11",
+                                enabled = From("0.8.4"),
+                                reserved = Never,
                                 value = Atom("error")
                             )]
                         ),
@@ -678,7 +652,7 @@ codegen_language_macros::compile!(Language(
                             name = ExperimentalKeyword,
                             identifier = Identifier,
                             definitions = [KeywordDefinition(
-                                unreserved_in = "0.4.11",
+                                reserved = Never,
                                 value = Atom("experimental")
                             )]
                         ),
@@ -691,7 +665,7 @@ codegen_language_macros::compile!(Language(
                             name = FallbackKeyword,
                             identifier = Identifier,
                             definitions = [KeywordDefinition(
-                                reserved_in = "0.6.0",
+                                reserved = From("0.6.0"),
                                 value = Atom("fallback")
                             )]
                         ),
@@ -703,17 +677,15 @@ codegen_language_macros::compile!(Language(
                         Keyword(
                             name = FinalKeyword,
                             identifier = Identifier,
-                            definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                value = Atom("final")
-                            )]
+                            definitions =
+                                [KeywordDefinition(enabled = Never, value = Atom("final"))]
                         ),
                         Keyword(
                             name = FinneyKeyword,
                             identifier = Identifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.7.0",
-                                unreserved_in = "0.7.0",
+                                enabled = Till("0.7.0"),
+                                reserved = Till("0.7.0"),
                                 value = Atom("finney")
                             )]
                         ),
@@ -817,7 +789,7 @@ codegen_language_macros::compile!(Language(
                                     ])
                                 ),
                                 KeywordDefinition(
-                                    reserved_in = "0.4.14",
+                                    reserved = From("0.4.14"),
                                     value = Sequence([
                                         Atom("fixed"),
                                         Choice([
@@ -880,7 +852,7 @@ codegen_language_macros::compile!(Language(
                                     ])
                                 ),
                                 KeywordDefinition(
-                                    reserved_in = "0.4.14",
+                                    reserved = From("0.4.14"),
                                     value = Sequence([
                                         Atom("fixed"),
                                         Choice([
@@ -1003,10 +975,8 @@ codegen_language_macros::compile!(Language(
                         Keyword(
                             name = FromKeyword,
                             identifier = Identifier,
-                            definitions = [KeywordDefinition(
-                                unreserved_in = "0.4.11",
-                                value = Atom("from")
-                            )]
+                            definitions =
+                                [KeywordDefinition(reserved = Never, value = Atom("from"))]
                         ),
                         Keyword(
                             name = FunctionKeyword,
@@ -1017,8 +987,8 @@ codegen_language_macros::compile!(Language(
                             name = GlobalKeyword,
                             identifier = Identifier,
                             definitions = [KeywordDefinition(
-                                enabled_in = "0.8.13",
-                                unreserved_in = "0.4.11",
+                                enabled = From("0.8.13"),
+                                reserved = Never,
                                 value = Atom("global")
                             )]
                         ),
@@ -1026,18 +996,15 @@ codegen_language_macros::compile!(Language(
                             name = GweiKeyword,
                             identifier = Identifier,
                             definitions = [KeywordDefinition(
-                                enabled_in = "0.6.11",
-                                reserved_in = "0.7.0",
+                                enabled = From("0.6.11"),
+                                reserved = From("0.7.0"),
                                 value = Atom("gwei")
                             )]
                         ),
                         Keyword(
                             name = HexKeyword,
                             identifier = Identifier,
-                            definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                value = Atom("hex")
-                            )]
+                            definitions = [KeywordDefinition(enabled = Never, value = Atom("hex"))]
                         ),
                         Keyword(
                             name = HoursKeyword,
@@ -1053,8 +1020,8 @@ codegen_language_macros::compile!(Language(
                             name = ImmutableKeyword,
                             identifier = Identifier,
                             definitions = [KeywordDefinition(
-                                enabled_in = "0.6.5",
-                                reserved_in = "0.5.0",
+                                enabled = From("0.6.5"),
+                                reserved = From("0.5.0"),
                                 value = Atom("immutable")
                             )]
                         ),
@@ -1062,8 +1029,8 @@ codegen_language_macros::compile!(Language(
                             name = ImplementsKeyword,
                             identifier = Identifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                reserved_in = "0.5.0",
+                                enabled = Never,
+                                reserved = From("0.5.0"),
                                 value = Atom("implements")
                             )]
                         ),
@@ -1080,18 +1047,13 @@ codegen_language_macros::compile!(Language(
                         Keyword(
                             name = InKeyword,
                             identifier = Identifier,
-                            definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                value = Atom("in")
-                            )]
+                            definitions = [KeywordDefinition(enabled = Never, value = Atom("in"))]
                         ),
                         Keyword(
                             name = InlineKeyword,
                             identifier = Identifier,
-                            definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                value = Atom("inline")
-                            )]
+                            definitions =
+                                [KeywordDefinition(enabled = Never, value = Atom("inline"))]
                         ),
                         Keyword(
                             name = InterfaceKeyword,
@@ -1154,10 +1116,7 @@ codegen_language_macros::compile!(Language(
                         Keyword(
                             name = LetKeyword,
                             identifier = Identifier,
-                            definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                value = Atom("let")
-                            )]
+                            definitions = [KeywordDefinition(enabled = Never, value = Atom("let"))]
                         ),
                         Keyword(
                             name = LibraryKeyword,
@@ -1168,8 +1127,8 @@ codegen_language_macros::compile!(Language(
                             name = MacroKeyword,
                             identifier = Identifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                reserved_in = "0.5.0",
+                                enabled = Never,
+                                reserved = From("0.5.0"),
                                 value = Atom("macro")
                             )]
                         ),
@@ -1181,10 +1140,8 @@ codegen_language_macros::compile!(Language(
                         Keyword(
                             name = MatchKeyword,
                             identifier = Identifier,
-                            definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                value = Atom("match")
-                            )]
+                            definitions =
+                                [KeywordDefinition(enabled = Never, value = Atom("match"))]
                         ),
                         Keyword(
                             name = MemoryKeyword,
@@ -1205,8 +1162,8 @@ codegen_language_macros::compile!(Language(
                             name = MutableKeyword,
                             identifier = Identifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                reserved_in = "0.5.0",
+                                enabled = Never,
+                                reserved = From("0.5.0"),
                                 value = Atom("mutable")
                             )]
                         ),
@@ -1218,24 +1175,19 @@ codegen_language_macros::compile!(Language(
                         Keyword(
                             name = NullKeyword,
                             identifier = Identifier,
-                            definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                value = Atom("null")
-                            )]
+                            definitions =
+                                [KeywordDefinition(enabled = Never, value = Atom("null"))]
                         ),
                         Keyword(
                             name = OfKeyword,
                             identifier = Identifier,
-                            definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                value = Atom("of")
-                            )]
+                            definitions = [KeywordDefinition(enabled = Never, value = Atom("of"))]
                         ),
                         Keyword(
                             name = OverrideKeyword,
                             identifier = Identifier,
                             definitions = [KeywordDefinition(
-                                reserved_in = "0.5.0",
+                                reserved = From("0.5.0"),
                                 value = Atom("override")
                             )]
                         ),
@@ -1243,8 +1195,8 @@ codegen_language_macros::compile!(Language(
                             name = PartialKeyword,
                             identifier = Identifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                reserved_in = "0.5.0",
+                                enabled = Never,
+                                reserved = From("0.5.0"),
                                 value = Atom("partial")
                             )]
                         ),
@@ -1267,8 +1219,8 @@ codegen_language_macros::compile!(Language(
                             name = PromiseKeyword,
                             identifier = Identifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                reserved_in = "0.5.0",
+                                enabled = Never,
+                                reserved = From("0.5.0"),
                                 value = Atom("promise")
                             )]
                         ),
@@ -1286,7 +1238,7 @@ codegen_language_macros::compile!(Language(
                             name = ReceiveKeyword,
                             identifier = Identifier,
                             definitions = [KeywordDefinition(
-                                reserved_in = "0.6.0",
+                                reserved = From("0.6.0"),
                                 value = Atom("receive")
                             )]
                         ),
@@ -1294,8 +1246,8 @@ codegen_language_macros::compile!(Language(
                             name = ReferenceKeyword,
                             identifier = Identifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                reserved_in = "0.5.0",
+                                enabled = Never,
+                                reserved = From("0.5.0"),
                                 value = Atom("reference")
                             )]
                         ),
@@ -1303,7 +1255,7 @@ codegen_language_macros::compile!(Language(
                             name = RelocatableKeyword,
                             identifier = Identifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
+                                enabled = Never,
                                 value = Atom("relocatable")
                             )]
                         ),
@@ -1321,8 +1273,8 @@ codegen_language_macros::compile!(Language(
                             name = RevertKeyword,
                             identifier = Identifier,
                             definitions = [KeywordDefinition(
-                                enabled_in = "0.8.4",
-                                unreserved_in = "0.4.11",
+                                enabled = From("0.8.4"),
+                                reserved = Never,
                                 value = Atom("revert")
                             )]
                         ),
@@ -1330,8 +1282,8 @@ codegen_language_macros::compile!(Language(
                             name = SealedKeyword,
                             identifier = Identifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                reserved_in = "0.5.0",
+                                enabled = Never,
+                                reserved = From("0.5.0"),
                                 value = Atom("sealed")
                             )]
                         ),
@@ -1344,8 +1296,8 @@ codegen_language_macros::compile!(Language(
                             name = SizeOfKeyword,
                             identifier = Identifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                reserved_in = "0.5.0",
+                                enabled = Never,
+                                reserved = From("0.5.0"),
                                 value = Atom("sizeof")
                             )]
                         ),
@@ -1353,17 +1305,15 @@ codegen_language_macros::compile!(Language(
                             name = SolidityKeyword,
                             identifier = Identifier,
                             definitions = [KeywordDefinition(
-                                unreserved_in = "0.4.11",
+                                reserved = Never,
                                 value = Atom("solidity")
                             )]
                         ),
                         Keyword(
                             name = StaticKeyword,
                             identifier = Identifier,
-                            definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                value = Atom("static")
-                            )]
+                            definitions =
+                                [KeywordDefinition(enabled = Never, value = Atom("static"))]
                         ),
                         Keyword(
                             name = StorageKeyword,
@@ -1384,25 +1334,23 @@ codegen_language_macros::compile!(Language(
                             name = SupportsKeyword,
                             identifier = Identifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                reserved_in = "0.5.0",
+                                enabled = Never,
+                                reserved = From("0.5.0"),
                                 value = Atom("supports")
                             )]
                         ),
                         Keyword(
                             name = SwitchKeyword,
                             identifier = Identifier,
-                            definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                value = Atom("switch")
-                            )]
+                            definitions =
+                                [KeywordDefinition(enabled = Never, value = Atom("switch"))]
                         ),
                         Keyword(
                             name = SzaboKeyword,
                             identifier = Identifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.7.0",
-                                unreserved_in = "0.7.0",
+                                enabled = Till("0.7.0"),
+                                reserved = Till("0.7.0"),
                                 value = Atom("szabo")
                             )]
                         ),
@@ -1410,7 +1358,7 @@ codegen_language_macros::compile!(Language(
                             name = ThrowKeyword,
                             identifier = Identifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.5.0",
+                                enabled = Till("0.5.0"),
                                 value = Atom("throw")
                             )]
                         ),
@@ -1422,15 +1370,17 @@ codegen_language_macros::compile!(Language(
                         Keyword(
                             name = TryKeyword,
                             identifier = Identifier,
-                            definitions =
-                                [KeywordDefinition(enabled_in = "0.6.0", value = Atom("try"))]
+                            definitions = [KeywordDefinition(
+                                enabled = From("0.6.0"),
+                                value = Atom("try")
+                            )]
                         ),
                         Keyword(
                             name = TypeDefKeyword,
                             identifier = Identifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                reserved_in = "0.5.0",
+                                enabled = Never,
+                                reserved = From("0.5.0"),
                                 value = Atom("typedef")
                             )]
                         ),
@@ -1438,17 +1388,15 @@ codegen_language_macros::compile!(Language(
                             name = TypeKeyword,
                             identifier = Identifier,
                             definitions = [KeywordDefinition(
-                                enabled_in = "0.5.3",
+                                enabled = From("0.5.3"),
                                 value = Atom("type")
                             )]
                         ),
                         Keyword(
                             name = TypeOfKeyword,
                             identifier = Identifier,
-                            definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                value = Atom("typeof")
-                            )]
+                            definitions =
+                                [KeywordDefinition(enabled = Never, value = Atom("typeof"))]
                         ),
                         Keyword(
                             name = UfixedKeyword,
@@ -1550,7 +1498,7 @@ codegen_language_macros::compile!(Language(
                                     ])
                                 ),
                                 KeywordDefinition(
-                                    reserved_in = "0.4.14",
+                                    reserved = From("0.4.14"),
                                     value = Sequence([
                                         Atom("ufixed"),
                                         Choice([
@@ -1613,7 +1561,7 @@ codegen_language_macros::compile!(Language(
                                     ])
                                 ),
                                 KeywordDefinition(
-                                    reserved_in = "0.4.14",
+                                    reserved = From("0.4.14"),
                                     value = Sequence([
                                         Atom("ufixed"),
                                         Choice([
@@ -1775,8 +1723,8 @@ codegen_language_macros::compile!(Language(
                             name = UncheckedKeyword,
                             identifier = Identifier,
                             definitions = [KeywordDefinition(
-                                enabled_in = "0.8.0",
-                                reserved_in = "0.5.0",
+                                enabled = From("0.8.0"),
+                                reserved = From("0.5.0"),
                                 value = Atom("unchecked")
                             )]
                         ),
@@ -1789,7 +1737,7 @@ codegen_language_macros::compile!(Language(
                             name = VarKeyword,
                             identifier = Identifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.5.0",
+                                enabled = Till("0.5.0"),
                                 value = Atom("var")
                             )]
                         ),
@@ -1802,8 +1750,8 @@ codegen_language_macros::compile!(Language(
                             name = VirtualKeyword,
                             identifier = Identifier,
                             definitions = [KeywordDefinition(
-                                enabled_in = "0.6.0",
-                                reserved_in = "0.6.0",
+                                enabled = From("0.6.0"),
+                                reserved = From("0.6.0"),
                                 value = Atom("virtual")
                             )]
                         ),
@@ -1826,7 +1774,7 @@ codegen_language_macros::compile!(Language(
                             name = YearsKeyword,
                             identifier = Identifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.5.0",
+                                enabled = Till("0.5.0"),
                                 value = Atom("years")
                             )]
                         )
@@ -2134,7 +2082,7 @@ codegen_language_macros::compile!(Language(
                             fields = (
                                 abstract_keyword = Optional(
                                     kind = Terminal([AbstractKeyword]),
-                                    enabled_in = "0.6.0"
+                                    enabled = From("0.6.0")
                                 ),
                                 contract_keyword = Required(Terminal([ContractKeyword])),
                                 name = Required(Terminal([Identifier])),
@@ -2170,73 +2118,46 @@ codegen_language_macros::compile!(Language(
                         ),
                         Enum(
                             name = ContractMember,
-                            default_variant = StateVariable,
                             variants = [
-                                EnumVariant(
-                                    name = Using,
-                                    fields = (directive = Required(NonTerminal(UsingDirective)))
-                                ),
-                                EnumVariant(
-                                    name = Function,
-                                    fields =
-                                        (definition = Required(NonTerminal(FunctionDefinition)))
-                                ),
+                                EnumVariant(name = Using, reference = UsingDirective),
+                                EnumVariant(name = Function, reference = FunctionDefinition),
                                 EnumVariant(
                                     name = Constructor,
-                                    enabled_in = "0.4.22",
-                                    fields =
-                                        (definition = Required(NonTerminal(ConstructorDefinition)))
+                                    enabled = From("0.4.22"),
+                                    reference = ConstructorDefinition
                                 ),
                                 EnumVariant(
                                     name = ReceiveFunction,
-                                    enabled_in = "0.6.0",
-                                    fields = (definition =
-                                        Required(NonTerminal(ReceiveFunctionDefinition)))
+                                    enabled = From("0.6.0"),
+                                    reference = ReceiveFunctionDefinition
                                 ),
                                 EnumVariant(
                                     name = FallbackFunction,
-                                    enabled_in = "0.6.0",
-                                    fields = (definition =
-                                        Required(NonTerminal(FallbackFunctionDefinition)))
+                                    enabled = From("0.6.0"),
+                                    reference = FallbackFunctionDefinition
                                 ),
                                 EnumVariant(
                                     name = UnnamedFunction,
-                                    disabled_in = "0.6.0",
-                                    fields = (definition =
-                                        Required(NonTerminal(UnnamedFunctionDefinition)))
+                                    enabled = Till("0.6.0"),
+                                    reference = UnnamedFunctionDefinition
                                 ),
-                                EnumVariant(
-                                    name = Modifier,
-                                    fields =
-                                        (definition = Required(NonTerminal(ModifierDefinition)))
-                                ),
-                                EnumVariant(
-                                    name = Struct,
-                                    fields = (definition = Required(NonTerminal(StructDefinition)))
-                                ),
-                                EnumVariant(
-                                    name = Enum,
-                                    fields = (definition = Required(NonTerminal(EnumDefinition)))
-                                ),
-                                EnumVariant(
-                                    name = Event,
-                                    fields = (definition = Required(NonTerminal(EventDefinition)))
-                                ),
+                                EnumVariant(name = Modifier, reference = ModifierDefinition),
+                                EnumVariant(name = Struct, reference = StructDefinition),
+                                EnumVariant(name = Enum, reference = EnumDefinition),
+                                EnumVariant(name = Event, reference = EventDefinition),
                                 EnumVariant(
                                     name = StateVariable,
-                                    fields = (definition =
-                                        Required(NonTerminal(StateVariableDefinition)))
+                                    reference = StateVariableDefinition
                                 ),
                                 EnumVariant(
                                     name = Error,
-                                    enabled_in = "0.8.4",
-                                    fields = (definition = Required(NonTerminal(ErrorDefinition)))
+                                    enabled = From("0.8.4"),
+                                    reference = ErrorDefinition
                                 ),
                                 EnumVariant(
                                     name = UserDefinedValueType,
-                                    enabled_in = "0.8.8",
-                                    fields = (definition =
-                                        Required(NonTerminal(UserDefinedValueTypeDefinition)))
+                                    enabled = From("0.8.8"),
+                                    reference = UserDefinedValueTypeDefinition
                                 )
                             ]
                         )
@@ -2353,7 +2274,7 @@ codegen_language_macros::compile!(Language(
                     title = "Constants",
                     items = [Struct(
                         name = ConstantDefinition,
-                        enabled_in = "0.7.4",
+                        enabled = From("0.7.4"),
                         error_recovery = FieldsErrorRecovery(terminator = semicolon),
                         fields = (
                             type_name = Required(NonTerminal(TypeName)),
@@ -2393,32 +2314,16 @@ codegen_language_macros::compile!(Language(
                         ),
                         Enum(
                             name = StateVariableAttribute,
-                            default_variant = Public,
                             variants = [
-                                EnumVariant(
-                                    name = Override,
-                                    fields = (specifier = Required(NonTerminal(OverrideSpecifier)))
-                                ),
-                                EnumVariant(
-                                    name = Constant,
-                                    fields = (keyword = Required(Terminal([ConstantKeyword])))
-                                ),
-                                EnumVariant(
-                                    name = Internal,
-                                    fields = (keyword = Required(Terminal([InternalKeyword])))
-                                ),
-                                EnumVariant(
-                                    name = Private,
-                                    fields = (keyword = Required(Terminal([PrivateKeyword])))
-                                ),
-                                EnumVariant(
-                                    name = Public,
-                                    fields = (keyword = Required(Terminal([PublicKeyword])))
-                                ),
+                                EnumVariant(name = Override, reference = OverrideSpecifier),
+                                EnumVariant(name = Constant, reference = ConstantKeyword),
+                                EnumVariant(name = Internal, reference = InternalKeyword),
+                                EnumVariant(name = Private, reference = PrivateKeyword),
+                                EnumVariant(name = Public, reference = PublicKeyword),
                                 EnumVariant(
                                     name = Immutable,
-                                    enabled_in = "0.6.5",
-                                    fields = (keyword = Required(Terminal([ImmutableKeyword])))
+                                    enabled = From("0.6.5"),
+                                    reference = ImmutableKeyword
                                 )
                             ]
                         )
@@ -2475,53 +2380,25 @@ codegen_language_macros::compile!(Language(
                         ),
                         Enum(
                             name = FunctionAttribute,
-                            default_variant = Public,
                             variants = [
-                                EnumVariant(
-                                    name = Modifier,
-                                    fields = (modifier = Required(NonTerminal(ModifierInvocation)))
-                                ),
-                                EnumVariant(
-                                    name = Override,
-                                    fields = (specifier = Required(NonTerminal(OverrideSpecifier)))
-                                ),
+                                EnumVariant(name = Modifier, reference = ModifierInvocation),
+                                EnumVariant(name = Override, reference = OverrideSpecifier),
                                 EnumVariant(
                                     name = Constant,
-                                    disabled_in = "0.5.0",
-                                    fields = (keyword = Required(Terminal([ConstantKeyword])))
+                                    enabled = Till("0.5.0"),
+                                    reference = ConstantKeyword
                                 ),
-                                EnumVariant(
-                                    name = External,
-                                    fields = (keyword = Required(Terminal([ExternalKeyword])))
-                                ),
-                                EnumVariant(
-                                    name = Internal,
-                                    fields = (keyword = Required(Terminal([InternalKeyword])))
-                                ),
-                                EnumVariant(
-                                    name = Payable,
-                                    fields = (keyword = Required(Terminal([PayableKeyword])))
-                                ),
-                                EnumVariant(
-                                    name = Private,
-                                    fields = (keyword = Required(Terminal([PrivateKeyword])))
-                                ),
-                                EnumVariant(
-                                    name = Public,
-                                    fields = (keyword = Required(Terminal([PublicKeyword])))
-                                ),
-                                EnumVariant(
-                                    name = Pure,
-                                    fields = (keyword = Required(Terminal([PureKeyword])))
-                                ),
-                                EnumVariant(
-                                    name = View,
-                                    fields = (keyword = Required(Terminal([ViewKeyword])))
-                                ),
+                                EnumVariant(name = External, reference = ExternalKeyword),
+                                EnumVariant(name = Internal, reference = InternalKeyword),
+                                EnumVariant(name = Payable, reference = PayableKeyword),
+                                EnumVariant(name = Private, reference = PrivateKeyword),
+                                EnumVariant(name = Public, reference = PublicKeyword),
+                                EnumVariant(name = Pure, reference = PureKeyword),
+                                EnumVariant(name = View, reference = ViewKeyword),
                                 EnumVariant(
                                     name = Virtual,
-                                    enabled_in = "0.6.0",
-                                    fields = (keyword = Required(Terminal([VirtualKeyword])))
+                                    enabled = From("0.6.0"),
+                                    reference = VirtualKeyword
                                 )
                             ]
                         ),
@@ -2552,21 +2429,14 @@ codegen_language_macros::compile!(Language(
                         ),
                         Enum(
                             name = FunctionBody,
-                            default_variant = Semicolon,
                             variants = [
-                                EnumVariant(
-                                    name = Block,
-                                    fields = (block = Required(NonTerminal(Block)))
-                                ),
-                                EnumVariant(
-                                    name = Semicolon,
-                                    fields = (semicolon = Required(Terminal([Semicolon])))
-                                )
+                                EnumVariant(name = Block, reference = Block),
+                                EnumVariant(name = Semicolon, reference = Semicolon)
                             ]
                         ),
                         Struct(
                             name = ConstructorDefinition,
-                            enabled_in = "0.4.22",
+                            enabled = From("0.4.22"),
                             fields = (
                                 constructor_keyword = Required(Terminal([ConstructorKeyword])),
                                 parameters = Required(NonTerminal(ParametersDeclaration)),
@@ -2577,35 +2447,22 @@ codegen_language_macros::compile!(Language(
                         Repeated(
                             name = ConstructorAttributes,
                             repeated = ConstructorAttribute,
-                            enabled_in = "0.4.22",
+                            enabled = From("0.4.22"),
                             allow_empty = true
                         ),
                         Enum(
                             name = ConstructorAttribute,
-                            enabled_in = "0.4.22",
-                            default_variant = Public,
+                            enabled = From("0.4.22"),
                             variants = [
-                                EnumVariant(
-                                    name = Modifier,
-                                    fields = (modifier = Required(NonTerminal(ModifierInvocation)))
-                                ),
-                                EnumVariant(
-                                    name = Override,
-                                    fields = (specifier = Required(NonTerminal(OverrideSpecifier)))
-                                ),
-                                EnumVariant(
-                                    name = Payable,
-                                    fields = (keyword = Required(Terminal([PayableKeyword])))
-                                ),
-                                EnumVariant(
-                                    name = Public,
-                                    fields = (keyword = Required(Terminal([PublicKeyword])))
-                                )
+                                EnumVariant(name = Modifier, reference = ModifierInvocation),
+                                EnumVariant(name = Override, reference = OverrideSpecifier),
+                                EnumVariant(name = Payable, reference = PayableKeyword),
+                                EnumVariant(name = Public, reference = PublicKeyword)
                             ]
                         ),
                         Struct(
                             name = UnnamedFunctionDefinition,
-                            disabled_in = "0.6.0",
+                            enabled = Till("0.6.0"),
                             fields = (
                                 function_keyword = Required(Terminal([FunctionKeyword])),
                                 parameters = Required(NonTerminal(ParametersDeclaration)),
@@ -2616,43 +2473,24 @@ codegen_language_macros::compile!(Language(
                         Repeated(
                             name = UnnamedFunctionAttributes,
                             repeated = UnnamedFunctionAttribute,
-                            disabled_in = "0.6.0",
+                            enabled = Till("0.6.0"),
                             allow_empty = true
                         ),
                         Enum(
                             name = UnnamedFunctionAttribute,
-                            disabled_in = "0.6.0",
-                            default_variant = View,
+                            enabled = Till("0.6.0"),
                             variants = [
-                                EnumVariant(
-                                    name = Modifier,
-                                    fields = (modifier = Required(NonTerminal(ModifierInvocation)))
-                                ),
-                                EnumVariant(
-                                    name = Override,
-                                    fields = (specifier = Required(NonTerminal(OverrideSpecifier)))
-                                ),
-                                EnumVariant(
-                                    name = External,
-                                    fields = (keyword = Required(Terminal([ExternalKeyword])))
-                                ),
-                                EnumVariant(
-                                    name = Payable,
-                                    fields = (keyword = Required(Terminal([PayableKeyword])))
-                                ),
-                                EnumVariant(
-                                    name = Pure,
-                                    fields = (keyword = Required(Terminal([PureKeyword])))
-                                ),
-                                EnumVariant(
-                                    name = View,
-                                    fields = (keyword = Required(Terminal([ViewKeyword])))
-                                )
+                                EnumVariant(name = Modifier, reference = ModifierInvocation),
+                                EnumVariant(name = Override, reference = OverrideSpecifier),
+                                EnumVariant(name = External, reference = ExternalKeyword),
+                                EnumVariant(name = Payable, reference = PayableKeyword),
+                                EnumVariant(name = Pure, reference = PureKeyword),
+                                EnumVariant(name = View, reference = ViewKeyword)
                             ]
                         ),
                         Struct(
                             name = FallbackFunctionDefinition,
-                            enabled_in = "0.6.0",
+                            enabled = From("0.6.0"),
                             fields = (
                                 fallback_keyword = Required(Terminal([FallbackKeyword])),
                                 parameters = Required(NonTerminal(ParametersDeclaration)),
@@ -2664,47 +2502,25 @@ codegen_language_macros::compile!(Language(
                         Repeated(
                             name = FallbackFunctionAttributes,
                             repeated = FallbackFunctionAttribute,
-                            enabled_in = "0.6.0",
+                            enabled = From("0.6.0"),
                             allow_empty = true
                         ),
                         Enum(
                             name = FallbackFunctionAttribute,
-                            enabled_in = "0.6.0",
-                            default_variant = View,
+                            enabled = From("0.6.0"),
                             variants = [
-                                EnumVariant(
-                                    name = Modifier,
-                                    fields = (modifier = Required(NonTerminal(ModifierInvocation)))
-                                ),
-                                EnumVariant(
-                                    name = Override,
-                                    fields = (specifier = Required(NonTerminal(OverrideSpecifier)))
-                                ),
-                                EnumVariant(
-                                    name = External,
-                                    fields = (keyword = Required(Terminal([ExternalKeyword])))
-                                ),
-                                EnumVariant(
-                                    name = Payable,
-                                    fields = (keyword = Required(Terminal([PayableKeyword])))
-                                ),
-                                EnumVariant(
-                                    name = Pure,
-                                    fields = (keyword = Required(Terminal([PureKeyword])))
-                                ),
-                                EnumVariant(
-                                    name = View,
-                                    fields = (keyword = Required(Terminal([ViewKeyword])))
-                                ),
-                                EnumVariant(
-                                    name = Virtual,
-                                    fields = (keyword = Required(Terminal([VirtualKeyword])))
-                                )
+                                EnumVariant(name = Modifier, reference = ModifierInvocation),
+                                EnumVariant(name = Override, reference = OverrideSpecifier),
+                                EnumVariant(name = External, reference = ExternalKeyword),
+                                EnumVariant(name = Payable, reference = PayableKeyword),
+                                EnumVariant(name = Pure, reference = PureKeyword),
+                                EnumVariant(name = View, reference = ViewKeyword),
+                                EnumVariant(name = Virtual, reference = VirtualKeyword)
                             ]
                         ),
                         Struct(
                             name = ReceiveFunctionDefinition,
-                            enabled_in = "0.6.0",
+                            enabled = From("0.6.0"),
                             fields = (
                                 receive_keyword = Required(Terminal([ReceiveKeyword])),
                                 parameters = Required(NonTerminal(ParametersDeclaration)),
@@ -2715,34 +2531,18 @@ codegen_language_macros::compile!(Language(
                         Repeated(
                             name = ReceiveFunctionAttributes,
                             repeated = ReceiveFunctionAttribute,
-                            enabled_in = "0.6.0",
+                            enabled = From("0.6.0"),
                             allow_empty = true
                         ),
                         Enum(
                             name = ReceiveFunctionAttribute,
-                            enabled_in = "0.6.0",
-                            default_variant = Virtual,
+                            enabled = From("0.6.0"),
                             variants = [
-                                EnumVariant(
-                                    name = Modifier,
-                                    fields = (modifier = Required(NonTerminal(ModifierInvocation)))
-                                ),
-                                EnumVariant(
-                                    name = Override,
-                                    fields = (specifier = Required(NonTerminal(OverrideSpecifier)))
-                                ),
-                                EnumVariant(
-                                    name = External,
-                                    fields = (keyword = Required(Terminal([ExternalKeyword])))
-                                ),
-                                EnumVariant(
-                                    name = Payable,
-                                    fields = (keyword = Required(Terminal([PayableKeyword])))
-                                ),
-                                EnumVariant(
-                                    name = Virtual,
-                                    fields = (keyword = Required(Terminal([VirtualKeyword])))
-                                )
+                                EnumVariant(name = Modifier, reference = ModifierInvocation),
+                                EnumVariant(name = Override, reference = OverrideSpecifier),
+                                EnumVariant(name = External, reference = ExternalKeyword),
+                                EnumVariant(name = Payable, reference = PayableKeyword),
+                                EnumVariant(name = Virtual, reference = VirtualKeyword)
                             ]
                         )
                     ]
@@ -2767,16 +2567,12 @@ codegen_language_macros::compile!(Language(
                         ),
                         Enum(
                             name = ModifierAttribute,
-                            default_variant = Virtual,
                             variants = [
-                                EnumVariant(
-                                    name = Override,
-                                    fields = (specifier = Required(NonTerminal(OverrideSpecifier)))
-                                ),
+                                EnumVariant(name = Override, reference = OverrideSpecifier),
                                 EnumVariant(
                                     name = Virtual,
-                                    enabled_in = "0.6.0",
-                                    fields = (keyword = Required(Terminal([VirtualKeyword])))
+                                    enabled = From("0.6.0"),
+                                    reference = VirtualKeyword
                                 )
                             ]
                         ),
@@ -2836,7 +2632,7 @@ codegen_language_macros::compile!(Language(
                     title = "User Defined Value Types",
                     items = [Struct(
                         name = UserDefinedValueTypeDefinition,
-                        enabled_in = "0.8.8",
+                        enabled = From("0.8.8"),
                         error_recovery = FieldsErrorRecovery(terminator = semicolon),
                         fields = (
                             type_keyword = Required(Terminal([TypeKeyword])),
@@ -2852,7 +2648,7 @@ codegen_language_macros::compile!(Language(
                     items = [
                         Struct(
                             name = ErrorDefinition,
-                            enabled_in = "0.8.4",
+                            enabled = From("0.8.4"),
                             error_recovery = FieldsErrorRecovery(terminator = semicolon),
                             fields = (
                                 error_keyword = Required(Terminal([ErrorKeyword])),
@@ -2863,7 +2659,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Struct(
                             name = ErrorParametersDeclaration,
-                            enabled_in = "0.8.4",
+                            enabled = From("0.8.4"),
                             error_recovery = FieldsErrorRecovery(
                                 delimiters =
                                     FieldDelimiters(open = open_paren, close = close_paren)
@@ -2878,12 +2674,12 @@ codegen_language_macros::compile!(Language(
                             name = ErrorParameters,
                             separated = ErrorParameter,
                             separator = Comma,
-                            enabled_in = "0.8.4",
+                            enabled = From("0.8.4"),
                             allow_empty = true
                         ),
                         Struct(
                             name = ErrorParameter,
-                            enabled_in = "0.8.4",
+                            enabled = From("0.8.4"),
                             fields = (
                                 type_name = Required(NonTerminal(TypeName)),
                                 name = Optional(kind = Terminal([Identifier]))
@@ -2918,7 +2714,6 @@ codegen_language_macros::compile!(Language(
                                     )
                                 )]
                             )],
-                            default_primary_expression = ElementaryType,
                             primary_expressions = [
                                 PrimaryExpression(expression = FunctionType),
                                 PrimaryExpression(expression = MappingType),
@@ -2942,36 +2737,14 @@ codegen_language_macros::compile!(Language(
                         ),
                         Enum(
                             name = FunctionTypeAttribute,
-                            default_variant = Public,
                             variants = [
-                                EnumVariant(
-                                    name = Internal,
-                                    fields = (keyword = Required(Terminal([InternalKeyword])))
-                                ),
-                                EnumVariant(
-                                    name = External,
-                                    fields = (keyword = Required(Terminal([ExternalKeyword])))
-                                ),
-                                EnumVariant(
-                                    name = Private,
-                                    fields = (keyword = Required(Terminal([PrivateKeyword])))
-                                ),
-                                EnumVariant(
-                                    name = Public,
-                                    fields = (keyword = Required(Terminal([PublicKeyword])))
-                                ),
-                                EnumVariant(
-                                    name = Pure,
-                                    fields = (keyword = Required(Terminal([PureKeyword])))
-                                ),
-                                EnumVariant(
-                                    name = View,
-                                    fields = (keyword = Required(Terminal([ViewKeyword])))
-                                ),
-                                EnumVariant(
-                                    name = Payable,
-                                    fields = (keyword = Required(Terminal([PayableKeyword])))
-                                )
+                                EnumVariant(name = Internal, reference = InternalKeyword),
+                                EnumVariant(name = External, reference = ExternalKeyword),
+                                EnumVariant(name = Private, reference = PrivateKeyword),
+                                EnumVariant(name = Public, reference = PublicKeyword),
+                                EnumVariant(name = Pure, reference = PureKeyword),
+                                EnumVariant(name = View, reference = ViewKeyword),
+                                EnumVariant(name = Payable, reference = PayableKeyword)
                             ]
                         ),
                         Struct(
@@ -2993,30 +2766,27 @@ codegen_language_macros::compile!(Language(
                             name = MappingKey,
                             fields = (
                                 key_type = Required(NonTerminal(MappingKeyType)),
-                                name =
-                                    Optional(kind = Terminal([Identifier]), enabled_in = "0.8.18")
+                                name = Optional(
+                                    kind = Terminal([Identifier]),
+                                    enabled = From("0.8.18")
+                                )
                             )
                         ),
                         Enum(
                             name = MappingKeyType,
-                            default_variant = ElementaryType,
                             variants = [
-                                EnumVariant(
-                                    name = ElementaryType,
-                                    fields = (type_name = Required(NonTerminal(ElementaryType)))
-                                ),
-                                EnumVariant(
-                                    name = IdentifierPath,
-                                    fields = (type_name = Required(NonTerminal(IdentifierPath)))
-                                )
+                                EnumVariant(name = ElementaryType, reference = ElementaryType),
+                                EnumVariant(name = IdentifierPath, reference = IdentifierPath)
                             ]
                         ),
                         Struct(
                             name = MappingValue,
                             fields = (
                                 type_name = Required(NonTerminal(TypeName)),
-                                name =
-                                    Optional(kind = Terminal([Identifier]), enabled_in = "0.8.18")
+                                name = Optional(
+                                    kind = Terminal([Identifier]),
+                                    enabled = From("0.8.18")
+                                )
                             )
                         )
                     ]
@@ -3026,65 +2796,35 @@ codegen_language_macros::compile!(Language(
                     items = [
                         Enum(
                             name = ElementaryType,
-                            default_variant = Bool,
                             variants = [
-                                EnumVariant(
-                                    name = Bool,
-                                    fields = (type_name = Required(Terminal([BoolKeyword])))
-                                ),
+                                EnumVariant(name = Bool, reference = BoolKeyword),
                                 EnumVariant(
                                     name = Byte,
-                                    disabled_in = "0.8.0",
-                                    fields = (type_name = Required(Terminal([ByteKeyword])))
+                                    enabled = Till("0.8.0"),
+                                    reference = ByteKeyword
                                 ),
-                                EnumVariant(
-                                    name = String,
-                                    fields = (type_name = Required(Terminal([StringKeyword])))
-                                ),
-                                EnumVariant(
-                                    name = Address,
-                                    fields = (type_name = Required(NonTerminal(AddressType)))
-                                ),
-                                EnumVariant(
-                                    name = ByteArray,
-                                    fields = (type_name = Required(Terminal([BytesKeyword])))
-                                ),
-                                EnumVariant(
-                                    name = SignedInteger,
-                                    fields = (type_name = Required(Terminal([IntKeyword])))
-                                ),
-                                EnumVariant(
-                                    name = UnsignedInteger,
-                                    fields = (type_name = Required(Terminal([UintKeyword])))
-                                ),
+                                EnumVariant(name = String, reference = StringKeyword),
+                                EnumVariant(name = Address, reference = AddressType),
+                                EnumVariant(name = Payable, reference = PayableKeyword),
+                                EnumVariant(name = ByteArray, reference = BytesKeyword),
+                                EnumVariant(name = SignedInteger, reference = IntKeyword),
+                                EnumVariant(name = UnsignedInteger, reference = UintKeyword),
                                 EnumVariant(
                                     name = SignedFixedPointNumber,
-                                    fields = (type_name = Required(Terminal([FixedKeyword])))
+                                    reference = FixedKeyword
                                 ),
                                 EnumVariant(
                                     name = UnsignedFixedPointNumber,
-                                    fields = (type_name = Required(Terminal([UfixedKeyword])))
+                                    reference = UfixedKeyword
                                 )
                             ]
                         ),
-                        Enum(
+                        Struct(
                             name = AddressType,
-                            default_variant = Address,
-                            variants = [
-                                EnumVariant(
-                                    name = Address,
-                                    fields = (
-                                        address_keyword = Required(Terminal([AddressKeyword])),
-                                        payable_keyword =
-                                            Optional(kind = Terminal([PayableKeyword]))
-                                    )
-                                ),
-                                EnumVariant(
-                                    name = Payable,
-                                    fields =
-                                        (payable_keyword = Required(Terminal([PayableKeyword])))
-                                )
-                            ]
+                            fields = (
+                                address_keyword = Required(Terminal([AddressKeyword])),
+                                payable_keyword = Optional(kind = Terminal([PayableKeyword]))
+                            )
                         )
                     ]
                 )
@@ -3111,93 +2851,56 @@ codegen_language_macros::compile!(Language(
                         Repeated(name = Statements, repeated = Statement, allow_empty = true),
                         Enum(
                             name = Statement,
-                            default_variant = Block,
                             variants = [
                                 EnumVariant(
                                     name = TupleDeconstruction,
-                                    fields = (statement =
-                                        Required(NonTerminal(TupleDeconstructionStatement)))
+                                    reference = TupleDeconstructionStatement
                                 ),
                                 EnumVariant(
                                     name = VariableDeclaration,
-                                    fields = (statement =
-                                        Required(NonTerminal(VariableDeclarationStatement)))
+                                    reference = VariableDeclarationStatement
                                 ),
-                                EnumVariant(
-                                    name = If,
-                                    fields = (statement = Required(NonTerminal(IfStatement)))
-                                ),
-                                EnumVariant(
-                                    name = For,
-                                    fields = (statement = Required(NonTerminal(ForStatement)))
-                                ),
-                                EnumVariant(
-                                    name = While,
-                                    fields = (statement = Required(NonTerminal(WhileStatement)))
-                                ),
-                                EnumVariant(
-                                    name = DoWhile,
-                                    fields = (statement = Required(NonTerminal(DoWhileStatement)))
-                                ),
-                                EnumVariant(
-                                    name = Continue,
-                                    fields = (statement = Required(NonTerminal(ContinueStatement)))
-                                ),
-                                EnumVariant(
-                                    name = Break,
-                                    fields = (statement = Required(NonTerminal(BreakStatement)))
-                                ),
-                                EnumVariant(
-                                    name = Delete,
-                                    fields = (statement = Required(NonTerminal(DeleteStatement)))
-                                ),
-                                EnumVariant(
-                                    name = Return,
-                                    fields = (statement = Required(NonTerminal(ReturnStatement)))
-                                ),
+                                EnumVariant(name = If, reference = IfStatement),
+                                EnumVariant(name = For, reference = ForStatement),
+                                EnumVariant(name = While, reference = WhileStatement),
+                                EnumVariant(name = DoWhile, reference = DoWhileStatement),
+                                EnumVariant(name = Continue, reference = ContinueStatement),
+                                EnumVariant(name = Break, reference = BreakStatement),
+                                EnumVariant(name = Delete, reference = DeleteStatement),
+                                EnumVariant(name = Return, reference = ReturnStatement),
                                 EnumVariant(
                                     name = Throw,
-                                    disabled_in = "0.5.0",
-                                    fields = (statement = Required(NonTerminal(ThrowStatement)))
+                                    enabled = Till("0.5.0"),
+                                    reference = ThrowStatement
                                 ),
                                 EnumVariant(
                                     name = Emit,
-                                    enabled_in = "0.4.21",
-                                    fields = (statement = Required(NonTerminal(EmitStatement)))
+                                    enabled = From("0.4.21"),
+                                    reference = EmitStatement
                                 ),
                                 EnumVariant(
                                     name = Try,
-                                    enabled_in = "0.6.0",
-                                    fields = (statement = Required(NonTerminal(TryStatement)))
+                                    enabled = From("0.6.0"),
+                                    reference = TryStatement
                                 ),
                                 EnumVariant(
                                     name = Revert,
-                                    enabled_in = "0.8.4",
-                                    fields = (statement = Required(NonTerminal(RevertStatement)))
+                                    enabled = From("0.8.4"),
+                                    reference = RevertStatement
                                 ),
-                                EnumVariant(
-                                    name = Assembly,
-                                    fields = (statement = Required(NonTerminal(AssemblyStatement)))
-                                ),
-                                EnumVariant(
-                                    name = Block,
-                                    fields = (block = Required(NonTerminal(Block)))
-                                ),
+                                EnumVariant(name = Assembly, reference = AssemblyStatement),
+                                EnumVariant(name = Block, reference = Block),
                                 EnumVariant(
                                     name = UncheckedBlock,
-                                    enabled_in = "0.8.0",
-                                    fields = (block = Required(NonTerminal(UncheckedBlock)))
+                                    enabled = From("0.8.0"),
+                                    reference = UncheckedBlock
                                 ),
-                                EnumVariant(
-                                    name = Expression,
-                                    fields =
-                                        (statement = Required(NonTerminal(ExpressionStatement)))
-                                )
+                                EnumVariant(name = Expression, reference = ExpressionStatement)
                             ]
                         ),
                         Struct(
                             name = UncheckedBlock,
-                            enabled_in = "0.8.0",
+                            enabled = From("0.8.0"),
                             fields = (
                                 unchecked_keyword = Required(Terminal([UncheckedKeyword])),
                                 block = Required(NonTerminal(Block))
@@ -3244,26 +2947,25 @@ codegen_language_macros::compile!(Language(
                         ),
                         Enum(
                             name = TupleMember,
-                            default_variant = Typed,
                             variants = [
-                                EnumVariant(
-                                    name = Typed,
-                                    fields = (
-                                        type_name = Required(NonTerminal(TypeName)),
-                                        storage_location =
-                                            Optional(kind = NonTerminal(StorageLocation)),
-                                        name = Required(Terminal([Identifier]))
-                                    )
-                                ),
-                                EnumVariant(
-                                    name = Untyped,
-                                    fields = (
-                                        storage_location =
-                                            Optional(kind = NonTerminal(StorageLocation)),
-                                        name = Required(Terminal([Identifier]))
-                                    )
-                                )
+                                EnumVariant(name = Typed, reference = TypedTupleMember),
+                                EnumVariant(name = Untyped, reference = UntypedTupleMember)
                             ]
+                        ),
+                        Struct(
+                            name = TypedTupleMember,
+                            fields = (
+                                type_name = Required(NonTerminal(TypeName)),
+                                storage_location = Optional(kind = NonTerminal(StorageLocation)),
+                                name = Required(Terminal([Identifier]))
+                            )
+                        ),
+                        Struct(
+                            name = UntypedTupleMember,
+                            fields = (
+                                storage_location = Optional(kind = NonTerminal(StorageLocation)),
+                                name = Required(Terminal([Identifier]))
+                            )
                         ),
                         Struct(
                             name = VariableDeclarationStatement,
@@ -3278,16 +2980,12 @@ codegen_language_macros::compile!(Language(
                         ),
                         Enum(
                             name = VariableDeclarationType,
-                            default_variant = Typed,
                             variants = [
-                                EnumVariant(
-                                    name = Typed,
-                                    fields = (type_name = Required(NonTerminal(TypeName)))
-                                ),
+                                EnumVariant(name = Typed, reference = TypeName),
                                 EnumVariant(
                                     name = Untyped,
-                                    disabled_in = "0.5.0",
-                                    fields = (type_name = Required(Terminal([VarKeyword])))
+                                    enabled = Till("0.5.0"),
+                                    reference = VarKeyword
                                 )
                             ]
                         ),
@@ -3300,20 +2998,13 @@ codegen_language_macros::compile!(Language(
                         ),
                         Enum(
                             name = StorageLocation,
-                            default_variant = Memory,
                             variants = [
-                                EnumVariant(
-                                    name = Memory,
-                                    fields = (keyword = Required(Terminal([MemoryKeyword])))
-                                ),
-                                EnumVariant(
-                                    name = Storage,
-                                    fields = (keyword = Required(Terminal([StorageKeyword])))
-                                ),
+                                EnumVariant(name = Memory, reference = MemoryKeyword),
+                                EnumVariant(name = Storage, reference = StorageKeyword),
                                 EnumVariant(
                                     name = CallData,
-                                    enabled_in = "0.5.0",
-                                    fields = (keyword = Required(Terminal([CallDataKeyword])))
+                                    enabled = From("0.5.0"),
+                                    reference = CallDataKeyword
                                 )
                             ]
                         )
@@ -3362,42 +3053,24 @@ codegen_language_macros::compile!(Language(
                         ),
                         Enum(
                             name = ForStatementInitialization,
-                            default_variant = Semicolon,
                             variants = [
-                                EnumVariant(
-                                    name = Expression,
-                                    fields =
-                                        (statement = Required(NonTerminal(ExpressionStatement)))
-                                ),
+                                EnumVariant(name = Expression, reference = ExpressionStatement),
                                 EnumVariant(
                                     name = VariableDeclaration,
-                                    fields = (statement =
-                                        Required(NonTerminal(VariableDeclarationStatement)))
+                                    reference = VariableDeclarationStatement
                                 ),
                                 EnumVariant(
                                     name = TupleDeconstruction,
-                                    fields = (statement =
-                                        Required(NonTerminal(TupleDeconstructionStatement)))
+                                    reference = TupleDeconstructionStatement
                                 ),
-                                EnumVariant(
-                                    name = Semicolon,
-                                    fields = (semicolon = Required(Terminal([Semicolon])))
-                                )
+                                EnumVariant(name = Semicolon, reference = Semicolon)
                             ]
                         ),
                         Enum(
                             name = ForStatementCondition,
-                            default_variant = Semicolon,
                             variants = [
-                                EnumVariant(
-                                    name = Expression,
-                                    fields =
-                                        (statement = Required(NonTerminal(ExpressionStatement)))
-                                ),
-                                EnumVariant(
-                                    name = Semicolon,
-                                    fields = (semicolon = Required(Terminal([Semicolon])))
-                                )
+                                EnumVariant(name = Expression, reference = ExpressionStatement),
+                                EnumVariant(name = Semicolon, reference = Semicolon)
                             ]
                         ),
                         Struct(
@@ -3458,7 +3131,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Struct(
                             name = EmitStatement,
-                            enabled_in = "0.4.21",
+                            enabled = From("0.4.21"),
                             error_recovery = FieldsErrorRecovery(terminator = semicolon),
                             fields = (
                                 emit_keyword = Required(Terminal([EmitKeyword])),
@@ -3483,7 +3156,7 @@ codegen_language_macros::compile!(Language(
                     items = [
                         Struct(
                             name = TryStatement,
-                            enabled_in = "0.6.0",
+                            enabled = From("0.6.0"),
                             fields = (
                                 try_keyword = Required(Terminal([TryKeyword])),
                                 expression = Required(NonTerminal(Expression)),
@@ -3495,11 +3168,11 @@ codegen_language_macros::compile!(Language(
                         Repeated(
                             name = CatchClauses,
                             repeated = CatchClause,
-                            enabled_in = "0.6.0"
+                            enabled = From("0.6.0")
                         ),
                         Struct(
                             name = CatchClause,
-                            enabled_in = "0.6.0",
+                            enabled = From("0.6.0"),
                             fields = (
                                 catch_keyword = Required(Terminal([CatchKeyword])),
                                 error = Optional(kind = NonTerminal(CatchClauseError)),
@@ -3508,7 +3181,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Struct(
                             name = CatchClauseError,
-                            enabled_in = "0.6.0",
+                            enabled = From("0.6.0"),
                             fields = (
                                 name = Optional(kind = Terminal([Identifier])),
                                 parameters = Required(NonTerminal(ParametersDeclaration))
@@ -3516,7 +3189,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Struct(
                             name = RevertStatement,
-                            enabled_in = "0.8.4",
+                            enabled = From("0.8.4"),
                             error_recovery = FieldsErrorRecovery(terminator = semicolon),
                             fields = (
                                 revert_keyword = Required(Terminal([RevertKeyword])),
@@ -3527,7 +3200,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Struct(
                             name = ThrowStatement,
-                            disabled_in = "0.5.0",
+                            enabled = Till("0.5.0"),
                             error_recovery = FieldsErrorRecovery(terminator = semicolon),
                             fields = (
                                 throw_keyword = Required(Terminal([ThrowKeyword])),
@@ -3667,14 +3340,14 @@ codegen_language_macros::compile!(Language(
                                         // Before '0.6.0', it was left-associative:
                                         PrecedenceOperator(
                                             model = BinaryLeftAssociative,
-                                            disabled_in = "0.6.0",
+                                            enabled = Till("0.6.0"),
                                             fields =
                                                 (operator = Required(Terminal([AsteriskAsterisk])))
                                         ),
                                         // In '0.6.0', it became right-associative:
                                         PrecedenceOperator(
                                             model = BinaryRightAssociative,
-                                            enabled_in = "0.6.0",
+                                            enabled = From("0.6.0"),
                                             fields =
                                                 (operator = Required(Terminal([AsteriskAsterisk])))
                                         )
@@ -3694,7 +3367,7 @@ codegen_language_macros::compile!(Language(
                                         // Before '0.5.0', 'Plus' was supported:
                                         PrecedenceOperator(
                                             model = Prefix,
-                                            disabled_in = "0.5.0",
+                                            enabled = Till("0.5.0"),
                                             fields = (operator = Required(Terminal([
                                                 PlusPlus, MinusMinus, Tilde, Bang, Minus, Plus
                                             ])))
@@ -3702,7 +3375,7 @@ codegen_language_macros::compile!(Language(
                                         // In '0.5.0', 'Plus' was removed:
                                         PrecedenceOperator(
                                             model = Prefix,
-                                            enabled_in = "0.5.0",
+                                            enabled = From("0.5.0"),
                                             fields = (operator = Required(Terminal([
                                                 PlusPlus, MinusMinus, Tilde, Bang, Minus
                                             ])))
@@ -3714,7 +3387,10 @@ codegen_language_macros::compile!(Language(
                                     operators = [PrecedenceOperator(
                                         model = Postfix,
                                         fields = (
-                                            options = Required(NonTerminal(FunctionCallOptions)),
+                                            options = Optional(
+                                                kind = NonTerminal(FunctionCallOptions),
+                                                enabled = From("0.6.2")
+                                            ),
                                             arguments = Required(NonTerminal(ArgumentsDeclaration))
                                         )
                                     )]
@@ -3749,16 +3425,16 @@ codegen_language_macros::compile!(Language(
                                     )]
                                 )
                             ],
-                            default_primary_expression = Identifier,
                             primary_expressions = [
                                 PrimaryExpression(expression = NewExpression),
                                 PrimaryExpression(expression = TupleExpression),
                                 PrimaryExpression(
                                     expression = TypeExpression,
-                                    enabled_in = "0.5.3"
+                                    enabled = From("0.5.3")
                                 ),
                                 PrimaryExpression(expression = ArrayExpression),
-                                PrimaryExpression(expression = NumberExpression),
+                                PrimaryExpression(expression = HexNumberExpression),
+                                PrimaryExpression(expression = DecimalNumberExpression),
                                 PrimaryExpression(expression = StringExpression),
                                 PrimaryExpression(expression = ElementaryType),
                                 PrimaryExpression(expression = TrueKeyword),
@@ -3780,54 +3456,41 @@ codegen_language_macros::compile!(Language(
                     items = [
                         Enum(
                             name = FunctionCallOptions,
-                            default_variant = None,
+                            enabled = From("0.6.2"),
                             variants = [
                                 EnumVariant(
                                     name = Multiple,
-                                    enabled_in = "0.6.2",
-                                    disabled_in = "0.8.0",
-                                    fields = (options =
-                                        Required(NonTerminal(NamedArgumentsDeclarations)))
+                                    enabled = Range(from = "0.6.2", till = "0.8.0"),
+                                    reference = NamedArgumentGroups
                                 ),
                                 EnumVariant(
                                     name = Single,
-                                    enabled_in = "0.8.0",
-                                    fields = (options =
-                                        Optional(kind = NonTerminal(NamedArgumentsDeclaration)))
-                                ),
-                                EnumVariant(name = None, disabled_in = "0.6.2", fields = ())
+                                    enabled = From("0.8.0"),
+                                    reference = NamedArgumentGroup
+                                )
                             ]
                         ),
                         Enum(
                             name = ArgumentsDeclaration,
-                            default_variant = Positional,
                             variants = [
                                 EnumVariant(
                                     name = Positional,
-                                    error_recovery = FieldsErrorRecovery(
-                                        delimiters =
-                                            FieldDelimiters(open = open_paren, close = close_paren)
-                                    ),
-                                    fields = (
-                                        open_paren = Required(Terminal([OpenParen])),
-                                        arguments = Required(NonTerminal(PositionalArguments)),
-                                        close_paren = Required(Terminal([CloseParen]))
-                                    )
+                                    reference = PositionalArgumentsDeclaration
                                 ),
-                                EnumVariant(
-                                    name = Named,
-                                    error_recovery = FieldsErrorRecovery(
-                                        delimiters =
-                                            FieldDelimiters(open = open_paren, close = close_paren)
-                                    ),
-                                    fields = (
-                                        open_paren = Required(Terminal([OpenParen])),
-                                        arguments =
-                                            Optional(kind = NonTerminal(NamedArgumentsDeclaration)),
-                                        close_paren = Required(Terminal([CloseParen]))
-                                    )
-                                )
+                                EnumVariant(name = Named, reference = NamedArgumentsDeclaration)
                             ]
+                        ),
+                        Struct(
+                            name = PositionalArgumentsDeclaration,
+                            error_recovery = FieldsErrorRecovery(
+                                delimiters =
+                                    FieldDelimiters(open = open_paren, close = close_paren)
+                            ),
+                            fields = (
+                                open_paren = Required(Terminal([OpenParen])),
+                                arguments = Required(NonTerminal(PositionalArguments)),
+                                close_paren = Required(Terminal([CloseParen]))
+                            )
                         ),
                         Separated(
                             name = PositionalArguments,
@@ -3835,15 +3498,25 @@ codegen_language_macros::compile!(Language(
                             separator = Comma,
                             allow_empty = true
                         ),
-                        Repeated(
-                            name = NamedArgumentsDeclarations,
-                            repeated = NamedArgumentsDeclaration,
-                            enabled_in = "0.6.2",
-                            disabled_in = "0.8.0",
-                            allow_empty = true
-                        ),
                         Struct(
                             name = NamedArgumentsDeclaration,
+                            error_recovery = FieldsErrorRecovery(
+                                delimiters =
+                                    FieldDelimiters(open = open_paren, close = close_paren)
+                            ),
+                            fields = (
+                                open_paren = Required(Terminal([OpenParen])),
+                                arguments = Optional(kind = NonTerminal(NamedArgumentGroup)),
+                                close_paren = Required(Terminal([CloseParen]))
+                            )
+                        ),
+                        Repeated(
+                            name = NamedArgumentGroups,
+                            repeated = NamedArgumentGroup,
+                            enabled = Range(from = "0.6.2", till = "0.8.0")
+                        ),
+                        Struct(
+                            name = NamedArgumentGroup,
                             error_recovery = FieldsErrorRecovery(
                                 delimiters =
                                     FieldDelimiters(open = open_brace, close = close_brace)
@@ -3875,7 +3548,7 @@ codegen_language_macros::compile!(Language(
                     items = [
                         Struct(
                             name = TypeExpression,
-                            enabled_in = "0.5.3",
+                            enabled = From("0.5.3"),
                             error_recovery = FieldsErrorRecovery(
                                 delimiters =
                                     FieldDelimiters(open = open_paren, close = close_paren)
@@ -3937,34 +3610,28 @@ codegen_language_macros::compile!(Language(
                 Topic(
                     title = "Numbers",
                     items = [
-                        Enum(
-                            name = NumberExpression,
-                            default_variant = Decimal,
-                            variants = [
-                                EnumVariant(
-                                    name = Hex,
-                                    fields = (
-                                        literal = Required(Terminal([HexLiteral])),
-                                        unit = Optional(
-                                            kind = NonTerminal(NumberUnit),
-                                            disabled_in = "0.5.0"
-                                        )
-                                    )
-                                ),
-                                EnumVariant(
-                                    name = Decimal,
-                                    fields = (
-                                        literal = Required(Terminal([DecimalLiteral])),
-                                        unit = Optional(kind = NonTerminal(NumberUnit))
-                                    )
+                        Struct(
+                            name = HexNumberExpression,
+                            fields = (
+                                literal = Required(Terminal([HexLiteral])),
+                                unit = Optional(
+                                    kind = NonTerminal(NumberUnit),
+                                    enabled = Till("0.5.0")
                                 )
-                            ]
+                            )
+                        ),
+                        Struct(
+                            name = DecimalNumberExpression,
+                            fields = (
+                                literal = Required(Terminal([DecimalLiteral])),
+                                unit = Optional(kind = NonTerminal(NumberUnit))
+                            )
                         ),
                         Token(
                             name = HexLiteral,
                             definitions = [
+                                // Lowercase "0x" enabled in all versions:
                                 TokenDefinition(
-                                    // Lowercase "0x" enabled in all versions:
                                     scanner = TrailingContext(
                                         scanner = Sequence([
                                             Atom("0x"),
@@ -3977,9 +3644,9 @@ codegen_language_macros::compile!(Language(
                                         not_followed_by = Fragment(IdentifierPart)
                                     )
                                 ),
+                                // Uppercase "0X" only enabled before "0.5.0":
                                 TokenDefinition(
-                                    // Uppercase "0X" only enabled before "0.5.0":
-                                    disabled_in = "0.5.0",
+                                    enabled = Till("0.5.0"),
                                     scanner = TrailingContext(
                                         scanner = Sequence([
                                             Atom("0X"),
@@ -3997,8 +3664,8 @@ codegen_language_macros::compile!(Language(
                         Token(
                             name = DecimalLiteral,
                             definitions = [
+                                // An integer (without a dot or a fraction) is enabled in all versions:
                                 TokenDefinition(
-                                    // An integer (without a dot or a fraction) is enabled in all versions:
                                     scanner = TrailingContext(
                                         scanner = Sequence([
                                             Fragment(DecimalDigits),
@@ -4007,9 +3674,9 @@ codegen_language_macros::compile!(Language(
                                         not_followed_by = Fragment(IdentifierPart)
                                     )
                                 ),
+                                // An integer and a dot (without a fraction) is disabled in "0.5.0"
                                 TokenDefinition(
-                                    // An integer and a dot (without a fraction) is disabled in "0.5.0"
-                                    disabled_in = "0.5.0",
+                                    enabled = Till("0.5.0"),
                                     scanner = TrailingContext(
                                         scanner = Sequence([
                                             Fragment(DecimalDigits),
@@ -4019,8 +3686,8 @@ codegen_language_macros::compile!(Language(
                                         not_followed_by = Fragment(IdentifierPart)
                                     )
                                 ),
+                                // A dot and a fraction (without an integer) is enabled in all versions:
                                 TokenDefinition(
-                                    // A dot and a fraction (without an integer) is enabled in all versions:
                                     scanner = TrailingContext(
                                         scanner = Sequence([
                                             Atom("."),
@@ -4030,8 +3697,8 @@ codegen_language_macros::compile!(Language(
                                         not_followed_by = Fragment(IdentifierPart)
                                     )
                                 ),
+                                // An integer, a dot, and a fraction is enabled in all versions:
                                 TokenDefinition(
-                                    // An integer, a dot, and a fraction is enabled in all versions:
                                     scanner = TrailingContext(
                                         scanner = Sequence([
                                             Fragment(DecimalDigits),
@@ -4064,60 +3731,38 @@ codegen_language_macros::compile!(Language(
                         ),
                         Enum(
                             name = NumberUnit,
-                            default_variant = Seconds,
                             variants = [
-                                EnumVariant(
-                                    name = Wei,
-                                    // 1e-18 ETH
-                                    fields = (keyword = Required(Terminal([WeiKeyword])))
-                                ),
+                                // 1e-18 ETH
+                                EnumVariant(name = Wei, reference = WeiKeyword),
+                                // 1e-9 ETH
                                 EnumVariant(
                                     name = Gwei,
-                                    // 1e-9 ETH
-                                    enabled_in = "0.6.11",
-                                    fields = (keyword = Required(Terminal([GweiKeyword])))
+                                    enabled = From("0.6.11"),
+                                    reference = GweiKeyword
                                 ),
+                                // 1e-6 ETH
                                 EnumVariant(
                                     name = Szabo,
-                                    // 1e-6 ETH
-                                    disabled_in = "0.7.0",
-                                    fields = (keyword = Required(Terminal([SzaboKeyword])))
+                                    enabled = Till("0.7.0"),
+                                    reference = SzaboKeyword
                                 ),
+                                // 1e-3 ETH
                                 EnumVariant(
                                     name = Finney,
-                                    // 1e-3 ETH
-                                    disabled_in = "0.7.0",
-                                    fields = (keyword = Required(Terminal([FinneyKeyword])))
+                                    enabled = Till("0.7.0"),
+                                    reference = FinneyKeyword
                                 ),
-                                EnumVariant(
-                                    name = Ether,
-                                    // 1 ETH
-                                    fields = (keyword = Required(Terminal([EtherKeyword])))
-                                ),
-                                EnumVariant(
-                                    name = Seconds,
-                                    fields = (keyword = Required(Terminal([SecondsKeyword])))
-                                ),
-                                EnumVariant(
-                                    name = Minutes,
-                                    fields = (keyword = Required(Terminal([MinutesKeyword])))
-                                ),
-                                EnumVariant(
-                                    name = Hours,
-                                    fields = (keyword = Required(Terminal([HoursKeyword])))
-                                ),
-                                EnumVariant(
-                                    name = Days,
-                                    fields = (keyword = Required(Terminal([DaysKeyword])))
-                                ),
-                                EnumVariant(
-                                    name = Weeks,
-                                    fields = (keyword = Required(Terminal([WeeksKeyword])))
-                                ),
+                                // 1 ETH
+                                EnumVariant(name = Ether, reference = EtherKeyword),
+                                EnumVariant(name = Seconds, reference = SecondsKeyword),
+                                EnumVariant(name = Minutes, reference = MinutesKeyword),
+                                EnumVariant(name = Hours, reference = HoursKeyword),
+                                EnumVariant(name = Days, reference = DaysKeyword),
+                                EnumVariant(name = Weeks, reference = WeeksKeyword),
                                 EnumVariant(
                                     name = Years,
-                                    disabled_in = "0.5.0",
-                                    fields = (keyword = Required(Terminal([YearsKeyword])))
+                                    enabled = Till("0.5.0"),
+                                    reference = YearsKeyword
                                 )
                             ]
                         )
@@ -4128,22 +3773,13 @@ codegen_language_macros::compile!(Language(
                     items = [
                         Enum(
                             name = StringExpression,
-                            default_variant = Ascii,
                             variants = [
-                                EnumVariant(
-                                    name = Hex,
-                                    fields = (literals = Required(NonTerminal(HexStringLiterals)))
-                                ),
-                                EnumVariant(
-                                    name = Ascii,
-                                    fields =
-                                        (literals = Required(NonTerminal(AsciiStringLiterals)))
-                                ),
+                                EnumVariant(name = Hex, reference = HexStringLiterals),
+                                EnumVariant(name = Ascii, reference = AsciiStringLiterals),
                                 EnumVariant(
                                     name = Unicode,
-                                    enabled_in = "0.7.0",
-                                    fields =
-                                        (literals = Required(NonTerminal(UnicodeStringLiterals)))
+                                    enabled = From("0.7.0"),
+                                    reference = UnicodeStringLiterals
                                 )
                             ]
                         ),
@@ -4238,12 +3874,12 @@ codegen_language_macros::compile!(Language(
                         Repeated(
                             name = UnicodeStringLiterals,
                             repeated = UnicodeStringLiteral,
-                            enabled_in = "0.7.0"
+                            enabled = From("0.7.0")
                         ),
                         Token(
                             name = UnicodeStringLiteral,
                             definitions = [TokenDefinition(
-                                enabled_in = "0.7.0",
+                                enabled = From("0.7.0"),
                                 scanner = TrailingContext(
                                     scanner = Choice([
                                         Fragment(SingleQuotedUnicodeString),
@@ -4255,7 +3891,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Fragment(
                             name = SingleQuotedUnicodeString,
-                            enabled_in = "0.7.0",
+                            enabled = From("0.7.0"),
                             scanner = Sequence([
                                 Atom("unicode'"),
                                 ZeroOrMore(Choice([
@@ -4267,7 +3903,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Fragment(
                             name = DoubleQuotedUnicodeString,
-                            enabled_in = "0.7.0",
+                            enabled = From("0.7.0"),
                             scanner = Sequence([
                                 Atom("unicode\""),
                                 ZeroOrMore(Choice([
@@ -4413,58 +4049,25 @@ codegen_language_macros::compile!(Language(
                         ),
                         Enum(
                             name = YulStatement,
-                            default_variant = Block,
                             variants = [
-                                EnumVariant(
-                                    name = Block,
-                                    fields = (block = Required(NonTerminal(YulBlock)))
-                                ),
-                                EnumVariant(
-                                    name = Function,
-                                    fields =
-                                        (definition = Required(NonTerminal(YulFunctionDefinition)))
-                                ),
+                                EnumVariant(name = Block, reference = YulBlock),
+                                EnumVariant(name = Function, reference = YulFunctionDefinition),
                                 EnumVariant(
                                     name = VariableDeclaration,
-                                    fields = (statement =
-                                        Required(NonTerminal(YulVariableDeclarationStatement)))
+                                    reference = YulVariableDeclarationStatement
                                 ),
-                                EnumVariant(
-                                    name = Assignment,
-                                    fields =
-                                        (statement = Required(NonTerminal(YulAssignmentStatement)))
-                                ),
-                                EnumVariant(
-                                    name = If,
-                                    fields = (statement = Required(NonTerminal(YulIfStatement)))
-                                ),
-                                EnumVariant(
-                                    name = For,
-                                    fields = (statement = Required(NonTerminal(YulForStatement)))
-                                ),
-                                EnumVariant(
-                                    name = Switch,
-                                    fields =
-                                        (statement = Required(NonTerminal(YulSwitchStatement)))
-                                ),
+                                EnumVariant(name = Assignment, reference = YulAssignmentStatement),
+                                EnumVariant(name = If, reference = YulIfStatement),
+                                EnumVariant(name = For, reference = YulForStatement),
+                                EnumVariant(name = Switch, reference = YulSwitchStatement),
                                 EnumVariant(
                                     name = Leave,
-                                    enabled_in = "0.6.0",
-                                    fields = (statement = Required(NonTerminal(YulLeaveStatement)))
+                                    enabled = From("0.6.0"),
+                                    reference = YulLeaveStatement
                                 ),
-                                EnumVariant(
-                                    name = Break,
-                                    fields = (statement = Required(NonTerminal(YulBreakStatement)))
-                                ),
-                                EnumVariant(
-                                    name = Continue,
-                                    fields =
-                                        (statement = Required(NonTerminal(YulContinueStatement)))
-                                ),
-                                EnumVariant(
-                                    name = Expression,
-                                    fields = (expression = Required(NonTerminal(YulExpression)))
-                                )
+                                EnumVariant(name = Break, reference = YulBreakStatement),
+                                EnumVariant(name = Continue, reference = YulContinueStatement),
+                                EnumVariant(name = Expression, reference = YulExpression)
                             ]
                         ),
                         Struct(
@@ -4540,7 +4143,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Struct(
                             name = YulLeaveStatement,
-                            enabled_in = "0.6.0",
+                            enabled = From("0.6.0"),
                             fields = (leave_keyword = Required(Terminal([YulLeaveKeyword])))
                         ),
                         Struct(
@@ -4572,24 +4175,25 @@ codegen_language_macros::compile!(Language(
                         Repeated(name = YulSwitchCases, repeated = YulSwitchCase),
                         Enum(
                             name = YulSwitchCase,
-                            default_variant = Default,
                             variants = [
-                                EnumVariant(
-                                    name = Default,
-                                    fields = (
-                                        default_keyword = Required(Terminal([YulDefaultKeyword])),
-                                        body = Required(NonTerminal(YulBlock))
-                                    )
-                                ),
-                                EnumVariant(
-                                    name = Case,
-                                    fields = (
-                                        case_keyword = Required(Terminal([YulCaseKeyword])),
-                                        value = Required(NonTerminal(YulLiteral)),
-                                        body = Required(NonTerminal(YulBlock))
-                                    )
-                                )
+                                EnumVariant(name = Default, reference = YulDefaultCase),
+                                EnumVariant(name = Value, reference = YulValueCase)
                             ]
+                        ),
+                        Struct(
+                            name = YulDefaultCase,
+                            fields = (
+                                default_keyword = Required(Terminal([YulDefaultKeyword])),
+                                body = Required(NonTerminal(YulBlock))
+                            )
+                        ),
+                        Struct(
+                            name = YulValueCase,
+                            fields = (
+                                case_keyword = Required(Terminal([YulCaseKeyword])),
+                                value = Required(NonTerminal(YulLiteral)),
+                                body = Required(NonTerminal(YulBlock))
+                            )
                         )
                     ]
                 ),
@@ -4614,7 +4218,6 @@ codegen_language_macros::compile!(Language(
                                     )
                                 )]
                             )],
-                            default_primary_expression = YulLiteral,
                             primary_expressions = [
                                 PrimaryExpression(expression = YulLiteral),
                                 PrimaryExpression(expression = YulIdentifierPath)
@@ -4642,32 +4245,13 @@ codegen_language_macros::compile!(Language(
                         ),
                         Enum(
                             name = YulLiteral,
-                            default_variant = Decimal,
                             variants = [
-                                EnumVariant(
-                                    name = True,
-                                    fields = (literal = Required(Terminal([YulTrueKeyword])))
-                                ),
-                                EnumVariant(
-                                    name = False,
-                                    fields = (literal = Required(Terminal([YulFalseKeyword])))
-                                ),
-                                EnumVariant(
-                                    name = Decimal,
-                                    fields = (literal = Required(Terminal([YulDecimalLiteral])))
-                                ),
-                                EnumVariant(
-                                    name = Hex,
-                                    fields = (literal = Required(Terminal([YulHexLiteral])))
-                                ),
-                                EnumVariant(
-                                    name = HexString,
-                                    fields = (literal = Required(Terminal([HexStringLiteral])))
-                                ),
-                                EnumVariant(
-                                    name = AsciiString,
-                                    fields = (literal = Required(Terminal([AsciiStringLiteral])))
-                                )
+                                EnumVariant(name = True, reference = YulTrueKeyword),
+                                EnumVariant(name = False, reference = YulFalseKeyword),
+                                EnumVariant(name = Decimal, reference = YulDecimalLiteral),
+                                EnumVariant(name = Hex, reference = YulHexLiteral),
+                                EnumVariant(name = HexString, reference = HexStringLiteral),
+                                EnumVariant(name = AsciiString, reference = AsciiStringLiteral)
                             ]
                         ),
                         Token(
@@ -4708,25 +4292,23 @@ codegen_language_macros::compile!(Language(
                             name = YulAbstractKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                unreserved_in = "0.7.1",
+                                enabled = Never,
+                                reserved = Till("0.7.1"),
                                 value = Atom("abstract")
                             )]
                         ),
                         Keyword(
                             name = YulAddressKeyword,
                             identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                value = Atom("address")
-                            )]
+                            definitions =
+                                [KeywordDefinition(enabled = Never, value = Atom("address"))]
                         ),
                         Keyword(
                             name = YulAfterKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                unreserved_in = "0.7.1",
+                                enabled = Never,
+                                reserved = Till("0.7.1"),
                                 value = Atom("after")
                             )]
                         ),
@@ -4734,9 +4316,8 @@ codegen_language_macros::compile!(Language(
                             name = YulAliasKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                reserved_in = "0.5.0",
-                                unreserved_in = "0.7.1",
+                                enabled = Never,
+                                reserved = Range(from = "0.5.0", till = "0.7.1"),
                                 value = Atom("alias")
                             )]
                         ),
@@ -4744,8 +4325,8 @@ codegen_language_macros::compile!(Language(
                             name = YulAnonymousKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                unreserved_in = "0.7.1",
+                                enabled = Never,
+                                reserved = Till("0.7.1"),
                                 value = Atom("anonymous")
                             )]
                         ),
@@ -4753,9 +4334,8 @@ codegen_language_macros::compile!(Language(
                             name = YulApplyKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                reserved_in = "0.5.0",
-                                unreserved_in = "0.7.1",
+                                enabled = Never,
+                                reserved = Range(from = "0.5.0", till = "0.7.1"),
                                 value = Atom("apply")
                             )]
                         ),
@@ -4763,8 +4343,8 @@ codegen_language_macros::compile!(Language(
                             name = YulAsKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                unreserved_in = "0.7.1",
+                                enabled = Never,
+                                reserved = Till("0.7.1"),
                                 value = Atom("as")
                             )]
                         ),
@@ -4772,8 +4352,8 @@ codegen_language_macros::compile!(Language(
                             name = YulAssemblyKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                unreserved_in = "0.7.1",
+                                enabled = Never,
+                                reserved = Till("0.7.1"),
                                 value = Atom("assembly")
                             )]
                         ),
@@ -4781,9 +4361,8 @@ codegen_language_macros::compile!(Language(
                             name = YulAutoKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                reserved_in = "0.5.0",
-                                unreserved_in = "0.7.1",
+                                enabled = Never,
+                                reserved = Range(from = "0.5.0", till = "0.7.1"),
                                 value = Atom("auto")
                             )]
                         ),
@@ -4791,8 +4370,8 @@ codegen_language_macros::compile!(Language(
                             name = YulBoolKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                unreserved_in = "0.5.10",
+                                enabled = Never,
+                                reserved = Till("0.5.10"),
                                 value = Atom("bool")
                             )]
                         ),
@@ -4804,17 +4383,15 @@ codegen_language_macros::compile!(Language(
                         Keyword(
                             name = YulByteKeyword,
                             identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                value = Atom("byte")
-                            )]
+                            definitions =
+                                [KeywordDefinition(enabled = Never, value = Atom("byte"))]
                         ),
                         Keyword(
                             name = YulBytesKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                unreserved_in = "0.7.1",
+                                enabled = Never,
+                                reserved = Till("0.7.1"),
                                 value = Sequence([
                                     Atom("bytes"),
                                     Choice([
@@ -4858,9 +4435,8 @@ codegen_language_macros::compile!(Language(
                             name = YulCallDataKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                reserved_in = "0.5.0",
-                                unreserved_in = "0.7.1",
+                                enabled = Never,
+                                reserved = Range(from = "0.5.0", till = "0.7.1"),
                                 value = Atom("calldata")
                             )]
                         ),
@@ -4873,8 +4449,8 @@ codegen_language_macros::compile!(Language(
                             name = YulCatchKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                unreserved_in = "0.7.1",
+                                enabled = Never,
+                                reserved = Till("0.7.1"),
                                 value = Atom("catch")
                             )]
                         ),
@@ -4882,8 +4458,8 @@ codegen_language_macros::compile!(Language(
                             name = YulConstantKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                unreserved_in = "0.7.1",
+                                enabled = Never,
+                                reserved = Till("0.7.1"),
                                 value = Atom("constant")
                             )]
                         ),
@@ -4891,9 +4467,8 @@ codegen_language_macros::compile!(Language(
                             name = YulConstructorKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                reserved_in = "0.5.0",
-                                unreserved_in = "0.7.1",
+                                enabled = Never,
+                                reserved = Range(from = "0.5.0", till = "0.7.1"),
                                 value = Atom("constructor")
                             )]
                         ),
@@ -4906,8 +4481,8 @@ codegen_language_macros::compile!(Language(
                             name = YulContractKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                unreserved_in = "0.7.1",
+                                enabled = Never,
+                                reserved = Till("0.7.1"),
                                 value = Atom("contract")
                             )]
                         ),
@@ -4915,9 +4490,8 @@ codegen_language_macros::compile!(Language(
                             name = YulCopyOfKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                reserved_in = "0.5.0",
-                                unreserved_in = "0.7.1",
+                                enabled = Never,
+                                reserved = Range(from = "0.5.0", till = "0.7.1"),
                                 value = Atom("copyof")
                             )]
                         ),
@@ -4925,8 +4499,8 @@ codegen_language_macros::compile!(Language(
                             name = YulDaysKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                unreserved_in = "0.7.1",
+                                enabled = Never,
+                                reserved = Till("0.7.1"),
                                 value = Atom("days")
                             )]
                         ),
@@ -4939,9 +4513,8 @@ codegen_language_macros::compile!(Language(
                             name = YulDefineKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                reserved_in = "0.5.0",
-                                unreserved_in = "0.7.1",
+                                enabled = Never,
+                                reserved = Range(from = "0.5.0", till = "0.7.1"),
                                 value = Atom("define")
                             )]
                         ),
@@ -4949,8 +4522,8 @@ codegen_language_macros::compile!(Language(
                             name = YulDeleteKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                unreserved_in = "0.7.1",
+                                enabled = Never,
+                                reserved = Till("0.7.1"),
                                 value = Atom("delete")
                             )]
                         ),
@@ -4958,8 +4531,8 @@ codegen_language_macros::compile!(Language(
                             name = YulDoKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                unreserved_in = "0.7.1",
+                                enabled = Never,
+                                reserved = Till("0.7.1"),
                                 value = Atom("do")
                             )]
                         ),
@@ -4967,8 +4540,8 @@ codegen_language_macros::compile!(Language(
                             name = YulElseKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                unreserved_in = "0.7.1",
+                                enabled = Never,
+                                reserved = Till("0.7.1"),
                                 value = Atom("else")
                             )]
                         ),
@@ -4976,9 +4549,8 @@ codegen_language_macros::compile!(Language(
                             name = YulEmitKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                reserved_in = "0.5.0",
-                                unreserved_in = "0.7.1",
+                                enabled = Never,
+                                reserved = Range(from = "0.5.0", till = "0.7.1"),
                                 value = Atom("emit")
                             )]
                         ),
@@ -4986,8 +4558,8 @@ codegen_language_macros::compile!(Language(
                             name = YulEnumKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                unreserved_in = "0.7.1",
+                                enabled = Never,
+                                reserved = Till("0.7.1"),
                                 value = Atom("enum")
                             )]
                         ),
@@ -4995,8 +4567,8 @@ codegen_language_macros::compile!(Language(
                             name = YulEtherKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                unreserved_in = "0.7.1",
+                                enabled = Never,
+                                reserved = Till("0.7.1"),
                                 value = Atom("ether")
                             )]
                         ),
@@ -5004,8 +4576,8 @@ codegen_language_macros::compile!(Language(
                             name = YulEventKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                unreserved_in = "0.7.1",
+                                enabled = Never,
+                                reserved = Till("0.7.1"),
                                 value = Atom("event")
                             )]
                         ),
@@ -5013,8 +4585,8 @@ codegen_language_macros::compile!(Language(
                             name = YulExternalKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                unreserved_in = "0.7.1",
+                                enabled = Never,
+                                reserved = Till("0.7.1"),
                                 value = Atom("external")
                             )]
                         ),
@@ -5022,9 +4594,8 @@ codegen_language_macros::compile!(Language(
                             name = YulFallbackKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                reserved_in = "0.6.0",
-                                unreserved_in = "0.7.1",
+                                enabled = Never,
+                                reserved = Range(from = "0.6.0", till = "0.7.1"),
                                 value = Atom("fallback")
                             )]
                         ),
@@ -5037,8 +4608,8 @@ codegen_language_macros::compile!(Language(
                             name = YulFinalKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                unreserved_in = "0.7.1",
+                                enabled = Never,
+                                reserved = Till("0.7.1"),
                                 value = Atom("final")
                             )]
                         ),
@@ -5046,8 +4617,8 @@ codegen_language_macros::compile!(Language(
                             name = YulFinneyKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                unreserved_in = "0.7.0",
+                                enabled = Never,
+                                reserved = Till("0.7.0"),
                                 value = Atom("finney")
                             )]
                         ),
@@ -5056,13 +4627,13 @@ codegen_language_macros::compile!(Language(
                             identifier = YulIdentifier,
                             definitions = [
                                 KeywordDefinition(
-                                    disabled_in = "0.4.11",
-                                    unreserved_in = "0.7.1",
+                                    enabled = Never,
+                                    reserved = Till("0.7.1"),
                                     value = Atom("fixed")
                                 ),
                                 KeywordDefinition(
-                                    disabled_in = "0.4.11",
-                                    unreserved_in = "0.7.1",
+                                    enabled = Never,
+                                    reserved = Till("0.7.1"),
                                     value = Sequence([
                                         Atom("fixed"),
                                         Choice([
@@ -5105,8 +4676,8 @@ codegen_language_macros::compile!(Language(
                                     ])
                                 ),
                                 KeywordDefinition(
-                                    disabled_in = "0.4.11",
-                                    unreserved_in = "0.7.1",
+                                    enabled = Never,
+                                    reserved = Till("0.7.1"),
                                     value = Sequence([
                                         Atom("fixed"),
                                         Choice([
@@ -5159,9 +4730,8 @@ codegen_language_macros::compile!(Language(
                                     ])
                                 ),
                                 KeywordDefinition(
-                                    disabled_in = "0.4.11",
-                                    reserved_in = "0.4.14",
-                                    unreserved_in = "0.7.1",
+                                    enabled = Never,
+                                    reserved = Range(from = "0.4.14", till = "0.7.1"),
                                     value = Sequence([
                                         Atom("fixed"),
                                         Choice([
@@ -5224,9 +4794,8 @@ codegen_language_macros::compile!(Language(
                                     ])
                                 ),
                                 KeywordDefinition(
-                                    disabled_in = "0.4.11",
-                                    reserved_in = "0.4.14",
-                                    unreserved_in = "0.7.1",
+                                    enabled = Never,
+                                    reserved = Range(from = "0.4.14", till = "0.7.1"),
                                     value = Sequence([
                                         Atom("fixed"),
                                         Choice([
@@ -5355,26 +4924,22 @@ codegen_language_macros::compile!(Language(
                             name = YulGweiKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                reserved_in = "0.7.0",
-                                unreserved_in = "0.7.1",
+                                enabled = Never,
+                                reserved = Range(from = "0.7.0", till = "0.7.1"),
                                 value = Atom("gwei")
                             )]
                         ),
                         Keyword(
                             name = YulHexKeyword,
                             identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                value = Atom("hex")
-                            )]
+                            definitions = [KeywordDefinition(enabled = Never, value = Atom("hex"))]
                         ),
                         Keyword(
                             name = YulHoursKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                unreserved_in = "0.7.1",
+                                enabled = Never,
+                                reserved = Till("0.7.1"),
                                 value = Atom("hours")
                             )]
                         ),
@@ -5387,9 +4952,8 @@ codegen_language_macros::compile!(Language(
                             name = YulImmutableKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                reserved_in = "0.5.0",
-                                unreserved_in = "0.7.1",
+                                enabled = Never,
+                                reserved = Range(from = "0.5.0", till = "0.7.1"),
                                 value = Atom("immutable")
                             )]
                         ),
@@ -5397,9 +4961,8 @@ codegen_language_macros::compile!(Language(
                             name = YulImplementsKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                reserved_in = "0.5.0",
-                                unreserved_in = "0.7.1",
+                                enabled = Never,
+                                reserved = Range(from = "0.5.0", till = "0.7.1"),
                                 value = Atom("implements")
                             )]
                         ),
@@ -5407,8 +4970,8 @@ codegen_language_macros::compile!(Language(
                             name = YulImportKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                unreserved_in = "0.7.1",
+                                enabled = Never,
+                                reserved = Till("0.7.1"),
                                 value = Atom("import")
                             )]
                         ),
@@ -5416,8 +4979,8 @@ codegen_language_macros::compile!(Language(
                             name = YulIndexedKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                unreserved_in = "0.7.1",
+                                enabled = Never,
+                                reserved = Till("0.7.1"),
                                 value = Atom("indexed")
                             )]
                         ),
@@ -5425,8 +4988,8 @@ codegen_language_macros::compile!(Language(
                             name = YulInKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                unreserved_in = "0.6.8",
+                                enabled = Never,
+                                reserved = Till("0.6.8"),
                                 value = Atom("in")
                             )]
                         ),
@@ -5434,8 +4997,8 @@ codegen_language_macros::compile!(Language(
                             name = YulInlineKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                unreserved_in = "0.7.1",
+                                enabled = Never,
+                                reserved = Till("0.7.1"),
                                 value = Atom("inline")
                             )]
                         ),
@@ -5443,8 +5006,8 @@ codegen_language_macros::compile!(Language(
                             name = YulInterfaceKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                unreserved_in = "0.7.1",
+                                enabled = Never,
+                                reserved = Till("0.7.1"),
                                 value = Atom("interface")
                             )]
                         ),
@@ -5452,8 +5015,8 @@ codegen_language_macros::compile!(Language(
                             name = YulInternalKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                unreserved_in = "0.7.1",
+                                enabled = Never,
+                                reserved = Till("0.7.1"),
                                 value = Atom("internal")
                             )]
                         ),
@@ -5461,8 +5024,8 @@ codegen_language_macros::compile!(Language(
                             name = YulIntKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                unreserved_in = "0.7.1",
+                                enabled = Never,
+                                reserved = Till("0.7.1"),
                                 value = Sequence([
                                     Atom("int"),
                                     Optional(Choice([
@@ -5506,8 +5069,8 @@ codegen_language_macros::compile!(Language(
                             name = YulIsKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                unreserved_in = "0.7.1",
+                                enabled = Never,
+                                reserved = Till("0.7.1"),
                                 value = Atom("is")
                             )]
                         ),
@@ -5515,8 +5078,8 @@ codegen_language_macros::compile!(Language(
                             name = YulLeaveKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                enabled_in = "0.6.0",
-                                reserved_in = "0.7.1",
+                                enabled = From("0.6.0"),
+                                reserved = From("0.7.1"),
                                 value = Atom("leave")
                             )]
                         ),
@@ -5529,8 +5092,8 @@ codegen_language_macros::compile!(Language(
                             name = YulLibraryKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                unreserved_in = "0.7.1",
+                                enabled = Never,
+                                reserved = Till("0.7.1"),
                                 value = Atom("library")
                             )]
                         ),
@@ -5538,9 +5101,8 @@ codegen_language_macros::compile!(Language(
                             name = YulMacroKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                reserved_in = "0.5.0",
-                                unreserved_in = "0.7.1",
+                                enabled = Never,
+                                reserved = Range(from = "0.5.0", till = "0.7.1"),
                                 value = Atom("macro")
                             )]
                         ),
@@ -5548,8 +5110,8 @@ codegen_language_macros::compile!(Language(
                             name = YulMappingKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                unreserved_in = "0.7.1",
+                                enabled = Never,
+                                reserved = Till("0.7.1"),
                                 value = Atom("mapping")
                             )]
                         ),
@@ -5557,8 +5119,8 @@ codegen_language_macros::compile!(Language(
                             name = YulMatchKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                unreserved_in = "0.7.1",
+                                enabled = Never,
+                                reserved = Till("0.7.1"),
                                 value = Atom("match")
                             )]
                         ),
@@ -5566,8 +5128,8 @@ codegen_language_macros::compile!(Language(
                             name = YulMemoryKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                unreserved_in = "0.7.1",
+                                enabled = Never,
+                                reserved = Till("0.7.1"),
                                 value = Atom("memory")
                             )]
                         ),
@@ -5575,8 +5137,8 @@ codegen_language_macros::compile!(Language(
                             name = YulMinutesKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                unreserved_in = "0.7.1",
+                                enabled = Never,
+                                reserved = Till("0.7.1"),
                                 value = Atom("minutes")
                             )]
                         ),
@@ -5584,8 +5146,8 @@ codegen_language_macros::compile!(Language(
                             name = YulModifierKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                unreserved_in = "0.7.1",
+                                enabled = Never,
+                                reserved = Till("0.7.1"),
                                 value = Atom("modifier")
                             )]
                         ),
@@ -5593,9 +5155,8 @@ codegen_language_macros::compile!(Language(
                             name = YulMutableKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                reserved_in = "0.5.0",
-                                unreserved_in = "0.7.1",
+                                enabled = Never,
+                                reserved = Range(from = "0.5.0", till = "0.7.1"),
                                 value = Atom("mutable")
                             )]
                         ),
@@ -5603,8 +5164,8 @@ codegen_language_macros::compile!(Language(
                             name = YulNewKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                unreserved_in = "0.7.1",
+                                enabled = Never,
+                                reserved = Till("0.7.1"),
                                 value = Atom("new")
                             )]
                         ),
@@ -5612,8 +5173,8 @@ codegen_language_macros::compile!(Language(
                             name = YulNullKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                unreserved_in = "0.7.1",
+                                enabled = Never,
+                                reserved = Till("0.7.1"),
                                 value = Atom("null")
                             )]
                         ),
@@ -5621,8 +5182,8 @@ codegen_language_macros::compile!(Language(
                             name = YulOfKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                unreserved_in = "0.7.1",
+                                enabled = Never,
+                                reserved = Till("0.7.1"),
                                 value = Atom("of")
                             )]
                         ),
@@ -5630,9 +5191,8 @@ codegen_language_macros::compile!(Language(
                             name = YulOverrideKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                reserved_in = "0.5.0",
-                                unreserved_in = "0.7.1",
+                                enabled = Never,
+                                reserved = Range(from = "0.5.0", till = "0.7.1"),
                                 value = Atom("override")
                             )]
                         ),
@@ -5640,9 +5200,8 @@ codegen_language_macros::compile!(Language(
                             name = YulPartialKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                reserved_in = "0.5.0",
-                                unreserved_in = "0.7.1",
+                                enabled = Never,
+                                reserved = Range(from = "0.5.0", till = "0.7.1"),
                                 value = Atom("partial")
                             )]
                         ),
@@ -5650,8 +5209,8 @@ codegen_language_macros::compile!(Language(
                             name = YulPayableKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                unreserved_in = "0.7.1",
+                                enabled = Never,
+                                reserved = Till("0.7.1"),
                                 value = Atom("payable")
                             )]
                         ),
@@ -5659,8 +5218,8 @@ codegen_language_macros::compile!(Language(
                             name = YulPragmaKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                unreserved_in = "0.7.1",
+                                enabled = Never,
+                                reserved = Till("0.7.1"),
                                 value = Atom("pragma")
                             )]
                         ),
@@ -5668,8 +5227,8 @@ codegen_language_macros::compile!(Language(
                             name = YulPrivateKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                unreserved_in = "0.7.1",
+                                enabled = Never,
+                                reserved = Till("0.7.1"),
                                 value = Atom("private")
                             )]
                         ),
@@ -5677,9 +5236,8 @@ codegen_language_macros::compile!(Language(
                             name = YulPromiseKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                reserved_in = "0.5.0",
-                                unreserved_in = "0.7.1",
+                                enabled = Never,
+                                reserved = Range(from = "0.5.0", till = "0.7.1"),
                                 value = Atom("promise")
                             )]
                         ),
@@ -5687,8 +5245,8 @@ codegen_language_macros::compile!(Language(
                             name = YulPublicKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                unreserved_in = "0.7.1",
+                                enabled = Never,
+                                reserved = Till("0.7.1"),
                                 value = Atom("public")
                             )]
                         ),
@@ -5696,8 +5254,8 @@ codegen_language_macros::compile!(Language(
                             name = YulPureKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                unreserved_in = "0.7.1",
+                                enabled = Never,
+                                reserved = Till("0.7.1"),
                                 value = Atom("pure")
                             )]
                         ),
@@ -5705,9 +5263,8 @@ codegen_language_macros::compile!(Language(
                             name = YulReceiveKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                reserved_in = "0.6.0",
-                                unreserved_in = "0.7.1",
+                                enabled = Never,
+                                reserved = Range(from = "0.6.0", till = "0.7.1"),
                                 value = Atom("receive")
                             )]
                         ),
@@ -5715,9 +5272,8 @@ codegen_language_macros::compile!(Language(
                             name = YulReferenceKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                reserved_in = "0.5.0",
-                                unreserved_in = "0.7.1",
+                                enabled = Never,
+                                reserved = Range(from = "0.5.0", till = "0.7.1"),
                                 value = Atom("reference")
                             )]
                         ),
@@ -5725,43 +5281,38 @@ codegen_language_macros::compile!(Language(
                             name = YulRelocatableKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                unreserved_in = "0.7.1",
+                                enabled = Never,
+                                reserved = Till("0.7.1"),
                                 value = Atom("relocatable")
                             )]
                         ),
                         Keyword(
                             name = YulReturnKeyword,
                             identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                value = Atom("return")
-                            )]
+                            definitions =
+                                [KeywordDefinition(enabled = Never, value = Atom("return"))]
                         ),
                         Keyword(
                             name = YulReturnsKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                unreserved_in = "0.7.1",
+                                enabled = Never,
+                                reserved = Till("0.7.1"),
                                 value = Atom("returns")
                             )]
                         ),
                         Keyword(
                             name = YulRevertKeyword,
                             identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                value = Atom("revert")
-                            )]
+                            definitions =
+                                [KeywordDefinition(enabled = Never, value = Atom("revert"))]
                         ),
                         Keyword(
                             name = YulSealedKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                reserved_in = "0.5.0",
-                                unreserved_in = "0.7.1",
+                                enabled = Never,
+                                reserved = Range(from = "0.5.0", till = "0.7.1"),
                                 value = Atom("sealed")
                             )]
                         ),
@@ -5769,8 +5320,8 @@ codegen_language_macros::compile!(Language(
                             name = YulSecondsKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                unreserved_in = "0.7.1",
+                                enabled = Never,
+                                reserved = Till("0.7.1"),
                                 value = Atom("seconds")
                             )]
                         ),
@@ -5778,9 +5329,8 @@ codegen_language_macros::compile!(Language(
                             name = YulSizeOfKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                reserved_in = "0.5.0",
-                                unreserved_in = "0.7.1",
+                                enabled = Never,
+                                reserved = Range(from = "0.5.0", till = "0.7.1"),
                                 value = Atom("sizeof")
                             )]
                         ),
@@ -5788,8 +5338,8 @@ codegen_language_macros::compile!(Language(
                             name = YulStaticKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                unreserved_in = "0.7.1",
+                                enabled = Never,
+                                reserved = Till("0.7.1"),
                                 value = Atom("static")
                             )]
                         ),
@@ -5797,8 +5347,8 @@ codegen_language_macros::compile!(Language(
                             name = YulStorageKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                unreserved_in = "0.7.1",
+                                enabled = Never,
+                                reserved = Till("0.7.1"),
                                 value = Atom("storage")
                             )]
                         ),
@@ -5806,8 +5356,8 @@ codegen_language_macros::compile!(Language(
                             name = YulStringKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                unreserved_in = "0.7.1",
+                                enabled = Never,
+                                reserved = Till("0.7.1"),
                                 value = Atom("string")
                             )]
                         ),
@@ -5815,8 +5365,8 @@ codegen_language_macros::compile!(Language(
                             name = YulStructKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                unreserved_in = "0.7.1",
+                                enabled = Never,
+                                reserved = Till("0.7.1"),
                                 value = Atom("struct")
                             )]
                         ),
@@ -5824,9 +5374,8 @@ codegen_language_macros::compile!(Language(
                             name = YulSupportsKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                reserved_in = "0.5.0",
-                                unreserved_in = "0.7.1",
+                                enabled = Never,
+                                reserved = Range(from = "0.5.0", till = "0.7.1"),
                                 value = Atom("supports")
                             )]
                         ),
@@ -5839,8 +5388,8 @@ codegen_language_macros::compile!(Language(
                             name = YulSzaboKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                unreserved_in = "0.7.0",
+                                enabled = Never,
+                                reserved = Till("0.7.0"),
                                 value = Atom("szabo")
                             )]
                         ),
@@ -5848,8 +5397,8 @@ codegen_language_macros::compile!(Language(
                             name = YulThrowKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                unreserved_in = "0.7.1",
+                                enabled = Never,
+                                reserved = Till("0.7.1"),
                                 value = Atom("throw")
                             )]
                         ),
@@ -5862,8 +5411,8 @@ codegen_language_macros::compile!(Language(
                             name = YulTryKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                unreserved_in = "0.7.1",
+                                enabled = Never,
+                                reserved = Till("0.7.1"),
                                 value = Atom("try")
                             )]
                         ),
@@ -5871,9 +5420,8 @@ codegen_language_macros::compile!(Language(
                             name = YulTypeDefKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                reserved_in = "0.5.0",
-                                unreserved_in = "0.7.1",
+                                enabled = Never,
+                                reserved = Range(from = "0.5.0", till = "0.7.1"),
                                 value = Atom("typedef")
                             )]
                         ),
@@ -5881,8 +5429,8 @@ codegen_language_macros::compile!(Language(
                             name = YulTypeKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                unreserved_in = "0.7.1",
+                                enabled = Never,
+                                reserved = Till("0.7.1"),
                                 value = Atom("type")
                             )]
                         ),
@@ -5890,8 +5438,8 @@ codegen_language_macros::compile!(Language(
                             name = YulTypeOfKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                unreserved_in = "0.7.1",
+                                enabled = Never,
+                                reserved = Till("0.7.1"),
                                 value = Atom("typeof")
                             )]
                         ),
@@ -5900,13 +5448,13 @@ codegen_language_macros::compile!(Language(
                             identifier = YulIdentifier,
                             definitions = [
                                 KeywordDefinition(
-                                    disabled_in = "0.4.11",
-                                    unreserved_in = "0.7.1",
+                                    enabled = Never,
+                                    reserved = Till("0.7.1"),
                                     value = Atom("ufixed")
                                 ),
                                 KeywordDefinition(
-                                    disabled_in = "0.4.11",
-                                    unreserved_in = "0.7.1",
+                                    enabled = Never,
+                                    reserved = Till("0.7.1"),
                                     value = Sequence([
                                         Atom("ufixed"),
                                         Choice([
@@ -5949,8 +5497,8 @@ codegen_language_macros::compile!(Language(
                                     ])
                                 ),
                                 KeywordDefinition(
-                                    disabled_in = "0.4.11",
-                                    unreserved_in = "0.7.1",
+                                    enabled = Never,
+                                    reserved = Till("0.7.1"),
                                     value = Sequence([
                                         Atom("ufixed"),
                                         Choice([
@@ -6003,9 +5551,8 @@ codegen_language_macros::compile!(Language(
                                     ])
                                 ),
                                 KeywordDefinition(
-                                    disabled_in = "0.4.11",
-                                    reserved_in = "0.4.14",
-                                    unreserved_in = "0.7.1",
+                                    enabled = Never,
+                                    reserved = Range(from = "0.4.14", till = "0.7.1"),
                                     value = Sequence([
                                         Atom("ufixed"),
                                         Choice([
@@ -6068,9 +5615,8 @@ codegen_language_macros::compile!(Language(
                                     ])
                                 ),
                                 KeywordDefinition(
-                                    disabled_in = "0.4.11",
-                                    reserved_in = "0.4.14",
-                                    unreserved_in = "0.7.1",
+                                    enabled = Never,
+                                    reserved = Range(from = "0.4.14", till = "0.7.1"),
                                     value = Sequence([
                                         Atom("ufixed"),
                                         Choice([
@@ -6189,8 +5735,8 @@ codegen_language_macros::compile!(Language(
                             name = YulUintKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                unreserved_in = "0.7.1",
+                                enabled = Never,
+                                reserved = Till("0.7.1"),
                                 value = Sequence([
                                     Atom("uint"),
                                     Optional(Choice([
@@ -6234,9 +5780,8 @@ codegen_language_macros::compile!(Language(
                             name = YulUncheckedKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                reserved_in = "0.5.0",
-                                unreserved_in = "0.7.1",
+                                enabled = Never,
+                                reserved = Range(from = "0.5.0", till = "0.7.1"),
                                 value = Atom("unchecked")
                             )]
                         ),
@@ -6244,8 +5789,8 @@ codegen_language_macros::compile!(Language(
                             name = YulUsingKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                unreserved_in = "0.7.1",
+                                enabled = Never,
+                                reserved = Till("0.7.1"),
                                 value = Atom("using")
                             )]
                         ),
@@ -6253,8 +5798,8 @@ codegen_language_macros::compile!(Language(
                             name = YulVarKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                unreserved_in = "0.6.5",
+                                enabled = Never,
+                                reserved = Till("0.6.5"),
                                 value = Atom("var")
                             )]
                         ),
@@ -6262,8 +5807,8 @@ codegen_language_macros::compile!(Language(
                             name = YulViewKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                unreserved_in = "0.7.1",
+                                enabled = Never,
+                                reserved = Till("0.7.1"),
                                 value = Atom("view")
                             )]
                         ),
@@ -6271,9 +5816,8 @@ codegen_language_macros::compile!(Language(
                             name = YulVirtualKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                reserved_in = "0.6.0",
-                                unreserved_in = "0.7.1",
+                                enabled = Never,
+                                reserved = Range(from = "0.6.0", till = "0.7.1"),
                                 value = Atom("virtual")
                             )]
                         ),
@@ -6281,8 +5825,8 @@ codegen_language_macros::compile!(Language(
                             name = YulWeeksKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                unreserved_in = "0.7.1",
+                                enabled = Never,
+                                reserved = Till("0.7.1"),
                                 value = Atom("weeks")
                             )]
                         ),
@@ -6290,8 +5834,8 @@ codegen_language_macros::compile!(Language(
                             name = YulWeiKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                unreserved_in = "0.7.1",
+                                enabled = Never,
+                                reserved = Till("0.7.1"),
                                 value = Atom("wei")
                             )]
                         ),
@@ -6299,8 +5843,8 @@ codegen_language_macros::compile!(Language(
                             name = YulWhileKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                unreserved_in = "0.7.1",
+                                enabled = Never,
+                                reserved = Till("0.7.1"),
                                 value = Atom("while")
                             )]
                         ),
@@ -6308,8 +5852,8 @@ codegen_language_macros::compile!(Language(
                             name = YulYearsKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
-                                disabled_in = "0.4.11",
-                                unreserved_in = "0.7.1",
+                                enabled = Never,
+                                reserved = Till("0.7.1"),
                                 value = Atom("years")
                             )]
                         )

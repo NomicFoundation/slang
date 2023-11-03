@@ -14,7 +14,7 @@ codegen_language_macros::compile!(Language(
                 Struct(
                     name = One,
                     fields = (
-                        field_1 = Optional(kind = Terminal([Two]), enabled_in = "3.0.0"),
+                        field_1 = Optional(kind = Terminal([Two]), enabled = From("3.0.0")),
                         field_2 = Optional(kind = Terminal([Two]))
                     )
                 ),

@@ -61,8 +61,7 @@ fn definition() {
                         Item::Struct {
                             item: StructItem {
                                 name: "Foo".into(),
-                                enabled_in: None,
-                                disabled_in: None,
+                                enabled: None,
                                 error_recovery: None,
                                 fields: [
                                     (
@@ -101,8 +100,7 @@ fn definition() {
                             item: TokenItem {
                                 name: "Bar".into(),
                                 definitions: [TokenDefinition {
-                                    enabled_in: None,
-                                    disabled_in: None,
+                                    enabled: None,
                                     scanner: Scanner::Atom { atom: "bar".into() }
                                 }]
                                 .into()
@@ -113,8 +111,7 @@ fn definition() {
                             item: TokenItem {
                                 name: "Baz".into(),
                                 definitions: [TokenDefinition {
-                                    enabled_in: None,
-                                    disabled_in: None,
+                                    enabled: None,
                                     scanner: Scanner::Atom { atom: "baz".into() }
                                 }]
                                 .into()
