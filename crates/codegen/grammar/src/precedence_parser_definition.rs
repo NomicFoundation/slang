@@ -15,7 +15,6 @@ impl Visitable for PrecedenceParserDefinitionRef {
     fn accept_visitor<V: GrammarVisitor>(&self, visitor: &mut V) {
         visitor.precedence_parser_definition_enter(self);
         self.node().accept_visitor(visitor);
-        visitor.precedence_parser_definition_leave(self);
     }
 }
 
@@ -34,7 +33,6 @@ impl Visitable for PrecedenceParserDefinitionNode {
     fn accept_visitor<V: GrammarVisitor>(&self, visitor: &mut V) {
         visitor.precedence_parser_definition_node_enter(self);
         self.primary_expression.accept_visitor(visitor);
-        visitor.precedence_parser_definition_node_leave(self);
     }
 }
 

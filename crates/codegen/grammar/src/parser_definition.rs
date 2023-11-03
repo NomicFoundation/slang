@@ -16,7 +16,6 @@ impl Visitable for ParserDefinitionRef {
     fn accept_visitor<V: GrammarVisitor>(&self, visitor: &mut V) {
         visitor.parser_definition_enter(self);
         self.node().accept_visitor(visitor);
-        visitor.parser_definition_leave(self);
     }
 }
 
@@ -32,7 +31,6 @@ impl Visitable for TriviaParserDefinitionRef {
     fn accept_visitor<V: GrammarVisitor>(&self, visitor: &mut V) {
         visitor.trivia_parser_definition_enter(self);
         self.node().accept_visitor(visitor);
-        visitor.trivia_parser_definition_leave(self);
     }
 }
 
@@ -113,6 +111,5 @@ impl Visitable for ParserDefinitionNode {
             | Self::ParserDefinition(_)
             | Self::PrecedenceParserDefinition(_) => {}
         }
-        visitor.parser_definition_node_leave(self);
     }
 }

@@ -76,7 +76,6 @@ impl Into<GrammarElement> for PrecedenceParserDefinitionRef {
 
 impl Visitable for GrammarElement {
     fn accept_visitor<V: GrammarVisitor>(&self, visitor: &mut V) {
-        visitor.grammar_element_enter(self);
         match self {
             Self::ScannerDefinition(scanner) => scanner.accept_visitor(visitor),
             Self::TriviaParserDefinition(trivia_parser) => trivia_parser.accept_visitor(visitor),
@@ -85,6 +84,5 @@ impl Visitable for GrammarElement {
                 precedence_parser.accept_visitor(visitor)
             }
         }
-        visitor.grammar_element_leave(self);
     }
 }

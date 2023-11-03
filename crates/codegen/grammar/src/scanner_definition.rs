@@ -14,7 +14,6 @@ impl Visitable for ScannerDefinitionRef {
     fn accept_visitor<V: GrammarVisitor>(&self, visitor: &mut V) {
         visitor.scanner_definition_enter(self);
         self.node().accept_visitor(visitor);
-        visitor.scanner_definition_leave(self);
     }
 }
 
@@ -64,6 +63,5 @@ impl Visitable for ScannerDefinitionNode {
             | Self::Literal(_)
             | Self::ScannerDefinition(_) => {}
         }
-        visitor.scanner_definition_node_leave(self);
     }
 }
