@@ -9,7 +9,6 @@
   "rust-analyzer.check.allTargets": true,
   "rust-analyzer.check.command": "clippy",
   "rust-analyzer.check.features": "all",
-  "rust-analyzer.checkOnSave": true,
   "rust-analyzer.server.path": "${workspaceFolder}/bin/rust-analyzer",
   "search.exclude": {
     // Packages and Dependencies

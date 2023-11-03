@@ -7,7 +7,9 @@ use anyhow::{ensure, Context, Result};
 use regex::Regex;
 use semver::Version;
 
-use crate::{cargo::manifest::WorkspaceManifest, commands::Command, paths::PathExtensions};
+use crate::{
+    cargo::manifest::WorkspaceManifest, commands::Command, github::GitHub, paths::PathExtensions,
+};
 
 pub struct CargoWorkspace;
 
@@ -95,5 +97,27 @@ impl CargoWorkspace {
         ensure!(updated_contents.starts_with(&updated_header));
 
         return cargo_toml.write_string(updated_contents);
+    }
+
+    pub fn get_command(subcommand: impl AsRef<str>) -> Result<Command> {
+        let mut command = Command::new("cargo")
+            .arg(subcommand.as_ref())
+            .flag("--all")
+            .flag("--all-targets")
+            .flag("--all-features");
+
+        if GitHub::is_running_in_ci() {
+            // Using `$RUSTFLAGS' or '--' overrides any rustflags from `.cargo/config.toml'.
+            // Using this syntax instead, as it is concatenated with the existing flags:
+            command = command.property(
+                "--config",
+                format!(
+                    "build.rustflags = {rustflags}",
+                    rustflags = serde_json::to_string(&["--deny", "warnings"])?,
+                ),
+            );
+        }
+
+        return Ok(command);
     }
 }

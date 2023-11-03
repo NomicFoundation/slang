@@ -1,7 +1,7 @@
 use crate::utils::{ClapExtensions, OrderedCommand, Terminal};
 use anyhow::Result;
 use clap::{Parser, ValueEnum};
-use infra_utils::{commands::Command, github::GitHub};
+use infra_utils::{cargo::CargoWorkspace, commands::Command, github::GitHub};
 
 #[derive(Clone, Debug, Default, Parser)]
 pub struct TestController {
@@ -35,13 +35,7 @@ impl OrderedCommand for TestCommand {
 }
 
 fn test_cargo() -> Result<()> {
-    let mut command = Command::new("cargo")
-        .arg("test")
-        .flag("--quiet")
-        .flag("--offline")
-        .flag("--all")
-        .flag("--all-targets")
-        .flag("--all-features");
+    let mut command = CargoWorkspace::get_command("test")?.flag("--quiet");
 
     if GitHub::is_running_in_ci() {
         command = command.flag("--no-fail-fast");
