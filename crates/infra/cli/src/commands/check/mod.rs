@@ -1,6 +1,6 @@
 use anyhow::Result;
 use clap::{Parser, ValueEnum};
-use infra_utils::{commands::Command, github::GitHub};
+use infra_utils::cargo::CargoWorkspace;
 
 use crate::{
     toolchains::{
@@ -45,20 +45,7 @@ impl OrderedCommand for CheckCommand {
 }
 
 fn check_cargo() -> Result<()> {
-    let mut command = Command::new("cargo")
-        .arg("check")
-        .flag("--offline")
-        .flag("--all")
-        .flag("--all-targets")
-        .flag("--all-features");
-
-    if GitHub::is_running_in_ci() {
-        let rustflags = serde_json::to_string(&["--deny", "warnings"])?;
-
-        command = command.property("--config", format!("build.rustflags = {rustflags}"));
-    }
-
-    return command.run();
+    return CargoWorkspace::get_check_command("check")?.run();
 }
 
 fn check_npm() -> Result<()> {
