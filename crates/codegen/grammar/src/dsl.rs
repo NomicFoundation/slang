@@ -180,7 +180,6 @@ macro_rules! slang_grammar_definition {
         }
 
         impl $name {
-            const SOURCE_LOCATION: $crate::SourceLocation = slang_location!();
             const NAME: &str = stringify!($name);
             fn instance() -> $crate::$trait_ref {
                 use ::std::rc::Rc;
@@ -196,9 +195,6 @@ macro_rules! slang_grammar_definition {
         impl $crate::$trait for $name {
             fn name(&self) -> &'static str {
                 Self::NAME
-            }
-            fn source_location(&self) -> $crate::SourceLocation {
-                Self::SOURCE_LOCATION
             }
             fn node(&self) -> &$crate::$node_type {
                 &self.node.get_or_init(|| $dsl_macro!($value))
@@ -242,40 +238,25 @@ macro_rules! slang_grammar_register_definitions {
 }
 
 #[macro_export]
-macro_rules! slang_location {
-    // Meaningless in macro_rules! because the locations are all wrong.
-    () => {
-        $crate::SourceLocation {
-            file: file!(),
-            line: line!(),
-            column: column!(),
-        }
-    };
-}
-
-#[macro_export]
 macro_rules! slang_parser {
 
     ( $x:ident ) => {
-        ($x::instance(), slang_location!()).into()
+        $x::instance().into()
     };
 
     (( $x:tt ? )) => {
         $crate::ParserDefinitionNode::Optional(
-            Box::new(slang_parser!($x)) ,
-            slang_location!()
+            Box::new(slang_parser!($x))
         )
     };
     (( $x:tt * )) => {
         $crate::ParserDefinitionNode::ZeroOrMore(
-            Box::new(slang_parser!($x)) ,
-            slang_location!()
+            Box::new(slang_parser!($x)),
         )
     };
     (( $x:tt + )) => {
         $crate::ParserDefinitionNode::OneOrMore(
-            Box::new(slang_parser!($x)) ,
-            slang_location!()
+            Box::new(slang_parser!($x)),
         )
     };
 
@@ -284,28 +265,24 @@ macro_rules! slang_parser {
             Box::new(slang_parser!($o)),
             Box::new(slang_parser!($b)),
             Box::new(slang_parser!($c)),
-            slang_location!()
         )
     };
     (( $b:tt terminated by $t:tt )) => {
         $crate::ParserDefinitionNode::TerminatedBy(
             Box::new(slang_parser!($b)),
             Box::new(slang_parser!($t)),
-            slang_location!()
         )
     };
     (( $b:tt separated by $s:tt )) => {
         $crate::ParserDefinitionNode::SeparatedBy(
             Box::new(slang_parser!($b)),
             Box::new(slang_parser!($s)),
-            slang_location!()
         )
     };
 
     (( $first:tt | $($rest:tt)|+ )) => {
         $crate::ParserDefinitionNode::Choice(
             vec![slang_parser!($first), $(slang_parser!($rest)),+],
-            slang_location!()
         )
     };
 
@@ -316,7 +293,6 @@ macro_rules! slang_parser {
     (( $($rest:tt)+ )) => {
         $crate::ParserDefinitionNode::Sequence(
             vec![$(slang_parser!($rest)),+],
-            slang_location!()
         )
     };
 
@@ -333,7 +309,6 @@ macro_rules! slang_precedence_parser {
         $crate::PrecedenceParserDefinitionNode {
             primary_expression: Box::new(slang_parser!($primary)),
             operators: slang_precedence_parser_operators!([ [] [] ] $($operators)+),
-            source_location: slang_location!()
         }
     };
 
@@ -420,8 +395,8 @@ macro_rules! slang_precedence_parser_operators {
                     $($version,)*
                     {
                         $crate::VersionQualityRange {
-                            from: (semver::Version::parse($from).unwrap(), slang_location!()),
-                            quality: ($crate::VersionQuality::Introduced, slang_location!())
+                            from: semver::Version::parse($from).unwrap(),
+                            quality: $crate::VersionQuality::Introduced
                         }
                     }
                 ]
@@ -436,8 +411,8 @@ macro_rules! slang_precedence_parser_operators {
                     $($version,)*
                     {
                         $crate::VersionQualityRange {
-                            from: (semver::Version::parse($from).unwrap(), slang_location!()),
-                            quality: ($crate::VersionQuality::Removed, slang_location!())
+                            from: semver::Version::parse($from).unwrap(),
+                            quality: $crate::VersionQuality::Removed
                         }
                     }
                 ]
@@ -456,42 +431,36 @@ macro_rules! slang_scanner {
     ( $x:literal ) => {
         $crate::ScannerDefinitionNode::Literal(
             $x.to_string(),
-            slang_location!()
         )
     };
     ( $x:ident ) => {
-        ($x::instance(), slang_location!()).into()
+        ($x::instance()).into()
     };
 
     (( ! $x:literal )) => {
         $crate::ScannerDefinitionNode::NoneOf(
             $x.to_string(),
-            slang_location!()
         )
     };
     (( $x:tt ? )) => {
         $crate::ScannerDefinitionNode::Optional(
-            Box::new(slang_scanner!($x)) ,
-            slang_location!()
+            Box::new(slang_scanner!($x)),
         )
     };
     (( $x:tt * )) => {
         $crate::ScannerDefinitionNode::ZeroOrMore(
-            Box::new(slang_scanner!($x)) ,
-            slang_location!()
+            Box::new(slang_scanner!($x)),
         )
     };
     (( $x:tt + )) => {
         $crate::ScannerDefinitionNode::OneOrMore(
-            Box::new(slang_scanner!($x)) ,
-            slang_location!()
+            Box::new(slang_scanner!($x)),
         )
     };
 
     (( $x:literal .. $y:literal )) => {
         $crate::ScannerDefinitionNode::CharRange(
             $x, $y,
-            slang_location!()
         )
     };
 
@@ -499,7 +468,6 @@ macro_rules! slang_scanner {
         $crate::ScannerDefinitionNode::NotFollowedBy(
             Box::new(slang_scanner!($b)),
             Box::new(slang_scanner!($nla)),
-            slang_location!()
         )
     };
 
@@ -507,7 +475,6 @@ macro_rules! slang_scanner {
     (( $first:tt | $($rest:tt)|+ )) => {
         $crate::ScannerDefinitionNode::Choice(
             vec![slang_scanner!($first), $(slang_scanner!($rest)),+],
-            slang_location!()
         )
     };
 
@@ -518,7 +485,6 @@ macro_rules! slang_scanner {
     (( $($rest:tt)+ )) => {
         $crate::ScannerDefinitionNode::Sequence(
             vec![$(slang_scanner!($rest)),+],
-            slang_location!()
         )
     };
 
@@ -552,8 +518,8 @@ macro_rules! slang_dsl_versioned {
                     $($accum,)*
                     {
                         $crate::VersionQualityRange {
-                            from: (semver::Version::parse($from).unwrap(), slang_location!()),
-                            quality: ($crate::VersionQuality::$quality, slang_location!())
+                            from: semver::Version::parse($from).unwrap(),
+                            quality: $crate::VersionQuality::$quality,
                         }
                     }
                 ]
@@ -565,7 +531,6 @@ macro_rules! slang_dsl_versioned {
         $crate::$node_type::Versioned(
             Box::new($dsl_macro!($($rest)+)),
             vec! $accum,
-            slang_location!()
         )
     };
 

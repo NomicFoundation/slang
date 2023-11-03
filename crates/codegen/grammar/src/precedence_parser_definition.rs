@@ -8,7 +8,6 @@ where
     Self: std::fmt::Debug,
 {
     fn name(&self) -> &'static str;
-    fn source_location(&self) -> SourceLocation;
     fn node(&self) -> &PrecedenceParserDefinitionNode;
     fn context(&self) -> &'static str;
 }
@@ -32,7 +31,6 @@ pub struct PrecedenceParserDefinitionNode {
         &'static str, // name
         ParserDefinitionRef,
     )>,
-    pub source_location: SourceLocation,
 }
 
 impl Visitable for PrecedenceParserDefinitionNode {

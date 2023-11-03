@@ -48,17 +48,6 @@ impl GrammarElement {
             Self::PrecedenceParserDefinition(precedence_parser) => precedence_parser.name(),
         }
     }
-
-    pub fn source_location(&self) -> SourceLocation {
-        match self {
-            Self::ScannerDefinition(scanner) => scanner.source_location(),
-            Self::TriviaParserDefinition(trivia_parser) => trivia_parser.source_location(),
-            Self::ParserDefinition(parser) => parser.source_location(),
-            Self::PrecedenceParserDefinition(precedence_parser) => {
-                precedence_parser.source_location()
-            }
-        }
-    }
 }
 
 impl Into<GrammarElement> for ScannerDefinitionRef {

@@ -270,21 +270,21 @@ impl GrammarVisitor for CodeGenerator {
     }
 
     fn scanner_definition_node_enter(&mut self, node: &ScannerDefinitionNode) {
-        if let ScannerDefinitionNode::Versioned(_, version_quality_ranges, _) = node {
+        if let ScannerDefinitionNode::Versioned(_, version_quality_ranges) = node {
             for vqr in version_quality_ranges {
-                self.referenced_versions.insert(vqr.from.0.clone());
+                self.referenced_versions.insert(vqr.from.clone());
             }
         }
     }
 
     fn parser_definition_node_enter(&mut self, node: &ParserDefinitionNode) {
         match node {
-            ParserDefinitionNode::Versioned(_, version_quality_ranges, _) => {
+            ParserDefinitionNode::Versioned(_, version_quality_ranges) => {
                 for vqr in version_quality_ranges {
-                    self.referenced_versions.insert(vqr.from.0.clone());
+                    self.referenced_versions.insert(vqr.from.clone());
                 }
             }
-            ParserDefinitionNode::ScannerDefinition(scanner, _) => {
+            ParserDefinitionNode::ScannerDefinition(scanner) => {
                 self.top_level_scanner_names.insert(scanner.name());
                 self.token_kinds.insert(scanner.name());
                 self.scanner_contexts_map
@@ -294,7 +294,7 @@ impl GrammarVisitor for CodeGenerator {
                     .insert(scanner.name());
             }
             // Collect delimiters for each context
-            ParserDefinitionNode::DelimitedBy(open, _, close, _) => {
+            ParserDefinitionNode::DelimitedBy(open, _, close) => {
                 let (open, close) = match (open.as_ref(), close.as_ref()) {
                     (
                         ParserDefinitionNode::ScannerDefinition(open, ..),
@@ -321,7 +321,7 @@ impl GrammarVisitor for CodeGenerator {
     fn precedence_parser_definition_node_enter(&mut self, node: &PrecedenceParserDefinitionNode) {
         for operator in &node.operators {
             for vqr in &operator.0 {
-                self.referenced_versions.insert(vqr.from.0.clone());
+                self.referenced_versions.insert(vqr.from.clone());
             }
         }
     }

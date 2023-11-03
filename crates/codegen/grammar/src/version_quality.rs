@@ -1,6 +1,5 @@
-use super::*;
-
 use semver::Version;
+
 #[derive(Clone, Debug, Copy, PartialEq, Eq, strum_macros::Display)]
 pub enum VersionQuality {
     Introduced,
@@ -9,6 +8,6 @@ pub enum VersionQuality {
 
 #[derive(Clone, Debug)]
 pub struct VersionQualityRange {
-    pub from: (Version, SourceLocation),
-    pub quality: (VersionQuality, SourceLocation),
+    pub from: Version,
+    pub quality: VersionQuality,
 }

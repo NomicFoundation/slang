@@ -67,7 +67,7 @@ impl Trie {
             if branches.is_empty() && !path.is_empty() {
                 // This is an optimisation for a common case
                 let leaf = quote! { scan_chars!(input, #(#path),*).then_some(TokenKind::#kind) };
-                return if let ScannerDefinitionNode::Versioned(_, version_quality_ranges, _) =
+                return if let ScannerDefinitionNode::Versioned(_, version_quality_ranges) =
                     scanner_definition_ref.node()
                 {
                     version_quality_ranges.wrap_code(leaf, Some(quote! { None }))
@@ -76,7 +76,7 @@ impl Trie {
                 };
             }
 
-            if let ScannerDefinitionNode::Versioned(_, version_quality_ranges, _) =
+            if let ScannerDefinitionNode::Versioned(_, version_quality_ranges) =
                 scanner_definition_ref.node()
             {
                 version_quality_ranges
