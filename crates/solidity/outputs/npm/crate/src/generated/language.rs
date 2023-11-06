@@ -5056,14 +5056,10 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn ascii_string_literal(&self, input: &mut ParserContext) -> bool {
-        scan_not_followed_by!(
+        scan_choice!(
             input,
-            scan_choice!(
-                input,
-                self.single_quoted_ascii_string_literal(input),
-                self.double_quoted_ascii_string_literal(input)
-            ),
-            self.identifier_start(input)
+            self.single_quoted_ascii_string_literal(input),
+            self.double_quoted_ascii_string_literal(input)
         )
     }
 
@@ -5321,14 +5317,10 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn hex_string_literal(&self, input: &mut ParserContext) -> bool {
-        scan_not_followed_by!(
+        scan_choice!(
             input,
-            scan_choice!(
-                input,
-                self.single_quoted_hex_string_literal(input),
-                self.double_quoted_hex_string_literal(input)
-            ),
-            self.identifier_start(input)
+            self.single_quoted_hex_string_literal(input),
+            self.double_quoted_hex_string_literal(input)
         )
     }
 
@@ -5505,14 +5497,10 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn unicode_string_literal(&self, input: &mut ParserContext) -> bool {
         if self.version_is_at_least_0_7_0 {
-            scan_not_followed_by!(
+            scan_choice!(
                 input,
-                scan_choice!(
-                    input,
-                    self.single_quoted_unicode_string_literal(input),
-                    self.double_quoted_unicode_string_literal(input)
-                ),
-                self.identifier_start(input)
+                self.single_quoted_unicode_string_literal(input),
+                self.double_quoted_unicode_string_literal(input)
             )
         } else {
             false

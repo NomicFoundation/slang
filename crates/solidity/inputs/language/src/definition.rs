@@ -122,8 +122,15 @@ codegen_language_macros::compile!(Language(
                             name = ExperimentalPragma,
                             fields = (
                                 experimental_keyword = Required(Terminal([ExperimentalKeyword])),
-                                feature = Required(Terminal([AsciiStringLiteral, Identifier]))
+                                feature = Required(NonTerminal(ExperimentalFeature))
                             )
+                        ),
+                        Enum(
+                            name = ExperimentalFeature,
+                            variants = [
+                                EnumVariant(name = Identifier, reference = Identifier),
+                                EnumVariant(name = String, reference = AsciiStringLiteral)
+                            ]
                         ),
                         Struct(
                             name = VersionPragma,
@@ -216,7 +223,7 @@ codegen_language_macros::compile!(Language(
                         Struct(
                             name = PathImportSymbol,
                             fields = (
-                                path = Required(Terminal([AsciiStringLiteral])),
+                                path = Required(NonTerminal(AsciiStringLiteral)),
                                 alias = Optional(kind = NonTerminal(ImportAlias))
                             )
                         ),
@@ -226,7 +233,7 @@ codegen_language_macros::compile!(Language(
                                 asterisk = Required(Terminal([Asterisk])),
                                 alias = Required(NonTerminal(ImportAlias)),
                                 from_keyword = Required(Terminal([FromKeyword])),
-                                path = Required(Terminal([AsciiStringLiteral]))
+                                path = Required(NonTerminal(AsciiStringLiteral))
                             )
                         ),
                         Struct(
@@ -240,7 +247,7 @@ codegen_language_macros::compile!(Language(
                                 fields = Required(NonTerminal(ImportDeconstructionFields)),
                                 close_brace = Required(Terminal([CloseBrace])),
                                 from_keyword = Required(Terminal([FromKeyword])),
-                                path = Required(Terminal([AsciiStringLiteral]))
+                                path = Required(NonTerminal(AsciiStringLiteral))
                             )
                         ),
                         Separated(
@@ -3641,7 +3648,7 @@ codegen_language_macros::compile!(Language(
                                                 OneOrMore(Fragment(HexCharacter))
                                             ]))
                                         ]),
-                                        not_followed_by = Fragment(IdentifierPart)
+                                        not_followed_by = Fragment(IdentifierStart)
                                     )
                                 ),
                                 // Uppercase "0X" only enabled before "0.5.0":
@@ -3656,7 +3663,7 @@ codegen_language_macros::compile!(Language(
                                                 OneOrMore(Fragment(HexCharacter))
                                             ]))
                                         ]),
-                                        not_followed_by = Fragment(IdentifierPart)
+                                        not_followed_by = Fragment(IdentifierStart)
                                     )
                                 )
                             ]
@@ -3671,7 +3678,7 @@ codegen_language_macros::compile!(Language(
                                             Fragment(DecimalDigits),
                                             Optional(Fragment(DecimalExponent))
                                         ]),
-                                        not_followed_by = Fragment(IdentifierPart)
+                                        not_followed_by = Fragment(IdentifierStart)
                                     )
                                 ),
                                 // An integer and a dot (without a fraction) is disabled in "0.5.0"
@@ -3683,7 +3690,7 @@ codegen_language_macros::compile!(Language(
                                             Atom("."),
                                             Optional(Fragment(DecimalExponent))
                                         ]),
-                                        not_followed_by = Fragment(IdentifierPart)
+                                        not_followed_by = Fragment(IdentifierStart)
                                     )
                                 ),
                                 // A dot and a fraction (without an integer) is enabled in all versions:
@@ -3694,7 +3701,7 @@ codegen_language_macros::compile!(Language(
                                             Fragment(DecimalDigits),
                                             Optional(Fragment(DecimalExponent))
                                         ]),
-                                        not_followed_by = Fragment(IdentifierPart)
+                                        not_followed_by = Fragment(IdentifierStart)
                                     )
                                 ),
                                 // An integer, a dot, and a fraction is enabled in all versions:
@@ -3706,7 +3713,7 @@ codegen_language_macros::compile!(Language(
                                             Fragment(DecimalDigits),
                                             Optional(Fragment(DecimalExponent))
                                         ]),
-                                        not_followed_by = Fragment(IdentifierPart)
+                                        not_followed_by = Fragment(IdentifierStart)
                                     )
                                 )
                             ]
@@ -3784,33 +3791,38 @@ codegen_language_macros::compile!(Language(
                             ]
                         ),
                         Repeated(name = HexStringLiterals, repeated = HexStringLiteral),
-                        Token(
+                        Enum(
                             name = HexStringLiteral,
-                            definitions = [TokenDefinition(
-                                scanner = TrailingContext(
-                                    scanner = Choice([
-                                        Fragment(SingleQuotedHexString),
-                                        Fragment(DoubleQuotedHexString)
-                                    ]),
-                                    not_followed_by = Fragment(IdentifierPart)
+                            variants = [
+                                EnumVariant(
+                                    name = SingleQuoted,
+                                    reference = SingleQuotedHexStringLiteral
+                                ),
+                                EnumVariant(
+                                    name = DoubleQuoted,
+                                    reference = DoubleQuotedHexStringLiteral
                                 )
+                            ]
+                        ),
+                        Token(
+                            name = SingleQuotedHexStringLiteral,
+                            definitions = [TokenDefinition(
+                                scanner = Sequence([
+                                    Atom("hex'"),
+                                    Optional(Fragment(HexStringContents)),
+                                    Atom("'")
+                                ])
                             )]
                         ),
-                        Fragment(
-                            name = SingleQuotedHexString,
-                            scanner = Sequence([
-                                Atom("hex'"),
-                                Optional(Fragment(HexStringContents)),
-                                Atom("'")
-                            ])
-                        ),
-                        Fragment(
-                            name = DoubleQuotedHexString,
-                            scanner = Sequence([
-                                Atom("hex\""),
-                                Optional(Fragment(HexStringContents)),
-                                Atom("\"")
-                            ])
+                        Token(
+                            name = DoubleQuotedHexStringLiteral,
+                            definitions = [TokenDefinition(
+                                scanner = Sequence([
+                                    Atom("hex\""),
+                                    Optional(Fragment(HexStringContents)),
+                                    Atom("\"")
+                                ])
+                            )]
                         ),
                         Fragment(
                             name = HexStringContents,
@@ -3833,85 +3845,95 @@ codegen_language_macros::compile!(Language(
                             ])
                         ),
                         Repeated(name = AsciiStringLiterals, repeated = AsciiStringLiteral),
-                        Token(
+                        Enum(
                             name = AsciiStringLiteral,
-                            definitions = [TokenDefinition(
-                                scanner = TrailingContext(
-                                    scanner = Choice([
-                                        Fragment(SingleQuotedAsciiString),
-                                        Fragment(DoubleQuotedAsciiString)
-                                    ]),
-                                    not_followed_by = Fragment(IdentifierPart)
+                            variants = [
+                                EnumVariant(
+                                    name = SingleQuoted,
+                                    reference = SingleQuotedAsciiStringLiteral
+                                ),
+                                EnumVariant(
+                                    name = DoubleQuoted,
+                                    reference = DoubleQuotedAsciiStringLiteral
                                 )
+                            ]
+                        ),
+                        Token(
+                            name = SingleQuotedAsciiStringLiteral,
+                            definitions = [TokenDefinition(
+                                scanner = Sequence([
+                                    Atom("'"),
+                                    ZeroOrMore(Choice([
+                                        Fragment(EscapeSequence),
+                                        Range(inclusive_start = ' ', inclusive_end = '&'),
+                                        Range(inclusive_start = '(', inclusive_end = '['),
+                                        Range(inclusive_start = ']', inclusive_end = '~')
+                                    ])),
+                                    Atom("'")
+                                ])
                             )]
                         ),
-                        Fragment(
-                            name = SingleQuotedAsciiString,
-                            scanner = Sequence([
-                                Atom("'"),
-                                ZeroOrMore(Choice([
-                                    Fragment(EscapeSequence),
-                                    Range(inclusive_start = ' ', inclusive_end = '&'),
-                                    Range(inclusive_start = '(', inclusive_end = '['),
-                                    Range(inclusive_start = ']', inclusive_end = '~')
-                                ])),
-                                Atom("'")
-                            ])
-                        ),
-                        Fragment(
-                            name = DoubleQuotedAsciiString,
-                            scanner = Sequence([
-                                Atom("\""),
-                                ZeroOrMore(Choice([
-                                    Fragment(EscapeSequence),
-                                    Range(inclusive_start = ' ', inclusive_end = '!'),
-                                    Range(inclusive_start = '#', inclusive_end = '['),
-                                    Range(inclusive_start = ']', inclusive_end = '~')
-                                ])),
-                                Atom("\"")
-                            ])
+                        Token(
+                            name = DoubleQuotedAsciiStringLiteral,
+                            definitions = [TokenDefinition(
+                                scanner = Sequence([
+                                    Atom("\""),
+                                    ZeroOrMore(Choice([
+                                        Fragment(EscapeSequence),
+                                        Range(inclusive_start = ' ', inclusive_end = '!'),
+                                        Range(inclusive_start = '#', inclusive_end = '['),
+                                        Range(inclusive_start = ']', inclusive_end = '~')
+                                    ])),
+                                    Atom("\"")
+                                ])
+                            )]
                         ),
                         Repeated(
                             name = UnicodeStringLiterals,
                             repeated = UnicodeStringLiteral,
                             enabled = From("0.7.0")
                         ),
-                        Token(
+                        Enum(
                             name = UnicodeStringLiteral,
+                            enabled = From("0.7.0"),
+                            variants = [
+                                EnumVariant(
+                                    name = SingleQuoted,
+                                    reference = SingleQuotedUnicodeStringLiteral
+                                ),
+                                EnumVariant(
+                                    name = DoubleQuoted,
+                                    reference = DoubleQuotedUnicodeStringLiteral
+                                )
+                            ]
+                        ),
+                        Token(
+                            name = SingleQuotedUnicodeStringLiteral,
                             definitions = [TokenDefinition(
                                 enabled = From("0.7.0"),
-                                scanner = TrailingContext(
-                                    scanner = Choice([
-                                        Fragment(SingleQuotedUnicodeString),
-                                        Fragment(DoubleQuotedUnicodeString)
-                                    ]),
-                                    not_followed_by = Fragment(IdentifierPart)
-                                )
+                                scanner = Sequence([
+                                    Atom("unicode'"),
+                                    ZeroOrMore(Choice([
+                                        Fragment(EscapeSequence),
+                                        Not(['\'', '\\', '\r', '\n'])
+                                    ])),
+                                    Atom("'")
+                                ])
                             )]
                         ),
-                        Fragment(
-                            name = SingleQuotedUnicodeString,
-                            enabled = From("0.7.0"),
-                            scanner = Sequence([
-                                Atom("unicode'"),
-                                ZeroOrMore(Choice([
-                                    Fragment(EscapeSequence),
-                                    Not(['\'', '\\', '\r', '\n'])
-                                ])),
-                                Atom("'")
-                            ])
-                        ),
-                        Fragment(
-                            name = DoubleQuotedUnicodeString,
-                            enabled = From("0.7.0"),
-                            scanner = Sequence([
-                                Atom("unicode\""),
-                                ZeroOrMore(Choice([
-                                    Fragment(EscapeSequence),
-                                    Not(['"', '\\', '\r', '\n'])
-                                ])),
-                                Atom("\"")
-                            ])
+                        Token(
+                            name = DoubleQuotedUnicodeStringLiteral,
+                            definitions = [TokenDefinition(
+                                enabled = From("0.7.0"),
+                                scanner = Sequence([
+                                    Atom("unicode\""),
+                                    ZeroOrMore(Choice([
+                                        Fragment(EscapeSequence),
+                                        Not(['"', '\\', '\r', '\n'])
+                                    ])),
+                                    Atom("\"")
+                                ])
+                            )]
                         ),
                         Fragment(
                             name = EscapeSequence,
@@ -4007,7 +4029,7 @@ codegen_language_macros::compile!(Language(
                             name = AssemblyStatement,
                             fields = (
                                 assembly_keyword = Required(Terminal([AssemblyKeyword])),
-                                label = Optional(kind = Terminal([AsciiStringLiteral])),
+                                label = Optional(kind = NonTerminal(AsciiStringLiteral)),
                                 flags = Optional(kind = NonTerminal(AssemblyFlagsDeclaration)),
                                 body = Required(NonTerminal(YulBlock))
                             )
@@ -4268,7 +4290,7 @@ codegen_language_macros::compile!(Language(
                                             ))
                                         ])
                                     ]),
-                                    not_followed_by = Fragment(IdentifierPart)
+                                    not_followed_by = Fragment(IdentifierStart)
                                 )
                             )]
                         ),
@@ -4278,7 +4300,7 @@ codegen_language_macros::compile!(Language(
                                 scanner = TrailingContext(
                                     scanner =
                                         Sequence([Atom("0x"), OneOrMore(Fragment(HexCharacter))]),
-                                    not_followed_by = Fragment(IdentifierPart)
+                                    not_followed_by = Fragment(IdentifierStart)
                                 )
                             )]
                         )
