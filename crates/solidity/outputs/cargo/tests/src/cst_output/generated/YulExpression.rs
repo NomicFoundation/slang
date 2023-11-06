@@ -9,6 +9,11 @@ fn decimal_literal() -> Result<()> {
 }
 
 #[test]
+fn decimal_trailing_ident_start() -> Result<()> {
+    return run("YulExpression", "decimal_trailing_ident_start");
+}
+
+#[test]
 fn function_call() -> Result<()> {
     return run("YulExpression", "function_call");
 }
@@ -16,6 +21,11 @@ fn function_call() -> Result<()> {
 #[test]
 fn hex_literal() -> Result<()> {
     return run("YulExpression", "hex_literal");
+}
+
+#[test]
+fn hex_trailing_ident_start() -> Result<()> {
+    return run("YulExpression", "hex_trailing_ident_start");
 }
 
 #[test]

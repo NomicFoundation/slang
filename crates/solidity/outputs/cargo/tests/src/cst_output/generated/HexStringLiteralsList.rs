@@ -47,6 +47,11 @@ fn single() -> Result<()> {
 }
 
 #[test]
+fn single_trailing_ident() -> Result<()> {
+    return run("HexStringLiteralsList", "single_trailing_ident");
+}
+
+#[test]
 fn some_separated_pairs() -> Result<()> {
     return run("HexStringLiteralsList", "some_separated_pairs");
 }

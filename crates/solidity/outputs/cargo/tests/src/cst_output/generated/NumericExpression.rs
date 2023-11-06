@@ -14,6 +14,11 @@ fn decimal_no_unit() -> Result<()> {
 }
 
 #[test]
+fn decimal_trailing_ident_start() -> Result<()> {
+    return run("NumericExpression", "decimal_trailing_ident_start");
+}
+
+#[test]
 fn ether_unit() -> Result<()> {
     return run("NumericExpression", "ether_unit");
 }
@@ -56,6 +61,11 @@ fn hex_no_digits() -> Result<()> {
 #[test]
 fn hex_no_unit() -> Result<()> {
     return run("NumericExpression", "hex_no_unit");
+}
+
+#[test]
+fn hex_trailing_ident_start() -> Result<()> {
+    return run("NumericExpression", "hex_trailing_ident_start");
 }
 
 #[test]
