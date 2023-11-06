@@ -135,7 +135,7 @@
           - oneOrMore:
               reference: "HexCharacter"
       notFollowedBy:
-        reference: "IdentifierPart"
+        reference: "IdentifierStart"
 
 - name: "YulDecimalLiteral"
   kind: "Scanner"
@@ -153,4 +153,4 @@
                     from: "0"
                     to: "9"
       notFollowedBy:
-        reference: "IdentifierPart"
+        reference: "IdentifierStart"

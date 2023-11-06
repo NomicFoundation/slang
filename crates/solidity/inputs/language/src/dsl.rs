@@ -796,19 +796,13 @@ slang_grammar! {
 
     // Ascii String Literals
 
-    scanner AsciiStringLiteral = (
-        (SingleQuotedAsciiStringLiteral | DoubleQuotedAsciiStringLiteral)
-        not followed by IdentifierStart
-    ) ;
+    scanner AsciiStringLiteral = (SingleQuotedAsciiStringLiteral | DoubleQuotedAsciiStringLiteral) ;
     scanner DoubleQuotedAsciiStringLiteral = ("\"" ((EscapeSequence | AsciiCharacterWithoutDoubleQuoteOrBackslash) *) "\"") ;
     scanner SingleQuotedAsciiStringLiteral = ("\'" ((EscapeSequence | AsciiCharacterWithoutSingleQuoteOrBackslash) *) "\'") ;
 
     // Hex String Literals
 
-    scanner HexStringLiteral = (
-        (SingleQuotedHexStringLiteral | DoubleQuotedHexStringLiteral)
-        not followed by IdentifierStart
-    ) ;
+    scanner HexStringLiteral = (SingleQuotedHexStringLiteral | DoubleQuotedHexStringLiteral) ;
     scanner DoubleQuotedHexStringLiteral = ("hex\"" (HexStringContents ?) "\"") ;
     scanner SingleQuotedHexStringLiteral = ("hex\'" (HexStringContents ?) "\'") ;
     scanner HexStringContents = (HexCharacter HexCharacter ((('_' ?) HexCharacter HexCharacter) *)) ;
@@ -816,10 +810,7 @@ slang_grammar! {
     // Unicode String Literals
 
     scanner UnicodeStringLiteral = {
-        introduced in "0.7.0" (
-            (SingleQuotedUnicodeStringLiteral | DoubleQuotedUnicodeStringLiteral)
-            not followed by IdentifierStart
-        )
+        introduced in "0.7.0" (SingleQuotedUnicodeStringLiteral | DoubleQuotedUnicodeStringLiteral)
     } ;
     scanner DoubleQuotedUnicodeStringLiteral = { introduced in "0.7.0" ("unicode\"" ((EscapeSequence | (! "\n\r\"\\")) *) "\"") } ;
     scanner SingleQuotedUnicodeStringLiteral = { introduced in "0.7.0" ("unicode\'" ((EscapeSequence | (! "\n\r\'\\")) *) "\'") } ;

@@ -24,13 +24,9 @@
 - name: "HexStringLiteral"
   kind: "Scanner"
   unversioned:
-    trailingContext:
-      scanner:
-        choice:
-          - reference: "SingleQuotedHexStringLiteral"
-          - reference: "DoubleQuotedHexStringLiteral"
-      notFollowedBy:
-        reference: "IdentifierPart"
+    choice:
+      - reference: "SingleQuotedHexStringLiteral"
+      - reference: "DoubleQuotedHexStringLiteral"
 
 - name: "SingleQuotedHexStringLiteral"
   kind: "Scanner"
@@ -92,13 +88,9 @@
 - name: "AsciiStringLiteral"
   kind: "Scanner"
   unversioned:
-    trailingContext:
-      scanner:
-        choice:
-          - reference: "SingleQuotedAsciiStringLiteral"
-          - reference: "DoubleQuotedAsciiStringLiteral"
-      notFollowedBy:
-        reference: "IdentifierPart"
+    choice:
+      - reference: "SingleQuotedAsciiStringLiteral"
+      - reference: "DoubleQuotedAsciiStringLiteral"
 
 - name: "SingleQuotedAsciiStringLiteral"
   kind: "Scanner"
@@ -151,13 +143,9 @@
   kind: "Scanner"
   versioned:
     0.7.0:
-      trailingContext:
-        scanner:
-          choice:
-            - reference: "SingleQuotedUnicodeStringLiteral"
-            - reference: "DoubleQuotedUnicodeStringLiteral"
-        notFollowedBy:
-          reference: "IdentifierPart"
+      choice:
+        - reference: "SingleQuotedUnicodeStringLiteral"
+        - reference: "DoubleQuotedUnicodeStringLiteral"
 
 - name: "SingleQuotedUnicodeStringLiteral"
   kind: "Scanner"

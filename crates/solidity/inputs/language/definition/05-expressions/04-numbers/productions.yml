@@ -37,7 +37,7 @@
                   - oneOrMore:
                       reference: "HexCharacter"
         notFollowedBy:
-          reference: "IdentifierPart"
+          reference: "IdentifierStart"
     0.5.0:
       # removed uppercase "0X"
       trailingContext:
@@ -52,7 +52,7 @@
                   - oneOrMore:
                       reference: "HexCharacter"
         notFollowedBy:
-          reference: "IdentifierPart"
+          reference: "IdentifierStart"
 
 - name: "DecimalLiteral"
   kind: "Scanner"
@@ -75,7 +75,7 @@
             - optional:
                 reference: "DecimalExponent"
         notFollowedBy:
-          reference: "IdentifierPart"
+          reference: "IdentifierStart"
     0.5.0:
       # Second "DecimalDigits" is no longer "optional"
       trailingContext:
@@ -94,7 +94,7 @@
             - optional:
                 reference: "DecimalExponent"
         notFollowedBy:
-          reference: "IdentifierPart"
+          reference: "IdentifierStart"
 
 - name: "DecimalDigits"
   kind: "Scanner"
