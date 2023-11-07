@@ -956,6 +956,9 @@ slang_grammar! {
     scanner SupportsKeyword =   { introduced in "0.5.0" "supports" } ;
     scanner TypedefKeyword =    { introduced in "0.5.0" "typedef" } ;
 
+    // Reserved since 0.5.0 and used since 0.8.0
+    scanner UncheckedKeyword = { introduced in "0.5.0" "unchecked" } ;
+
     // Introduced in 0.6.0
     scanner LeaveKeyword =   { introduced in "0.6.0" "leave" } ; // warning: used in yul
     scanner TryKeyword =     { introduced in "0.6.0" "try" } ;
@@ -966,9 +969,6 @@ slang_grammar! {
 
     // Introduced in 0.6.11
     scanner GweiKeyword = { introduced in "0.6.11" "gwei" } ;
-
-    // Introduced in 0.8.0
-    scanner UncheckedKeyword = { introduced in "0.8.0" "unchecked" } ;
 
     // Introduced in 0.8.4
     scanner ErrorKeyword =  { introduced in "0.8.4" "error" } ;

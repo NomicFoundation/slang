@@ -6537,7 +6537,7 @@ impl Lexer for Language {
                     },
                     Some('u') => match input.next() {
                         Some('n') => {
-                            if self.version_is_at_least_0_8_0 {
+                            if self.version_is_at_least_0_5_0 {
                                 scan_chars!(input, 'c', 'h', 'e', 'c', 'k', 'e', 'd')
                                     .then_some(TokenKind::UncheckedKeyword)
                             } else {
