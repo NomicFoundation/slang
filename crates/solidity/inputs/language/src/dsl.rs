@@ -877,7 +877,6 @@ slang_grammar! {
     scanner FallbackKeyword = "fallback" ;
     scanner FalseKeyword = "false" ;
     scanner FinalKeyword = "final" ;
-    scanner FinneyKeyword = "finney" ;
     scanner ForKeyword = "for" ;
     scanner FromKeyword = "from" ;
     scanner FunctionKeyword = "function" ;
@@ -918,7 +917,6 @@ slang_grammar! {
     scanner StringKeyword = "string" ;
     scanner StructKeyword = "struct" ;
     scanner SwitchKeyword = "switch" ;
-    scanner SzaboKeyword = "szabo" ;
     scanner ThrowKeyword = "throw" ;
     scanner TrueKeyword = "true" ;
     scanner TypeKeyword = "type";
@@ -969,6 +967,10 @@ slang_grammar! {
 
     // Introduced in 0.6.11
     scanner GweiKeyword = { introduced in "0.6.11" "gwei" } ;
+
+    // Removed in 0.7.0
+    scanner FinneyKeyword = { removed in "0.7.0" "finney" } ;
+    scanner SzaboKeyword = { removed in "0.7.0" "szabo" } ;
 
     // Introduced in 0.8.4
     scanner ErrorKeyword =  { introduced in "0.8.4" "error" } ;
