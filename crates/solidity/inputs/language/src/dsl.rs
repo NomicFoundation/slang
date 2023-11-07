@@ -929,6 +929,9 @@ slang_grammar! {
     scanner WhileKeyword = "while" ;
     scanner YearsKeyword = "years" ;
 
+    // Always reserved but used since 0.6.0
+    scanner TryKeyword = "try" ;
+
     // introduced in 0.4.21
     // WRONG, it is both a keyword AND identifier for some versions.
     scanner EmitKeyword = { introduced in "0.4.21" "emit" } ;
@@ -959,7 +962,6 @@ slang_grammar! {
 
     // Introduced in 0.6.0
     scanner LeaveKeyword =   { introduced in "0.6.0" "leave" } ; // warning: used in yul
-    scanner TryKeyword =     { introduced in "0.6.0" "try" } ;
     scanner VirtualKeyword = { introduced in "0.6.0" "virtual" } ;
 
     // Introduced in 0.6.5

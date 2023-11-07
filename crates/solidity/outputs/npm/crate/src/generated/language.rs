@@ -6502,13 +6502,7 @@ impl Lexer for Language {
                         }
                         Some('r') => match input.next() {
                             Some('u') => scan_chars!(input, 'e').then_some(TokenKind::TrueKeyword),
-                            Some('y') => {
-                                if self.version_is_at_least_0_6_0 {
-                                    Some(TokenKind::TryKeyword)
-                                } else {
-                                    None
-                                }
-                            }
+                            Some('y') => Some(TokenKind::TryKeyword),
                             Some(_) => {
                                 input.undo();
                                 None
