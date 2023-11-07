@@ -899,7 +899,6 @@ slang_grammar! {
     scanner NewKeyword = "new" ;
     scanner NullKeyword = "null" ;
     scanner OfKeyword = "of" ;
-    scanner OverrideKeyword = "override" ;
     scanner PayableKeyword = "payable" ;
     scanner PragmaKeyword = "pragma" ;
     scanner PrivateKeyword = "private" ;
@@ -959,6 +958,8 @@ slang_grammar! {
     scanner UncheckedKeyword = { introduced in "0.5.0" "unchecked" } ;
     // Reserved since 0.5.0 and used since 0.6.5
     scanner ImmutableKeyword = { introduced in "0.5.0" "immutable" } ;
+    // Reserved since 0.5.0 and used since 0.6.0
+    scanner OverrideKeyword =  { introduced in "0.5.0" "override" } ;
 
     // Introduced in 0.6.0
     scanner FallbackKeyword = { introduced in "0.6.0" "fallback" } ;

@@ -6317,8 +6317,14 @@ impl Lexer for Language {
                     },
                     Some('o') => match input.next() {
                         Some('f') => Some(TokenKind::OfKeyword),
-                        Some('v') => scan_chars!(input, 'e', 'r', 'r', 'i', 'd', 'e')
-                            .then_some(TokenKind::OverrideKeyword),
+                        Some('v') => {
+                            if self.version_is_at_least_0_5_0 {
+                                scan_chars!(input, 'e', 'r', 'r', 'i', 'd', 'e')
+                                    .then_some(TokenKind::OverrideKeyword)
+                            } else {
+                                None
+                            }
+                        }
                         Some(_) => {
                             input.undo();
                             None
