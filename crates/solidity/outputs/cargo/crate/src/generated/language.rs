@@ -6084,8 +6084,14 @@ impl Lexer for Language {
                         Some('a') => {
                             if scan_chars!(input, 'l') {
                                 match input.next() {
-                                    Some('l') => scan_chars!(input, 'b', 'a', 'c', 'k')
-                                        .then_some(TokenKind::FallbackKeyword),
+                                    Some('l') => {
+                                        if self.version_is_at_least_0_6_0 {
+                                            scan_chars!(input, 'b', 'a', 'c', 'k')
+                                                .then_some(TokenKind::FallbackKeyword)
+                                        } else {
+                                            None
+                                        }
+                                    }
                                     Some('s') => {
                                         scan_chars!(input, 'e').then_some(TokenKind::FalseKeyword)
                                     }
@@ -6375,8 +6381,14 @@ impl Lexer for Language {
                     Some('r') => {
                         if scan_chars!(input, 'e') {
                             match input.next() {
-                                Some('c') => scan_chars!(input, 'e', 'i', 'v', 'e')
-                                    .then_some(TokenKind::ReceiveKeyword),
+                                Some('c') => {
+                                    if self.version_is_at_least_0_6_0 {
+                                        scan_chars!(input, 'e', 'i', 'v', 'e')
+                                            .then_some(TokenKind::ReceiveKeyword)
+                                    } else {
+                                        None
+                                    }
+                                }
                                 Some('f') => {
                                     if self.version_is_at_least_0_5_0 {
                                         scan_chars!(input, 'e', 'r', 'e', 'n', 'c', 'e')

@@ -874,7 +874,6 @@ slang_grammar! {
     scanner EventKeyword = "event" ;
     scanner ExperimentalKeyword = "experimental" ;
     scanner ExternalKeyword = "external" ;
-    scanner FallbackKeyword = "fallback" ;
     scanner FalseKeyword = "false" ;
     scanner FinalKeyword = "final" ;
     scanner ForKeyword = "for" ;
@@ -906,7 +905,6 @@ slang_grammar! {
     scanner PrivateKeyword = "private" ;
     scanner PublicKeyword = "public" ;
     scanner PureKeyword = "pure" ;
-    scanner ReceiveKeyword = "receive" ;
     scanner RelocatableKeyword = "relocatable" ;
     scanner ReturnKeyword = "return" ;
     scanner ReturnsKeyword = "returns" ;
@@ -963,8 +961,10 @@ slang_grammar! {
     scanner ImmutableKeyword = { introduced in "0.5.0" "immutable" } ;
 
     // Introduced in 0.6.0
-    scanner LeaveKeyword =   { introduced in "0.6.0" "leave" } ; // warning: used in yul
-    scanner VirtualKeyword = { introduced in "0.6.0" "virtual" } ;
+    scanner FallbackKeyword = { introduced in "0.6.0" "fallback" } ;
+    scanner ReceiveKeyword =  { introduced in "0.6.0" "receive" } ;
+    scanner LeaveKeyword =    { introduced in "0.6.0" "leave" } ; // warning: used in yul
+    scanner VirtualKeyword =  { introduced in "0.6.0" "virtual" } ;
 
     // Introduced in 0.6.11
     scanner GweiKeyword = { introduced in "0.6.11" "gwei" } ;
