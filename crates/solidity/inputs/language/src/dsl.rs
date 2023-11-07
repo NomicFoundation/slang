@@ -959,13 +959,12 @@ slang_grammar! {
 
     // Reserved since 0.5.0 and used since 0.8.0
     scanner UncheckedKeyword = { introduced in "0.5.0" "unchecked" } ;
+    // Reserved since 0.5.0 and used since 0.6.5
+    scanner ImmutableKeyword = { introduced in "0.5.0" "immutable" } ;
 
     // Introduced in 0.6.0
     scanner LeaveKeyword =   { introduced in "0.6.0" "leave" } ; // warning: used in yul
     scanner VirtualKeyword = { introduced in "0.6.0" "virtual" } ;
-
-    // Introduced in 0.6.5
-    scanner ImmutableKeyword = { introduced in "0.6.5" "immutable" } ;
 
     // Introduced in 0.6.11
     scanner GweiKeyword = { introduced in "0.6.11" "gwei" } ;

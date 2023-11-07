@@ -6170,7 +6170,7 @@ impl Lexer for Language {
                         Some('f') => Some(TokenKind::IfKeyword),
                         Some('m') => match input.next() {
                             Some('m') => {
-                                if self.version_is_at_least_0_6_5 {
+                                if self.version_is_at_least_0_5_0 {
                                     scan_chars!(input, 'u', 't', 'a', 'b', 'l', 'e')
                                         .then_some(TokenKind::ImmutableKeyword)
                                 } else {
