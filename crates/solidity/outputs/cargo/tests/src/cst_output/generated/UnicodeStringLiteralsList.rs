@@ -12,3 +12,8 @@ fn multiple() -> Result<()> {
 fn single() -> Result<()> {
     return run("UnicodeStringLiteralsList", "single");
 }
+
+#[test]
+fn single_trailing_ident() -> Result<()> {
+    return run("UnicodeStringLiteralsList", "single_trailing_ident");
+}
