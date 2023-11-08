@@ -3671,35 +3671,29 @@ codegen_language_macros::compile!(Language(
                         Token(
                             name = DecimalLiteral,
                             definitions = [
-                                // An integer, optionally with a dot that may not be followed by a fraction, is disabled in "0.5.0":
+                                // An integer (without a dot or a fraction) is enabled in all versions:
                                 TokenDefinition(
-                                    enabled = Till("0.5.0"),
                                     scanner = TrailingContext(
                                         scanner = Sequence([
-                                            Sequence([
-                                                Fragment(DecimalDigits),
-                                                Optional(Sequence([
-                                                    Atom("."),
-                                                    Optional(Fragment(DecimalDigits))
-                                                ]))
-                                            ]),
+                                            TrailingContext(
+                                                scanner = Fragment(DecimalDigits),
+                                                not_followed_by = Atom(".")
+                                            ),
                                             Optional(Fragment(DecimalExponent))
                                         ]),
                                         not_followed_by = Fragment(IdentifierStart)
                                     )
                                 ),
-                                // An integer, optionally with dot that is always followed by a fraction, is enabled in "0.5.0":
+                                // An integer and a dot (without a fraction) is disabled in "0.5.0"
                                 TokenDefinition(
-                                    enabled = From("0.5.0"),
+                                    enabled = Till("0.5.0"),
                                     scanner = TrailingContext(
                                         scanner = Sequence([
-                                            Sequence([
-                                                Fragment(DecimalDigits),
-                                                Optional(Sequence([
-                                                    Atom("."),
-                                                    Fragment(DecimalDigits)
-                                                ]))
-                                            ]),
+                                            TrailingContext(
+                                                scanner =
+                                                    Sequence([Fragment(DecimalDigits), Atom(".")]),
+                                                not_followed_by = Fragment(DecimalDigits)
+                                            ),
                                             Optional(Fragment(DecimalExponent))
                                         ]),
                                         not_followed_by = Fragment(IdentifierStart)
@@ -3709,6 +3703,18 @@ codegen_language_macros::compile!(Language(
                                 TokenDefinition(
                                     scanner = TrailingContext(
                                         scanner = Sequence([
+                                            Atom("."),
+                                            Fragment(DecimalDigits),
+                                            Optional(Fragment(DecimalExponent))
+                                        ]),
+                                        not_followed_by = Fragment(IdentifierStart)
+                                    )
+                                ),
+                                // An integer, a dot, and a fraction is enabled in all versions:
+                                TokenDefinition(
+                                    scanner = TrailingContext(
+                                        scanner = Sequence([
+                                            Fragment(DecimalDigits),
                                             Atom("."),
                                             Fragment(DecimalDigits),
                                             Optional(Fragment(DecimalExponent))
