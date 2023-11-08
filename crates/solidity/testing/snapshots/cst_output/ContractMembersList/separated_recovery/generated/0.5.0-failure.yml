@@ -56,7 +56,7 @@ Errors: # 10 total
        │                                              ╰────────────────────────────── Error occurred here.
     ───╯
   - >
-    Error: Expected AddressKeyword or AsciiStringLiteral or BoolKeyword or ByteKeyword or DecimalLiteral or FalseKeyword or FixedBytesType or HexLiteral or HexStringLiteral or Identifier or NewKeyword or OpenBracket or OpenParen or PayableKeyword or SignedFixedType or SignedIntegerType or StringKeyword or TrueKeyword or UnsignedFixedType or UnsignedIntegerType.
+    Error: Expected Identifier.
        ╭─[crates/solidity/testing/snapshots/cst_output/ContractMembersList/separated_recovery/input.sol:9:50]
        │
      9 │ function empty() override(some.ident, /* empty */, other.arg.here, and.here);
@@ -64,7 +64,7 @@ Errors: # 10 total
        │                                                               ╰────────────── Error occurred here.
     ───╯
   - >
-    Error: Expected AddressKeyword or Identifier.
+    Error: Expected Identifier.
         ╭─[crates/solidity/testing/snapshots/cst_output/ContractMembersList/separated_recovery/input.sol:11:51]
         │
      11 │ function nested_lists() override(some.ident, next.do.that, other.while, next.one, final, ultimate);
@@ -72,7 +72,7 @@ Errors: # 10 total
         │                                                      ╰───── Error occurred here.
     ────╯
   - >
-    Error: Expected AddressKeyword or Identifier.
+    Error: Expected Identifier.
         ╭─[crates/solidity/testing/snapshots/cst_output/ContractMembersList/separated_recovery/input.sol:11:66]
         │
      11 │ function nested_lists() override(some.ident, next.do.that, other.while, next.one, final, ultimate);
@@ -80,7 +80,7 @@ Errors: # 10 total
         │                                                                    ╰──── Error occurred here.
     ────╯
   - >
-    Error: Expected AddressKeyword or AsciiStringLiteral or BoolKeyword or ByteKeyword or DecimalLiteral or FalseKeyword or FixedBytesType or HexLiteral or HexStringLiteral or Identifier or NewKeyword or OpenBracket or OpenParen or PayableKeyword or SignedFixedType or SignedIntegerType or StringKeyword or TrueKeyword or UnsignedFixedType or UnsignedIntegerType.
+    Error: Expected Identifier.
         ╭─[crates/solidity/testing/snapshots/cst_output/ContractMembersList/separated_recovery/input.sol:11:83]
         │
      11 │ function nested_lists() override(some.ident, next.do.that, other.while, next.one, final, ultimate);
@@ -88,7 +88,7 @@ Errors: # 10 total
         │                                                                                          ╰───────── Error occurred here.
     ────╯
   - >
-    Error: Expected AddressKeyword or Identifier.
+    Error: Expected Identifier.
         ╭─[crates/solidity/testing/snapshots/cst_output/ContractMembersList/separated_recovery/input.sol:12:39]
         │
      12 │ function nested_lists() override(some., next.arg, next.one, ultimate);
@@ -105,20 +105,16 @@ Tree:
               - OpenParen (Token): "(" # 12..13
               - CloseParen (Token): ")" # 13..14
           - FunctionAttributesList (Rule): # 14..83 " override(some.ident unexpected tokens, ISomeInter..."
-              - ModifierInvocation (Rule): # 14..76 " override(some.ident unexpected tokens, ISomeInter..."
-                  - IdentifierPath (Rule): # 14..23 " override"
-                      - Identifier (Token): "override" # 15..23
-                  - ArgumentsDeclaration (Rule): # 23..76 "(some.ident unexpected tokens, ISomeInterface, Oth..."
-                      - OpenParen (Token): "(" # 23..24
-                      - PositionalArgumentsList (Rule): # 24..34 "some.ident"
-                          - Expression (Rule): # 24..34 "some.ident"
-                              - MemberAccessExpression (Rule): # 24..34 "some.ident"
-                                  - Expression (Rule): # 24..28 "some"
-                                      - Identifier (Token): "some" # 24..28
-                                  - Period (Token): "." # 28..29
-                                  - Identifier (Token): "ident" # 29..34
-                      - SKIPPED (Token): "unexpected tokens, ISomeInterface, Other" # 35..75
-                      - CloseParen (Token): ")" # 75..76
+              - OverrideSpecifier (Rule): # 14..76 " override(some.ident unexpected tokens, ISomeInter..."
+                  - OverrideKeyword (Token): "override" # 15..23
+                  - OpenParen (Token): "(" # 23..24
+                  - IdentifierPathsList (Rule): # 24..34 "some.ident"
+                      - IdentifierPath (Rule): # 24..34 "some.ident"
+                          - Identifier (Token): "some" # 24..28
+                          - Period (Token): "." # 28..29
+                          - Identifier (Token): "ident" # 29..34
+                  - SKIPPED (Token): "unexpected tokens, ISomeInterface, Other" # 35..75
+                  - CloseParen (Token): ")" # 75..76
               - PublicKeyword (Token): "public" # 77..83
           - Block (Rule): # 83..309 " {\n  msg.sender.call{do: 1, arg: 1 }();\n  msg.send..."
               - OpenBrace (Token): "{" # 84..85
@@ -187,23 +183,19 @@ Tree:
               - OpenParen (Token): "(" # 324..325
               - CloseParen (Token): ")" # 325..326
           - FunctionAttributesList (Rule): # 326..386 " override(some.ident, /* empty */, other.arg.here,..."
-              - ModifierInvocation (Rule): # 326..386 " override(some.ident, /* empty */, other.arg.here,..."
-                  - IdentifierPath (Rule): # 326..335 " override"
-                      - Identifier (Token): "override" # 327..335
-                  - ArgumentsDeclaration (Rule): # 335..386 "(some.ident, /* empty */, other.arg.here, and.here..."
-                      - OpenParen (Token): "(" # 335..336
-                      - PositionalArgumentsList (Rule): # 336..347 "some.ident,"
-                          - Expression (Rule): # 336..346 "some.ident"
-                              - MemberAccessExpression (Rule): # 336..346 "some.ident"
-                                  - Expression (Rule): # 336..340 "some"
-                                      - Identifier (Token): "some" # 336..340
-                                  - Period (Token): "." # 340..341
-                                  - Identifier (Token): "ident" # 341..346
-                          - Comma (Token): "," # 346..347
-                      - LeadingTrivia (Rule): # 347..359 " /* empty */"
-                          - MultilineComment (Trivia): "/* empty */" # 348..359
-                      - SKIPPED (Token): ", other.arg.here, and.here" # 359..385
-                      - CloseParen (Token): ")" # 385..386
+              - OverrideSpecifier (Rule): # 326..386 " override(some.ident, /* empty */, other.arg.here,..."
+                  - OverrideKeyword (Token): "override" # 327..335
+                  - OpenParen (Token): "(" # 335..336
+                  - IdentifierPathsList (Rule): # 336..347 "some.ident,"
+                      - IdentifierPath (Rule): # 336..346 "some.ident"
+                          - Identifier (Token): "some" # 336..340
+                          - Period (Token): "." # 340..341
+                          - Identifier (Token): "ident" # 341..346
+                      - Comma (Token): "," # 346..347
+                  - LeadingTrivia (Rule): # 347..359 " /* empty */"
+                      - MultilineComment (Trivia): "/* empty */" # 348..359
+                  - SKIPPED (Token): ", other.arg.here, and.here" # 359..385
+                  - CloseParen (Token): ")" # 385..386
           - Semicolon (Token): ";" # 386..387
       - FunctionDefinition (Rule): # 388..489 "\nfunction nested_lists() override(some.ident, next..."
           - FunctionKeyword (Token): "function" # 389..397
@@ -212,38 +204,32 @@ Tree:
               - OpenParen (Token): "(" # 410..411
               - CloseParen (Token): ")" # 411..412
           - FunctionAttributesList (Rule): # 412..487 " override(some.ident, next.do.that, other.while, n..."
-              - ModifierInvocation (Rule): # 412..487 " override(some.ident, next.do.that, other.while, n..."
-                  - IdentifierPath (Rule): # 412..421 " override"
-                      - Identifier (Token): "override" # 413..421
-                  - ArgumentsDeclaration (Rule): # 421..487 "(some.ident, next.do.that, other.while, next.one, ..."
-                      - OpenParen (Token): "(" # 421..422
-                      - PositionalArgumentsList (Rule): # 422..470 "some.ident, next.do.that, other.while, next.one,"
-                          - Expression (Rule): # 422..432 "some.ident"
-                              - MemberAccessExpression (Rule): # 422..432 "some.ident"
-                                  - Expression (Rule): # 422..426 "some"
-                                      - Identifier (Token): "some" # 422..426
-                                  - Period (Token): "." # 426..427
-                                  - Identifier (Token): "ident" # 427..432
-                          - Comma (Token): "," # 432..433
-                          - Expression (Rule): # 433..439 " next."
-                              - Identifier (Token): "next" # 434..438
-                              - Period (Token): "." # 438..439
-                          - SKIPPED (Token): "do.that" # 439..446
-                          - Comma (Token): "," # 446..447
-                          - Expression (Rule): # 447..454 " other."
-                              - Identifier (Token): "other" # 448..453
-                              - Period (Token): "." # 453..454
-                          - SKIPPED (Token): "while" # 454..459
-                          - Comma (Token): "," # 459..460
-                          - Expression (Rule): # 460..469 " next.one"
-                              - MemberAccessExpression (Rule): # 460..469 " next.one"
-                                  - Expression (Rule): # 460..465 " next"
-                                      - Identifier (Token): "next" # 461..465
-                                  - Period (Token): "." # 465..466
-                                  - Identifier (Token): "one" # 466..469
-                          - Comma (Token): "," # 469..470
-                      - SKIPPED (Token): "final, ultimate" # 471..486
-                      - CloseParen (Token): ")" # 486..487
+              - OverrideSpecifier (Rule): # 412..487 " override(some.ident, next.do.that, other.while, n..."
+                  - OverrideKeyword (Token): "override" # 413..421
+                  - OpenParen (Token): "(" # 421..422
+                  - IdentifierPathsList (Rule): # 422..470 "some.ident, next.do.that, other.while, next.one,"
+                      - IdentifierPath (Rule): # 422..432 "some.ident"
+                          - Identifier (Token): "some" # 422..426
+                          - Period (Token): "." # 426..427
+                          - Identifier (Token): "ident" # 427..432
+                      - Comma (Token): "," # 432..433
+                      - IdentifierPath (Rule): # 433..439 " next."
+                          - Identifier (Token): "next" # 434..438
+                          - Period (Token): "." # 438..439
+                      - SKIPPED (Token): "do.that" # 439..446
+                      - Comma (Token): "," # 446..447
+                      - IdentifierPath (Rule): # 447..454 " other."
+                          - Identifier (Token): "other" # 448..453
+                          - Period (Token): "." # 453..454
+                      - SKIPPED (Token): "while" # 454..459
+                      - Comma (Token): "," # 459..460
+                      - IdentifierPath (Rule): # 460..469 " next.one"
+                          - Identifier (Token): "next" # 461..465
+                          - Period (Token): "." # 465..466
+                          - Identifier (Token): "one" # 466..469
+                      - Comma (Token): "," # 469..470
+                  - SKIPPED (Token): "final, ultimate" # 471..486
+                  - CloseParen (Token): ")" # 486..487
           - Semicolon (Token): ";" # 487..488
       - FunctionDefinition (Rule): # 489..560 "function nested_lists() override(some., next.arg, ..."
           - FunctionKeyword (Token): "function" # 489..497
@@ -252,32 +238,26 @@ Tree:
               - OpenParen (Token): "(" # 510..511
               - CloseParen (Token): ")" # 511..512
           - FunctionAttributesList (Rule): # 512..558 " override(some., next.arg, next.one, ultimate)"
-              - ModifierInvocation (Rule): # 512..558 " override(some., next.arg, next.one, ultimate)"
-                  - IdentifierPath (Rule): # 512..521 " override"
-                      - Identifier (Token): "override" # 513..521
-                  - ArgumentsDeclaration (Rule): # 521..558 "(some., next.arg, next.one, ultimate)"
-                      - OpenParen (Token): "(" # 521..522
-                      - PositionalArgumentsList (Rule): # 522..557 "some., next.arg, next.one, ultimate"
-                          - Expression (Rule): # 522..527 "some."
-                              - Identifier (Token): "some" # 522..526
-                              - Period (Token): "." # 526..527
-                          - SKIPPED (Token): "" # 527..527
-                          - Comma (Token): "," # 527..528
-                          - Expression (Rule): # 528..537 " next.arg"
-                              - MemberAccessExpression (Rule): # 528..537 " next.arg"
-                                  - Expression (Rule): # 528..533 " next"
-                                      - Identifier (Token): "next" # 529..533
-                                  - Period (Token): "." # 533..534
-                                  - Identifier (Token): "arg" # 534..537
-                          - Comma (Token): "," # 537..538
-                          - Expression (Rule): # 538..547 " next.one"
-                              - MemberAccessExpression (Rule): # 538..547 " next.one"
-                                  - Expression (Rule): # 538..543 " next"
-                                      - Identifier (Token): "next" # 539..543
-                                  - Period (Token): "." # 543..544
-                                  - Identifier (Token): "one" # 544..547
-                          - Comma (Token): "," # 547..548
-                          - Expression (Rule): # 548..557 " ultimate"
-                              - Identifier (Token): "ultimate" # 549..557
-                      - CloseParen (Token): ")" # 557..558
+              - OverrideSpecifier (Rule): # 512..558 " override(some., next.arg, next.one, ultimate)"
+                  - OverrideKeyword (Token): "override" # 513..521
+                  - OpenParen (Token): "(" # 521..522
+                  - IdentifierPathsList (Rule): # 522..557 "some., next.arg, next.one, ultimate"
+                      - IdentifierPath (Rule): # 522..527 "some."
+                          - Identifier (Token): "some" # 522..526
+                          - Period (Token): "." # 526..527
+                      - SKIPPED (Token): "" # 527..527
+                      - Comma (Token): "," # 527..528
+                      - IdentifierPath (Rule): # 528..537 " next.arg"
+                          - Identifier (Token): "next" # 529..533
+                          - Period (Token): "." # 533..534
+                          - Identifier (Token): "arg" # 534..537
+                      - Comma (Token): "," # 537..538
+                      - IdentifierPath (Rule): # 538..547 " next.one"
+                          - Identifier (Token): "next" # 539..543
+                          - Period (Token): "." # 543..544
+                          - Identifier (Token): "one" # 544..547
+                      - Comma (Token): "," # 547..548
+                      - IdentifierPath (Rule): # 548..557 " ultimate"
+                          - Identifier (Token): "ultimate" # 549..557
+                  - CloseParen (Token): ")" # 557..558
           - Semicolon (Token): ";" # 558..559

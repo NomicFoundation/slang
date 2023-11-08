@@ -874,10 +874,8 @@ slang_grammar! {
     scanner EventKeyword = "event" ;
     scanner ExperimentalKeyword = "experimental" ;
     scanner ExternalKeyword = "external" ;
-    scanner FallbackKeyword = "fallback" ;
     scanner FalseKeyword = "false" ;
     scanner FinalKeyword = "final" ;
-    scanner FinneyKeyword = "finney" ;
     scanner ForKeyword = "for" ;
     scanner FromKeyword = "from" ;
     scanner FunctionKeyword = "function" ;
@@ -901,13 +899,11 @@ slang_grammar! {
     scanner NewKeyword = "new" ;
     scanner NullKeyword = "null" ;
     scanner OfKeyword = "of" ;
-    scanner OverrideKeyword = "override" ;
     scanner PayableKeyword = "payable" ;
     scanner PragmaKeyword = "pragma" ;
     scanner PrivateKeyword = "private" ;
     scanner PublicKeyword = "public" ;
     scanner PureKeyword = "pure" ;
-    scanner ReceiveKeyword = "receive" ;
     scanner RelocatableKeyword = "relocatable" ;
     scanner ReturnKeyword = "return" ;
     scanner ReturnsKeyword = "returns" ;
@@ -918,7 +914,6 @@ slang_grammar! {
     scanner StringKeyword = "string" ;
     scanner StructKeyword = "struct" ;
     scanner SwitchKeyword = "switch" ;
-    scanner SzaboKeyword = "szabo" ;
     scanner ThrowKeyword = "throw" ;
     scanner TrueKeyword = "true" ;
     scanner TypeKeyword = "type";
@@ -930,6 +925,9 @@ slang_grammar! {
     scanner WeiKeyword = "wei" ;
     scanner WhileKeyword = "while" ;
     scanner YearsKeyword = "years" ;
+
+    // Always reserved but used since 0.6.0
+    scanner TryKeyword = "try" ;
 
     // introduced in 0.4.21
     // WRONG, it is both a keyword AND identifier for some versions.
@@ -956,19 +954,25 @@ slang_grammar! {
     scanner SupportsKeyword =   { introduced in "0.5.0" "supports" } ;
     scanner TypedefKeyword =    { introduced in "0.5.0" "typedef" } ;
 
-    // Introduced in 0.6.0
-    scanner LeaveKeyword =   { introduced in "0.6.0" "leave" } ; // warning: used in yul
-    scanner TryKeyword =     { introduced in "0.6.0" "try" } ;
-    scanner VirtualKeyword = { introduced in "0.6.0" "virtual" } ;
+    // Reserved since 0.5.0 and used since 0.8.0
+    scanner UncheckedKeyword = { introduced in "0.5.0" "unchecked" } ;
+    // Reserved since 0.5.0 and used since 0.6.5
+    scanner ImmutableKeyword = { introduced in "0.5.0" "immutable" } ;
+    // Reserved since 0.5.0 and used since 0.6.0
+    scanner OverrideKeyword =  { introduced in "0.5.0" "override" } ;
 
-    // Introduced in 0.6.5
-    scanner ImmutableKeyword = { introduced in "0.6.5" "immutable" } ;
+    // Introduced in 0.6.0
+    scanner FallbackKeyword = { introduced in "0.6.0" "fallback" } ;
+    scanner ReceiveKeyword =  { introduced in "0.6.0" "receive" } ;
+    scanner LeaveKeyword =    { introduced in "0.6.0" "leave" } ; // warning: used in yul
+    scanner VirtualKeyword =  { introduced in "0.6.0" "virtual" } ;
 
     // Introduced in 0.6.11
     scanner GweiKeyword = { introduced in "0.6.11" "gwei" } ;
 
-    // Introduced in 0.8.0
-    scanner UncheckedKeyword = { introduced in "0.8.0" "unchecked" } ;
+    // Removed in 0.7.0
+    scanner FinneyKeyword = { removed in "0.7.0" "finney" } ;
+    scanner SzaboKeyword = { removed in "0.7.0" "szabo" } ;
 
     // Introduced in 0.8.4
     scanner ErrorKeyword =  { introduced in "0.8.4" "error" } ;

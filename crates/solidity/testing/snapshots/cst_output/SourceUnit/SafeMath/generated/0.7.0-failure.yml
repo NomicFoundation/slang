@@ -11,24 +11,16 @@ Source: >
   8  │   }                                                                              │ 206..209
   9  │ }                                                                                │ 210..211
 
-Errors: # 2 total
+Errors: # 1 total
   - >
-    Error: Expected CloseBrace or Identifier.
-       ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/SafeMath/input.sol:4:7]
+    Error: Expected AddressKeyword or AsciiStringLiteral or AssemblyKeyword or BoolKeyword or BreakKeyword or ByteKeyword or CloseBrace or ContinueKeyword or DecimalLiteral or DeleteKeyword or DoKeyword or EmitKeyword or FalseKeyword or FixedBytesType or ForKeyword or FunctionKeyword or HexLiteral or HexStringLiteral or Identifier or IfKeyword or MappingKeyword or NewKeyword or OpenBrace or OpenBracket or OpenParen or PayableKeyword or ReturnKeyword or SignedFixedType or SignedIntegerType or StringKeyword or TrueKeyword or TryKeyword or TypeKeyword or UnicodeStringLiteral or UnsignedFixedType or UnsignedIntegerType or WhileKeyword.
+       ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/SafeMath/input.sol:3:5]
        │
-     4 │ ╭─▶       uint256 c = a + b;
+     3 │ ╭─▶     unchecked {
        ┆ ┆   
-     7 │ ├─▶     }
-       │ │           
-       │ ╰─────────── Error occurred here.
-    ───╯
-  - >
-    Error: Expected OpenBrace or OpenParen.
-       ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/SafeMath/input.sol:8:3]
-       │
-     8 │   }
-       │   │ 
-       │   ╰─ Error occurred here.
+     8 │ ├─▶   }
+       │ │         
+       │ ╰───────── Error occurred here.
     ───╯
 
 Tree:
@@ -73,16 +65,6 @@ Tree:
                               - CloseParen (Token): ")" # 95..96
                       - Block (Rule): # 96..210 " {\n    unchecked {\n      uint256 c = a + b;\n      ..."
                           - OpenBrace (Token): "{" # 97..98
-                          - StatementsList (Rule): # 99..208 "    unchecked {\n      uint256 c = a + b;\n      if ..."
-                              - Statement (Rule): # 99..208 "    unchecked {\n      uint256 c = a + b;\n      if ..."
-                                  - ExpressionStatement (Rule): # 99..208 "    unchecked {\n      uint256 c = a + b;\n      if ..."
-                                      - Expression (Rule): # 99..206 "    unchecked {\n      uint256 c = a + b;\n      if ..."
-                                          - Identifier (Token): "unchecked" # 103..112
-                                          - FunctionCallOptions (Rule): # 112..206 " {\n      uint256 c = a + b;\n      if (c < a) retur..."
-                                              - NamedArgumentsDeclaration (Rule): # 112..206 " {\n      uint256 c = a + b;\n      if (c < a) retur..."
-                                                  - OpenBrace (Token): "{" # 113..114
-                                                  - SKIPPED (Token): "uint256 c = a + b;\n      if (c < a) return (false,..." # 121..204
-                                                  - CloseBrace (Token): "}" # 204..205
-                          - SKIPPED (Token): "" # 208..208
+                          - SKIPPED (Token): "unchecked {\n      uint256 c = a + b;\n      if (c <..." # 103..208
                           - CloseBrace (Token): "}" # 208..209
               - CloseBrace (Token): "}" # 210..211
