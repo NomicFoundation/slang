@@ -223,7 +223,7 @@ codegen_language_macros::compile!(Language(
                         Struct(
                             name = PathImportSymbol,
                             fields = (
-                                path = Required(NonTerminal(AsciiStringLiteral)),
+                                path = Required(Terminal([AsciiStringLiteral])),
                                 alias = Optional(kind = NonTerminal(ImportAlias))
                             )
                         ),
@@ -233,7 +233,7 @@ codegen_language_macros::compile!(Language(
                                 asterisk = Required(Terminal([Asterisk])),
                                 alias = Required(NonTerminal(ImportAlias)),
                                 from_keyword = Required(Terminal([FromKeyword])),
-                                path = Required(NonTerminal(AsciiStringLiteral))
+                                path = Required(Terminal([AsciiStringLiteral]))
                             )
                         ),
                         Struct(
@@ -247,7 +247,7 @@ codegen_language_macros::compile!(Language(
                                 fields = Required(NonTerminal(ImportDeconstructionFields)),
                                 close_brace = Required(Terminal([CloseBrace])),
                                 from_keyword = Required(Terminal([FromKeyword])),
-                                path = Required(NonTerminal(AsciiStringLiteral))
+                                path = Required(Terminal([AsciiStringLiteral]))
                             )
                         ),
                         Separated(
@@ -3797,38 +3797,28 @@ codegen_language_macros::compile!(Language(
                             ]
                         ),
                         Repeated(name = HexStringLiterals, repeated = HexStringLiteral),
-                        Enum(
+                        Token(
                             name = HexStringLiteral,
-                            variants = [
-                                EnumVariant(
-                                    name = SingleQuoted,
-                                    reference = SingleQuotedHexStringLiteral
-                                ),
-                                EnumVariant(
-                                    name = DoubleQuoted,
-                                    reference = DoubleQuotedHexStringLiteral
-                                )
+                            definitions = [
+                                TokenDefinition(scanner = Fragment(SingleQuotedHexStringLiteral)),
+                                TokenDefinition(scanner = Fragment(DoubleQuotedHexStringLiteral))
                             ]
                         ),
-                        Token(
+                        Fragment(
                             name = SingleQuotedHexStringLiteral,
-                            definitions = [TokenDefinition(
-                                scanner = Sequence([
-                                    Atom("hex'"),
-                                    Optional(Fragment(HexStringContents)),
-                                    Atom("'")
-                                ])
-                            )]
+                            scanner = Sequence([
+                                Atom("hex'"),
+                                Optional(Fragment(HexStringContents)),
+                                Atom("'")
+                            ])
                         ),
-                        Token(
+                        Fragment(
                             name = DoubleQuotedHexStringLiteral,
-                            definitions = [TokenDefinition(
-                                scanner = Sequence([
-                                    Atom("hex\""),
-                                    Optional(Fragment(HexStringContents)),
-                                    Atom("\"")
-                                ])
-                            )]
+                            scanner = Sequence([
+                                Atom("hex\""),
+                                Optional(Fragment(HexStringContents)),
+                                Atom("\"")
+                            ])
                         ),
                         Fragment(
                             name = HexStringContents,
@@ -3851,95 +3841,80 @@ codegen_language_macros::compile!(Language(
                             ])
                         ),
                         Repeated(name = AsciiStringLiterals, repeated = AsciiStringLiteral),
-                        Enum(
+                        Token(
                             name = AsciiStringLiteral,
-                            variants = [
-                                EnumVariant(
-                                    name = SingleQuoted,
-                                    reference = SingleQuotedAsciiStringLiteral
-                                ),
-                                EnumVariant(
-                                    name = DoubleQuoted,
-                                    reference = DoubleQuotedAsciiStringLiteral
-                                )
+                            definitions = [
+                                TokenDefinition(scanner = Fragment(SingleQuotedAsciiStringLiteral)),
+                                TokenDefinition(scanner = Fragment(DoubleQuotedAsciiStringLiteral))
                             ]
                         ),
-                        Token(
+                        Fragment(
                             name = SingleQuotedAsciiStringLiteral,
-                            definitions = [TokenDefinition(
-                                scanner = Sequence([
-                                    Atom("'"),
-                                    ZeroOrMore(Choice([
-                                        Fragment(EscapeSequence),
-                                        Range(inclusive_start = ' ', inclusive_end = '&'),
-                                        Range(inclusive_start = '(', inclusive_end = '['),
-                                        Range(inclusive_start = ']', inclusive_end = '~')
-                                    ])),
-                                    Atom("'")
-                                ])
-                            )]
+                            scanner = Sequence([
+                                Atom("'"),
+                                ZeroOrMore(Choice([
+                                    Fragment(EscapeSequence),
+                                    Range(inclusive_start = ' ', inclusive_end = '&'),
+                                    Range(inclusive_start = '(', inclusive_end = '['),
+                                    Range(inclusive_start = ']', inclusive_end = '~')
+                                ])),
+                                Atom("'")
+                            ])
                         ),
-                        Token(
+                        Fragment(
                             name = DoubleQuotedAsciiStringLiteral,
-                            definitions = [TokenDefinition(
-                                scanner = Sequence([
-                                    Atom("\""),
-                                    ZeroOrMore(Choice([
-                                        Fragment(EscapeSequence),
-                                        Range(inclusive_start = ' ', inclusive_end = '!'),
-                                        Range(inclusive_start = '#', inclusive_end = '['),
-                                        Range(inclusive_start = ']', inclusive_end = '~')
-                                    ])),
-                                    Atom("\"")
-                                ])
-                            )]
+                            scanner = Sequence([
+                                Atom("\""),
+                                ZeroOrMore(Choice([
+                                    Fragment(EscapeSequence),
+                                    Range(inclusive_start = ' ', inclusive_end = '!'),
+                                    Range(inclusive_start = '#', inclusive_end = '['),
+                                    Range(inclusive_start = ']', inclusive_end = '~')
+                                ])),
+                                Atom("\"")
+                            ])
                         ),
                         Repeated(
                             name = UnicodeStringLiterals,
                             repeated = UnicodeStringLiteral,
                             enabled = From("0.7.0")
                         ),
-                        Enum(
+                        Token(
                             name = UnicodeStringLiteral,
-                            enabled = From("0.7.0"),
-                            variants = [
-                                EnumVariant(
-                                    name = SingleQuoted,
-                                    reference = SingleQuotedUnicodeStringLiteral
+                            definitions = [
+                                TokenDefinition(
+                                    enabled = From("0.7.0"),
+                                    scanner = Fragment(SingleQuotedUnicodeStringLiteral)
                                 ),
-                                EnumVariant(
-                                    name = DoubleQuoted,
-                                    reference = DoubleQuotedUnicodeStringLiteral
+                                TokenDefinition(
+                                    enabled = From("0.7.0"),
+                                    scanner = Fragment(DoubleQuotedUnicodeStringLiteral)
                                 )
                             ]
                         ),
-                        Token(
+                        Fragment(
                             name = SingleQuotedUnicodeStringLiteral,
-                            definitions = [TokenDefinition(
-                                enabled = From("0.7.0"),
-                                scanner = Sequence([
-                                    Atom("unicode'"),
-                                    ZeroOrMore(Choice([
-                                        Fragment(EscapeSequence),
-                                        Not(['\'', '\\', '\r', '\n'])
-                                    ])),
-                                    Atom("'")
-                                ])
-                            )]
+                            enabled = From("0.7.0"),
+                            scanner = Sequence([
+                                Atom("unicode'"),
+                                ZeroOrMore(Choice([
+                                    Fragment(EscapeSequence),
+                                    Not(['\'', '\\', '\r', '\n'])
+                                ])),
+                                Atom("'")
+                            ])
                         ),
-                        Token(
+                        Fragment(
                             name = DoubleQuotedUnicodeStringLiteral,
-                            definitions = [TokenDefinition(
-                                enabled = From("0.7.0"),
-                                scanner = Sequence([
-                                    Atom("unicode\""),
-                                    ZeroOrMore(Choice([
-                                        Fragment(EscapeSequence),
-                                        Not(['"', '\\', '\r', '\n'])
-                                    ])),
-                                    Atom("\"")
-                                ])
-                            )]
+                            enabled = From("0.7.0"),
+                            scanner = Sequence([
+                                Atom("unicode\""),
+                                ZeroOrMore(Choice([
+                                    Fragment(EscapeSequence),
+                                    Not(['"', '\\', '\r', '\n'])
+                                ])),
+                                Atom("\"")
+                            ])
                         ),
                         Fragment(
                             name = EscapeSequence,
@@ -4035,7 +4010,7 @@ codegen_language_macros::compile!(Language(
                             name = AssemblyStatement,
                             fields = (
                                 assembly_keyword = Required(Terminal([AssemblyKeyword])),
-                                label = Optional(kind = NonTerminal(AsciiStringLiteral)),
+                                label = Optional(kind = Terminal([AsciiStringLiteral])),
                                 flags = Optional(kind = NonTerminal(AssemblyFlagsDeclaration)),
                                 body = Required(NonTerminal(YulBlock))
                             )
