@@ -5098,32 +5098,26 @@ impl Language {
             scan_sequence!(
                 scan_choice!(
                     input,
+                    scan_not_followed_by!(
+                        input,
+                        self.decimal_digits(input),
+                        scan_chars!(input, '.')
+                    ),
                     if !self.version_is_at_least_0_5_0 {
-                        scan_sequence!(
-                            self.decimal_digits(input),
-                            scan_optional!(
-                                input,
-                                scan_sequence!(
-                                    scan_chars!(input, '.'),
-                                    scan_optional!(input, self.decimal_digits(input))
-                                )
-                            )
+                        scan_not_followed_by!(
+                            input,
+                            scan_sequence!(self.decimal_digits(input), scan_chars!(input, '.')),
+                            self.decimal_digits(input)
                         )
                     } else {
                         false
                     },
-                    if self.version_is_at_least_0_5_0 {
-                        scan_sequence!(
-                            self.decimal_digits(input),
-                            scan_optional!(
-                                input,
-                                scan_sequence!(scan_chars!(input, '.'), self.decimal_digits(input))
-                            )
-                        )
-                    } else {
-                        false
-                    },
-                    scan_sequence!(scan_chars!(input, '.'), self.decimal_digits(input))
+                    scan_sequence!(scan_chars!(input, '.'), self.decimal_digits(input)),
+                    scan_sequence!(
+                        self.decimal_digits(input),
+                        scan_chars!(input, '.'),
+                        self.decimal_digits(input)
+                    )
                 ),
                 scan_optional!(input, self.decimal_exponent(input))
             ),

@@ -820,9 +820,10 @@ slang_grammar! {
     scanner DecimalLiteral = (
         (
             (
-                { removed in "0.5.0"    (DecimalDigits (("." (DecimalDigits ?) ) ?)) } |
-                { introduced in "0.5.0" (DecimalDigits (("." DecimalDigits     ) ?)) } |
-                ('.' DecimalDigits)
+                (DecimalDigits not followed by '.') |
+                { removed in "0.5.0" ((DecimalDigits '.') not followed by DecimalDigits) } |
+                ('.' DecimalDigits) |
+                (DecimalDigits '.' DecimalDigits)
             )
             (DecimalExponent ?)
         ) not followed by IdentifierStart

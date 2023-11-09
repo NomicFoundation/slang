@@ -3675,7 +3675,10 @@ codegen_language_macros::compile!(Language(
                                 TokenDefinition(
                                     scanner = TrailingContext(
                                         scanner = Sequence([
-                                            Fragment(DecimalDigits),
+                                            TrailingContext(
+                                                scanner = Fragment(DecimalDigits),
+                                                not_followed_by = Atom(".")
+                                            ),
                                             Optional(Fragment(DecimalExponent))
                                         ]),
                                         not_followed_by = Fragment(IdentifierStart)
@@ -3686,8 +3689,11 @@ codegen_language_macros::compile!(Language(
                                     enabled = Till("0.5.0"),
                                     scanner = TrailingContext(
                                         scanner = Sequence([
-                                            Fragment(DecimalDigits),
-                                            Atom("."),
+                                            TrailingContext(
+                                                scanner =
+                                                    Sequence([Fragment(DecimalDigits), Atom(".")]),
+                                                not_followed_by = Fragment(DecimalDigits)
+                                            ),
                                             Optional(Fragment(DecimalExponent))
                                         ]),
                                         not_followed_by = Fragment(IdentifierStart)
