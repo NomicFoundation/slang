@@ -4062,12 +4062,12 @@ codegen_language_macros::compile!(Language(
                             name = YulBlock,
                             error_recovery = FieldsErrorRecovery(
                                 delimiters =
-                                    FieldDelimiters(open = open_paren, close = close_paren)
+                                    FieldDelimiters(open = open_brace, close = close_brace)
                             ),
                             fields = (
-                                open_paren = Required(Terminal([OpenParen])),
+                                open_brace = Required(Terminal([OpenBrace])),
                                 statements = Required(NonTerminal(YulStatements)),
-                                close_paren = Required(Terminal([CloseParen]))
+                                close_brace = Required(Terminal([CloseBrace]))
                             )
                         ),
                         Repeated(
