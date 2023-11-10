@@ -546,7 +546,7 @@ slang_grammar! {
 
         parser UsingDirective = ((UsingKeyword (UsingDirectivePath | UsingDirectiveDeconstruction) ForKeyword (Asterisk | TypeName) ({ introduced in "0.8.13" GlobalKeyword } ?)) terminated by Semicolon) ;
 
-        parser UsingDirectiveDeconstruction = (UsingDirectiveSymbolsList delimited by OpenBrace and CloseBrace) ;
+        parser UsingDirectiveDeconstruction = { introduced in "0.8.13" (UsingDirectiveSymbolsList delimited by OpenBrace and CloseBrace) };
 
         inline parser UsingDirectiveOperator = {
             introduced in "0.8.19" (Ampersand | Asterisk | BangEqual | Bar | Caret | EqualEqual | GreaterThan | GreaterThanEqual | LessThan | LessThanEqual | Minus | Percent | Plus | Slash | Tilde)
