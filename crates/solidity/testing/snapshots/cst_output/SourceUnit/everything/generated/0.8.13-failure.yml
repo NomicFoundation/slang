@@ -24,11 +24,21 @@ Source: >
   21 │ error E1(string);                                                                │ 182..199
   22 │                                                                                  │ 200..200
   23 │ type T is bool;                                                                  │ 201..216
+  24 │                                                                                  │ 217..217
+  25 │ event E1(uint256 value);                                                         │ 218..242
 
-Errors: []
+Errors: # 1 total
+  - >
+    Error: Expected EndOfLine or MultilineComment or SingleLineComment or Whitespace.
+        ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/everything/input.sol:25:1]
+        │
+     25 │ event E1(uint256 value);
+        │ ────────────┬────────────  
+        │             ╰────────────── Error occurred here.
+    ────╯
 
 Tree:
-  - SourceUnit (Rule): # 0..217 'pragma solidity 0.0.0;\n\nimport "foo.sol";\n\nusing A...'
+  - SourceUnit (Rule): # 0..243 'pragma solidity 0.0.0;\n\nimport "foo.sol";\n\nusing A...'
       - SourceUnitMembersList (Rule): # 0..217 'pragma solidity 0.0.0;\n\nimport "foo.sol";\n\nusing A...'
           - PragmaDirective (Rule): # 0..23 "pragma solidity 0.0.0;\n"
               - PragmaKeyword (Token): "pragma" # 0..6
@@ -120,3 +130,5 @@ Tree:
               - IsKeyword (Token): "is" # 208..210
               - BoolKeyword (Token): "bool" # 211..215
               - Semicolon (Token): ";" # 215..216
+      - EndOfFileTrivia (Rule): "\n" # 217..218
+      - SKIPPED (Token): "event E1(uint256 value);\n" # 218..243

@@ -1,0 +1,18 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ event E1(uint256 value);                                                         │ 0..24
+
+Errors: # 1 total
+  - >
+    Error: Expected EndOfLine or MultilineComment or SingleLineComment or Whitespace.
+       ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/top_level_event/input.sol:1:1]
+       │
+     1 │ event E1(uint256 value);
+       │ ────────────┬────────────  
+       │             ╰────────────── Error occurred here.
+    ───╯
+
+Tree:
+  - SourceUnit (Rule): # 0..25 "event E1(uint256 value);\n"
+      - SKIPPED (Token): "event E1(uint256 value);\n" # 0..25

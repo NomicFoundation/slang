@@ -101,3 +101,19 @@
         - reference: "UserDefinedValueTypeDefinition"
         # added:
         - reference: "UsingDirective"
+    0.8.22:
+      choice:
+        - reference: "PragmaDirective"
+        - reference: "ImportDirective"
+        - reference: "ContractDefinition"
+        - reference: "InterfaceDefinition"
+        - reference: "LibraryDefinition"
+        - reference: "StructDefinition"
+        - reference: "EnumDefinition"
+        - reference: "FunctionDefinition"
+        - reference: "ConstantDefinition"
+        - reference: "ErrorDefinition"
+        - reference: "UserDefinedValueTypeDefinition"
+        - reference: "UsingDirective"
+        # added:
+        - reference: "EventDefinition"

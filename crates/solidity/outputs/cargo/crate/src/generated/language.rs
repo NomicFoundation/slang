@@ -38,6 +38,7 @@ pub struct Language {
     pub(crate) version_is_at_least_0_8_13: bool,
     pub(crate) version_is_at_least_0_8_18: bool,
     pub(crate) version_is_at_least_0_8_19: bool,
+    pub(crate) version_is_at_least_0_8_22: bool,
 }
 
 #[derive(thiserror::Error, Debug)]
@@ -133,6 +134,9 @@ impl Language {
         Version::new(0, 8, 17),
         Version::new(0, 8, 18),
         Version::new(0, 8, 19),
+        Version::new(0, 8, 20),
+        Version::new(0, 8, 21),
+        Version::new(0, 8, 22),
     ];
 
     pub fn new(version: Version) -> std::result::Result<Self, Error> {
@@ -155,6 +159,7 @@ impl Language {
                 version_is_at_least_0_8_13: Version::new(0, 8, 13) <= version,
                 version_is_at_least_0_8_18: Version::new(0, 8, 18) <= version,
                 version_is_at_least_0_8_19: Version::new(0, 8, 19) <= version,
+                version_is_at_least_0_8_22: Version::new(0, 8, 22) <= version,
                 version,
             })
         } else {
@@ -3245,6 +3250,10 @@ impl Language {
                 }
                 if self.version_is_at_least_0_8_13 {
                     let result = self.using_directive(input);
+                    choice.consider(input, result)?;
+                }
+                if self.version_is_at_least_0_8_22 {
+                    let result = self.event_definition(input);
                     choice.consider(input, result)?;
                 }
                 choice.finish(input)

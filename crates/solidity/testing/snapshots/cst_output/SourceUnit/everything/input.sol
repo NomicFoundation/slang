@@ -21,3 +21,5 @@ function f() public { }
 error E1(string);
 
 type T is bool;
+
+event E1(uint256 value);

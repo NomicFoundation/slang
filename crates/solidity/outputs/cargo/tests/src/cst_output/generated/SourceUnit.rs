@@ -29,6 +29,11 @@ fn partial_definition() -> Result<()> {
 }
 
 #[test]
+fn top_level_event() -> Result<()> {
+    return run("SourceUnit", "top_level_event");
+}
+
+#[test]
 fn top_level_function() -> Result<()> {
     return run("SourceUnit", "top_level_function");
 }

@@ -24,6 +24,8 @@ Source: >
   21 │ error E1(string);                                                                │ 182..199
   22 │                                                                                  │ 200..200
   23 │ type T is bool;                                                                  │ 201..216
+  24 │                                                                                  │ 217..217
+  25 │ event E1(uint256 value);                                                         │ 218..242
 
 Errors: # 1 total
   - >
@@ -32,13 +34,13 @@ Errors: # 1 total
         │
       5 │ ╭─▶ using A for B;
         ┆ ┆   
-     23 │ ├─▶ type T is bool;
-        │ │                     
-        │ ╰───────────────────── Error occurred here.
+     25 │ ├─▶ event E1(uint256 value);
+        │ │                              
+        │ ╰────────────────────────────── Error occurred here.
     ────╯
 
 Tree:
-  - SourceUnit (Rule): # 0..217 'pragma solidity 0.0.0;\n\nimport "foo.sol";\n\nusing A...'
+  - SourceUnit (Rule): # 0..243 'pragma solidity 0.0.0;\n\nimport "foo.sol";\n\nusing A...'
       - SourceUnitMembersList (Rule): # 0..42 'pragma solidity 0.0.0;\n\nimport "foo.sol";\n'
           - PragmaDirective (Rule): # 0..23 "pragma solidity 0.0.0;\n"
               - PragmaKeyword (Token): "pragma" # 0..6
@@ -59,4 +61,4 @@ Tree:
                   - AsciiStringLiteral (Token): '"foo.sol"' # 31..40
               - Semicolon (Token): ";" # 40..41
       - EndOfFileTrivia (Rule): "\n" # 42..43
-      - SKIPPED (Token): "using A for B;\n\ncontract C { }\n\ninterface I { }\n\nl..." # 43..217
+      - SKIPPED (Token): "using A for B;\n\ncontract C { }\n\ninterface I { }\n\nl..." # 43..243
