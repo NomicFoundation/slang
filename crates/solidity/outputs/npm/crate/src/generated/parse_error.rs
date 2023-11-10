@@ -30,8 +30,8 @@ impl ParseError {
             .collect();
     }
 
-    pub fn to_error_report(&self, source_id: &str, source: &str, with_colour: bool) -> String {
-        return render_error_report(self, source_id, source, with_colour);
+    pub fn to_error_report(&self, source_id: &str, source: &str, with_color: bool) -> String {
+        return render_error_report(self, source_id, source, with_color);
     }
 }
 

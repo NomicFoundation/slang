@@ -547,7 +547,7 @@ export namespace cursor {
 export namespace parse_error {
   export class ParseError {
     get textRange(): text_index.TextRange;
-    toErrorReport(sourceId: string, source: string, withColour: boolean): string;
+    toErrorReport(sourceId: string, source: string, withColor: boolean): string;
   }
 }
 export namespace parse_output {

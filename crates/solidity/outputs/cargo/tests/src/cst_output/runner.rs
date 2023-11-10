@@ -47,7 +47,7 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
             .errors()
             .iter()
             .map(|error| {
-                error.to_error_report(source_id, &source, /* with_colour */ false)
+                error.to_error_report(source_id, &source, /* with_color */ false)
             })
             .collect();
 
