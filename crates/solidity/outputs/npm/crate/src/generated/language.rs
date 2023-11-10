@@ -4124,28 +4124,32 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn using_directive_deconstruction(&self, input: &mut ParserContext) -> ParserResult {
-        SequenceHelper::run(|mut seq| {
-            let mut delim_guard = input.open_delim(TokenKind::CloseBrace);
-            let input = delim_guard.ctx();
-            seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                input,
-                TokenKind::OpenBrace,
-            ))?;
-            seq.elem(
-                self.using_directive_symbols_list(input)
-                    .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
-                        input,
-                        self,
-                        TokenKind::CloseBrace,
-                        RecoverFromNoMatch::Yes,
-                    ),
-            )?;
-            seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                input,
-                TokenKind::CloseBrace,
-            ))?;
-            seq.finish()
-        })
+        if self.version_is_at_least_0_8_13 {
+            SequenceHelper::run(|mut seq| {
+                let mut delim_guard = input.open_delim(TokenKind::CloseBrace);
+                let input = delim_guard.ctx();
+                seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    input,
+                    TokenKind::OpenBrace,
+                ))?;
+                seq.elem(
+                    self.using_directive_symbols_list(input)
+                        .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
+                            input,
+                            self,
+                            TokenKind::CloseBrace,
+                            RecoverFromNoMatch::Yes,
+                        ),
+                )?;
+                seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    input,
+                    TokenKind::CloseBrace,
+                ))?;
+                seq.finish()
+            })
+        } else {
+            ParserResult::disabled()
+        }
         .with_kind(RuleKind::UsingDirectiveDeconstruction)
     }
 
