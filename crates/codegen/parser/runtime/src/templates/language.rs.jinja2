@@ -49,7 +49,7 @@ impl Language {
     ];
 
     pub fn new(version: Version) -> std::result::Result<Self, Error> {
-        if Self::SUPPORTED_VERSIONS.contains(&version) {
+        if Self::SUPPORTED_VERSIONS.binary_search(&version).is_ok() {
             Ok(Self {
                 {%- for version in code.referenced_versions %}
                     version_is_at_least_{{ version | replace(from=".", to="_") }}: Version::new({{ version | split(pat=".") | join(sep=", ") }}) <= version,

@@ -140,7 +140,7 @@ impl Language {
     ];
 
     pub fn new(version: Version) -> std::result::Result<Self, Error> {
-        if Self::SUPPORTED_VERSIONS.contains(&version) {
+        if Self::SUPPORTED_VERSIONS.binary_search(&version).is_ok() {
             Ok(Self {
                 version_is_at_least_0_4_21: Version::new(0, 4, 21) <= version,
                 version_is_at_least_0_4_22: Version::new(0, 4, 22) <= version,
