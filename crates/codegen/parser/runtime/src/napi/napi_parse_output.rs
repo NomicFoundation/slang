@@ -29,6 +29,7 @@ impl ParseOutput {
         self.0.is_valid()
     }
 
+    /// Creates a cursor that starts at the root of the parse tree.
     #[napi(ts_return_type = "cursor.Cursor")]
     pub fn create_tree_cursor(&self) -> napi_cursor::Cursor {
         return self.0.create_tree_cursor().into();

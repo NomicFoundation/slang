@@ -19,6 +19,7 @@ impl ParseOutput {
         return self.errors.is_empty();
     }
 
+    /// Creates a cursor that starts at the root of the parse tree.
     pub fn create_tree_cursor(&self) -> Cursor {
         return self.parse_tree.create_cursor(Default::default());
     }

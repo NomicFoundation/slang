@@ -555,6 +555,7 @@ export namespace parse_output {
     tree(): cst.RuleNode | cst.TokenNode;
     errors(): Array<parse_error.ParseError>;
     get isValid(): boolean;
+    /** Creates a cursor that starts at the root of the parse tree. */
     createTreeCursor(): cursor.Cursor;
   }
 }

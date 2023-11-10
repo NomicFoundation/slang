@@ -85,12 +85,11 @@ impl TestNodeBuilder {
 }
 
 impl TestNode {
-    pub fn from_cst(cursor: Cursor) -> Self {
+    pub fn from_cst(mut cursor: Cursor) -> Self {
         let mut visitor = TestNodeBuilder {
             stack: vec![vec![]],
         };
 
-        let mut cursor = cursor;
         cursor.drive_visitor(&mut visitor).unwrap();
 
         return visitor.stack.remove(0).remove(0);
