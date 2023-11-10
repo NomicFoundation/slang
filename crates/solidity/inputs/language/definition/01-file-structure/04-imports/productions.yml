@@ -82,7 +82,7 @@
                 - reference: "TypeName"
         terminator:
           reference: "Semicolon"
-    # Added an optional `global` keyword
+    # Added an optional `global` keyword and `UsingDirectiveDeconstruction`
     0.8.13:
       terminatedBy:
         parser:
