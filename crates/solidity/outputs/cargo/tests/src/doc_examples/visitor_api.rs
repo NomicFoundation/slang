@@ -47,8 +47,7 @@ fn visitor_api() -> Result<()> {
     };
 
     parse_output
-        .parse_tree()
-        .cursor()
+        .create_tree_cursor()
         .drive_visitor(&mut collector)?;
 
     assert!(matches!(&collector.contract_names[..], [single] if single == "Foo"));

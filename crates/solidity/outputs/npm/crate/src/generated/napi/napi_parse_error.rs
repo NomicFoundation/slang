@@ -31,7 +31,7 @@ impl ParseError {
     }
 
     #[napi(namespace = "parse_error")]
-    pub fn to_error_report(&self, source_id: String, source: String, with_colour: bool) -> String {
-        self.0.to_error_report(&source_id, &source, with_colour)
+    pub fn to_error_report(&self, source_id: String, source: String, with_color: bool) -> String {
+        self.0.to_error_report(&source_id, &source, with_color)
     }
 }

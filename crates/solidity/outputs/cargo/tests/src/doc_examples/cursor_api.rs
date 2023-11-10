@@ -13,7 +13,7 @@ fn cursor_api() -> Result<()> {
     let parse_output = language.parse(ProductionKind::ContractDefinition, "contract Foo {}");
 
     let mut contract_names = Vec::new();
-    let mut cursor = parse_output.parse_tree().cursor();
+    let mut cursor = parse_output.create_tree_cursor();
     while let Some(_rule_node) = cursor.find_rule_with_kind(&[RuleKind::ContractDefinition]) {
         // You have to make sure you return the cursor to original position
         if cursor.go_to_first_child() {
@@ -40,7 +40,7 @@ fn cursor_api_using_spawn() -> Result<()> {
     let parse_output = language.parse(ProductionKind::ContractDefinition, "contract Foo {}");
 
     let mut contract_names = Vec::new();
-    let mut cursor = parse_output.parse_tree().cursor();
+    let mut cursor = parse_output.create_tree_cursor();
     while let Some(_rule_node) = cursor.find_rule_with_kind(&[RuleKind::ContractDefinition]) {
         // `.spawn()` creates a new cursor without the path history, which is cheaper
         // than `.clone()`, which copies the path history.
@@ -72,7 +72,7 @@ fn cursor_api_using_iter() -> Result<()> {
     let parse_output = language.parse(ProductionKind::ContractDefinition, "contract Foo {}");
 
     let mut contract_names = Vec::new();
-    let mut cursor = parse_output.parse_tree().cursor();
+    let mut cursor = parse_output.create_tree_cursor();
     while let Some(_rule_node) = cursor.find_rule_with_kind(&[RuleKind::ContractDefinition]) {
         if let Some(token_node) = _rule_node
             .children
@@ -97,7 +97,7 @@ fn cursor_as_iter() -> Result<()> {
     let language = Language::new(Version::parse("0.8.0")?)?;
     let parse_output = language.parse(ProductionKind::ContractDefinition, "contract Foo {}");
 
-    let mut cursor = parse_output.parse_tree().cursor();
+    let mut cursor = parse_output.create_tree_cursor();
     assert_eq!(
         cursor.node().as_rule().unwrap().kind,
         RuleKind::ContractDefinition

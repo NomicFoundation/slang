@@ -63,12 +63,12 @@ fn execute_parse_command(file_path_string: String, version: Version, json: bool)
 
     let errors = output.errors();
     for error in errors {
-        let report = error.to_error_report(&file_path_string, &input, /* with_colour */ true);
+        let report = error.to_error_report(&file_path_string, &input, /* with_color */ true);
         eprintln!("{report}");
     }
 
     if json {
-        let root_node = output.parse_tree();
+        let root_node = output.tree();
         let json = serde_json::to_string_pretty(&root_node)?;
         println!("{json}");
     }

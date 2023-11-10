@@ -47,11 +47,11 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
             .errors()
             .iter()
             .map(|error| {
-                error.to_error_report(source_id, &source, /* with_colour */ false)
+                error.to_error_report(source_id, &source, /* with_color */ false)
             })
             .collect();
 
-        let tree = Some(output.parse_tree());
+        let cursor = output.create_tree_cursor();
 
         let status = if output.is_valid() {
             TestStatus::Success
@@ -59,7 +59,7 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
             TestStatus::Failure
         };
 
-        let snapshot = CstSnapshots::render(&source, &errors, &tree)?;
+        let snapshot = CstSnapshots::render(&source, &errors, cursor)?;
 
         let snapshot_path = test_dir
             .join("generated")

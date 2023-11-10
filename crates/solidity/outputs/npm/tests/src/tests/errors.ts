@@ -5,11 +5,10 @@ test("render error reports", () => {
   const source = "int256 constant";
   const language = new Language("0.8.1");
 
-  const { errors } = language.parse(ProductionKind.SourceUnit, source);
+  const errors = language.parse(ProductionKind.SourceUnit, source).errors();
   expect(errors).toHaveLength(1);
 
-  const report = errors[0]?.toErrorReport("test.sol", source, /* withColor */ false);
-
+  const report = errors[0]!.toErrorReport("test.sol", source, /* withColor */ false);
   expect(report).toEqual(
     `
 Error: Expected Identifier.

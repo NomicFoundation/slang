@@ -10,6 +10,12 @@ use napi_text_index::*;
 #[napi(namespace = "cursor")]
 pub struct Cursor(Box<RustCursor>);
 
+impl From<RustCursor> for Cursor {
+    fn from(value: RustCursor) -> Self {
+        Self(value.into())
+    }
+}
+
 #[napi(namespace = "cursor")]
 impl Cursor {
     pub(crate) fn new(cursor: RustCursor) -> Self {
@@ -41,7 +47,7 @@ impl Cursor {
         self.0.is_completed()
     }
 
-    #[napi(getter, ts_return_type = "cst.RuleNode | cst.TokenNode")]
+    #[napi(ts_return_type = "cst.RuleNode | cst.TokenNode")]
     pub fn node(&self, env: Env) -> JsObject {
         self.0.node().to_js(&env)
     }
@@ -56,7 +62,7 @@ impl Cursor {
         (&self.0.text_range()).into()
     }
 
-    #[napi(getter, ts_return_type = "Array<cst.RuleNode>")]
+    #[napi(ts_return_type = "Array<cst.RuleNode>")]
     pub fn path_rule_nodes(&self, env: Env) -> Vec<JsObject> {
         self.0
             .path_rule_nodes()

@@ -509,15 +509,15 @@ export namespace cst {
     get type(): NodeType.Rule;
     get kind(): kinds.RuleKind;
     get textLength(): text_index.TextIndex;
-    get children(): Array<cst.RuleNode | cst.TokenNode>;
-    get cursor(): cursor.Cursor;
+    children(): Array<cst.RuleNode | cst.TokenNode>;
+    createCursor(textOffset: TextIndex): cursor.Cursor;
   }
   export class TokenNode {
     get type(): NodeType.Token;
     get kind(): kinds.TokenKind;
     get textLength(): text_index.TextIndex;
     get text(): string;
-    get cursor(): cursor.Cursor;
+    createCursor(textOffset: TextIndex): cursor.Cursor;
   }
 }
 export namespace cursor {
@@ -527,10 +527,10 @@ export namespace cursor {
     clone(): Cursor;
     spawn(): Cursor;
     get isCompleted(): boolean;
-    get node(): cst.RuleNode | cst.TokenNode;
+    node(): cst.RuleNode | cst.TokenNode;
     get textOffset(): text_index.TextIndex;
     get textRange(): text_index.TextRange;
-    get pathRuleNodes(): Array<cst.RuleNode>;
+    pathRuleNodes(): Array<cst.RuleNode>;
     goToNext(): boolean;
     goToNextNonDescendent(): boolean;
     goToPrevious(): boolean;
@@ -547,14 +547,16 @@ export namespace cursor {
 export namespace parse_error {
   export class ParseError {
     get textRange(): text_index.TextRange;
-    toErrorReport(sourceId: string, source: string, withColour: boolean): string;
+    toErrorReport(sourceId: string, source: string, withColor: boolean): string;
   }
 }
 export namespace parse_output {
   export class ParseOutput {
-    get parseTree(): cst.RuleNode | cst.TokenNode;
-    get errors(): Array<parse_error.ParseError>;
+    tree(): cst.RuleNode | cst.TokenNode;
+    errors(): Array<parse_error.ParseError>;
     get isValid(): boolean;
+    /** Creates a cursor that starts at the root of the parse tree. */
+    createTreeCursor(): cursor.Cursor;
   }
 }
 export namespace text_index {

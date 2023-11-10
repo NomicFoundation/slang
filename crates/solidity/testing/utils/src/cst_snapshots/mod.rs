@@ -3,14 +3,14 @@ mod test_nodes;
 use std::{self, cmp::max, fmt::Write};
 
 use anyhow::Result;
-use slang_solidity::{cst::Node, text_index::TextRangeExtensions};
+use slang_solidity::{cursor::Cursor, text_index::TextRangeExtensions};
 
 use crate::cst_snapshots::test_nodes::{TestNode, TestNodeKind};
 
 pub struct CstSnapshots;
 
 impl CstSnapshots {
-    pub fn render(source: &str, errors: &Vec<String>, tree: &Option<Node>) -> Result<String> {
+    pub fn render(source: &str, errors: &Vec<String>, cursor: Cursor) -> Result<String> {
         let mut w = String::new();
 
         write_source(&mut w, source)?;
@@ -19,7 +19,7 @@ impl CstSnapshots {
         write_errors(&mut w, errors)?;
         writeln!(&mut w)?;
 
-        write_tree(&mut w, tree, source)?;
+        write_tree(&mut w, cursor, source)?;
 
         return Ok(w);
     }
@@ -83,17 +83,12 @@ fn write_errors<W: Write>(w: &mut W, errors: &Vec<String>) -> Result<()> {
     return Ok(());
 }
 
-fn write_tree<W: Write>(w: &mut W, tree: &Option<Node>, source: &str) -> Result<()> {
+fn write_tree<W: Write>(w: &mut W, cursor: Cursor, source: &str) -> Result<()> {
     write!(w, "Tree:")?;
+    writeln!(w)?;
 
-    if let Some(tree) = tree {
-        writeln!(w)?;
-
-        let tree = TestNode::from_cst(tree);
-        write_node(w, &tree, source, 0)?;
-    } else {
-        writeln!(w, " null")?;
-    }
+    let tree = TestNode::from_cst(cursor);
+    write_node(w, &tree, source, 0)?;
 
     return Ok(());
 }

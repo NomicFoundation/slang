@@ -12,7 +12,7 @@ fn simple_contract() -> Result<()> {
     let language = Language::new(Version::parse("0.8.0")?)?;
     let parse_output = language.parse(ProductionKind::ContractDefinition, "contract Foo {}");
 
-    let parse_tree = parse_output.parse_tree();
+    let parse_tree = parse_output.tree();
 
     let children = if let Node::Rule(rule) = &parse_tree {
         assert_eq!(rule.kind, RuleKind::ContractDefinition);

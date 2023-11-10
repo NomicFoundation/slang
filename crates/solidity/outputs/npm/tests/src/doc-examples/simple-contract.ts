@@ -6,10 +6,10 @@ test("simple contract", () => {
   const language = new Language("0.8.0");
   const parseOutput = language.parse(ProductionKind.ContractDefinition, "contract Foo {}");
 
-  const parseTree = parseOutput.parseTree as RuleNode;
+  const parseTree = parseOutput.tree() as RuleNode;
   expect(parseTree.kind).toEqual(RuleKind.ContractDefinition);
 
-  const children = parseTree.children;
+  const children = parseTree.children();
   expect(children).toHaveLength(6);
 
   expect((children[0] as TokenNode).kind).toEqual(TokenKind.ContractKeyword);

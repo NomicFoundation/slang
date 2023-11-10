@@ -3,7 +3,7 @@ use std::rc::Rc;
 
 use anyhow::Result;
 use slang_solidity::{
-    cst::Node, cst::RuleNode, cst::TokenNode, cursor::Cursor, kinds::RuleKind, kinds::TokenKind,
+    cst::RuleNode, cst::TokenNode, cursor::Cursor, kinds::RuleKind, kinds::TokenKind,
     text_index::TextRange, visitor::Step, visitor::Visitor,
 };
 
@@ -85,11 +85,13 @@ impl TestNodeBuilder {
 }
 
 impl TestNode {
-    pub fn from_cst(node: &Node) -> Self {
+    pub fn from_cst(mut cursor: Cursor) -> Self {
         let mut visitor = TestNodeBuilder {
             stack: vec![vec![]],
         };
-        node.cursor().drive_visitor(&mut visitor).unwrap();
+
+        cursor.drive_visitor(&mut visitor).unwrap();
+
         return visitor.stack.remove(0).remove(0);
     }
 

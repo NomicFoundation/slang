@@ -71,7 +71,7 @@ impl Reporter {
             let reports = errors
                 .iter()
                 .take(Self::MAX_PRINTED_FAILURES - failures_before_update)
-                .map(|error| error.to_error_report(source_id, source, /* with_colour */ true))
+                .map(|error| error.to_error_report(source_id, source, /* with_color */ true))
                 .collect::<Vec<String>>();
 
             self.progress_bar.suspend(|| {
