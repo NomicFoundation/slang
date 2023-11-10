@@ -95,7 +95,7 @@ where
                     debug_assert_eq!(
                         errors.len() > 0,
                         parse_tree
-                            .cursor()
+                            .create_cursor(Default::default())
                             .any(|x| x.as_token_with_kind(&[TokenKind::SKIPPED]).is_some())
                     );
 

@@ -7,8 +7,8 @@ test("use cursor", () => {
   const source = "int256 constant z = 1 + 2;";
   const language = new Language("0.8.1");
 
-  const parseTree = language.parse(ProductionKind.SourceUnit, source).parseTree();
-  const cursor: Cursor = parseTree.cursor();
+  const parseOutput = language.parse(ProductionKind.SourceUnit, source);
+  const cursor: Cursor = parseOutput.createTreeCursor();
 
   expectRule(cursor.node(), RuleKind.SourceUnit);
   expect(cursor.goToNext()).toBe(true);

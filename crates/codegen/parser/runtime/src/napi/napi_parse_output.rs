@@ -15,8 +15,8 @@ impl From<RustParseOutput> for ParseOutput {
 #[napi(namespace = "parse_output")]
 impl ParseOutput {
     #[napi(ts_return_type = "cst.RuleNode | cst.TokenNode")]
-    pub fn parse_tree(&self, env: Env) -> napi::JsObject {
-        return self.0.parse_tree().to_js(&env);
+    pub fn tree(&self, env: Env) -> napi::JsObject {
+        return self.0.tree().to_js(&env);
     }
 
     #[napi(ts_return_type = "Array<parse_error.ParseError>")]
@@ -27,5 +27,10 @@ impl ParseOutput {
     #[napi(getter)]
     pub fn is_valid(&self) -> bool {
         self.0.is_valid()
+    }
+
+    #[napi(ts_return_type = "cursor.Cursor")]
+    pub fn create_tree_cursor(&self) -> napi_cursor::Cursor {
+        return self.0.create_tree_cursor().into();
     }
 }

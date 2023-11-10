@@ -18,7 +18,7 @@ fn extract_non_trivia() -> Result<()> {
 
     assert_eq!(output.errors().len(), 0);
 
-    let parse_tree = output.parse_tree();
+    let parse_tree = output.tree();
     let value = parse_tree.extract_non_trivia();
 
     assert_eq!(value, "x=(1+2)");

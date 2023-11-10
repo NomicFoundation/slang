@@ -87,13 +87,13 @@ impl Iterator for Cursor {
 }
 
 impl Cursor {
-    pub(crate) fn new(node: Node) -> Self {
+    pub(crate) fn new(node: Node, text_offset: TextIndex) -> Self {
         Self {
             path: vec![],
             current: PathNode {
                 node,
                 child_number: 0,
-                text_offset: Default::default(),
+                text_offset,
             },
             is_completed: false,
         }

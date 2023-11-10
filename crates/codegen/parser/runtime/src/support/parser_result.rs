@@ -93,7 +93,7 @@ impl Match {
     pub fn is_full_recursive(&self) -> bool {
         self.nodes
             .iter()
-            .flat_map(cst::Node::cursor)
+            .flat_map(|node| cst::Node::create_cursor(node, Default::default()))
             .all(|node| node.as_token_with_kind(&[TokenKind::SKIPPED]).is_none())
     }
 }

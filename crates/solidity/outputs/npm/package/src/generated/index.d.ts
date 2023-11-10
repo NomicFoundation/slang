@@ -510,14 +510,14 @@ export namespace cst {
     get kind(): kinds.RuleKind;
     get textLength(): text_index.TextIndex;
     children(): Array<cst.RuleNode | cst.TokenNode>;
-    cursor(): cursor.Cursor;
+    createCursor(textOffset: TextIndex): cursor.Cursor;
   }
   export class TokenNode {
     get type(): NodeType.Token;
     get kind(): kinds.TokenKind;
     get textLength(): text_index.TextIndex;
     get text(): string;
-    cursor(): cursor.Cursor;
+    createCursor(textOffset: TextIndex): cursor.Cursor;
   }
 }
 export namespace cursor {
@@ -552,9 +552,10 @@ export namespace parse_error {
 }
 export namespace parse_output {
   export class ParseOutput {
-    parseTree(): cst.RuleNode | cst.TokenNode;
+    tree(): cst.RuleNode | cst.TokenNode;
     errors(): Array<parse_error.ParseError>;
     get isValid(): boolean;
+    createTreeCursor(): cursor.Cursor;
   }
 }
 export namespace text_index {

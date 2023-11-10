@@ -20,6 +20,16 @@ impl From<&RustTextIndex> for TextIndex {
     }
 }
 
+impl From<&TextIndex> for RustTextIndex {
+    fn from(value: &TextIndex) -> Self {
+        Self {
+            utf8: value.utf8 as usize,
+            utf16: value.utf16 as usize,
+            char: value.char as usize,
+        }
+    }
+}
+
 #[napi(object, namespace = "text_index")]
 #[derive(Copy, Clone)]
 pub struct TextRange {

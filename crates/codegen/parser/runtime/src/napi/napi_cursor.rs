@@ -10,6 +10,12 @@ use napi_text_index::*;
 #[napi(namespace = "cursor")]
 pub struct Cursor(Box<RustCursor>);
 
+impl From<RustCursor> for Cursor {
+    fn from(value: RustCursor) -> Self {
+        Self(value.into())
+    }
+}
+
 #[napi(namespace = "cursor")]
 impl Cursor {
     pub(crate) fn new(cursor: RustCursor) -> Self {

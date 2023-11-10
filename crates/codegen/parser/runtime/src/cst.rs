@@ -46,8 +46,8 @@ impl Node {
         }
     }
 
-    pub fn cursor(&self) -> Cursor {
-        Cursor::new(self.clone())
+    pub fn create_cursor(&self, text_offset: TextIndex) -> Cursor {
+        Cursor::new(self.clone(), text_offset)
     }
 
     pub fn as_rule(&self) -> Option<&Rc<RuleNode>> {

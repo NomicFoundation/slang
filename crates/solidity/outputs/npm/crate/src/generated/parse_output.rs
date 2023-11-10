@@ -1,6 +1,6 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-use super::{cst, parse_error::ParseError};
+use crate::{cst, cursor::Cursor, parse_error::ParseError};
 
 #[derive(Debug, PartialEq)]
 pub struct ParseOutput {
@@ -9,7 +9,7 @@ pub struct ParseOutput {
 }
 
 impl ParseOutput {
-    pub fn parse_tree(&self) -> cst::Node {
+    pub fn tree(&self) -> cst::Node {
         return self.parse_tree.clone();
     }
 
@@ -19,5 +19,9 @@ impl ParseOutput {
 
     pub fn is_valid(&self) -> bool {
         return self.errors.is_empty();
+    }
+
+    pub fn create_tree_cursor(&self) -> Cursor {
+        return self.parse_tree.create_cursor(Default::default());
     }
 }

@@ -6,7 +6,7 @@ test("parse token", () => {
   const source = "5_286_981";
   const language = new Language("0.8.1");
 
-  const parseTree = language.parse(ProductionKind.NumericExpression, source).parseTree();
+  const parseTree = language.parse(ProductionKind.NumericExpression, source).tree();
   expectRule(parseTree, RuleKind.NumericExpression);
 
   const children = parseTree.children();
@@ -19,7 +19,7 @@ test("parse rule", () => {
   const source = "int256 constant z = 1**2**3;";
   const language = new Language("0.8.1");
 
-  const parseTree = language.parse(ProductionKind.SourceUnit, source).parseTree();
+  const parseTree = language.parse(ProductionKind.SourceUnit, source).tree();
   expectRule(parseTree, RuleKind.SourceUnit);
 
   const children = parseTree.children();
@@ -32,8 +32,8 @@ test("trivial cursor access", () => {
   const source = "int256 constant z = 1**2**3;";
   const language = new Language("0.8.1");
 
-  const parseTree = language.parse(ProductionKind.SourceUnit, source).parseTree();
-  const node = parseTree.cursor().node();
+  const parseOutput = language.parse(ProductionKind.SourceUnit, source);
+  const node = parseOutput.createTreeCursor().node();
   expectRule(node, RuleKind.SourceUnit);
 
   const children = node.children();
@@ -44,7 +44,7 @@ test("calculate unicode characters text length", () => {
   const source = `unicode"some 😁 emoji"`;
   const language = new Language("0.8.1");
 
-  const parseTree = language.parse(ProductionKind.UnicodeStringLiteralsList, source).parseTree();
+  const parseTree = language.parse(ProductionKind.UnicodeStringLiteralsList, source).tree();
   expectRule(parseTree, RuleKind.UnicodeStringLiteralsList);
 
   expect(parseTree.textLength).toEqual({

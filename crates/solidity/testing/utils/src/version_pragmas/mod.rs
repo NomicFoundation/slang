@@ -20,7 +20,7 @@ pub fn extract_version_pragmas(
     let language = &Language::new(latest_version.to_owned())?;
     let output = language.parse(ProductionKind::SourceUnit, source);
 
-    let mut cursor = output.parse_tree().cursor();
+    let mut cursor = output.create_tree_cursor();
     let mut pragmas = vec![];
     while let Some(rule_node) = cursor.find_rule_with_kind(&[RuleKind::VersionPragmaExpression]) {
         pragmas.push(
