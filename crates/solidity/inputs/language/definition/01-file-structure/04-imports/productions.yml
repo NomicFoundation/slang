@@ -75,9 +75,7 @@
         parser:
           sequence:
             - reference: "UsingKeyword"
-            - choice:
-                - reference: "UsingDirectivePath"
-                - reference: "UsingDirectiveDeconstruction"
+            - reference: "UsingDirectivePath"
             - reference: "ForKeyword"
             - choice:
                 - reference: "Asterisk"
@@ -109,28 +107,30 @@
 
 - name: "UsingDirectiveDeconstruction"
   kind: "Parser"
-  unversioned:
-    delimitedBy:
-      open:
-        reference: "OpenBrace"
-      parser:
-        reference: "UsingDirectiveSymbolsList"
-      close:
-        reference: "CloseBrace"
+  versioned:
+    0.8.13:
+      delimitedBy:
+        open:
+          reference: "OpenBrace"
+        parser:
+          reference: "UsingDirectiveSymbolsList"
+        close:
+          reference: "CloseBrace"
 
 - name: "UsingDirectiveSymbolsList"
   kind: "Parser"
-  unversioned:
-    separatedBy:
-      separator:
-        reference: "Comma"
-      parser:
-        reference: "UsingDirectiveSymbol"
+  versioned:
+    0.8.13:
+      separatedBy:
+        separator:
+          reference: "Comma"
+        parser:
+          reference: "UsingDirectiveSymbol"
 
 - name: "UsingDirectiveSymbol"
   kind: "Parser"
   versioned:
-    0.4.11:
+    0.8.13:
       reference: "IdentifierPath"
     0.8.19:
       sequence:
