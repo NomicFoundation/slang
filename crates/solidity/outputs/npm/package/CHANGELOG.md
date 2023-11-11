@@ -1,5 +1,19 @@
 # changelog
 
+## 0.11.0
+
+### Minor Changes
+
+-   [#625](https://github.com/NomicFoundation/slang/pull/625) [`7bb650b`](https://github.com/NomicFoundation/slang/commit/7bb650b12ae793a318dc5b7839fb93915c88828e) Thanks [@Xanewok](https://github.com/Xanewok)! - The CST Cursor now implements the Iterator trait as part of the Rust API
+
+-   [#647](https://github.com/NomicFoundation/slang/pull/647) [`b1dced3`](https://github.com/NomicFoundation/slang/commit/b1dced355ce83f3bd858c02837d67665f7ef281d) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - Require specifying an initial offset when creating a CST cursor.
+
+### Patch Changes
+
+-   [#648](https://github.com/NomicFoundation/slang/pull/648) [`2327bf5`](https://github.com/NomicFoundation/slang/commit/2327bf5d8c40d85edd0cc80fe9e36d367a1a3336) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - Support Solidity v0.8.22.
+
+-   [#623](https://github.com/NomicFoundation/slang/pull/623) [`80114a8`](https://github.com/NomicFoundation/slang/commit/80114a833dc8249447c382bf457215b1a4d9e5ae) Thanks [@AntonyBlakey](https://github.com/AntonyBlakey)! - Correct the types in the TS api by adding the correct namespaces to type references
+
 ## 0.10.1
 
 ### Patch Changes
