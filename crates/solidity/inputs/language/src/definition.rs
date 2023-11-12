@@ -2865,14 +2865,17 @@ codegen_language_macros::compile!(Language(
                         Enum(
                             name = Statement,
                             variants = [
-                                EnumVariant(
-                                    name = TupleDeconstruction,
-                                    reference = TupleDeconstructionStatement
-                                ),
+                                // Simple statements
+                                EnumVariant(name = Expression, reference = ExpressionStatement),
                                 EnumVariant(
                                     name = VariableDeclaration,
                                     reference = VariableDeclarationStatement
                                 ),
+                                EnumVariant(
+                                    name = TupleDeconstruction,
+                                    reference = TupleDeconstructionStatement
+                                ),
+                                // Control statements
                                 EnumVariant(name = If, reference = IfStatement),
                                 EnumVariant(name = For, reference = ForStatement),
                                 EnumVariant(name = While, reference = WhileStatement),
@@ -2907,8 +2910,7 @@ codegen_language_macros::compile!(Language(
                                     name = UncheckedBlock,
                                     enabled = From("0.8.0"),
                                     reference = UncheckedBlock
-                                ),
-                                EnumVariant(name = Expression, reference = ExpressionStatement)
+                                )
                             ]
                         ),
                         Struct(
