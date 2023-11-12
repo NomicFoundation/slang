@@ -4929,16 +4929,16 @@ impl Language {
             choice.consider(input, result)?;
             let result = self.yul_switch_statement(input);
             choice.consider(input, result)?;
+            if self.version_is_at_least_0_6_0 {
+                let result = self.yul_leave_statement(input);
+                choice.consider(input, result)?;
+            }
             let result = self.yul_break_statement(input);
             choice.consider(input, result)?;
             let result = self.yul_continue_statement(input);
             choice.consider(input, result)?;
             let result = self.yul_expression(input);
             choice.consider(input, result)?;
-            if self.version_is_at_least_0_6_0 {
-                let result = self.yul_leave_statement(input);
-                choice.consider(input, result)?;
-            }
             choice.finish(input)
         })
         .with_kind(RuleKind::YulStatement)

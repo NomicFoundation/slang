@@ -664,8 +664,8 @@ slang_grammar! {
 
         parser YulStatement = (
             YulBlock | YulFunctionDefinition | YulDeclarationStatement | YulAssignmentStatement | YulIfStatement |
-            YulForStatement | YulSwitchStatement | YulBreakStatement | YulContinueStatement | YulExpression |
-            { introduced in "0.6.0" YulLeaveStatement }
+            YulForStatement | YulSwitchStatement | { introduced in "0.6.0" YulLeaveStatement } |
+            YulBreakStatement | YulContinueStatement | YulExpression
         ) ;
 
         parser YulStatementsList = (YulStatement +) ;
