@@ -2603,26 +2603,19 @@ codegen_language_macros::compile!(Language(
                     items = [
                         Struct(
                             name = EventDefinition,
-                            error_recovery = FieldsErrorRecovery(terminator = semicolon),
-                            fields = (
-                                event_keyword = Required(Terminal([EventKeyword])),
-                                name = Required(Terminal([Identifier])),
-                                parameters =
-                                    Optional(kind = NonTerminal(EventParametersDeclaration)),
-                                anonymous_keyword = Optional(kind = Terminal([AnonymousKeyword])),
-                                semicolon = Required(Terminal([Semicolon]))
-                            )
-                        ),
-                        Struct(
-                            name = EventParametersDeclaration,
                             error_recovery = FieldsErrorRecovery(
+                                terminator = semicolon,
                                 delimiters =
                                     FieldDelimiters(open = open_paren, close = close_paren)
                             ),
                             fields = (
+                                event_keyword = Required(Terminal([EventKeyword])),
+                                name = Required(Terminal([Identifier])),
                                 open_paren = Required(Terminal([OpenParen])),
-                                parameters = Required(NonTerminal(EventParameters)),
-                                close_paren = Required(Terminal([CloseParen]))
+                                parameters = Optional(kind = NonTerminal(EventParameters)),
+                                close_paren = Required(Terminal([CloseParen])),
+                                anonymous_keyword = Optional(kind = Terminal([AnonymousKeyword])),
+                                semicolon = Required(Terminal([Semicolon]))
                             )
                         ),
                         Separated(
