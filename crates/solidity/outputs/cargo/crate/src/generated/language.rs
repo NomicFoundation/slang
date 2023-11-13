@@ -4161,116 +4161,120 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn using_directive_symbol(&self, input: &mut ParserContext) -> ParserResult {
-        SequenceHelper::run(|mut seq| {
-            seq.elem(self.identifier_path(input))?;
-            if self.version_is_at_least_0_8_19 {
-                seq.elem(OptionalHelper::transform(SequenceHelper::run(|mut seq| {
-                    seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::AsKeyword,
-                    ))?;
-                    seq.elem(if self.version_is_at_least_0_8_19 {
-                        ChoiceHelper::run(input, |mut choice, input| {
-                            let result = self
-                                .parse_token_with_trivia::<LexicalContextType::Default>(
-                                    input,
-                                    TokenKind::Ampersand,
-                                );
-                            choice.consider(input, result)?;
-                            let result = self
-                                .parse_token_with_trivia::<LexicalContextType::Default>(
-                                    input,
-                                    TokenKind::Asterisk,
-                                );
-                            choice.consider(input, result)?;
-                            let result = self
-                                .parse_token_with_trivia::<LexicalContextType::Default>(
-                                    input,
-                                    TokenKind::BangEqual,
-                                );
-                            choice.consider(input, result)?;
-                            let result = self
-                                .parse_token_with_trivia::<LexicalContextType::Default>(
-                                    input,
-                                    TokenKind::Bar,
-                                );
-                            choice.consider(input, result)?;
-                            let result = self
-                                .parse_token_with_trivia::<LexicalContextType::Default>(
-                                    input,
-                                    TokenKind::Caret,
-                                );
-                            choice.consider(input, result)?;
-                            let result = self
-                                .parse_token_with_trivia::<LexicalContextType::Default>(
-                                    input,
-                                    TokenKind::EqualEqual,
-                                );
-                            choice.consider(input, result)?;
-                            let result = self
-                                .parse_token_with_trivia::<LexicalContextType::Default>(
-                                    input,
-                                    TokenKind::GreaterThan,
-                                );
-                            choice.consider(input, result)?;
-                            let result = self
-                                .parse_token_with_trivia::<LexicalContextType::Default>(
-                                    input,
-                                    TokenKind::GreaterThanEqual,
-                                );
-                            choice.consider(input, result)?;
-                            let result = self
-                                .parse_token_with_trivia::<LexicalContextType::Default>(
-                                    input,
-                                    TokenKind::LessThan,
-                                );
-                            choice.consider(input, result)?;
-                            let result = self
-                                .parse_token_with_trivia::<LexicalContextType::Default>(
-                                    input,
-                                    TokenKind::LessThanEqual,
-                                );
-                            choice.consider(input, result)?;
-                            let result = self
-                                .parse_token_with_trivia::<LexicalContextType::Default>(
-                                    input,
-                                    TokenKind::Minus,
-                                );
-                            choice.consider(input, result)?;
-                            let result = self
-                                .parse_token_with_trivia::<LexicalContextType::Default>(
-                                    input,
-                                    TokenKind::Percent,
-                                );
-                            choice.consider(input, result)?;
-                            let result = self
-                                .parse_token_with_trivia::<LexicalContextType::Default>(
-                                    input,
-                                    TokenKind::Plus,
-                                );
-                            choice.consider(input, result)?;
-                            let result = self
-                                .parse_token_with_trivia::<LexicalContextType::Default>(
-                                    input,
-                                    TokenKind::Slash,
-                                );
-                            choice.consider(input, result)?;
-                            let result = self
-                                .parse_token_with_trivia::<LexicalContextType::Default>(
-                                    input,
-                                    TokenKind::Tilde,
-                                );
-                            choice.consider(input, result)?;
-                            choice.finish(input)
-                        })
-                    } else {
-                        ParserResult::disabled()
-                    })?;
-                    seq.finish()
-                })))?;
-            }
-            seq.finish()
-        })
+        if self.version_is_at_least_0_8_13 {
+            SequenceHelper::run(|mut seq| {
+                seq.elem(self.identifier_path(input))?;
+                if self.version_is_at_least_0_8_19 {
+                    seq.elem(OptionalHelper::transform(SequenceHelper::run(|mut seq| {
+                        seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            input,
+                            TokenKind::AsKeyword,
+                        ))?;
+                        seq.elem(if self.version_is_at_least_0_8_19 {
+                            ChoiceHelper::run(input, |mut choice, input| {
+                                let result = self
+                                    .parse_token_with_trivia::<LexicalContextType::Default>(
+                                        input,
+                                        TokenKind::Ampersand,
+                                    );
+                                choice.consider(input, result)?;
+                                let result = self
+                                    .parse_token_with_trivia::<LexicalContextType::Default>(
+                                        input,
+                                        TokenKind::Asterisk,
+                                    );
+                                choice.consider(input, result)?;
+                                let result = self
+                                    .parse_token_with_trivia::<LexicalContextType::Default>(
+                                        input,
+                                        TokenKind::BangEqual,
+                                    );
+                                choice.consider(input, result)?;
+                                let result = self
+                                    .parse_token_with_trivia::<LexicalContextType::Default>(
+                                        input,
+                                        TokenKind::Bar,
+                                    );
+                                choice.consider(input, result)?;
+                                let result = self
+                                    .parse_token_with_trivia::<LexicalContextType::Default>(
+                                        input,
+                                        TokenKind::Caret,
+                                    );
+                                choice.consider(input, result)?;
+                                let result = self
+                                    .parse_token_with_trivia::<LexicalContextType::Default>(
+                                        input,
+                                        TokenKind::EqualEqual,
+                                    );
+                                choice.consider(input, result)?;
+                                let result = self
+                                    .parse_token_with_trivia::<LexicalContextType::Default>(
+                                        input,
+                                        TokenKind::GreaterThan,
+                                    );
+                                choice.consider(input, result)?;
+                                let result = self
+                                    .parse_token_with_trivia::<LexicalContextType::Default>(
+                                        input,
+                                        TokenKind::GreaterThanEqual,
+                                    );
+                                choice.consider(input, result)?;
+                                let result = self
+                                    .parse_token_with_trivia::<LexicalContextType::Default>(
+                                        input,
+                                        TokenKind::LessThan,
+                                    );
+                                choice.consider(input, result)?;
+                                let result = self
+                                    .parse_token_with_trivia::<LexicalContextType::Default>(
+                                        input,
+                                        TokenKind::LessThanEqual,
+                                    );
+                                choice.consider(input, result)?;
+                                let result = self
+                                    .parse_token_with_trivia::<LexicalContextType::Default>(
+                                        input,
+                                        TokenKind::Minus,
+                                    );
+                                choice.consider(input, result)?;
+                                let result = self
+                                    .parse_token_with_trivia::<LexicalContextType::Default>(
+                                        input,
+                                        TokenKind::Percent,
+                                    );
+                                choice.consider(input, result)?;
+                                let result = self
+                                    .parse_token_with_trivia::<LexicalContextType::Default>(
+                                        input,
+                                        TokenKind::Plus,
+                                    );
+                                choice.consider(input, result)?;
+                                let result = self
+                                    .parse_token_with_trivia::<LexicalContextType::Default>(
+                                        input,
+                                        TokenKind::Slash,
+                                    );
+                                choice.consider(input, result)?;
+                                let result = self
+                                    .parse_token_with_trivia::<LexicalContextType::Default>(
+                                        input,
+                                        TokenKind::Tilde,
+                                    );
+                                choice.consider(input, result)?;
+                                choice.finish(input)
+                            })
+                        } else {
+                            ParserResult::disabled()
+                        })?;
+                        seq.finish()
+                    })))?;
+                }
+                seq.finish()
+            })
+        } else {
+            ParserResult::disabled()
+        }
         .with_kind(RuleKind::UsingDirectiveSymbol)
     }
 

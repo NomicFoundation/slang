@@ -554,9 +554,9 @@ slang_grammar! {
 
         parser UsingDirectivePath = IdentifierPath ;
 
-        parser UsingDirectiveSymbol = (
-            IdentifierPath { introduced in "0.8.19" ((AsKeyword UsingDirectiveOperator) ?) }
-        ) ;
+        parser UsingDirectiveSymbol = {
+            introduced in "0.8.13" (IdentifierPath { introduced in "0.8.19" ((AsKeyword UsingDirectiveOperator) ?) } )
+        } ;
 
         parser UsingDirectiveSymbolsList = (UsingDirectiveSymbol separated by Comma) ;
 
