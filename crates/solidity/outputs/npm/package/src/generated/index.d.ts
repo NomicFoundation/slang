@@ -306,7 +306,7 @@ export namespace kinds {
   }
   export enum TokenKind {
     SKIPPED = "SKIPPED",
-    ABICoderKeyword = "ABICoderKeyword",
+    AbicoderKeyword = "AbicoderKeyword",
     AbstractKeyword = "AbstractKeyword",
     AddressKeyword = "AddressKeyword",
     AfterKeyword = "AfterKeyword",
