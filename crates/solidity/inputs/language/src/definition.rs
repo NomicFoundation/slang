@@ -3039,8 +3039,8 @@ codegen_language_macros::compile!(Language(
                         Struct(
                             name = ElseBranch,
                             fields = (
-                                else_keyword = Optional(kind = Terminal([ElseKeyword])),
-                                body = Optional(kind = NonTerminal(Statement))
+                                else_keyword = Required(Terminal([ElseKeyword])),
+                                body = Required(NonTerminal(Statement))
                             )
                         ),
                         Struct(
