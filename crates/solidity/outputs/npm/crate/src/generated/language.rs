@@ -180,7 +180,7 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
                 input,
-                TokenKind::ABICoderKeyword,
+                TokenKind::AbicoderKeyword,
             ))?;
             seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
                 input,
@@ -5868,7 +5868,7 @@ impl Lexer for Language {
                     Some('a') => match input.next() {
                         Some('b') => match input.next() {
                             Some('i') => scan_chars!(input, 'c', 'o', 'd', 'e', 'r')
-                                .then_some(TokenKind::ABICoderKeyword),
+                                .then_some(TokenKind::AbicoderKeyword),
                             Some('s') => scan_chars!(input, 't', 'r', 'a', 'c', 't')
                                 .then_some(TokenKind::AbstractKeyword),
                             Some(_) => {

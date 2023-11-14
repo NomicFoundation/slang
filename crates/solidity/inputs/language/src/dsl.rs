@@ -35,7 +35,7 @@ slang_grammar! {
     lexical context Default = {
 
         inline parser SolidityKeywordsOverAllVersions = (
-              ABICoderKeyword
+              AbicoderKeyword
             | AbstractKeyword
             | AddressKeyword
             | AfterKeyword
@@ -165,7 +165,7 @@ slang_grammar! {
             | GlobalKeyword
         ) ;
 
-        parser ABICoderPragma = (ABICoderKeyword Identifier) ;
+        parser ABICoderPragma = (AbicoderKeyword Identifier) ;
 
         inline parser AddSubOperator = (Plus | Minus) ;
 
@@ -852,7 +852,7 @@ slang_grammar! {
 
     // Keywords
 
-    scanner ABICoderKeyword = "abicoder" ;
+    scanner AbicoderKeyword = "abicoder" ;
     scanner AbstractKeyword = "abstract" ;
     scanner AddressKeyword = "address" ;
     scanner AfterKeyword = "after" ;

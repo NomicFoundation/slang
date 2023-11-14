@@ -350,7 +350,7 @@ impl RuleKind {
 #[cfg_attr(not(feature = "slang_napi_interfaces"), derive(Clone, Copy))]
 pub enum TokenKind {
     SKIPPED,
-    ABICoderKeyword,
+    AbicoderKeyword,
     AbstractKeyword,
     AddressKeyword,
     AfterKeyword,
