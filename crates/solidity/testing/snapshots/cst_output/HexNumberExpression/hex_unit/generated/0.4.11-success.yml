@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ 0x1 wei                                                                          │ 0..7
+
+Errors: []
+
+Tree:
+  - HexNumberExpression (Rule): # 0..7 "0x1 wei"
+      - HexLiteral (Token): "0x1" # 0..3
+      - WeiKeyword (Token): "wei" # 4..7

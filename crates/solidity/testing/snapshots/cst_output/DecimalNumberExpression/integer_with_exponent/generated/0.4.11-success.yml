@@ -1,0 +1,10 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ 1e2                                                                              │ 0..3
+
+Errors: []
+
+Tree:
+  - DecimalNumberExpression (Rule): # 0..3 "1e2"
+      - DecimalLiteral (Token): "1e2" # 0..3

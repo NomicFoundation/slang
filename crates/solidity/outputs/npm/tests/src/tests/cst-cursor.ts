@@ -61,7 +61,7 @@ test("use cursor", () => {
   expectRule(cursor.node(), RuleKind.Expression);
   expect(cursor.goToNext()).toBe(true);
 
-  expectRule(cursor.node(), RuleKind.NumericExpression);
+  expectRule(cursor.node(), RuleKind.DecimalNumberExpression);
   expect(cursor.goToNext()).toBe(true);
 
   expectRule(cursor.node(), RuleKind.LeadingTrivia);
@@ -85,7 +85,7 @@ test("use cursor", () => {
   expectRule(cursor.node(), RuleKind.Expression);
   expect(cursor.goToNext()).toBe(true);
 
-  expectRule(cursor.node(), RuleKind.NumericExpression);
+  expectRule(cursor.node(), RuleKind.DecimalNumberExpression);
   expect(cursor.goToNext()).toBe(true);
 
   expectRule(cursor.node(), RuleKind.LeadingTrivia);

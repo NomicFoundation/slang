@@ -6,8 +6,8 @@ test("parse token", () => {
   const source = "5_286_981";
   const language = new Language("0.8.1");
 
-  const parseTree = language.parse(ProductionKind.NumericExpression, source).tree();
-  expectRule(parseTree, RuleKind.NumericExpression);
+  const parseTree = language.parse(ProductionKind.DecimalNumberExpression, source).tree();
+  expectRule(parseTree, RuleKind.DecimalNumberExpression);
 
   const children = parseTree.children();
   expect(children).toHaveLength(1);
