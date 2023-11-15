@@ -117,12 +117,13 @@ Tree:
           - ErrorDefinition (Rule): # 181..200 "\nerror E1(string);\n"
               - ErrorKeyword (Token): "error" # 182..187
               - Identifier (Token): "E1" # 188..190
-              - OpenParen (Token): "(" # 190..191
-              - ErrorParametersList (Rule): # 191..197 "string"
-                  - ErrorParameter (Rule): # 191..197 "string"
-                      - TypeName (Rule): # 191..197 "string"
-                          - StringKeyword (Token): "string" # 191..197
-              - CloseParen (Token): ")" # 197..198
+              - ErrorParametersDeclaration (Rule): # 190..198 "(string)"
+                  - OpenParen (Token): "(" # 190..191
+                  - ErrorParametersList (Rule): # 191..197 "string"
+                      - ErrorParameter (Rule): # 191..197 "string"
+                          - TypeName (Rule): # 191..197 "string"
+                              - StringKeyword (Token): "string" # 191..197
+                  - CloseParen (Token): ")" # 197..198
               - Semicolon (Token): ";" # 198..199
           - UserDefinedValueTypeDefinition (Rule): # 200..217 "\ntype T is bool;\n"
               - TypeKeyword (Token): "type" # 201..205

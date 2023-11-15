@@ -924,7 +924,38 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn error_definition(&self, input: &mut ParserContext) -> ParserResult {
-        if self . version_is_at_least_0_8_4 { SequenceHelper :: run (| mut seq | { seq . elem (SequenceHelper :: run (| mut seq | { seq . elem (self . parse_token_with_trivia :: < LexicalContextType :: Default > (input , TokenKind :: ErrorKeyword)) ? ; seq . elem (self . parse_token_with_trivia :: < LexicalContextType :: Default > (input , TokenKind :: Identifier)) ? ; seq . elem (SequenceHelper :: run (| mut seq | { let mut delim_guard = input . open_delim (TokenKind :: CloseParen) ; let input = delim_guard . ctx () ; seq . elem (self . parse_token_with_trivia :: < LexicalContextType :: Default > (input , TokenKind :: OpenParen)) ? ; seq . elem (OptionalHelper :: transform (self . error_parameters_list (input)) . recover_until_with_nested_delims :: < _ , LexicalContextType :: Default > (input , self , TokenKind :: CloseParen , RecoverFromNoMatch :: Yes ,)) ? ; seq . elem (self . parse_token_with_trivia :: < LexicalContextType :: Default > (input , TokenKind :: CloseParen)) ? ; seq . finish () })) ? ; seq . finish () }) . recover_until_with_nested_delims :: < _ , LexicalContextType :: Default > (input , self , TokenKind :: Semicolon , RecoverFromNoMatch :: No ,)) ? ; seq . elem (self . parse_token_with_trivia :: < LexicalContextType :: Default > (input , TokenKind :: Semicolon)) ? ; seq . finish () }) } else { ParserResult :: disabled () } . with_kind (RuleKind :: ErrorDefinition)
+        if self.version_is_at_least_0_8_4 {
+            SequenceHelper::run(|mut seq| {
+                seq.elem(
+                    SequenceHelper::run(|mut seq| {
+                        seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            input,
+                            TokenKind::ErrorKeyword,
+                        ))?;
+                        seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            input,
+                            TokenKind::Identifier,
+                        ))?;
+                        seq.elem(self.error_parameters_declaration(input))?;
+                        seq.finish()
+                    })
+                    .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
+                        input,
+                        self,
+                        TokenKind::Semicolon,
+                        RecoverFromNoMatch::No,
+                    ),
+                )?;
+                seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    input,
+                    TokenKind::Semicolon,
+                ))?;
+                seq.finish()
+            })
+        } else {
+            ParserResult::disabled()
+        }
+        .with_kind(RuleKind::ErrorDefinition)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -944,6 +975,37 @@ impl Language {
             ParserResult::disabled()
         }
         .with_kind(RuleKind::ErrorParameter)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn error_parameters_declaration(&self, input: &mut ParserContext) -> ParserResult {
+        if self.version_is_at_least_0_8_4 {
+            SequenceHelper::run(|mut seq| {
+                let mut delim_guard = input.open_delim(TokenKind::CloseParen);
+                let input = delim_guard.ctx();
+                seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    input,
+                    TokenKind::OpenParen,
+                ))?;
+                seq.elem(
+                    OptionalHelper::transform(self.error_parameters_list(input))
+                        .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
+                        input,
+                        self,
+                        TokenKind::CloseParen,
+                        RecoverFromNoMatch::Yes,
+                    ),
+                )?;
+                seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    input,
+                    TokenKind::CloseParen,
+                ))?;
+                seq.finish()
+            })
+        } else {
+            ParserResult::disabled()
+        }
+        .with_kind(RuleKind::ErrorParametersDeclaration)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -5651,6 +5713,9 @@ impl Language {
             ProductionKind::EnumDefinition => Self::enum_definition.parse(self, input),
             ProductionKind::ErrorDefinition => Self::error_definition.parse(self, input),
             ProductionKind::ErrorParameter => Self::error_parameter.parse(self, input),
+            ProductionKind::ErrorParametersDeclaration => {
+                Self::error_parameters_declaration.parse(self, input)
+            }
             ProductionKind::ErrorParametersList => Self::error_parameters_list.parse(self, input),
             ProductionKind::EventDefinition => Self::event_definition.parse(self, input),
             ProductionKind::EventParameter => Self::event_parameter.parse(self, input),

@@ -271,7 +271,9 @@ slang_grammar! {
 
         inline parser EqualityComparisonOperator = (EqualEqual | BangEqual) ;
 
-        parser ErrorDefinition = { introduced in "0.8.4" ((ErrorKeyword Identifier ((ErrorParametersList ?) delimited by OpenParen and CloseParen)) terminated by Semicolon) } ;
+        parser ErrorDefinition = { introduced in "0.8.4" ((ErrorKeyword Identifier ErrorParametersDeclaration) terminated by Semicolon) } ;
+
+        parser ErrorParametersDeclaration = { introduced in "0.8.4" ((ErrorParametersList ?) delimited by OpenParen and CloseParen) } ;
 
         parser ErrorParameter = { introduced in "0.8.4" (TypeName (Identifier ?)) } ;
 
