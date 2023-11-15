@@ -24,10 +24,9 @@ Tree:
               - Block (Rule): # 34..48 " {\n    _;\n  }\n"
                   - OpenBrace (Token): "{" # 35..36
                   - StatementsList (Rule): # 37..44 "    _;\n"
-                      - Statement (Rule): # 37..44 "    _;\n"
-                          - ExpressionStatement (Rule): # 37..44 "    _;\n"
-                              - Expression (Rule): # 37..42 "    _"
-                                  - Identifier (Token): "_" # 41..42
-                              - Semicolon (Token): ";" # 42..43
+                      - ExpressionStatement (Rule): # 37..44 "    _;\n"
+                          - Expression (Rule): # 37..42 "    _"
+                              - Identifier (Token): "_" # 41..42
+                          - Semicolon (Token): ";" # 42..43
                   - CloseBrace (Token): "}" # 46..47
       - CloseBrace (Token): "}" # 48..49

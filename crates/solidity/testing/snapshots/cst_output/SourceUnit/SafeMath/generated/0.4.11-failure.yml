@@ -66,10 +66,9 @@ Tree:
                       - Block (Rule): # 96..210 " {\n    unchecked {\n      uint256 c = a + b;\n      ..."
                           - OpenBrace (Token): "{" # 97..98
                           - StatementsList (Rule): # 99..113 "    unchecked "
-                              - Statement (Rule): # 99..113 "    unchecked "
-                                  - ExpressionStatement (Rule): # 99..113 "    unchecked "
-                                      - Expression (Rule): # 99..112 "    unchecked"
-                                          - Identifier (Token): "unchecked" # 103..112
+                              - ExpressionStatement (Rule): # 99..113 "    unchecked "
+                                  - Expression (Rule): # 99..112 "    unchecked"
+                                      - Identifier (Token): "unchecked" # 103..112
                           - SKIPPED (Token): "{\n      uint256 c = a + b;\n      if (c < a) return..." # 113..208
                           - CloseBrace (Token): "}" # 208..209
               - CloseBrace (Token): "}" # 210..211

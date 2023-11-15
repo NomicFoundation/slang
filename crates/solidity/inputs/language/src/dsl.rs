@@ -491,7 +491,7 @@ slang_grammar! {
 
         parser StateVariableDefinition = ((TypeName (StateVariableAttributesList ?) Identifier ((Equal Expression) ?)) terminated by Semicolon) ;
 
-        parser Statement = (
+        inline parser Statement = (
             SimpleStatement | ControlStatement | AssemblyStatement | Block | { introduced in "0.8.0" UncheckedBlock }
         ) ;
 
@@ -666,7 +666,7 @@ slang_grammar! {
 
         parser YulReturnsDeclaration = (MinusGreaterThan YulIdentifiersList) ;
 
-        parser YulStatement = (
+        inline parser YulStatement = (
             YulBlock | YulFunctionDefinition | YulDeclarationStatement | YulAssignmentStatement | YulIfStatement |
             YulForStatement | YulSwitchStatement | { introduced in "0.6.0" YulLeaveStatement } |
             YulBreakStatement | YulContinueStatement | YulExpression

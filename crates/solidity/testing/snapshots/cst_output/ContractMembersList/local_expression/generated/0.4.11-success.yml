@@ -18,27 +18,26 @@ Tree:
           - Block (Rule): # 15..42 " {\n  uint a = 1 + 2 * 3;\n}\n"
               - OpenBrace (Token): "{" # 16..17
               - StatementsList (Rule): # 18..40 "  uint a = 1 + 2 * 3;\n"
-                  - Statement (Rule): # 18..40 "  uint a = 1 + 2 * 3;\n"
-                      - VariableDeclarationStatement (Rule): # 18..40 "  uint a = 1 + 2 * 3;\n"
-                          - VariableDeclaration (Rule): # 18..26 "  uint a"
-                              - TypeName (Rule): # 18..24 "  uint"
-                                  - UnsignedIntegerType (Token): "uint" # 20..24
-                              - Identifier (Token): "a" # 25..26
-                          - Equal (Token): "=" # 27..28
-                          - Expression (Rule): # 28..38 " 1 + 2 * 3"
-                              - BinaryExpression (Rule): # 28..38 " 1 + 2 * 3"
-                                  - Expression (Rule): # 28..30 " 1"
-                                      - DecimalNumberExpression (Rule): # 28..30 " 1"
-                                          - DecimalLiteral (Token): "1" # 29..30
-                                  - Plus (Token): "+" # 31..32
-                                  - Expression (Rule): # 32..38 " 2 * 3"
-                                      - BinaryExpression (Rule): # 32..38 " 2 * 3"
-                                          - Expression (Rule): # 32..34 " 2"
-                                              - DecimalNumberExpression (Rule): # 32..34 " 2"
-                                                  - DecimalLiteral (Token): "2" # 33..34
-                                          - Asterisk (Token): "*" # 35..36
-                                          - Expression (Rule): # 36..38 " 3"
-                                              - DecimalNumberExpression (Rule): # 36..38 " 3"
-                                                  - DecimalLiteral (Token): "3" # 37..38
-                          - Semicolon (Token): ";" # 38..39
+                  - VariableDeclarationStatement (Rule): # 18..40 "  uint a = 1 + 2 * 3;\n"
+                      - VariableDeclaration (Rule): # 18..26 "  uint a"
+                          - TypeName (Rule): # 18..24 "  uint"
+                              - UnsignedIntegerType (Token): "uint" # 20..24
+                          - Identifier (Token): "a" # 25..26
+                      - Equal (Token): "=" # 27..28
+                      - Expression (Rule): # 28..38 " 1 + 2 * 3"
+                          - BinaryExpression (Rule): # 28..38 " 1 + 2 * 3"
+                              - Expression (Rule): # 28..30 " 1"
+                                  - DecimalNumberExpression (Rule): # 28..30 " 1"
+                                      - DecimalLiteral (Token): "1" # 29..30
+                              - Plus (Token): "+" # 31..32
+                              - Expression (Rule): # 32..38 " 2 * 3"
+                                  - BinaryExpression (Rule): # 32..38 " 2 * 3"
+                                      - Expression (Rule): # 32..34 " 2"
+                                          - DecimalNumberExpression (Rule): # 32..34 " 2"
+                                              - DecimalLiteral (Token): "2" # 33..34
+                                      - Asterisk (Token): "*" # 35..36
+                                      - Expression (Rule): # 36..38 " 3"
+                                          - DecimalNumberExpression (Rule): # 36..38 " 3"
+                                              - DecimalLiteral (Token): "3" # 37..38
+                      - Semicolon (Token): ";" # 38..39
               - CloseBrace (Token): "}" # 40..41

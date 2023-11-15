@@ -52,11 +52,13 @@ mod ReturnStatement;
 #[allow(non_snake_case)]
 mod SourceUnit;
 #[allow(non_snake_case)]
-mod Statement;
-#[allow(non_snake_case)]
 mod StatementsList;
 #[allow(non_snake_case)]
 mod StructDefinition;
+#[allow(non_snake_case)]
+mod ThrowStatement;
+#[allow(non_snake_case)]
+mod TryStatement;
 #[allow(non_snake_case)]
 mod TupleDeconstructionStatement;
 #[allow(non_snake_case)]
@@ -80,7 +82,7 @@ mod YulBlock;
 #[allow(non_snake_case)]
 mod YulExpression;
 #[allow(non_snake_case)]
-mod YulStatement;
+mod YulLeaveStatement;
 
 pub const VERSION_BREAKS: [Version; 19] = [
     Version::new(0, 4, 11),

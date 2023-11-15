@@ -5,5 +5,5 @@ use anyhow::Result;
 
 #[test]
 fn leave() -> Result<()> {
-    return run("YulStatement", "leave");
+    return run("YulLeaveStatement", "leave");
 }

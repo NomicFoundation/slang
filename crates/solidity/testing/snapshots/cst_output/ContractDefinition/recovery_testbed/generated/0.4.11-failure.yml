@@ -64,28 +64,25 @@ Tree:
               - Block (Rule): # 62..138 " {\n\t\tif(while == pair && !_isExcludedFromFee[to]){..."
                   - OpenBrace (Token): "{" # 63..64
                   - StatementsList (Rule): # 65..135 "\t\tif(while == pair && !_isExcludedFromFee[to]){\n\t\t..."
-                      - Statement (Rule): # 65..135 "\t\tif(while == pair && !_isExcludedFromFee[to]){\n\t\t..."
-                          - IfStatement (Rule): # 65..135 "\t\tif(while == pair && !_isExcludedFromFee[to]){\n\t\t..."
-                              - IfKeyword (Token): "if" # 67..69
-                              - OpenParen (Token): "(" # 69..70
-                              - SKIPPED (Token): "while == pair && !_isExcludedFromFee[to]" # 70..110
-                              - CloseParen (Token): ")" # 110..111
-                              - Statement (Rule): # 111..135 "{\n\t\t\tuint256 a = 1;\n\t\t}\n"
-                                  - Block (Rule): # 111..135 "{\n\t\t\tuint256 a = 1;\n\t\t}\n"
-                                      - OpenBrace (Token): "{" # 111..112
-                                      - StatementsList (Rule): # 113..131 "\t\t\tuint256 a = 1;\n"
-                                          - Statement (Rule): # 113..131 "\t\t\tuint256 a = 1;\n"
-                                              - VariableDeclarationStatement (Rule): # 113..131 "\t\t\tuint256 a = 1;\n"
-                                                  - VariableDeclaration (Rule): # 113..125 "\t\t\tuint256 a"
-                                                      - TypeName (Rule): # 113..123 "\t\t\tuint256"
-                                                          - UnsignedIntegerType (Token): "uint256" # 116..123
-                                                      - Identifier (Token): "a" # 124..125
-                                                  - Equal (Token): "=" # 126..127
-                                                  - Expression (Rule): # 127..129 " 1"
-                                                      - DecimalNumberExpression (Rule): # 127..129 " 1"
-                                                          - DecimalLiteral (Token): "1" # 128..129
-                                                  - Semicolon (Token): ";" # 129..130
-                                      - CloseBrace (Token): "}" # 133..134
+                      - IfStatement (Rule): # 65..135 "\t\tif(while == pair && !_isExcludedFromFee[to]){\n\t\t..."
+                          - IfKeyword (Token): "if" # 67..69
+                          - OpenParen (Token): "(" # 69..70
+                          - SKIPPED (Token): "while == pair && !_isExcludedFromFee[to]" # 70..110
+                          - CloseParen (Token): ")" # 110..111
+                          - Block (Rule): # 111..135 "{\n\t\t\tuint256 a = 1;\n\t\t}\n"
+                              - OpenBrace (Token): "{" # 111..112
+                              - StatementsList (Rule): # 113..131 "\t\t\tuint256 a = 1;\n"
+                                  - VariableDeclarationStatement (Rule): # 113..131 "\t\t\tuint256 a = 1;\n"
+                                      - VariableDeclaration (Rule): # 113..125 "\t\t\tuint256 a"
+                                          - TypeName (Rule): # 113..123 "\t\t\tuint256"
+                                              - UnsignedIntegerType (Token): "uint256" # 116..123
+                                          - Identifier (Token): "a" # 124..125
+                                      - Equal (Token): "=" # 126..127
+                                      - Expression (Rule): # 127..129 " 1"
+                                          - DecimalNumberExpression (Rule): # 127..129 " 1"
+                                              - DecimalLiteral (Token): "1" # 128..129
+                                      - Semicolon (Token): ";" # 129..130
+                              - CloseBrace (Token): "}" # 133..134
                   - CloseBrace (Token): "}" # 136..137
           - FunctionDefinition (Rule): # 138..210 "\n\tfunction abc() {\n\t\tuint256 x = 0;\n\t\tunchecked { ..."
               - FunctionKeyword (Token): "function" # 140..148
@@ -96,21 +93,19 @@ Tree:
               - Block (Rule): # 154..210 " {\n\t\tuint256 x = 0;\n\t\tunchecked { invalid sequence..."
                   - OpenBrace (Token): "{" # 155..156
                   - StatementsList (Rule): # 157..186 "\t\tuint256 x = 0;\n\t\tunchecked "
-                      - Statement (Rule): # 157..174 "\t\tuint256 x = 0;\n"
-                          - VariableDeclarationStatement (Rule): # 157..174 "\t\tuint256 x = 0;\n"
-                              - VariableDeclaration (Rule): # 157..168 "\t\tuint256 x"
-                                  - TypeName (Rule): # 157..166 "\t\tuint256"
-                                      - UnsignedIntegerType (Token): "uint256" # 159..166
-                                  - Identifier (Token): "x" # 167..168
-                              - Equal (Token): "=" # 169..170
-                              - Expression (Rule): # 170..172 " 0"
-                                  - DecimalNumberExpression (Rule): # 170..172 " 0"
-                                      - DecimalLiteral (Token): "0" # 171..172
-                              - Semicolon (Token): ";" # 172..173
-                      - Statement (Rule): # 174..186 "\t\tunchecked "
-                          - ExpressionStatement (Rule): # 174..186 "\t\tunchecked "
-                              - Expression (Rule): # 174..185 "\t\tunchecked"
-                                  - Identifier (Token): "unchecked" # 176..185
+                      - VariableDeclarationStatement (Rule): # 157..174 "\t\tuint256 x = 0;\n"
+                          - VariableDeclaration (Rule): # 157..168 "\t\tuint256 x"
+                              - TypeName (Rule): # 157..166 "\t\tuint256"
+                                  - UnsignedIntegerType (Token): "uint256" # 159..166
+                              - Identifier (Token): "x" # 167..168
+                          - Equal (Token): "=" # 169..170
+                          - Expression (Rule): # 170..172 " 0"
+                              - DecimalNumberExpression (Rule): # 170..172 " 0"
+                                  - DecimalLiteral (Token): "0" # 171..172
+                          - Semicolon (Token): ";" # 172..173
+                      - ExpressionStatement (Rule): # 174..186 "\t\tunchecked "
+                          - Expression (Rule): # 174..185 "\t\tunchecked"
+                              - Identifier (Token): "unchecked" # 176..185
                   - SKIPPED (Token): "{ invalid sequence }\n\t" # 186..208
                   - CloseBrace (Token): "}" # 208..209
       - CloseBrace (Token): "}" # 210..211

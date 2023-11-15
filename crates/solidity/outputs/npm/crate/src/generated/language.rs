@@ -867,7 +867,63 @@ impl Language {
                         input,
                         TokenKind::DoKeyword,
                     ))?;
-                    seq.elem(self.statement(input))?;
+                    seq.elem(ChoiceHelper::run(input, |mut choice, input| {
+                        let result = ChoiceHelper::run(input, |mut choice, input| {
+                            let result = self.expression_statement(input);
+                            choice.consider(input, result)?;
+                            let result = self.variable_declaration_statement(input);
+                            choice.consider(input, result)?;
+                            let result = self.tuple_deconstruction_statement(input);
+                            choice.consider(input, result)?;
+                            choice.finish(input)
+                        });
+                        choice.consider(input, result)?;
+                        let result = ChoiceHelper::run(input, |mut choice, input| {
+                            let result = self.if_statement(input);
+                            choice.consider(input, result)?;
+                            let result = self.for_statement(input);
+                            choice.consider(input, result)?;
+                            let result = self.while_statement(input);
+                            choice.consider(input, result)?;
+                            let result = self.do_while_statement(input);
+                            choice.consider(input, result)?;
+                            let result = self.continue_statement(input);
+                            choice.consider(input, result)?;
+                            let result = self.break_statement(input);
+                            choice.consider(input, result)?;
+                            let result = self.delete_statement(input);
+                            choice.consider(input, result)?;
+                            let result = self.return_statement(input);
+                            choice.consider(input, result)?;
+                            if self.version_is_at_least_0_4_21 {
+                                let result = self.emit_statement(input);
+                                choice.consider(input, result)?;
+                            }
+                            if !self.version_is_at_least_0_5_0 {
+                                let result = self.throw_statement(input);
+                                choice.consider(input, result)?;
+                            }
+                            if self.version_is_at_least_0_6_0 {
+                                let result = self.try_statement(input);
+                                choice.consider(input, result)?;
+                            }
+                            if self.version_is_at_least_0_8_4 {
+                                let result = self.revert_statement(input);
+                                choice.consider(input, result)?;
+                            }
+                            choice.finish(input)
+                        });
+                        choice.consider(input, result)?;
+                        let result = self.assembly_statement(input);
+                        choice.consider(input, result)?;
+                        let result = self.block(input);
+                        choice.consider(input, result)?;
+                        if self.version_is_at_least_0_8_0 {
+                            let result = self.unchecked_block(input);
+                            choice.consider(input, result)?;
+                        }
+                        choice.finish(input)
+                    }))?;
                     seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
                         TokenKind::WhileKeyword,
@@ -2007,7 +2063,63 @@ impl Language {
                 ))?;
                 seq.finish()
             }))?;
-            seq.elem(self.statement(input))?;
+            seq.elem(ChoiceHelper::run(input, |mut choice, input| {
+                let result = ChoiceHelper::run(input, |mut choice, input| {
+                    let result = self.expression_statement(input);
+                    choice.consider(input, result)?;
+                    let result = self.variable_declaration_statement(input);
+                    choice.consider(input, result)?;
+                    let result = self.tuple_deconstruction_statement(input);
+                    choice.consider(input, result)?;
+                    choice.finish(input)
+                });
+                choice.consider(input, result)?;
+                let result = ChoiceHelper::run(input, |mut choice, input| {
+                    let result = self.if_statement(input);
+                    choice.consider(input, result)?;
+                    let result = self.for_statement(input);
+                    choice.consider(input, result)?;
+                    let result = self.while_statement(input);
+                    choice.consider(input, result)?;
+                    let result = self.do_while_statement(input);
+                    choice.consider(input, result)?;
+                    let result = self.continue_statement(input);
+                    choice.consider(input, result)?;
+                    let result = self.break_statement(input);
+                    choice.consider(input, result)?;
+                    let result = self.delete_statement(input);
+                    choice.consider(input, result)?;
+                    let result = self.return_statement(input);
+                    choice.consider(input, result)?;
+                    if self.version_is_at_least_0_4_21 {
+                        let result = self.emit_statement(input);
+                        choice.consider(input, result)?;
+                    }
+                    if !self.version_is_at_least_0_5_0 {
+                        let result = self.throw_statement(input);
+                        choice.consider(input, result)?;
+                    }
+                    if self.version_is_at_least_0_6_0 {
+                        let result = self.try_statement(input);
+                        choice.consider(input, result)?;
+                    }
+                    if self.version_is_at_least_0_8_4 {
+                        let result = self.revert_statement(input);
+                        choice.consider(input, result)?;
+                    }
+                    choice.finish(input)
+                });
+                choice.consider(input, result)?;
+                let result = self.assembly_statement(input);
+                choice.consider(input, result)?;
+                let result = self.block(input);
+                choice.consider(input, result)?;
+                if self.version_is_at_least_0_8_0 {
+                    let result = self.unchecked_block(input);
+                    choice.consider(input, result)?;
+                }
+                choice.finish(input)
+            }))?;
             seq.finish()
         })
         .with_kind(RuleKind::ForStatement)
@@ -2372,13 +2484,125 @@ impl Language {
                 ))?;
                 seq.finish()
             }))?;
-            seq.elem(self.statement(input))?;
+            seq.elem(ChoiceHelper::run(input, |mut choice, input| {
+                let result = ChoiceHelper::run(input, |mut choice, input| {
+                    let result = self.expression_statement(input);
+                    choice.consider(input, result)?;
+                    let result = self.variable_declaration_statement(input);
+                    choice.consider(input, result)?;
+                    let result = self.tuple_deconstruction_statement(input);
+                    choice.consider(input, result)?;
+                    choice.finish(input)
+                });
+                choice.consider(input, result)?;
+                let result = ChoiceHelper::run(input, |mut choice, input| {
+                    let result = self.if_statement(input);
+                    choice.consider(input, result)?;
+                    let result = self.for_statement(input);
+                    choice.consider(input, result)?;
+                    let result = self.while_statement(input);
+                    choice.consider(input, result)?;
+                    let result = self.do_while_statement(input);
+                    choice.consider(input, result)?;
+                    let result = self.continue_statement(input);
+                    choice.consider(input, result)?;
+                    let result = self.break_statement(input);
+                    choice.consider(input, result)?;
+                    let result = self.delete_statement(input);
+                    choice.consider(input, result)?;
+                    let result = self.return_statement(input);
+                    choice.consider(input, result)?;
+                    if self.version_is_at_least_0_4_21 {
+                        let result = self.emit_statement(input);
+                        choice.consider(input, result)?;
+                    }
+                    if !self.version_is_at_least_0_5_0 {
+                        let result = self.throw_statement(input);
+                        choice.consider(input, result)?;
+                    }
+                    if self.version_is_at_least_0_6_0 {
+                        let result = self.try_statement(input);
+                        choice.consider(input, result)?;
+                    }
+                    if self.version_is_at_least_0_8_4 {
+                        let result = self.revert_statement(input);
+                        choice.consider(input, result)?;
+                    }
+                    choice.finish(input)
+                });
+                choice.consider(input, result)?;
+                let result = self.assembly_statement(input);
+                choice.consider(input, result)?;
+                let result = self.block(input);
+                choice.consider(input, result)?;
+                if self.version_is_at_least_0_8_0 {
+                    let result = self.unchecked_block(input);
+                    choice.consider(input, result)?;
+                }
+                choice.finish(input)
+            }))?;
             seq.elem(OptionalHelper::transform(SequenceHelper::run(|mut seq| {
                 seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::ElseKeyword,
                 ))?;
-                seq.elem(self.statement(input))?;
+                seq.elem(ChoiceHelper::run(input, |mut choice, input| {
+                    let result = ChoiceHelper::run(input, |mut choice, input| {
+                        let result = self.expression_statement(input);
+                        choice.consider(input, result)?;
+                        let result = self.variable_declaration_statement(input);
+                        choice.consider(input, result)?;
+                        let result = self.tuple_deconstruction_statement(input);
+                        choice.consider(input, result)?;
+                        choice.finish(input)
+                    });
+                    choice.consider(input, result)?;
+                    let result = ChoiceHelper::run(input, |mut choice, input| {
+                        let result = self.if_statement(input);
+                        choice.consider(input, result)?;
+                        let result = self.for_statement(input);
+                        choice.consider(input, result)?;
+                        let result = self.while_statement(input);
+                        choice.consider(input, result)?;
+                        let result = self.do_while_statement(input);
+                        choice.consider(input, result)?;
+                        let result = self.continue_statement(input);
+                        choice.consider(input, result)?;
+                        let result = self.break_statement(input);
+                        choice.consider(input, result)?;
+                        let result = self.delete_statement(input);
+                        choice.consider(input, result)?;
+                        let result = self.return_statement(input);
+                        choice.consider(input, result)?;
+                        if self.version_is_at_least_0_4_21 {
+                            let result = self.emit_statement(input);
+                            choice.consider(input, result)?;
+                        }
+                        if !self.version_is_at_least_0_5_0 {
+                            let result = self.throw_statement(input);
+                            choice.consider(input, result)?;
+                        }
+                        if self.version_is_at_least_0_6_0 {
+                            let result = self.try_statement(input);
+                            choice.consider(input, result)?;
+                        }
+                        if self.version_is_at_least_0_8_4 {
+                            let result = self.revert_statement(input);
+                            choice.consider(input, result)?;
+                        }
+                        choice.finish(input)
+                    });
+                    choice.consider(input, result)?;
+                    let result = self.assembly_statement(input);
+                    choice.consider(input, result)?;
+                    let result = self.block(input);
+                    choice.consider(input, result)?;
+                    if self.version_is_at_least_0_8_0 {
+                        let result = self.unchecked_block(input);
+                        choice.consider(input, result)?;
+                    }
+                    choice.finish(input)
+                }))?;
                 seq.finish()
             })))?;
             seq.finish()
@@ -3406,71 +3630,67 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn statement(&self, input: &mut ParserContext) -> ParserResult {
-        ChoiceHelper::run(input, |mut choice, input| {
-            let result = ChoiceHelper::run(input, |mut choice, input| {
-                let result = self.expression_statement(input);
-                choice.consider(input, result)?;
-                let result = self.variable_declaration_statement(input);
-                choice.consider(input, result)?;
-                let result = self.tuple_deconstruction_statement(input);
-                choice.consider(input, result)?;
-                choice.finish(input)
-            });
-            choice.consider(input, result)?;
-            let result = ChoiceHelper::run(input, |mut choice, input| {
-                let result = self.if_statement(input);
-                choice.consider(input, result)?;
-                let result = self.for_statement(input);
-                choice.consider(input, result)?;
-                let result = self.while_statement(input);
-                choice.consider(input, result)?;
-                let result = self.do_while_statement(input);
-                choice.consider(input, result)?;
-                let result = self.continue_statement(input);
-                choice.consider(input, result)?;
-                let result = self.break_statement(input);
-                choice.consider(input, result)?;
-                let result = self.delete_statement(input);
-                choice.consider(input, result)?;
-                let result = self.return_statement(input);
-                choice.consider(input, result)?;
-                if self.version_is_at_least_0_4_21 {
-                    let result = self.emit_statement(input);
-                    choice.consider(input, result)?;
-                }
-                if !self.version_is_at_least_0_5_0 {
-                    let result = self.throw_statement(input);
-                    choice.consider(input, result)?;
-                }
-                if self.version_is_at_least_0_6_0 {
-                    let result = self.try_statement(input);
-                    choice.consider(input, result)?;
-                }
-                if self.version_is_at_least_0_8_4 {
-                    let result = self.revert_statement(input);
-                    choice.consider(input, result)?;
-                }
-                choice.finish(input)
-            });
-            choice.consider(input, result)?;
-            let result = self.assembly_statement(input);
-            choice.consider(input, result)?;
-            let result = self.block(input);
-            choice.consider(input, result)?;
-            if self.version_is_at_least_0_8_0 {
-                let result = self.unchecked_block(input);
-                choice.consider(input, result)?;
-            }
-            choice.finish(input)
-        })
-        .with_kind(RuleKind::Statement)
-    }
-
-    #[allow(unused_assignments, unused_parens)]
     fn statements_list(&self, input: &mut ParserContext) -> ParserResult {
-        OneOrMoreHelper::run(input, |input| self.statement(input))
-            .with_kind(RuleKind::StatementsList)
+        OneOrMoreHelper::run(input, |input| {
+            ChoiceHelper::run(input, |mut choice, input| {
+                let result = ChoiceHelper::run(input, |mut choice, input| {
+                    let result = self.expression_statement(input);
+                    choice.consider(input, result)?;
+                    let result = self.variable_declaration_statement(input);
+                    choice.consider(input, result)?;
+                    let result = self.tuple_deconstruction_statement(input);
+                    choice.consider(input, result)?;
+                    choice.finish(input)
+                });
+                choice.consider(input, result)?;
+                let result = ChoiceHelper::run(input, |mut choice, input| {
+                    let result = self.if_statement(input);
+                    choice.consider(input, result)?;
+                    let result = self.for_statement(input);
+                    choice.consider(input, result)?;
+                    let result = self.while_statement(input);
+                    choice.consider(input, result)?;
+                    let result = self.do_while_statement(input);
+                    choice.consider(input, result)?;
+                    let result = self.continue_statement(input);
+                    choice.consider(input, result)?;
+                    let result = self.break_statement(input);
+                    choice.consider(input, result)?;
+                    let result = self.delete_statement(input);
+                    choice.consider(input, result)?;
+                    let result = self.return_statement(input);
+                    choice.consider(input, result)?;
+                    if self.version_is_at_least_0_4_21 {
+                        let result = self.emit_statement(input);
+                        choice.consider(input, result)?;
+                    }
+                    if !self.version_is_at_least_0_5_0 {
+                        let result = self.throw_statement(input);
+                        choice.consider(input, result)?;
+                    }
+                    if self.version_is_at_least_0_6_0 {
+                        let result = self.try_statement(input);
+                        choice.consider(input, result)?;
+                    }
+                    if self.version_is_at_least_0_8_4 {
+                        let result = self.revert_statement(input);
+                        choice.consider(input, result)?;
+                    }
+                    choice.finish(input)
+                });
+                choice.consider(input, result)?;
+                let result = self.assembly_statement(input);
+                choice.consider(input, result)?;
+                let result = self.block(input);
+                choice.consider(input, result)?;
+                if self.version_is_at_least_0_8_0 {
+                    let result = self.unchecked_block(input);
+                    choice.consider(input, result)?;
+                }
+                choice.finish(input)
+            })
+        })
+        .with_kind(RuleKind::StatementsList)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -4614,7 +4834,63 @@ impl Language {
                 ))?;
                 seq.finish()
             }))?;
-            seq.elem(self.statement(input))?;
+            seq.elem(ChoiceHelper::run(input, |mut choice, input| {
+                let result = ChoiceHelper::run(input, |mut choice, input| {
+                    let result = self.expression_statement(input);
+                    choice.consider(input, result)?;
+                    let result = self.variable_declaration_statement(input);
+                    choice.consider(input, result)?;
+                    let result = self.tuple_deconstruction_statement(input);
+                    choice.consider(input, result)?;
+                    choice.finish(input)
+                });
+                choice.consider(input, result)?;
+                let result = ChoiceHelper::run(input, |mut choice, input| {
+                    let result = self.if_statement(input);
+                    choice.consider(input, result)?;
+                    let result = self.for_statement(input);
+                    choice.consider(input, result)?;
+                    let result = self.while_statement(input);
+                    choice.consider(input, result)?;
+                    let result = self.do_while_statement(input);
+                    choice.consider(input, result)?;
+                    let result = self.continue_statement(input);
+                    choice.consider(input, result)?;
+                    let result = self.break_statement(input);
+                    choice.consider(input, result)?;
+                    let result = self.delete_statement(input);
+                    choice.consider(input, result)?;
+                    let result = self.return_statement(input);
+                    choice.consider(input, result)?;
+                    if self.version_is_at_least_0_4_21 {
+                        let result = self.emit_statement(input);
+                        choice.consider(input, result)?;
+                    }
+                    if !self.version_is_at_least_0_5_0 {
+                        let result = self.throw_statement(input);
+                        choice.consider(input, result)?;
+                    }
+                    if self.version_is_at_least_0_6_0 {
+                        let result = self.try_statement(input);
+                        choice.consider(input, result)?;
+                    }
+                    if self.version_is_at_least_0_8_4 {
+                        let result = self.revert_statement(input);
+                        choice.consider(input, result)?;
+                    }
+                    choice.finish(input)
+                });
+                choice.consider(input, result)?;
+                let result = self.assembly_statement(input);
+                choice.consider(input, result)?;
+                let result = self.block(input);
+                choice.consider(input, result)?;
+                if self.version_is_at_least_0_8_0 {
+                    let result = self.unchecked_block(input);
+                    choice.consider(input, result)?;
+                }
+                choice.finish(input)
+            }))?;
             seq.finish()
         })
         .with_kind(RuleKind::WhileStatement)
@@ -4978,41 +5254,37 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn yul_statement(&self, input: &mut ParserContext) -> ParserResult {
-        ChoiceHelper::run(input, |mut choice, input| {
-            let result = self.yul_block(input);
-            choice.consider(input, result)?;
-            let result = self.yul_function_definition(input);
-            choice.consider(input, result)?;
-            let result = self.yul_declaration_statement(input);
-            choice.consider(input, result)?;
-            let result = self.yul_assignment_statement(input);
-            choice.consider(input, result)?;
-            let result = self.yul_if_statement(input);
-            choice.consider(input, result)?;
-            let result = self.yul_for_statement(input);
-            choice.consider(input, result)?;
-            let result = self.yul_switch_statement(input);
-            choice.consider(input, result)?;
-            if self.version_is_at_least_0_6_0 {
-                let result = self.yul_leave_statement(input);
-                choice.consider(input, result)?;
-            }
-            let result = self.yul_break_statement(input);
-            choice.consider(input, result)?;
-            let result = self.yul_continue_statement(input);
-            choice.consider(input, result)?;
-            let result = self.yul_expression(input);
-            choice.consider(input, result)?;
-            choice.finish(input)
-        })
-        .with_kind(RuleKind::YulStatement)
-    }
-
-    #[allow(unused_assignments, unused_parens)]
     fn yul_statements_list(&self, input: &mut ParserContext) -> ParserResult {
-        OneOrMoreHelper::run(input, |input| self.yul_statement(input))
-            .with_kind(RuleKind::YulStatementsList)
+        OneOrMoreHelper::run(input, |input| {
+            ChoiceHelper::run(input, |mut choice, input| {
+                let result = self.yul_block(input);
+                choice.consider(input, result)?;
+                let result = self.yul_function_definition(input);
+                choice.consider(input, result)?;
+                let result = self.yul_declaration_statement(input);
+                choice.consider(input, result)?;
+                let result = self.yul_assignment_statement(input);
+                choice.consider(input, result)?;
+                let result = self.yul_if_statement(input);
+                choice.consider(input, result)?;
+                let result = self.yul_for_statement(input);
+                choice.consider(input, result)?;
+                let result = self.yul_switch_statement(input);
+                choice.consider(input, result)?;
+                if self.version_is_at_least_0_6_0 {
+                    let result = self.yul_leave_statement(input);
+                    choice.consider(input, result)?;
+                }
+                let result = self.yul_break_statement(input);
+                choice.consider(input, result)?;
+                let result = self.yul_continue_statement(input);
+                choice.consider(input, result)?;
+                let result = self.yul_expression(input);
+                choice.consider(input, result)?;
+                choice.finish(input)
+            })
+        })
+        .with_kind(RuleKind::YulStatementsList)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -5804,7 +6076,6 @@ impl Language {
             ProductionKind::StateVariableDefinition => {
                 Self::state_variable_definition.parse(self, input)
             }
-            ProductionKind::Statement => Self::statement.parse(self, input),
             ProductionKind::StatementsList => Self::statements_list.parse(self, input),
             ProductionKind::StructDefinition => Self::struct_definition.parse(self, input),
             ProductionKind::StructMember => Self::struct_member.parse(self, input),
@@ -5886,7 +6157,6 @@ impl Language {
             ProductionKind::YulReturnsDeclaration => {
                 Self::yul_returns_declaration.parse(self, input)
             }
-            ProductionKind::YulStatement => Self::yul_statement.parse(self, input),
             ProductionKind::YulStatementsList => Self::yul_statements_list.parse(self, input),
             ProductionKind::YulSwitchCase => Self::yul_switch_case.parse(self, input),
             ProductionKind::YulSwitchCasesList => Self::yul_switch_cases_list.parse(self, input),
