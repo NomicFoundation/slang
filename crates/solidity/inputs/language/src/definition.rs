@@ -2621,8 +2621,7 @@ codegen_language_macros::compile!(Language(
                         Separated(
                             name = EventParameters,
                             separated = EventParameter,
-                            separator = Comma,
-                            allow_empty = true
+                            separator = Comma
                         ),
                         Struct(
                             name = EventParameter,
