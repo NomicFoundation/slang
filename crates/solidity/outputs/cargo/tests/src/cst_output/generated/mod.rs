@@ -4,6 +4,8 @@ use semver::Version;
 #[allow(non_snake_case)]
 mod AsciiStringLiteralsList;
 #[allow(non_snake_case)]
+mod AssemblyStatement;
+#[allow(non_snake_case)]
 mod Block;
 #[allow(non_snake_case)]
 mod BreakStatement;
