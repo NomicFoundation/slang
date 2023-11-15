@@ -974,28 +974,7 @@ impl Language {
                         input,
                         TokenKind::Identifier,
                     ))?;
-                    seq.elem(SequenceHelper::run(|mut seq| {
-                        let mut delim_guard = input.open_delim(TokenKind::CloseParen);
-                        let input = delim_guard.ctx();
-                        seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                            input,
-                            TokenKind::OpenParen,
-                        ))?;
-                        seq.elem(
-                            OptionalHelper::transform(self.event_parameters_list(input))
-                                .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
-                                input,
-                                self,
-                                TokenKind::CloseParen,
-                                RecoverFromNoMatch::Yes,
-                            ),
-                        )?;
-                        seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                            input,
-                            TokenKind::CloseParen,
-                        ))?;
-                        seq.finish()
-                    }))?;
+                    seq.elem(self.event_parameters_declaration(input))?;
                     seq.elem(OptionalHelper::transform(
                         self.parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
@@ -1039,6 +1018,33 @@ impl Language {
             seq.finish()
         })
         .with_kind(RuleKind::EventParameter)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn event_parameters_declaration(&self, input: &mut ParserContext) -> ParserResult {
+        SequenceHelper::run(|mut seq| {
+            let mut delim_guard = input.open_delim(TokenKind::CloseParen);
+            let input = delim_guard.ctx();
+            seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
+                input,
+                TokenKind::OpenParen,
+            ))?;
+            seq.elem(
+                OptionalHelper::transform(self.event_parameters_list(input))
+                    .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
+                    input,
+                    self,
+                    TokenKind::CloseParen,
+                    RecoverFromNoMatch::Yes,
+                ),
+            )?;
+            seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
+                input,
+                TokenKind::CloseParen,
+            ))?;
+            seq.finish()
+        })
+        .with_kind(RuleKind::EventParametersDeclaration)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -5648,6 +5654,9 @@ impl Language {
             ProductionKind::ErrorParametersList => Self::error_parameters_list.parse(self, input),
             ProductionKind::EventDefinition => Self::event_definition.parse(self, input),
             ProductionKind::EventParameter => Self::event_parameter.parse(self, input),
+            ProductionKind::EventParametersDeclaration => {
+                Self::event_parameters_declaration.parse(self, input)
+            }
             ProductionKind::EventParametersList => Self::event_parameters_list.parse(self, input),
             ProductionKind::ExperimentalPragma => Self::experimental_pragma.parse(self, input),
             ProductionKind::Expression => Self::expression.parse(self, input),

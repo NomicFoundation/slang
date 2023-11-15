@@ -277,7 +277,9 @@ slang_grammar! {
 
         parser ErrorParametersList = { introduced in "0.8.4" (ErrorParameter separated by Comma) } ;
 
-        parser EventDefinition = ((EventKeyword Identifier ((EventParametersList ?) delimited by OpenParen and CloseParen) (AnonymousKeyword ?)) terminated by Semicolon) ;
+        parser EventDefinition = ((EventKeyword Identifier EventParametersDeclaration (AnonymousKeyword ?)) terminated by Semicolon) ;
+
+        parser EventParametersDeclaration = ((EventParametersList ?) delimited by OpenParen and CloseParen);
 
         parser EventParameter = (TypeName (IndexedKeyword ?) (Identifier ?)) ;
 

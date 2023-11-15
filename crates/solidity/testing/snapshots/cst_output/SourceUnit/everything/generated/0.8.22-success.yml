@@ -125,11 +125,12 @@ Tree:
           - EventDefinition (Rule): # 217..243 "\nevent E1(uint256 value);\n"
               - EventKeyword (Token): "event" # 218..223
               - Identifier (Token): "E1" # 224..226
-              - OpenParen (Token): "(" # 226..227
-              - EventParametersList (Rule): # 227..240 "uint256 value"
-                  - EventParameter (Rule): # 227..240 "uint256 value"
-                      - TypeName (Rule): # 227..234 "uint256"
-                          - UnsignedIntegerType (Token): "uint256" # 227..234
-                      - Identifier (Token): "value" # 235..240
-              - CloseParen (Token): ")" # 240..241
+              - EventParametersDeclaration (Rule): # 226..241 "(uint256 value)"
+                  - OpenParen (Token): "(" # 226..227
+                  - EventParametersList (Rule): # 227..240 "uint256 value"
+                      - EventParameter (Rule): # 227..240 "uint256 value"
+                          - TypeName (Rule): # 227..234 "uint256"
+                              - UnsignedIntegerType (Token): "uint256" # 227..234
+                          - Identifier (Token): "value" # 235..240
+                  - CloseParen (Token): ")" # 240..241
               - Semicolon (Token): ";" # 241..242
