@@ -39,11 +39,11 @@ Tree:
                           - Expression (Rule): # 18..24 " 1 * 2"
                               - BinaryExpression (Rule): # 18..24 " 1 * 2"
                                   - Expression (Rule): # 18..20 " 1"
-                                      - NumericExpression (Rule): # 18..20 " 1"
+                                      - DecimalNumberExpression (Rule): # 18..20 " 1"
                                           - DecimalLiteral (Token): "1" # 19..20
                                   - Asterisk (Token): "*" # 21..22
                                   - Expression (Rule): # 22..24 " 2"
-                                      - NumericExpression (Rule): # 22..24 " 2"
+                                      - DecimalNumberExpression (Rule): # 22..24 " 2"
                                           - DecimalLiteral (Token): "2" # 23..24
                           - Semicolon (Token): ";" # 24..25
                   - Statement (Rule): # 25..40 " 3 * b invalid;"
@@ -51,7 +51,7 @@ Tree:
                           - Expression (Rule): # 25..31 " 3 * b"
                               - BinaryExpression (Rule): # 25..31 " 3 * b"
                                   - Expression (Rule): # 25..27 " 3"
-                                      - NumericExpression (Rule): # 25..27 " 3"
+                                      - DecimalNumberExpression (Rule): # 25..27 " 3"
                                           - DecimalLiteral (Token): "3" # 26..27
                                   - Asterisk (Token): "*" # 28..29
                                   - Expression (Rule): # 29..31 " b"

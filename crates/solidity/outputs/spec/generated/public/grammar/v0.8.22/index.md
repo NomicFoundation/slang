@@ -380,7 +380,9 @@
 
 ### 5.4. Numbers
 
---8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/04-numbers/numeric-expression/0.5.0.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/04-numbers/numeric-expression/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/04-numbers/decimal-number-expression/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/04-numbers/hex-number-expression/0.5.0.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/04-numbers/hex-literal/0.5.0.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/04-numbers/decimal-literal/0.5.0.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/04-numbers/decimal-digits/unversioned.md"

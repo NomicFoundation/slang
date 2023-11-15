@@ -27,7 +27,7 @@ Tree:
               - Expression (Rule): # 10..19 " 2 * some"
                   - BinaryExpression (Rule): # 10..19 " 2 * some"
                       - Expression (Rule): # 10..12 " 2"
-                          - NumericExpression (Rule): # 10..12 " 2"
+                          - DecimalNumberExpression (Rule): # 10..12 " 2"
                               - DecimalLiteral (Token): "2" # 11..12
                       - Asterisk (Token): "*" # 13..14
                       - Expression (Rule): # 14..19 " some"

@@ -22,14 +22,14 @@ Tree:
                           - Identifier (Token): "value" # 4..9
                           - Colon (Token): ":" # 9..10
                           - Expression (Rule): # 10..12 " 0"
-                              - NumericExpression (Rule): # 10..12 " 0"
+                              - DecimalNumberExpression (Rule): # 10..12 " 0"
                                   - DecimalLiteral (Token): "0" # 11..12
                       - Comma (Token): "," # 12..13
                       - NamedArgument (Rule): # 13..20 " gas: 1"
                           - Identifier (Token): "gas" # 14..17
                           - Colon (Token): ":" # 17..18
                           - Expression (Rule): # 18..20 " 1"
-                              - NumericExpression (Rule): # 18..20 " 1"
+                              - DecimalNumberExpression (Rule): # 18..20 " 1"
                                   - DecimalLiteral (Token): "1" # 19..20
                   - CloseBrace (Token): "}" # 20..21
           - ArgumentsDeclaration (Rule): # 21..25 '("")'

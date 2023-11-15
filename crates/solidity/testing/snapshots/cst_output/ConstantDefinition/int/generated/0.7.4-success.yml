@@ -13,6 +13,6 @@ Tree:
       - Identifier (Token): "foo" # 13..16
       - Equal (Token): "=" # 17..18
       - Expression (Rule): # 18..20 " 0"
-          - NumericExpression (Rule): # 18..20 " 0"
+          - DecimalNumberExpression (Rule): # 18..20 " 0"
               - DecimalLiteral (Token): "0" # 19..20
       - Semicolon (Token): ";" # 20..21

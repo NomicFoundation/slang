@@ -16,6 +16,8 @@ mod ContractDefinition;
 #[allow(non_snake_case)]
 mod ContractMembersList;
 #[allow(non_snake_case)]
+mod DecimalNumberExpression;
+#[allow(non_snake_case)]
 mod DeleteStatement;
 #[allow(non_snake_case)]
 mod EnumDefinition;
@@ -30,6 +32,8 @@ mod FallbackFunctionDefinition;
 #[allow(non_snake_case)]
 mod FunctionDefinition;
 #[allow(non_snake_case)]
+mod HexNumberExpression;
+#[allow(non_snake_case)]
 mod HexStringLiteralsList;
 #[allow(non_snake_case)]
 mod ImportDirective;
@@ -39,8 +43,6 @@ mod InterfaceDefinition;
 mod MappingType;
 #[allow(non_snake_case)]
 mod NewExpression;
-#[allow(non_snake_case)]
-mod NumericExpression;
 #[allow(non_snake_case)]
 mod PragmaDirective;
 #[allow(non_snake_case)]

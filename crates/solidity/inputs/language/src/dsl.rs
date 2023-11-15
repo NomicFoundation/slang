@@ -424,10 +424,10 @@ slang_grammar! {
             { removed in "0.7.0"     (FinneyKeyword | SzaboKeyword) }
         ) ;
 
-        parser NumericExpression = (
-            (HexLiteral { removed in "0.5.0" (NumberUnit ?) }) |
-            (DecimalLiteral (NumberUnit ?))
-        ) ;
+        inline parser NumericExpression = ( DecimalNumberExpression | HexNumberExpression ) ;
+
+        parser DecimalNumberExpression = (DecimalLiteral (NumberUnit ?)) ;
+        parser HexNumberExpression = (HexLiteral { removed in "0.5.0" (NumberUnit ?) }) ;
 
         inline parser OrOperator = BarBar ;
 
