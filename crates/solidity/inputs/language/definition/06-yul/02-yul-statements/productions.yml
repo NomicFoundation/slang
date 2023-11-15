@@ -20,6 +20,7 @@
 
 - name: "YulStatement"
   kind: "Parser"
+  inlined: true
   versioned:
     0.4.11:
       choice:

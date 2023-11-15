@@ -56,68 +56,63 @@ Tree:
                       - Block (Rule): # 96..210 " {\n    unchecked {\n      uint256 c = a + b;\n      ..."
                           - OpenBrace (Token): "{" # 97..98
                           - StatementsList (Rule): # 99..206 "    unchecked {\n      uint256 c = a + b;\n      if ..."
-                              - Statement (Rule): # 99..206 "    unchecked {\n      uint256 c = a + b;\n      if ..."
-                                  - UncheckedBlock (Rule): # 99..206 "    unchecked {\n      uint256 c = a + b;\n      if ..."
-                                      - UncheckedKeyword (Token): "unchecked" # 103..112
-                                      - Block (Rule): # 112..206 " {\n      uint256 c = a + b;\n      if (c < a) retur..."
-                                          - OpenBrace (Token): "{" # 113..114
-                                          - StatementsList (Rule): # 115..200 "      uint256 c = a + b;\n      if (c < a) return (..."
-                                              - Statement (Rule): # 115..140 "      uint256 c = a + b;\n"
-                                                  - VariableDeclarationStatement (Rule): # 115..140 "      uint256 c = a + b;\n"
-                                                      - VariableDeclaration (Rule): # 115..130 "      uint256 c"
-                                                          - TypeName (Rule): # 115..128 "      uint256"
-                                                              - UnsignedIntegerType (Token): "uint256" # 121..128
-                                                          - Identifier (Token): "c" # 129..130
-                                                      - Equal (Token): "=" # 131..132
-                                                      - Expression (Rule): # 132..138 " a + b"
-                                                          - BinaryExpression (Rule): # 132..138 " a + b"
-                                                              - Expression (Rule): # 132..134 " a"
-                                                                  - Identifier (Token): "a" # 133..134
-                                                              - Plus (Token): "+" # 135..136
-                                                              - Expression (Rule): # 136..138 " b"
-                                                                  - Identifier (Token): "b" # 137..138
-                                                      - Semicolon (Token): ";" # 138..139
-                                              - Statement (Rule): # 140..176 "      if (c < a) return (false, 0);\n"
-                                                  - IfStatement (Rule): # 140..176 "      if (c < a) return (false, 0);\n"
-                                                      - IfKeyword (Token): "if" # 146..148
-                                                      - OpenParen (Token): "(" # 149..150
-                                                      - Expression (Rule): # 150..155 "c < a"
-                                                          - BinaryExpression (Rule): # 150..155 "c < a"
-                                                              - Expression (Rule): # 150..151 "c"
-                                                                  - Identifier (Token): "c" # 150..151
-                                                              - LessThan (Token): "<" # 152..153
-                                                              - Expression (Rule): # 153..155 " a"
-                                                                  - Identifier (Token): "a" # 154..155
-                                                      - CloseParen (Token): ")" # 155..156
-                                                      - Statement (Rule): # 156..176 " return (false, 0);\n"
-                                                          - ReturnStatement (Rule): # 156..176 " return (false, 0);\n"
-                                                              - ReturnKeyword (Token): "return" # 157..163
-                                                              - Expression (Rule): # 163..174 " (false, 0)"
-                                                                  - TupleExpression (Rule): # 163..174 " (false, 0)"
-                                                                      - OpenParen (Token): "(" # 164..165
-                                                                      - TupleValuesList (Rule): # 165..173 "false, 0"
-                                                                          - Expression (Rule): # 165..170 "false"
-                                                                              - FalseKeyword (Token): "false" # 165..170
-                                                                          - Comma (Token): "," # 170..171
-                                                                          - Expression (Rule): # 171..173 " 0"
-                                                                              - DecimalNumberExpression (Rule): # 171..173 " 0"
-                                                                                  - DecimalLiteral (Token): "0" # 172..173
-                                                                      - CloseParen (Token): ")" # 173..174
-                                                              - Semicolon (Token): ";" # 174..175
-                                              - Statement (Rule): # 176..200 "      return (true, c);\n"
-                                                  - ReturnStatement (Rule): # 176..200 "      return (true, c);\n"
-                                                      - ReturnKeyword (Token): "return" # 182..188
-                                                      - Expression (Rule): # 188..198 " (true, c)"
-                                                          - TupleExpression (Rule): # 188..198 " (true, c)"
-                                                              - OpenParen (Token): "(" # 189..190
-                                                              - TupleValuesList (Rule): # 190..197 "true, c"
-                                                                  - Expression (Rule): # 190..194 "true"
-                                                                      - TrueKeyword (Token): "true" # 190..194
-                                                                  - Comma (Token): "," # 194..195
-                                                                  - Expression (Rule): # 195..197 " c"
-                                                                      - Identifier (Token): "c" # 196..197
-                                                              - CloseParen (Token): ")" # 197..198
-                                                      - Semicolon (Token): ";" # 198..199
-                                          - CloseBrace (Token): "}" # 204..205
+                              - UncheckedBlock (Rule): # 99..206 "    unchecked {\n      uint256 c = a + b;\n      if ..."
+                                  - UncheckedKeyword (Token): "unchecked" # 103..112
+                                  - Block (Rule): # 112..206 " {\n      uint256 c = a + b;\n      if (c < a) retur..."
+                                      - OpenBrace (Token): "{" # 113..114
+                                      - StatementsList (Rule): # 115..200 "      uint256 c = a + b;\n      if (c < a) return (..."
+                                          - VariableDeclarationStatement (Rule): # 115..140 "      uint256 c = a + b;\n"
+                                              - VariableDeclaration (Rule): # 115..130 "      uint256 c"
+                                                  - TypeName (Rule): # 115..128 "      uint256"
+                                                      - UnsignedIntegerType (Token): "uint256" # 121..128
+                                                  - Identifier (Token): "c" # 129..130
+                                              - Equal (Token): "=" # 131..132
+                                              - Expression (Rule): # 132..138 " a + b"
+                                                  - BinaryExpression (Rule): # 132..138 " a + b"
+                                                      - Expression (Rule): # 132..134 " a"
+                                                          - Identifier (Token): "a" # 133..134
+                                                      - Plus (Token): "+" # 135..136
+                                                      - Expression (Rule): # 136..138 " b"
+                                                          - Identifier (Token): "b" # 137..138
+                                              - Semicolon (Token): ";" # 138..139
+                                          - IfStatement (Rule): # 140..176 "      if (c < a) return (false, 0);\n"
+                                              - IfKeyword (Token): "if" # 146..148
+                                              - OpenParen (Token): "(" # 149..150
+                                              - Expression (Rule): # 150..155 "c < a"
+                                                  - BinaryExpression (Rule): # 150..155 "c < a"
+                                                      - Expression (Rule): # 150..151 "c"
+                                                          - Identifier (Token): "c" # 150..151
+                                                      - LessThan (Token): "<" # 152..153
+                                                      - Expression (Rule): # 153..155 " a"
+                                                          - Identifier (Token): "a" # 154..155
+                                              - CloseParen (Token): ")" # 155..156
+                                              - ReturnStatement (Rule): # 156..176 " return (false, 0);\n"
+                                                  - ReturnKeyword (Token): "return" # 157..163
+                                                  - Expression (Rule): # 163..174 " (false, 0)"
+                                                      - TupleExpression (Rule): # 163..174 " (false, 0)"
+                                                          - OpenParen (Token): "(" # 164..165
+                                                          - TupleValuesList (Rule): # 165..173 "false, 0"
+                                                              - Expression (Rule): # 165..170 "false"
+                                                                  - FalseKeyword (Token): "false" # 165..170
+                                                              - Comma (Token): "," # 170..171
+                                                              - Expression (Rule): # 171..173 " 0"
+                                                                  - DecimalNumberExpression (Rule): # 171..173 " 0"
+                                                                      - DecimalLiteral (Token): "0" # 172..173
+                                                          - CloseParen (Token): ")" # 173..174
+                                                  - Semicolon (Token): ";" # 174..175
+                                          - ReturnStatement (Rule): # 176..200 "      return (true, c);\n"
+                                              - ReturnKeyword (Token): "return" # 182..188
+                                              - Expression (Rule): # 188..198 " (true, c)"
+                                                  - TupleExpression (Rule): # 188..198 " (true, c)"
+                                                      - OpenParen (Token): "(" # 189..190
+                                                      - TupleValuesList (Rule): # 190..197 "true, c"
+                                                          - Expression (Rule): # 190..194 "true"
+                                                              - TrueKeyword (Token): "true" # 190..194
+                                                          - Comma (Token): "," # 194..195
+                                                          - Expression (Rule): # 195..197 " c"
+                                                              - Identifier (Token): "c" # 196..197
+                                                      - CloseParen (Token): ")" # 197..198
+                                              - Semicolon (Token): ";" # 198..199
+                                      - CloseBrace (Token): "}" # 204..205
                           - CloseBrace (Token): "}" # 208..209
               - CloseBrace (Token): "}" # 210..211

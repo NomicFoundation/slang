@@ -123,62 +123,58 @@ Tree:
           - Block (Rule): # 83..309 " {\n  msg.sender.call{do: 1, arg: 1 }();\n  msg.send..."
               - OpenBrace (Token): "{" # 84..85
               - StatementsList (Rule): # 86..306 "  msg.sender.call{do: 1, arg: 1 }();\n  msg.sender...."
-                  - Statement (Rule): # 86..123 "  msg.sender.call{do: 1, arg: 1 }();\n"
-                      - ExpressionStatement (Rule): # 86..123 "  msg.sender.call{do: 1, arg: 1 }();\n"
-                          - Expression (Rule): # 86..103 "  msg.sender.call"
-                              - MemberAccessExpression (Rule): # 86..103 "  msg.sender.call"
-                                  - Expression (Rule): # 86..98 "  msg.sender"
-                                      - MemberAccessExpression (Rule): # 86..98 "  msg.sender"
-                                          - Expression (Rule): # 86..91 "  msg"
-                                              - Identifier (Token): "msg" # 88..91
-                                          - Period (Token): "." # 91..92
-                                          - Identifier (Token): "sender" # 92..98
-                                  - Period (Token): "." # 98..99
-                                  - Identifier (Token): "call" # 99..103
-                          - SKIPPED (Token): "{do: 1, arg: 1 }()" # 103..121
-                          - Semicolon (Token): ";" # 121..122
-                  - Statement (Rule): # 123..167 "  msg.sender.call{, empty: 1, parse: 2 }();\n"
-                      - ExpressionStatement (Rule): # 123..167 "  msg.sender.call{, empty: 1, parse: 2 }();\n"
-                          - Expression (Rule): # 123..140 "  msg.sender.call"
-                              - MemberAccessExpression (Rule): # 123..140 "  msg.sender.call"
-                                  - Expression (Rule): # 123..135 "  msg.sender"
-                                      - MemberAccessExpression (Rule): # 123..135 "  msg.sender"
-                                          - Expression (Rule): # 123..128 "  msg"
-                                              - Identifier (Token): "msg" # 125..128
-                                          - Period (Token): "." # 128..129
-                                          - Identifier (Token): "sender" # 129..135
-                                  - Period (Token): "." # 135..136
-                                  - Identifier (Token): "call" # 136..140
-                          - SKIPPED (Token): "{, empty: 1, parse: 2 }()" # 140..165
-                          - Semicolon (Token): ";" # 165..166
-                  - Statement (Rule): # 167..230 "  msg.sender.call{arg: 1, missing_expr: , no_semic..."
-                      - ExpressionStatement (Rule): # 167..230 "  msg.sender.call{arg: 1, missing_expr: , no_semic..."
-                          - Expression (Rule): # 167..184 "  msg.sender.call"
-                              - MemberAccessExpression (Rule): # 167..184 "  msg.sender.call"
-                                  - Expression (Rule): # 167..179 "  msg.sender"
-                                      - MemberAccessExpression (Rule): # 167..179 "  msg.sender"
-                                          - Expression (Rule): # 167..172 "  msg"
-                                              - Identifier (Token): "msg" # 169..172
-                                          - Period (Token): "." # 172..173
-                                          - Identifier (Token): "sender" # 173..179
-                                  - Period (Token): "." # 179..180
-                                  - Identifier (Token): "call" # 180..184
-                          - SKIPPED (Token): "{arg: 1, missing_expr: , no_semicolon, , }()" # 184..228
-                          - Semicolon (Token): ";" # 228..229
-                  - Statement (Rule): # 230..306 "  msg.sender.call{arg: 1 unexpected tokens, not: 2..."
-                      - ExpressionStatement (Rule): # 230..306 "  msg.sender.call{arg: 1 unexpected tokens, not: 2..."
-                          - Expression (Rule): # 230..247 "  msg.sender.call"
-                              - MemberAccessExpression (Rule): # 230..247 "  msg.sender.call"
-                                  - Expression (Rule): # 230..242 "  msg.sender"
-                                      - MemberAccessExpression (Rule): # 230..242 "  msg.sender"
-                                          - Expression (Rule): # 230..235 "  msg"
-                                              - Identifier (Token): "msg" # 232..235
-                                          - Period (Token): "." # 235..236
-                                          - Identifier (Token): "sender" # 236..242
-                                  - Period (Token): "." # 242..243
-                                  - Identifier (Token): "call" # 243..247
-                          - SKIPPED (Token): "{arg: 1 unexpected tokens, not: 2, recovered, yet:..." # 247..304
-                          - Semicolon (Token): ";" # 304..305
+                  - ExpressionStatement (Rule): # 86..123 "  msg.sender.call{do: 1, arg: 1 }();\n"
+                      - Expression (Rule): # 86..103 "  msg.sender.call"
+                          - MemberAccessExpression (Rule): # 86..103 "  msg.sender.call"
+                              - Expression (Rule): # 86..98 "  msg.sender"
+                                  - MemberAccessExpression (Rule): # 86..98 "  msg.sender"
+                                      - Expression (Rule): # 86..91 "  msg"
+                                          - Identifier (Token): "msg" # 88..91
+                                      - Period (Token): "." # 91..92
+                                      - Identifier (Token): "sender" # 92..98
+                              - Period (Token): "." # 98..99
+                              - Identifier (Token): "call" # 99..103
+                      - SKIPPED (Token): "{do: 1, arg: 1 }()" # 103..121
+                      - Semicolon (Token): ";" # 121..122
+                  - ExpressionStatement (Rule): # 123..167 "  msg.sender.call{, empty: 1, parse: 2 }();\n"
+                      - Expression (Rule): # 123..140 "  msg.sender.call"
+                          - MemberAccessExpression (Rule): # 123..140 "  msg.sender.call"
+                              - Expression (Rule): # 123..135 "  msg.sender"
+                                  - MemberAccessExpression (Rule): # 123..135 "  msg.sender"
+                                      - Expression (Rule): # 123..128 "  msg"
+                                          - Identifier (Token): "msg" # 125..128
+                                      - Period (Token): "." # 128..129
+                                      - Identifier (Token): "sender" # 129..135
+                              - Period (Token): "." # 135..136
+                              - Identifier (Token): "call" # 136..140
+                      - SKIPPED (Token): "{, empty: 1, parse: 2 }()" # 140..165
+                      - Semicolon (Token): ";" # 165..166
+                  - ExpressionStatement (Rule): # 167..230 "  msg.sender.call{arg: 1, missing_expr: , no_semic..."
+                      - Expression (Rule): # 167..184 "  msg.sender.call"
+                          - MemberAccessExpression (Rule): # 167..184 "  msg.sender.call"
+                              - Expression (Rule): # 167..179 "  msg.sender"
+                                  - MemberAccessExpression (Rule): # 167..179 "  msg.sender"
+                                      - Expression (Rule): # 167..172 "  msg"
+                                          - Identifier (Token): "msg" # 169..172
+                                      - Period (Token): "." # 172..173
+                                      - Identifier (Token): "sender" # 173..179
+                              - Period (Token): "." # 179..180
+                              - Identifier (Token): "call" # 180..184
+                      - SKIPPED (Token): "{arg: 1, missing_expr: , no_semicolon, , }()" # 184..228
+                      - Semicolon (Token): ";" # 228..229
+                  - ExpressionStatement (Rule): # 230..306 "  msg.sender.call{arg: 1 unexpected tokens, not: 2..."
+                      - Expression (Rule): # 230..247 "  msg.sender.call"
+                          - MemberAccessExpression (Rule): # 230..247 "  msg.sender.call"
+                              - Expression (Rule): # 230..242 "  msg.sender"
+                                  - MemberAccessExpression (Rule): # 230..242 "  msg.sender"
+                                      - Expression (Rule): # 230..235 "  msg"
+                                          - Identifier (Token): "msg" # 232..235
+                                      - Period (Token): "." # 235..236
+                                      - Identifier (Token): "sender" # 236..242
+                              - Period (Token): "." # 242..243
+                              - Identifier (Token): "call" # 243..247
+                      - SKIPPED (Token): "{arg: 1 unexpected tokens, not: 2, recovered, yet:..." # 247..304
+                      - Semicolon (Token): ";" # 304..305
               - CloseBrace (Token): "}" # 307..308
       - FunctionDefinition (Rule): # 309..388 "\nfunction empty() override(some.ident, /* empty */..."
           - FunctionKeyword (Token): "function" # 310..318

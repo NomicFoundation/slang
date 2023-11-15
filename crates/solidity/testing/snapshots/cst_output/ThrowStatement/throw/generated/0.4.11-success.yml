@@ -6,7 +6,6 @@ Source: >
 Errors: []
 
 Tree:
-  - Statement (Rule): # 0..6 "throw;"
-      - ThrowStatement (Rule): # 0..6 "throw;"
-          - ThrowKeyword (Token): "throw" # 0..5
-          - Semicolon (Token): ";" # 5..6
+  - ThrowStatement (Rule): # 0..6 "throw;"
+      - ThrowKeyword (Token): "throw" # 0..5
+      - Semicolon (Token): ";" # 5..6
