@@ -100,7 +100,7 @@ Tree:
                                                                               - FalseKeyword (Token): "false" # 165..170
                                                                           - Comma (Token): "," # 170..171
                                                                           - Expression (Rule): # 171..173 " 0"
-                                                                              - NumericExpression (Rule): # 171..173 " 0"
+                                                                              - DecimalNumberExpression (Rule): # 171..173 " 0"
                                                                                   - DecimalLiteral (Token): "0" # 172..173
                                                                       - CloseParen (Token): ")" # 173..174
                                                               - Semicolon (Token): ";" # 174..175

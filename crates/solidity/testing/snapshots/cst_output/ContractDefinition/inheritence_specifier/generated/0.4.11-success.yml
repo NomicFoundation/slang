@@ -23,11 +23,11 @@ Tree:
                       - OpenParen (Token): "(" # 27..28
                       - PositionalArgumentsList (Rule): # 28..32 "1, 2"
                           - Expression (Rule): # 28..29 "1"
-                              - NumericExpression (Rule): # 28..29 "1"
+                              - DecimalNumberExpression (Rule): # 28..29 "1"
                                   - DecimalLiteral (Token): "1" # 28..29
                           - Comma (Token): "," # 29..30
                           - Expression (Rule): # 30..32 " 2"
-                              - NumericExpression (Rule): # 30..32 " 2"
+                              - DecimalNumberExpression (Rule): # 30..32 " 2"
                                   - DecimalLiteral (Token): "2" # 31..32
                       - CloseParen (Token): ")" # 32..33
               - Comma (Token): "," # 33..34

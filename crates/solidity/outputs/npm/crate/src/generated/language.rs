@@ -674,6 +674,91 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
+    fn decimal_number_expression(&self, input: &mut ParserContext) -> ParserResult {
+        SequenceHelper::run(|mut seq| {
+            seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
+                input,
+                TokenKind::DecimalLiteral,
+            ))?;
+            seq.elem(OptionalHelper::transform(ChoiceHelper::run(
+                input,
+                |mut choice, input| {
+                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        input,
+                        TokenKind::DaysKeyword,
+                    );
+                    choice.consider(input, result)?;
+                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        input,
+                        TokenKind::EtherKeyword,
+                    );
+                    choice.consider(input, result)?;
+                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        input,
+                        TokenKind::HoursKeyword,
+                    );
+                    choice.consider(input, result)?;
+                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        input,
+                        TokenKind::MinutesKeyword,
+                    );
+                    choice.consider(input, result)?;
+                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        input,
+                        TokenKind::SecondsKeyword,
+                    );
+                    choice.consider(input, result)?;
+                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        input,
+                        TokenKind::WeeksKeyword,
+                    );
+                    choice.consider(input, result)?;
+                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        input,
+                        TokenKind::WeiKeyword,
+                    );
+                    choice.consider(input, result)?;
+                    if !self.version_is_at_least_0_5_0 {
+                        let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            input,
+                            TokenKind::YearsKeyword,
+                        );
+                        choice.consider(input, result)?;
+                    }
+                    if self.version_is_at_least_0_6_11 {
+                        let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            input,
+                            TokenKind::GweiKeyword,
+                        );
+                        choice.consider(input, result)?;
+                    }
+                    if !self.version_is_at_least_0_7_0 {
+                        let result = ChoiceHelper::run(input, |mut choice, input| {
+                            let result = self
+                                .parse_token_with_trivia::<LexicalContextType::Default>(
+                                    input,
+                                    TokenKind::FinneyKeyword,
+                                );
+                            choice.consider(input, result)?;
+                            let result = self
+                                .parse_token_with_trivia::<LexicalContextType::Default>(
+                                    input,
+                                    TokenKind::SzaboKeyword,
+                                );
+                            choice.consider(input, result)?;
+                            choice.finish(input)
+                        });
+                        choice.consider(input, result)?;
+                    }
+                    choice.finish(input)
+                },
+            )))?;
+            seq.finish()
+        })
+        .with_kind(RuleKind::DecimalNumberExpression)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
     fn deconstruction_import(&self, input: &mut ParserContext) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(SequenceHelper::run(|mut seq| {
@@ -1531,7 +1616,13 @@ impl Language {
                     choice.finish(input)
                 });
                 choice.consider(input, result)?;
-                let result = self.numeric_expression(input);
+                let result = ChoiceHelper::run(input, |mut choice, input| {
+                    let result = self.decimal_number_expression(input);
+                    choice.consider(input, result)?;
+                    let result = self.hex_number_expression(input);
+                    choice.consider(input, result)?;
+                    choice.finish(input)
+                });
                 choice.consider(input, result)?;
                 let result = ChoiceHelper::run(input, |mut choice, input| {
                     let result = self.hex_string_literals_list(input);
@@ -2039,6 +2130,95 @@ impl Language {
             })
         })
         .with_kind(RuleKind::FunctionTypeAttributesList)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn hex_number_expression(&self, input: &mut ParserContext) -> ParserResult {
+        SequenceHelper::run(|mut seq| {
+            seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
+                input,
+                TokenKind::HexLiteral,
+            ))?;
+            if !self.version_is_at_least_0_5_0 {
+                seq.elem(OptionalHelper::transform(ChoiceHelper::run(
+                    input,
+                    |mut choice, input| {
+                        let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            input,
+                            TokenKind::DaysKeyword,
+                        );
+                        choice.consider(input, result)?;
+                        let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            input,
+                            TokenKind::EtherKeyword,
+                        );
+                        choice.consider(input, result)?;
+                        let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            input,
+                            TokenKind::HoursKeyword,
+                        );
+                        choice.consider(input, result)?;
+                        let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            input,
+                            TokenKind::MinutesKeyword,
+                        );
+                        choice.consider(input, result)?;
+                        let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            input,
+                            TokenKind::SecondsKeyword,
+                        );
+                        choice.consider(input, result)?;
+                        let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            input,
+                            TokenKind::WeeksKeyword,
+                        );
+                        choice.consider(input, result)?;
+                        let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            input,
+                            TokenKind::WeiKeyword,
+                        );
+                        choice.consider(input, result)?;
+                        if !self.version_is_at_least_0_5_0 {
+                            let result = self
+                                .parse_token_with_trivia::<LexicalContextType::Default>(
+                                    input,
+                                    TokenKind::YearsKeyword,
+                                );
+                            choice.consider(input, result)?;
+                        }
+                        if self.version_is_at_least_0_6_11 {
+                            let result = self
+                                .parse_token_with_trivia::<LexicalContextType::Default>(
+                                    input,
+                                    TokenKind::GweiKeyword,
+                                );
+                            choice.consider(input, result)?;
+                        }
+                        if !self.version_is_at_least_0_7_0 {
+                            let result = ChoiceHelper::run(input, |mut choice, input| {
+                                let result = self
+                                    .parse_token_with_trivia::<LexicalContextType::Default>(
+                                        input,
+                                        TokenKind::FinneyKeyword,
+                                    );
+                                choice.consider(input, result)?;
+                                let result = self
+                                    .parse_token_with_trivia::<LexicalContextType::Default>(
+                                        input,
+                                        TokenKind::SzaboKeyword,
+                                    );
+                                choice.consider(input, result)?;
+                                choice.finish(input)
+                            });
+                            choice.consider(input, result)?;
+                        }
+                        choice.finish(input)
+                    },
+                )))?;
+            }
+            seq.finish()
+        })
+        .with_kind(RuleKind::HexNumberExpression)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -2694,189 +2874,6 @@ impl Language {
             seq.finish()
         })
         .with_kind(RuleKind::NewExpression)
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn numeric_expression(&self, input: &mut ParserContext) -> ParserResult {
-        ChoiceHelper::run(input, |mut choice, input| {
-            let result = SequenceHelper::run(|mut seq| {
-                seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                    input,
-                    TokenKind::HexLiteral,
-                ))?;
-                if !self.version_is_at_least_0_5_0 {
-                    seq.elem(OptionalHelper::transform(ChoiceHelper::run(
-                        input,
-                        |mut choice, input| {
-                            let result = self
-                                .parse_token_with_trivia::<LexicalContextType::Default>(
-                                    input,
-                                    TokenKind::DaysKeyword,
-                                );
-                            choice.consider(input, result)?;
-                            let result = self
-                                .parse_token_with_trivia::<LexicalContextType::Default>(
-                                    input,
-                                    TokenKind::EtherKeyword,
-                                );
-                            choice.consider(input, result)?;
-                            let result = self
-                                .parse_token_with_trivia::<LexicalContextType::Default>(
-                                    input,
-                                    TokenKind::HoursKeyword,
-                                );
-                            choice.consider(input, result)?;
-                            let result = self
-                                .parse_token_with_trivia::<LexicalContextType::Default>(
-                                    input,
-                                    TokenKind::MinutesKeyword,
-                                );
-                            choice.consider(input, result)?;
-                            let result = self
-                                .parse_token_with_trivia::<LexicalContextType::Default>(
-                                    input,
-                                    TokenKind::SecondsKeyword,
-                                );
-                            choice.consider(input, result)?;
-                            let result = self
-                                .parse_token_with_trivia::<LexicalContextType::Default>(
-                                    input,
-                                    TokenKind::WeeksKeyword,
-                                );
-                            choice.consider(input, result)?;
-                            let result = self
-                                .parse_token_with_trivia::<LexicalContextType::Default>(
-                                    input,
-                                    TokenKind::WeiKeyword,
-                                );
-                            choice.consider(input, result)?;
-                            if !self.version_is_at_least_0_5_0 {
-                                let result = self
-                                    .parse_token_with_trivia::<LexicalContextType::Default>(
-                                        input,
-                                        TokenKind::YearsKeyword,
-                                    );
-                                choice.consider(input, result)?;
-                            }
-                            if self.version_is_at_least_0_6_11 {
-                                let result = self
-                                    .parse_token_with_trivia::<LexicalContextType::Default>(
-                                        input,
-                                        TokenKind::GweiKeyword,
-                                    );
-                                choice.consider(input, result)?;
-                            }
-                            if !self.version_is_at_least_0_7_0 {
-                                let result = ChoiceHelper::run(input, |mut choice, input| {
-                                    let result = self
-                                        .parse_token_with_trivia::<LexicalContextType::Default>(
-                                            input,
-                                            TokenKind::FinneyKeyword,
-                                        );
-                                    choice.consider(input, result)?;
-                                    let result = self
-                                        .parse_token_with_trivia::<LexicalContextType::Default>(
-                                            input,
-                                            TokenKind::SzaboKeyword,
-                                        );
-                                    choice.consider(input, result)?;
-                                    choice.finish(input)
-                                });
-                                choice.consider(input, result)?;
-                            }
-                            choice.finish(input)
-                        },
-                    )))?;
-                }
-                seq.finish()
-            });
-            choice.consider(input, result)?;
-            let result = SequenceHelper::run(|mut seq| {
-                seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                    input,
-                    TokenKind::DecimalLiteral,
-                ))?;
-                seq.elem(OptionalHelper::transform(ChoiceHelper::run(
-                    input,
-                    |mut choice, input| {
-                        let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                            input,
-                            TokenKind::DaysKeyword,
-                        );
-                        choice.consider(input, result)?;
-                        let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                            input,
-                            TokenKind::EtherKeyword,
-                        );
-                        choice.consider(input, result)?;
-                        let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                            input,
-                            TokenKind::HoursKeyword,
-                        );
-                        choice.consider(input, result)?;
-                        let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                            input,
-                            TokenKind::MinutesKeyword,
-                        );
-                        choice.consider(input, result)?;
-                        let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                            input,
-                            TokenKind::SecondsKeyword,
-                        );
-                        choice.consider(input, result)?;
-                        let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                            input,
-                            TokenKind::WeeksKeyword,
-                        );
-                        choice.consider(input, result)?;
-                        let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                            input,
-                            TokenKind::WeiKeyword,
-                        );
-                        choice.consider(input, result)?;
-                        if !self.version_is_at_least_0_5_0 {
-                            let result = self
-                                .parse_token_with_trivia::<LexicalContextType::Default>(
-                                    input,
-                                    TokenKind::YearsKeyword,
-                                );
-                            choice.consider(input, result)?;
-                        }
-                        if self.version_is_at_least_0_6_11 {
-                            let result = self
-                                .parse_token_with_trivia::<LexicalContextType::Default>(
-                                    input,
-                                    TokenKind::GweiKeyword,
-                                );
-                            choice.consider(input, result)?;
-                        }
-                        if !self.version_is_at_least_0_7_0 {
-                            let result = ChoiceHelper::run(input, |mut choice, input| {
-                                let result = self
-                                    .parse_token_with_trivia::<LexicalContextType::Default>(
-                                        input,
-                                        TokenKind::FinneyKeyword,
-                                    );
-                                choice.consider(input, result)?;
-                                let result = self
-                                    .parse_token_with_trivia::<LexicalContextType::Default>(
-                                        input,
-                                        TokenKind::SzaboKeyword,
-                                    );
-                                choice.consider(input, result)?;
-                                choice.finish(input)
-                            });
-                            choice.consider(input, result)?;
-                        }
-                        choice.finish(input)
-                    },
-                )))?;
-                seq.finish()
-            });
-            choice.consider(input, result)?;
-            choice.finish(input)
-        })
-        .with_kind(RuleKind::NumericExpression)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -5627,6 +5624,9 @@ impl Language {
             ProductionKind::ContinueStatement => Self::continue_statement.parse(self, input),
             ProductionKind::ContractDefinition => Self::contract_definition.parse(self, input),
             ProductionKind::ContractMembersList => Self::contract_members_list.parse(self, input),
+            ProductionKind::DecimalNumberExpression => {
+                Self::decimal_number_expression.parse(self, input)
+            }
             ProductionKind::DeconstructionImport => Self::deconstruction_import.parse(self, input),
             ProductionKind::DeconstructionImportSymbol => {
                 Self::deconstruction_import_symbol.parse(self, input)
@@ -5664,6 +5664,7 @@ impl Language {
             ProductionKind::FunctionTypeAttributesList => {
                 Self::function_type_attributes_list.parse(self, input)
             }
+            ProductionKind::HexNumberExpression => Self::hex_number_expression.parse(self, input),
             ProductionKind::HexStringLiteralsList => {
                 Self::hex_string_literals_list.parse(self, input)
             }
@@ -5695,7 +5696,6 @@ impl Language {
             ProductionKind::NamedArgumentsList => Self::named_arguments_list.parse(self, input),
             ProductionKind::NamedImport => Self::named_import.parse(self, input),
             ProductionKind::NewExpression => Self::new_expression.parse(self, input),
-            ProductionKind::NumericExpression => Self::numeric_expression.parse(self, input),
             ProductionKind::OverrideSpecifier => Self::override_specifier.parse(self, input),
             ProductionKind::Parameter => Self::parameter.parse(self, input),
             ProductionKind::ParametersDeclaration => {

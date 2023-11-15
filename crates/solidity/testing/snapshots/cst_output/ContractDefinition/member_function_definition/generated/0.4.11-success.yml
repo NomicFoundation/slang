@@ -37,7 +37,7 @@ Tree:
                           - ReturnStatement (Rule): # 52..66 "    return 1;\n"
                               - ReturnKeyword (Token): "return" # 56..62
                               - Expression (Rule): # 62..64 " 1"
-                                  - NumericExpression (Rule): # 62..64 " 1"
+                                  - DecimalNumberExpression (Rule): # 62..64 " 1"
                                       - DecimalLiteral (Token): "1" # 63..64
                               - Semicolon (Token): ";" # 64..65
                   - CloseBrace (Token): "}" # 68..69

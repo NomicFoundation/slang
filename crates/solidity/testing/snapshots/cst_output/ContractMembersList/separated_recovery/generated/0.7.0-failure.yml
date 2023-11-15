@@ -203,7 +203,7 @@ Tree:
                                                   - Identifier (Token): "arg" # 185..188
                                                   - Colon (Token): ":" # 188..189
                                                   - Expression (Rule): # 189..191 " 1"
-                                                      - NumericExpression (Rule): # 189..191 " 1"
+                                                      - DecimalNumberExpression (Rule): # 189..191 " 1"
                                                           - DecimalLiteral (Token): "1" # 190..191
                                               - Comma (Token): "," # 191..192
                                               - NamedArgument (Rule): # 192..206 " missing_expr:"
@@ -243,7 +243,7 @@ Tree:
                                                   - Identifier (Token): "arg" # 248..251
                                                   - Colon (Token): ":" # 251..252
                                                   - Expression (Rule): # 252..254 " 1"
-                                                      - NumericExpression (Rule): # 252..254 " 1"
+                                                      - DecimalNumberExpression (Rule): # 252..254 " 1"
                                                           - DecimalLiteral (Token): "1" # 253..254
                                           - SKIPPED (Token): "unexpected tokens, not: 2, recovered, yet: 3, " # 255..301
                                           - CloseBrace (Token): "}" # 301..302

@@ -32,11 +32,11 @@ Tree:
               - OpenParen (Token): "(" # 9..10
               - TupleValuesList (Rule): # 10..18 "123, 135"
                   - Expression (Rule): # 10..13 "123"
-                      - NumericExpression (Rule): # 10..13 "123"
+                      - DecimalNumberExpression (Rule): # 10..13 "123"
                           - DecimalLiteral (Token): "123" # 10..13
                   - Comma (Token): "," # 13..14
                   - Expression (Rule): # 14..18 " 135"
-                      - NumericExpression (Rule): # 14..18 " 135"
+                      - DecimalNumberExpression (Rule): # 14..18 " 135"
                           - DecimalLiteral (Token): "135" # 15..18
               - CloseParen (Token): ")" # 18..19
       - SKIPPED (Token): "/**/\n{ throw; \n" # 20..35

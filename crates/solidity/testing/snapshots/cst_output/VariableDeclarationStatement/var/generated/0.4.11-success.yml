@@ -12,6 +12,6 @@ Tree:
           - Identifier (Token): "z" # 4..5
       - Equal (Token): "=" # 6..7
       - Expression (Rule): # 7..9 " 0"
-          - NumericExpression (Rule): # 7..9 " 0"
+          - DecimalNumberExpression (Rule): # 7..9 " 0"
               - DecimalLiteral (Token): "0" # 8..9
       - Semicolon (Token): ";" # 9..10

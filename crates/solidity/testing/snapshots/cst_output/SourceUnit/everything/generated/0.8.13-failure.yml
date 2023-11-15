@@ -100,7 +100,7 @@ Tree:
               - Identifier (Token): "x" # 149..150
               - Equal (Token): "=" # 151..152
               - Expression (Rule): # 152..154 " 0"
-                  - NumericExpression (Rule): # 152..154 " 0"
+                  - DecimalNumberExpression (Rule): # 152..154 " 0"
                       - DecimalLiteral (Token): "0" # 153..154
               - Semicolon (Token): ";" # 154..155
           - FunctionDefinition (Rule): # 156..181 "\nfunction f() public { }\n"

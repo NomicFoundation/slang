@@ -81,7 +81,7 @@ Tree:
                                                       - Identifier (Token): "a" # 124..125
                                                   - Equal (Token): "=" # 126..127
                                                   - Expression (Rule): # 127..129 " 1"
-                                                      - NumericExpression (Rule): # 127..129 " 1"
+                                                      - DecimalNumberExpression (Rule): # 127..129 " 1"
                                                           - DecimalLiteral (Token): "1" # 128..129
                                                   - Semicolon (Token): ";" # 129..130
                                       - CloseBrace (Token): "}" # 133..134
@@ -103,7 +103,7 @@ Tree:
                                   - Identifier (Token): "x" # 167..168
                               - Equal (Token): "=" # 169..170
                               - Expression (Rule): # 170..172 " 0"
-                                  - NumericExpression (Rule): # 170..172 " 0"
+                                  - DecimalNumberExpression (Rule): # 170..172 " 0"
                                       - DecimalLiteral (Token): "0" # 171..172
                               - Semicolon (Token): ";" # 172..173
                       - Statement (Rule): # 174..207 "\t\tunchecked { invalid sequence }\n"

@@ -15,7 +15,7 @@ Errors: # 1 total
 
 Tree:
   - Expression (Rule): # 0..8 "2 * new\n"
-      - NumericExpression (Rule): # 0..1 "2"
+      - DecimalNumberExpression (Rule): # 0..1 "2"
           - DecimalLiteral (Token): "2" # 0..1
       - BinaryExpression (Rule): # 1..3 " *"
           - Asterisk (Token): "*" # 2..3

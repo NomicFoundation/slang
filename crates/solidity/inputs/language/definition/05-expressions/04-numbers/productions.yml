@@ -2,22 +2,31 @@
 
 - name: "NumericExpression"
   kind: "Parser"
+  inlined: true
+  unversioned:
+    choice:
+      - reference: "DecimalNumberExpression"
+      - reference: "HexNumberExpression"
+
+- name: "DecimalNumberExpression"
+  kind: "Parser"
+  unversioned:
+    sequence:
+      - reference: "DecimalLiteral"
+      - optional:
+          reference: "NumberUnit"
+
+- name: "HexNumberExpression"
+  kind: "Parser"
   versioned:
     0.4.11:
       sequence:
-        - choice:
-            - reference: "HexLiteral"
-            - reference: "DecimalLiteral"
+        - reference: "HexLiteral"
         - optional:
             reference: "NumberUnit"
     0.5.0:
-      # "HexLiteral" no longer allows a "NumberUnit"
-      choice:
-        - reference: "HexLiteral"
-        - sequence:
-            - reference: "DecimalLiteral"
-            - optional:
-                reference: "NumberUnit"
+      # Removed optional "NumberUnit"
+      reference: "HexLiteral"
 
 - name: "HexLiteral"
   kind: "Scanner"
