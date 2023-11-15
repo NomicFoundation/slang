@@ -8,9 +8,11 @@
 
 mod definition;
 mod dsl;
+mod grammar;
 
-pub use definition::*;
+pub use definition::SolidityDefinition;
 pub use dsl::GrammarConstructorDslV1;
+pub use grammar::GrammarConstructorDslV2;
 
 use anyhow::Result;
 use codegen_schema::types::{LanguageDefinition, LanguageDefinitionRef};

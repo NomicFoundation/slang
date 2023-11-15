@@ -171,7 +171,11 @@ fn check_precedence(analysis: &mut Analysis, item: &PrecedenceItem, enablement: 
     let enablement = update_enablement(analysis, enablement, enabled);
 
     for precedence_expression in precedence_expressions {
-        let PrecedenceExpression { name: _, operators } = &**precedence_expression;
+        let PrecedenceExpression {
+            name: _,
+            rule_name: _,
+            operators,
+        } = &**precedence_expression;
 
         for operator in operators {
             let PrecedenceOperator {
@@ -262,13 +266,14 @@ fn check_trivia_parser(analysis: &mut Analysis, parser: &TriviaParser, enablemen
                 check_trivia_parser(analysis, parser, enablement);
             }
         }
-        TriviaParser::ZeroOrMore { parser } | TriviaParser::Optional { parser } => {
+        TriviaParser::OneOrMore { parser }
+        | TriviaParser::ZeroOrMore { parser }
+        | TriviaParser::Optional { parser } => {
             check_trivia_parser(analysis, parser, enablement);
         }
         TriviaParser::Trivia { trivia } => {
             check_reference(analysis, None, trivia, enablement, ReferenceFilter::Trivia);
         }
-        TriviaParser::EndOfInput => {}
     };
 }
 

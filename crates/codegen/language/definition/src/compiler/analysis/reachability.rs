@@ -60,13 +60,14 @@ fn collect_trivia<'l>(parser: &'l TriviaParser, acc: &mut Vec<&'l Identifier>) {
                 collect_trivia(parser, acc);
             }
         }
-        TriviaParser::ZeroOrMore { parser } | TriviaParser::Optional { parser } => {
+        TriviaParser::OneOrMore { parser }
+        | TriviaParser::ZeroOrMore { parser }
+        | TriviaParser::Optional { parser } => {
             collect_trivia(parser, acc);
         }
         TriviaParser::Trivia { trivia } => {
             acc.push(trivia);
         }
-        TriviaParser::EndOfInput => {}
     };
 }
 

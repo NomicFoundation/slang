@@ -1,4 +1,5 @@
 pub use self::wrapper::*;
+pub use indexmap::{IndexMap, IndexSet};
 
 /// We want to generate all Spanned types in a single module.
 /// Unfortunately, module-level (inner) attribute macros are not supported yet:
@@ -6,8 +7,9 @@ pub use self::wrapper::*;
 /// More information: https://github.com/rust-lang/rust/issues/54726
 #[codegen_language_internal_macros::derive_internals]
 mod wrapper {
+    use super::{IndexMap, IndexSet};
+
     use crate::model::Identifier;
-    use indexmap::{IndexMap, IndexSet};
     use semver::Version;
     use serde::Serialize;
     use std::{path::PathBuf, rc::Rc};
@@ -61,7 +63,23 @@ mod wrapper {
         Fragment { item: FragmentItem },
     }
 
-    #[derive(Debug, Eq, PartialEq, Serialize)]
+    impl Item {
+        pub fn name(&self) -> &Identifier {
+            match self {
+                Item::Struct { item } => &item.name,
+                Item::Enum { item } => &item.name,
+                Item::Repeated { item } => &item.name,
+                Item::Separated { item } => &item.name,
+                Item::Precedence { item } => &item.name,
+                Item::Trivia { item } => &item.name,
+                Item::Keyword { item } => &item.name,
+                Item::Token { item } => &item.name,
+                Item::Fragment { item } => &item.name,
+            }
+        }
+    }
+
+    #[derive(Clone, Debug, Eq, PartialEq, Serialize)]
     pub struct StructItem {
         pub name: Identifier,
 
@@ -71,7 +89,7 @@ mod wrapper {
         pub fields: IndexMap<Identifier, Field>,
     }
 
-    #[derive(Debug, Eq, PartialEq, Serialize)]
+    #[derive(Clone, Debug, Eq, PartialEq, Serialize)]
     pub struct EnumItem {
         pub name: Identifier,
 
@@ -80,7 +98,7 @@ mod wrapper {
         pub variants: Vec<EnumVariant>,
     }
 
-    #[derive(Debug, Eq, PartialEq, Serialize)]
+    #[derive(Clone, Debug, Eq, PartialEq, Serialize)]
     pub struct EnumVariant {
         pub name: Identifier,
 
@@ -89,7 +107,7 @@ mod wrapper {
         pub reference: Identifier,
     }
 
-    #[derive(Debug, Eq, PartialEq, Serialize)]
+    #[derive(Clone, Debug, Eq, PartialEq, Serialize)]
     pub struct RepeatedItem {
         pub name: Identifier,
         pub repeated: Identifier,
@@ -99,7 +117,7 @@ mod wrapper {
         pub allow_empty: Option<bool>,
     }
 
-    #[derive(Debug, Eq, PartialEq, Serialize)]
+    #[derive(Clone, Debug, Eq, PartialEq, Serialize)]
     pub struct SeparatedItem {
         pub name: Identifier,
         pub separated: Identifier,
@@ -110,7 +128,7 @@ mod wrapper {
         pub allow_empty: Option<bool>,
     }
 
-    #[derive(Debug, Eq, PartialEq, Serialize)]
+    #[derive(Clone, Debug, Eq, PartialEq, Serialize)]
     pub struct PrecedenceItem {
         pub name: Identifier,
 
@@ -120,14 +138,16 @@ mod wrapper {
         pub primary_expressions: Vec<PrimaryExpression>,
     }
 
-    #[derive(Debug, Eq, PartialEq, Serialize)]
+    #[derive(Clone, Debug, Eq, PartialEq, Serialize)]
     pub struct PrecedenceExpression {
         pub name: Identifier,
+        // TODO(#638): Remove this, once we adapt the DSL v1 codegen model to the new v2 definition.
+        pub rule_name: Identifier,
 
         pub operators: Vec<PrecedenceOperator>,
     }
 
-    #[derive(Debug, Eq, PartialEq, Serialize)]
+    #[derive(Clone, Debug, Eq, PartialEq, Serialize)]
     pub struct PrecedenceOperator {
         pub model: OperatorModel,
 
@@ -137,7 +157,7 @@ mod wrapper {
         pub fields: IndexMap<Identifier, Field>,
     }
 
-    #[derive(Debug, Eq, PartialEq, Serialize)]
+    #[derive(Clone, Copy, Debug, Eq, PartialEq, Serialize)]
     pub enum OperatorModel {
         Prefix,
         Postfix,
@@ -145,26 +165,26 @@ mod wrapper {
         BinaryRightAssociative,
     }
 
-    #[derive(Debug, Eq, PartialEq, Serialize)]
+    #[derive(Clone, Debug, Eq, PartialEq, Serialize)]
     pub struct PrimaryExpression {
         pub expression: Identifier,
 
         pub enabled: Option<VersionSpecifier>,
     }
 
-    #[derive(Debug, Eq, PartialEq, Serialize)]
+    #[derive(Clone, Debug, Eq, PartialEq, Serialize)]
     pub struct FieldsErrorRecovery {
         pub terminator: Option<Identifier>,
         pub delimiters: Option<FieldDelimiters>,
     }
 
-    #[derive(Debug, Eq, PartialEq, Serialize)]
+    #[derive(Clone, Debug, Eq, PartialEq, Serialize)]
     pub struct FieldDelimiters {
         pub open: Identifier,
         pub close: Identifier,
     }
 
-    #[derive(Debug, Eq, PartialEq, Serialize)]
+    #[derive(Clone, Debug, Eq, PartialEq, Serialize)]
     pub enum Field {
         Required {
             kind: FieldKind,
@@ -176,22 +196,22 @@ mod wrapper {
         },
     }
 
-    #[derive(Debug, Eq, PartialEq, Serialize)]
+    #[derive(Clone, Debug, Eq, PartialEq, Serialize)]
     pub enum FieldKind {
         NonTerminal { item: Identifier },
         Terminal { items: IndexSet<Identifier> },
     }
 
-    #[derive(Debug, Eq, PartialEq, Serialize)]
+    #[derive(Clone, Debug, Eq, PartialEq, Serialize)]
     pub enum TriviaParser {
         Sequence { parsers: Vec<TriviaParser> },
         Choice { parsers: Vec<TriviaParser> },
 
-        ZeroOrMore { parser: Box<TriviaParser> },
         Optional { parser: Box<TriviaParser> },
+        OneOrMore { parser: Box<TriviaParser> },
+        ZeroOrMore { parser: Box<TriviaParser> },
 
         Trivia { trivia: Identifier },
-        EndOfInput,
     }
 
     #[derive(Debug, Eq, PartialEq, Serialize)]
@@ -201,7 +221,7 @@ mod wrapper {
         pub scanner: Scanner,
     }
 
-    #[derive(Debug, Eq, PartialEq, Serialize)]
+    #[derive(Clone, Debug, Eq, PartialEq, Serialize)]
     pub struct KeywordItem {
         pub name: Identifier,
         pub identifier: Identifier,
@@ -209,7 +229,7 @@ mod wrapper {
         pub definitions: Vec<KeywordDefinition>,
     }
 
-    #[derive(Debug, Eq, PartialEq, Serialize)]
+    #[derive(Clone, Debug, Eq, PartialEq, Serialize)]
     pub struct KeywordDefinition {
         pub enabled: Option<VersionSpecifier>,
         pub reserved: Option<VersionSpecifier>,
@@ -217,7 +237,7 @@ mod wrapper {
         pub value: KeywordValue,
     }
 
-    #[derive(Debug, Eq, PartialEq, Serialize)]
+    #[derive(Clone, Debug, Eq, PartialEq, Serialize)]
     pub enum KeywordValue {
         Sequence { values: Vec<KeywordValue> },
         Optional { value: Box<KeywordValue> },
@@ -225,21 +245,21 @@ mod wrapper {
         Atom { atom: String },
     }
 
-    #[derive(Debug, Eq, PartialEq, Serialize)]
+    #[derive(Clone, Debug, Eq, PartialEq, Serialize)]
     pub struct TokenItem {
         pub name: Identifier,
 
         pub definitions: Vec<TokenDefinition>,
     }
 
-    #[derive(Debug, Eq, PartialEq, Serialize)]
+    #[derive(Clone, Debug, Eq, PartialEq, Serialize)]
     pub struct TokenDefinition {
         pub enabled: Option<VersionSpecifier>,
 
         pub scanner: Scanner,
     }
 
-    #[derive(Debug, Eq, PartialEq, Serialize)]
+    #[derive(Clone, Debug, Eq, PartialEq, Serialize)]
     pub struct FragmentItem {
         pub name: Identifier,
 
@@ -248,7 +268,7 @@ mod wrapper {
         pub scanner: Scanner,
     }
 
-    #[derive(Debug, Eq, PartialEq, Serialize)]
+    #[derive(Clone, Debug, Eq, PartialEq, Serialize)]
     pub enum Scanner {
         Sequence {
             scanners: Vec<Scanner>,
@@ -284,7 +304,7 @@ mod wrapper {
         },
     }
 
-    #[derive(Debug, Eq, PartialEq, Serialize)]
+    #[derive(Clone, Debug, Eq, PartialEq, Serialize)]
     pub enum VersionSpecifier {
         Never,
         From { from: Version },

@@ -586,7 +586,7 @@ slang_grammar! {
 
     } ;
 
-    lexical context VersionPragma = {
+    lexical context Pragma = {
 
         parser VersionPragma = (SolidityKeyword VersionPragmaExpressions) ;
 
@@ -611,7 +611,7 @@ slang_grammar! {
 
     } ;
 
-    lexical context YulBlock = {
+    lexical context Yul = {
 
         inline parser YulKeywordsOverAllVersions = (
               BreakKeyword
