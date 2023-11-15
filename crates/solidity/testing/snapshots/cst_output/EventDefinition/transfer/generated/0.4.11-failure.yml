@@ -17,13 +17,14 @@ Tree:
   - EventDefinition (Rule): # 0..73 "event Transfer(address indexed from, address index..."
       - EventKeyword (Token): "event" # 0..5
       - Identifier (Token): "Transfer" # 6..14
-      - OpenParen (Token): "(" # 14..15
-      - EventParametersList (Rule): # 15..30 "address indexed"
-          - EventParameter (Rule): # 15..30 "address indexed"
-              - TypeName (Rule): # 15..22 "address"
-                  - AddressType (Rule): # 15..22 "address"
-                      - AddressKeyword (Token): "address" # 15..22
-              - IndexedKeyword (Token): "indexed" # 23..30
-      - SKIPPED (Token): "from, address indexed to, uint256 value" # 31..70
-      - CloseParen (Token): ")" # 70..71
+      - EventParametersDeclaration (Rule): # 14..71 "(address indexed from, address indexed to, uint256..."
+          - OpenParen (Token): "(" # 14..15
+          - EventParametersList (Rule): # 15..30 "address indexed"
+              - EventParameter (Rule): # 15..30 "address indexed"
+                  - TypeName (Rule): # 15..22 "address"
+                      - AddressType (Rule): # 15..22 "address"
+                          - AddressKeyword (Token): "address" # 15..22
+                  - IndexedKeyword (Token): "indexed" # 23..30
+          - SKIPPED (Token): "from, address indexed to, uint256 value" # 31..70
+          - CloseParen (Token): ")" # 70..71
       - Semicolon (Token): ";" # 71..72

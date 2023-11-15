@@ -251,6 +251,7 @@
 ### 2.10 Events
 
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/10-events/event-definition/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/10-events/event-parameters-declaration/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/10-events/event-parameters-list/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/10-events/event-parameter/unversioned.md"
 
@@ -261,6 +262,7 @@
 ### 2.12. Errors
 
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/12-errors/error-definition/0.8.4.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/12-errors/error-parameters-declaration/0.8.4.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/12-errors/error-parameters-list/0.8.4.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/12-errors/error-parameter/0.8.4.md"
 

@@ -109,12 +109,13 @@ Tree:
           - ErrorDefinition (Rule): # 181..200 "\nerror E1(string);\n"
               - ErrorKeyword (Token): "error" # 182..187
               - Identifier (Token): "E1" # 188..190
-              - OpenParen (Token): "(" # 190..191
-              - ErrorParametersList (Rule): # 191..197 "string"
-                  - ErrorParameter (Rule): # 191..197 "string"
-                      - TypeName (Rule): # 191..197 "string"
-                          - StringKeyword (Token): "string" # 191..197
-              - CloseParen (Token): ")" # 197..198
+              - ErrorParametersDeclaration (Rule): # 190..198 "(string)"
+                  - OpenParen (Token): "(" # 190..191
+                  - ErrorParametersList (Rule): # 191..197 "string"
+                      - ErrorParameter (Rule): # 191..197 "string"
+                          - TypeName (Rule): # 191..197 "string"
+                              - StringKeyword (Token): "string" # 191..197
+                  - CloseParen (Token): ")" # 197..198
               - Semicolon (Token): ";" # 198..199
           - UserDefinedValueTypeDefinition (Rule): # 200..217 "\ntype T is bool;\n"
               - TypeKeyword (Token): "type" # 201..205
@@ -125,11 +126,12 @@ Tree:
           - EventDefinition (Rule): # 217..243 "\nevent E1(uint256 value);\n"
               - EventKeyword (Token): "event" # 218..223
               - Identifier (Token): "E1" # 224..226
-              - OpenParen (Token): "(" # 226..227
-              - EventParametersList (Rule): # 227..240 "uint256 value"
-                  - EventParameter (Rule): # 227..240 "uint256 value"
-                      - TypeName (Rule): # 227..234 "uint256"
-                          - UnsignedIntegerType (Token): "uint256" # 227..234
-                      - Identifier (Token): "value" # 235..240
-              - CloseParen (Token): ")" # 240..241
+              - EventParametersDeclaration (Rule): # 226..241 "(uint256 value)"
+                  - OpenParen (Token): "(" # 226..227
+                  - EventParametersList (Rule): # 227..240 "uint256 value"
+                      - EventParameter (Rule): # 227..240 "uint256 value"
+                          - TypeName (Rule): # 227..234 "uint256"
+                              - UnsignedIntegerType (Token): "uint256" # 227..234
+                          - Identifier (Token): "value" # 235..240
+                  - CloseParen (Token): ")" # 240..241
               - Semicolon (Token): ";" # 241..242

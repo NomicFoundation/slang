@@ -100,9 +100,9 @@
         - reference: "BreakStatement"
         - reference: "DeleteStatement"
         - reference: "ReturnStatement"
-        - reference: "RevertStatement"
         - reference: "EmitStatement"
         - reference: "TryStatement"
+        - reference: "RevertStatement"
 
 - name: "SimpleStatement"
   kind: "Parser"

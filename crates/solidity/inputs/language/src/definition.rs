@@ -2607,8 +2607,7 @@ codegen_language_macros::compile!(Language(
                             fields = (
                                 event_keyword = Required(Terminal([EventKeyword])),
                                 name = Required(Terminal([Identifier])),
-                                parameters =
-                                    Optional(kind = NonTerminal(EventParametersDeclaration)),
+                                parameters = Required(NonTerminal(EventParametersDeclaration)),
                                 anonymous_keyword = Optional(kind = Terminal([AnonymousKeyword])),
                                 semicolon = Required(Terminal([Semicolon]))
                             )
@@ -2621,15 +2620,14 @@ codegen_language_macros::compile!(Language(
                             ),
                             fields = (
                                 open_paren = Required(Terminal([OpenParen])),
-                                parameters = Required(NonTerminal(EventParameters)),
+                                parameters = Optional(kind = NonTerminal(EventParameters)),
                                 close_paren = Required(Terminal([CloseParen]))
                             )
                         ),
                         Separated(
                             name = EventParameters,
                             separated = EventParameter,
-                            separator = Comma,
-                            allow_empty = true
+                            separator = Comma
                         ),
                         Struct(
                             name = EventParameter,
@@ -2865,14 +2863,17 @@ codegen_language_macros::compile!(Language(
                         Enum(
                             name = Statement,
                             variants = [
-                                EnumVariant(
-                                    name = TupleDeconstruction,
-                                    reference = TupleDeconstructionStatement
-                                ),
+                                // Simple statements
+                                EnumVariant(name = Expression, reference = ExpressionStatement),
                                 EnumVariant(
                                     name = VariableDeclaration,
                                     reference = VariableDeclarationStatement
                                 ),
+                                EnumVariant(
+                                    name = TupleDeconstruction,
+                                    reference = TupleDeconstructionStatement
+                                ),
+                                // Control statements
                                 EnumVariant(name = If, reference = IfStatement),
                                 EnumVariant(name = For, reference = ForStatement),
                                 EnumVariant(name = While, reference = WhileStatement),
@@ -2907,8 +2908,7 @@ codegen_language_macros::compile!(Language(
                                     name = UncheckedBlock,
                                     enabled = From("0.8.0"),
                                     reference = UncheckedBlock
-                                ),
-                                EnumVariant(name = Expression, reference = ExpressionStatement)
+                                )
                             ]
                         ),
                         Struct(
@@ -3044,8 +3044,8 @@ codegen_language_macros::compile!(Language(
                         Struct(
                             name = ElseBranch,
                             fields = (
-                                else_keyword = Optional(kind = Terminal([ElseKeyword])),
-                                body = Optional(kind = NonTerminal(Statement))
+                                else_keyword = Required(Terminal([ElseKeyword])),
+                                body = Required(NonTerminal(Statement))
                             )
                         ),
                         Struct(

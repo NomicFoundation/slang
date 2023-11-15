@@ -1,0 +1,17 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ foo.bar                                                                          │ 0..7
+
+Errors: # 1 total
+  - >
+    Error: Expected end of file.
+       ╭─[crates/solidity/testing/snapshots/cst_output/UsingDirectiveSymbol/identifier_path/input.sol:1:1]
+       │
+     1 │ foo.bar
+       │ ───┬───  
+       │    ╰───── Error occurred here.
+    ───╯
+
+Tree:
+  - SKIPPED (Token): "foo.bar" # 0..7

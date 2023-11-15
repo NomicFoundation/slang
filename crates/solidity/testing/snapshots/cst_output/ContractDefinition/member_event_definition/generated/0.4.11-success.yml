@@ -16,19 +16,20 @@ Tree:
           - EventDefinition (Rule): # 18..69 "  event Log(uint256 indexed a, uint256 indexed b);..."
               - EventKeyword (Token): "event" # 20..25
               - Identifier (Token): "Log" # 26..29
-              - OpenParen (Token): "(" # 29..30
-              - EventParametersList (Rule): # 30..66 "uint256 indexed a, uint256 indexed b"
-                  - EventParameter (Rule): # 30..47 "uint256 indexed a"
-                      - TypeName (Rule): # 30..37 "uint256"
-                          - UnsignedIntegerType (Token): "uint256" # 30..37
-                      - IndexedKeyword (Token): "indexed" # 38..45
-                      - Identifier (Token): "a" # 46..47
-                  - Comma (Token): "," # 47..48
-                  - EventParameter (Rule): # 48..66 " uint256 indexed b"
-                      - TypeName (Rule): # 48..56 " uint256"
-                          - UnsignedIntegerType (Token): "uint256" # 49..56
-                      - IndexedKeyword (Token): "indexed" # 57..64
-                      - Identifier (Token): "b" # 65..66
-              - CloseParen (Token): ")" # 66..67
+              - EventParametersDeclaration (Rule): # 29..67 "(uint256 indexed a, uint256 indexed b)"
+                  - OpenParen (Token): "(" # 29..30
+                  - EventParametersList (Rule): # 30..66 "uint256 indexed a, uint256 indexed b"
+                      - EventParameter (Rule): # 30..47 "uint256 indexed a"
+                          - TypeName (Rule): # 30..37 "uint256"
+                              - UnsignedIntegerType (Token): "uint256" # 30..37
+                          - IndexedKeyword (Token): "indexed" # 38..45
+                          - Identifier (Token): "a" # 46..47
+                      - Comma (Token): "," # 47..48
+                      - EventParameter (Rule): # 48..66 " uint256 indexed b"
+                          - TypeName (Rule): # 48..56 " uint256"
+                              - UnsignedIntegerType (Token): "uint256" # 49..56
+                          - IndexedKeyword (Token): "indexed" # 57..64
+                          - Identifier (Token): "b" # 65..66
+                  - CloseParen (Token): ")" # 66..67
               - Semicolon (Token): ";" # 67..68
       - CloseBrace (Token): "}" # 69..70

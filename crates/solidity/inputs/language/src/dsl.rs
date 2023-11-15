@@ -35,7 +35,7 @@ slang_grammar! {
     lexical context Default = {
 
         inline parser SolidityKeywordsOverAllVersions = (
-              ABICoderKeyword
+              AbicoderKeyword
             | AbstractKeyword
             | AddressKeyword
             | AfterKeyword
@@ -165,7 +165,7 @@ slang_grammar! {
             | GlobalKeyword
         ) ;
 
-        parser ABICoderPragma = (ABICoderKeyword Identifier) ;
+        parser ABICoderPragma = (AbicoderKeyword Identifier) ;
 
         inline parser AddSubOperator = (Plus | Minus) ;
 
@@ -271,13 +271,17 @@ slang_grammar! {
 
         inline parser EqualityComparisonOperator = (EqualEqual | BangEqual) ;
 
-        parser ErrorDefinition = { introduced in "0.8.4" ((ErrorKeyword Identifier ((ErrorParametersList ?) delimited by OpenParen and CloseParen)) terminated by Semicolon) } ;
+        parser ErrorDefinition = { introduced in "0.8.4" ((ErrorKeyword Identifier ErrorParametersDeclaration) terminated by Semicolon) } ;
+
+        parser ErrorParametersDeclaration = { introduced in "0.8.4" ((ErrorParametersList ?) delimited by OpenParen and CloseParen) } ;
 
         parser ErrorParameter = { introduced in "0.8.4" (TypeName (Identifier ?)) } ;
 
         parser ErrorParametersList = { introduced in "0.8.4" (ErrorParameter separated by Comma) } ;
 
-        parser EventDefinition = ((EventKeyword Identifier ((EventParametersList ?) delimited by OpenParen and CloseParen) (AnonymousKeyword ?)) terminated by Semicolon) ;
+        parser EventDefinition = ((EventKeyword Identifier EventParametersDeclaration (AnonymousKeyword ?)) terminated by Semicolon) ;
+
+        parser EventParametersDeclaration = ((EventParametersList ?) delimited by OpenParen and CloseParen);
 
         parser EventParameter = (TypeName (IndexedKeyword ?) (Identifier ?)) ;
 
@@ -554,9 +558,9 @@ slang_grammar! {
 
         parser UsingDirectivePath = IdentifierPath ;
 
-        parser UsingDirectiveSymbol = (
-            IdentifierPath { introduced in "0.8.19" ((AsKeyword UsingDirectiveOperator) ?) }
-        ) ;
+        parser UsingDirectiveSymbol = {
+            introduced in "0.8.13" (IdentifierPath { introduced in "0.8.19" ((AsKeyword UsingDirectiveOperator) ?) } )
+        } ;
 
         parser UsingDirectiveSymbolsList = (UsingDirectiveSymbol separated by Comma) ;
 
@@ -664,8 +668,8 @@ slang_grammar! {
 
         parser YulStatement = (
             YulBlock | YulFunctionDefinition | YulDeclarationStatement | YulAssignmentStatement | YulIfStatement |
-            YulForStatement | YulSwitchStatement | YulBreakStatement | YulContinueStatement | YulExpression |
-            { introduced in "0.6.0" YulLeaveStatement }
+            YulForStatement | YulSwitchStatement | { introduced in "0.6.0" YulLeaveStatement } |
+            YulBreakStatement | YulContinueStatement | YulExpression
         ) ;
 
         parser YulStatementsList = (YulStatement +) ;
@@ -852,7 +856,7 @@ slang_grammar! {
 
     // Keywords
 
-    scanner ABICoderKeyword = "abicoder" ;
+    scanner AbicoderKeyword = "abicoder" ;
     scanner AbstractKeyword = "abstract" ;
     scanner AddressKeyword = "address" ;
     scanner AfterKeyword = "after" ;

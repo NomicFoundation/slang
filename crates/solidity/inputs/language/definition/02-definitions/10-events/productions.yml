@@ -8,18 +8,23 @@
         sequence:
           - reference: "EventKeyword"
           - reference: "Identifier"
-          - delimitedBy:
-              open:
-                reference: "OpenParen"
-              parser:
-                optional:
-                  reference: "EventParametersList"
-              close:
-                reference: "CloseParen"
+          - reference: "EventParametersDeclaration"
           - optional:
               reference: "AnonymousKeyword"
       terminator:
         reference: "Semicolon"
+
+- name: "EventParametersDeclaration"
+  kind: "Parser"
+  unversioned:
+    delimitedBy:
+      open:
+        reference: "OpenParen"
+      parser:
+        optional:
+          reference: "EventParametersList"
+      close:
+        reference: "CloseParen"
 
 - name: "EventParametersList"
   kind: "Parser"

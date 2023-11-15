@@ -16,7 +16,8 @@ Tree:
           - ErrorDefinition (Rule): # 18..36 "  error Error1();\n"
               - ErrorKeyword (Token): "error" # 20..25
               - Identifier (Token): "Error1" # 26..32
-              - OpenParen (Token): "(" # 32..33
-              - CloseParen (Token): ")" # 33..34
+              - ErrorParametersDeclaration (Rule): # 32..34 "()"
+                  - OpenParen (Token): "(" # 32..33
+                  - CloseParen (Token): ")" # 33..34
               - Semicolon (Token): ";" # 34..35
       - CloseBrace (Token): "}" # 36..37

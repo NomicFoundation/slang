@@ -1,0 +1,21 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ event MyEvent;                                                                   │ 0..14
+
+Errors: # 1 total
+  - >
+    Error: Expected OpenParen.
+       ╭─[crates/solidity/testing/snapshots/cst_output/EventDefinition/no_parens/input.sol:1:14]
+       │
+     1 │ event MyEvent;
+       │              │ 
+       │              ╰─ Error occurred here.
+    ───╯
+
+Tree:
+  - EventDefinition (Rule): # 0..15 "event MyEvent;\n"
+      - EventKeyword (Token): "event" # 0..5
+      - Identifier (Token): "MyEvent" # 6..13
+      - SKIPPED (Token): "" # 13..13
+      - Semicolon (Token): ";" # 13..14
