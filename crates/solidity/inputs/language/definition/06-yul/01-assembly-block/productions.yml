@@ -8,14 +8,19 @@
       - optional:
           reference: "AsciiStringLiteral" # label: "evmasm"
       - optional:
-          delimitedBy:
-            open:
-              reference: "OpenParen"
-            parser:
-              reference: "AssemblyFlagsList"
-            close:
-              reference: "CloseParen"
+          reference: "AssemblyFlagsDeclaration"
       - reference: "YulBlock"
+
+- name: "AssemblyFlagsDeclaration"
+  kind: "Parser"
+  unversioned:
+    delimitedBy:
+      open:
+        reference: "OpenParen"
+      parser:
+        reference: "AssemblyFlagsList"
+      close:
+        reference: "CloseParen"
 
 - name: "AssemblyFlagsList"
   kind: "Parser"

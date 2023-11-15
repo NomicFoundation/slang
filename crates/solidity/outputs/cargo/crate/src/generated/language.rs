@@ -301,6 +301,33 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
+    fn assembly_flags_declaration(&self, input: &mut ParserContext) -> ParserResult {
+        SequenceHelper::run(|mut seq| {
+            let mut delim_guard = input.open_delim(TokenKind::CloseParen);
+            let input = delim_guard.ctx();
+            seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
+                input,
+                TokenKind::OpenParen,
+            ))?;
+            seq.elem(
+                self.assembly_flags_list(input)
+                    .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
+                        input,
+                        self,
+                        TokenKind::CloseParen,
+                        RecoverFromNoMatch::Yes,
+                    ),
+            )?;
+            seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
+                input,
+                TokenKind::CloseParen,
+            ))?;
+            seq.finish()
+        })
+        .with_kind(RuleKind::AssemblyFlagsDeclaration)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
     fn assembly_flags_list(&self, input: &mut ParserContext) -> ParserResult {
         SeparatedHelper::run::<_, LexicalContextType::Default>(
             input,
@@ -329,28 +356,9 @@ impl Language {
                     TokenKind::AsciiStringLiteral,
                 ),
             ))?;
-            seq.elem(OptionalHelper::transform(SequenceHelper::run(|mut seq| {
-                let mut delim_guard = input.open_delim(TokenKind::CloseParen);
-                let input = delim_guard.ctx();
-                seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                    input,
-                    TokenKind::OpenParen,
-                ))?;
-                seq.elem(
-                    self.assembly_flags_list(input)
-                        .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
-                            input,
-                            self,
-                            TokenKind::CloseParen,
-                            RecoverFromNoMatch::Yes,
-                        ),
-                )?;
-                seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                    input,
-                    TokenKind::CloseParen,
-                ))?;
-                seq.finish()
-            })))?;
+            seq.elem(OptionalHelper::transform(
+                self.assembly_flags_declaration(input),
+            ))?;
             seq.elem(self.yul_block(input))?;
             seq.finish()
         })
@@ -5678,6 +5686,9 @@ impl Language {
             ProductionKind::ArrayValuesList => Self::array_values_list.parse(self, input),
             ProductionKind::AsciiStringLiteralsList => {
                 Self::ascii_string_literals_list.parse(self, input)
+            }
+            ProductionKind::AssemblyFlagsDeclaration => {
+                Self::assembly_flags_declaration.parse(self, input)
             }
             ProductionKind::AssemblyFlagsList => Self::assembly_flags_list.parse(self, input),
             ProductionKind::AssemblyStatement => Self::assembly_statement.parse(self, input),
