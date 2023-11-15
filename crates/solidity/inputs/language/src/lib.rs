@@ -10,7 +10,7 @@ mod definition;
 mod dsl;
 
 pub use definition::*;
-pub use dsl::*;
+pub use dsl::GrammarConstructorDslV1;
 
 use anyhow::Result;
 use codegen_schema::types::{LanguageDefinition, LanguageDefinitionRef};

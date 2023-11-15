@@ -37,30 +37,30 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
         let lex_ctx = quote! { LexicalContextType::#context };
 
         match self {
-            Self::Versioned(body, _, _) => body.to_parser_code(context_name, is_trivia),
+            Self::Versioned(body, _) => body.to_parser_code(context_name, is_trivia),
 
-            Self::Optional(node, _) => {
+            Self::Optional(node) => {
                 let parser = node.to_parser_code(context_name, is_trivia);
                 quote! {
                     OptionalHelper::transform(#parser)
                 }
             }
 
-            Self::ZeroOrMore(node, _) => {
+            Self::ZeroOrMore(node) => {
                 let parser = node.to_parser_code(context_name, is_trivia);
                 quote! {
                     ZeroOrMoreHelper::run(input, |input| #parser)
                 }
             }
 
-            Self::OneOrMore(node, _) => {
+            Self::OneOrMore(node) => {
                 let parser = node.to_parser_code(context_name, is_trivia);
                 quote! {
                     OneOrMoreHelper::run(input, |input| #parser)
                 }
             }
 
-            Self::Sequence(nodes, _) => {
+            Self::Sequence(nodes) => {
                 if nodes.len() == 1 {
                     nodes[0].to_parser_code(context_name, is_trivia)
                 } else {
@@ -81,7 +81,7 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                 }
             }
 
-            Self::Choice(nodes, _) => {
+            Self::Choice(nodes) => {
                 let parsers = nodes
                     .iter()
                     .map(|node| {
@@ -103,7 +103,7 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                 }
             }
 
-            Self::ScannerDefinition(scanner_definition, _) => {
+            Self::ScannerDefinition(scanner_definition) => {
                 let kind = format_ident!("{name}", name = scanner_definition.name());
 
                 let parse_token = if is_trivia {
@@ -117,14 +117,14 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                 }
             }
 
-            Self::TriviaParserDefinition(trivia_parser_definition, _) => {
+            Self::TriviaParserDefinition(trivia_parser_definition) => {
                 let function_name =
                     format_ident!("{}", trivia_parser_definition.name().to_snake_case());
 
                 quote! { self.#function_name(input) }
             }
 
-            Self::ParserDefinition(parser_definition, _) => {
+            Self::ParserDefinition(parser_definition) => {
                 assert!(
                     !is_trivia,
                     "Trivia productions can only reference trivia or token productions"
@@ -142,7 +142,7 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                 }
             }
 
-            Self::PrecedenceParserDefinition(precedence_parser_definition, _) => {
+            Self::PrecedenceParserDefinition(precedence_parser_definition) => {
                 assert!(
                     !is_trivia,
                     "Trivia productions can only reference trivia or token productions"
@@ -154,7 +154,7 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                 quote! { self.#function_name(input) }
             }
 
-            Self::DelimitedBy(open, body, close, _) => {
+            Self::DelimitedBy(open, body, close) => {
                 let [open_delim, close_delim] = match (open.as_ref(), close.as_ref()) {
                     (
                         ParserDefinitionNode::ScannerDefinition(open, ..),
@@ -190,7 +190,7 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                 }
             }
 
-            Self::SeparatedBy(body, separator, _) => {
+            Self::SeparatedBy(body, separator) => {
                 let separator = match separator.as_ref() {
                     ParserDefinitionNode::ScannerDefinition(scanner, ..) => {
                         format_ident!("{name}", name = scanner.name())
@@ -209,7 +209,7 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                     )
                 }
             }
-            Self::TerminatedBy(body, terminator, _) => {
+            Self::TerminatedBy(body, terminator) => {
                 let terminator = match terminator.as_ref() {
                     ParserDefinitionNode::ScannerDefinition(scanner, ..) => {
                         format_ident!("{name}", name = scanner.name())
@@ -244,13 +244,13 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
 
     fn applicable_version_quality_ranges(&self) -> Vec<VersionQualityRange> {
         match self {
-            ParserDefinitionNode::Versioned(_, version_quality_ranges, _) => {
+            ParserDefinitionNode::Versioned(_, version_quality_ranges) => {
                 version_quality_ranges.clone()
             }
 
-            ParserDefinitionNode::Optional(node, _)
-            | ParserDefinitionNode::ZeroOrMore(node, _)
-            | ParserDefinitionNode::OneOrMore(node, _) => node.applicable_version_quality_ranges(),
+            ParserDefinitionNode::Optional(node)
+            | ParserDefinitionNode::ZeroOrMore(node)
+            | ParserDefinitionNode::OneOrMore(node) => node.applicable_version_quality_ranges(),
 
             _ => vec![],
         }
@@ -270,9 +270,9 @@ impl VersionQualityRangeVecExtensions for Vec<VersionQualityRange> {
             let flags = self.iter().map(|vqr| {
                 let flag = format_ident!(
                     "version_is_at_least_{v}",
-                    v = &vqr.from.0.to_string().replace('.', "_")
+                    v = &vqr.from.to_string().replace('.', "_")
                 );
-                if vqr.quality.0 == VersionQuality::Introduced {
+                if vqr.quality == VersionQuality::Introduced {
                     quote! { self.#flag }
                 } else {
                     quote! { !self.#flag }
@@ -287,9 +287,9 @@ impl VersionQualityRangeVecExtensions for Vec<VersionQualityRange> {
         let mut suffix = String::new();
         for vqr in self {
             suffix.push_str("_");
-            suffix.push_str(&vqr.quality.0.to_string().to_lowercase());
+            suffix.push_str(&vqr.quality.to_string().to_lowercase());
             suffix.push_str("_from_");
-            suffix.push_str(&vqr.from.0.to_string().replace('.', "_"));
+            suffix.push_str(&vqr.from.to_string().replace('.', "_"));
         }
         suffix
     }
