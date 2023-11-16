@@ -110,7 +110,7 @@ Tree:
                       - Identifier (Token): "override" # 15..23
                   - ArgumentsDeclaration (Rule): # 23..76 "(some.ident unexpected tokens, ISomeInterface, Oth..."
                       - OpenParen (Token): "(" # 23..24
-                      - PositionalArgumentsList (Rule): # 24..34 "some.ident"
+                      - PositionalArguments (Rule): # 24..34 "some.ident"
                           - Expression (Rule): # 24..34 "some.ident"
                               - MemberAccessExpression (Rule): # 24..34 "some.ident"
                                   - Expression (Rule): # 24..28 "some"
@@ -188,7 +188,7 @@ Tree:
                       - Identifier (Token): "override" # 327..335
                   - ArgumentsDeclaration (Rule): # 335..386 "(some.ident, /* empty */, other.arg.here, and.here..."
                       - OpenParen (Token): "(" # 335..336
-                      - PositionalArgumentsList (Rule): # 336..347 "some.ident,"
+                      - PositionalArguments (Rule): # 336..347 "some.ident,"
                           - Expression (Rule): # 336..346 "some.ident"
                               - MemberAccessExpression (Rule): # 336..346 "some.ident"
                                   - Expression (Rule): # 336..340 "some"
@@ -213,7 +213,7 @@ Tree:
                       - Identifier (Token): "override" # 413..421
                   - ArgumentsDeclaration (Rule): # 421..487 "(some.ident, next.do.that, other.while, next.one, ..."
                       - OpenParen (Token): "(" # 421..422
-                      - PositionalArgumentsList (Rule): # 422..470 "some.ident, next.do.that, other.while, next.one,"
+                      - PositionalArguments (Rule): # 422..470 "some.ident, next.do.that, other.while, next.one,"
                           - Expression (Rule): # 422..432 "some.ident"
                               - MemberAccessExpression (Rule): # 422..432 "some.ident"
                                   - Expression (Rule): # 422..426 "some"
@@ -253,7 +253,7 @@ Tree:
                       - Identifier (Token): "override" # 513..521
                   - ArgumentsDeclaration (Rule): # 521..558 "(some., next.arg, next.one, ultimate)"
                       - OpenParen (Token): "(" # 521..522
-                      - PositionalArgumentsList (Rule): # 522..557 "some., next.arg, next.one, ultimate"
+                      - PositionalArguments (Rule): # 522..557 "some., next.arg, next.one, ultimate"
                           - Expression (Rule): # 522..527 "some."
                               - Identifier (Token): "some" # 522..526
                               - Period (Token): "." # 526..527

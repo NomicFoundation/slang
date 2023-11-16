@@ -34,7 +34,7 @@ Tree:
                   - CloseBrace (Token): "}" # 20..21
           - ArgumentsDeclaration (Rule): # 21..25 '("")'
               - OpenParen (Token): "(" # 21..22
-              - PositionalArgumentsList (Rule): # 22..24 '""'
+              - PositionalArguments (Rule): # 22..24 '""'
                   - Expression (Rule): # 22..24 '""'
                       - AsciiStringLiteralsList (Rule): # 22..24 '""'
                           - AsciiStringLiteral (Token): '""' # 22..24

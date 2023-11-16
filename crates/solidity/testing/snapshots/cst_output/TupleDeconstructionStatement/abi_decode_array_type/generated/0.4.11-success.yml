@@ -35,7 +35,7 @@ Tree:
                       - Identifier (Token): "decode" # 36..42
               - ArgumentsDeclaration (Rule): # 42..68 "(data, (uint32, uint32[]))"
                   - OpenParen (Token): "(" # 42..43
-                  - PositionalArgumentsList (Rule): # 43..67 "data, (uint32, uint32[])"
+                  - PositionalArguments (Rule): # 43..67 "data, (uint32, uint32[])"
                       - Expression (Rule): # 43..47 "data"
                           - Identifier (Token): "data" # 43..47
                       - Comma (Token): "," # 47..48

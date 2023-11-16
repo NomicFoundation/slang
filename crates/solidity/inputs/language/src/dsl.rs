@@ -173,7 +173,7 @@ slang_grammar! {
 
         inline parser AndOperator = AmpersandAmpersand ;
 
-        parser ArgumentsDeclaration = (((PositionalArgumentsList | NamedArgumentsDeclaration) ?) delimited by OpenParen and CloseParen) ;
+        parser ArgumentsDeclaration = (((PositionalArguments | NamedArgumentsDeclaration) ?) delimited by OpenParen and CloseParen) ;
 
         parser ArrayExpression = (ArrayValuesList delimited by OpenBracket and CloseBracket) ;
 
@@ -445,7 +445,7 @@ slang_grammar! {
 
         parser PathImport = (AsciiStringLiteral ((AsKeyword Identifier) ?)) ;
 
-        parser PositionalArgumentsList = (Expression separated by Comma) ;
+        parser PositionalArguments = (Expression separated by Comma) ;
 
         parser PragmaDirective = ((PragmaKeyword (ABICoderPragma | ExperimentalPragma | VersionPragma)) terminated by Semicolon) ;
 

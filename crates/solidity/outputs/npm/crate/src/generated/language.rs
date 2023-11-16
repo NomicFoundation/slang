@@ -229,7 +229,7 @@ impl Language {
             ))?;
             seq.elem(
                 OptionalHelper::transform(ChoiceHelper::run(input, |mut choice, input| {
-                    let result = self.positional_arguments_list(input);
+                    let result = self.positional_arguments(input);
                     choice.consider(input, result)?;
                     let result = self.named_arguments_declaration(input);
                     choice.consider(input, result)?;
@@ -3306,14 +3306,14 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn positional_arguments_list(&self, input: &mut ParserContext) -> ParserResult {
+    fn positional_arguments(&self, input: &mut ParserContext) -> ParserResult {
         SeparatedHelper::run::<_, LexicalContextType::Default>(
             input,
             self,
             |input| self.expression(input),
             TokenKind::Comma,
         )
-        .with_kind(RuleKind::PositionalArgumentsList)
+        .with_kind(RuleKind::PositionalArguments)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -6054,9 +6054,7 @@ impl Language {
                 Self::parameters_declaration.parse(self, input)
             }
             ProductionKind::PathImport => Self::path_import.parse(self, input),
-            ProductionKind::PositionalArgumentsList => {
-                Self::positional_arguments_list.parse(self, input)
-            }
+            ProductionKind::PositionalArguments => Self::positional_arguments.parse(self, input),
             ProductionKind::PragmaDirective => Self::pragma_directive.parse(self, input),
             ProductionKind::ReceiveFunctionAttributes => {
                 Self::receive_function_attributes.parse(self, input)

@@ -9,12 +9,12 @@
       parser:
         optional:
           choice:
-            - reference: "PositionalArgumentsList"
+            - reference: "PositionalArguments"
             - reference: "NamedArgumentsDeclaration"
       close:
         reference: "CloseParen"
 
-- name: "PositionalArgumentsList"
+- name: "PositionalArguments"
   kind: "Parser"
   unversioned:
     separatedBy:

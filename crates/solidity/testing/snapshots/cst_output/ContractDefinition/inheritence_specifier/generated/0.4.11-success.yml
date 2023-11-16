@@ -21,7 +21,7 @@ Tree:
                       - Identifier (Token): "Bar" # 24..27
                   - ArgumentsDeclaration (Rule): # 27..33 "(1, 2)"
                       - OpenParen (Token): "(" # 27..28
-                      - PositionalArgumentsList (Rule): # 28..32 "1, 2"
+                      - PositionalArguments (Rule): # 28..32 "1, 2"
                           - Expression (Rule): # 28..29 "1"
                               - DecimalNumberExpression (Rule): # 28..29 "1"
                                   - DecimalLiteral (Token): "1" # 28..29

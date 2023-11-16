@@ -12,7 +12,7 @@ Tree:
               - Identifier (Token): "x" # 0..1
           - ArgumentsDeclaration (Rule): # 1..13 "(interested)"
               - OpenParen (Token): "(" # 1..2
-              - PositionalArgumentsList (Rule): # 2..12 "interested"
+              - PositionalArguments (Rule): # 2..12 "interested"
                   - Expression (Rule): # 2..12 "interested"
                       - Identifier (Token): "interested" # 2..12
               - CloseParen (Token): ")" # 12..13
