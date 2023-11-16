@@ -80,7 +80,7 @@ Tree:
                           - Semicolon (Token): ";" # 199..200
                       - TupleDeconstructionStatement (Rule): # 201..262 "\n    (bool success, ) = recipient.call{ value: amo..."
                           - OpenParen (Token): "(" # 206..207
-                          - TupleMembersList (Rule): # 207..220 "bool success,"
+                          - TupleMembers (Rule): # 207..220 "bool success,"
                               - TupleMember (Rule): # 207..219 "bool success"
                                   - TypeName (Rule): # 207..211 "bool"
                                       - BoolKeyword (Token): "bool" # 207..211

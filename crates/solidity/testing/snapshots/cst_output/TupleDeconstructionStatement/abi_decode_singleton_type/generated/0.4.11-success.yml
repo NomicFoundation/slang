@@ -8,7 +8,7 @@ Errors: []
 Tree:
   - TupleDeconstructionStatement (Rule): # 0..58 "(uint32 a, uint32 b) = abi.decode(data, (uint32, u..."
       - OpenParen (Token): "(" # 0..1
-      - TupleMembersList (Rule): # 1..19 "uint32 a, uint32 b"
+      - TupleMembers (Rule): # 1..19 "uint32 a, uint32 b"
           - TupleMember (Rule): # 1..9 "uint32 a"
               - TypeName (Rule): # 1..7 "uint32"
                   - UnsignedIntegerType (Token): "uint32" # 1..7

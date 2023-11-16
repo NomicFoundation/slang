@@ -1,5 +1,5 @@
 <!-- This file is generated automatically by infrastructure scripts. Please don't edit by hand. -->
 
-```{ .ebnf .slang-ebnf #TupleMembersList }
-TupleMembersList = TupleMember (COMMA TupleMember)*;
+```{ .ebnf .slang-ebnf #TupleMembers }
+TupleMembers = TupleMember (COMMA TupleMember)*;
 ```

@@ -513,13 +513,13 @@ slang_grammar! {
 
         parser TryStatement = { introduced in "0.6.0" (TryKeyword Expression (ReturnsDeclaration ?) Block CatchClauses) } ;
 
-        parser TupleDeconstructionStatement = ((((TupleMembersList ?) delimited by OpenParen and CloseParen) Equal Expression) terminated by Semicolon) ;
+        parser TupleDeconstructionStatement = ((((TupleMembers ?) delimited by OpenParen and CloseParen) Equal Expression) terminated by Semicolon) ;
 
         parser TupleExpression = (TupleValues delimited by OpenParen and CloseParen) ;
 
         parser TupleMember = (((TypeName (DataLocation ?) Identifier) | ((DataLocation ?) Identifier)) ?) ;
 
-        parser TupleMembersList = (TupleMember separated by Comma) ;
+        parser TupleMembers = (TupleMember separated by Comma) ;
 
         parser TupleValues = ((Expression ?) separated by Comma) ;
 

@@ -3846,7 +3846,7 @@ impl Language {
                             TokenKind::OpenParen,
                         ))?;
                         seq.elem(
-                            OptionalHelper::transform(self.tuple_members_list(input))
+                            OptionalHelper::transform(self.tuple_members(input))
                                 .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                                 input,
                                 self,
@@ -3984,14 +3984,14 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn tuple_members_list(&self, input: &mut ParserContext) -> ParserResult {
+    fn tuple_members(&self, input: &mut ParserContext) -> ParserResult {
         SeparatedHelper::run::<_, LexicalContextType::Default>(
             input,
             self,
             |input| self.tuple_member(input),
             TokenKind::Comma,
         )
-        .with_kind(RuleKind::TupleMembersList)
+        .with_kind(RuleKind::TupleMembers)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -6081,7 +6081,7 @@ impl Language {
             }
             ProductionKind::TupleExpression => Self::tuple_expression.parse(self, input),
             ProductionKind::TupleMember => Self::tuple_member.parse(self, input),
-            ProductionKind::TupleMembersList => Self::tuple_members_list.parse(self, input),
+            ProductionKind::TupleMembers => Self::tuple_members.parse(self, input),
             ProductionKind::TupleValues => Self::tuple_values.parse(self, input),
             ProductionKind::TypeExpression => Self::type_expression.parse(self, input),
             ProductionKind::TypeName => Self::type_name.parse(self, input),
