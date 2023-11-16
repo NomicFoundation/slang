@@ -51,7 +51,7 @@ Tree:
                                       - YulIdentifierPath (Rule): # 46..50 " mul"
                                           - YulIdentifier (Token): "mul" # 47..50
                                   - OpenParen (Token): "(" # 50..51
-                                  - YulExpressionsList (Rule): # 51..55 "a, b"
+                                  - YulArguments (Rule): # 51..55 "a, b"
                                       - YulExpression (Rule): # 51..52 "a"
                                           - YulIdentifierPath (Rule): # 51..52 "a"
                                               - YulIdentifier (Token): "a" # 51..52

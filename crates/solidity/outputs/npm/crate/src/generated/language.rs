@@ -4899,6 +4899,17 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
+    fn yul_arguments(&self, input: &mut ParserContext) -> ParserResult {
+        SeparatedHelper::run::<_, LexicalContextType::YulBlock>(
+            input,
+            self,
+            |input| self.yul_expression(input),
+            TokenKind::Comma,
+        )
+        .with_kind(RuleKind::YulArguments)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
     fn yul_assignment_statement(&self, input: &mut ParserContext) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(self.yul_identifier_paths(input))?;
@@ -5001,7 +5012,7 @@ impl Language {
                         ),
                     )?;
                     seq.elem(
-                        OptionalHelper::transform(self.yul_expressions_list(input))
+                        OptionalHelper::transform(self.yul_arguments(input))
                             .recover_until_with_nested_delims::<_, LexicalContextType::YulBlock>(
                             input,
                             self,
@@ -5081,17 +5092,6 @@ impl Language {
             linear_expression_parser(input),
         )
         .with_kind(RuleKind::YulExpression)
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn yul_expressions_list(&self, input: &mut ParserContext) -> ParserResult {
-        SeparatedHelper::run::<_, LexicalContextType::YulBlock>(
-            input,
-            self,
-            |input| self.yul_expression(input),
-            TokenKind::Comma,
-        )
-        .with_kind(RuleKind::YulExpressionsList)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -6122,6 +6122,7 @@ impl Language {
                 Self::version_pragma_specifier.parse(self, input)
             }
             ProductionKind::WhileStatement => Self::while_statement.parse(self, input),
+            ProductionKind::YulArguments => Self::yul_arguments.parse(self, input),
             ProductionKind::YulAssignmentStatement => {
                 Self::yul_assignment_statement.parse(self, input)
             }
@@ -6132,7 +6133,6 @@ impl Language {
                 Self::yul_declaration_statement.parse(self, input)
             }
             ProductionKind::YulExpression => Self::yul_expression.parse(self, input),
-            ProductionKind::YulExpressionsList => Self::yul_expressions_list.parse(self, input),
             ProductionKind::YulForStatement => Self::yul_for_statement.parse(self, input),
             ProductionKind::YulFunctionDefinition => {
                 Self::yul_function_definition.parse(self, input)

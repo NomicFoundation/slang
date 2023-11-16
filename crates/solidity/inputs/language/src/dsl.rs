@@ -644,11 +644,11 @@ slang_grammar! {
             with primary expression (YulLiteral | YulIdentifierPath)
         ) ;
 
-        parser YulExpressionsList = (YulExpression separated by Comma) ;
+        parser YulArguments = (YulExpression separated by Comma) ;
 
         parser YulForStatement = (ForKeyword YulBlock YulExpression YulBlock YulBlock) ;
 
-        inline parser YulFunctionCallOperator = ((YulExpressionsList ?) delimited by OpenParen and CloseParen) ;
+        inline parser YulFunctionCallOperator = ((YulArguments ?) delimited by OpenParen and CloseParen) ;
 
         parser YulFunctionDefinition = (FunctionKeyword YulIdentifier YulParametersDeclaration (YulReturnsDeclaration ?) YulBlock) ;
 

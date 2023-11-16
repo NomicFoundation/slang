@@ -1,5 +1,5 @@
 <!-- This file is generated automatically by infrastructure scripts. Please don't edit by hand. -->
 
-```{ .ebnf .slang-ebnf #YulExpressionsList }
-YulExpressionsList = YulExpression (COMMA YulExpression)*;
+```{ .ebnf .slang-ebnf #YulArguments }
+YulArguments = YulExpression (COMMA YulExpression)*;
 ```

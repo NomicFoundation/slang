@@ -1,14 +1,5 @@
 # yaml-language-server: $schema=../../../generated/productions.schema.json
 
-- name: "YulExpressionsList"
-  kind: "Parser"
-  unversioned:
-    separatedBy:
-      separator:
-        reference: "Comma"
-      parser:
-        reference: "YulExpression"
-
 - name: "YulExpression"
   kind: "PrecedenceParser"
   unversioned:
@@ -32,9 +23,18 @@
         reference: "OpenParen"
       parser:
         optional:
-          reference: "YulExpressionsList"
+          reference: "YulArguments"
       close:
         reference: "CloseParen"
+
+- name: "YulArguments"
+  kind: "Parser"
+  unversioned:
+    separatedBy:
+      separator:
+        reference: "Comma"
+      parser:
+        reference: "YulExpression"
 
 - name: "YulIdentifierPaths"
   kind: "Parser"
