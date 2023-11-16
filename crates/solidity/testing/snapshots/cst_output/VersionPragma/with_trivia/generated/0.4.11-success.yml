@@ -8,7 +8,7 @@ Errors: []
 Tree:
   - VersionPragma (Rule): # 0..68 "solidity /* comments */ 0 /* are */ . /* allowed *..."
       - SolidityKeyword (Token): "solidity" # 0..8
-      - VersionPragmaExpressionsList (Rule): # 8..68 " /* comments */ 0 /* are */ . /* allowed */ 0 . /*..."
+      - VersionPragmaExpressions (Rule): # 8..68 " /* comments */ 0 /* are */ . /* allowed */ 0 . /*..."
           - VersionPragmaExpression (Rule): # 8..68 " /* comments */ 0 /* are */ . /* allowed */ 0 . /*..."
               - VersionPragmaSpecifier (Rule): # 8..68 " /* comments */ 0 /* are */ . /* allowed */ 0 . /*..."
                   - LeadingTrivia (Rule): # 8..24 " /* comments */ "

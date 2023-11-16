@@ -16,7 +16,7 @@
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/03-pragmas/abi-coder-pragma/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/03-pragmas/experimental-pragma/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/03-pragmas/version-pragma/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/03-pragmas/version-pragma-expressions-list/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/03-pragmas/version-pragma-expressions/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/03-pragmas/version-pragma-expression/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/03-pragmas/version-pragma-or-operator/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/03-pragmas/version-pragma-range-operator/unversioned.md"

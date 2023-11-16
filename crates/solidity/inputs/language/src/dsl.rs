@@ -584,7 +584,7 @@ slang_grammar! {
 
     lexical context VersionPragma = {
 
-        parser VersionPragma = (SolidityKeyword VersionPragmaExpressionsList) ;
+        parser VersionPragma = (SolidityKeyword VersionPragmaExpressions) ;
 
         precedence parser VersionPragmaExpression = (
             [
@@ -595,7 +595,7 @@ slang_grammar! {
             with primary expression VersionPragmaSpecifier
         ) ;
 
-        parser VersionPragmaExpressionsList = (VersionPragmaExpression +) ;
+        parser VersionPragmaExpressions = (VersionPragmaExpression +) ;
 
         inline parser VersionPragmaOrOperator = BarBar ;
 

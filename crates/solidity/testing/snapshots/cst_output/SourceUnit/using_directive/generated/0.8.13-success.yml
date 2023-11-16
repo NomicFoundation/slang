@@ -36,7 +36,7 @@ Tree:
               - PragmaKeyword (Token): "pragma" # 32..38
               - VersionPragma (Rule): # 38..54 " solidity ^0.8.0"
                   - SolidityKeyword (Token): "solidity" # 39..47
-                  - VersionPragmaExpressionsList (Rule): # 47..54 " ^0.8.0"
+                  - VersionPragmaExpressions (Rule): # 47..54 " ^0.8.0"
                       - VersionPragmaExpression (Rule): # 47..54 " ^0.8.0"
                           - VersionPragmaUnaryExpression (Rule): # 47..54 " ^0.8.0"
                               - Caret (Token): "^" # 48..49

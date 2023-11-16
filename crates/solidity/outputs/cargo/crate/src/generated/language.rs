@@ -4668,7 +4668,7 @@ impl Language {
                     TokenKind::SolidityKeyword,
                 ),
             )?;
-            seq.elem(self.version_pragma_expressions_list(input))?;
+            seq.elem(self.version_pragma_expressions(input))?;
             seq.finish()
         })
         .with_kind(RuleKind::VersionPragma)
@@ -4790,9 +4790,9 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn version_pragma_expressions_list(&self, input: &mut ParserContext) -> ParserResult {
+    fn version_pragma_expressions(&self, input: &mut ParserContext) -> ParserResult {
         OneOrMoreHelper::run(input, |input| self.version_pragma_expression(input))
-            .with_kind(RuleKind::VersionPragmaExpressionsList)
+            .with_kind(RuleKind::VersionPragmaExpressions)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -6129,8 +6129,8 @@ impl Language {
             ProductionKind::VersionPragmaExpression => {
                 Self::version_pragma_expression.parse(self, input)
             }
-            ProductionKind::VersionPragmaExpressionsList => {
-                Self::version_pragma_expressions_list.parse(self, input)
+            ProductionKind::VersionPragmaExpressions => {
+                Self::version_pragma_expressions.parse(self, input)
             }
             ProductionKind::VersionPragmaSpecifier => {
                 Self::version_pragma_specifier.parse(self, input)

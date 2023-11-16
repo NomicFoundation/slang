@@ -44,7 +44,7 @@ Tree:
               - PragmaKeyword (Token): "pragma" # 0..6
               - VersionPragma (Rule): # 6..21 " solidity 0.0.0"
                   - SolidityKeyword (Token): "solidity" # 7..15
-                  - VersionPragmaExpressionsList (Rule): # 15..21 " 0.0.0"
+                  - VersionPragmaExpressions (Rule): # 15..21 " 0.0.0"
                       - VersionPragmaExpression (Rule): # 15..21 " 0.0.0"
                           - VersionPragmaSpecifier (Rule): # 15..21 " 0.0.0"
                               - VersionPragmaValue (Token): "0" # 16..17
