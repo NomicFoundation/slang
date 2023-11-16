@@ -322,7 +322,7 @@
 ### 4.4. Error Handling
 
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/04-statements/04-error-handling/try-statement/0.6.0.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/04-statements/04-error-handling/catch-clauses-list/0.6.0.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/04-statements/04-error-handling/catch-clauses/0.6.0.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/04-statements/04-error-handling/catch-clause/0.6.0.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/04-statements/04-error-handling/catch-clause-error/0.6.0.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/04-statements/04-error-handling/revert-statement/0.8.4.md"

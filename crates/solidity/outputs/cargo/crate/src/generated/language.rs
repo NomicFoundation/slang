@@ -454,13 +454,13 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn catch_clauses_list(&self, input: &mut ParserContext) -> ParserResult {
+    fn catch_clauses(&self, input: &mut ParserContext) -> ParserResult {
         if self.version_is_at_least_0_6_0 {
             OneOrMoreHelper::run(input, |input| self.catch_clause(input))
         } else {
             ParserResult::disabled()
         }
-        .with_kind(RuleKind::CatchClausesList)
+        .with_kind(RuleKind::CatchClauses)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -3824,7 +3824,7 @@ impl Language {
                 seq.elem(self.expression(input))?;
                 seq.elem(OptionalHelper::transform(self.returns_declaration(input)))?;
                 seq.elem(self.block(input))?;
-                seq.elem(self.catch_clauses_list(input))?;
+                seq.elem(self.catch_clauses(input))?;
                 seq.finish()
             })
         } else {
@@ -5962,7 +5962,7 @@ impl Language {
             ProductionKind::BreakStatement => Self::break_statement.parse(self, input),
             ProductionKind::CatchClause => Self::catch_clause.parse(self, input),
             ProductionKind::CatchClauseError => Self::catch_clause_error.parse(self, input),
-            ProductionKind::CatchClausesList => Self::catch_clauses_list.parse(self, input),
+            ProductionKind::CatchClauses => Self::catch_clauses.parse(self, input),
             ProductionKind::ConstantDefinition => Self::constant_definition.parse(self, input),
             ProductionKind::ConstructorAttributes => {
                 Self::constructor_attributes.parse(self, input)

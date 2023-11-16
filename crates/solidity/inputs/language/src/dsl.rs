@@ -210,7 +210,7 @@ slang_grammar! {
 
         parser CatchClauseError = { introduced in "0.6.0" ((Identifier ?) ParametersDeclaration) } ;
 
-        parser CatchClausesList = { introduced in "0.6.0" (CatchClause +) } ;
+        parser CatchClauses = { introduced in "0.6.0" (CatchClause +) } ;
 
         inline parser ConditionalOperator = (QuestionMark Expression Colon Expression) ;
 
@@ -511,7 +511,7 @@ slang_grammar! {
 
         parser ThrowStatement = { removed in "0.5.0" (ThrowKeyword terminated by Semicolon) } ;
 
-        parser TryStatement = { introduced in "0.6.0" (TryKeyword Expression (ReturnsDeclaration ?) Block CatchClausesList) } ;
+        parser TryStatement = { introduced in "0.6.0" (TryKeyword Expression (ReturnsDeclaration ?) Block CatchClauses) } ;
 
         parser TupleDeconstructionStatement = ((((TupleMembersList ?) delimited by OpenParen and CloseParen) Equal Expression) terminated by Semicolon) ;
 
