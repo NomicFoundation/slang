@@ -261,7 +261,7 @@ impl Language {
                 TokenKind::OpenBracket,
             ))?;
             seq.elem(
-                self.array_values_list(input)
+                self.array_values(input)
                     .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
                         self,
@@ -279,14 +279,14 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn array_values_list(&self, input: &mut ParserContext) -> ParserResult {
+    fn array_values(&self, input: &mut ParserContext) -> ParserResult {
         SeparatedHelper::run::<_, LexicalContextType::Default>(
             input,
             self,
             |input| self.expression(input),
             TokenKind::Comma,
         )
-        .with_kind(RuleKind::ArrayValuesList)
+        .with_kind(RuleKind::ArrayValues)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -5949,7 +5949,7 @@ impl Language {
             ProductionKind::AddressType => Self::address_type.parse(self, input),
             ProductionKind::ArgumentsDeclaration => Self::arguments_declaration.parse(self, input),
             ProductionKind::ArrayExpression => Self::array_expression.parse(self, input),
-            ProductionKind::ArrayValuesList => Self::array_values_list.parse(self, input),
+            ProductionKind::ArrayValues => Self::array_values.parse(self, input),
             ProductionKind::AsciiStringLiteralsList => {
                 Self::ascii_string_literals_list.parse(self, input)
             }

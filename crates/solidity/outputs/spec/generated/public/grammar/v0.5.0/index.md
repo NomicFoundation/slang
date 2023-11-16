@@ -335,7 +335,7 @@
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/03-primary-expressions/tuple-expression/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/03-primary-expressions/tuple-values/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/03-primary-expressions/array-expression/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/03-primary-expressions/array-values-list/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/03-primary-expressions/array-values/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/03-primary-expressions/boolean-expression/unversioned.md"
 
 ### 5.4. Numbers

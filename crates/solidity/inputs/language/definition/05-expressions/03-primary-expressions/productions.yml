@@ -76,11 +76,11 @@
       open:
         reference: "OpenBracket"
       parser:
-        reference: "ArrayValuesList"
+        reference: "ArrayValues"
       close:
         reference: "CloseBracket"
 
-- name: "ArrayValuesList"
+- name: "ArrayValues"
   kind: "Parser"
   unversioned:
     separatedBy:

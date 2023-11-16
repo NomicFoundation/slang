@@ -175,11 +175,11 @@ slang_grammar! {
 
         parser ArgumentsDeclaration = (((PositionalArguments | NamedArgumentsDeclaration) ?) delimited by OpenParen and CloseParen) ;
 
-        parser ArrayExpression = (ArrayValuesList delimited by OpenBracket and CloseBracket) ;
+        parser ArrayExpression = (ArrayValues delimited by OpenBracket and CloseBracket) ;
 
         inline parser ArrayTypeNameOperator = ((Expression ?) delimited by OpenBracket and CloseBracket) ;
 
-        parser ArrayValuesList = (Expression separated by Comma) ;
+        parser ArrayValues = (Expression separated by Comma) ;
 
         parser AsciiStringLiteralsList = (AsciiStringLiteral +) ;
 
