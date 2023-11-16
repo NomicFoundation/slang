@@ -6,16 +6,16 @@
   versioned:
     0.4.11:
       choice:
-        - reference: "HexStringLiteralsList"
+        - reference: "HexStringLiterals"
         - reference: "AsciiStringLiteralsList"
     0.7.0:
       # added "UnicodeStringLiteralsList"
       choice:
-        - reference: "HexStringLiteralsList"
+        - reference: "HexStringLiterals"
         - reference: "AsciiStringLiteralsList"
         - reference: "UnicodeStringLiteralsList"
 
-- name: "HexStringLiteralsList"
+- name: "HexStringLiterals"
   kind: "Parser"
   unversioned:
     oneOrMore:

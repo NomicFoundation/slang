@@ -394,7 +394,7 @@
 ### 5.5. Strings
 
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/05-strings/string-expression/0.7.0.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/05-strings/hex-string-literals-list/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/05-strings/hex-string-literals/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/05-strings/hex-string-literal/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/05-strings/single-quoted-hex-string-literal/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/05-strings/double-quoted-hex-string-literal/unversioned.md"

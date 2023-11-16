@@ -1773,7 +1773,7 @@ impl Language {
                 });
                 choice.consider(input, result)?;
                 let result = ChoiceHelper::run(input, |mut choice, input| {
-                    let result = self.hex_string_literals_list(input);
+                    let result = self.hex_string_literals(input);
                     choice.consider(input, result)?;
                     let result = self.ascii_string_literals_list(input);
                     choice.consider(input, result)?;
@@ -2424,14 +2424,14 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn hex_string_literals_list(&self, input: &mut ParserContext) -> ParserResult {
+    fn hex_string_literals(&self, input: &mut ParserContext) -> ParserResult {
         OneOrMoreHelper::run(input, |input| {
             self.parse_token_with_trivia::<LexicalContextType::Default>(
                 input,
                 TokenKind::HexStringLiteral,
             )
         })
-        .with_kind(RuleKind::HexStringLiteralsList)
+        .with_kind(RuleKind::HexStringLiterals)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -6019,9 +6019,7 @@ impl Language {
                 Self::function_type_attributes.parse(self, input)
             }
             ProductionKind::HexNumberExpression => Self::hex_number_expression.parse(self, input),
-            ProductionKind::HexStringLiteralsList => {
-                Self::hex_string_literals_list.parse(self, input)
-            }
+            ProductionKind::HexStringLiterals => Self::hex_string_literals.parse(self, input),
             ProductionKind::IdentifierPath => Self::identifier_path.parse(self, input),
             ProductionKind::IfStatement => Self::if_statement.parse(self, input),
             ProductionKind::ImportDirective => Self::import_directive.parse(self, input),

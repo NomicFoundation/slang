@@ -36,7 +36,7 @@ mod FunctionDefinition;
 #[allow(non_snake_case)]
 mod HexNumberExpression;
 #[allow(non_snake_case)]
-mod HexStringLiteralsList;
+mod HexStringLiterals;
 #[allow(non_snake_case)]
 mod ImportDirective;
 #[allow(non_snake_case)]

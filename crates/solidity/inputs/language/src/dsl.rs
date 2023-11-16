@@ -354,7 +354,7 @@ slang_grammar! {
 
         parser FunctionTypeAttributes = (FunctionTypeAttribute +) ;
 
-        parser HexStringLiteralsList = (HexStringLiteral +) ;
+        parser HexStringLiterals = (HexStringLiteral +) ;
 
         parser IdentifierPath = (Identifier separated by Period) ;
 
@@ -500,7 +500,7 @@ slang_grammar! {
         parser Statements = (Statement +) ;
 
         inline parser StringExpression = (
-            HexStringLiteralsList | AsciiStringLiteralsList | { introduced in "0.7.0" UnicodeStringLiteralsList }
+            HexStringLiterals | AsciiStringLiteralsList | { introduced in "0.7.0" UnicodeStringLiteralsList }
         ) ;
 
         parser StructDefinition = (StructKeyword Identifier ((StructMembers ?) delimited by OpenBrace and CloseBrace)) ;
