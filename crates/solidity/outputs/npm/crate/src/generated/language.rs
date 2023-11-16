@@ -3005,7 +3005,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn modifier_attributes_list(&self, input: &mut ParserContext) -> ParserResult {
+    fn modifier_attributes(&self, input: &mut ParserContext) -> ParserResult {
         OneOrMoreHelper::run(input, |input| {
             ChoiceHelper::run(input, |mut choice, input| {
                 let result = self.override_specifier(input);
@@ -3020,7 +3020,7 @@ impl Language {
                 choice.finish(input)
             })
         })
-        .with_kind(RuleKind::ModifierAttributesList)
+        .with_kind(RuleKind::ModifierAttributes)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -3037,9 +3037,7 @@ impl Language {
             seq.elem(OptionalHelper::transform(
                 self.parameters_declaration(input),
             ))?;
-            seq.elem(OptionalHelper::transform(
-                self.modifier_attributes_list(input),
-            ))?;
+            seq.elem(OptionalHelper::transform(self.modifier_attributes(input)))?;
             seq.elem(ChoiceHelper::run(input, |mut choice, input| {
                 let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
@@ -6038,9 +6036,7 @@ impl Language {
             ProductionKind::MappingKeyType => Self::mapping_key_type.parse(self, input),
             ProductionKind::MappingType => Self::mapping_type.parse(self, input),
             ProductionKind::MappingValueType => Self::mapping_value_type.parse(self, input),
-            ProductionKind::ModifierAttributesList => {
-                Self::modifier_attributes_list.parse(self, input)
-            }
+            ProductionKind::ModifierAttributes => Self::modifier_attributes.parse(self, input),
             ProductionKind::ModifierDefinition => Self::modifier_definition.parse(self, input),
             ProductionKind::ModifierInvocation => Self::modifier_invocation.parse(self, input),
             ProductionKind::NamedArgument => Self::named_argument.parse(self, input),

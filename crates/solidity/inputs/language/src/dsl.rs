@@ -401,9 +401,9 @@ slang_grammar! {
             { introduced in "0.6.0" VirtualKeyword }
         ) ;
 
-        parser ModifierAttributesList = (ModifierAttribute +) ;
+        parser ModifierAttributes = (ModifierAttribute +) ;
 
-        parser ModifierDefinition = (ModifierKeyword Identifier (ParametersDeclaration ?) (ModifierAttributesList ?) (Semicolon | Block)) ;
+        parser ModifierDefinition = (ModifierKeyword Identifier (ParametersDeclaration ?) (ModifierAttributes ?) (Semicolon | Block)) ;
 
         parser ModifierInvocation = (IdentifierPath (ArgumentsDeclaration ?)) ;
 

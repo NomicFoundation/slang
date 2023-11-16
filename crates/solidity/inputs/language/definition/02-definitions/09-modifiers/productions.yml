@@ -9,12 +9,12 @@
       - optional:
           reference: "ParametersDeclaration"
       - optional:
-          reference: "ModifierAttributesList"
+          reference: "ModifierAttributes"
       - choice:
           - reference: "Semicolon"
           - reference: "Block"
 
-- name: "ModifierAttributesList"
+- name: "ModifierAttributes"
   kind: "Parser"
   unversioned:
     oneOrMore:
