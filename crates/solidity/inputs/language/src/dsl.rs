@@ -500,7 +500,7 @@ slang_grammar! {
         parser Statements = (Statement +) ;
 
         inline parser StringExpression = (
-            HexStringLiterals | AsciiStringLiterals | { introduced in "0.7.0" UnicodeStringLiteralsList }
+            HexStringLiterals | AsciiStringLiterals | { introduced in "0.7.0" UnicodeStringLiterals }
         ) ;
 
         parser StructDefinition = (StructKeyword Identifier ((StructMembers ?) delimited by OpenBrace and CloseBrace)) ;
@@ -540,7 +540,7 @@ slang_grammar! {
 
         parser UncheckedBlock = { introduced in "0.8.0" (UncheckedKeyword Block) } ;
 
-        parser UnicodeStringLiteralsList = { introduced in "0.7.0" (UnicodeStringLiteral +) } ;
+        parser UnicodeStringLiterals = { introduced in "0.7.0" (UnicodeStringLiteral +) } ;
 
         inline parser UnnamedFunctionAttribute = { removed in "0.6.0" (ModifierInvocation | OverrideSpecifier | ExternalKeyword | PayableKeyword | PureKeyword | ViewKeyword) } ;
 

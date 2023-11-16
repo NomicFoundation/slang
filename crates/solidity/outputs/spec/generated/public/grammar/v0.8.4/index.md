@@ -395,7 +395,7 @@
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/05-strings/ascii-string-literal/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/05-strings/single-quoted-ascii-string-literal/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/05-strings/double-quoted-ascii-string-literal/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/05-strings/unicode-string-literals-list/0.7.0.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/05-strings/unicode-string-literals/0.7.0.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/05-strings/unicode-string-literal/0.7.0.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/05-strings/single-quoted-unicode-string-literal/0.7.0.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/05-strings/double-quoted-unicode-string-literal/0.7.0.md"

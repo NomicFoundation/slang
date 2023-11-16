@@ -9,11 +9,11 @@
         - reference: "HexStringLiterals"
         - reference: "AsciiStringLiterals"
     0.7.0:
-      # added "UnicodeStringLiteralsList"
+      # added "UnicodeStringLiterals"
       choice:
         - reference: "HexStringLiterals"
         - reference: "AsciiStringLiterals"
-        - reference: "UnicodeStringLiteralsList"
+        - reference: "UnicodeStringLiterals"
 
 - name: "HexStringLiterals"
   kind: "Parser"
@@ -132,7 +132,7 @@
                     - terminal: "\\"
       - terminal: '"'
 
-- name: "UnicodeStringLiteralsList"
+- name: "UnicodeStringLiterals"
   kind: "Parser"
   versioned:
     0.7.0:

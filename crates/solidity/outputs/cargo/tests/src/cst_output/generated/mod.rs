@@ -68,7 +68,7 @@ mod TupleExpression;
 #[allow(non_snake_case)]
 mod TypeName;
 #[allow(non_snake_case)]
-mod UnicodeStringLiteralsList;
+mod UnicodeStringLiterals;
 #[allow(non_snake_case)]
 mod UserDefinedValueTypeDefinition;
 #[allow(non_snake_case)]

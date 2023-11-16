@@ -1778,7 +1778,7 @@ impl Language {
                     let result = self.ascii_string_literals(input);
                     choice.consider(input, result)?;
                     if self.version_is_at_least_0_7_0 {
-                        let result = self.unicode_string_literals_list(input);
+                        let result = self.unicode_string_literals(input);
                         choice.consider(input, result)?;
                     }
                     choice.finish(input)
@@ -4173,7 +4173,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn unicode_string_literals_list(&self, input: &mut ParserContext) -> ParserResult {
+    fn unicode_string_literals(&self, input: &mut ParserContext) -> ParserResult {
         if self.version_is_at_least_0_7_0 {
             OneOrMoreHelper::run(input, |input| {
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
@@ -4184,7 +4184,7 @@ impl Language {
         } else {
             ParserResult::disabled()
         }
-        .with_kind(RuleKind::UnicodeStringLiteralsList)
+        .with_kind(RuleKind::UnicodeStringLiterals)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -6086,8 +6086,8 @@ impl Language {
             ProductionKind::TypeExpression => Self::type_expression.parse(self, input),
             ProductionKind::TypeName => Self::type_name.parse(self, input),
             ProductionKind::UncheckedBlock => Self::unchecked_block.parse(self, input),
-            ProductionKind::UnicodeStringLiteralsList => {
-                Self::unicode_string_literals_list.parse(self, input)
+            ProductionKind::UnicodeStringLiterals => {
+                Self::unicode_string_literals.parse(self, input)
             }
             ProductionKind::UnnamedFunctionAttributes => {
                 Self::unnamed_function_attributes.parse(self, input)

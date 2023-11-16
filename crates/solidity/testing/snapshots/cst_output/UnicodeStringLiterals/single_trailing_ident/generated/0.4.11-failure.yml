@@ -6,7 +6,7 @@ Source: >
 Errors: # 1 total
   - >
     Error: Expected end of file.
-       ╭─[crates/solidity/testing/snapshots/cst_output/UnicodeStringLiteralsList/single_trailing_ident/input.sol:1:1]
+       ╭─[crates/solidity/testing/snapshots/cst_output/UnicodeStringLiterals/single_trailing_ident/input.sol:1:1]
        │
      1 │ ╭─▶ unicode"emoji 😃"happy
     ───╯

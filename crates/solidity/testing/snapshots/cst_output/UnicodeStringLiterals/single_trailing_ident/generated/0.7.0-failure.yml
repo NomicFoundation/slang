@@ -6,12 +6,12 @@ Source: >
 Errors: # 1 total
   - >
     Error: Expected UnicodeStringLiteral.
-       ╭─[crates/solidity/testing/snapshots/cst_output/UnicodeStringLiteralsList/single_trailing_ident/input.sol:1:20]
+       ╭─[crates/solidity/testing/snapshots/cst_output/UnicodeStringLiterals/single_trailing_ident/input.sol:1:20]
        │
      1 │ ╭─▶ unicode"emoji 😃"happy
     ───╯
 
 Tree:
-  - UnicodeStringLiteralsList (Rule): # 0..25 'unicode"emoji 😃"happy\n'
+  - UnicodeStringLiterals (Rule): # 0..25 'unicode"emoji 😃"happy\n'
       - UnicodeStringLiteral (Token): 'unicode"emoji 😃"' # 0..19
       - SKIPPED (Token): "happy\n" # 19..25

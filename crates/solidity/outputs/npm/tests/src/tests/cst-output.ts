@@ -44,8 +44,8 @@ test("calculate unicode characters text length", () => {
   const source = `unicode"some 😁 emoji"`;
   const language = new Language("0.8.1");
 
-  const parseTree = language.parse(ProductionKind.UnicodeStringLiteralsList, source).tree();
-  expectRule(parseTree, RuleKind.UnicodeStringLiteralsList);
+  const parseTree = language.parse(ProductionKind.UnicodeStringLiterals, source).tree();
+  expectRule(parseTree, RuleKind.UnicodeStringLiterals);
 
   expect(parseTree.textLength).toEqual({
     char: 21,
