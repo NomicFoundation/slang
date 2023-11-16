@@ -36,7 +36,7 @@ Tree:
                       - Identifier (Token): "tryAdd" # 30..36
                       - ParametersDeclaration (Rule): # 36..58 "(uint256 a, uint256 b)"
                           - OpenParen (Token): "(" # 36..37
-                          - ParametersList (Rule): # 37..57 "uint256 a, uint256 b"
+                          - Parameters (Rule): # 37..57 "uint256 a, uint256 b"
                               - Parameter (Rule): # 37..46 "uint256 a"
                                   - TypeName (Rule): # 37..44 "uint256"
                                       - UnsignedIntegerType (Token): "uint256" # 37..44
@@ -54,7 +54,7 @@ Tree:
                           - ReturnsKeyword (Token): "returns" # 73..80
                           - ParametersDeclaration (Rule): # 80..96 " (bool, uint256)"
                               - OpenParen (Token): "(" # 81..82
-                              - ParametersList (Rule): # 82..95 "bool, uint256"
+                              - Parameters (Rule): # 82..95 "bool, uint256"
                                   - Parameter (Rule): # 82..86 "bool"
                                       - TypeName (Rule): # 82..86 "bool"
                                           - BoolKeyword (Token): "bool" # 82..86

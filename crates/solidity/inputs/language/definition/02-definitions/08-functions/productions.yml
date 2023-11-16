@@ -105,11 +105,11 @@
         reference: "OpenParen"
       parser:
         optional:
-          reference: "ParametersList"
+          reference: "Parameters"
       close:
         reference: "CloseParen"
 
-- name: "ParametersList"
+- name: "Parameters"
   kind: "Parser"
   unversioned:
     separatedBy:

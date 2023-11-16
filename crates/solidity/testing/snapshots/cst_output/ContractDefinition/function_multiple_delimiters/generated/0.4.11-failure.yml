@@ -34,7 +34,7 @@ Tree:
               - Identifier (Token): "sendValue" # 58..67
               - ParametersDeclaration (Rule): # 67..110 "(address payable recipient, uint256 amount)"
                   - OpenParen (Token): "(" # 67..68
-                  - ParametersList (Rule): # 68..109 "address payable recipient, uint256 amount"
+                  - Parameters (Rule): # 68..109 "address payable recipient, uint256 amount"
                       - Parameter (Rule): # 68..93 "address payable recipient"
                           - TypeName (Rule): # 68..83 "address payable"
                               - AddressType (Rule): # 68..83 "address payable"

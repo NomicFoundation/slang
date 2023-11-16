@@ -439,9 +439,9 @@ slang_grammar! {
 
         parser Parameter = (TypeName (DataLocation ?) (Identifier ?)) ;
 
-        parser ParametersDeclaration = ((ParametersList ?) delimited by OpenParen and CloseParen) ;
+        parser ParametersDeclaration = ((Parameters ?) delimited by OpenParen and CloseParen) ;
 
-        parser ParametersList = (Parameter separated by Comma) ;
+        parser Parameters = (Parameter separated by Comma) ;
 
         parser PathImport = (AsciiStringLiteral ((AsKeyword Identifier) ?)) ;
 

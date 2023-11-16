@@ -32,7 +32,7 @@ Tree:
                   - ReturnsKeyword (Token): "returns" # 89..96
                   - ParametersDeclaration (Rule): # 96..103 " (uint)"
                       - OpenParen (Token): "(" # 97..98
-                      - ParametersList (Rule): # 98..102 "uint"
+                      - Parameters (Rule): # 98..102 "uint"
                           - Parameter (Rule): # 98..102 "uint"
                               - TypeName (Rule): # 98..102 "uint"
                                   - UnsignedIntegerType (Token): "uint" # 98..102

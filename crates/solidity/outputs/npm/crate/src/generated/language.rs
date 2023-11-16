@@ -3247,6 +3247,17 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
+    fn parameters(&self, input: &mut ParserContext) -> ParserResult {
+        SeparatedHelper::run::<_, LexicalContextType::Default>(
+            input,
+            self,
+            |input| self.parameter(input),
+            TokenKind::Comma,
+        )
+        .with_kind(RuleKind::Parameters)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
     fn parameters_declaration(&self, input: &mut ParserContext) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             let mut delim_guard = input.open_delim(TokenKind::CloseParen);
@@ -3256,7 +3267,7 @@ impl Language {
                 TokenKind::OpenParen,
             ))?;
             seq.elem(
-                OptionalHelper::transform(self.parameters_list(input))
+                OptionalHelper::transform(self.parameters(input))
                     .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
                         self,
@@ -3271,17 +3282,6 @@ impl Language {
             seq.finish()
         })
         .with_kind(RuleKind::ParametersDeclaration)
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn parameters_list(&self, input: &mut ParserContext) -> ParserResult {
-        SeparatedHelper::run::<_, LexicalContextType::Default>(
-            input,
-            self,
-            |input| self.parameter(input),
-            TokenKind::Comma,
-        )
-        .with_kind(RuleKind::ParametersList)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -6053,10 +6053,10 @@ impl Language {
             ProductionKind::OverridePaths => Self::override_paths.parse(self, input),
             ProductionKind::OverrideSpecifier => Self::override_specifier.parse(self, input),
             ProductionKind::Parameter => Self::parameter.parse(self, input),
+            ProductionKind::Parameters => Self::parameters.parse(self, input),
             ProductionKind::ParametersDeclaration => {
                 Self::parameters_declaration.parse(self, input)
             }
-            ProductionKind::ParametersList => Self::parameters_list.parse(self, input),
             ProductionKind::PathImport => Self::path_import.parse(self, input),
             ProductionKind::PositionalArgumentsList => {
                 Self::positional_arguments_list.parse(self, input)
