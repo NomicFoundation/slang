@@ -301,6 +301,22 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
+    fn assembly_flags(&self, input: &mut ParserContext) -> ParserResult {
+        SeparatedHelper::run::<_, LexicalContextType::Default>(
+            input,
+            self,
+            |input| {
+                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    input,
+                    TokenKind::AsciiStringLiteral,
+                )
+            },
+            TokenKind::Comma,
+        )
+        .with_kind(RuleKind::AssemblyFlags)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
     fn assembly_flags_declaration(&self, input: &mut ParserContext) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             let mut delim_guard = input.open_delim(TokenKind::CloseParen);
@@ -310,7 +326,7 @@ impl Language {
                 TokenKind::OpenParen,
             ))?;
             seq.elem(
-                self.assembly_flags_list(input)
+                self.assembly_flags(input)
                     .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
                         self,
@@ -325,22 +341,6 @@ impl Language {
             seq.finish()
         })
         .with_kind(RuleKind::AssemblyFlagsDeclaration)
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn assembly_flags_list(&self, input: &mut ParserContext) -> ParserResult {
-        SeparatedHelper::run::<_, LexicalContextType::Default>(
-            input,
-            self,
-            |input| {
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
-                    input,
-                    TokenKind::AsciiStringLiteral,
-                )
-            },
-            TokenKind::Comma,
-        )
-        .with_kind(RuleKind::AssemblyFlagsList)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -5951,10 +5951,10 @@ impl Language {
             ProductionKind::ArrayExpression => Self::array_expression.parse(self, input),
             ProductionKind::ArrayValues => Self::array_values.parse(self, input),
             ProductionKind::AsciiStringLiterals => Self::ascii_string_literals.parse(self, input),
+            ProductionKind::AssemblyFlags => Self::assembly_flags.parse(self, input),
             ProductionKind::AssemblyFlagsDeclaration => {
                 Self::assembly_flags_declaration.parse(self, input)
             }
-            ProductionKind::AssemblyFlagsList => Self::assembly_flags_list.parse(self, input),
             ProductionKind::AssemblyStatement => Self::assembly_statement.parse(self, input),
             ProductionKind::Block => Self::block.parse(self, input),
             ProductionKind::BreakStatement => Self::break_statement.parse(self, input),

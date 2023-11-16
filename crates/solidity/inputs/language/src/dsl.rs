@@ -183,11 +183,11 @@ slang_grammar! {
 
         parser AsciiStringLiterals = (AsciiStringLiteral +) ;
 
-        parser AssemblyFlagsList = (AsciiStringLiteral separated by Comma) ;
+        parser AssemblyFlags = (AsciiStringLiteral separated by Comma) ;
 
         parser AssemblyStatement = (AssemblyKeyword (AsciiStringLiteral ?) (AssemblyFlagsDeclaration ?) YulBlock) ;
 
-        parser AssemblyFlagsDeclaration = (AssemblyFlagsList delimited by OpenParen and CloseParen) ;
+        parser AssemblyFlagsDeclaration = (AssemblyFlags delimited by OpenParen and CloseParen) ;
 
         inline parser AssignmentOperator = (
             Equal | BarEqual | PlusEqual | MinusEqual | CaretEqual | SlashEqual | PercentEqual | AsteriskEqual | AmpersandEqual |

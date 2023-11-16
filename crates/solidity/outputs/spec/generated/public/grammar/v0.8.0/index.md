@@ -412,7 +412,7 @@
 
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/06-yul/01-assembly-block/assembly-statement/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/06-yul/01-assembly-block/assembly-flags-declaration/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/06-yul/01-assembly-block/assembly-flags-list/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/06-yul/01-assembly-block/assembly-flags/unversioned.md"
 
 ### 6.2. Yul Statements
 

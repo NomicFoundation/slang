@@ -13,7 +13,7 @@ Tree:
       - AsciiStringLiteral (Token): '"evmasm"' # 9..17
       - AssemblyFlagsDeclaration (Rule): # 17..33 ' ("memory-safe")'
           - OpenParen (Token): "(" # 18..19
-          - AssemblyFlagsList (Rule): # 19..32 '"memory-safe"'
+          - AssemblyFlags (Rule): # 19..32 '"memory-safe"'
               - AsciiStringLiteral (Token): '"memory-safe"' # 19..32
           - CloseParen (Token): ")" # 32..33
       - YulBlock (Rule): # 33..39 " {\n\n}\n"
