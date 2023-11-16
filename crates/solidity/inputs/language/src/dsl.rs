@@ -252,11 +252,11 @@ slang_grammar! {
             { introduced in "0.5.0" CalldataKeyword}
         ) ;
 
-        parser DeconstructionImport = ((DeconstructionImportSymbolsList delimited by OpenBrace and CloseBrace) FromKeyword AsciiStringLiteral) ;
+        parser DeconstructionImport = ((DeconstructionImportSymbols delimited by OpenBrace and CloseBrace) FromKeyword AsciiStringLiteral) ;
 
         parser DeconstructionImportSymbol = (Identifier ((AsKeyword Identifier) ?)) ;
 
-        parser DeconstructionImportSymbolsList = (DeconstructionImportSymbol separated by Comma) ;
+        parser DeconstructionImportSymbols = (DeconstructionImportSymbol separated by Comma) ;
 
         parser DeleteStatement = ((DeleteKeyword Expression) terminated by Semicolon) ;
 

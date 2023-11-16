@@ -42,13 +42,13 @@
           open:
             reference: "OpenBrace"
           parser:
-            reference: "DeconstructionImportSymbolsList"
+            reference: "DeconstructionImportSymbols"
           close:
             reference: "CloseBrace"
       - reference: "FromKeyword"
       - reference: "AsciiStringLiteral"
 
-- name: "DeconstructionImportSymbolsList"
+- name: "DeconstructionImportSymbols"
   kind: "Parser"
   unversioned:
     separatedBy:

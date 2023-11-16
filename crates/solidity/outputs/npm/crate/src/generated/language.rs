@@ -777,7 +777,7 @@ impl Language {
                     TokenKind::OpenBrace,
                 ))?;
                 seq.elem(
-                    self.deconstruction_import_symbols_list(input)
+                    self.deconstruction_import_symbols(input)
                         .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                             input,
                             self,
@@ -828,14 +828,14 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn deconstruction_import_symbols_list(&self, input: &mut ParserContext) -> ParserResult {
+    fn deconstruction_import_symbols(&self, input: &mut ParserContext) -> ParserResult {
         SeparatedHelper::run::<_, LexicalContextType::Default>(
             input,
             self,
             |input| self.deconstruction_import_symbol(input),
             TokenKind::Comma,
         )
-        .with_kind(RuleKind::DeconstructionImportSymbolsList)
+        .with_kind(RuleKind::DeconstructionImportSymbols)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -5978,8 +5978,8 @@ impl Language {
             ProductionKind::DeconstructionImportSymbol => {
                 Self::deconstruction_import_symbol.parse(self, input)
             }
-            ProductionKind::DeconstructionImportSymbolsList => {
-                Self::deconstruction_import_symbols_list.parse(self, input)
+            ProductionKind::DeconstructionImportSymbols => {
+                Self::deconstruction_import_symbols.parse(self, input)
             }
             ProductionKind::DeleteStatement => Self::delete_statement.parse(self, input),
             ProductionKind::DoWhileStatement => Self::do_while_statement.parse(self, input),
