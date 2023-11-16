@@ -38,10 +38,10 @@ Tree:
               - PublicKeyword (Token): "public" # 20..26
           - Block (Rule): # 26..74 " {\n    {\n        uint256 arg = (1 + 2;\n    })\n}\n"
               - OpenBrace (Token): "{" # 27..28
-              - StatementsList (Rule): # 29..70 "    {\n        uint256 arg = (1 + 2;\n    }"
+              - Statements (Rule): # 29..70 "    {\n        uint256 arg = (1 + 2;\n    }"
                   - Block (Rule): # 29..70 "    {\n        uint256 arg = (1 + 2;\n    }"
                       - OpenBrace (Token): "{" # 33..34
-                      - StatementsList (Rule): # 35..63 "        uint256 arg = (1 + 2"
+                      - Statements (Rule): # 35..63 "        uint256 arg = (1 + 2"
                           - VariableDeclarationStatement (Rule): # 35..63 "        uint256 arg = (1 + 2"
                               - VariableDeclaration (Rule): # 35..54 "        uint256 arg"
                                   - TypeName (Rule): # 35..50 "        uint256"

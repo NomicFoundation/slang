@@ -375,7 +375,7 @@ impl Language {
                 TokenKind::OpenBrace,
             ))?;
             seq.elem(
-                OptionalHelper::transform(self.statements_list(input))
+                OptionalHelper::transform(self.statements(input))
                     .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
                         self,
@@ -3636,7 +3636,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn statements_list(&self, input: &mut ParserContext) -> ParserResult {
+    fn statements(&self, input: &mut ParserContext) -> ParserResult {
         OneOrMoreHelper::run(input, |input| {
             ChoiceHelper::run(input, |mut choice, input| {
                 let result = ChoiceHelper::run(input, |mut choice, input| {
@@ -3696,7 +3696,7 @@ impl Language {
                 choice.finish(input)
             })
         })
-        .with_kind(RuleKind::StatementsList)
+        .with_kind(RuleKind::Statements)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -6083,7 +6083,7 @@ impl Language {
             ProductionKind::StateVariableDefinition => {
                 Self::state_variable_definition.parse(self, input)
             }
-            ProductionKind::StatementsList => Self::statements_list.parse(self, input),
+            ProductionKind::Statements => Self::statements.parse(self, input),
             ProductionKind::StructDefinition => Self::struct_definition.parse(self, input),
             ProductionKind::StructMember => Self::struct_member.parse(self, input),
             ProductionKind::StructMembersList => Self::struct_members_list.parse(self, input),

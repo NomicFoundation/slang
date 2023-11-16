@@ -200,7 +200,7 @@ slang_grammar! {
 
         inline parser BitwiseXOrOperator = Caret ;
 
-        parser Block = ((StatementsList ?) delimited by OpenBrace and CloseBrace) ;
+        parser Block = ((Statements ?) delimited by OpenBrace and CloseBrace) ;
 
         inline parser BooleanExpression = (TrueKeyword | FalseKeyword) ;
 
@@ -497,7 +497,7 @@ slang_grammar! {
             SimpleStatement | ControlStatement | AssemblyStatement | Block | { introduced in "0.8.0" UncheckedBlock }
         ) ;
 
-        parser StatementsList = (Statement +) ;
+        parser Statements = (Statement +) ;
 
         inline parser StringExpression = (
             HexStringLiteralsList | AsciiStringLiteralsList | { introduced in "0.7.0" UnicodeStringLiteralsList }

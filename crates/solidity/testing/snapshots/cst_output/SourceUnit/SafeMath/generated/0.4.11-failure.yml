@@ -65,7 +65,7 @@ Tree:
                               - CloseParen (Token): ")" # 95..96
                       - Block (Rule): # 96..210 " {\n    unchecked {\n      uint256 c = a + b;\n      ..."
                           - OpenBrace (Token): "{" # 97..98
-                          - StatementsList (Rule): # 99..113 "    unchecked "
+                          - Statements (Rule): # 99..113 "    unchecked "
                               - ExpressionStatement (Rule): # 99..113 "    unchecked "
                                   - Expression (Rule): # 99..112 "    unchecked"
                                       - Identifier (Token): "unchecked" # 103..112

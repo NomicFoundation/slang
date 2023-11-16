@@ -269,7 +269,7 @@
 ### 4.1. Blocks
 
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/04-statements/01-blocks/block/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/04-statements/01-blocks/statements-list/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/04-statements/01-blocks/statements/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/04-statements/01-blocks/statement/0.4.11.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/04-statements/01-blocks/control-statement/0.4.21.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/04-statements/01-blocks/simple-statement/unversioned.md"

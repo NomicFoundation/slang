@@ -54,7 +54,7 @@ mod ReturnStatement;
 #[allow(non_snake_case)]
 mod SourceUnit;
 #[allow(non_snake_case)]
-mod StatementsList;
+mod Statements;
 #[allow(non_snake_case)]
 mod StructDefinition;
 #[allow(non_snake_case)]

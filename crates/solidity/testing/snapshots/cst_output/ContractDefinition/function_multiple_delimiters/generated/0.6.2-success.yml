@@ -43,7 +43,7 @@ Tree:
                   - InternalKeyword (Token): "internal" # 111..119
               - Block (Rule): # 119..350 ' {\n    require(address(this).balance >= amount, "A...'
                   - OpenBrace (Token): "{" # 120..121
-                  - StatementsList (Rule): # 122..346 '    require(address(this).balance >= amount, "Addr...'
+                  - Statements (Rule): # 122..346 '    require(address(this).balance >= amount, "Addr...'
                       - ExpressionStatement (Rule): # 122..201 '    require(address(this).balance >= amount, "Addr...'
                           - Expression (Rule): # 122..199 '    require(address(this).balance >= amount, "Addr...'
                               - FunctionCallExpression (Rule): # 122..199 '    require(address(this).balance >= amount, "Addr...'

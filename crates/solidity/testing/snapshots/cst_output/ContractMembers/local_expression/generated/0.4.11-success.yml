@@ -17,7 +17,7 @@ Tree:
               - CloseParen (Token): ")" # 14..15
           - Block (Rule): # 15..42 " {\n  uint a = 1 + 2 * 3;\n}\n"
               - OpenBrace (Token): "{" # 16..17
-              - StatementsList (Rule): # 18..40 "  uint a = 1 + 2 * 3;\n"
+              - Statements (Rule): # 18..40 "  uint a = 1 + 2 * 3;\n"
                   - VariableDeclarationStatement (Rule): # 18..40 "  uint a = 1 + 2 * 3;\n"
                       - VariableDeclaration (Rule): # 18..26 "  uint a"
                           - TypeName (Rule): # 18..24 "  uint"

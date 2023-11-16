@@ -63,7 +63,7 @@ Tree:
                   - PrivateKeyword (Token): "private" # 55..62
               - Block (Rule): # 62..138 " {\n\t\tif(while == pair && !_isExcludedFromFee[to]){..."
                   - OpenBrace (Token): "{" # 63..64
-                  - StatementsList (Rule): # 65..135 "\t\tif(while == pair && !_isExcludedFromFee[to]){\n\t\t..."
+                  - Statements (Rule): # 65..135 "\t\tif(while == pair && !_isExcludedFromFee[to]){\n\t\t..."
                       - IfStatement (Rule): # 65..135 "\t\tif(while == pair && !_isExcludedFromFee[to]){\n\t\t..."
                           - IfKeyword (Token): "if" # 67..69
                           - OpenParen (Token): "(" # 69..70
@@ -71,7 +71,7 @@ Tree:
                           - CloseParen (Token): ")" # 110..111
                           - Block (Rule): # 111..135 "{\n\t\t\tuint256 a = 1;\n\t\t}\n"
                               - OpenBrace (Token): "{" # 111..112
-                              - StatementsList (Rule): # 113..131 "\t\t\tuint256 a = 1;\n"
+                              - Statements (Rule): # 113..131 "\t\t\tuint256 a = 1;\n"
                                   - VariableDeclarationStatement (Rule): # 113..131 "\t\t\tuint256 a = 1;\n"
                                       - VariableDeclaration (Rule): # 113..125 "\t\t\tuint256 a"
                                           - TypeName (Rule): # 113..123 "\t\t\tuint256"
@@ -92,7 +92,7 @@ Tree:
                   - CloseParen (Token): ")" # 153..154
               - Block (Rule): # 154..210 " {\n\t\tuint256 x = 0;\n\t\tunchecked { invalid sequence..."
                   - OpenBrace (Token): "{" # 155..156
-                  - StatementsList (Rule): # 157..174 "\t\tuint256 x = 0;\n"
+                  - Statements (Rule): # 157..174 "\t\tuint256 x = 0;\n"
                       - VariableDeclarationStatement (Rule): # 157..174 "\t\tuint256 x = 0;\n"
                           - VariableDeclaration (Rule): # 157..168 "\t\tuint256 x"
                               - TypeName (Rule): # 157..166 "\t\tuint256"

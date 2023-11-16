@@ -122,7 +122,7 @@ Tree:
               - PublicKeyword (Token): "public" # 77..83
           - Block (Rule): # 83..309 " {\n  msg.sender.call{do: 1, arg: 1 }();\n  msg.send..."
               - OpenBrace (Token): "{" # 84..85
-              - StatementsList (Rule): # 86..306 "  msg.sender.call{do: 1, arg: 1 }();\n  msg.sender...."
+              - Statements (Rule): # 86..306 "  msg.sender.call{do: 1, arg: 1 }();\n  msg.sender...."
                   - ExpressionStatement (Rule): # 86..123 "  msg.sender.call{do: 1, arg: 1 }();\n"
                       - Expression (Rule): # 86..103 "  msg.sender.call"
                           - MemberAccessExpression (Rule): # 86..103 "  msg.sender.call"
