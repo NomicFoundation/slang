@@ -656,7 +656,7 @@ slang_grammar! {
 
         parser YulIdentifierPaths = (YulIdentifierPath separated by Comma) ;
 
-        parser YulIdentifiersList = (YulIdentifier separated by Comma) ;
+        parser YulIdentifiers = (YulIdentifier separated by Comma) ;
 
         parser YulIfStatement = (IfKeyword YulExpression YulBlock) ;
 
@@ -664,9 +664,9 @@ slang_grammar! {
 
         inline parser YulLiteral = (TrueKeyword | FalseKeyword | YulHexLiteral | YulDecimalLiteral | HexStringLiteral | AsciiStringLiteral) ;
 
-        parser YulParametersDeclaration = ((YulIdentifiersList ?) delimited by OpenParen and CloseParen) ;
+        parser YulParametersDeclaration = ((YulIdentifiers ?) delimited by OpenParen and CloseParen) ;
 
-        parser YulReturnsDeclaration = (MinusGreaterThan YulIdentifiersList) ;
+        parser YulReturnsDeclaration = (MinusGreaterThan YulIdentifiers) ;
 
         inline parser YulStatement = (
             YulBlock | YulFunctionDefinition | YulDeclarationStatement | YulAssignmentStatement | YulIfStatement |

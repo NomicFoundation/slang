@@ -79,7 +79,7 @@
         reference: "OpenParen"
       parser:
         optional:
-          reference: "YulIdentifiersList"
+          reference: "YulIdentifiers"
       close:
         reference: "CloseParen"
 
@@ -88,7 +88,7 @@
   unversioned:
     sequence:
       - reference: "MinusGreaterThan"
-      - reference: "YulIdentifiersList"
+      - reference: "YulIdentifiers"
 
 - name: "YulAssignmentStatement"
   kind: "Parser"

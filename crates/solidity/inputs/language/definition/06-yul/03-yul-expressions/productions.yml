@@ -54,7 +54,7 @@
       parser:
         reference: "YulIdentifier"
 
-- name: "YulIdentifiersList"
+- name: "YulIdentifiers"
   kind: "Parser"
   unversioned:
     separatedBy:

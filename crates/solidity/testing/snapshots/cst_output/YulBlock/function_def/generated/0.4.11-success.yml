@@ -18,14 +18,14 @@ Tree:
               - YulIdentifier (Token): "mult" # 12..16
               - YulParametersDeclaration (Rule): # 16..22 "(a, b)"
                   - OpenParen (Token): "(" # 16..17
-                  - YulIdentifiersList (Rule): # 17..21 "a, b"
+                  - YulIdentifiers (Rule): # 17..21 "a, b"
                       - YulIdentifier (Token): "a" # 17..18
                       - Comma (Token): "," # 18..19
                       - YulIdentifier (Token): "b" # 20..21
                   - CloseParen (Token): ")" # 21..22
               - YulReturnsDeclaration (Rule): # 22..32 " -> result"
                   - MinusGreaterThan (Token): "->" # 23..25
-                  - YulIdentifiersList (Rule): # 25..32 " result"
+                  - YulIdentifiers (Rule): # 25..32 " result"
                       - YulIdentifier (Token): "result" # 26..32
               - YulBlock (Rule): # 32..60 " {\n\t\tresult := mul(a, b)\n\t}\n"
                   - OpenBrace (Token): "{" # 33..34
