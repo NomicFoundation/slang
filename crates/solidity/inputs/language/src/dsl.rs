@@ -456,9 +456,9 @@ slang_grammar! {
 
         inline parser ReceiveFunctionAttribute = { introduced in "0.6.0" (ModifierInvocation | OverrideSpecifier | ExternalKeyword | PayableKeyword | VirtualKeyword) } ;
 
-        parser ReceiveFunctionAttributesList = { introduced in "0.6.0" (ReceiveFunctionAttribute +) } ;
+        parser ReceiveFunctionAttributes = { introduced in "0.6.0" (ReceiveFunctionAttribute +) } ;
 
-        parser ReceiveFunctionDefinition = { introduced in "0.6.0" (ReceiveKeyword ParametersDeclaration (ReceiveFunctionAttributesList ?) (Semicolon | Block)) } ;
+        parser ReceiveFunctionDefinition = { introduced in "0.6.0" (ReceiveKeyword ParametersDeclaration (ReceiveFunctionAttributes ?) (Semicolon | Block)) } ;
 
         parser ReturnStatement = ((ReturnKeyword (Expression ?)) terminated by Semicolon) ;
 

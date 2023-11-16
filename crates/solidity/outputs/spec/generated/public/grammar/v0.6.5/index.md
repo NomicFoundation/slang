@@ -231,7 +231,7 @@
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/08-functions/fallback-function-attributes/0.6.0.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/08-functions/fallback-function-attribute/0.6.0.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/08-functions/receive-function-definition/0.6.0.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/08-functions/receive-function-attributes-list/0.6.0.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/08-functions/receive-function-attributes/0.6.0.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/08-functions/receive-function-attribute/0.6.0.md"
 
 ### 2.9. Modifiers

@@ -237,12 +237,12 @@
         - reference: "ReceiveKeyword"
         - reference: "ParametersDeclaration"
         - optional:
-            reference: "ReceiveFunctionAttributesList"
+            reference: "ReceiveFunctionAttributes"
         - choice:
             - reference: "Semicolon"
             - reference: "Block"
 
-- name: "ReceiveFunctionAttributesList"
+- name: "ReceiveFunctionAttributes"
   kind: "Parser"
   versioned:
     0.6.0:
