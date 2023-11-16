@@ -1248,6 +1248,17 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
+    fn event_parameters(&self, input: &mut ParserContext) -> ParserResult {
+        SeparatedHelper::run::<_, LexicalContextType::Default>(
+            input,
+            self,
+            |input| self.event_parameter(input),
+            TokenKind::Comma,
+        )
+        .with_kind(RuleKind::EventParameters)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
     fn event_parameters_declaration(&self, input: &mut ParserContext) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             let mut delim_guard = input.open_delim(TokenKind::CloseParen);
@@ -1257,13 +1268,13 @@ impl Language {
                 TokenKind::OpenParen,
             ))?;
             seq.elem(
-                OptionalHelper::transform(self.event_parameters_list(input))
+                OptionalHelper::transform(self.event_parameters(input))
                     .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
-                    input,
-                    self,
-                    TokenKind::CloseParen,
-                    RecoverFromNoMatch::Yes,
-                ),
+                        input,
+                        self,
+                        TokenKind::CloseParen,
+                        RecoverFromNoMatch::Yes,
+                    ),
             )?;
             seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
                 input,
@@ -1272,17 +1283,6 @@ impl Language {
             seq.finish()
         })
         .with_kind(RuleKind::EventParametersDeclaration)
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn event_parameters_list(&self, input: &mut ParserContext) -> ParserResult {
-        SeparatedHelper::run::<_, LexicalContextType::Default>(
-            input,
-            self,
-            |input| self.event_parameter(input),
-            TokenKind::Comma,
-        )
-        .with_kind(RuleKind::EventParametersList)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -5997,10 +5997,10 @@ impl Language {
             ProductionKind::ErrorParametersList => Self::error_parameters_list.parse(self, input),
             ProductionKind::EventDefinition => Self::event_definition.parse(self, input),
             ProductionKind::EventParameter => Self::event_parameter.parse(self, input),
+            ProductionKind::EventParameters => Self::event_parameters.parse(self, input),
             ProductionKind::EventParametersDeclaration => {
                 Self::event_parameters_declaration.parse(self, input)
             }
-            ProductionKind::EventParametersList => Self::event_parameters_list.parse(self, input),
             ProductionKind::ExperimentalPragma => Self::experimental_pragma.parse(self, input),
             ProductionKind::Expression => Self::expression.parse(self, input),
             ProductionKind::ExpressionStatement => Self::expression_statement.parse(self, input),

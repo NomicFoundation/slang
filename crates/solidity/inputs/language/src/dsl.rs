@@ -283,11 +283,11 @@ slang_grammar! {
 
         parser EventDefinition = ((EventKeyword Identifier EventParametersDeclaration (AnonymousKeyword ?)) terminated by Semicolon) ;
 
-        parser EventParametersDeclaration = ((EventParametersList ?) delimited by OpenParen and CloseParen);
+        parser EventParametersDeclaration = ((EventParameters ?) delimited by OpenParen and CloseParen);
 
         parser EventParameter = (TypeName (IndexedKeyword ?) (Identifier ?)) ;
 
-        parser EventParametersList = (EventParameter separated by Comma) ;
+        parser EventParameters = (EventParameter separated by Comma) ;
 
         parser ExperimentalPragma = (ExperimentalKeyword (AsciiStringLiteral | Identifier)) ;
 

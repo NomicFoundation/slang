@@ -18,7 +18,7 @@ Tree:
               - Identifier (Token): "Log" # 26..29
               - EventParametersDeclaration (Rule): # 29..67 "(uint256 indexed a, uint256 indexed b)"
                   - OpenParen (Token): "(" # 29..30
-                  - EventParametersList (Rule): # 30..66 "uint256 indexed a, uint256 indexed b"
+                  - EventParameters (Rule): # 30..66 "uint256 indexed a, uint256 indexed b"
                       - EventParameter (Rule): # 30..47 "uint256 indexed a"
                           - TypeName (Rule): # 30..37 "uint256"
                               - UnsignedIntegerType (Token): "uint256" # 30..37

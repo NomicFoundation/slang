@@ -245,7 +245,7 @@
 
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/10-events/event-definition/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/10-events/event-parameters-declaration/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/10-events/event-parameters-list/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/10-events/event-parameters/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/10-events/event-parameter/unversioned.md"
 
 ## 3. Types

@@ -13,7 +13,7 @@ Tree:
               - Identifier (Token): "E1" # 6..8
               - EventParametersDeclaration (Rule): # 8..23 "(uint256 value)"
                   - OpenParen (Token): "(" # 8..9
-                  - EventParametersList (Rule): # 9..22 "uint256 value"
+                  - EventParameters (Rule): # 9..22 "uint256 value"
                       - EventParameter (Rule): # 9..22 "uint256 value"
                           - TypeName (Rule): # 9..16 "uint256"
                               - UnsignedIntegerType (Token): "uint256" # 9..16
