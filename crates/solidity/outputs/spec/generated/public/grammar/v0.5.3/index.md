@@ -360,7 +360,7 @@
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/05-strings/double-quoted-hex-string-literal/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/05-strings/hex-string-contents/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/05-strings/hex-character/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/05-strings/ascii-string-literals-list/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/05-strings/ascii-string-literals/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/05-strings/ascii-string-literal/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/05-strings/single-quoted-ascii-string-literal/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/05-strings/double-quoted-ascii-string-literal/unversioned.md"

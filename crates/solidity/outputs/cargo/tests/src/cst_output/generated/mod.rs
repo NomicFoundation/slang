@@ -2,7 +2,7 @@
 
 use semver::Version;
 #[allow(non_snake_case)]
-mod AsciiStringLiteralsList;
+mod AsciiStringLiterals;
 #[allow(non_snake_case)]
 mod AssemblyStatement;
 #[allow(non_snake_case)]

@@ -290,14 +290,14 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn ascii_string_literals_list(&self, input: &mut ParserContext) -> ParserResult {
+    fn ascii_string_literals(&self, input: &mut ParserContext) -> ParserResult {
         OneOrMoreHelper::run(input, |input| {
             self.parse_token_with_trivia::<LexicalContextType::Default>(
                 input,
                 TokenKind::AsciiStringLiteral,
             )
         })
-        .with_kind(RuleKind::AsciiStringLiteralsList)
+        .with_kind(RuleKind::AsciiStringLiterals)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -1775,7 +1775,7 @@ impl Language {
                 let result = ChoiceHelper::run(input, |mut choice, input| {
                     let result = self.hex_string_literals(input);
                     choice.consider(input, result)?;
-                    let result = self.ascii_string_literals_list(input);
+                    let result = self.ascii_string_literals(input);
                     choice.consider(input, result)?;
                     if self.version_is_at_least_0_7_0 {
                         let result = self.unicode_string_literals_list(input);
@@ -5950,9 +5950,7 @@ impl Language {
             ProductionKind::ArgumentsDeclaration => Self::arguments_declaration.parse(self, input),
             ProductionKind::ArrayExpression => Self::array_expression.parse(self, input),
             ProductionKind::ArrayValues => Self::array_values.parse(self, input),
-            ProductionKind::AsciiStringLiteralsList => {
-                Self::ascii_string_literals_list.parse(self, input)
-            }
+            ProductionKind::AsciiStringLiterals => Self::ascii_string_literals.parse(self, input),
             ProductionKind::AssemblyFlagsDeclaration => {
                 Self::assembly_flags_declaration.parse(self, input)
             }

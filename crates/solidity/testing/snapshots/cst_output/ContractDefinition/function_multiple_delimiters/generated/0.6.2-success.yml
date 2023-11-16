@@ -74,7 +74,7 @@ Tree:
                                                       - Identifier (Token): "amount" # 159..165
                                           - Comma (Token): "," # 165..166
                                           - Expression (Rule): # 166..198 ' "Address: insufficient balance"'
-                                              - AsciiStringLiteralsList (Rule): # 166..198 ' "Address: insufficient balance"'
+                                              - AsciiStringLiterals (Rule): # 166..198 ' "Address: insufficient balance"'
                                                   - AsciiStringLiteral (Token): '"Address: insufficient balance"' # 167..198
                                       - CloseParen (Token): ")" # 198..199
                           - Semicolon (Token): ";" # 199..200
@@ -111,7 +111,7 @@ Tree:
                                       - OpenParen (Token): "(" # 256..257
                                       - PositionalArguments (Rule): # 257..259 '""'
                                           - Expression (Rule): # 257..259 '""'
-                                              - AsciiStringLiteralsList (Rule): # 257..259 '""'
+                                              - AsciiStringLiterals (Rule): # 257..259 '""'
                                                   - AsciiStringLiteral (Token): '""' # 257..259
                                       - CloseParen (Token): ")" # 259..260
                           - Semicolon (Token): ";" # 260..261
@@ -127,7 +127,7 @@ Tree:
                                               - Identifier (Token): "success" # 274..281
                                           - Comma (Token): "," # 281..282
                                           - Expression (Rule): # 282..343 ' "Address: unable to send value, recipient may hav...'
-                                              - AsciiStringLiteralsList (Rule): # 282..343 ' "Address: unable to send value, recipient may hav...'
+                                              - AsciiStringLiterals (Rule): # 282..343 ' "Address: unable to send value, recipient may hav...'
                                                   - AsciiStringLiteral (Token): '"Address: unable to send value, recipient may have...' # 283..343
                                       - CloseParen (Token): ")" # 343..344
                           - Semicolon (Token): ";" # 344..345

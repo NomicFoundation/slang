@@ -7,12 +7,12 @@
     0.4.11:
       choice:
         - reference: "HexStringLiterals"
-        - reference: "AsciiStringLiteralsList"
+        - reference: "AsciiStringLiterals"
     0.7.0:
       # added "UnicodeStringLiteralsList"
       choice:
         - reference: "HexStringLiterals"
-        - reference: "AsciiStringLiteralsList"
+        - reference: "AsciiStringLiterals"
         - reference: "UnicodeStringLiteralsList"
 
 - name: "HexStringLiterals"
@@ -79,7 +79,7 @@
           from: "A"
           to: "F"
 
-- name: "AsciiStringLiteralsList"
+- name: "AsciiStringLiterals"
   kind: "Parser"
   unversioned:
     oneOrMore:

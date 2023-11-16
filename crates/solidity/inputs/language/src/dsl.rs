@@ -181,7 +181,7 @@ slang_grammar! {
 
         parser ArrayValues = (Expression separated by Comma) ;
 
-        parser AsciiStringLiteralsList = (AsciiStringLiteral +) ;
+        parser AsciiStringLiterals = (AsciiStringLiteral +) ;
 
         parser AssemblyFlagsList = (AsciiStringLiteral separated by Comma) ;
 
@@ -500,7 +500,7 @@ slang_grammar! {
         parser Statements = (Statement +) ;
 
         inline parser StringExpression = (
-            HexStringLiterals | AsciiStringLiteralsList | { introduced in "0.7.0" UnicodeStringLiteralsList }
+            HexStringLiterals | AsciiStringLiterals | { introduced in "0.7.0" UnicodeStringLiteralsList }
         ) ;
 
         parser StructDefinition = (StructKeyword Identifier ((StructMembers ?) delimited by OpenBrace and CloseBrace)) ;

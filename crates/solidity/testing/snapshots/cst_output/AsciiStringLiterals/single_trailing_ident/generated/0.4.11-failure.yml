@@ -6,7 +6,7 @@ Source: >
 Errors: # 1 total
   - >
     Error: Expected AsciiStringLiteral.
-       ╭─[crates/solidity/testing/snapshots/cst_output/AsciiStringLiteralsList/single_trailing_ident/input.sol:1:6]
+       ╭─[crates/solidity/testing/snapshots/cst_output/AsciiStringLiterals/single_trailing_ident/input.sol:1:6]
        │
      1 │ "foo"bar
        │      ──┬─  
@@ -14,6 +14,6 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - AsciiStringLiteralsList (Rule): # 0..9 '"foo"bar\n'
+  - AsciiStringLiterals (Rule): # 0..9 '"foo"bar\n'
       - AsciiStringLiteral (Token): '"foo"' # 0..5
       - SKIPPED (Token): "bar\n" # 5..9

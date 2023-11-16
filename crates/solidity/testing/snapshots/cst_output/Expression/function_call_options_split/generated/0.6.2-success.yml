@@ -39,6 +39,6 @@ Tree:
               - OpenParen (Token): "(" # 21..22
               - PositionalArguments (Rule): # 22..24 '""'
                   - Expression (Rule): # 22..24 '""'
-                      - AsciiStringLiteralsList (Rule): # 22..24 '""'
+                      - AsciiStringLiterals (Rule): # 22..24 '""'
                           - AsciiStringLiteral (Token): '""' # 22..24
               - CloseParen (Token): ")" # 24..25

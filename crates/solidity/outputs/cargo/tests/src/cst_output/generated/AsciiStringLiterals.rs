@@ -5,15 +5,15 @@ use anyhow::Result;
 
 #[test]
 fn multiple() -> Result<()> {
-    return run("AsciiStringLiteralsList", "multiple");
+    return run("AsciiStringLiterals", "multiple");
 }
 
 #[test]
 fn single() -> Result<()> {
-    return run("AsciiStringLiteralsList", "single");
+    return run("AsciiStringLiterals", "single");
 }
 
 #[test]
 fn single_trailing_ident() -> Result<()> {
-    return run("AsciiStringLiteralsList", "single_trailing_ident");
+    return run("AsciiStringLiterals", "single_trailing_ident");
 }
