@@ -156,7 +156,7 @@ pub enum ProductionKind {
     YulReturnsDeclaration,
     YulStatements,
     YulSwitchCase,
-    YulSwitchCasesList,
+    YulSwitchCases,
     YulSwitchStatement,
 }
 
@@ -324,7 +324,7 @@ pub enum RuleKind {
     YulReturnsDeclaration,
     YulStatements,
     YulSwitchCase,
-    YulSwitchCasesList,
+    YulSwitchCases,
     YulSwitchStatement,
 }
 

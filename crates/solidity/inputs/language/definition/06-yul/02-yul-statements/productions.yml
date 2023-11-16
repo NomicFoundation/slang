@@ -138,9 +138,9 @@
     sequence:
       - reference: "SwitchKeyword"
       - reference: "YulExpression"
-      - reference: "YulSwitchCasesList"
+      - reference: "YulSwitchCases"
 
-- name: "YulSwitchCasesList"
+- name: "YulSwitchCases"
   kind: "Parser"
   unversioned:
     oneOrMore:

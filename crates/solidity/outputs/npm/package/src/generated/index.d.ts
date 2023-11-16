@@ -151,7 +151,7 @@ export namespace kinds {
     YulReturnsDeclaration = "YulReturnsDeclaration",
     YulStatements = "YulStatements",
     YulSwitchCase = "YulSwitchCase",
-    YulSwitchCasesList = "YulSwitchCasesList",
+    YulSwitchCases = "YulSwitchCases",
     YulSwitchStatement = "YulSwitchStatement",
   }
   export enum RuleKind {
@@ -305,7 +305,7 @@ export namespace kinds {
     YulReturnsDeclaration = "YulReturnsDeclaration",
     YulStatements = "YulStatements",
     YulSwitchCase = "YulSwitchCase",
-    YulSwitchCasesList = "YulSwitchCasesList",
+    YulSwitchCases = "YulSwitchCases",
     YulSwitchStatement = "YulSwitchStatement",
   }
   export enum TokenKind {

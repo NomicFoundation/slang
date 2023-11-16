@@ -5350,9 +5350,9 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn yul_switch_cases_list(&self, input: &mut ParserContext) -> ParserResult {
+    fn yul_switch_cases(&self, input: &mut ParserContext) -> ParserResult {
         OneOrMoreHelper::run(input, |input| self.yul_switch_case(input))
-            .with_kind(RuleKind::YulSwitchCasesList)
+            .with_kind(RuleKind::YulSwitchCases)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -5365,7 +5365,7 @@ impl Language {
                 ),
             )?;
             seq.elem(self.yul_expression(input))?;
-            seq.elem(self.yul_switch_cases_list(input))?;
+            seq.elem(self.yul_switch_cases(input))?;
             seq.finish()
         })
         .with_kind(RuleKind::YulSwitchStatement)
@@ -6150,7 +6150,7 @@ impl Language {
             }
             ProductionKind::YulStatements => Self::yul_statements.parse(self, input),
             ProductionKind::YulSwitchCase => Self::yul_switch_case.parse(self, input),
-            ProductionKind::YulSwitchCasesList => Self::yul_switch_cases_list.parse(self, input),
+            ProductionKind::YulSwitchCases => Self::yul_switch_cases.parse(self, input),
             ProductionKind::YulSwitchStatement => Self::yul_switch_statement.parse(self, input),
         }
     }

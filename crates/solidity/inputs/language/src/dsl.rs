@@ -678,9 +678,9 @@ slang_grammar! {
 
         parser YulSwitchCase = ((DefaultKeyword | (CaseKeyword YulLiteral)) YulBlock) ;
 
-        parser YulSwitchCasesList = (YulSwitchCase +) ;
+        parser YulSwitchCases = (YulSwitchCase +) ;
 
-        parser YulSwitchStatement = (SwitchKeyword YulExpression YulSwitchCasesList) ;
+        parser YulSwitchStatement = (SwitchKeyword YulExpression YulSwitchCases) ;
 
     } ;
 
