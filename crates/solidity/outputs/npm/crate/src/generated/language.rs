@@ -2820,7 +2820,7 @@ impl Language {
                     TokenKind::OpenBrace,
                 ))?;
                 seq.elem(
-                    OptionalHelper::transform(self.library_members_list(input))
+                    OptionalHelper::transform(self.library_members(input))
                         .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
                         self,
@@ -2840,7 +2840,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn library_members_list(&self, input: &mut ParserContext) -> ParserResult {
+    fn library_members(&self, input: &mut ParserContext) -> ParserResult {
         OneOrMoreHelper::run(input, |input| {
             ChoiceHelper::run(input, |mut choice, input| {
                 let result = self.using_directive(input);
@@ -2886,7 +2886,7 @@ impl Language {
                 choice.finish(input)
             })
         })
-        .with_kind(RuleKind::LibraryMembersList)
+        .with_kind(RuleKind::LibraryMembers)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -6039,7 +6039,7 @@ impl Language {
             ProductionKind::InterfaceMembersList => Self::interface_members_list.parse(self, input),
             ProductionKind::LeadingTrivia => Self::leading_trivia.parse(self, input),
             ProductionKind::LibraryDefinition => Self::library_definition.parse(self, input),
-            ProductionKind::LibraryMembersList => Self::library_members_list.parse(self, input),
+            ProductionKind::LibraryMembers => Self::library_members.parse(self, input),
             ProductionKind::MappingKeyType => Self::mapping_key_type.parse(self, input),
             ProductionKind::MappingType => Self::mapping_type.parse(self, input),
             ProductionKind::MappingValueType => Self::mapping_value_type.parse(self, input),

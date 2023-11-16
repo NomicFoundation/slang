@@ -30,7 +30,7 @@ Tree:
               - LibraryKeyword (Token): "library" # 0..7
               - Identifier (Token): "SafeMath" # 8..16
               - OpenBrace (Token): "{" # 17..18
-              - LibraryMembersList (Rule): # 19..210 "  function tryAdd(uint256 a, uint256 b) internal p..."
+              - LibraryMembers (Rule): # 19..210 "  function tryAdd(uint256 a, uint256 b) internal p..."
                   - FunctionDefinition (Rule): # 19..210 "  function tryAdd(uint256 a, uint256 b) internal p..."
                       - FunctionKeyword (Token): "function" # 21..29
                       - Identifier (Token): "tryAdd" # 30..36

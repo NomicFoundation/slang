@@ -200,7 +200,7 @@
 ### 2.3. Libraries
 
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/03-libraries/library-definition/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/03-libraries/library-members-list/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/03-libraries/library-members/unversioned.md"
 
 ### 2.4. Structs
 

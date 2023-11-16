@@ -378,9 +378,9 @@ slang_grammar! {
 
         parser InterfaceMembersList = (ContractMember +) ;
 
-        parser LibraryDefinition = (LibraryKeyword Identifier ((LibraryMembersList ?) delimited by OpenBrace and CloseBrace)) ;
+        parser LibraryDefinition = (LibraryKeyword Identifier ((LibraryMembers ?) delimited by OpenBrace and CloseBrace)) ;
 
-        parser LibraryMembersList = (ContractMember +) ;
+        parser LibraryMembers = (ContractMember +) ;
 
         parser MappingKeyType = (
             (ElementaryType | IdentifierPath)
