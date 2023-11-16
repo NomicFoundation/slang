@@ -218,9 +218,9 @@ slang_grammar! {
 
         inline parser ConstructorAttribute = { introduced in "0.4.22" (ModifierInvocation | InternalKeyword | PayableKeyword | PublicKeyword) } ;
 
-        parser ConstructorAttributesList = { introduced in "0.4.22" (ConstructorAttribute +) } ;
+        parser ConstructorAttributes = { introduced in "0.4.22" (ConstructorAttribute +) } ;
 
-        parser ConstructorDefinition = { introduced in "0.4.22" (ConstructorKeyword ParametersDeclaration (ConstructorAttributesList ?) Block) } ;
+        parser ConstructorDefinition = { introduced in "0.4.22" (ConstructorKeyword ParametersDeclaration (ConstructorAttributes ?) Block) } ;
 
         parser ContinueStatement = (ContinueKeyword terminated by Semicolon) ;
 

@@ -136,10 +136,10 @@
         - reference: "ConstructorKeyword"
         - reference: "ParametersDeclaration"
         - optional:
-            reference: "ConstructorAttributesList"
+            reference: "ConstructorAttributes"
         - reference: "Block"
 
-- name: "ConstructorAttributesList"
+- name: "ConstructorAttributes"
   kind: "Parser"
   versioned:
     0.4.22:

@@ -19,7 +19,7 @@ Tree:
               - ParametersDeclaration (Rule): # 31..33 "()"
                   - OpenParen (Token): "(" # 31..32
                   - CloseParen (Token): ")" # 32..33
-              - ConstructorAttributesList (Rule): # 33..40 " public"
+              - ConstructorAttributes (Rule): # 33..40 " public"
                   - PublicKeyword (Token): "public" # 34..40
               - Block (Rule): # 40..47 " {\n  }\n"
                   - OpenBrace (Token): "{" # 41..42

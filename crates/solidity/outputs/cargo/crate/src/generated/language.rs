@@ -505,7 +505,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn constructor_attributes_list(&self, input: &mut ParserContext) -> ParserResult {
+    fn constructor_attributes(&self, input: &mut ParserContext) -> ParserResult {
         if self.version_is_at_least_0_4_22 {
             OneOrMoreHelper::run(input, |input| {
                 if self.version_is_at_least_0_4_22 {
@@ -536,7 +536,7 @@ impl Language {
         } else {
             ParserResult::disabled()
         }
-        .with_kind(RuleKind::ConstructorAttributesList)
+        .with_kind(RuleKind::ConstructorAttributes)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -549,7 +549,7 @@ impl Language {
                 ))?;
                 seq.elem(self.parameters_declaration(input))?;
                 seq.elem(OptionalHelper::transform(
-                    self.constructor_attributes_list(input),
+                    self.constructor_attributes(input),
                 ))?;
                 seq.elem(self.block(input))?;
                 seq.finish()
@@ -5966,8 +5966,8 @@ impl Language {
             ProductionKind::CatchClauseError => Self::catch_clause_error.parse(self, input),
             ProductionKind::CatchClausesList => Self::catch_clauses_list.parse(self, input),
             ProductionKind::ConstantDefinition => Self::constant_definition.parse(self, input),
-            ProductionKind::ConstructorAttributesList => {
-                Self::constructor_attributes_list.parse(self, input)
+            ProductionKind::ConstructorAttributes => {
+                Self::constructor_attributes.parse(self, input)
             }
             ProductionKind::ConstructorDefinition => {
                 Self::constructor_definition.parse(self, input)

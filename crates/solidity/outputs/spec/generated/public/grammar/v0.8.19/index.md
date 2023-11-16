@@ -235,7 +235,7 @@
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/08-functions/parameters/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/08-functions/parameter/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/08-functions/constructor-definition/0.4.22.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/08-functions/constructor-attributes-list/0.4.22.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/08-functions/constructor-attributes/0.4.22.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/08-functions/constructor-attribute/0.4.22.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/08-functions/fallback-function-definition/0.6.0.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/08-functions/fallback-function-attributes-list/0.6.0.md"
