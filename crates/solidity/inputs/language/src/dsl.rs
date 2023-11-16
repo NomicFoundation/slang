@@ -629,7 +629,7 @@ slang_grammar! {
 
         parser YulAssignmentStatement = (YulIdentifierPathsList ColonEqual YulExpression) ;
 
-        parser YulBlock = ((YulStatementsList ?) delimited by OpenBrace and CloseBrace) ;
+        parser YulBlock = ((YulStatements ?) delimited by OpenBrace and CloseBrace) ;
 
         parser YulBreakStatement = BreakKeyword ;
 
@@ -674,7 +674,7 @@ slang_grammar! {
             YulBreakStatement | YulContinueStatement | YulExpression
         ) ;
 
-        parser YulStatementsList = (YulStatement +) ;
+        parser YulStatements = (YulStatement +) ;
 
         parser YulSwitchCase = ((DefaultKeyword | (CaseKeyword YulLiteral)) YulBlock) ;
 

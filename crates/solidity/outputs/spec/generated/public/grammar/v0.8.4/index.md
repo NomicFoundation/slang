@@ -427,7 +427,7 @@
 ### 6.2. Yul Statements
 
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/06-yul/02-yul-statements/yul-block/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/06-yul/02-yul-statements/yul-statements-list/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/06-yul/02-yul-statements/yul-statements/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/06-yul/02-yul-statements/yul-statement/0.6.0.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/06-yul/02-yul-statements/yul-declaration-statement/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/06-yul/02-yul-statements/yul-function-definition/unversioned.md"

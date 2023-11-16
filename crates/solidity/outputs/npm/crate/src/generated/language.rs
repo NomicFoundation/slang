@@ -4926,13 +4926,13 @@ impl Language {
                 ),
             )?;
             seq.elem(
-                OptionalHelper::transform(self.yul_statements_list(input))
+                OptionalHelper::transform(self.yul_statements(input))
                     .recover_until_with_nested_delims::<_, LexicalContextType::YulBlock>(
-                    input,
-                    self,
-                    TokenKind::CloseBrace,
-                    RecoverFromNoMatch::Yes,
-                ),
+                        input,
+                        self,
+                        TokenKind::CloseBrace,
+                        RecoverFromNoMatch::Yes,
+                    ),
             )?;
             seq.elem(
                 self.parse_token_with_trivia::<LexicalContextType::YulBlock>(
@@ -5256,7 +5256,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn yul_statements_list(&self, input: &mut ParserContext) -> ParserResult {
+    fn yul_statements(&self, input: &mut ParserContext) -> ParserResult {
         OneOrMoreHelper::run(input, |input| {
             ChoiceHelper::run(input, |mut choice, input| {
                 let result = self.yul_block(input);
@@ -5286,7 +5286,7 @@ impl Language {
                 choice.finish(input)
             })
         })
-        .with_kind(RuleKind::YulStatementsList)
+        .with_kind(RuleKind::YulStatements)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -6150,7 +6150,7 @@ impl Language {
             ProductionKind::YulReturnsDeclaration => {
                 Self::yul_returns_declaration.parse(self, input)
             }
-            ProductionKind::YulStatementsList => Self::yul_statements_list.parse(self, input),
+            ProductionKind::YulStatements => Self::yul_statements.parse(self, input),
             ProductionKind::YulSwitchCase => Self::yul_switch_case.parse(self, input),
             ProductionKind::YulSwitchCasesList => Self::yul_switch_cases_list.parse(self, input),
             ProductionKind::YulSwitchStatement => Self::yul_switch_statement.parse(self, input),

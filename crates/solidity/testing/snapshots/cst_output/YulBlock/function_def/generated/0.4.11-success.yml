@@ -12,7 +12,7 @@ Errors: []
 Tree:
   - YulBlock (Rule): # 0..62 "{\n\tfunction mult(a, b) -> result {\n\t\tresult := mul..."
       - OpenBrace (Token): "{" # 0..1
-      - YulStatementsList (Rule): # 2..60 "\tfunction mult(a, b) -> result {\n\t\tresult := mul(a..."
+      - YulStatements (Rule): # 2..60 "\tfunction mult(a, b) -> result {\n\t\tresult := mul(a..."
           - YulFunctionDefinition (Rule): # 2..60 "\tfunction mult(a, b) -> result {\n\t\tresult := mul(a..."
               - FunctionKeyword (Token): "function" # 3..11
               - YulIdentifier (Token): "mult" # 12..16
@@ -29,7 +29,7 @@ Tree:
                       - YulIdentifier (Token): "result" # 26..32
               - YulBlock (Rule): # 32..60 " {\n\t\tresult := mul(a, b)\n\t}\n"
                   - OpenBrace (Token): "{" # 33..34
-                  - YulStatementsList (Rule): # 35..57 "\t\tresult := mul(a, b)\n"
+                  - YulStatements (Rule): # 35..57 "\t\tresult := mul(a, b)\n"
                       - YulAssignmentStatement (Rule): # 35..57 "\t\tresult := mul(a, b)\n"
                           - YulIdentifierPathsList (Rule): # 35..43 "\t\tresult"
                               - YulIdentifierPath (Rule): # 35..43 "\t\tresult"

@@ -8,11 +8,11 @@
         reference: "OpenBrace"
       parser:
         optional:
-          reference: "YulStatementsList"
+          reference: "YulStatements"
       close:
         reference: "CloseBrace"
 
-- name: "YulStatementsList"
+- name: "YulStatements"
   kind: "Parser"
   unversioned:
     oneOrMore:
