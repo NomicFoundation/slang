@@ -470,7 +470,7 @@ slang_grammar! {
 
         inline parser SimpleStatement = (ExpressionStatement | VariableDeclarationStatement | TupleDeconstructionStatement) ;
 
-        parser SourceUnit = ((SourceUnitMembersList ?) (EndOfFileTrivia ?)) ;
+        parser SourceUnit = ((SourceUnitMembers ?) (EndOfFileTrivia ?)) ;
 
         inline parser SourceUnitMember = (
               PragmaDirective | ImportDirective | ContractDefinition | InterfaceDefinition | LibraryDefinition |
@@ -483,7 +483,7 @@ slang_grammar! {
               { introduced in "0.8.22" EventDefinition }
         ) ;
 
-        parser SourceUnitMembersList = (SourceUnitMember +) ;
+        parser SourceUnitMembers = (SourceUnitMember +) ;
 
         inline parser StateVariableAttribute = (
             OverrideSpecifier | ConstantKeyword | InternalKeyword | PrivateKeyword | PublicKeyword| { introduced in "0.6.5" ImmutableKeyword }

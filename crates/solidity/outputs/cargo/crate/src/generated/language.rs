@@ -3496,9 +3496,7 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn source_unit(&self, input: &mut ParserContext) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem(OptionalHelper::transform(
-                self.source_unit_members_list(input),
-            ))?;
+            seq.elem(OptionalHelper::transform(self.source_unit_members(input)))?;
             seq.elem(OptionalHelper::transform(self.end_of_file_trivia(input)))?;
             seq.finish()
         })
@@ -3506,7 +3504,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn source_unit_members_list(&self, input: &mut ParserContext) -> ParserResult {
+    fn source_unit_members(&self, input: &mut ParserContext) -> ParserResult {
         OneOrMoreHelper::run(input, |input| {
             ChoiceHelper::run(input, |mut choice, input| {
                 let result = self.pragma_directive(input);
@@ -3556,7 +3554,7 @@ impl Language {
                 choice.finish(input)
             })
         })
-        .with_kind(RuleKind::SourceUnitMembersList)
+        .with_kind(RuleKind::SourceUnitMembers)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -6078,9 +6076,7 @@ impl Language {
             ProductionKind::ReturnsDeclaration => Self::returns_declaration.parse(self, input),
             ProductionKind::RevertStatement => Self::revert_statement.parse(self, input),
             ProductionKind::SourceUnit => Self::source_unit.parse(self, input),
-            ProductionKind::SourceUnitMembersList => {
-                Self::source_unit_members_list.parse(self, input)
-            }
+            ProductionKind::SourceUnitMembers => Self::source_unit_members.parse(self, input),
             ProductionKind::StateVariableAttributesList => {
                 Self::state_variable_attributes_list.parse(self, input)
             }

@@ -5,11 +5,11 @@
   unversioned:
     sequence:
       - optional:
-          reference: "SourceUnitMembersList"
+          reference: "SourceUnitMembers"
       - optional:
           reference: "EndOfFileTrivia"
 
-- name: "SourceUnitMembersList"
+- name: "SourceUnitMembers"
   kind: "Parser"
   unversioned:
     oneOrMore:

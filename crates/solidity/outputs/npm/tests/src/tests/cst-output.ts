@@ -25,7 +25,7 @@ test("parse rule", () => {
   const children = parseTree.children();
   expect(children).toHaveLength(1);
 
-  expectRule(children[0]!, RuleKind.SourceUnitMembersList);
+  expectRule(children[0]!, RuleKind.SourceUnitMembers);
 });
 
 test("trivial cursor access", () => {

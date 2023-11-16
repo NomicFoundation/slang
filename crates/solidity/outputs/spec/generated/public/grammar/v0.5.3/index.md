@@ -7,7 +7,7 @@
 ### 1.2. Source Unit
 
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/02-source-unit/source-unit/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/02-source-unit/source-unit-members-list/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/02-source-unit/source-unit-members/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/02-source-unit/source-unit-member/0.4.11.md"
 
 ### 1.3. Pragmas

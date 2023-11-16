@@ -39,7 +39,7 @@ Errors: # 1 total
 
 Tree:
   - SourceUnit (Rule): # 0..243 'pragma solidity 0.0.0;\n\nimport "foo.sol";\n\nusing A...'
-      - SourceUnitMembersList (Rule): # 0..217 'pragma solidity 0.0.0;\n\nimport "foo.sol";\n\nusing A...'
+      - SourceUnitMembers (Rule): # 0..217 'pragma solidity 0.0.0;\n\nimport "foo.sol";\n\nusing A...'
           - PragmaDirective (Rule): # 0..23 "pragma solidity 0.0.0;\n"
               - PragmaKeyword (Token): "pragma" # 0..6
               - VersionPragma (Rule): # 6..21 " solidity 0.0.0"

@@ -16,7 +16,7 @@ Errors: # 1 total
 
 Tree:
   - SourceUnit (Rule): # 0..28 "contract Sample {\n  function"
-      - SourceUnitMembersList (Rule): # 0..28 "contract Sample {\n  function"
+      - SourceUnitMembers (Rule): # 0..28 "contract Sample {\n  function"
           - ContractDefinition (Rule): # 0..28 "contract Sample {\n  function"
               - ContractKeyword (Token): "contract" # 0..8
               - Identifier (Token): "Sample" # 9..15
