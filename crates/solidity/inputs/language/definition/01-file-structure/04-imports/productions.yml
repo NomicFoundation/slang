@@ -113,11 +113,11 @@
         open:
           reference: "OpenBrace"
         parser:
-          reference: "UsingDirectiveSymbolsList"
+          reference: "UsingDirectiveSymbols"
         close:
           reference: "CloseBrace"
 
-- name: "UsingDirectiveSymbolsList"
+- name: "UsingDirectiveSymbols"
   kind: "Parser"
   versioned:
     0.8.13:

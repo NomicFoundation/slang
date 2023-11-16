@@ -552,7 +552,7 @@ slang_grammar! {
 
         parser UsingDirective = ((UsingKeyword (UsingDirectivePath | UsingDirectiveDeconstruction) ForKeyword (Asterisk | TypeName) ({ introduced in "0.8.13" GlobalKeyword } ?)) terminated by Semicolon) ;
 
-        parser UsingDirectiveDeconstruction = { introduced in "0.8.13" (UsingDirectiveSymbolsList delimited by OpenBrace and CloseBrace) };
+        parser UsingDirectiveDeconstruction = { introduced in "0.8.13" (UsingDirectiveSymbols delimited by OpenBrace and CloseBrace) };
 
         inline parser UsingDirectiveOperator = {
             introduced in "0.8.19" (Ampersand | Asterisk | BangEqual | Bar | Caret | EqualEqual | GreaterThan | GreaterThanEqual | LessThan | LessThanEqual | Minus | Percent | Plus | Slash | Tilde)
@@ -564,7 +564,7 @@ slang_grammar! {
             introduced in "0.8.13" (IdentifierPath { introduced in "0.8.19" ((AsKeyword UsingDirectiveOperator) ?) } )
         } ;
 
-        parser UsingDirectiveSymbolsList = (UsingDirectiveSymbol separated by Comma) ;
+        parser UsingDirectiveSymbols = (UsingDirectiveSymbol separated by Comma) ;
 
         parser VariableDeclaration = (
             ({ removed in "0.5.0" VarKeyword } | TypeName) (DataLocation ?) Identifier

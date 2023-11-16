@@ -4420,7 +4420,7 @@ impl Language {
                     TokenKind::OpenBrace,
                 ))?;
                 seq.elem(
-                    self.using_directive_symbols_list(input)
+                    self.using_directive_symbols(input)
                         .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                             input,
                             self,
@@ -4566,14 +4566,14 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn using_directive_symbols_list(&self, input: &mut ParserContext) -> ParserResult {
+    fn using_directive_symbols(&self, input: &mut ParserContext) -> ParserResult {
         SeparatedHelper::run::<_, LexicalContextType::Default>(
             input,
             self,
             |input| self.using_directive_symbol(input),
             TokenKind::Comma,
         )
-        .with_kind(RuleKind::UsingDirectiveSymbolsList)
+        .with_kind(RuleKind::UsingDirectiveSymbols)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -6104,8 +6104,8 @@ impl Language {
             }
             ProductionKind::UsingDirectivePath => Self::using_directive_path.parse(self, input),
             ProductionKind::UsingDirectiveSymbol => Self::using_directive_symbol.parse(self, input),
-            ProductionKind::UsingDirectiveSymbolsList => {
-                Self::using_directive_symbols_list.parse(self, input)
+            ProductionKind::UsingDirectiveSymbols => {
+                Self::using_directive_symbols.parse(self, input)
             }
             ProductionKind::VariableDeclaration => Self::variable_declaration.parse(self, input),
             ProductionKind::VariableDeclarationStatement => {
