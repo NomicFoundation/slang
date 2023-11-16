@@ -2453,17 +2453,6 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn identifier_paths_list(&self, input: &mut ParserContext) -> ParserResult {
-        SeparatedHelper::run::<_, LexicalContextType::Default>(
-            input,
-            self,
-            |input| self.identifier_path(input),
-            TokenKind::Comma,
-        )
-        .with_kind(RuleKind::IdentifierPathsList)
-    }
-
-    #[allow(unused_assignments, unused_parens)]
     fn if_statement(&self, input: &mut ParserContext) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
@@ -3177,6 +3166,17 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
+    fn override_paths(&self, input: &mut ParserContext) -> ParserResult {
+        SeparatedHelper::run::<_, LexicalContextType::Default>(
+            input,
+            self,
+            |input| self.identifier_path(input),
+            TokenKind::Comma,
+        )
+        .with_kind(RuleKind::OverridePaths)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
     fn override_specifier(&self, input: &mut ParserContext) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
@@ -3191,7 +3191,7 @@ impl Language {
                     TokenKind::OpenParen,
                 ))?;
                 seq.elem(
-                    OptionalHelper::transform(self.identifier_paths_list(input))
+                    OptionalHelper::transform(self.override_paths(input))
                         .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
                         self,
@@ -6029,7 +6029,6 @@ impl Language {
                 Self::hex_string_literals_list.parse(self, input)
             }
             ProductionKind::IdentifierPath => Self::identifier_path.parse(self, input),
-            ProductionKind::IdentifierPathsList => Self::identifier_paths_list.parse(self, input),
             ProductionKind::IfStatement => Self::if_statement.parse(self, input),
             ProductionKind::ImportDirective => Self::import_directive.parse(self, input),
             ProductionKind::InheritanceSpecifier => Self::inheritance_specifier.parse(self, input),
@@ -6055,6 +6054,7 @@ impl Language {
             ProductionKind::NamedArgumentsList => Self::named_arguments_list.parse(self, input),
             ProductionKind::NamedImport => Self::named_import.parse(self, input),
             ProductionKind::NewExpression => Self::new_expression.parse(self, input),
+            ProductionKind::OverridePaths => Self::override_paths.parse(self, input),
             ProductionKind::OverrideSpecifier => Self::override_specifier.parse(self, input),
             ProductionKind::Parameter => Self::parameter.parse(self, input),
             ProductionKind::ParametersDeclaration => {

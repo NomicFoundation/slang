@@ -84,9 +84,18 @@
               reference: "OpenParen"
             parser:
               optional:
-                reference: "IdentifierPathsList"
+                reference: "OverridePaths"
             close:
               reference: "CloseParen"
+
+- name: "OverridePaths"
+  kind: "Parser"
+  unversioned:
+    separatedBy:
+      separator:
+        reference: "Comma"
+      parser:
+        reference: "IdentifierPath"
 
 - name: "ParametersDeclaration"
   kind: "Parser"

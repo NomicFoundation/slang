@@ -108,7 +108,7 @@ Tree:
               - OverrideSpecifier (Rule): # 14..76 " override(some.ident unexpected tokens, ISomeInter..."
                   - OverrideKeyword (Token): "override" # 15..23
                   - OpenParen (Token): "(" # 23..24
-                  - IdentifierPathsList (Rule): # 24..34 "some.ident"
+                  - OverridePaths (Rule): # 24..34 "some.ident"
                       - IdentifierPath (Rule): # 24..34 "some.ident"
                           - Identifier (Token): "some" # 24..28
                           - Period (Token): "." # 28..29
@@ -182,7 +182,7 @@ Tree:
               - OverrideSpecifier (Rule): # 326..386 " override(some.ident, /* empty */, other.arg.here,..."
                   - OverrideKeyword (Token): "override" # 327..335
                   - OpenParen (Token): "(" # 335..336
-                  - IdentifierPathsList (Rule): # 336..347 "some.ident,"
+                  - OverridePaths (Rule): # 336..347 "some.ident,"
                       - IdentifierPath (Rule): # 336..346 "some.ident"
                           - Identifier (Token): "some" # 336..340
                           - Period (Token): "." # 340..341
@@ -203,7 +203,7 @@ Tree:
               - OverrideSpecifier (Rule): # 412..487 " override(some.ident, next.do.that, other.while, n..."
                   - OverrideKeyword (Token): "override" # 413..421
                   - OpenParen (Token): "(" # 421..422
-                  - IdentifierPathsList (Rule): # 422..470 "some.ident, next.do.that, other.while, next.one,"
+                  - OverridePaths (Rule): # 422..470 "some.ident, next.do.that, other.while, next.one,"
                       - IdentifierPath (Rule): # 422..432 "some.ident"
                           - Identifier (Token): "some" # 422..426
                           - Period (Token): "." # 426..427
@@ -237,7 +237,7 @@ Tree:
               - OverrideSpecifier (Rule): # 512..558 " override(some., next.arg, next.one, ultimate)"
                   - OverrideKeyword (Token): "override" # 513..521
                   - OpenParen (Token): "(" # 521..522
-                  - IdentifierPathsList (Rule): # 522..557 "some., next.arg, next.one, ultimate"
+                  - OverridePaths (Rule): # 522..557 "some., next.arg, next.one, ultimate"
                       - IdentifierPath (Rule): # 522..527 "some."
                           - Identifier (Token): "some" # 522..526
                           - Period (Token): "." # 526..527

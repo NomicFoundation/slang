@@ -358,7 +358,7 @@ slang_grammar! {
 
         parser IdentifierPath = (Identifier separated by Period) ;
 
-        parser IdentifierPathsList = (IdentifierPath separated by Comma) ;
+        parser OverridePaths = (IdentifierPath separated by Comma) ;
 
         parser EnumMembers = (Identifier separated by Comma) ;
 
@@ -435,7 +435,7 @@ slang_grammar! {
 
         inline parser OrderComparisonOperator = (LessThan | GreaterThan | LessThanEqual | GreaterThanEqual) ;
 
-        parser OverrideSpecifier = (OverrideKeyword (((IdentifierPathsList ?) delimited by OpenParen and CloseParen) ?)) ;
+        parser OverrideSpecifier = (OverrideKeyword (((OverridePaths ?) delimited by OpenParen and CloseParen) ?)) ;
 
         parser Parameter = (TypeName (DataLocation ?) (Identifier ?)) ;
 
