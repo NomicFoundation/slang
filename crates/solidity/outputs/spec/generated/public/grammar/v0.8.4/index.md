@@ -302,7 +302,7 @@
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/04-statements/02-declaration-statements/tuple-members-list/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/04-statements/02-declaration-statements/tuple-member/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/04-statements/02-declaration-statements/variable-declaration-statement/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/04-statements/02-declaration-statements/variable-declaration/0.5.0.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/04-statements/02-declaration-statements/variable-declaration-type/0.5.0.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/04-statements/02-declaration-statements/data-location/0.5.0.md"
 
 ### 4.3. Control Statements

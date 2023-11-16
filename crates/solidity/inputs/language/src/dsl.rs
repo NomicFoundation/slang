@@ -566,9 +566,9 @@ slang_grammar! {
 
         parser UsingDirectiveSymbolsList = (UsingDirectiveSymbol separated by Comma) ;
 
-        parser VariableDeclaration = (
-            ({ removed in "0.5.0" VarKeyword } | TypeName) (DataLocation ?) Identifier
-        ) ;
+        parser VariableDeclaration = (VariableDeclarationType (DataLocation ?) Identifier) ;
+
+        inline parser VariableDeclarationType = ({ removed in "0.5.0" VarKeyword } | TypeName) ;
 
         parser VariableDeclarationStatement = ((VariableDeclaration ((Equal Expression) ?)) terminated by Semicolon) ;
 
