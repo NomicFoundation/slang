@@ -1143,6 +1143,21 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
+    fn error_parameters(&self, input: &mut ParserContext) -> ParserResult {
+        if self.version_is_at_least_0_8_4 {
+            SeparatedHelper::run::<_, LexicalContextType::Default>(
+                input,
+                self,
+                |input| self.error_parameter(input),
+                TokenKind::Comma,
+            )
+        } else {
+            ParserResult::disabled()
+        }
+        .with_kind(RuleKind::ErrorParameters)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
     fn error_parameters_declaration(&self, input: &mut ParserContext) -> ParserResult {
         if self.version_is_at_least_0_8_4 {
             SequenceHelper::run(|mut seq| {
@@ -1153,7 +1168,7 @@ impl Language {
                     TokenKind::OpenParen,
                 ))?;
                 seq.elem(
-                    OptionalHelper::transform(self.error_parameters_list(input))
+                    OptionalHelper::transform(self.error_parameters(input))
                         .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
                         self,
@@ -1171,21 +1186,6 @@ impl Language {
             ParserResult::disabled()
         }
         .with_kind(RuleKind::ErrorParametersDeclaration)
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn error_parameters_list(&self, input: &mut ParserContext) -> ParserResult {
-        if self.version_is_at_least_0_8_4 {
-            SeparatedHelper::run::<_, LexicalContextType::Default>(
-                input,
-                self,
-                |input| self.error_parameter(input),
-                TokenKind::Comma,
-            )
-        } else {
-            ParserResult::disabled()
-        }
-        .with_kind(RuleKind::ErrorParametersList)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -5991,10 +5991,10 @@ impl Language {
             ProductionKind::EnumMembers => Self::enum_members.parse(self, input),
             ProductionKind::ErrorDefinition => Self::error_definition.parse(self, input),
             ProductionKind::ErrorParameter => Self::error_parameter.parse(self, input),
+            ProductionKind::ErrorParameters => Self::error_parameters.parse(self, input),
             ProductionKind::ErrorParametersDeclaration => {
                 Self::error_parameters_declaration.parse(self, input)
             }
-            ProductionKind::ErrorParametersList => Self::error_parameters_list.parse(self, input),
             ProductionKind::EventDefinition => Self::event_definition.parse(self, input),
             ProductionKind::EventParameter => Self::event_parameter.parse(self, input),
             ProductionKind::EventParameters => Self::event_parameters.parse(self, input),

@@ -257,7 +257,7 @@
 
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/12-errors/error-definition/0.8.4.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/12-errors/error-parameters-declaration/0.8.4.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/12-errors/error-parameters-list/0.8.4.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/12-errors/error-parameters/0.8.4.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/12-errors/error-parameter/0.8.4.md"
 
 ## 3. Types

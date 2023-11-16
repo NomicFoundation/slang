@@ -275,11 +275,11 @@ slang_grammar! {
 
         parser ErrorDefinition = { introduced in "0.8.4" ((ErrorKeyword Identifier ErrorParametersDeclaration) terminated by Semicolon) } ;
 
-        parser ErrorParametersDeclaration = { introduced in "0.8.4" ((ErrorParametersList ?) delimited by OpenParen and CloseParen) } ;
+        parser ErrorParametersDeclaration = { introduced in "0.8.4" ((ErrorParameters ?) delimited by OpenParen and CloseParen) } ;
 
         parser ErrorParameter = { introduced in "0.8.4" (TypeName (Identifier ?)) } ;
 
-        parser ErrorParametersList = { introduced in "0.8.4" (ErrorParameter separated by Comma) } ;
+        parser ErrorParameters = { introduced in "0.8.4" (ErrorParameter separated by Comma) } ;
 
         parser EventDefinition = ((EventKeyword Identifier EventParametersDeclaration (AnonymousKeyword ?)) terminated by Semicolon) ;
 

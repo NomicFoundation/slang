@@ -111,7 +111,7 @@ Tree:
               - Identifier (Token): "E1" # 188..190
               - ErrorParametersDeclaration (Rule): # 190..198 "(string)"
                   - OpenParen (Token): "(" # 190..191
-                  - ErrorParametersList (Rule): # 191..197 "string"
+                  - ErrorParameters (Rule): # 191..197 "string"
                       - ErrorParameter (Rule): # 191..197 "string"
                           - TypeName (Rule): # 191..197 "string"
                               - StringKeyword (Token): "string" # 191..197

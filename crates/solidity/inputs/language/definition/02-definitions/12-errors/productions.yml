@@ -22,11 +22,11 @@
           reference: "OpenParen"
         parser:
           optional:
-            reference: "ErrorParametersList"
+            reference: "ErrorParameters"
         close:
           reference: "CloseParen"
 
-- name: "ErrorParametersList"
+- name: "ErrorParameters"
   kind: "Parser"
   versioned:
     0.8.4:
