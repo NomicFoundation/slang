@@ -37,7 +37,7 @@ Tree:
                                       - UnsignedIntegerType (Token): "uint256" # 48..55
                                   - Identifier (Token): "b" # 56..57
                           - CloseParen (Token): ")" # 57..58
-                      - FunctionAttributesList (Rule): # 58..72 " internal pure"
+                      - FunctionAttributes (Rule): # 58..72 " internal pure"
                           - InternalKeyword (Token): "internal" # 59..67
                           - PureKeyword (Token): "pure" # 68..72
                       - ReturnsDeclaration (Rule): # 72..96 " returns (bool, uint256)"

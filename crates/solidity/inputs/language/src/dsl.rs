@@ -334,7 +334,7 @@ slang_grammar! {
             { introduced in "0.6.0" VirtualKeyword }
          ) ;
 
-        parser FunctionAttributesList = (FunctionAttribute +) ;
+        parser FunctionAttributes = (FunctionAttribute +) ;
 
         inline parser FunctionCallOperator = (
             { introduced in "0.6.2" (FunctionCallOptions ?) }
@@ -346,7 +346,7 @@ slang_grammar! {
             { introduced in "0.8.0"                        NamedArgumentsDeclaration     }
         ) ;
 
-        parser FunctionDefinition = (FunctionKeyword (Identifier | FallbackKeyword | ReceiveKeyword) ParametersDeclaration (FunctionAttributesList ?) (ReturnsDeclaration ?) (Semicolon | Block)) ;
+        parser FunctionDefinition = (FunctionKeyword (Identifier | FallbackKeyword | ReceiveKeyword) ParametersDeclaration (FunctionAttributes ?) (ReturnsDeclaration ?) (Semicolon | Block)) ;
 
         parser FunctionType = (FunctionKeyword ParametersDeclaration (FunctionTypeAttributesList ?) (ReturnsDeclaration ?)) ;
 

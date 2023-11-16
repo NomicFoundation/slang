@@ -39,7 +39,7 @@ Tree:
                               - UnsignedIntegerType (Token): "uint256" # 95..102
                           - Identifier (Token): "amount" # 103..109
                   - CloseParen (Token): ")" # 109..110
-              - FunctionAttributesList (Rule): # 110..119 " internal"
+              - FunctionAttributes (Rule): # 110..119 " internal"
                   - InternalKeyword (Token): "internal" # 111..119
               - Block (Rule): # 119..350 ' {\n    require(address(this).balance >= amount, "A...'
                   - OpenBrace (Token): "{" # 120..121

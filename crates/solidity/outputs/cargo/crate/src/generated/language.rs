@@ -2150,7 +2150,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn function_attributes_list(&self, input: &mut ParserContext) -> ParserResult {
+    fn function_attributes(&self, input: &mut ParserContext) -> ParserResult {
         OneOrMoreHelper::run(input, |input| {
             ChoiceHelper::run(input, |mut choice, input| {
                 let result = self.modifier_invocation(input);
@@ -2209,7 +2209,7 @@ impl Language {
                 choice.finish(input)
             })
         })
-        .with_kind(RuleKind::FunctionAttributesList)
+        .with_kind(RuleKind::FunctionAttributes)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -2255,9 +2255,7 @@ impl Language {
                 choice.finish(input)
             }))?;
             seq.elem(self.parameters_declaration(input))?;
-            seq.elem(OptionalHelper::transform(
-                self.function_attributes_list(input),
-            ))?;
+            seq.elem(OptionalHelper::transform(self.function_attributes(input)))?;
             seq.elem(OptionalHelper::transform(self.returns_declaration(input)))?;
             seq.elem(ChoiceHelper::run(input, |mut choice, input| {
                 let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
@@ -6015,9 +6013,7 @@ impl Language {
                 Self::fallback_function_definition.parse(self, input)
             }
             ProductionKind::ForStatement => Self::for_statement.parse(self, input),
-            ProductionKind::FunctionAttributesList => {
-                Self::function_attributes_list.parse(self, input)
-            }
+            ProductionKind::FunctionAttributes => Self::function_attributes.parse(self, input),
             ProductionKind::FunctionCallOptions => Self::function_call_options.parse(self, input),
             ProductionKind::FunctionDefinition => Self::function_definition.parse(self, input),
             ProductionKind::FunctionType => Self::function_type.parse(self, input),

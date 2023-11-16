@@ -34,7 +34,7 @@ Tree:
           - ParametersDeclaration (Rule): # 17..19 "()"
               - OpenParen (Token): "(" # 17..18
               - CloseParen (Token): ")" # 18..19
-          - FunctionAttributesList (Rule): # 19..26 " public"
+          - FunctionAttributes (Rule): # 19..26 " public"
               - PublicKeyword (Token): "public" # 20..26
           - Block (Rule): # 26..74 " {\n    {\n        uint256 arg = (1 + 2;\n    })\n}\n"
               - OpenBrace (Token): "{" # 27..28

@@ -58,7 +58,7 @@ Tree:
                                   - AddressKeyword (Token): "address" # 40..47
                   - SKIPPED (Token): "while" # 48..53
                   - CloseParen (Token): ")" # 53..54
-              - FunctionAttributesList (Rule): # 54..62 " private"
+              - FunctionAttributes (Rule): # 54..62 " private"
                   - PrivateKeyword (Token): "private" # 55..62
               - Block (Rule): # 62..138 " {\n\t\tif(while == pair && !_isExcludedFromFee[to]){..."
                   - OpenBrace (Token): "{" # 63..64

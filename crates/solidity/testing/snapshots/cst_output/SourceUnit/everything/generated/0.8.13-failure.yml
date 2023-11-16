@@ -109,7 +109,7 @@ Tree:
               - ParametersDeclaration (Rule): # 167..169 "()"
                   - OpenParen (Token): "(" # 167..168
                   - CloseParen (Token): ")" # 168..169
-              - FunctionAttributesList (Rule): # 169..176 " public"
+              - FunctionAttributes (Rule): # 169..176 " public"
                   - PublicKeyword (Token): "public" # 170..176
               - Block (Rule): # 176..181 " { }\n"
                   - OpenBrace (Token): "{" # 177..178

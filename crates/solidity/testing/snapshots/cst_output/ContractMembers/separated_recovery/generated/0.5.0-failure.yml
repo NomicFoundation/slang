@@ -104,7 +104,7 @@ Tree:
           - ParametersDeclaration (Rule): # 12..14 "()"
               - OpenParen (Token): "(" # 12..13
               - CloseParen (Token): ")" # 13..14
-          - FunctionAttributesList (Rule): # 14..83 " override(some.ident unexpected tokens, ISomeInter..."
+          - FunctionAttributes (Rule): # 14..83 " override(some.ident unexpected tokens, ISomeInter..."
               - OverrideSpecifier (Rule): # 14..76 " override(some.ident unexpected tokens, ISomeInter..."
                   - OverrideKeyword (Token): "override" # 15..23
                   - OpenParen (Token): "(" # 23..24
@@ -178,7 +178,7 @@ Tree:
           - ParametersDeclaration (Rule): # 324..326 "()"
               - OpenParen (Token): "(" # 324..325
               - CloseParen (Token): ")" # 325..326
-          - FunctionAttributesList (Rule): # 326..386 " override(some.ident, /* empty */, other.arg.here,..."
+          - FunctionAttributes (Rule): # 326..386 " override(some.ident, /* empty */, other.arg.here,..."
               - OverrideSpecifier (Rule): # 326..386 " override(some.ident, /* empty */, other.arg.here,..."
                   - OverrideKeyword (Token): "override" # 327..335
                   - OpenParen (Token): "(" # 335..336
@@ -199,7 +199,7 @@ Tree:
           - ParametersDeclaration (Rule): # 410..412 "()"
               - OpenParen (Token): "(" # 410..411
               - CloseParen (Token): ")" # 411..412
-          - FunctionAttributesList (Rule): # 412..487 " override(some.ident, next.do.that, other.while, n..."
+          - FunctionAttributes (Rule): # 412..487 " override(some.ident, next.do.that, other.while, n..."
               - OverrideSpecifier (Rule): # 412..487 " override(some.ident, next.do.that, other.while, n..."
                   - OverrideKeyword (Token): "override" # 413..421
                   - OpenParen (Token): "(" # 421..422
@@ -233,7 +233,7 @@ Tree:
           - ParametersDeclaration (Rule): # 510..512 "()"
               - OpenParen (Token): "(" # 510..511
               - CloseParen (Token): ")" # 511..512
-          - FunctionAttributesList (Rule): # 512..558 " override(some., next.arg, next.one, ultimate)"
+          - FunctionAttributes (Rule): # 512..558 " override(some., next.arg, next.one, ultimate)"
               - OverrideSpecifier (Rule): # 512..558 " override(some., next.arg, next.one, ultimate)"
                   - OverrideKeyword (Token): "override" # 513..521
                   - OpenParen (Token): "(" # 521..522

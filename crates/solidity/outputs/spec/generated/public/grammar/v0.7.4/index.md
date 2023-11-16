@@ -220,7 +220,7 @@
 
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/08-functions/function-definition/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/08-functions/returns-declaration/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/08-functions/function-attributes-list/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/08-functions/function-attributes/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/08-functions/function-attribute/0.6.0.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/08-functions/override-specifier/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/08-functions/override-paths/unversioned.md"
