@@ -36,7 +36,7 @@
       close:
         reference: "CloseParen"
 
-- name: "YulIdentifierPathsList"
+- name: "YulIdentifierPaths"
   kind: "Parser"
   unversioned:
     separatedBy:

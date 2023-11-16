@@ -627,7 +627,7 @@ slang_grammar! {
             | LeaveKeyword
         ) ;
 
-        parser YulAssignmentStatement = (YulIdentifierPathsList ColonEqual YulExpression) ;
+        parser YulAssignmentStatement = (YulIdentifierPaths ColonEqual YulExpression) ;
 
         parser YulBlock = ((YulStatements ?) delimited by OpenBrace and CloseBrace) ;
 
@@ -635,7 +635,7 @@ slang_grammar! {
 
         parser YulContinueStatement = ContinueKeyword ;
 
-        parser YulDeclarationStatement = (LetKeyword YulIdentifierPathsList ((ColonEqual YulExpression) ?)) ;
+        parser YulDeclarationStatement = (LetKeyword YulIdentifierPaths ((ColonEqual YulExpression) ?)) ;
 
         precedence parser YulExpression = (
             [
@@ -654,7 +654,7 @@ slang_grammar! {
 
         parser YulIdentifierPath = (YulIdentifier separated by Period) ;
 
-        parser YulIdentifierPathsList = (YulIdentifierPath separated by Comma) ;
+        parser YulIdentifierPaths = (YulIdentifierPath separated by Comma) ;
 
         parser YulIdentifiersList = (YulIdentifier separated by Comma) ;
 

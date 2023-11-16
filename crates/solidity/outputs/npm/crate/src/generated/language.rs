@@ -4901,7 +4901,7 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn yul_assignment_statement(&self, input: &mut ParserContext) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem(self.yul_identifier_paths_list(input))?;
+            seq.elem(self.yul_identifier_paths(input))?;
             seq.elem(
                 self.parse_token_with_trivia::<LexicalContextType::YulBlock>(
                     input,
@@ -4969,7 +4969,7 @@ impl Language {
                     TokenKind::LetKeyword,
                 ),
             )?;
-            seq.elem(self.yul_identifier_paths_list(input))?;
+            seq.elem(self.yul_identifier_paths(input))?;
             seq.elem(OptionalHelper::transform(SequenceHelper::run(|mut seq| {
                 seq.elem(
                     self.parse_token_with_trivia::<LexicalContextType::YulBlock>(
@@ -5154,14 +5154,14 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn yul_identifier_paths_list(&self, input: &mut ParserContext) -> ParserResult {
+    fn yul_identifier_paths(&self, input: &mut ParserContext) -> ParserResult {
         SeparatedHelper::run::<_, LexicalContextType::YulBlock>(
             input,
             self,
             |input| self.yul_identifier_path(input),
             TokenKind::Comma,
         )
-        .with_kind(RuleKind::YulIdentifierPathsList)
+        .with_kind(RuleKind::YulIdentifierPaths)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -6138,9 +6138,7 @@ impl Language {
                 Self::yul_function_definition.parse(self, input)
             }
             ProductionKind::YulIdentifierPath => Self::yul_identifier_path.parse(self, input),
-            ProductionKind::YulIdentifierPathsList => {
-                Self::yul_identifier_paths_list.parse(self, input)
-            }
+            ProductionKind::YulIdentifierPaths => Self::yul_identifier_paths.parse(self, input),
             ProductionKind::YulIdentifiersList => Self::yul_identifiers_list.parse(self, input),
             ProductionKind::YulIfStatement => Self::yul_if_statement.parse(self, input),
             ProductionKind::YulLeaveStatement => Self::yul_leave_statement.parse(self, input),
