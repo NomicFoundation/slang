@@ -40,11 +40,11 @@
         reference: "OpenBrace"
       parser:
         optional:
-          reference: "NamedArgumentsList"
+          reference: "NamedArguments"
       close:
         reference: "CloseBrace"
 
-- name: "NamedArgumentsList"
+- name: "NamedArguments"
   kind: "Parser"
   unversioned:
     separatedBy:

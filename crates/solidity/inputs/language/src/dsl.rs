@@ -411,9 +411,9 @@ slang_grammar! {
 
         parser NamedArgument = (Identifier Colon Expression) ;
 
-        parser NamedArgumentsDeclaration = ((NamedArgumentsList ?) delimited by OpenBrace and CloseBrace) ;
+        parser NamedArgumentsDeclaration = ((NamedArguments ?) delimited by OpenBrace and CloseBrace) ;
 
-        parser NamedArgumentsList = (NamedArgument separated by Comma) ;
+        parser NamedArguments = (NamedArgument separated by Comma) ;
 
         parser NamedImport = (Asterisk AsKeyword Identifier FromKeyword AsciiStringLiteral) ;
 

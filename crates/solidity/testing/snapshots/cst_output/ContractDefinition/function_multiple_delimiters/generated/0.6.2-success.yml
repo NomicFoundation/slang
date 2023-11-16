@@ -100,7 +100,7 @@ Tree:
                                   - FunctionCallOptions (Rule): # 239..256 "{ value: amount }"
                                       - NamedArgumentsDeclaration (Rule): # 239..256 "{ value: amount }"
                                           - OpenBrace (Token): "{" # 239..240
-                                          - NamedArgumentsList (Rule): # 240..254 " value: amount"
+                                          - NamedArguments (Rule): # 240..254 " value: amount"
                                               - NamedArgument (Rule): # 240..254 " value: amount"
                                                   - Identifier (Token): "value" # 241..246
                                                   - Colon (Token): ":" # 246..247

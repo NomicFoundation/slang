@@ -195,7 +195,7 @@ Tree:
                               - FunctionCallOptions (Rule): # 184..226 "{arg: 1, missing_expr: , no_semicolon, , }"
                                   - NamedArgumentsDeclaration (Rule): # 184..226 "{arg: 1, missing_expr: , no_semicolon, , }"
                                       - OpenBrace (Token): "{" # 184..185
-                                      - NamedArgumentsList (Rule): # 185..222 "arg: 1, missing_expr: , no_semicolon,"
+                                      - NamedArguments (Rule): # 185..222 "arg: 1, missing_expr: , no_semicolon,"
                                           - NamedArgument (Rule): # 185..191 "arg: 1"
                                               - Identifier (Token): "arg" # 185..188
                                               - Colon (Token): ":" # 188..189
@@ -234,7 +234,7 @@ Tree:
                               - FunctionCallOptions (Rule): # 247..302 "{arg: 1 unexpected tokens, not: 2, recovered, yet:..."
                                   - NamedArgumentsDeclaration (Rule): # 247..302 "{arg: 1 unexpected tokens, not: 2, recovered, yet:..."
                                       - OpenBrace (Token): "{" # 247..248
-                                      - NamedArgumentsList (Rule): # 248..254 "arg: 1"
+                                      - NamedArguments (Rule): # 248..254 "arg: 1"
                                           - NamedArgument (Rule): # 248..254 "arg: 1"
                                               - Identifier (Token): "arg" # 248..251
                                               - Colon (Token): ":" # 251..252

@@ -357,7 +357,7 @@
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/02-function-calls/positional-arguments/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/02-function-calls/function-call-options/0.8.0.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/02-function-calls/named-arguments-declaration/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/02-function-calls/named-arguments-list/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/02-function-calls/named-arguments/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/02-function-calls/named-argument/unversioned.md"
 
 ### 5.3. Primary Expressions

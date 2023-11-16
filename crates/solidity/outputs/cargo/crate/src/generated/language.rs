@@ -3083,6 +3083,17 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
+    fn named_arguments(&self, input: &mut ParserContext) -> ParserResult {
+        SeparatedHelper::run::<_, LexicalContextType::Default>(
+            input,
+            self,
+            |input| self.named_argument(input),
+            TokenKind::Comma,
+        )
+        .with_kind(RuleKind::NamedArguments)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
     fn named_arguments_declaration(&self, input: &mut ParserContext) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             let mut delim_guard = input.open_delim(TokenKind::CloseBrace);
@@ -3092,13 +3103,13 @@ impl Language {
                 TokenKind::OpenBrace,
             ))?;
             seq.elem(
-                OptionalHelper::transform(self.named_arguments_list(input))
+                OptionalHelper::transform(self.named_arguments(input))
                     .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
-                    input,
-                    self,
-                    TokenKind::CloseBrace,
-                    RecoverFromNoMatch::Yes,
-                ),
+                        input,
+                        self,
+                        TokenKind::CloseBrace,
+                        RecoverFromNoMatch::Yes,
+                    ),
             )?;
             seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
                 input,
@@ -3107,17 +3118,6 @@ impl Language {
             seq.finish()
         })
         .with_kind(RuleKind::NamedArgumentsDeclaration)
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn named_arguments_list(&self, input: &mut ParserContext) -> ParserResult {
-        SeparatedHelper::run::<_, LexicalContextType::Default>(
-            input,
-            self,
-            |input| self.named_argument(input),
-            TokenKind::Comma,
-        )
-        .with_kind(RuleKind::NamedArgumentsList)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -6040,10 +6040,10 @@ impl Language {
             ProductionKind::ModifierDefinition => Self::modifier_definition.parse(self, input),
             ProductionKind::ModifierInvocation => Self::modifier_invocation.parse(self, input),
             ProductionKind::NamedArgument => Self::named_argument.parse(self, input),
+            ProductionKind::NamedArguments => Self::named_arguments.parse(self, input),
             ProductionKind::NamedArgumentsDeclaration => {
                 Self::named_arguments_declaration.parse(self, input)
             }
-            ProductionKind::NamedArgumentsList => Self::named_arguments_list.parse(self, input),
             ProductionKind::NamedImport => Self::named_import.parse(self, input),
             ProductionKind::NewExpression => Self::new_expression.parse(self, input),
             ProductionKind::OverridePaths => Self::override_paths.parse(self, input),
