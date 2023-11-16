@@ -374,9 +374,9 @@ slang_grammar! {
 
         parser InheritanceTypesList = (InheritanceType separated by Comma) ;
 
-        parser InterfaceDefinition = (InterfaceKeyword Identifier (InheritanceSpecifier ?) ((InterfaceMembersList ?) delimited by OpenBrace and CloseBrace)) ;
+        parser InterfaceDefinition = (InterfaceKeyword Identifier (InheritanceSpecifier ?) ((InterfaceMembers ?) delimited by OpenBrace and CloseBrace)) ;
 
-        parser InterfaceMembersList = (ContractMember +) ;
+        parser InterfaceMembers = (ContractMember +) ;
 
         parser LibraryDefinition = (LibraryKeyword Identifier ((LibraryMembers ?) delimited by OpenBrace and CloseBrace)) ;
 

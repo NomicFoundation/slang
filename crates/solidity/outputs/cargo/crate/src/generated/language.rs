@@ -2708,7 +2708,7 @@ impl Language {
                     TokenKind::OpenBrace,
                 ))?;
                 seq.elem(
-                    OptionalHelper::transform(self.interface_members_list(input))
+                    OptionalHelper::transform(self.interface_members(input))
                         .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
                         self,
@@ -2728,7 +2728,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn interface_members_list(&self, input: &mut ParserContext) -> ParserResult {
+    fn interface_members(&self, input: &mut ParserContext) -> ParserResult {
         OneOrMoreHelper::run(input, |input| {
             ChoiceHelper::run(input, |mut choice, input| {
                 let result = self.using_directive(input);
@@ -2774,7 +2774,7 @@ impl Language {
                 choice.finish(input)
             })
         })
-        .with_kind(RuleKind::InterfaceMembersList)
+        .with_kind(RuleKind::InterfaceMembers)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -6036,7 +6036,7 @@ impl Language {
             ProductionKind::InheritanceType => Self::inheritance_type.parse(self, input),
             ProductionKind::InheritanceTypesList => Self::inheritance_types_list.parse(self, input),
             ProductionKind::InterfaceDefinition => Self::interface_definition.parse(self, input),
-            ProductionKind::InterfaceMembersList => Self::interface_members_list.parse(self, input),
+            ProductionKind::InterfaceMembers => Self::interface_members.parse(self, input),
             ProductionKind::LeadingTrivia => Self::leading_trivia.parse(self, input),
             ProductionKind::LibraryDefinition => Self::library_definition.parse(self, input),
             ProductionKind::LibraryMembers => Self::library_members.parse(self, input),

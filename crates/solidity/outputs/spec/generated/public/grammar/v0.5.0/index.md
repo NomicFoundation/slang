@@ -182,7 +182,7 @@
 ### 2.2. Interfaces
 
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/02-interfaces/interface-definition/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/02-interfaces/interface-members-list/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/02-interfaces/interface-members/unversioned.md"
 
 ### 2.3. Libraries
 

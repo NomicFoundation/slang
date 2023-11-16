@@ -16,7 +16,7 @@ Tree:
       - InterfaceKeyword (Token): "interface" # 0..9
       - Identifier (Token): "ICounter" # 10..18
       - OpenBrace (Token): "{" # 19..20
-      - InterfaceMembersList (Rule): # 21..171 "    // returns the current count\n    function coun..."
+      - InterfaceMembers (Rule): # 21..171 "    // returns the current count\n    function coun..."
           - FunctionDefinition (Rule): # 21..105 "    // returns the current count\n    function coun..."
               - LeadingTrivia (Rule): # 21..58 "    // returns the current count\n    "
                   - SingleLineComment (Trivia): "// returns the current count" # 25..53
