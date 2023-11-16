@@ -348,11 +348,11 @@ slang_grammar! {
 
         parser FunctionDefinition = (FunctionKeyword (Identifier | FallbackKeyword | ReceiveKeyword) ParametersDeclaration (FunctionAttributes ?) (ReturnsDeclaration ?) (Semicolon | Block)) ;
 
-        parser FunctionType = (FunctionKeyword ParametersDeclaration (FunctionTypeAttributesList ?) (ReturnsDeclaration ?)) ;
+        parser FunctionType = (FunctionKeyword ParametersDeclaration (FunctionTypeAttributes ?) (ReturnsDeclaration ?)) ;
 
         inline parser FunctionTypeAttribute = (InternalKeyword | ExternalKeyword | PrivateKeyword | PublicKeyword | PureKeyword | ViewKeyword | PayableKeyword) ;
 
-        parser FunctionTypeAttributesList = (FunctionTypeAttribute +) ;
+        parser FunctionTypeAttributes = (FunctionTypeAttribute +) ;
 
         parser HexStringLiteralsList = (HexStringLiteral +) ;
 

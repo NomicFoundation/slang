@@ -28,7 +28,7 @@ Tree:
                       - ParametersDeclaration (Rule): # 28..30 "()"
                           - OpenParen (Token): "(" # 28..29
                           - CloseParen (Token): ")" # 29..30
-                      - FunctionTypeAttributesList (Rule): # 30..47 " external payable"
+                      - FunctionTypeAttributes (Rule): # 30..47 " external payable"
                           - ExternalKeyword (Token): "external" # 31..39
                           - PayableKeyword (Token): "payable" # 40..47
       - SKIPPED (Token): "{}\n" # 48..51

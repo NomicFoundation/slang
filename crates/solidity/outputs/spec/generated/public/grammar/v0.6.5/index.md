@@ -255,7 +255,7 @@
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/03-types/01-advanced-types/type-name/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/03-types/01-advanced-types/array-type-name-operator/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/03-types/01-advanced-types/function-type/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/03-types/01-advanced-types/function-type-attributes-list/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/03-types/01-advanced-types/function-type-attributes/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/03-types/01-advanced-types/function-type-attribute/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/03-types/01-advanced-types/mapping-type/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/03-types/01-advanced-types/mapping-key-type/0.4.11.md"
