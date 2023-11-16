@@ -76,7 +76,7 @@ Tree:
               - StructKeyword (Token): "struct" # 643..649
               - Identifier (Token): "Envelope" # 650..658
               - OpenBrace (Token): "{" # 659..660
-              - StructMembersList (Rule): # 661..791 "  uint256 nonce;\n  address origin;\n  address desti..."
+              - StructMembers (Rule): # 661..791 "  uint256 nonce;\n  address origin;\n  address desti..."
                   - StructMember (Rule): # 661..678 "  uint256 nonce;\n"
                       - TypeName (Rule): # 661..670 "  uint256"
                           - UnsignedIntegerType (Token): "uint256" # 663..670

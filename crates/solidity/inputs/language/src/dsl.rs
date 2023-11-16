@@ -503,11 +503,11 @@ slang_grammar! {
             HexStringLiteralsList | AsciiStringLiteralsList | { introduced in "0.7.0" UnicodeStringLiteralsList }
         ) ;
 
-        parser StructDefinition = (StructKeyword Identifier ((StructMembersList ?) delimited by OpenBrace and CloseBrace)) ;
+        parser StructDefinition = (StructKeyword Identifier ((StructMembers ?) delimited by OpenBrace and CloseBrace)) ;
 
         parser StructMember = ((TypeName Identifier) terminated by Semicolon) ;
 
-        parser StructMembersList = (StructMember +) ;
+        parser StructMembers = (StructMember +) ;
 
         parser ThrowStatement = { removed in "0.5.0" (ThrowKeyword terminated by Semicolon) } ;
 

@@ -194,7 +194,7 @@
 ### 2.4. Structs
 
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/04-structs/struct-definition/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/04-structs/struct-members-list/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/04-structs/struct-members/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/04-structs/struct-member/unversioned.md"
 
 ### 2.5. Enums

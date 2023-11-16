@@ -20,7 +20,7 @@ Tree:
               - StructKeyword (Token): "struct" # 20..26
               - Identifier (Token): "S" # 27..28
               - OpenBrace (Token): "{" # 29..30
-              - StructMembersList (Rule): # 31..55 "    uint a;\n    uint b;\n"
+              - StructMembers (Rule): # 31..55 "    uint a;\n    uint b;\n"
                   - StructMember (Rule): # 31..43 "    uint a;\n"
                       - TypeName (Rule): # 31..39 "    uint"
                           - UnsignedIntegerType (Token): "uint" # 35..39

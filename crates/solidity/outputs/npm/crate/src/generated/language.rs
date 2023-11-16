@@ -3718,7 +3718,7 @@ impl Language {
                     TokenKind::OpenBrace,
                 ))?;
                 seq.elem(
-                    OptionalHelper::transform(self.struct_members_list(input))
+                    OptionalHelper::transform(self.struct_members(input))
                         .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
                         self,
@@ -3766,9 +3766,9 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn struct_members_list(&self, input: &mut ParserContext) -> ParserResult {
+    fn struct_members(&self, input: &mut ParserContext) -> ParserResult {
         OneOrMoreHelper::run(input, |input| self.struct_member(input))
-            .with_kind(RuleKind::StructMembersList)
+            .with_kind(RuleKind::StructMembers)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -6086,7 +6086,7 @@ impl Language {
             ProductionKind::Statements => Self::statements.parse(self, input),
             ProductionKind::StructDefinition => Self::struct_definition.parse(self, input),
             ProductionKind::StructMember => Self::struct_member.parse(self, input),
-            ProductionKind::StructMembersList => Self::struct_members_list.parse(self, input),
+            ProductionKind::StructMembers => Self::struct_members.parse(self, input),
             ProductionKind::ThrowStatement => Self::throw_statement.parse(self, input),
             ProductionKind::TrailingTrivia => Self::trailing_trivia.parse(self, input),
             ProductionKind::TryStatement => Self::try_statement.parse(self, input),
