@@ -12,7 +12,7 @@ Tree:
       - ContractKeyword (Token): "contract" # 0..8
       - Identifier (Token): "Sample" # 9..15
       - OpenBrace (Token): "{" # 16..17
-      - ContractMembersList (Rule): # 18..69 "  event Log(uint256 indexed a, uint256 indexed b);..."
+      - ContractMembers (Rule): # 18..69 "  event Log(uint256 indexed a, uint256 indexed b);..."
           - EventDefinition (Rule): # 18..69 "  event Log(uint256 indexed a, uint256 indexed b);..."
               - EventKeyword (Token): "event" # 20..25
               - Identifier (Token): "Log" # 26..29

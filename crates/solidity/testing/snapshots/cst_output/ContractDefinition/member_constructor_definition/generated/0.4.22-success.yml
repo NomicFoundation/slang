@@ -13,7 +13,7 @@ Tree:
       - ContractKeyword (Token): "contract" # 0..8
       - Identifier (Token): "Sample" # 9..15
       - OpenBrace (Token): "{" # 16..17
-      - ContractMembersList (Rule): # 18..47 "  constructor() public {\n  }\n"
+      - ContractMembers (Rule): # 18..47 "  constructor() public {\n  }\n"
           - ConstructorDefinition (Rule): # 18..47 "  constructor() public {\n  }\n"
               - ConstructorKeyword (Token): "constructor" # 20..31
               - ParametersDeclaration (Rule): # 31..33 "()"

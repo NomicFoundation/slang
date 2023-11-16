@@ -13,7 +13,7 @@ Tree:
       - ContractKeyword (Token): "contract" # 0..8
       - Identifier (Token): "Sample" # 9..15
       - OpenBrace (Token): "{" # 16..17
-      - ContractMembersList (Rule): # 18..36 "  receive() {\n  }\n"
+      - ContractMembers (Rule): # 18..36 "  receive() {\n  }\n"
           - ReceiveFunctionDefinition (Rule): # 18..36 "  receive() {\n  }\n"
               - ReceiveKeyword (Token): "receive" # 20..27
               - ParametersDeclaration (Rule): # 27..29 "()"

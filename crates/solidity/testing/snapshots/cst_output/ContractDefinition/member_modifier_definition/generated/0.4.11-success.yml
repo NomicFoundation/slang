@@ -14,7 +14,7 @@ Tree:
       - ContractKeyword (Token): "contract" # 0..8
       - Identifier (Token): "Sample" # 9..15
       - OpenBrace (Token): "{" # 16..17
-      - ContractMembersList (Rule): # 18..48 "  modifier foo() {\n    _;\n  }\n"
+      - ContractMembers (Rule): # 18..48 "  modifier foo() {\n    _;\n  }\n"
           - ModifierDefinition (Rule): # 18..48 "  modifier foo() {\n    _;\n  }\n"
               - ModifierKeyword (Token): "modifier" # 20..28
               - Identifier (Token): "foo" # 29..32

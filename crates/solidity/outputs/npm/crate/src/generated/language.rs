@@ -612,7 +612,7 @@ impl Language {
                     TokenKind::OpenBrace,
                 ))?;
                 seq.elem(
-                    OptionalHelper::transform(self.contract_members_list(input))
+                    OptionalHelper::transform(self.contract_members(input))
                         .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
                         self,
@@ -632,7 +632,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn contract_members_list(&self, input: &mut ParserContext) -> ParserResult {
+    fn contract_members(&self, input: &mut ParserContext) -> ParserResult {
         OneOrMoreHelper::run(input, |input| {
             ChoiceHelper::run(input, |mut choice, input| {
                 let result = self.using_directive(input);
@@ -678,7 +678,7 @@ impl Language {
                 choice.finish(input)
             })
         })
-        .with_kind(RuleKind::ContractMembersList)
+        .with_kind(RuleKind::ContractMembers)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -5976,7 +5976,7 @@ impl Language {
             }
             ProductionKind::ContinueStatement => Self::continue_statement.parse(self, input),
             ProductionKind::ContractDefinition => Self::contract_definition.parse(self, input),
-            ProductionKind::ContractMembersList => Self::contract_members_list.parse(self, input),
+            ProductionKind::ContractMembers => Self::contract_members.parse(self, input),
             ProductionKind::DecimalNumberExpression => {
                 Self::decimal_number_expression.parse(self, input)
             }

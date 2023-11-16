@@ -14,7 +14,7 @@
               reference: "OpenBrace"
             parser:
               optional:
-                reference: "ContractMembersList"
+                reference: "ContractMembers"
             close:
               reference: "CloseBrace"
     0.6.0:
@@ -31,7 +31,7 @@
               reference: "OpenBrace"
             parser:
               optional:
-                reference: "ContractMembersList"
+                reference: "ContractMembers"
             close:
               reference: "CloseBrace"
 
@@ -59,7 +59,7 @@
       - optional:
           reference: "ArgumentsDeclaration"
 
-- name: "ContractMembersList"
+- name: "ContractMembers"
   kind: "Parser"
   unversioned:
     oneOrMore:

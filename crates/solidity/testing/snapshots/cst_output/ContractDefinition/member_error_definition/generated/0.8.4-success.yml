@@ -12,7 +12,7 @@ Tree:
       - ContractKeyword (Token): "contract" # 0..8
       - Identifier (Token): "Sample" # 9..15
       - OpenBrace (Token): "{" # 16..17
-      - ContractMembersList (Rule): # 18..36 "  error Error1();\n"
+      - ContractMembers (Rule): # 18..36 "  error Error1();\n"
           - ErrorDefinition (Rule): # 18..36 "  error Error1();\n"
               - ErrorKeyword (Token): "error" # 20..25
               - Identifier (Token): "Error1" # 26..32

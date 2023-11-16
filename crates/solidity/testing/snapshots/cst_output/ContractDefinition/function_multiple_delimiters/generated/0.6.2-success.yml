@@ -20,7 +20,7 @@ Tree:
       - ContractKeyword (Token): "contract" # 32..40
       - Identifier (Token): "ABC" # 41..44
       - OpenBrace (Token): "{" # 45..46
-      - ContractMembersList (Rule): # 47..350 "  function sendValue(address payable recipient, ui..."
+      - ContractMembers (Rule): # 47..350 "  function sendValue(address payable recipient, ui..."
           - FunctionDefinition (Rule): # 47..350 "  function sendValue(address payable recipient, ui..."
               - FunctionKeyword (Token): "function" # 49..57
               - Identifier (Token): "sendValue" # 58..67

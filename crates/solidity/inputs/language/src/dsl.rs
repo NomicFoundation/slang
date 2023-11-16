@@ -225,7 +225,7 @@ slang_grammar! {
         parser ContinueStatement = (ContinueKeyword terminated by Semicolon) ;
 
         parser ContractDefinition = (
-            { introduced in "0.6.0" (AbstractKeyword ?) } ContractKeyword Identifier (InheritanceSpecifier ?) ((ContractMembersList ?) delimited by OpenBrace and CloseBrace)
+            { introduced in "0.6.0" (AbstractKeyword ?) } ContractKeyword Identifier (InheritanceSpecifier ?) ((ContractMembers ?) delimited by OpenBrace and CloseBrace)
         ) ;
 
         inline parser ContractMember = (
@@ -237,7 +237,7 @@ slang_grammar! {
             { introduced in "0.8.8"  UserDefinedValueTypeDefinition }
         ) ;
 
-        parser ContractMembersList = (ContractMember +) ;
+        parser ContractMembers = (ContractMember +) ;
 
         inline parser ControlStatement = (
             IfStatement | ForStatement | WhileStatement | DoWhileStatement | ContinueStatement | BreakStatement | DeleteStatement | ReturnStatement |

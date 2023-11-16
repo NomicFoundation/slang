@@ -14,7 +14,7 @@ Tree:
       - ContractKeyword (Token): "contract" # 0..8
       - Identifier (Token): "Sample" # 9..15
       - OpenBrace (Token): "{" # 16..17
-      - ContractMembersList (Rule): # 18..70 "  function foo() returns (uint) {\n    return 1;\n  ..."
+      - ContractMembers (Rule): # 18..70 "  function foo() returns (uint) {\n    return 1;\n  ..."
           - FunctionDefinition (Rule): # 18..70 "  function foo() returns (uint) {\n    return 1;\n  ..."
               - FunctionKeyword (Token): "function" # 20..28
               - Identifier (Token): "foo" # 29..32

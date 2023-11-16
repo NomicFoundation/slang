@@ -45,7 +45,7 @@ Tree:
       - ContractKeyword (Token): "contract" # 0..8
       - Identifier (Token): "Contract" # 9..17
       - OpenBrace (Token): "{" # 18..19
-      - ContractMembersList (Rule): # 20..210 "\tfunction _transfer(address while) private {\n\t\tif(..."
+      - ContractMembers (Rule): # 20..210 "\tfunction _transfer(address while) private {\n\t\tif(..."
           - FunctionDefinition (Rule): # 20..138 "\tfunction _transfer(address while) private {\n\t\tif(..."
               - FunctionKeyword (Token): "function" # 21..29
               - Identifier (Token): "_transfer" # 30..39

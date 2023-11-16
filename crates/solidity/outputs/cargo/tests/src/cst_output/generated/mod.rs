@@ -16,7 +16,7 @@ mod ConstructorDefinition;
 #[allow(non_snake_case)]
 mod ContractDefinition;
 #[allow(non_snake_case)]
-mod ContractMembersList;
+mod ContractMembers;
 #[allow(non_snake_case)]
 mod DecimalNumberExpression;
 #[allow(non_snake_case)]

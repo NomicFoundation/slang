@@ -10,7 +10,7 @@ Source: >
 Errors: # 2 total
   - >
     Error: Expected CloseParen or Comma.
-       ╭─[crates/solidity/testing/snapshots/cst_output/ContractMembersList/mismatched_delimiter/input.sol:3:29]
+       ╭─[crates/solidity/testing/snapshots/cst_output/ContractMembers/mismatched_delimiter/input.sol:3:29]
        │
      3 │ ╭─▶         uint256 arg = (1 + 2;
      4 │ ├─▶     })
@@ -18,8 +18,8 @@ Errors: # 2 total
        │ ╰──────────── Error occurred here.
     ───╯
   - >
-    Error: Expected AddressKeyword or AsciiStringLiteral or AssemblyKeyword or BoolKeyword or BreakKeyword or ByteKeyword or CloseBrace or ContinueKeyword or DecimalLiteral or DeleteKeyword or DoKeyword or EmitKeyword or FalseKeyword or FixedBytesType or ForKeyword or FunctionKeyword or HexLiteral or HexStringLiteral or Identifier or IfKeyword or MappingKeyword or NewKeyword or OpenBrace or OpenBracket or OpenParen or PayableKeyword or ReturnKeyword or SignedFixedType or SignedIntegerType or StringKeyword or TrueKeyword or TryKeyword or TypeKeyword or UnicodeStringLiteral or UnsignedFixedType or UnsignedIntegerType or WhileKeyword.
-       ╭─[crates/solidity/testing/snapshots/cst_output/ContractMembersList/mismatched_delimiter/input.sol:4:6]
+    Error: Expected AddressKeyword or AsciiStringLiteral or AssemblyKeyword or BoolKeyword or BreakKeyword or ByteKeyword or CloseBrace or ContinueKeyword or DecimalLiteral or DeleteKeyword or DoKeyword or EmitKeyword or FalseKeyword or FixedBytesType or ForKeyword or FunctionKeyword or HexLiteral or HexStringLiteral or Identifier or IfKeyword or MappingKeyword or NewKeyword or OpenBrace or OpenBracket or OpenParen or PayableKeyword or ReturnKeyword or SignedFixedType or SignedIntegerType or StringKeyword or ThrowKeyword or TrueKeyword or UnsignedFixedType or UnsignedIntegerType or VarKeyword or WhileKeyword.
+       ╭─[crates/solidity/testing/snapshots/cst_output/ContractMembers/mismatched_delimiter/input.sol:4:6]
        │
      4 │     })
        │      ─┬  
@@ -27,7 +27,7 @@ Errors: # 2 total
     ───╯
 
 Tree:
-  - ContractMembersList (Rule): # 0..74 "function someFunc() public {\n    {\n        uint256..."
+  - ContractMembers (Rule): # 0..74 "function someFunc() public {\n    {\n        uint256..."
       - FunctionDefinition (Rule): # 0..74 "function someFunc() public {\n    {\n        uint256..."
           - FunctionKeyword (Token): "function" # 0..8
           - Identifier (Token): "someFunc" # 9..17

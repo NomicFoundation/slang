@@ -20,7 +20,7 @@ Tree:
       - ContractKeyword (Token): "contract" # 0..8
       - Identifier (Token): "Sample" # 9..15
       - OpenBrace (Token): "{" # 16..17
-      - ContractMembersList (Rule): # 18..48 "  function() external payable "
+      - ContractMembers (Rule): # 18..48 "  function() external payable "
           - StateVariableDefinition (Rule): # 18..48 "  function() external payable "
               - TypeName (Rule): # 18..47 "  function() external payable"
                   - FunctionType (Rule): # 18..47 "  function() external payable"

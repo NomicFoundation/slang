@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - ContractMembersList (Rule): # 0..24 "constructor() public {}\n"
+  - ContractMembers (Rule): # 0..24 "constructor() public {}\n"
       - ConstructorDefinition (Rule): # 0..24 "constructor() public {}\n"
           - ConstructorKeyword (Token): "constructor" # 0..11
           - ParametersDeclaration (Rule): # 11..13 "()"

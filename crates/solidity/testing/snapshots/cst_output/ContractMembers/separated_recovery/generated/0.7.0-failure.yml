@@ -17,7 +17,7 @@ Source: >
 Errors: # 12 total
   - >
     Error: Expected CloseParen or Comma.
-       ╭─[crates/solidity/testing/snapshots/cst_output/ContractMembersList/separated_recovery/input.sol:1:36]
+       ╭─[crates/solidity/testing/snapshots/cst_output/ContractMembers/separated_recovery/input.sol:1:36]
        │
      1 │ function all() override(some.ident unexpected tokens, ISomeInterface, Other) public {
        │                                    ────────────────────┬───────────────────  
@@ -25,7 +25,7 @@ Errors: # 12 total
     ───╯
   - >
     Error: Expected CloseBrace or Identifier.
-       ╭─[crates/solidity/testing/snapshots/cst_output/ContractMembersList/separated_recovery/input.sol:2:19]
+       ╭─[crates/solidity/testing/snapshots/cst_output/ContractMembers/separated_recovery/input.sol:2:19]
        │
      2 │   msg.sender.call{do: 1, arg: 1 }();
        │                   ───────┬──────  
@@ -33,15 +33,15 @@ Errors: # 12 total
     ───╯
   - >
     Error: Expected CloseBrace or Identifier.
-       ╭─[crates/solidity/testing/snapshots/cst_output/ContractMembersList/separated_recovery/input.sol:3:19]
+       ╭─[crates/solidity/testing/snapshots/cst_output/ContractMembers/separated_recovery/input.sol:3:19]
        │
      3 │   msg.sender.call{, empty: 1, parse: 2 }();
        │                   ──────────┬──────────  
        │                             ╰──────────── Error occurred here.
     ───╯
   - >
-    Error: Expected AddressKeyword or AsciiStringLiteral or BoolKeyword or DecimalLiteral or FalseKeyword or FixedBytesType or HexLiteral or HexStringLiteral or Identifier or NewKeyword or OpenBracket or OpenParen or PayableKeyword or SignedFixedType or SignedIntegerType or StringKeyword or TrueKeyword or TypeKeyword or UnicodeStringLiteral or UnsignedFixedType or UnsignedIntegerType.
-       ╭─[crates/solidity/testing/snapshots/cst_output/ContractMembersList/separated_recovery/input.sol:4:40]
+    Error: Expected AddressKeyword or AsciiStringLiteral or BoolKeyword or ByteKeyword or DecimalLiteral or FalseKeyword or FixedBytesType or HexLiteral or HexStringLiteral or Identifier or NewKeyword or OpenBracket or OpenParen or PayableKeyword or SignedFixedType or SignedIntegerType or StringKeyword or TrueKeyword or TypeKeyword or UnicodeStringLiteral or UnsignedFixedType or UnsignedIntegerType.
+       ╭─[crates/solidity/testing/snapshots/cst_output/ContractMembers/separated_recovery/input.sol:4:40]
        │
      4 │   msg.sender.call{arg: 1, missing_expr: , no_semicolon, , }();
        │                                        ┬  
@@ -49,7 +49,7 @@ Errors: # 12 total
     ───╯
   - >
     Error: Expected Colon.
-       ╭─[crates/solidity/testing/snapshots/cst_output/ContractMembersList/separated_recovery/input.sol:4:55]
+       ╭─[crates/solidity/testing/snapshots/cst_output/ContractMembers/separated_recovery/input.sol:4:55]
        │
      4 │   msg.sender.call{arg: 1, missing_expr: , no_semicolon, , }();
        │                                                       │ 
@@ -57,7 +57,7 @@ Errors: # 12 total
     ───╯
   - >
     Error: Expected Identifier.
-       ╭─[crates/solidity/testing/snapshots/cst_output/ContractMembersList/separated_recovery/input.sol:4:57]
+       ╭─[crates/solidity/testing/snapshots/cst_output/ContractMembers/separated_recovery/input.sol:4:57]
        │
      4 │   msg.sender.call{arg: 1, missing_expr: , no_semicolon, , }();
        │                                                         ─┬  
@@ -65,7 +65,7 @@ Errors: # 12 total
     ───╯
   - >
     Error: Expected CloseBrace or Comma.
-       ╭─[crates/solidity/testing/snapshots/cst_output/ContractMembersList/separated_recovery/input.sol:5:26]
+       ╭─[crates/solidity/testing/snapshots/cst_output/ContractMembers/separated_recovery/input.sol:5:26]
        │
      5 │   msg.sender.call{arg: 1 unexpected tokens, not: 2, recovered, yet: 3, }();
        │                          ───────────────────────┬──────────────────────  
@@ -73,7 +73,7 @@ Errors: # 12 total
     ───╯
   - >
     Error: Expected Identifier.
-       ╭─[crates/solidity/testing/snapshots/cst_output/ContractMembersList/separated_recovery/input.sol:9:50]
+       ╭─[crates/solidity/testing/snapshots/cst_output/ContractMembers/separated_recovery/input.sol:9:50]
        │
      9 │ function empty() override(some.ident, /* empty */, other.arg.here, and.here);
        │                                                  ─────────────┬────────────  
@@ -81,7 +81,7 @@ Errors: # 12 total
     ───╯
   - >
     Error: Expected Identifier.
-        ╭─[crates/solidity/testing/snapshots/cst_output/ContractMembersList/separated_recovery/input.sol:11:51]
+        ╭─[crates/solidity/testing/snapshots/cst_output/ContractMembers/separated_recovery/input.sol:11:51]
         │
      11 │ function nested_lists() override(some.ident, next.do.that, other.while, next.one, final, ultimate);
         │                                                   ───┬───  
@@ -89,7 +89,7 @@ Errors: # 12 total
     ────╯
   - >
     Error: Expected Identifier.
-        ╭─[crates/solidity/testing/snapshots/cst_output/ContractMembersList/separated_recovery/input.sol:11:66]
+        ╭─[crates/solidity/testing/snapshots/cst_output/ContractMembers/separated_recovery/input.sol:11:66]
         │
      11 │ function nested_lists() override(some.ident, next.do.that, other.while, next.one, final, ultimate);
         │                                                                  ──┬──  
@@ -97,7 +97,7 @@ Errors: # 12 total
     ────╯
   - >
     Error: Expected Identifier.
-        ╭─[crates/solidity/testing/snapshots/cst_output/ContractMembersList/separated_recovery/input.sol:11:83]
+        ╭─[crates/solidity/testing/snapshots/cst_output/ContractMembers/separated_recovery/input.sol:11:83]
         │
      11 │ function nested_lists() override(some.ident, next.do.that, other.while, next.one, final, ultimate);
         │                                                                                   ───────┬───────  
@@ -105,7 +105,7 @@ Errors: # 12 total
     ────╯
   - >
     Error: Expected Identifier.
-        ╭─[crates/solidity/testing/snapshots/cst_output/ContractMembersList/separated_recovery/input.sol:12:39]
+        ╭─[crates/solidity/testing/snapshots/cst_output/ContractMembers/separated_recovery/input.sol:12:39]
         │
      12 │ function nested_lists() override(some., next.arg, next.one, ultimate);
         │                                       │ 
@@ -113,7 +113,7 @@ Errors: # 12 total
     ────╯
 
 Tree:
-  - ContractMembersList (Rule): # 0..560 "function all() override(some.ident unexpected toke..."
+  - ContractMembers (Rule): # 0..560 "function all() override(some.ident unexpected toke..."
       - FunctionDefinition (Rule): # 0..309 "function all() override(some.ident unexpected toke..."
           - FunctionKeyword (Token): "function" # 0..8
           - Identifier (Token): "all" # 9..12

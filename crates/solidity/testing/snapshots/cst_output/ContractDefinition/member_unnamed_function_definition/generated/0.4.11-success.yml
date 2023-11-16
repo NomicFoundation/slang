@@ -13,7 +13,7 @@ Tree:
       - ContractKeyword (Token): "contract" # 0..8
       - Identifier (Token): "Sample" # 9..15
       - OpenBrace (Token): "{" # 16..17
-      - ContractMembersList (Rule): # 18..38 "  function () {\n  }\n"
+      - ContractMembers (Rule): # 18..38 "  function () {\n  }\n"
           - UnnamedFunctionDefinition (Rule): # 18..38 "  function () {\n  }\n"
               - FunctionKeyword (Token): "function" # 20..28
               - ParametersDeclaration (Rule): # 28..31 " ()"

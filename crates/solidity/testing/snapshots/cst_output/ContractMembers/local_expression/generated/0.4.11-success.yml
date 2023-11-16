@@ -8,7 +8,7 @@ Source: >
 Errors: []
 
 Tree:
-  - ContractMembersList (Rule): # 0..42 "function func() {\n  uint a = 1 + 2 * 3;\n}\n"
+  - ContractMembers (Rule): # 0..42 "function func() {\n  uint a = 1 + 2 * 3;\n}\n"
       - FunctionDefinition (Rule): # 0..42 "function func() {\n  uint a = 1 + 2 * 3;\n}\n"
           - FunctionKeyword (Token): "function" # 0..8
           - Identifier (Token): "func" # 9..13

@@ -16,7 +16,7 @@ Tree:
       - ContractKeyword (Token): "contract" # 0..8
       - Identifier (Token): "Sample" # 9..15
       - OpenBrace (Token): "{" # 16..17
-      - ContractMembersList (Rule): # 18..57 "  enum State {\n    A,\n    B,\n    C\n  }\n"
+      - ContractMembers (Rule): # 18..57 "  enum State {\n    A,\n    B,\n    C\n  }\n"
           - EnumDefinition (Rule): # 18..57 "  enum State {\n    A,\n    B,\n    C\n  }\n"
               - EnumKeyword (Token): "enum" # 20..24
               - Identifier (Token): "State" # 25..30
