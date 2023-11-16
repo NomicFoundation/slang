@@ -165,13 +165,13 @@
         - reference: "FunctionKeyword"
         - reference: "ParametersDeclaration"
         - optional:
-            reference: "UnnamedFunctionAttributesList"
+            reference: "UnnamedFunctionAttributes"
         - choice:
             - reference: "Semicolon"
             - reference: "Block"
     0.6.0: null
 
-- name: "UnnamedFunctionAttributesList"
+- name: "UnnamedFunctionAttributes"
   kind: "Parser"
   versioned:
     0.4.11:

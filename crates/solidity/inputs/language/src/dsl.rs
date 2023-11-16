@@ -544,9 +544,9 @@ slang_grammar! {
 
         inline parser UnnamedFunctionAttribute = { removed in "0.6.0" (ModifierInvocation | OverrideSpecifier | ExternalKeyword | PayableKeyword | PureKeyword | ViewKeyword) } ;
 
-        parser UnnamedFunctionAttributesList = { removed in "0.6.0" (UnnamedFunctionAttribute +) } ;
+        parser UnnamedFunctionAttributes = { removed in "0.6.0" (UnnamedFunctionAttribute +) } ;
 
-        parser UnnamedFunctionDefinition = { removed in "0.6.0" (FunctionKeyword ParametersDeclaration (UnnamedFunctionAttributesList ?) (Semicolon | Block)) } ;
+        parser UnnamedFunctionDefinition = { removed in "0.6.0" (FunctionKeyword ParametersDeclaration (UnnamedFunctionAttributes ?) (Semicolon | Block)) } ;
 
         parser UserDefinedValueTypeDefinition = { introduced in "0.8.8" ((TypeKeyword Identifier IsKeyword ElementaryType) terminated by Semicolon) } ;
 

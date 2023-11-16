@@ -4190,7 +4190,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn unnamed_function_attributes_list(&self, input: &mut ParserContext) -> ParserResult {
+    fn unnamed_function_attributes(&self, input: &mut ParserContext) -> ParserResult {
         if !self.version_is_at_least_0_6_0 {
             OneOrMoreHelper::run(input, |input| {
                 if !self.version_is_at_least_0_6_0 {
@@ -4228,7 +4228,7 @@ impl Language {
         } else {
             ParserResult::disabled()
         }
-        .with_kind(RuleKind::UnnamedFunctionAttributesList)
+        .with_kind(RuleKind::UnnamedFunctionAttributes)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -4241,7 +4241,7 @@ impl Language {
                 ))?;
                 seq.elem(self.parameters_declaration(input))?;
                 seq.elem(OptionalHelper::transform(
-                    self.unnamed_function_attributes_list(input),
+                    self.unnamed_function_attributes(input),
                 ))?;
                 seq.elem(ChoiceHelper::run(input, |mut choice, input| {
                     let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
@@ -6099,8 +6099,8 @@ impl Language {
             ProductionKind::UnicodeStringLiteralsList => {
                 Self::unicode_string_literals_list.parse(self, input)
             }
-            ProductionKind::UnnamedFunctionAttributesList => {
-                Self::unnamed_function_attributes_list.parse(self, input)
+            ProductionKind::UnnamedFunctionAttributes => {
+                Self::unnamed_function_attributes.parse(self, input)
             }
             ProductionKind::UnnamedFunctionDefinition => {
                 Self::unnamed_function_definition.parse(self, input)
