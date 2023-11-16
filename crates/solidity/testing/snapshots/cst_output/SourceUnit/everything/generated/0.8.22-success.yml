@@ -52,9 +52,8 @@ Tree:
               - Semicolon (Token): ";" # 40..41
           - UsingDirective (Rule): # 42..58 "\nusing A for B;\n"
               - UsingKeyword (Token): "using" # 43..48
-              - UsingDirectivePath (Rule): # 48..50 " A"
-                  - IdentifierPath (Rule): # 48..50 " A"
-                      - Identifier (Token): "A" # 49..50
+              - IdentifierPath (Rule): # 48..50 " A"
+                  - Identifier (Token): "A" # 49..50
               - ForKeyword (Token): "for" # 51..54
               - TypeName (Rule): # 54..56 " B"
                   - IdentifierPath (Rule): # 54..56 " B"

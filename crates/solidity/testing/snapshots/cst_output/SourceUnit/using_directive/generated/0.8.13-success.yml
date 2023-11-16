@@ -50,9 +50,8 @@ Tree:
               - Semicolon (Token): ";" # 54..55
           - UsingDirective (Rule): # 56..98 "\nusing EnvelopeUtils for Envelope global;\n"
               - UsingKeyword (Token): "using" # 57..62
-              - UsingDirectivePath (Rule): # 62..76 " EnvelopeUtils"
-                  - IdentifierPath (Rule): # 62..76 " EnvelopeUtils"
-                      - Identifier (Token): "EnvelopeUtils" # 63..76
+              - IdentifierPath (Rule): # 62..76 " EnvelopeUtils"
+                  - Identifier (Token): "EnvelopeUtils" # 63..76
               - ForKeyword (Token): "for" # 77..80
               - TypeName (Rule): # 80..89 " Envelope"
                   - IdentifierPath (Rule): # 80..89 " Envelope"
@@ -61,9 +60,8 @@ Tree:
               - Semicolon (Token): ";" # 96..97
           - UsingDirective (Rule): # 98..145 "using TransactionUtils for Transaction global;\n"
               - UsingKeyword (Token): "using" # 98..103
-              - UsingDirectivePath (Rule): # 103..120 " TransactionUtils"
-                  - IdentifierPath (Rule): # 103..120 " TransactionUtils"
-                      - Identifier (Token): "TransactionUtils" # 104..120
+              - IdentifierPath (Rule): # 103..120 " TransactionUtils"
+                  - Identifier (Token): "TransactionUtils" # 104..120
               - ForKeyword (Token): "for" # 121..124
               - TypeName (Rule): # 124..136 " Transaction"
                   - IdentifierPath (Rule): # 124..136 " Transaction"

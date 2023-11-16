@@ -550,15 +550,13 @@ slang_grammar! {
 
         parser UserDefinedValueTypeDefinition = { introduced in "0.8.8" ((TypeKeyword Identifier IsKeyword ElementaryType) terminated by Semicolon) } ;
 
-        parser UsingDirective = ((UsingKeyword (UsingDirectivePath | UsingDirectiveDeconstruction) ForKeyword (Asterisk | TypeName) ({ introduced in "0.8.13" GlobalKeyword } ?)) terminated by Semicolon) ;
+        parser UsingDirective = ((UsingKeyword (IdentifierPath | UsingDirectiveDeconstruction) ForKeyword (Asterisk | TypeName) ({ introduced in "0.8.13" GlobalKeyword } ?)) terminated by Semicolon) ;
 
         parser UsingDirectiveDeconstruction = { introduced in "0.8.13" (UsingDirectiveSymbolsList delimited by OpenBrace and CloseBrace) };
 
         inline parser UsingDirectiveOperator = {
             introduced in "0.8.19" (Ampersand | Asterisk | BangEqual | Bar | Caret | EqualEqual | GreaterThan | GreaterThanEqual | LessThan | LessThanEqual | Minus | Percent | Plus | Slash | Tilde)
         } ;
-
-        parser UsingDirectivePath = IdentifierPath ;
 
         parser UsingDirectiveSymbol = {
             introduced in "0.8.13" (IdentifierPath { introduced in "0.8.19" ((AsKeyword UsingDirectiveOperator) ?) } )

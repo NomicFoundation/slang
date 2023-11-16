@@ -33,7 +33,6 @@
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/04-imports/deconstruction-import-symbols-list/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/04-imports/deconstruction-import-symbol/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/04-imports/using-directive/0.8.13.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/04-imports/using-directive-path/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/04-imports/using-directive-deconstruction/0.8.13.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/04-imports/using-directive-symbols-list/0.8.13.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/04-imports/using-directive-symbol/0.8.19.md"
