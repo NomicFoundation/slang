@@ -11,7 +11,7 @@ Tree:
       - Identifier (Token): "Sample" # 9..15
       - InheritanceSpecifier (Rule): # 15..38 " is Foo, Bar(1, 2), Baz"
           - IsKeyword (Token): "is" # 16..18
-          - InheritanceTypesList (Rule): # 18..38 " Foo, Bar(1, 2), Baz"
+          - InheritanceTypes (Rule): # 18..38 " Foo, Bar(1, 2), Baz"
               - InheritanceType (Rule): # 18..22 " Foo"
                   - IdentifierPath (Rule): # 18..22 " Foo"
                       - Identifier (Token): "Foo" # 19..22

@@ -2650,7 +2650,7 @@ impl Language {
                 input,
                 TokenKind::IsKeyword,
             ))?;
-            seq.elem(self.inheritance_types_list(input))?;
+            seq.elem(self.inheritance_types(input))?;
             seq.finish()
         })
         .with_kind(RuleKind::InheritanceSpecifier)
@@ -2667,14 +2667,14 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn inheritance_types_list(&self, input: &mut ParserContext) -> ParserResult {
+    fn inheritance_types(&self, input: &mut ParserContext) -> ParserResult {
         SeparatedHelper::run::<_, LexicalContextType::Default>(
             input,
             self,
             |input| self.inheritance_type(input),
             TokenKind::Comma,
         )
-        .with_kind(RuleKind::InheritanceTypesList)
+        .with_kind(RuleKind::InheritanceTypes)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -6033,7 +6033,7 @@ impl Language {
             ProductionKind::ImportDirective => Self::import_directive.parse(self, input),
             ProductionKind::InheritanceSpecifier => Self::inheritance_specifier.parse(self, input),
             ProductionKind::InheritanceType => Self::inheritance_type.parse(self, input),
-            ProductionKind::InheritanceTypesList => Self::inheritance_types_list.parse(self, input),
+            ProductionKind::InheritanceTypes => Self::inheritance_types.parse(self, input),
             ProductionKind::InterfaceDefinition => Self::interface_definition.parse(self, input),
             ProductionKind::InterfaceMembers => Self::interface_members.parse(self, input),
             ProductionKind::LeadingTrivia => Self::leading_trivia.parse(self, input),

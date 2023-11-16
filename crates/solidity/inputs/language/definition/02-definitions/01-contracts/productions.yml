@@ -40,9 +40,9 @@
   unversioned:
     sequence:
       - reference: "IsKeyword"
-      - reference: "InheritanceTypesList"
+      - reference: "InheritanceTypes"
 
-- name: "InheritanceTypesList"
+- name: "InheritanceTypes"
   kind: "Parser"
   unversioned:
     separatedBy:

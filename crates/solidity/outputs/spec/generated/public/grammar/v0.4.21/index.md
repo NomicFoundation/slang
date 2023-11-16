@@ -175,7 +175,7 @@
 
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/01-contracts/contract-definition/0.4.11.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/01-contracts/inheritance-specifier/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/01-contracts/inheritance-types-list/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/01-contracts/inheritance-types/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/01-contracts/inheritance-type/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/01-contracts/contract-members/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/01-contracts/contract-member/0.4.11.md"

@@ -368,11 +368,11 @@ slang_grammar! {
 
         inline parser IndexAccessOperator = (((Expression ?) ((Colon (Expression ?)) ?)) delimited by OpenBracket and CloseBracket) ;
 
-        parser InheritanceSpecifier = (IsKeyword InheritanceTypesList) ;
+        parser InheritanceSpecifier = (IsKeyword InheritanceTypes) ;
 
         parser InheritanceType = (IdentifierPath (ArgumentsDeclaration ?)) ;
 
-        parser InheritanceTypesList = (InheritanceType separated by Comma) ;
+        parser InheritanceTypes = (InheritanceType separated by Comma) ;
 
         parser InterfaceDefinition = (InterfaceKeyword Identifier (InheritanceSpecifier ?) ((InterfaceMembers ?) delimited by OpenBrace and CloseBrace)) ;
 
