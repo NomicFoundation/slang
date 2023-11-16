@@ -3893,7 +3893,7 @@ impl Language {
                 TokenKind::OpenParen,
             ))?;
             seq.elem(
-                self.tuple_values_list(input)
+                self.tuple_values(input)
                     .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
                         self,
@@ -3995,14 +3995,14 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn tuple_values_list(&self, input: &mut ParserContext) -> ParserResult {
+    fn tuple_values(&self, input: &mut ParserContext) -> ParserResult {
         SeparatedHelper::run::<_, LexicalContextType::Default>(
             input,
             self,
             |input| OptionalHelper::transform(self.expression(input)),
             TokenKind::Comma,
         )
-        .with_kind(RuleKind::TupleValuesList)
+        .with_kind(RuleKind::TupleValues)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -6086,7 +6086,7 @@ impl Language {
             ProductionKind::TupleExpression => Self::tuple_expression.parse(self, input),
             ProductionKind::TupleMember => Self::tuple_member.parse(self, input),
             ProductionKind::TupleMembersList => Self::tuple_members_list.parse(self, input),
-            ProductionKind::TupleValuesList => Self::tuple_values_list.parse(self, input),
+            ProductionKind::TupleValues => Self::tuple_values.parse(self, input),
             ProductionKind::TypeExpression => Self::type_expression.parse(self, input),
             ProductionKind::TypeName => Self::type_name.parse(self, input),
             ProductionKind::UncheckedBlock => Self::unchecked_block.parse(self, input),

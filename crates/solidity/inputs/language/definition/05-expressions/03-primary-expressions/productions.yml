@@ -55,11 +55,11 @@
       open:
         reference: "OpenParen"
       parser:
-        reference: "TupleValuesList"
+        reference: "TupleValues"
       close:
         reference: "CloseParen"
 
-- name: "TupleValuesList"
+- name: "TupleValues"
   kind: "Parser"
   unversioned:
     separatedBy:

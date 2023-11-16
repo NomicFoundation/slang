@@ -91,7 +91,7 @@ Tree:
                                                   - Expression (Rule): # 163..174 " (false, 0)"
                                                       - TupleExpression (Rule): # 163..174 " (false, 0)"
                                                           - OpenParen (Token): "(" # 164..165
-                                                          - TupleValuesList (Rule): # 165..173 "false, 0"
+                                                          - TupleValues (Rule): # 165..173 "false, 0"
                                                               - Expression (Rule): # 165..170 "false"
                                                                   - FalseKeyword (Token): "false" # 165..170
                                                               - Comma (Token): "," # 170..171
@@ -105,7 +105,7 @@ Tree:
                                               - Expression (Rule): # 188..198 " (true, c)"
                                                   - TupleExpression (Rule): # 188..198 " (true, c)"
                                                       - OpenParen (Token): "(" # 189..190
-                                                      - TupleValuesList (Rule): # 190..197 "true, c"
+                                                      - TupleValues (Rule): # 190..197 "true, c"
                                                           - Expression (Rule): # 190..194 "true"
                                                               - TrueKeyword (Token): "true" # 190..194
                                                           - Comma (Token): "," # 194..195

@@ -51,7 +51,7 @@ Tree:
                               - Expression (Rule): # 56..63 " (1 + 2"
                                   - TupleExpression (Rule): # 56..63 " (1 + 2"
                                       - OpenParen (Token): "(" # 57..58
-                                      - TupleValuesList (Rule): # 58..63 "1 + 2"
+                                      - TupleValues (Rule): # 58..63 "1 + 2"
                                           - Expression (Rule): # 58..63 "1 + 2"
                                               - BinaryExpression (Rule): # 58..63 "1 + 2"
                                                   - Expression (Rule): # 58..59 "1"

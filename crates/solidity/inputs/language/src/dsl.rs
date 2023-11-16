@@ -515,13 +515,13 @@ slang_grammar! {
 
         parser TupleDeconstructionStatement = ((((TupleMembersList ?) delimited by OpenParen and CloseParen) Equal Expression) terminated by Semicolon) ;
 
-        parser TupleExpression = (TupleValuesList delimited by OpenParen and CloseParen) ;
+        parser TupleExpression = (TupleValues delimited by OpenParen and CloseParen) ;
 
         parser TupleMember = (((TypeName (DataLocation ?) Identifier) | ((DataLocation ?) Identifier)) ?) ;
 
         parser TupleMembersList = (TupleMember separated by Comma) ;
 
-        parser TupleValuesList = ((Expression ?) separated by Comma) ;
+        parser TupleValues = ((Expression ?) separated by Comma) ;
 
         parser TypeExpression = { introduced in "0.5.3" (TypeKeyword (TypeName delimited by OpenParen and CloseParen)) } ;
 

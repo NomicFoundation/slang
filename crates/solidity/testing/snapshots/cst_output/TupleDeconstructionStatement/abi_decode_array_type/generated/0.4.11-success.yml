@@ -42,7 +42,7 @@ Tree:
                       - Expression (Rule): # 48..67 " (uint32, uint32[])"
                           - TupleExpression (Rule): # 48..67 " (uint32, uint32[])"
                               - OpenParen (Token): "(" # 49..50
-                              - TupleValuesList (Rule): # 50..66 "uint32, uint32[]"
+                              - TupleValues (Rule): # 50..66 "uint32, uint32[]"
                                   - Expression (Rule): # 50..56 "uint32"
                                       - UnsignedIntegerType (Token): "uint32" # 50..56
                                   - Comma (Token): "," # 56..57
