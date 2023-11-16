@@ -16,7 +16,7 @@ Tree:
           - StateVariableDefinition (Rule): # 18..35 "  uint public a;\n"
               - TypeName (Rule): # 18..24 "  uint"
                   - UnsignedIntegerType (Token): "uint" # 20..24
-              - StateVariableAttributesList (Rule): # 24..31 " public"
+              - StateVariableAttributes (Rule): # 24..31 " public"
                   - PublicKeyword (Token): "public" # 25..31
               - Identifier (Token): "a" # 32..33
               - Semicolon (Token): ";" # 33..34

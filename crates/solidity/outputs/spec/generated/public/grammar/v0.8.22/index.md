@@ -220,7 +220,7 @@
 ### 2.7. State Variables
 
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/07-state-variables/state-variable-definition/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/07-state-variables/state-variable-attributes-list/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/07-state-variables/state-variable-attributes/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/07-state-variables/state-variable-attribute/0.6.5.md"
 
 ### 2.8. Functions

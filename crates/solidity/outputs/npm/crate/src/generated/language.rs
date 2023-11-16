@@ -3558,7 +3558,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn state_variable_attributes_list(&self, input: &mut ParserContext) -> ParserResult {
+    fn state_variable_attributes(&self, input: &mut ParserContext) -> ParserResult {
         OneOrMoreHelper::run(input, |input| {
             ChoiceHelper::run(input, |mut choice, input| {
                 let result = self.override_specifier(input);
@@ -3593,7 +3593,7 @@ impl Language {
                 choice.finish(input)
             })
         })
-        .with_kind(RuleKind::StateVariableAttributesList)
+        .with_kind(RuleKind::StateVariableAttributes)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -3603,7 +3603,7 @@ impl Language {
                 SequenceHelper::run(|mut seq| {
                     seq.elem(self.type_name(input))?;
                     seq.elem(OptionalHelper::transform(
-                        self.state_variable_attributes_list(input),
+                        self.state_variable_attributes(input),
                     ))?;
                     seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
@@ -6077,8 +6077,8 @@ impl Language {
             ProductionKind::RevertStatement => Self::revert_statement.parse(self, input),
             ProductionKind::SourceUnit => Self::source_unit.parse(self, input),
             ProductionKind::SourceUnitMembers => Self::source_unit_members.parse(self, input),
-            ProductionKind::StateVariableAttributesList => {
-                Self::state_variable_attributes_list.parse(self, input)
+            ProductionKind::StateVariableAttributes => {
+                Self::state_variable_attributes.parse(self, input)
             }
             ProductionKind::StateVariableDefinition => {
                 Self::state_variable_definition.parse(self, input)

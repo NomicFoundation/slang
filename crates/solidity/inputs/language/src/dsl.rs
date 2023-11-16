@@ -489,9 +489,9 @@ slang_grammar! {
             OverrideSpecifier | ConstantKeyword | InternalKeyword | PrivateKeyword | PublicKeyword| { introduced in "0.6.5" ImmutableKeyword }
         ) ;
 
-        parser StateVariableAttributesList = (StateVariableAttribute +) ;
+        parser StateVariableAttributes = (StateVariableAttribute +) ;
 
-        parser StateVariableDefinition = ((TypeName (StateVariableAttributesList ?) Identifier ((Equal Expression) ?)) terminated by Semicolon) ;
+        parser StateVariableDefinition = ((TypeName (StateVariableAttributes ?) Identifier ((Equal Expression) ?)) terminated by Semicolon) ;
 
         inline parser Statement = (
             SimpleStatement | ControlStatement | AssemblyStatement | Block | { introduced in "0.8.0" UncheckedBlock }
