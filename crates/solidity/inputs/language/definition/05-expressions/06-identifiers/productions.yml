@@ -18,15 +18,6 @@
       separator:
         reference: "Period"
 
-- name: "IdentifiersList"
-  kind: "Parser"
-  unversioned:
-    separatedBy:
-      separator:
-        reference: "Comma"
-      parser:
-        reference: "Identifier"
-
 - name: "Identifier"
   kind: "Scanner"
   versioned:

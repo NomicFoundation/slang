@@ -211,6 +211,7 @@
 ### 2.5. Enums
 
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/05-enums/enum-definition/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/05-enums/enum-members/unversioned.md"
 
 ### 2.6. Constants
 
@@ -415,7 +416,6 @@
 
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/06-identifiers/identifier-paths-list/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/06-identifiers/identifier-path/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/06-identifiers/identifiers-list/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/06-identifiers/identifier/0.5.0.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/06-identifiers/keyword-in-any-version/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/06-identifiers/keyword-in-some-version/0.8.0.md"

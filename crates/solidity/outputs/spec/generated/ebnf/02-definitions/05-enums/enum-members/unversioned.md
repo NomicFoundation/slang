@@ -1,5 +1,5 @@
 <!-- This file is generated automatically by infrastructure scripts. Please don't edit by hand. -->
 
-```{ .ebnf .slang-ebnf #IdentifiersList }
-IdentifiersList = IDENTIFIER (COMMA IDENTIFIER)*;
+```{ .ebnf .slang-ebnf #EnumMembers }
+EnumMembers = IDENTIFIER (COMMA IDENTIFIER)*;
 ```

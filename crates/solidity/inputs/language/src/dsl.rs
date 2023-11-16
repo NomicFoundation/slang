@@ -269,7 +269,7 @@ slang_grammar! {
 
         parser EmitStatement = { introduced in "0.4.21" ((EmitKeyword IdentifierPath ArgumentsDeclaration) terminated by Semicolon) } ;
 
-        parser EnumDefinition = (EnumKeyword Identifier ((IdentifiersList ?) delimited by OpenBrace and CloseBrace)) ;
+        parser EnumDefinition = (EnumKeyword Identifier ((EnumMembers ?) delimited by OpenBrace and CloseBrace)) ;
 
         inline parser EqualityComparisonOperator = (EqualEqual | BangEqual) ;
 
@@ -360,7 +360,7 @@ slang_grammar! {
 
         parser IdentifierPathsList = (IdentifierPath separated by Comma) ;
 
-        parser IdentifiersList = (Identifier separated by Comma) ;
+        parser EnumMembers = (Identifier separated by Comma) ;
 
         parser IfStatement = (IfKeyword (Expression delimited by OpenParen and CloseParen) Statement ((ElseKeyword Statement) ?)) ;
 

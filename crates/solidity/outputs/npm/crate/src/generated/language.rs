@@ -1052,13 +1052,13 @@ impl Language {
                     TokenKind::OpenBrace,
                 ))?;
                 seq.elem(
-                    OptionalHelper::transform(self.identifiers_list(input))
+                    OptionalHelper::transform(self.enum_members(input))
                         .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
-                        input,
-                        self,
-                        TokenKind::CloseBrace,
-                        RecoverFromNoMatch::Yes,
-                    ),
+                            input,
+                            self,
+                            TokenKind::CloseBrace,
+                            RecoverFromNoMatch::Yes,
+                        ),
                 )?;
                 seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
@@ -1069,6 +1069,22 @@ impl Language {
             seq.finish()
         })
         .with_kind(RuleKind::EnumDefinition)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn enum_members(&self, input: &mut ParserContext) -> ParserResult {
+        SeparatedHelper::run::<_, LexicalContextType::Default>(
+            input,
+            self,
+            |input| {
+                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    input,
+                    TokenKind::Identifier,
+                )
+            },
+            TokenKind::Comma,
+        )
+        .with_kind(RuleKind::EnumMembers)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -2445,22 +2461,6 @@ impl Language {
             TokenKind::Comma,
         )
         .with_kind(RuleKind::IdentifierPathsList)
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn identifiers_list(&self, input: &mut ParserContext) -> ParserResult {
-        SeparatedHelper::run::<_, LexicalContextType::Default>(
-            input,
-            self,
-            |input| {
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
-                    input,
-                    TokenKind::Identifier,
-                )
-            },
-            TokenKind::Comma,
-        )
-        .with_kind(RuleKind::IdentifiersList)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -5992,6 +5992,7 @@ impl Language {
             ProductionKind::EmitStatement => Self::emit_statement.parse(self, input),
             ProductionKind::EndOfFileTrivia => Self::end_of_file_trivia.parse(self, input),
             ProductionKind::EnumDefinition => Self::enum_definition.parse(self, input),
+            ProductionKind::EnumMembers => Self::enum_members.parse(self, input),
             ProductionKind::ErrorDefinition => Self::error_definition.parse(self, input),
             ProductionKind::ErrorParameter => Self::error_parameter.parse(self, input),
             ProductionKind::ErrorParametersDeclaration => {
@@ -6029,7 +6030,6 @@ impl Language {
             }
             ProductionKind::IdentifierPath => Self::identifier_path.parse(self, input),
             ProductionKind::IdentifierPathsList => Self::identifier_paths_list.parse(self, input),
-            ProductionKind::IdentifiersList => Self::identifiers_list.parse(self, input),
             ProductionKind::IfStatement => Self::if_statement.parse(self, input),
             ProductionKind::ImportDirective => Self::import_directive.parse(self, input),
             ProductionKind::InheritanceSpecifier => Self::inheritance_specifier.parse(self, input),
