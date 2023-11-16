@@ -322,9 +322,9 @@ slang_grammar! {
 
         inline parser FallbackFunctionAttribute = { introduced in "0.6.0" (ModifierInvocation | OverrideSpecifier | ExternalKeyword | PayableKeyword | PureKeyword | ViewKeyword | VirtualKeyword) } ;
 
-        parser FallbackFunctionAttributesList = { introduced in "0.6.0" (FallbackFunctionAttribute +) } ;
+        parser FallbackFunctionAttributes = { introduced in "0.6.0" (FallbackFunctionAttribute +) } ;
 
-        parser FallbackFunctionDefinition = { introduced in "0.6.0" (FallbackKeyword ParametersDeclaration (FallbackFunctionAttributesList ?) (ReturnsDeclaration ?) (Semicolon | Block)) } ;
+        parser FallbackFunctionDefinition = { introduced in "0.6.0" (FallbackKeyword ParametersDeclaration (FallbackFunctionAttributes ?) (ReturnsDeclaration ?) (Semicolon | Block)) } ;
 
         parser ForStatement = (ForKeyword (((SimpleStatement | Semicolon) (ExpressionStatement | Semicolon) (Expression ?)) delimited by OpenParen and CloseParen) Statement) ;
 

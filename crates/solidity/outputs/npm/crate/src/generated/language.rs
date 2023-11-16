@@ -1948,7 +1948,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn fallback_function_attributes_list(&self, input: &mut ParserContext) -> ParserResult {
+    fn fallback_function_attributes(&self, input: &mut ParserContext) -> ParserResult {
         if self.version_is_at_least_0_6_0 {
             OneOrMoreHelper::run(input, |input| {
                 if self.version_is_at_least_0_6_0 {
@@ -1991,7 +1991,7 @@ impl Language {
         } else {
             ParserResult::disabled()
         }
-        .with_kind(RuleKind::FallbackFunctionAttributesList)
+        .with_kind(RuleKind::FallbackFunctionAttributes)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -2004,7 +2004,7 @@ impl Language {
                 ))?;
                 seq.elem(self.parameters_declaration(input))?;
                 seq.elem(OptionalHelper::transform(
-                    self.fallback_function_attributes_list(input),
+                    self.fallback_function_attributes(input),
                 ))?;
                 seq.elem(OptionalHelper::transform(self.returns_declaration(input)))?;
                 seq.elem(ChoiceHelper::run(input, |mut choice, input| {
@@ -6006,8 +6006,8 @@ impl Language {
             ProductionKind::ExperimentalPragma => Self::experimental_pragma.parse(self, input),
             ProductionKind::Expression => Self::expression.parse(self, input),
             ProductionKind::ExpressionStatement => Self::expression_statement.parse(self, input),
-            ProductionKind::FallbackFunctionAttributesList => {
-                Self::fallback_function_attributes_list.parse(self, input)
+            ProductionKind::FallbackFunctionAttributes => {
+                Self::fallback_function_attributes.parse(self, input)
             }
             ProductionKind::FallbackFunctionDefinition => {
                 Self::fallback_function_definition.parse(self, input)

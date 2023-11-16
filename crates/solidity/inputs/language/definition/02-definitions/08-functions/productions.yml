@@ -201,14 +201,14 @@
         - reference: "FallbackKeyword"
         - reference: "ParametersDeclaration"
         - optional:
-            reference: "FallbackFunctionAttributesList"
+            reference: "FallbackFunctionAttributes"
         - optional:
             reference: "ReturnsDeclaration"
         - choice:
             - reference: "Semicolon"
             - reference: "Block"
 
-- name: "FallbackFunctionAttributesList"
+- name: "FallbackFunctionAttributes"
   kind: "Parser"
   versioned:
     0.6.0:
