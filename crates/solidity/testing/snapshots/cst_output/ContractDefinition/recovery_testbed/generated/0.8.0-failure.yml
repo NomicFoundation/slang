@@ -45,24 +45,24 @@ Tree:
       - ContractKeyword (Token): "contract" # 0..8
       - Identifier (Token): "Contract" # 9..17
       - OpenBrace (Token): "{" # 18..19
-      - ContractMembersList (Rule): # 20..210 "\tfunction _transfer(address while) private {\n\t\tif(..."
+      - ContractMembers (Rule): # 20..210 "\tfunction _transfer(address while) private {\n\t\tif(..."
           - FunctionDefinition (Rule): # 20..138 "\tfunction _transfer(address while) private {\n\t\tif(..."
               - FunctionKeyword (Token): "function" # 21..29
               - Identifier (Token): "_transfer" # 30..39
               - ParametersDeclaration (Rule): # 39..54 "(address while)"
                   - OpenParen (Token): "(" # 39..40
-                  - ParametersList (Rule): # 40..47 "address"
+                  - Parameters (Rule): # 40..47 "address"
                       - Parameter (Rule): # 40..47 "address"
                           - TypeName (Rule): # 40..47 "address"
                               - AddressType (Rule): # 40..47 "address"
                                   - AddressKeyword (Token): "address" # 40..47
                   - SKIPPED (Token): "while" # 48..53
                   - CloseParen (Token): ")" # 53..54
-              - FunctionAttributesList (Rule): # 54..62 " private"
+              - FunctionAttributes (Rule): # 54..62 " private"
                   - PrivateKeyword (Token): "private" # 55..62
               - Block (Rule): # 62..138 " {\n\t\tif(while == pair && !_isExcludedFromFee[to]){..."
                   - OpenBrace (Token): "{" # 63..64
-                  - StatementsList (Rule): # 65..135 "\t\tif(while == pair && !_isExcludedFromFee[to]){\n\t\t..."
+                  - Statements (Rule): # 65..135 "\t\tif(while == pair && !_isExcludedFromFee[to]){\n\t\t..."
                       - IfStatement (Rule): # 65..135 "\t\tif(while == pair && !_isExcludedFromFee[to]){\n\t\t..."
                           - IfKeyword (Token): "if" # 67..69
                           - OpenParen (Token): "(" # 69..70
@@ -70,7 +70,7 @@ Tree:
                           - CloseParen (Token): ")" # 110..111
                           - Block (Rule): # 111..135 "{\n\t\t\tuint256 a = 1;\n\t\t}\n"
                               - OpenBrace (Token): "{" # 111..112
-                              - StatementsList (Rule): # 113..131 "\t\t\tuint256 a = 1;\n"
+                              - Statements (Rule): # 113..131 "\t\t\tuint256 a = 1;\n"
                                   - VariableDeclarationStatement (Rule): # 113..131 "\t\t\tuint256 a = 1;\n"
                                       - VariableDeclaration (Rule): # 113..125 "\t\t\tuint256 a"
                                           - TypeName (Rule): # 113..123 "\t\t\tuint256"
@@ -91,7 +91,7 @@ Tree:
                   - CloseParen (Token): ")" # 153..154
               - Block (Rule): # 154..210 " {\n\t\tuint256 x = 0;\n\t\tunchecked { invalid sequence..."
                   - OpenBrace (Token): "{" # 155..156
-                  - StatementsList (Rule): # 157..207 "\t\tuint256 x = 0;\n\t\tunchecked { invalid sequence }\n"
+                  - Statements (Rule): # 157..207 "\t\tuint256 x = 0;\n\t\tunchecked { invalid sequence }\n"
                       - VariableDeclarationStatement (Rule): # 157..174 "\t\tuint256 x = 0;\n"
                           - VariableDeclaration (Rule): # 157..168 "\t\tuint256 x"
                               - TypeName (Rule): # 157..166 "\t\tuint256"
@@ -106,7 +106,7 @@ Tree:
                           - UncheckedKeyword (Token): "unchecked" # 176..185
                           - Block (Rule): # 185..207 " { invalid sequence }\n"
                               - OpenBrace (Token): "{" # 186..187
-                              - StatementsList (Rule): # 187..205 " invalid sequence "
+                              - Statements (Rule): # 187..205 " invalid sequence "
                                   - VariableDeclarationStatement (Rule): # 187..205 " invalid sequence "
                                       - VariableDeclaration (Rule): # 187..204 " invalid sequence"
                                           - TypeName (Rule): # 187..195 " invalid"

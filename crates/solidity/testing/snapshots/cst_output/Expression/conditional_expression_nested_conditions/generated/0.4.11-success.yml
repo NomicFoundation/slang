@@ -14,7 +14,7 @@ Tree:
           - Expression (Rule): # 5..13 " (a + b)"
               - TupleExpression (Rule): # 5..13 " (a + b)"
                   - OpenParen (Token): "(" # 6..7
-                  - TupleValuesList (Rule): # 7..12 "a + b"
+                  - TupleValues (Rule): # 7..12 "a + b"
                       - Expression (Rule): # 7..12 "a + b"
                           - BinaryExpression (Rule): # 7..12 "a + b"
                               - Expression (Rule): # 7..8 "a"
@@ -27,7 +27,7 @@ Tree:
           - Expression (Rule): # 15..23 " (c + d)"
               - TupleExpression (Rule): # 15..23 " (c + d)"
                   - OpenParen (Token): "(" # 16..17
-                  - TupleValuesList (Rule): # 17..22 "c + d"
+                  - TupleValues (Rule): # 17..22 "c + d"
                       - Expression (Rule): # 17..22 "c + d"
                           - BinaryExpression (Rule): # 17..22 "c + d"
                               - Expression (Rule): # 17..18 "c"

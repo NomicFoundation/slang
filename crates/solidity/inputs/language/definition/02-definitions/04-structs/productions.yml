@@ -11,11 +11,11 @@
             reference: "OpenBrace"
           parser:
             optional:
-              reference: "StructMembersList"
+              reference: "StructMembers"
           close:
             reference: "CloseBrace"
 
-- name: "StructMembersList"
+- name: "StructMembers"
   kind: "Parser"
   unversioned:
     oneOrMore:

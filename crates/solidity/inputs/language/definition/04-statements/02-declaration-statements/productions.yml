@@ -11,7 +11,7 @@
                 reference: "OpenParen"
               parser:
                 optional:
-                  reference: "TupleMembersList"
+                  reference: "TupleMembers"
               close:
                 reference: "CloseParen"
           - reference: "Equal"
@@ -19,7 +19,7 @@
       terminator:
         reference: "Semicolon"
 
-- name: "TupleMembersList"
+- name: "TupleMembers"
   kind: "Parser"
   unversioned:
     separatedBy:

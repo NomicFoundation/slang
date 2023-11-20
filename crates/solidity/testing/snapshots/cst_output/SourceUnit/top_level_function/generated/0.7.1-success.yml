@@ -7,7 +7,7 @@ Errors: []
 
 Tree:
   - SourceUnit (Rule): # 0..18 "function foo() { }"
-      - SourceUnitMembersList (Rule): # 0..18 "function foo() { }"
+      - SourceUnitMembers (Rule): # 0..18 "function foo() { }"
           - FunctionDefinition (Rule): # 0..18 "function foo() { }"
               - FunctionKeyword (Token): "function" # 0..8
               - Identifier (Token): "foo" # 9..12

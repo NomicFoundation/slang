@@ -8,7 +8,7 @@ Errors: []
 Tree:
   - TupleDeconstructionStatement (Rule): # 0..27 "(, second, , fourth) = rhs;"
       - OpenParen (Token): "(" # 0..1
-      - TupleMembersList (Rule): # 1..19 ", second, , fourth"
+      - TupleMembers (Rule): # 1..19 ", second, , fourth"
           - TupleMember (Rule): [] # 1..1
           - Comma (Token): "," # 1..2
           - TupleMember (Rule): # 2..9 " second"

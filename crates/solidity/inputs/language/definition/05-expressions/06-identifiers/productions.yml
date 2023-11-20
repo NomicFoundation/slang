@@ -1,14 +1,5 @@
 # yaml-language-server: $schema=../../../generated/productions.schema.json
 
-- name: "IdentifierPathsList"
-  kind: "Parser"
-  unversioned:
-    separatedBy:
-      separator:
-        reference: "Comma"
-      parser:
-        reference: "IdentifierPath"
-
 - name: "IdentifierPath"
   kind: "Parser"
   unversioned:
@@ -17,15 +8,6 @@
         reference: "Identifier"
       separator:
         reference: "Period"
-
-- name: "IdentifiersList"
-  kind: "Parser"
-  unversioned:
-    separatedBy:
-      separator:
-        reference: "Comma"
-      parser:
-        reference: "Identifier"
 
 - name: "Identifier"
   kind: "Scanner"

@@ -31,12 +31,12 @@ Errors: []
 
 Tree:
   - SourceUnit (Rule): # 0..243 'pragma solidity 0.0.0;\n\nimport "foo.sol";\n\nusing A...'
-      - SourceUnitMembersList (Rule): # 0..243 'pragma solidity 0.0.0;\n\nimport "foo.sol";\n\nusing A...'
+      - SourceUnitMembers (Rule): # 0..243 'pragma solidity 0.0.0;\n\nimport "foo.sol";\n\nusing A...'
           - PragmaDirective (Rule): # 0..23 "pragma solidity 0.0.0;\n"
               - PragmaKeyword (Token): "pragma" # 0..6
               - VersionPragma (Rule): # 6..21 " solidity 0.0.0"
                   - SolidityKeyword (Token): "solidity" # 7..15
-                  - VersionPragmaExpressionsList (Rule): # 15..21 " 0.0.0"
+                  - VersionPragmaExpressions (Rule): # 15..21 " 0.0.0"
                       - VersionPragmaExpression (Rule): # 15..21 " 0.0.0"
                           - VersionPragmaSpecifier (Rule): # 15..21 " 0.0.0"
                               - VersionPragmaValue (Token): "0" # 16..17
@@ -100,7 +100,7 @@ Tree:
               - ParametersDeclaration (Rule): # 167..169 "()"
                   - OpenParen (Token): "(" # 167..168
                   - CloseParen (Token): ")" # 168..169
-              - FunctionAttributesList (Rule): # 169..176 " public"
+              - FunctionAttributes (Rule): # 169..176 " public"
                   - PublicKeyword (Token): "public" # 170..176
               - Block (Rule): # 176..181 " { }\n"
                   - OpenBrace (Token): "{" # 177..178
@@ -110,7 +110,7 @@ Tree:
               - Identifier (Token): "E1" # 188..190
               - ErrorParametersDeclaration (Rule): # 190..198 "(string)"
                   - OpenParen (Token): "(" # 190..191
-                  - ErrorParametersList (Rule): # 191..197 "string"
+                  - ErrorParameters (Rule): # 191..197 "string"
                       - ErrorParameter (Rule): # 191..197 "string"
                           - TypeName (Rule): # 191..197 "string"
                               - StringKeyword (Token): "string" # 191..197
@@ -127,7 +127,7 @@ Tree:
               - Identifier (Token): "E1" # 224..226
               - EventParametersDeclaration (Rule): # 226..241 "(uint256 value)"
                   - OpenParen (Token): "(" # 226..227
-                  - EventParametersList (Rule): # 227..240 "uint256 value"
+                  - EventParameters (Rule): # 227..240 "uint256 value"
                       - EventParameter (Rule): # 227..240 "uint256 value"
                           - TypeName (Rule): # 227..234 "uint256"
                               - UnsignedIntegerType (Token): "uint256" # 227..234

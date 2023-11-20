@@ -36,11 +36,11 @@
       - reference: "FunctionKeyword"
       - reference: "ParametersDeclaration"
       - optional:
-          reference: "FunctionTypeAttributesList"
+          reference: "FunctionTypeAttributes"
       - optional:
           reference: "ReturnsDeclaration"
 
-- name: "FunctionTypeAttributesList"
+- name: "FunctionTypeAttributes"
   kind: "Parser"
   unversioned:
     oneOrMore:

@@ -11,7 +11,7 @@
           - reference: "ReceiveKeyword"
       - reference: "ParametersDeclaration"
       - optional:
-          reference: "FunctionAttributesList"
+          reference: "FunctionAttributes"
       - optional:
           reference: "ReturnsDeclaration"
       - choice:
@@ -25,7 +25,7 @@
       - reference: "ReturnsKeyword"
       - reference: "ParametersDeclaration"
 
-- name: "FunctionAttributesList"
+- name: "FunctionAttributes"
   kind: "Parser"
   unversioned:
     oneOrMore:
@@ -84,9 +84,18 @@
               reference: "OpenParen"
             parser:
               optional:
-                reference: "IdentifierPathsList"
+                reference: "OverridePaths"
             close:
               reference: "CloseParen"
+
+- name: "OverridePaths"
+  kind: "Parser"
+  unversioned:
+    separatedBy:
+      separator:
+        reference: "Comma"
+      parser:
+        reference: "IdentifierPath"
 
 - name: "ParametersDeclaration"
   kind: "Parser"
@@ -96,11 +105,11 @@
         reference: "OpenParen"
       parser:
         optional:
-          reference: "ParametersList"
+          reference: "Parameters"
       close:
         reference: "CloseParen"
 
-- name: "ParametersList"
+- name: "Parameters"
   kind: "Parser"
   unversioned:
     separatedBy:
@@ -127,10 +136,10 @@
         - reference: "ConstructorKeyword"
         - reference: "ParametersDeclaration"
         - optional:
-            reference: "ConstructorAttributesList"
+            reference: "ConstructorAttributes"
         - reference: "Block"
 
-- name: "ConstructorAttributesList"
+- name: "ConstructorAttributes"
   kind: "Parser"
   versioned:
     0.4.22:
@@ -156,13 +165,13 @@
         - reference: "FunctionKeyword"
         - reference: "ParametersDeclaration"
         - optional:
-            reference: "UnnamedFunctionAttributesList"
+            reference: "UnnamedFunctionAttributes"
         - choice:
             - reference: "Semicolon"
             - reference: "Block"
     0.6.0: null
 
-- name: "UnnamedFunctionAttributesList"
+- name: "UnnamedFunctionAttributes"
   kind: "Parser"
   versioned:
     0.4.11:
@@ -192,14 +201,14 @@
         - reference: "FallbackKeyword"
         - reference: "ParametersDeclaration"
         - optional:
-            reference: "FallbackFunctionAttributesList"
+            reference: "FallbackFunctionAttributes"
         - optional:
             reference: "ReturnsDeclaration"
         - choice:
             - reference: "Semicolon"
             - reference: "Block"
 
-- name: "FallbackFunctionAttributesList"
+- name: "FallbackFunctionAttributes"
   kind: "Parser"
   versioned:
     0.6.0:
@@ -228,12 +237,12 @@
         - reference: "ReceiveKeyword"
         - reference: "ParametersDeclaration"
         - optional:
-            reference: "ReceiveFunctionAttributesList"
+            reference: "ReceiveFunctionAttributes"
         - choice:
             - reference: "Semicolon"
             - reference: "Block"
 
-- name: "ReceiveFunctionAttributesList"
+- name: "ReceiveFunctionAttributes"
   kind: "Parser"
   versioned:
     0.6.0:

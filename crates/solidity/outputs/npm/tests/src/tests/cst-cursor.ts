@@ -13,7 +13,7 @@ test("use cursor", () => {
   expectRule(cursor.node(), RuleKind.SourceUnit);
   expect(cursor.goToNext()).toBe(true);
 
-  expectRule(cursor.node(), RuleKind.SourceUnitMembersList);
+  expectRule(cursor.node(), RuleKind.SourceUnitMembers);
   expect(cursor.goToNext()).toBe(true);
 
   expectRule(cursor.node(), RuleKind.ConstantDefinition);

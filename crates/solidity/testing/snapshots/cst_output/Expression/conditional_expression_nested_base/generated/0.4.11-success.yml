@@ -11,7 +11,7 @@ Tree:
           - Expression (Rule): # 0..12 "(foo == bar)"
               - TupleExpression (Rule): # 0..12 "(foo == bar)"
                   - OpenParen (Token): "(" # 0..1
-                  - TupleValuesList (Rule): # 1..11 "foo == bar"
+                  - TupleValues (Rule): # 1..11 "foo == bar"
                       - Expression (Rule): # 1..11 "foo == bar"
                           - BinaryExpression (Rule): # 1..11 "foo == bar"
                               - Expression (Rule): # 1..4 "foo"

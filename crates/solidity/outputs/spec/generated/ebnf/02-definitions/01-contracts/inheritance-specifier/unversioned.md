@@ -1,5 +1,5 @@
 <!-- This file is generated automatically by infrastructure scripts. Please don't edit by hand. -->
 
 ```{ .ebnf .slang-ebnf #InheritanceSpecifier }
-InheritanceSpecifier = IS_KEYWORD InheritanceTypesList;
+InheritanceSpecifier = IS_KEYWORD InheritanceTypes;
 ```

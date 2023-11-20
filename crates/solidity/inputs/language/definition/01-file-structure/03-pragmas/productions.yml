@@ -36,9 +36,9 @@
   unversioned:
     sequence:
       - reference: "SolidityKeyword"
-      - reference: "VersionPragmaExpressionsList"
+      - reference: "VersionPragmaExpressions"
 
-- name: "VersionPragmaExpressionsList"
+- name: "VersionPragmaExpressions"
   kind: "Parser"
   unversioned:
     oneOrMore:

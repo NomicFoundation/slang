@@ -22,11 +22,11 @@
         reference: "OpenParen"
       parser:
         optional:
-          reference: "EventParametersList"
+          reference: "EventParameters"
       close:
         reference: "CloseParen"
 
-- name: "EventParametersList"
+- name: "EventParameters"
   kind: "Parser"
   unversioned:
     separatedBy:

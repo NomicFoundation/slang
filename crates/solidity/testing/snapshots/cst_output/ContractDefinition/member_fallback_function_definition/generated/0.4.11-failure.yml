@@ -22,7 +22,7 @@ Tree:
       - ContractKeyword (Token): "contract" # 0..8
       - Identifier (Token): "Sample" # 9..15
       - OpenBrace (Token): "{" # 16..17
-      - ContractMembersList (Rule): # 18..28 "  fallback"
+      - ContractMembers (Rule): # 18..28 "  fallback"
           - StateVariableDefinition (Rule): # 18..28 "  fallback"
               - TypeName (Rule): # 18..28 "  fallback"
                   - IdentifierPath (Rule): # 18..28 "  fallback"

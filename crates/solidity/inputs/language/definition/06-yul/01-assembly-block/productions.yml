@@ -18,11 +18,11 @@
       open:
         reference: "OpenParen"
       parser:
-        reference: "AssemblyFlagsList"
+        reference: "AssemblyFlags"
       close:
         reference: "CloseParen"
 
-- name: "AssemblyFlagsList"
+- name: "AssemblyFlags"
   kind: "Parser"
   unversioned:
     separatedBy:

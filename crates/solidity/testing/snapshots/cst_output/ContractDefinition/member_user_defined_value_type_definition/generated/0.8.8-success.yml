@@ -12,7 +12,7 @@ Tree:
       - ContractKeyword (Token): "contract" # 0..8
       - Identifier (Token): "Sample" # 9..15
       - OpenBrace (Token): "{" # 16..17
-      - ContractMembersList (Rule): # 18..38 "  type Foo is bool;\n"
+      - ContractMembers (Rule): # 18..38 "  type Foo is bool;\n"
           - UserDefinedValueTypeDefinition (Rule): # 18..38 "  type Foo is bool;\n"
               - TypeKeyword (Token): "type" # 20..24
               - Identifier (Token): "Foo" # 25..28

@@ -1,5 +1,5 @@
 <!-- This file is generated automatically by infrastructure scripts. Please don't edit by hand. -->
 
 ```{ .ebnf .slang-ebnf #YulSwitchStatement }
-YulSwitchStatement = SWITCH_KEYWORD YulExpression YulSwitchCasesList;
+YulSwitchStatement = SWITCH_KEYWORD YulExpression YulSwitchCases;
 ```

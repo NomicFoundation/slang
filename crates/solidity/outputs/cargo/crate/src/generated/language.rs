@@ -229,7 +229,7 @@ impl Language {
             ))?;
             seq.elem(
                 OptionalHelper::transform(ChoiceHelper::run(input, |mut choice, input| {
-                    let result = self.positional_arguments_list(input);
+                    let result = self.positional_arguments(input);
                     choice.consider(input, result)?;
                     let result = self.named_arguments_declaration(input);
                     choice.consider(input, result)?;
@@ -261,7 +261,7 @@ impl Language {
                 TokenKind::OpenBracket,
             ))?;
             seq.elem(
-                self.array_values_list(input)
+                self.array_values(input)
                     .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
                         self,
@@ -279,25 +279,41 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn array_values_list(&self, input: &mut ParserContext) -> ParserResult {
+    fn array_values(&self, input: &mut ParserContext) -> ParserResult {
         SeparatedHelper::run::<_, LexicalContextType::Default>(
             input,
             self,
             |input| self.expression(input),
             TokenKind::Comma,
         )
-        .with_kind(RuleKind::ArrayValuesList)
+        .with_kind(RuleKind::ArrayValues)
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn ascii_string_literals_list(&self, input: &mut ParserContext) -> ParserResult {
+    fn ascii_string_literals(&self, input: &mut ParserContext) -> ParserResult {
         OneOrMoreHelper::run(input, |input| {
             self.parse_token_with_trivia::<LexicalContextType::Default>(
                 input,
                 TokenKind::AsciiStringLiteral,
             )
         })
-        .with_kind(RuleKind::AsciiStringLiteralsList)
+        .with_kind(RuleKind::AsciiStringLiterals)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn assembly_flags(&self, input: &mut ParserContext) -> ParserResult {
+        SeparatedHelper::run::<_, LexicalContextType::Default>(
+            input,
+            self,
+            |input| {
+                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    input,
+                    TokenKind::AsciiStringLiteral,
+                )
+            },
+            TokenKind::Comma,
+        )
+        .with_kind(RuleKind::AssemblyFlags)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -310,7 +326,7 @@ impl Language {
                 TokenKind::OpenParen,
             ))?;
             seq.elem(
-                self.assembly_flags_list(input)
+                self.assembly_flags(input)
                     .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
                         self,
@@ -325,22 +341,6 @@ impl Language {
             seq.finish()
         })
         .with_kind(RuleKind::AssemblyFlagsDeclaration)
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn assembly_flags_list(&self, input: &mut ParserContext) -> ParserResult {
-        SeparatedHelper::run::<_, LexicalContextType::Default>(
-            input,
-            self,
-            |input| {
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
-                    input,
-                    TokenKind::AsciiStringLiteral,
-                )
-            },
-            TokenKind::Comma,
-        )
-        .with_kind(RuleKind::AssemblyFlagsList)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -375,7 +375,7 @@ impl Language {
                 TokenKind::OpenBrace,
             ))?;
             seq.elem(
-                OptionalHelper::transform(self.statements_list(input))
+                OptionalHelper::transform(self.statements(input))
                     .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
                         self,
@@ -454,13 +454,13 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn catch_clauses_list(&self, input: &mut ParserContext) -> ParserResult {
+    fn catch_clauses(&self, input: &mut ParserContext) -> ParserResult {
         if self.version_is_at_least_0_6_0 {
             OneOrMoreHelper::run(input, |input| self.catch_clause(input))
         } else {
             ParserResult::disabled()
         }
-        .with_kind(RuleKind::CatchClausesList)
+        .with_kind(RuleKind::CatchClauses)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -505,7 +505,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn constructor_attributes_list(&self, input: &mut ParserContext) -> ParserResult {
+    fn constructor_attributes(&self, input: &mut ParserContext) -> ParserResult {
         if self.version_is_at_least_0_4_22 {
             OneOrMoreHelper::run(input, |input| {
                 if self.version_is_at_least_0_4_22 {
@@ -536,7 +536,7 @@ impl Language {
         } else {
             ParserResult::disabled()
         }
-        .with_kind(RuleKind::ConstructorAttributesList)
+        .with_kind(RuleKind::ConstructorAttributes)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -549,7 +549,7 @@ impl Language {
                 ))?;
                 seq.elem(self.parameters_declaration(input))?;
                 seq.elem(OptionalHelper::transform(
-                    self.constructor_attributes_list(input),
+                    self.constructor_attributes(input),
                 ))?;
                 seq.elem(self.block(input))?;
                 seq.finish()
@@ -612,7 +612,7 @@ impl Language {
                     TokenKind::OpenBrace,
                 ))?;
                 seq.elem(
-                    OptionalHelper::transform(self.contract_members_list(input))
+                    OptionalHelper::transform(self.contract_members(input))
                         .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
                         self,
@@ -632,7 +632,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn contract_members_list(&self, input: &mut ParserContext) -> ParserResult {
+    fn contract_members(&self, input: &mut ParserContext) -> ParserResult {
         OneOrMoreHelper::run(input, |input| {
             ChoiceHelper::run(input, |mut choice, input| {
                 let result = self.using_directive(input);
@@ -678,7 +678,7 @@ impl Language {
                 choice.finish(input)
             })
         })
-        .with_kind(RuleKind::ContractMembersList)
+        .with_kind(RuleKind::ContractMembers)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -777,7 +777,7 @@ impl Language {
                     TokenKind::OpenBrace,
                 ))?;
                 seq.elem(
-                    self.deconstruction_import_symbols_list(input)
+                    self.deconstruction_import_symbols(input)
                         .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                             input,
                             self,
@@ -828,14 +828,14 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn deconstruction_import_symbols_list(&self, input: &mut ParserContext) -> ParserResult {
+    fn deconstruction_import_symbols(&self, input: &mut ParserContext) -> ParserResult {
         SeparatedHelper::run::<_, LexicalContextType::Default>(
             input,
             self,
             |input| self.deconstruction_import_symbol(input),
             TokenKind::Comma,
         )
-        .with_kind(RuleKind::DeconstructionImportSymbolsList)
+        .with_kind(RuleKind::DeconstructionImportSymbols)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -1052,13 +1052,13 @@ impl Language {
                     TokenKind::OpenBrace,
                 ))?;
                 seq.elem(
-                    OptionalHelper::transform(self.identifiers_list(input))
+                    OptionalHelper::transform(self.enum_members(input))
                         .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
-                        input,
-                        self,
-                        TokenKind::CloseBrace,
-                        RecoverFromNoMatch::Yes,
-                    ),
+                            input,
+                            self,
+                            TokenKind::CloseBrace,
+                            RecoverFromNoMatch::Yes,
+                        ),
                 )?;
                 seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
@@ -1069,6 +1069,22 @@ impl Language {
             seq.finish()
         })
         .with_kind(RuleKind::EnumDefinition)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn enum_members(&self, input: &mut ParserContext) -> ParserResult {
+        SeparatedHelper::run::<_, LexicalContextType::Default>(
+            input,
+            self,
+            |input| {
+                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    input,
+                    TokenKind::Identifier,
+                )
+            },
+            TokenKind::Comma,
+        )
+        .with_kind(RuleKind::EnumMembers)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -1127,6 +1143,21 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
+    fn error_parameters(&self, input: &mut ParserContext) -> ParserResult {
+        if self.version_is_at_least_0_8_4 {
+            SeparatedHelper::run::<_, LexicalContextType::Default>(
+                input,
+                self,
+                |input| self.error_parameter(input),
+                TokenKind::Comma,
+            )
+        } else {
+            ParserResult::disabled()
+        }
+        .with_kind(RuleKind::ErrorParameters)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
     fn error_parameters_declaration(&self, input: &mut ParserContext) -> ParserResult {
         if self.version_is_at_least_0_8_4 {
             SequenceHelper::run(|mut seq| {
@@ -1137,7 +1168,7 @@ impl Language {
                     TokenKind::OpenParen,
                 ))?;
                 seq.elem(
-                    OptionalHelper::transform(self.error_parameters_list(input))
+                    OptionalHelper::transform(self.error_parameters(input))
                         .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
                         self,
@@ -1155,21 +1186,6 @@ impl Language {
             ParserResult::disabled()
         }
         .with_kind(RuleKind::ErrorParametersDeclaration)
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn error_parameters_list(&self, input: &mut ParserContext) -> ParserResult {
-        if self.version_is_at_least_0_8_4 {
-            SeparatedHelper::run::<_, LexicalContextType::Default>(
-                input,
-                self,
-                |input| self.error_parameter(input),
-                TokenKind::Comma,
-            )
-        } else {
-            ParserResult::disabled()
-        }
-        .with_kind(RuleKind::ErrorParametersList)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -1232,6 +1248,17 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
+    fn event_parameters(&self, input: &mut ParserContext) -> ParserResult {
+        SeparatedHelper::run::<_, LexicalContextType::Default>(
+            input,
+            self,
+            |input| self.event_parameter(input),
+            TokenKind::Comma,
+        )
+        .with_kind(RuleKind::EventParameters)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
     fn event_parameters_declaration(&self, input: &mut ParserContext) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             let mut delim_guard = input.open_delim(TokenKind::CloseParen);
@@ -1241,13 +1268,13 @@ impl Language {
                 TokenKind::OpenParen,
             ))?;
             seq.elem(
-                OptionalHelper::transform(self.event_parameters_list(input))
+                OptionalHelper::transform(self.event_parameters(input))
                     .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
-                    input,
-                    self,
-                    TokenKind::CloseParen,
-                    RecoverFromNoMatch::Yes,
-                ),
+                        input,
+                        self,
+                        TokenKind::CloseParen,
+                        RecoverFromNoMatch::Yes,
+                    ),
             )?;
             seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
                 input,
@@ -1256,17 +1283,6 @@ impl Language {
             seq.finish()
         })
         .with_kind(RuleKind::EventParametersDeclaration)
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn event_parameters_list(&self, input: &mut ParserContext) -> ParserResult {
-        SeparatedHelper::run::<_, LexicalContextType::Default>(
-            input,
-            self,
-            |input| self.event_parameter(input),
-            TokenKind::Comma,
-        )
-        .with_kind(RuleKind::EventParametersList)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -1757,12 +1773,12 @@ impl Language {
                 });
                 choice.consider(input, result)?;
                 let result = ChoiceHelper::run(input, |mut choice, input| {
-                    let result = self.hex_string_literals_list(input);
+                    let result = self.hex_string_literals(input);
                     choice.consider(input, result)?;
-                    let result = self.ascii_string_literals_list(input);
+                    let result = self.ascii_string_literals(input);
                     choice.consider(input, result)?;
                     if self.version_is_at_least_0_7_0 {
-                        let result = self.unicode_string_literals_list(input);
+                        let result = self.unicode_string_literals(input);
                         choice.consider(input, result)?;
                     }
                     choice.finish(input)
@@ -1932,7 +1948,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn fallback_function_attributes_list(&self, input: &mut ParserContext) -> ParserResult {
+    fn fallback_function_attributes(&self, input: &mut ParserContext) -> ParserResult {
         if self.version_is_at_least_0_6_0 {
             OneOrMoreHelper::run(input, |input| {
                 if self.version_is_at_least_0_6_0 {
@@ -1975,7 +1991,7 @@ impl Language {
         } else {
             ParserResult::disabled()
         }
-        .with_kind(RuleKind::FallbackFunctionAttributesList)
+        .with_kind(RuleKind::FallbackFunctionAttributes)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -1988,7 +2004,7 @@ impl Language {
                 ))?;
                 seq.elem(self.parameters_declaration(input))?;
                 seq.elem(OptionalHelper::transform(
-                    self.fallback_function_attributes_list(input),
+                    self.fallback_function_attributes(input),
                 ))?;
                 seq.elem(OptionalHelper::transform(self.returns_declaration(input)))?;
                 seq.elem(ChoiceHelper::run(input, |mut choice, input| {
@@ -2134,7 +2150,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn function_attributes_list(&self, input: &mut ParserContext) -> ParserResult {
+    fn function_attributes(&self, input: &mut ParserContext) -> ParserResult {
         OneOrMoreHelper::run(input, |input| {
             ChoiceHelper::run(input, |mut choice, input| {
                 let result = self.modifier_invocation(input);
@@ -2193,7 +2209,7 @@ impl Language {
                 choice.finish(input)
             })
         })
-        .with_kind(RuleKind::FunctionAttributesList)
+        .with_kind(RuleKind::FunctionAttributes)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -2239,9 +2255,7 @@ impl Language {
                 choice.finish(input)
             }))?;
             seq.elem(self.parameters_declaration(input))?;
-            seq.elem(OptionalHelper::transform(
-                self.function_attributes_list(input),
-            ))?;
+            seq.elem(OptionalHelper::transform(self.function_attributes(input)))?;
             seq.elem(OptionalHelper::transform(self.returns_declaration(input)))?;
             seq.elem(ChoiceHelper::run(input, |mut choice, input| {
                 let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
@@ -2267,7 +2281,7 @@ impl Language {
             ))?;
             seq.elem(self.parameters_declaration(input))?;
             seq.elem(OptionalHelper::transform(
-                self.function_type_attributes_list(input),
+                self.function_type_attributes(input),
             ))?;
             seq.elem(OptionalHelper::transform(self.returns_declaration(input)))?;
             seq.finish()
@@ -2276,7 +2290,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn function_type_attributes_list(&self, input: &mut ParserContext) -> ParserResult {
+    fn function_type_attributes(&self, input: &mut ParserContext) -> ParserResult {
         OneOrMoreHelper::run(input, |input| {
             ChoiceHelper::run(input, |mut choice, input| {
                 let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
@@ -2317,7 +2331,7 @@ impl Language {
                 choice.finish(input)
             })
         })
-        .with_kind(RuleKind::FunctionTypeAttributesList)
+        .with_kind(RuleKind::FunctionTypeAttributes)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -2410,14 +2424,14 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn hex_string_literals_list(&self, input: &mut ParserContext) -> ParserResult {
+    fn hex_string_literals(&self, input: &mut ParserContext) -> ParserResult {
         OneOrMoreHelper::run(input, |input| {
             self.parse_token_with_trivia::<LexicalContextType::Default>(
                 input,
                 TokenKind::HexStringLiteral,
             )
         })
-        .with_kind(RuleKind::HexStringLiteralsList)
+        .with_kind(RuleKind::HexStringLiterals)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -2434,33 +2448,6 @@ impl Language {
             TokenKind::Period,
         )
         .with_kind(RuleKind::IdentifierPath)
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn identifier_paths_list(&self, input: &mut ParserContext) -> ParserResult {
-        SeparatedHelper::run::<_, LexicalContextType::Default>(
-            input,
-            self,
-            |input| self.identifier_path(input),
-            TokenKind::Comma,
-        )
-        .with_kind(RuleKind::IdentifierPathsList)
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn identifiers_list(&self, input: &mut ParserContext) -> ParserResult {
-        SeparatedHelper::run::<_, LexicalContextType::Default>(
-            input,
-            self,
-            |input| {
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
-                    input,
-                    TokenKind::Identifier,
-                )
-            },
-            TokenKind::Comma,
-        )
-        .with_kind(RuleKind::IdentifiersList)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -2661,7 +2648,7 @@ impl Language {
                 input,
                 TokenKind::IsKeyword,
             ))?;
-            seq.elem(self.inheritance_types_list(input))?;
+            seq.elem(self.inheritance_types(input))?;
             seq.finish()
         })
         .with_kind(RuleKind::InheritanceSpecifier)
@@ -2678,14 +2665,14 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn inheritance_types_list(&self, input: &mut ParserContext) -> ParserResult {
+    fn inheritance_types(&self, input: &mut ParserContext) -> ParserResult {
         SeparatedHelper::run::<_, LexicalContextType::Default>(
             input,
             self,
             |input| self.inheritance_type(input),
             TokenKind::Comma,
         )
-        .with_kind(RuleKind::InheritanceTypesList)
+        .with_kind(RuleKind::InheritanceTypes)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -2708,7 +2695,7 @@ impl Language {
                     TokenKind::OpenBrace,
                 ))?;
                 seq.elem(
-                    OptionalHelper::transform(self.interface_members_list(input))
+                    OptionalHelper::transform(self.interface_members(input))
                         .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
                         self,
@@ -2728,7 +2715,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn interface_members_list(&self, input: &mut ParserContext) -> ParserResult {
+    fn interface_members(&self, input: &mut ParserContext) -> ParserResult {
         OneOrMoreHelper::run(input, |input| {
             ChoiceHelper::run(input, |mut choice, input| {
                 let result = self.using_directive(input);
@@ -2774,7 +2761,7 @@ impl Language {
                 choice.finish(input)
             })
         })
-        .with_kind(RuleKind::InterfaceMembersList)
+        .with_kind(RuleKind::InterfaceMembers)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -2820,7 +2807,7 @@ impl Language {
                     TokenKind::OpenBrace,
                 ))?;
                 seq.elem(
-                    OptionalHelper::transform(self.library_members_list(input))
+                    OptionalHelper::transform(self.library_members(input))
                         .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
                         self,
@@ -2840,7 +2827,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn library_members_list(&self, input: &mut ParserContext) -> ParserResult {
+    fn library_members(&self, input: &mut ParserContext) -> ParserResult {
         OneOrMoreHelper::run(input, |input| {
             ChoiceHelper::run(input, |mut choice, input| {
                 let result = self.using_directive(input);
@@ -2886,7 +2873,7 @@ impl Language {
                 choice.finish(input)
             })
         })
-        .with_kind(RuleKind::LibraryMembersList)
+        .with_kind(RuleKind::LibraryMembers)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -3018,7 +3005,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn modifier_attributes_list(&self, input: &mut ParserContext) -> ParserResult {
+    fn modifier_attributes(&self, input: &mut ParserContext) -> ParserResult {
         OneOrMoreHelper::run(input, |input| {
             ChoiceHelper::run(input, |mut choice, input| {
                 let result = self.override_specifier(input);
@@ -3033,7 +3020,7 @@ impl Language {
                 choice.finish(input)
             })
         })
-        .with_kind(RuleKind::ModifierAttributesList)
+        .with_kind(RuleKind::ModifierAttributes)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -3050,9 +3037,7 @@ impl Language {
             seq.elem(OptionalHelper::transform(
                 self.parameters_declaration(input),
             ))?;
-            seq.elem(OptionalHelper::transform(
-                self.modifier_attributes_list(input),
-            ))?;
+            seq.elem(OptionalHelper::transform(self.modifier_attributes(input)))?;
             seq.elem(ChoiceHelper::run(input, |mut choice, input| {
                 let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
@@ -3098,6 +3083,17 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
+    fn named_arguments(&self, input: &mut ParserContext) -> ParserResult {
+        SeparatedHelper::run::<_, LexicalContextType::Default>(
+            input,
+            self,
+            |input| self.named_argument(input),
+            TokenKind::Comma,
+        )
+        .with_kind(RuleKind::NamedArguments)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
     fn named_arguments_declaration(&self, input: &mut ParserContext) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             let mut delim_guard = input.open_delim(TokenKind::CloseBrace);
@@ -3107,13 +3103,13 @@ impl Language {
                 TokenKind::OpenBrace,
             ))?;
             seq.elem(
-                OptionalHelper::transform(self.named_arguments_list(input))
+                OptionalHelper::transform(self.named_arguments(input))
                     .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
-                    input,
-                    self,
-                    TokenKind::CloseBrace,
-                    RecoverFromNoMatch::Yes,
-                ),
+                        input,
+                        self,
+                        TokenKind::CloseBrace,
+                        RecoverFromNoMatch::Yes,
+                    ),
             )?;
             seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
                 input,
@@ -3122,17 +3118,6 @@ impl Language {
             seq.finish()
         })
         .with_kind(RuleKind::NamedArgumentsDeclaration)
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn named_arguments_list(&self, input: &mut ParserContext) -> ParserResult {
-        SeparatedHelper::run::<_, LexicalContextType::Default>(
-            input,
-            self,
-            |input| self.named_argument(input),
-            TokenKind::Comma,
-        )
-        .with_kind(RuleKind::NamedArgumentsList)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -3177,6 +3162,17 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
+    fn override_paths(&self, input: &mut ParserContext) -> ParserResult {
+        SeparatedHelper::run::<_, LexicalContextType::Default>(
+            input,
+            self,
+            |input| self.identifier_path(input),
+            TokenKind::Comma,
+        )
+        .with_kind(RuleKind::OverridePaths)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
     fn override_specifier(&self, input: &mut ParserContext) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
@@ -3191,7 +3187,7 @@ impl Language {
                     TokenKind::OpenParen,
                 ))?;
                 seq.elem(
-                    OptionalHelper::transform(self.identifier_paths_list(input))
+                    OptionalHelper::transform(self.override_paths(input))
                         .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
                         self,
@@ -3249,6 +3245,17 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
+    fn parameters(&self, input: &mut ParserContext) -> ParserResult {
+        SeparatedHelper::run::<_, LexicalContextType::Default>(
+            input,
+            self,
+            |input| self.parameter(input),
+            TokenKind::Comma,
+        )
+        .with_kind(RuleKind::Parameters)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
     fn parameters_declaration(&self, input: &mut ParserContext) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             let mut delim_guard = input.open_delim(TokenKind::CloseParen);
@@ -3258,7 +3265,7 @@ impl Language {
                 TokenKind::OpenParen,
             ))?;
             seq.elem(
-                OptionalHelper::transform(self.parameters_list(input))
+                OptionalHelper::transform(self.parameters(input))
                     .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
                         self,
@@ -3273,17 +3280,6 @@ impl Language {
             seq.finish()
         })
         .with_kind(RuleKind::ParametersDeclaration)
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn parameters_list(&self, input: &mut ParserContext) -> ParserResult {
-        SeparatedHelper::run::<_, LexicalContextType::Default>(
-            input,
-            self,
-            |input| self.parameter(input),
-            TokenKind::Comma,
-        )
-        .with_kind(RuleKind::ParametersList)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -3310,14 +3306,14 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn positional_arguments_list(&self, input: &mut ParserContext) -> ParserResult {
+    fn positional_arguments(&self, input: &mut ParserContext) -> ParserResult {
         SeparatedHelper::run::<_, LexicalContextType::Default>(
             input,
             self,
             |input| self.expression(input),
             TokenKind::Comma,
         )
-        .with_kind(RuleKind::PositionalArgumentsList)
+        .with_kind(RuleKind::PositionalArguments)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -3357,7 +3353,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn receive_function_attributes_list(&self, input: &mut ParserContext) -> ParserResult {
+    fn receive_function_attributes(&self, input: &mut ParserContext) -> ParserResult {
         if self.version_is_at_least_0_6_0 {
             OneOrMoreHelper::run(input, |input| {
                 if self.version_is_at_least_0_6_0 {
@@ -3390,7 +3386,7 @@ impl Language {
         } else {
             ParserResult::disabled()
         }
-        .with_kind(RuleKind::ReceiveFunctionAttributesList)
+        .with_kind(RuleKind::ReceiveFunctionAttributes)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -3403,7 +3399,7 @@ impl Language {
                 ))?;
                 seq.elem(self.parameters_declaration(input))?;
                 seq.elem(OptionalHelper::transform(
-                    self.receive_function_attributes_list(input),
+                    self.receive_function_attributes(input),
                 ))?;
                 seq.elem(ChoiceHelper::run(input, |mut choice, input| {
                     let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
@@ -3496,9 +3492,7 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn source_unit(&self, input: &mut ParserContext) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem(OptionalHelper::transform(
-                self.source_unit_members_list(input),
-            ))?;
+            seq.elem(OptionalHelper::transform(self.source_unit_members(input)))?;
             seq.elem(OptionalHelper::transform(self.end_of_file_trivia(input)))?;
             seq.finish()
         })
@@ -3506,7 +3500,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn source_unit_members_list(&self, input: &mut ParserContext) -> ParserResult {
+    fn source_unit_members(&self, input: &mut ParserContext) -> ParserResult {
         OneOrMoreHelper::run(input, |input| {
             ChoiceHelper::run(input, |mut choice, input| {
                 let result = self.pragma_directive(input);
@@ -3556,11 +3550,11 @@ impl Language {
                 choice.finish(input)
             })
         })
-        .with_kind(RuleKind::SourceUnitMembersList)
+        .with_kind(RuleKind::SourceUnitMembers)
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn state_variable_attributes_list(&self, input: &mut ParserContext) -> ParserResult {
+    fn state_variable_attributes(&self, input: &mut ParserContext) -> ParserResult {
         OneOrMoreHelper::run(input, |input| {
             ChoiceHelper::run(input, |mut choice, input| {
                 let result = self.override_specifier(input);
@@ -3595,7 +3589,7 @@ impl Language {
                 choice.finish(input)
             })
         })
-        .with_kind(RuleKind::StateVariableAttributesList)
+        .with_kind(RuleKind::StateVariableAttributes)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -3605,7 +3599,7 @@ impl Language {
                 SequenceHelper::run(|mut seq| {
                     seq.elem(self.type_name(input))?;
                     seq.elem(OptionalHelper::transform(
-                        self.state_variable_attributes_list(input),
+                        self.state_variable_attributes(input),
                     ))?;
                     seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
@@ -3638,7 +3632,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn statements_list(&self, input: &mut ParserContext) -> ParserResult {
+    fn statements(&self, input: &mut ParserContext) -> ParserResult {
         OneOrMoreHelper::run(input, |input| {
             ChoiceHelper::run(input, |mut choice, input| {
                 let result = ChoiceHelper::run(input, |mut choice, input| {
@@ -3698,7 +3692,7 @@ impl Language {
                 choice.finish(input)
             })
         })
-        .with_kind(RuleKind::StatementsList)
+        .with_kind(RuleKind::Statements)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -3720,7 +3714,7 @@ impl Language {
                     TokenKind::OpenBrace,
                 ))?;
                 seq.elem(
-                    OptionalHelper::transform(self.struct_members_list(input))
+                    OptionalHelper::transform(self.struct_members(input))
                         .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
                         self,
@@ -3768,9 +3762,9 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn struct_members_list(&self, input: &mut ParserContext) -> ParserResult {
+    fn struct_members(&self, input: &mut ParserContext) -> ParserResult {
         OneOrMoreHelper::run(input, |input| self.struct_member(input))
-            .with_kind(RuleKind::StructMembersList)
+            .with_kind(RuleKind::StructMembers)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -3830,7 +3824,7 @@ impl Language {
                 seq.elem(self.expression(input))?;
                 seq.elem(OptionalHelper::transform(self.returns_declaration(input)))?;
                 seq.elem(self.block(input))?;
-                seq.elem(self.catch_clauses_list(input))?;
+                seq.elem(self.catch_clauses(input))?;
                 seq.finish()
             })
         } else {
@@ -3852,7 +3846,7 @@ impl Language {
                             TokenKind::OpenParen,
                         ))?;
                         seq.elem(
-                            OptionalHelper::transform(self.tuple_members_list(input))
+                            OptionalHelper::transform(self.tuple_members(input))
                                 .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                                 input,
                                 self,
@@ -3899,7 +3893,7 @@ impl Language {
                 TokenKind::OpenParen,
             ))?;
             seq.elem(
-                self.tuple_values_list(input)
+                self.tuple_values(input)
                     .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
                         self,
@@ -3990,25 +3984,25 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn tuple_members_list(&self, input: &mut ParserContext) -> ParserResult {
+    fn tuple_members(&self, input: &mut ParserContext) -> ParserResult {
         SeparatedHelper::run::<_, LexicalContextType::Default>(
             input,
             self,
             |input| self.tuple_member(input),
             TokenKind::Comma,
         )
-        .with_kind(RuleKind::TupleMembersList)
+        .with_kind(RuleKind::TupleMembers)
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn tuple_values_list(&self, input: &mut ParserContext) -> ParserResult {
+    fn tuple_values(&self, input: &mut ParserContext) -> ParserResult {
         SeparatedHelper::run::<_, LexicalContextType::Default>(
             input,
             self,
             |input| OptionalHelper::transform(self.expression(input)),
             TokenKind::Comma,
         )
-        .with_kind(RuleKind::TupleValuesList)
+        .with_kind(RuleKind::TupleValues)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -4179,7 +4173,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn unicode_string_literals_list(&self, input: &mut ParserContext) -> ParserResult {
+    fn unicode_string_literals(&self, input: &mut ParserContext) -> ParserResult {
         if self.version_is_at_least_0_7_0 {
             OneOrMoreHelper::run(input, |input| {
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
@@ -4190,11 +4184,11 @@ impl Language {
         } else {
             ParserResult::disabled()
         }
-        .with_kind(RuleKind::UnicodeStringLiteralsList)
+        .with_kind(RuleKind::UnicodeStringLiterals)
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn unnamed_function_attributes_list(&self, input: &mut ParserContext) -> ParserResult {
+    fn unnamed_function_attributes(&self, input: &mut ParserContext) -> ParserResult {
         if !self.version_is_at_least_0_6_0 {
             OneOrMoreHelper::run(input, |input| {
                 if !self.version_is_at_least_0_6_0 {
@@ -4232,7 +4226,7 @@ impl Language {
         } else {
             ParserResult::disabled()
         }
-        .with_kind(RuleKind::UnnamedFunctionAttributesList)
+        .with_kind(RuleKind::UnnamedFunctionAttributes)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -4245,7 +4239,7 @@ impl Language {
                 ))?;
                 seq.elem(self.parameters_declaration(input))?;
                 seq.elem(OptionalHelper::transform(
-                    self.unnamed_function_attributes_list(input),
+                    self.unnamed_function_attributes(input),
                 ))?;
                 seq.elem(ChoiceHelper::run(input, |mut choice, input| {
                     let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
@@ -4426,7 +4420,7 @@ impl Language {
                     TokenKind::OpenBrace,
                 ))?;
                 seq.elem(
-                    self.using_directive_symbols_list(input)
+                    self.using_directive_symbols(input)
                         .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                             input,
                             self,
@@ -4566,14 +4560,14 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn using_directive_symbols_list(&self, input: &mut ParserContext) -> ParserResult {
+    fn using_directive_symbols(&self, input: &mut ParserContext) -> ParserResult {
         SeparatedHelper::run::<_, LexicalContextType::Default>(
             input,
             self,
             |input| self.using_directive_symbol(input),
             TokenKind::Comma,
         )
-        .with_kind(RuleKind::UsingDirectiveSymbolsList)
+        .with_kind(RuleKind::UsingDirectiveSymbols)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -4664,7 +4658,7 @@ impl Language {
                     TokenKind::SolidityKeyword,
                 ),
             )?;
-            seq.elem(self.version_pragma_expressions_list(input))?;
+            seq.elem(self.version_pragma_expressions(input))?;
             seq.finish()
         })
         .with_kind(RuleKind::VersionPragma)
@@ -4786,9 +4780,9 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn version_pragma_expressions_list(&self, input: &mut ParserContext) -> ParserResult {
+    fn version_pragma_expressions(&self, input: &mut ParserContext) -> ParserResult {
         OneOrMoreHelper::run(input, |input| self.version_pragma_expression(input))
-            .with_kind(RuleKind::VersionPragmaExpressionsList)
+            .with_kind(RuleKind::VersionPragmaExpressions)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -4899,9 +4893,20 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
+    fn yul_arguments(&self, input: &mut ParserContext) -> ParserResult {
+        SeparatedHelper::run::<_, LexicalContextType::YulBlock>(
+            input,
+            self,
+            |input| self.yul_expression(input),
+            TokenKind::Comma,
+        )
+        .with_kind(RuleKind::YulArguments)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
     fn yul_assignment_statement(&self, input: &mut ParserContext) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem(self.yul_identifier_paths_list(input))?;
+            seq.elem(self.yul_identifier_paths(input))?;
             seq.elem(
                 self.parse_token_with_trivia::<LexicalContextType::YulBlock>(
                     input,
@@ -4926,13 +4931,13 @@ impl Language {
                 ),
             )?;
             seq.elem(
-                OptionalHelper::transform(self.yul_statements_list(input))
+                OptionalHelper::transform(self.yul_statements(input))
                     .recover_until_with_nested_delims::<_, LexicalContextType::YulBlock>(
-                    input,
-                    self,
-                    TokenKind::CloseBrace,
-                    RecoverFromNoMatch::Yes,
-                ),
+                        input,
+                        self,
+                        TokenKind::CloseBrace,
+                        RecoverFromNoMatch::Yes,
+                    ),
             )?;
             seq.elem(
                 self.parse_token_with_trivia::<LexicalContextType::YulBlock>(
@@ -4969,7 +4974,7 @@ impl Language {
                     TokenKind::LetKeyword,
                 ),
             )?;
-            seq.elem(self.yul_identifier_paths_list(input))?;
+            seq.elem(self.yul_identifier_paths(input))?;
             seq.elem(OptionalHelper::transform(SequenceHelper::run(|mut seq| {
                 seq.elem(
                     self.parse_token_with_trivia::<LexicalContextType::YulBlock>(
@@ -5001,7 +5006,7 @@ impl Language {
                         ),
                     )?;
                     seq.elem(
-                        OptionalHelper::transform(self.yul_expressions_list(input))
+                        OptionalHelper::transform(self.yul_arguments(input))
                             .recover_until_with_nested_delims::<_, LexicalContextType::YulBlock>(
                             input,
                             self,
@@ -5084,17 +5089,6 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn yul_expressions_list(&self, input: &mut ParserContext) -> ParserResult {
-        SeparatedHelper::run::<_, LexicalContextType::YulBlock>(
-            input,
-            self,
-            |input| self.yul_expression(input),
-            TokenKind::Comma,
-        )
-        .with_kind(RuleKind::YulExpressionsList)
-    }
-
-    #[allow(unused_assignments, unused_parens)]
     fn yul_for_statement(&self, input: &mut ParserContext) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(
@@ -5154,18 +5148,18 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn yul_identifier_paths_list(&self, input: &mut ParserContext) -> ParserResult {
+    fn yul_identifier_paths(&self, input: &mut ParserContext) -> ParserResult {
         SeparatedHelper::run::<_, LexicalContextType::YulBlock>(
             input,
             self,
             |input| self.yul_identifier_path(input),
             TokenKind::Comma,
         )
-        .with_kind(RuleKind::YulIdentifierPathsList)
+        .with_kind(RuleKind::YulIdentifierPaths)
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn yul_identifiers_list(&self, input: &mut ParserContext) -> ParserResult {
+    fn yul_identifiers(&self, input: &mut ParserContext) -> ParserResult {
         SeparatedHelper::run::<_, LexicalContextType::YulBlock>(
             input,
             self,
@@ -5177,7 +5171,7 @@ impl Language {
             },
             TokenKind::Comma,
         )
-        .with_kind(RuleKind::YulIdentifiersList)
+        .with_kind(RuleKind::YulIdentifiers)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -5221,13 +5215,13 @@ impl Language {
                 ),
             )?;
             seq.elem(
-                OptionalHelper::transform(self.yul_identifiers_list(input))
+                OptionalHelper::transform(self.yul_identifiers(input))
                     .recover_until_with_nested_delims::<_, LexicalContextType::YulBlock>(
-                    input,
-                    self,
-                    TokenKind::CloseParen,
-                    RecoverFromNoMatch::Yes,
-                ),
+                        input,
+                        self,
+                        TokenKind::CloseParen,
+                        RecoverFromNoMatch::Yes,
+                    ),
             )?;
             seq.elem(
                 self.parse_token_with_trivia::<LexicalContextType::YulBlock>(
@@ -5249,14 +5243,14 @@ impl Language {
                     TokenKind::MinusGreaterThan,
                 ),
             )?;
-            seq.elem(self.yul_identifiers_list(input))?;
+            seq.elem(self.yul_identifiers(input))?;
             seq.finish()
         })
         .with_kind(RuleKind::YulReturnsDeclaration)
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn yul_statements_list(&self, input: &mut ParserContext) -> ParserResult {
+    fn yul_statements(&self, input: &mut ParserContext) -> ParserResult {
         OneOrMoreHelper::run(input, |input| {
             ChoiceHelper::run(input, |mut choice, input| {
                 let result = self.yul_block(input);
@@ -5286,7 +5280,7 @@ impl Language {
                 choice.finish(input)
             })
         })
-        .with_kind(RuleKind::YulStatementsList)
+        .with_kind(RuleKind::YulStatements)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -5350,9 +5344,9 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn yul_switch_cases_list(&self, input: &mut ParserContext) -> ParserResult {
+    fn yul_switch_cases(&self, input: &mut ParserContext) -> ParserResult {
         OneOrMoreHelper::run(input, |input| self.yul_switch_case(input))
-            .with_kind(RuleKind::YulSwitchCasesList)
+            .with_kind(RuleKind::YulSwitchCases)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -5365,7 +5359,7 @@ impl Language {
                 ),
             )?;
             seq.elem(self.yul_expression(input))?;
-            seq.elem(self.yul_switch_cases_list(input))?;
+            seq.elem(self.yul_switch_cases(input))?;
             seq.finish()
         })
         .with_kind(RuleKind::YulSwitchStatement)
@@ -5949,30 +5943,28 @@ impl Language {
             ProductionKind::AddressType => Self::address_type.parse(self, input),
             ProductionKind::ArgumentsDeclaration => Self::arguments_declaration.parse(self, input),
             ProductionKind::ArrayExpression => Self::array_expression.parse(self, input),
-            ProductionKind::ArrayValuesList => Self::array_values_list.parse(self, input),
-            ProductionKind::AsciiStringLiteralsList => {
-                Self::ascii_string_literals_list.parse(self, input)
-            }
+            ProductionKind::ArrayValues => Self::array_values.parse(self, input),
+            ProductionKind::AsciiStringLiterals => Self::ascii_string_literals.parse(self, input),
+            ProductionKind::AssemblyFlags => Self::assembly_flags.parse(self, input),
             ProductionKind::AssemblyFlagsDeclaration => {
                 Self::assembly_flags_declaration.parse(self, input)
             }
-            ProductionKind::AssemblyFlagsList => Self::assembly_flags_list.parse(self, input),
             ProductionKind::AssemblyStatement => Self::assembly_statement.parse(self, input),
             ProductionKind::Block => Self::block.parse(self, input),
             ProductionKind::BreakStatement => Self::break_statement.parse(self, input),
             ProductionKind::CatchClause => Self::catch_clause.parse(self, input),
             ProductionKind::CatchClauseError => Self::catch_clause_error.parse(self, input),
-            ProductionKind::CatchClausesList => Self::catch_clauses_list.parse(self, input),
+            ProductionKind::CatchClauses => Self::catch_clauses.parse(self, input),
             ProductionKind::ConstantDefinition => Self::constant_definition.parse(self, input),
-            ProductionKind::ConstructorAttributesList => {
-                Self::constructor_attributes_list.parse(self, input)
+            ProductionKind::ConstructorAttributes => {
+                Self::constructor_attributes.parse(self, input)
             }
             ProductionKind::ConstructorDefinition => {
                 Self::constructor_definition.parse(self, input)
             }
             ProductionKind::ContinueStatement => Self::continue_statement.parse(self, input),
             ProductionKind::ContractDefinition => Self::contract_definition.parse(self, input),
-            ProductionKind::ContractMembersList => Self::contract_members_list.parse(self, input),
+            ProductionKind::ContractMembers => Self::contract_members.parse(self, input),
             ProductionKind::DecimalNumberExpression => {
                 Self::decimal_number_expression.parse(self, input)
             }
@@ -5980,90 +5972,82 @@ impl Language {
             ProductionKind::DeconstructionImportSymbol => {
                 Self::deconstruction_import_symbol.parse(self, input)
             }
-            ProductionKind::DeconstructionImportSymbolsList => {
-                Self::deconstruction_import_symbols_list.parse(self, input)
+            ProductionKind::DeconstructionImportSymbols => {
+                Self::deconstruction_import_symbols.parse(self, input)
             }
             ProductionKind::DeleteStatement => Self::delete_statement.parse(self, input),
             ProductionKind::DoWhileStatement => Self::do_while_statement.parse(self, input),
             ProductionKind::EmitStatement => Self::emit_statement.parse(self, input),
             ProductionKind::EndOfFileTrivia => Self::end_of_file_trivia.parse(self, input),
             ProductionKind::EnumDefinition => Self::enum_definition.parse(self, input),
+            ProductionKind::EnumMembers => Self::enum_members.parse(self, input),
             ProductionKind::ErrorDefinition => Self::error_definition.parse(self, input),
             ProductionKind::ErrorParameter => Self::error_parameter.parse(self, input),
+            ProductionKind::ErrorParameters => Self::error_parameters.parse(self, input),
             ProductionKind::ErrorParametersDeclaration => {
                 Self::error_parameters_declaration.parse(self, input)
             }
-            ProductionKind::ErrorParametersList => Self::error_parameters_list.parse(self, input),
             ProductionKind::EventDefinition => Self::event_definition.parse(self, input),
             ProductionKind::EventParameter => Self::event_parameter.parse(self, input),
+            ProductionKind::EventParameters => Self::event_parameters.parse(self, input),
             ProductionKind::EventParametersDeclaration => {
                 Self::event_parameters_declaration.parse(self, input)
             }
-            ProductionKind::EventParametersList => Self::event_parameters_list.parse(self, input),
             ProductionKind::ExperimentalPragma => Self::experimental_pragma.parse(self, input),
             ProductionKind::Expression => Self::expression.parse(self, input),
             ProductionKind::ExpressionStatement => Self::expression_statement.parse(self, input),
-            ProductionKind::FallbackFunctionAttributesList => {
-                Self::fallback_function_attributes_list.parse(self, input)
+            ProductionKind::FallbackFunctionAttributes => {
+                Self::fallback_function_attributes.parse(self, input)
             }
             ProductionKind::FallbackFunctionDefinition => {
                 Self::fallback_function_definition.parse(self, input)
             }
             ProductionKind::ForStatement => Self::for_statement.parse(self, input),
-            ProductionKind::FunctionAttributesList => {
-                Self::function_attributes_list.parse(self, input)
-            }
+            ProductionKind::FunctionAttributes => Self::function_attributes.parse(self, input),
             ProductionKind::FunctionCallOptions => Self::function_call_options.parse(self, input),
             ProductionKind::FunctionDefinition => Self::function_definition.parse(self, input),
             ProductionKind::FunctionType => Self::function_type.parse(self, input),
-            ProductionKind::FunctionTypeAttributesList => {
-                Self::function_type_attributes_list.parse(self, input)
+            ProductionKind::FunctionTypeAttributes => {
+                Self::function_type_attributes.parse(self, input)
             }
             ProductionKind::HexNumberExpression => Self::hex_number_expression.parse(self, input),
-            ProductionKind::HexStringLiteralsList => {
-                Self::hex_string_literals_list.parse(self, input)
-            }
+            ProductionKind::HexStringLiterals => Self::hex_string_literals.parse(self, input),
             ProductionKind::IdentifierPath => Self::identifier_path.parse(self, input),
-            ProductionKind::IdentifierPathsList => Self::identifier_paths_list.parse(self, input),
-            ProductionKind::IdentifiersList => Self::identifiers_list.parse(self, input),
             ProductionKind::IfStatement => Self::if_statement.parse(self, input),
             ProductionKind::ImportDirective => Self::import_directive.parse(self, input),
             ProductionKind::InheritanceSpecifier => Self::inheritance_specifier.parse(self, input),
             ProductionKind::InheritanceType => Self::inheritance_type.parse(self, input),
-            ProductionKind::InheritanceTypesList => Self::inheritance_types_list.parse(self, input),
+            ProductionKind::InheritanceTypes => Self::inheritance_types.parse(self, input),
             ProductionKind::InterfaceDefinition => Self::interface_definition.parse(self, input),
-            ProductionKind::InterfaceMembersList => Self::interface_members_list.parse(self, input),
+            ProductionKind::InterfaceMembers => Self::interface_members.parse(self, input),
             ProductionKind::LeadingTrivia => Self::leading_trivia.parse(self, input),
             ProductionKind::LibraryDefinition => Self::library_definition.parse(self, input),
-            ProductionKind::LibraryMembersList => Self::library_members_list.parse(self, input),
+            ProductionKind::LibraryMembers => Self::library_members.parse(self, input),
             ProductionKind::MappingKeyType => Self::mapping_key_type.parse(self, input),
             ProductionKind::MappingType => Self::mapping_type.parse(self, input),
             ProductionKind::MappingValueType => Self::mapping_value_type.parse(self, input),
-            ProductionKind::ModifierAttributesList => {
-                Self::modifier_attributes_list.parse(self, input)
-            }
+            ProductionKind::ModifierAttributes => Self::modifier_attributes.parse(self, input),
             ProductionKind::ModifierDefinition => Self::modifier_definition.parse(self, input),
             ProductionKind::ModifierInvocation => Self::modifier_invocation.parse(self, input),
             ProductionKind::NamedArgument => Self::named_argument.parse(self, input),
+            ProductionKind::NamedArguments => Self::named_arguments.parse(self, input),
             ProductionKind::NamedArgumentsDeclaration => {
                 Self::named_arguments_declaration.parse(self, input)
             }
-            ProductionKind::NamedArgumentsList => Self::named_arguments_list.parse(self, input),
             ProductionKind::NamedImport => Self::named_import.parse(self, input),
             ProductionKind::NewExpression => Self::new_expression.parse(self, input),
+            ProductionKind::OverridePaths => Self::override_paths.parse(self, input),
             ProductionKind::OverrideSpecifier => Self::override_specifier.parse(self, input),
             ProductionKind::Parameter => Self::parameter.parse(self, input),
+            ProductionKind::Parameters => Self::parameters.parse(self, input),
             ProductionKind::ParametersDeclaration => {
                 Self::parameters_declaration.parse(self, input)
             }
-            ProductionKind::ParametersList => Self::parameters_list.parse(self, input),
             ProductionKind::PathImport => Self::path_import.parse(self, input),
-            ProductionKind::PositionalArgumentsList => {
-                Self::positional_arguments_list.parse(self, input)
-            }
+            ProductionKind::PositionalArguments => Self::positional_arguments.parse(self, input),
             ProductionKind::PragmaDirective => Self::pragma_directive.parse(self, input),
-            ProductionKind::ReceiveFunctionAttributesList => {
-                Self::receive_function_attributes_list.parse(self, input)
+            ProductionKind::ReceiveFunctionAttributes => {
+                Self::receive_function_attributes.parse(self, input)
             }
             ProductionKind::ReceiveFunctionDefinition => {
                 Self::receive_function_definition.parse(self, input)
@@ -6072,19 +6056,17 @@ impl Language {
             ProductionKind::ReturnsDeclaration => Self::returns_declaration.parse(self, input),
             ProductionKind::RevertStatement => Self::revert_statement.parse(self, input),
             ProductionKind::SourceUnit => Self::source_unit.parse(self, input),
-            ProductionKind::SourceUnitMembersList => {
-                Self::source_unit_members_list.parse(self, input)
-            }
-            ProductionKind::StateVariableAttributesList => {
-                Self::state_variable_attributes_list.parse(self, input)
+            ProductionKind::SourceUnitMembers => Self::source_unit_members.parse(self, input),
+            ProductionKind::StateVariableAttributes => {
+                Self::state_variable_attributes.parse(self, input)
             }
             ProductionKind::StateVariableDefinition => {
                 Self::state_variable_definition.parse(self, input)
             }
-            ProductionKind::StatementsList => Self::statements_list.parse(self, input),
+            ProductionKind::Statements => Self::statements.parse(self, input),
             ProductionKind::StructDefinition => Self::struct_definition.parse(self, input),
             ProductionKind::StructMember => Self::struct_member.parse(self, input),
-            ProductionKind::StructMembersList => Self::struct_members_list.parse(self, input),
+            ProductionKind::StructMembers => Self::struct_members.parse(self, input),
             ProductionKind::ThrowStatement => Self::throw_statement.parse(self, input),
             ProductionKind::TrailingTrivia => Self::trailing_trivia.parse(self, input),
             ProductionKind::TryStatement => Self::try_statement.parse(self, input),
@@ -6093,16 +6075,16 @@ impl Language {
             }
             ProductionKind::TupleExpression => Self::tuple_expression.parse(self, input),
             ProductionKind::TupleMember => Self::tuple_member.parse(self, input),
-            ProductionKind::TupleMembersList => Self::tuple_members_list.parse(self, input),
-            ProductionKind::TupleValuesList => Self::tuple_values_list.parse(self, input),
+            ProductionKind::TupleMembers => Self::tuple_members.parse(self, input),
+            ProductionKind::TupleValues => Self::tuple_values.parse(self, input),
             ProductionKind::TypeExpression => Self::type_expression.parse(self, input),
             ProductionKind::TypeName => Self::type_name.parse(self, input),
             ProductionKind::UncheckedBlock => Self::unchecked_block.parse(self, input),
-            ProductionKind::UnicodeStringLiteralsList => {
-                Self::unicode_string_literals_list.parse(self, input)
+            ProductionKind::UnicodeStringLiterals => {
+                Self::unicode_string_literals.parse(self, input)
             }
-            ProductionKind::UnnamedFunctionAttributesList => {
-                Self::unnamed_function_attributes_list.parse(self, input)
+            ProductionKind::UnnamedFunctionAttributes => {
+                Self::unnamed_function_attributes.parse(self, input)
             }
             ProductionKind::UnnamedFunctionDefinition => {
                 Self::unnamed_function_definition.parse(self, input)
@@ -6115,8 +6097,8 @@ impl Language {
                 Self::using_directive_deconstruction.parse(self, input)
             }
             ProductionKind::UsingDirectiveSymbol => Self::using_directive_symbol.parse(self, input),
-            ProductionKind::UsingDirectiveSymbolsList => {
-                Self::using_directive_symbols_list.parse(self, input)
+            ProductionKind::UsingDirectiveSymbols => {
+                Self::using_directive_symbols.parse(self, input)
             }
             ProductionKind::VariableDeclaration => Self::variable_declaration.parse(self, input),
             ProductionKind::VariableDeclarationStatement => {
@@ -6126,13 +6108,14 @@ impl Language {
             ProductionKind::VersionPragmaExpression => {
                 Self::version_pragma_expression.parse(self, input)
             }
-            ProductionKind::VersionPragmaExpressionsList => {
-                Self::version_pragma_expressions_list.parse(self, input)
+            ProductionKind::VersionPragmaExpressions => {
+                Self::version_pragma_expressions.parse(self, input)
             }
             ProductionKind::VersionPragmaSpecifier => {
                 Self::version_pragma_specifier.parse(self, input)
             }
             ProductionKind::WhileStatement => Self::while_statement.parse(self, input),
+            ProductionKind::YulArguments => Self::yul_arguments.parse(self, input),
             ProductionKind::YulAssignmentStatement => {
                 Self::yul_assignment_statement.parse(self, input)
             }
@@ -6143,16 +6126,13 @@ impl Language {
                 Self::yul_declaration_statement.parse(self, input)
             }
             ProductionKind::YulExpression => Self::yul_expression.parse(self, input),
-            ProductionKind::YulExpressionsList => Self::yul_expressions_list.parse(self, input),
             ProductionKind::YulForStatement => Self::yul_for_statement.parse(self, input),
             ProductionKind::YulFunctionDefinition => {
                 Self::yul_function_definition.parse(self, input)
             }
             ProductionKind::YulIdentifierPath => Self::yul_identifier_path.parse(self, input),
-            ProductionKind::YulIdentifierPathsList => {
-                Self::yul_identifier_paths_list.parse(self, input)
-            }
-            ProductionKind::YulIdentifiersList => Self::yul_identifiers_list.parse(self, input),
+            ProductionKind::YulIdentifierPaths => Self::yul_identifier_paths.parse(self, input),
+            ProductionKind::YulIdentifiers => Self::yul_identifiers.parse(self, input),
             ProductionKind::YulIfStatement => Self::yul_if_statement.parse(self, input),
             ProductionKind::YulLeaveStatement => Self::yul_leave_statement.parse(self, input),
             ProductionKind::YulParametersDeclaration => {
@@ -6161,9 +6141,9 @@ impl Language {
             ProductionKind::YulReturnsDeclaration => {
                 Self::yul_returns_declaration.parse(self, input)
             }
-            ProductionKind::YulStatementsList => Self::yul_statements_list.parse(self, input),
+            ProductionKind::YulStatements => Self::yul_statements.parse(self, input),
             ProductionKind::YulSwitchCase => Self::yul_switch_case.parse(self, input),
-            ProductionKind::YulSwitchCasesList => Self::yul_switch_cases_list.parse(self, input),
+            ProductionKind::YulSwitchCases => Self::yul_switch_cases.parse(self, input),
             ProductionKind::YulSwitchStatement => Self::yul_switch_statement.parse(self, input),
         }
     }
