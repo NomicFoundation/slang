@@ -14,12 +14,13 @@ fn simple_contract() -> Result<()> {
 
     let parse_tree = parse_output.tree();
 
-    let children = if let Node::Rule(rule) = &parse_tree {
+    let rule = if let Node::Rule(rule) = parse_tree {
         assert_eq!(rule.kind, RuleKind::ContractDefinition);
-        &rule.children
+        rule
     } else {
         panic!("Unexpected parse_tree");
     };
+    let children = &rule.children;
 
     assert_eq!(children.len(), 6);
 
@@ -29,6 +30,8 @@ fn simple_contract() -> Result<()> {
     assert!(matches!(&children[3], Node::Rule(rule) if rule.kind == RuleKind::LeadingTrivia));
     assert!(matches!(&children[4], Node::Token(token) if token.kind == TokenKind::OpenBrace));
     assert!(matches!(&children[5], Node::Token(token) if token.kind == TokenKind::CloseBrace));
+
+    assert_eq!(rule.reconstruct(), "contract Foo {}");
 
     return Ok(());
 }

@@ -53,6 +53,14 @@ impl Node {
         Cursor::new(self.clone(), text_offset)
     }
 
+    /// Reconstructs the original source code from the parse tree.
+    pub fn reconstruct(self) -> String {
+        match self {
+            Self::Rule(rule) => rule.reconstruct(),
+            Self::Token(token) => token.text.clone(),
+        }
+    }
+
     pub fn as_rule(&self) -> Option<&Rc<RuleNode>> {
         match self {
             Self::Rule(node) => Some(node),
@@ -60,7 +68,21 @@ impl Node {
         }
     }
 
+    pub fn into_rule(self) -> Option<Rc<RuleNode>> {
+        match self {
+            Self::Rule(node) => Some(node),
+            _ => None,
+        }
+    }
+
     pub fn as_token(&self) -> Option<&Rc<TokenNode>> {
+        match self {
+            Self::Token(node) => Some(node),
+            _ => None,
+        }
+    }
+
+    pub fn into_token(self) -> Option<Rc<TokenNode>> {
         match self {
             Self::Token(node) => Some(node),
             _ => None,
@@ -112,5 +134,17 @@ impl RuleNode {
     /// Creates a [`Cursor`] that starts at the current node as the root and a given initial `text_offset`.
     pub fn cursor_with_offset(self: Rc<Self>, text_offset: TextIndex) -> Cursor {
         Cursor::new(Node::Rule(self), text_offset)
+    }
+
+    /// Reconstructs the original source code from the parse tree.
+    pub fn reconstruct(self: Rc<Self>) -> String {
+        let acc = String::with_capacity(self.text_len.utf8);
+
+        self.cursor_with_offset(TextIndex::ZERO)
+            .filter_map(Node::into_token)
+            .fold(acc, |mut acc, token| {
+                acc.push_str(&token.text);
+                acc
+            })
     }
 }

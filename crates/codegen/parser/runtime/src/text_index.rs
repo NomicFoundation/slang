@@ -12,6 +12,15 @@ pub struct TextIndex {
     pub char: usize,
 }
 
+impl TextIndex {
+    /// Shorthand for `TextIndex { utf8: 0, utf16: 0, char: 0 }`.
+    pub const ZERO: TextIndex = TextIndex {
+        utf8: 0,
+        utf16: 0,
+        char: 0,
+    };
+}
+
 impl PartialOrd for TextIndex {
     fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
         self.utf8.partial_cmp(&other.utf8)
