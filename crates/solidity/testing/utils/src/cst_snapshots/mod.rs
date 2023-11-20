@@ -1,11 +1,14 @@
-mod test_nodes;
-
-use std::{self, cmp::max, fmt::Write};
+use std::{cmp::max, fmt::Write};
 
 use anyhow::Result;
-use slang_solidity::{cursor::Cursor, text_index::TextRangeExtensions};
+use slang_solidity::{
+    cst,
+    cursor::Cursor,
+    kinds::TokenKind,
+    text_index::{TextRange, TextRangeExtensions},
+};
 
-use crate::cst_snapshots::test_nodes::{TestNode, TestNodeKind};
+use crate::node_extensions::NodeExtensions;
 
 pub struct CstSnapshots;
 
@@ -83,55 +86,122 @@ fn write_errors<W: Write>(w: &mut W, errors: &Vec<String>) -> Result<()> {
     return Ok(());
 }
 
-fn write_tree<W: Write>(w: &mut W, cursor: Cursor, source: &str) -> Result<()> {
+fn write_tree<W: Write>(w: &mut W, mut cursor: Cursor, source: &str) -> Result<()> {
     write!(w, "Tree:")?;
     writeln!(w)?;
 
-    let tree = TestNode::from_cst(cursor);
-    write_node(w, &tree, source, 0)?;
+    let significant_nodes_with_range = std::iter::from_fn(|| loop {
+        let (depth, range) = (cursor.depth(), cursor.text_range());
 
-    return Ok(());
+        // Skip whitespace and trivia rules containing only those tokens
+        match cursor.next() {
+            Some(cst::Node::Rule(rule))
+                if rule.is_trivia()
+                    && rule.children.iter().all(|node| {
+                        node.as_token_matching(|t| is_whitespace(t.kind)).is_some()
+                    }) =>
+            {
+                continue
+            }
+            Some(cst::Node::Token(token)) if is_whitespace(token.kind) => continue,
+            next => break next.map(|item| (item, depth, range)),
+        }
+    });
+
+    for (node, depth, range) in significant_nodes_with_range {
+        write_node(w, &node, &range, source, depth)?;
+    }
+
+    Ok(())
 }
 
 fn write_node<W: Write>(
     w: &mut W,
-    node: &TestNode,
+    node: &cst::Node,
+    range: &TextRange,
     source: &str,
     indentation: usize,
 ) -> Result<()> {
-    let range_string = format!("{range:?}", range = node.range.utf8());
+    let range_string = format!("{range:?}", range = range.utf8());
 
-    let (node_value, node_comment) = if node.range.is_empty() {
-        let preview = match node.kind {
-            TestNodeKind::Rule(_) => " []",
-            TestNodeKind::Token(_) | TestNodeKind::Trivia(_) => " \"\"",
+    let (node_value, node_comment) = if range.is_empty() {
+        let preview = match node {
+            cst::Node::Rule(_) => " []",
+            cst::Node::Token(_) => " \"\"",
         };
+
         (preview.to_owned(), range_string)
     } else {
-        let preview = node.render_preview(source, &node.range)?;
-        if node.children.is_empty() {
-            (
-                format!(" {preview}"),
-                format!("{range:?}", range = node.range.utf8()),
-            )
+        let preview = render_source_preview(source, &range)?;
+
+        if node.children().is_empty() {
+            // "foo" # 1..2
+            (format!(" {preview}"), range_string)
         } else {
-            (
-                "".to_owned(),
-                format!("{range:?} {preview}", range = node.range.utf8()),
-            )
+            // # 1..2 "foo"
+            ("".to_owned(), format!("{range_string} {preview}"))
         }
+    };
+
+    let name = match node {
+        cst::Node::Rule(rule) => format!("{:?} (Rule)", rule.kind),
+        cst::Node::Token(token) if is_comment(token.kind) => format!("{:?} (Trivia)", token.kind),
+        cst::Node::Token(token) => format!("{:?} (Token)", token.kind),
     };
 
     writeln!(
         w,
-        "{indentation}  - {kind}:{node_value} # {node_comment}",
+        "{indentation}  - {name}:{node_value} # {node_comment}",
         indentation = " ".repeat(4 * indentation),
-        kind = node.kind,
     )?;
 
-    for child in &node.children {
-        write_node(w, child, source, indentation + 1)?;
+    Ok(())
+}
+
+pub fn render_source_preview(source: &str, range: &TextRange) -> Result<String> {
+    let max_length = 50;
+    let length = range.end.utf8 - range.start.utf8;
+
+    // Trim long values:
+    let contents = source
+        .bytes()
+        .skip(range.start.utf8)
+        .take(length.clamp(0, max_length))
+        .collect();
+
+    // Add terminator if trimmed:
+    let mut contents = String::from_utf8(contents)?;
+    if length > max_length {
+        contents.push_str("...");
     }
 
-    return Ok(());
+    // Escape line breaks:
+    let contents = contents
+        .replace("\t", "\\t")
+        .replace("\r", "\\r")
+        .replace("\n", "\\n");
+
+    // Surround by quotes for use in yaml:
+    let contents = {
+        if contents.contains("\"") {
+            let contents = contents.replace("'", "''");
+            format!("'{contents}'")
+        } else {
+            let contents = contents.replace("\"", "\\\"");
+            format!("\"{contents}\"")
+        }
+    };
+
+    return Ok(contents);
+}
+
+fn is_whitespace(kind: TokenKind) -> bool {
+    matches!(kind, TokenKind::Whitespace | TokenKind::EndOfLine)
+}
+
+fn is_comment(kind: TokenKind) -> bool {
+    matches!(
+        kind,
+        TokenKind::SingleLineComment | TokenKind::MultilineComment
+    )
 }

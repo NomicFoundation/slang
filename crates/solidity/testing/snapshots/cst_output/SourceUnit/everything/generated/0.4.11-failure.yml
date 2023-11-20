@@ -60,5 +60,4 @@ Tree:
               - PathImport (Rule): # 30..40 ' "foo.sol"'
                   - AsciiStringLiteral (Token): '"foo.sol"' # 31..40
               - Semicolon (Token): ";" # 40..41
-      - EndOfFileTrivia (Rule): "\n" # 42..43
       - SKIPPED (Token): "using A for B;\n\ncontract C { }\n\ninterface I { }\n\nl..." # 43..243
