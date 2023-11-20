@@ -2949,8 +2949,7 @@ codegen_language_macros::compile!(Language(
                         Separated(
                             name = TupleMembersDeconstruction,
                             separated = TupleMemberDeconstruction,
-                            separator = Comma,
-                            allow_empty = true
+                            separator = Comma
                         ),
                         Struct(
                             name = TupleMemberDeconstruction,
