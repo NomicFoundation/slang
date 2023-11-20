@@ -107,3 +107,10 @@ impl From<Rc<TokenNode>> for Node {
         Self::Token(node)
     }
 }
+
+impl RuleNode {
+    /// Creates a [`Cursor`] that starts at the current node as the root and a given initial `text_offset`.
+    pub fn cursor_with_offset(self: Rc<Self>, text_offset: TextIndex) -> Cursor {
+        Cursor::new(Node::Rule(self), text_offset)
+    }
+}
