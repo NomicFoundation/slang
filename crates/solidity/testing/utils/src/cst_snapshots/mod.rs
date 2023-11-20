@@ -1,5 +1,3 @@
-mod test_nodes;
-
 use std::{cmp::max, fmt::Write};
 
 use anyhow::Result;
@@ -10,7 +8,7 @@ use slang_solidity::{
     text_index::{TextRange, TextRangeExtensions},
 };
 
-use crate::{cst_snapshots::test_nodes::TestNode, node_extensions::NodeExtensions};
+use crate::node_extensions::NodeExtensions;
 
 pub struct CstSnapshots;
 
@@ -99,16 +97,13 @@ fn write_tree<W: Write>(w: &mut W, mut cursor: Cursor, source: &str) -> Result<(
         match cursor.next() {
             Some(cst::Node::Rule(rule))
                 if rule.is_trivia()
-                    && rule.children.iter().all(|token| {
-                        token
-                            .as_token_with_kind(&[TokenKind::Whitespace, TokenKind::EndOfLine])
-                            .is_some()
+                    && rule.children.iter().all(|node| {
+                        node.as_token_matching(|t| is_whitespace(t.kind)).is_some()
                     }) =>
             {
                 continue
             }
-            Some(cst::Node::Token(token)) if token.kind == TokenKind::Whitespace => continue,
-            Some(cst::Node::Token(token)) if token.kind == TokenKind::EndOfLine => continue,
+            Some(cst::Node::Token(token)) if is_whitespace(token.kind) => continue,
             next => break next.map(|item| (item, depth, range)),
         }
     });
@@ -137,7 +132,7 @@ fn write_node<W: Write>(
 
         (preview.to_owned(), range_string)
     } else {
-        let preview = TestNode::render_source_preview(source, &range)?;
+        let preview = render_source_preview(source, &range)?;
 
         if node.children().is_empty() {
             // "foo" # 1..2
@@ -150,14 +145,7 @@ fn write_node<W: Write>(
 
     let name = match node {
         cst::Node::Rule(rule) => format!("{:?} (Rule)", rule.kind),
-        cst::Node::Token(token)
-            if matches!(
-                token.kind,
-                TokenKind::SingleLineComment | TokenKind::MultilineComment
-            ) =>
-        {
-            format!("{:?} (Trivia)", token.kind)
-        }
+        cst::Node::Token(token) if is_comment(token.kind) => format!("{:?} (Trivia)", token.kind),
         cst::Node::Token(token) => format!("{:?} (Token)", token.kind),
     };
 
@@ -168,4 +156,52 @@ fn write_node<W: Write>(
     )?;
 
     Ok(())
+}
+
+pub fn render_source_preview(source: &str, range: &TextRange) -> Result<String> {
+    let max_length = 50;
+    let length = range.end.utf8 - range.start.utf8;
+
+    // Trim long values:
+    let contents = source
+        .bytes()
+        .skip(range.start.utf8)
+        .take(length.clamp(0, max_length))
+        .collect();
+
+    // Add terminator if trimmed:
+    let mut contents = String::from_utf8(contents)?;
+    if length > max_length {
+        contents.push_str("...");
+    }
+
+    // Escape line breaks:
+    let contents = contents
+        .replace("\t", "\\t")
+        .replace("\r", "\\r")
+        .replace("\n", "\\n");
+
+    // Surround by quotes for use in yaml:
+    let contents = {
+        if contents.contains("\"") {
+            let contents = contents.replace("'", "''");
+            format!("'{contents}'")
+        } else {
+            let contents = contents.replace("\"", "\\\"");
+            format!("\"{contents}\"")
+        }
+    };
+
+    return Ok(contents);
+}
+
+fn is_whitespace(kind: TokenKind) -> bool {
+    matches!(kind, TokenKind::Whitespace | TokenKind::EndOfLine)
+}
+
+fn is_comment(kind: TokenKind) -> bool {
+    matches!(
+        kind,
+        TokenKind::SingleLineComment | TokenKind::MultilineComment
+    )
 }
