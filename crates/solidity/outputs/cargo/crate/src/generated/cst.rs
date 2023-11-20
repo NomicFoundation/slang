@@ -68,45 +68,31 @@ impl Node {
     }
 
     pub fn as_token_with_kind(&self, kinds: &[TokenKind]) -> Option<&Rc<TokenNode>> {
-        if let Node::Token(token_node) = self {
-            if kinds.contains(&token_node.kind) {
-                return Some(token_node);
-            }
-        }
-        return None;
+        self.as_token_matching(|token| kinds.contains(&token.kind))
     }
 
     pub fn as_token_matching<F: Fn(&Rc<TokenNode>) -> bool>(
         &self,
         predicate: F,
     ) -> Option<&Rc<TokenNode>> {
-        if let Node::Token(token_node) = self {
-            if predicate(&token_node) {
-                return Some(token_node);
-            }
+        match self {
+            Node::Token(token) if predicate(&token) => Some(token),
+            _ => None,
         }
-        return None;
     }
 
     pub fn as_rule_with_kind(&self, kinds: &[RuleKind]) -> Option<&Rc<RuleNode>> {
-        if let Node::Rule(rule_node) = self {
-            if kinds.contains(&rule_node.kind) {
-                return Some(rule_node);
-            }
-        }
-        return None;
+        self.as_rule_matching(|rule| kinds.contains(&rule.kind))
     }
 
     pub fn as_rule_matching<F: Fn(&Rc<RuleNode>) -> bool>(
         &self,
         predicate: F,
     ) -> Option<&Rc<RuleNode>> {
-        if let Node::Rule(rule_node) = self {
-            if predicate(&rule_node) {
-                return Some(rule_node);
-            }
+        match self {
+            Node::Rule(rule) if predicate(&rule) => Some(rule),
+            _ => None,
         }
-        return None;
     }
 }
 
