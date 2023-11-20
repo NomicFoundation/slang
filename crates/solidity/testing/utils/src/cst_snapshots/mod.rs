@@ -103,6 +103,7 @@ fn write_node<W: Write>(
 
     let (node_value, node_comment) = if node.range.is_empty() {
         let preview = match node.kind {
+            TestNodeKind::Rule(_) if !node.children.is_empty() => "",
             TestNodeKind::Rule(_) => " []",
             TestNodeKind::Token(_) | TestNodeKind::Trivia(_) => " \"\"",
         };
