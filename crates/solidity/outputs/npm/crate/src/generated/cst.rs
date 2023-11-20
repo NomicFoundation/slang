@@ -109,3 +109,15 @@ impl Node {
         return None;
     }
 }
+
+impl From<Rc<RuleNode>> for Node {
+    fn from(node: Rc<RuleNode>) -> Self {
+        Self::Rule(node)
+    }
+}
+
+impl From<Rc<TokenNode>> for Node {
+    fn from(node: Rc<TokenNode>) -> Self {
+        Self::Token(node)
+    }
+}
