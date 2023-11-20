@@ -144,11 +144,9 @@ impl Cursor {
         self.current.text_range()
     }
 
-    pub fn path_rule_nodes(&self) -> Vec<Rc<RuleNode>> {
-        self.path
-            .iter()
-            .map(|path_element| path_element.rule_node.clone())
-            .collect()
+    /// Returns an iterator over the current node's ancestors, starting from the cursor root node.
+    pub fn ancestors(&self) -> impl Iterator<Item = &Rc<RuleNode>> {
+        self.path.iter().map(|elem| &elem.rule_node)
     }
 
     /// Attempts to go to current node's next one, according to the DFS pre-order traversal.

@@ -67,8 +67,7 @@ impl Cursor {
     #[napi(ts_return_type = "Array<cst.RuleNode>")]
     pub fn path_rule_nodes(&self, env: Env) -> Vec<JsObject> {
         self.0
-            .path_rule_nodes()
-            .iter()
+            .ancestors()
             .map(|rust_rule_node| rust_rule_node.to_js(&env))
             .collect()
     }
