@@ -259,8 +259,7 @@ codegen_language_macros::compile!(Language(
                         Separated(
                             name = ImportDeconstructionFields,
                             separated = ImportDeconstructionField,
-                            separator = Comma,
-                            allow_empty = true
+                            separator = Comma
                         ),
                         Struct(
                             name = ImportDeconstructionField,

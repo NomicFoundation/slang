@@ -4,6 +4,11 @@ use crate::cst_output::runner::run;
 use anyhow::Result;
 
 #[test]
+fn destructure_import_empty() -> Result<()> {
+    return run("ImportDirective", "destructure_import_empty");
+}
+
+#[test]
 fn destructure_import_multiple() -> Result<()> {
     return run("ImportDirective", "destructure_import_multiple");
 }
