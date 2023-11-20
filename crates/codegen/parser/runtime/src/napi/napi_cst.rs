@@ -54,7 +54,7 @@ impl RuleNode {
     #[napi(ts_return_type = "cursor.Cursor")]
     pub fn create_cursor(&self, text_offset: TextIndex) -> Cursor {
         RustNode::Rule(self.0.clone())
-            .create_cursor((&text_offset).into())
+            .cursor_with_offset((&text_offset).into())
             .into()
     }
 }
@@ -88,7 +88,7 @@ impl TokenNode {
     #[napi(ts_return_type = "cursor.Cursor")]
     pub fn create_cursor(&self, text_offset: TextIndex) -> Cursor {
         RustNode::Token(self.0.clone())
-            .create_cursor((&text_offset).into())
+            .cursor_with_offset((&text_offset).into())
             .into()
     }
 }

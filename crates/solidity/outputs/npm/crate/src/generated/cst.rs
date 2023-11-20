@@ -48,7 +48,8 @@ impl Node {
         }
     }
 
-    pub fn create_cursor(&self, text_offset: TextIndex) -> Cursor {
+    /// Creates a [`Cursor`] that starts at the current node as the root and a given initial `text_offset`.
+    pub fn cursor_with_offset(&self, text_offset: TextIndex) -> Cursor {
         Cursor::new(self.clone(), text_offset)
     }
 

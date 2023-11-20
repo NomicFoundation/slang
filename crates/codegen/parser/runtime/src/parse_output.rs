@@ -21,6 +21,6 @@ impl ParseOutput {
 
     /// Creates a cursor that starts at the root of the parse tree.
     pub fn create_tree_cursor(&self) -> Cursor {
-        return self.parse_tree.create_cursor(Default::default());
+        return self.parse_tree.cursor_with_offset(Default::default());
     }
 }
