@@ -2271,15 +2271,14 @@ codegen_language_macros::compile!(Language(
                                 enum_keyword = Required(Terminal([EnumKeyword])),
                                 name = Required(Terminal([Identifier])),
                                 open_brace = Required(Terminal([OpenBrace])),
-                                members = Required(NonTerminal(EnumMembers)),
+                                members = Optional(kind = NonTerminal(EnumMembers)),
                                 close_brace = Required(Terminal([CloseBrace]))
                             )
                         ),
                         Separated(
                             name = EnumMembers,
                             separated = Identifier,
-                            separator = Comma,
-                            allow_empty = true
+                            separator = Comma
                         )
                     ]
                 ),
@@ -2368,16 +2367,11 @@ codegen_language_macros::compile!(Language(
                             ),
                             fields = (
                                 open_paren = Required(Terminal([OpenParen])),
-                                parameters = Required(NonTerminal(Parameters)),
+                                parameters = Optional(kind = NonTerminal(Parameters)),
                                 close_paren = Required(Terminal([CloseParen]))
                             )
                         ),
-                        Separated(
-                            name = Parameters,
-                            separated = Parameter,
-                            separator = Comma,
-                            allow_empty = true
-                        ),
+                        Separated(name = Parameters, separated = Parameter, separator = Comma),
                         Struct(
                             name = Parameter,
                             fields = (
@@ -2424,7 +2418,7 @@ codegen_language_macros::compile!(Language(
                             fields = (
                                 override_keyword = Required(Terminal([OverrideKeyword])),
                                 open_paren = Required(Terminal([OpenParen])),
-                                overridden = Required(NonTerminal(OverridePaths)),
+                                overridden = Optional(kind = NonTerminal(OverridePaths)),
                                 close_paren = Required(Terminal([CloseParen]))
                             )
                         ),
@@ -2677,7 +2671,7 @@ codegen_language_macros::compile!(Language(
                             ),
                             fields = (
                                 open_paren = Required(Terminal([OpenParen])),
-                                parameters = Required(NonTerminal(ErrorParameters)),
+                                parameters = Optional(kind = NonTerminal(ErrorParameters)),
                                 close_paren = Required(Terminal([CloseParen]))
                             )
                         ),
@@ -2685,8 +2679,7 @@ codegen_language_macros::compile!(Language(
                             name = ErrorParameters,
                             separated = ErrorParameter,
                             separator = Comma,
-                            enabled = From("0.8.4"),
-                            allow_empty = true
+                            enabled = From("0.8.4")
                         ),
                         Struct(
                             name = ErrorParameter,
@@ -3501,15 +3494,14 @@ codegen_language_macros::compile!(Language(
                             ),
                             fields = (
                                 open_paren = Required(Terminal([OpenParen])),
-                                arguments = Required(NonTerminal(PositionalArguments)),
+                                arguments = Optional(kind = NonTerminal(PositionalArguments)),
                                 close_paren = Required(Terminal([CloseParen]))
                             )
                         ),
                         Separated(
                             name = PositionalArguments,
                             separated = Expression,
-                            separator = Comma,
-                            allow_empty = true
+                            separator = Comma
                         ),
                         Struct(
                             name = NamedArgumentsDeclaration,
@@ -3536,15 +3528,14 @@ codegen_language_macros::compile!(Language(
                             ),
                             fields = (
                                 open_brace = Required(Terminal([OpenBrace])),
-                                arguments = Required(NonTerminal(NamedArguments)),
+                                arguments = Optional(kind = NonTerminal(NamedArguments)),
                                 close_brace = Required(Terminal([CloseBrace]))
                             )
                         ),
                         Separated(
                             name = NamedArguments,
                             separated = NamedArgument,
-                            separator = Comma,
-                            allow_empty = true
+                            separator = Comma
                         ),
                         Struct(
                             name = NamedArgument,
@@ -4036,8 +4027,7 @@ codegen_language_macros::compile!(Language(
                         Separated(
                             name = AssemblyFlags,
                             separated = AsciiStringLiteral,
-                            separator = Comma,
-                            allow_empty = true
+                            separator = Comma
                         ),
                         Struct(
                             name = YulBlock,
@@ -4097,15 +4087,14 @@ codegen_language_macros::compile!(Language(
                             ),
                             fields = (
                                 open_paren = Required(Terminal([OpenParen])),
-                                parameters = Required(NonTerminal(YulParameters)),
+                                parameters = Optional(kind = NonTerminal(YulParameters)),
                                 close_paren = Required(Terminal([CloseParen]))
                             )
                         ),
                         Separated(
                             name = YulParameters,
                             separated = YulIdentifier,
-                            separator = Comma,
-                            allow_empty = true
+                            separator = Comma
                         ),
                         Struct(
                             name = YulReturnsDeclaration,
@@ -4222,7 +4211,7 @@ codegen_language_macros::compile!(Language(
                                     ),
                                     fields = (
                                         open_paren = Required(Terminal([OpenParen])),
-                                        arguments = Required(NonTerminal(YulArguments)),
+                                        arguments = Optional(kind = NonTerminal(YulArguments)),
                                         close_paren = Required(Terminal([CloseParen]))
                                     )
                                 )]
@@ -4235,8 +4224,7 @@ codegen_language_macros::compile!(Language(
                         Separated(
                             name = YulArguments,
                             separated = YulExpression,
-                            separator = Comma,
-                            allow_empty = true
+                            separator = Comma
                         ),
                         Separated(
                             name = YulIdentifierPaths,
