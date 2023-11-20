@@ -1,0 +1,20 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ using {} for *;                                                                  │ 0..15
+
+Errors: # 1 total
+  - >
+    Error: Expected Identifier.
+       ╭─[crates/solidity/testing/snapshots/cst_output/UsingDirective/destructure_empty/input.sol:1:7]
+       │
+     1 │ using {} for *;
+       │       ────┬───  
+       │           ╰───── Error occurred here.
+    ───╯
+
+Tree:
+  - UsingDirective (Rule): # 0..16 "using {} for *;\n"
+      - UsingKeyword (Token): "using" # 0..5
+      - SKIPPED (Token): "{} for *" # 6..14
+      - Semicolon (Token): ";" # 14..15

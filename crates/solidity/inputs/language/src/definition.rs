@@ -323,8 +323,7 @@ codegen_language_macros::compile!(Language(
                             name = UsingDeconstructionFields,
                             separated = UsingDeconstructionField,
                             separator = Comma,
-                            enabled = From("0.8.13"),
-                            allow_empty = true
+                            enabled = From("0.8.13")
                         ),
                         Struct(
                             name = UsingDeconstructionField,
