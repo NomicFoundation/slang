@@ -146,6 +146,7 @@ impl Cursor {
         self.current.text_range()
     }
 
+    /// Returns the depth of the current node in the CST, i.e. the number of ancestors.
     pub fn depth(&self) -> usize {
         self.path.len()
     }

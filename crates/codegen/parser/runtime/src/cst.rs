@@ -46,6 +46,7 @@ impl Node {
         }
     }
 
+    /// Returns a slice of the children (not all descendants) of this node.
     pub fn children(&self) -> &[Node] {
         match self {
             Self::Rule(node) => &node.children,
