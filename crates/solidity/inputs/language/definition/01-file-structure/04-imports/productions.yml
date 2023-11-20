@@ -75,7 +75,7 @@
         parser:
           sequence:
             - reference: "UsingKeyword"
-            - reference: "UsingDirectivePath"
+            - reference: "IdentifierPath"
             - reference: "ForKeyword"
             - choice:
                 - reference: "Asterisk"
@@ -89,7 +89,7 @@
           sequence:
             - reference: "UsingKeyword"
             - choice:
-                - reference: "UsingDirectivePath"
+                - reference: "IdentifierPath"
                 - reference: "UsingDirectiveDeconstruction"
             - reference: "ForKeyword"
             - choice:
@@ -99,11 +99,6 @@
                 reference: "GlobalKeyword"
         terminator:
           reference: "Semicolon"
-
-- name: "UsingDirectivePath"
-  kind: "Parser"
-  unversioned:
-    reference: "IdentifierPath"
 
 - name: "UsingDirectiveDeconstruction"
   kind: "Parser"

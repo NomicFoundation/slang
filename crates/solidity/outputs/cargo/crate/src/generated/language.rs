@@ -4369,7 +4369,7 @@ impl Language {
                         TokenKind::UsingKeyword,
                     ))?;
                     seq.elem(ChoiceHelper::run(input, |mut choice, input| {
-                        let result = self.using_directive_path(input);
+                        let result = self.identifier_path(input);
                         choice.consider(input, result)?;
                         let result = self.using_directive_deconstruction(input);
                         choice.consider(input, result)?;
@@ -4444,12 +4444,6 @@ impl Language {
             ParserResult::disabled()
         }
         .with_kind(RuleKind::UsingDirectiveDeconstruction)
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn using_directive_path(&self, input: &mut ParserContext) -> ParserResult {
-        self.identifier_path(input)
-            .with_kind(RuleKind::UsingDirectivePath)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -6120,7 +6114,6 @@ impl Language {
             ProductionKind::UsingDirectiveDeconstruction => {
                 Self::using_directive_deconstruction.parse(self, input)
             }
-            ProductionKind::UsingDirectivePath => Self::using_directive_path.parse(self, input),
             ProductionKind::UsingDirectiveSymbol => Self::using_directive_symbol.parse(self, input),
             ProductionKind::UsingDirectiveSymbolsList => {
                 Self::using_directive_symbols_list.parse(self, input)

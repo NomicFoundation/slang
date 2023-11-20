@@ -8,9 +8,8 @@ Errors: []
 Tree:
   - UsingDirective (Rule): # 0..16 "using foo for *;"
       - UsingKeyword (Token): "using" # 0..5
-      - UsingDirectivePath (Rule): # 5..9 " foo"
-          - IdentifierPath (Rule): # 5..9 " foo"
-              - Identifier (Token): "foo" # 6..9
+      - IdentifierPath (Rule): # 5..9 " foo"
+          - Identifier (Token): "foo" # 6..9
       - ForKeyword (Token): "for" # 10..13
       - Asterisk (Token): "*" # 14..15
       - Semicolon (Token): ";" # 15..16
