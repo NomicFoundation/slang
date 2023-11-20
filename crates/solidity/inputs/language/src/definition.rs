@@ -37,13 +37,9 @@ codegen_language_macros::compile!(Language(
                     items = [
                         Struct(
                             name = SourceUnit,
-                            fields = (members = Required(NonTerminal(SourceUnitMembers)))
+                            fields = (members = Optional(kind = NonTerminal(SourceUnitMembers)))
                         ),
-                        Repeated(
-                            name = SourceUnitMembers,
-                            repeated = SourceUnitMember,
-                            allow_empty = true
-                        ),
+                        Repeated(name = SourceUnitMembers, repeated = SourceUnitMember),
                         Enum(
                             name = SourceUnitMember,
                             variants = [
@@ -2101,7 +2097,7 @@ codegen_language_macros::compile!(Language(
                                 name = Required(Terminal([Identifier])),
                                 inheritence = Optional(kind = NonTerminal(InheritanceSpecifier)),
                                 open_brace = Required(Terminal([OpenBrace])),
-                                members = Required(NonTerminal(ContractMembers)),
+                                members = Optional(kind = NonTerminal(ContractMembers)),
                                 close_brace = Required(Terminal([CloseBrace]))
                             )
                         ),
@@ -2124,11 +2120,7 @@ codegen_language_macros::compile!(Language(
                                 arguments = Optional(kind = NonTerminal(ArgumentsDeclaration))
                             )
                         ),
-                        Repeated(
-                            name = ContractMembers,
-                            repeated = ContractMember,
-                            allow_empty = true
-                        ),
+                        Repeated(name = ContractMembers, repeated = ContractMember),
                         Enum(
                             name = ContractMember,
                             variants = [
@@ -2190,15 +2182,11 @@ codegen_language_macros::compile!(Language(
                                 name = Required(Terminal([Identifier])),
                                 inheritence = Optional(kind = NonTerminal(InheritanceSpecifier)),
                                 open_brace = Required(Terminal([OpenBrace])),
-                                members = Required(NonTerminal(InterfaceMembers)),
+                                members = Optional(kind = NonTerminal(InterfaceMembers)),
                                 close_brace = Required(Terminal([CloseBrace]))
                             )
                         ),
-                        Repeated(
-                            name = InterfaceMembers,
-                            repeated = ContractMember,
-                            allow_empty = true
-                        )
+                        Repeated(name = InterfaceMembers, repeated = ContractMember)
                     ]
                 ),
                 Topic(
@@ -2214,15 +2202,11 @@ codegen_language_macros::compile!(Language(
                                 library_keyword = Required(Terminal([LibraryKeyword])),
                                 name = Required(Terminal([Identifier])),
                                 open_brace = Required(Terminal([OpenBrace])),
-                                members = Required(NonTerminal(LibraryMembers)),
+                                members = Optional(kind = NonTerminal(LibraryMembers)),
                                 close_brace = Required(Terminal([CloseBrace]))
                             )
                         ),
-                        Repeated(
-                            name = LibraryMembers,
-                            repeated = ContractMember,
-                            allow_empty = true
-                        )
+                        Repeated(name = LibraryMembers, repeated = ContractMember)
                     ]
                 ),
                 Topic(
@@ -2238,15 +2222,11 @@ codegen_language_macros::compile!(Language(
                                 struct_keyword = Required(Terminal([StructKeyword])),
                                 name = Required(Terminal([Identifier])),
                                 open_brace = Required(Terminal([OpenBrace])),
-                                members = Required(NonTerminal(StructMembers)),
+                                members = Optional(kind = NonTerminal(StructMembers)),
                                 close_brace = Required(Terminal([CloseBrace]))
                             )
                         ),
-                        Repeated(
-                            name = StructMembers,
-                            repeated = StructMember,
-                            allow_empty = true
-                        ),
+                        Repeated(name = StructMembers, repeated = StructMember),
                         Struct(
                             name = StructMember,
                             error_recovery = FieldsErrorRecovery(terminator = semicolon),
@@ -2306,7 +2286,7 @@ codegen_language_macros::compile!(Language(
                             error_recovery = FieldsErrorRecovery(terminator = semicolon),
                             fields = (
                                 type_name = Required(NonTerminal(TypeName)),
-                                attributes = Required(NonTerminal(StateVariableAttributes)),
+                                attributes = Optional(kind = NonTerminal(StateVariableAttributes)),
                                 name = Required(Terminal([Identifier])),
                                 value = Optional(kind = NonTerminal(StateVariableDefinitionValue)),
                                 semicolon = Required(Terminal([Semicolon]))
@@ -2321,8 +2301,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Repeated(
                             name = StateVariableAttributes,
-                            repeated = StateVariableAttribute,
-                            allow_empty = true
+                            repeated = StateVariableAttribute
                         ),
                         Enum(
                             name = StateVariableAttribute,
@@ -2354,7 +2333,7 @@ codegen_language_macros::compile!(Language(
                                     ReceiveKeyword
                                 ])),
                                 parameters = Required(NonTerminal(ParametersDeclaration)),
-                                attributes = Required(NonTerminal(FunctionAttributes)),
+                                attributes = Optional(kind = NonTerminal(FunctionAttributes)),
                                 returns = Optional(kind = NonTerminal(ReturnsDeclaration)),
                                 body = Required(NonTerminal(FunctionBody))
                             )
@@ -2380,11 +2359,7 @@ codegen_language_macros::compile!(Language(
                                 name = Optional(kind = Terminal([Identifier]))
                             )
                         ),
-                        Repeated(
-                            name = FunctionAttributes,
-                            repeated = FunctionAttribute,
-                            allow_empty = true
-                        ),
+                        Repeated(name = FunctionAttributes, repeated = FunctionAttribute),
                         Enum(
                             name = FunctionAttribute,
                             variants = [
@@ -2447,15 +2422,14 @@ codegen_language_macros::compile!(Language(
                             fields = (
                                 constructor_keyword = Required(Terminal([ConstructorKeyword])),
                                 parameters = Required(NonTerminal(ParametersDeclaration)),
-                                attributes = Required(NonTerminal(ConstructorAttributes)),
+                                attributes = Optional(kind = NonTerminal(ConstructorAttributes)),
                                 body = Required(NonTerminal(Block))
                             )
                         ),
                         Repeated(
                             name = ConstructorAttributes,
                             repeated = ConstructorAttribute,
-                            enabled = From("0.4.22"),
-                            allow_empty = true
+                            enabled = From("0.4.22")
                         ),
                         Enum(
                             name = ConstructorAttribute,
@@ -2473,15 +2447,15 @@ codegen_language_macros::compile!(Language(
                             fields = (
                                 function_keyword = Required(Terminal([FunctionKeyword])),
                                 parameters = Required(NonTerminal(ParametersDeclaration)),
-                                attributes = Required(NonTerminal(UnnamedFunctionAttributes)),
+                                attributes =
+                                    Optional(kind = NonTerminal(UnnamedFunctionAttributes)),
                                 body = Required(NonTerminal(FunctionBody))
                             )
                         ),
                         Repeated(
                             name = UnnamedFunctionAttributes,
                             repeated = UnnamedFunctionAttribute,
-                            enabled = Till("0.6.0"),
-                            allow_empty = true
+                            enabled = Till("0.6.0")
                         ),
                         Enum(
                             name = UnnamedFunctionAttribute,
@@ -2501,7 +2475,8 @@ codegen_language_macros::compile!(Language(
                             fields = (
                                 fallback_keyword = Required(Terminal([FallbackKeyword])),
                                 parameters = Required(NonTerminal(ParametersDeclaration)),
-                                attributes = Required(NonTerminal(FallbackFunctionAttributes)),
+                                attributes =
+                                    Optional(kind = NonTerminal(FallbackFunctionAttributes)),
                                 returns = Optional(kind = NonTerminal(ReturnsDeclaration)),
                                 body = Required(NonTerminal(FunctionBody))
                             )
@@ -2509,8 +2484,7 @@ codegen_language_macros::compile!(Language(
                         Repeated(
                             name = FallbackFunctionAttributes,
                             repeated = FallbackFunctionAttribute,
-                            enabled = From("0.6.0"),
-                            allow_empty = true
+                            enabled = From("0.6.0")
                         ),
                         Enum(
                             name = FallbackFunctionAttribute,
@@ -2531,15 +2505,15 @@ codegen_language_macros::compile!(Language(
                             fields = (
                                 receive_keyword = Required(Terminal([ReceiveKeyword])),
                                 parameters = Required(NonTerminal(ParametersDeclaration)),
-                                attributes = Required(NonTerminal(ReceiveFunctionAttributes)),
+                                attributes =
+                                    Optional(kind = NonTerminal(ReceiveFunctionAttributes)),
                                 body = Required(NonTerminal(FunctionBody))
                             )
                         ),
                         Repeated(
                             name = ReceiveFunctionAttributes,
                             repeated = ReceiveFunctionAttribute,
-                            enabled = From("0.6.0"),
-                            allow_empty = true
+                            enabled = From("0.6.0")
                         ),
                         Enum(
                             name = ReceiveFunctionAttribute,
@@ -2563,15 +2537,11 @@ codegen_language_macros::compile!(Language(
                                 modifier_keyword = Required(Terminal([ModifierKeyword])),
                                 name = Required(Terminal([Identifier])),
                                 parameters = Optional(kind = NonTerminal(ParametersDeclaration)),
-                                attributes = Required(NonTerminal(ModifierAttributes)),
+                                attributes = Optional(kind = NonTerminal(ModifierAttributes)),
                                 body = Required(NonTerminal(FunctionBody))
                             )
                         ),
-                        Repeated(
-                            name = ModifierAttributes,
-                            repeated = ModifierAttribute,
-                            allow_empty = true
-                        ),
+                        Repeated(name = ModifierAttributes, repeated = ModifierAttribute),
                         Enum(
                             name = ModifierAttribute,
                             variants = [
@@ -2730,14 +2700,13 @@ codegen_language_macros::compile!(Language(
                             fields = (
                                 function_keyword = Required(Terminal([FunctionKeyword])),
                                 parameters = Required(NonTerminal(ParametersDeclaration)),
-                                attributes = Required(NonTerminal(FunctionTypeAttributes)),
+                                attributes = Optional(kind = NonTerminal(FunctionTypeAttributes)),
                                 returns = Optional(kind = NonTerminal(ReturnsDeclaration))
                             )
                         ),
                         Repeated(
                             name = FunctionTypeAttributes,
-                            repeated = FunctionTypeAttribute,
-                            allow_empty = true
+                            repeated = FunctionTypeAttribute
                         ),
                         Enum(
                             name = FunctionTypeAttribute,
@@ -2848,11 +2817,11 @@ codegen_language_macros::compile!(Language(
                             ),
                             fields = (
                                 open_brace = Required(Terminal([OpenBrace])),
-                                statements = Required(NonTerminal(Statements)),
+                                statements = Optional(kind = NonTerminal(Statements)),
                                 close_brace = Required(Terminal([CloseBrace]))
                             )
                         ),
-                        Repeated(name = Statements, repeated = Statement, allow_empty = true),
+                        Repeated(name = Statements, repeated = Statement),
                         Enum(
                             name = Statement,
                             variants = [
@@ -4037,15 +4006,11 @@ codegen_language_macros::compile!(Language(
                             ),
                             fields = (
                                 open_brace = Required(Terminal([OpenBrace])),
-                                statements = Required(NonTerminal(YulStatements)),
+                                statements = Optional(kind = NonTerminal(YulStatements)),
                                 close_brace = Required(Terminal([CloseBrace]))
                             )
                         ),
-                        Repeated(
-                            name = YulStatements,
-                            repeated = YulStatement,
-                            allow_empty = true
-                        ),
+                        Repeated(name = YulStatements, repeated = YulStatement),
                         Enum(
                             name = YulStatement,
                             variants = [
