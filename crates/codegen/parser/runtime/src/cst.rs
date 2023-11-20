@@ -46,6 +46,13 @@ impl Node {
         }
     }
 
+    pub fn children(&self) -> &[Node] {
+        match self {
+            Self::Rule(node) => &node.children,
+            Self::Token(_) => &[],
+        }
+    }
+
     pub fn create_cursor(&self, text_offset: TextIndex) -> Cursor {
         Cursor::new(self.clone(), text_offset)
     }

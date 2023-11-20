@@ -95,7 +95,7 @@ impl TestNode {
         return visitor.stack.remove(0).remove(0);
     }
 
-    pub fn render_preview(&self, source: &str, range: &TextRange) -> Result<String> {
+    pub fn render_source_preview(source: &str, range: &TextRange) -> Result<String> {
         let max_length = 50;
         let length = range.end.utf8 - range.start.utf8;
 

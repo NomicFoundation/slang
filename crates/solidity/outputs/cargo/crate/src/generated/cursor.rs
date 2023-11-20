@@ -146,6 +146,10 @@ impl Cursor {
         self.current.text_range()
     }
 
+    pub fn depth(&self) -> usize {
+        self.path.len()
+    }
+
     /// Returns an iterator over the current node's ancestors, starting from the cursor root node.
     pub fn ancestors(&self) -> impl Iterator<Item = &Rc<RuleNode>> {
         self.path.iter().map(|elem| &elem.rule_node)

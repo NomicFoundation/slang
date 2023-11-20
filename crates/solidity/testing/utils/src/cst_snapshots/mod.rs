@@ -1,11 +1,16 @@
 mod test_nodes;
 
-use std::{self, cmp::max, fmt::Write};
+use std::{cmp::max, fmt::Write};
 
 use anyhow::Result;
-use slang_solidity::{cursor::Cursor, text_index::TextRangeExtensions};
+use slang_solidity::{
+    cst,
+    cursor::Cursor,
+    kinds::TokenKind,
+    text_index::{TextRange, TextRangeExtensions},
+};
 
-use crate::cst_snapshots::test_nodes::{TestNode, TestNodeKind};
+use crate::{cst_snapshots::test_nodes::TestNode, node_extensions::NodeExtensions};
 
 pub struct CstSnapshots;
 
@@ -83,55 +88,84 @@ fn write_errors<W: Write>(w: &mut W, errors: &Vec<String>) -> Result<()> {
     return Ok(());
 }
 
-fn write_tree<W: Write>(w: &mut W, cursor: Cursor, source: &str) -> Result<()> {
+fn write_tree<W: Write>(w: &mut W, mut cursor: Cursor, source: &str) -> Result<()> {
     write!(w, "Tree:")?;
     writeln!(w)?;
 
-    let tree = TestNode::from_cst(cursor);
-    write_node(w, &tree, source, 0)?;
+    let significant_nodes_with_range = std::iter::from_fn(|| loop {
+        let (depth, range) = (cursor.depth(), cursor.text_range());
 
-    return Ok(());
+        // Skip whitespace and trivia rules containing only those tokens
+        match cursor.next() {
+            Some(cst::Node::Rule(rule))
+                if rule.is_trivia()
+                    && rule.children.iter().all(|token| {
+                        token
+                            .as_token_with_kind(&[TokenKind::Whitespace, TokenKind::EndOfLine])
+                            .is_some()
+                    }) =>
+            {
+                continue
+            }
+            Some(cst::Node::Token(token)) if token.kind == TokenKind::Whitespace => continue,
+            Some(cst::Node::Token(token)) if token.kind == TokenKind::EndOfLine => continue,
+            next => break next.map(|item| (item, depth, range)),
+        }
+    });
+
+    for (node, depth, range) in significant_nodes_with_range {
+        write_node(w, &node, &range, source, depth)?;
+    }
+
+    Ok(())
 }
 
 fn write_node<W: Write>(
     w: &mut W,
-    node: &TestNode,
+    node: &cst::Node,
+    range: &TextRange,
     source: &str,
     indentation: usize,
 ) -> Result<()> {
-    let range_string = format!("{range:?}", range = node.range.utf8());
+    let range_string = format!("{range:?}", range = range.utf8());
 
-    let (node_value, node_comment) = if node.range.is_empty() {
-        let preview = match node.kind {
-            TestNodeKind::Rule(_) => " []",
-            TestNodeKind::Token(_) | TestNodeKind::Trivia(_) => " \"\"",
+    let (node_value, node_comment) = if range.is_empty() {
+        let preview = match node {
+            cst::Node::Rule(_) => " []",
+            cst::Node::Token(_) => " \"\"",
         };
+
         (preview.to_owned(), range_string)
     } else {
-        let preview = node.render_preview(source, &node.range)?;
-        if node.children.is_empty() {
-            (
-                format!(" {preview}"),
-                format!("{range:?}", range = node.range.utf8()),
-            )
+        let preview = TestNode::render_source_preview(source, &range)?;
+
+        if node.children().is_empty() {
+            // "foo" # 1..2
+            (format!(" {preview}"), range_string)
         } else {
-            (
-                "".to_owned(),
-                format!("{range:?} {preview}", range = node.range.utf8()),
-            )
+            // # 1..2 "foo"
+            ("".to_owned(), format!("{range_string} {preview}"))
         }
+    };
+
+    let name = match node {
+        cst::Node::Rule(rule) => format!("{:?} (Rule)", rule.kind),
+        cst::Node::Token(token)
+            if matches!(
+                token.kind,
+                TokenKind::SingleLineComment | TokenKind::MultilineComment
+            ) =>
+        {
+            format!("{:?} (Trivia)", token.kind)
+        }
+        cst::Node::Token(token) => format!("{:?} (Token)", token.kind),
     };
 
     writeln!(
         w,
-        "{indentation}  - {kind}:{node_value} # {node_comment}",
+        "{indentation}  - {name}:{node_value} # {node_comment}",
         indentation = " ".repeat(4 * indentation),
-        kind = node.kind,
     )?;
 
-    for child in &node.children {
-        write_node(w, child, source, indentation + 1)?;
-    }
-
-    return Ok(());
+    Ok(())
 }
