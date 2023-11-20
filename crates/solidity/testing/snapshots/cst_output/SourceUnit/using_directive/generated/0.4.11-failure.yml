@@ -58,5 +58,4 @@ Tree:
                                       - Period (Token): "." # 52..53
                                       - VersionPragmaValue (Token): "0" # 53..54
               - Semicolon (Token): ";" # 54..55
-      - EndOfFileTrivia (Rule): # 56..57 "\n"
       - SKIPPED (Token): "using EnvelopeUtils for Envelope global;\nusing Tra..." # 57..793

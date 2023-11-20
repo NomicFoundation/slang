@@ -131,5 +131,4 @@ Tree:
               - IsKeyword (Token): "is" # 208..210
               - BoolKeyword (Token): "bool" # 211..215
               - Semicolon (Token): ";" # 215..216
-      - EndOfFileTrivia (Rule): # 217..218 "\n"
       - SKIPPED (Token): "event E1(uint256 value);\n" # 218..243
