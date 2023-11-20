@@ -2415,12 +2415,18 @@ codegen_language_macros::compile!(Language(
                         ),
                         Struct(
                             name = OverrideSpecifier,
+                            fields = (
+                                override_keyword = Required(Terminal([OverrideKeyword])),
+                                overriden = Optional(kind = NonTerminal(OverridePathsDeclaration))
+                            )
+                        ),
+                        Struct(
+                            name = OverridePathsDeclaration,
                             error_recovery = FieldsErrorRecovery(
                                 delimiters =
                                     FieldDelimiters(open = open_paren, close = close_paren)
                             ),
                             fields = (
-                                override_keyword = Required(Terminal([OverrideKeyword])),
                                 open_paren = Required(Terminal([OpenParen])),
                                 overridden = Required(NonTerminal(OverridePaths)),
                                 close_paren = Required(Terminal([CloseParen]))

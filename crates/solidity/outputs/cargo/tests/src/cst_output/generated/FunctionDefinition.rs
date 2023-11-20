@@ -12,3 +12,8 @@ fn constant_state_mutability() -> Result<()> {
 fn from_contextual_keyword() -> Result<()> {
     return run("FunctionDefinition", "from_contextual_keyword");
 }
+
+#[test]
+fn overriden() -> Result<()> {
+    return run("FunctionDefinition", "overriden");
+}
