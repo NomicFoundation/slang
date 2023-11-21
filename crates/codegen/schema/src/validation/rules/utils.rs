@@ -3,9 +3,5 @@ pub fn is_a_keyword_scanner(reference_name: &str) -> bool {
     // In the meantime, let's just skip them from this validation.
     // https://github.com/NomicFoundation/slang/issues/505
 
-    return match reference_name {
-        "BytesKeyword" | "FixedKeyword" | "UfixedKeyword" | "IntKeyword" | "UintKeyword" => true,
-        keyword if keyword.contains("Keyword") || keyword.contains("ReservedWord") => true,
-        _ => false,
-    };
+    reference_name.contains("Keyword") || reference_name.contains("ReservedWord")
 }
