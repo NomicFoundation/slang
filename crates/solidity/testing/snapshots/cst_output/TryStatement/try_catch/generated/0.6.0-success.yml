@@ -22,7 +22,7 @@ Tree:
       - Block (Rule): # 9..12 " {}"
           - OpenBrace (Token): "{" # 10..11
           - CloseBrace (Token): "}" # 11..12
-      - CatchClausesList (Rule): # 12..21 " catch {}"
+      - CatchClauses (Rule): # 12..21 " catch {}"
           - CatchClause (Rule): # 12..21 " catch {}"
               - CatchKeyword (Token): "catch" # 13..18
               - Block (Rule): # 18..21 " {}"

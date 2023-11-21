@@ -15,12 +15,12 @@ Tree:
       - ContractKeyword (Token): "contract" # 0..8
       - Identifier (Token): "Sample" # 9..15
       - OpenBrace (Token): "{" # 16..17
-      - ContractMembersList (Rule): # 18..59 "  struct S {\n    uint a;\n    uint b;\n  }\n"
+      - ContractMembers (Rule): # 18..59 "  struct S {\n    uint a;\n    uint b;\n  }\n"
           - StructDefinition (Rule): # 18..59 "  struct S {\n    uint a;\n    uint b;\n  }\n"
               - StructKeyword (Token): "struct" # 20..26
               - Identifier (Token): "S" # 27..28
               - OpenBrace (Token): "{" # 29..30
-              - StructMembersList (Rule): # 31..55 "    uint a;\n    uint b;\n"
+              - StructMembers (Rule): # 31..55 "    uint a;\n    uint b;\n"
                   - StructMember (Rule): # 31..43 "    uint a;\n"
                       - TypeName (Rule): # 31..39 "    uint"
                           - UnsignedIntegerType (Token): "uint" # 35..39

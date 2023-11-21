@@ -1,0 +1,17 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ unicode"emoji 😃"happy                                                            │ 0..24
+
+Errors: # 1 total
+  - >
+    Error: Expected UnicodeStringLiteral.
+       ╭─[crates/solidity/testing/snapshots/cst_output/UnicodeStringLiterals/single_trailing_ident/input.sol:1:20]
+       │
+     1 │ ╭─▶ unicode"emoji 😃"happy
+    ───╯
+
+Tree:
+  - UnicodeStringLiterals (Rule): # 0..25 'unicode"emoji 😃"happy\n'
+      - UnicodeStringLiteral (Token): 'unicode"emoji 😃"' # 0..19
+      - SKIPPED (Token): "happy\n" # 19..25

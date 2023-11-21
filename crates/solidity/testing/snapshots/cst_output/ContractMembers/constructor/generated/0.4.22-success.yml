@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ constructor() public {}                                                          │ 0..23
+
+Errors: []
+
+Tree:
+  - ContractMembers (Rule): # 0..24 "constructor() public {}\n"
+      - ConstructorDefinition (Rule): # 0..24 "constructor() public {}\n"
+          - ConstructorKeyword (Token): "constructor" # 0..11
+          - ParametersDeclaration (Rule): # 11..13 "()"
+              - OpenParen (Token): "(" # 11..12
+              - CloseParen (Token): ")" # 12..13
+          - ConstructorAttributes (Rule): # 13..20 " public"
+              - PublicKeyword (Token): "public" # 14..20
+          - Block (Rule): # 20..24 " {}\n"
+              - OpenBrace (Token): "{" # 21..22
+              - CloseBrace (Token): "}" # 22..23

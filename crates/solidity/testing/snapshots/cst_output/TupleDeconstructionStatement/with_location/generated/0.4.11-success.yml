@@ -8,7 +8,7 @@ Errors: []
 Tree:
   - TupleDeconstructionStatement (Rule): # 0..47 "(memory with_location, without_location) = rhs;"
       - OpenParen (Token): "(" # 0..1
-      - TupleMembersList (Rule): # 1..39 "memory with_location, without_location"
+      - TupleMembers (Rule): # 1..39 "memory with_location, without_location"
           - TupleMember (Rule): # 1..21 "memory with_location"
               - MemoryKeyword (Token): "memory" # 1..7
               - Identifier (Token): "with_location" # 8..21

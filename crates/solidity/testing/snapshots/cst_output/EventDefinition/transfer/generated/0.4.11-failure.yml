@@ -19,7 +19,7 @@ Tree:
       - Identifier (Token): "Transfer" # 6..14
       - EventParametersDeclaration (Rule): # 14..71 "(address indexed from, address indexed to, uint256..."
           - OpenParen (Token): "(" # 14..15
-          - EventParametersList (Rule): # 15..30 "address indexed"
+          - EventParameters (Rule): # 15..30 "address indexed"
               - EventParameter (Rule): # 15..30 "address indexed"
                   - TypeName (Rule): # 15..22 "address"
                       - AddressType (Rule): # 15..22 "address"

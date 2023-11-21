@@ -11,7 +11,7 @@
                 reference: "OpenParen"
               parser:
                 optional:
-                  reference: "TupleMembersList"
+                  reference: "TupleMembers"
               close:
                 reference: "CloseParen"
           - reference: "Equal"
@@ -19,7 +19,7 @@
       terminator:
         reference: "Semicolon"
 
-- name: "TupleMembersList"
+- name: "TupleMembers"
   kind: "Parser"
   unversioned:
     separatedBy:
@@ -49,7 +49,10 @@
     terminatedBy:
       parser:
         sequence:
-          - reference: "VariableDeclaration"
+          - reference: "VariableDeclarationType"
+          - optional:
+              reference: "DataLocation"
+          - reference: "Identifier"
           - optional:
               sequence:
                 - reference: "Equal"
@@ -57,24 +60,17 @@
       terminator:
         reference: "Semicolon"
 
-- name: "VariableDeclaration"
+- name: "VariableDeclarationType"
   kind: "Parser"
+  inlined: true
   versioned:
     0.4.11:
-      sequence:
-        - choice:
-            - reference: "VarKeyword"
-            - reference: "TypeName"
-        - optional:
-            reference: "DataLocation"
-        - reference: "Identifier"
+      choice:
+        - reference: "VarKeyword"
+        - reference: "TypeName"
     0.5.0:
       # removed "VarKeyword"
-      sequence:
-        - reference: "TypeName"
-        - optional:
-            reference: "DataLocation"
-        - reference: "Identifier"
+      reference: "TypeName"
 
 - name: "DataLocation"
   kind: "Parser"

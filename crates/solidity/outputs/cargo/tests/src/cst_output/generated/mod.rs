@@ -2,7 +2,7 @@
 
 use semver::Version;
 #[allow(non_snake_case)]
-mod AsciiStringLiteralsList;
+mod AsciiStringLiterals;
 #[allow(non_snake_case)]
 mod AssemblyStatement;
 #[allow(non_snake_case)]
@@ -16,7 +16,7 @@ mod ConstructorDefinition;
 #[allow(non_snake_case)]
 mod ContractDefinition;
 #[allow(non_snake_case)]
-mod ContractMembersList;
+mod ContractMembers;
 #[allow(non_snake_case)]
 mod DecimalNumberExpression;
 #[allow(non_snake_case)]
@@ -36,7 +36,7 @@ mod FunctionDefinition;
 #[allow(non_snake_case)]
 mod HexNumberExpression;
 #[allow(non_snake_case)]
-mod HexStringLiteralsList;
+mod HexStringLiterals;
 #[allow(non_snake_case)]
 mod ImportDirective;
 #[allow(non_snake_case)]
@@ -54,7 +54,7 @@ mod ReturnStatement;
 #[allow(non_snake_case)]
 mod SourceUnit;
 #[allow(non_snake_case)]
-mod StatementsList;
+mod Statements;
 #[allow(non_snake_case)]
 mod StructDefinition;
 #[allow(non_snake_case)]
@@ -68,7 +68,7 @@ mod TupleExpression;
 #[allow(non_snake_case)]
 mod TypeName;
 #[allow(non_snake_case)]
-mod UnicodeStringLiteralsList;
+mod UnicodeStringLiterals;
 #[allow(non_snake_case)]
 mod UserDefinedValueTypeDefinition;
 #[allow(non_snake_case)]

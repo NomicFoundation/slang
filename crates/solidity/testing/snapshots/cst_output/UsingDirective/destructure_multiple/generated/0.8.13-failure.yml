@@ -18,7 +18,7 @@ Tree:
       - UsingKeyword (Token): "using" # 0..5
       - UsingDirectiveDeconstruction (Rule): # 5..36 " {add as +, sub, mul, div as /}"
           - OpenBrace (Token): "{" # 6..7
-          - UsingDirectiveSymbolsList (Rule): # 7..10 "add"
+          - UsingDirectiveSymbols (Rule): # 7..10 "add"
               - UsingDirectiveSymbol (Rule): # 7..10 "add"
                   - IdentifierPath (Rule): # 7..10 "add"
                       - Identifier (Token): "add" # 7..10

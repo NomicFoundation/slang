@@ -39,12 +39,12 @@ Errors: # 1 total
 
 Tree:
   - SourceUnit (Rule): # 0..243 'pragma solidity 0.0.0;\n\nimport "foo.sol";\n\nusing A...'
-      - SourceUnitMembersList (Rule): # 0..217 'pragma solidity 0.0.0;\n\nimport "foo.sol";\n\nusing A...'
+      - SourceUnitMembers (Rule): # 0..217 'pragma solidity 0.0.0;\n\nimport "foo.sol";\n\nusing A...'
           - PragmaDirective (Rule): # 0..23 "pragma solidity 0.0.0;\n"
               - PragmaKeyword (Token): "pragma" # 0..6
               - VersionPragma (Rule): # 6..21 " solidity 0.0.0"
                   - SolidityKeyword (Token): "solidity" # 7..15
-                  - VersionPragmaExpressionsList (Rule): # 15..21 " 0.0.0"
+                  - VersionPragmaExpressions (Rule): # 15..21 " 0.0.0"
                       - VersionPragmaExpression (Rule): # 15..21 " 0.0.0"
                           - VersionPragmaSpecifier (Rule): # 15..21 " 0.0.0"
                               - VersionPragmaValue (Token): "0" # 16..17
@@ -60,9 +60,8 @@ Tree:
               - Semicolon (Token): ";" # 40..41
           - UsingDirective (Rule): # 42..58 "\nusing A for B;\n"
               - UsingKeyword (Token): "using" # 43..48
-              - UsingDirectivePath (Rule): # 48..50 " A"
-                  - IdentifierPath (Rule): # 48..50 " A"
-                      - Identifier (Token): "A" # 49..50
+              - IdentifierPath (Rule): # 48..50 " A"
+                  - Identifier (Token): "A" # 49..50
               - ForKeyword (Token): "for" # 51..54
               - TypeName (Rule): # 54..56 " B"
                   - IdentifierPath (Rule): # 54..56 " B"
@@ -109,7 +108,7 @@ Tree:
               - ParametersDeclaration (Rule): # 167..169 "()"
                   - OpenParen (Token): "(" # 167..168
                   - CloseParen (Token): ")" # 168..169
-              - FunctionAttributesList (Rule): # 169..176 " public"
+              - FunctionAttributes (Rule): # 169..176 " public"
                   - PublicKeyword (Token): "public" # 170..176
               - Block (Rule): # 176..181 " { }\n"
                   - OpenBrace (Token): "{" # 177..178
@@ -119,7 +118,7 @@ Tree:
               - Identifier (Token): "E1" # 188..190
               - ErrorParametersDeclaration (Rule): # 190..198 "(string)"
                   - OpenParen (Token): "(" # 190..191
-                  - ErrorParametersList (Rule): # 191..197 "string"
+                  - ErrorParameters (Rule): # 191..197 "string"
                       - ErrorParameter (Rule): # 191..197 "string"
                           - TypeName (Rule): # 191..197 "string"
                               - StringKeyword (Token): "string" # 191..197
@@ -131,5 +130,4 @@ Tree:
               - IsKeyword (Token): "is" # 208..210
               - BoolKeyword (Token): "bool" # 211..215
               - Semicolon (Token): ";" # 215..216
-      - EndOfFileTrivia (Rule): "\n" # 217..218
       - SKIPPED (Token): "event E1(uint256 value);\n" # 218..243

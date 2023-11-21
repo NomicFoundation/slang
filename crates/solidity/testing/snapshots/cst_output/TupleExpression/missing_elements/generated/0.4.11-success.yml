@@ -8,7 +8,7 @@ Errors: []
 Tree:
   - TupleExpression (Rule): # 0..20 "(, second, , fourth)"
       - OpenParen (Token): "(" # 0..1
-      - TupleValuesList (Rule): # 1..19 ", second, , fourth"
+      - TupleValues (Rule): # 1..19 ", second, , fourth"
           - Comma (Token): "," # 1..2
           - Expression (Rule): # 2..9 " second"
               - Identifier (Token): "second" # 3..9

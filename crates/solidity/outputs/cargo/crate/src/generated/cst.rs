@@ -48,6 +48,14 @@ impl Node {
         }
     }
 
+    /// Returns a slice of the children (not all descendants) of this node.
+    pub fn children(&self) -> &[Node] {
+        match self {
+            Self::Rule(node) => &node.children,
+            Self::Token(_) => &[],
+        }
+    }
+
     /// Creates a [`Cursor`] that starts at the current node as the root and a given initial `text_offset`.
     pub fn cursor_with_offset(&self, text_offset: TextIndex) -> Cursor {
         Cursor::new(self.clone(), text_offset)

@@ -12,7 +12,7 @@ Tree:
               - Identifier (Token): "x" # 0..1
           - ArgumentsDeclaration (Rule): # 1..7 "(1, 2)"
               - OpenParen (Token): "(" # 1..2
-              - PositionalArgumentsList (Rule): # 2..6 "1, 2"
+              - PositionalArguments (Rule): # 2..6 "1, 2"
                   - Expression (Rule): # 2..3 "1"
                       - DecimalNumberExpression (Rule): # 2..3 "1"
                           - DecimalLiteral (Token): "1" # 2..3

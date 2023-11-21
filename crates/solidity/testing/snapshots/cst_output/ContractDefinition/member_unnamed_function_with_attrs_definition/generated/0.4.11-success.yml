@@ -12,13 +12,13 @@ Tree:
       - ContractKeyword (Token): "contract" # 0..8
       - Identifier (Token): "Sample" # 9..15
       - OpenBrace (Token): "{" # 16..17
-      - ContractMembersList (Rule): # 18..51 "  function() external payable {}\n"
+      - ContractMembers (Rule): # 18..51 "  function() external payable {}\n"
           - UnnamedFunctionDefinition (Rule): # 18..51 "  function() external payable {}\n"
               - FunctionKeyword (Token): "function" # 20..28
               - ParametersDeclaration (Rule): # 28..30 "()"
                   - OpenParen (Token): "(" # 28..29
                   - CloseParen (Token): ")" # 29..30
-              - UnnamedFunctionAttributesList (Rule): # 30..47 " external payable"
+              - UnnamedFunctionAttributes (Rule): # 30..47 " external payable"
                   - ExternalKeyword (Token): "external" # 31..39
                   - PayableKeyword (Token): "payable" # 40..47
               - Block (Rule): # 47..51 " {}\n"

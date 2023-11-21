@@ -20,7 +20,7 @@ Tree:
       - ContractKeyword (Token): "contract" # 0..8
       - Identifier (Token): "Test" # 9..13
       - OpenBrace (Token): "{" # 14..15
-      - ContractMembersList (Rule): # 16..25 "  field;\n"
+      - ContractMembers (Rule): # 16..25 "  field;\n"
           - StateVariableDefinition (Rule): # 16..25 "  field;\n"
               - TypeName (Rule): # 16..23 "  field"
                   - IdentifierPath (Rule): # 16..23 "  field"

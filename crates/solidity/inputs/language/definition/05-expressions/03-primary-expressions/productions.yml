@@ -55,11 +55,11 @@
       open:
         reference: "OpenParen"
       parser:
-        reference: "TupleValuesList"
+        reference: "TupleValues"
       close:
         reference: "CloseParen"
 
-- name: "TupleValuesList"
+- name: "TupleValues"
   kind: "Parser"
   unversioned:
     separatedBy:
@@ -76,11 +76,11 @@
       open:
         reference: "OpenBracket"
       parser:
-        reference: "ArrayValuesList"
+        reference: "ArrayValues"
       close:
         reference: "CloseBracket"
 
-- name: "ArrayValuesList"
+- name: "ArrayValues"
   kind: "Parser"
   unversioned:
     separatedBy:

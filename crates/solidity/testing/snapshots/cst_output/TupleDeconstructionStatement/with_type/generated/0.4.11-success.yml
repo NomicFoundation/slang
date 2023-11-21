@@ -8,7 +8,7 @@ Errors: []
 Tree:
   - TupleDeconstructionStatement (Rule): # 0..37 "(bool with_type, without_type) = rhs;"
       - OpenParen (Token): "(" # 0..1
-      - TupleMembersList (Rule): # 1..29 "bool with_type, without_type"
+      - TupleMembers (Rule): # 1..29 "bool with_type, without_type"
           - TupleMember (Rule): # 1..15 "bool with_type"
               - TypeName (Rule): # 1..5 "bool"
                   - BoolKeyword (Token): "bool" # 1..5

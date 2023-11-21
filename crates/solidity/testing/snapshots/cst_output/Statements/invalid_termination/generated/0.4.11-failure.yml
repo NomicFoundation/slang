@@ -1,0 +1,57 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │                                                                                  │ 0..0
+  2  │ throw invalid ;                                                                  │ 1..16
+  3  │ { 1 * 2; 3 * b invalid; }                                                        │ 17..42
+
+Errors: # 2 total
+  - >
+    Error: Expected Semicolon.
+       ╭─[crates/solidity/testing/snapshots/cst_output/Statements/invalid_termination/input.sol:2:7]
+       │
+     2 │ throw invalid ;
+       │       ────┬───  
+       │           ╰───── Error occurred here.
+    ───╯
+  - >
+    Error: Expected Semicolon.
+       ╭─[crates/solidity/testing/snapshots/cst_output/Statements/invalid_termination/input.sol:3:16]
+       │
+     3 │ { 1 * 2; 3 * b invalid; }
+       │                ───┬───  
+       │                   ╰───── Error occurred here.
+    ───╯
+
+Tree:
+  - Statements (Rule): # 0..43 "\nthrow invalid ;\n{ 1 * 2; 3 * b invalid; }\n"
+      - ThrowStatement (Rule): # 0..17 "\nthrow invalid ;\n"
+          - ThrowKeyword (Token): "throw" # 1..6
+          - SKIPPED (Token): "invalid " # 7..15
+          - Semicolon (Token): ";" # 15..16
+      - Block (Rule): # 17..43 "{ 1 * 2; 3 * b invalid; }\n"
+          - OpenBrace (Token): "{" # 17..18
+          - Statements (Rule): # 18..40 " 1 * 2; 3 * b invalid;"
+              - ExpressionStatement (Rule): # 18..25 " 1 * 2;"
+                  - Expression (Rule): # 18..24 " 1 * 2"
+                      - BinaryExpression (Rule): # 18..24 " 1 * 2"
+                          - Expression (Rule): # 18..20 " 1"
+                              - DecimalNumberExpression (Rule): # 18..20 " 1"
+                                  - DecimalLiteral (Token): "1" # 19..20
+                          - Asterisk (Token): "*" # 21..22
+                          - Expression (Rule): # 22..24 " 2"
+                              - DecimalNumberExpression (Rule): # 22..24 " 2"
+                                  - DecimalLiteral (Token): "2" # 23..24
+                  - Semicolon (Token): ";" # 24..25
+              - ExpressionStatement (Rule): # 25..40 " 3 * b invalid;"
+                  - Expression (Rule): # 25..31 " 3 * b"
+                      - BinaryExpression (Rule): # 25..31 " 3 * b"
+                          - Expression (Rule): # 25..27 " 3"
+                              - DecimalNumberExpression (Rule): # 25..27 " 3"
+                                  - DecimalLiteral (Token): "3" # 26..27
+                          - Asterisk (Token): "*" # 28..29
+                          - Expression (Rule): # 29..31 " b"
+                              - Identifier (Token): "b" # 30..31
+                  - SKIPPED (Token): "invalid" # 32..39
+                  - Semicolon (Token): ";" # 39..40
+          - CloseBrace (Token): "}" # 41..42

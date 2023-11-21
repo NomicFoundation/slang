@@ -22,7 +22,7 @@ Tree:
       - ContractKeyword (Token): "contract" # 0..8
       - Identifier (Token): "Sample" # 9..15
       - OpenBrace (Token): "{" # 16..17
-      - ContractMembersList (Rule): # 18..31 "  constructor"
+      - ContractMembers (Rule): # 18..31 "  constructor"
           - StateVariableDefinition (Rule): # 18..31 "  constructor"
               - TypeName (Rule): # 18..31 "  constructor"
                   - IdentifierPath (Rule): # 18..31 "  constructor"

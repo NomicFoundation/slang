@@ -13,11 +13,11 @@
             reference: "OpenBrace"
           parser:
             optional:
-              reference: "InterfaceMembersList"
+              reference: "InterfaceMembers"
           close:
             reference: "CloseBrace"
 
-- name: "InterfaceMembersList"
+- name: "InterfaceMembers"
   kind: "Parser"
   unversioned:
     oneOrMore:
