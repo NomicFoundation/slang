@@ -2,7 +2,7 @@
 
 ```{ .ebnf .slang-ebnf #KEYWORD_IN_ANY_VERSION }
 «KEYWORD_IN_ANY_VERSION» = BYTES_KEYWORD
-                         | SIGNED_FIXED_TYPE
+                         | FIXED_KEYWORD
                          | UNSIGNED_FIXED_TYPE
                          | SIGNED_INTEGER_TYPE
                          | UNSIGNED_INTEGER_TYPE

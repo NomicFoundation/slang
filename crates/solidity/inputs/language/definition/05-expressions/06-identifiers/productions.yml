@@ -41,7 +41,7 @@
     choice:
       # Types
       - reference: "BytesKeyword"
-      - reference: "SignedFixedType"
+      - reference: "FixedKeyword"
       - reference: "UnsignedFixedType"
       - reference: "SignedIntegerType"
       - reference: "UnsignedIntegerType"

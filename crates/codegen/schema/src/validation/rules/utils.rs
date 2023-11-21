@@ -5,7 +5,7 @@ pub fn is_a_keyword_scanner(reference_name: &str) -> bool {
 
     return match reference_name {
         "BytesKeyword"
-        | "SignedFixedType"
+        | "FixedKeyword"
         | "UnsignedFixedType"
         | "SignedIntegerType"
         | "UnsignedIntegerType" => true,

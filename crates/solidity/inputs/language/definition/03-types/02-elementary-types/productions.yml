@@ -13,7 +13,7 @@
         - reference: "BytesKeyword"
         - reference: "SignedIntegerType"
         - reference: "UnsignedIntegerType"
-        - reference: "SignedFixedType"
+        - reference: "FixedKeyword"
         - reference: "UnsignedFixedType"
     0.8.0:
       # removed: ByteKeyword
@@ -24,7 +24,7 @@
         - reference: "BytesKeyword"
         - reference: "SignedIntegerType"
         - reference: "UnsignedIntegerType"
-        - reference: "SignedFixedType"
+        - reference: "FixedKeyword"
         - reference: "UnsignedFixedType"
 
 - name: "AddressType"
@@ -148,7 +148,7 @@
       - terminal: "248"
       - terminal: "256"
 
-- name: "SignedFixedType"
+- name: "FixedKeyword"
   kind: "Scanner"
   unversioned:
     trailingContext:

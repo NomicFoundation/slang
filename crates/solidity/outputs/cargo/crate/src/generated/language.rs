@@ -1814,7 +1814,7 @@ impl Language {
                     choice.consider(input, result)?;
                     let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::SignedFixedType,
+                        TokenKind::FixedKeyword,
                     );
                     choice.consider(input, result)?;
                     let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
@@ -2910,7 +2910,7 @@ impl Language {
                     choice.consider(input, result)?;
                     let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::SignedFixedType,
+                        TokenKind::FixedKeyword,
                     );
                     choice.consider(input, result)?;
                     let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
@@ -4109,7 +4109,7 @@ impl Language {
                     choice.consider(input, result)?;
                     let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::SignedFixedType,
+                        TokenKind::FixedKeyword,
                     );
                     choice.consider(input, result)?;
                     let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
@@ -4313,7 +4313,7 @@ impl Language {
                             let result = self
                                 .parse_token_with_trivia::<LexicalContextType::Default>(
                                     input,
-                                    TokenKind::SignedFixedType,
+                                    TokenKind::FixedKeyword,
                                 );
                             choice.consider(input, result)?;
                             let result = self
@@ -5589,6 +5589,14 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
+    fn fixed_keyword(&self, input: &mut ParserContext) -> bool {
+        scan_sequence!(
+            scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
+            scan_optional!(input, self.fixed_type_size(input))
+        )
+    }
+
+    #[allow(unused_assignments, unused_parens)]
     fn fixed_type_size(&self, input: &mut ParserContext) -> bool {
         scan_sequence!(
             scan_one_or_more!(input, scan_char_range!(input, '0', '9')),
@@ -5755,14 +5763,6 @@ impl Language {
         scan_sequence!(
             self.identifier_start(input),
             scan_zero_or_more!(input, self.identifier_part(input))
-        )
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn signed_fixed_type(&self, input: &mut ParserContext) -> bool {
-        scan_sequence!(
-            scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
-            scan_optional!(input, self.fixed_type_size(input))
         )
     }
 
@@ -7133,10 +7133,10 @@ impl Lexer for Language {
                         { BytesKeyword = bytes_keyword }
                         { DecimalLiteral = decimal_literal }
                         { EndOfLine = end_of_line }
+                        { FixedKeyword = fixed_keyword }
                         { HexLiteral = hex_literal }
                         { HexStringLiteral = hex_string_literal }
                         { MultilineComment = multiline_comment }
-                        { SignedFixedType = signed_fixed_type }
                         { SignedIntegerType = signed_integer_type }
                         { SingleLineComment = single_line_comment }
                         { UnicodeStringLiteral = unicode_string_literal }
