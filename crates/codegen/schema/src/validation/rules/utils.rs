@@ -7,7 +7,7 @@ pub fn is_a_keyword_scanner(reference_name: &str) -> bool {
         "BytesKeyword"
         | "FixedKeyword"
         | "UnsignedFixedType"
-        | "SignedIntegerType"
+        | "IntKeyword"
         | "UnsignedIntegerType" => true,
         keyword if keyword.contains("Keyword") || keyword.contains("ReservedWord") => true,
         _ => false,

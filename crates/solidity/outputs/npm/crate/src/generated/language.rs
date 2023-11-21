@@ -1804,7 +1804,7 @@ impl Language {
                     choice.consider(input, result)?;
                     let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::SignedIntegerType,
+                        TokenKind::IntKeyword,
                     );
                     choice.consider(input, result)?;
                     let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
@@ -2900,7 +2900,7 @@ impl Language {
                     choice.consider(input, result)?;
                     let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::SignedIntegerType,
+                        TokenKind::IntKeyword,
                     );
                     choice.consider(input, result)?;
                     let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
@@ -4099,7 +4099,7 @@ impl Language {
                     choice.consider(input, result)?;
                     let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::SignedIntegerType,
+                        TokenKind::IntKeyword,
                     );
                     choice.consider(input, result)?;
                     let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
@@ -4301,7 +4301,7 @@ impl Language {
                             let result = self
                                 .parse_token_with_trivia::<LexicalContextType::Default>(
                                     input,
-                                    TokenKind::SignedIntegerType,
+                                    TokenKind::IntKeyword,
                                 );
                             choice.consider(input, result)?;
                             let result = self
@@ -5702,6 +5702,14 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
+    fn int_keyword(&self, input: &mut ParserContext) -> bool {
+        scan_sequence!(
+            scan_chars!(input, 'i', 'n', 't'),
+            scan_optional!(input, self.integer_type_size(input))
+        )
+    }
+
+    #[allow(unused_assignments, unused_parens)]
     fn integer_type_size(&self, input: &mut ParserContext) -> bool {
         scan_choice!(
             input,
@@ -5763,14 +5771,6 @@ impl Language {
         scan_sequence!(
             self.identifier_start(input),
             scan_zero_or_more!(input, self.identifier_part(input))
-        )
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn signed_integer_type(&self, input: &mut ParserContext) -> bool {
-        scan_sequence!(
-            scan_chars!(input, 'i', 'n', 't'),
-            scan_optional!(input, self.integer_type_size(input))
         )
     }
 
@@ -7136,8 +7136,8 @@ impl Lexer for Language {
                         { FixedKeyword = fixed_keyword }
                         { HexLiteral = hex_literal }
                         { HexStringLiteral = hex_string_literal }
+                        { IntKeyword = int_keyword }
                         { MultilineComment = multiline_comment }
-                        { SignedIntegerType = signed_integer_type }
                         { SingleLineComment = single_line_comment }
                         { UnicodeStringLiteral = unicode_string_literal }
                         { UnsignedFixedType = unsigned_fixed_type }

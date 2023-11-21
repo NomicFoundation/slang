@@ -4,7 +4,7 @@
 «KEYWORD_IN_ANY_VERSION» = BYTES_KEYWORD
                          | FIXED_KEYWORD
                          | UNSIGNED_FIXED_TYPE
-                         | SIGNED_INTEGER_TYPE
+                         | INT_KEYWORD
                          | UNSIGNED_INTEGER_TYPE
                          | ADDRESS_KEYWORD
                          | ANONYMOUS_KEYWORD

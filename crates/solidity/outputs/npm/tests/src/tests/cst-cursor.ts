@@ -22,7 +22,7 @@ test("use cursor", () => {
   expectRule(cursor.node(), RuleKind.TypeName);
   expect(cursor.goToNext()).toBe(true);
 
-  expectToken(cursor.node(), TokenKind.SignedIntegerType, "int256");
+  expectToken(cursor.node(), TokenKind.IntKeyword, "int256");
   expect(cursor.goToNext()).toBe(true);
 
   expectRule(cursor.node(), RuleKind.LeadingTrivia);

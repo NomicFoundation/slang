@@ -43,7 +43,7 @@
       - reference: "BytesKeyword"
       - reference: "FixedKeyword"
       - reference: "UnsignedFixedType"
-      - reference: "SignedIntegerType"
+      - reference: "IntKeyword"
       - reference: "UnsignedIntegerType"
       # Keywords
       - reference: "AddressKeyword"

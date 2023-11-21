@@ -282,7 +282,7 @@
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/03-types/02-elementary-types/address-type/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/03-types/02-elementary-types/bytes-keyword/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/03-types/02-elementary-types/fixed-bytes-type-size/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/03-types/02-elementary-types/signed-integer-type/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/03-types/02-elementary-types/int-keyword/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/03-types/02-elementary-types/unsigned-integer-type/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/03-types/02-elementary-types/integer-type-size/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/03-types/02-elementary-types/fixed-keyword/unversioned.md"

@@ -11,7 +11,7 @@
         - reference: "StringKeyword"
         - reference: "AddressType"
         - reference: "BytesKeyword"
-        - reference: "SignedIntegerType"
+        - reference: "IntKeyword"
         - reference: "UnsignedIntegerType"
         - reference: "FixedKeyword"
         - reference: "UnsignedFixedType"
@@ -22,7 +22,7 @@
         - reference: "StringKeyword"
         - reference: "AddressType"
         - reference: "BytesKeyword"
-        - reference: "SignedIntegerType"
+        - reference: "IntKeyword"
         - reference: "UnsignedIntegerType"
         - reference: "FixedKeyword"
         - reference: "UnsignedFixedType"
@@ -86,7 +86,7 @@
       - terminal: "31"
       - terminal: "32"
 
-- name: "SignedIntegerType"
+- name: "IntKeyword"
   kind: "Scanner"
   unversioned:
     trailingContext:
