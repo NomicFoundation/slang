@@ -14,6 +14,6 @@ fn from_contextual_keyword() -> Result<()> {
 }
 
 #[test]
-fn overriden() -> Result<()> {
-    return run("FunctionDefinition", "overriden");
+fn overridden() -> Result<()> {
+    return run("FunctionDefinition", "overridden");
 }

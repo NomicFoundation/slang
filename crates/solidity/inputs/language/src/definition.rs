@@ -2417,7 +2417,7 @@ codegen_language_macros::compile!(Language(
                             name = OverrideSpecifier,
                             fields = (
                                 override_keyword = Required(Terminal([OverrideKeyword])),
-                                overriden = Optional(kind = NonTerminal(OverridePathsDeclaration))
+                                overridden = Optional(kind = NonTerminal(OverridePathsDeclaration))
                             )
                         ),
                         Struct(
