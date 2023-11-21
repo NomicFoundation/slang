@@ -40,11 +40,11 @@
   unversioned:
     choice:
       # Types
-      - reference: "FixedBytesType"
-      - reference: "SignedFixedType"
-      - reference: "UnsignedFixedType"
-      - reference: "SignedIntegerType"
-      - reference: "UnsignedIntegerType"
+      - reference: "BytesKeyword"
+      - reference: "FixedKeyword"
+      - reference: "UfixedKeyword"
+      - reference: "IntKeyword"
+      - reference: "UintKeyword"
       # Keywords
       - reference: "AddressKeyword"
       - reference: "AnonymousKeyword"

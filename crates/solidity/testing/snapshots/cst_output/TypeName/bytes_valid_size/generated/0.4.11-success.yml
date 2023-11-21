@@ -7,4 +7,4 @@ Errors: []
 
 Tree:
   - TypeName (Rule): # 0..7 "bytes32"
-      - FixedBytesType (Token): "bytes32" # 0..7
+      - BytesKeyword (Token): "bytes32" # 0..7

@@ -11,12 +11,12 @@ Tree:
       - TupleMembers (Rule): # 1..19 "uint32 a, uint32 b"
           - TupleMember (Rule): # 1..9 "uint32 a"
               - TypeName (Rule): # 1..7 "uint32"
-                  - UnsignedIntegerType (Token): "uint32" # 1..7
+                  - UintKeyword (Token): "uint32" # 1..7
               - Identifier (Token): "a" # 8..9
           - Comma (Token): "," # 9..10
           - TupleMember (Rule): # 10..19 " uint32 b"
               - TypeName (Rule): # 10..17 " uint32"
-                  - UnsignedIntegerType (Token): "uint32" # 11..17
+                  - UintKeyword (Token): "uint32" # 11..17
               - Identifier (Token): "b" # 18..19
       - CloseParen (Token): ")" # 19..20
       - Equal (Token): "=" # 21..22
@@ -39,10 +39,10 @@ Tree:
                               - OpenParen (Token): "(" # 40..41
                               - TupleValues (Rule): # 41..55 "uint32, uint32"
                                   - Expression (Rule): # 41..47 "uint32"
-                                      - UnsignedIntegerType (Token): "uint32" # 41..47
+                                      - UintKeyword (Token): "uint32" # 41..47
                                   - Comma (Token): "," # 47..48
                                   - Expression (Rule): # 48..55 " uint32"
-                                      - UnsignedIntegerType (Token): "uint32" # 49..55
+                                      - UintKeyword (Token): "uint32" # 49..55
                               - CloseParen (Token): ")" # 55..56
                   - CloseParen (Token): ")" # 56..57
       - Semicolon (Token): ";" # 57..58

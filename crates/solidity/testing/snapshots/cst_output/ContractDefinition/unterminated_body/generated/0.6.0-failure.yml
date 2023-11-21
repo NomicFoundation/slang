@@ -5,7 +5,7 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Expected AddressKeyword or BoolKeyword or ByteKeyword or CloseBrace or ConstructorKeyword or EnumKeyword or EventKeyword or FallbackKeyword or FixedBytesType or FunctionKeyword or Identifier or MappingKeyword or ModifierKeyword or PayableKeyword or ReceiveKeyword or SignedFixedType or SignedIntegerType or StringKeyword or StructKeyword or UnsignedFixedType or UnsignedIntegerType or UsingKeyword.
+    Error: Expected AddressKeyword or BoolKeyword or ByteKeyword or BytesKeyword or CloseBrace or ConstructorKeyword or EnumKeyword or EventKeyword or FallbackKeyword or FixedKeyword or FunctionKeyword or Identifier or IntKeyword or MappingKeyword or ModifierKeyword or PayableKeyword or ReceiveKeyword or StringKeyword or StructKeyword or UfixedKeyword or UintKeyword or UsingKeyword.
        ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/unterminated_body/input.sol:1:18]
        │
      1 │ contract Sample {

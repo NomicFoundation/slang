@@ -23,12 +23,12 @@ Tree:
               - StructMembers (Rule): # 31..55 "    uint a;\n    uint b;\n"
                   - StructMember (Rule): # 31..43 "    uint a;\n"
                       - TypeName (Rule): # 31..39 "    uint"
-                          - UnsignedIntegerType (Token): "uint" # 35..39
+                          - UintKeyword (Token): "uint" # 35..39
                       - Identifier (Token): "a" # 40..41
                       - Semicolon (Token): ";" # 41..42
                   - StructMember (Rule): # 43..55 "    uint b;\n"
                       - TypeName (Rule): # 43..51 "    uint"
-                          - UnsignedIntegerType (Token): "uint" # 47..51
+                          - UintKeyword (Token): "uint" # 47..51
                       - Identifier (Token): "b" # 52..53
                       - Semicolon (Token): ";" # 53..54
               - CloseBrace (Token): "}" # 57..58

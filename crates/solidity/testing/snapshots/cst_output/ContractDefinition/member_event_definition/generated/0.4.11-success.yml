@@ -21,13 +21,13 @@ Tree:
                   - EventParameters (Rule): # 30..66 "uint256 indexed a, uint256 indexed b"
                       - EventParameter (Rule): # 30..47 "uint256 indexed a"
                           - TypeName (Rule): # 30..37 "uint256"
-                              - UnsignedIntegerType (Token): "uint256" # 30..37
+                              - UintKeyword (Token): "uint256" # 30..37
                           - IndexedKeyword (Token): "indexed" # 38..45
                           - Identifier (Token): "a" # 46..47
                       - Comma (Token): "," # 47..48
                       - EventParameter (Rule): # 48..66 " uint256 indexed b"
                           - TypeName (Rule): # 48..56 " uint256"
-                              - UnsignedIntegerType (Token): "uint256" # 49..56
+                              - UintKeyword (Token): "uint256" # 49..56
                           - IndexedKeyword (Token): "indexed" # 57..64
                           - Identifier (Token): "b" # 65..66
                   - CloseParen (Token): ")" # 66..67
