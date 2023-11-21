@@ -1,4 +1,4 @@
-use super::super::{cst, kinds::*};
+use super::super::{cst, kinds::*, text_index::TextIndex};
 
 #[derive(PartialEq, Eq, Clone, Debug)]
 pub enum ParserResult {
@@ -93,7 +93,7 @@ impl Match {
     pub fn is_full_recursive(&self) -> bool {
         self.nodes
             .iter()
-            .flat_map(|node| cst::Node::cursor_with_offset(node, Default::default()))
+            .flat_map(|node| cst::Node::cursor_with_offset(node, TextIndex::ZERO))
             .all(|node| node.as_token_with_kind(&[TokenKind::SKIPPED]).is_none())
     }
 }
