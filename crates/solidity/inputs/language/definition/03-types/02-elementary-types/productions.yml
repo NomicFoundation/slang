@@ -12,7 +12,7 @@
         - reference: "AddressType"
         - reference: "BytesKeyword"
         - reference: "IntKeyword"
-        - reference: "UnsignedIntegerType"
+        - reference: "UintKeyword"
         - reference: "FixedKeyword"
         - reference: "UfixedKeyword"
     0.8.0:
@@ -23,7 +23,7 @@
         - reference: "AddressType"
         - reference: "BytesKeyword"
         - reference: "IntKeyword"
-        - reference: "UnsignedIntegerType"
+        - reference: "UintKeyword"
         - reference: "FixedKeyword"
         - reference: "UfixedKeyword"
 
@@ -98,7 +98,7 @@
       notFollowedBy:
         reference: "IdentifierPart"
 
-- name: "UnsignedIntegerType"
+- name: "UintKeyword"
   kind: "Scanner"
   unversioned:
     trailingContext:

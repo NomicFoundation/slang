@@ -5,7 +5,7 @@
                          | FIXED_KEYWORD
                          | UFIXED_KEYWORD
                          | INT_KEYWORD
-                         | UNSIGNED_INTEGER_TYPE
+                         | UINT_KEYWORD
                          | ADDRESS_KEYWORD
                          | ANONYMOUS_KEYWORD
                          | AS_KEYWORD

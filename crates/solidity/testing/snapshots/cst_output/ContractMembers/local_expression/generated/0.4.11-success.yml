@@ -21,7 +21,7 @@ Tree:
                   - VariableDeclarationStatement (Rule): # 18..40 "  uint a = 1 + 2 * 3;\n"
                       - VariableDeclaration (Rule): # 18..26 "  uint a"
                           - TypeName (Rule): # 18..24 "  uint"
-                              - UnsignedIntegerType (Token): "uint" # 20..24
+                              - UintKeyword (Token): "uint" # 20..24
                           - Identifier (Token): "a" # 25..26
                       - Equal (Token): "=" # 27..28
                       - Expression (Rule): # 28..38 " 1 + 2 * 3"

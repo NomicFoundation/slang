@@ -18,7 +18,7 @@ Errors: # 2 total
        │ ╰──────────── Error occurred here.
     ───╯
   - >
-    Error: Expected AddressKeyword or AsciiStringLiteral or AssemblyKeyword or BoolKeyword or BreakKeyword or BytesKeyword or CloseBrace or ContinueKeyword or DecimalLiteral or DeleteKeyword or DoKeyword or EmitKeyword or FalseKeyword or FixedKeyword or ForKeyword or FunctionKeyword or HexLiteral or HexStringLiteral or Identifier or IfKeyword or IntKeyword or MappingKeyword or NewKeyword or OpenBrace or OpenBracket or OpenParen or PayableKeyword or ReturnKeyword or RevertKeyword or StringKeyword or TrueKeyword or TryKeyword or TypeKeyword or UfixedKeyword or UncheckedKeyword or UnicodeStringLiteral or UnsignedIntegerType or WhileKeyword.
+    Error: Expected AddressKeyword or AsciiStringLiteral or AssemblyKeyword or BoolKeyword or BreakKeyword or BytesKeyword or CloseBrace or ContinueKeyword or DecimalLiteral or DeleteKeyword or DoKeyword or EmitKeyword or FalseKeyword or FixedKeyword or ForKeyword or FunctionKeyword or HexLiteral or HexStringLiteral or Identifier or IfKeyword or IntKeyword or MappingKeyword or NewKeyword or OpenBrace or OpenBracket or OpenParen or PayableKeyword or ReturnKeyword or RevertKeyword or StringKeyword or TrueKeyword or TryKeyword or TypeKeyword or UfixedKeyword or UintKeyword or UncheckedKeyword or UnicodeStringLiteral or WhileKeyword.
        ╭─[crates/solidity/testing/snapshots/cst_output/ContractMembers/mismatched_delimiter/input.sol:4:6]
        │
      4 │     })
@@ -45,7 +45,7 @@ Tree:
                           - VariableDeclarationStatement (Rule): # 35..63 "        uint256 arg = (1 + 2"
                               - VariableDeclaration (Rule): # 35..54 "        uint256 arg"
                                   - TypeName (Rule): # 35..50 "        uint256"
-                                      - UnsignedIntegerType (Token): "uint256" # 43..50
+                                      - UintKeyword (Token): "uint256" # 43..50
                                   - Identifier (Token): "arg" # 51..54
                               - Equal (Token): "=" # 55..56
                               - Expression (Rule): # 56..63 " (1 + 2"

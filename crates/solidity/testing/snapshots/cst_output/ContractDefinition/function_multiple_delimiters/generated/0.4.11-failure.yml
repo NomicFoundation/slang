@@ -44,7 +44,7 @@ Tree:
                       - Comma (Token): "," # 93..94
                       - Parameter (Rule): # 94..109 " uint256 amount"
                           - TypeName (Rule): # 94..102 " uint256"
-                              - UnsignedIntegerType (Token): "uint256" # 95..102
+                              - UintKeyword (Token): "uint256" # 95..102
                           - Identifier (Token): "amount" # 103..109
                   - CloseParen (Token): ")" # 109..110
               - FunctionAttributes (Rule): # 110..119 " internal"

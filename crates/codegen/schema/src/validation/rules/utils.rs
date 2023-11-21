@@ -4,11 +4,7 @@ pub fn is_a_keyword_scanner(reference_name: &str) -> bool {
     // https://github.com/NomicFoundation/slang/issues/505
 
     return match reference_name {
-        "BytesKeyword"
-        | "FixedKeyword"
-        | "UfixedKeyword"
-        | "IntKeyword"
-        | "UnsignedIntegerType" => true,
+        "BytesKeyword" | "FixedKeyword" | "UfixedKeyword" | "IntKeyword" | "UintKeyword" => true,
         keyword if keyword.contains("Keyword") || keyword.contains("ReservedWord") => true,
         _ => false,
     };

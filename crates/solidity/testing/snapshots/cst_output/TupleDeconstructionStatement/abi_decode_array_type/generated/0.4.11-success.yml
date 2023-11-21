@@ -11,14 +11,14 @@ Tree:
       - TupleMembers (Rule): # 1..28 "uint32 a, uint32[] memory b"
           - TupleMember (Rule): # 1..9 "uint32 a"
               - TypeName (Rule): # 1..7 "uint32"
-                  - UnsignedIntegerType (Token): "uint32" # 1..7
+                  - UintKeyword (Token): "uint32" # 1..7
               - Identifier (Token): "a" # 8..9
           - Comma (Token): "," # 9..10
           - TupleMember (Rule): # 10..28 " uint32[] memory b"
               - TypeName (Rule): # 10..19 " uint32[]"
                   - ArrayTypeName (Rule): # 10..19 " uint32[]"
                       - TypeName (Rule): # 10..17 " uint32"
-                          - UnsignedIntegerType (Token): "uint32" # 11..17
+                          - UintKeyword (Token): "uint32" # 11..17
                       - OpenBracket (Token): "[" # 17..18
                       - CloseBracket (Token): "]" # 18..19
               - MemoryKeyword (Token): "memory" # 20..26
@@ -44,12 +44,12 @@ Tree:
                               - OpenParen (Token): "(" # 49..50
                               - TupleValues (Rule): # 50..66 "uint32, uint32[]"
                                   - Expression (Rule): # 50..56 "uint32"
-                                      - UnsignedIntegerType (Token): "uint32" # 50..56
+                                      - UintKeyword (Token): "uint32" # 50..56
                                   - Comma (Token): "," # 56..57
                                   - Expression (Rule): # 57..66 " uint32[]"
                                       - IndexAccessExpression (Rule): # 57..66 " uint32[]"
                                           - Expression (Rule): # 57..64 " uint32"
-                                              - UnsignedIntegerType (Token): "uint32" # 58..64
+                                              - UintKeyword (Token): "uint32" # 58..64
                                           - OpenBracket (Token): "[" # 64..65
                                           - CloseBracket (Token): "]" # 65..66
                               - CloseParen (Token): ")" # 66..67

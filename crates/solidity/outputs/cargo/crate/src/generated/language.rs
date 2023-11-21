@@ -1809,7 +1809,7 @@ impl Language {
                     choice.consider(input, result)?;
                     let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::UnsignedIntegerType,
+                        TokenKind::UintKeyword,
                     );
                     choice.consider(input, result)?;
                     let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
@@ -2905,7 +2905,7 @@ impl Language {
                     choice.consider(input, result)?;
                     let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::UnsignedIntegerType,
+                        TokenKind::UintKeyword,
                     );
                     choice.consider(input, result)?;
                     let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
@@ -4104,7 +4104,7 @@ impl Language {
                     choice.consider(input, result)?;
                     let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::UnsignedIntegerType,
+                        TokenKind::UintKeyword,
                     );
                     choice.consider(input, result)?;
                     let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
@@ -4307,7 +4307,7 @@ impl Language {
                             let result = self
                                 .parse_token_with_trivia::<LexicalContextType::Default>(
                                     input,
-                                    TokenKind::UnsignedIntegerType,
+                                    TokenKind::UintKeyword,
                                 );
                             choice.consider(input, result)?;
                             let result = self
@@ -5836,6 +5836,14 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
+    fn uint_keyword(&self, input: &mut ParserContext) -> bool {
+        scan_sequence!(
+            scan_chars!(input, 'u', 'i', 'n', 't'),
+            scan_optional!(input, self.integer_type_size(input))
+        )
+    }
+
+    #[allow(unused_assignments, unused_parens)]
     fn unicode_escape(&self, input: &mut ParserContext) -> bool {
         scan_sequence!(
             scan_chars!(input, 'u'),
@@ -5857,14 +5865,6 @@ impl Language {
         } else {
             false
         }
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn unsigned_integer_type(&self, input: &mut ParserContext) -> bool {
-        scan_sequence!(
-            scan_chars!(input, 'u', 'i', 'n', 't'),
-            scan_optional!(input, self.integer_type_size(input))
-        )
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -7140,8 +7140,8 @@ impl Lexer for Language {
                         { MultilineComment = multiline_comment }
                         { SingleLineComment = single_line_comment }
                         { UfixedKeyword = ufixed_keyword }
+                        { UintKeyword = uint_keyword }
                         { UnicodeStringLiteral = unicode_string_literal }
-                        { UnsignedIntegerType = unsigned_integer_type }
                         { Whitespace = whitespace }
                         { Identifier = identifier }
                 }

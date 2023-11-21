@@ -44,7 +44,7 @@
       - reference: "FixedKeyword"
       - reference: "UfixedKeyword"
       - reference: "IntKeyword"
-      - reference: "UnsignedIntegerType"
+      - reference: "UintKeyword"
       # Keywords
       - reference: "AddressKeyword"
       - reference: "AnonymousKeyword"

@@ -35,7 +35,7 @@ Tree:
                       - Parameters (Rule): # 98..102 "uint"
                           - Parameter (Rule): # 98..102 "uint"
                               - TypeName (Rule): # 98..102 "uint"
-                                  - UnsignedIntegerType (Token): "uint" # 98..102
+                                  - UintKeyword (Token): "uint" # 98..102
                       - CloseParen (Token): ")" # 102..103
               - Semicolon (Token): ";" # 103..104
           - FunctionDefinition (Rule): # 105..171 "\n    // increments the counter\n    function increm..."
