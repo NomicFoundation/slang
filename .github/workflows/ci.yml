@@ -16,7 +16,7 @@ on:
 
 # In the event that there is a new push to the ref, cancel any running jobs because there are now obsolete, and wasting resources.
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: "${{ github.workflow }}-${{ github.ref }}"
   cancel-in-progress: true
 
 jobs:
