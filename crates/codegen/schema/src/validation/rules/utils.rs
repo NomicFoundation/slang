@@ -6,7 +6,7 @@ pub fn is_a_keyword_scanner(reference_name: &str) -> bool {
     return match reference_name {
         "BytesKeyword"
         | "FixedKeyword"
-        | "UnsignedFixedType"
+        | "UfixedKeyword"
         | "IntKeyword"
         | "UnsignedIntegerType" => true,
         keyword if keyword.contains("Keyword") || keyword.contains("ReservedWord") => true,

@@ -5,7 +5,7 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Expected AddressKeyword or AsciiStringLiteral or BoolKeyword or ByteKeyword or BytesKeyword or DecimalLiteral or FalseKeyword or FixedKeyword or HexLiteral or HexStringLiteral or Identifier or IntKeyword or NewKeyword or OpenBracket or OpenParen or PayableKeyword or StringKeyword or TrueKeyword or TypeKeyword or UnsignedFixedType or UnsignedIntegerType.
+    Error: Expected AddressKeyword or AsciiStringLiteral or BoolKeyword or ByteKeyword or BytesKeyword or DecimalLiteral or FalseKeyword or FixedKeyword or HexLiteral or HexStringLiteral or Identifier or IntKeyword or NewKeyword or OpenBracket or OpenParen or PayableKeyword or StringKeyword or TrueKeyword or TypeKeyword or UfixedKeyword or UnsignedIntegerType.
        ╭─[crates/solidity/testing/snapshots/cst_output/Expression/keyword_virtual/input.sol:1:1]
        │
      1 │ virtual

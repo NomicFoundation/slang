@@ -1819,7 +1819,7 @@ impl Language {
                     choice.consider(input, result)?;
                     let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::UnsignedFixedType,
+                        TokenKind::UfixedKeyword,
                     );
                     choice.consider(input, result)?;
                     if !self.version_is_at_least_0_8_0 {
@@ -2915,7 +2915,7 @@ impl Language {
                     choice.consider(input, result)?;
                     let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::UnsignedFixedType,
+                        TokenKind::UfixedKeyword,
                     );
                     choice.consider(input, result)?;
                     if !self.version_is_at_least_0_8_0 {
@@ -4114,7 +4114,7 @@ impl Language {
                     choice.consider(input, result)?;
                     let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::UnsignedFixedType,
+                        TokenKind::UfixedKeyword,
                     );
                     choice.consider(input, result)?;
                     if !self.version_is_at_least_0_8_0 {
@@ -4319,7 +4319,7 @@ impl Language {
                             let result = self
                                 .parse_token_with_trivia::<LexicalContextType::Default>(
                                     input,
-                                    TokenKind::UnsignedFixedType,
+                                    TokenKind::UfixedKeyword,
                                 );
                             choice.consider(input, result)?;
                             if !self.version_is_at_least_0_8_0 {
@@ -5828,6 +5828,14 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
+    fn ufixed_keyword(&self, input: &mut ParserContext) -> bool {
+        scan_sequence!(
+            scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
+            scan_optional!(input, self.fixed_type_size(input))
+        )
+    }
+
+    #[allow(unused_assignments, unused_parens)]
     fn unicode_escape(&self, input: &mut ParserContext) -> bool {
         scan_sequence!(
             scan_chars!(input, 'u'),
@@ -5849,14 +5857,6 @@ impl Language {
         } else {
             false
         }
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn unsigned_fixed_type(&self, input: &mut ParserContext) -> bool {
-        scan_sequence!(
-            scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
-            scan_optional!(input, self.fixed_type_size(input))
-        )
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -7139,8 +7139,8 @@ impl Lexer for Language {
                         { IntKeyword = int_keyword }
                         { MultilineComment = multiline_comment }
                         { SingleLineComment = single_line_comment }
+                        { UfixedKeyword = ufixed_keyword }
                         { UnicodeStringLiteral = unicode_string_literal }
-                        { UnsignedFixedType = unsigned_fixed_type }
                         { UnsignedIntegerType = unsigned_integer_type }
                         { Whitespace = whitespace }
                         { Identifier = identifier }

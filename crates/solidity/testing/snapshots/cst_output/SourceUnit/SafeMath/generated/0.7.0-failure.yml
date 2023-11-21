@@ -13,7 +13,7 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Expected AddressKeyword or AsciiStringLiteral or AssemblyKeyword or BoolKeyword or BreakKeyword or ByteKeyword or BytesKeyword or CloseBrace or ContinueKeyword or DecimalLiteral or DeleteKeyword or DoKeyword or EmitKeyword or FalseKeyword or FixedKeyword or ForKeyword or FunctionKeyword or HexLiteral or HexStringLiteral or Identifier or IfKeyword or IntKeyword or MappingKeyword or NewKeyword or OpenBrace or OpenBracket or OpenParen or PayableKeyword or ReturnKeyword or StringKeyword or TrueKeyword or TryKeyword or TypeKeyword or UnicodeStringLiteral or UnsignedFixedType or UnsignedIntegerType or WhileKeyword.
+    Error: Expected AddressKeyword or AsciiStringLiteral or AssemblyKeyword or BoolKeyword or BreakKeyword or ByteKeyword or BytesKeyword or CloseBrace or ContinueKeyword or DecimalLiteral or DeleteKeyword or DoKeyword or EmitKeyword or FalseKeyword or FixedKeyword or ForKeyword or FunctionKeyword or HexLiteral or HexStringLiteral or Identifier or IfKeyword or IntKeyword or MappingKeyword or NewKeyword or OpenBrace or OpenBracket or OpenParen or PayableKeyword or ReturnKeyword or StringKeyword or TrueKeyword or TryKeyword or TypeKeyword or UfixedKeyword or UnicodeStringLiteral or UnsignedIntegerType or WhileKeyword.
        ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/SafeMath/input.sol:3:5]
        │
      3 │ ╭─▶     unchecked {

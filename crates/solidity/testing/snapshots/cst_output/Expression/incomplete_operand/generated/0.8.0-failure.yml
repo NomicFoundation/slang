@@ -5,7 +5,7 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Expected AddressKeyword or BoolKeyword or BytesKeyword or FixedKeyword or FunctionKeyword or Identifier or IntKeyword or MappingKeyword or PayableKeyword or StringKeyword or UnsignedFixedType or UnsignedIntegerType.
+    Error: Expected AddressKeyword or BoolKeyword or BytesKeyword or FixedKeyword or FunctionKeyword or Identifier or IntKeyword or MappingKeyword or PayableKeyword or StringKeyword or UfixedKeyword or UnsignedIntegerType.
        ╭─[crates/solidity/testing/snapshots/cst_output/Expression/incomplete_operand/input.sol:1:9]
        │
      1 │ 2 * new

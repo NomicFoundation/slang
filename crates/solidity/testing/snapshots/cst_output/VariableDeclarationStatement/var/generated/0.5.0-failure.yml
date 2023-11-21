@@ -5,7 +5,7 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Expected AddressKeyword or BoolKeyword or ByteKeyword or BytesKeyword or FixedKeyword or FunctionKeyword or Identifier or IntKeyword or MappingKeyword or PayableKeyword or StringKeyword or UnsignedFixedType or UnsignedIntegerType.
+    Error: Expected AddressKeyword or BoolKeyword or ByteKeyword or BytesKeyword or FixedKeyword or FunctionKeyword or Identifier or IntKeyword or MappingKeyword or PayableKeyword or StringKeyword or UfixedKeyword or UnsignedIntegerType.
        ╭─[crates/solidity/testing/snapshots/cst_output/VariableDeclarationStatement/var/input.sol:1:1]
        │
      1 │ var z = 0;

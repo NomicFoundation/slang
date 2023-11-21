@@ -14,7 +14,7 @@
         - reference: "IntKeyword"
         - reference: "UnsignedIntegerType"
         - reference: "FixedKeyword"
-        - reference: "UnsignedFixedType"
+        - reference: "UfixedKeyword"
     0.8.0:
       # removed: ByteKeyword
       choice:
@@ -25,7 +25,7 @@
         - reference: "IntKeyword"
         - reference: "UnsignedIntegerType"
         - reference: "FixedKeyword"
-        - reference: "UnsignedFixedType"
+        - reference: "UfixedKeyword"
 
 - name: "AddressType"
   kind: "Parser"
@@ -160,7 +160,7 @@
       notFollowedBy:
         reference: "IdentifierPart"
 
-- name: "UnsignedFixedType"
+- name: "UfixedKeyword"
   kind: "Scanner"
   unversioned:
     trailingContext:

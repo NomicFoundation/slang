@@ -42,7 +42,7 @@
       # Types
       - reference: "BytesKeyword"
       - reference: "FixedKeyword"
-      - reference: "UnsignedFixedType"
+      - reference: "UfixedKeyword"
       - reference: "IntKeyword"
       - reference: "UnsignedIntegerType"
       # Keywords
