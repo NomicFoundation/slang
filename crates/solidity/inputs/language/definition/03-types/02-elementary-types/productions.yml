@@ -10,7 +10,7 @@
         - reference: "ByteKeyword"
         - reference: "StringKeyword"
         - reference: "AddressType"
-        - reference: "FixedBytesType"
+        - reference: "BytesKeyword"
         - reference: "SignedIntegerType"
         - reference: "UnsignedIntegerType"
         - reference: "SignedFixedType"
@@ -21,7 +21,7 @@
         - reference: "BoolKeyword"
         - reference: "StringKeyword"
         - reference: "AddressType"
-        - reference: "FixedBytesType"
+        - reference: "BytesKeyword"
         - reference: "SignedIntegerType"
         - reference: "UnsignedIntegerType"
         - reference: "SignedFixedType"
@@ -37,7 +37,7 @@
               reference: "PayableKeyword"
       - reference: "PayableKeyword"
 
-- name: "FixedBytesType"
+- name: "BytesKeyword"
   kind: "Scanner"
   unversioned:
     trailingContext:

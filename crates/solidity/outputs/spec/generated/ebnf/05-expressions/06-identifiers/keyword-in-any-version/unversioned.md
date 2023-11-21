@@ -1,7 +1,7 @@
 <!-- This file is generated automatically by infrastructure scripts. Please don't edit by hand. -->
 
 ```{ .ebnf .slang-ebnf #KEYWORD_IN_ANY_VERSION }
-«KEYWORD_IN_ANY_VERSION» = FIXED_BYTES_TYPE
+«KEYWORD_IN_ANY_VERSION» = BYTES_KEYWORD
                          | SIGNED_FIXED_TYPE
                          | UNSIGNED_FIXED_TYPE
                          | SIGNED_INTEGER_TYPE

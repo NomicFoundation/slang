@@ -1799,7 +1799,7 @@ impl Language {
                     choice.consider(input, result)?;
                     let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::FixedBytesType,
+                        TokenKind::BytesKeyword,
                     );
                     choice.consider(input, result)?;
                     let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
@@ -2895,7 +2895,7 @@ impl Language {
                     choice.consider(input, result)?;
                     let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::FixedBytesType,
+                        TokenKind::BytesKeyword,
                     );
                     choice.consider(input, result)?;
                     let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
@@ -4094,7 +4094,7 @@ impl Language {
                     choice.consider(input, result)?;
                     let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::FixedBytesType,
+                        TokenKind::BytesKeyword,
                     );
                     choice.consider(input, result)?;
                     let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
@@ -4295,7 +4295,7 @@ impl Language {
                             let result = self
                                 .parse_token_with_trivia::<LexicalContextType::Default>(
                                     input,
-                                    TokenKind::FixedBytesType,
+                                    TokenKind::BytesKeyword,
                                 );
                             choice.consider(input, result)?;
                             let result = self
@@ -5414,6 +5414,14 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
+    fn bytes_keyword(&self, input: &mut ParserContext) -> bool {
+        scan_sequence!(
+            scan_chars!(input, 'b', 'y', 't', 'e', 's'),
+            self.fixed_bytes_type_size(input)
+        )
+    }
+
+    #[allow(unused_assignments, unused_parens)]
     fn decimal_digit(&self, input: &mut ParserContext) -> bool {
         scan_char_range!(input, '0', '9')
     }
@@ -5538,14 +5546,6 @@ impl Language {
                 self.hex_byte_escape(input),
                 self.unicode_escape(input)
             )
-        )
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn fixed_bytes_type(&self, input: &mut ParserContext) -> bool {
-        scan_sequence!(
-            scan_chars!(input, 'b', 'y', 't', 'e', 's'),
-            self.fixed_bytes_type_size(input)
         )
     }
 
@@ -7130,9 +7130,9 @@ impl Lexer for Language {
 
                 longest_match! {
                         { AsciiStringLiteral = ascii_string_literal }
+                        { BytesKeyword = bytes_keyword }
                         { DecimalLiteral = decimal_literal }
                         { EndOfLine = end_of_line }
-                        { FixedBytesType = fixed_bytes_type }
                         { HexLiteral = hex_literal }
                         { HexStringLiteral = hex_string_literal }
                         { MultilineComment = multiline_comment }

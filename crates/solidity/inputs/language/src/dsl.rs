@@ -263,7 +263,7 @@ slang_grammar! {
         parser DoWhileStatement = ((DoKeyword Statement WhileKeyword (Expression delimited by OpenParen and CloseParen)) terminated by Semicolon) ;
 
         inline parser ElementaryType = (
-            BoolKeyword | StringKeyword | AddressType | FixedBytesType | SignedIntegerType | UnsignedIntegerType | SignedFixedType | UnsignedFixedType |
+            BoolKeyword | StringKeyword | AddressType | BytesKeyword | SignedIntegerType | UnsignedIntegerType | SignedFixedType | UnsignedFixedType |
             { removed in "0.8.0" ByteKeyword}
         ) ;
 
@@ -768,7 +768,7 @@ slang_grammar! {
 
     // Constructed Identifiers (Typenames)
 
-    scanner FixedBytesType =      ("bytes"  FixedBytesTypeSize) ;
+    scanner BytesKeyword =      ("bytes"  FixedBytesTypeSize) ;
     scanner SignedFixedType =     ("fixed"  (FixedTypeSize ?)) ;
     scanner SignedIntegerType =   ("int"    (IntegerTypeSize ?)) ;
     scanner UnsignedFixedType =   ("ufixed" (FixedTypeSize ?)) ;

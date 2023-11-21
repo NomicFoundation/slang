@@ -40,7 +40,7 @@
   unversioned:
     choice:
       # Types
-      - reference: "FixedBytesType"
+      - reference: "BytesKeyword"
       - reference: "SignedFixedType"
       - reference: "UnsignedFixedType"
       - reference: "SignedIntegerType"
