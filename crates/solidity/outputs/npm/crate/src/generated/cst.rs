@@ -54,9 +54,9 @@ impl Node {
     }
 
     /// Reconstructs the original source code from the parse tree.
-    pub fn reconstruct(self) -> String {
+    pub fn unparse(self) -> String {
         match self {
-            Self::Rule(rule) => rule.reconstruct(),
+            Self::Rule(rule) => rule.unparse(),
             Self::Token(token) => token.text.clone(),
         }
     }
@@ -137,7 +137,7 @@ impl RuleNode {
     }
 
     /// Reconstructs the original source code from the parse tree.
-    pub fn reconstruct(self: Rc<Self>) -> String {
+    pub fn unparse(self: Rc<Self>) -> String {
         let acc = String::with_capacity(self.text_len.utf8);
 
         self.cursor_with_offset(TextIndex::ZERO)

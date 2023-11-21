@@ -31,7 +31,7 @@ fn simple_contract() -> Result<()> {
     assert!(matches!(&children[4], Node::Token(token) if token.kind == TokenKind::OpenBrace));
     assert!(matches!(&children[5], Node::Token(token) if token.kind == TokenKind::CloseBrace));
 
-    assert_eq!(rule.reconstruct(), "contract Foo {}");
+    assert_eq!(rule.unparse(), "contract Foo {}");
 
     return Ok(());
 }
