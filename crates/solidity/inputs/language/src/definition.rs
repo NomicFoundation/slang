@@ -2428,7 +2428,7 @@ codegen_language_macros::compile!(Language(
                             ),
                             fields = (
                                 open_paren = Required(Terminal([OpenParen])),
-                                overridden = Required(NonTerminal(OverridePaths)),
+                                paths = Required(NonTerminal(OverridePaths)),
                                 close_paren = Required(Terminal([CloseParen]))
                             )
                         ),
