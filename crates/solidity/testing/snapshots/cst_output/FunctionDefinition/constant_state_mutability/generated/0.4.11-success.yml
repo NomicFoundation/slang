@@ -12,7 +12,7 @@ Tree:
       - ParametersDeclaration (Rule): # 10..12 "()"
           - OpenParen (Token): "(" # 10..11
           - CloseParen (Token): ")" # 11..12
-      - FunctionAttributesList (Rule): # 12..21 " constant"
+      - FunctionAttributes (Rule): # 12..21 " constant"
           - ConstantKeyword (Token): "constant" # 13..21
       - Block (Rule): # 21..24 " {}"
           - OpenBrace (Token): "{" # 22..23

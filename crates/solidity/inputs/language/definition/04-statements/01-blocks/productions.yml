@@ -8,11 +8,11 @@
         reference: "OpenBrace"
       parser:
         optional:
-          reference: "StatementsList"
+          reference: "Statements"
       close:
         reference: "CloseBrace"
 
-- name: "StatementsList"
+- name: "Statements"
   kind: "Parser"
   unversioned:
     oneOrMore:

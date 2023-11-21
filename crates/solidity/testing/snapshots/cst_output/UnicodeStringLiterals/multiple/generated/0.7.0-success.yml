@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ unicode"happy 😃" unicode'sad 😔'                                                  │ 0..37
+
+Errors: []
+
+Tree:
+  - UnicodeStringLiterals (Rule): # 0..37 'unicode"happy 😃" unicode''sad 😔'''
+      - UnicodeStringLiteral (Token): 'unicode"happy 😃"' # 0..19
+      - UnicodeStringLiteral (Token): "unicode'sad 😔'" # 20..37

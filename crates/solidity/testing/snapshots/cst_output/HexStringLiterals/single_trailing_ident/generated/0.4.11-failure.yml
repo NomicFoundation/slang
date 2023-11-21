@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ hex"12"b                                                                         │ 0..8
+
+Errors: # 1 total
+  - >
+    Error: Expected HexStringLiteral.
+       ╭─[crates/solidity/testing/snapshots/cst_output/HexStringLiterals/single_trailing_ident/input.sol:1:8]
+       │
+     1 │ hex"12"b
+       │        ─┬  
+       │         ╰── Error occurred here.
+    ───╯
+
+Tree:
+  - HexStringLiterals (Rule): # 0..9 'hex"12"b\n'
+      - HexStringLiteral (Token): 'hex"12"' # 0..7
+      - SKIPPED (Token): "b\n" # 7..9

@@ -11,6 +11,15 @@
             reference: "OpenBrace"
           parser:
             optional:
-              reference: "IdentifiersList"
+              reference: "EnumMembers"
           close:
             reference: "CloseBrace"
+
+- name: "EnumMembers"
+  kind: "Parser"
+  unversioned:
+    separatedBy:
+      separator:
+        reference: "Comma"
+      parser:
+        reference: "Identifier"

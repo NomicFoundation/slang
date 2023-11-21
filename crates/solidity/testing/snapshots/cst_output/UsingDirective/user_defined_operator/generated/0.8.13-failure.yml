@@ -18,7 +18,7 @@ Tree:
       - UsingKeyword (Token): "using" # 0..5
       - UsingDirectiveDeconstruction (Rule): # 5..16 " {div as /}"
           - OpenBrace (Token): "{" # 6..7
-          - UsingDirectiveSymbolsList (Rule): # 7..10 "div"
+          - UsingDirectiveSymbols (Rule): # 7..10 "div"
               - UsingDirectiveSymbol (Rule): # 7..10 "div"
                   - IdentifierPath (Rule): # 7..10 "div"
                       - Identifier (Token): "div" # 7..10

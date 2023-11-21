@@ -41,12 +41,12 @@ Errors: # 1 total
 
 Tree:
   - SourceUnit (Rule): # 0..243 'pragma solidity 0.0.0;\n\nimport "foo.sol";\n\nusing A...'
-      - SourceUnitMembersList (Rule): # 0..42 'pragma solidity 0.0.0;\n\nimport "foo.sol";\n'
+      - SourceUnitMembers (Rule): # 0..42 'pragma solidity 0.0.0;\n\nimport "foo.sol";\n'
           - PragmaDirective (Rule): # 0..23 "pragma solidity 0.0.0;\n"
               - PragmaKeyword (Token): "pragma" # 0..6
               - VersionPragma (Rule): # 6..21 " solidity 0.0.0"
                   - SolidityKeyword (Token): "solidity" # 7..15
-                  - VersionPragmaExpressionsList (Rule): # 15..21 " 0.0.0"
+                  - VersionPragmaExpressions (Rule): # 15..21 " 0.0.0"
                       - VersionPragmaExpression (Rule): # 15..21 " 0.0.0"
                           - VersionPragmaSpecifier (Rule): # 15..21 " 0.0.0"
                               - VersionPragmaValue (Token): "0" # 16..17
@@ -60,5 +60,4 @@ Tree:
               - PathImport (Rule): # 30..40 ' "foo.sol"'
                   - AsciiStringLiteral (Token): '"foo.sol"' # 31..40
               - Semicolon (Token): ";" # 40..41
-      - EndOfFileTrivia (Rule): "\n" # 42..43
       - SKIPPED (Token): "using A for B;\n\ncontract C { }\n\ninterface I { }\n\nl..." # 43..243

@@ -173,21 +173,21 @@ slang_grammar! {
 
         inline parser AndOperator = AmpersandAmpersand ;
 
-        parser ArgumentsDeclaration = (((PositionalArgumentsList | NamedArgumentsDeclaration) ?) delimited by OpenParen and CloseParen) ;
+        parser ArgumentsDeclaration = (((PositionalArguments | NamedArgumentsDeclaration) ?) delimited by OpenParen and CloseParen) ;
 
-        parser ArrayExpression = (ArrayValuesList delimited by OpenBracket and CloseBracket) ;
+        parser ArrayExpression = (ArrayValues delimited by OpenBracket and CloseBracket) ;
 
         inline parser ArrayTypeNameOperator = ((Expression ?) delimited by OpenBracket and CloseBracket) ;
 
-        parser ArrayValuesList = (Expression separated by Comma) ;
+        parser ArrayValues = (Expression separated by Comma) ;
 
-        parser AsciiStringLiteralsList = (AsciiStringLiteral +) ;
+        parser AsciiStringLiterals = (AsciiStringLiteral +) ;
 
-        parser AssemblyFlagsList = (AsciiStringLiteral separated by Comma) ;
+        parser AssemblyFlags = (AsciiStringLiteral separated by Comma) ;
 
         parser AssemblyStatement = (AssemblyKeyword (AsciiStringLiteral ?) (AssemblyFlagsDeclaration ?) YulBlock) ;
 
-        parser AssemblyFlagsDeclaration = (AssemblyFlagsList delimited by OpenParen and CloseParen) ;
+        parser AssemblyFlagsDeclaration = (AssemblyFlags delimited by OpenParen and CloseParen) ;
 
         inline parser AssignmentOperator = (
             Equal | BarEqual | PlusEqual | MinusEqual | CaretEqual | SlashEqual | PercentEqual | AsteriskEqual | AmpersandEqual |
@@ -200,7 +200,7 @@ slang_grammar! {
 
         inline parser BitwiseXOrOperator = Caret ;
 
-        parser Block = ((StatementsList ?) delimited by OpenBrace and CloseBrace) ;
+        parser Block = ((Statements ?) delimited by OpenBrace and CloseBrace) ;
 
         inline parser BooleanExpression = (TrueKeyword | FalseKeyword) ;
 
@@ -210,7 +210,7 @@ slang_grammar! {
 
         parser CatchClauseError = { introduced in "0.6.0" ((Identifier ?) ParametersDeclaration) } ;
 
-        parser CatchClausesList = { introduced in "0.6.0" (CatchClause +) } ;
+        parser CatchClauses = { introduced in "0.6.0" (CatchClause +) } ;
 
         inline parser ConditionalOperator = (QuestionMark Expression Colon Expression) ;
 
@@ -218,14 +218,14 @@ slang_grammar! {
 
         inline parser ConstructorAttribute = { introduced in "0.4.22" (ModifierInvocation | InternalKeyword | PayableKeyword | PublicKeyword) } ;
 
-        parser ConstructorAttributesList = { introduced in "0.4.22" (ConstructorAttribute +) } ;
+        parser ConstructorAttributes = { introduced in "0.4.22" (ConstructorAttribute +) } ;
 
-        parser ConstructorDefinition = { introduced in "0.4.22" (ConstructorKeyword ParametersDeclaration (ConstructorAttributesList ?) Block) } ;
+        parser ConstructorDefinition = { introduced in "0.4.22" (ConstructorKeyword ParametersDeclaration (ConstructorAttributes ?) Block) } ;
 
         parser ContinueStatement = (ContinueKeyword terminated by Semicolon) ;
 
         parser ContractDefinition = (
-            { introduced in "0.6.0" (AbstractKeyword ?) } ContractKeyword Identifier (InheritanceSpecifier ?) ((ContractMembersList ?) delimited by OpenBrace and CloseBrace)
+            { introduced in "0.6.0" (AbstractKeyword ?) } ContractKeyword Identifier (InheritanceSpecifier ?) ((ContractMembers ?) delimited by OpenBrace and CloseBrace)
         ) ;
 
         inline parser ContractMember = (
@@ -237,7 +237,7 @@ slang_grammar! {
             { introduced in "0.8.8"  UserDefinedValueTypeDefinition }
         ) ;
 
-        parser ContractMembersList = (ContractMember +) ;
+        parser ContractMembers = (ContractMember +) ;
 
         inline parser ControlStatement = (
             IfStatement | ForStatement | WhileStatement | DoWhileStatement | ContinueStatement | BreakStatement | DeleteStatement | ReturnStatement |
@@ -252,11 +252,11 @@ slang_grammar! {
             { introduced in "0.5.0" CalldataKeyword}
         ) ;
 
-        parser DeconstructionImport = ((DeconstructionImportSymbolsList delimited by OpenBrace and CloseBrace) FromKeyword AsciiStringLiteral) ;
+        parser DeconstructionImport = ((DeconstructionImportSymbols delimited by OpenBrace and CloseBrace) FromKeyword AsciiStringLiteral) ;
 
         parser DeconstructionImportSymbol = (Identifier ((AsKeyword Identifier) ?)) ;
 
-        parser DeconstructionImportSymbolsList = (DeconstructionImportSymbol separated by Comma) ;
+        parser DeconstructionImportSymbols = (DeconstructionImportSymbol separated by Comma) ;
 
         parser DeleteStatement = ((DeleteKeyword Expression) terminated by Semicolon) ;
 
@@ -269,25 +269,25 @@ slang_grammar! {
 
         parser EmitStatement = { introduced in "0.4.21" ((EmitKeyword IdentifierPath ArgumentsDeclaration) terminated by Semicolon) } ;
 
-        parser EnumDefinition = (EnumKeyword Identifier ((IdentifiersList ?) delimited by OpenBrace and CloseBrace)) ;
+        parser EnumDefinition = (EnumKeyword Identifier ((EnumMembers ?) delimited by OpenBrace and CloseBrace)) ;
 
         inline parser EqualityComparisonOperator = (EqualEqual | BangEqual) ;
 
         parser ErrorDefinition = { introduced in "0.8.4" ((ErrorKeyword Identifier ErrorParametersDeclaration) terminated by Semicolon) } ;
 
-        parser ErrorParametersDeclaration = { introduced in "0.8.4" ((ErrorParametersList ?) delimited by OpenParen and CloseParen) } ;
+        parser ErrorParametersDeclaration = { introduced in "0.8.4" ((ErrorParameters ?) delimited by OpenParen and CloseParen) } ;
 
         parser ErrorParameter = { introduced in "0.8.4" (TypeName (Identifier ?)) } ;
 
-        parser ErrorParametersList = { introduced in "0.8.4" (ErrorParameter separated by Comma) } ;
+        parser ErrorParameters = { introduced in "0.8.4" (ErrorParameter separated by Comma) } ;
 
         parser EventDefinition = ((EventKeyword Identifier EventParametersDeclaration (AnonymousKeyword ?)) terminated by Semicolon) ;
 
-        parser EventParametersDeclaration = ((EventParametersList ?) delimited by OpenParen and CloseParen);
+        parser EventParametersDeclaration = ((EventParameters ?) delimited by OpenParen and CloseParen);
 
         parser EventParameter = (TypeName (IndexedKeyword ?) (Identifier ?)) ;
 
-        parser EventParametersList = (EventParameter separated by Comma) ;
+        parser EventParameters = (EventParameter separated by Comma) ;
 
         parser ExperimentalPragma = (ExperimentalKeyword (AsciiStringLiteral | Identifier)) ;
 
@@ -322,9 +322,9 @@ slang_grammar! {
 
         inline parser FallbackFunctionAttribute = { introduced in "0.6.0" (ModifierInvocation | OverrideSpecifier | ExternalKeyword | PayableKeyword | PureKeyword | ViewKeyword | VirtualKeyword) } ;
 
-        parser FallbackFunctionAttributesList = { introduced in "0.6.0" (FallbackFunctionAttribute +) } ;
+        parser FallbackFunctionAttributes = { introduced in "0.6.0" (FallbackFunctionAttribute +) } ;
 
-        parser FallbackFunctionDefinition = { introduced in "0.6.0" (FallbackKeyword ParametersDeclaration (FallbackFunctionAttributesList ?) (ReturnsDeclaration ?) (Semicolon | Block)) } ;
+        parser FallbackFunctionDefinition = { introduced in "0.6.0" (FallbackKeyword ParametersDeclaration (FallbackFunctionAttributes ?) (ReturnsDeclaration ?) (Semicolon | Block)) } ;
 
         parser ForStatement = (ForKeyword (((SimpleStatement | Semicolon) (ExpressionStatement | Semicolon) (Expression ?)) delimited by OpenParen and CloseParen) Statement) ;
 
@@ -334,7 +334,7 @@ slang_grammar! {
             { introduced in "0.6.0" VirtualKeyword }
          ) ;
 
-        parser FunctionAttributesList = (FunctionAttribute +) ;
+        parser FunctionAttributes = (FunctionAttribute +) ;
 
         inline parser FunctionCallOperator = (
             { introduced in "0.6.2" (FunctionCallOptions ?) }
@@ -346,21 +346,21 @@ slang_grammar! {
             { introduced in "0.8.0"                        NamedArgumentsDeclaration     }
         ) ;
 
-        parser FunctionDefinition = (FunctionKeyword (Identifier | FallbackKeyword | ReceiveKeyword) ParametersDeclaration (FunctionAttributesList ?) (ReturnsDeclaration ?) (Semicolon | Block)) ;
+        parser FunctionDefinition = (FunctionKeyword (Identifier | FallbackKeyword | ReceiveKeyword) ParametersDeclaration (FunctionAttributes ?) (ReturnsDeclaration ?) (Semicolon | Block)) ;
 
-        parser FunctionType = (FunctionKeyword ParametersDeclaration (FunctionTypeAttributesList ?) (ReturnsDeclaration ?)) ;
+        parser FunctionType = (FunctionKeyword ParametersDeclaration (FunctionTypeAttributes ?) (ReturnsDeclaration ?)) ;
 
         inline parser FunctionTypeAttribute = (InternalKeyword | ExternalKeyword | PrivateKeyword | PublicKeyword | PureKeyword | ViewKeyword | PayableKeyword) ;
 
-        parser FunctionTypeAttributesList = (FunctionTypeAttribute +) ;
+        parser FunctionTypeAttributes = (FunctionTypeAttribute +) ;
 
-        parser HexStringLiteralsList = (HexStringLiteral +) ;
+        parser HexStringLiterals = (HexStringLiteral +) ;
 
         parser IdentifierPath = (Identifier separated by Period) ;
 
-        parser IdentifierPathsList = (IdentifierPath separated by Comma) ;
+        parser OverridePaths = (IdentifierPath separated by Comma) ;
 
-        parser IdentifiersList = (Identifier separated by Comma) ;
+        parser EnumMembers = (Identifier separated by Comma) ;
 
         parser IfStatement = (IfKeyword (Expression delimited by OpenParen and CloseParen) Statement ((ElseKeyword Statement) ?)) ;
 
@@ -368,19 +368,19 @@ slang_grammar! {
 
         inline parser IndexAccessOperator = (((Expression ?) ((Colon (Expression ?)) ?)) delimited by OpenBracket and CloseBracket) ;
 
-        parser InheritanceSpecifier = (IsKeyword InheritanceTypesList) ;
+        parser InheritanceSpecifier = (IsKeyword InheritanceTypes) ;
 
         parser InheritanceType = (IdentifierPath (ArgumentsDeclaration ?)) ;
 
-        parser InheritanceTypesList = (InheritanceType separated by Comma) ;
+        parser InheritanceTypes = (InheritanceType separated by Comma) ;
 
-        parser InterfaceDefinition = (InterfaceKeyword Identifier (InheritanceSpecifier ?) ((InterfaceMembersList ?) delimited by OpenBrace and CloseBrace)) ;
+        parser InterfaceDefinition = (InterfaceKeyword Identifier (InheritanceSpecifier ?) ((InterfaceMembers ?) delimited by OpenBrace and CloseBrace)) ;
 
-        parser InterfaceMembersList = (ContractMember +) ;
+        parser InterfaceMembers = (ContractMember +) ;
 
-        parser LibraryDefinition = (LibraryKeyword Identifier ((LibraryMembersList ?) delimited by OpenBrace and CloseBrace)) ;
+        parser LibraryDefinition = (LibraryKeyword Identifier ((LibraryMembers ?) delimited by OpenBrace and CloseBrace)) ;
 
-        parser LibraryMembersList = (ContractMember +) ;
+        parser LibraryMembers = (ContractMember +) ;
 
         parser MappingKeyType = (
             (ElementaryType | IdentifierPath)
@@ -401,9 +401,9 @@ slang_grammar! {
             { introduced in "0.6.0" VirtualKeyword }
         ) ;
 
-        parser ModifierAttributesList = (ModifierAttribute +) ;
+        parser ModifierAttributes = (ModifierAttribute +) ;
 
-        parser ModifierDefinition = (ModifierKeyword Identifier (ParametersDeclaration ?) (ModifierAttributesList ?) (Semicolon | Block)) ;
+        parser ModifierDefinition = (ModifierKeyword Identifier (ParametersDeclaration ?) (ModifierAttributes ?) (Semicolon | Block)) ;
 
         parser ModifierInvocation = (IdentifierPath (ArgumentsDeclaration ?)) ;
 
@@ -411,9 +411,9 @@ slang_grammar! {
 
         parser NamedArgument = (Identifier Colon Expression) ;
 
-        parser NamedArgumentsDeclaration = ((NamedArgumentsList ?) delimited by OpenBrace and CloseBrace) ;
+        parser NamedArgumentsDeclaration = ((NamedArguments ?) delimited by OpenBrace and CloseBrace) ;
 
-        parser NamedArgumentsList = (NamedArgument separated by Comma) ;
+        parser NamedArguments = (NamedArgument separated by Comma) ;
 
         parser NamedImport = (Asterisk AsKeyword Identifier FromKeyword AsciiStringLiteral) ;
 
@@ -435,17 +435,17 @@ slang_grammar! {
 
         inline parser OrderComparisonOperator = (LessThan | GreaterThan | LessThanEqual | GreaterThanEqual) ;
 
-        parser OverrideSpecifier = (OverrideKeyword (((IdentifierPathsList ?) delimited by OpenParen and CloseParen) ?)) ;
+        parser OverrideSpecifier = (OverrideKeyword (((OverridePaths ?) delimited by OpenParen and CloseParen) ?)) ;
 
         parser Parameter = (TypeName (DataLocation ?) (Identifier ?)) ;
 
-        parser ParametersDeclaration = ((ParametersList ?) delimited by OpenParen and CloseParen) ;
+        parser ParametersDeclaration = ((Parameters ?) delimited by OpenParen and CloseParen) ;
 
-        parser ParametersList = (Parameter separated by Comma) ;
+        parser Parameters = (Parameter separated by Comma) ;
 
         parser PathImport = (AsciiStringLiteral ((AsKeyword Identifier) ?)) ;
 
-        parser PositionalArgumentsList = (Expression separated by Comma) ;
+        parser PositionalArguments = (Expression separated by Comma) ;
 
         parser PragmaDirective = ((PragmaKeyword (ABICoderPragma | ExperimentalPragma | VersionPragma)) terminated by Semicolon) ;
 
@@ -456,9 +456,9 @@ slang_grammar! {
 
         inline parser ReceiveFunctionAttribute = { introduced in "0.6.0" (ModifierInvocation | OverrideSpecifier | ExternalKeyword | PayableKeyword | VirtualKeyword) } ;
 
-        parser ReceiveFunctionAttributesList = { introduced in "0.6.0" (ReceiveFunctionAttribute +) } ;
+        parser ReceiveFunctionAttributes = { introduced in "0.6.0" (ReceiveFunctionAttribute +) } ;
 
-        parser ReceiveFunctionDefinition = { introduced in "0.6.0" (ReceiveKeyword ParametersDeclaration (ReceiveFunctionAttributesList ?) (Semicolon | Block)) } ;
+        parser ReceiveFunctionDefinition = { introduced in "0.6.0" (ReceiveKeyword ParametersDeclaration (ReceiveFunctionAttributes ?) (Semicolon | Block)) } ;
 
         parser ReturnStatement = ((ReturnKeyword (Expression ?)) terminated by Semicolon) ;
 
@@ -470,7 +470,7 @@ slang_grammar! {
 
         inline parser SimpleStatement = (ExpressionStatement | VariableDeclarationStatement | TupleDeconstructionStatement) ;
 
-        parser SourceUnit = ((SourceUnitMembersList ?) (EndOfFileTrivia ?)) ;
+        parser SourceUnit = ((SourceUnitMembers ?) (EndOfFileTrivia ?)) ;
 
         inline parser SourceUnitMember = (
               PragmaDirective | ImportDirective | ContractDefinition | InterfaceDefinition | LibraryDefinition |
@@ -483,45 +483,45 @@ slang_grammar! {
               { introduced in "0.8.22" EventDefinition }
         ) ;
 
-        parser SourceUnitMembersList = (SourceUnitMember +) ;
+        parser SourceUnitMembers = (SourceUnitMember +) ;
 
         inline parser StateVariableAttribute = (
             OverrideSpecifier | ConstantKeyword | InternalKeyword | PrivateKeyword | PublicKeyword| { introduced in "0.6.5" ImmutableKeyword }
         ) ;
 
-        parser StateVariableAttributesList = (StateVariableAttribute +) ;
+        parser StateVariableAttributes = (StateVariableAttribute +) ;
 
-        parser StateVariableDefinition = ((TypeName (StateVariableAttributesList ?) Identifier ((Equal Expression) ?)) terminated by Semicolon) ;
+        parser StateVariableDefinition = ((TypeName (StateVariableAttributes ?) Identifier ((Equal Expression) ?)) terminated by Semicolon) ;
 
         inline parser Statement = (
             SimpleStatement | ControlStatement | AssemblyStatement | Block | { introduced in "0.8.0" UncheckedBlock }
         ) ;
 
-        parser StatementsList = (Statement +) ;
+        parser Statements = (Statement +) ;
 
         inline parser StringExpression = (
-            HexStringLiteralsList | AsciiStringLiteralsList | { introduced in "0.7.0" UnicodeStringLiteralsList }
+            HexStringLiterals | AsciiStringLiterals | { introduced in "0.7.0" UnicodeStringLiterals }
         ) ;
 
-        parser StructDefinition = (StructKeyword Identifier ((StructMembersList ?) delimited by OpenBrace and CloseBrace)) ;
+        parser StructDefinition = (StructKeyword Identifier ((StructMembers ?) delimited by OpenBrace and CloseBrace)) ;
 
         parser StructMember = ((TypeName Identifier) terminated by Semicolon) ;
 
-        parser StructMembersList = (StructMember +) ;
+        parser StructMembers = (StructMember +) ;
 
         parser ThrowStatement = { removed in "0.5.0" (ThrowKeyword terminated by Semicolon) } ;
 
-        parser TryStatement = { introduced in "0.6.0" (TryKeyword Expression (ReturnsDeclaration ?) Block CatchClausesList) } ;
+        parser TryStatement = { introduced in "0.6.0" (TryKeyword Expression (ReturnsDeclaration ?) Block CatchClauses) } ;
 
-        parser TupleDeconstructionStatement = ((((TupleMembersList ?) delimited by OpenParen and CloseParen) Equal Expression) terminated by Semicolon) ;
+        parser TupleDeconstructionStatement = ((((TupleMembers ?) delimited by OpenParen and CloseParen) Equal Expression) terminated by Semicolon) ;
 
-        parser TupleExpression = (TupleValuesList delimited by OpenParen and CloseParen) ;
+        parser TupleExpression = (TupleValues delimited by OpenParen and CloseParen) ;
 
         parser TupleMember = (((TypeName (DataLocation ?) Identifier) | ((DataLocation ?) Identifier)) ?) ;
 
-        parser TupleMembersList = (TupleMember separated by Comma) ;
+        parser TupleMembers = (TupleMember separated by Comma) ;
 
-        parser TupleValuesList = ((Expression ?) separated by Comma) ;
+        parser TupleValues = ((Expression ?) separated by Comma) ;
 
         parser TypeExpression = { introduced in "0.5.3" (TypeKeyword (TypeName delimited by OpenParen and CloseParen)) } ;
 
@@ -540,35 +540,33 @@ slang_grammar! {
 
         parser UncheckedBlock = { introduced in "0.8.0" (UncheckedKeyword Block) } ;
 
-        parser UnicodeStringLiteralsList = { introduced in "0.7.0" (UnicodeStringLiteral +) } ;
+        parser UnicodeStringLiterals = { introduced in "0.7.0" (UnicodeStringLiteral +) } ;
 
         inline parser UnnamedFunctionAttribute = { removed in "0.6.0" (ModifierInvocation | OverrideSpecifier | ExternalKeyword | PayableKeyword | PureKeyword | ViewKeyword) } ;
 
-        parser UnnamedFunctionAttributesList = { removed in "0.6.0" (UnnamedFunctionAttribute +) } ;
+        parser UnnamedFunctionAttributes = { removed in "0.6.0" (UnnamedFunctionAttribute +) } ;
 
-        parser UnnamedFunctionDefinition = { removed in "0.6.0" (FunctionKeyword ParametersDeclaration (UnnamedFunctionAttributesList ?) (Semicolon | Block)) } ;
+        parser UnnamedFunctionDefinition = { removed in "0.6.0" (FunctionKeyword ParametersDeclaration (UnnamedFunctionAttributes ?) (Semicolon | Block)) } ;
 
         parser UserDefinedValueTypeDefinition = { introduced in "0.8.8" ((TypeKeyword Identifier IsKeyword ElementaryType) terminated by Semicolon) } ;
 
-        parser UsingDirective = ((UsingKeyword (UsingDirectivePath | UsingDirectiveDeconstruction) ForKeyword (Asterisk | TypeName) ({ introduced in "0.8.13" GlobalKeyword } ?)) terminated by Semicolon) ;
+        parser UsingDirective = ((UsingKeyword (IdentifierPath | UsingDirectiveDeconstruction) ForKeyword (Asterisk | TypeName) ({ introduced in "0.8.13" GlobalKeyword } ?)) terminated by Semicolon) ;
 
-        parser UsingDirectiveDeconstruction = { introduced in "0.8.13" (UsingDirectiveSymbolsList delimited by OpenBrace and CloseBrace) };
+        parser UsingDirectiveDeconstruction = { introduced in "0.8.13" (UsingDirectiveSymbols delimited by OpenBrace and CloseBrace) };
 
         inline parser UsingDirectiveOperator = {
             introduced in "0.8.19" (Ampersand | Asterisk | BangEqual | Bar | Caret | EqualEqual | GreaterThan | GreaterThanEqual | LessThan | LessThanEqual | Minus | Percent | Plus | Slash | Tilde)
         } ;
 
-        parser UsingDirectivePath = IdentifierPath ;
-
         parser UsingDirectiveSymbol = {
             introduced in "0.8.13" (IdentifierPath { introduced in "0.8.19" ((AsKeyword UsingDirectiveOperator) ?) } )
         } ;
 
-        parser UsingDirectiveSymbolsList = (UsingDirectiveSymbol separated by Comma) ;
+        parser UsingDirectiveSymbols = (UsingDirectiveSymbol separated by Comma) ;
 
-        parser VariableDeclaration = (
-            ({ removed in "0.5.0" VarKeyword } | TypeName) (DataLocation ?) Identifier
-        ) ;
+        parser VariableDeclaration = (VariableDeclarationType (DataLocation ?) Identifier) ;
+
+        inline parser VariableDeclarationType = ({ removed in "0.5.0" VarKeyword } | TypeName) ;
 
         parser VariableDeclarationStatement = ((VariableDeclaration ((Equal Expression) ?)) terminated by Semicolon) ;
 
@@ -584,7 +582,7 @@ slang_grammar! {
 
     lexical context VersionPragma = {
 
-        parser VersionPragma = (SolidityKeyword VersionPragmaExpressionsList) ;
+        parser VersionPragma = (SolidityKeyword VersionPragmaExpressions) ;
 
         precedence parser VersionPragmaExpression = (
             [
@@ -595,7 +593,7 @@ slang_grammar! {
             with primary expression VersionPragmaSpecifier
         ) ;
 
-        parser VersionPragmaExpressionsList = (VersionPragmaExpression +) ;
+        parser VersionPragmaExpressions = (VersionPragmaExpression +) ;
 
         inline parser VersionPragmaOrOperator = BarBar ;
 
@@ -627,15 +625,15 @@ slang_grammar! {
             | LeaveKeyword
         ) ;
 
-        parser YulAssignmentStatement = (YulIdentifierPathsList ColonEqual YulExpression) ;
+        parser YulAssignmentStatement = (YulIdentifierPaths ColonEqual YulExpression) ;
 
-        parser YulBlock = ((YulStatementsList ?) delimited by OpenBrace and CloseBrace) ;
+        parser YulBlock = ((YulStatements ?) delimited by OpenBrace and CloseBrace) ;
 
         parser YulBreakStatement = BreakKeyword ;
 
         parser YulContinueStatement = ContinueKeyword ;
 
-        parser YulDeclarationStatement = (LetKeyword YulIdentifierPathsList ((ColonEqual YulExpression) ?)) ;
+        parser YulDeclarationStatement = (LetKeyword YulIdentifierPaths ((ColonEqual YulExpression) ?)) ;
 
         precedence parser YulExpression = (
             [
@@ -644,19 +642,19 @@ slang_grammar! {
             with primary expression (YulLiteral | YulIdentifierPath)
         ) ;
 
-        parser YulExpressionsList = (YulExpression separated by Comma) ;
+        parser YulArguments = (YulExpression separated by Comma) ;
 
         parser YulForStatement = (ForKeyword YulBlock YulExpression YulBlock YulBlock) ;
 
-        inline parser YulFunctionCallOperator = ((YulExpressionsList ?) delimited by OpenParen and CloseParen) ;
+        inline parser YulFunctionCallOperator = ((YulArguments ?) delimited by OpenParen and CloseParen) ;
 
         parser YulFunctionDefinition = (FunctionKeyword YulIdentifier YulParametersDeclaration (YulReturnsDeclaration ?) YulBlock) ;
 
         parser YulIdentifierPath = (YulIdentifier separated by Period) ;
 
-        parser YulIdentifierPathsList = (YulIdentifierPath separated by Comma) ;
+        parser YulIdentifierPaths = (YulIdentifierPath separated by Comma) ;
 
-        parser YulIdentifiersList = (YulIdentifier separated by Comma) ;
+        parser YulIdentifiers = (YulIdentifier separated by Comma) ;
 
         parser YulIfStatement = (IfKeyword YulExpression YulBlock) ;
 
@@ -664,9 +662,9 @@ slang_grammar! {
 
         inline parser YulLiteral = (TrueKeyword | FalseKeyword | YulHexLiteral | YulDecimalLiteral | HexStringLiteral | AsciiStringLiteral) ;
 
-        parser YulParametersDeclaration = ((YulIdentifiersList ?) delimited by OpenParen and CloseParen) ;
+        parser YulParametersDeclaration = ((YulIdentifiers ?) delimited by OpenParen and CloseParen) ;
 
-        parser YulReturnsDeclaration = (MinusGreaterThan YulIdentifiersList) ;
+        parser YulReturnsDeclaration = (MinusGreaterThan YulIdentifiers) ;
 
         inline parser YulStatement = (
             YulBlock | YulFunctionDefinition | YulDeclarationStatement | YulAssignmentStatement | YulIfStatement |
@@ -674,13 +672,13 @@ slang_grammar! {
             YulBreakStatement | YulContinueStatement | YulExpression
         ) ;
 
-        parser YulStatementsList = (YulStatement +) ;
+        parser YulStatements = (YulStatement +) ;
 
         parser YulSwitchCase = ((DefaultKeyword | (CaseKeyword YulLiteral)) YulBlock) ;
 
-        parser YulSwitchCasesList = (YulSwitchCase +) ;
+        parser YulSwitchCases = (YulSwitchCase +) ;
 
-        parser YulSwitchStatement = (SwitchKeyword YulExpression YulSwitchCasesList) ;
+        parser YulSwitchStatement = (SwitchKeyword YulExpression YulSwitchCases) ;
 
     } ;
 

@@ -11,13 +11,13 @@ Tree:
       - LeadingTrivia (Rule): # 0..42 "// TODO: Tuple expressions can't be empty\n"
           - SingleLineComment (Trivia): "// TODO: Tuple expressions can't be empty" # 0..41
       - OpenParen (Token): "(" # 42..43
-      - TupleMembersList (Rule): # 43..43
+      - TupleMembers (Rule): # 43..43
           - TupleMember (Rule): [] # 43..43
       - CloseParen (Token): ")" # 43..44
       - Equal (Token): "=" # 45..46
       - Expression (Rule): # 46..49 " ()"
           - TupleExpression (Rule): # 46..49 " ()"
               - OpenParen (Token): "(" # 47..48
-              - TupleValuesList (Rule): [] # 48..48
+              - TupleValues (Rule): [] # 48..48
               - CloseParen (Token): ")" # 48..49
       - Semicolon (Token): ";" # 49..50

@@ -19,20 +19,20 @@ Tree:
       - Identifier (Token): "transferFrom" # 9..21
       - ParametersDeclaration (Rule): # 21..63 "(address from, address to, uint256 amount)"
           - OpenParen (Token): "(" # 21..22
-          - ParametersList (Rule): # 22..29 "address"
+          - Parameters (Rule): # 22..29 "address"
               - Parameter (Rule): # 22..29 "address"
                   - TypeName (Rule): # 22..29 "address"
                       - AddressType (Rule): # 22..29 "address"
                           - AddressKeyword (Token): "address" # 22..29
           - SKIPPED (Token): "from, address to, uint256 amount" # 30..62
           - CloseParen (Token): ")" # 62..63
-      - FunctionAttributesList (Rule): # 63..72 " external"
+      - FunctionAttributes (Rule): # 63..72 " external"
           - ExternalKeyword (Token): "external" # 64..72
       - ReturnsDeclaration (Rule): # 72..87 " returns (bool)"
           - ReturnsKeyword (Token): "returns" # 73..80
           - ParametersDeclaration (Rule): # 80..87 " (bool)"
               - OpenParen (Token): "(" # 81..82
-              - ParametersList (Rule): # 82..86 "bool"
+              - Parameters (Rule): # 82..86 "bool"
                   - Parameter (Rule): # 82..86 "bool"
                       - TypeName (Rule): # 82..86 "bool"
                           - BoolKeyword (Token): "bool" # 82..86

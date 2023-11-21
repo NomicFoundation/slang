@@ -113,7 +113,6 @@ impl CodeGenerator {
             "parse_error.rs",
             "parse_output.rs",
             "text_index.rs",
-            "visitor.rs",
             "napi/napi_cst.rs",
             "napi/napi_cursor.rs",
             "napi/napi_parse_error.rs",

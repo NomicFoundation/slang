@@ -1,0 +1,17 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ hex"_1234"                                                                       │ 0..10
+
+Errors: # 1 total
+  - >
+    Error: Expected HexStringLiteral.
+       ╭─[crates/solidity/testing/snapshots/cst_output/HexStringLiterals/invalid_leading_separator/input.sol:1:1]
+       │
+     1 │ hex"_1234"
+       │ ─────┬────  
+       │      ╰────── Error occurred here.
+    ───╯
+
+Tree:
+  - SKIPPED (Token): 'hex"_1234"' # 0..10

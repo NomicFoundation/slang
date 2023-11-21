@@ -8,11 +8,11 @@
         reference: "OpenBrace"
       parser:
         optional:
-          reference: "YulStatementsList"
+          reference: "YulStatements"
       close:
         reference: "CloseBrace"
 
-- name: "YulStatementsList"
+- name: "YulStatements"
   kind: "Parser"
   unversioned:
     oneOrMore:
@@ -54,7 +54,7 @@
   unversioned:
     sequence:
       - reference: "LetKeyword"
-      - reference: "YulIdentifierPathsList"
+      - reference: "YulIdentifierPaths"
       - optional:
           sequence:
             - reference: "ColonEqual"
@@ -79,7 +79,7 @@
         reference: "OpenParen"
       parser:
         optional:
-          reference: "YulIdentifiersList"
+          reference: "YulIdentifiers"
       close:
         reference: "CloseParen"
 
@@ -88,13 +88,13 @@
   unversioned:
     sequence:
       - reference: "MinusGreaterThan"
-      - reference: "YulIdentifiersList"
+      - reference: "YulIdentifiers"
 
 - name: "YulAssignmentStatement"
   kind: "Parser"
   unversioned:
     sequence:
-      - reference: "YulIdentifierPathsList"
+      - reference: "YulIdentifierPaths"
       - reference: "ColonEqual"
       - reference: "YulExpression"
 
@@ -138,9 +138,9 @@
     sequence:
       - reference: "SwitchKeyword"
       - reference: "YulExpression"
-      - reference: "YulSwitchCasesList"
+      - reference: "YulSwitchCases"
 
-- name: "YulSwitchCasesList"
+- name: "YulSwitchCases"
   kind: "Parser"
   unversioned:
     oneOrMore:

@@ -6,16 +6,16 @@
   versioned:
     0.4.11:
       choice:
-        - reference: "HexStringLiteralsList"
-        - reference: "AsciiStringLiteralsList"
+        - reference: "HexStringLiterals"
+        - reference: "AsciiStringLiterals"
     0.7.0:
-      # added "UnicodeStringLiteralsList"
+      # added "UnicodeStringLiterals"
       choice:
-        - reference: "HexStringLiteralsList"
-        - reference: "AsciiStringLiteralsList"
-        - reference: "UnicodeStringLiteralsList"
+        - reference: "HexStringLiterals"
+        - reference: "AsciiStringLiterals"
+        - reference: "UnicodeStringLiterals"
 
-- name: "HexStringLiteralsList"
+- name: "HexStringLiterals"
   kind: "Parser"
   unversioned:
     oneOrMore:
@@ -79,7 +79,7 @@
           from: "A"
           to: "F"
 
-- name: "AsciiStringLiteralsList"
+- name: "AsciiStringLiterals"
   kind: "Parser"
   unversioned:
     oneOrMore:
@@ -132,7 +132,7 @@
                     - terminal: "\\"
       - terminal: '"'
 
-- name: "UnicodeStringLiteralsList"
+- name: "UnicodeStringLiterals"
   kind: "Parser"
   versioned:
     0.7.0:

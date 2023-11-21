@@ -46,24 +46,8 @@ You can then iterate over the resulting children, and assert that they match the
 For many code analysis tasks, it is useful to traverse the parse tree and visit each node.
 The `Cursor` object allows callers to traverse the parse tree in a pre-order depth-first manner.
 
-This is an internal iterator. The `Cursor` can drive an external iterator i.e. the `Visitor` trait, which is described below.
-
 The below example uses a cursor to collect the names of all contracts in a source file, and returns them as a `Vec<String>`:
 
 ```{ .rust }
 --8<-- "crates/solidity/outputs/cargo/tests/src/doc_examples/cursor_api.rs"
-```
-
-## Visitor API
-
-The `Visitor` trait allows callers to implement a visitor that will be called for each node in the tree.
-The `std::ops::ControlFlow` enum coupled with the `Step` enum allows callers to control the traversal behavior.
-
-For example, if the visitor is only interested in the top-level nodes, it can return `ControlFlow::Continue(Step::Over)` to skip the children of the current node.
-If the visitor is interested in the children of the current node, it can return `ControlFlow::Continue(Step::In)` to visit them.
-
-The below example defines a visitor that collects the names of all contracts in a source file, and returns them as a `Vec<String>`:
-
-```{ .rust }
---8<-- "crates/solidity/outputs/cargo/tests/src/doc_examples/visitor_api.rs"
 ```

@@ -10,9 +10,9 @@
         - optional:
             reference: "ReturnsDeclaration"
         - reference: "Block"
-        - reference: "CatchClausesList"
+        - reference: "CatchClauses"
 
-- name: "CatchClausesList"
+- name: "CatchClauses"
   kind: "Parser"
   versioned:
     0.6.0:

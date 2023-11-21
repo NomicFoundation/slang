@@ -93,6 +93,30 @@ fn cursor_api_using_iter() -> Result<()> {
 }
 
 #[test]
+fn cursor_api_using_iter_combinators() -> Result<()> {
+    let language = Language::new(Version::parse("0.8.0")?)?;
+    let parse_output = language.parse(ProductionKind::ContractDefinition, "contract Foo {}");
+
+    let cursor = parse_output.create_tree_cursor();
+
+    let contract_names: Vec<_> = cursor
+        .filter_map(|node| {
+            let node = node.as_rule_with_kind(&[RuleKind::ContractDefinition])?;
+            let name = node
+                .children
+                .iter()
+                .find_map(|node| node.as_token_with_kind(&[TokenKind::Identifier]))?;
+
+            Some(name.text.clone())
+        })
+        .collect();
+
+    assert_eq!(contract_names, &["Foo"]);
+
+    return Ok(());
+}
+
+#[test]
 fn cursor_as_iter() -> Result<()> {
     let language = Language::new(Version::parse("0.8.0")?)?;
     let parse_output = language.parse(ProductionKind::ContractDefinition, "contract Foo {}");
