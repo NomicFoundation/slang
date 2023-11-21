@@ -13,17 +13,14 @@ fn simple_contract() -> Result<()> {
     let parse_output = language.parse(ProductionKind::ContractDefinition, "contract Foo {}");
 
     let parse_tree = parse_output.tree();
+    let rule = parse_tree
+        .into_rule()
+        .expect("Expected root node to be a rule");
 
-    let rule = if let Node::Rule(rule) = parse_tree {
-        assert_eq!(rule.kind, RuleKind::ContractDefinition);
-        rule
-    } else {
-        panic!("Unexpected parse_tree");
-    };
+    assert_eq!(rule.kind, RuleKind::ContractDefinition);
+    assert_eq!(rule.children.len(), 6);
+
     let children = &rule.children;
-
-    assert_eq!(children.len(), 6);
-
     assert!(matches!(&children[0], Node::Token(token) if token.kind == TokenKind::ContractKeyword));
     assert!(matches!(&children[1], Node::Rule(rule) if rule.kind == RuleKind::LeadingTrivia));
     assert!(matches!(&children[2], Node::Token(token) if token.kind == TokenKind::Identifier));
