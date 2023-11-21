@@ -1,2 +1,2 @@
-// TODO: Tuple expressions can't be empty
+// TODO(#671): Tuple expressions can't be empty
 () = ();
