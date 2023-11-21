@@ -1,20 +1,23 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ using {} for *;                                                                  │ 0..15
+  1  │ // Empty using symbols list is not valid                                         │ 0..40
+  2  │ using {} for *;                                                                  │ 41..56
 
 Errors: # 1 total
   - >
     Error: Expected Identifier.
-       ╭─[crates/solidity/testing/snapshots/cst_output/UsingDirective/destructure_empty/input.sol:1:7]
+       ╭─[crates/solidity/testing/snapshots/cst_output/UsingDirective/destructure_empty/input.sol:2:7]
        │
-     1 │ using {} for *;
+     2 │ using {} for *;
        │       ────┬───  
        │           ╰───── Error occurred here.
     ───╯
 
 Tree:
-  - UsingDirective (Rule): # 0..16 "using {} for *;\n"
-      - UsingKeyword (Token): "using" # 0..5
-      - SKIPPED (Token): "{} for *" # 6..14
-      - Semicolon (Token): ";" # 14..15
+  - UsingDirective (Rule): # 0..57 "// Empty using symbols list is not valid\nusing {} ..."
+      - LeadingTrivia (Rule): # 0..41 "// Empty using symbols list is not valid\n"
+          - SingleLineComment (Trivia): "// Empty using symbols list is not valid" # 0..40
+      - UsingKeyword (Token): "using" # 41..46
+      - SKIPPED (Token): "{} for *" # 47..55
+      - Semicolon (Token): ";" # 55..56
