@@ -26,7 +26,7 @@ Tree:
               - Parameters (Rule): # 49..56 "uint256"
                   - Parameter (Rule): # 49..56 "uint256"
                       - TypeName (Rule): # 49..56 "uint256"
-                          - UnsignedIntegerType (Token): "uint256" # 49..56
+                          - UintKeyword (Token): "uint256" # 49..56
               - CloseParen (Token): ")" # 56..57
       - Block (Rule): # 57..73 " {\n\treturn 1;\n}\n"
           - OpenBrace (Token): "{" # 58..59
