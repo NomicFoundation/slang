@@ -1,7 +1,10 @@
 use std::rc::Rc;
 
 use super::{
-    super::{cst, kinds::TokenKind, parse_error::ParseError, parse_output::ParseOutput},
+    super::{
+        cst, kinds::TokenKind, parse_error::ParseError, parse_output::ParseOutput,
+        text_index::TextIndex,
+    },
     context::ParserContext,
     parser_result::*,
 };
@@ -95,7 +98,7 @@ where
                     debug_assert_eq!(
                         errors.len() > 0,
                         parse_tree
-                            .create_cursor(Default::default())
+                            .cursor_with_offset(TextIndex::ZERO)
                             .any(|x| x.as_token_with_kind(&[TokenKind::SKIPPED]).is_some())
                     );
 

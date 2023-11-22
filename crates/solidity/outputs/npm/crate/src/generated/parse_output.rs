@@ -1,6 +1,6 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-use crate::{cst, cursor::Cursor, parse_error::ParseError};
+use crate::{cst, cursor::Cursor, parse_error::ParseError, text_index::TextIndex};
 
 #[derive(Debug, PartialEq)]
 pub struct ParseOutput {
@@ -23,6 +23,6 @@ impl ParseOutput {
 
     /// Creates a cursor that starts at the root of the parse tree.
     pub fn create_tree_cursor(&self) -> Cursor {
-        return self.parse_tree.create_cursor(Default::default());
+        return self.parse_tree.cursor_with_offset(TextIndex::ZERO);
     }
 }
