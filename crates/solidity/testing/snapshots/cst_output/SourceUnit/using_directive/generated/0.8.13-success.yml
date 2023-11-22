@@ -77,7 +77,7 @@ Tree:
               - StructMembers (Rule): # 661..791 "  uint256 nonce;\n  address origin;\n  address desti..."
                   - StructMember (Rule): # 661..678 "  uint256 nonce;\n"
                       - TypeName (Rule): # 661..670 "  uint256"
-                          - UnsignedIntegerType (Token): "uint256" # 663..670
+                          - UintKeyword (Token): "uint256" # 663..670
                       - Identifier (Token): "nonce" # 671..676
                       - Semicolon (Token): ";" # 676..677
                   - StructMember (Rule): # 678..696 "  address origin;\n"
@@ -94,12 +94,12 @@ Tree:
                       - Semicolon (Token): ";" # 717..718
                   - StructMember (Rule): # 719..744 "  uint256 originChainId;\n"
                       - TypeName (Rule): # 719..728 "  uint256"
-                          - UnsignedIntegerType (Token): "uint256" # 721..728
+                          - UintKeyword (Token): "uint256" # 721..728
                       - Identifier (Token): "originChainId" # 729..742
                       - Semicolon (Token): ";" # 742..743
                   - StructMember (Rule): # 744..774 "  uint256 destinationChainId;\n"
                       - TypeName (Rule): # 744..753 "  uint256"
-                          - UnsignedIntegerType (Token): "uint256" # 746..753
+                          - UintKeyword (Token): "uint256" # 746..753
                       - Identifier (Token): "destinationChainId" # 754..772
                       - Semicolon (Token): ";" # 772..773
                   - StructMember (Rule): # 774..791 "  bytes message;\n"

@@ -16,7 +16,7 @@ Tree:
                   - EventParameters (Rule): # 9..22 "uint256 value"
                       - EventParameter (Rule): # 9..22 "uint256 value"
                           - TypeName (Rule): # 9..16 "uint256"
-                              - UnsignedIntegerType (Token): "uint256" # 9..16
+                              - UintKeyword (Token): "uint256" # 9..16
                           - Identifier (Token): "value" # 17..22
                   - CloseParen (Token): ")" # 22..23
               - Semicolon (Token): ";" # 23..24

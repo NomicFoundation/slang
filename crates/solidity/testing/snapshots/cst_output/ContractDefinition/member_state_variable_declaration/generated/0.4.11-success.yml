@@ -15,7 +15,7 @@ Tree:
       - ContractMembers (Rule): # 18..35 "  uint public a;\n"
           - StateVariableDefinition (Rule): # 18..35 "  uint public a;\n"
               - TypeName (Rule): # 18..24 "  uint"
-                  - UnsignedIntegerType (Token): "uint" # 20..24
+                  - UintKeyword (Token): "uint" # 20..24
               - StateVariableAttributes (Rule): # 24..31 " public"
                   - PublicKeyword (Token): "public" # 25..31
               - Identifier (Token): "a" # 32..33

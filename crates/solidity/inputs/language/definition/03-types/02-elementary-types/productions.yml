@@ -10,22 +10,22 @@
         - reference: "ByteKeyword"
         - reference: "StringKeyword"
         - reference: "AddressType"
-        - reference: "FixedBytesType"
-        - reference: "SignedIntegerType"
-        - reference: "UnsignedIntegerType"
-        - reference: "SignedFixedType"
-        - reference: "UnsignedFixedType"
+        - reference: "BytesKeyword"
+        - reference: "IntKeyword"
+        - reference: "UintKeyword"
+        - reference: "FixedKeyword"
+        - reference: "UfixedKeyword"
     0.8.0:
       # removed: ByteKeyword
       choice:
         - reference: "BoolKeyword"
         - reference: "StringKeyword"
         - reference: "AddressType"
-        - reference: "FixedBytesType"
-        - reference: "SignedIntegerType"
-        - reference: "UnsignedIntegerType"
-        - reference: "SignedFixedType"
-        - reference: "UnsignedFixedType"
+        - reference: "BytesKeyword"
+        - reference: "IntKeyword"
+        - reference: "UintKeyword"
+        - reference: "FixedKeyword"
+        - reference: "UfixedKeyword"
 
 - name: "AddressType"
   kind: "Parser"
@@ -37,7 +37,7 @@
               reference: "PayableKeyword"
       - reference: "PayableKeyword"
 
-- name: "FixedBytesType"
+- name: "BytesKeyword"
   kind: "Scanner"
   unversioned:
     trailingContext:
@@ -86,7 +86,7 @@
       - terminal: "31"
       - terminal: "32"
 
-- name: "SignedIntegerType"
+- name: "IntKeyword"
   kind: "Scanner"
   unversioned:
     trailingContext:
@@ -98,7 +98,7 @@
       notFollowedBy:
         reference: "IdentifierPart"
 
-- name: "UnsignedIntegerType"
+- name: "UintKeyword"
   kind: "Scanner"
   unversioned:
     trailingContext:
@@ -148,7 +148,7 @@
       - terminal: "248"
       - terminal: "256"
 
-- name: "SignedFixedType"
+- name: "FixedKeyword"
   kind: "Scanner"
   unversioned:
     trailingContext:
@@ -160,7 +160,7 @@
       notFollowedBy:
         reference: "IdentifierPart"
 
-- name: "UnsignedFixedType"
+- name: "UfixedKeyword"
   kind: "Scanner"
   unversioned:
     trailingContext:

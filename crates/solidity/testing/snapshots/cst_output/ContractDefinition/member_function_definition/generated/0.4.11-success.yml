@@ -28,7 +28,7 @@ Tree:
                       - Parameters (Rule): # 44..48 "uint"
                           - Parameter (Rule): # 44..48 "uint"
                               - TypeName (Rule): # 44..48 "uint"
-                                  - UnsignedIntegerType (Token): "uint" # 44..48
+                                  - UintKeyword (Token): "uint" # 44..48
                       - CloseParen (Token): ")" # 48..49
               - Block (Rule): # 49..70 " {\n    return 1;\n  }\n"
                   - OpenBrace (Token): "{" # 50..51

@@ -14,5 +14,5 @@ Tree:
       - EqualGreaterThan (Token): "=>" # 15..17
       - MappingValueType (Rule): # 17..25 " bytes32"
           - TypeName (Rule): # 17..25 " bytes32"
-              - FixedBytesType (Token): "bytes32" # 18..25
+              - BytesKeyword (Token): "bytes32" # 18..25
       - CloseParen (Token): ")" # 25..26

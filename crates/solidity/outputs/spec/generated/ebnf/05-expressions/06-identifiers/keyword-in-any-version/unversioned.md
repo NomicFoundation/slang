@@ -1,11 +1,11 @@
 <!-- This file is generated automatically by infrastructure scripts. Please don't edit by hand. -->
 
 ```{ .ebnf .slang-ebnf #KEYWORD_IN_ANY_VERSION }
-«KEYWORD_IN_ANY_VERSION» = FIXED_BYTES_TYPE
-                         | SIGNED_FIXED_TYPE
-                         | UNSIGNED_FIXED_TYPE
-                         | SIGNED_INTEGER_TYPE
-                         | UNSIGNED_INTEGER_TYPE
+«KEYWORD_IN_ANY_VERSION» = BYTES_KEYWORD
+                         | FIXED_KEYWORD
+                         | UFIXED_KEYWORD
+                         | INT_KEYWORD
+                         | UINT_KEYWORD
                          | ADDRESS_KEYWORD
                          | ANONYMOUS_KEYWORD
                          | AS_KEYWORD

@@ -7,4 +7,4 @@ Errors: []
 
 Tree:
   - TypeName (Rule): # 0..3 "int"
-      - SignedIntegerType (Token): "int" # 0..3
+      - IntKeyword (Token): "int" # 0..3

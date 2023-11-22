@@ -39,12 +39,12 @@ Tree:
                           - Parameters (Rule): # 37..57 "uint256 a, uint256 b"
                               - Parameter (Rule): # 37..46 "uint256 a"
                                   - TypeName (Rule): # 37..44 "uint256"
-                                      - UnsignedIntegerType (Token): "uint256" # 37..44
+                                      - UintKeyword (Token): "uint256" # 37..44
                                   - Identifier (Token): "a" # 45..46
                               - Comma (Token): "," # 46..47
                               - Parameter (Rule): # 47..57 " uint256 b"
                                   - TypeName (Rule): # 47..55 " uint256"
-                                      - UnsignedIntegerType (Token): "uint256" # 48..55
+                                      - UintKeyword (Token): "uint256" # 48..55
                                   - Identifier (Token): "b" # 56..57
                           - CloseParen (Token): ")" # 57..58
                       - FunctionAttributes (Rule): # 58..72 " internal pure"
@@ -61,7 +61,7 @@ Tree:
                                   - Comma (Token): "," # 86..87
                                   - Parameter (Rule): # 87..95 " uint256"
                                       - TypeName (Rule): # 87..95 " uint256"
-                                          - UnsignedIntegerType (Token): "uint256" # 88..95
+                                          - UintKeyword (Token): "uint256" # 88..95
                               - CloseParen (Token): ")" # 95..96
                       - Block (Rule): # 96..210 " {\n    unchecked {\n      uint256 c = a + b;\n      ..."
                           - OpenBrace (Token): "{" # 97..98

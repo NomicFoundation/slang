@@ -86,7 +86,7 @@ Tree:
               - CloseBrace (Token): "}" # 130..131
           - ConstantDefinition (Rule): # 132..156 "\nuint32 constant x = 0;\n"
               - TypeName (Rule): # 132..139 "\nuint32"
-                  - UnsignedIntegerType (Token): "uint32" # 133..139
+                  - UintKeyword (Token): "uint32" # 133..139
               - ConstantKeyword (Token): "constant" # 140..148
               - Identifier (Token): "x" # 149..150
               - Equal (Token): "=" # 151..152
@@ -130,7 +130,7 @@ Tree:
                   - EventParameters (Rule): # 227..240 "uint256 value"
                       - EventParameter (Rule): # 227..240 "uint256 value"
                           - TypeName (Rule): # 227..234 "uint256"
-                              - UnsignedIntegerType (Token): "uint256" # 227..234
+                              - UintKeyword (Token): "uint256" # 227..234
                           - Identifier (Token): "value" # 235..240
                   - CloseParen (Token): ")" # 240..241
               - Semicolon (Token): ";" # 241..242
