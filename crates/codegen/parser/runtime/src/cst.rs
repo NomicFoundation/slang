@@ -96,31 +96,11 @@ impl Node {
     }
 
     pub fn as_token_with_kind(&self, kinds: &[TokenKind]) -> Option<&Rc<TokenNode>> {
-        self.as_token_matching(|token| kinds.contains(&token.kind))
-    }
-
-    pub fn as_token_matching<F: Fn(&Rc<TokenNode>) -> bool>(
-        &self,
-        predicate: F,
-    ) -> Option<&Rc<TokenNode>> {
-        match self {
-            Node::Token(token) if predicate(&token) => Some(token),
-            _ => None,
-        }
+        self.as_token().filter(|token| kinds.contains(&token.kind))
     }
 
     pub fn as_rule_with_kind(&self, kinds: &[RuleKind]) -> Option<&Rc<RuleNode>> {
-        self.as_rule_matching(|rule| kinds.contains(&rule.kind))
-    }
-
-    pub fn as_rule_matching<F: Fn(&Rc<RuleNode>) -> bool>(
-        &self,
-        predicate: F,
-    ) -> Option<&Rc<RuleNode>> {
-        match self {
-            Node::Rule(rule) if predicate(&rule) => Some(rule),
-            _ => None,
-        }
+        self.as_rule().filter(|rule| kinds.contains(&rule.kind))
     }
 }
 

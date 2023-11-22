@@ -398,7 +398,7 @@ impl Cursor {
         &mut self,
         predicate: F,
     ) -> Option<Rc<TokenNode>> {
-        self.find_noconsume(|node| node.as_token_matching(&predicate).cloned())
+        self.find_noconsume(|node| node.as_token().filter(|node| predicate(node)).cloned())
     }
 
     /// Finds the first rule node with either of the given kinds.
@@ -415,6 +415,6 @@ impl Cursor {
         &mut self,
         predicate: F,
     ) -> Option<Rc<RuleNode>> {
-        self.find_noconsume(|node| node.as_rule_matching(&predicate).cloned())
+        self.find_noconsume(|node| node.as_rule().filter(|node| predicate(node)).cloned())
     }
 }
