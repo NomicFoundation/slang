@@ -2886,6 +2886,32 @@ codegen_language_macros::compile!(Language(
                                 expression = Required(NonTerminal(Expression)),
                                 semicolon = Required(Terminal([Semicolon]))
                             )
+                        ),
+                        Struct(
+                            name = AssemblyStatement,
+                            fields = (
+                                assembly_keyword = Required(Terminal([AssemblyKeyword])),
+                                label = Optional(kind = Terminal([AsciiStringLiteral])),
+                                flags = Optional(kind = NonTerminal(AssemblyFlagsDeclaration)),
+                                body = Required(NonTerminal(YulBlock))
+                            )
+                        ),
+                        Struct(
+                            name = AssemblyFlagsDeclaration,
+                            error_recovery = FieldsErrorRecovery(
+                                delimiters =
+                                    FieldDelimiters(open = open_paren, close = close_paren)
+                            ),
+                            fields = (
+                                open_paren = Required(Terminal([OpenParen])),
+                                flags = Required(NonTerminal(AssemblyFlags)),
+                                close_paren = Required(Terminal([CloseParen]))
+                            )
+                        ),
+                        Separated(
+                            name = AssemblyFlags,
+                            separated = AsciiStringLiteral,
+                            separator = Comma
                         )
                     ]
                 ),
@@ -3987,32 +4013,6 @@ codegen_language_macros::compile!(Language(
                     title = "Yul Statements",
                     lexical_context = Yul,
                     items = [
-                        Struct(
-                            name = AssemblyStatement,
-                            fields = (
-                                assembly_keyword = Required(Terminal([AssemblyKeyword])),
-                                label = Optional(kind = Terminal([AsciiStringLiteral])),
-                                flags = Optional(kind = NonTerminal(AssemblyFlagsDeclaration)),
-                                body = Required(NonTerminal(YulBlock))
-                            )
-                        ),
-                        Struct(
-                            name = AssemblyFlagsDeclaration,
-                            error_recovery = FieldsErrorRecovery(
-                                delimiters =
-                                    FieldDelimiters(open = open_paren, close = close_paren)
-                            ),
-                            fields = (
-                                open_paren = Required(Terminal([OpenParen])),
-                                flags = Required(NonTerminal(AssemblyFlags)),
-                                close_paren = Required(Terminal([CloseParen]))
-                            )
-                        ),
-                        Separated(
-                            name = AssemblyFlags,
-                            separated = AsciiStringLiteral,
-                            separator = Comma
-                        ),
                         Struct(
                             name = YulBlock,
                             error_recovery = FieldsErrorRecovery(
