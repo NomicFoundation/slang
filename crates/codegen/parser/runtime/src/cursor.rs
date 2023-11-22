@@ -370,7 +370,7 @@ impl Cursor {
         None
     }
 
-    /// In contract to `Iterator::find_*`, this does not consume the first item when found.
+    /// In contrast to `Iterator::find_*`, this does not consume the first item when found.
     fn find_noconsume<F: Fn(&Node) -> Option<R>, R>(&mut self, predicate: F) -> Option<R> {
         while !self.is_completed {
             match predicate(&self.current.node) {
