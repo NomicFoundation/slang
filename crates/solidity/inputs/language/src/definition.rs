@@ -270,8 +270,7 @@ codegen_language_macros::compile!(Language(
                         Separated(
                             name = ImportDeconstructionFields,
                             separated = ImportDeconstructionField,
-                            separator = Comma,
-                            allow_empty = true
+                            separator = Comma
                         ),
                         Struct(
                             name = ImportDeconstructionField,
@@ -335,8 +334,7 @@ codegen_language_macros::compile!(Language(
                             name = UsingDeconstructionFields,
                             separated = UsingDeconstructionField,
                             separator = Comma,
-                            enabled = From("0.8.13"),
-                            allow_empty = true
+                            enabled = From("0.8.13")
                         ),
                         Struct(
                             name = UsingDeconstructionField,
@@ -2377,14 +2375,20 @@ codegen_language_macros::compile!(Language(
                         ),
                         Struct(
                             name = OverrideSpecifier,
+                            fields = (
+                                override_keyword = Required(Terminal([OverrideKeyword])),
+                                overridden = Optional(kind = NonTerminal(OverridePathsDeclaration))
+                            )
+                        ),
+                        Struct(
+                            name = OverridePathsDeclaration,
                             error_recovery = FieldsErrorRecovery(
                                 delimiters =
                                     FieldDelimiters(open = open_paren, close = close_paren)
                             ),
                             fields = (
-                                override_keyword = Required(Terminal([OverrideKeyword])),
                                 open_paren = Required(Terminal([OpenParen])),
-                                overridden = Optional(kind = NonTerminal(OverridePaths)),
+                                paths = Required(NonTerminal(OverridePaths)),
                                 close_paren = Required(Terminal([CloseParen]))
                             )
                         ),
@@ -2904,8 +2908,7 @@ codegen_language_macros::compile!(Language(
                         Separated(
                             name = TupleMembersDeconstruction,
                             separated = TupleMemberDeconstruction,
-                            separator = Comma,
-                            allow_empty = true
+                            separator = Comma
                         ),
                         Struct(
                             name = TupleMemberDeconstruction,

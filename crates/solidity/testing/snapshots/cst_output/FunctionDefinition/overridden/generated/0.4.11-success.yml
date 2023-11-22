@@ -1,0 +1,43 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ function some() public virtual override returns (uint256) {                      │ 0..59
+  2  │ 	return 1;                                                                       │ 60..70
+  3  │ }                                                                                │ 71..72
+
+Errors: []
+
+Tree:
+  - FunctionDefinition (Rule): # 0..73 "function some() public virtual override returns (u..."
+      - FunctionKeyword (Token): "function" # 0..8
+      - Identifier (Token): "some" # 9..13
+      - ParametersDeclaration (Rule): # 13..15 "()"
+          - OpenParen (Token): "(" # 13..14
+          - CloseParen (Token): ")" # 14..15
+      - FunctionAttributes (Rule): # 15..39 " public virtual override"
+          - PublicKeyword (Token): "public" # 16..22
+          - ModifierInvocation (Rule): # 22..30 " virtual"
+              - IdentifierPath (Rule): # 22..30 " virtual"
+                  - Identifier (Token): "virtual" # 23..30
+          - ModifierInvocation (Rule): # 30..39 " override"
+              - IdentifierPath (Rule): # 30..39 " override"
+                  - Identifier (Token): "override" # 31..39
+      - ReturnsDeclaration (Rule): # 39..57 " returns (uint256)"
+          - ReturnsKeyword (Token): "returns" # 40..47
+          - ParametersDeclaration (Rule): # 47..57 " (uint256)"
+              - OpenParen (Token): "(" # 48..49
+              - Parameters (Rule): # 49..56 "uint256"
+                  - Parameter (Rule): # 49..56 "uint256"
+                      - TypeName (Rule): # 49..56 "uint256"
+                          - UintKeyword (Token): "uint256" # 49..56
+              - CloseParen (Token): ")" # 56..57
+      - Block (Rule): # 57..73 " {\n\treturn 1;\n}\n"
+          - OpenBrace (Token): "{" # 58..59
+          - Statements (Rule): # 60..71 "\treturn 1;\n"
+              - ReturnStatement (Rule): # 60..71 "\treturn 1;\n"
+                  - ReturnKeyword (Token): "return" # 61..67
+                  - Expression (Rule): # 67..69 " 1"
+                      - DecimalNumberExpression (Rule): # 67..69 " 1"
+                          - DecimalLiteral (Token): "1" # 68..69
+                  - Semicolon (Token): ";" # 69..70
+          - CloseBrace (Token): "}" # 71..72

@@ -1,0 +1,23 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // TODO(#671): Tuple expressions can't be empty                                  │ 0..47
+  2  │ () = ();                                                                         │ 48..56
+
+Errors: []
+
+Tree:
+  - TupleDeconstructionStatement (Rule): # 0..57 "// TODO(#671): Tuple expressions can't be empty\n()..."
+      - LeadingTrivia (Rule): # 0..48 "// TODO(#671): Tuple expressions can't be empty\n"
+          - SingleLineComment (Trivia): "// TODO(#671): Tuple expressions can't be empty" # 0..47
+      - OpenParen (Token): "(" # 48..49
+      - TupleMembers (Rule): # 49..49
+          - TupleMember (Rule): [] # 49..49
+      - CloseParen (Token): ")" # 49..50
+      - Equal (Token): "=" # 51..52
+      - Expression (Rule): # 52..55 " ()"
+          - TupleExpression (Rule): # 52..55 " ()"
+              - OpenParen (Token): "(" # 53..54
+              - TupleValues (Rule): [] # 54..54
+              - CloseParen (Token): ")" # 54..55
+      - Semicolon (Token): ";" # 55..56

@@ -1,0 +1,28 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // Empty imports are not valid                                                   │ 0..30
+  2  │ import {} from "foo";                                                            │ 31..52
+
+Errors: # 1 total
+  - >
+    Error: Expected Identifier.
+       ╭─[crates/solidity/testing/snapshots/cst_output/ImportDirective/destructure_import_empty/input.sol:2:9]
+       │
+     2 │ import {} from "foo";
+       │         │ 
+       │         ╰─ Error occurred here.
+    ───╯
+
+Tree:
+  - ImportDirective (Rule): # 0..53 '// Empty imports are not valid\nimport {} from "foo...'
+      - LeadingTrivia (Rule): # 0..31 "// Empty imports are not valid\n"
+          - SingleLineComment (Trivia): "// Empty imports are not valid" # 0..30
+      - ImportKeyword (Token): "import" # 31..37
+      - DeconstructionImport (Rule): # 37..51 ' {} from "foo"'
+          - OpenBrace (Token): "{" # 38..39
+          - SKIPPED (Token): "" # 39..39
+          - CloseBrace (Token): "}" # 39..40
+          - FromKeyword (Token): "from" # 41..45
+          - AsciiStringLiteral (Token): '"foo"' # 46..51
+      - Semicolon (Token): ";" # 51..52

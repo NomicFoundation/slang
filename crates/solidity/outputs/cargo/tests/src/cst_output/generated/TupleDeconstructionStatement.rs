@@ -14,6 +14,11 @@ fn abi_decode_singleton_type() -> Result<()> {
 }
 
 #[test]
+fn empty() -> Result<()> {
+    return run("TupleDeconstructionStatement", "empty");
+}
+
+#[test]
 fn ignored_members() -> Result<()> {
     return run("TupleDeconstructionStatement", "ignored_members");
 }

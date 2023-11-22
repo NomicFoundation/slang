@@ -4,6 +4,11 @@ use crate::cst_output::runner::run;
 use anyhow::Result;
 
 #[test]
+fn destructure_empty() -> Result<()> {
+    return run("UsingDirective", "destructure_empty");
+}
+
+#[test]
 fn destructure_multiple() -> Result<()> {
     return run("UsingDirective", "destructure_multiple");
 }

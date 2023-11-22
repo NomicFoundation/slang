@@ -126,6 +126,7 @@ fn write_node<W: Write>(
 
     let (node_value, node_comment) = if range.is_empty() {
         let preview = match node {
+            cst::Node::Rule(_) if !node.children().is_empty() => "",
             cst::Node::Rule(_) => " []",
             cst::Node::Token(_) => " \"\"",
         };
