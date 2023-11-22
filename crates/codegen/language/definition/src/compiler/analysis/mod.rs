@@ -4,16 +4,15 @@ mod references;
 mod utils;
 
 use crate::{
-    compiler::analysis::{
-        definitions::analyze_definitions, reachability::analyze_reachability,
-        references::analyze_references,
+    compiler::{
+        analysis::{
+            definitions::analyze_definitions, reachability::analyze_reachability,
+            references::analyze_references,
+        },
+        version_set::VersionSet,
     },
-    internals::{ErrorsCollection, ParseOutput, Spanned},
-    model::{
-        spanned::{Item, ItemKind, Language},
-        Identifier,
-    },
-    utils::VersionSet,
+    internals::{ErrorsCollection, ParseOutput},
+    model::{Identifier, Item, ItemKind, Language, Spanned},
 };
 use indexmap::IndexMap;
 use proc_macro2::Span;
@@ -78,6 +77,6 @@ impl Language {
             .iter()
             .flat_map(|section| &section.topics)
             .flat_map(|topic| &topic.items)
-            .map(|item| &***item);
+            .map(|item| item.as_ref());
     }
 }

@@ -1,16 +1,11 @@
 use crate::{
-    compiler::analysis::Analysis,
-    internals::Spanned,
+    compiler::{analysis::Analysis, version_set::VersionSet},
     model::{
-        spanned::{
-            EnumItem, EnumVariant, Field, FieldKind, FragmentItem, Item, ItemKind,
-            KeywordDefinition, KeywordItem, PrecedenceExpression, PrecedenceItem,
-            PrecedenceOperator, PrimaryExpression, RepeatedItem, Scanner, SeparatedItem,
-            StructItem, TokenDefinition, TokenItem, TriviaItem, TriviaParser, VersionSpecifier,
-        },
-        Identifier,
+        EnumItem, EnumVariant, Field, FieldKind, FragmentItem, Identifier, Item, ItemKind,
+        KeywordDefinition, KeywordItem, PrecedenceExpression, PrecedenceItem, PrecedenceOperator,
+        PrimaryExpression, RepeatedItem, Scanner, SeparatedItem, Spanned, StructItem,
+        TokenDefinition, TokenItem, TriviaItem, TriviaParser, VersionSpecifier,
     },
-    utils::VersionSet,
 };
 use indexmap::IndexMap;
 use itertools::Itertools;
@@ -100,7 +95,7 @@ fn check_enum(analysis: &mut Analysis, item: &EnumItem, enablement: &VersionSet)
             name: _,
             enabled,
             reference,
-        } = &**variant;
+        } = variant;
 
         let enablement = update_enablement(analysis, &enablement, &enabled);
 
@@ -171,7 +166,7 @@ fn check_precedence(analysis: &mut Analysis, item: &PrecedenceItem, enablement: 
     let enablement = update_enablement(analysis, &enablement, &enabled);
 
     for precedence_expression in precedence_expressions {
-        let PrecedenceExpression { name: _, operators } = &**precedence_expression;
+        let PrecedenceExpression { name: _, operators } = precedence_expression;
 
         for operator in operators {
             let PrecedenceOperator {
@@ -179,7 +174,7 @@ fn check_precedence(analysis: &mut Analysis, item: &PrecedenceItem, enablement: 
                 enabled,
                 error_recovery: _,
                 fields,
-            } = &**operator;
+            } = operator;
 
             let enablement = update_enablement(analysis, &enablement, &enabled);
 
@@ -191,7 +186,7 @@ fn check_precedence(analysis: &mut Analysis, item: &PrecedenceItem, enablement: 
         let PrimaryExpression {
             expression,
             enabled,
-        } = &**primary_expression;
+        } = primary_expression;
 
         let enablement = update_enablement(analysis, &enablement, &enabled);
 
@@ -208,11 +203,11 @@ fn check_precedence(analysis: &mut Analysis, item: &PrecedenceItem, enablement: 
 fn check_fields(
     analysis: &mut Analysis,
     source: Option<&Identifier>,
-    fields: &IndexMap<Spanned<Identifier>, Spanned<Field>>,
+    fields: &IndexMap<Spanned<Identifier>, Field>,
     enablement: &VersionSet,
 ) {
     for field in fields.values() {
-        match &**field {
+        match field {
             Field::Required { kind } => {
                 check_field_kind(analysis, source, &kind, &enablement);
             }
@@ -298,7 +293,7 @@ fn check_keyword(analysis: &mut Analysis, item: &KeywordItem, enablement: &Versi
             enabled,
             reserved,
             value: _,
-        } = &**definition;
+        } = definition;
 
         let _ = update_enablement(analysis, &enablement, &enabled);
 
@@ -312,7 +307,7 @@ fn check_token(analysis: &mut Analysis, item: &TokenItem, enablement: &VersionSe
     let TokenItem { name, definitions } = item;
 
     for definition in definitions {
-        let TokenDefinition { enabled, scanner } = &**definition;
+        let TokenDefinition { enabled, scanner } = definition;
 
         let enablement = update_enablement(analysis, &enablement, &enabled);
 

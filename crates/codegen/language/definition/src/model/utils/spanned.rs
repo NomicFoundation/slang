@@ -9,7 +9,11 @@ pub struct Spanned<T> {
 }
 
 impl<T> Spanned<T> {
-    pub fn new(span: Span, value: T) -> Self {
+    pub fn without_span(value: T) -> Self {
+        return Self::with_span(Span::call_site(), value);
+    }
+
+    pub fn with_span(span: Span, value: T) -> Self {
         return Self { span, value };
     }
 

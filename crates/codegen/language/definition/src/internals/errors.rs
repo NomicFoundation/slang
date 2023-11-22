@@ -72,7 +72,7 @@ pub trait HasSpan {
     fn span(&self) -> Span;
 }
 
-impl<T> HasSpan for crate::internals::Spanned<T> {
+impl<T> HasSpan for crate::model::Spanned<T> {
     fn span(&self) -> Span {
         return self.span();
     }

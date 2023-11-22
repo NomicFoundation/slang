@@ -1,6 +1,6 @@
 use codegen_language_definition::model::{
-    Field, FieldKind, Item, Language, Scanner, Section, StructItem, TokenDefinition, TokenItem,
-    Topic, TriviaParser,
+    Field, FieldKind, Item, Language, Scanner, Section, Spanned, StructItem, TokenDefinition,
+    TokenItem, Topic, TriviaParser,
 };
 use semver::Version;
 
@@ -41,52 +41,52 @@ fn definition() {
     assert_eq!(
         tiny::TinyDefinition::create(),
         Language {
-            name: "Tiny".into(),
-            root_item: "Foo".into(),
+            name: Spanned::without_span("Tiny".into()),
+            root_item: Spanned::without_span("Foo".into()),
             leading_trivia: TriviaParser::Sequence { parsers: [].into() },
             trailing_trivia: TriviaParser::Sequence { parsers: [].into() },
             versions: [
-                Version::parse("1.0.0").unwrap(),
-                Version::parse("2.0.0").unwrap(),
-                Version::parse("3.0.0").unwrap(),
+                Spanned::without_span(Version::parse("1.0.0").unwrap()),
+                Spanned::without_span(Version::parse("2.0.0").unwrap()),
+                Spanned::without_span(Version::parse("3.0.0").unwrap()),
             ]
             .into(),
             sections: vec![Section {
-                title: "Section One".into(),
+                title: Spanned::without_span("Section One".into()),
                 topics: vec![Topic {
-                    title: "Topic One".into(),
+                    title: Spanned::without_span("Topic One".into()),
                     notes_file: None,
                     lexical_context: None,
                     items: [
                         Item::Struct {
                             item: StructItem {
-                                name: "Foo".into(),
+                                name: Spanned::without_span("Foo".into()),
                                 enabled: None,
                                 error_recovery: None,
                                 fields: [
                                     (
-                                        "bar".into(),
+                                        Spanned::without_span("bar".into()),
                                         Field::Required {
                                             kind: FieldKind::Terminal {
-                                                items: ["Bar".into()].into()
+                                                items: [Spanned::without_span("Bar".into())].into()
                                             }
                                         }
                                     )
                                         .into(),
                                     (
-                                        "baz".into(),
+                                        Spanned::without_span("baz".into()),
                                         Field::Required {
                                             kind: FieldKind::Terminal {
-                                                items: ["Baz".into()].into()
+                                                items: [Spanned::without_span("Baz".into())].into()
                                             }
                                         }
                                     )
                                         .into(),
                                     (
-                                        "baz_again".into(),
+                                        Spanned::without_span("baz_again".into()),
                                         Field::Required {
                                             kind: FieldKind::Terminal {
-                                                items: ["Baz".into()].into()
+                                                items: [Spanned::without_span("Baz".into())].into()
                                             }
                                         }
                                     )
@@ -98,10 +98,12 @@ fn definition() {
                         .into(),
                         Item::Token {
                             item: TokenItem {
-                                name: "Bar".into(),
+                                name: Spanned::without_span("Bar".into()),
                                 definitions: [TokenDefinition {
                                     enabled: None,
-                                    scanner: Scanner::Atom { atom: "bar".into() }
+                                    scanner: Scanner::Atom {
+                                        atom: Spanned::without_span("bar".into())
+                                    }
                                 }]
                                 .into()
                             }
@@ -109,10 +111,12 @@ fn definition() {
                         .into(),
                         Item::Token {
                             item: TokenItem {
-                                name: "Baz".into(),
+                                name: Spanned::without_span("Baz".into()),
                                 definitions: [TokenDefinition {
                                     enabled: None,
-                                    scanner: Scanner::Atom { atom: "baz".into() }
+                                    scanner: Scanner::Atom {
+                                        atom: Spanned::without_span("baz".into())
+                                    }
                                 }]
                                 .into()
                             }

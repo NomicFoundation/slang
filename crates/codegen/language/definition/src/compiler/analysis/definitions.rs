@@ -1,11 +1,9 @@
 use crate::{
-    compiler::analysis::{Analysis, ItemMetadata},
-    internals::Spanned,
-    model::{
-        spanned::{Item, VersionSpecifier},
-        Identifier,
+    compiler::{
+        analysis::{Analysis, ItemMetadata},
+        version_set::VersionSet,
     },
-    utils::VersionSet,
+    model::{Identifier, Item, Spanned, VersionSpecifier},
 };
 use std::collections::HashSet;
 
@@ -20,7 +18,7 @@ fn collect_top_level_items(analysis: &mut Analysis) {
     let language = analysis.language.clone();
 
     for item in language.items() {
-        let name = get_item_name(item);
+        let name = item.name();
         let defined_in = calculate_defined_in(analysis, item);
 
         if analysis.metadata.contains_key(&**name) {
@@ -96,20 +94,6 @@ fn check_precedence_items(analysis: &mut Analysis) {
                     .add(expression, &Errors::ExistingExpression(expression));
             }
         }
-    }
-}
-
-fn get_item_name(item: &Item) -> &Spanned<Identifier> {
-    match item {
-        Item::Struct { item } => &item.name,
-        Item::Enum { item } => &item.name,
-        Item::Repeated { item } => &item.name,
-        Item::Separated { item } => &item.name,
-        Item::Precedence { item } => &item.name,
-        Item::Trivia { item } => &item.name,
-        Item::Keyword { item } => &item.name,
-        Item::Token { item } => &item.name,
-        Item::Fragment { item } => &item.name,
     }
 }
 

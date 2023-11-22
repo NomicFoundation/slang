@@ -1,12 +1,10 @@
 use crate::utils::{ApiInput, Binary, InputSource};
-use codegen_language_definition::model::{
-    Item, KeywordDefinition, KeywordItem, Language, VersionSpecifier,
-};
+use codegen_language_definition::model::{Item, KeywordDefinition, KeywordItem, Language};
 use indicatif::{ProgressBar, ProgressStyle};
 use rayon::prelude::{IntoParallelRefIterator, ParallelIterator};
 use semver::Version;
 use solidity_language::SolidityDefinition;
-use std::collections::HashSet;
+use std::{collections::HashSet, ops::Deref};
 
 pub fn check_solidity_keywords() {
     println!();
@@ -139,36 +137,15 @@ impl TestCase {
             }
         };
 
-        let mut reserved_in = HashSet::new();
-
-        match definition.reserved.as_ref() {
-            None => {
-                reserved_in.extend(language.versions.iter().cloned());
-            }
-            Some(specifier) => {
-                match specifier {
-                    VersionSpecifier::Never => {
-                        // Do Nothing
-                    }
-                    VersionSpecifier::From { from } => {
-                        reserved_in
-                            .extend(language.versions.iter().filter(|v| &from <= v).cloned());
-                    }
-                    VersionSpecifier::Till { till } => {
-                        reserved_in.extend(language.versions.iter().filter(|v| v < &till).cloned());
-                    }
-                    VersionSpecifier::Range { from, till } => {
-                        reserved_in.extend(
-                            language
-                                .versions
-                                .iter()
-                                .filter(|v| &from <= v && v < &till)
-                                .cloned(),
-                        );
-                    }
-                };
-            }
-        };
+        let reserved_in = language
+            .versions
+            .iter()
+            .filter(|version| match &definition.reserved {
+                None => true,
+                Some(specifier) => specifier.contains(version),
+            })
+            .map(|v| v.deref().to_owned())
+            .collect();
 
         return Self {
             item: item.name.to_string(),

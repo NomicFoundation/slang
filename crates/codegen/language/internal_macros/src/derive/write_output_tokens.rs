@@ -1,12 +1,12 @@
-use crate::model::{Field, Item, Variant};
+use crate::parse_input::{InputField, InputItem, InputVariant};
 use itertools::Itertools;
 use proc_macro2::{Ident, TokenStream};
 use quote::quote;
 
-pub fn write_output_tokens(item: &Item) -> TokenStream {
+pub fn write_output_tokens(item: &InputItem) -> TokenStream {
     let (name, implementation) = match item {
-        Item::Struct { name, fields, .. } => (name, derive_struct(name, fields)),
-        Item::Enum { name, variants, .. } => (name, derive_enum(name, variants)),
+        InputItem::Struct { name, fields, .. } => (name, derive_struct(name, fields)),
+        InputItem::Enum { name, variants, .. } => (name, derive_enum(name, variants)),
     };
 
     return quote! {
@@ -18,7 +18,7 @@ pub fn write_output_tokens(item: &Item) -> TokenStream {
     };
 }
 
-fn derive_struct(name: &Ident, fields: &Vec<Field>) -> TokenStream {
+fn derive_struct(name: &Ident, fields: &Vec<InputField>) -> TokenStream {
     let keys = fields.iter().map(|field| &field.name).collect_vec();
 
     return quote! {
@@ -32,7 +32,7 @@ fn derive_struct(name: &Ident, fields: &Vec<Field>) -> TokenStream {
     };
 }
 
-fn derive_enum(name: &Ident, variants: &Vec<Variant>) -> TokenStream {
+fn derive_enum(name: &Ident, variants: &Vec<InputVariant>) -> TokenStream {
     let match_arms = variants.iter().map(|variant| {
         let variant_name = &variant.name;
 

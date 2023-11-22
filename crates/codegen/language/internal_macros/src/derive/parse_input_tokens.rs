@@ -1,16 +1,16 @@
-use crate::model::{Field, Item, Variant};
+use crate::parse_input::{InputField, InputItem, InputVariant};
 use itertools::Itertools;
 use proc_macro2::{Ident, Literal, TokenStream};
 use quote::quote;
 
-pub fn parse_input_tokens(item: &Item) -> TokenStream {
+pub fn parse_input_tokens(item: &InputItem) -> TokenStream {
     return match item {
-        Item::Struct { name, fields, .. } => derive_struct(name, fields),
-        Item::Enum { name, variants, .. } => derive_enum(name, variants),
+        InputItem::Struct { name, fields, .. } => derive_struct(name, fields),
+        InputItem::Enum { name, variants, .. } => derive_enum(name, variants),
     };
 }
 
-fn derive_struct(name: &Ident, fields: &Vec<Field>) -> TokenStream {
+fn derive_struct(name: &Ident, fields: &Vec<InputField>) -> TokenStream {
     let name_string = Literal::string(&name.to_string());
     let unexpected_type_error = Literal::string(&format!("Expected type: {name}"));
 
@@ -44,7 +44,7 @@ fn derive_struct(name: &Ident, fields: &Vec<Field>) -> TokenStream {
     };
 }
 
-fn derive_enum(name: &Ident, variants: &Vec<Variant>) -> TokenStream {
+fn derive_enum(name: &Ident, variants: &Vec<InputVariant>) -> TokenStream {
     let match_arms = variants.iter().map(|variant| {
         let variant_id = &variant.name;
         let variant_name = variant_id.to_string();
@@ -98,7 +98,7 @@ fn derive_enum(name: &Ident, variants: &Vec<Variant>) -> TokenStream {
     };
 }
 
-fn derive_fields_return(type_name: TokenStream, fields: &Vec<Field>) -> TokenStream {
+fn derive_fields_return(type_name: TokenStream, fields: &Vec<InputField>) -> TokenStream {
     // When there is only one field, we omit the `key = ` part.
     // This way, we can just write `Foo(Bar)` instead of `Foo(key = Bar)`.
     let assignments = if let [single_field] = &fields[..] {

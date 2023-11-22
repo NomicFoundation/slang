@@ -1,6 +1,6 @@
 use crate::{
-    internals::{Spanned, WriteOutputTokens},
-    model::Identifier,
+    internals::WriteOutputTokens,
+    model::{Identifier, Spanned},
 };
 use indexmap::{IndexMap, IndexSet};
 use proc_macro2::{Literal, TokenStream};
@@ -110,8 +110,11 @@ impl<T: WriteOutputTokens> WriteOutputTokens for Rc<T> {
 
 impl<T: WriteOutputTokens> WriteOutputTokens for Spanned<T> {
     fn write_output_tokens(&self) -> TokenStream {
-        // 'Spanned' is removed from macro output, leaving only the inner value:
-        return self.deref().write_output_tokens();
+        let value = self.deref().write_output_tokens();
+
+        return quote! {
+            codegen_language_definition::model::Spanned::without_span(#value)
+        };
     }
 }
 

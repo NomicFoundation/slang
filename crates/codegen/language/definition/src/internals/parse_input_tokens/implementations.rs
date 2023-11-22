@@ -1,9 +1,8 @@
 use crate::{
     internals::{
         parse_input_tokens::ParseHelpers, Error, ErrorsCollection, ParseInputTokens, Result,
-        Spanned,
     },
-    model::Identifier,
+    model::{Identifier, Spanned},
 };
 use indexmap::{IndexMap, IndexSet};
 use infra_utils::paths::PathExtensions;
@@ -49,7 +48,7 @@ impl ParseInputTokens for Identifier {
 }
 
 impl<K: ParseInputTokens + std::hash::Hash + Eq, V: ParseInputTokens> ParseInputTokens
-    for IndexMap<Spanned<K>, Spanned<V>>
+    for IndexMap<Spanned<K>, V>
 {
     fn parse_value(input: ParseStream, errors: &mut ErrorsCollection) -> Result<Self> {
         return ParseHelpers::map(input, errors);
@@ -122,14 +121,14 @@ impl<T: ParseInputTokens> ParseInputTokens for Spanned<T> {
         let span = input.span();
         let value = T::parse_value(input, errors)?;
 
-        return Ok(Self::new(span, value));
+        return Ok(Self::with_span(span, value));
     }
 
     fn parse_named_value(input: ParseStream, errors: &mut ErrorsCollection) -> Result<Self> {
         let span = input.span();
         let value = ParseInputTokens::parse_named_value(input, errors)?;
 
-        return Ok(Self::new(span, value));
+        return Ok(Self::with_span(span, value));
     }
 }
 

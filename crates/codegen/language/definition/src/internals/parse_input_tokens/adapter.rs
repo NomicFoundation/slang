@@ -1,6 +1,6 @@
 use crate::{
     internals::{Error, ErrorsCollection, ParseInputTokens, Result},
-    model::spanned::Language,
+    model::Language,
 };
 use proc_macro2::TokenStream;
 use syn::parse::{Parse, ParseStream};
