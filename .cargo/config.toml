@@ -17,7 +17,5 @@ rustflags = [
 	"clippy::should_implement_trait",
 	"-A",
 	"clippy::upper_case_acronyms",
-	"-A",
-	"clippy::wrong_self_convention",
 
 ]

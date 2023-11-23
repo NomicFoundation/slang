@@ -121,9 +121,9 @@ pub enum PrattElement {
 }
 
 impl PrattElement {
-    pub fn to_nodes(self) -> Vec<cst::Node> {
+    pub fn into_nodes(self) -> Vec<cst::Node> {
         match self {
-            Self::Expression { nodes } => nodes.clone(),
+            Self::Expression { nodes } => nodes,
             Self::Binary { kind, nodes, .. }
             | Self::Prefix { kind, nodes, .. }
             | Self::Postfix { kind, nodes, .. } => {

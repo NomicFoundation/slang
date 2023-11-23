@@ -22,5 +22,5 @@ pub fn run(language: &LanguageDefinitionRef) -> Result<()> {
     metadata.validate_not_used(language, &mut reporter);
     metadata.validate_not_reachable(language, &mut reporter);
 
-    return reporter.to_result();
+    return reporter.into_result();
 }

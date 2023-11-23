@@ -21,7 +21,7 @@ impl Reporter {
         self.errors.push((location.to_owned(), error.to_string()));
     }
 
-    pub fn to_result(self) -> Result<()> {
+    pub fn into_result(self) -> Result<()> {
         let mut errors = InfraErrors::new();
         let mut cst_cache = HashMap::<PathBuf, NodeRef>::new();
 
@@ -50,6 +50,6 @@ impl Reporter {
             errors.push(file_path, range, message);
         }
 
-        return errors.to_result();
+        return errors.into_result();
     }
 }

@@ -98,7 +98,7 @@ fn load_sections(
         });
     }
 
-    return errors.to_result().map(|_| results);
+    return errors.into_result().map(|_| results);
 }
 
 fn load_topic(

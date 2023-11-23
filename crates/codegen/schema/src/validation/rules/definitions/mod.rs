@@ -23,5 +23,5 @@ pub fn run(language: &LanguageDefinitionRef) -> Result<()> {
     Productions::validate(language, &mut reporter);
     Versions::validate(language, &mut reporter);
 
-    return reporter.to_result();
+    return reporter.into_result();
 }

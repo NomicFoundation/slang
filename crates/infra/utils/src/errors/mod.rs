@@ -37,7 +37,7 @@ impl InfraErrors {
         self.contents.extend(other.contents);
     }
 
-    pub fn to_result(self) -> Result<()> {
+    pub fn into_result(self) -> Result<()> {
         if self.contents.is_empty() {
             return Ok(());
         } else {

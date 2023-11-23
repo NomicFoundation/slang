@@ -94,7 +94,7 @@ impl SequenceHelper {
                     self.result = State::Running(ParserResult::incomplete_match(
                         std::mem::take(&mut cur.elements)
                             .into_iter()
-                            .flat_map(|pratt| pratt.to_nodes())
+                            .flat_map(|pratt| pratt.into_nodes())
                             .chain(next.nodes)
                             .collect(),
                         next.expected_tokens,
@@ -104,7 +104,7 @@ impl SequenceHelper {
                     self.result = State::Running(ParserResult::incomplete_match(
                         std::mem::take(&mut cur.elements)
                             .into_iter()
-                            .flat_map(|pratt| pratt.to_nodes())
+                            .flat_map(|pratt| pratt.into_nodes())
                             .collect(),
                         next.expected_tokens,
                     ));
