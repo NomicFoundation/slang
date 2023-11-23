@@ -15,7 +15,4 @@ rustflags = [
 	"clippy::needless_return",
 	"-A",
 	"clippy::should_implement_trait",
-	"-A",
-	"clippy::upper_case_acronyms",
-
 ]

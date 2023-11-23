@@ -20,7 +20,7 @@ mod supress_api_dependencies {
 #[derive(ClapParser, Debug)]
 #[command(next_line_help = true)]
 #[command(author, about)]
-struct CLI {
+struct Cli {
     #[command(subcommand)]
     command: Commands,
 }
@@ -43,7 +43,7 @@ enum Commands {
 }
 
 fn main() -> Result<()> {
-    return match CLI::parse().command {
+    return match Cli::parse().command {
         Commands::Parse {
             file_path,
             version,
@@ -83,5 +83,5 @@ fn execute_parse_command(file_path_string: String, version: Version, json: bool)
 #[test]
 fn verify_clap_cli() {
     // Catches problems earlier in the development cycle:
-    <CLI as clap::CommandFactory>::command().debug_assert();
+    <Cli as clap::CommandFactory>::command().debug_assert();
 }
