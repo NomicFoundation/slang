@@ -53,7 +53,7 @@ impl GitHub {
 
         // tag_name is in the form 'v1.2.3', so remove the 'v' prefix before parsing the version:
         let version = tag_name
-            .strip_prefix("v")
+            .strip_prefix('v')
             .with_context(|| format!("Cannot extract version out of tag: {tag_name:#?}"))?;
 
         return Ok(Version::parse(version)?);

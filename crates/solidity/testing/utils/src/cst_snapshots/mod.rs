@@ -179,17 +179,17 @@ pub fn render_source_preview(source: &str, range: &TextRange) -> Result<String> 
 
     // Escape line breaks:
     let contents = contents
-        .replace("\t", "\\t")
-        .replace("\r", "\\r")
-        .replace("\n", "\\n");
+        .replace('\t', "\\t")
+        .replace('\r', "\\r")
+        .replace('\n', "\\n");
 
     // Surround by quotes for use in yaml:
     let contents = {
-        if contents.contains("\"") {
-            let contents = contents.replace("'", "''");
+        if contents.contains('"') {
+            let contents = contents.replace('\'', "''");
             format!("'{contents}'")
         } else {
-            let contents = contents.replace("\"", "\\\"");
+            let contents = contents.replace('"', "\\\"");
             format!("\"{contents}\"")
         }
     };

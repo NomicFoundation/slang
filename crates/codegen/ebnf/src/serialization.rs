@@ -224,7 +224,7 @@ impl EbnfSerializer {
 }
 
 fn format_string_literal(value: &str) -> String {
-    let delimiter = if value.contains('"') && !value.contains("'") {
+    let delimiter = if value.contains('"') && !value.contains('\'') {
         '\''
     } else {
         '"'
