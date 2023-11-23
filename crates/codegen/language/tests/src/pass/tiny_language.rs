@@ -71,8 +71,7 @@ fn definition() {
                                                 items: ["Bar".into()].into()
                                             }
                                         }
-                                    )
-                                        .into(),
+                                    ),
                                     (
                                         "baz".into(),
                                         Field::Required {
@@ -80,8 +79,7 @@ fn definition() {
                                                 items: ["Baz".into()].into()
                                             }
                                         }
-                                    )
-                                        .into(),
+                                    ),
                                     (
                                         "baz_again".into(),
                                         Field::Required {
@@ -90,7 +88,6 @@ fn definition() {
                                             }
                                         }
                                     )
-                                        .into()
                                 ]
                                 .into()
                             }

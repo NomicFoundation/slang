@@ -97,7 +97,7 @@ impl SequenceHelper {
                         std::mem::take(&mut cur.elements)
                             .into_iter()
                             .flat_map(|pratt| pratt.to_nodes())
-                            .chain(next.nodes.into_iter())
+                            .chain(next.nodes)
                             .collect(),
                         next.expected_tokens,
                     ));

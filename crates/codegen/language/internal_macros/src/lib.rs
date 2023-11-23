@@ -40,7 +40,7 @@ fn derive_internals_aux(
     let output = run_derivers(input_items)?;
     input_items.push(syn::Item::Verbatim(output));
 
-    return Ok(input_mod.into_token_stream().into());
+    return Ok(input_mod.into_token_stream());
 }
 
 fn run_derivers(input_items: &[syn::Item]) -> Result<proc_macro2::TokenStream> {

@@ -108,7 +108,7 @@ impl ScannerDefinitionNodeExtensions for ScannerDefinitionNode {
                         quote! { scan_chars!(input, #(#chars),*) }
                     })
                     .collect::<Vec<_>>();
-                scanners.extend(non_literal_scanners.into_iter());
+                scanners.extend(non_literal_scanners);
                 quote! { scan_choice!(input, #(#scanners),*) }
             }
 

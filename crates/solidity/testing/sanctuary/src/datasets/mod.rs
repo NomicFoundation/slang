@@ -57,8 +57,7 @@ pub fn get_all_datasets() -> Result<Vec<impl Dataset>> {
                     "sanctuary-polygon",
                     Url::parse("https://github.com/tintinweb/smart-contract-sanctuary-polygon")?,
                 ),
-            ]
-            .into_iter(),
+            ],
         );
     }
 
