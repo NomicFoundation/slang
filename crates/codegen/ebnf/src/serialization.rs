@@ -127,7 +127,7 @@ impl EbnfSerializer {
     pub fn serialize_node(&mut self, top_node: &EbnfNode, buffer: &mut String) {
         match top_node {
             EbnfNode::Choice { nodes } => {
-                for (i, node) in nodes.into_iter().enumerate() {
+                for (i, node) in nodes.iter().enumerate() {
                     if i > 0 {
                         buffer.push_str(" | ");
                     }
@@ -164,7 +164,7 @@ impl EbnfSerializer {
                 buffer.push_str(&self.display_name(name));
             }
             EbnfNode::Sequence { nodes } => {
-                for (i, node) in nodes.into_iter().enumerate() {
+                for (i, node) in nodes.iter().enumerate() {
                     if i > 0 {
                         buffer.push_str(" ");
                     }
