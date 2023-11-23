@@ -113,7 +113,7 @@ impl Snippets {
             snippet.write_code_block(language, class, &id, ebnf);
         }
 
-        return Some(snippet.to_string());
+        return Some(snippet.into_string());
     }
 
     fn locate_production(&self, name: &str) -> (&LanguageSection, &LanguageTopic) {

@@ -39,8 +39,8 @@ impl NavigationEntry {
                     index_page.write_list_link(child.title(), &child.nav_path());
                 }
 
-                codegen.write_file(current_dir.join("NAV.md"), nav_page.to_string())?;
-                codegen.write_file(current_dir.join("index.md"), index_page.to_string())?;
+                codegen.write_file(current_dir.join("NAV.md"), nav_page.into_string())?;
+                codegen.write_file(current_dir.join("index.md"), index_page.into_string())?;
             }
             NavigationEntry::Page { contents, .. } => {
                 codegen.write_file(current_dir.join("index.md"), contents)?;

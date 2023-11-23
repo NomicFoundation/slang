@@ -11,7 +11,7 @@ impl MarkdownWriter {
         return Self { w: String::new() };
     }
 
-    pub fn to_string(self) -> String {
+    pub fn into_string(self) -> String {
         return self.w;
     }
 
