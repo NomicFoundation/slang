@@ -42,17 +42,14 @@ impl ParserResult {
     }
 
     pub fn is_match(&self) -> bool {
-        match self {
-            ParserResult::Match(_) | ParserResult::PrattOperatorMatch(_) => true,
-            _ => false,
-        }
+        matches!(
+            self,
+            ParserResult::Match(_) | ParserResult::PrattOperatorMatch(_)
+        )
     }
 
     pub fn is_no_match(&self) -> bool {
-        match self {
-            ParserResult::NoMatch(_) => true,
-            _ => false,
-        }
+        matches!(self, ParserResult::NoMatch(_))
     }
 
     pub fn with_kind(self, new_kind: RuleKind) -> ParserResult {
