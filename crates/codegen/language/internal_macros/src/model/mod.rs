@@ -58,7 +58,7 @@ impl Item {
             variants: input
                 .variants
                 .iter()
-                .map(|variant| Variant::from_syn(variant))
+                .map(Variant::from_syn)
                 .try_collect()?,
         });
     }

@@ -152,7 +152,7 @@ impl ParseInputTokens for usize {
 
         return literal
             .base10_parse::<usize>()
-            .map_err(|error| Error::from_syn(error));
+            .map_err(Error::from_syn);
     }
 }
 

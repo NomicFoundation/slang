@@ -9,7 +9,7 @@ pub struct ParseAdapter;
 
 impl ParseAdapter {
     pub fn parse(input: TokenStream) -> Result<ParseOutput> {
-        return syn::parse2(input).map_err(|error| Error::from_syn(error));
+        return syn::parse2(input).map_err(Error::from_syn);
     }
 }
 
