@@ -150,9 +150,7 @@ impl ParseInputTokens for usize {
     fn parse_value(input: ParseStream, _: &mut ErrorsCollection) -> Result<Self> {
         let literal = ParseHelpers::syn::<syn::LitInt>(input)?;
 
-        return literal
-            .base10_parse::<usize>()
-            .map_err(Error::from_syn);
+        return literal.base10_parse::<usize>().map_err(Error::from_syn);
     }
 }
 

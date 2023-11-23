@@ -43,22 +43,20 @@ pub fn get_all_datasets() -> Result<Vec<impl Dataset>> {
 
     // Large repositories (millions of files). Skip running locally for now.
     if GitHub::is_running_in_ci() {
-        result.extend(
-            [
-                GitDataset::new(
-                    "sanctuary-ethereum",
-                    Url::parse("https://github.com/tintinweb/smart-contract-sanctuary-ethereum")?,
-                ),
-                GitDataset::new(
-                    "sanctuary-bsc",
-                    Url::parse("https://github.com/tintinweb/smart-contract-sanctuary-bsc")?,
-                ),
-                GitDataset::new(
-                    "sanctuary-polygon",
-                    Url::parse("https://github.com/tintinweb/smart-contract-sanctuary-polygon")?,
-                ),
-            ],
-        );
+        result.extend([
+            GitDataset::new(
+                "sanctuary-ethereum",
+                Url::parse("https://github.com/tintinweb/smart-contract-sanctuary-ethereum")?,
+            ),
+            GitDataset::new(
+                "sanctuary-bsc",
+                Url::parse("https://github.com/tintinweb/smart-contract-sanctuary-bsc")?,
+            ),
+            GitDataset::new(
+                "sanctuary-polygon",
+                Url::parse("https://github.com/tintinweb/smart-contract-sanctuary-polygon")?,
+            ),
+        ]);
     }
 
     return Ok(result);

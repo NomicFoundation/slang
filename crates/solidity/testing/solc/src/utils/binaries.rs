@@ -6,7 +6,7 @@ use infra_utils::{cargo::CargoWorkspace, commands::Command};
 use rayon::prelude::{ParallelBridge, ParallelIterator};
 use semver::Version;
 use serde::Deserialize;
-use std::{collections::HashMap, os::unix::prelude::PermissionsExt, path::PathBuf, path::Path};
+use std::{collections::HashMap, os::unix::prelude::PermissionsExt, path::Path, path::PathBuf};
 use url::Url;
 
 #[derive(Debug)]

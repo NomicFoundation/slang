@@ -55,11 +55,7 @@ impl Item {
         return Ok(Item::Enum {
             name: input.ident.clone(),
             attributes: input.attrs.clone(),
-            variants: input
-                .variants
-                .iter()
-                .map(Variant::from_syn)
-                .try_collect()?,
+            variants: input.variants.iter().map(Variant::from_syn).try_collect()?,
         });
     }
 }
