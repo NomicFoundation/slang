@@ -1,4 +1,5 @@
 use std::{
+    cmp,
     sync::atomic::{AtomicUsize, Ordering},
     time::Duration,
 };
@@ -67,27 +68,33 @@ impl Reporter {
 
         let failures_before_update = self.failed_tests.fetch_add(1, Ordering::Relaxed);
 
-        if failures_before_update < Self::MAX_PRINTED_FAILURES {
-            let reports = errors
-                .iter()
-                .take(Self::MAX_PRINTED_FAILURES - failures_before_update)
-                .map(|error| error.to_error_report(source_id, source, /* with_color */ true))
-                .collect::<Vec<String>>();
+        match failures_before_update.cmp(&Self::MAX_PRINTED_FAILURES) {
+            cmp::Ordering::Less => {
+                let reports = errors
+                    .iter()
+                    .take(Self::MAX_PRINTED_FAILURES - failures_before_update)
+                    .map(|error| {
+                        error.to_error_report(source_id, source, /* with_color */ true)
+                    })
+                    .collect::<Vec<String>>();
 
-            self.progress_bar.suspend(|| {
-                for report in reports {
+                self.progress_bar.suspend(|| {
+                    for report in reports {
+                        eprintln!();
+                        eprintln!("[{version}] {report}");
+                    }
+                });
+            }
+            cmp::Ordering::Equal => {
+                self.progress_bar.suspend(|| {
                     eprintln!();
-                    eprintln!("[{version}] {report}");
-                }
-            });
-        } else if failures_before_update == Self::MAX_PRINTED_FAILURES {
-            self.progress_bar.suspend(|| {
-                eprintln!();
-                eprintln!(
-                    "More than {max_failures} tests failed. Further errors will not be shown.",
-                    max_failures = Self::MAX_PRINTED_FAILURES
-                );
-            });
+                    eprintln!(
+                        "More than {max_failures} tests failed. Further errors will not be shown.",
+                        max_failures = Self::MAX_PRINTED_FAILURES
+                    );
+                });
+            }
+            cmp::Ordering::Greater => {}
         }
     }
 }
