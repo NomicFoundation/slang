@@ -70,12 +70,12 @@ impl EbnfSerializer {
         buffer.push_str(&self.display_name(name));
         buffer.push_str(" = ");
         buffer.push_str(&self.serialize_root_node(name, root_node));
-        buffer.push_str(";");
+        buffer.push(';');
 
         match self.outputs.get_mut(name) {
             Some(existing) => {
                 if !existing.is_empty() {
-                    existing.push_str("\n");
+                    existing.push('\n');
                 }
 
                 existing.push_str(&buffer);
@@ -144,20 +144,20 @@ impl EbnfSerializer {
                 self.serialize_child_node(top_node, subtrahend, buffer);
             }
             EbnfNode::Not { node } => {
-                buffer.push_str("!");
+                buffer.push('!');
                 self.serialize_child_node(top_node, node, buffer);
             }
             EbnfNode::OneOrMore { node } => {
                 self.serialize_child_node(top_node, node, buffer);
-                buffer.push_str("+");
+                buffer.push('+');
             }
             EbnfNode::Optional { node } => {
                 self.serialize_child_node(top_node, node, buffer);
-                buffer.push_str("?");
+                buffer.push('?');
             }
             EbnfNode::Range { from, to } => {
                 buffer.push_str(&format_string_literal(&from.to_string()));
-                buffer.push_str("…");
+                buffer.push('…');
                 buffer.push_str(&format_string_literal(&to.to_string()));
             }
             EbnfNode::ProductionRef { name } => {
@@ -166,7 +166,7 @@ impl EbnfSerializer {
             EbnfNode::Sequence { nodes } => {
                 for (i, node) in nodes.iter().enumerate() {
                     if i > 0 {
-                        buffer.push_str(" ");
+                        buffer.push(' ');
                     }
 
                     self.serialize_child_node(top_node, node, buffer);
@@ -183,7 +183,7 @@ impl EbnfSerializer {
             }
             EbnfNode::ZeroOrMore { node } => {
                 self.serialize_child_node(top_node, node, buffer);
-                buffer.push_str("*");
+                buffer.push('*');
             }
         };
     }
@@ -191,9 +191,9 @@ impl EbnfSerializer {
     fn serialize_child_node(&mut self, parent: &EbnfNode, child: &EbnfNode, buffer: &mut String) {
         if discriminant(parent) != discriminant(child) && child.precedence() <= parent.precedence()
         {
-            buffer.push_str("(");
+            buffer.push('(');
             self.serialize_node(child, buffer);
-            buffer.push_str(")");
+            buffer.push(')');
         } else {
             self.serialize_node(child, buffer);
         }

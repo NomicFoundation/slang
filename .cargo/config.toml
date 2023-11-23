@@ -16,8 +16,6 @@ rustflags = [
 	"-A",
 	"clippy::should_implement_trait",
 	"-A",
-	"clippy::single_char_add_str",
-	"-A",
 	"clippy::single_char_pattern",
 	"-A",
 	"clippy::to_string_in_format_args",
