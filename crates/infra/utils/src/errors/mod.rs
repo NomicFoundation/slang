@@ -69,7 +69,7 @@ impl std::fmt::Display for ErrorDescriptor {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         if var("VSCODE_PROBLEM_MATCHER").is_ok() {
             self.write_problem_matcher(f)?;
-            writeln!(f, "")?;
+            writeln!(f)?;
         }
 
         self.write_ariadne_report(f)?;
