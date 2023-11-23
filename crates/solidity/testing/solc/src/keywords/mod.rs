@@ -228,7 +228,7 @@ impl TestCase {
                     return false;
                 }
 
-                println!("");
+                println!();
                 println!(
                     "Invoking solc failed:\n{error}\n\nInput:\n{input}",
                     input = serde_json::to_string_pretty(&input).unwrap(),
