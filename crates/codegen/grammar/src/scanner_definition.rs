@@ -32,9 +32,9 @@ pub enum ScannerDefinitionNode {
     ScannerDefinition(ScannerDefinitionRef),
 }
 
-impl Into<ScannerDefinitionNode> for ScannerDefinitionRef {
-    fn into(self) -> ScannerDefinitionNode {
-        ScannerDefinitionNode::ScannerDefinition(self)
+impl From<ScannerDefinitionRef> for ScannerDefinitionNode {
+    fn from(def_ref: ScannerDefinitionRef) -> Self {
+        ScannerDefinitionNode::ScannerDefinition(def_ref)
     }
 }
 

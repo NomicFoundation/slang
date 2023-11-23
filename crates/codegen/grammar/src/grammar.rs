@@ -50,27 +50,27 @@ impl GrammarElement {
     }
 }
 
-impl Into<GrammarElement> for ScannerDefinitionRef {
-    fn into(self) -> GrammarElement {
-        GrammarElement::ScannerDefinition(self)
+impl From<ScannerDefinitionRef> for GrammarElement {
+    fn from(def: ScannerDefinitionRef) -> Self {
+        GrammarElement::ScannerDefinition(def)
     }
 }
 
-impl Into<GrammarElement> for TriviaParserDefinitionRef {
-    fn into(self) -> GrammarElement {
-        GrammarElement::TriviaParserDefinition(self)
+impl From<TriviaParserDefinitionRef> for GrammarElement {
+    fn from(def: TriviaParserDefinitionRef) -> Self {
+        GrammarElement::TriviaParserDefinition(def)
     }
 }
 
-impl Into<GrammarElement> for ParserDefinitionRef {
-    fn into(self) -> GrammarElement {
-        GrammarElement::ParserDefinition(self)
+impl From<ParserDefinitionRef> for GrammarElement {
+    fn from(def: ParserDefinitionRef) -> Self {
+        GrammarElement::ParserDefinition(def)
     }
 }
 
-impl Into<GrammarElement> for PrecedenceParserDefinitionRef {
-    fn into(self) -> GrammarElement {
-        GrammarElement::PrecedenceParserDefinition(self)
+impl From<PrecedenceParserDefinitionRef> for GrammarElement {
+    fn from(def: PrecedenceParserDefinitionRef) -> Self {
+        GrammarElement::PrecedenceParserDefinition(def)
     }
 }
 
