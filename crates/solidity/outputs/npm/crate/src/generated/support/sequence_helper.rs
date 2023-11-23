@@ -49,7 +49,7 @@ impl SequenceHelper {
 
                 // If the accumulated result is valid, but empty (e.g. we accepted an empty optional)
                 // just take the next result
-                (ParserResult::Match(running), next @ _) if running.nodes.is_empty() => {
+                (ParserResult::Match(running), next) if running.nodes.is_empty() => {
                     self.result = State::Running(next);
                 }
                 // Keep accepting or convert into PrattOperatorMatch
