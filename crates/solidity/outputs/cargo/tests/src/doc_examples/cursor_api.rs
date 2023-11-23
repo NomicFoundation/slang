@@ -117,6 +117,7 @@ fn cursor_api_using_iter_combinators() -> Result<()> {
 }
 
 #[test]
+#[allow(clippy::redundant_pattern_matching)]
 fn cursor_as_iter() -> Result<()> {
     let language = Language::new(Version::parse("0.8.0")?)?;
     let parse_output = language.parse(ProductionKind::ContractDefinition, "contract Foo {}");
