@@ -11,7 +11,7 @@ impl Model {
         return self.items.iter();
     }
 
-    pub fn from_syn(input: &Vec<syn::Item>) -> Result<Self> {
+    pub fn from_syn(input: &[syn::Item]) -> Result<Self> {
         let items = input
             .iter()
             .filter_map(|item| match &item {

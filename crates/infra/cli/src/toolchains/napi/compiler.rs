@@ -146,7 +146,7 @@ fn compile_root_package(node_binary: Option<&Path>) -> Result<()> {
     return Ok(());
 }
 
-fn compile_platform_packages(node_binaries: &Vec<PathBuf>) -> Result<()> {
+fn compile_platform_packages(node_binaries: &[PathBuf]) -> Result<()> {
     for platform_dir in NapiResolver::platforms_dir().collect_children()? {
         let platform = platform_dir.unwrap_name();
         let package_kind = NapiPackageKind::Platform(platform.to_owned());

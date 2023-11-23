@@ -6,7 +6,7 @@ use infra_utils::{cargo::CargoWorkspace, commands::Command};
 use rayon::prelude::{ParallelBridge, ParallelIterator};
 use semver::Version;
 use serde::Deserialize;
-use std::{collections::HashMap, os::unix::prelude::PermissionsExt, path::PathBuf};
+use std::{collections::HashMap, os::unix::prelude::PermissionsExt, path::PathBuf, path::Path};
 use url::Url;
 
 #[derive(Debug)]
@@ -67,7 +67,7 @@ impl Binary {
     }
 }
 
-fn fetch_releases(mirror_url: &Url, binaries_dir: &PathBuf) -> HashMap<Version, String> {
+fn fetch_releases(mirror_url: &Url, binaries_dir: &Path) -> HashMap<Version, String> {
     #[derive(Deserialize)]
     struct MirrorList {
         releases: HashMap<Version, String>,
@@ -84,7 +84,7 @@ fn fetch_releases(mirror_url: &Url, binaries_dir: &PathBuf) -> HashMap<Version, 
     return list.releases;
 }
 
-fn download_file(url: Url, path: &PathBuf) {
+fn download_file(url: Url, path: &Path) {
     let bytes = reqwest::blocking::get(url).unwrap().bytes().unwrap();
 
     std::fs::create_dir_all(path.parent().unwrap()).unwrap();

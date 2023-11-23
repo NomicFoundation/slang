@@ -43,7 +43,7 @@ fn derive_internals_aux(
     return Ok(input_mod.into_token_stream().into());
 }
 
-fn run_derivers(input_items: &Vec<syn::Item>) -> Result<proc_macro2::TokenStream> {
+fn run_derivers(input_items: &[syn::Item]) -> Result<proc_macro2::TokenStream> {
     let model = Model::from_syn(input_items)?;
 
     let spanned = model.items().map(derive::spanned);

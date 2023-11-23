@@ -50,8 +50,6 @@ rustflags = [
 	"-A",
 	"clippy::println_empty_string",
 	"-A",
-	"clippy::ptr_arg",
-	"-A",
 	"clippy::redundant_closure",
 	"-A",
 	"clippy::redundant_pattern",
