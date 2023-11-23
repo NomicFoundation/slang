@@ -32,7 +32,7 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
 
     for version in VERSION_BREAKS {
         let production_kind = ProductionKind::from_str(parser_name)
-            .expect(format!("No such parser: {parser_name}").as_str());
+            .unwrap_or_else(|_| panic!("No such parser: {parser_name}"));
 
         let output = Language::new(version.clone())?.parse(production_kind, &source);
 

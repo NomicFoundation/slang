@@ -32,7 +32,7 @@ impl Reporter {
                 let source = file_path.read_to_string().unwrap();
 
                 return Parser::run_parser(&file_path, &source)
-                    .expect(&format!("File cannot be parsed: {file_path:?}"));
+                    .unwrap_or_else(|_| panic!("File cannot be parsed: {file_path:?}"));
             });
 
             let mut current_node = cst.as_ref();
