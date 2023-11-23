@@ -29,9 +29,10 @@ macro_rules! scan_none_of {
 
 #[allow(unused_macros)]
 macro_rules! scan_char_range {
-    ($stream:ident, $from:literal , $to:literal) => {
+    ($stream:ident, $from:literal..=$to:literal) => {
         if let Some(c) = $stream.next() {
-            if $from <= c && c <= $to {
+            #[allow(clippy::manual_is_ascii_check)]
+            if ($from..=$to).contains(&c) {
                 true
             } else {
                 $stream.undo();

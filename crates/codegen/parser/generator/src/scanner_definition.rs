@@ -113,7 +113,7 @@ impl ScannerDefinitionNodeExtensions for ScannerDefinitionNode {
             }
 
             ScannerDefinitionNode::CharRange(from, to) => {
-                quote! { scan_char_range!(input, #from, #to) }
+                quote! { scan_char_range!(input, #from..=#to) }
             }
 
             ScannerDefinitionNode::Literal(string) => {
