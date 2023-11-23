@@ -69,7 +69,7 @@ fn write_source<W: Write>(w: &mut W, source: &str) -> Result<()> {
 }
 
 fn write_errors<W: Write>(w: &mut W, errors: &Vec<String>) -> Result<()> {
-    if errors.len() == 0 {
+    if errors.is_empty() {
         writeln!(w, "Errors: []")?;
         return Ok(());
     }

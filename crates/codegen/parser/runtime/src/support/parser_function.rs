@@ -96,10 +96,10 @@ where
                     let parse_tree = cst::Node::Rule(topmost_rule);
                     // Sanity check: Make sure that succesful parse is equivalent to not having any SKIPPED nodes
                     debug_assert_eq!(
-                        errors.len() > 0,
+                        errors.is_empty(),
                         parse_tree
                             .cursor_with_offset(TextIndex::ZERO)
-                            .any(|x| x.as_token_with_kind(&[TokenKind::SKIPPED]).is_some())
+                            .all(|x| x.as_token_with_kind(&[TokenKind::SKIPPED]).is_none())
                     );
 
                     ParseOutput { parse_tree, errors }
