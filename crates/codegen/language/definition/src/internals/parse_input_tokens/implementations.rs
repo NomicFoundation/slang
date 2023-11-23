@@ -85,7 +85,7 @@ impl<T: ParseInputTokens> ParseInputTokens for Option<T> {
 
     fn parse_field(name: &str, input: ParseStream, errors: &mut ErrorsCollection) -> Result<Self> {
         match ParseHelpers::syn::<Ident>(&input.fork()) {
-            Ok(key) if key.to_string() == name => {
+            Ok(key) if key == name => {
                 return Ok(Some(ParseHelpers::field(name, input, errors)?));
             }
             _ => {

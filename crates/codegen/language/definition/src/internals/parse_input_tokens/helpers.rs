@@ -102,10 +102,8 @@ impl ParseHelpers {
     ) -> Result<T> {
         let span = input.span();
         match Self::syn::<Ident>(&input) {
-            Ok(key) if key.to_string() == name => key,
-            _ => {
-                return Error::fatal(&span, &Errors::ExpectedField(name));
-            }
+            Ok(key) if key == name => {}
+            _ => return Error::fatal(&span, &Errors::ExpectedField(name)),
         };
 
         Self::syn::<Token![=]>(&input)?;

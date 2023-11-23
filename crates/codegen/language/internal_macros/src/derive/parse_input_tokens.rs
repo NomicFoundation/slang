@@ -30,7 +30,7 @@ fn derive_struct(name: &Ident, fields: &[Field]) -> TokenStream {
                 errors: &mut crate::internals::ErrorsCollection,
             ) -> crate::internals::Result<Self> {
                 let name = crate::internals::ParseHelpers::syn::<syn::Ident>(input)?;
-                if name.to_string() != #name_string {
+                if name != #name_string {
                     return crate::internals::Error::fatal(&name, &#unexpected_type_error);
                 }
 
