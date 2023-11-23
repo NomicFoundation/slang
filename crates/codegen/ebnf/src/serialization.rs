@@ -241,7 +241,7 @@ fn format_string_literal(value: &str) -> String {
             _ => {
                 panic!(
                     "Unexpected character in string literal: '{c}'",
-                    c = c.escape_unicode().to_string()
+                    c = c.escape_unicode()
                 );
             }
         })

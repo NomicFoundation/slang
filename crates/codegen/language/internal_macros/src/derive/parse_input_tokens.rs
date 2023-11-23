@@ -74,7 +74,7 @@ fn derive_enum(name: &Ident, variants: &[Variant]) -> TokenStream {
         "Expected a variant: {}",
         variants
             .iter()
-            .map(|variant| format!("'{}'", variant.name.to_string()))
+            .map(|variant| format!("'{}'", variant.name))
             .collect_vec()
             .join(" or ")
     ));
