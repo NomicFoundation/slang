@@ -5,14 +5,14 @@ use anyhow::{bail, Result};
 use ariadne::{Color, Label, Report, ReportKind, Source};
 
 #[allow(clippy::len_without_is_empty)]
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub struct InfraErrors {
     contents: Vec<ErrorDescriptor>,
 }
 
 impl InfraErrors {
     pub fn new() -> Self {
-        return Self { contents: vec![] };
+        return Self::default();
     }
 
     pub fn len(&self) -> usize {

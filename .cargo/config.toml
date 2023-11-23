@@ -14,8 +14,6 @@ rustflags = [
 	"-A",
 	"clippy::needless_return",
 	"-A",
-	"clippy::new_without_default",
-	"-A",
 	"clippy::println_empty_string",
 	"-A",
 	"clippy::redundant_closure",

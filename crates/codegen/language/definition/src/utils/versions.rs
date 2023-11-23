@@ -3,14 +3,14 @@ use std::{fmt::Display, mem::swap, ops::Range};
 
 const MAX_VERSION: Version = Version::new(u64::MAX, u64::MAX, u64::MAX);
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Default)]
 pub struct VersionSet {
     ranges: Vec<Range<Version>>,
 }
 
 impl VersionSet {
     pub fn new() -> Self {
-        return Self { ranges: vec![] };
+        return Self::default();
     }
 
     pub fn is_empty(&self) -> bool {
