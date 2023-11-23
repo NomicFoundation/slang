@@ -4,6 +4,7 @@ use crate::paths::PathExtensions;
 use anyhow::{bail, Result};
 use ariadne::{Color, Label, Report, ReportKind, Source};
 
+#[allow(clippy::len_without_is_empty)]
 #[derive(Debug)]
 pub struct InfraErrors {
     contents: Vec<ErrorDescriptor>,
