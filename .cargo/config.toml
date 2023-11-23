@@ -18,8 +18,6 @@ rustflags = [
 	"-A",
 	"clippy::upper_case_acronyms",
 	"-A",
-	"clippy::write_literal",
-	"-A",
 	"clippy::writeln_empty_string",
 	"-A",
 	"clippy::wrong_self_convention",
