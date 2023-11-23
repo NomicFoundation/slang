@@ -28,10 +28,10 @@ impl Visitor for Productions {
         for name in required_productions {
             if let Some(production) = self.language.productions.get(name) {
                 if production.inlined {
-                    reporter.report(&location, Errors::RequiredCannotBeInlined(name.to_owned()));
+                    reporter.report(location, Errors::RequiredCannotBeInlined(name.to_owned()));
                 }
             } else {
-                reporter.report(&location, Errors::MissingRequired(name.to_owned()));
+                reporter.report(location, Errors::MissingRequired(name.to_owned()));
             }
         }
 

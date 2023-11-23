@@ -36,7 +36,7 @@ fn write_binary(language: &LanguageDefinitionRef, bin_file_path: &Path) -> Resul
     bson::to_document(&language)?.to_writer(&mut buffer)?;
 
     if bin_file_path.exists() {
-        let existing_buffer = std::fs::read(&bin_file_path)?;
+        let existing_buffer = std::fs::read(bin_file_path)?;
 
         if buffer == existing_buffer {
             // Don't overwrite, in order not to trigger a rebuild by Cargo:
@@ -46,7 +46,7 @@ fn write_binary(language: &LanguageDefinitionRef, bin_file_path: &Path) -> Resul
 
     std::fs::create_dir_all(bin_file_path.unwrap_parent())?;
 
-    std::fs::write(&bin_file_path, &buffer)?;
+    std::fs::write(bin_file_path, &buffer)?;
 
     return Ok(());
 }

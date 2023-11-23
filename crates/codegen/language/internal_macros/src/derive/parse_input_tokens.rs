@@ -50,7 +50,7 @@ fn derive_enum(name: &Ident, variants: &[Variant]) -> TokenStream {
         let variant_name = variant_id.to_string();
 
         if let Some(fields) = &variant.fields {
-            let fields_return = derive_fields_return(quote!(Self::#variant_id), &fields);
+            let fields_return = derive_fields_return(quote!(Self::#variant_id), fields);
 
             return quote! {
                 #variant_name => {

@@ -31,7 +31,7 @@ impl CargoWorkspace {
 
         return Command::new("cargo")
             .args(["install", crate_name])
-            .property("--version", &version)
+            .property("--version", version)
             .run();
     }
 

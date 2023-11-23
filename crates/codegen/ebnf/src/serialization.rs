@@ -178,7 +178,7 @@ impl EbnfSerializer {
             EbnfNode::WithComment { node, comment } => {
                 self.serialize_child_node(top_node, node, buffer);
                 buffer.push_str(" (* ");
-                buffer.push_str(&comment);
+                buffer.push_str(comment);
                 buffer.push_str(" *)");
             }
             EbnfNode::ZeroOrMore { node } => {

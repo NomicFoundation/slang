@@ -22,7 +22,7 @@ impl Versions {
 impl Visitor for Versions {
     fn visit_manifest(&mut self, location: &LocationRef, reporter: &mut Reporter) -> bool {
         if self.language.versions.is_empty() {
-            reporter.report(&location, Errors::Empty);
+            reporter.report(location, Errors::Empty);
             return false;
         }
 
@@ -31,7 +31,7 @@ impl Visitor for Versions {
             let next = &window[1];
 
             if current >= next {
-                reporter.report(&location, Errors::NotSorted(current.to_owned()));
+                reporter.report(location, Errors::NotSorted(current.to_owned()));
                 return false;
             }
         }
@@ -51,7 +51,7 @@ impl Visitor for Versions {
         };
 
         if versions.is_empty() {
-            reporter.report(&location, Errors::Empty);
+            reporter.report(location, Errors::Empty);
             return false;
         }
 
@@ -60,7 +60,7 @@ impl Visitor for Versions {
             let next = window[1];
 
             if current >= next {
-                reporter.report(&location, Errors::NotSorted(current.to_owned()));
+                reporter.report(location, Errors::NotSorted(current.to_owned()));
                 return false;
             }
         }

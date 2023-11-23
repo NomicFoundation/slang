@@ -134,7 +134,7 @@ fn write_node<W: Write>(
 
         (preview.to_owned(), range_string)
     } else {
-        let preview = render_source_preview(source, &range)?;
+        let preview = render_source_preview(source, range)?;
 
         if node.children().is_empty() {
             // "foo" # 1..2

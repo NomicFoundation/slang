@@ -97,7 +97,7 @@ fn process_source_file(
         let language = Language::new(version.to_owned())?;
         let output = language.parse(ProductionKind::SourceUnit, source);
 
-        reporter.report_test_result(source_id, source, &version, &output);
+        reporter.report_test_result(source_id, source, version, &output);
     }
 
     return Ok(());

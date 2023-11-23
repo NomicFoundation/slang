@@ -81,7 +81,7 @@ fn generate_test_cases(language: &Language) -> Vec<TestCase> {
                             "Duplicate variation: {variation}"
                         );
 
-                        test_cases.push(TestCase::new(language, item, &definition, variation));
+                        test_cases.push(TestCase::new(language, item, definition, variation));
                     }
                 }
             }

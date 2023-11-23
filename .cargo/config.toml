@@ -12,8 +12,6 @@ rustflags = [
 	# This is a list of allowed Clippy rules for the purposes of gradual migration.
 	# See https://github.com/NomicFoundation/slang/pull/626
 	"-A",
-	"clippy::needless_borrow",
-	"-A",
 	"clippy::needless_range_loop",
 	"-A",
 	"clippy::needless_return",
