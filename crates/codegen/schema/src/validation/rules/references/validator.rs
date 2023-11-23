@@ -172,11 +172,10 @@ impl Validator<'_> {
 
         match validation_kind {
             ReferenceKind::ParserToAnything => {
-                if matches!(reference.definition, ProductionDefinition::Scanner { .. }) {
-                    if reference.inlined {
-                        reporter
-                            .report(location, Errors::CannotBeInlined(reference_name.to_owned()));
-                    }
+                if reference.inlined
+                    && matches!(reference.definition, ProductionDefinition::Scanner { .. })
+                {
+                    reporter.report(location, Errors::CannotBeInlined(reference_name.to_owned()));
                 }
             }
             ReferenceKind::ParserToScanner => {
