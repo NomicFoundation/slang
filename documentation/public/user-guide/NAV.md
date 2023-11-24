@@ -1,3 +1,5 @@
 -   [User Guide](./index.md)
--   [Cargo Crate](./cargo-crate/index.md)
--   [NPM Package](./npm-package/index.md)
+-   [Introduction](./introduction.md)
+-   [Overview](./overview.md)
+-   [Rust Crate](./rust-crate/)
+-   [NPM Package](./npm-package/)

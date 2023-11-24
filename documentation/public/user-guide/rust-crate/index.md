@@ -1,4 +1,8 @@
-# Cargo Crate
+# Rust Crate
+
+The Rust package is published to crates.io as [`slang_solidity`](https://crates.io/crates/slang_solidity).
+
+It can be used both as a regular Rust dependency and as a standalone CLI (installable with Cargo).
 
 ## Installation
 
