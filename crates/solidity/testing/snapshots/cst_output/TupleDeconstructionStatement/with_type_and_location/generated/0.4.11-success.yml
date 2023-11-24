@@ -8,18 +8,20 @@ Errors: []
 Tree:
   - TupleDeconstructionStatement (Rule): # 0..38 "(bool memory x, bool storage y) = rhs;"
       - OpenParen (Token): "(" # 0..1
-      - TupleMembers (Rule): # 1..30 "bool memory x, bool storage y"
-          - TupleMember (Rule): # 1..14 "bool memory x"
-              - TypeName (Rule): # 1..5 "bool"
-                  - BoolKeyword (Token): "bool" # 1..5
-              - MemoryKeyword (Token): "memory" # 6..12
-              - Identifier (Token): "x" # 13..14
+      - TupleDeconstructionElements (Rule): # 1..30 "bool memory x, bool storage y"
+          - TupleDeconstructionElement (Rule): # 1..14 "bool memory x"
+              - TypedTupleMember (Rule): # 1..14 "bool memory x"
+                  - TypeName (Rule): # 1..5 "bool"
+                      - BoolKeyword (Token): "bool" # 1..5
+                  - MemoryKeyword (Token): "memory" # 6..12
+                  - Identifier (Token): "x" # 13..14
           - Comma (Token): "," # 14..15
-          - TupleMember (Rule): # 15..30 " bool storage y"
-              - TypeName (Rule): # 15..20 " bool"
-                  - BoolKeyword (Token): "bool" # 16..20
-              - StorageKeyword (Token): "storage" # 21..28
-              - Identifier (Token): "y" # 29..30
+          - TupleDeconstructionElement (Rule): # 15..30 " bool storage y"
+              - TypedTupleMember (Rule): # 15..30 " bool storage y"
+                  - TypeName (Rule): # 15..20 " bool"
+                      - BoolKeyword (Token): "bool" # 16..20
+                  - StorageKeyword (Token): "storage" # 21..28
+                  - Identifier (Token): "y" # 29..30
       - CloseParen (Token): ")" # 30..31
       - Equal (Token): "=" # 32..33
       - Expression (Rule): # 33..37 " rhs"

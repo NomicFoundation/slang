@@ -8,21 +8,23 @@ Errors: []
 Tree:
   - TupleDeconstructionStatement (Rule): # 0..69 "(uint32 a, uint32[] memory b) = abi.decode(data, (..."
       - OpenParen (Token): "(" # 0..1
-      - TupleMembers (Rule): # 1..28 "uint32 a, uint32[] memory b"
-          - TupleMember (Rule): # 1..9 "uint32 a"
-              - TypeName (Rule): # 1..7 "uint32"
-                  - UintKeyword (Token): "uint32" # 1..7
-              - Identifier (Token): "a" # 8..9
+      - TupleDeconstructionElements (Rule): # 1..28 "uint32 a, uint32[] memory b"
+          - TupleDeconstructionElement (Rule): # 1..9 "uint32 a"
+              - TypedTupleMember (Rule): # 1..9 "uint32 a"
+                  - TypeName (Rule): # 1..7 "uint32"
+                      - UintKeyword (Token): "uint32" # 1..7
+                  - Identifier (Token): "a" # 8..9
           - Comma (Token): "," # 9..10
-          - TupleMember (Rule): # 10..28 " uint32[] memory b"
-              - TypeName (Rule): # 10..19 " uint32[]"
-                  - ArrayTypeName (Rule): # 10..19 " uint32[]"
-                      - TypeName (Rule): # 10..17 " uint32"
-                          - UintKeyword (Token): "uint32" # 11..17
-                      - OpenBracket (Token): "[" # 17..18
-                      - CloseBracket (Token): "]" # 18..19
-              - MemoryKeyword (Token): "memory" # 20..26
-              - Identifier (Token): "b" # 27..28
+          - TupleDeconstructionElement (Rule): # 10..28 " uint32[] memory b"
+              - TypedTupleMember (Rule): # 10..28 " uint32[] memory b"
+                  - TypeName (Rule): # 10..19 " uint32[]"
+                      - ArrayTypeName (Rule): # 10..19 " uint32[]"
+                          - TypeName (Rule): # 10..17 " uint32"
+                              - UintKeyword (Token): "uint32" # 11..17
+                          - OpenBracket (Token): "[" # 17..18
+                          - CloseBracket (Token): "]" # 18..19
+                  - MemoryKeyword (Token): "memory" # 20..26
+                  - Identifier (Token): "b" # 27..28
       - CloseParen (Token): ")" # 28..29
       - Equal (Token): "=" # 30..31
       - Expression (Rule): # 31..68 " abi.decode(data, (uint32, uint32[]))"

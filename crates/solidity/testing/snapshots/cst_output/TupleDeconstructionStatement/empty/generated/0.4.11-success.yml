@@ -11,8 +11,8 @@ Tree:
       - LeadingTrivia (Rule): # 0..48 "// TODO(#671): Tuple expressions can't be empty\n"
           - SingleLineComment (Trivia): "// TODO(#671): Tuple expressions can't be empty" # 0..47
       - OpenParen (Token): "(" # 48..49
-      - TupleMembers (Rule): # 49..49
-          - TupleMember (Rule): [] # 49..49
+      - TupleDeconstructionElements (Rule): # 49..49
+          - TupleDeconstructionElement (Rule): [] # 49..49
       - CloseParen (Token): ")" # 49..50
       - Equal (Token): "=" # 51..52
       - Expression (Rule): # 52..55 " ()"

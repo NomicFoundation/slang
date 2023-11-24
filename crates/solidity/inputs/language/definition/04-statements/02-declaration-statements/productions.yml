@@ -10,8 +10,7 @@
               open:
                 reference: "OpenParen"
               parser:
-                optional:
-                  reference: "TupleMembers"
+                reference: "TupleDeconstructionElements"
               close:
                 reference: "CloseParen"
           - reference: "Equal"
@@ -19,29 +18,39 @@
       terminator:
         reference: "Semicolon"
 
-- name: "TupleMembers"
+- name: "TupleDeconstructionElements"
   kind: "Parser"
   unversioned:
     separatedBy:
       separator:
         reference: "Comma"
       parser:
-        reference: "TupleMember"
+        reference: "TupleDeconstructionElement"
 
-- name: "TupleMember"
+- name: "TupleDeconstructionElement"
   kind: "Parser"
   unversioned:
     optional:
       choice:
-        - sequence:
-            - reference: "TypeName"
-            - optional:
-                reference: "DataLocation"
-            - reference: "Identifier"
-        - sequence:
-            - optional:
-                reference: "DataLocation"
-            - reference: "Identifier"
+        - reference: "TypedTupleMember"
+        - reference: "UntypedTupleMember"
+
+- name: "TypedTupleMember"
+  kind: "Parser"
+  unversioned:
+    sequence:
+      - reference: "TypeName"
+      - optional:
+          reference: "DataLocation"
+      - reference: "Identifier"
+
+- name: "UntypedTupleMember"
+  kind: "Parser"
+  unversioned:
+    sequence:
+      - optional:
+          reference: "DataLocation"
+      - reference: "Identifier"
 
 - name: "VariableDeclarationStatement"
   kind: "Parser"
