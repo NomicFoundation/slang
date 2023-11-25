@@ -19,7 +19,7 @@ Tree:
       - LeadingTrivia (Rule): # 0..41 "// Empty using symbols list is not valid\n"
           - SingleLineComment (Trivia): "// Empty using symbols list is not valid" # 0..40
       - UsingKeyword (Token): "using" # 41..46
-      - UsingDirectiveDeconstruction (Rule): # 46..49 " {}"
+      - UsingDeconstruction (Rule): # 46..49 " {}"
           - OpenBrace (Token): "{" # 47..48
           - SKIPPED (Token): "" # 48..48
           - CloseBrace (Token): "}" # 48..49

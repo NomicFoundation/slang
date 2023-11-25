@@ -10,7 +10,7 @@
           - choice:
               - reference: "PathImport"
               - reference: "NamedImport"
-              - reference: "DeconstructionImport"
+              - reference: "ImportDeconstruction"
       terminator:
         reference: "Semicolon"
 
@@ -34,7 +34,7 @@
       - reference: "FromKeyword"
       - reference: "AsciiStringLiteral"
 
-- name: "DeconstructionImport"
+- name: "ImportDeconstruction"
   kind: "Parser"
   unversioned:
     sequence:
@@ -42,22 +42,22 @@
           open:
             reference: "OpenBrace"
           parser:
-            reference: "DeconstructionImportSymbols"
+            reference: "ImportDeconstructionSymbols"
           close:
             reference: "CloseBrace"
       - reference: "FromKeyword"
       - reference: "AsciiStringLiteral"
 
-- name: "DeconstructionImportSymbols"
+- name: "ImportDeconstructionSymbols"
   kind: "Parser"
   unversioned:
     separatedBy:
       separator:
         reference: "Comma"
       parser:
-        reference: "DeconstructionImportSymbol"
+        reference: "ImportDeconstructionSymbol"
 
-- name: "DeconstructionImportSymbol"
+- name: "ImportDeconstructionSymbol"
   kind: "Parser"
   unversioned:
     sequence:
@@ -82,7 +82,7 @@
                 - reference: "TypeName"
         terminator:
           reference: "Semicolon"
-    # Added an optional `global` keyword and `UsingDirectiveDeconstruction`
+    # Added an optional `global` keyword and `UsingDeconstruction`
     0.8.13:
       terminatedBy:
         parser:
@@ -90,7 +90,7 @@
             - reference: "UsingKeyword"
             - choice:
                 - reference: "IdentifierPath"
-                - reference: "UsingDirectiveDeconstruction"
+                - reference: "UsingDeconstruction"
             - reference: "ForKeyword"
             - choice:
                 - reference: "Asterisk"
@@ -100,7 +100,7 @@
         terminator:
           reference: "Semicolon"
 
-- name: "UsingDirectiveDeconstruction"
+- name: "UsingDeconstruction"
   kind: "Parser"
   versioned:
     0.8.13:
@@ -108,11 +108,11 @@
         open:
           reference: "OpenBrace"
         parser:
-          reference: "UsingDirectiveSymbols"
+          reference: "UsingDeconstructionSymbols"
         close:
           reference: "CloseBrace"
 
-- name: "UsingDirectiveSymbols"
+- name: "UsingDeconstructionSymbols"
   kind: "Parser"
   versioned:
     0.8.13:
@@ -120,9 +120,9 @@
         separator:
           reference: "Comma"
         parser:
-          reference: "UsingDirectiveSymbol"
+          reference: "UsingDeconstructionSymbol"
 
-- name: "UsingDirectiveSymbol"
+- name: "UsingDeconstructionSymbol"
   kind: "Parser"
   versioned:
     0.8.13:

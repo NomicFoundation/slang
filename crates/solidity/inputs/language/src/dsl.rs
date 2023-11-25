@@ -252,11 +252,11 @@ slang_grammar! {
             { introduced in "0.5.0" CalldataKeyword}
         ) ;
 
-        parser DeconstructionImport = ((DeconstructionImportSymbols delimited by OpenBrace and CloseBrace) FromKeyword AsciiStringLiteral) ;
+        parser ImportDeconstruction = ((ImportDeconstructionSymbols delimited by OpenBrace and CloseBrace) FromKeyword AsciiStringLiteral) ;
 
-        parser DeconstructionImportSymbol = (Identifier ((AsKeyword Identifier) ?)) ;
+        parser ImportDeconstructionSymbol = (Identifier ((AsKeyword Identifier) ?)) ;
 
-        parser DeconstructionImportSymbols = (DeconstructionImportSymbol separated by Comma) ;
+        parser ImportDeconstructionSymbols = (ImportDeconstructionSymbol separated by Comma) ;
 
         parser DeleteStatement = ((DeleteKeyword Expression) terminated by Semicolon) ;
 
@@ -364,7 +364,7 @@ slang_grammar! {
 
         parser IfStatement = (IfKeyword (Expression delimited by OpenParen and CloseParen) Statement ((ElseKeyword Statement) ?)) ;
 
-        parser ImportDirective = ((ImportKeyword (PathImport | NamedImport | DeconstructionImport)) terminated by Semicolon) ;
+        parser ImportDirective = ((ImportKeyword (PathImport | NamedImport | ImportDeconstruction)) terminated by Semicolon) ;
 
         inline parser IndexAccessOperator = (((Expression ?) ((Colon (Expression ?)) ?)) delimited by OpenBracket and CloseBracket) ;
 
@@ -550,19 +550,21 @@ slang_grammar! {
 
         parser UserDefinedValueTypeDefinition = { introduced in "0.8.8" ((TypeKeyword Identifier IsKeyword ElementaryType) terminated by Semicolon) } ;
 
-        parser UsingDirective = ((UsingKeyword (IdentifierPath | UsingDirectiveDeconstruction) ForKeyword (Asterisk | TypeName) ({ introduced in "0.8.13" GlobalKeyword } ?)) terminated by Semicolon) ;
+        parser UsingDirective = ((UsingKeyword (IdentifierPath | { introduced in "0.8.13" UsingDeconstruction }) ForKeyword (Asterisk | TypeName) ({ introduced in "0.8.13" GlobalKeyword } ?)) terminated by Semicolon) ;
 
-        parser UsingDirectiveDeconstruction = { introduced in "0.8.13" (UsingDirectiveSymbols delimited by OpenBrace and CloseBrace) };
+        parser UsingDeconstruction = { introduced in "0.8.13" (UsingDeconstructionSymbols delimited by OpenBrace and CloseBrace) };
 
         inline parser UsingDirectiveOperator = {
             introduced in "0.8.19" (Ampersand | Asterisk | BangEqual | Bar | Caret | EqualEqual | GreaterThan | GreaterThanEqual | LessThan | LessThanEqual | Minus | Percent | Plus | Slash | Tilde)
         } ;
 
-        parser UsingDirectiveSymbol = {
+        parser UsingDeconstructionSymbol = {
             introduced in "0.8.13" (IdentifierPath { introduced in "0.8.19" ((AsKeyword UsingDirectiveOperator) ?) } )
         } ;
 
-        parser UsingDirectiveSymbols = (UsingDirectiveSymbol separated by Comma) ;
+        parser UsingDeconstructionSymbols = {
+            introduced in "0.8.13"  (UsingDeconstructionSymbol separated by Comma)
+         } ;
 
         parser VariableDeclaration = (VariableDeclarationType (DataLocation ?) Identifier) ;
 

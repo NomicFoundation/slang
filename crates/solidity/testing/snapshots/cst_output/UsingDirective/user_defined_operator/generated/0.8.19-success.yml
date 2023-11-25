@@ -8,10 +8,10 @@ Errors: []
 Tree:
   - UsingDirective (Rule): # 0..32 "using {div as /} for Int global;"
       - UsingKeyword (Token): "using" # 0..5
-      - UsingDirectiveDeconstruction (Rule): # 5..16 " {div as /}"
+      - UsingDeconstruction (Rule): # 5..16 " {div as /}"
           - OpenBrace (Token): "{" # 6..7
-          - UsingDirectiveSymbols (Rule): # 7..15 "div as /"
-              - UsingDirectiveSymbol (Rule): # 7..15 "div as /"
+          - UsingDeconstructionSymbols (Rule): # 7..15 "div as /"
+              - UsingDeconstructionSymbol (Rule): # 7..15 "div as /"
                   - IdentifierPath (Rule): # 7..10 "div"
                       - Identifier (Token): "div" # 7..10
                   - AsKeyword (Token): "as" # 11..13

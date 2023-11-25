@@ -16,10 +16,10 @@ Errors: # 1 total
 Tree:
   - UsingDirective (Rule): # 0..52 "using {add as +, sub, mul, div as /} for Int globa..."
       - UsingKeyword (Token): "using" # 0..5
-      - UsingDirectiveDeconstruction (Rule): # 5..36 " {add as +, sub, mul, div as /}"
+      - UsingDeconstruction (Rule): # 5..36 " {add as +, sub, mul, div as /}"
           - OpenBrace (Token): "{" # 6..7
-          - UsingDirectiveSymbols (Rule): # 7..10 "add"
-              - UsingDirectiveSymbol (Rule): # 7..10 "add"
+          - UsingDeconstructionSymbols (Rule): # 7..10 "add"
+              - UsingDeconstructionSymbol (Rule): # 7..10 "add"
                   - IdentifierPath (Rule): # 7..10 "add"
                       - Identifier (Token): "add" # 7..10
           - SKIPPED (Token): "as +, sub, mul, div as /" # 11..35

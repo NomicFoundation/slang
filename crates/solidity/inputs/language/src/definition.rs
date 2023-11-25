@@ -222,30 +222,30 @@ codegen_language_macros::compile!(Language(
                             error_recovery = FieldsErrorRecovery(terminator = semicolon),
                             fields = (
                                 import_keyword = Required(Terminal([ImportKeyword])),
-                                symbol = Required(NonTerminal(ImportSymbol)),
+                                clause = Required(NonTerminal(ImportClause)),
                                 semicolon = Required(Terminal([Semicolon]))
                             )
                         ),
                         Enum(
-                            name = ImportSymbol,
+                            name = ImportClause,
                             variants = [
-                                EnumVariant(name = Path, reference = PathImportSymbol),
-                                EnumVariant(name = Named, reference = NamedImportSymbol),
+                                EnumVariant(name = Path, reference = PathImport),
+                                EnumVariant(name = Named, reference = NamedImport),
                                 EnumVariant(
                                     name = Deconstruction,
-                                    reference = ImportSymbolDeconstruction
+                                    reference = ImportDeconstruction
                                 )
                             ]
                         ),
                         Struct(
-                            name = PathImportSymbol,
+                            name = PathImport,
                             fields = (
                                 path = Required(Terminal([AsciiStringLiteral])),
                                 alias = Optional(kind = NonTerminal(ImportAlias))
                             )
                         ),
                         Struct(
-                            name = NamedImportSymbol,
+                            name = NamedImport,
                             fields = (
                                 asterisk = Required(Terminal([Asterisk])),
                                 alias = Required(NonTerminal(ImportAlias)),
@@ -254,26 +254,26 @@ codegen_language_macros::compile!(Language(
                             )
                         ),
                         Struct(
-                            name = ImportSymbolDeconstruction,
+                            name = ImportDeconstruction,
                             error_recovery = FieldsErrorRecovery(
                                 delimiters =
                                     FieldDelimiters(open = open_brace, close = close_brace)
                             ),
                             fields = (
                                 open_brace = Required(Terminal([OpenBrace])),
-                                fields = Required(NonTerminal(ImportDeconstructionFields)),
+                                symbols = Required(NonTerminal(ImportDeconstructionSymbols)),
                                 close_brace = Required(Terminal([CloseBrace])),
                                 from_keyword = Required(Terminal([FromKeyword])),
                                 path = Required(Terminal([AsciiStringLiteral]))
                             )
                         ),
                         Separated(
-                            name = ImportDeconstructionFields,
-                            separated = ImportDeconstructionField,
+                            name = ImportDeconstructionSymbols,
+                            separated = ImportDeconstructionSymbol,
                             separator = Comma
                         ),
                         Struct(
-                            name = ImportDeconstructionField,
+                            name = ImportDeconstructionSymbol,
                             fields = (
                                 name = Required(Terminal([Identifier])),
                                 alias = Optional(kind = NonTerminal(ImportAlias))
@@ -296,7 +296,7 @@ codegen_language_macros::compile!(Language(
                             error_recovery = FieldsErrorRecovery(terminator = semicolon),
                             fields = (
                                 using_keyword = Required(Terminal([UsingKeyword])),
-                                symbol = Required(NonTerminal(UsingSymbol)),
+                                clause = Required(NonTerminal(UsingClause)),
                                 for_keyword = Required(Terminal([ForKeyword])),
                                 target = Required(NonTerminal(UsingTarget)),
                                 global_keyword = Optional(
@@ -307,18 +307,18 @@ codegen_language_macros::compile!(Language(
                             )
                         ),
                         Enum(
-                            name = UsingSymbol,
+                            name = UsingClause,
                             variants = [
                                 EnumVariant(name = Path, reference = IdentifierPath),
                                 EnumVariant(
                                     name = Deconstruction,
                                     enabled = From("0.8.13"),
-                                    reference = UsingSymbolDeconstruction
+                                    reference = UsingDeconstruction
                                 )
                             ]
                         ),
                         Struct(
-                            name = UsingSymbolDeconstruction,
+                            name = UsingDeconstruction,
                             enabled = From("0.8.13"),
                             error_recovery = FieldsErrorRecovery(
                                 delimiters =
@@ -326,18 +326,18 @@ codegen_language_macros::compile!(Language(
                             ),
                             fields = (
                                 open_brace = Required(Terminal([OpenBrace])),
-                                fields = Required(NonTerminal(UsingDeconstructionFields)),
+                                symbols = Required(NonTerminal(UsingDeconstructionSymbols)),
                                 close_brace = Required(Terminal([CloseBrace]))
                             )
                         ),
                         Separated(
-                            name = UsingDeconstructionFields,
-                            separated = UsingDeconstructionField,
+                            name = UsingDeconstructionSymbols,
+                            separated = UsingDeconstructionSymbol,
                             separator = Comma,
                             enabled = From("0.8.13")
                         ),
                         Struct(
-                            name = UsingDeconstructionField,
+                            name = UsingDeconstructionSymbol,
                             enabled = From("0.8.13"),
                             fields = (
                                 name = Required(NonTerminal(IdentifierPath)),
