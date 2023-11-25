@@ -2431,7 +2431,7 @@ codegen_language_macros::compile!(Language(
                             enabled = From("0.4.22"),
                             variants = [
                                 EnumVariant(name = Modifier, reference = ModifierInvocation),
-                                EnumVariant(name = Override, reference = OverrideSpecifier),
+                                EnumVariant(name = Internal, reference = InternalKeyword),
                                 EnumVariant(name = Payable, reference = PayableKeyword),
                                 EnumVariant(name = Public, reference = PublicKeyword)
                             ]
