@@ -1,6 +1,6 @@
 ## Design overview
 
-At its core, Slang is a collection of APIs that is meant to analyze the source code, starting with the source code itself and ending with a rich structure that can be reasoned about. This is a departure from the classic approach of "black-box" compilers, which are handed the input and only their output can be observed.
+At its core, Slang is a collection of APIs that are meant to analyze the source code, starting with the source code itself and ending with a rich structure that can be reasoned about. This is a departure from the classic approach of "black-box" compilers, which are handed the input and only their output can be observed.
 
 At the time of writing, Slang is capable of parsing the source code into a Concrete Syntax Tree (CST; also sometimes called "full-fidelity"), which is a tree structure of the program that also includes things like punctuation or whitespace.
 
