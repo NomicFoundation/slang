@@ -513,17 +513,19 @@ slang_grammar! {
 
         parser TryStatement = { introduced in "0.6.0" (TryKeyword Expression (ReturnsDeclaration ?) Block CatchClauses) } ;
 
-        parser TupleDeconstructionStatement = ((((TupleMembers ?) delimited by OpenParen and CloseParen) Equal Expression) terminated by Semicolon) ;
+        parser TupleDeconstructionStatement = (((TupleDeconstructionElements delimited by OpenParen and CloseParen) Equal Expression) terminated by Semicolon) ;
 
         parser TupleExpression = (TupleValues delimited by OpenParen and CloseParen) ;
 
-        parser TupleMember = (((TypeName (DataLocation ?) Identifier) | ((DataLocation ?) Identifier)) ?) ;
+        parser TupleDeconstructionElement = ((TypedTupleMember | UntypedTupleMember) ?) ;
 
-        parser TupleMembers = (TupleMember separated by Comma) ;
+        parser TupleDeconstructionElements = (TupleDeconstructionElement separated by Comma) ;
 
         parser TupleValues = ((Expression ?) separated by Comma) ;
 
         parser TypeExpression = { introduced in "0.5.3" (TypeKeyword (TypeName delimited by OpenParen and CloseParen)) } ;
+
+        parser TypedTupleMember = (TypeName (DataLocation ?) Identifier) ;
 
         precedence parser TypeName = (
             [
@@ -547,6 +549,8 @@ slang_grammar! {
         parser UnnamedFunctionAttributes = { removed in "0.6.0" (UnnamedFunctionAttribute +) } ;
 
         parser UnnamedFunctionDefinition = { removed in "0.6.0" (FunctionKeyword ParametersDeclaration (UnnamedFunctionAttributes ?) (Semicolon | Block)) } ;
+
+        parser UntypedTupleMember = ((DataLocation ?) Identifier) ;
 
         parser UserDefinedValueTypeDefinition = { introduced in "0.8.8" ((TypeKeyword Identifier IsKeyword ElementaryType) terminated by Semicolon) } ;
 

@@ -8,16 +8,18 @@ Errors: []
 Tree:
   - TupleDeconstructionStatement (Rule): # 0..58 "(uint32 a, uint32 b) = abi.decode(data, (uint32, u..."
       - OpenParen (Token): "(" # 0..1
-      - TupleMembers (Rule): # 1..19 "uint32 a, uint32 b"
-          - TupleMember (Rule): # 1..9 "uint32 a"
-              - TypeName (Rule): # 1..7 "uint32"
-                  - UintKeyword (Token): "uint32" # 1..7
-              - Identifier (Token): "a" # 8..9
+      - TupleDeconstructionElements (Rule): # 1..19 "uint32 a, uint32 b"
+          - TupleDeconstructionElement (Rule): # 1..9 "uint32 a"
+              - TypedTupleMember (Rule): # 1..9 "uint32 a"
+                  - TypeName (Rule): # 1..7 "uint32"
+                      - UintKeyword (Token): "uint32" # 1..7
+                  - Identifier (Token): "a" # 8..9
           - Comma (Token): "," # 9..10
-          - TupleMember (Rule): # 10..19 " uint32 b"
-              - TypeName (Rule): # 10..17 " uint32"
-                  - UintKeyword (Token): "uint32" # 11..17
-              - Identifier (Token): "b" # 18..19
+          - TupleDeconstructionElement (Rule): # 10..19 " uint32 b"
+              - TypedTupleMember (Rule): # 10..19 " uint32 b"
+                  - TypeName (Rule): # 10..17 " uint32"
+                      - UintKeyword (Token): "uint32" # 11..17
+                  - Identifier (Token): "b" # 18..19
       - CloseParen (Token): ")" # 19..20
       - Equal (Token): "=" # 21..22
       - Expression (Rule): # 22..57 " abi.decode(data, (uint32, uint32))"

@@ -275,8 +275,10 @@
 ### 4.2. Declaration Statements
 
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/04-statements/02-declaration-statements/tuple-deconstruction-statement/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/04-statements/02-declaration-statements/tuple-members/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/04-statements/02-declaration-statements/tuple-member/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/04-statements/02-declaration-statements/tuple-deconstruction-elements/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/04-statements/02-declaration-statements/tuple-deconstruction-element/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/04-statements/02-declaration-statements/typed-tuple-member/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/04-statements/02-declaration-statements/untyped-tuple-member/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/04-statements/02-declaration-statements/variable-declaration-statement/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/04-statements/02-declaration-statements/variable-declaration-type/0.4.11.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/04-statements/02-declaration-statements/data-location/0.4.11.md"

@@ -2898,7 +2898,7 @@ codegen_language_macros::compile!(Language(
                             ),
                             fields = (
                                 open_paren = Required(Terminal([OpenParen])),
-                                members = Required(NonTerminal(TupleMembersDeconstruction)),
+                                elements = Required(NonTerminal(TupleDeconstructionElements)),
                                 close_paren = Required(Terminal([CloseParen])),
                                 equal = Required(Terminal([Equal])),
                                 expression = Required(NonTerminal(Expression)),
@@ -2906,12 +2906,12 @@ codegen_language_macros::compile!(Language(
                             )
                         ),
                         Separated(
-                            name = TupleMembersDeconstruction,
-                            separated = TupleMemberDeconstruction,
+                            name = TupleDeconstructionElements,
+                            separated = TupleDeconstructionElement,
                             separator = Comma
                         ),
                         Struct(
-                            name = TupleMemberDeconstruction,
+                            name = TupleDeconstructionElement,
                             fields = (member = Optional(kind = NonTerminal(TupleMember)))
                         ),
                         Enum(

@@ -3834,6 +3834,29 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
+    fn tuple_deconstruction_element(&self, input: &mut ParserContext) -> ParserResult {
+        OptionalHelper::transform(ChoiceHelper::run(input, |mut choice, input| {
+            let result = self.typed_tuple_member(input);
+            choice.consider(input, result)?;
+            let result = self.untyped_tuple_member(input);
+            choice.consider(input, result)?;
+            choice.finish(input)
+        }))
+        .with_kind(RuleKind::TupleDeconstructionElement)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn tuple_deconstruction_elements(&self, input: &mut ParserContext) -> ParserResult {
+        SeparatedHelper::run::<_, LexicalContextType::Default>(
+            input,
+            self,
+            |input| self.tuple_deconstruction_element(input),
+            TokenKind::Comma,
+        )
+        .with_kind(RuleKind::TupleDeconstructionElements)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
     fn tuple_deconstruction_statement(&self, input: &mut ParserContext) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(
@@ -3846,13 +3869,13 @@ impl Language {
                             TokenKind::OpenParen,
                         ))?;
                         seq.elem(
-                            OptionalHelper::transform(self.tuple_members(input))
+                            self.tuple_deconstruction_elements(input)
                                 .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
-                                input,
-                                self,
-                                TokenKind::CloseParen,
-                                RecoverFromNoMatch::Yes,
-                            ),
+                                    input,
+                                    self,
+                                    TokenKind::CloseParen,
+                                    RecoverFromNoMatch::Yes,
+                                ),
                         )?;
                         seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
@@ -3908,90 +3931,6 @@ impl Language {
             seq.finish()
         })
         .with_kind(RuleKind::TupleExpression)
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn tuple_member(&self, input: &mut ParserContext) -> ParserResult {
-        OptionalHelper::transform(ChoiceHelper::run(input, |mut choice, input| {
-            let result = SequenceHelper::run(|mut seq| {
-                seq.elem(self.type_name(input))?;
-                seq.elem(OptionalHelper::transform(ChoiceHelper::run(
-                    input,
-                    |mut choice, input| {
-                        let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                            input,
-                            TokenKind::MemoryKeyword,
-                        );
-                        choice.consider(input, result)?;
-                        let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                            input,
-                            TokenKind::StorageKeyword,
-                        );
-                        choice.consider(input, result)?;
-                        if self.version_is_at_least_0_5_0 {
-                            let result = self
-                                .parse_token_with_trivia::<LexicalContextType::Default>(
-                                    input,
-                                    TokenKind::CalldataKeyword,
-                                );
-                            choice.consider(input, result)?;
-                        }
-                        choice.finish(input)
-                    },
-                )))?;
-                seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                    input,
-                    TokenKind::Identifier,
-                ))?;
-                seq.finish()
-            });
-            choice.consider(input, result)?;
-            let result = SequenceHelper::run(|mut seq| {
-                seq.elem(OptionalHelper::transform(ChoiceHelper::run(
-                    input,
-                    |mut choice, input| {
-                        let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                            input,
-                            TokenKind::MemoryKeyword,
-                        );
-                        choice.consider(input, result)?;
-                        let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                            input,
-                            TokenKind::StorageKeyword,
-                        );
-                        choice.consider(input, result)?;
-                        if self.version_is_at_least_0_5_0 {
-                            let result = self
-                                .parse_token_with_trivia::<LexicalContextType::Default>(
-                                    input,
-                                    TokenKind::CalldataKeyword,
-                                );
-                            choice.consider(input, result)?;
-                        }
-                        choice.finish(input)
-                    },
-                )))?;
-                seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                    input,
-                    TokenKind::Identifier,
-                ))?;
-                seq.finish()
-            });
-            choice.consider(input, result)?;
-            choice.finish(input)
-        }))
-        .with_kind(RuleKind::TupleMember)
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn tuple_members(&self, input: &mut ParserContext) -> ParserResult {
-        SeparatedHelper::run::<_, LexicalContextType::Default>(
-            input,
-            self,
-            |input| self.tuple_member(input),
-            TokenKind::Comma,
-        )
-        .with_kind(RuleKind::TupleMembers)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -4156,6 +4095,42 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
+    fn typed_tuple_member(&self, input: &mut ParserContext) -> ParserResult {
+        SequenceHelper::run(|mut seq| {
+            seq.elem(self.type_name(input))?;
+            seq.elem(OptionalHelper::transform(ChoiceHelper::run(
+                input,
+                |mut choice, input| {
+                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        input,
+                        TokenKind::MemoryKeyword,
+                    );
+                    choice.consider(input, result)?;
+                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        input,
+                        TokenKind::StorageKeyword,
+                    );
+                    choice.consider(input, result)?;
+                    if self.version_is_at_least_0_5_0 {
+                        let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            input,
+                            TokenKind::CalldataKeyword,
+                        );
+                        choice.consider(input, result)?;
+                    }
+                    choice.finish(input)
+                },
+            )))?;
+            seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
+                input,
+                TokenKind::Identifier,
+            ))?;
+            seq.finish()
+        })
+        .with_kind(RuleKind::TypedTupleMember)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
     fn unchecked_block(&self, input: &mut ParserContext) -> ParserResult {
         if self.version_is_at_least_0_8_0 {
             SequenceHelper::run(|mut seq| {
@@ -4257,6 +4232,41 @@ impl Language {
             ParserResult::disabled()
         }
         .with_kind(RuleKind::UnnamedFunctionDefinition)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn untyped_tuple_member(&self, input: &mut ParserContext) -> ParserResult {
+        SequenceHelper::run(|mut seq| {
+            seq.elem(OptionalHelper::transform(ChoiceHelper::run(
+                input,
+                |mut choice, input| {
+                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        input,
+                        TokenKind::MemoryKeyword,
+                    );
+                    choice.consider(input, result)?;
+                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        input,
+                        TokenKind::StorageKeyword,
+                    );
+                    choice.consider(input, result)?;
+                    if self.version_is_at_least_0_5_0 {
+                        let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            input,
+                            TokenKind::CalldataKeyword,
+                        );
+                        choice.consider(input, result)?;
+                    }
+                    choice.finish(input)
+                },
+            )))?;
+            seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
+                input,
+                TokenKind::Identifier,
+            ))?;
+            seq.finish()
+        })
+        .with_kind(RuleKind::UntypedTupleMember)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -6076,15 +6086,20 @@ impl Language {
             ProductionKind::ThrowStatement => Self::throw_statement.parse(self, input),
             ProductionKind::TrailingTrivia => Self::trailing_trivia.parse(self, input),
             ProductionKind::TryStatement => Self::try_statement.parse(self, input),
+            ProductionKind::TupleDeconstructionElement => {
+                Self::tuple_deconstruction_element.parse(self, input)
+            }
+            ProductionKind::TupleDeconstructionElements => {
+                Self::tuple_deconstruction_elements.parse(self, input)
+            }
             ProductionKind::TupleDeconstructionStatement => {
                 Self::tuple_deconstruction_statement.parse(self, input)
             }
             ProductionKind::TupleExpression => Self::tuple_expression.parse(self, input),
-            ProductionKind::TupleMember => Self::tuple_member.parse(self, input),
-            ProductionKind::TupleMembers => Self::tuple_members.parse(self, input),
             ProductionKind::TupleValues => Self::tuple_values.parse(self, input),
             ProductionKind::TypeExpression => Self::type_expression.parse(self, input),
             ProductionKind::TypeName => Self::type_name.parse(self, input),
+            ProductionKind::TypedTupleMember => Self::typed_tuple_member.parse(self, input),
             ProductionKind::UncheckedBlock => Self::unchecked_block.parse(self, input),
             ProductionKind::UnicodeStringLiterals => {
                 Self::unicode_string_literals.parse(self, input)
@@ -6095,6 +6110,7 @@ impl Language {
             ProductionKind::UnnamedFunctionDefinition => {
                 Self::unnamed_function_definition.parse(self, input)
             }
+            ProductionKind::UntypedTupleMember => Self::untyped_tuple_member.parse(self, input),
             ProductionKind::UserDefinedValueTypeDefinition => {
                 Self::user_defined_value_type_definition.parse(self, input)
             }
