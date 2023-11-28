@@ -21,13 +21,16 @@ use super::napi::napi_parse_output::ParseOutput as NAPIParseOutput;
 #[cfg_attr(feature = "slang_napi_interfaces", napi(namespace = "language"))]
 pub struct Language {
     pub(crate) version: Version,
+    pub(crate) version_is_at_least_0_4_14: bool,
     pub(crate) version_is_at_least_0_4_21: bool,
     pub(crate) version_is_at_least_0_4_22: bool,
     pub(crate) version_is_at_least_0_5_0: bool,
     pub(crate) version_is_at_least_0_5_3: bool,
+    pub(crate) version_is_at_least_0_5_10: bool,
     pub(crate) version_is_at_least_0_6_0: bool,
     pub(crate) version_is_at_least_0_6_2: bool,
     pub(crate) version_is_at_least_0_6_5: bool,
+    pub(crate) version_is_at_least_0_6_8: bool,
     pub(crate) version_is_at_least_0_6_11: bool,
     pub(crate) version_is_at_least_0_7_0: bool,
     pub(crate) version_is_at_least_0_7_1: bool,
@@ -142,13 +145,16 @@ impl Language {
     pub fn new(version: Version) -> std::result::Result<Self, Error> {
         if Self::SUPPORTED_VERSIONS.binary_search(&version).is_ok() {
             Ok(Self {
+                version_is_at_least_0_4_14: Version::new(0, 4, 14) <= version,
                 version_is_at_least_0_4_21: Version::new(0, 4, 21) <= version,
                 version_is_at_least_0_4_22: Version::new(0, 4, 22) <= version,
                 version_is_at_least_0_5_0: Version::new(0, 5, 0) <= version,
                 version_is_at_least_0_5_3: Version::new(0, 5, 3) <= version,
+                version_is_at_least_0_5_10: Version::new(0, 5, 10) <= version,
                 version_is_at_least_0_6_0: Version::new(0, 6, 0) <= version,
                 version_is_at_least_0_6_2: Version::new(0, 6, 2) <= version,
                 version_is_at_least_0_6_5: Version::new(0, 6, 5) <= version,
+                version_is_at_least_0_6_8: Version::new(0, 6, 8) <= version,
                 version_is_at_least_0_6_11: Version::new(0, 6, 11) <= version,
                 version_is_at_least_0_7_0: Version::new(0, 7, 0) <= version,
                 version_is_at_least_0_7_1: Version::new(0, 7, 1) <= version,
@@ -178,11 +184,11 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn abi_coder_pragma(&self, input: &mut ParserContext) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
+            seq.elem(self.parse_token_with_trivia::<LexicalContextType::Pragma>(
                 input,
                 TokenKind::AbicoderKeyword,
             ))?;
-            seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
+            seq.elem(self.parse_token_with_trivia::<LexicalContextType::Pragma>(
                 input,
                 TokenKind::Identifier,
             ))?;
@@ -193,62 +199,20 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn address_type(&self, input: &mut ParserContext) -> ParserResult {
-        ChoiceHelper::run(input, |mut choice, input| {
-            let result = SequenceHelper::run(|mut seq| {
-                seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                    input,
-                    TokenKind::AddressKeyword,
-                ))?;
-                seq.elem(OptionalHelper::transform(
-                    self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::PayableKeyword,
-                    ),
-                ))?;
-                seq.finish()
-            });
-            choice.consider(input, result)?;
-            let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                input,
-                TokenKind::PayableKeyword,
-            );
-            choice.consider(input, result)?;
-            choice.finish(input)
-        })
-        .with_kind(RuleKind::AddressType)
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn arguments_declaration(&self, input: &mut ParserContext) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            let mut delim_guard = input.open_delim(TokenKind::CloseParen);
-            let input = delim_guard.ctx();
             seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
                 input,
-                TokenKind::OpenParen,
+                TokenKind::AddressKeyword,
             ))?;
-            seq.elem(
-                OptionalHelper::transform(ChoiceHelper::run(input, |mut choice, input| {
-                    let result = self.positional_arguments(input);
-                    choice.consider(input, result)?;
-                    let result = self.named_arguments_declaration(input);
-                    choice.consider(input, result)?;
-                    choice.finish(input)
-                }))
-                .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
+            seq.elem(OptionalHelper::transform(
+                self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    self,
-                    TokenKind::CloseParen,
-                    RecoverFromNoMatch::Yes,
+                    TokenKind::PayableKeyword,
                 ),
-            )?;
-            seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                input,
-                TokenKind::CloseParen,
             ))?;
             seq.finish()
         })
-        .with_kind(RuleKind::ArgumentsDeclaration)
+        .with_kind(RuleKind::AddressType)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -639,6 +603,22 @@ impl Language {
                 choice.consider(input, result)?;
                 let result = self.function_definition(input);
                 choice.consider(input, result)?;
+                if self.version_is_at_least_0_4_22 {
+                    let result = self.constructor_definition(input);
+                    choice.consider(input, result)?;
+                }
+                if self.version_is_at_least_0_6_0 {
+                    let result = self.receive_function_definition(input);
+                    choice.consider(input, result)?;
+                }
+                if self.version_is_at_least_0_6_0 {
+                    let result = self.fallback_function_definition(input);
+                    choice.consider(input, result)?;
+                }
+                if !self.version_is_at_least_0_6_0 {
+                    let result = self.unnamed_function_definition(input);
+                    choice.consider(input, result)?;
+                }
                 let result = self.modifier_definition(input);
                 choice.consider(input, result)?;
                 let result = self.struct_definition(input);
@@ -649,24 +629,6 @@ impl Language {
                 choice.consider(input, result)?;
                 let result = self.state_variable_definition(input);
                 choice.consider(input, result)?;
-                if self.version_is_at_least_0_4_22 {
-                    let result = self.constructor_definition(input);
-                    choice.consider(input, result)?;
-                }
-                if self.version_is_at_least_0_6_0 {
-                    let result = ChoiceHelper::run(input, |mut choice, input| {
-                        let result = self.fallback_function_definition(input);
-                        choice.consider(input, result)?;
-                        let result = self.receive_function_definition(input);
-                        choice.consider(input, result)?;
-                        choice.finish(input)
-                    });
-                    choice.consider(input, result)?;
-                }
-                if !self.version_is_at_least_0_6_0 {
-                    let result = self.unnamed_function_definition(input);
-                    choice.consider(input, result)?;
-                }
                 if self.version_is_at_least_0_8_4 {
                     let result = self.error_definition(input);
                     choice.consider(input, result)?;
@@ -693,22 +655,33 @@ impl Language {
                 |mut choice, input| {
                     let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::DaysKeyword,
+                        TokenKind::WeiKeyword,
                     );
                     choice.consider(input, result)?;
+                    if self.version_is_at_least_0_6_11 {
+                        let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            input,
+                            TokenKind::GweiKeyword,
+                        );
+                        choice.consider(input, result)?;
+                    }
+                    if !self.version_is_at_least_0_7_0 {
+                        let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            input,
+                            TokenKind::SzaboKeyword,
+                        );
+                        choice.consider(input, result)?;
+                    }
+                    if !self.version_is_at_least_0_7_0 {
+                        let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            input,
+                            TokenKind::FinneyKeyword,
+                        );
+                        choice.consider(input, result)?;
+                    }
                     let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
                         TokenKind::EtherKeyword,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::HoursKeyword,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::MinutesKeyword,
                     );
                     choice.consider(input, result)?;
                     let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
@@ -718,12 +691,22 @@ impl Language {
                     choice.consider(input, result)?;
                     let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::WeeksKeyword,
+                        TokenKind::MinutesKeyword,
                     );
                     choice.consider(input, result)?;
                     let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::WeiKeyword,
+                        TokenKind::HoursKeyword,
+                    );
+                    choice.consider(input, result)?;
+                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        input,
+                        TokenKind::DaysKeyword,
+                    );
+                    choice.consider(input, result)?;
+                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        input,
+                        TokenKind::WeeksKeyword,
                     );
                     choice.consider(input, result)?;
                     if !self.version_is_at_least_0_5_0 {
@@ -731,31 +714,6 @@ impl Language {
                             input,
                             TokenKind::YearsKeyword,
                         );
-                        choice.consider(input, result)?;
-                    }
-                    if self.version_is_at_least_0_6_11 {
-                        let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                            input,
-                            TokenKind::GweiKeyword,
-                        );
-                        choice.consider(input, result)?;
-                    }
-                    if !self.version_is_at_least_0_7_0 {
-                        let result = ChoiceHelper::run(input, |mut choice, input| {
-                            let result = self
-                                .parse_token_with_trivia::<LexicalContextType::Default>(
-                                    input,
-                                    TokenKind::FinneyKeyword,
-                                );
-                            choice.consider(input, result)?;
-                            let result = self
-                                .parse_token_with_trivia::<LexicalContextType::Default>(
-                                    input,
-                                    TokenKind::SzaboKeyword,
-                                );
-                            choice.consider(input, result)?;
-                            choice.finish(input)
-                        });
                         choice.consider(input, result)?;
                     }
                     choice.finish(input)
@@ -804,52 +762,44 @@ impl Language {
                         TokenKind::DoKeyword,
                     ))?;
                     seq.elem(ChoiceHelper::run(input, |mut choice, input| {
-                        let result = ChoiceHelper::run(input, |mut choice, input| {
-                            let result = self.expression_statement(input);
-                            choice.consider(input, result)?;
-                            let result = self.variable_declaration_statement(input);
-                            choice.consider(input, result)?;
-                            let result = self.tuple_deconstruction_statement(input);
-                            choice.consider(input, result)?;
-                            choice.finish(input)
-                        });
+                        let result = self.expression_statement(input);
                         choice.consider(input, result)?;
-                        let result = ChoiceHelper::run(input, |mut choice, input| {
-                            let result = self.if_statement(input);
-                            choice.consider(input, result)?;
-                            let result = self.for_statement(input);
-                            choice.consider(input, result)?;
-                            let result = self.while_statement(input);
-                            choice.consider(input, result)?;
-                            let result = self.do_while_statement(input);
-                            choice.consider(input, result)?;
-                            let result = self.continue_statement(input);
-                            choice.consider(input, result)?;
-                            let result = self.break_statement(input);
-                            choice.consider(input, result)?;
-                            let result = self.delete_statement(input);
-                            choice.consider(input, result)?;
-                            let result = self.return_statement(input);
-                            choice.consider(input, result)?;
-                            if self.version_is_at_least_0_4_21 {
-                                let result = self.emit_statement(input);
-                                choice.consider(input, result)?;
-                            }
-                            if !self.version_is_at_least_0_5_0 {
-                                let result = self.throw_statement(input);
-                                choice.consider(input, result)?;
-                            }
-                            if self.version_is_at_least_0_6_0 {
-                                let result = self.try_statement(input);
-                                choice.consider(input, result)?;
-                            }
-                            if self.version_is_at_least_0_8_4 {
-                                let result = self.revert_statement(input);
-                                choice.consider(input, result)?;
-                            }
-                            choice.finish(input)
-                        });
+                        let result = self.variable_declaration_statement(input);
                         choice.consider(input, result)?;
+                        let result = self.tuple_deconstruction_statement(input);
+                        choice.consider(input, result)?;
+                        let result = self.if_statement(input);
+                        choice.consider(input, result)?;
+                        let result = self.for_statement(input);
+                        choice.consider(input, result)?;
+                        let result = self.while_statement(input);
+                        choice.consider(input, result)?;
+                        let result = self.do_while_statement(input);
+                        choice.consider(input, result)?;
+                        let result = self.continue_statement(input);
+                        choice.consider(input, result)?;
+                        let result = self.break_statement(input);
+                        choice.consider(input, result)?;
+                        let result = self.delete_statement(input);
+                        choice.consider(input, result)?;
+                        let result = self.return_statement(input);
+                        choice.consider(input, result)?;
+                        if !self.version_is_at_least_0_5_0 {
+                            let result = self.throw_statement(input);
+                            choice.consider(input, result)?;
+                        }
+                        if self.version_is_at_least_0_4_21 {
+                            let result = self.emit_statement(input);
+                            choice.consider(input, result)?;
+                        }
+                        if self.version_is_at_least_0_6_0 {
+                            let result = self.try_statement(input);
+                            choice.consider(input, result)?;
+                        }
+                        if self.version_is_at_least_0_8_4 {
+                            let result = self.revert_statement(input);
+                            choice.consider(input, result)?;
+                        }
                         let result = self.assembly_statement(input);
                         choice.consider(input, result)?;
                         let result = self.block(input);
@@ -905,6 +855,67 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
+    fn else_branch(&self, input: &mut ParserContext) -> ParserResult {
+        SequenceHelper::run(|mut seq| {
+            seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
+                input,
+                TokenKind::ElseKeyword,
+            ))?;
+            seq.elem(ChoiceHelper::run(input, |mut choice, input| {
+                let result = self.expression_statement(input);
+                choice.consider(input, result)?;
+                let result = self.variable_declaration_statement(input);
+                choice.consider(input, result)?;
+                let result = self.tuple_deconstruction_statement(input);
+                choice.consider(input, result)?;
+                let result = self.if_statement(input);
+                choice.consider(input, result)?;
+                let result = self.for_statement(input);
+                choice.consider(input, result)?;
+                let result = self.while_statement(input);
+                choice.consider(input, result)?;
+                let result = self.do_while_statement(input);
+                choice.consider(input, result)?;
+                let result = self.continue_statement(input);
+                choice.consider(input, result)?;
+                let result = self.break_statement(input);
+                choice.consider(input, result)?;
+                let result = self.delete_statement(input);
+                choice.consider(input, result)?;
+                let result = self.return_statement(input);
+                choice.consider(input, result)?;
+                if !self.version_is_at_least_0_5_0 {
+                    let result = self.throw_statement(input);
+                    choice.consider(input, result)?;
+                }
+                if self.version_is_at_least_0_4_21 {
+                    let result = self.emit_statement(input);
+                    choice.consider(input, result)?;
+                }
+                if self.version_is_at_least_0_6_0 {
+                    let result = self.try_statement(input);
+                    choice.consider(input, result)?;
+                }
+                if self.version_is_at_least_0_8_4 {
+                    let result = self.revert_statement(input);
+                    choice.consider(input, result)?;
+                }
+                let result = self.assembly_statement(input);
+                choice.consider(input, result)?;
+                let result = self.block(input);
+                choice.consider(input, result)?;
+                if self.version_is_at_least_0_8_0 {
+                    let result = self.unchecked_block(input);
+                    choice.consider(input, result)?;
+                }
+                choice.finish(input)
+            }))?;
+            seq.finish()
+        })
+        .with_kind(RuleKind::ElseBranch)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
     fn emit_statement(&self, input: &mut ParserContext) -> ParserResult {
         if self.version_is_at_least_0_4_21 {
             SequenceHelper::run(|mut seq| {
@@ -915,7 +926,13 @@ impl Language {
                             TokenKind::EmitKeyword,
                         ))?;
                         seq.elem(self.identifier_path(input))?;
-                        seq.elem(self.arguments_declaration(input))?;
+                        seq.elem(ChoiceHelper::run(input, |mut choice, input| {
+                            let result = self.positional_arguments_declaration(input);
+                            choice.consider(input, result)?;
+                            let result = self.named_arguments_declaration(input);
+                            choice.consider(input, result)?;
+                            choice.finish(input)
+                        }))?;
                         seq.finish()
                     })
                     .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
@@ -1216,19 +1233,19 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn experimental_pragma(&self, input: &mut ParserContext) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
+            seq.elem(self.parse_token_with_trivia::<LexicalContextType::Pragma>(
                 input,
                 TokenKind::ExperimentalKeyword,
             ))?;
             seq.elem(ChoiceHelper::run(input, |mut choice, input| {
-                let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                    input,
-                    TokenKind::AsciiStringLiteral,
-                );
-                choice.consider(input, result)?;
-                let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                let result = self.parse_token_with_trivia::<LexicalContextType::Pragma>(
                     input,
                     TokenKind::Identifier,
+                );
+                choice.consider(input, result)?;
+                let result = self.parse_token_with_trivia::<LexicalContextType::Pragma>(
+                    input,
+                    TokenKind::AsciiStringLiteral,
                 );
                 choice.consider(input, result)?;
                 choice.finish(input)
@@ -1240,7 +1257,7 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn expression(&self, input: &mut ParserContext) -> ParserResult {
-        let parse_assignment_operator = |input: &mut ParserContext| {
+        let parse_assignment_expression = |input: &mut ParserContext| {
             PrecedenceHelper::to_binary_operator(
                 RuleKind::BinaryExpression,
                 1u8,
@@ -1310,7 +1327,7 @@ impl Language {
                 }),
             )
         };
-        let parse_conditional_operator = |input: &mut ParserContext| {
+        let parse_conditional_expression = |input: &mut ParserContext| {
             PrecedenceHelper::to_postfix_operator(
                 RuleKind::ConditionalExpression,
                 3u8,
@@ -1329,7 +1346,7 @@ impl Language {
                 }),
             )
         };
-        let parse_or_operator = |input: &mut ParserContext| {
+        let parse_or_expression = |input: &mut ParserContext| {
             PrecedenceHelper::to_binary_operator(
                 RuleKind::BinaryExpression,
                 5u8,
@@ -1340,7 +1357,7 @@ impl Language {
                 ),
             )
         };
-        let parse_and_operator = |input: &mut ParserContext| {
+        let parse_and_expression = |input: &mut ParserContext| {
             PrecedenceHelper::to_binary_operator(
                 RuleKind::BinaryExpression,
                 7u8,
@@ -1351,7 +1368,7 @@ impl Language {
                 ),
             )
         };
-        let parse_equality_comparison_operator = |input: &mut ParserContext| {
+        let parse_equality_expression = |input: &mut ParserContext| {
             PrecedenceHelper::to_binary_operator(
                 RuleKind::BinaryExpression,
                 9u8,
@@ -1371,7 +1388,7 @@ impl Language {
                 }),
             )
         };
-        let parse_order_comparison_operator = |input: &mut ParserContext| {
+        let parse_comparison_expression = |input: &mut ParserContext| {
             PrecedenceHelper::to_binary_operator(
                 RuleKind::BinaryExpression,
                 11u8,
@@ -1401,7 +1418,7 @@ impl Language {
                 }),
             )
         };
-        let parse_bitwise_or_operator = |input: &mut ParserContext| {
+        let parse_bitwise_or_expression = |input: &mut ParserContext| {
             PrecedenceHelper::to_binary_operator(
                 RuleKind::BinaryExpression,
                 13u8,
@@ -1409,7 +1426,7 @@ impl Language {
                 self.parse_token_with_trivia::<LexicalContextType::Default>(input, TokenKind::Bar),
             )
         };
-        let parse_bitwise_x_or_operator = |input: &mut ParserContext| {
+        let parse_bitwise_xor_expression = |input: &mut ParserContext| {
             PrecedenceHelper::to_binary_operator(
                 RuleKind::BinaryExpression,
                 15u8,
@@ -1420,7 +1437,7 @@ impl Language {
                 ),
             )
         };
-        let parse_bitwise_and_operator = |input: &mut ParserContext| {
+        let parse_bitwise_and_expression = |input: &mut ParserContext| {
             PrecedenceHelper::to_binary_operator(
                 RuleKind::BinaryExpression,
                 17u8,
@@ -1431,7 +1448,7 @@ impl Language {
                 ),
             )
         };
-        let parse_shift_operator = |input: &mut ParserContext| {
+        let parse_shift_expression = |input: &mut ParserContext| {
             PrecedenceHelper::to_binary_operator(
                 RuleKind::BinaryExpression,
                 19u8,
@@ -1456,7 +1473,7 @@ impl Language {
                 }),
             )
         };
-        let parse_add_sub_operator = |input: &mut ParserContext| {
+        let parse_additive_expression = |input: &mut ParserContext| {
             PrecedenceHelper::to_binary_operator(
                 RuleKind::BinaryExpression,
                 21u8,
@@ -1476,7 +1493,7 @@ impl Language {
                 }),
             )
         };
-        let parse_mul_div_mod_operator = |input: &mut ParserContext| {
+        let parse_multiplicative_expression = |input: &mut ParserContext| {
             PrecedenceHelper::to_binary_operator(
                 RuleKind::BinaryExpression,
                 23u8,
@@ -1501,29 +1518,55 @@ impl Language {
                 }),
             )
         };
-        let parse_exponentiation_operator_removed_from_0_6_0 = |input: &mut ParserContext| {
+        let parse_exponentiation_expression_removed_from_0_6_0 = |input: &mut ParserContext| {
             PrecedenceHelper::to_binary_operator(
                 RuleKind::BinaryExpression,
                 25u8,
                 25u8 + 1,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
-                    input,
-                    TokenKind::AsteriskAsterisk,
-                ),
+                ChoiceHelper::run(input, |mut choice, input| {
+                    if !self.version_is_at_least_0_6_0 {
+                        let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            input,
+                            TokenKind::AsteriskAsterisk,
+                        );
+                        choice.consider(input, result)?;
+                    }
+                    if self.version_is_at_least_0_6_0 {
+                        let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            input,
+                            TokenKind::AsteriskAsterisk,
+                        );
+                        choice.consider(input, result)?;
+                    }
+                    choice.finish(input)
+                }),
             )
         };
-        let parse_exponentiation_operator_introduced_from_0_6_0 = |input: &mut ParserContext| {
+        let parse_exponentiation_expression_introduced_from_0_6_0 = |input: &mut ParserContext| {
             PrecedenceHelper::to_binary_operator(
                 RuleKind::BinaryExpression,
                 27u8 + 1,
                 27u8,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
-                    input,
-                    TokenKind::AsteriskAsterisk,
-                ),
+                ChoiceHelper::run(input, |mut choice, input| {
+                    if !self.version_is_at_least_0_6_0 {
+                        let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            input,
+                            TokenKind::AsteriskAsterisk,
+                        );
+                        choice.consider(input, result)?;
+                    }
+                    if self.version_is_at_least_0_6_0 {
+                        let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            input,
+                            TokenKind::AsteriskAsterisk,
+                        );
+                        choice.consider(input, result)?;
+                    }
+                    choice.finish(input)
+                }),
             )
         };
-        let parse_unary_postfix_operator = |input: &mut ParserContext| {
+        let parse_postfix_expression = |input: &mut ParserContext| {
             PrecedenceHelper::to_postfix_operator(
                 RuleKind::UnaryPostfixExpression,
                 29u8,
@@ -1542,64 +1585,221 @@ impl Language {
                 }),
             )
         };
-        let parse_unary_prefix_operator = |input: &mut ParserContext| {
+        let parse_prefix_expression_removed_from_0_5_0 = |input: &mut ParserContext| {
             PrecedenceHelper::to_prefix_operator(
                 RuleKind::UnaryPrefixExpression,
                 31u8,
                 ChoiceHelper::run(input, |mut choice, input| {
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::PlusPlus,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::MinusMinus,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::Tilde,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::Bang,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::Minus,
-                    );
-                    choice.consider(input, result)?;
                     if !self.version_is_at_least_0_5_0 {
-                        let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                            input,
-                            TokenKind::Plus,
-                        );
+                        let result = ChoiceHelper::run(input, |mut choice, input| {
+                            let result = self
+                                .parse_token_with_trivia::<LexicalContextType::Default>(
+                                    input,
+                                    TokenKind::PlusPlus,
+                                );
+                            choice.consider(input, result)?;
+                            let result = self
+                                .parse_token_with_trivia::<LexicalContextType::Default>(
+                                    input,
+                                    TokenKind::MinusMinus,
+                                );
+                            choice.consider(input, result)?;
+                            let result = self
+                                .parse_token_with_trivia::<LexicalContextType::Default>(
+                                    input,
+                                    TokenKind::Tilde,
+                                );
+                            choice.consider(input, result)?;
+                            let result = self
+                                .parse_token_with_trivia::<LexicalContextType::Default>(
+                                    input,
+                                    TokenKind::Bang,
+                                );
+                            choice.consider(input, result)?;
+                            let result = self
+                                .parse_token_with_trivia::<LexicalContextType::Default>(
+                                    input,
+                                    TokenKind::Minus,
+                                );
+                            choice.consider(input, result)?;
+                            let result = self
+                                .parse_token_with_trivia::<LexicalContextType::Default>(
+                                    input,
+                                    TokenKind::Plus,
+                                );
+                            choice.consider(input, result)?;
+                            choice.finish(input)
+                        });
+                        choice.consider(input, result)?;
+                    }
+                    if self.version_is_at_least_0_5_0 {
+                        let result = ChoiceHelper::run(input, |mut choice, input| {
+                            let result = self
+                                .parse_token_with_trivia::<LexicalContextType::Default>(
+                                    input,
+                                    TokenKind::PlusPlus,
+                                );
+                            choice.consider(input, result)?;
+                            let result = self
+                                .parse_token_with_trivia::<LexicalContextType::Default>(
+                                    input,
+                                    TokenKind::MinusMinus,
+                                );
+                            choice.consider(input, result)?;
+                            let result = self
+                                .parse_token_with_trivia::<LexicalContextType::Default>(
+                                    input,
+                                    TokenKind::Tilde,
+                                );
+                            choice.consider(input, result)?;
+                            let result = self
+                                .parse_token_with_trivia::<LexicalContextType::Default>(
+                                    input,
+                                    TokenKind::Bang,
+                                );
+                            choice.consider(input, result)?;
+                            let result = self
+                                .parse_token_with_trivia::<LexicalContextType::Default>(
+                                    input,
+                                    TokenKind::Minus,
+                                );
+                            choice.consider(input, result)?;
+                            choice.finish(input)
+                        });
                         choice.consider(input, result)?;
                     }
                     choice.finish(input)
                 }),
             )
         };
-        let parse_function_call_operator = |input: &mut ParserContext| {
+        let parse_prefix_expression_introduced_from_0_5_0 = |input: &mut ParserContext| {
+            PrecedenceHelper::to_prefix_operator(
+                RuleKind::UnaryPrefixExpression,
+                33u8,
+                ChoiceHelper::run(input, |mut choice, input| {
+                    if !self.version_is_at_least_0_5_0 {
+                        let result = ChoiceHelper::run(input, |mut choice, input| {
+                            let result = self
+                                .parse_token_with_trivia::<LexicalContextType::Default>(
+                                    input,
+                                    TokenKind::PlusPlus,
+                                );
+                            choice.consider(input, result)?;
+                            let result = self
+                                .parse_token_with_trivia::<LexicalContextType::Default>(
+                                    input,
+                                    TokenKind::MinusMinus,
+                                );
+                            choice.consider(input, result)?;
+                            let result = self
+                                .parse_token_with_trivia::<LexicalContextType::Default>(
+                                    input,
+                                    TokenKind::Tilde,
+                                );
+                            choice.consider(input, result)?;
+                            let result = self
+                                .parse_token_with_trivia::<LexicalContextType::Default>(
+                                    input,
+                                    TokenKind::Bang,
+                                );
+                            choice.consider(input, result)?;
+                            let result = self
+                                .parse_token_with_trivia::<LexicalContextType::Default>(
+                                    input,
+                                    TokenKind::Minus,
+                                );
+                            choice.consider(input, result)?;
+                            let result = self
+                                .parse_token_with_trivia::<LexicalContextType::Default>(
+                                    input,
+                                    TokenKind::Plus,
+                                );
+                            choice.consider(input, result)?;
+                            choice.finish(input)
+                        });
+                        choice.consider(input, result)?;
+                    }
+                    if self.version_is_at_least_0_5_0 {
+                        let result = ChoiceHelper::run(input, |mut choice, input| {
+                            let result = self
+                                .parse_token_with_trivia::<LexicalContextType::Default>(
+                                    input,
+                                    TokenKind::PlusPlus,
+                                );
+                            choice.consider(input, result)?;
+                            let result = self
+                                .parse_token_with_trivia::<LexicalContextType::Default>(
+                                    input,
+                                    TokenKind::MinusMinus,
+                                );
+                            choice.consider(input, result)?;
+                            let result = self
+                                .parse_token_with_trivia::<LexicalContextType::Default>(
+                                    input,
+                                    TokenKind::Tilde,
+                                );
+                            choice.consider(input, result)?;
+                            let result = self
+                                .parse_token_with_trivia::<LexicalContextType::Default>(
+                                    input,
+                                    TokenKind::Bang,
+                                );
+                            choice.consider(input, result)?;
+                            let result = self
+                                .parse_token_with_trivia::<LexicalContextType::Default>(
+                                    input,
+                                    TokenKind::Minus,
+                                );
+                            choice.consider(input, result)?;
+                            choice.finish(input)
+                        });
+                        choice.consider(input, result)?;
+                    }
+                    choice.finish(input)
+                }),
+            )
+        };
+        let parse_function_call_expression = |input: &mut ParserContext| {
             PrecedenceHelper::to_postfix_operator(
                 RuleKind::FunctionCallExpression,
-                33u8,
+                35u8,
                 SequenceHelper::run(|mut seq| {
                     if self.version_is_at_least_0_6_2 {
-                        seq.elem(OptionalHelper::transform(self.function_call_options(input)))?;
+                        seq.elem(OptionalHelper::transform(
+                            if self.version_is_at_least_0_6_2 {
+                                ChoiceHelper::run(input, |mut choice, input| {
+                                    if self.version_is_at_least_0_6_2
+                                        && !self.version_is_at_least_0_8_0
+                                    {
+                                        let result = self.named_argument_groups(input);
+                                        choice.consider(input, result)?;
+                                    }
+                                    if self.version_is_at_least_0_8_0 {
+                                        let result = self.named_argument_group(input);
+                                        choice.consider(input, result)?;
+                                    }
+                                    choice.finish(input)
+                                })
+                            } else {
+                                ParserResult::disabled()
+                            },
+                        ))?;
                     }
-                    seq.elem(self.arguments_declaration(input))?;
+                    seq.elem(ChoiceHelper::run(input, |mut choice, input| {
+                        let result = self.positional_arguments_declaration(input);
+                        choice.consider(input, result)?;
+                        let result = self.named_arguments_declaration(input);
+                        choice.consider(input, result)?;
+                        choice.finish(input)
+                    }))?;
                     seq.finish()
                 }),
             )
         };
-        let parse_member_access_operator = |input: &mut ParserContext| {
+        let parse_member_access_expression = |input: &mut ParserContext| {
             PrecedenceHelper::to_postfix_operator(
                 RuleKind::MemberAccessExpression,
-                35u8,
+                37u8,
                 SequenceHelper::run(|mut seq| {
                     seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
@@ -1622,10 +1822,10 @@ impl Language {
                 }),
             )
         };
-        let parse_index_access_operator = |input: &mut ParserContext| {
+        let parse_index_access_expression = |input: &mut ParserContext| {
             PrecedenceHelper::to_postfix_operator(
                 RuleKind::IndexAccessExpression,
-                37u8,
+                39u8,
                 SequenceHelper::run(|mut seq| {
                     let mut delim_guard = input.open_delim(TokenKind::CloseBracket);
                     let input = delim_guard.ctx();
@@ -1636,16 +1836,7 @@ impl Language {
                     seq.elem(
                         SequenceHelper::run(|mut seq| {
                             seq.elem(OptionalHelper::transform(self.expression(input)))?;
-                            seq.elem(OptionalHelper::transform(SequenceHelper::run(|mut seq| {
-                                seq.elem(
-                                    self.parse_token_with_trivia::<LexicalContextType::Default>(
-                                        input,
-                                        TokenKind::Colon,
-                                    ),
-                                )?;
-                                seq.elem(OptionalHelper::transform(self.expression(input)))?;
-                                seq.finish()
-                            })))?;
+                            seq.elem(OptionalHelper::transform(self.index_access_end(input)))?;
                             seq.finish()
                         })
                         .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
@@ -1665,8 +1856,14 @@ impl Language {
         };
         let prefix_operator_parser = |input: &mut ParserContext| {
             ChoiceHelper::run(input, |mut choice, input| {
-                let result = parse_unary_prefix_operator(input);
-                choice.consider(input, result)?;
+                if !self.version_is_at_least_0_5_0 {
+                    let result = parse_prefix_expression_removed_from_0_5_0(input);
+                    choice.consider(input, result)?;
+                }
+                if self.version_is_at_least_0_5_0 {
+                    let result = parse_prefix_expression_introduced_from_0_5_0(input);
+                    choice.consider(input, result)?;
+                }
                 choice.finish(input)
             })
         };
@@ -1676,29 +1873,15 @@ impl Language {
                 choice.consider(input, result)?;
                 let result = self.tuple_expression(input);
                 choice.consider(input, result)?;
+                if self.version_is_at_least_0_5_3 {
+                    let result = self.type_expression(input);
+                    choice.consider(input, result)?;
+                }
                 let result = self.array_expression(input);
                 choice.consider(input, result)?;
-                let result = ChoiceHelper::run(input, |mut choice, input| {
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::TrueKeyword,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::FalseKeyword,
-                    );
-                    choice.consider(input, result)?;
-                    choice.finish(input)
-                });
+                let result = self.hex_number_expression(input);
                 choice.consider(input, result)?;
-                let result = ChoiceHelper::run(input, |mut choice, input| {
-                    let result = self.decimal_number_expression(input);
-                    choice.consider(input, result)?;
-                    let result = self.hex_number_expression(input);
-                    choice.consider(input, result)?;
-                    choice.finish(input)
-                });
+                let result = self.decimal_number_expression(input);
                 choice.consider(input, result)?;
                 let result = ChoiceHelper::run(input, |mut choice, input| {
                     let result = self.hex_string_literals(input);
@@ -1718,12 +1901,24 @@ impl Language {
                         TokenKind::BoolKeyword,
                     );
                     choice.consider(input, result)?;
+                    if !self.version_is_at_least_0_8_0 {
+                        let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            input,
+                            TokenKind::ByteKeyword,
+                        );
+                        choice.consider(input, result)?;
+                    }
                     let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
                         TokenKind::StringKeyword,
                     );
                     choice.consider(input, result)?;
                     let result = self.address_type(input);
+                    choice.consider(input, result)?;
+                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        input,
+                        TokenKind::PayableKeyword,
+                    );
                     choice.consider(input, result)?;
                     let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
@@ -1750,39 +1945,38 @@ impl Language {
                         TokenKind::UfixedKeyword,
                     );
                     choice.consider(input, result)?;
-                    if !self.version_is_at_least_0_8_0 {
-                        let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                            input,
-                            TokenKind::ByteKeyword,
-                        );
-                        choice.consider(input, result)?;
-                    }
                     choice.finish(input)
                 });
+                choice.consider(input, result)?;
+                let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    input,
+                    TokenKind::TrueKeyword,
+                );
+                choice.consider(input, result)?;
+                let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    input,
+                    TokenKind::FalseKeyword,
+                );
                 choice.consider(input, result)?;
                 let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::Identifier,
                 );
                 choice.consider(input, result)?;
-                if self.version_is_at_least_0_5_3 {
-                    let result = self.type_expression(input);
-                    choice.consider(input, result)?;
-                }
                 choice.finish(input)
             })
         };
         let postfix_operator_parser = |input: &mut ParserContext| {
             ChoiceHelper::run(input, |mut choice, input| {
-                let result = parse_conditional_operator(input);
+                let result = parse_conditional_expression(input);
                 choice.consider(input, result)?;
-                let result = parse_unary_postfix_operator(input);
+                let result = parse_postfix_expression(input);
                 choice.consider(input, result)?;
-                let result = parse_function_call_operator(input);
+                let result = parse_function_call_expression(input);
                 choice.consider(input, result)?;
-                let result = parse_member_access_operator(input);
+                let result = parse_member_access_expression(input);
                 choice.consider(input, result)?;
-                let result = parse_index_access_operator(input);
+                let result = parse_index_access_expression(input);
                 choice.consider(input, result)?;
                 choice.finish(input)
             })
@@ -1801,34 +1995,34 @@ impl Language {
         };
         let binary_operator_parser = |input: &mut ParserContext| {
             ChoiceHelper::run(input, |mut choice, input| {
-                let result = parse_assignment_operator(input);
+                let result = parse_assignment_expression(input);
                 choice.consider(input, result)?;
-                let result = parse_or_operator(input);
+                let result = parse_or_expression(input);
                 choice.consider(input, result)?;
-                let result = parse_and_operator(input);
+                let result = parse_and_expression(input);
                 choice.consider(input, result)?;
-                let result = parse_equality_comparison_operator(input);
+                let result = parse_equality_expression(input);
                 choice.consider(input, result)?;
-                let result = parse_order_comparison_operator(input);
+                let result = parse_comparison_expression(input);
                 choice.consider(input, result)?;
-                let result = parse_bitwise_or_operator(input);
+                let result = parse_bitwise_or_expression(input);
                 choice.consider(input, result)?;
-                let result = parse_bitwise_x_or_operator(input);
+                let result = parse_bitwise_xor_expression(input);
                 choice.consider(input, result)?;
-                let result = parse_bitwise_and_operator(input);
+                let result = parse_bitwise_and_expression(input);
                 choice.consider(input, result)?;
-                let result = parse_shift_operator(input);
+                let result = parse_shift_expression(input);
                 choice.consider(input, result)?;
-                let result = parse_add_sub_operator(input);
+                let result = parse_additive_expression(input);
                 choice.consider(input, result)?;
-                let result = parse_mul_div_mod_operator(input);
+                let result = parse_multiplicative_expression(input);
                 choice.consider(input, result)?;
                 if !self.version_is_at_least_0_6_0 {
-                    let result = parse_exponentiation_operator_removed_from_0_6_0(input);
+                    let result = parse_exponentiation_expression_removed_from_0_6_0(input);
                     choice.consider(input, result)?;
                 }
                 if self.version_is_at_least_0_6_0 {
-                    let result = parse_exponentiation_operator_introduced_from_0_6_0(input);
+                    let result = parse_exponentiation_expression_introduced_from_0_6_0(input);
                     choice.consider(input, result)?;
                 }
                 choice.finish(input)
@@ -1936,12 +2130,12 @@ impl Language {
                 ))?;
                 seq.elem(OptionalHelper::transform(self.returns_declaration(input)))?;
                 seq.elem(ChoiceHelper::run(input, |mut choice, input| {
+                    let result = self.block(input);
+                    choice.consider(input, result)?;
                     let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
                         TokenKind::Semicolon,
                     );
-                    choice.consider(input, result)?;
-                    let result = self.block(input);
                     choice.consider(input, result)?;
                     choice.finish(input)
                 }))?;
@@ -1970,15 +2164,11 @@ impl Language {
                 seq.elem(
                     SequenceHelper::run(|mut seq| {
                         seq.elem(ChoiceHelper::run(input, |mut choice, input| {
-                            let result = ChoiceHelper::run(input, |mut choice, input| {
-                                let result = self.expression_statement(input);
-                                choice.consider(input, result)?;
-                                let result = self.variable_declaration_statement(input);
-                                choice.consider(input, result)?;
-                                let result = self.tuple_deconstruction_statement(input);
-                                choice.consider(input, result)?;
-                                choice.finish(input)
-                            });
+                            let result = self.expression_statement(input);
+                            choice.consider(input, result)?;
+                            let result = self.variable_declaration_statement(input);
+                            choice.consider(input, result)?;
+                            let result = self.tuple_deconstruction_statement(input);
                             choice.consider(input, result)?;
                             let result = self
                                 .parse_token_with_trivia::<LexicalContextType::Default>(
@@ -2016,52 +2206,44 @@ impl Language {
                 seq.finish()
             }))?;
             seq.elem(ChoiceHelper::run(input, |mut choice, input| {
-                let result = ChoiceHelper::run(input, |mut choice, input| {
-                    let result = self.expression_statement(input);
-                    choice.consider(input, result)?;
-                    let result = self.variable_declaration_statement(input);
-                    choice.consider(input, result)?;
-                    let result = self.tuple_deconstruction_statement(input);
-                    choice.consider(input, result)?;
-                    choice.finish(input)
-                });
+                let result = self.expression_statement(input);
                 choice.consider(input, result)?;
-                let result = ChoiceHelper::run(input, |mut choice, input| {
-                    let result = self.if_statement(input);
-                    choice.consider(input, result)?;
-                    let result = self.for_statement(input);
-                    choice.consider(input, result)?;
-                    let result = self.while_statement(input);
-                    choice.consider(input, result)?;
-                    let result = self.do_while_statement(input);
-                    choice.consider(input, result)?;
-                    let result = self.continue_statement(input);
-                    choice.consider(input, result)?;
-                    let result = self.break_statement(input);
-                    choice.consider(input, result)?;
-                    let result = self.delete_statement(input);
-                    choice.consider(input, result)?;
-                    let result = self.return_statement(input);
-                    choice.consider(input, result)?;
-                    if self.version_is_at_least_0_4_21 {
-                        let result = self.emit_statement(input);
-                        choice.consider(input, result)?;
-                    }
-                    if !self.version_is_at_least_0_5_0 {
-                        let result = self.throw_statement(input);
-                        choice.consider(input, result)?;
-                    }
-                    if self.version_is_at_least_0_6_0 {
-                        let result = self.try_statement(input);
-                        choice.consider(input, result)?;
-                    }
-                    if self.version_is_at_least_0_8_4 {
-                        let result = self.revert_statement(input);
-                        choice.consider(input, result)?;
-                    }
-                    choice.finish(input)
-                });
+                let result = self.variable_declaration_statement(input);
                 choice.consider(input, result)?;
+                let result = self.tuple_deconstruction_statement(input);
+                choice.consider(input, result)?;
+                let result = self.if_statement(input);
+                choice.consider(input, result)?;
+                let result = self.for_statement(input);
+                choice.consider(input, result)?;
+                let result = self.while_statement(input);
+                choice.consider(input, result)?;
+                let result = self.do_while_statement(input);
+                choice.consider(input, result)?;
+                let result = self.continue_statement(input);
+                choice.consider(input, result)?;
+                let result = self.break_statement(input);
+                choice.consider(input, result)?;
+                let result = self.delete_statement(input);
+                choice.consider(input, result)?;
+                let result = self.return_statement(input);
+                choice.consider(input, result)?;
+                if !self.version_is_at_least_0_5_0 {
+                    let result = self.throw_statement(input);
+                    choice.consider(input, result)?;
+                }
+                if self.version_is_at_least_0_4_21 {
+                    let result = self.emit_statement(input);
+                    choice.consider(input, result)?;
+                }
+                if self.version_is_at_least_0_6_0 {
+                    let result = self.try_statement(input);
+                    choice.consider(input, result)?;
+                }
+                if self.version_is_at_least_0_8_4 {
+                    let result = self.revert_statement(input);
+                    choice.consider(input, result)?;
+                }
                 let result = self.assembly_statement(input);
                 choice.consider(input, result)?;
                 let result = self.block(input);
@@ -2085,6 +2267,13 @@ impl Language {
                 choice.consider(input, result)?;
                 let result = self.override_specifier(input);
                 choice.consider(input, result)?;
+                if !self.version_is_at_least_0_5_0 {
+                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        input,
+                        TokenKind::ConstantKeyword,
+                    );
+                    choice.consider(input, result)?;
+                }
                 let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::ExternalKeyword,
@@ -2120,13 +2309,6 @@ impl Language {
                     TokenKind::ViewKeyword,
                 );
                 choice.consider(input, result)?;
-                if !self.version_is_at_least_0_5_0 {
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::ConstantKeyword,
-                    );
-                    choice.consider(input, result)?;
-                }
                 if self.version_is_at_least_0_6_0 {
                     let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
@@ -2138,23 +2320,6 @@ impl Language {
             })
         })
         .with_kind(RuleKind::FunctionAttributes)
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn function_call_options(&self, input: &mut ParserContext) -> ParserResult {
-        ChoiceHelper::run(input, |mut choice, input| {
-            if self.version_is_at_least_0_6_2 && !self.version_is_at_least_0_8_0 {
-                let result =
-                    OneOrMoreHelper::run(input, |input| self.named_arguments_declaration(input));
-                choice.consider(input, result)?;
-            }
-            if self.version_is_at_least_0_8_0 {
-                let result = self.named_arguments_declaration(input);
-                choice.consider(input, result)?;
-            }
-            choice.finish(input)
-        })
-        .with_kind(RuleKind::FunctionCallOptions)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -2186,12 +2351,12 @@ impl Language {
             seq.elem(OptionalHelper::transform(self.function_attributes(input)))?;
             seq.elem(OptionalHelper::transform(self.returns_declaration(input)))?;
             seq.elem(ChoiceHelper::run(input, |mut choice, input| {
+                let result = self.block(input);
+                choice.consider(input, result)?;
                 let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::Semicolon,
                 );
-                choice.consider(input, result)?;
-                let result = self.block(input);
                 choice.consider(input, result)?;
                 choice.finish(input)
             }))?;
@@ -2275,47 +2440,9 @@ impl Language {
                     |mut choice, input| {
                         let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
-                            TokenKind::DaysKeyword,
-                        );
-                        choice.consider(input, result)?;
-                        let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                            input,
-                            TokenKind::EtherKeyword,
-                        );
-                        choice.consider(input, result)?;
-                        let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                            input,
-                            TokenKind::HoursKeyword,
-                        );
-                        choice.consider(input, result)?;
-                        let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                            input,
-                            TokenKind::MinutesKeyword,
-                        );
-                        choice.consider(input, result)?;
-                        let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                            input,
-                            TokenKind::SecondsKeyword,
-                        );
-                        choice.consider(input, result)?;
-                        let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                            input,
-                            TokenKind::WeeksKeyword,
-                        );
-                        choice.consider(input, result)?;
-                        let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                            input,
                             TokenKind::WeiKeyword,
                         );
                         choice.consider(input, result)?;
-                        if !self.version_is_at_least_0_5_0 {
-                            let result = self
-                                .parse_token_with_trivia::<LexicalContextType::Default>(
-                                    input,
-                                    TokenKind::YearsKeyword,
-                                );
-                            choice.consider(input, result)?;
-                        }
                         if self.version_is_at_least_0_6_11 {
                             let result = self
                                 .parse_token_with_trivia::<LexicalContextType::Default>(
@@ -2325,21 +2452,57 @@ impl Language {
                             choice.consider(input, result)?;
                         }
                         if !self.version_is_at_least_0_7_0 {
-                            let result = ChoiceHelper::run(input, |mut choice, input| {
-                                let result = self
-                                    .parse_token_with_trivia::<LexicalContextType::Default>(
-                                        input,
-                                        TokenKind::FinneyKeyword,
-                                    );
-                                choice.consider(input, result)?;
-                                let result = self
-                                    .parse_token_with_trivia::<LexicalContextType::Default>(
-                                        input,
-                                        TokenKind::SzaboKeyword,
-                                    );
-                                choice.consider(input, result)?;
-                                choice.finish(input)
-                            });
+                            let result = self
+                                .parse_token_with_trivia::<LexicalContextType::Default>(
+                                    input,
+                                    TokenKind::SzaboKeyword,
+                                );
+                            choice.consider(input, result)?;
+                        }
+                        if !self.version_is_at_least_0_7_0 {
+                            let result = self
+                                .parse_token_with_trivia::<LexicalContextType::Default>(
+                                    input,
+                                    TokenKind::FinneyKeyword,
+                                );
+                            choice.consider(input, result)?;
+                        }
+                        let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            input,
+                            TokenKind::EtherKeyword,
+                        );
+                        choice.consider(input, result)?;
+                        let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            input,
+                            TokenKind::SecondsKeyword,
+                        );
+                        choice.consider(input, result)?;
+                        let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            input,
+                            TokenKind::MinutesKeyword,
+                        );
+                        choice.consider(input, result)?;
+                        let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            input,
+                            TokenKind::HoursKeyword,
+                        );
+                        choice.consider(input, result)?;
+                        let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            input,
+                            TokenKind::DaysKeyword,
+                        );
+                        choice.consider(input, result)?;
+                        let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            input,
+                            TokenKind::WeeksKeyword,
+                        );
+                        choice.consider(input, result)?;
+                        if !self.version_is_at_least_0_5_0 {
+                            let result = self
+                                .parse_token_with_trivia::<LexicalContextType::Default>(
+                                    input,
+                                    TokenKind::YearsKeyword,
+                                );
                             choice.consider(input, result)?;
                         }
                         choice.finish(input)
@@ -2408,52 +2571,44 @@ impl Language {
                 seq.finish()
             }))?;
             seq.elem(ChoiceHelper::run(input, |mut choice, input| {
-                let result = ChoiceHelper::run(input, |mut choice, input| {
-                    let result = self.expression_statement(input);
-                    choice.consider(input, result)?;
-                    let result = self.variable_declaration_statement(input);
-                    choice.consider(input, result)?;
-                    let result = self.tuple_deconstruction_statement(input);
-                    choice.consider(input, result)?;
-                    choice.finish(input)
-                });
+                let result = self.expression_statement(input);
                 choice.consider(input, result)?;
-                let result = ChoiceHelper::run(input, |mut choice, input| {
-                    let result = self.if_statement(input);
-                    choice.consider(input, result)?;
-                    let result = self.for_statement(input);
-                    choice.consider(input, result)?;
-                    let result = self.while_statement(input);
-                    choice.consider(input, result)?;
-                    let result = self.do_while_statement(input);
-                    choice.consider(input, result)?;
-                    let result = self.continue_statement(input);
-                    choice.consider(input, result)?;
-                    let result = self.break_statement(input);
-                    choice.consider(input, result)?;
-                    let result = self.delete_statement(input);
-                    choice.consider(input, result)?;
-                    let result = self.return_statement(input);
-                    choice.consider(input, result)?;
-                    if self.version_is_at_least_0_4_21 {
-                        let result = self.emit_statement(input);
-                        choice.consider(input, result)?;
-                    }
-                    if !self.version_is_at_least_0_5_0 {
-                        let result = self.throw_statement(input);
-                        choice.consider(input, result)?;
-                    }
-                    if self.version_is_at_least_0_6_0 {
-                        let result = self.try_statement(input);
-                        choice.consider(input, result)?;
-                    }
-                    if self.version_is_at_least_0_8_4 {
-                        let result = self.revert_statement(input);
-                        choice.consider(input, result)?;
-                    }
-                    choice.finish(input)
-                });
+                let result = self.variable_declaration_statement(input);
                 choice.consider(input, result)?;
+                let result = self.tuple_deconstruction_statement(input);
+                choice.consider(input, result)?;
+                let result = self.if_statement(input);
+                choice.consider(input, result)?;
+                let result = self.for_statement(input);
+                choice.consider(input, result)?;
+                let result = self.while_statement(input);
+                choice.consider(input, result)?;
+                let result = self.do_while_statement(input);
+                choice.consider(input, result)?;
+                let result = self.continue_statement(input);
+                choice.consider(input, result)?;
+                let result = self.break_statement(input);
+                choice.consider(input, result)?;
+                let result = self.delete_statement(input);
+                choice.consider(input, result)?;
+                let result = self.return_statement(input);
+                choice.consider(input, result)?;
+                if !self.version_is_at_least_0_5_0 {
+                    let result = self.throw_statement(input);
+                    choice.consider(input, result)?;
+                }
+                if self.version_is_at_least_0_4_21 {
+                    let result = self.emit_statement(input);
+                    choice.consider(input, result)?;
+                }
+                if self.version_is_at_least_0_6_0 {
+                    let result = self.try_statement(input);
+                    choice.consider(input, result)?;
+                }
+                if self.version_is_at_least_0_8_4 {
+                    let result = self.revert_statement(input);
+                    choice.consider(input, result)?;
+                }
                 let result = self.assembly_statement(input);
                 choice.consider(input, result)?;
                 let result = self.block(input);
@@ -2464,73 +2619,26 @@ impl Language {
                 }
                 choice.finish(input)
             }))?;
-            seq.elem(OptionalHelper::transform(SequenceHelper::run(|mut seq| {
-                seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                    input,
-                    TokenKind::ElseKeyword,
-                ))?;
-                seq.elem(ChoiceHelper::run(input, |mut choice, input| {
-                    let result = ChoiceHelper::run(input, |mut choice, input| {
-                        let result = self.expression_statement(input);
-                        choice.consider(input, result)?;
-                        let result = self.variable_declaration_statement(input);
-                        choice.consider(input, result)?;
-                        let result = self.tuple_deconstruction_statement(input);
-                        choice.consider(input, result)?;
-                        choice.finish(input)
-                    });
-                    choice.consider(input, result)?;
-                    let result = ChoiceHelper::run(input, |mut choice, input| {
-                        let result = self.if_statement(input);
-                        choice.consider(input, result)?;
-                        let result = self.for_statement(input);
-                        choice.consider(input, result)?;
-                        let result = self.while_statement(input);
-                        choice.consider(input, result)?;
-                        let result = self.do_while_statement(input);
-                        choice.consider(input, result)?;
-                        let result = self.continue_statement(input);
-                        choice.consider(input, result)?;
-                        let result = self.break_statement(input);
-                        choice.consider(input, result)?;
-                        let result = self.delete_statement(input);
-                        choice.consider(input, result)?;
-                        let result = self.return_statement(input);
-                        choice.consider(input, result)?;
-                        if self.version_is_at_least_0_4_21 {
-                            let result = self.emit_statement(input);
-                            choice.consider(input, result)?;
-                        }
-                        if !self.version_is_at_least_0_5_0 {
-                            let result = self.throw_statement(input);
-                            choice.consider(input, result)?;
-                        }
-                        if self.version_is_at_least_0_6_0 {
-                            let result = self.try_statement(input);
-                            choice.consider(input, result)?;
-                        }
-                        if self.version_is_at_least_0_8_4 {
-                            let result = self.revert_statement(input);
-                            choice.consider(input, result)?;
-                        }
-                        choice.finish(input)
-                    });
-                    choice.consider(input, result)?;
-                    let result = self.assembly_statement(input);
-                    choice.consider(input, result)?;
-                    let result = self.block(input);
-                    choice.consider(input, result)?;
-                    if self.version_is_at_least_0_8_0 {
-                        let result = self.unchecked_block(input);
-                        choice.consider(input, result)?;
-                    }
-                    choice.finish(input)
-                }))?;
-                seq.finish()
-            })))?;
+            seq.elem(OptionalHelper::transform(self.else_branch(input)))?;
             seq.finish()
         })
         .with_kind(RuleKind::IfStatement)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn import_alias(&self, input: &mut ParserContext) -> ParserResult {
+        SequenceHelper::run(|mut seq| {
+            seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
+                input,
+                TokenKind::AsKeyword,
+            ))?;
+            seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
+                input,
+                TokenKind::Identifier,
+            ))?;
+            seq.finish()
+        })
+        .with_kind(RuleKind::ImportAlias)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -2578,17 +2686,7 @@ impl Language {
                 input,
                 TokenKind::Identifier,
             ))?;
-            seq.elem(OptionalHelper::transform(SequenceHelper::run(|mut seq| {
-                seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                    input,
-                    TokenKind::AsKeyword,
-                ))?;
-                seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                    input,
-                    TokenKind::Identifier,
-                ))?;
-                seq.finish()
-            })))?;
+            seq.elem(OptionalHelper::transform(self.import_alias(input)))?;
             seq.finish()
         })
         .with_kind(RuleKind::ImportDeconstructionSymbol)
@@ -2642,6 +2740,21 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
+    fn index_access_end(&self, input: &mut ParserContext) -> ParserResult {
+        SequenceHelper::run(|mut seq| {
+            seq.elem(
+                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    input,
+                    TokenKind::Colon,
+                ),
+            )?;
+            seq.elem(OptionalHelper::transform(self.expression(input)))?;
+            seq.finish()
+        })
+        .with_kind(RuleKind::IndexAccessEnd)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
     fn inheritance_specifier(&self, input: &mut ParserContext) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
@@ -2658,7 +2771,16 @@ impl Language {
     fn inheritance_type(&self, input: &mut ParserContext) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(self.identifier_path(input))?;
-            seq.elem(OptionalHelper::transform(self.arguments_declaration(input)))?;
+            seq.elem(OptionalHelper::transform(ChoiceHelper::run(
+                input,
+                |mut choice, input| {
+                    let result = self.positional_arguments_declaration(input);
+                    choice.consider(input, result)?;
+                    let result = self.named_arguments_declaration(input);
+                    choice.consider(input, result)?;
+                    choice.finish(input)
+                },
+            )))?;
             seq.finish()
         })
         .with_kind(RuleKind::InheritanceType)
@@ -2722,6 +2844,22 @@ impl Language {
                 choice.consider(input, result)?;
                 let result = self.function_definition(input);
                 choice.consider(input, result)?;
+                if self.version_is_at_least_0_4_22 {
+                    let result = self.constructor_definition(input);
+                    choice.consider(input, result)?;
+                }
+                if self.version_is_at_least_0_6_0 {
+                    let result = self.receive_function_definition(input);
+                    choice.consider(input, result)?;
+                }
+                if self.version_is_at_least_0_6_0 {
+                    let result = self.fallback_function_definition(input);
+                    choice.consider(input, result)?;
+                }
+                if !self.version_is_at_least_0_6_0 {
+                    let result = self.unnamed_function_definition(input);
+                    choice.consider(input, result)?;
+                }
                 let result = self.modifier_definition(input);
                 choice.consider(input, result)?;
                 let result = self.struct_definition(input);
@@ -2732,24 +2870,6 @@ impl Language {
                 choice.consider(input, result)?;
                 let result = self.state_variable_definition(input);
                 choice.consider(input, result)?;
-                if self.version_is_at_least_0_4_22 {
-                    let result = self.constructor_definition(input);
-                    choice.consider(input, result)?;
-                }
-                if self.version_is_at_least_0_6_0 {
-                    let result = ChoiceHelper::run(input, |mut choice, input| {
-                        let result = self.fallback_function_definition(input);
-                        choice.consider(input, result)?;
-                        let result = self.receive_function_definition(input);
-                        choice.consider(input, result)?;
-                        choice.finish(input)
-                    });
-                    choice.consider(input, result)?;
-                }
-                if !self.version_is_at_least_0_6_0 {
-                    let result = self.unnamed_function_definition(input);
-                    choice.consider(input, result)?;
-                }
                 if self.version_is_at_least_0_8_4 {
                     let result = self.error_definition(input);
                     choice.consider(input, result)?;
@@ -2834,6 +2954,22 @@ impl Language {
                 choice.consider(input, result)?;
                 let result = self.function_definition(input);
                 choice.consider(input, result)?;
+                if self.version_is_at_least_0_4_22 {
+                    let result = self.constructor_definition(input);
+                    choice.consider(input, result)?;
+                }
+                if self.version_is_at_least_0_6_0 {
+                    let result = self.receive_function_definition(input);
+                    choice.consider(input, result)?;
+                }
+                if self.version_is_at_least_0_6_0 {
+                    let result = self.fallback_function_definition(input);
+                    choice.consider(input, result)?;
+                }
+                if !self.version_is_at_least_0_6_0 {
+                    let result = self.unnamed_function_definition(input);
+                    choice.consider(input, result)?;
+                }
                 let result = self.modifier_definition(input);
                 choice.consider(input, result)?;
                 let result = self.struct_definition(input);
@@ -2844,24 +2980,6 @@ impl Language {
                 choice.consider(input, result)?;
                 let result = self.state_variable_definition(input);
                 choice.consider(input, result)?;
-                if self.version_is_at_least_0_4_22 {
-                    let result = self.constructor_definition(input);
-                    choice.consider(input, result)?;
-                }
-                if self.version_is_at_least_0_6_0 {
-                    let result = ChoiceHelper::run(input, |mut choice, input| {
-                        let result = self.fallback_function_definition(input);
-                        choice.consider(input, result)?;
-                        let result = self.receive_function_definition(input);
-                        choice.consider(input, result)?;
-                        choice.finish(input)
-                    });
-                    choice.consider(input, result)?;
-                }
-                if !self.version_is_at_least_0_6_0 {
-                    let result = self.unnamed_function_definition(input);
-                    choice.consider(input, result)?;
-                }
                 if self.version_is_at_least_0_8_4 {
                     let result = self.error_definition(input);
                     choice.consider(input, result)?;
@@ -2877,7 +2995,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn mapping_key_type(&self, input: &mut ParserContext) -> ParserResult {
+    fn mapping_key(&self, input: &mut ParserContext) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(ChoiceHelper::run(input, |mut choice, input| {
                 let result = ChoiceHelper::run(input, |mut choice, input| {
@@ -2886,12 +3004,24 @@ impl Language {
                         TokenKind::BoolKeyword,
                     );
                     choice.consider(input, result)?;
+                    if !self.version_is_at_least_0_8_0 {
+                        let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            input,
+                            TokenKind::ByteKeyword,
+                        );
+                        choice.consider(input, result)?;
+                    }
                     let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
                         TokenKind::StringKeyword,
                     );
                     choice.consider(input, result)?;
                     let result = self.address_type(input);
+                    choice.consider(input, result)?;
+                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        input,
+                        TokenKind::PayableKeyword,
+                    );
                     choice.consider(input, result)?;
                     let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
@@ -2918,13 +3048,6 @@ impl Language {
                         TokenKind::UfixedKeyword,
                     );
                     choice.consider(input, result)?;
-                    if !self.version_is_at_least_0_8_0 {
-                        let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                            input,
-                            TokenKind::ByteKeyword,
-                        );
-                        choice.consider(input, result)?;
-                    }
                     choice.finish(input)
                 });
                 choice.consider(input, result)?;
@@ -2942,7 +3065,7 @@ impl Language {
             }
             seq.finish()
         })
-        .with_kind(RuleKind::MappingKeyType)
+        .with_kind(RuleKind::MappingKey)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -2961,12 +3084,12 @@ impl Language {
                 ))?;
                 seq.elem(
                     SequenceHelper::run(|mut seq| {
-                        seq.elem(self.mapping_key_type(input))?;
+                        seq.elem(self.mapping_key(input))?;
                         seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
                             TokenKind::EqualGreaterThan,
                         ))?;
-                        seq.elem(self.mapping_value_type(input))?;
+                        seq.elem(self.mapping_value(input))?;
                         seq.finish()
                     })
                     .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
@@ -2988,7 +3111,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn mapping_value_type(&self, input: &mut ParserContext) -> ParserResult {
+    fn mapping_value(&self, input: &mut ParserContext) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(self.type_name(input))?;
             if self.version_is_at_least_0_8_18 {
@@ -3001,7 +3124,7 @@ impl Language {
             }
             seq.finish()
         })
-        .with_kind(RuleKind::MappingValueType)
+        .with_kind(RuleKind::MappingValue)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -3039,12 +3162,12 @@ impl Language {
             ))?;
             seq.elem(OptionalHelper::transform(self.modifier_attributes(input)))?;
             seq.elem(ChoiceHelper::run(input, |mut choice, input| {
+                let result = self.block(input);
+                choice.consider(input, result)?;
                 let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::Semicolon,
                 );
-                choice.consider(input, result)?;
-                let result = self.block(input);
                 choice.consider(input, result)?;
                 choice.finish(input)
             }))?;
@@ -3057,7 +3180,16 @@ impl Language {
     fn modifier_invocation(&self, input: &mut ParserContext) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(self.identifier_path(input))?;
-            seq.elem(OptionalHelper::transform(self.arguments_declaration(input)))?;
+            seq.elem(OptionalHelper::transform(ChoiceHelper::run(
+                input,
+                |mut choice, input| {
+                    let result = self.positional_arguments_declaration(input);
+                    choice.consider(input, result)?;
+                    let result = self.named_arguments_declaration(input);
+                    choice.consider(input, result)?;
+                    choice.finish(input)
+                },
+            )))?;
             seq.finish()
         })
         .with_kind(RuleKind::ModifierInvocation)
@@ -3083,18 +3215,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn named_arguments(&self, input: &mut ParserContext) -> ParserResult {
-        SeparatedHelper::run::<_, LexicalContextType::Default>(
-            input,
-            self,
-            |input| self.named_argument(input),
-            TokenKind::Comma,
-        )
-        .with_kind(RuleKind::NamedArguments)
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn named_arguments_declaration(&self, input: &mut ParserContext) -> ParserResult {
+    fn named_argument_group(&self, input: &mut ParserContext) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             let mut delim_guard = input.open_delim(TokenKind::CloseBrace);
             let input = delim_guard.ctx();
@@ -3117,6 +3238,54 @@ impl Language {
             ))?;
             seq.finish()
         })
+        .with_kind(RuleKind::NamedArgumentGroup)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn named_argument_groups(&self, input: &mut ParserContext) -> ParserResult {
+        if self.version_is_at_least_0_6_2 && !self.version_is_at_least_0_8_0 {
+            OneOrMoreHelper::run(input, |input| self.named_argument_group(input))
+        } else {
+            ParserResult::disabled()
+        }
+        .with_kind(RuleKind::NamedArgumentGroups)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn named_arguments(&self, input: &mut ParserContext) -> ParserResult {
+        SeparatedHelper::run::<_, LexicalContextType::Default>(
+            input,
+            self,
+            |input| self.named_argument(input),
+            TokenKind::Comma,
+        )
+        .with_kind(RuleKind::NamedArguments)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn named_arguments_declaration(&self, input: &mut ParserContext) -> ParserResult {
+        SequenceHelper::run(|mut seq| {
+            let mut delim_guard = input.open_delim(TokenKind::CloseParen);
+            let input = delim_guard.ctx();
+            seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
+                input,
+                TokenKind::OpenParen,
+            ))?;
+            seq.elem(
+                OptionalHelper::transform(self.named_argument_group(input))
+                    .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
+                    input,
+                    self,
+                    TokenKind::CloseParen,
+                    RecoverFromNoMatch::Yes,
+                ),
+            )?;
+            seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
+                input,
+                TokenKind::CloseParen,
+            ))?;
+            seq.finish()
+        })
         .with_kind(RuleKind::NamedArgumentsDeclaration)
     }
 
@@ -3127,14 +3296,7 @@ impl Language {
                 input,
                 TokenKind::Asterisk,
             ))?;
-            seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                input,
-                TokenKind::AsKeyword,
-            ))?;
-            seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                input,
-                TokenKind::Identifier,
-            ))?;
+            seq.elem(self.import_alias(input))?;
             seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
                 input,
                 TokenKind::FromKeyword,
@@ -3173,34 +3335,42 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
+    fn override_paths_declaration(&self, input: &mut ParserContext) -> ParserResult {
+        SequenceHelper::run(|mut seq| {
+            let mut delim_guard = input.open_delim(TokenKind::CloseParen);
+            let input = delim_guard.ctx();
+            seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
+                input,
+                TokenKind::OpenParen,
+            ))?;
+            seq.elem(
+                self.override_paths(input)
+                    .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
+                        input,
+                        self,
+                        TokenKind::CloseParen,
+                        RecoverFromNoMatch::Yes,
+                    ),
+            )?;
+            seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
+                input,
+                TokenKind::CloseParen,
+            ))?;
+            seq.finish()
+        })
+        .with_kind(RuleKind::OverridePathsDeclaration)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
     fn override_specifier(&self, input: &mut ParserContext) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
                 input,
                 TokenKind::OverrideKeyword,
             ))?;
-            seq.elem(OptionalHelper::transform(SequenceHelper::run(|mut seq| {
-                let mut delim_guard = input.open_delim(TokenKind::CloseParen);
-                let input = delim_guard.ctx();
-                seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                    input,
-                    TokenKind::OpenParen,
-                ))?;
-                seq.elem(
-                    OptionalHelper::transform(self.override_paths(input))
-                        .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
-                        input,
-                        self,
-                        TokenKind::CloseParen,
-                        RecoverFromNoMatch::Yes,
-                    ),
-                )?;
-                seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                    input,
-                    TokenKind::CloseParen,
-                ))?;
-                seq.finish()
-            })))?;
+            seq.elem(OptionalHelper::transform(
+                self.override_paths_declaration(input),
+            ))?;
             seq.finish()
         })
         .with_kind(RuleKind::OverrideSpecifier)
@@ -3226,7 +3396,7 @@ impl Language {
                     if self.version_is_at_least_0_5_0 {
                         let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
-                            TokenKind::CalldataKeyword,
+                            TokenKind::CallDataKeyword,
                         );
                         choice.consider(input, result)?;
                     }
@@ -3289,17 +3459,7 @@ impl Language {
                 input,
                 TokenKind::AsciiStringLiteral,
             ))?;
-            seq.elem(OptionalHelper::transform(SequenceHelper::run(|mut seq| {
-                seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                    input,
-                    TokenKind::AsKeyword,
-                ))?;
-                seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                    input,
-                    TokenKind::Identifier,
-                ))?;
-                seq.finish()
-            })))?;
+            seq.elem(OptionalHelper::transform(self.import_alias(input)))?;
             seq.finish()
         })
         .with_kind(RuleKind::PathImport)
@@ -3317,11 +3477,38 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
+    fn positional_arguments_declaration(&self, input: &mut ParserContext) -> ParserResult {
+        SequenceHelper::run(|mut seq| {
+            let mut delim_guard = input.open_delim(TokenKind::CloseParen);
+            let input = delim_guard.ctx();
+            seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
+                input,
+                TokenKind::OpenParen,
+            ))?;
+            seq.elem(
+                OptionalHelper::transform(self.positional_arguments(input))
+                    .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
+                    input,
+                    self,
+                    TokenKind::CloseParen,
+                    RecoverFromNoMatch::Yes,
+                ),
+            )?;
+            seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
+                input,
+                TokenKind::CloseParen,
+            ))?;
+            seq.finish()
+        })
+        .with_kind(RuleKind::PositionalArgumentsDeclaration)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
     fn pragma_directive(&self, input: &mut ParserContext) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(
                 SequenceHelper::run(|mut seq| {
-                    seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    seq.elem(self.parse_token_with_trivia::<LexicalContextType::Pragma>(
                         input,
                         TokenKind::PragmaKeyword,
                     ))?;
@@ -3336,14 +3523,14 @@ impl Language {
                     }))?;
                     seq.finish()
                 })
-                .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
+                .recover_until_with_nested_delims::<_, LexicalContextType::Pragma>(
                     input,
                     self,
                     TokenKind::Semicolon,
                     RecoverFromNoMatch::No,
                 ),
             )?;
-            seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
+            seq.elem(self.parse_token_with_trivia::<LexicalContextType::Pragma>(
                 input,
                 TokenKind::Semicolon,
             ))?;
@@ -3402,12 +3589,12 @@ impl Language {
                     self.receive_function_attributes(input),
                 ))?;
                 seq.elem(ChoiceHelper::run(input, |mut choice, input| {
+                    let result = self.block(input);
+                    choice.consider(input, result)?;
                     let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
                         TokenKind::Semicolon,
                     );
-                    choice.consider(input, result)?;
-                    let result = self.block(input);
                     choice.consider(input, result)?;
                     choice.finish(input)
                 }))?;
@@ -3462,30 +3649,40 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn revert_statement(&self, input: &mut ParserContext) -> ParserResult {
-        SequenceHelper::run(|mut seq| {
-            seq.elem(
-                SequenceHelper::run(|mut seq| {
-                    seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
+        if self.version_is_at_least_0_8_4 {
+            SequenceHelper::run(|mut seq| {
+                seq.elem(
+                    SequenceHelper::run(|mut seq| {
+                        seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            input,
+                            TokenKind::RevertKeyword,
+                        ))?;
+                        seq.elem(OptionalHelper::transform(self.identifier_path(input)))?;
+                        seq.elem(ChoiceHelper::run(input, |mut choice, input| {
+                            let result = self.positional_arguments_declaration(input);
+                            choice.consider(input, result)?;
+                            let result = self.named_arguments_declaration(input);
+                            choice.consider(input, result)?;
+                            choice.finish(input)
+                        }))?;
+                        seq.finish()
+                    })
+                    .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
-                        TokenKind::RevertKeyword,
-                    ))?;
-                    seq.elem(OptionalHelper::transform(self.identifier_path(input)))?;
-                    seq.elem(self.arguments_declaration(input))?;
-                    seq.finish()
-                })
-                .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
+                        self,
+                        TokenKind::Semicolon,
+                        RecoverFromNoMatch::No,
+                    ),
+                )?;
+                seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    self,
                     TokenKind::Semicolon,
-                    RecoverFromNoMatch::No,
-                ),
-            )?;
-            seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                input,
-                TokenKind::Semicolon,
-            ))?;
-            seq.finish()
-        })
+                ))?;
+                seq.finish()
+            })
+        } else {
+            ParserResult::disabled()
+        }
         .with_kind(RuleKind::RevertStatement)
     }
 
@@ -3514,13 +3711,11 @@ impl Language {
                 let result = self.library_definition(input);
                 choice.consider(input, result)?;
                 if self.version_is_at_least_0_6_0 {
-                    let result = ChoiceHelper::run(input, |mut choice, input| {
-                        let result = self.struct_definition(input);
-                        choice.consider(input, result)?;
-                        let result = self.enum_definition(input);
-                        choice.consider(input, result)?;
-                        choice.finish(input)
-                    });
+                    let result = self.struct_definition(input);
+                    choice.consider(input, result)?;
+                }
+                if self.version_is_at_least_0_6_0 {
+                    let result = self.enum_definition(input);
                     choice.consider(input, result)?;
                 }
                 if self.version_is_at_least_0_7_1 {
@@ -3605,14 +3800,9 @@ impl Language {
                         input,
                         TokenKind::Identifier,
                     ))?;
-                    seq.elem(OptionalHelper::transform(SequenceHelper::run(|mut seq| {
-                        seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                            input,
-                            TokenKind::Equal,
-                        ))?;
-                        seq.elem(self.expression(input))?;
-                        seq.finish()
-                    })))?;
+                    seq.elem(OptionalHelper::transform(
+                        self.state_variable_definition_value(input),
+                    ))?;
                     seq.finish()
                 })
                 .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
@@ -3632,55 +3822,62 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
+    fn state_variable_definition_value(&self, input: &mut ParserContext) -> ParserResult {
+        SequenceHelper::run(|mut seq| {
+            seq.elem(
+                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    input,
+                    TokenKind::Equal,
+                ),
+            )?;
+            seq.elem(self.expression(input))?;
+            seq.finish()
+        })
+        .with_kind(RuleKind::StateVariableDefinitionValue)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
     fn statements(&self, input: &mut ParserContext) -> ParserResult {
         OneOrMoreHelper::run(input, |input| {
             ChoiceHelper::run(input, |mut choice, input| {
-                let result = ChoiceHelper::run(input, |mut choice, input| {
-                    let result = self.expression_statement(input);
-                    choice.consider(input, result)?;
-                    let result = self.variable_declaration_statement(input);
-                    choice.consider(input, result)?;
-                    let result = self.tuple_deconstruction_statement(input);
-                    choice.consider(input, result)?;
-                    choice.finish(input)
-                });
+                let result = self.expression_statement(input);
                 choice.consider(input, result)?;
-                let result = ChoiceHelper::run(input, |mut choice, input| {
-                    let result = self.if_statement(input);
-                    choice.consider(input, result)?;
-                    let result = self.for_statement(input);
-                    choice.consider(input, result)?;
-                    let result = self.while_statement(input);
-                    choice.consider(input, result)?;
-                    let result = self.do_while_statement(input);
-                    choice.consider(input, result)?;
-                    let result = self.continue_statement(input);
-                    choice.consider(input, result)?;
-                    let result = self.break_statement(input);
-                    choice.consider(input, result)?;
-                    let result = self.delete_statement(input);
-                    choice.consider(input, result)?;
-                    let result = self.return_statement(input);
-                    choice.consider(input, result)?;
-                    if self.version_is_at_least_0_4_21 {
-                        let result = self.emit_statement(input);
-                        choice.consider(input, result)?;
-                    }
-                    if !self.version_is_at_least_0_5_0 {
-                        let result = self.throw_statement(input);
-                        choice.consider(input, result)?;
-                    }
-                    if self.version_is_at_least_0_6_0 {
-                        let result = self.try_statement(input);
-                        choice.consider(input, result)?;
-                    }
-                    if self.version_is_at_least_0_8_4 {
-                        let result = self.revert_statement(input);
-                        choice.consider(input, result)?;
-                    }
-                    choice.finish(input)
-                });
+                let result = self.variable_declaration_statement(input);
                 choice.consider(input, result)?;
+                let result = self.tuple_deconstruction_statement(input);
+                choice.consider(input, result)?;
+                let result = self.if_statement(input);
+                choice.consider(input, result)?;
+                let result = self.for_statement(input);
+                choice.consider(input, result)?;
+                let result = self.while_statement(input);
+                choice.consider(input, result)?;
+                let result = self.do_while_statement(input);
+                choice.consider(input, result)?;
+                let result = self.continue_statement(input);
+                choice.consider(input, result)?;
+                let result = self.break_statement(input);
+                choice.consider(input, result)?;
+                let result = self.delete_statement(input);
+                choice.consider(input, result)?;
+                let result = self.return_statement(input);
+                choice.consider(input, result)?;
+                if !self.version_is_at_least_0_5_0 {
+                    let result = self.throw_statement(input);
+                    choice.consider(input, result)?;
+                }
+                if self.version_is_at_least_0_4_21 {
+                    let result = self.emit_statement(input);
+                    choice.consider(input, result)?;
+                }
+                if self.version_is_at_least_0_6_0 {
+                    let result = self.try_statement(input);
+                    choice.consider(input, result)?;
+                }
+                if self.version_is_at_least_0_8_4 {
+                    let result = self.revert_statement(input);
+                    choice.consider(input, result)?;
+                }
                 let result = self.assembly_statement(input);
                 choice.consider(input, result)?;
                 let result = self.block(input);
@@ -3934,11 +4131,16 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
+    fn tuple_value(&self, input: &mut ParserContext) -> ParserResult {
+        OptionalHelper::transform(self.expression(input)).with_kind(RuleKind::TupleValue)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
     fn tuple_values(&self, input: &mut ParserContext) -> ParserResult {
         SeparatedHelper::run::<_, LexicalContextType::Default>(
             input,
             self,
-            |input| OptionalHelper::transform(self.expression(input)),
+            |input| self.tuple_value(input),
             TokenKind::Comma,
         )
         .with_kind(RuleKind::TupleValues)
@@ -3984,7 +4186,7 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn type_name(&self, input: &mut ParserContext) -> ParserResult {
-        let parse_array_type_name_operator = |input: &mut ParserContext| {
+        let parse_array_type_name = |input: &mut ParserContext| {
             PrecedenceHelper::to_postfix_operator(
                 RuleKind::ArrayTypeName,
                 1u8,
@@ -4024,12 +4226,24 @@ impl Language {
                         TokenKind::BoolKeyword,
                     );
                     choice.consider(input, result)?;
+                    if !self.version_is_at_least_0_8_0 {
+                        let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            input,
+                            TokenKind::ByteKeyword,
+                        );
+                        choice.consider(input, result)?;
+                    }
                     let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
                         TokenKind::StringKeyword,
                     );
                     choice.consider(input, result)?;
                     let result = self.address_type(input);
+                    choice.consider(input, result)?;
+                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        input,
+                        TokenKind::PayableKeyword,
+                    );
                     choice.consider(input, result)?;
                     let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
@@ -4056,13 +4270,6 @@ impl Language {
                         TokenKind::UfixedKeyword,
                     );
                     choice.consider(input, result)?;
-                    if !self.version_is_at_least_0_8_0 {
-                        let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                            input,
-                            TokenKind::ByteKeyword,
-                        );
-                        choice.consider(input, result)?;
-                    }
                     choice.finish(input)
                 });
                 choice.consider(input, result)?;
@@ -4073,7 +4280,7 @@ impl Language {
         };
         let postfix_operator_parser = |input: &mut ParserContext| {
             ChoiceHelper::run(input, |mut choice, input| {
-                let result = parse_array_type_name_operator(input);
+                let result = parse_array_type_name(input);
                 choice.consider(input, result)?;
                 choice.finish(input)
             })
@@ -4114,7 +4321,7 @@ impl Language {
                     if self.version_is_at_least_0_5_0 {
                         let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
-                            TokenKind::CalldataKeyword,
+                            TokenKind::CallDataKeyword,
                         );
                         choice.consider(input, result)?;
                     }
@@ -4217,12 +4424,12 @@ impl Language {
                     self.unnamed_function_attributes(input),
                 ))?;
                 seq.elem(ChoiceHelper::run(input, |mut choice, input| {
+                    let result = self.block(input);
+                    choice.consider(input, result)?;
                     let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
                         TokenKind::Semicolon,
                     );
-                    choice.consider(input, result)?;
-                    let result = self.block(input);
                     choice.consider(input, result)?;
                     choice.finish(input)
                 }))?;
@@ -4253,7 +4460,7 @@ impl Language {
                     if self.version_is_at_least_0_5_0 {
                         let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
-                            TokenKind::CalldataKeyword,
+                            TokenKind::CallDataKeyword,
                         );
                         choice.consider(input, result)?;
                     }
@@ -4294,6 +4501,14 @@ impl Language {
                                     TokenKind::BoolKeyword,
                                 );
                             choice.consider(input, result)?;
+                            if !self.version_is_at_least_0_8_0 {
+                                let result = self
+                                    .parse_token_with_trivia::<LexicalContextType::Default>(
+                                        input,
+                                        TokenKind::ByteKeyword,
+                                    );
+                                choice.consider(input, result)?;
+                            }
                             let result = self
                                 .parse_token_with_trivia::<LexicalContextType::Default>(
                                     input,
@@ -4301,6 +4516,12 @@ impl Language {
                                 );
                             choice.consider(input, result)?;
                             let result = self.address_type(input);
+                            choice.consider(input, result)?;
+                            let result = self
+                                .parse_token_with_trivia::<LexicalContextType::Default>(
+                                    input,
+                                    TokenKind::PayableKeyword,
+                                );
                             choice.consider(input, result)?;
                             let result = self
                                 .parse_token_with_trivia::<LexicalContextType::Default>(
@@ -4332,14 +4553,6 @@ impl Language {
                                     TokenKind::UfixedKeyword,
                                 );
                             choice.consider(input, result)?;
-                            if !self.version_is_at_least_0_8_0 {
-                                let result = self
-                                    .parse_token_with_trivia::<LexicalContextType::Default>(
-                                        input,
-                                        TokenKind::ByteKeyword,
-                                    );
-                                choice.consider(input, result)?;
-                            }
                             choice.finish(input)
                         }))?;
                         seq.finish()
@@ -4361,6 +4574,100 @@ impl Language {
             ParserResult::disabled()
         }
         .with_kind(RuleKind::UserDefinedValueTypeDefinition)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn using_alias(&self, input: &mut ParserContext) -> ParserResult {
+        if self.version_is_at_least_0_8_19 {
+            SequenceHelper::run(|mut seq| {
+                seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    input,
+                    TokenKind::AsKeyword,
+                ))?;
+                seq.elem(ChoiceHelper::run(input, |mut choice, input| {
+                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        input,
+                        TokenKind::Ampersand,
+                    );
+                    choice.consider(input, result)?;
+                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        input,
+                        TokenKind::Asterisk,
+                    );
+                    choice.consider(input, result)?;
+                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        input,
+                        TokenKind::BangEqual,
+                    );
+                    choice.consider(input, result)?;
+                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        input,
+                        TokenKind::Bar,
+                    );
+                    choice.consider(input, result)?;
+                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        input,
+                        TokenKind::Caret,
+                    );
+                    choice.consider(input, result)?;
+                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        input,
+                        TokenKind::EqualEqual,
+                    );
+                    choice.consider(input, result)?;
+                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        input,
+                        TokenKind::GreaterThan,
+                    );
+                    choice.consider(input, result)?;
+                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        input,
+                        TokenKind::GreaterThanEqual,
+                    );
+                    choice.consider(input, result)?;
+                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        input,
+                        TokenKind::LessThan,
+                    );
+                    choice.consider(input, result)?;
+                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        input,
+                        TokenKind::LessThanEqual,
+                    );
+                    choice.consider(input, result)?;
+                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        input,
+                        TokenKind::Minus,
+                    );
+                    choice.consider(input, result)?;
+                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        input,
+                        TokenKind::Percent,
+                    );
+                    choice.consider(input, result)?;
+                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        input,
+                        TokenKind::Plus,
+                    );
+                    choice.consider(input, result)?;
+                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        input,
+                        TokenKind::Slash,
+                    );
+                    choice.consider(input, result)?;
+                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        input,
+                        TokenKind::Tilde,
+                    );
+                    choice.consider(input, result)?;
+                    choice.finish(input)
+                }))?;
+                seq.finish()
+            })
+        } else {
+            ParserResult::disabled()
+        }
+        .with_kind(RuleKind::UsingAlias)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -4400,110 +4707,7 @@ impl Language {
             SequenceHelper::run(|mut seq| {
                 seq.elem(self.identifier_path(input))?;
                 if self.version_is_at_least_0_8_19 {
-                    seq.elem(OptionalHelper::transform(SequenceHelper::run(|mut seq| {
-                        seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                            input,
-                            TokenKind::AsKeyword,
-                        ))?;
-                        seq.elem(if self.version_is_at_least_0_8_19 {
-                            ChoiceHelper::run(input, |mut choice, input| {
-                                let result = self
-                                    .parse_token_with_trivia::<LexicalContextType::Default>(
-                                        input,
-                                        TokenKind::Ampersand,
-                                    );
-                                choice.consider(input, result)?;
-                                let result = self
-                                    .parse_token_with_trivia::<LexicalContextType::Default>(
-                                        input,
-                                        TokenKind::Asterisk,
-                                    );
-                                choice.consider(input, result)?;
-                                let result = self
-                                    .parse_token_with_trivia::<LexicalContextType::Default>(
-                                        input,
-                                        TokenKind::BangEqual,
-                                    );
-                                choice.consider(input, result)?;
-                                let result = self
-                                    .parse_token_with_trivia::<LexicalContextType::Default>(
-                                        input,
-                                        TokenKind::Bar,
-                                    );
-                                choice.consider(input, result)?;
-                                let result = self
-                                    .parse_token_with_trivia::<LexicalContextType::Default>(
-                                        input,
-                                        TokenKind::Caret,
-                                    );
-                                choice.consider(input, result)?;
-                                let result = self
-                                    .parse_token_with_trivia::<LexicalContextType::Default>(
-                                        input,
-                                        TokenKind::EqualEqual,
-                                    );
-                                choice.consider(input, result)?;
-                                let result = self
-                                    .parse_token_with_trivia::<LexicalContextType::Default>(
-                                        input,
-                                        TokenKind::GreaterThan,
-                                    );
-                                choice.consider(input, result)?;
-                                let result = self
-                                    .parse_token_with_trivia::<LexicalContextType::Default>(
-                                        input,
-                                        TokenKind::GreaterThanEqual,
-                                    );
-                                choice.consider(input, result)?;
-                                let result = self
-                                    .parse_token_with_trivia::<LexicalContextType::Default>(
-                                        input,
-                                        TokenKind::LessThan,
-                                    );
-                                choice.consider(input, result)?;
-                                let result = self
-                                    .parse_token_with_trivia::<LexicalContextType::Default>(
-                                        input,
-                                        TokenKind::LessThanEqual,
-                                    );
-                                choice.consider(input, result)?;
-                                let result = self
-                                    .parse_token_with_trivia::<LexicalContextType::Default>(
-                                        input,
-                                        TokenKind::Minus,
-                                    );
-                                choice.consider(input, result)?;
-                                let result = self
-                                    .parse_token_with_trivia::<LexicalContextType::Default>(
-                                        input,
-                                        TokenKind::Percent,
-                                    );
-                                choice.consider(input, result)?;
-                                let result = self
-                                    .parse_token_with_trivia::<LexicalContextType::Default>(
-                                        input,
-                                        TokenKind::Plus,
-                                    );
-                                choice.consider(input, result)?;
-                                let result = self
-                                    .parse_token_with_trivia::<LexicalContextType::Default>(
-                                        input,
-                                        TokenKind::Slash,
-                                    );
-                                choice.consider(input, result)?;
-                                let result = self
-                                    .parse_token_with_trivia::<LexicalContextType::Default>(
-                                        input,
-                                        TokenKind::Tilde,
-                                    );
-                                choice.consider(input, result)?;
-                                choice.finish(input)
-                            })
-                        } else {
-                            ParserResult::disabled()
-                        })?;
-                        seq.finish()
-                    })))?;
+                    seq.elem(OptionalHelper::transform(self.using_alias(input)))?;
                 }
                 seq.finish()
             })
@@ -4551,12 +4755,12 @@ impl Language {
                         TokenKind::ForKeyword,
                     ))?;
                     seq.elem(ChoiceHelper::run(input, |mut choice, input| {
+                        let result = self.type_name(input);
+                        choice.consider(input, result)?;
                         let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
                             TokenKind::Asterisk,
                         );
-                        choice.consider(input, result)?;
-                        let result = self.type_name(input);
                         choice.consider(input, result)?;
                         choice.finish(input)
                     }))?;
@@ -4587,66 +4791,56 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn variable_declaration(&self, input: &mut ParserContext) -> ParserResult {
-        SequenceHelper::run(|mut seq| {
-            seq.elem(ChoiceHelper::run(input, |mut choice, input| {
-                if !self.version_is_at_least_0_5_0 {
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::VarKeyword,
-                    );
-                    choice.consider(input, result)?;
-                }
-                let result = self.type_name(input);
-                choice.consider(input, result)?;
-                choice.finish(input)
-            }))?;
-            seq.elem(OptionalHelper::transform(ChoiceHelper::run(
-                input,
-                |mut choice, input| {
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::MemoryKeyword,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::StorageKeyword,
-                    );
-                    choice.consider(input, result)?;
-                    if self.version_is_at_least_0_5_0 {
-                        let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                            input,
-                            TokenKind::CalldataKeyword,
-                        );
-                        choice.consider(input, result)?;
-                    }
-                    choice.finish(input)
-                },
-            )))?;
-            seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                input,
-                TokenKind::Identifier,
-            ))?;
-            seq.finish()
-        })
-        .with_kind(RuleKind::VariableDeclaration)
-    }
-
-    #[allow(unused_assignments, unused_parens)]
     fn variable_declaration_statement(&self, input: &mut ParserContext) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(
                 SequenceHelper::run(|mut seq| {
-                    seq.elem(self.variable_declaration(input))?;
-                    seq.elem(OptionalHelper::transform(SequenceHelper::run(|mut seq| {
-                        seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                            input,
-                            TokenKind::Equal,
-                        ))?;
-                        seq.elem(self.expression(input))?;
-                        seq.finish()
-                    })))?;
+                    seq.elem(ChoiceHelper::run(input, |mut choice, input| {
+                        let result = self.type_name(input);
+                        choice.consider(input, result)?;
+                        if !self.version_is_at_least_0_5_0 {
+                            let result = self
+                                .parse_token_with_trivia::<LexicalContextType::Default>(
+                                    input,
+                                    TokenKind::VarKeyword,
+                                );
+                            choice.consider(input, result)?;
+                        }
+                        choice.finish(input)
+                    }))?;
+                    seq.elem(OptionalHelper::transform(ChoiceHelper::run(
+                        input,
+                        |mut choice, input| {
+                            let result = self
+                                .parse_token_with_trivia::<LexicalContextType::Default>(
+                                    input,
+                                    TokenKind::MemoryKeyword,
+                                );
+                            choice.consider(input, result)?;
+                            let result = self
+                                .parse_token_with_trivia::<LexicalContextType::Default>(
+                                    input,
+                                    TokenKind::StorageKeyword,
+                                );
+                            choice.consider(input, result)?;
+                            if self.version_is_at_least_0_5_0 {
+                                let result = self
+                                    .parse_token_with_trivia::<LexicalContextType::Default>(
+                                        input,
+                                        TokenKind::CallDataKeyword,
+                                    );
+                                choice.consider(input, result)?;
+                            }
+                            choice.finish(input)
+                        },
+                    )))?;
+                    seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        input,
+                        TokenKind::Identifier,
+                    ))?;
+                    seq.elem(OptionalHelper::transform(
+                        self.variable_declaration_value(input),
+                    ))?;
                     seq.finish()
                 })
                 .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
@@ -4666,14 +4860,27 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn version_pragma(&self, input: &mut ParserContext) -> ParserResult {
+    fn variable_declaration_value(&self, input: &mut ParserContext) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(
-                self.parse_token_with_trivia::<LexicalContextType::VersionPragma>(
+                self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
-                    TokenKind::SolidityKeyword,
+                    TokenKind::Equal,
                 ),
             )?;
+            seq.elem(self.expression(input))?;
+            seq.finish()
+        })
+        .with_kind(RuleKind::VariableDeclarationValue)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn version_pragma(&self, input: &mut ParserContext) -> ParserResult {
+        SequenceHelper::run(|mut seq| {
+            seq.elem(self.parse_token_with_trivia::<LexicalContextType::Pragma>(
+                input,
+                TokenKind::SolidityKeyword,
+            ))?;
             seq.elem(self.version_pragma_expressions(input))?;
             seq.finish()
         })
@@ -4682,64 +4889,61 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn version_pragma_expression(&self, input: &mut ParserContext) -> ParserResult {
-        let parse_version_pragma_or_operator = |input: &mut ParserContext| {
+        let parse_version_pragma_or_expression = |input: &mut ParserContext| {
             PrecedenceHelper::to_binary_operator(
                 RuleKind::VersionPragmaBinaryExpression,
                 1u8,
                 1u8 + 1,
-                self.parse_token_with_trivia::<LexicalContextType::VersionPragma>(
+                self.parse_token_with_trivia::<LexicalContextType::Pragma>(
                     input,
                     TokenKind::BarBar,
                 ),
             )
         };
-        let parse_version_pragma_range_operator = |input: &mut ParserContext| {
+        let parse_version_pragma_range_expression = |input: &mut ParserContext| {
             PrecedenceHelper::to_binary_operator(
                 RuleKind::VersionPragmaBinaryExpression,
                 3u8,
                 3u8 + 1,
-                self.parse_token_with_trivia::<LexicalContextType::VersionPragma>(
-                    input,
-                    TokenKind::Minus,
-                ),
+                self.parse_token_with_trivia::<LexicalContextType::Pragma>(input, TokenKind::Minus),
             )
         };
-        let parse_version_pragma_unary_operator = |input: &mut ParserContext| {
+        let parse_version_pragma_prefix_expression = |input: &mut ParserContext| {
             PrecedenceHelper::to_prefix_operator(
                 RuleKind::VersionPragmaUnaryExpression,
                 5u8,
                 ChoiceHelper::run(input, |mut choice, input| {
-                    let result = self.parse_token_with_trivia::<LexicalContextType::VersionPragma>(
+                    let result = self.parse_token_with_trivia::<LexicalContextType::Pragma>(
                         input,
                         TokenKind::Caret,
                     );
                     choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::VersionPragma>(
+                    let result = self.parse_token_with_trivia::<LexicalContextType::Pragma>(
                         input,
                         TokenKind::Tilde,
                     );
                     choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::VersionPragma>(
+                    let result = self.parse_token_with_trivia::<LexicalContextType::Pragma>(
                         input,
                         TokenKind::Equal,
                     );
                     choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::VersionPragma>(
+                    let result = self.parse_token_with_trivia::<LexicalContextType::Pragma>(
                         input,
                         TokenKind::LessThan,
                     );
                     choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::VersionPragma>(
+                    let result = self.parse_token_with_trivia::<LexicalContextType::Pragma>(
                         input,
                         TokenKind::GreaterThan,
                     );
                     choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::VersionPragma>(
+                    let result = self.parse_token_with_trivia::<LexicalContextType::Pragma>(
                         input,
                         TokenKind::LessThanEqual,
                     );
                     choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::VersionPragma>(
+                    let result = self.parse_token_with_trivia::<LexicalContextType::Pragma>(
                         input,
                         TokenKind::GreaterThanEqual,
                     );
@@ -4750,7 +4954,7 @@ impl Language {
         };
         let prefix_operator_parser = |input: &mut ParserContext| {
             ChoiceHelper::run(input, |mut choice, input| {
-                let result = parse_version_pragma_unary_operator(input);
+                let result = parse_version_pragma_prefix_expression(input);
                 choice.consider(input, result)?;
                 choice.finish(input)
             })
@@ -4768,9 +4972,9 @@ impl Language {
         };
         let binary_operator_parser = |input: &mut ParserContext| {
             ChoiceHelper::run(input, |mut choice, input| {
-                let result = parse_version_pragma_or_operator(input);
+                let result = parse_version_pragma_or_expression(input);
                 choice.consider(input, result)?;
-                let result = parse_version_pragma_range_operator(input);
+                let result = parse_version_pragma_range_expression(input);
                 choice.consider(input, result)?;
                 choice.finish(input)
             })
@@ -4803,11 +5007,11 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn version_pragma_specifier(&self, input: &mut ParserContext) -> ParserResult {
-        SeparatedHelper::run::<_, LexicalContextType::VersionPragma>(
+        SeparatedHelper::run::<_, LexicalContextType::Pragma>(
             input,
             self,
             |input| {
-                self.parse_token_with_trivia::<LexicalContextType::VersionPragma>(
+                self.parse_token_with_trivia::<LexicalContextType::Pragma>(
                     input,
                     TokenKind::VersionPragmaValue,
                 )
@@ -4847,52 +5051,44 @@ impl Language {
                 seq.finish()
             }))?;
             seq.elem(ChoiceHelper::run(input, |mut choice, input| {
-                let result = ChoiceHelper::run(input, |mut choice, input| {
-                    let result = self.expression_statement(input);
-                    choice.consider(input, result)?;
-                    let result = self.variable_declaration_statement(input);
-                    choice.consider(input, result)?;
-                    let result = self.tuple_deconstruction_statement(input);
-                    choice.consider(input, result)?;
-                    choice.finish(input)
-                });
+                let result = self.expression_statement(input);
                 choice.consider(input, result)?;
-                let result = ChoiceHelper::run(input, |mut choice, input| {
-                    let result = self.if_statement(input);
-                    choice.consider(input, result)?;
-                    let result = self.for_statement(input);
-                    choice.consider(input, result)?;
-                    let result = self.while_statement(input);
-                    choice.consider(input, result)?;
-                    let result = self.do_while_statement(input);
-                    choice.consider(input, result)?;
-                    let result = self.continue_statement(input);
-                    choice.consider(input, result)?;
-                    let result = self.break_statement(input);
-                    choice.consider(input, result)?;
-                    let result = self.delete_statement(input);
-                    choice.consider(input, result)?;
-                    let result = self.return_statement(input);
-                    choice.consider(input, result)?;
-                    if self.version_is_at_least_0_4_21 {
-                        let result = self.emit_statement(input);
-                        choice.consider(input, result)?;
-                    }
-                    if !self.version_is_at_least_0_5_0 {
-                        let result = self.throw_statement(input);
-                        choice.consider(input, result)?;
-                    }
-                    if self.version_is_at_least_0_6_0 {
-                        let result = self.try_statement(input);
-                        choice.consider(input, result)?;
-                    }
-                    if self.version_is_at_least_0_8_4 {
-                        let result = self.revert_statement(input);
-                        choice.consider(input, result)?;
-                    }
-                    choice.finish(input)
-                });
+                let result = self.variable_declaration_statement(input);
                 choice.consider(input, result)?;
+                let result = self.tuple_deconstruction_statement(input);
+                choice.consider(input, result)?;
+                let result = self.if_statement(input);
+                choice.consider(input, result)?;
+                let result = self.for_statement(input);
+                choice.consider(input, result)?;
+                let result = self.while_statement(input);
+                choice.consider(input, result)?;
+                let result = self.do_while_statement(input);
+                choice.consider(input, result)?;
+                let result = self.continue_statement(input);
+                choice.consider(input, result)?;
+                let result = self.break_statement(input);
+                choice.consider(input, result)?;
+                let result = self.delete_statement(input);
+                choice.consider(input, result)?;
+                let result = self.return_statement(input);
+                choice.consider(input, result)?;
+                if !self.version_is_at_least_0_5_0 {
+                    let result = self.throw_statement(input);
+                    choice.consider(input, result)?;
+                }
+                if self.version_is_at_least_0_4_21 {
+                    let result = self.emit_statement(input);
+                    choice.consider(input, result)?;
+                }
+                if self.version_is_at_least_0_6_0 {
+                    let result = self.try_statement(input);
+                    choice.consider(input, result)?;
+                }
+                if self.version_is_at_least_0_8_4 {
+                    let result = self.revert_statement(input);
+                    choice.consider(input, result)?;
+                }
                 let result = self.assembly_statement(input);
                 choice.consider(input, result)?;
                 let result = self.block(input);
@@ -4910,7 +5106,7 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn yul_arguments(&self, input: &mut ParserContext) -> ParserResult {
-        SeparatedHelper::run::<_, LexicalContextType::YulBlock>(
+        SeparatedHelper::run::<_, LexicalContextType::Yul>(
             input,
             self,
             |input| self.yul_expression(input),
@@ -4924,7 +5120,7 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             seq.elem(self.yul_identifier_paths(input))?;
             seq.elem(
-                self.parse_token_with_trivia::<LexicalContextType::YulBlock>(
+                self.parse_token_with_trivia::<LexicalContextType::Yul>(
                     input,
                     TokenKind::ColonEqual,
                 ),
@@ -4941,14 +5137,14 @@ impl Language {
             let mut delim_guard = input.open_delim(TokenKind::CloseBrace);
             let input = delim_guard.ctx();
             seq.elem(
-                self.parse_token_with_trivia::<LexicalContextType::YulBlock>(
+                self.parse_token_with_trivia::<LexicalContextType::Yul>(
                     input,
                     TokenKind::OpenBrace,
                 ),
             )?;
             seq.elem(
                 OptionalHelper::transform(self.yul_statements(input))
-                    .recover_until_with_nested_delims::<_, LexicalContextType::YulBlock>(
+                    .recover_until_with_nested_delims::<_, LexicalContextType::Yul>(
                         input,
                         self,
                         TokenKind::CloseBrace,
@@ -4956,7 +5152,7 @@ impl Language {
                     ),
             )?;
             seq.elem(
-                self.parse_token_with_trivia::<LexicalContextType::YulBlock>(
+                self.parse_token_with_trivia::<LexicalContextType::Yul>(
                     input,
                     TokenKind::CloseBrace,
                 ),
@@ -4968,74 +5164,58 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn yul_break_statement(&self, input: &mut ParserContext) -> ParserResult {
-        self.parse_token_with_trivia::<LexicalContextType::YulBlock>(input, TokenKind::BreakKeyword)
+        self.parse_token_with_trivia::<LexicalContextType::Yul>(input, TokenKind::YulBreakKeyword)
             .with_kind(RuleKind::YulBreakStatement)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn yul_continue_statement(&self, input: &mut ParserContext) -> ParserResult {
-        self.parse_token_with_trivia::<LexicalContextType::YulBlock>(
+        self.parse_token_with_trivia::<LexicalContextType::Yul>(
             input,
-            TokenKind::ContinueKeyword,
+            TokenKind::YulContinueKeyword,
         )
         .with_kind(RuleKind::YulContinueStatement)
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn yul_declaration_statement(&self, input: &mut ParserContext) -> ParserResult {
+    fn yul_default_case(&self, input: &mut ParserContext) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem(
-                self.parse_token_with_trivia::<LexicalContextType::YulBlock>(
-                    input,
-                    TokenKind::LetKeyword,
-                ),
-            )?;
-            seq.elem(self.yul_identifier_paths(input))?;
-            seq.elem(OptionalHelper::transform(SequenceHelper::run(|mut seq| {
-                seq.elem(
-                    self.parse_token_with_trivia::<LexicalContextType::YulBlock>(
-                        input,
-                        TokenKind::ColonEqual,
-                    ),
-                )?;
-                seq.elem(self.yul_expression(input))?;
-                seq.finish()
-            })))?;
+            seq.elem(self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                input,
+                TokenKind::YulDefaultKeyword,
+            ))?;
+            seq.elem(self.yul_block(input))?;
             seq.finish()
         })
-        .with_kind(RuleKind::YulDeclarationStatement)
+        .with_kind(RuleKind::YulDefaultCase)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn yul_expression(&self, input: &mut ParserContext) -> ParserResult {
-        let parse_yul_function_call_operator = |input: &mut ParserContext| {
+        let parse_yul_function_call_expression = |input: &mut ParserContext| {
             PrecedenceHelper::to_postfix_operator(
                 RuleKind::YulFunctionCallExpression,
                 1u8,
                 SequenceHelper::run(|mut seq| {
                     let mut delim_guard = input.open_delim(TokenKind::CloseParen);
                     let input = delim_guard.ctx();
-                    seq.elem(
-                        self.parse_token_with_trivia::<LexicalContextType::YulBlock>(
-                            input,
-                            TokenKind::OpenParen,
-                        ),
-                    )?;
+                    seq.elem(self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                        input,
+                        TokenKind::OpenParen,
+                    ))?;
                     seq.elem(
                         OptionalHelper::transform(self.yul_arguments(input))
-                            .recover_until_with_nested_delims::<_, LexicalContextType::YulBlock>(
-                            input,
-                            self,
-                            TokenKind::CloseParen,
-                            RecoverFromNoMatch::Yes,
-                        ),
+                            .recover_until_with_nested_delims::<_, LexicalContextType::Yul>(
+                                input,
+                                self,
+                                TokenKind::CloseParen,
+                                RecoverFromNoMatch::Yes,
+                            ),
                     )?;
-                    seq.elem(
-                        self.parse_token_with_trivia::<LexicalContextType::YulBlock>(
-                            input,
-                            TokenKind::CloseParen,
-                        ),
-                    )?;
+                    seq.elem(self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                        input,
+                        TokenKind::CloseParen,
+                    ))?;
                     seq.finish()
                 }),
             )
@@ -5043,32 +5223,32 @@ impl Language {
         let primary_expression_parser = |input: &mut ParserContext| {
             ChoiceHelper::run(input, |mut choice, input| {
                 let result = ChoiceHelper::run(input, |mut choice, input| {
-                    let result = self.parse_token_with_trivia::<LexicalContextType::YulBlock>(
+                    let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                         input,
-                        TokenKind::TrueKeyword,
+                        TokenKind::YulTrueKeyword,
                     );
                     choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::YulBlock>(
+                    let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                         input,
-                        TokenKind::FalseKeyword,
+                        TokenKind::YulFalseKeyword,
                     );
                     choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::YulBlock>(
-                        input,
-                        TokenKind::YulHexLiteral,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::YulBlock>(
+                    let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                         input,
                         TokenKind::YulDecimalLiteral,
                     );
                     choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::YulBlock>(
+                    let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                        input,
+                        TokenKind::YulHexLiteral,
+                    );
+                    choice.consider(input, result)?;
+                    let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                         input,
                         TokenKind::HexStringLiteral,
                     );
                     choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::YulBlock>(
+                    let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
                         input,
                         TokenKind::AsciiStringLiteral,
                     );
@@ -5083,7 +5263,7 @@ impl Language {
         };
         let postfix_operator_parser = |input: &mut ParserContext| {
             ChoiceHelper::run(input, |mut choice, input| {
-                let result = parse_yul_function_call_operator(input);
+                let result = parse_yul_function_call_expression(input);
                 choice.consider(input, result)?;
                 choice.finish(input)
             })
@@ -5107,12 +5287,10 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn yul_for_statement(&self, input: &mut ParserContext) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem(
-                self.parse_token_with_trivia::<LexicalContextType::YulBlock>(
-                    input,
-                    TokenKind::ForKeyword,
-                ),
-            )?;
+            seq.elem(self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                input,
+                TokenKind::YulForKeyword,
+            ))?;
             seq.elem(self.yul_block(input))?;
             seq.elem(self.yul_expression(input))?;
             seq.elem(self.yul_block(input))?;
@@ -5125,18 +5303,14 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn yul_function_definition(&self, input: &mut ParserContext) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem(
-                self.parse_token_with_trivia::<LexicalContextType::YulBlock>(
-                    input,
-                    TokenKind::FunctionKeyword,
-                ),
-            )?;
-            seq.elem(
-                self.parse_token_with_trivia::<LexicalContextType::YulBlock>(
-                    input,
-                    TokenKind::YulIdentifier,
-                ),
-            )?;
+            seq.elem(self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                input,
+                TokenKind::YulFunctionKeyword,
+            ))?;
+            seq.elem(self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                input,
+                TokenKind::YulIdentifier,
+            ))?;
             seq.elem(self.yul_parameters_declaration(input))?;
             seq.elem(OptionalHelper::transform(
                 self.yul_returns_declaration(input),
@@ -5149,11 +5323,11 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn yul_identifier_path(&self, input: &mut ParserContext) -> ParserResult {
-        SeparatedHelper::run::<_, LexicalContextType::YulBlock>(
+        SeparatedHelper::run::<_, LexicalContextType::Yul>(
             input,
             self,
             |input| {
-                self.parse_token_with_trivia::<LexicalContextType::YulBlock>(
+                self.parse_token_with_trivia::<LexicalContextType::Yul>(
                     input,
                     TokenKind::YulIdentifier,
                 )
@@ -5165,7 +5339,7 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn yul_identifier_paths(&self, input: &mut ParserContext) -> ParserResult {
-        SeparatedHelper::run::<_, LexicalContextType::YulBlock>(
+        SeparatedHelper::run::<_, LexicalContextType::Yul>(
             input,
             self,
             |input| self.yul_identifier_path(input),
@@ -5175,30 +5349,12 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn yul_identifiers(&self, input: &mut ParserContext) -> ParserResult {
-        SeparatedHelper::run::<_, LexicalContextType::YulBlock>(
-            input,
-            self,
-            |input| {
-                self.parse_token_with_trivia::<LexicalContextType::YulBlock>(
-                    input,
-                    TokenKind::YulIdentifier,
-                )
-            },
-            TokenKind::Comma,
-        )
-        .with_kind(RuleKind::YulIdentifiers)
-    }
-
-    #[allow(unused_assignments, unused_parens)]
     fn yul_if_statement(&self, input: &mut ParserContext) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem(
-                self.parse_token_with_trivia::<LexicalContextType::YulBlock>(
-                    input,
-                    TokenKind::IfKeyword,
-                ),
-            )?;
+            seq.elem(self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                input,
+                TokenKind::YulIfKeyword,
+            ))?;
             seq.elem(self.yul_expression(input))?;
             seq.elem(self.yul_block(input))?;
             seq.finish()
@@ -5209,9 +5365,9 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn yul_leave_statement(&self, input: &mut ParserContext) -> ParserResult {
         if self.version_is_at_least_0_6_0 {
-            self.parse_token_with_trivia::<LexicalContextType::YulBlock>(
+            self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
-                TokenKind::LeaveKeyword,
+                TokenKind::YulLeaveKeyword,
             )
         } else {
             ParserResult::disabled()
@@ -5220,19 +5376,35 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
+    fn yul_parameters(&self, input: &mut ParserContext) -> ParserResult {
+        SeparatedHelper::run::<_, LexicalContextType::Yul>(
+            input,
+            self,
+            |input| {
+                self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                    input,
+                    TokenKind::YulIdentifier,
+                )
+            },
+            TokenKind::Comma,
+        )
+        .with_kind(RuleKind::YulParameters)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
     fn yul_parameters_declaration(&self, input: &mut ParserContext) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             let mut delim_guard = input.open_delim(TokenKind::CloseParen);
             let input = delim_guard.ctx();
             seq.elem(
-                self.parse_token_with_trivia::<LexicalContextType::YulBlock>(
+                self.parse_token_with_trivia::<LexicalContextType::Yul>(
                     input,
                     TokenKind::OpenParen,
                 ),
             )?;
             seq.elem(
-                OptionalHelper::transform(self.yul_identifiers(input))
-                    .recover_until_with_nested_delims::<_, LexicalContextType::YulBlock>(
+                OptionalHelper::transform(self.yul_parameters(input))
+                    .recover_until_with_nested_delims::<_, LexicalContextType::Yul>(
                         input,
                         self,
                         TokenKind::CloseParen,
@@ -5240,7 +5412,7 @@ impl Language {
                     ),
             )?;
             seq.elem(
-                self.parse_token_with_trivia::<LexicalContextType::YulBlock>(
+                self.parse_token_with_trivia::<LexicalContextType::Yul>(
                     input,
                     TokenKind::CloseParen,
                 ),
@@ -5251,15 +5423,29 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
+    fn yul_return_variables(&self, input: &mut ParserContext) -> ParserResult {
+        SeparatedHelper::run::<_, LexicalContextType::Yul>(
+            input,
+            self,
+            |input| {
+                self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                    input,
+                    TokenKind::YulIdentifier,
+                )
+            },
+            TokenKind::Comma,
+        )
+        .with_kind(RuleKind::YulReturnVariables)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
     fn yul_returns_declaration(&self, input: &mut ParserContext) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem(
-                self.parse_token_with_trivia::<LexicalContextType::YulBlock>(
-                    input,
-                    TokenKind::MinusGreaterThan,
-                ),
-            )?;
-            seq.elem(self.yul_identifiers(input))?;
+            seq.elem(self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                input,
+                TokenKind::MinusGreaterThan,
+            ))?;
+            seq.elem(self.yul_return_variables(input))?;
             seq.finish()
         })
         .with_kind(RuleKind::YulReturnsDeclaration)
@@ -5273,7 +5459,7 @@ impl Language {
                 choice.consider(input, result)?;
                 let result = self.yul_function_definition(input);
                 choice.consider(input, result)?;
-                let result = self.yul_declaration_statement(input);
+                let result = self.yul_variable_declaration_statement(input);
                 choice.consider(input, result)?;
                 let result = self.yul_assignment_statement(input);
                 choice.consider(input, result)?;
@@ -5300,80 +5486,26 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn yul_switch_case(&self, input: &mut ParserContext) -> ParserResult {
-        SequenceHelper::run(|mut seq| {
-            seq.elem(ChoiceHelper::run(input, |mut choice, input| {
-                let result = self.parse_token_with_trivia::<LexicalContextType::YulBlock>(
-                    input,
-                    TokenKind::DefaultKeyword,
-                );
+    fn yul_switch_cases(&self, input: &mut ParserContext) -> ParserResult {
+        OneOrMoreHelper::run(input, |input| {
+            ChoiceHelper::run(input, |mut choice, input| {
+                let result = self.yul_default_case(input);
                 choice.consider(input, result)?;
-                let result = SequenceHelper::run(|mut seq| {
-                    seq.elem(
-                        self.parse_token_with_trivia::<LexicalContextType::YulBlock>(
-                            input,
-                            TokenKind::CaseKeyword,
-                        ),
-                    )?;
-                    seq.elem(ChoiceHelper::run(input, |mut choice, input| {
-                        let result = self.parse_token_with_trivia::<LexicalContextType::YulBlock>(
-                            input,
-                            TokenKind::TrueKeyword,
-                        );
-                        choice.consider(input, result)?;
-                        let result = self.parse_token_with_trivia::<LexicalContextType::YulBlock>(
-                            input,
-                            TokenKind::FalseKeyword,
-                        );
-                        choice.consider(input, result)?;
-                        let result = self.parse_token_with_trivia::<LexicalContextType::YulBlock>(
-                            input,
-                            TokenKind::YulHexLiteral,
-                        );
-                        choice.consider(input, result)?;
-                        let result = self.parse_token_with_trivia::<LexicalContextType::YulBlock>(
-                            input,
-                            TokenKind::YulDecimalLiteral,
-                        );
-                        choice.consider(input, result)?;
-                        let result = self.parse_token_with_trivia::<LexicalContextType::YulBlock>(
-                            input,
-                            TokenKind::HexStringLiteral,
-                        );
-                        choice.consider(input, result)?;
-                        let result = self.parse_token_with_trivia::<LexicalContextType::YulBlock>(
-                            input,
-                            TokenKind::AsciiStringLiteral,
-                        );
-                        choice.consider(input, result)?;
-                        choice.finish(input)
-                    }))?;
-                    seq.finish()
-                });
+                let result = self.yul_value_case(input);
                 choice.consider(input, result)?;
                 choice.finish(input)
-            }))?;
-            seq.elem(self.yul_block(input))?;
-            seq.finish()
+            })
         })
-        .with_kind(RuleKind::YulSwitchCase)
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn yul_switch_cases(&self, input: &mut ParserContext) -> ParserResult {
-        OneOrMoreHelper::run(input, |input| self.yul_switch_case(input))
-            .with_kind(RuleKind::YulSwitchCases)
+        .with_kind(RuleKind::YulSwitchCases)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn yul_switch_statement(&self, input: &mut ParserContext) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem(
-                self.parse_token_with_trivia::<LexicalContextType::YulBlock>(
-                    input,
-                    TokenKind::SwitchKeyword,
-                ),
-            )?;
+            seq.elem(self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                input,
+                TokenKind::YulSwitchKeyword,
+            ))?;
             seq.elem(self.yul_expression(input))?;
             seq.elem(self.yul_switch_cases(input))?;
             seq.finish()
@@ -5381,27 +5513,93 @@ impl Language {
         .with_kind(RuleKind::YulSwitchStatement)
     }
 
+    #[allow(unused_assignments, unused_parens)]
+    fn yul_value_case(&self, input: &mut ParserContext) -> ParserResult {
+        SequenceHelper::run(|mut seq| {
+            seq.elem(self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                input,
+                TokenKind::YulCaseKeyword,
+            ))?;
+            seq.elem(ChoiceHelper::run(input, |mut choice, input| {
+                let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                    input,
+                    TokenKind::YulTrueKeyword,
+                );
+                choice.consider(input, result)?;
+                let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                    input,
+                    TokenKind::YulFalseKeyword,
+                );
+                choice.consider(input, result)?;
+                let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                    input,
+                    TokenKind::YulDecimalLiteral,
+                );
+                choice.consider(input, result)?;
+                let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                    input,
+                    TokenKind::YulHexLiteral,
+                );
+                choice.consider(input, result)?;
+                let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                    input,
+                    TokenKind::HexStringLiteral,
+                );
+                choice.consider(input, result)?;
+                let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                    input,
+                    TokenKind::AsciiStringLiteral,
+                );
+                choice.consider(input, result)?;
+                choice.finish(input)
+            }))?;
+            seq.elem(self.yul_block(input))?;
+            seq.finish()
+        })
+        .with_kind(RuleKind::YulValueCase)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn yul_variable_declaration_statement(&self, input: &mut ParserContext) -> ParserResult {
+        SequenceHelper::run(|mut seq| {
+            seq.elem(self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                input,
+                TokenKind::YulLetKeyword,
+            ))?;
+            seq.elem(self.yul_identifier_paths(input))?;
+            seq.elem(OptionalHelper::transform(
+                self.yul_variable_declaration_value(input),
+            ))?;
+            seq.finish()
+        })
+        .with_kind(RuleKind::YulVariableDeclarationStatement)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn yul_variable_declaration_value(&self, input: &mut ParserContext) -> ParserResult {
+        SequenceHelper::run(|mut seq| {
+            seq.elem(
+                self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                    input,
+                    TokenKind::ColonEqual,
+                ),
+            )?;
+            seq.elem(self.yul_expression(input))?;
+            seq.finish()
+        })
+        .with_kind(RuleKind::YulVariableDeclarationValue)
+    }
+
     /********************************************
      *         Scanner Functions
      ********************************************/
 
     #[allow(unused_assignments, unused_parens)]
-    fn ascii_character_without_double_quote_or_backslash(&self, input: &mut ParserContext) -> bool {
-        scan_choice!(
+    fn ampersand(&self, input: &mut ParserContext) -> bool {
+        scan_not_followed_by!(
             input,
-            scan_char_range!(input, ' '..='!'),
-            scan_char_range!(input, '#'..='['),
-            scan_char_range!(input, ']'..='~')
-        )
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn ascii_character_without_single_quote_or_backslash(&self, input: &mut ParserContext) -> bool {
-        scan_choice!(
-            input,
-            scan_char_range!(input, ' '..='&'),
-            scan_char_range!(input, '('..='['),
-            scan_char_range!(input, ']'..='~')
+            scan_chars!(input, '&'),
+            scan_choice!(input, scan_chars!(input, '='), scan_chars!(input, '&'))
         )
     }
 
@@ -5430,27 +5628,89 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn bytes_keyword(&self, input: &mut ParserContext) -> bool {
-        scan_sequence!(
-            scan_chars!(input, 'b', 'y', 't', 'e', 's'),
-            self.fixed_bytes_type_size(input)
+    fn asterisk(&self, input: &mut ParserContext) -> bool {
+        scan_not_followed_by!(
+            input,
+            scan_chars!(input, '*'),
+            scan_choice!(input, scan_chars!(input, '='), scan_chars!(input, '*'))
         )
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn decimal_digit(&self, input: &mut ParserContext) -> bool {
-        scan_char_range!(input, '0'..='9')
+    fn bang(&self, input: &mut ParserContext) -> bool {
+        scan_not_followed_by!(input, scan_chars!(input, '!'), scan_chars!(input, '='))
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn bar(&self, input: &mut ParserContext) -> bool {
+        scan_not_followed_by!(
+            input,
+            scan_chars!(input, '|'),
+            scan_choice!(input, scan_chars!(input, '|'), scan_chars!(input, '='))
+        )
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn bytes_keyword(&self, input: &mut ParserContext) -> bool {
+        scan_sequence!(
+            scan_chars!(input, 'b', 'y', 't', 'e', 's'),
+            scan_choice!(
+                input,
+                scan_chars!(input, '9'),
+                scan_chars!(input, '8'),
+                scan_chars!(input, '7'),
+                scan_chars!(input, '6'),
+                scan_chars!(input, '5'),
+                scan_chars!(input, '4'),
+                scan_chars!(input, '3', '2'),
+                scan_chars!(input, '3', '1'),
+                scan_chars!(input, '3', '0'),
+                scan_chars!(input, '3'),
+                scan_chars!(input, '2', '9'),
+                scan_chars!(input, '2', '8'),
+                scan_chars!(input, '2', '7'),
+                scan_chars!(input, '2', '6'),
+                scan_chars!(input, '2', '5'),
+                scan_chars!(input, '2', '4'),
+                scan_chars!(input, '2', '3'),
+                scan_chars!(input, '2', '2'),
+                scan_chars!(input, '2', '1'),
+                scan_chars!(input, '2', '0'),
+                scan_chars!(input, '2'),
+                scan_chars!(input, '1', '9'),
+                scan_chars!(input, '1', '8'),
+                scan_chars!(input, '1', '7'),
+                scan_chars!(input, '1', '6'),
+                scan_chars!(input, '1', '5'),
+                scan_chars!(input, '1', '4'),
+                scan_chars!(input, '1', '3'),
+                scan_chars!(input, '1', '2'),
+                scan_chars!(input, '1', '1'),
+                scan_chars!(input, '1', '0'),
+                scan_chars!(input, '1')
+            )
+        )
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn caret(&self, input: &mut ParserContext) -> bool {
+        scan_not_followed_by!(input, scan_chars!(input, '^'), scan_chars!(input, '='))
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn colon(&self, input: &mut ParserContext) -> bool {
+        scan_not_followed_by!(input, scan_chars!(input, ':'), scan_chars!(input, '='))
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn decimal_digits(&self, input: &mut ParserContext) -> bool {
         scan_sequence!(
-            scan_one_or_more!(input, self.decimal_digit(input)),
+            scan_one_or_more!(input, scan_char_range!(input, '0'..='9')),
             scan_zero_or_more!(
                 input,
                 scan_sequence!(
                     scan_chars!(input, '_'),
-                    scan_one_or_more!(input, self.decimal_digit(input))
+                    scan_one_or_more!(input, scan_char_range!(input, '0'..='9'))
                 )
             )
         )
@@ -5467,35 +5727,55 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn decimal_literal(&self, input: &mut ParserContext) -> bool {
-        scan_not_followed_by!(
+        scan_choice!(
             input,
-            scan_sequence!(
-                scan_choice!(
-                    input,
+            scan_not_followed_by!(
+                input,
+                scan_sequence!(
                     scan_not_followed_by!(
                         input,
                         self.decimal_digits(input),
                         scan_chars!(input, '.')
                     ),
-                    if !self.version_is_at_least_0_5_0 {
+                    scan_optional!(input, self.decimal_exponent(input))
+                ),
+                self.identifier_start(input)
+            ),
+            if !self.version_is_at_least_0_5_0 {
+                scan_not_followed_by!(
+                    input,
+                    scan_sequence!(
                         scan_not_followed_by!(
                             input,
                             scan_sequence!(self.decimal_digits(input), scan_chars!(input, '.')),
                             self.decimal_digits(input)
-                        )
-                    } else {
-                        false
-                    },
-                    scan_sequence!(scan_chars!(input, '.'), self.decimal_digits(input)),
-                    scan_sequence!(
-                        self.decimal_digits(input),
-                        scan_chars!(input, '.'),
-                        self.decimal_digits(input)
-                    )
+                        ),
+                        scan_optional!(input, self.decimal_exponent(input))
+                    ),
+                    self.identifier_start(input)
+                )
+            } else {
+                false
+            },
+            scan_not_followed_by!(
+                input,
+                scan_sequence!(
+                    scan_chars!(input, '.'),
+                    self.decimal_digits(input),
+                    scan_optional!(input, self.decimal_exponent(input))
                 ),
-                scan_optional!(input, self.decimal_exponent(input))
+                self.identifier_start(input)
             ),
-            self.identifier_start(input)
+            scan_not_followed_by!(
+                input,
+                scan_sequence!(
+                    self.decimal_digits(input),
+                    scan_chars!(input, '.'),
+                    self.decimal_digits(input),
+                    scan_optional!(input, self.decimal_exponent(input))
+                ),
+                self.identifier_start(input)
+            )
         )
     }
 
@@ -5508,7 +5788,9 @@ impl Language {
                 scan_choice!(
                     input,
                     self.escape_sequence(input),
-                    self.ascii_character_without_double_quote_or_backslash(input)
+                    scan_char_range!(input, ' '..='!'),
+                    scan_char_range!(input, '#'..='['),
+                    scan_char_range!(input, ']'..='~')
                 )
             ),
             scan_chars!(input, '"')
@@ -5534,7 +5816,7 @@ impl Language {
                     scan_choice!(
                         input,
                         self.escape_sequence(input),
-                        scan_none_of!(input, '\n', '\r', '"', '\\')
+                        scan_none_of!(input, '"', '\\', '\r', '\n')
                     )
                 ),
                 scan_chars!(input, '"')
@@ -5553,6 +5835,15 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
+    fn equal(&self, input: &mut ParserContext) -> bool {
+        scan_not_followed_by!(
+            input,
+            scan_chars!(input, '='),
+            scan_choice!(input, scan_chars!(input, '>'), scan_chars!(input, '='))
+        )
+    }
+
+    #[allow(unused_assignments, unused_parens)]
     fn escape_sequence(&self, input: &mut ParserContext) -> bool {
         scan_sequence!(
             scan_chars!(input, '\\'),
@@ -5566,58 +5857,312 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn fixed_bytes_type_size(&self, input: &mut ParserContext) -> bool {
+    fn fixed_keyword(&self, input: &mut ParserContext) -> bool {
         scan_choice!(
             input,
-            scan_chars!(input, '9'),
-            scan_chars!(input, '8'),
-            scan_chars!(input, '7'),
-            scan_chars!(input, '6'),
-            scan_chars!(input, '5'),
-            scan_chars!(input, '4'),
-            scan_chars!(input, '3', '2'),
-            scan_chars!(input, '3', '1'),
-            scan_chars!(input, '3', '0'),
-            scan_chars!(input, '3'),
-            scan_chars!(input, '2', '9'),
-            scan_chars!(input, '2', '8'),
-            scan_chars!(input, '2', '7'),
-            scan_chars!(input, '2', '6'),
-            scan_chars!(input, '2', '5'),
-            scan_chars!(input, '2', '4'),
-            scan_chars!(input, '2', '3'),
-            scan_chars!(input, '2', '2'),
-            scan_chars!(input, '2', '1'),
-            scan_chars!(input, '2', '0'),
-            scan_chars!(input, '2'),
-            scan_chars!(input, '1', '9'),
-            scan_chars!(input, '1', '8'),
-            scan_chars!(input, '1', '7'),
-            scan_chars!(input, '1', '6'),
-            scan_chars!(input, '1', '5'),
-            scan_chars!(input, '1', '4'),
-            scan_chars!(input, '1', '3'),
-            scan_chars!(input, '1', '2'),
-            scan_chars!(input, '1', '1'),
-            scan_chars!(input, '1', '0'),
-            scan_chars!(input, '1')
-        )
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn fixed_keyword(&self, input: &mut ParserContext) -> bool {
-        scan_sequence!(
             scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
-            scan_optional!(input, self.fixed_type_size(input))
+            scan_sequence!(
+                scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
+                scan_choice!(
+                    input,
+                    scan_chars!(input, '9', '6'),
+                    scan_chars!(input, '8', '8'),
+                    scan_chars!(input, '8', '0'),
+                    scan_chars!(input, '8'),
+                    scan_chars!(input, '7', '2'),
+                    scan_chars!(input, '6', '4'),
+                    scan_chars!(input, '5', '6'),
+                    scan_chars!(input, '4', '8'),
+                    scan_chars!(input, '4', '0'),
+                    scan_chars!(input, '3', '2'),
+                    scan_chars!(input, '2', '4'),
+                    scan_chars!(input, '1', '7', '6'),
+                    scan_chars!(input, '1', '6', '8'),
+                    scan_chars!(input, '1', '6', '0'),
+                    scan_chars!(input, '1', '6'),
+                    scan_chars!(input, '1', '5', '2'),
+                    scan_chars!(input, '1', '4', '4'),
+                    scan_chars!(input, '1', '3', '6'),
+                    scan_chars!(input, '1', '2', '8'),
+                    scan_chars!(input, '1', '2', '0'),
+                    scan_chars!(input, '1', '1', '2'),
+                    scan_chars!(input, '1', '0', '4')
+                ),
+                scan_chars!(input, 'x'),
+                scan_choice!(
+                    input,
+                    scan_chars!(input, '8', '0'),
+                    scan_chars!(input, '8'),
+                    scan_chars!(input, '7', '2'),
+                    scan_chars!(input, '6', '4'),
+                    scan_chars!(input, '5', '6'),
+                    scan_chars!(input, '4', '8'),
+                    scan_chars!(input, '4', '0'),
+                    scan_chars!(input, '3', '2'),
+                    scan_chars!(input, '2', '4'),
+                    scan_chars!(input, '1', '6')
+                )
+            ),
+            scan_sequence!(
+                scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
+                scan_choice!(
+                    input,
+                    scan_chars!(input, '2', '4', '8', 'x', '8'),
+                    scan_chars!(input, '2', '4', '0', 'x', '8'),
+                    scan_chars!(input, '2', '4', '0', 'x', '1', '6'),
+                    scan_chars!(input, '2', '3', '2', 'x', '8'),
+                    scan_chars!(input, '2', '3', '2', 'x', '2', '4'),
+                    scan_chars!(input, '2', '3', '2', 'x', '1', '6'),
+                    scan_chars!(input, '2', '2', '4', 'x', '8'),
+                    scan_chars!(input, '2', '2', '4', 'x', '3', '2'),
+                    scan_chars!(input, '2', '2', '4', 'x', '2', '4'),
+                    scan_chars!(input, '2', '2', '4', 'x', '1', '6'),
+                    scan_chars!(input, '2', '1', '6', 'x', '8'),
+                    scan_chars!(input, '2', '1', '6', 'x', '4', '0'),
+                    scan_chars!(input, '2', '1', '6', 'x', '3', '2'),
+                    scan_chars!(input, '2', '1', '6', 'x', '2', '4'),
+                    scan_chars!(input, '2', '1', '6', 'x', '1', '6'),
+                    scan_chars!(input, '2', '0', '8', 'x', '8'),
+                    scan_chars!(input, '2', '0', '8', 'x', '4', '8'),
+                    scan_chars!(input, '2', '0', '8', 'x', '4', '0'),
+                    scan_chars!(input, '2', '0', '8', 'x', '3', '2'),
+                    scan_chars!(input, '2', '0', '8', 'x', '2', '4'),
+                    scan_chars!(input, '2', '0', '8', 'x', '1', '6'),
+                    scan_chars!(input, '2', '0', '0', 'x', '8'),
+                    scan_chars!(input, '2', '0', '0', 'x', '5', '6'),
+                    scan_chars!(input, '2', '0', '0', 'x', '4', '8'),
+                    scan_chars!(input, '2', '0', '0', 'x', '4', '0'),
+                    scan_chars!(input, '2', '0', '0', 'x', '3', '2'),
+                    scan_chars!(input, '2', '0', '0', 'x', '2', '4'),
+                    scan_chars!(input, '2', '0', '0', 'x', '1', '6'),
+                    scan_chars!(input, '1', '9', '2', 'x', '8'),
+                    scan_chars!(input, '1', '9', '2', 'x', '6', '4'),
+                    scan_chars!(input, '1', '9', '2', 'x', '5', '6'),
+                    scan_chars!(input, '1', '9', '2', 'x', '4', '8'),
+                    scan_chars!(input, '1', '9', '2', 'x', '4', '0'),
+                    scan_chars!(input, '1', '9', '2', 'x', '3', '2'),
+                    scan_chars!(input, '1', '9', '2', 'x', '2', '4'),
+                    scan_chars!(input, '1', '9', '2', 'x', '1', '6'),
+                    scan_chars!(input, '1', '8', '4', 'x', '8'),
+                    scan_chars!(input, '1', '8', '4', 'x', '7', '2'),
+                    scan_chars!(input, '1', '8', '4', 'x', '6', '4'),
+                    scan_chars!(input, '1', '8', '4', 'x', '5', '6'),
+                    scan_chars!(input, '1', '8', '4', 'x', '4', '8'),
+                    scan_chars!(input, '1', '8', '4', 'x', '4', '0'),
+                    scan_chars!(input, '1', '8', '4', 'x', '3', '2'),
+                    scan_chars!(input, '1', '8', '4', 'x', '2', '4'),
+                    scan_chars!(input, '1', '8', '4', 'x', '1', '6')
+                )
+            ),
+            if self.version_is_at_least_0_4_14 {
+                scan_sequence!(
+                    scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
+                    scan_choice!(
+                        input,
+                        scan_chars!(input, '2', '5', '6', 'x', '8', '0'),
+                        scan_chars!(input, '2', '5', '6', 'x', '8'),
+                        scan_chars!(input, '2', '5', '6', 'x', '7', '2'),
+                        scan_chars!(input, '2', '5', '6', 'x', '6', '4'),
+                        scan_chars!(input, '2', '5', '6', 'x', '5', '6'),
+                        scan_chars!(input, '2', '5', '6', 'x', '4', '8'),
+                        scan_chars!(input, '2', '5', '6', 'x', '4', '0'),
+                        scan_chars!(input, '2', '5', '6', 'x', '3', '2'),
+                        scan_chars!(input, '2', '5', '6', 'x', '2', '4'),
+                        scan_chars!(input, '2', '5', '6', 'x', '1', '6'),
+                        scan_chars!(input, '2', '4', '8', 'x', '8', '0'),
+                        scan_chars!(input, '2', '4', '8', 'x', '7', '2'),
+                        scan_chars!(input, '2', '4', '8', 'x', '6', '4'),
+                        scan_chars!(input, '2', '4', '8', 'x', '5', '6'),
+                        scan_chars!(input, '2', '4', '8', 'x', '4', '8'),
+                        scan_chars!(input, '2', '4', '8', 'x', '4', '0'),
+                        scan_chars!(input, '2', '4', '8', 'x', '3', '2'),
+                        scan_chars!(input, '2', '4', '8', 'x', '2', '4'),
+                        scan_chars!(input, '2', '4', '8', 'x', '1', '6'),
+                        scan_chars!(input, '2', '4', '0', 'x', '8', '0'),
+                        scan_chars!(input, '2', '4', '0', 'x', '7', '2'),
+                        scan_chars!(input, '2', '4', '0', 'x', '6', '4'),
+                        scan_chars!(input, '2', '4', '0', 'x', '5', '6'),
+                        scan_chars!(input, '2', '4', '0', 'x', '4', '8'),
+                        scan_chars!(input, '2', '4', '0', 'x', '4', '0'),
+                        scan_chars!(input, '2', '4', '0', 'x', '3', '2'),
+                        scan_chars!(input, '2', '4', '0', 'x', '2', '4'),
+                        scan_chars!(input, '2', '3', '2', 'x', '8', '0'),
+                        scan_chars!(input, '2', '3', '2', 'x', '7', '2'),
+                        scan_chars!(input, '2', '3', '2', 'x', '6', '4'),
+                        scan_chars!(input, '2', '3', '2', 'x', '5', '6'),
+                        scan_chars!(input, '2', '3', '2', 'x', '4', '8'),
+                        scan_chars!(input, '2', '3', '2', 'x', '4', '0'),
+                        scan_chars!(input, '2', '3', '2', 'x', '3', '2'),
+                        scan_chars!(input, '2', '2', '4', 'x', '8', '0'),
+                        scan_chars!(input, '2', '2', '4', 'x', '7', '2'),
+                        scan_chars!(input, '2', '2', '4', 'x', '6', '4'),
+                        scan_chars!(input, '2', '2', '4', 'x', '5', '6'),
+                        scan_chars!(input, '2', '2', '4', 'x', '4', '8'),
+                        scan_chars!(input, '2', '2', '4', 'x', '4', '0'),
+                        scan_chars!(input, '2', '1', '6', 'x', '8', '0'),
+                        scan_chars!(input, '2', '1', '6', 'x', '7', '2'),
+                        scan_chars!(input, '2', '1', '6', 'x', '6', '4'),
+                        scan_chars!(input, '2', '1', '6', 'x', '5', '6'),
+                        scan_chars!(input, '2', '1', '6', 'x', '4', '8'),
+                        scan_chars!(input, '2', '0', '8', 'x', '8', '0'),
+                        scan_chars!(input, '2', '0', '8', 'x', '7', '2'),
+                        scan_chars!(input, '2', '0', '8', 'x', '6', '4'),
+                        scan_chars!(input, '2', '0', '8', 'x', '5', '6'),
+                        scan_chars!(input, '2', '0', '0', 'x', '8', '0'),
+                        scan_chars!(input, '2', '0', '0', 'x', '7', '2'),
+                        scan_chars!(input, '2', '0', '0', 'x', '6', '4'),
+                        scan_chars!(input, '1', '9', '2', 'x', '8', '0'),
+                        scan_chars!(input, '1', '9', '2', 'x', '7', '2'),
+                        scan_chars!(input, '1', '8', '4', 'x', '8', '0')
+                    )
+                )
+            } else {
+                false
+            },
+            if self.version_is_at_least_0_4_14 {
+                scan_sequence!(
+                    scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
+                    scan_choice!(
+                        input,
+                        scan_chars!(input, '9', '6'),
+                        scan_chars!(input, '8', '8'),
+                        scan_chars!(input, '8', '0'),
+                        scan_chars!(input, '8'),
+                        scan_chars!(input, '7', '2'),
+                        scan_chars!(input, '6', '4'),
+                        scan_chars!(input, '5', '6'),
+                        scan_chars!(input, '4', '8'),
+                        scan_chars!(input, '4', '0'),
+                        scan_chars!(input, '3', '2'),
+                        scan_chars!(input, '2', '5', '6'),
+                        scan_chars!(input, '2', '4', '8'),
+                        scan_chars!(input, '2', '4', '0'),
+                        scan_chars!(input, '2', '4'),
+                        scan_chars!(input, '2', '3', '2'),
+                        scan_chars!(input, '2', '2', '4'),
+                        scan_chars!(input, '2', '1', '6'),
+                        scan_chars!(input, '2', '0', '8'),
+                        scan_chars!(input, '2', '0', '0'),
+                        scan_chars!(input, '1', '9', '2'),
+                        scan_chars!(input, '1', '8', '4'),
+                        scan_chars!(input, '1', '7', '6'),
+                        scan_chars!(input, '1', '6', '8'),
+                        scan_chars!(input, '1', '6', '0'),
+                        scan_chars!(input, '1', '6'),
+                        scan_chars!(input, '1', '5', '2'),
+                        scan_chars!(input, '1', '4', '4'),
+                        scan_chars!(input, '1', '3', '6'),
+                        scan_chars!(input, '1', '2', '8'),
+                        scan_chars!(input, '1', '2', '0'),
+                        scan_chars!(input, '1', '1', '2'),
+                        scan_chars!(input, '1', '0', '4')
+                    ),
+                    scan_chars!(input, 'x'),
+                    scan_choice!(
+                        input,
+                        scan_chars!(input, '9'),
+                        scan_chars!(input, '7', '9'),
+                        scan_chars!(input, '7', '8'),
+                        scan_chars!(input, '7', '7'),
+                        scan_chars!(input, '7', '6'),
+                        scan_chars!(input, '7', '5'),
+                        scan_chars!(input, '7', '4'),
+                        scan_chars!(input, '7', '3'),
+                        scan_chars!(input, '7', '1'),
+                        scan_chars!(input, '7', '0'),
+                        scan_chars!(input, '7'),
+                        scan_chars!(input, '6', '9'),
+                        scan_chars!(input, '6', '8'),
+                        scan_chars!(input, '6', '7'),
+                        scan_chars!(input, '6', '6'),
+                        scan_chars!(input, '6', '5'),
+                        scan_chars!(input, '6', '3'),
+                        scan_chars!(input, '6', '2'),
+                        scan_chars!(input, '6', '1'),
+                        scan_chars!(input, '6', '0'),
+                        scan_chars!(input, '6'),
+                        scan_chars!(input, '5', '9'),
+                        scan_chars!(input, '5', '8'),
+                        scan_chars!(input, '5', '7'),
+                        scan_chars!(input, '5', '5'),
+                        scan_chars!(input, '5', '4'),
+                        scan_chars!(input, '5', '3'),
+                        scan_chars!(input, '5', '2'),
+                        scan_chars!(input, '5', '1'),
+                        scan_chars!(input, '5', '0'),
+                        scan_chars!(input, '5'),
+                        scan_chars!(input, '4', '9'),
+                        scan_chars!(input, '4', '7'),
+                        scan_chars!(input, '4', '6'),
+                        scan_chars!(input, '4', '5'),
+                        scan_chars!(input, '4', '4'),
+                        scan_chars!(input, '4', '3'),
+                        scan_chars!(input, '4', '2'),
+                        scan_chars!(input, '4', '1'),
+                        scan_chars!(input, '4'),
+                        scan_chars!(input, '3', '9'),
+                        scan_chars!(input, '3', '8'),
+                        scan_chars!(input, '3', '7'),
+                        scan_chars!(input, '3', '6'),
+                        scan_chars!(input, '3', '5'),
+                        scan_chars!(input, '3', '4'),
+                        scan_chars!(input, '3', '3'),
+                        scan_chars!(input, '3', '1'),
+                        scan_chars!(input, '3', '0'),
+                        scan_chars!(input, '3'),
+                        scan_chars!(input, '2', '9'),
+                        scan_chars!(input, '2', '8'),
+                        scan_chars!(input, '2', '7'),
+                        scan_chars!(input, '2', '6'),
+                        scan_chars!(input, '2', '5'),
+                        scan_chars!(input, '2', '3'),
+                        scan_chars!(input, '2', '2'),
+                        scan_chars!(input, '2', '1'),
+                        scan_chars!(input, '2', '0'),
+                        scan_chars!(input, '2'),
+                        scan_chars!(input, '1', '9'),
+                        scan_chars!(input, '1', '8'),
+                        scan_chars!(input, '1', '7'),
+                        scan_chars!(input, '1', '5'),
+                        scan_chars!(input, '1', '4'),
+                        scan_chars!(input, '1', '3'),
+                        scan_chars!(input, '1', '2'),
+                        scan_chars!(input, '1', '1'),
+                        scan_chars!(input, '1', '0'),
+                        scan_chars!(input, '1'),
+                        scan_chars!(input, '0')
+                    )
+                )
+            } else {
+                false
+            }
         )
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn fixed_type_size(&self, input: &mut ParserContext) -> bool {
-        scan_sequence!(
-            scan_one_or_more!(input, scan_char_range!(input, '0'..='9')),
-            scan_chars!(input, 'x'),
-            scan_one_or_more!(input, scan_char_range!(input, '0'..='9'))
+    fn greater_than(&self, input: &mut ParserContext) -> bool {
+        scan_not_followed_by!(
+            input,
+            scan_chars!(input, '>'),
+            scan_choice!(input, scan_chars!(input, '>'), scan_chars!(input, '='))
+        )
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn greater_than_greater_than(&self, input: &mut ParserContext) -> bool {
+        scan_not_followed_by!(
+            input,
+            scan_chars!(input, '>', '>'),
+            scan_choice!(input, scan_chars!(input, '>'), scan_chars!(input, '='))
+        )
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn greater_than_greater_than_greater_than(&self, input: &mut ParserContext) -> bool {
+        scan_not_followed_by!(
+            input,
+            scan_chars!(input, '>', '>', '>'),
+            scan_chars!(input, '=')
         )
     }
 
@@ -5634,36 +6179,50 @@ impl Language {
     fn hex_character(&self, input: &mut ParserContext) -> bool {
         scan_choice!(
             input,
-            self.decimal_digit(input),
-            scan_char_range!(input, 'A'..='F'),
-            scan_char_range!(input, 'a'..='f')
+            scan_char_range!(input, '0'..='9'),
+            scan_char_range!(input, 'a'..='f'),
+            scan_char_range!(input, 'A'..='F')
         )
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn hex_literal(&self, input: &mut ParserContext) -> bool {
-        scan_not_followed_by!(
+        scan_choice!(
             input,
-            scan_sequence!(
-                scan_choice!(
-                    input,
+            scan_not_followed_by!(
+                input,
+                scan_sequence!(
                     scan_chars!(input, '0', 'x'),
-                    if !self.version_is_at_least_0_5_0 {
-                        scan_chars!(input, '0', 'X')
-                    } else {
-                        false
-                    }
+                    scan_one_or_more!(input, self.hex_character(input)),
+                    scan_zero_or_more!(
+                        input,
+                        scan_sequence!(
+                            scan_chars!(input, '_'),
+                            scan_one_or_more!(input, self.hex_character(input))
+                        )
+                    )
                 ),
-                scan_one_or_more!(input, self.hex_character(input)),
-                scan_zero_or_more!(
+                self.identifier_start(input)
+            ),
+            if !self.version_is_at_least_0_5_0 {
+                scan_not_followed_by!(
                     input,
                     scan_sequence!(
-                        scan_chars!(input, '_'),
-                        scan_one_or_more!(input, self.hex_character(input))
-                    )
+                        scan_chars!(input, '0', 'X'),
+                        scan_one_or_more!(input, self.hex_character(input)),
+                        scan_zero_or_more!(
+                            input,
+                            scan_sequence!(
+                                scan_chars!(input, '_'),
+                                scan_one_or_more!(input, self.hex_character(input))
+                            )
+                        )
+                    ),
+                    self.identifier_start(input)
                 )
-            ),
-            self.identifier_start(input)
+            } else {
+                false
+            }
         )
     }
 
@@ -5712,8 +6271,8 @@ impl Language {
             input,
             scan_chars!(input, '_'),
             scan_chars!(input, '$'),
-            scan_char_range!(input, 'A'..='Z'),
-            scan_char_range!(input, 'a'..='z')
+            scan_char_range!(input, 'a'..='z'),
+            scan_char_range!(input, 'A'..='Z')
         )
     }
 
@@ -5721,46 +6280,72 @@ impl Language {
     fn int_keyword(&self, input: &mut ParserContext) -> bool {
         scan_sequence!(
             scan_chars!(input, 'i', 'n', 't'),
-            scan_optional!(input, self.integer_type_size(input))
+            scan_optional!(
+                input,
+                scan_choice!(
+                    input,
+                    scan_chars!(input, '9', '6'),
+                    scan_chars!(input, '8', '8'),
+                    scan_chars!(input, '8', '0'),
+                    scan_chars!(input, '8'),
+                    scan_chars!(input, '7', '2'),
+                    scan_chars!(input, '6', '4'),
+                    scan_chars!(input, '5', '6'),
+                    scan_chars!(input, '4', '8'),
+                    scan_chars!(input, '4', '0'),
+                    scan_chars!(input, '3', '2'),
+                    scan_chars!(input, '2', '5', '6'),
+                    scan_chars!(input, '2', '4', '8'),
+                    scan_chars!(input, '2', '4', '0'),
+                    scan_chars!(input, '2', '4'),
+                    scan_chars!(input, '2', '3', '2'),
+                    scan_chars!(input, '2', '2', '4'),
+                    scan_chars!(input, '2', '1', '6'),
+                    scan_chars!(input, '2', '0', '8'),
+                    scan_chars!(input, '2', '0', '0'),
+                    scan_chars!(input, '1', '9', '2'),
+                    scan_chars!(input, '1', '8', '4'),
+                    scan_chars!(input, '1', '7', '6'),
+                    scan_chars!(input, '1', '6', '8'),
+                    scan_chars!(input, '1', '6', '0'),
+                    scan_chars!(input, '1', '6'),
+                    scan_chars!(input, '1', '5', '2'),
+                    scan_chars!(input, '1', '4', '4'),
+                    scan_chars!(input, '1', '3', '6'),
+                    scan_chars!(input, '1', '2', '8'),
+                    scan_chars!(input, '1', '2', '0'),
+                    scan_chars!(input, '1', '1', '2'),
+                    scan_chars!(input, '1', '0', '4')
+                )
+            )
         )
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn integer_type_size(&self, input: &mut ParserContext) -> bool {
-        scan_choice!(
+    fn less_than(&self, input: &mut ParserContext) -> bool {
+        scan_not_followed_by!(
             input,
-            scan_chars!(input, '9', '6'),
-            scan_chars!(input, '8', '8'),
-            scan_chars!(input, '8', '0'),
-            scan_chars!(input, '8'),
-            scan_chars!(input, '7', '2'),
-            scan_chars!(input, '6', '4'),
-            scan_chars!(input, '5', '6'),
-            scan_chars!(input, '4', '8'),
-            scan_chars!(input, '4', '0'),
-            scan_chars!(input, '3', '2'),
-            scan_chars!(input, '2', '5', '6'),
-            scan_chars!(input, '2', '4', '8'),
-            scan_chars!(input, '2', '4', '0'),
-            scan_chars!(input, '2', '4'),
-            scan_chars!(input, '2', '3', '2'),
-            scan_chars!(input, '2', '2', '4'),
-            scan_chars!(input, '2', '1', '6'),
-            scan_chars!(input, '2', '0', '8'),
-            scan_chars!(input, '2', '0', '0'),
-            scan_chars!(input, '1', '9', '2'),
-            scan_chars!(input, '1', '8', '4'),
-            scan_chars!(input, '1', '7', '6'),
-            scan_chars!(input, '1', '6', '8'),
-            scan_chars!(input, '1', '6', '0'),
-            scan_chars!(input, '1', '6'),
-            scan_chars!(input, '1', '5', '2'),
-            scan_chars!(input, '1', '4', '4'),
-            scan_chars!(input, '1', '3', '6'),
-            scan_chars!(input, '1', '2', '8'),
-            scan_chars!(input, '1', '2', '0'),
-            scan_chars!(input, '1', '1', '2'),
-            scan_chars!(input, '1', '0', '4')
+            scan_chars!(input, '<'),
+            scan_choice!(input, scan_chars!(input, '='), scan_chars!(input, '<'))
+        )
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn less_than_less_than(&self, input: &mut ParserContext) -> bool {
+        scan_not_followed_by!(input, scan_chars!(input, '<', '<'), scan_chars!(input, '='))
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn minus(&self, input: &mut ParserContext) -> bool {
+        scan_not_followed_by!(
+            input,
+            scan_chars!(input, '-'),
+            scan_choice!(
+                input,
+                scan_chars!(input, '>'),
+                scan_chars!(input, '='),
+                scan_chars!(input, '-')
+            )
         )
     }
 
@@ -5783,6 +6368,20 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
+    fn percent(&self, input: &mut ParserContext) -> bool {
+        scan_not_followed_by!(input, scan_chars!(input, '%'), scan_chars!(input, '='))
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn plus(&self, input: &mut ParserContext) -> bool {
+        scan_not_followed_by!(
+            input,
+            scan_chars!(input, '+'),
+            scan_choice!(input, scan_chars!(input, '='), scan_chars!(input, '+'))
+        )
+    }
+
+    #[allow(unused_assignments, unused_parens)]
     fn raw_identifier(&self, input: &mut ParserContext) -> bool {
         scan_sequence!(
             self.identifier_start(input),
@@ -5794,7 +6393,7 @@ impl Language {
     fn single_line_comment(&self, input: &mut ParserContext) -> bool {
         scan_sequence!(
             scan_chars!(input, '/', '/'),
-            scan_zero_or_more!(input, scan_none_of!(input, '\n', '\r'))
+            scan_zero_or_more!(input, scan_none_of!(input, '\r', '\n'))
         )
     }
 
@@ -5807,7 +6406,9 @@ impl Language {
                 scan_choice!(
                     input,
                     self.escape_sequence(input),
-                    self.ascii_character_without_single_quote_or_backslash(input)
+                    scan_char_range!(input, ' '..='&'),
+                    scan_char_range!(input, '('..='['),
+                    scan_char_range!(input, ']'..='~')
                 )
             ),
             scan_chars!(input, '\'')
@@ -5833,7 +6434,7 @@ impl Language {
                     scan_choice!(
                         input,
                         self.escape_sequence(input),
-                        scan_none_of!(input, '\n', '\r', '\'', '\\')
+                        scan_none_of!(input, '\'', '\\', '\r', '\n')
                     )
                 ),
                 scan_chars!(input, '\'')
@@ -5844,10 +6445,290 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
+    fn slash(&self, input: &mut ParserContext) -> bool {
+        scan_not_followed_by!(input, scan_chars!(input, '/'), scan_chars!(input, '='))
+    }
+
+    #[allow(unused_assignments, unused_parens)]
     fn ufixed_keyword(&self, input: &mut ParserContext) -> bool {
-        scan_sequence!(
+        scan_choice!(
+            input,
             scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
-            scan_optional!(input, self.fixed_type_size(input))
+            scan_sequence!(
+                scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
+                scan_choice!(
+                    input,
+                    scan_chars!(input, '9', '6'),
+                    scan_chars!(input, '8', '8'),
+                    scan_chars!(input, '8', '0'),
+                    scan_chars!(input, '8'),
+                    scan_chars!(input, '7', '2'),
+                    scan_chars!(input, '6', '4'),
+                    scan_chars!(input, '5', '6'),
+                    scan_chars!(input, '4', '8'),
+                    scan_chars!(input, '4', '0'),
+                    scan_chars!(input, '3', '2'),
+                    scan_chars!(input, '2', '4'),
+                    scan_chars!(input, '1', '7', '6'),
+                    scan_chars!(input, '1', '6', '8'),
+                    scan_chars!(input, '1', '6', '0'),
+                    scan_chars!(input, '1', '6'),
+                    scan_chars!(input, '1', '5', '2'),
+                    scan_chars!(input, '1', '4', '4'),
+                    scan_chars!(input, '1', '3', '6'),
+                    scan_chars!(input, '1', '2', '8'),
+                    scan_chars!(input, '1', '2', '0'),
+                    scan_chars!(input, '1', '1', '2'),
+                    scan_chars!(input, '1', '0', '4')
+                ),
+                scan_chars!(input, 'x'),
+                scan_choice!(
+                    input,
+                    scan_chars!(input, '8', '0'),
+                    scan_chars!(input, '8'),
+                    scan_chars!(input, '7', '2'),
+                    scan_chars!(input, '6', '4'),
+                    scan_chars!(input, '5', '6'),
+                    scan_chars!(input, '4', '8'),
+                    scan_chars!(input, '4', '0'),
+                    scan_chars!(input, '3', '2'),
+                    scan_chars!(input, '2', '4'),
+                    scan_chars!(input, '1', '6')
+                )
+            ),
+            scan_sequence!(
+                scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
+                scan_choice!(
+                    input,
+                    scan_chars!(input, '2', '4', '8', 'x', '8'),
+                    scan_chars!(input, '2', '4', '0', 'x', '8'),
+                    scan_chars!(input, '2', '4', '0', 'x', '1', '6'),
+                    scan_chars!(input, '2', '3', '2', 'x', '8'),
+                    scan_chars!(input, '2', '3', '2', 'x', '2', '4'),
+                    scan_chars!(input, '2', '3', '2', 'x', '1', '6'),
+                    scan_chars!(input, '2', '2', '4', 'x', '8'),
+                    scan_chars!(input, '2', '2', '4', 'x', '3', '2'),
+                    scan_chars!(input, '2', '2', '4', 'x', '2', '4'),
+                    scan_chars!(input, '2', '2', '4', 'x', '1', '6'),
+                    scan_chars!(input, '2', '1', '6', 'x', '8'),
+                    scan_chars!(input, '2', '1', '6', 'x', '4', '0'),
+                    scan_chars!(input, '2', '1', '6', 'x', '3', '2'),
+                    scan_chars!(input, '2', '1', '6', 'x', '2', '4'),
+                    scan_chars!(input, '2', '1', '6', 'x', '1', '6'),
+                    scan_chars!(input, '2', '0', '8', 'x', '8'),
+                    scan_chars!(input, '2', '0', '8', 'x', '4', '8'),
+                    scan_chars!(input, '2', '0', '8', 'x', '4', '0'),
+                    scan_chars!(input, '2', '0', '8', 'x', '3', '2'),
+                    scan_chars!(input, '2', '0', '8', 'x', '2', '4'),
+                    scan_chars!(input, '2', '0', '8', 'x', '1', '6'),
+                    scan_chars!(input, '2', '0', '0', 'x', '8'),
+                    scan_chars!(input, '2', '0', '0', 'x', '5', '6'),
+                    scan_chars!(input, '2', '0', '0', 'x', '4', '8'),
+                    scan_chars!(input, '2', '0', '0', 'x', '4', '0'),
+                    scan_chars!(input, '2', '0', '0', 'x', '3', '2'),
+                    scan_chars!(input, '2', '0', '0', 'x', '2', '4'),
+                    scan_chars!(input, '2', '0', '0', 'x', '1', '6'),
+                    scan_chars!(input, '1', '9', '2', 'x', '8'),
+                    scan_chars!(input, '1', '9', '2', 'x', '6', '4'),
+                    scan_chars!(input, '1', '9', '2', 'x', '5', '6'),
+                    scan_chars!(input, '1', '9', '2', 'x', '4', '8'),
+                    scan_chars!(input, '1', '9', '2', 'x', '4', '0'),
+                    scan_chars!(input, '1', '9', '2', 'x', '3', '2'),
+                    scan_chars!(input, '1', '9', '2', 'x', '2', '4'),
+                    scan_chars!(input, '1', '9', '2', 'x', '1', '6'),
+                    scan_chars!(input, '1', '8', '4', 'x', '8'),
+                    scan_chars!(input, '1', '8', '4', 'x', '7', '2'),
+                    scan_chars!(input, '1', '8', '4', 'x', '6', '4'),
+                    scan_chars!(input, '1', '8', '4', 'x', '5', '6'),
+                    scan_chars!(input, '1', '8', '4', 'x', '4', '8'),
+                    scan_chars!(input, '1', '8', '4', 'x', '4', '0'),
+                    scan_chars!(input, '1', '8', '4', 'x', '3', '2'),
+                    scan_chars!(input, '1', '8', '4', 'x', '2', '4'),
+                    scan_chars!(input, '1', '8', '4', 'x', '1', '6')
+                )
+            ),
+            if self.version_is_at_least_0_4_14 {
+                scan_sequence!(
+                    scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
+                    scan_choice!(
+                        input,
+                        scan_chars!(input, '2', '5', '6', 'x', '8', '0'),
+                        scan_chars!(input, '2', '5', '6', 'x', '8'),
+                        scan_chars!(input, '2', '5', '6', 'x', '7', '2'),
+                        scan_chars!(input, '2', '5', '6', 'x', '6', '4'),
+                        scan_chars!(input, '2', '5', '6', 'x', '5', '6'),
+                        scan_chars!(input, '2', '5', '6', 'x', '4', '8'),
+                        scan_chars!(input, '2', '5', '6', 'x', '4', '0'),
+                        scan_chars!(input, '2', '5', '6', 'x', '3', '2'),
+                        scan_chars!(input, '2', '5', '6', 'x', '2', '4'),
+                        scan_chars!(input, '2', '5', '6', 'x', '1', '6'),
+                        scan_chars!(input, '2', '4', '8', 'x', '8', '0'),
+                        scan_chars!(input, '2', '4', '8', 'x', '7', '2'),
+                        scan_chars!(input, '2', '4', '8', 'x', '6', '4'),
+                        scan_chars!(input, '2', '4', '8', 'x', '5', '6'),
+                        scan_chars!(input, '2', '4', '8', 'x', '4', '8'),
+                        scan_chars!(input, '2', '4', '8', 'x', '4', '0'),
+                        scan_chars!(input, '2', '4', '8', 'x', '3', '2'),
+                        scan_chars!(input, '2', '4', '8', 'x', '2', '4'),
+                        scan_chars!(input, '2', '4', '8', 'x', '1', '6'),
+                        scan_chars!(input, '2', '4', '0', 'x', '8', '0'),
+                        scan_chars!(input, '2', '4', '0', 'x', '7', '2'),
+                        scan_chars!(input, '2', '4', '0', 'x', '6', '4'),
+                        scan_chars!(input, '2', '4', '0', 'x', '5', '6'),
+                        scan_chars!(input, '2', '4', '0', 'x', '4', '8'),
+                        scan_chars!(input, '2', '4', '0', 'x', '4', '0'),
+                        scan_chars!(input, '2', '4', '0', 'x', '3', '2'),
+                        scan_chars!(input, '2', '4', '0', 'x', '2', '4'),
+                        scan_chars!(input, '2', '3', '2', 'x', '8', '0'),
+                        scan_chars!(input, '2', '3', '2', 'x', '7', '2'),
+                        scan_chars!(input, '2', '3', '2', 'x', '6', '4'),
+                        scan_chars!(input, '2', '3', '2', 'x', '5', '6'),
+                        scan_chars!(input, '2', '3', '2', 'x', '4', '8'),
+                        scan_chars!(input, '2', '3', '2', 'x', '4', '0'),
+                        scan_chars!(input, '2', '3', '2', 'x', '3', '2'),
+                        scan_chars!(input, '2', '2', '4', 'x', '8', '0'),
+                        scan_chars!(input, '2', '2', '4', 'x', '7', '2'),
+                        scan_chars!(input, '2', '2', '4', 'x', '6', '4'),
+                        scan_chars!(input, '2', '2', '4', 'x', '5', '6'),
+                        scan_chars!(input, '2', '2', '4', 'x', '4', '8'),
+                        scan_chars!(input, '2', '2', '4', 'x', '4', '0'),
+                        scan_chars!(input, '2', '1', '6', 'x', '8', '0'),
+                        scan_chars!(input, '2', '1', '6', 'x', '7', '2'),
+                        scan_chars!(input, '2', '1', '6', 'x', '6', '4'),
+                        scan_chars!(input, '2', '1', '6', 'x', '5', '6'),
+                        scan_chars!(input, '2', '1', '6', 'x', '4', '8'),
+                        scan_chars!(input, '2', '0', '8', 'x', '8', '0'),
+                        scan_chars!(input, '2', '0', '8', 'x', '7', '2'),
+                        scan_chars!(input, '2', '0', '8', 'x', '6', '4'),
+                        scan_chars!(input, '2', '0', '8', 'x', '5', '6'),
+                        scan_chars!(input, '2', '0', '0', 'x', '8', '0'),
+                        scan_chars!(input, '2', '0', '0', 'x', '7', '2'),
+                        scan_chars!(input, '2', '0', '0', 'x', '6', '4'),
+                        scan_chars!(input, '1', '9', '2', 'x', '8', '0'),
+                        scan_chars!(input, '1', '9', '2', 'x', '7', '2'),
+                        scan_chars!(input, '1', '8', '4', 'x', '8', '0')
+                    )
+                )
+            } else {
+                false
+            },
+            if self.version_is_at_least_0_4_14 {
+                scan_sequence!(
+                    scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
+                    scan_choice!(
+                        input,
+                        scan_chars!(input, '9', '6'),
+                        scan_chars!(input, '8', '8'),
+                        scan_chars!(input, '8', '0'),
+                        scan_chars!(input, '8'),
+                        scan_chars!(input, '7', '2'),
+                        scan_chars!(input, '6', '4'),
+                        scan_chars!(input, '5', '6'),
+                        scan_chars!(input, '4', '8'),
+                        scan_chars!(input, '4', '0'),
+                        scan_chars!(input, '3', '2'),
+                        scan_chars!(input, '2', '5', '6'),
+                        scan_chars!(input, '2', '4', '8'),
+                        scan_chars!(input, '2', '4', '0'),
+                        scan_chars!(input, '2', '4'),
+                        scan_chars!(input, '2', '3', '2'),
+                        scan_chars!(input, '2', '2', '4'),
+                        scan_chars!(input, '2', '1', '6'),
+                        scan_chars!(input, '2', '0', '8'),
+                        scan_chars!(input, '2', '0', '0'),
+                        scan_chars!(input, '1', '9', '2'),
+                        scan_chars!(input, '1', '8', '4'),
+                        scan_chars!(input, '1', '7', '6'),
+                        scan_chars!(input, '1', '6', '8'),
+                        scan_chars!(input, '1', '6', '0'),
+                        scan_chars!(input, '1', '6'),
+                        scan_chars!(input, '1', '5', '2'),
+                        scan_chars!(input, '1', '4', '4'),
+                        scan_chars!(input, '1', '3', '6'),
+                        scan_chars!(input, '1', '2', '8'),
+                        scan_chars!(input, '1', '2', '0'),
+                        scan_chars!(input, '1', '1', '2'),
+                        scan_chars!(input, '1', '0', '4')
+                    ),
+                    scan_chars!(input, 'x'),
+                    scan_choice!(
+                        input,
+                        scan_chars!(input, '9'),
+                        scan_chars!(input, '7', '9'),
+                        scan_chars!(input, '7', '8'),
+                        scan_chars!(input, '7', '7'),
+                        scan_chars!(input, '7', '6'),
+                        scan_chars!(input, '7', '5'),
+                        scan_chars!(input, '7', '4'),
+                        scan_chars!(input, '7', '3'),
+                        scan_chars!(input, '7', '1'),
+                        scan_chars!(input, '7', '0'),
+                        scan_chars!(input, '7'),
+                        scan_chars!(input, '6', '9'),
+                        scan_chars!(input, '6', '8'),
+                        scan_chars!(input, '6', '7'),
+                        scan_chars!(input, '6', '6'),
+                        scan_chars!(input, '6', '5'),
+                        scan_chars!(input, '6', '3'),
+                        scan_chars!(input, '6', '2'),
+                        scan_chars!(input, '6', '1'),
+                        scan_chars!(input, '6', '0'),
+                        scan_chars!(input, '6'),
+                        scan_chars!(input, '5', '9'),
+                        scan_chars!(input, '5', '8'),
+                        scan_chars!(input, '5', '7'),
+                        scan_chars!(input, '5', '5'),
+                        scan_chars!(input, '5', '4'),
+                        scan_chars!(input, '5', '3'),
+                        scan_chars!(input, '5', '2'),
+                        scan_chars!(input, '5', '1'),
+                        scan_chars!(input, '5', '0'),
+                        scan_chars!(input, '5'),
+                        scan_chars!(input, '4', '9'),
+                        scan_chars!(input, '4', '7'),
+                        scan_chars!(input, '4', '6'),
+                        scan_chars!(input, '4', '5'),
+                        scan_chars!(input, '4', '4'),
+                        scan_chars!(input, '4', '3'),
+                        scan_chars!(input, '4', '2'),
+                        scan_chars!(input, '4', '1'),
+                        scan_chars!(input, '4'),
+                        scan_chars!(input, '3', '9'),
+                        scan_chars!(input, '3', '8'),
+                        scan_chars!(input, '3', '7'),
+                        scan_chars!(input, '3', '6'),
+                        scan_chars!(input, '3', '5'),
+                        scan_chars!(input, '3', '4'),
+                        scan_chars!(input, '3', '3'),
+                        scan_chars!(input, '3', '1'),
+                        scan_chars!(input, '3', '0'),
+                        scan_chars!(input, '3'),
+                        scan_chars!(input, '2', '9'),
+                        scan_chars!(input, '2', '8'),
+                        scan_chars!(input, '2', '7'),
+                        scan_chars!(input, '2', '6'),
+                        scan_chars!(input, '2', '5'),
+                        scan_chars!(input, '2', '3'),
+                        scan_chars!(input, '2', '2'),
+                        scan_chars!(input, '2', '1'),
+                        scan_chars!(input, '2', '0'),
+                        scan_chars!(input, '2'),
+                        scan_chars!(input, '1', '9'),
+                        scan_chars!(input, '1', '8'),
+                        scan_chars!(input, '1', '7'),
+                        scan_chars!(input, '1', '5'),
+                        scan_chars!(input, '1', '4'),
+                        scan_chars!(input, '1', '3'),
+                        scan_chars!(input, '1', '2'),
+                        scan_chars!(input, '1', '1'),
+                        scan_chars!(input, '1', '0'),
+                        scan_chars!(input, '1'),
+                        scan_chars!(input, '0')
+                    )
+                )
+            } else {
+                false
+            }
         )
     }
 
@@ -5855,7 +6736,44 @@ impl Language {
     fn uint_keyword(&self, input: &mut ParserContext) -> bool {
         scan_sequence!(
             scan_chars!(input, 'u', 'i', 'n', 't'),
-            scan_optional!(input, self.integer_type_size(input))
+            scan_optional!(
+                input,
+                scan_choice!(
+                    input,
+                    scan_chars!(input, '9', '6'),
+                    scan_chars!(input, '8', '8'),
+                    scan_chars!(input, '8', '0'),
+                    scan_chars!(input, '8'),
+                    scan_chars!(input, '7', '2'),
+                    scan_chars!(input, '6', '4'),
+                    scan_chars!(input, '5', '6'),
+                    scan_chars!(input, '4', '8'),
+                    scan_chars!(input, '4', '0'),
+                    scan_chars!(input, '3', '2'),
+                    scan_chars!(input, '2', '5', '6'),
+                    scan_chars!(input, '2', '4', '8'),
+                    scan_chars!(input, '2', '4', '0'),
+                    scan_chars!(input, '2', '4'),
+                    scan_chars!(input, '2', '3', '2'),
+                    scan_chars!(input, '2', '2', '4'),
+                    scan_chars!(input, '2', '1', '6'),
+                    scan_chars!(input, '2', '0', '8'),
+                    scan_chars!(input, '2', '0', '0'),
+                    scan_chars!(input, '1', '9', '2'),
+                    scan_chars!(input, '1', '8', '4'),
+                    scan_chars!(input, '1', '7', '6'),
+                    scan_chars!(input, '1', '6', '8'),
+                    scan_chars!(input, '1', '6', '0'),
+                    scan_chars!(input, '1', '6'),
+                    scan_chars!(input, '1', '5', '2'),
+                    scan_chars!(input, '1', '4', '4'),
+                    scan_chars!(input, '1', '3', '6'),
+                    scan_chars!(input, '1', '2', '8'),
+                    scan_chars!(input, '1', '2', '0'),
+                    scan_chars!(input, '1', '1', '2'),
+                    scan_chars!(input, '1', '0', '4')
+                )
+            )
         )
     }
 
@@ -5872,15 +6790,19 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn unicode_string_literal(&self, input: &mut ParserContext) -> bool {
-        if self.version_is_at_least_0_7_0 {
-            scan_choice!(
-                input,
-                self.single_quoted_unicode_string_literal(input),
+        scan_choice!(
+            input,
+            if self.version_is_at_least_0_7_0 {
+                self.single_quoted_unicode_string_literal(input)
+            } else {
+                false
+            },
+            if self.version_is_at_least_0_7_0 {
                 self.double_quoted_unicode_string_literal(input)
-            )
-        } else {
-            false
-        }
+            } else {
+                false
+            }
+        )
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -5906,6 +6828,52 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
+    fn yul_bytes_keyword(&self, input: &mut ParserContext) -> bool {
+        if !self.version_is_at_least_0_7_1 {
+            scan_sequence!(
+                scan_chars!(input, 'b', 'y', 't', 'e', 's'),
+                scan_choice!(
+                    input,
+                    scan_chars!(input, '9'),
+                    scan_chars!(input, '8'),
+                    scan_chars!(input, '7'),
+                    scan_chars!(input, '6'),
+                    scan_chars!(input, '5'),
+                    scan_chars!(input, '4'),
+                    scan_chars!(input, '3', '2'),
+                    scan_chars!(input, '3', '1'),
+                    scan_chars!(input, '3', '0'),
+                    scan_chars!(input, '3'),
+                    scan_chars!(input, '2', '9'),
+                    scan_chars!(input, '2', '8'),
+                    scan_chars!(input, '2', '7'),
+                    scan_chars!(input, '2', '6'),
+                    scan_chars!(input, '2', '5'),
+                    scan_chars!(input, '2', '4'),
+                    scan_chars!(input, '2', '3'),
+                    scan_chars!(input, '2', '2'),
+                    scan_chars!(input, '2', '1'),
+                    scan_chars!(input, '2', '0'),
+                    scan_chars!(input, '2'),
+                    scan_chars!(input, '1', '9'),
+                    scan_chars!(input, '1', '8'),
+                    scan_chars!(input, '1', '7'),
+                    scan_chars!(input, '1', '6'),
+                    scan_chars!(input, '1', '5'),
+                    scan_chars!(input, '1', '4'),
+                    scan_chars!(input, '1', '3'),
+                    scan_chars!(input, '1', '2'),
+                    scan_chars!(input, '1', '1'),
+                    scan_chars!(input, '1', '0'),
+                    scan_chars!(input, '1')
+                )
+            )
+        } else {
+            false
+        }
+    }
+
+    #[allow(unused_assignments, unused_parens)]
     fn yul_decimal_literal(&self, input: &mut ParserContext) -> bool {
         scan_not_followed_by!(
             input,
@@ -5914,10 +6882,305 @@ impl Language {
                 scan_chars!(input, '0'),
                 scan_sequence!(
                     scan_char_range!(input, '1'..='9'),
-                    scan_zero_or_more!(input, self.decimal_digit(input))
+                    scan_zero_or_more!(input, scan_char_range!(input, '0'..='9'))
                 )
             ),
             self.identifier_start(input)
+        )
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn yul_fixed_keyword(&self, input: &mut ParserContext) -> bool {
+        scan_choice!(
+            input,
+            if !self.version_is_at_least_0_7_1 {
+                scan_chars!(input, 'f', 'i', 'x', 'e', 'd')
+            } else {
+                false
+            },
+            if !self.version_is_at_least_0_7_1 {
+                scan_sequence!(
+                    scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
+                    scan_choice!(
+                        input,
+                        scan_chars!(input, '9', '6'),
+                        scan_chars!(input, '8', '8'),
+                        scan_chars!(input, '8', '0'),
+                        scan_chars!(input, '8'),
+                        scan_chars!(input, '7', '2'),
+                        scan_chars!(input, '6', '4'),
+                        scan_chars!(input, '5', '6'),
+                        scan_chars!(input, '4', '8'),
+                        scan_chars!(input, '4', '0'),
+                        scan_chars!(input, '3', '2'),
+                        scan_chars!(input, '2', '4'),
+                        scan_chars!(input, '1', '7', '6'),
+                        scan_chars!(input, '1', '6', '8'),
+                        scan_chars!(input, '1', '6', '0'),
+                        scan_chars!(input, '1', '6'),
+                        scan_chars!(input, '1', '5', '2'),
+                        scan_chars!(input, '1', '4', '4'),
+                        scan_chars!(input, '1', '3', '6'),
+                        scan_chars!(input, '1', '2', '8'),
+                        scan_chars!(input, '1', '2', '0'),
+                        scan_chars!(input, '1', '1', '2'),
+                        scan_chars!(input, '1', '0', '4')
+                    ),
+                    scan_chars!(input, 'x'),
+                    scan_choice!(
+                        input,
+                        scan_chars!(input, '8', '0'),
+                        scan_chars!(input, '8'),
+                        scan_chars!(input, '7', '2'),
+                        scan_chars!(input, '6', '4'),
+                        scan_chars!(input, '5', '6'),
+                        scan_chars!(input, '4', '8'),
+                        scan_chars!(input, '4', '0'),
+                        scan_chars!(input, '3', '2'),
+                        scan_chars!(input, '2', '4'),
+                        scan_chars!(input, '1', '6')
+                    )
+                )
+            } else {
+                false
+            },
+            if !self.version_is_at_least_0_7_1 {
+                scan_sequence!(
+                    scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
+                    scan_choice!(
+                        input,
+                        scan_chars!(input, '2', '4', '8', 'x', '8'),
+                        scan_chars!(input, '2', '4', '0', 'x', '8'),
+                        scan_chars!(input, '2', '4', '0', 'x', '1', '6'),
+                        scan_chars!(input, '2', '3', '2', 'x', '8'),
+                        scan_chars!(input, '2', '3', '2', 'x', '2', '4'),
+                        scan_chars!(input, '2', '3', '2', 'x', '1', '6'),
+                        scan_chars!(input, '2', '2', '4', 'x', '8'),
+                        scan_chars!(input, '2', '2', '4', 'x', '3', '2'),
+                        scan_chars!(input, '2', '2', '4', 'x', '2', '4'),
+                        scan_chars!(input, '2', '2', '4', 'x', '1', '6'),
+                        scan_chars!(input, '2', '1', '6', 'x', '8'),
+                        scan_chars!(input, '2', '1', '6', 'x', '4', '0'),
+                        scan_chars!(input, '2', '1', '6', 'x', '3', '2'),
+                        scan_chars!(input, '2', '1', '6', 'x', '2', '4'),
+                        scan_chars!(input, '2', '1', '6', 'x', '1', '6'),
+                        scan_chars!(input, '2', '0', '8', 'x', '8'),
+                        scan_chars!(input, '2', '0', '8', 'x', '4', '8'),
+                        scan_chars!(input, '2', '0', '8', 'x', '4', '0'),
+                        scan_chars!(input, '2', '0', '8', 'x', '3', '2'),
+                        scan_chars!(input, '2', '0', '8', 'x', '2', '4'),
+                        scan_chars!(input, '2', '0', '8', 'x', '1', '6'),
+                        scan_chars!(input, '2', '0', '0', 'x', '8'),
+                        scan_chars!(input, '2', '0', '0', 'x', '5', '6'),
+                        scan_chars!(input, '2', '0', '0', 'x', '4', '8'),
+                        scan_chars!(input, '2', '0', '0', 'x', '4', '0'),
+                        scan_chars!(input, '2', '0', '0', 'x', '3', '2'),
+                        scan_chars!(input, '2', '0', '0', 'x', '2', '4'),
+                        scan_chars!(input, '2', '0', '0', 'x', '1', '6'),
+                        scan_chars!(input, '1', '9', '2', 'x', '8'),
+                        scan_chars!(input, '1', '9', '2', 'x', '6', '4'),
+                        scan_chars!(input, '1', '9', '2', 'x', '5', '6'),
+                        scan_chars!(input, '1', '9', '2', 'x', '4', '8'),
+                        scan_chars!(input, '1', '9', '2', 'x', '4', '0'),
+                        scan_chars!(input, '1', '9', '2', 'x', '3', '2'),
+                        scan_chars!(input, '1', '9', '2', 'x', '2', '4'),
+                        scan_chars!(input, '1', '9', '2', 'x', '1', '6'),
+                        scan_chars!(input, '1', '8', '4', 'x', '8'),
+                        scan_chars!(input, '1', '8', '4', 'x', '7', '2'),
+                        scan_chars!(input, '1', '8', '4', 'x', '6', '4'),
+                        scan_chars!(input, '1', '8', '4', 'x', '5', '6'),
+                        scan_chars!(input, '1', '8', '4', 'x', '4', '8'),
+                        scan_chars!(input, '1', '8', '4', 'x', '4', '0'),
+                        scan_chars!(input, '1', '8', '4', 'x', '3', '2'),
+                        scan_chars!(input, '1', '8', '4', 'x', '2', '4'),
+                        scan_chars!(input, '1', '8', '4', 'x', '1', '6')
+                    )
+                )
+            } else {
+                false
+            },
+            if self.version_is_at_least_0_4_14 && !self.version_is_at_least_0_7_1 {
+                scan_sequence!(
+                    scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
+                    scan_choice!(
+                        input,
+                        scan_chars!(input, '2', '5', '6', 'x', '8', '0'),
+                        scan_chars!(input, '2', '5', '6', 'x', '8'),
+                        scan_chars!(input, '2', '5', '6', 'x', '7', '2'),
+                        scan_chars!(input, '2', '5', '6', 'x', '6', '4'),
+                        scan_chars!(input, '2', '5', '6', 'x', '5', '6'),
+                        scan_chars!(input, '2', '5', '6', 'x', '4', '8'),
+                        scan_chars!(input, '2', '5', '6', 'x', '4', '0'),
+                        scan_chars!(input, '2', '5', '6', 'x', '3', '2'),
+                        scan_chars!(input, '2', '5', '6', 'x', '2', '4'),
+                        scan_chars!(input, '2', '5', '6', 'x', '1', '6'),
+                        scan_chars!(input, '2', '4', '8', 'x', '8', '0'),
+                        scan_chars!(input, '2', '4', '8', 'x', '7', '2'),
+                        scan_chars!(input, '2', '4', '8', 'x', '6', '4'),
+                        scan_chars!(input, '2', '4', '8', 'x', '5', '6'),
+                        scan_chars!(input, '2', '4', '8', 'x', '4', '8'),
+                        scan_chars!(input, '2', '4', '8', 'x', '4', '0'),
+                        scan_chars!(input, '2', '4', '8', 'x', '3', '2'),
+                        scan_chars!(input, '2', '4', '8', 'x', '2', '4'),
+                        scan_chars!(input, '2', '4', '8', 'x', '1', '6'),
+                        scan_chars!(input, '2', '4', '0', 'x', '8', '0'),
+                        scan_chars!(input, '2', '4', '0', 'x', '7', '2'),
+                        scan_chars!(input, '2', '4', '0', 'x', '6', '4'),
+                        scan_chars!(input, '2', '4', '0', 'x', '5', '6'),
+                        scan_chars!(input, '2', '4', '0', 'x', '4', '8'),
+                        scan_chars!(input, '2', '4', '0', 'x', '4', '0'),
+                        scan_chars!(input, '2', '4', '0', 'x', '3', '2'),
+                        scan_chars!(input, '2', '4', '0', 'x', '2', '4'),
+                        scan_chars!(input, '2', '3', '2', 'x', '8', '0'),
+                        scan_chars!(input, '2', '3', '2', 'x', '7', '2'),
+                        scan_chars!(input, '2', '3', '2', 'x', '6', '4'),
+                        scan_chars!(input, '2', '3', '2', 'x', '5', '6'),
+                        scan_chars!(input, '2', '3', '2', 'x', '4', '8'),
+                        scan_chars!(input, '2', '3', '2', 'x', '4', '0'),
+                        scan_chars!(input, '2', '3', '2', 'x', '3', '2'),
+                        scan_chars!(input, '2', '2', '4', 'x', '8', '0'),
+                        scan_chars!(input, '2', '2', '4', 'x', '7', '2'),
+                        scan_chars!(input, '2', '2', '4', 'x', '6', '4'),
+                        scan_chars!(input, '2', '2', '4', 'x', '5', '6'),
+                        scan_chars!(input, '2', '2', '4', 'x', '4', '8'),
+                        scan_chars!(input, '2', '2', '4', 'x', '4', '0'),
+                        scan_chars!(input, '2', '1', '6', 'x', '8', '0'),
+                        scan_chars!(input, '2', '1', '6', 'x', '7', '2'),
+                        scan_chars!(input, '2', '1', '6', 'x', '6', '4'),
+                        scan_chars!(input, '2', '1', '6', 'x', '5', '6'),
+                        scan_chars!(input, '2', '1', '6', 'x', '4', '8'),
+                        scan_chars!(input, '2', '0', '8', 'x', '8', '0'),
+                        scan_chars!(input, '2', '0', '8', 'x', '7', '2'),
+                        scan_chars!(input, '2', '0', '8', 'x', '6', '4'),
+                        scan_chars!(input, '2', '0', '8', 'x', '5', '6'),
+                        scan_chars!(input, '2', '0', '0', 'x', '8', '0'),
+                        scan_chars!(input, '2', '0', '0', 'x', '7', '2'),
+                        scan_chars!(input, '2', '0', '0', 'x', '6', '4'),
+                        scan_chars!(input, '1', '9', '2', 'x', '8', '0'),
+                        scan_chars!(input, '1', '9', '2', 'x', '7', '2'),
+                        scan_chars!(input, '1', '8', '4', 'x', '8', '0')
+                    )
+                )
+            } else {
+                false
+            },
+            if self.version_is_at_least_0_4_14 && !self.version_is_at_least_0_7_1 {
+                scan_sequence!(
+                    scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
+                    scan_choice!(
+                        input,
+                        scan_chars!(input, '9', '6'),
+                        scan_chars!(input, '8', '8'),
+                        scan_chars!(input, '8', '0'),
+                        scan_chars!(input, '8'),
+                        scan_chars!(input, '7', '2'),
+                        scan_chars!(input, '6', '4'),
+                        scan_chars!(input, '5', '6'),
+                        scan_chars!(input, '4', '8'),
+                        scan_chars!(input, '4', '0'),
+                        scan_chars!(input, '3', '2'),
+                        scan_chars!(input, '2', '5', '6'),
+                        scan_chars!(input, '2', '4', '8'),
+                        scan_chars!(input, '2', '4', '0'),
+                        scan_chars!(input, '2', '4'),
+                        scan_chars!(input, '2', '3', '2'),
+                        scan_chars!(input, '2', '2', '4'),
+                        scan_chars!(input, '2', '1', '6'),
+                        scan_chars!(input, '2', '0', '8'),
+                        scan_chars!(input, '2', '0', '0'),
+                        scan_chars!(input, '1', '9', '2'),
+                        scan_chars!(input, '1', '8', '4'),
+                        scan_chars!(input, '1', '7', '6'),
+                        scan_chars!(input, '1', '6', '8'),
+                        scan_chars!(input, '1', '6', '0'),
+                        scan_chars!(input, '1', '6'),
+                        scan_chars!(input, '1', '5', '2'),
+                        scan_chars!(input, '1', '4', '4'),
+                        scan_chars!(input, '1', '3', '6'),
+                        scan_chars!(input, '1', '2', '8'),
+                        scan_chars!(input, '1', '2', '0'),
+                        scan_chars!(input, '1', '1', '2'),
+                        scan_chars!(input, '1', '0', '4')
+                    ),
+                    scan_chars!(input, 'x'),
+                    scan_choice!(
+                        input,
+                        scan_chars!(input, '9'),
+                        scan_chars!(input, '7', '9'),
+                        scan_chars!(input, '7', '8'),
+                        scan_chars!(input, '7', '7'),
+                        scan_chars!(input, '7', '6'),
+                        scan_chars!(input, '7', '5'),
+                        scan_chars!(input, '7', '4'),
+                        scan_chars!(input, '7', '3'),
+                        scan_chars!(input, '7', '1'),
+                        scan_chars!(input, '7', '0'),
+                        scan_chars!(input, '7'),
+                        scan_chars!(input, '6', '9'),
+                        scan_chars!(input, '6', '8'),
+                        scan_chars!(input, '6', '7'),
+                        scan_chars!(input, '6', '6'),
+                        scan_chars!(input, '6', '5'),
+                        scan_chars!(input, '6', '3'),
+                        scan_chars!(input, '6', '2'),
+                        scan_chars!(input, '6', '1'),
+                        scan_chars!(input, '6', '0'),
+                        scan_chars!(input, '6'),
+                        scan_chars!(input, '5', '9'),
+                        scan_chars!(input, '5', '8'),
+                        scan_chars!(input, '5', '7'),
+                        scan_chars!(input, '5', '5'),
+                        scan_chars!(input, '5', '4'),
+                        scan_chars!(input, '5', '3'),
+                        scan_chars!(input, '5', '2'),
+                        scan_chars!(input, '5', '1'),
+                        scan_chars!(input, '5', '0'),
+                        scan_chars!(input, '5'),
+                        scan_chars!(input, '4', '9'),
+                        scan_chars!(input, '4', '7'),
+                        scan_chars!(input, '4', '6'),
+                        scan_chars!(input, '4', '5'),
+                        scan_chars!(input, '4', '4'),
+                        scan_chars!(input, '4', '3'),
+                        scan_chars!(input, '4', '2'),
+                        scan_chars!(input, '4', '1'),
+                        scan_chars!(input, '4'),
+                        scan_chars!(input, '3', '9'),
+                        scan_chars!(input, '3', '8'),
+                        scan_chars!(input, '3', '7'),
+                        scan_chars!(input, '3', '6'),
+                        scan_chars!(input, '3', '5'),
+                        scan_chars!(input, '3', '4'),
+                        scan_chars!(input, '3', '3'),
+                        scan_chars!(input, '3', '1'),
+                        scan_chars!(input, '3', '0'),
+                        scan_chars!(input, '3'),
+                        scan_chars!(input, '2', '9'),
+                        scan_chars!(input, '2', '8'),
+                        scan_chars!(input, '2', '7'),
+                        scan_chars!(input, '2', '6'),
+                        scan_chars!(input, '2', '5'),
+                        scan_chars!(input, '2', '3'),
+                        scan_chars!(input, '2', '2'),
+                        scan_chars!(input, '2', '1'),
+                        scan_chars!(input, '2', '0'),
+                        scan_chars!(input, '2'),
+                        scan_chars!(input, '1', '9'),
+                        scan_chars!(input, '1', '8'),
+                        scan_chars!(input, '1', '7'),
+                        scan_chars!(input, '1', '5'),
+                        scan_chars!(input, '1', '4'),
+                        scan_chars!(input, '1', '3'),
+                        scan_chars!(input, '1', '2'),
+                        scan_chars!(input, '1', '1'),
+                        scan_chars!(input, '1', '0'),
+                        scan_chars!(input, '1'),
+                        scan_chars!(input, '0')
+                    )
+                )
+            } else {
+                false
+            }
         )
     }
 
@@ -5938,18 +7201,409 @@ impl Language {
         self.raw_identifier(input)
     }
 
+    #[allow(unused_assignments, unused_parens)]
+    fn yul_int_keyword(&self, input: &mut ParserContext) -> bool {
+        if !self.version_is_at_least_0_7_1 {
+            scan_sequence!(
+                scan_chars!(input, 'i', 'n', 't'),
+                scan_optional!(
+                    input,
+                    scan_choice!(
+                        input,
+                        scan_chars!(input, '9', '6'),
+                        scan_chars!(input, '8', '8'),
+                        scan_chars!(input, '8', '0'),
+                        scan_chars!(input, '8'),
+                        scan_chars!(input, '7', '2'),
+                        scan_chars!(input, '6', '4'),
+                        scan_chars!(input, '5', '6'),
+                        scan_chars!(input, '4', '8'),
+                        scan_chars!(input, '4', '0'),
+                        scan_chars!(input, '3', '2'),
+                        scan_chars!(input, '2', '5', '6'),
+                        scan_chars!(input, '2', '4', '8'),
+                        scan_chars!(input, '2', '4', '0'),
+                        scan_chars!(input, '2', '4'),
+                        scan_chars!(input, '2', '3', '2'),
+                        scan_chars!(input, '2', '2', '4'),
+                        scan_chars!(input, '2', '1', '6'),
+                        scan_chars!(input, '2', '0', '8'),
+                        scan_chars!(input, '2', '0', '0'),
+                        scan_chars!(input, '1', '9', '2'),
+                        scan_chars!(input, '1', '8', '4'),
+                        scan_chars!(input, '1', '7', '6'),
+                        scan_chars!(input, '1', '6', '8'),
+                        scan_chars!(input, '1', '6', '0'),
+                        scan_chars!(input, '1', '6'),
+                        scan_chars!(input, '1', '5', '2'),
+                        scan_chars!(input, '1', '4', '4'),
+                        scan_chars!(input, '1', '3', '6'),
+                        scan_chars!(input, '1', '2', '8'),
+                        scan_chars!(input, '1', '2', '0'),
+                        scan_chars!(input, '1', '1', '2'),
+                        scan_chars!(input, '1', '0', '4')
+                    )
+                )
+            )
+        } else {
+            false
+        }
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn yul_ufixed_keyword(&self, input: &mut ParserContext) -> bool {
+        scan_choice!(
+            input,
+            if !self.version_is_at_least_0_7_1 {
+                scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd')
+            } else {
+                false
+            },
+            if !self.version_is_at_least_0_7_1 {
+                scan_sequence!(
+                    scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
+                    scan_choice!(
+                        input,
+                        scan_chars!(input, '9', '6'),
+                        scan_chars!(input, '8', '8'),
+                        scan_chars!(input, '8', '0'),
+                        scan_chars!(input, '8'),
+                        scan_chars!(input, '7', '2'),
+                        scan_chars!(input, '6', '4'),
+                        scan_chars!(input, '5', '6'),
+                        scan_chars!(input, '4', '8'),
+                        scan_chars!(input, '4', '0'),
+                        scan_chars!(input, '3', '2'),
+                        scan_chars!(input, '2', '4'),
+                        scan_chars!(input, '1', '7', '6'),
+                        scan_chars!(input, '1', '6', '8'),
+                        scan_chars!(input, '1', '6', '0'),
+                        scan_chars!(input, '1', '6'),
+                        scan_chars!(input, '1', '5', '2'),
+                        scan_chars!(input, '1', '4', '4'),
+                        scan_chars!(input, '1', '3', '6'),
+                        scan_chars!(input, '1', '2', '8'),
+                        scan_chars!(input, '1', '2', '0'),
+                        scan_chars!(input, '1', '1', '2'),
+                        scan_chars!(input, '1', '0', '4')
+                    ),
+                    scan_chars!(input, 'x'),
+                    scan_choice!(
+                        input,
+                        scan_chars!(input, '8', '0'),
+                        scan_chars!(input, '8'),
+                        scan_chars!(input, '7', '2'),
+                        scan_chars!(input, '6', '4'),
+                        scan_chars!(input, '5', '6'),
+                        scan_chars!(input, '4', '8'),
+                        scan_chars!(input, '4', '0'),
+                        scan_chars!(input, '3', '2'),
+                        scan_chars!(input, '2', '4'),
+                        scan_chars!(input, '1', '6')
+                    )
+                )
+            } else {
+                false
+            },
+            if !self.version_is_at_least_0_7_1 {
+                scan_sequence!(
+                    scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
+                    scan_choice!(
+                        input,
+                        scan_chars!(input, '2', '4', '8', 'x', '8'),
+                        scan_chars!(input, '2', '4', '0', 'x', '8'),
+                        scan_chars!(input, '2', '4', '0', 'x', '1', '6'),
+                        scan_chars!(input, '2', '3', '2', 'x', '8'),
+                        scan_chars!(input, '2', '3', '2', 'x', '2', '4'),
+                        scan_chars!(input, '2', '3', '2', 'x', '1', '6'),
+                        scan_chars!(input, '2', '2', '4', 'x', '8'),
+                        scan_chars!(input, '2', '2', '4', 'x', '3', '2'),
+                        scan_chars!(input, '2', '2', '4', 'x', '2', '4'),
+                        scan_chars!(input, '2', '2', '4', 'x', '1', '6'),
+                        scan_chars!(input, '2', '1', '6', 'x', '8'),
+                        scan_chars!(input, '2', '1', '6', 'x', '4', '0'),
+                        scan_chars!(input, '2', '1', '6', 'x', '3', '2'),
+                        scan_chars!(input, '2', '1', '6', 'x', '2', '4'),
+                        scan_chars!(input, '2', '1', '6', 'x', '1', '6'),
+                        scan_chars!(input, '2', '0', '8', 'x', '8'),
+                        scan_chars!(input, '2', '0', '8', 'x', '4', '8'),
+                        scan_chars!(input, '2', '0', '8', 'x', '4', '0'),
+                        scan_chars!(input, '2', '0', '8', 'x', '3', '2'),
+                        scan_chars!(input, '2', '0', '8', 'x', '2', '4'),
+                        scan_chars!(input, '2', '0', '8', 'x', '1', '6'),
+                        scan_chars!(input, '2', '0', '0', 'x', '8'),
+                        scan_chars!(input, '2', '0', '0', 'x', '5', '6'),
+                        scan_chars!(input, '2', '0', '0', 'x', '4', '8'),
+                        scan_chars!(input, '2', '0', '0', 'x', '4', '0'),
+                        scan_chars!(input, '2', '0', '0', 'x', '3', '2'),
+                        scan_chars!(input, '2', '0', '0', 'x', '2', '4'),
+                        scan_chars!(input, '2', '0', '0', 'x', '1', '6'),
+                        scan_chars!(input, '1', '9', '2', 'x', '8'),
+                        scan_chars!(input, '1', '9', '2', 'x', '6', '4'),
+                        scan_chars!(input, '1', '9', '2', 'x', '5', '6'),
+                        scan_chars!(input, '1', '9', '2', 'x', '4', '8'),
+                        scan_chars!(input, '1', '9', '2', 'x', '4', '0'),
+                        scan_chars!(input, '1', '9', '2', 'x', '3', '2'),
+                        scan_chars!(input, '1', '9', '2', 'x', '2', '4'),
+                        scan_chars!(input, '1', '9', '2', 'x', '1', '6'),
+                        scan_chars!(input, '1', '8', '4', 'x', '8'),
+                        scan_chars!(input, '1', '8', '4', 'x', '7', '2'),
+                        scan_chars!(input, '1', '8', '4', 'x', '6', '4'),
+                        scan_chars!(input, '1', '8', '4', 'x', '5', '6'),
+                        scan_chars!(input, '1', '8', '4', 'x', '4', '8'),
+                        scan_chars!(input, '1', '8', '4', 'x', '4', '0'),
+                        scan_chars!(input, '1', '8', '4', 'x', '3', '2'),
+                        scan_chars!(input, '1', '8', '4', 'x', '2', '4'),
+                        scan_chars!(input, '1', '8', '4', 'x', '1', '6')
+                    )
+                )
+            } else {
+                false
+            },
+            if self.version_is_at_least_0_4_14 && !self.version_is_at_least_0_7_1 {
+                scan_sequence!(
+                    scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
+                    scan_choice!(
+                        input,
+                        scan_chars!(input, '2', '5', '6', 'x', '8', '0'),
+                        scan_chars!(input, '2', '5', '6', 'x', '8'),
+                        scan_chars!(input, '2', '5', '6', 'x', '7', '2'),
+                        scan_chars!(input, '2', '5', '6', 'x', '6', '4'),
+                        scan_chars!(input, '2', '5', '6', 'x', '5', '6'),
+                        scan_chars!(input, '2', '5', '6', 'x', '4', '8'),
+                        scan_chars!(input, '2', '5', '6', 'x', '4', '0'),
+                        scan_chars!(input, '2', '5', '6', 'x', '3', '2'),
+                        scan_chars!(input, '2', '5', '6', 'x', '2', '4'),
+                        scan_chars!(input, '2', '5', '6', 'x', '1', '6'),
+                        scan_chars!(input, '2', '4', '8', 'x', '8', '0'),
+                        scan_chars!(input, '2', '4', '8', 'x', '7', '2'),
+                        scan_chars!(input, '2', '4', '8', 'x', '6', '4'),
+                        scan_chars!(input, '2', '4', '8', 'x', '5', '6'),
+                        scan_chars!(input, '2', '4', '8', 'x', '4', '8'),
+                        scan_chars!(input, '2', '4', '8', 'x', '4', '0'),
+                        scan_chars!(input, '2', '4', '8', 'x', '3', '2'),
+                        scan_chars!(input, '2', '4', '8', 'x', '2', '4'),
+                        scan_chars!(input, '2', '4', '8', 'x', '1', '6'),
+                        scan_chars!(input, '2', '4', '0', 'x', '8', '0'),
+                        scan_chars!(input, '2', '4', '0', 'x', '7', '2'),
+                        scan_chars!(input, '2', '4', '0', 'x', '6', '4'),
+                        scan_chars!(input, '2', '4', '0', 'x', '5', '6'),
+                        scan_chars!(input, '2', '4', '0', 'x', '4', '8'),
+                        scan_chars!(input, '2', '4', '0', 'x', '4', '0'),
+                        scan_chars!(input, '2', '4', '0', 'x', '3', '2'),
+                        scan_chars!(input, '2', '4', '0', 'x', '2', '4'),
+                        scan_chars!(input, '2', '3', '2', 'x', '8', '0'),
+                        scan_chars!(input, '2', '3', '2', 'x', '7', '2'),
+                        scan_chars!(input, '2', '3', '2', 'x', '6', '4'),
+                        scan_chars!(input, '2', '3', '2', 'x', '5', '6'),
+                        scan_chars!(input, '2', '3', '2', 'x', '4', '8'),
+                        scan_chars!(input, '2', '3', '2', 'x', '4', '0'),
+                        scan_chars!(input, '2', '3', '2', 'x', '3', '2'),
+                        scan_chars!(input, '2', '2', '4', 'x', '8', '0'),
+                        scan_chars!(input, '2', '2', '4', 'x', '7', '2'),
+                        scan_chars!(input, '2', '2', '4', 'x', '6', '4'),
+                        scan_chars!(input, '2', '2', '4', 'x', '5', '6'),
+                        scan_chars!(input, '2', '2', '4', 'x', '4', '8'),
+                        scan_chars!(input, '2', '2', '4', 'x', '4', '0'),
+                        scan_chars!(input, '2', '1', '6', 'x', '8', '0'),
+                        scan_chars!(input, '2', '1', '6', 'x', '7', '2'),
+                        scan_chars!(input, '2', '1', '6', 'x', '6', '4'),
+                        scan_chars!(input, '2', '1', '6', 'x', '5', '6'),
+                        scan_chars!(input, '2', '1', '6', 'x', '4', '8'),
+                        scan_chars!(input, '2', '0', '8', 'x', '8', '0'),
+                        scan_chars!(input, '2', '0', '8', 'x', '7', '2'),
+                        scan_chars!(input, '2', '0', '8', 'x', '6', '4'),
+                        scan_chars!(input, '2', '0', '8', 'x', '5', '6'),
+                        scan_chars!(input, '2', '0', '0', 'x', '8', '0'),
+                        scan_chars!(input, '2', '0', '0', 'x', '7', '2'),
+                        scan_chars!(input, '2', '0', '0', 'x', '6', '4'),
+                        scan_chars!(input, '1', '9', '2', 'x', '8', '0'),
+                        scan_chars!(input, '1', '9', '2', 'x', '7', '2'),
+                        scan_chars!(input, '1', '8', '4', 'x', '8', '0')
+                    )
+                )
+            } else {
+                false
+            },
+            if self.version_is_at_least_0_4_14 && !self.version_is_at_least_0_7_1 {
+                scan_sequence!(
+                    scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
+                    scan_choice!(
+                        input,
+                        scan_chars!(input, '9', '6'),
+                        scan_chars!(input, '8', '8'),
+                        scan_chars!(input, '8', '0'),
+                        scan_chars!(input, '8'),
+                        scan_chars!(input, '7', '2'),
+                        scan_chars!(input, '6', '4'),
+                        scan_chars!(input, '5', '6'),
+                        scan_chars!(input, '4', '8'),
+                        scan_chars!(input, '4', '0'),
+                        scan_chars!(input, '3', '2'),
+                        scan_chars!(input, '2', '5', '6'),
+                        scan_chars!(input, '2', '4', '8'),
+                        scan_chars!(input, '2', '4', '0'),
+                        scan_chars!(input, '2', '4'),
+                        scan_chars!(input, '2', '3', '2'),
+                        scan_chars!(input, '2', '2', '4'),
+                        scan_chars!(input, '2', '1', '6'),
+                        scan_chars!(input, '2', '0', '8'),
+                        scan_chars!(input, '2', '0', '0'),
+                        scan_chars!(input, '1', '9', '2'),
+                        scan_chars!(input, '1', '8', '4'),
+                        scan_chars!(input, '1', '7', '6'),
+                        scan_chars!(input, '1', '6', '8'),
+                        scan_chars!(input, '1', '6', '0'),
+                        scan_chars!(input, '1', '6'),
+                        scan_chars!(input, '1', '5', '2'),
+                        scan_chars!(input, '1', '4', '4'),
+                        scan_chars!(input, '1', '3', '6'),
+                        scan_chars!(input, '1', '2', '8'),
+                        scan_chars!(input, '1', '2', '0'),
+                        scan_chars!(input, '1', '1', '2'),
+                        scan_chars!(input, '1', '0', '4')
+                    ),
+                    scan_chars!(input, 'x'),
+                    scan_choice!(
+                        input,
+                        scan_chars!(input, '9'),
+                        scan_chars!(input, '7', '9'),
+                        scan_chars!(input, '7', '8'),
+                        scan_chars!(input, '7', '7'),
+                        scan_chars!(input, '7', '6'),
+                        scan_chars!(input, '7', '5'),
+                        scan_chars!(input, '7', '4'),
+                        scan_chars!(input, '7', '3'),
+                        scan_chars!(input, '7', '1'),
+                        scan_chars!(input, '7', '0'),
+                        scan_chars!(input, '7'),
+                        scan_chars!(input, '6', '9'),
+                        scan_chars!(input, '6', '8'),
+                        scan_chars!(input, '6', '7'),
+                        scan_chars!(input, '6', '6'),
+                        scan_chars!(input, '6', '5'),
+                        scan_chars!(input, '6', '3'),
+                        scan_chars!(input, '6', '2'),
+                        scan_chars!(input, '6', '1'),
+                        scan_chars!(input, '6', '0'),
+                        scan_chars!(input, '6'),
+                        scan_chars!(input, '5', '9'),
+                        scan_chars!(input, '5', '8'),
+                        scan_chars!(input, '5', '7'),
+                        scan_chars!(input, '5', '5'),
+                        scan_chars!(input, '5', '4'),
+                        scan_chars!(input, '5', '3'),
+                        scan_chars!(input, '5', '2'),
+                        scan_chars!(input, '5', '1'),
+                        scan_chars!(input, '5', '0'),
+                        scan_chars!(input, '5'),
+                        scan_chars!(input, '4', '9'),
+                        scan_chars!(input, '4', '7'),
+                        scan_chars!(input, '4', '6'),
+                        scan_chars!(input, '4', '5'),
+                        scan_chars!(input, '4', '4'),
+                        scan_chars!(input, '4', '3'),
+                        scan_chars!(input, '4', '2'),
+                        scan_chars!(input, '4', '1'),
+                        scan_chars!(input, '4'),
+                        scan_chars!(input, '3', '9'),
+                        scan_chars!(input, '3', '8'),
+                        scan_chars!(input, '3', '7'),
+                        scan_chars!(input, '3', '6'),
+                        scan_chars!(input, '3', '5'),
+                        scan_chars!(input, '3', '4'),
+                        scan_chars!(input, '3', '3'),
+                        scan_chars!(input, '3', '1'),
+                        scan_chars!(input, '3', '0'),
+                        scan_chars!(input, '3'),
+                        scan_chars!(input, '2', '9'),
+                        scan_chars!(input, '2', '8'),
+                        scan_chars!(input, '2', '7'),
+                        scan_chars!(input, '2', '6'),
+                        scan_chars!(input, '2', '5'),
+                        scan_chars!(input, '2', '3'),
+                        scan_chars!(input, '2', '2'),
+                        scan_chars!(input, '2', '1'),
+                        scan_chars!(input, '2', '0'),
+                        scan_chars!(input, '2'),
+                        scan_chars!(input, '1', '9'),
+                        scan_chars!(input, '1', '8'),
+                        scan_chars!(input, '1', '7'),
+                        scan_chars!(input, '1', '5'),
+                        scan_chars!(input, '1', '4'),
+                        scan_chars!(input, '1', '3'),
+                        scan_chars!(input, '1', '2'),
+                        scan_chars!(input, '1', '1'),
+                        scan_chars!(input, '1', '0'),
+                        scan_chars!(input, '1'),
+                        scan_chars!(input, '0')
+                    )
+                )
+            } else {
+                false
+            }
+        )
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn yul_uint_keyword(&self, input: &mut ParserContext) -> bool {
+        if !self.version_is_at_least_0_7_1 {
+            scan_sequence!(
+                scan_chars!(input, 'u', 'i', 'n', 't'),
+                scan_optional!(
+                    input,
+                    scan_choice!(
+                        input,
+                        scan_chars!(input, '9', '6'),
+                        scan_chars!(input, '8', '8'),
+                        scan_chars!(input, '8', '0'),
+                        scan_chars!(input, '8'),
+                        scan_chars!(input, '7', '2'),
+                        scan_chars!(input, '6', '4'),
+                        scan_chars!(input, '5', '6'),
+                        scan_chars!(input, '4', '8'),
+                        scan_chars!(input, '4', '0'),
+                        scan_chars!(input, '3', '2'),
+                        scan_chars!(input, '2', '5', '6'),
+                        scan_chars!(input, '2', '4', '8'),
+                        scan_chars!(input, '2', '4', '0'),
+                        scan_chars!(input, '2', '4'),
+                        scan_chars!(input, '2', '3', '2'),
+                        scan_chars!(input, '2', '2', '4'),
+                        scan_chars!(input, '2', '1', '6'),
+                        scan_chars!(input, '2', '0', '8'),
+                        scan_chars!(input, '2', '0', '0'),
+                        scan_chars!(input, '1', '9', '2'),
+                        scan_chars!(input, '1', '8', '4'),
+                        scan_chars!(input, '1', '7', '6'),
+                        scan_chars!(input, '1', '6', '8'),
+                        scan_chars!(input, '1', '6', '0'),
+                        scan_chars!(input, '1', '6'),
+                        scan_chars!(input, '1', '5', '2'),
+                        scan_chars!(input, '1', '4', '4'),
+                        scan_chars!(input, '1', '3', '6'),
+                        scan_chars!(input, '1', '2', '8'),
+                        scan_chars!(input, '1', '2', '0'),
+                        scan_chars!(input, '1', '1', '2'),
+                        scan_chars!(input, '1', '0', '4')
+                    )
+                )
+            )
+        } else {
+            false
+        }
+    }
+
     pub fn scan(&self, lexical_context: LexicalContext, input: &str) -> Option<TokenKind> {
         let mut input = ParserContext::new(input);
         match lexical_context {
             LexicalContext::Default => {
                 Lexer::next_token::<LexicalContextType::Default>(self, &mut input)
             }
-            LexicalContext::VersionPragma => {
-                Lexer::next_token::<LexicalContextType::VersionPragma>(self, &mut input)
+            LexicalContext::Pragma => {
+                Lexer::next_token::<LexicalContextType::Pragma>(self, &mut input)
             }
-            LexicalContext::YulBlock => {
-                Lexer::next_token::<LexicalContextType::YulBlock>(self, &mut input)
-            }
+            LexicalContext::Yul => Lexer::next_token::<LexicalContextType::Yul>(self, &mut input),
         }
     }
 
@@ -5957,7 +7611,6 @@ impl Language {
         match production_kind {
             ProductionKind::ABICoderPragma => Self::abi_coder_pragma.parse(self, input),
             ProductionKind::AddressType => Self::address_type.parse(self, input),
-            ProductionKind::ArgumentsDeclaration => Self::arguments_declaration.parse(self, input),
             ProductionKind::ArrayExpression => Self::array_expression.parse(self, input),
             ProductionKind::ArrayValues => Self::array_values.parse(self, input),
             ProductionKind::AsciiStringLiterals => Self::ascii_string_literals.parse(self, input),
@@ -5986,6 +7639,7 @@ impl Language {
             }
             ProductionKind::DeleteStatement => Self::delete_statement.parse(self, input),
             ProductionKind::DoWhileStatement => Self::do_while_statement.parse(self, input),
+            ProductionKind::ElseBranch => Self::else_branch.parse(self, input),
             ProductionKind::EmitStatement => Self::emit_statement.parse(self, input),
             ProductionKind::EndOfFileTrivia => Self::end_of_file_trivia.parse(self, input),
             ProductionKind::EnumDefinition => Self::enum_definition.parse(self, input),
@@ -6013,7 +7667,6 @@ impl Language {
             }
             ProductionKind::ForStatement => Self::for_statement.parse(self, input),
             ProductionKind::FunctionAttributes => Self::function_attributes.parse(self, input),
-            ProductionKind::FunctionCallOptions => Self::function_call_options.parse(self, input),
             ProductionKind::FunctionDefinition => Self::function_definition.parse(self, input),
             ProductionKind::FunctionType => Self::function_type.parse(self, input),
             ProductionKind::FunctionTypeAttributes => {
@@ -6023,6 +7676,7 @@ impl Language {
             ProductionKind::HexStringLiterals => Self::hex_string_literals.parse(self, input),
             ProductionKind::IdentifierPath => Self::identifier_path.parse(self, input),
             ProductionKind::IfStatement => Self::if_statement.parse(self, input),
+            ProductionKind::ImportAlias => Self::import_alias.parse(self, input),
             ProductionKind::ImportDeconstruction => Self::import_deconstruction.parse(self, input),
             ProductionKind::ImportDeconstructionSymbol => {
                 Self::import_deconstruction_symbol.parse(self, input)
@@ -6031,6 +7685,7 @@ impl Language {
                 Self::import_deconstruction_symbols.parse(self, input)
             }
             ProductionKind::ImportDirective => Self::import_directive.parse(self, input),
+            ProductionKind::IndexAccessEnd => Self::index_access_end.parse(self, input),
             ProductionKind::InheritanceSpecifier => Self::inheritance_specifier.parse(self, input),
             ProductionKind::InheritanceType => Self::inheritance_type.parse(self, input),
             ProductionKind::InheritanceTypes => Self::inheritance_types.parse(self, input),
@@ -6039,13 +7694,15 @@ impl Language {
             ProductionKind::LeadingTrivia => Self::leading_trivia.parse(self, input),
             ProductionKind::LibraryDefinition => Self::library_definition.parse(self, input),
             ProductionKind::LibraryMembers => Self::library_members.parse(self, input),
-            ProductionKind::MappingKeyType => Self::mapping_key_type.parse(self, input),
+            ProductionKind::MappingKey => Self::mapping_key.parse(self, input),
             ProductionKind::MappingType => Self::mapping_type.parse(self, input),
-            ProductionKind::MappingValueType => Self::mapping_value_type.parse(self, input),
+            ProductionKind::MappingValue => Self::mapping_value.parse(self, input),
             ProductionKind::ModifierAttributes => Self::modifier_attributes.parse(self, input),
             ProductionKind::ModifierDefinition => Self::modifier_definition.parse(self, input),
             ProductionKind::ModifierInvocation => Self::modifier_invocation.parse(self, input),
             ProductionKind::NamedArgument => Self::named_argument.parse(self, input),
+            ProductionKind::NamedArgumentGroup => Self::named_argument_group.parse(self, input),
+            ProductionKind::NamedArgumentGroups => Self::named_argument_groups.parse(self, input),
             ProductionKind::NamedArguments => Self::named_arguments.parse(self, input),
             ProductionKind::NamedArgumentsDeclaration => {
                 Self::named_arguments_declaration.parse(self, input)
@@ -6053,6 +7710,9 @@ impl Language {
             ProductionKind::NamedImport => Self::named_import.parse(self, input),
             ProductionKind::NewExpression => Self::new_expression.parse(self, input),
             ProductionKind::OverridePaths => Self::override_paths.parse(self, input),
+            ProductionKind::OverridePathsDeclaration => {
+                Self::override_paths_declaration.parse(self, input)
+            }
             ProductionKind::OverrideSpecifier => Self::override_specifier.parse(self, input),
             ProductionKind::Parameter => Self::parameter.parse(self, input),
             ProductionKind::Parameters => Self::parameters.parse(self, input),
@@ -6061,6 +7721,9 @@ impl Language {
             }
             ProductionKind::PathImport => Self::path_import.parse(self, input),
             ProductionKind::PositionalArguments => Self::positional_arguments.parse(self, input),
+            ProductionKind::PositionalArgumentsDeclaration => {
+                Self::positional_arguments_declaration.parse(self, input)
+            }
             ProductionKind::PragmaDirective => Self::pragma_directive.parse(self, input),
             ProductionKind::ReceiveFunctionAttributes => {
                 Self::receive_function_attributes.parse(self, input)
@@ -6079,6 +7742,9 @@ impl Language {
             ProductionKind::StateVariableDefinition => {
                 Self::state_variable_definition.parse(self, input)
             }
+            ProductionKind::StateVariableDefinitionValue => {
+                Self::state_variable_definition_value.parse(self, input)
+            }
             ProductionKind::Statements => Self::statements.parse(self, input),
             ProductionKind::StructDefinition => Self::struct_definition.parse(self, input),
             ProductionKind::StructMember => Self::struct_member.parse(self, input),
@@ -6096,6 +7762,7 @@ impl Language {
                 Self::tuple_deconstruction_statement.parse(self, input)
             }
             ProductionKind::TupleExpression => Self::tuple_expression.parse(self, input),
+            ProductionKind::TupleValue => Self::tuple_value.parse(self, input),
             ProductionKind::TupleValues => Self::tuple_values.parse(self, input),
             ProductionKind::TypeExpression => Self::type_expression.parse(self, input),
             ProductionKind::TypeName => Self::type_name.parse(self, input),
@@ -6114,6 +7781,7 @@ impl Language {
             ProductionKind::UserDefinedValueTypeDefinition => {
                 Self::user_defined_value_type_definition.parse(self, input)
             }
+            ProductionKind::UsingAlias => Self::using_alias.parse(self, input),
             ProductionKind::UsingDeconstruction => Self::using_deconstruction.parse(self, input),
             ProductionKind::UsingDeconstructionSymbol => {
                 Self::using_deconstruction_symbol.parse(self, input)
@@ -6122,9 +7790,11 @@ impl Language {
                 Self::using_deconstruction_symbols.parse(self, input)
             }
             ProductionKind::UsingDirective => Self::using_directive.parse(self, input),
-            ProductionKind::VariableDeclaration => Self::variable_declaration.parse(self, input),
             ProductionKind::VariableDeclarationStatement => {
                 Self::variable_declaration_statement.parse(self, input)
+            }
+            ProductionKind::VariableDeclarationValue => {
+                Self::variable_declaration_value.parse(self, input)
             }
             ProductionKind::VersionPragma => Self::version_pragma.parse(self, input),
             ProductionKind::VersionPragmaExpression => {
@@ -6144,9 +7814,7 @@ impl Language {
             ProductionKind::YulBlock => Self::yul_block.parse(self, input),
             ProductionKind::YulBreakStatement => Self::yul_break_statement.parse(self, input),
             ProductionKind::YulContinueStatement => Self::yul_continue_statement.parse(self, input),
-            ProductionKind::YulDeclarationStatement => {
-                Self::yul_declaration_statement.parse(self, input)
-            }
+            ProductionKind::YulDefaultCase => Self::yul_default_case.parse(self, input),
             ProductionKind::YulExpression => Self::yul_expression.parse(self, input),
             ProductionKind::YulForStatement => Self::yul_for_statement.parse(self, input),
             ProductionKind::YulFunctionDefinition => {
@@ -6154,19 +7822,26 @@ impl Language {
             }
             ProductionKind::YulIdentifierPath => Self::yul_identifier_path.parse(self, input),
             ProductionKind::YulIdentifierPaths => Self::yul_identifier_paths.parse(self, input),
-            ProductionKind::YulIdentifiers => Self::yul_identifiers.parse(self, input),
             ProductionKind::YulIfStatement => Self::yul_if_statement.parse(self, input),
             ProductionKind::YulLeaveStatement => Self::yul_leave_statement.parse(self, input),
+            ProductionKind::YulParameters => Self::yul_parameters.parse(self, input),
             ProductionKind::YulParametersDeclaration => {
                 Self::yul_parameters_declaration.parse(self, input)
             }
+            ProductionKind::YulReturnVariables => Self::yul_return_variables.parse(self, input),
             ProductionKind::YulReturnsDeclaration => {
                 Self::yul_returns_declaration.parse(self, input)
             }
             ProductionKind::YulStatements => Self::yul_statements.parse(self, input),
-            ProductionKind::YulSwitchCase => Self::yul_switch_case.parse(self, input),
             ProductionKind::YulSwitchCases => Self::yul_switch_cases.parse(self, input),
             ProductionKind::YulSwitchStatement => Self::yul_switch_statement.parse(self, input),
+            ProductionKind::YulValueCase => Self::yul_value_case.parse(self, input),
+            ProductionKind::YulVariableDeclarationStatement => {
+                Self::yul_variable_declaration_statement.parse(self, input)
+            }
+            ProductionKind::YulVariableDeclarationValue => {
+                Self::yul_variable_declaration_value.parse(self, input)
+            }
         }
     }
 }
@@ -6187,8 +7862,8 @@ impl Lexer for Language {
                 (TokenKind::OpenBracket, TokenKind::CloseBracket),
                 (TokenKind::OpenParen, TokenKind::CloseParen),
             ],
-            LexicalContext::VersionPragma => &[],
-            LexicalContext::YulBlock => &[
+            LexicalContext::Pragma => &[],
+            LexicalContext::Yul => &[
                 (TokenKind::OpenBrace, TokenKind::CloseBrace),
                 (TokenKind::OpenParen, TokenKind::CloseParen),
             ],
@@ -6216,17 +7891,8 @@ impl Lexer for Language {
 
                 if let Some(kind) = match input.next() {
                     Some('a') => match input.next() {
-                        Some('b') => match input.next() {
-                            Some('i') => scan_chars!(input, 'c', 'o', 'd', 'e', 'r')
-                                .then_some(TokenKind::AbicoderKeyword),
-                            Some('s') => scan_chars!(input, 't', 'r', 'a', 'c', 't')
-                                .then_some(TokenKind::AbstractKeyword),
-                            Some(_) => {
-                                input.undo();
-                                None
-                            }
-                            None => None,
-                        },
+                        Some('b') => scan_chars!(input, 's', 't', 'r', 'a', 'c', 't')
+                            .then_some(TokenKind::AbstractKeyword),
                         Some('d') => scan_chars!(input, 'd', 'r', 'e', 's', 's')
                             .then_some(TokenKind::AddressKeyword),
                         Some('f') => {
@@ -6287,7 +7953,7 @@ impl Lexer for Language {
                             Some('l') => {
                                 if self.version_is_at_least_0_5_0 {
                                     scan_chars!(input, 'l', 'd', 'a', 't', 'a')
-                                        .then_some(TokenKind::CalldataKeyword)
+                                        .then_some(TokenKind::CallDataKeyword)
                                 } else {
                                     None
                                 }
@@ -6347,7 +8013,7 @@ impl Lexer for Language {
                             Some('p') => {
                                 if self.version_is_at_least_0_5_0 {
                                     scan_chars!(input, 'y', 'o', 'f')
-                                        .then_some(TokenKind::CopyofKeyword)
+                                        .then_some(TokenKind::CopyOfKeyword)
                                 } else {
                                     None
                                 }
@@ -6422,19 +8088,8 @@ impl Lexer for Language {
                         Some('v') => {
                             scan_chars!(input, 'e', 'n', 't').then_some(TokenKind::EventKeyword)
                         }
-                        Some('x') => match input.next() {
-                            Some('p') => {
-                                scan_chars!(input, 'e', 'r', 'i', 'm', 'e', 'n', 't', 'a', 'l')
-                                    .then_some(TokenKind::ExperimentalKeyword)
-                            }
-                            Some('t') => scan_chars!(input, 'e', 'r', 'n', 'a', 'l')
-                                .then_some(TokenKind::ExternalKeyword),
-                            Some(_) => {
-                                input.undo();
-                                None
-                            }
-                            None => None,
-                        },
+                        Some('x') => scan_chars!(input, 't', 'e', 'r', 'n', 'a', 'l')
+                            .then_some(TokenKind::ExternalKeyword),
                         Some(_) => {
                             input.undo();
                             None
@@ -6604,21 +8259,7 @@ impl Lexer for Language {
                         None => None,
                     },
                     Some('l') => match input.next() {
-                        Some('e') => match input.next() {
-                            Some('a') => {
-                                if self.version_is_at_least_0_6_0 {
-                                    scan_chars!(input, 'v', 'e').then_some(TokenKind::LeaveKeyword)
-                                } else {
-                                    None
-                                }
-                            }
-                            Some('t') => Some(TokenKind::LetKeyword),
-                            Some(_) => {
-                                input.undo();
-                                None
-                            }
-                            None => None,
-                        },
+                        Some('e') => scan_chars!(input, 't').then_some(TokenKind::LetKeyword),
                         Some('i') => scan_chars!(input, 'b', 'r', 'a', 'r', 'y')
                             .then_some(TokenKind::LibraryKeyword),
                         Some(_) => {
@@ -6821,13 +8462,11 @@ impl Lexer for Language {
                         Some('i') => {
                             if self.version_is_at_least_0_5_0 {
                                 scan_chars!(input, 'z', 'e', 'o', 'f')
-                                    .then_some(TokenKind::SizeofKeyword)
+                                    .then_some(TokenKind::SizeOfKeyword)
                             } else {
                                 None
                             }
                         }
-                        Some('o') => scan_chars!(input, 'l', 'i', 'd', 'i', 't', 'y')
-                            .then_some(TokenKind::SolidityKeyword),
                         Some('t') => {
                             match input.next() {
                                 Some('a') => scan_chars!(input, 't', 'i', 'c')
@@ -6894,13 +8533,13 @@ impl Lexer for Language {
                                     Some('d') => {
                                         if self.version_is_at_least_0_5_0 {
                                             scan_chars!(input, 'e', 'f')
-                                                .then_some(TokenKind::TypedefKeyword)
+                                                .then_some(TokenKind::TypeDefKeyword)
                                         } else {
                                             None
                                         }
                                     }
                                     Some('o') => {
-                                        scan_chars!(input, 'f').then_some(TokenKind::TypeofKeyword)
+                                        scan_chars!(input, 'f').then_some(TokenKind::TypeOfKeyword)
                                     }
                                     Some(_) => {
                                         input.undo();
@@ -6999,30 +8638,16 @@ impl Lexer for Language {
                 input.set_position(save);
 
                 if let Some(kind) = match input.next() {
-                    Some('!') => match input.next() {
-                        Some('=') => Some(TokenKind::BangEqual),
-                        Some(_) => {
-                            input.undo();
-                            Some(TokenKind::Bang)
-                        }
-                        None => Some(TokenKind::Bang),
-                    },
-                    Some('%') => match input.next() {
-                        Some('=') => Some(TokenKind::PercentEqual),
-                        Some(_) => {
-                            input.undo();
-                            Some(TokenKind::Percent)
-                        }
-                        None => Some(TokenKind::Percent),
-                    },
+                    Some('!') => scan_chars!(input, '=').then_some(TokenKind::BangEqual),
+                    Some('%') => scan_chars!(input, '=').then_some(TokenKind::PercentEqual),
                     Some('&') => match input.next() {
                         Some('&') => Some(TokenKind::AmpersandAmpersand),
                         Some('=') => Some(TokenKind::AmpersandEqual),
                         Some(_) => {
                             input.undo();
-                            Some(TokenKind::Ampersand)
+                            None
                         }
-                        None => Some(TokenKind::Ampersand),
+                        None => None,
                     },
                     Some('(') => Some(TokenKind::OpenParen),
                     Some(')') => Some(TokenKind::CloseParen),
@@ -7031,18 +8656,18 @@ impl Lexer for Language {
                         Some('=') => Some(TokenKind::AsteriskEqual),
                         Some(_) => {
                             input.undo();
-                            Some(TokenKind::Asterisk)
+                            None
                         }
-                        None => Some(TokenKind::Asterisk),
+                        None => None,
                     },
                     Some('+') => match input.next() {
                         Some('+') => Some(TokenKind::PlusPlus),
                         Some('=') => Some(TokenKind::PlusEqual),
                         Some(_) => {
                             input.undo();
-                            Some(TokenKind::Plus)
+                            None
                         }
-                        None => Some(TokenKind::Plus),
+                        None => None,
                     },
                     Some(',') => Some(TokenKind::Comma),
                     Some('-') => match input.next() {
@@ -7050,92 +8675,64 @@ impl Lexer for Language {
                         Some('=') => Some(TokenKind::MinusEqual),
                         Some(_) => {
                             input.undo();
-                            Some(TokenKind::Minus)
+                            None
                         }
-                        None => Some(TokenKind::Minus),
+                        None => None,
                     },
                     Some('.') => Some(TokenKind::Period),
-                    Some('/') => match input.next() {
-                        Some('=') => Some(TokenKind::SlashEqual),
-                        Some(_) => {
-                            input.undo();
-                            Some(TokenKind::Slash)
-                        }
-                        None => Some(TokenKind::Slash),
-                    },
-                    Some(':') => Some(TokenKind::Colon),
+                    Some('/') => scan_chars!(input, '=').then_some(TokenKind::SlashEqual),
                     Some(';') => Some(TokenKind::Semicolon),
                     Some('<') => match input.next() {
-                        Some('<') => match input.next() {
-                            Some('=') => Some(TokenKind::LessThanLessThanEqual),
-                            Some(_) => {
-                                input.undo();
-                                Some(TokenKind::LessThanLessThan)
-                            }
-                            None => Some(TokenKind::LessThanLessThan),
-                        },
+                        Some('<') => {
+                            scan_chars!(input, '=').then_some(TokenKind::LessThanLessThanEqual)
+                        }
                         Some('=') => Some(TokenKind::LessThanEqual),
                         Some(_) => {
                             input.undo();
-                            Some(TokenKind::LessThan)
+                            None
                         }
-                        None => Some(TokenKind::LessThan),
+                        None => None,
                     },
                     Some('=') => match input.next() {
                         Some('=') => Some(TokenKind::EqualEqual),
                         Some('>') => Some(TokenKind::EqualGreaterThan),
                         Some(_) => {
                             input.undo();
-                            Some(TokenKind::Equal)
+                            None
                         }
-                        None => Some(TokenKind::Equal),
+                        None => None,
                     },
                     Some('>') => match input.next() {
                         Some('=') => Some(TokenKind::GreaterThanEqual),
                         Some('>') => match input.next() {
                             Some('=') => Some(TokenKind::GreaterThanGreaterThanEqual),
-                            Some('>') => match input.next() {
-                                Some('=') => {
-                                    Some(TokenKind::GreaterThanGreaterThanGreaterThanEqual)
-                                }
-                                Some(_) => {
-                                    input.undo();
-                                    Some(TokenKind::GreaterThanGreaterThanGreaterThan)
-                                }
-                                None => Some(TokenKind::GreaterThanGreaterThanGreaterThan),
-                            },
+                            Some('>') => scan_chars!(input, '=')
+                                .then_some(TokenKind::GreaterThanGreaterThanGreaterThanEqual),
                             Some(_) => {
                                 input.undo();
-                                Some(TokenKind::GreaterThanGreaterThan)
+                                None
                             }
-                            None => Some(TokenKind::GreaterThanGreaterThan),
+                            None => None,
                         },
                         Some(_) => {
                             input.undo();
-                            Some(TokenKind::GreaterThan)
+                            None
                         }
-                        None => Some(TokenKind::GreaterThan),
+                        None => None,
                     },
                     Some('?') => Some(TokenKind::QuestionMark),
                     Some('[') => Some(TokenKind::OpenBracket),
                     Some(']') => Some(TokenKind::CloseBracket),
-                    Some('^') => match input.next() {
-                        Some('=') => Some(TokenKind::CaretEqual),
-                        Some(_) => {
-                            input.undo();
-                            Some(TokenKind::Caret)
-                        }
-                        None => Some(TokenKind::Caret),
-                    },
+                    Some('^') => scan_chars!(input, '=').then_some(TokenKind::CaretEqual),
                     Some('{') => Some(TokenKind::OpenBrace),
                     Some('|') => match input.next() {
                         Some('=') => Some(TokenKind::BarEqual),
                         Some('|') => Some(TokenKind::BarBar),
                         Some(_) => {
                             input.undo();
-                            Some(TokenKind::Bar)
+                            None
                         }
-                        None => Some(TokenKind::Bar),
+                        None => None,
                     },
                     Some('}') => Some(TokenKind::CloseBrace),
                     Some('~') => Some(TokenKind::Tilde),
@@ -7151,16 +8748,32 @@ impl Lexer for Language {
                 input.set_position(save);
 
                 longest_match! {
+                        { Ampersand = ampersand }
                         { AsciiStringLiteral = ascii_string_literal }
+                        { Asterisk = asterisk }
+                        { Bang = bang }
+                        { Bar = bar }
                         { BytesKeyword = bytes_keyword }
+                        { Caret = caret }
+                        { Colon = colon }
                         { DecimalLiteral = decimal_literal }
                         { EndOfLine = end_of_line }
+                        { Equal = equal }
                         { FixedKeyword = fixed_keyword }
+                        { GreaterThan = greater_than }
+                        { GreaterThanGreaterThan = greater_than_greater_than }
+                        { GreaterThanGreaterThanGreaterThan = greater_than_greater_than_greater_than }
                         { HexLiteral = hex_literal }
                         { HexStringLiteral = hex_string_literal }
                         { IntKeyword = int_keyword }
+                        { LessThan = less_than }
+                        { LessThanLessThan = less_than_less_than }
+                        { Minus = minus }
                         { MultilineComment = multiline_comment }
+                        { Percent = percent }
+                        { Plus = plus }
                         { SingleLineComment = single_line_comment }
+                        { Slash = slash }
                         { UfixedKeyword = ufixed_keyword }
                         { UintKeyword = uint_keyword }
                         { UnicodeStringLiteral = unicode_string_literal }
@@ -7168,7 +8781,7 @@ impl Lexer for Language {
                         { Identifier = identifier }
                 }
             }
-            LexicalContext::VersionPragma => {
+            LexicalContext::Pragma => {
                 macro_rules! longest_match {
                         ($( { $kind:ident = $function:ident } )*) => {
                             $(
@@ -7181,9 +8794,23 @@ impl Lexer for Language {
                         };
                     }
 
-                if let Some(kind) = scan_chars!(input, 's', 'o', 'l', 'i', 'd', 'i', 't', 'y')
-                    .then_some(TokenKind::SolidityKeyword)
-                {
+                if let Some(kind) = match input.next() {
+                    Some('a') => scan_chars!(input, 'b', 'i', 'c', 'o', 'd', 'e', 'r')
+                        .then_some(TokenKind::AbicoderKeyword),
+                    Some('e') => {
+                        scan_chars!(input, 'x', 'p', 'e', 'r', 'i', 'm', 'e', 'n', 't', 'a', 'l')
+                            .then_some(TokenKind::ExperimentalKeyword)
+                    }
+                    Some('p') => scan_chars!(input, 'r', 'a', 'g', 'm', 'a')
+                        .then_some(TokenKind::PragmaKeyword),
+                    Some('s') => scan_chars!(input, 'o', 'l', 'i', 'd', 'i', 't', 'y')
+                        .then_some(TokenKind::SolidityKeyword),
+                    Some(_) => {
+                        input.undo();
+                        None
+                    }
+                    None => None,
+                } {
                     // Make sure that this is not the start of an identifier
                     if !self.identifier_part(input) {
                         furthest_position = input.position();
@@ -7193,26 +8820,10 @@ impl Lexer for Language {
                 input.set_position(save);
 
                 if let Some(kind) = match input.next() {
-                    Some('-') => Some(TokenKind::Minus),
                     Some('.') => Some(TokenKind::Period),
-                    Some('<') => match input.next() {
-                        Some('=') => Some(TokenKind::LessThanEqual),
-                        Some(_) => {
-                            input.undo();
-                            Some(TokenKind::LessThan)
-                        }
-                        None => Some(TokenKind::LessThan),
-                    },
-                    Some('=') => Some(TokenKind::Equal),
-                    Some('>') => match input.next() {
-                        Some('=') => Some(TokenKind::GreaterThanEqual),
-                        Some(_) => {
-                            input.undo();
-                            Some(TokenKind::GreaterThan)
-                        }
-                        None => Some(TokenKind::GreaterThan),
-                    },
-                    Some('^') => Some(TokenKind::Caret),
+                    Some(';') => Some(TokenKind::Semicolon),
+                    Some('<') => scan_chars!(input, '=').then_some(TokenKind::LessThanEqual),
+                    Some('>') => scan_chars!(input, '=').then_some(TokenKind::GreaterThanEqual),
                     Some('|') => scan_chars!(input, '|').then_some(TokenKind::BarBar),
                     Some('~') => Some(TokenKind::Tilde),
                     Some(_) => {
@@ -7227,10 +8838,17 @@ impl Lexer for Language {
                 input.set_position(save);
 
                 longest_match! {
+                        { AsciiStringLiteral = ascii_string_literal }
+                        { Caret = caret }
+                        { Equal = equal }
+                        { GreaterThan = greater_than }
+                        { LessThan = less_than }
+                        { Minus = minus }
                         { VersionPragmaValue = version_pragma_value }
+                        { Identifier = identifier }
                 }
             }
-            LexicalContext::YulBlock => {
+            LexicalContext::Yul => {
                 macro_rules! longest_match {
                         ($( { $kind:ident = $function:ident } )*) => {
                             $(
@@ -7244,48 +8862,807 @@ impl Lexer for Language {
                     }
 
                 if let Some(kind) = match input.next() {
-                    Some('b') => {
-                        scan_chars!(input, 'r', 'e', 'a', 'k').then_some(TokenKind::BreakKeyword)
-                    }
+                    Some('a') => match input.next() {
+                        Some('b') => {
+                            if !self.version_is_at_least_0_7_1 {
+                                scan_chars!(input, 's', 't', 'r', 'a', 'c', 't')
+                                    .then_some(TokenKind::YulAbstractKeyword)
+                            } else {
+                                None
+                            }
+                        }
+                        Some('d') => scan_chars!(input, 'd', 'r', 'e', 's', 's')
+                            .then_some(TokenKind::YulAddressKeyword),
+                        Some('f') => {
+                            if !self.version_is_at_least_0_7_1 {
+                                scan_chars!(input, 't', 'e', 'r')
+                                    .then_some(TokenKind::YulAfterKeyword)
+                            } else {
+                                None
+                            }
+                        }
+                        Some('l') => {
+                            if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
+                                scan_chars!(input, 'i', 'a', 's')
+                                    .then_some(TokenKind::YulAliasKeyword)
+                            } else {
+                                None
+                            }
+                        }
+                        Some('n') => {
+                            if !self.version_is_at_least_0_7_1 {
+                                scan_chars!(input, 'o', 'n', 'y', 'm', 'o', 'u', 's')
+                                    .then_some(TokenKind::YulAnonymousKeyword)
+                            } else {
+                                None
+                            }
+                        }
+                        Some('p') => {
+                            if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
+                                scan_chars!(input, 'p', 'l', 'y')
+                                    .then_some(TokenKind::YulApplyKeyword)
+                            } else {
+                                None
+                            }
+                        }
+                        Some('s') => match input.next() {
+                            Some('s') => {
+                                if !self.version_is_at_least_0_7_1 {
+                                    scan_chars!(input, 'e', 'm', 'b', 'l', 'y')
+                                        .then_some(TokenKind::YulAssemblyKeyword)
+                                } else {
+                                    None
+                                }
+                            }
+                            Some(_) => {
+                                input.undo();
+                                if !self.version_is_at_least_0_7_1 {
+                                    Some(TokenKind::YulAsKeyword)
+                                } else {
+                                    None
+                                }
+                            }
+                            None => {
+                                if !self.version_is_at_least_0_7_1 {
+                                    Some(TokenKind::YulAsKeyword)
+                                } else {
+                                    None
+                                }
+                            }
+                        },
+                        Some('u') => {
+                            if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
+                                scan_chars!(input, 't', 'o').then_some(TokenKind::YulAutoKeyword)
+                            } else {
+                                None
+                            }
+                        }
+                        Some(_) => {
+                            input.undo();
+                            None
+                        }
+                        None => None,
+                    },
+                    Some('b') => match input.next() {
+                        Some('o') => {
+                            if !self.version_is_at_least_0_5_10 {
+                                scan_chars!(input, 'o', 'l').then_some(TokenKind::YulBoolKeyword)
+                            } else {
+                                None
+                            }
+                        }
+                        Some('r') => {
+                            scan_chars!(input, 'e', 'a', 'k').then_some(TokenKind::YulBreakKeyword)
+                        }
+                        Some('y') => {
+                            scan_chars!(input, 't', 'e').then_some(TokenKind::YulByteKeyword)
+                        }
+                        Some(_) => {
+                            input.undo();
+                            None
+                        }
+                        None => None,
+                    },
                     Some('c') => match input.next() {
-                        Some('a') => scan_chars!(input, 's', 'e').then_some(TokenKind::CaseKeyword),
-                        Some('o') => scan_chars!(input, 'n', 't', 'i', 'n', 'u', 'e')
-                            .then_some(TokenKind::ContinueKeyword),
-                        Some(_) => {
-                            input.undo();
-                            None
-                        }
-                        None => None,
-                    },
-                    Some('d') => scan_chars!(input, 'e', 'f', 'a', 'u', 'l', 't')
-                        .then_some(TokenKind::DefaultKeyword),
-                    Some('f') => match input.next() {
-                        Some('a') => {
-                            scan_chars!(input, 'l', 's', 'e').then_some(TokenKind::FalseKeyword)
-                        }
-                        Some('o') => scan_chars!(input, 'r').then_some(TokenKind::ForKeyword),
-                        Some('u') => scan_chars!(input, 'n', 'c', 't', 'i', 'o', 'n')
-                            .then_some(TokenKind::FunctionKeyword),
-                        Some(_) => {
-                            input.undo();
-                            None
-                        }
-                        None => None,
-                    },
-                    Some('h') => scan_chars!(input, 'e', 'x').then_some(TokenKind::HexKeyword),
-                    Some('i') => scan_chars!(input, 'f').then_some(TokenKind::IfKeyword),
-                    Some('l') => {
-                        if scan_chars!(input, 'e') {
-                            match input.next() {
-                                Some('a') => {
-                                    if self.version_is_at_least_0_6_0 {
-                                        scan_chars!(input, 'v', 'e')
-                                            .then_some(TokenKind::LeaveKeyword)
+                        Some('a') => match input.next() {
+                            Some('l') => {
+                                if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1
+                                {
+                                    scan_chars!(input, 'l', 'd', 'a', 't', 'a')
+                                        .then_some(TokenKind::YulCallDataKeyword)
+                                } else {
+                                    None
+                                }
+                            }
+                            Some('s') => {
+                                scan_chars!(input, 'e').then_some(TokenKind::YulCaseKeyword)
+                            }
+                            Some('t') => {
+                                if !self.version_is_at_least_0_7_1 {
+                                    scan_chars!(input, 'c', 'h')
+                                        .then_some(TokenKind::YulCatchKeyword)
+                                } else {
+                                    None
+                                }
+                            }
+                            Some(_) => {
+                                input.undo();
+                                None
+                            }
+                            None => None,
+                        },
+                        Some('o') => match input.next() {
+                            Some('n') => match input.next() {
+                                Some('s') => {
+                                    if scan_chars!(input, 't') {
+                                        match input.next() {
+                                            Some('a') => {
+                                                if !self.version_is_at_least_0_7_1 {
+                                                    scan_chars!(input, 'n', 't')
+                                                        .then_some(TokenKind::YulConstantKeyword)
+                                                } else {
+                                                    None
+                                                }
+                                            }
+                                            Some('r') => {
+                                                if self.version_is_at_least_0_5_0
+                                                    && !self.version_is_at_least_0_7_1
+                                                {
+                                                    scan_chars!(input, 'u', 'c', 't', 'o', 'r')
+                                                        .then_some(TokenKind::YulConstructorKeyword)
+                                                } else {
+                                                    None
+                                                }
+                                            }
+                                            Some(_) => {
+                                                input.undo();
+                                                None
+                                            }
+                                            None => None,
+                                        }
                                     } else {
                                         None
                                     }
                                 }
-                                Some('t') => Some(TokenKind::LetKeyword),
+                                Some('t') => match input.next() {
+                                    Some('i') => scan_chars!(input, 'n', 'u', 'e')
+                                        .then_some(TokenKind::YulContinueKeyword),
+                                    Some('r') => {
+                                        if !self.version_is_at_least_0_7_1 {
+                                            scan_chars!(input, 'a', 'c', 't')
+                                                .then_some(TokenKind::YulContractKeyword)
+                                        } else {
+                                            None
+                                        }
+                                    }
+                                    Some(_) => {
+                                        input.undo();
+                                        None
+                                    }
+                                    None => None,
+                                },
+                                Some(_) => {
+                                    input.undo();
+                                    None
+                                }
+                                None => None,
+                            },
+                            Some('p') => {
+                                if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1
+                                {
+                                    scan_chars!(input, 'y', 'o', 'f')
+                                        .then_some(TokenKind::YulCopyOfKeyword)
+                                } else {
+                                    None
+                                }
+                            }
+                            Some(_) => {
+                                input.undo();
+                                None
+                            }
+                            None => None,
+                        },
+                        Some(_) => {
+                            input.undo();
+                            None
+                        }
+                        None => None,
+                    },
+                    Some('d') => match input.next() {
+                        Some('a') => {
+                            if !self.version_is_at_least_0_7_1 {
+                                scan_chars!(input, 'y', 's').then_some(TokenKind::YulDaysKeyword)
+                            } else {
+                                None
+                            }
+                        }
+                        Some('e') => match input.next() {
+                            Some('f') => match input.next() {
+                                Some('a') => scan_chars!(input, 'u', 'l', 't')
+                                    .then_some(TokenKind::YulDefaultKeyword),
+                                Some('i') => {
+                                    if self.version_is_at_least_0_5_0
+                                        && !self.version_is_at_least_0_7_1
+                                    {
+                                        scan_chars!(input, 'n', 'e')
+                                            .then_some(TokenKind::YulDefineKeyword)
+                                    } else {
+                                        None
+                                    }
+                                }
+                                Some(_) => {
+                                    input.undo();
+                                    None
+                                }
+                                None => None,
+                            },
+                            Some('l') => {
+                                if !self.version_is_at_least_0_7_1 {
+                                    scan_chars!(input, 'e', 't', 'e')
+                                        .then_some(TokenKind::YulDeleteKeyword)
+                                } else {
+                                    None
+                                }
+                            }
+                            Some(_) => {
+                                input.undo();
+                                None
+                            }
+                            None => None,
+                        },
+                        Some('o') => {
+                            if !self.version_is_at_least_0_7_1 {
+                                Some(TokenKind::YulDoKeyword)
+                            } else {
+                                None
+                            }
+                        }
+                        Some(_) => {
+                            input.undo();
+                            None
+                        }
+                        None => None,
+                    },
+                    Some('e') => match input.next() {
+                        Some('l') => {
+                            if !self.version_is_at_least_0_7_1 {
+                                scan_chars!(input, 's', 'e').then_some(TokenKind::YulElseKeyword)
+                            } else {
+                                None
+                            }
+                        }
+                        Some('m') => {
+                            if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
+                                scan_chars!(input, 'i', 't').then_some(TokenKind::YulEmitKeyword)
+                            } else {
+                                None
+                            }
+                        }
+                        Some('n') => {
+                            if !self.version_is_at_least_0_7_1 {
+                                scan_chars!(input, 'u', 'm').then_some(TokenKind::YulEnumKeyword)
+                            } else {
+                                None
+                            }
+                        }
+                        Some('t') => {
+                            if !self.version_is_at_least_0_7_1 {
+                                scan_chars!(input, 'h', 'e', 'r')
+                                    .then_some(TokenKind::YulEtherKeyword)
+                            } else {
+                                None
+                            }
+                        }
+                        Some('v') => {
+                            if !self.version_is_at_least_0_7_1 {
+                                scan_chars!(input, 'e', 'n', 't')
+                                    .then_some(TokenKind::YulEventKeyword)
+                            } else {
+                                None
+                            }
+                        }
+                        Some('x') => {
+                            if !self.version_is_at_least_0_7_1 {
+                                scan_chars!(input, 't', 'e', 'r', 'n', 'a', 'l')
+                                    .then_some(TokenKind::YulExternalKeyword)
+                            } else {
+                                None
+                            }
+                        }
+                        Some(_) => {
+                            input.undo();
+                            None
+                        }
+                        None => None,
+                    },
+                    Some('f') => match input.next() {
+                        Some('a') => {
+                            if scan_chars!(input, 'l') {
+                                match input.next() {
+                                    Some('l') => {
+                                        if self.version_is_at_least_0_6_0
+                                            && !self.version_is_at_least_0_7_1
+                                        {
+                                            scan_chars!(input, 'b', 'a', 'c', 'k')
+                                                .then_some(TokenKind::YulFallbackKeyword)
+                                        } else {
+                                            None
+                                        }
+                                    }
+                                    Some('s') => scan_chars!(input, 'e')
+                                        .then_some(TokenKind::YulFalseKeyword),
+                                    Some(_) => {
+                                        input.undo();
+                                        None
+                                    }
+                                    None => None,
+                                }
+                            } else {
+                                None
+                            }
+                        }
+                        Some('i') => {
+                            if scan_chars!(input, 'n') {
+                                match input.next() {
+                                    Some('a') => {
+                                        if !self.version_is_at_least_0_7_1 {
+                                            scan_chars!(input, 'l')
+                                                .then_some(TokenKind::YulFinalKeyword)
+                                        } else {
+                                            None
+                                        }
+                                    }
+                                    Some('n') => {
+                                        if !self.version_is_at_least_0_7_0 {
+                                            scan_chars!(input, 'e', 'y')
+                                                .then_some(TokenKind::YulFinneyKeyword)
+                                        } else {
+                                            None
+                                        }
+                                    }
+                                    Some(_) => {
+                                        input.undo();
+                                        None
+                                    }
+                                    None => None,
+                                }
+                            } else {
+                                None
+                            }
+                        }
+                        Some('o') => scan_chars!(input, 'r').then_some(TokenKind::YulForKeyword),
+                        Some('u') => scan_chars!(input, 'n', 'c', 't', 'i', 'o', 'n')
+                            .then_some(TokenKind::YulFunctionKeyword),
+                        Some(_) => {
+                            input.undo();
+                            None
+                        }
+                        None => None,
+                    },
+                    Some('g') => {
+                        if self.version_is_at_least_0_7_0 && !self.version_is_at_least_0_7_1 {
+                            scan_chars!(input, 'w', 'e', 'i').then_some(TokenKind::YulGweiKeyword)
+                        } else {
+                            None
+                        }
+                    }
+                    Some('h') => match input.next() {
+                        Some('e') => scan_chars!(input, 'x').then_some(TokenKind::YulHexKeyword),
+                        Some('o') => {
+                            if !self.version_is_at_least_0_7_1 {
+                                scan_chars!(input, 'u', 'r', 's')
+                                    .then_some(TokenKind::YulHoursKeyword)
+                            } else {
+                                None
+                            }
+                        }
+                        Some(_) => {
+                            input.undo();
+                            None
+                        }
+                        None => None,
+                    },
+                    Some('i') => match input.next() {
+                        Some('f') => Some(TokenKind::YulIfKeyword),
+                        Some('m') => match input.next() {
+                            Some('m') => {
+                                if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1
+                                {
+                                    scan_chars!(input, 'u', 't', 'a', 'b', 'l', 'e')
+                                        .then_some(TokenKind::YulImmutableKeyword)
+                                } else {
+                                    None
+                                }
+                            }
+                            Some('p') => match input.next() {
+                                Some('l') => {
+                                    if self.version_is_at_least_0_5_0
+                                        && !self.version_is_at_least_0_7_1
+                                    {
+                                        scan_chars!(input, 'e', 'm', 'e', 'n', 't', 's')
+                                            .then_some(TokenKind::YulImplementsKeyword)
+                                    } else {
+                                        None
+                                    }
+                                }
+                                Some('o') => {
+                                    if !self.version_is_at_least_0_7_1 {
+                                        scan_chars!(input, 'r', 't')
+                                            .then_some(TokenKind::YulImportKeyword)
+                                    } else {
+                                        None
+                                    }
+                                }
+                                Some(_) => {
+                                    input.undo();
+                                    None
+                                }
+                                None => None,
+                            },
+                            Some(_) => {
+                                input.undo();
+                                None
+                            }
+                            None => None,
+                        },
+                        Some('n') => match input.next() {
+                            Some('d') => {
+                                if !self.version_is_at_least_0_7_1 {
+                                    scan_chars!(input, 'e', 'x', 'e', 'd')
+                                        .then_some(TokenKind::YulIndexedKeyword)
+                                } else {
+                                    None
+                                }
+                            }
+                            Some('l') => {
+                                if !self.version_is_at_least_0_7_1 {
+                                    scan_chars!(input, 'i', 'n', 'e')
+                                        .then_some(TokenKind::YulInlineKeyword)
+                                } else {
+                                    None
+                                }
+                            }
+                            Some('t') => {
+                                if scan_chars!(input, 'e', 'r') {
+                                    match input.next() {
+                                        Some('f') => {
+                                            if !self.version_is_at_least_0_7_1 {
+                                                scan_chars!(input, 'a', 'c', 'e')
+                                                    .then_some(TokenKind::YulInterfaceKeyword)
+                                            } else {
+                                                None
+                                            }
+                                        }
+                                        Some('n') => {
+                                            if !self.version_is_at_least_0_7_1 {
+                                                scan_chars!(input, 'a', 'l')
+                                                    .then_some(TokenKind::YulInternalKeyword)
+                                            } else {
+                                                None
+                                            }
+                                        }
+                                        Some(_) => {
+                                            input.undo();
+                                            None
+                                        }
+                                        None => None,
+                                    }
+                                } else {
+                                    None
+                                }
+                            }
+                            Some(_) => {
+                                input.undo();
+                                if !self.version_is_at_least_0_6_8 {
+                                    Some(TokenKind::YulInKeyword)
+                                } else {
+                                    None
+                                }
+                            }
+                            None => {
+                                if !self.version_is_at_least_0_6_8 {
+                                    Some(TokenKind::YulInKeyword)
+                                } else {
+                                    None
+                                }
+                            }
+                        },
+                        Some('s') => {
+                            if !self.version_is_at_least_0_7_1 {
+                                Some(TokenKind::YulIsKeyword)
+                            } else {
+                                None
+                            }
+                        }
+                        Some(_) => {
+                            input.undo();
+                            None
+                        }
+                        None => None,
+                    },
+                    Some('l') => match input.next() {
+                        Some('e') => match input.next() {
+                            Some('a') => {
+                                if self.version_is_at_least_0_6_0 {
+                                    scan_chars!(input, 'v', 'e')
+                                        .then_some(TokenKind::YulLeaveKeyword)
+                                } else {
+                                    None
+                                }
+                            }
+                            Some('t') => Some(TokenKind::YulLetKeyword),
+                            Some(_) => {
+                                input.undo();
+                                None
+                            }
+                            None => None,
+                        },
+                        Some('i') => {
+                            if !self.version_is_at_least_0_7_1 {
+                                scan_chars!(input, 'b', 'r', 'a', 'r', 'y')
+                                    .then_some(TokenKind::YulLibraryKeyword)
+                            } else {
+                                None
+                            }
+                        }
+                        Some(_) => {
+                            input.undo();
+                            None
+                        }
+                        None => None,
+                    },
+                    Some('m') => match input.next() {
+                        Some('a') => match input.next() {
+                            Some('c') => {
+                                if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1
+                                {
+                                    scan_chars!(input, 'r', 'o')
+                                        .then_some(TokenKind::YulMacroKeyword)
+                                } else {
+                                    None
+                                }
+                            }
+                            Some('p') => {
+                                if !self.version_is_at_least_0_7_1 {
+                                    scan_chars!(input, 'p', 'i', 'n', 'g')
+                                        .then_some(TokenKind::YulMappingKeyword)
+                                } else {
+                                    None
+                                }
+                            }
+                            Some('t') => {
+                                if !self.version_is_at_least_0_7_1 {
+                                    scan_chars!(input, 'c', 'h')
+                                        .then_some(TokenKind::YulMatchKeyword)
+                                } else {
+                                    None
+                                }
+                            }
+                            Some(_) => {
+                                input.undo();
+                                None
+                            }
+                            None => None,
+                        },
+                        Some('e') => {
+                            if !self.version_is_at_least_0_7_1 {
+                                scan_chars!(input, 'm', 'o', 'r', 'y')
+                                    .then_some(TokenKind::YulMemoryKeyword)
+                            } else {
+                                None
+                            }
+                        }
+                        Some('i') => {
+                            if !self.version_is_at_least_0_7_1 {
+                                scan_chars!(input, 'n', 'u', 't', 'e', 's')
+                                    .then_some(TokenKind::YulMinutesKeyword)
+                            } else {
+                                None
+                            }
+                        }
+                        Some('o') => {
+                            if !self.version_is_at_least_0_7_1 {
+                                scan_chars!(input, 'd', 'i', 'f', 'i', 'e', 'r')
+                                    .then_some(TokenKind::YulModifierKeyword)
+                            } else {
+                                None
+                            }
+                        }
+                        Some('u') => {
+                            if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
+                                scan_chars!(input, 't', 'a', 'b', 'l', 'e')
+                                    .then_some(TokenKind::YulMutableKeyword)
+                            } else {
+                                None
+                            }
+                        }
+                        Some(_) => {
+                            input.undo();
+                            None
+                        }
+                        None => None,
+                    },
+                    Some('n') => match input.next() {
+                        Some('e') => {
+                            if !self.version_is_at_least_0_7_1 {
+                                scan_chars!(input, 'w').then_some(TokenKind::YulNewKeyword)
+                            } else {
+                                None
+                            }
+                        }
+                        Some('u') => {
+                            if !self.version_is_at_least_0_7_1 {
+                                scan_chars!(input, 'l', 'l').then_some(TokenKind::YulNullKeyword)
+                            } else {
+                                None
+                            }
+                        }
+                        Some(_) => {
+                            input.undo();
+                            None
+                        }
+                        None => None,
+                    },
+                    Some('o') => match input.next() {
+                        Some('f') => {
+                            if !self.version_is_at_least_0_7_1 {
+                                Some(TokenKind::YulOfKeyword)
+                            } else {
+                                None
+                            }
+                        }
+                        Some('v') => {
+                            if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
+                                scan_chars!(input, 'e', 'r', 'r', 'i', 'd', 'e')
+                                    .then_some(TokenKind::YulOverrideKeyword)
+                            } else {
+                                None
+                            }
+                        }
+                        Some(_) => {
+                            input.undo();
+                            None
+                        }
+                        None => None,
+                    },
+                    Some('p') => match input.next() {
+                        Some('a') => match input.next() {
+                            Some('r') => {
+                                if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1
+                                {
+                                    scan_chars!(input, 't', 'i', 'a', 'l')
+                                        .then_some(TokenKind::YulPartialKeyword)
+                                } else {
+                                    None
+                                }
+                            }
+                            Some('y') => {
+                                if !self.version_is_at_least_0_7_1 {
+                                    scan_chars!(input, 'a', 'b', 'l', 'e')
+                                        .then_some(TokenKind::YulPayableKeyword)
+                                } else {
+                                    None
+                                }
+                            }
+                            Some(_) => {
+                                input.undo();
+                                None
+                            }
+                            None => None,
+                        },
+                        Some('r') => match input.next() {
+                            Some('a') => {
+                                if !self.version_is_at_least_0_7_1 {
+                                    scan_chars!(input, 'g', 'm', 'a')
+                                        .then_some(TokenKind::YulPragmaKeyword)
+                                } else {
+                                    None
+                                }
+                            }
+                            Some('i') => {
+                                if !self.version_is_at_least_0_7_1 {
+                                    scan_chars!(input, 'v', 'a', 't', 'e')
+                                        .then_some(TokenKind::YulPrivateKeyword)
+                                } else {
+                                    None
+                                }
+                            }
+                            Some('o') => {
+                                if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1
+                                {
+                                    scan_chars!(input, 'm', 'i', 's', 'e')
+                                        .then_some(TokenKind::YulPromiseKeyword)
+                                } else {
+                                    None
+                                }
+                            }
+                            Some(_) => {
+                                input.undo();
+                                None
+                            }
+                            None => None,
+                        },
+                        Some('u') => match input.next() {
+                            Some('b') => {
+                                if !self.version_is_at_least_0_7_1 {
+                                    scan_chars!(input, 'l', 'i', 'c')
+                                        .then_some(TokenKind::YulPublicKeyword)
+                                } else {
+                                    None
+                                }
+                            }
+                            Some('r') => {
+                                if !self.version_is_at_least_0_7_1 {
+                                    scan_chars!(input, 'e').then_some(TokenKind::YulPureKeyword)
+                                } else {
+                                    None
+                                }
+                            }
+                            Some(_) => {
+                                input.undo();
+                                None
+                            }
+                            None => None,
+                        },
+                        Some(_) => {
+                            input.undo();
+                            None
+                        }
+                        None => None,
+                    },
+                    Some('r') => {
+                        if scan_chars!(input, 'e') {
+                            match input.next() {
+                                Some('c') => {
+                                    if self.version_is_at_least_0_6_0
+                                        && !self.version_is_at_least_0_7_1
+                                    {
+                                        scan_chars!(input, 'e', 'i', 'v', 'e')
+                                            .then_some(TokenKind::YulReceiveKeyword)
+                                    } else {
+                                        None
+                                    }
+                                }
+                                Some('f') => {
+                                    if self.version_is_at_least_0_5_0
+                                        && !self.version_is_at_least_0_7_1
+                                    {
+                                        scan_chars!(input, 'e', 'r', 'e', 'n', 'c', 'e')
+                                            .then_some(TokenKind::YulReferenceKeyword)
+                                    } else {
+                                        None
+                                    }
+                                }
+                                Some('l') => {
+                                    if !self.version_is_at_least_0_7_1 {
+                                        scan_chars!(input, 'o', 'c', 'a', 't', 'a', 'b', 'l', 'e')
+                                            .then_some(TokenKind::YulRelocatableKeyword)
+                                    } else {
+                                        None
+                                    }
+                                }
+                                Some('t') => {
+                                    if scan_chars!(input, 'u', 'r', 'n') {
+                                        match input.next() {
+                                            Some('s') => {
+                                                if !self.version_is_at_least_0_7_1 {
+                                                    Some(TokenKind::YulReturnsKeyword)
+                                                } else {
+                                                    None
+                                                }
+                                            }
+                                            Some(_) => {
+                                                input.undo();
+                                                Some(TokenKind::YulReturnKeyword)
+                                            }
+                                            None => Some(TokenKind::YulReturnKeyword),
+                                        }
+                                    } else {
+                                        None
+                                    }
+                                }
+                                Some('v') => scan_chars!(input, 'e', 'r', 't')
+                                    .then_some(TokenKind::YulRevertKeyword),
                                 Some(_) => {
                                     input.undo();
                                     None
@@ -7296,10 +9673,286 @@ impl Lexer for Language {
                             None
                         }
                     }
-                    Some('s') => scan_chars!(input, 'w', 'i', 't', 'c', 'h')
-                        .then_some(TokenKind::SwitchKeyword),
-                    Some('t') => {
-                        scan_chars!(input, 'r', 'u', 'e').then_some(TokenKind::TrueKeyword)
+                    Some('s') => match input.next() {
+                        Some('e') => match input.next() {
+                            Some('a') => {
+                                if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1
+                                {
+                                    scan_chars!(input, 'l', 'e', 'd')
+                                        .then_some(TokenKind::YulSealedKeyword)
+                                } else {
+                                    None
+                                }
+                            }
+                            Some('c') => {
+                                if !self.version_is_at_least_0_7_1 {
+                                    scan_chars!(input, 'o', 'n', 'd', 's')
+                                        .then_some(TokenKind::YulSecondsKeyword)
+                                } else {
+                                    None
+                                }
+                            }
+                            Some(_) => {
+                                input.undo();
+                                None
+                            }
+                            None => None,
+                        },
+                        Some('i') => {
+                            if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
+                                scan_chars!(input, 'z', 'e', 'o', 'f')
+                                    .then_some(TokenKind::YulSizeOfKeyword)
+                            } else {
+                                None
+                            }
+                        }
+                        Some('t') => match input.next() {
+                            Some('a') => {
+                                if !self.version_is_at_least_0_7_1 {
+                                    scan_chars!(input, 't', 'i', 'c')
+                                        .then_some(TokenKind::YulStaticKeyword)
+                                } else {
+                                    None
+                                }
+                            }
+                            Some('o') => {
+                                if !self.version_is_at_least_0_7_1 {
+                                    scan_chars!(input, 'r', 'a', 'g', 'e')
+                                        .then_some(TokenKind::YulStorageKeyword)
+                                } else {
+                                    None
+                                }
+                            }
+                            Some('r') => match input.next() {
+                                Some('i') => {
+                                    if !self.version_is_at_least_0_7_1 {
+                                        scan_chars!(input, 'n', 'g')
+                                            .then_some(TokenKind::YulStringKeyword)
+                                    } else {
+                                        None
+                                    }
+                                }
+                                Some('u') => {
+                                    if !self.version_is_at_least_0_7_1 {
+                                        scan_chars!(input, 'c', 't')
+                                            .then_some(TokenKind::YulStructKeyword)
+                                    } else {
+                                        None
+                                    }
+                                }
+                                Some(_) => {
+                                    input.undo();
+                                    None
+                                }
+                                None => None,
+                            },
+                            Some(_) => {
+                                input.undo();
+                                None
+                            }
+                            None => None,
+                        },
+                        Some('u') => {
+                            if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
+                                scan_chars!(input, 'p', 'p', 'o', 'r', 't', 's')
+                                    .then_some(TokenKind::YulSupportsKeyword)
+                            } else {
+                                None
+                            }
+                        }
+                        Some('w') => scan_chars!(input, 'i', 't', 'c', 'h')
+                            .then_some(TokenKind::YulSwitchKeyword),
+                        Some('z') => {
+                            if !self.version_is_at_least_0_7_0 {
+                                scan_chars!(input, 'a', 'b', 'o')
+                                    .then_some(TokenKind::YulSzaboKeyword)
+                            } else {
+                                None
+                            }
+                        }
+                        Some(_) => {
+                            input.undo();
+                            None
+                        }
+                        None => None,
+                    },
+                    Some('t') => match input.next() {
+                        Some('h') => {
+                            if !self.version_is_at_least_0_7_1 {
+                                scan_chars!(input, 'r', 'o', 'w')
+                                    .then_some(TokenKind::YulThrowKeyword)
+                            } else {
+                                None
+                            }
+                        }
+                        Some('r') => match input.next() {
+                            Some('u') => {
+                                scan_chars!(input, 'e').then_some(TokenKind::YulTrueKeyword)
+                            }
+                            Some('y') => {
+                                if !self.version_is_at_least_0_7_1 {
+                                    Some(TokenKind::YulTryKeyword)
+                                } else {
+                                    None
+                                }
+                            }
+                            Some(_) => {
+                                input.undo();
+                                None
+                            }
+                            None => None,
+                        },
+                        Some('y') => {
+                            if scan_chars!(input, 'p', 'e') {
+                                match input.next() {
+                                    Some('d') => {
+                                        if self.version_is_at_least_0_5_0
+                                            && !self.version_is_at_least_0_7_1
+                                        {
+                                            scan_chars!(input, 'e', 'f')
+                                                .then_some(TokenKind::YulTypeDefKeyword)
+                                        } else {
+                                            None
+                                        }
+                                    }
+                                    Some('o') => {
+                                        if !self.version_is_at_least_0_7_1 {
+                                            scan_chars!(input, 'f')
+                                                .then_some(TokenKind::YulTypeOfKeyword)
+                                        } else {
+                                            None
+                                        }
+                                    }
+                                    Some(_) => {
+                                        input.undo();
+                                        if !self.version_is_at_least_0_7_1 {
+                                            Some(TokenKind::YulTypeKeyword)
+                                        } else {
+                                            None
+                                        }
+                                    }
+                                    None => {
+                                        if !self.version_is_at_least_0_7_1 {
+                                            Some(TokenKind::YulTypeKeyword)
+                                        } else {
+                                            None
+                                        }
+                                    }
+                                }
+                            } else {
+                                None
+                            }
+                        }
+                        Some(_) => {
+                            input.undo();
+                            None
+                        }
+                        None => None,
+                    },
+                    Some('u') => match input.next() {
+                        Some('n') => {
+                            if self.version_is_at_least_0_5_0 && !self.version_is_at_least_0_7_1 {
+                                scan_chars!(input, 'c', 'h', 'e', 'c', 'k', 'e', 'd')
+                                    .then_some(TokenKind::YulUncheckedKeyword)
+                            } else {
+                                None
+                            }
+                        }
+                        Some('s') => {
+                            if !self.version_is_at_least_0_7_1 {
+                                scan_chars!(input, 'i', 'n', 'g')
+                                    .then_some(TokenKind::YulUsingKeyword)
+                            } else {
+                                None
+                            }
+                        }
+                        Some(_) => {
+                            input.undo();
+                            None
+                        }
+                        None => None,
+                    },
+                    Some('v') => match input.next() {
+                        Some('a') => {
+                            if !self.version_is_at_least_0_6_5 {
+                                scan_chars!(input, 'r').then_some(TokenKind::YulVarKeyword)
+                            } else {
+                                None
+                            }
+                        }
+                        Some('i') => match input.next() {
+                            Some('e') => {
+                                if !self.version_is_at_least_0_7_1 {
+                                    scan_chars!(input, 'w').then_some(TokenKind::YulViewKeyword)
+                                } else {
+                                    None
+                                }
+                            }
+                            Some('r') => {
+                                if self.version_is_at_least_0_6_0 && !self.version_is_at_least_0_7_1
+                                {
+                                    scan_chars!(input, 't', 'u', 'a', 'l')
+                                        .then_some(TokenKind::YulVirtualKeyword)
+                                } else {
+                                    None
+                                }
+                            }
+                            Some(_) => {
+                                input.undo();
+                                None
+                            }
+                            None => None,
+                        },
+                        Some(_) => {
+                            input.undo();
+                            None
+                        }
+                        None => None,
+                    },
+                    Some('w') => match input.next() {
+                        Some('e') => match input.next() {
+                            Some('e') => {
+                                if !self.version_is_at_least_0_7_1 {
+                                    scan_chars!(input, 'k', 's')
+                                        .then_some(TokenKind::YulWeeksKeyword)
+                                } else {
+                                    None
+                                }
+                            }
+                            Some('i') => {
+                                if !self.version_is_at_least_0_7_1 {
+                                    Some(TokenKind::YulWeiKeyword)
+                                } else {
+                                    None
+                                }
+                            }
+                            Some(_) => {
+                                input.undo();
+                                None
+                            }
+                            None => None,
+                        },
+                        Some('h') => {
+                            if !self.version_is_at_least_0_7_1 {
+                                scan_chars!(input, 'i', 'l', 'e')
+                                    .then_some(TokenKind::YulWhileKeyword)
+                            } else {
+                                None
+                            }
+                        }
+                        Some(_) => {
+                            input.undo();
+                            None
+                        }
+                        None => None,
+                    },
+                    Some('y') => {
+                        if !self.version_is_at_least_0_7_1 {
+                            scan_chars!(input, 'e', 'a', 'r', 's')
+                                .then_some(TokenKind::YulYearsKeyword)
+                        } else {
+                            None
+                        }
                     }
                     Some(_) => {
                         input.undo();
@@ -7338,9 +9991,14 @@ impl Lexer for Language {
                 longest_match! {
                         { AsciiStringLiteral = ascii_string_literal }
                         { HexStringLiteral = hex_string_literal }
+                        { YulBytesKeyword = yul_bytes_keyword }
                         { YulDecimalLiteral = yul_decimal_literal }
+                        { YulFixedKeyword = yul_fixed_keyword }
                         { YulHexLiteral = yul_hex_literal }
                         { YulIdentifier = yul_identifier }
+                        { YulIntKeyword = yul_int_keyword }
+                        { YulUfixedKeyword = yul_ufixed_keyword }
+                        { YulUintKeyword = yul_uint_keyword }
                 }
             }
         }

@@ -2078,6 +2078,7 @@ dependencies = [
  "codegen_language_definition",
  "codegen_language_macros",
  "codegen_schema",
+ "indexmap 1.9.3",
  "infra_utils",
  "semver",
 ]

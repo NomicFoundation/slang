@@ -9,9 +9,8 @@ Tree:
   - Expression (Rule): # 0..14 "payable(value)"
       - FunctionCallExpression (Rule): # 0..14 "payable(value)"
           - Expression (Rule): # 0..7 "payable"
-              - AddressType (Rule): # 0..7 "payable"
-                  - PayableKeyword (Token): "payable" # 0..7
-          - ArgumentsDeclaration (Rule): # 7..14 "(value)"
+              - PayableKeyword (Token): "payable" # 0..7
+          - PositionalArgumentsDeclaration (Rule): # 7..14 "(value)"
               - OpenParen (Token): "(" # 7..8
               - PositionalArguments (Rule): # 8..13 "value"
                   - Expression (Rule): # 8..13 "value"

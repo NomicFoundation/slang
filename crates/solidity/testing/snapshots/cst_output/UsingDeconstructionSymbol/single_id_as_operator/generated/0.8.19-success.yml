@@ -9,5 +9,6 @@ Tree:
   - UsingDeconstructionSymbol (Rule): # 0..8 "foo as /"
       - IdentifierPath (Rule): # 0..3 "foo"
           - Identifier (Token): "foo" # 0..3
-      - AsKeyword (Token): "as" # 4..6
-      - Slash (Token): "/" # 7..8
+      - UsingAlias (Rule): # 3..8 " as /"
+          - AsKeyword (Token): "as" # 4..6
+          - Slash (Token): "/" # 7..8

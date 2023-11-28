@@ -3,19 +3,18 @@ pub use solidity::SolidityDefinition;
 codegen_language_macros::compile!(Language(
     name = Solidity,
     root_item = SourceUnit,
-    leading_trivia = ZeroOrMore(Choice([
+    // TODO(#638): For now this is on par with the DSL v1 definition to minimize the fallout.
+    // We should replace this with the new definition from #629.
+    leading_trivia = OneOrMore(Choice([
         Trivia(Whitespace),
         Trivia(EndOfLine),
-        Trivia(SingleLineComment),
-        Trivia(MultilineComment)
+        Trivia(MultilineComment),
+        Trivia(SingleLineComment)
     ])),
     trailing_trivia = Sequence([
-        ZeroOrMore(Choice([
-            Trivia(Whitespace),
-            Trivia(SingleLineComment),
-            Trivia(MultilineComment)
-        ])),
-        Choice([Trivia(EndOfLine), EndOfInput])
+        Optional(Trivia(Whitespace)),
+        Optional(Trivia(SingleLineComment)),
+        Trivia(EndOfLine)
     ]),
     versions = [
         "0.4.11", "0.4.12", "0.4.13", "0.4.14", "0.4.15", "0.4.16", "0.4.17", "0.4.18", "0.4.19",
@@ -150,6 +149,7 @@ codegen_language_macros::compile!(Language(
                             precedence_expressions = [
                                 PrecedenceExpression(
                                     name = VersionPragmaOrExpression,
+                                    rule_name = VersionPragmaBinaryExpression,
                                     operators = [PrecedenceOperator(
                                         model = BinaryLeftAssociative,
                                         fields = (operator = Required(Terminal([BarBar])))
@@ -157,6 +157,7 @@ codegen_language_macros::compile!(Language(
                                 ),
                                 PrecedenceExpression(
                                     name = VersionPragmaRangeExpression,
+                                    rule_name = VersionPragmaBinaryExpression,
                                     operators = [PrecedenceOperator(
                                         model = BinaryLeftAssociative,
                                         fields = (operator = Required(Terminal([Minus])))
@@ -164,6 +165,7 @@ codegen_language_macros::compile!(Language(
                                 ),
                                 PrecedenceExpression(
                                     name = VersionPragmaPrefixExpression,
+                                    rule_name = VersionPragmaUnaryExpression,
                                     operators = [PrecedenceOperator(
                                         model = Prefix,
                                         fields = (operator = Required(Terminal([
@@ -2668,6 +2670,7 @@ codegen_language_macros::compile!(Language(
                             name = TypeName,
                             precedence_expressions = [PrecedenceExpression(
                                 name = ArrayTypeName,
+                                rule_name = ArrayTypeName,
                                 operators = [PrecedenceOperator(
                                     model = Postfix,
                                     error_recovery = FieldsErrorRecovery(
@@ -2883,6 +2886,32 @@ codegen_language_macros::compile!(Language(
                                 expression = Required(NonTerminal(Expression)),
                                 semicolon = Required(Terminal([Semicolon]))
                             )
+                        ),
+                        Struct(
+                            name = AssemblyStatement,
+                            fields = (
+                                assembly_keyword = Required(Terminal([AssemblyKeyword])),
+                                label = Optional(kind = Terminal([AsciiStringLiteral])),
+                                flags = Optional(kind = NonTerminal(AssemblyFlagsDeclaration)),
+                                body = Required(NonTerminal(YulBlock))
+                            )
+                        ),
+                        Struct(
+                            name = AssemblyFlagsDeclaration,
+                            error_recovery = FieldsErrorRecovery(
+                                delimiters =
+                                    FieldDelimiters(open = open_paren, close = close_paren)
+                            ),
+                            fields = (
+                                open_paren = Required(Terminal([OpenParen])),
+                                flags = Required(NonTerminal(AssemblyFlags)),
+                                close_paren = Required(Terminal([CloseParen]))
+                            )
+                        ),
+                        Separated(
+                            name = AssemblyFlags,
+                            separated = AsciiStringLiteral,
+                            separator = Comma
                         )
                     ]
                 ),
@@ -3191,6 +3220,7 @@ codegen_language_macros::compile!(Language(
                             precedence_expressions = [
                                 PrecedenceExpression(
                                     name = AssignmentExpression,
+                                    rule_name = BinaryExpression,
                                     operators = [PrecedenceOperator(
                                         model = BinaryLeftAssociative,
                                         fields = (operator = Required(Terminal([
@@ -3211,6 +3241,7 @@ codegen_language_macros::compile!(Language(
                                 ),
                                 PrecedenceExpression(
                                     name = ConditionalExpression,
+                                    rule_name = ConditionalExpression,
                                     operators = [PrecedenceOperator(
                                         model = Postfix,
                                         fields = (
@@ -3223,6 +3254,7 @@ codegen_language_macros::compile!(Language(
                                 ),
                                 PrecedenceExpression(
                                     name = OrExpression,
+                                    rule_name = BinaryExpression,
                                     operators = [PrecedenceOperator(
                                         model = BinaryLeftAssociative,
                                         fields = (operator = Required(Terminal([BarBar])))
@@ -3230,6 +3262,7 @@ codegen_language_macros::compile!(Language(
                                 ),
                                 PrecedenceExpression(
                                     name = AndExpression,
+                                    rule_name = BinaryExpression,
                                     operators = [PrecedenceOperator(
                                         model = BinaryLeftAssociative,
                                         fields =
@@ -3238,6 +3271,7 @@ codegen_language_macros::compile!(Language(
                                 ),
                                 PrecedenceExpression(
                                     name = EqualityExpression,
+                                    rule_name = BinaryExpression,
                                     operators = [PrecedenceOperator(
                                         model = BinaryLeftAssociative,
                                         fields = (operator =
@@ -3246,6 +3280,7 @@ codegen_language_macros::compile!(Language(
                                 ),
                                 PrecedenceExpression(
                                     name = ComparisonExpression,
+                                    rule_name = BinaryExpression,
                                     operators = [PrecedenceOperator(
                                         model = BinaryLeftAssociative,
                                         fields = (operator = Required(Terminal([
@@ -3258,6 +3293,7 @@ codegen_language_macros::compile!(Language(
                                 ),
                                 PrecedenceExpression(
                                     name = BitwiseOrExpression,
+                                    rule_name = BinaryExpression,
                                     operators = [PrecedenceOperator(
                                         model = BinaryLeftAssociative,
                                         fields = (operator = Required(Terminal([Bar])))
@@ -3265,6 +3301,7 @@ codegen_language_macros::compile!(Language(
                                 ),
                                 PrecedenceExpression(
                                     name = BitwiseXorExpression,
+                                    rule_name = BinaryExpression,
                                     operators = [PrecedenceOperator(
                                         model = BinaryLeftAssociative,
                                         fields = (operator = Required(Terminal([Caret])))
@@ -3272,6 +3309,7 @@ codegen_language_macros::compile!(Language(
                                 ),
                                 PrecedenceExpression(
                                     name = BitwiseAndExpression,
+                                    rule_name = BinaryExpression,
                                     operators = [PrecedenceOperator(
                                         model = BinaryLeftAssociative,
                                         fields = (operator = Required(Terminal([Ampersand])))
@@ -3279,6 +3317,7 @@ codegen_language_macros::compile!(Language(
                                 ),
                                 PrecedenceExpression(
                                     name = ShiftExpression,
+                                    rule_name = BinaryExpression,
                                     operators = [PrecedenceOperator(
                                         model = BinaryLeftAssociative,
                                         fields = (operator = Required(Terminal([
@@ -3290,6 +3329,7 @@ codegen_language_macros::compile!(Language(
                                 ),
                                 PrecedenceExpression(
                                     name = AdditiveExpression,
+                                    rule_name = BinaryExpression,
                                     operators = [PrecedenceOperator(
                                         model = BinaryLeftAssociative,
                                         fields = (operator = Required(Terminal([Plus, Minus])))
@@ -3297,6 +3337,7 @@ codegen_language_macros::compile!(Language(
                                 ),
                                 PrecedenceExpression(
                                     name = MultiplicativeExpression,
+                                    rule_name = BinaryExpression,
                                     operators = [PrecedenceOperator(
                                         model = BinaryLeftAssociative,
                                         fields = (operator =
@@ -3305,6 +3346,7 @@ codegen_language_macros::compile!(Language(
                                 ),
                                 PrecedenceExpression(
                                     name = ExponentiationExpression,
+                                    rule_name = BinaryExpression,
                                     operators = [
                                         // Before '0.6.0', it was left-associative:
                                         PrecedenceOperator(
@@ -3324,6 +3366,7 @@ codegen_language_macros::compile!(Language(
                                 ),
                                 PrecedenceExpression(
                                     name = PostfixExpression,
+                                    rule_name = UnaryPostfixExpression,
                                     operators = [PrecedenceOperator(
                                         model = Postfix,
                                         fields =
@@ -3332,6 +3375,7 @@ codegen_language_macros::compile!(Language(
                                 ),
                                 PrecedenceExpression(
                                     name = PrefixExpression,
+                                    rule_name = UnaryPrefixExpression,
                                     operators = [
                                         // Before '0.5.0', 'Plus' was supported:
                                         PrecedenceOperator(
@@ -3353,6 +3397,7 @@ codegen_language_macros::compile!(Language(
                                 ),
                                 PrecedenceExpression(
                                     name = FunctionCallExpression,
+                                    rule_name = FunctionCallExpression,
                                     operators = [PrecedenceOperator(
                                         model = Postfix,
                                         fields = (
@@ -3366,6 +3411,7 @@ codegen_language_macros::compile!(Language(
                                 ),
                                 PrecedenceExpression(
                                     name = MemberAccessExpression,
+                                    rule_name = MemberAccessExpression,
                                     operators = [PrecedenceOperator(
                                         model = Postfix,
                                         fields = (
@@ -3377,6 +3423,7 @@ codegen_language_macros::compile!(Language(
                                 ),
                                 PrecedenceExpression(
                                     name = IndexAccessExpression,
+                                    rule_name = IndexAccessExpression,
                                     operators = [PrecedenceOperator(
                                         model = Postfix,
                                         error_recovery = FieldsErrorRecovery(
@@ -3967,32 +4014,6 @@ codegen_language_macros::compile!(Language(
                     lexical_context = Yul,
                     items = [
                         Struct(
-                            name = AssemblyStatement,
-                            fields = (
-                                assembly_keyword = Required(Terminal([AssemblyKeyword])),
-                                label = Optional(kind = Terminal([AsciiStringLiteral])),
-                                flags = Optional(kind = NonTerminal(AssemblyFlagsDeclaration)),
-                                body = Required(NonTerminal(YulBlock))
-                            )
-                        ),
-                        Struct(
-                            name = AssemblyFlagsDeclaration,
-                            error_recovery = FieldsErrorRecovery(
-                                delimiters =
-                                    FieldDelimiters(open = open_paren, close = close_paren)
-                            ),
-                            fields = (
-                                open_paren = Required(Terminal([OpenParen])),
-                                flags = Required(NonTerminal(AssemblyFlags)),
-                                close_paren = Required(Terminal([CloseParen]))
-                            )
-                        ),
-                        Separated(
-                            name = AssemblyFlags,
-                            separated = AsciiStringLiteral,
-                            separator = Comma
-                        ),
-                        Struct(
                             name = YulBlock,
                             error_recovery = FieldsErrorRecovery(
                                 delimiters =
@@ -4162,6 +4183,7 @@ codegen_language_macros::compile!(Language(
                             name = YulExpression,
                             precedence_expressions = [PrecedenceExpression(
                                 name = YulFunctionCallExpression,
+                                rule_name = YulFunctionCallExpression,
                                 operators = [PrecedenceOperator(
                                     model = Postfix,
                                     error_recovery = FieldsErrorRecovery(

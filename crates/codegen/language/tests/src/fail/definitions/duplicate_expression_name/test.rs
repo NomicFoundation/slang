@@ -14,9 +14,9 @@ codegen_language_macros::compile!(Language(
                 Precedence(
                     name = Bar,
                     precedence_expressions = [
-                        PrecedenceExpression(name = Expression1, operators = []),
-                        PrecedenceExpression(name = Expression2, operators = []),
-                        PrecedenceExpression(name = Expression1, operators = [])
+                        PrecedenceExpression(name = Expression1, rule_name = X, operators = []),
+                        PrecedenceExpression(name = Expression2, rule_name = X, operators = []),
+                        PrecedenceExpression(name = Expression1, rule_name = X, operators = [])
                     ],
                     primary_expressions = [PrimaryExpression(expression = Baz)]
                 ),

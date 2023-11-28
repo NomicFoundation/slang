@@ -9,11 +9,11 @@ Tree:
   - MappingType (Rule): # 0..30 "mapping(string Foo => bytes32)"
       - MappingKeyword (Token): "mapping" # 0..7
       - OpenParen (Token): "(" # 7..8
-      - MappingKeyType (Rule): # 8..18 "string Foo"
+      - MappingKey (Rule): # 8..18 "string Foo"
           - StringKeyword (Token): "string" # 8..14
           - Identifier (Token): "Foo" # 15..18
       - EqualGreaterThan (Token): "=>" # 19..21
-      - MappingValueType (Rule): # 21..29 " bytes32"
+      - MappingValue (Rule): # 21..29 " bytes32"
           - TypeName (Rule): # 21..29 " bytes32"
               - BytesKeyword (Token): "bytes32" # 22..29
       - CloseParen (Token): ")" # 29..30

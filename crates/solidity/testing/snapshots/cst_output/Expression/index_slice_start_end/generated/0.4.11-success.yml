@@ -13,7 +13,8 @@ Tree:
           - OpenBracket (Token): "[" # 3..4
           - Expression (Rule): # 4..9 "start"
               - Identifier (Token): "start" # 4..9
-          - Colon (Token): ":" # 9..10
-          - Expression (Rule): # 10..13 "end"
-              - Identifier (Token): "end" # 10..13
+          - IndexAccessEnd (Rule): # 9..13 ":end"
+              - Colon (Token): ":" # 9..10
+              - Expression (Rule): # 10..13 "end"
+                  - Identifier (Token): "end" # 10..13
           - CloseBracket (Token): "]" # 13..14

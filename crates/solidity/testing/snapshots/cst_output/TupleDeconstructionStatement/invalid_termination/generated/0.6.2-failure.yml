@@ -32,16 +32,18 @@ Tree:
           - TupleExpression (Rule): # 8..20 " (123, 135)\n"
               - OpenParen (Token): "(" # 9..10
               - TupleValues (Rule): # 10..18 "123, 135"
-                  - Expression (Rule): # 10..13 "123"
-                      - DecimalNumberExpression (Rule): # 10..13 "123"
-                          - DecimalLiteral (Token): "123" # 10..13
+                  - TupleValue (Rule): # 10..13 "123"
+                      - Expression (Rule): # 10..13 "123"
+                          - DecimalNumberExpression (Rule): # 10..13 "123"
+                              - DecimalLiteral (Token): "123" # 10..13
                   - Comma (Token): "," # 13..14
-                  - Expression (Rule): # 14..18 " 135"
-                      - DecimalNumberExpression (Rule): # 14..18 " 135"
-                          - DecimalLiteral (Token): "135" # 15..18
+                  - TupleValue (Rule): # 14..18 " 135"
+                      - Expression (Rule): # 14..18 " 135"
+                          - DecimalNumberExpression (Rule): # 14..18 " 135"
+                              - DecimalLiteral (Token): "135" # 15..18
               - CloseParen (Token): ")" # 18..19
-          - FunctionCallOptions (Rule): # 20..26 "/**/\n{"
-              - NamedArgumentsDeclaration (Rule): # 20..26 "/**/\n{"
+          - NamedArgumentGroups (Rule): # 20..26 "/**/\n{"
+              - NamedArgumentGroup (Rule): # 20..26 "/**/\n{"
                   - LeadingTrivia (Rule): # 20..25 "/**/\n"
                       - MultilineComment (Trivia): "/**/" # 20..24
                   - OpenBrace (Token): "{" # 25..26

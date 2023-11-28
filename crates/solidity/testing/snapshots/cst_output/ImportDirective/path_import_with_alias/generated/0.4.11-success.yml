@@ -10,6 +10,7 @@ Tree:
       - ImportKeyword (Token): "import" # 0..6
       - PathImport (Rule): # 6..19 ' "foo" as bar'
           - AsciiStringLiteral (Token): '"foo"' # 7..12
-          - AsKeyword (Token): "as" # 13..15
-          - Identifier (Token): "bar" # 16..19
+          - ImportAlias (Rule): # 12..19 " as bar"
+              - AsKeyword (Token): "as" # 13..15
+              - Identifier (Token): "bar" # 16..19
       - Semicolon (Token): ";" # 19..20

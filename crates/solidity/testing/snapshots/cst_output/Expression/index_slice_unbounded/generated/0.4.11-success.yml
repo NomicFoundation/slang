@@ -11,5 +11,6 @@ Tree:
           - Expression (Rule): # 0..3 "arr"
               - Identifier (Token): "arr" # 0..3
           - OpenBracket (Token): "[" # 3..4
-          - Colon (Token): ":" # 4..5
+          - IndexAccessEnd (Rule): # 4..5 ":"
+              - Colon (Token): ":" # 4..5
           - CloseBracket (Token): "]" # 5..6

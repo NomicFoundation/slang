@@ -1,5 +1,3 @@
-pub mod dsl;
-
 mod grammar;
 mod parser_definition;
 mod precedence_parser_definition;

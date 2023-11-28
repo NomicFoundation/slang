@@ -7,11 +7,11 @@ Errors: []
 
 Tree:
   - VariableDeclarationStatement (Rule): # 0..10 "var z = 0;"
-      - VariableDeclaration (Rule): # 0..5 "var z"
-          - VarKeyword (Token): "var" # 0..3
-          - Identifier (Token): "z" # 4..5
-      - Equal (Token): "=" # 6..7
-      - Expression (Rule): # 7..9 " 0"
-          - DecimalNumberExpression (Rule): # 7..9 " 0"
-              - DecimalLiteral (Token): "0" # 8..9
+      - VarKeyword (Token): "var" # 0..3
+      - Identifier (Token): "z" # 4..5
+      - VariableDeclarationValue (Rule): # 5..9 " = 0"
+          - Equal (Token): "=" # 6..7
+          - Expression (Rule): # 7..9 " 0"
+              - DecimalNumberExpression (Rule): # 7..9 " 0"
+                  - DecimalLiteral (Token): "0" # 8..9
       - Semicolon (Token): ";" # 9..10

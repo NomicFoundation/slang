@@ -72,14 +72,14 @@ Tree:
                               - OpenBrace (Token): "{" # 111..112
                               - Statements (Rule): # 113..131 "\t\t\tuint256 a = 1;\n"
                                   - VariableDeclarationStatement (Rule): # 113..131 "\t\t\tuint256 a = 1;\n"
-                                      - VariableDeclaration (Rule): # 113..125 "\t\t\tuint256 a"
-                                          - TypeName (Rule): # 113..123 "\t\t\tuint256"
-                                              - UintKeyword (Token): "uint256" # 116..123
-                                          - Identifier (Token): "a" # 124..125
-                                      - Equal (Token): "=" # 126..127
-                                      - Expression (Rule): # 127..129 " 1"
-                                          - DecimalNumberExpression (Rule): # 127..129 " 1"
-                                              - DecimalLiteral (Token): "1" # 128..129
+                                      - TypeName (Rule): # 113..123 "\t\t\tuint256"
+                                          - UintKeyword (Token): "uint256" # 116..123
+                                      - Identifier (Token): "a" # 124..125
+                                      - VariableDeclarationValue (Rule): # 125..129 " = 1"
+                                          - Equal (Token): "=" # 126..127
+                                          - Expression (Rule): # 127..129 " 1"
+                                              - DecimalNumberExpression (Rule): # 127..129 " 1"
+                                                  - DecimalLiteral (Token): "1" # 128..129
                                       - Semicolon (Token): ";" # 129..130
                               - CloseBrace (Token): "}" # 133..134
                   - CloseBrace (Token): "}" # 136..137
@@ -93,14 +93,14 @@ Tree:
                   - OpenBrace (Token): "{" # 155..156
                   - Statements (Rule): # 157..207 "\t\tuint256 x = 0;\n\t\tunchecked { invalid sequence }\n"
                       - VariableDeclarationStatement (Rule): # 157..174 "\t\tuint256 x = 0;\n"
-                          - VariableDeclaration (Rule): # 157..168 "\t\tuint256 x"
-                              - TypeName (Rule): # 157..166 "\t\tuint256"
-                                  - UintKeyword (Token): "uint256" # 159..166
-                              - Identifier (Token): "x" # 167..168
-                          - Equal (Token): "=" # 169..170
-                          - Expression (Rule): # 170..172 " 0"
-                              - DecimalNumberExpression (Rule): # 170..172 " 0"
-                                  - DecimalLiteral (Token): "0" # 171..172
+                          - TypeName (Rule): # 157..166 "\t\tuint256"
+                              - UintKeyword (Token): "uint256" # 159..166
+                          - Identifier (Token): "x" # 167..168
+                          - VariableDeclarationValue (Rule): # 168..172 " = 0"
+                              - Equal (Token): "=" # 169..170
+                              - Expression (Rule): # 170..172 " 0"
+                                  - DecimalNumberExpression (Rule): # 170..172 " 0"
+                                      - DecimalLiteral (Token): "0" # 171..172
                           - Semicolon (Token): ";" # 172..173
                       - UncheckedBlock (Rule): # 174..207 "\t\tunchecked { invalid sequence }\n"
                           - UncheckedKeyword (Token): "unchecked" # 176..185
@@ -108,11 +108,10 @@ Tree:
                               - OpenBrace (Token): "{" # 186..187
                               - Statements (Rule): # 187..205 " invalid sequence "
                                   - VariableDeclarationStatement (Rule): # 187..205 " invalid sequence "
-                                      - VariableDeclaration (Rule): # 187..204 " invalid sequence"
-                                          - TypeName (Rule): # 187..195 " invalid"
-                                              - IdentifierPath (Rule): # 187..195 " invalid"
-                                                  - Identifier (Token): "invalid" # 188..195
-                                          - Identifier (Token): "sequence" # 196..204
+                                      - TypeName (Rule): # 187..195 " invalid"
+                                          - IdentifierPath (Rule): # 187..195 " invalid"
+                                              - Identifier (Token): "invalid" # 188..195
+                                      - Identifier (Token): "sequence" # 196..204
                               - SKIPPED (Token): "" # 205..205
                               - CloseBrace (Token): "}" # 205..206
                   - CloseBrace (Token): "}" # 208..209

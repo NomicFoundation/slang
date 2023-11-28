@@ -98,16 +98,15 @@ Tree:
                                               - Identifier (Token): "recipient" # 225..234
                                           - Period (Token): "." # 234..235
                                           - Identifier (Token): "call" # 235..239
-                                  - NamedArgumentGroups (Rule): # 239..256 "{ value: amount }"
-                                      - NamedArgumentGroup (Rule): # 239..256 "{ value: amount }"
-                                          - OpenBrace (Token): "{" # 239..240
-                                          - NamedArguments (Rule): # 240..254 " value: amount"
-                                              - NamedArgument (Rule): # 240..254 " value: amount"
-                                                  - Identifier (Token): "value" # 241..246
-                                                  - Colon (Token): ":" # 246..247
-                                                  - Expression (Rule): # 247..254 " amount"
-                                                      - Identifier (Token): "amount" # 248..254
-                                          - CloseBrace (Token): "}" # 255..256
+                                  - NamedArgumentGroup (Rule): # 239..256 "{ value: amount }"
+                                      - OpenBrace (Token): "{" # 239..240
+                                      - NamedArguments (Rule): # 240..254 " value: amount"
+                                          - NamedArgument (Rule): # 240..254 " value: amount"
+                                              - Identifier (Token): "value" # 241..246
+                                              - Colon (Token): ":" # 246..247
+                                              - Expression (Rule): # 247..254 " amount"
+                                                  - Identifier (Token): "amount" # 248..254
+                                      - CloseBrace (Token): "}" # 255..256
                                   - PositionalArgumentsDeclaration (Rule): # 256..260 '("")'
                                       - OpenParen (Token): "(" # 256..257
                                       - PositionalArguments (Rule): # 257..259 '""'

@@ -11,5 +11,6 @@ Tree:
           - Identifier (Token): "foo" # 0..3
           - Period (Token): "." # 3..4
           - Identifier (Token): "bar" # 4..7
-      - AsKeyword (Token): "as" # 8..10
-      - Slash (Token): "/" # 11..12
+      - UsingAlias (Rule): # 7..12 " as /"
+          - AsKeyword (Token): "as" # 8..10
+          - Slash (Token): "/" # 11..12

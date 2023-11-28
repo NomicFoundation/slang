@@ -8,5 +8,6 @@ Errors: []
 Tree:
   - TupleExpression (Rule): # 0..3 "( )"
       - OpenParen (Token): "(" # 0..1
-      - TupleValues (Rule): [] # 1..1
+      - TupleValues (Rule): # 1..1
+          - TupleValue (Rule): [] # 1..1
       - CloseParen (Token): ")" # 2..3

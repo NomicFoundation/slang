@@ -12,13 +12,14 @@ Tree:
               - TupleExpression (Rule): # 0..12 "(foo == bar)"
                   - OpenParen (Token): "(" # 0..1
                   - TupleValues (Rule): # 1..11 "foo == bar"
-                      - Expression (Rule): # 1..11 "foo == bar"
-                          - BinaryExpression (Rule): # 1..11 "foo == bar"
-                              - Expression (Rule): # 1..4 "foo"
-                                  - Identifier (Token): "foo" # 1..4
-                              - EqualEqual (Token): "==" # 5..7
-                              - Expression (Rule): # 7..11 " bar"
-                                  - Identifier (Token): "bar" # 8..11
+                      - TupleValue (Rule): # 1..11 "foo == bar"
+                          - Expression (Rule): # 1..11 "foo == bar"
+                              - BinaryExpression (Rule): # 1..11 "foo == bar"
+                                  - Expression (Rule): # 1..4 "foo"
+                                      - Identifier (Token): "foo" # 1..4
+                                  - EqualEqual (Token): "==" # 5..7
+                                  - Expression (Rule): # 7..11 " bar"
+                                      - Identifier (Token): "bar" # 8..11
                   - CloseParen (Token): ")" # 11..12
           - QuestionMark (Token): "?" # 13..14
           - Expression (Rule): # 14..19 " true"

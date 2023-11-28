@@ -10,7 +10,7 @@ Tree:
       - FunctionCallExpression (Rule): # 0..7 "x(1, 2)"
           - Expression (Rule): # 0..1 "x"
               - Identifier (Token): "x" # 0..1
-          - ArgumentsDeclaration (Rule): # 1..7 "(1, 2)"
+          - PositionalArgumentsDeclaration (Rule): # 1..7 "(1, 2)"
               - OpenParen (Token): "(" # 1..2
               - PositionalArguments (Rule): # 2..6 "1, 2"
                   - Expression (Rule): # 2..3 "1"
