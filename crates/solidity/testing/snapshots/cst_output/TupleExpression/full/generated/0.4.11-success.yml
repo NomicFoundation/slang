@@ -9,15 +9,19 @@ Tree:
   - TupleExpression (Rule): # 0..30 "(first, second, third, fourth)"
       - OpenParen (Token): "(" # 0..1
       - TupleValues (Rule): # 1..29 "first, second, third, fourth"
-          - Expression (Rule): # 1..6 "first"
-              - Identifier (Token): "first" # 1..6
+          - TupleValue (Rule): # 1..6 "first"
+              - Expression (Rule): # 1..6 "first"
+                  - Identifier (Token): "first" # 1..6
           - Comma (Token): "," # 6..7
-          - Expression (Rule): # 7..14 " second"
-              - Identifier (Token): "second" # 8..14
+          - TupleValue (Rule): # 7..14 " second"
+              - Expression (Rule): # 7..14 " second"
+                  - Identifier (Token): "second" # 8..14
           - Comma (Token): "," # 14..15
-          - Expression (Rule): # 15..21 " third"
-              - Identifier (Token): "third" # 16..21
+          - TupleValue (Rule): # 15..21 " third"
+              - Expression (Rule): # 15..21 " third"
+                  - Identifier (Token): "third" # 16..21
           - Comma (Token): "," # 21..22
-          - Expression (Rule): # 22..29 " fourth"
-              - Identifier (Token): "fourth" # 23..29
+          - TupleValue (Rule): # 22..29 " fourth"
+              - Expression (Rule): # 22..29 " fourth"
+                  - Identifier (Token): "fourth" # 23..29
       - CloseParen (Token): ")" # 29..30

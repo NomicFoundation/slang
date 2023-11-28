@@ -35,7 +35,7 @@ Tree:
                           - Identifier (Token): "abi" # 32..35
                       - Period (Token): "." # 35..36
                       - Identifier (Token): "decode" # 36..42
-              - ArgumentsDeclaration (Rule): # 42..68 "(data, (uint32, uint32[]))"
+              - PositionalArgumentsDeclaration (Rule): # 42..68 "(data, (uint32, uint32[]))"
                   - OpenParen (Token): "(" # 42..43
                   - PositionalArguments (Rule): # 43..67 "data, (uint32, uint32[])"
                       - Expression (Rule): # 43..47 "data"
@@ -45,15 +45,17 @@ Tree:
                           - TupleExpression (Rule): # 48..67 " (uint32, uint32[])"
                               - OpenParen (Token): "(" # 49..50
                               - TupleValues (Rule): # 50..66 "uint32, uint32[]"
-                                  - Expression (Rule): # 50..56 "uint32"
-                                      - UintKeyword (Token): "uint32" # 50..56
+                                  - TupleValue (Rule): # 50..56 "uint32"
+                                      - Expression (Rule): # 50..56 "uint32"
+                                          - UintKeyword (Token): "uint32" # 50..56
                                   - Comma (Token): "," # 56..57
-                                  - Expression (Rule): # 57..66 " uint32[]"
-                                      - IndexAccessExpression (Rule): # 57..66 " uint32[]"
-                                          - Expression (Rule): # 57..64 " uint32"
-                                              - UintKeyword (Token): "uint32" # 58..64
-                                          - OpenBracket (Token): "[" # 64..65
-                                          - CloseBracket (Token): "]" # 65..66
+                                  - TupleValue (Rule): # 57..66 " uint32[]"
+                                      - Expression (Rule): # 57..66 " uint32[]"
+                                          - IndexAccessExpression (Rule): # 57..66 " uint32[]"
+                                              - Expression (Rule): # 57..64 " uint32"
+                                                  - UintKeyword (Token): "uint32" # 58..64
+                                              - OpenBracket (Token): "[" # 64..65
+                                              - CloseBracket (Token): "]" # 65..66
                               - CloseParen (Token): ")" # 66..67
                   - CloseParen (Token): ")" # 67..68
       - Semicolon (Token): ";" # 68..69

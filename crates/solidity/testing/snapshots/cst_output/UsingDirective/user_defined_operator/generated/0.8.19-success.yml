@@ -14,8 +14,9 @@ Tree:
               - UsingDeconstructionSymbol (Rule): # 7..15 "div as /"
                   - IdentifierPath (Rule): # 7..10 "div"
                       - Identifier (Token): "div" # 7..10
-                  - AsKeyword (Token): "as" # 11..13
-                  - Slash (Token): "/" # 14..15
+                  - UsingAlias (Rule): # 10..15 " as /"
+                      - AsKeyword (Token): "as" # 11..13
+                      - Slash (Token): "/" # 14..15
           - CloseBrace (Token): "}" # 15..16
       - ForKeyword (Token): "for" # 17..20
       - TypeName (Rule): # 20..24 " Int"

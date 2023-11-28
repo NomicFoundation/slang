@@ -57,7 +57,7 @@ Tree:
                               - FunctionCallExpression (Rule): # 122..199 '    require(address(this).balance >= amount, "Addr...'
                                   - Expression (Rule): # 122..133 "    require"
                                       - Identifier (Token): "require" # 126..133
-                                  - ArgumentsDeclaration (Rule): # 133..199 '(address(this).balance >= amount, "Address: insuff...'
+                                  - PositionalArgumentsDeclaration (Rule): # 133..199 '(address(this).balance >= amount, "Address: insuff...'
                                       - OpenParen (Token): "(" # 133..134
                                       - PositionalArguments (Rule): # 134..198 'address(this).balance >= amount, "Address: insuffi...'
                                           - Expression (Rule): # 134..165 "address(this).balance >= amount"
@@ -69,7 +69,7 @@ Tree:
                                                                   - Expression (Rule): # 134..141 "address"
                                                                       - AddressType (Rule): # 134..141 "address"
                                                                           - AddressKeyword (Token): "address" # 134..141
-                                                                  - ArgumentsDeclaration (Rule): # 141..147 "(this)"
+                                                                  - PositionalArgumentsDeclaration (Rule): # 141..147 "(this)"
                                                                       - OpenParen (Token): "(" # 141..142
                                                                       - PositionalArguments (Rule): # 142..146 "this"
                                                                           - Expression (Rule): # 142..146 "this"
@@ -111,7 +111,7 @@ Tree:
                               - FunctionCallExpression (Rule): # 262..344 '    require(success, "Address: unable to send valu...'
                                   - Expression (Rule): # 262..273 "    require"
                                       - Identifier (Token): "require" # 266..273
-                                  - ArgumentsDeclaration (Rule): # 273..344 '(success, "Address: unable to send value, recipien...'
+                                  - PositionalArgumentsDeclaration (Rule): # 273..344 '(success, "Address: unable to send value, recipien...'
                                       - OpenParen (Token): "(" # 273..274
                                       - PositionalArguments (Rule): # 274..343 'success, "Address: unable to send value, recipient...'
                                           - Expression (Rule): # 274..281 "success"

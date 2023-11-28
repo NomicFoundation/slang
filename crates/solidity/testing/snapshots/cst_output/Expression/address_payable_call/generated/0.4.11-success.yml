@@ -12,7 +12,7 @@ Tree:
               - AddressType (Rule): # 0..15 "address payable"
                   - AddressKeyword (Token): "address" # 0..7
                   - PayableKeyword (Token): "payable" # 8..15
-          - ArgumentsDeclaration (Rule): # 15..22 "(value)"
+          - PositionalArgumentsDeclaration (Rule): # 15..22 "(value)"
               - OpenParen (Token): "(" # 15..16
               - PositionalArguments (Rule): # 16..21 "value"
                   - Expression (Rule): # 16..21 "value"

@@ -11,7 +11,7 @@ Tree:
           - Expression (Rule): # 0..7 "address"
               - AddressType (Rule): # 0..7 "address"
                   - AddressKeyword (Token): "address" # 0..7
-          - ArgumentsDeclaration (Rule): # 7..14 "(value)"
+          - PositionalArgumentsDeclaration (Rule): # 7..14 "(value)"
               - OpenParen (Token): "(" # 7..8
               - PositionalArguments (Rule): # 8..13 "value"
                   - Expression (Rule): # 8..13 "value"

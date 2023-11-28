@@ -18,6 +18,7 @@ Tree:
       - Expression (Rule): # 52..55 " ()"
           - TupleExpression (Rule): # 52..55 " ()"
               - OpenParen (Token): "(" # 53..54
-              - TupleValues (Rule): [] # 54..54
+              - TupleValues (Rule): # 54..54
+                  - TupleValue (Rule): [] # 54..54
               - CloseParen (Token): ")" # 54..55
       - Semicolon (Token): ";" # 55..56

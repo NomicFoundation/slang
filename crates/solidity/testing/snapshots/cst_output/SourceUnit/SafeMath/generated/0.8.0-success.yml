@@ -62,18 +62,18 @@ Tree:
                                       - OpenBrace (Token): "{" # 113..114
                                       - Statements (Rule): # 115..200 "      uint256 c = a + b;\n      if (c < a) return (..."
                                           - VariableDeclarationStatement (Rule): # 115..140 "      uint256 c = a + b;\n"
-                                              - VariableDeclaration (Rule): # 115..130 "      uint256 c"
-                                                  - TypeName (Rule): # 115..128 "      uint256"
-                                                      - UintKeyword (Token): "uint256" # 121..128
-                                                  - Identifier (Token): "c" # 129..130
-                                              - Equal (Token): "=" # 131..132
-                                              - Expression (Rule): # 132..138 " a + b"
-                                                  - BinaryExpression (Rule): # 132..138 " a + b"
-                                                      - Expression (Rule): # 132..134 " a"
-                                                          - Identifier (Token): "a" # 133..134
-                                                      - Plus (Token): "+" # 135..136
-                                                      - Expression (Rule): # 136..138 " b"
-                                                          - Identifier (Token): "b" # 137..138
+                                              - TypeName (Rule): # 115..128 "      uint256"
+                                                  - UintKeyword (Token): "uint256" # 121..128
+                                              - Identifier (Token): "c" # 129..130
+                                              - VariableDeclarationValue (Rule): # 130..138 " = a + b"
+                                                  - Equal (Token): "=" # 131..132
+                                                  - Expression (Rule): # 132..138 " a + b"
+                                                      - BinaryExpression (Rule): # 132..138 " a + b"
+                                                          - Expression (Rule): # 132..134 " a"
+                                                              - Identifier (Token): "a" # 133..134
+                                                          - Plus (Token): "+" # 135..136
+                                                          - Expression (Rule): # 136..138 " b"
+                                                              - Identifier (Token): "b" # 137..138
                                               - Semicolon (Token): ";" # 138..139
                                           - IfStatement (Rule): # 140..176 "      if (c < a) return (false, 0);\n"
                                               - IfKeyword (Token): "if" # 146..148
@@ -92,12 +92,14 @@ Tree:
                                                       - TupleExpression (Rule): # 163..174 " (false, 0)"
                                                           - OpenParen (Token): "(" # 164..165
                                                           - TupleValues (Rule): # 165..173 "false, 0"
-                                                              - Expression (Rule): # 165..170 "false"
-                                                                  - FalseKeyword (Token): "false" # 165..170
+                                                              - TupleValue (Rule): # 165..170 "false"
+                                                                  - Expression (Rule): # 165..170 "false"
+                                                                      - FalseKeyword (Token): "false" # 165..170
                                                               - Comma (Token): "," # 170..171
-                                                              - Expression (Rule): # 171..173 " 0"
-                                                                  - DecimalNumberExpression (Rule): # 171..173 " 0"
-                                                                      - DecimalLiteral (Token): "0" # 172..173
+                                                              - TupleValue (Rule): # 171..173 " 0"
+                                                                  - Expression (Rule): # 171..173 " 0"
+                                                                      - DecimalNumberExpression (Rule): # 171..173 " 0"
+                                                                          - DecimalLiteral (Token): "0" # 172..173
                                                           - CloseParen (Token): ")" # 173..174
                                                   - Semicolon (Token): ";" # 174..175
                                           - ReturnStatement (Rule): # 176..200 "      return (true, c);\n"
@@ -106,11 +108,13 @@ Tree:
                                                   - TupleExpression (Rule): # 188..198 " (true, c)"
                                                       - OpenParen (Token): "(" # 189..190
                                                       - TupleValues (Rule): # 190..197 "true, c"
-                                                          - Expression (Rule): # 190..194 "true"
-                                                              - TrueKeyword (Token): "true" # 190..194
+                                                          - TupleValue (Rule): # 190..194 "true"
+                                                              - Expression (Rule): # 190..194 "true"
+                                                                  - TrueKeyword (Token): "true" # 190..194
                                                           - Comma (Token): "," # 194..195
-                                                          - Expression (Rule): # 195..197 " c"
-                                                              - Identifier (Token): "c" # 196..197
+                                                          - TupleValue (Rule): # 195..197 " c"
+                                                              - Expression (Rule): # 195..197 " c"
+                                                                  - Identifier (Token): "c" # 196..197
                                                       - CloseParen (Token): ")" # 197..198
                                               - Semicolon (Token): ";" # 198..199
                                       - CloseBrace (Token): "}" # 204..205

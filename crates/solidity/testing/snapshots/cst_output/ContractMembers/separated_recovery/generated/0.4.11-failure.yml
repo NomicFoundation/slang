@@ -108,7 +108,7 @@ Tree:
               - ModifierInvocation (Rule): # 14..76 " override(some.ident unexpected tokens, ISomeInter..."
                   - IdentifierPath (Rule): # 14..23 " override"
                       - Identifier (Token): "override" # 15..23
-                  - ArgumentsDeclaration (Rule): # 23..76 "(some.ident unexpected tokens, ISomeInterface, Oth..."
+                  - PositionalArgumentsDeclaration (Rule): # 23..76 "(some.ident unexpected tokens, ISomeInterface, Oth..."
                       - OpenParen (Token): "(" # 23..24
                       - PositionalArguments (Rule): # 24..34 "some.ident"
                           - Expression (Rule): # 24..34 "some.ident"
@@ -186,7 +186,7 @@ Tree:
               - ModifierInvocation (Rule): # 326..386 " override(some.ident, /* empty */, other.arg.here,..."
                   - IdentifierPath (Rule): # 326..335 " override"
                       - Identifier (Token): "override" # 327..335
-                  - ArgumentsDeclaration (Rule): # 335..386 "(some.ident, /* empty */, other.arg.here, and.here..."
+                  - PositionalArgumentsDeclaration (Rule): # 335..386 "(some.ident, /* empty */, other.arg.here, and.here..."
                       - OpenParen (Token): "(" # 335..336
                       - PositionalArguments (Rule): # 336..347 "some.ident,"
                           - Expression (Rule): # 336..346 "some.ident"
@@ -211,7 +211,7 @@ Tree:
               - ModifierInvocation (Rule): # 412..487 " override(some.ident, next.do.that, other.while, n..."
                   - IdentifierPath (Rule): # 412..421 " override"
                       - Identifier (Token): "override" # 413..421
-                  - ArgumentsDeclaration (Rule): # 421..487 "(some.ident, next.do.that, other.while, next.one, ..."
+                  - PositionalArgumentsDeclaration (Rule): # 421..487 "(some.ident, next.do.that, other.while, next.one, ..."
                       - OpenParen (Token): "(" # 421..422
                       - PositionalArguments (Rule): # 422..470 "some.ident, next.do.that, other.while, next.one,"
                           - Expression (Rule): # 422..432 "some.ident"
@@ -251,7 +251,7 @@ Tree:
               - ModifierInvocation (Rule): # 512..558 " override(some., next.arg, next.one, ultimate)"
                   - IdentifierPath (Rule): # 512..521 " override"
                       - Identifier (Token): "override" # 513..521
-                  - ArgumentsDeclaration (Rule): # 521..558 "(some., next.arg, next.one, ultimate)"
+                  - PositionalArgumentsDeclaration (Rule): # 521..558 "(some., next.arg, next.one, ultimate)"
                       - OpenParen (Token): "(" # 521..522
                       - PositionalArguments (Rule): # 522..557 "some., next.arg, next.one, ultimate"
                           - Expression (Rule): # 522..527 "some."

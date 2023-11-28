@@ -7,4 +7,4 @@ Errors: []
 
 Tree:
   - YulLeaveStatement (Rule): # 0..5 "leave"
-      - LeaveKeyword (Token): "leave" # 0..5
+      - YulLeaveKeyword (Token): "leave" # 0..5

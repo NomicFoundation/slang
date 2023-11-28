@@ -14,8 +14,8 @@ Tree:
                       - Identifier (Token): "a" # 0..1
                   - Period (Token): "." # 1..2
                   - Identifier (Token): "b" # 2..3
-          - FunctionCallOptions (Rule): # 3..21 "{value: 0, gas: 1}"
-              - NamedArgumentsDeclaration (Rule): # 3..21 "{value: 0, gas: 1}"
+          - NamedArgumentGroups (Rule): # 3..21 "{value: 0, gas: 1}"
+              - NamedArgumentGroup (Rule): # 3..21 "{value: 0, gas: 1}"
                   - OpenBrace (Token): "{" # 3..4
                   - NamedArguments (Rule): # 4..20 "value: 0, gas: 1"
                       - NamedArgument (Rule): # 4..12 "value: 0"
@@ -32,7 +32,7 @@ Tree:
                               - DecimalNumberExpression (Rule): # 18..20 " 1"
                                   - DecimalLiteral (Token): "1" # 19..20
                   - CloseBrace (Token): "}" # 20..21
-          - ArgumentsDeclaration (Rule): # 21..25 '("")'
+          - PositionalArgumentsDeclaration (Rule): # 21..25 '("")'
               - OpenParen (Token): "(" # 21..22
               - PositionalArguments (Rule): # 22..24 '""'
                   - Expression (Rule): # 22..24 '""'
