@@ -4,7 +4,6 @@ use crate::paths::PathExtensions;
 use anyhow::{bail, Result};
 use ariadne::{Color, Label, Report, ReportKind, Source};
 
-#[allow(clippy::len_without_is_empty)]
 #[derive(Debug, Default)]
 pub struct InfraErrors {
     contents: Vec<ErrorDescriptor>,
@@ -17,6 +16,10 @@ impl InfraErrors {
 
     pub fn len(&self) -> usize {
         return self.contents.len();
+    }
+
+    pub fn is_empty(&self) -> bool {
+        return self.contents.is_empty();
     }
 
     pub fn single(file_path: PathBuf, range: Range, message: String) -> Self {
