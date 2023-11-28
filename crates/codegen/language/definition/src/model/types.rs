@@ -1,5 +1,4 @@
 pub use self::wrapper::*;
-pub use indexmap::{IndexMap, IndexSet};
 
 /// We want to generate all Spanned types in a single module.
 /// Unfortunately, module-level (inner) attribute macros are not supported yet:
@@ -7,7 +6,7 @@ pub use indexmap::{IndexMap, IndexSet};
 /// More information: https://github.com/rust-lang/rust/issues/54726
 #[codegen_language_internal_macros::derive_internals]
 mod wrapper {
-    use super::{IndexMap, IndexSet};
+    use indexmap::{IndexMap, IndexSet};
 
     use crate::model::Identifier;
     use semver::Version;

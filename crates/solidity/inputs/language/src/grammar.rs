@@ -20,8 +20,8 @@ use codegen_grammar::VersionQualityRange;
 use codegen_language_definition::model;
 use codegen_language_definition::model::FieldsErrorRecovery;
 use codegen_language_definition::model::Identifier;
-use codegen_language_definition::model::IndexMap;
 use codegen_language_definition::model::Item;
+use indexmap::IndexMap;
 
 use crate::definition::SolidityDefinition;
 
