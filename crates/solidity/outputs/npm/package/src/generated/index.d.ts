@@ -664,7 +664,7 @@ export namespace cursor {
     node(): cst.RuleNode | cst.TokenNode;
     get textOffset(): text_index.TextIndex;
     get textRange(): text_index.TextRange;
-    pathRuleNodes(): Array<cst.RuleNode>;
+    ancestors(): Array<cst.RuleNode>;
     goToNext(): boolean;
     goToNextNonDescendent(): boolean;
     goToPrevious(): boolean;
