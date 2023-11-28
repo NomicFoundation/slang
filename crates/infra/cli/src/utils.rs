@@ -9,8 +9,8 @@ use terminal_size::terminal_size;
 pub trait OrderedCommand: Clone + Ord + PartialEq + ValueEnum {
     fn execute(&self) -> Result<()>;
 
-    fn execute_in_order(commands: &Vec<Self>) -> Result<()> {
-        let mut commands = commands.clone();
+    fn execute_in_order(commands: &[Self]) -> Result<()> {
+        let mut commands = commands.to_owned();
 
         if commands.is_empty() {
             // Execute all commands if none are provided:

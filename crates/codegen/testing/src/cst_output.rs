@@ -62,7 +62,7 @@ fn collect_parser_tests(data_dir: &Path) -> Result<BTreeMap<String, BTreeSet<Str
             [parser_name, test_name, "input.sol"] => {
                 let parser_tests = parser_tests
                     .entry(parser_name.to_string())
-                    .or_insert_with(|| BTreeSet::new());
+                    .or_insert_with(BTreeSet::new);
 
                 parser_tests.insert(test_name.to_string());
             }

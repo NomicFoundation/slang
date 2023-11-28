@@ -48,5 +48,5 @@ fn generate_topic_page(
             .join(LanguageTopic::NOTES_FILE_NAME),
     );
 
-    return page.to_string();
+    return page.into_string();
 }

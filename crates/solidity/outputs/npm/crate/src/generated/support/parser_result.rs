@@ -42,17 +42,14 @@ impl ParserResult {
     }
 
     pub fn is_match(&self) -> bool {
-        match self {
-            ParserResult::Match(_) | ParserResult::PrattOperatorMatch(_) => true,
-            _ => false,
-        }
+        matches!(
+            self,
+            ParserResult::Match(_) | ParserResult::PrattOperatorMatch(_)
+        )
     }
 
     pub fn is_no_match(&self) -> bool {
-        match self {
-            ParserResult::NoMatch(_) => true,
-            _ => false,
-        }
+        matches!(self, ParserResult::NoMatch(_))
     }
 
     pub fn with_kind(self, new_kind: RuleKind) -> ParserResult {
@@ -124,9 +121,9 @@ pub enum PrattElement {
 }
 
 impl PrattElement {
-    pub fn to_nodes(self) -> Vec<cst::Node> {
+    pub fn into_nodes(self) -> Vec<cst::Node> {
         match self {
-            Self::Expression { nodes } => nodes.clone(),
+            Self::Expression { nodes } => nodes,
             Self::Binary { kind, nodes, .. }
             | Self::Prefix { kind, nodes, .. }
             | Self::Postfix { kind, nodes, .. } => {

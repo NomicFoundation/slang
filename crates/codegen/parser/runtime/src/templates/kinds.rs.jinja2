@@ -43,6 +43,7 @@ pub enum RuleKind {
 
 impl RuleKind {
     pub fn is_trivia(&self) -> bool {
+        #[allow(clippy::match_like_matches_macro)]
         match self {
             {%- for variant in code.trivia_kinds -%}
                 Self::{{ variant }} => true,

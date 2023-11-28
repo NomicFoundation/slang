@@ -41,7 +41,7 @@ impl Node {
         return match self {
             Node::Array { nodes, .. } => nodes
                 .get(index)
-                .expect(&format!("Expected array to have index '{index}'.")),
+                .unwrap_or_else(|| panic!("Expected array to have index '{index}'.")),
             _ => unreachable!("Expected an array."),
         };
     }
@@ -51,7 +51,7 @@ impl Node {
             Node::Object { fields, .. } => {
                 &fields
                     .get(field)
-                    .expect(&format!("Expected object to have field '{field}'."))
+                    .unwrap_or_else(|| panic!("Expected object to have field '{field}'."))
                     .value
             }
             _ => unreachable!("Expected an object."),

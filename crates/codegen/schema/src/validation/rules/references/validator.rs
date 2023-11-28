@@ -62,7 +62,7 @@ impl Visitor for Validator<'_> {
     ) -> bool {
         if let ScannerDefinition::Reference(reference) = &scanner.definition {
             self.validate_reference(
-                &reference,
+                reference,
                 ReferenceKind::ScannerToScanner,
                 location,
                 reporter,
@@ -161,7 +161,7 @@ impl Validator<'_> {
 
         if !self.metadata.is_defined_over(reference_name, version_set) {
             reporter.report(
-                &location,
+                location,
                 Errors::ReferenceVersionNotDefined(
                     reference_name.to_owned(),
                     version_set.to_owned(),
@@ -172,11 +172,10 @@ impl Validator<'_> {
 
         match validation_kind {
             ReferenceKind::ParserToAnything => {
-                if matches!(reference.definition, ProductionDefinition::Scanner { .. }) {
-                    if reference.inlined {
-                        reporter
-                            .report(location, Errors::CannotBeInlined(reference_name.to_owned()));
-                    }
+                if reference.inlined
+                    && matches!(reference.definition, ProductionDefinition::Scanner { .. })
+                {
+                    reporter.report(location, Errors::CannotBeInlined(reference_name.to_owned()));
                 }
             }
             ReferenceKind::ParserToScanner => {
@@ -199,7 +198,7 @@ impl Validator<'_> {
         };
 
         self.metadata
-            .add_reference(&production.name, &version_set, reference_name);
+            .add_reference(&production.name, version_set, reference_name);
     }
 }
 

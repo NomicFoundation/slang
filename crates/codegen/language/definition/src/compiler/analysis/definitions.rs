@@ -161,6 +161,7 @@ fn calculate_defined_in(analysis: &mut Analysis, item: &Item) -> VersionSet {
     return defined_in;
 }
 
+#[allow(clippy::enum_variant_names)]
 #[derive(thiserror::Error, Debug)]
 enum Errors<'err> {
     #[error("An item with the name '{0}' already exists.")]

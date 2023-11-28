@@ -49,7 +49,7 @@ impl SequenceHelper {
 
                 // If the accumulated result is valid, but empty (e.g. we accepted an empty optional)
                 // just take the next result
-                (ParserResult::Match(running), next @ _) if running.nodes.is_empty() => {
+                (ParserResult::Match(running), next) if running.nodes.is_empty() => {
                     self.result = State::Running(next);
                 }
                 // Keep accepting or convert into PrattOperatorMatch
@@ -96,8 +96,8 @@ impl SequenceHelper {
                     self.result = State::Running(ParserResult::incomplete_match(
                         std::mem::take(&mut cur.elements)
                             .into_iter()
-                            .flat_map(|pratt| pratt.to_nodes())
-                            .chain(next.nodes.into_iter())
+                            .flat_map(|pratt| pratt.into_nodes())
+                            .chain(next.nodes)
                             .collect(),
                         next.expected_tokens,
                     ));
@@ -106,7 +106,7 @@ impl SequenceHelper {
                     self.result = State::Running(ParserResult::incomplete_match(
                         std::mem::take(&mut cur.elements)
                             .into_iter()
-                            .flat_map(|pratt| pratt.to_nodes())
+                            .flat_map(|pratt| pratt.into_nodes())
                             .collect(),
                         next.expected_tokens,
                     ));

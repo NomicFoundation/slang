@@ -23,10 +23,9 @@ impl Trie {
     }
 
     pub fn insert(&mut self, key: &str, payload: ScannerDefinitionRef) {
-        let chars = key.chars().collect::<Vec<_>>();
         let mut node = self;
-        for i in 0..chars.len() {
-            node = node.subtries.entry(chars[i]).or_insert_with(Self::new);
+        for char in key.chars() {
+            node = node.subtries.entry(char).or_insert_with(Self::new);
         }
         node.payload = Some(payload);
         node.key = Some(key.to_string());

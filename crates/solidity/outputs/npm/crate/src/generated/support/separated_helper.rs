@@ -88,10 +88,10 @@ impl SeparatedHelper {
                     }
                 }
                 ParserResult::NoMatch(no_match) => {
-                    if accum.len() > 0 {
-                        return ParserResult::incomplete_match(accum, no_match.expected_tokens);
-                    } else {
+                    if accum.is_empty() {
                         return ParserResult::no_match(no_match.expected_tokens);
+                    } else {
+                        return ParserResult::incomplete_match(accum, no_match.expected_tokens);
                     }
                 }
 

@@ -40,7 +40,7 @@ impl WriteOutputTokens for char {
 
 impl WriteOutputTokens for Identifier {
     fn write_output_tokens(&self) -> TokenStream {
-        let value = Literal::string(&self);
+        let value = Literal::string(self);
 
         return quote! {
             #value.into()

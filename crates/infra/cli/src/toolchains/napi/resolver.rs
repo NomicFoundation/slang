@@ -33,7 +33,7 @@ impl NapiResolver {
             .join("target/napi")
             .join(match target {
                 BuildTarget::Debug => "debug",
-                BuildTarget::ReleaseTarget(target) => &target,
+                BuildTarget::ReleaseTarget(target) => target,
             });
     }
 

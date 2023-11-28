@@ -44,31 +44,31 @@ pub fn analyze_references(analysis: &mut Analysis) {
 fn check_item(analysis: &mut Analysis, item: &Item, enablement: &VersionSet) {
     match item {
         Item::Struct { item } => {
-            check_struct(analysis, item, &enablement);
+            check_struct(analysis, item, enablement);
         }
         Item::Enum { item } => {
-            check_enum(analysis, item, &enablement);
+            check_enum(analysis, item, enablement);
         }
         Item::Repeated { item } => {
-            check_repeated(analysis, item, &enablement);
+            check_repeated(analysis, item, enablement);
         }
         Item::Separated { item } => {
-            check_separated(analysis, item, &enablement);
+            check_separated(analysis, item, enablement);
         }
         Item::Precedence { item } => {
-            check_precedence(analysis, item, &enablement);
+            check_precedence(analysis, item, enablement);
         }
         Item::Trivia { item } => {
-            check_trivia(analysis, item, &enablement);
+            check_trivia(analysis, item, enablement);
         }
         Item::Keyword { item } => {
-            check_keyword(analysis, item, &enablement);
+            check_keyword(analysis, item, enablement);
         }
         Item::Token { item } => {
-            check_token(analysis, item, &enablement);
+            check_token(analysis, item, enablement);
         }
         Item::Fragment { item } => {
-            check_fragment(analysis, item, &enablement);
+            check_fragment(analysis, item, enablement);
         }
     }
 }
@@ -81,7 +81,7 @@ fn check_struct(analysis: &mut Analysis, item: &StructItem, enablement: &Version
         fields,
     } = item;
 
-    let enablement = update_enablement(analysis, &enablement, &enabled);
+    let enablement = update_enablement(analysis, enablement, enabled);
 
     check_fields(analysis, Some(name), fields, &enablement);
 }
@@ -93,7 +93,7 @@ fn check_enum(analysis: &mut Analysis, item: &EnumItem, enablement: &VersionSet)
         variants,
     } = item;
 
-    let enablement = update_enablement(analysis, &enablement, &enabled);
+    let enablement = update_enablement(analysis, enablement, enabled);
 
     for variant in variants {
         let EnumVariant {
@@ -102,7 +102,7 @@ fn check_enum(analysis: &mut Analysis, item: &EnumItem, enablement: &VersionSet)
             reference,
         } = &**variant;
 
-        let enablement = update_enablement(analysis, &enablement, &enabled);
+        let enablement = update_enablement(analysis, &enablement, enabled);
 
         check_reference(
             analysis,
@@ -122,7 +122,7 @@ fn check_repeated(analysis: &mut Analysis, item: &RepeatedItem, enablement: &Ver
         enabled,
     } = item;
 
-    let enablement = update_enablement(analysis, &enablement, &enabled);
+    let enablement = update_enablement(analysis, enablement, enabled);
 
     check_reference(
         analysis,
@@ -142,7 +142,7 @@ fn check_separated(analysis: &mut Analysis, item: &SeparatedItem, enablement: &V
         enabled,
     } = item;
 
-    let enablement = update_enablement(analysis, &enablement, &enabled);
+    let enablement = update_enablement(analysis, enablement, enabled);
 
     check_reference(
         analysis,
@@ -168,7 +168,7 @@ fn check_precedence(analysis: &mut Analysis, item: &PrecedenceItem, enablement: 
         primary_expressions,
     } = item;
 
-    let enablement = update_enablement(analysis, &enablement, &enabled);
+    let enablement = update_enablement(analysis, enablement, enabled);
 
     for precedence_expression in precedence_expressions {
         let PrecedenceExpression { name: _, operators } = &**precedence_expression;
@@ -181,9 +181,9 @@ fn check_precedence(analysis: &mut Analysis, item: &PrecedenceItem, enablement: 
                 fields,
             } = &**operator;
 
-            let enablement = update_enablement(analysis, &enablement, &enabled);
+            let enablement = update_enablement(analysis, &enablement, enabled);
 
-            check_fields(analysis, Some(name), &fields, &enablement);
+            check_fields(analysis, Some(name), fields, &enablement);
         }
     }
 
@@ -193,12 +193,12 @@ fn check_precedence(analysis: &mut Analysis, item: &PrecedenceItem, enablement: 
             enabled,
         } = &**primary_expression;
 
-        let enablement = update_enablement(analysis, &enablement, &enabled);
+        let enablement = update_enablement(analysis, &enablement, enabled);
 
         check_reference(
             analysis,
             Some(name),
-            &expression,
+            expression,
             &enablement,
             ReferenceFilter::Nodes,
         );
@@ -214,12 +214,12 @@ fn check_fields(
     for field in fields.values() {
         match &**field {
             Field::Required { kind } => {
-                check_field_kind(analysis, source, &kind, &enablement);
+                check_field_kind(analysis, source, kind, enablement);
             }
             Field::Optional { kind, enabled } => {
-                let enablement = update_enablement(analysis, &enablement, &enabled);
+                let enablement = update_enablement(analysis, enablement, enabled);
 
-                check_field_kind(analysis, source, &kind, &enablement);
+                check_field_kind(analysis, source, kind, &enablement);
             }
         };
     }
@@ -237,7 +237,7 @@ fn check_field_kind(
                 analysis,
                 source,
                 item,
-                &enablement,
+                enablement,
                 ReferenceFilter::NonTerminals,
             );
         }
@@ -247,7 +247,7 @@ fn check_field_kind(
                     analysis,
                     source,
                     item,
-                    &enablement,
+                    enablement,
                     ReferenceFilter::Terminals,
                 );
             }
@@ -259,14 +259,14 @@ fn check_trivia_parser(analysis: &mut Analysis, parser: &TriviaParser, enablemen
     match parser {
         TriviaParser::Sequence { parsers } | TriviaParser::Choice { parsers } => {
             for parser in parsers {
-                check_trivia_parser(analysis, parser, &enablement);
+                check_trivia_parser(analysis, parser, enablement);
             }
         }
         TriviaParser::ZeroOrMore { parser } | TriviaParser::Optional { parser } => {
-            check_trivia_parser(analysis, parser, &enablement);
+            check_trivia_parser(analysis, parser, enablement);
         }
         TriviaParser::Trivia { trivia } => {
-            check_reference(analysis, None, trivia, &enablement, ReferenceFilter::Trivia);
+            check_reference(analysis, None, trivia, enablement, ReferenceFilter::Trivia);
         }
         TriviaParser::EndOfInput => {}
     };
@@ -275,7 +275,7 @@ fn check_trivia_parser(analysis: &mut Analysis, parser: &TriviaParser, enablemen
 fn check_trivia(analysis: &mut Analysis, item: &TriviaItem, enablement: &VersionSet) {
     let TriviaItem { name, scanner } = item;
 
-    check_scanner(analysis, Some(name), &scanner, &enablement);
+    check_scanner(analysis, Some(name), scanner, enablement);
 }
 
 fn check_keyword(analysis: &mut Analysis, item: &KeywordItem, enablement: &VersionSet) {
@@ -289,7 +289,7 @@ fn check_keyword(analysis: &mut Analysis, item: &KeywordItem, enablement: &Versi
         analysis,
         Some(name),
         identifier,
-        &enablement,
+        enablement,
         ReferenceFilter::Tokens,
     );
 
@@ -300,7 +300,7 @@ fn check_keyword(analysis: &mut Analysis, item: &KeywordItem, enablement: &Versi
             value: _,
         } = &**definition;
 
-        let _ = update_enablement(analysis, &enablement, &enabled);
+        let _ = update_enablement(analysis, enablement, enabled);
 
         if let Some(reserved) = reserved {
             check_version_specifier(analysis, reserved);
@@ -314,9 +314,9 @@ fn check_token(analysis: &mut Analysis, item: &TokenItem, enablement: &VersionSe
     for definition in definitions {
         let TokenDefinition { enabled, scanner } = &**definition;
 
-        let enablement = update_enablement(analysis, &enablement, &enabled);
+        let enablement = update_enablement(analysis, enablement, enabled);
 
-        check_scanner(analysis, Some(name), &scanner, &enablement);
+        check_scanner(analysis, Some(name), scanner, &enablement);
     }
 }
 
@@ -327,7 +327,7 @@ fn check_fragment(analysis: &mut Analysis, item: &FragmentItem, enablement: &Ver
         scanner,
     } = item;
 
-    let enablement = update_enablement(analysis, &enablement, &enabled);
+    let enablement = update_enablement(analysis, enablement, enabled);
 
     check_scanner(analysis, Some(name), scanner, &enablement);
 }
@@ -341,13 +341,13 @@ fn check_scanner(
     match scanner {
         Scanner::Sequence { scanners } | Scanner::Choice { scanners } => {
             for scanner in scanners {
-                check_scanner(analysis, source, scanner, &enablement);
+                check_scanner(analysis, source, scanner, enablement);
             }
         }
         Scanner::Optional { scanner }
         | Scanner::ZeroOrMore { scanner }
         | Scanner::OneOrMore { scanner } => {
-            check_scanner(analysis, source, scanner, &enablement);
+            check_scanner(analysis, source, scanner, enablement);
         }
         Scanner::Not { chars: _ }
         | Scanner::Range {
@@ -361,8 +361,8 @@ fn check_scanner(
             scanner,
             not_followed_by,
         } => {
-            check_scanner(analysis, source, scanner, &enablement);
-            check_scanner(analysis, source, not_followed_by, &enablement);
+            check_scanner(analysis, source, scanner, enablement);
+            check_scanner(analysis, source, not_followed_by, enablement);
         }
         Scanner::Fragment { reference } => {
             check_reference(
@@ -478,11 +478,11 @@ fn update_enablement(
     let mut new_enablement = VersionSet::new();
     analysis.add_specifier(&mut new_enablement, new_specifier);
 
-    let not_defined_in = new_enablement.difference(&existing_enablement);
+    let not_defined_in = new_enablement.difference(existing_enablement);
     if !not_defined_in.is_empty() {
         analysis
             .errors
-            .add(new_specifier, &Errors::EnabledTooWide(&existing_enablement));
+            .add(new_specifier, &Errors::EnabledTooWide(existing_enablement));
     }
 
     return new_enablement;

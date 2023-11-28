@@ -51,27 +51,27 @@ pub enum ParserDefinitionNode {
     TerminatedBy(Box<Self>, Box<Self>),
 }
 
-impl Into<ParserDefinitionNode> for ScannerDefinitionRef {
-    fn into(self) -> ParserDefinitionNode {
-        ParserDefinitionNode::ScannerDefinition(self)
+impl From<ScannerDefinitionRef> for ParserDefinitionNode {
+    fn from(def: ScannerDefinitionRef) -> Self {
+        ParserDefinitionNode::ScannerDefinition(def)
     }
 }
 
-impl Into<ParserDefinitionNode> for TriviaParserDefinitionRef {
-    fn into(self) -> ParserDefinitionNode {
-        ParserDefinitionNode::TriviaParserDefinition(self)
+impl From<TriviaParserDefinitionRef> for ParserDefinitionNode {
+    fn from(def: TriviaParserDefinitionRef) -> Self {
+        ParserDefinitionNode::TriviaParserDefinition(def)
     }
 }
 
-impl Into<ParserDefinitionNode> for ParserDefinitionRef {
-    fn into(self) -> ParserDefinitionNode {
-        ParserDefinitionNode::ParserDefinition(self)
+impl From<ParserDefinitionRef> for ParserDefinitionNode {
+    fn from(def: ParserDefinitionRef) -> Self {
+        ParserDefinitionNode::ParserDefinition(def)
     }
 }
 
-impl Into<ParserDefinitionNode> for PrecedenceParserDefinitionRef {
-    fn into(self) -> ParserDefinitionNode {
-        ParserDefinitionNode::PrecedenceParserDefinition(self)
+impl From<PrecedenceParserDefinitionRef> for ParserDefinitionNode {
+    fn from(def: PrecedenceParserDefinitionRef) -> Self {
+        ParserDefinitionNode::PrecedenceParserDefinition(def)
     }
 }
 

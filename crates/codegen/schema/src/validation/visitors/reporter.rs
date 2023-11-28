@@ -21,7 +21,7 @@ impl Reporter {
         self.errors.push((location.to_owned(), error.to_string()));
     }
 
-    pub fn to_result(self) -> Result<()> {
+    pub fn into_result(self) -> Result<()> {
         let mut errors = InfraErrors::new();
         let mut cst_cache = HashMap::<PathBuf, NodeRef>::new();
 
@@ -32,7 +32,7 @@ impl Reporter {
                 let source = file_path.read_to_string().unwrap();
 
                 return Parser::run_parser(&file_path, &source)
-                    .expect(&format!("File cannot be parsed: {file_path:?}"));
+                    .unwrap_or_else(|_| panic!("File cannot be parsed: {file_path:?}"));
             });
 
             let mut current_node = cst.as_ref();
@@ -50,6 +50,6 @@ impl Reporter {
             errors.push(file_path, range, message);
         }
 
-        return errors.to_result();
+        return errors.into_result();
     }
 }

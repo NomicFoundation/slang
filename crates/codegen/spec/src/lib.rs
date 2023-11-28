@@ -37,7 +37,7 @@ impl SpecGeneratorExtensions for LanguageDefinitionRef {
     fn generate_spec(&self, output_dir: &Path) -> Result<()> {
         let mut codegen = Codegen::write_only()?;
 
-        let snippets = Snippets::new(&self, output_dir);
+        let snippets = Snippets::new(self, output_dir);
         snippets.write_files(&mut codegen)?;
 
         let root_entry = NavigationEntry::Directory {

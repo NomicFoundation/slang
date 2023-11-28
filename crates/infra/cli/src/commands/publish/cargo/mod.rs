@@ -1,7 +1,7 @@
 use anyhow::Result;
 use infra_utils::{cargo::CargoWorkspace, commands::Command, github::GitHub};
 
-const USER_FACING_CRATE: &'static str = "slang_solidity";
+const USER_FACING_CRATE: &str = "slang_solidity";
 
 pub fn publish_cargo() -> Result<()> {
     let local_version = CargoWorkspace::local_version()?;

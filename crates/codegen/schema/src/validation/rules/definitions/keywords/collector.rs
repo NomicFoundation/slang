@@ -99,7 +99,7 @@ impl KeywordsCollector {
             ScannerDefinition::Choice(scanners) => {
                 let mut variations = Vec::new();
                 for scanner in scanners {
-                    variations.extend(Self::collect_variations(&scanner)?);
+                    variations.extend(Self::collect_variations(scanner)?);
                 }
 
                 return Some(variations);

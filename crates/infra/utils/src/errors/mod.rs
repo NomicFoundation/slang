@@ -4,18 +4,22 @@ use crate::paths::PathExtensions;
 use anyhow::{bail, Result};
 use ariadne::{Color, Label, Report, ReportKind, Source};
 
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub struct InfraErrors {
     contents: Vec<ErrorDescriptor>,
 }
 
 impl InfraErrors {
     pub fn new() -> Self {
-        return Self { contents: vec![] };
+        return Self::default();
     }
 
     pub fn len(&self) -> usize {
         return self.contents.len();
+    }
+
+    pub fn is_empty(&self) -> bool {
+        return self.contents.is_empty();
     }
 
     pub fn single(file_path: PathBuf, range: Range, message: String) -> Self {
@@ -36,7 +40,7 @@ impl InfraErrors {
         self.contents.extend(other.contents);
     }
 
-    pub fn to_result(self) -> Result<()> {
+    pub fn into_result(self) -> Result<()> {
         if self.contents.is_empty() {
             return Ok(());
         } else {
@@ -68,7 +72,7 @@ impl std::fmt::Display for ErrorDescriptor {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         if var("VSCODE_PROBLEM_MATCHER").is_ok() {
             self.write_problem_matcher(f)?;
-            writeln!(f, "")?;
+            writeln!(f)?;
         }
 
         self.write_ariadne_report(f)?;
@@ -111,6 +115,8 @@ impl ErrorDescriptor {
     }
 
     fn write_problem_matcher(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        let severity = "error";
+
         writeln!(
             f,
             "slang-problem-matcher:{file}:{line}:{column}-{end_line}:{end_column}: {severity}: {message}",
@@ -119,7 +125,6 @@ impl ErrorDescriptor {
             column = self.range.start.column,
             end_line = self.range.end.line,
             end_column = self.range.end.column,
-            severity = "error",
             message = self.message,
         )?;
 

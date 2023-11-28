@@ -70,12 +70,12 @@ impl EbnfSerializer {
         buffer.push_str(&self.display_name(name));
         buffer.push_str(" = ");
         buffer.push_str(&self.serialize_root_node(name, root_node));
-        buffer.push_str(";");
+        buffer.push(';');
 
         match self.outputs.get_mut(name) {
             Some(existing) => {
                 if !existing.is_empty() {
-                    existing.push_str("\n");
+                    existing.push('\n');
                 }
 
                 existing.push_str(&buffer);
@@ -127,7 +127,7 @@ impl EbnfSerializer {
     pub fn serialize_node(&mut self, top_node: &EbnfNode, buffer: &mut String) {
         match top_node {
             EbnfNode::Choice { nodes } => {
-                for (i, node) in nodes.into_iter().enumerate() {
+                for (i, node) in nodes.iter().enumerate() {
                     if i > 0 {
                         buffer.push_str(" | ");
                     }
@@ -144,29 +144,29 @@ impl EbnfSerializer {
                 self.serialize_child_node(top_node, subtrahend, buffer);
             }
             EbnfNode::Not { node } => {
-                buffer.push_str("!");
+                buffer.push('!');
                 self.serialize_child_node(top_node, node, buffer);
             }
             EbnfNode::OneOrMore { node } => {
                 self.serialize_child_node(top_node, node, buffer);
-                buffer.push_str("+");
+                buffer.push('+');
             }
             EbnfNode::Optional { node } => {
                 self.serialize_child_node(top_node, node, buffer);
-                buffer.push_str("?");
+                buffer.push('?');
             }
             EbnfNode::Range { from, to } => {
                 buffer.push_str(&format_string_literal(&from.to_string()));
-                buffer.push_str("…");
+                buffer.push('…');
                 buffer.push_str(&format_string_literal(&to.to_string()));
             }
             EbnfNode::ProductionRef { name } => {
                 buffer.push_str(&self.display_name(name));
             }
             EbnfNode::Sequence { nodes } => {
-                for (i, node) in nodes.into_iter().enumerate() {
+                for (i, node) in nodes.iter().enumerate() {
                     if i > 0 {
-                        buffer.push_str(" ");
+                        buffer.push(' ');
                     }
 
                     self.serialize_child_node(top_node, node, buffer);
@@ -178,12 +178,12 @@ impl EbnfSerializer {
             EbnfNode::WithComment { node, comment } => {
                 self.serialize_child_node(top_node, node, buffer);
                 buffer.push_str(" (* ");
-                buffer.push_str(&comment);
+                buffer.push_str(comment);
                 buffer.push_str(" *)");
             }
             EbnfNode::ZeroOrMore { node } => {
                 self.serialize_child_node(top_node, node, buffer);
-                buffer.push_str("*");
+                buffer.push('*');
             }
         };
     }
@@ -191,9 +191,9 @@ impl EbnfSerializer {
     fn serialize_child_node(&mut self, parent: &EbnfNode, child: &EbnfNode, buffer: &mut String) {
         if discriminant(parent) != discriminant(child) && child.precedence() <= parent.precedence()
         {
-            buffer.push_str("(");
+            buffer.push('(');
             self.serialize_node(child, buffer);
-            buffer.push_str(")");
+            buffer.push(')');
         } else {
             self.serialize_node(child, buffer);
         }
@@ -224,7 +224,7 @@ impl EbnfSerializer {
 }
 
 fn format_string_literal(value: &str) -> String {
-    let delimiter = if value.contains('"') && !value.contains("'") {
+    let delimiter = if value.contains('"') && !value.contains('\'') {
         '\''
     } else {
         '"'
@@ -241,7 +241,7 @@ fn format_string_literal(value: &str) -> String {
             _ => {
                 panic!(
                     "Unexpected character in string literal: '{c}'",
-                    c = c.escape_unicode().to_string()
+                    c = c.escape_unicode()
                 );
             }
         })

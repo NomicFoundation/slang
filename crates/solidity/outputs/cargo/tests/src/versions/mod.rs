@@ -5,7 +5,7 @@ use slang_solidity::language::Language;
 fn list_supported_versions() {
     let versions = Language::SUPPORTED_VERSIONS;
 
-    assert_eq!(false, versions.is_empty());
-    assert_eq!(false, versions.contains(&Version::parse("0.0.0").unwrap()));
-    assert_eq!(true, versions.contains(&Version::parse("0.4.11").unwrap()));
+    assert!(!versions.is_empty());
+    assert!(!versions.contains(&Version::new(0, 0, 0)));
+    assert!(versions.contains(&Version::new(0, 4, 11)));
 }

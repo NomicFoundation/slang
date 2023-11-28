@@ -286,7 +286,7 @@ impl VersionQualityRangeVecExtensions for Vec<VersionQualityRange> {
     fn disambiguating_name_suffix(&self) -> String {
         let mut suffix = String::new();
         for vqr in self {
-            suffix.push_str("_");
+            suffix.push('_');
             suffix.push_str(&vqr.quality.to_string().to_lowercase());
             suffix.push_str("_from_");
             suffix.push_str(&vqr.from.to_string().replace('.', "_"));

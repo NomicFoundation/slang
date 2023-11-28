@@ -1,7 +1,7 @@
 use std::{
     collections::{BTreeMap, BTreeSet},
     mem,
-    path::PathBuf,
+    path::Path,
 };
 
 use anyhow::Result;
@@ -57,7 +57,7 @@ struct ScannerContext {
 }
 
 impl CodeGenerator {
-    pub fn write_source(output_dir: &PathBuf, grammar: &Grammar) -> Result<()> {
+    pub fn write_source(output_dir: &Path, grammar: &Grammar) -> Result<()> {
         let mut code = Self::default();
         grammar.accept_visitor(&mut code);
         let code = &code;

@@ -45,7 +45,7 @@ fn extract_latest_changelogs(
     // Asser that first block contains title '# changelog'
     assert_eq!(
         all_blocks.next().unwrap(),
-        Block::Header(vec![Span::Text(format!("changelog"))], 1),
+        Block::Header(vec![Span::Text("changelog".to_string())], 1),
     );
 
     // H2 for current_version: '## 1.2.3'

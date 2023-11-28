@@ -217,8 +217,8 @@ impl Display for Command {
         parts.push(self.name.to_owned());
 
         for arg in &self.args {
-            let delimiter = if arg.contains(" ") {
-                if arg.contains("\"") {
+            let delimiter = if arg.contains(' ') {
+                if arg.contains('"') {
                     "'"
                 } else {
                     "\""

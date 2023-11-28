@@ -21,7 +21,7 @@ pub trait SolidityLanguageExtensions {
 }
 
 // Set by the build script.
-static LANGUAGE_DEFINITION_BIN: &'static str = env!("COMPILED_SOLIDITY_LANGUAGE_DEFINITION_BIN");
+static LANGUAGE_DEFINITION_BIN: &str = env!("COMPILED_SOLIDITY_LANGUAGE_DEFINITION_BIN");
 
 impl SolidityLanguageExtensions for LanguageDefinition {
     fn load_solidity() -> Result<LanguageDefinitionRef> {

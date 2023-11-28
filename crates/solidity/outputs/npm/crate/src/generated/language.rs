@@ -5373,9 +5373,9 @@ impl Language {
     fn ascii_character_without_double_quote_or_backslash(&self, input: &mut ParserContext) -> bool {
         scan_choice!(
             input,
-            scan_char_range!(input, ' ', '!'),
-            scan_char_range!(input, '#', '['),
-            scan_char_range!(input, ']', '~')
+            scan_char_range!(input, ' '..='!'),
+            scan_char_range!(input, '#'..='['),
+            scan_char_range!(input, ']'..='~')
         )
     }
 
@@ -5383,9 +5383,9 @@ impl Language {
     fn ascii_character_without_single_quote_or_backslash(&self, input: &mut ParserContext) -> bool {
         scan_choice!(
             input,
-            scan_char_range!(input, ' ', '&'),
-            scan_char_range!(input, '(', '['),
-            scan_char_range!(input, ']', '~')
+            scan_char_range!(input, ' '..='&'),
+            scan_char_range!(input, '('..='['),
+            scan_char_range!(input, ']'..='~')
         )
     }
 
@@ -5423,7 +5423,7 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn decimal_digit(&self, input: &mut ParserContext) -> bool {
-        scan_char_range!(input, '0', '9')
+        scan_char_range!(input, '0'..='9')
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -5599,9 +5599,9 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn fixed_type_size(&self, input: &mut ParserContext) -> bool {
         scan_sequence!(
-            scan_one_or_more!(input, scan_char_range!(input, '0', '9')),
+            scan_one_or_more!(input, scan_char_range!(input, '0'..='9')),
             scan_chars!(input, 'x'),
-            scan_one_or_more!(input, scan_char_range!(input, '0', '9'))
+            scan_one_or_more!(input, scan_char_range!(input, '0'..='9'))
         )
     }
 
@@ -5619,8 +5619,8 @@ impl Language {
         scan_choice!(
             input,
             self.decimal_digit(input),
-            scan_char_range!(input, 'A', 'F'),
-            scan_char_range!(input, 'a', 'f')
+            scan_char_range!(input, 'A'..='F'),
+            scan_char_range!(input, 'a'..='f')
         )
     }
 
@@ -5686,7 +5686,7 @@ impl Language {
         scan_choice!(
             input,
             self.identifier_start(input),
-            scan_char_range!(input, '0', '9')
+            scan_char_range!(input, '0'..='9')
         )
     }
 
@@ -5696,8 +5696,8 @@ impl Language {
             input,
             scan_chars!(input, '_'),
             scan_chars!(input, '$'),
-            scan_char_range!(input, 'A', 'Z'),
-            scan_char_range!(input, 'a', 'z')
+            scan_char_range!(input, 'A'..='Z'),
+            scan_char_range!(input, 'a'..='z')
         )
     }
 
@@ -5876,7 +5876,7 @@ impl Language {
                 scan_chars!(input, 'x'),
                 scan_chars!(input, 'X'),
                 scan_chars!(input, '*'),
-                scan_char_range!(input, '0', '9')
+                scan_char_range!(input, '0'..='9')
             )
         )
     }
@@ -5897,7 +5897,7 @@ impl Language {
                 input,
                 scan_chars!(input, '0'),
                 scan_sequence!(
-                    scan_char_range!(input, '1', '9'),
+                    scan_char_range!(input, '1'..='9'),
                     scan_zero_or_more!(input, self.decimal_digit(input))
                 )
             ),

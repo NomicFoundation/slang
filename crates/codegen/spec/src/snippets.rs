@@ -34,8 +34,8 @@ impl Snippets {
             };
 
             for version in versions {
-                if let Some(snippet_path) = self.get_snippet_path(production, &version) {
-                    let snippet = self.get_snippet(production, &version).unwrap_or_default();
+                if let Some(snippet_path) = self.get_snippet_path(production, version) {
+                    let snippet = self.get_snippet(production, version).unwrap_or_default();
                     codegen.write_file(snippet_path, snippet)?
                 };
             }
@@ -113,7 +113,7 @@ impl Snippets {
             snippet.write_code_block(language, class, &id, ebnf);
         }
 
-        return Some(snippet.to_string());
+        return Some(snippet.into_string());
     }
 
     fn locate_production(&self, name: &str) -> (&LanguageSection, &LanguageTopic) {

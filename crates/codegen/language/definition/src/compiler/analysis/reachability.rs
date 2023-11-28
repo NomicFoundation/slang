@@ -48,7 +48,7 @@ fn check_unreachabable_items(analysis: &mut Analysis) {
         if !metadata.defined_in.is_empty() && !visited.contains(&*metadata.name) {
             analysis
                 .errors
-                .add(&metadata.name, &Errors::Unreachable(&*metadata.name));
+                .add(&metadata.name, &Errors::Unreachable(&metadata.name));
         }
     }
 }

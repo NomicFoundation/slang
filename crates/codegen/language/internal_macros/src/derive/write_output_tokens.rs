@@ -18,7 +18,7 @@ pub fn write_output_tokens(item: &Item) -> TokenStream {
     };
 }
 
-fn derive_struct(name: &Ident, fields: &Vec<Field>) -> TokenStream {
+fn derive_struct(name: &Ident, fields: &[Field]) -> TokenStream {
     let keys = fields.iter().map(|field| &field.name).collect_vec();
 
     return quote! {
@@ -32,7 +32,7 @@ fn derive_struct(name: &Ident, fields: &Vec<Field>) -> TokenStream {
     };
 }
 
-fn derive_enum(name: &Ident, variants: &Vec<Variant>) -> TokenStream {
+fn derive_enum(name: &Ident, variants: &[Variant]) -> TokenStream {
     let match_arms = variants.iter().map(|variant| {
         let variant_name = &variant.name;
 

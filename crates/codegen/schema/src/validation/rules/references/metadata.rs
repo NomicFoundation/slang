@@ -100,7 +100,7 @@ impl Metadata {
             let references = &self.productions.get(production_name).unwrap().references;
             for reference in references {
                 if !visited.contains(reference) {
-                    queue.push(&reference);
+                    queue.push(reference);
                 }
             }
         }

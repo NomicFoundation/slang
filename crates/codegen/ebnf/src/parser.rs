@@ -16,29 +16,29 @@ impl EbnfNode {
             } => {
                 return Self::sequence(vec![
                     Self::production_ref(&open.reference),
-                    Self::from_parser(&parser),
+                    Self::from_parser(parser),
                     Self::production_ref(&close.reference),
                 ]);
             }
 
             ParserDefinition::OneOrMore(parser) => {
-                return Self::one_or_more(Self::from_parser(&parser));
+                return Self::one_or_more(Self::from_parser(parser));
             }
 
             ParserDefinition::Optional(parser) => {
-                return Self::optional(Self::from_parser(&parser));
+                return Self::optional(Self::from_parser(parser));
             }
 
             ParserDefinition::Reference(name) => {
-                return Self::production_ref(&name);
+                return Self::production_ref(name);
             }
 
             ParserDefinition::SeparatedBy { parser, separator } => {
                 return Self::sequence(vec![
-                    Self::from_parser(&parser),
+                    Self::from_parser(parser),
                     Self::zero_or_more(Self::sequence(vec![
                         Self::production_ref(&separator.reference),
-                        Self::from_parser(&parser),
+                        Self::from_parser(parser),
                     ])),
                 ]);
             }
@@ -49,13 +49,13 @@ impl EbnfNode {
 
             ParserDefinition::TerminatedBy { parser, terminator } => {
                 return Self::sequence(vec![
-                    Self::from_parser(&parser),
+                    Self::from_parser(parser),
                     Self::production_ref(&terminator.reference),
                 ]);
             }
 
             ParserDefinition::ZeroOrMore(parser) => {
-                return Self::zero_or_more(Self::from_parser(&parser));
+                return Self::zero_or_more(Self::from_parser(parser));
             }
         };
     }

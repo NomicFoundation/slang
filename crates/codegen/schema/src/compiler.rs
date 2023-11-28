@@ -98,7 +98,7 @@ fn load_sections(
         });
     }
 
-    return errors.to_result().map(|_| results);
+    return errors.into_result().map(|_| results);
 }
 
 fn load_topic(
@@ -114,7 +114,7 @@ fn load_topic(
     for path in [&notes_path, &productions_path] {
         if !path.exists() {
             let range = Position::new(0, 0, 0)..Position::new(usize::MAX, usize::MAX, usize::MAX);
-            let message = format!("Topic file not found.");
+            let message = "Topic file not found.".to_string();
 
             return Err(InfraErrors::single(path.to_owned(), range, message));
         }

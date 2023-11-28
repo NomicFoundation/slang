@@ -31,10 +31,10 @@ impl ParseHelpers {
             let mut result = Vec::new();
 
             while !inner_input.is_empty() {
-                result.push(ParseInputTokens::parse_named_value(&inner_input, errors)?);
+                result.push(ParseInputTokens::parse_named_value(inner_input, errors)?);
 
                 if !inner_input.is_empty() {
-                    let comma = Self::syn::<Token![,]>(&inner_input)?;
+                    let comma = Self::syn::<Token![,]>(inner_input)?;
 
                     if inner_input.is_empty() {
                         errors.add(&comma, &Errors::TrailingComma);
@@ -62,14 +62,14 @@ impl ParseHelpers {
             let mut result = IndexMap::new();
 
             while !inner_input.is_empty() {
-                let key = ParseInputTokens::parse_named_value(&inner_input, errors)?;
+                let key = ParseInputTokens::parse_named_value(inner_input, errors)?;
 
-                Self::syn::<Token![=]>(&inner_input)?;
+                Self::syn::<Token![=]>(inner_input)?;
 
-                let value = ParseInputTokens::parse_named_value(&inner_input, errors)?;
+                let value = ParseInputTokens::parse_named_value(inner_input, errors)?;
 
                 if !inner_input.is_empty() {
-                    let comma = Self::syn::<Token![,]>(&inner_input)?;
+                    let comma = Self::syn::<Token![,]>(inner_input)?;
 
                     if inner_input.is_empty() {
                         errors.add(&comma, &Errors::TrailingComma);
@@ -101,19 +101,17 @@ impl ParseHelpers {
         errors: &mut ErrorsCollection,
     ) -> Result<T> {
         let span = input.span();
-        match Self::syn::<Ident>(&input) {
-            Ok(key) if key.to_string() == name => key,
-            _ => {
-                return Error::fatal(&span, &Errors::ExpectedField(name));
-            }
+        match Self::syn::<Ident>(input) {
+            Ok(key) if key == name => {}
+            _ => return Error::fatal(&span, &Errors::ExpectedField(name)),
         };
 
-        Self::syn::<Token![=]>(&input)?;
+        Self::syn::<Token![=]>(input)?;
 
-        let value = ParseInputTokens::parse_named_value(&input, errors)?;
+        let value = ParseInputTokens::parse_named_value(input, errors)?;
 
         if !input.is_empty() {
-            let comma = Self::syn::<Token![,]>(&input)?;
+            let comma = Self::syn::<Token![,]>(input)?;
 
             if input.is_empty() {
                 errors.add(&comma, &Errors::TrailingComma);

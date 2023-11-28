@@ -69,7 +69,7 @@ fn write_source<W: Write>(w: &mut W, source: &str) -> Result<()> {
 }
 
 fn write_errors<W: Write>(w: &mut W, errors: &Vec<String>) -> Result<()> {
-    if errors.len() == 0 {
+    if errors.is_empty() {
         writeln!(w, "Errors: []")?;
         return Ok(());
     }
@@ -134,7 +134,7 @@ fn write_node<W: Write>(
 
         (preview.to_owned(), range_string)
     } else {
-        let preview = render_source_preview(source, &range)?;
+        let preview = render_source_preview(source, range)?;
 
         if node.children().is_empty() {
             // "foo" # 1..2
@@ -179,17 +179,17 @@ pub fn render_source_preview(source: &str, range: &TextRange) -> Result<String> 
 
     // Escape line breaks:
     let contents = contents
-        .replace("\t", "\\t")
-        .replace("\r", "\\r")
-        .replace("\n", "\\n");
+        .replace('\t', "\\t")
+        .replace('\r', "\\r")
+        .replace('\n', "\\n");
 
     // Surround by quotes for use in yaml:
     let contents = {
-        if contents.contains("\"") {
-            let contents = contents.replace("'", "''");
+        if contents.contains('"') {
+            let contents = contents.replace('\'', "''");
             format!("'{contents}'")
         } else {
-            let contents = contents.replace("\"", "\\\"");
+            let contents = contents.replace('"', "\\\"");
             format!("\"{contents}\"")
         }
     };

@@ -61,7 +61,7 @@ impl Reporter {
         self.total_tests.fetch_add(1, Ordering::Relaxed);
 
         let errors = output.errors();
-        if errors.len() == 0 {
+        if errors.is_empty() {
             return;
         }
 

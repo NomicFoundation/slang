@@ -32,7 +32,7 @@ pub fn generate_supported_versions_page(language: &LanguageDefinition) -> Naviga
     return NavigationEntry::Page {
         title: "Supported Versions".to_owned(),
         path: "supported-versions".to_owned(),
-        contents: page.to_string(),
+        contents: page.into_string(),
     };
 }
 
@@ -88,5 +88,5 @@ fn generate_grammar_page(
         }
     }
 
-    return page.to_string();
+    return page.into_string();
 }

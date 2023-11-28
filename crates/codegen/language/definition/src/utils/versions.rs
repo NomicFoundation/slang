@@ -3,14 +3,14 @@ use std::{fmt::Display, mem::swap, ops::Range};
 
 const MAX_VERSION: Version = Version::new(u64::MAX, u64::MAX, u64::MAX);
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Default)]
 pub struct VersionSet {
     ranges: Vec<Range<Version>>,
 }
 
 impl VersionSet {
     pub fn new() -> Self {
-        return Self { ranges: vec![] };
+        return Self::default();
     }
 
     pub fn is_empty(&self) -> bool {
@@ -24,7 +24,7 @@ impl VersionSet {
     pub fn add_version_range(&mut self, from: &Version, till: &Version) {
         let mut from = from.to_owned();
         let mut till = till.to_owned();
-        assert_eq!(from < till, true, "Invalid range: '{from}..{till}'");
+        assert!(from < till, "Invalid range: '{from}..{till}'");
 
         self.ranges.retain_mut(|range| {
             if till < range.start {
