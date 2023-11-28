@@ -1,0 +1,13 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ foo as /                                                                         │ 0..8
+
+Errors: []
+
+Tree:
+  - UsingDeconstructionSymbol (Rule): # 0..8 "foo as /"
+      - IdentifierPath (Rule): # 0..3 "foo"
+          - Identifier (Token): "foo" # 0..3
+      - AsKeyword (Token): "as" # 4..6
+      - Slash (Token): "/" # 7..8

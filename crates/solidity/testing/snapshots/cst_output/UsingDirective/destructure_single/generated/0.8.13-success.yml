@@ -8,10 +8,10 @@ Errors: []
 Tree:
   - UsingDirective (Rule): # 0..27 "using {add} for Int global;"
       - UsingKeyword (Token): "using" # 0..5
-      - UsingDirectiveDeconstruction (Rule): # 5..11 " {add}"
+      - UsingDeconstruction (Rule): # 5..11 " {add}"
           - OpenBrace (Token): "{" # 6..7
-          - UsingDirectiveSymbols (Rule): # 7..10 "add"
-              - UsingDirectiveSymbol (Rule): # 7..10 "add"
+          - UsingDeconstructionSymbols (Rule): # 7..10 "add"
+              - UsingDeconstructionSymbol (Rule): # 7..10 "add"
                   - IdentifierPath (Rule): # 7..10 "add"
                       - Identifier (Token): "add" # 7..10
           - CloseBrace (Token): "}" # 10..11

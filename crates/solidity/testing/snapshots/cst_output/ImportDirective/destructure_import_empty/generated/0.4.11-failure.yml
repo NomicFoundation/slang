@@ -19,7 +19,7 @@ Tree:
       - LeadingTrivia (Rule): # 0..31 "// Empty imports are not valid\n"
           - SingleLineComment (Trivia): "// Empty imports are not valid" # 0..30
       - ImportKeyword (Token): "import" # 31..37
-      - DeconstructionImport (Rule): # 37..51 ' {} from "foo"'
+      - ImportDeconstruction (Rule): # 37..51 ' {} from "foo"'
           - OpenBrace (Token): "{" # 38..39
           - SKIPPED (Token): "" # 39..39
           - CloseBrace (Token): "}" # 39..40

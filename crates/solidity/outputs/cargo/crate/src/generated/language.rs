@@ -767,78 +767,6 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn deconstruction_import(&self, input: &mut ParserContext) -> ParserResult {
-        SequenceHelper::run(|mut seq| {
-            seq.elem(SequenceHelper::run(|mut seq| {
-                let mut delim_guard = input.open_delim(TokenKind::CloseBrace);
-                let input = delim_guard.ctx();
-                seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                    input,
-                    TokenKind::OpenBrace,
-                ))?;
-                seq.elem(
-                    self.deconstruction_import_symbols(input)
-                        .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
-                            input,
-                            self,
-                            TokenKind::CloseBrace,
-                            RecoverFromNoMatch::Yes,
-                        ),
-                )?;
-                seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                    input,
-                    TokenKind::CloseBrace,
-                ))?;
-                seq.finish()
-            }))?;
-            seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                input,
-                TokenKind::FromKeyword,
-            ))?;
-            seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                input,
-                TokenKind::AsciiStringLiteral,
-            ))?;
-            seq.finish()
-        })
-        .with_kind(RuleKind::DeconstructionImport)
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn deconstruction_import_symbol(&self, input: &mut ParserContext) -> ParserResult {
-        SequenceHelper::run(|mut seq| {
-            seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                input,
-                TokenKind::Identifier,
-            ))?;
-            seq.elem(OptionalHelper::transform(SequenceHelper::run(|mut seq| {
-                seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                    input,
-                    TokenKind::AsKeyword,
-                ))?;
-                seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                    input,
-                    TokenKind::Identifier,
-                ))?;
-                seq.finish()
-            })))?;
-            seq.finish()
-        })
-        .with_kind(RuleKind::DeconstructionImportSymbol)
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn deconstruction_import_symbols(&self, input: &mut ParserContext) -> ParserResult {
-        SeparatedHelper::run::<_, LexicalContextType::Default>(
-            input,
-            self,
-            |input| self.deconstruction_import_symbol(input),
-            TokenKind::Comma,
-        )
-        .with_kind(RuleKind::DeconstructionImportSymbols)
-    }
-
-    #[allow(unused_assignments, unused_parens)]
     fn delete_statement(&self, input: &mut ParserContext) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(
@@ -2606,6 +2534,78 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
+    fn import_deconstruction(&self, input: &mut ParserContext) -> ParserResult {
+        SequenceHelper::run(|mut seq| {
+            seq.elem(SequenceHelper::run(|mut seq| {
+                let mut delim_guard = input.open_delim(TokenKind::CloseBrace);
+                let input = delim_guard.ctx();
+                seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    input,
+                    TokenKind::OpenBrace,
+                ))?;
+                seq.elem(
+                    self.import_deconstruction_symbols(input)
+                        .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
+                            input,
+                            self,
+                            TokenKind::CloseBrace,
+                            RecoverFromNoMatch::Yes,
+                        ),
+                )?;
+                seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    input,
+                    TokenKind::CloseBrace,
+                ))?;
+                seq.finish()
+            }))?;
+            seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
+                input,
+                TokenKind::FromKeyword,
+            ))?;
+            seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
+                input,
+                TokenKind::AsciiStringLiteral,
+            ))?;
+            seq.finish()
+        })
+        .with_kind(RuleKind::ImportDeconstruction)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn import_deconstruction_symbol(&self, input: &mut ParserContext) -> ParserResult {
+        SequenceHelper::run(|mut seq| {
+            seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
+                input,
+                TokenKind::Identifier,
+            ))?;
+            seq.elem(OptionalHelper::transform(SequenceHelper::run(|mut seq| {
+                seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    input,
+                    TokenKind::AsKeyword,
+                ))?;
+                seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    input,
+                    TokenKind::Identifier,
+                ))?;
+                seq.finish()
+            })))?;
+            seq.finish()
+        })
+        .with_kind(RuleKind::ImportDeconstructionSymbol)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn import_deconstruction_symbols(&self, input: &mut ParserContext) -> ParserResult {
+        SeparatedHelper::run::<_, LexicalContextType::Default>(
+            input,
+            self,
+            |input| self.import_deconstruction_symbol(input),
+            TokenKind::Comma,
+        )
+        .with_kind(RuleKind::ImportDeconstructionSymbols)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
     fn import_directive(&self, input: &mut ParserContext) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(
@@ -2619,7 +2619,7 @@ impl Language {
                         choice.consider(input, result)?;
                         let result = self.named_import(input);
                         choice.consider(input, result)?;
-                        let result = self.deconstruction_import(input);
+                        let result = self.import_deconstruction(input);
                         choice.consider(input, result)?;
                         choice.finish(input)
                     }))?;
@@ -4354,63 +4354,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn using_directive(&self, input: &mut ParserContext) -> ParserResult {
-        SequenceHelper::run(|mut seq| {
-            seq.elem(
-                SequenceHelper::run(|mut seq| {
-                    seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::UsingKeyword,
-                    ))?;
-                    seq.elem(ChoiceHelper::run(input, |mut choice, input| {
-                        let result = self.identifier_path(input);
-                        choice.consider(input, result)?;
-                        let result = self.using_directive_deconstruction(input);
-                        choice.consider(input, result)?;
-                        choice.finish(input)
-                    }))?;
-                    seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::ForKeyword,
-                    ))?;
-                    seq.elem(ChoiceHelper::run(input, |mut choice, input| {
-                        let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                            input,
-                            TokenKind::Asterisk,
-                        );
-                        choice.consider(input, result)?;
-                        let result = self.type_name(input);
-                        choice.consider(input, result)?;
-                        choice.finish(input)
-                    }))?;
-                    if self.version_is_at_least_0_8_13 {
-                        seq.elem(OptionalHelper::transform(
-                            self.parse_token_with_trivia::<LexicalContextType::Default>(
-                                input,
-                                TokenKind::GlobalKeyword,
-                            ),
-                        ))?;
-                    }
-                    seq.finish()
-                })
-                .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
-                    input,
-                    self,
-                    TokenKind::Semicolon,
-                    RecoverFromNoMatch::No,
-                ),
-            )?;
-            seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                input,
-                TokenKind::Semicolon,
-            ))?;
-            seq.finish()
-        })
-        .with_kind(RuleKind::UsingDirective)
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn using_directive_deconstruction(&self, input: &mut ParserContext) -> ParserResult {
+    fn using_deconstruction(&self, input: &mut ParserContext) -> ParserResult {
         if self.version_is_at_least_0_8_13 {
             SequenceHelper::run(|mut seq| {
                 let mut delim_guard = input.open_delim(TokenKind::CloseBrace);
@@ -4420,7 +4364,7 @@ impl Language {
                     TokenKind::OpenBrace,
                 ))?;
                 seq.elem(
-                    self.using_directive_symbols(input)
+                    self.using_deconstruction_symbols(input)
                         .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                             input,
                             self,
@@ -4437,11 +4381,11 @@ impl Language {
         } else {
             ParserResult::disabled()
         }
-        .with_kind(RuleKind::UsingDirectiveDeconstruction)
+        .with_kind(RuleKind::UsingDeconstruction)
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn using_directive_symbol(&self, input: &mut ParserContext) -> ParserResult {
+    fn using_deconstruction_symbol(&self, input: &mut ParserContext) -> ParserResult {
         if self.version_is_at_least_0_8_13 {
             SequenceHelper::run(|mut seq| {
                 seq.elem(self.identifier_path(input))?;
@@ -4556,18 +4500,80 @@ impl Language {
         } else {
             ParserResult::disabled()
         }
-        .with_kind(RuleKind::UsingDirectiveSymbol)
+        .with_kind(RuleKind::UsingDeconstructionSymbol)
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn using_directive_symbols(&self, input: &mut ParserContext) -> ParserResult {
-        SeparatedHelper::run::<_, LexicalContextType::Default>(
-            input,
-            self,
-            |input| self.using_directive_symbol(input),
-            TokenKind::Comma,
-        )
-        .with_kind(RuleKind::UsingDirectiveSymbols)
+    fn using_deconstruction_symbols(&self, input: &mut ParserContext) -> ParserResult {
+        if self.version_is_at_least_0_8_13 {
+            SeparatedHelper::run::<_, LexicalContextType::Default>(
+                input,
+                self,
+                |input| self.using_deconstruction_symbol(input),
+                TokenKind::Comma,
+            )
+        } else {
+            ParserResult::disabled()
+        }
+        .with_kind(RuleKind::UsingDeconstructionSymbols)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn using_directive(&self, input: &mut ParserContext) -> ParserResult {
+        SequenceHelper::run(|mut seq| {
+            seq.elem(
+                SequenceHelper::run(|mut seq| {
+                    seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        input,
+                        TokenKind::UsingKeyword,
+                    ))?;
+                    seq.elem(ChoiceHelper::run(input, |mut choice, input| {
+                        let result = self.identifier_path(input);
+                        choice.consider(input, result)?;
+                        if self.version_is_at_least_0_8_13 {
+                            let result = self.using_deconstruction(input);
+                            choice.consider(input, result)?;
+                        }
+                        choice.finish(input)
+                    }))?;
+                    seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        input,
+                        TokenKind::ForKeyword,
+                    ))?;
+                    seq.elem(ChoiceHelper::run(input, |mut choice, input| {
+                        let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            input,
+                            TokenKind::Asterisk,
+                        );
+                        choice.consider(input, result)?;
+                        let result = self.type_name(input);
+                        choice.consider(input, result)?;
+                        choice.finish(input)
+                    }))?;
+                    if self.version_is_at_least_0_8_13 {
+                        seq.elem(OptionalHelper::transform(
+                            self.parse_token_with_trivia::<LexicalContextType::Default>(
+                                input,
+                                TokenKind::GlobalKeyword,
+                            ),
+                        ))?;
+                    }
+                    seq.finish()
+                })
+                .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
+                    input,
+                    self,
+                    TokenKind::Semicolon,
+                    RecoverFromNoMatch::No,
+                ),
+            )?;
+            seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
+                input,
+                TokenKind::Semicolon,
+            ))?;
+            seq.finish()
+        })
+        .with_kind(RuleKind::UsingDirective)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -5968,13 +5974,6 @@ impl Language {
             ProductionKind::DecimalNumberExpression => {
                 Self::decimal_number_expression.parse(self, input)
             }
-            ProductionKind::DeconstructionImport => Self::deconstruction_import.parse(self, input),
-            ProductionKind::DeconstructionImportSymbol => {
-                Self::deconstruction_import_symbol.parse(self, input)
-            }
-            ProductionKind::DeconstructionImportSymbols => {
-                Self::deconstruction_import_symbols.parse(self, input)
-            }
             ProductionKind::DeleteStatement => Self::delete_statement.parse(self, input),
             ProductionKind::DoWhileStatement => Self::do_while_statement.parse(self, input),
             ProductionKind::EmitStatement => Self::emit_statement.parse(self, input),
@@ -6014,6 +6013,13 @@ impl Language {
             ProductionKind::HexStringLiterals => Self::hex_string_literals.parse(self, input),
             ProductionKind::IdentifierPath => Self::identifier_path.parse(self, input),
             ProductionKind::IfStatement => Self::if_statement.parse(self, input),
+            ProductionKind::ImportDeconstruction => Self::import_deconstruction.parse(self, input),
+            ProductionKind::ImportDeconstructionSymbol => {
+                Self::import_deconstruction_symbol.parse(self, input)
+            }
+            ProductionKind::ImportDeconstructionSymbols => {
+                Self::import_deconstruction_symbols.parse(self, input)
+            }
             ProductionKind::ImportDirective => Self::import_directive.parse(self, input),
             ProductionKind::InheritanceSpecifier => Self::inheritance_specifier.parse(self, input),
             ProductionKind::InheritanceType => Self::inheritance_type.parse(self, input),
@@ -6092,14 +6098,14 @@ impl Language {
             ProductionKind::UserDefinedValueTypeDefinition => {
                 Self::user_defined_value_type_definition.parse(self, input)
             }
+            ProductionKind::UsingDeconstruction => Self::using_deconstruction.parse(self, input),
+            ProductionKind::UsingDeconstructionSymbol => {
+                Self::using_deconstruction_symbol.parse(self, input)
+            }
+            ProductionKind::UsingDeconstructionSymbols => {
+                Self::using_deconstruction_symbols.parse(self, input)
+            }
             ProductionKind::UsingDirective => Self::using_directive.parse(self, input),
-            ProductionKind::UsingDirectiveDeconstruction => {
-                Self::using_directive_deconstruction.parse(self, input)
-            }
-            ProductionKind::UsingDirectiveSymbol => Self::using_directive_symbol.parse(self, input),
-            ProductionKind::UsingDirectiveSymbols => {
-                Self::using_directive_symbols.parse(self, input)
-            }
             ProductionKind::VariableDeclaration => Self::variable_declaration.parse(self, input),
             ProductionKind::VariableDeclarationStatement => {
                 Self::variable_declaration_statement.parse(self, input)

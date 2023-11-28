@@ -72,9 +72,9 @@ mod UnicodeStringLiterals;
 #[allow(non_snake_case)]
 mod UserDefinedValueTypeDefinition;
 #[allow(non_snake_case)]
-mod UsingDirective;
+mod UsingDeconstructionSymbol;
 #[allow(non_snake_case)]
-mod UsingDirectiveSymbol;
+mod UsingDirective;
 #[allow(non_snake_case)]
 mod VariableDeclarationStatement;
 #[allow(non_snake_case)]
