@@ -7,11 +7,9 @@
 //! Call the [`SolidityLanguageExtensions::load_solidity`] method to load the precompiled language definition.
 
 mod definition;
-mod dsl;
 mod grammar;
 
 pub use definition::SolidityDefinition;
-pub use dsl::GrammarConstructorDslV1;
 pub use grammar::GrammarConstructorDslV2;
 
 use anyhow::Result;
