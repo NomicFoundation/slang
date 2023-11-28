@@ -112,9 +112,11 @@ impl ErrorDescriptor {
     }
 
     fn write_problem_matcher(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        let severity = "error";
+
         writeln!(
             f,
-            "slang-problem-matcher:{file}:{line}:{column}-{end_line}:{end_column}: error: {message}",
+            "slang-problem-matcher:{file}:{line}:{column}-{end_line}:{end_column}: {severity}: {message}",
             file = self.file_path.unwrap_str(),
             line = self.range.start.line,
             column = self.range.start.column,
