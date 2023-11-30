@@ -1,5 +1,0 @@
-error: Path not found: $WORKSPACE/foo/bar/non-existing-file.md
-  --> src/fail/parsing/non_existing_path_buf/test.rs:22:30
-   |
-22 |                 notes_file = "foo/bar/non-existing-file.md",
-   |                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

@@ -3,10 +3,16 @@ use anyhow::Result;
 use codegen_language_definition::model::Language;
 use indicatif::{ProgressBar, ProgressStyle};
 use infra_utils::{cargo::CargoWorkspace, commands::Command};
-use rayon::prelude::{ParallelBridge, ParallelIterator};
+use itertools::Itertools;
+use rayon::{iter::IntoParallelIterator, prelude::ParallelIterator};
 use semver::Version;
 use serde::Deserialize;
-use std::{collections::HashMap, os::unix::prelude::PermissionsExt, path::Path, path::PathBuf};
+use std::{
+    collections::HashMap,
+    ops::Deref,
+    os::unix::prelude::PermissionsExt,
+    path::{Path, PathBuf},
+};
 use url::Url;
 
 #[derive(Debug)]
@@ -22,19 +28,23 @@ impl Binary {
         let mirror_url = get_mirror_url();
         let releases = fetch_releases(&mirror_url, &binaries_dir);
 
-        let progress_bar = ProgressBar::new(language.versions.len() as u64);
+        let versions = language
+            .versions
+            .iter()
+            .map(|version| version.deref().to_owned())
+            .collect_vec();
+
+        let progress_bar = ProgressBar::new(versions.len() as u64);
 
         let style = "[{elapsed_precise}] [{bar:80.cyan/blue}] {pos}/{len} │ ETA: {eta_precise}";
         progress_bar.set_style(ProgressStyle::with_template(style).unwrap());
 
-        let mut binaries: Vec<_> = language
-            .versions
-            .iter()
-            .par_bridge()
+        let mut binaries: Vec<_> = versions
+            .into_par_iter()
             .map(|version| {
                 let local_path = binaries_dir.join(version.to_string());
                 if !local_path.exists() {
-                    let remote_url = mirror_url.join(&releases[version]).unwrap();
+                    let remote_url = mirror_url.join(&releases[&version]).unwrap();
                     download_file(remote_url, &local_path);
                     make_file_executable(&local_path);
                 }
@@ -42,7 +52,7 @@ impl Binary {
                 progress_bar.inc(1);
 
                 return Self {
-                    version: version.to_owned(),
+                    version,
                     local_path,
                 };
             })
@@ -91,7 +101,7 @@ fn download_file(url: Url, path: &Path) {
     std::fs::write(path, bytes).unwrap();
 }
 
-fn make_file_executable(local_path: &PathBuf) {
+fn make_file_executable(local_path: &Path) {
     let mut permissions = local_path.metadata().unwrap().permissions();
     permissions.set_mode(0o744);
     std::fs::set_permissions(local_path, permissions).unwrap();

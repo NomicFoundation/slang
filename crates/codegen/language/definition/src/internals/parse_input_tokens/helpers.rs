@@ -57,7 +57,7 @@ impl ParseHelpers {
     pub fn map<K: ParseInputTokens + std::hash::Hash + Eq, V: ParseInputTokens>(
         input: ParseStream,
         errors: &mut ErrorsCollection,
-    ) -> Result<IndexMap<Spanned<K>, Spanned<V>>> {
+    ) -> Result<IndexMap<Spanned<K>, V>> {
         match Self::delimited(Delimiter::Parenthesis, input, |_, inner_input| {
             let mut result = IndexMap::new();
 

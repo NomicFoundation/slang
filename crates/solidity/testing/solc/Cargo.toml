@@ -11,6 +11,7 @@ clap = { workspace = true }
 codegen_language_definition = { workspace = true }
 indicatif = { workspace = true }
 infra_utils = { workspace = true }
+itertools = { workspace = true }
 rayon = { workspace = true }
 reqwest = { workspace = true }
 semver = { workspace = true }

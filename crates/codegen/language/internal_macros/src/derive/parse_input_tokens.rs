@@ -1,18 +1,18 @@
-use crate::model::{Field, Item, Variant};
+use crate::input_model::{strip_spanned_prefix, InputField, InputItem, InputVariant};
 use itertools::Itertools;
 use proc_macro2::{Ident, Literal, TokenStream};
 use quote::quote;
 
-pub fn parse_input_tokens(item: &Item) -> TokenStream {
+pub fn parse_input_tokens(item: InputItem) -> TokenStream {
     return match item {
-        Item::Struct { name, fields, .. } => derive_struct(name, fields),
-        Item::Enum { name, variants, .. } => derive_enum(name, variants),
+        InputItem::Struct { name, fields } => derive_struct(name, &fields),
+        InputItem::Enum { name, variants } => derive_enum(name, &variants),
     };
 }
 
-fn derive_struct(name: &Ident, fields: &[Field]) -> TokenStream {
-    let name_string = Literal::string(&name.to_string());
-    let unexpected_type_error = Literal::string(&format!("Expected type: {name}"));
+fn derive_struct(name: Ident, fields: &[InputField]) -> TokenStream {
+    let stripped_name = Literal::string(&strip_spanned_prefix(name.to_string()));
+    let unexpected_type_error = Literal::string(&format!("Expected type: {stripped_name}"));
 
     let fields_return = derive_fields_return(quote!(Self), fields);
 
@@ -30,7 +30,7 @@ fn derive_struct(name: &Ident, fields: &[Field]) -> TokenStream {
                 errors: &mut crate::internals::ErrorsCollection,
             ) -> crate::internals::Result<Self> {
                 let name = crate::internals::ParseHelpers::syn::<syn::Ident>(input)?;
-                if name != #name_string {
+                if name != #stripped_name {
                     return crate::internals::Error::fatal(&name, &#unexpected_type_error);
                 }
 
@@ -44,13 +44,22 @@ fn derive_struct(name: &Ident, fields: &[Field]) -> TokenStream {
     };
 }
 
-fn derive_enum(name: &Ident, variants: &[Variant]) -> TokenStream {
+fn derive_enum(name: Ident, variants: &[InputVariant]) -> TokenStream {
+    let unknown_variant_error = Literal::string(&format!(
+        "Expected a variant: {}",
+        variants
+            .iter()
+            .map(|variant| format!("'{}'", variant.name))
+            .collect_vec()
+            .join(" or ")
+    ));
+
     let match_arms = variants.iter().map(|variant| {
-        let variant_id = &variant.name;
-        let variant_name = variant_id.to_string();
+        let variant_ident = &variant.name;
+        let variant_name = variant_ident.to_string();
 
         if let Some(fields) = &variant.fields {
-            let fields_return = derive_fields_return(quote!(Self::#variant_id), fields);
+            let fields_return = derive_fields_return(quote!(Self::#variant_ident), fields);
 
             return quote! {
                 #variant_name => {
@@ -64,20 +73,11 @@ fn derive_enum(name: &Ident, variants: &[Variant]) -> TokenStream {
         } else {
             return quote! {
                 #variant_name => {
-                    return Ok(Self::#variant_id);
+                    return Ok(Self::#variant_ident);
                 }
             };
         }
     });
-
-    let unknown_variant_error = Literal::string(&format!(
-        "Expected a variant: {}",
-        variants
-            .iter()
-            .map(|variant| format!("'{}'", variant.name))
-            .collect_vec()
-            .join(" or ")
-    ));
 
     return quote! {
         impl crate::internals::ParseInputTokens for #name {
@@ -98,7 +98,7 @@ fn derive_enum(name: &Ident, variants: &[Variant]) -> TokenStream {
     };
 }
 
-fn derive_fields_return(type_name: TokenStream, fields: &[Field]) -> TokenStream {
+fn derive_fields_return(type_name: TokenStream, fields: &[InputField]) -> TokenStream {
     // When there is only one field, we omit the `key = ` part.
     // This way, we can just write `Foo(Bar)` instead of `Foo(key = Bar)`.
     let assignments = if let [single_field] = fields {

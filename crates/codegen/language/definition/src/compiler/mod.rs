@@ -1,5 +1,6 @@
 mod analysis;
 mod emitter;
+mod version_set;
 
 use crate::{
     compiler::{analysis::Analysis, emitter::LanguageEmitter},

@@ -1,65 +1,34 @@
 mod derive;
-mod model;
-mod utils;
+mod input_model;
 
-use crate::{model::Model, utils::error};
-use quote::{quote, ToTokens};
-use std::borrow::BorrowMut;
-use syn::Result;
+use crate::input_model::InputItem;
+use proc_macro::TokenStream;
+use quote::ToTokens;
 
 #[proc_macro_attribute]
-pub fn derive_internals(
-    config: proc_macro::TokenStream,
-    input: proc_macro::TokenStream,
-) -> proc_macro::TokenStream {
-    return match derive_internals_aux(config, input) {
-        Ok(output) => output.into(),
-        Err(error) => error.to_compile_error().into(),
-    };
-}
+pub fn derive_spanned_type(args: TokenStream, mut input: TokenStream) -> TokenStream {
+    let spanned_type = {
+        let spanned_derive_args = args.into();
+        let input = input.to_owned();
 
-fn derive_internals_aux(
-    config: proc_macro::TokenStream,
-    input: proc_macro::TokenStream,
-) -> Result<proc_macro2::TokenStream> {
-    if !config.is_empty() {
-        return error(
-            proc_macro2::TokenStream::from(config),
-            "Attribute does not support configuration.",
-        );
-    }
-
-    let mut input_mod = syn::parse::<syn::ItemMod>(input)?;
-
-    let input_items = match input_mod.content.borrow_mut() {
-        Some((_, items)) => items,
-        None => return error(input_mod, "Expected a module containing items within."),
+        let item = syn::parse_macro_input!(input as InputItem);
+        derive::spanned(item, spanned_derive_args)
     };
 
-    // Use [syn::Item::Verbatim] so that we don't end up parsing the generated items:
-    let output = run_derivers(input_items)?;
-    input_items.push(syn::Item::Verbatim(output));
-
-    return Ok(input_mod.into_token_stream());
+    input.extend(TokenStream::from(spanned_type.into_token_stream()));
+    return input;
 }
 
-fn run_derivers(input_items: &[syn::Item]) -> Result<proc_macro2::TokenStream> {
-    let model = Model::from_syn(input_items)?;
+#[proc_macro_derive(ParseInputTokens)]
+pub fn derive_parse_input_tokens(input: TokenStream) -> TokenStream {
+    let item = syn::parse_macro_input!(input as InputItem);
 
-    let spanned = model.items().map(derive::spanned);
-    let parse_input_tokens = model.items().map(derive::parse_input_tokens);
-    let write_output_tokens = model.items().map(derive::write_output_tokens);
+    return derive::parse_input_tokens(item).into();
+}
 
-    // Group macro-generated items in a 'spanned' sub-module.
-    // It is visible only to the definition crate, and never leaked outside the context of the macro.
-    // Only the parent types are returned to the user via the generated definition.
-    return Ok(quote! {
-        pub(crate) mod spanned {
-            pub use super::*;
+#[proc_macro_derive(WriteOutputTokens)]
+pub fn derive_write_output_tokens(input: TokenStream) -> TokenStream {
+    let item = syn::parse_macro_input!(input as InputItem);
 
-            #(#spanned)*
-            #(#parse_input_tokens)*
-            #(#write_output_tokens)*
-        }
-    });
+    return derive::write_output_tokens(item).into();
 }
