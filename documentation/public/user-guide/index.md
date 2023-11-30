@@ -2,7 +2,7 @@
 
 Welcome to the Slang user guide! This aims to be an introduction to Slang itself, its concepts and also contains a collection of guides how you can achieve basic tasks with it.
 
-To get a good grasp on the concepts used in Slang, see the [Overview](./overview.md) section.
+To get a good grasp on the concepts used in Slang, see the [Concepts](./concepts.md) section.
 
 ## Distributions
 
