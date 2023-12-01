@@ -4,7 +4,7 @@ Slang is intended to be a modular Solidity compiler, specifically targeting code
 
 ## What Slang is not?
 
-First and foremost, it is not a replacement for `solc`, the standard Solidity compiler. We do not plan at the moment to support emitting EVM bytecode. Secondly, it is not meant to be used for formal verification of contracts or Solidity logic in general.
+First and foremost, it is not a replacement for `solc`, the standard Solidity compiler. We do not plan at the moment to support emitting optimized EVM bytecode for use in production. Secondly, it does not perform formal verification of contracts or Solidity logic in general. However, other tools that serve this purpose can definitely be built on top of it.
 
 ## Supporting multiple versions
 
