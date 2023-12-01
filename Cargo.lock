@@ -2152,7 +2152,6 @@ dependencies = [
  "codegen_language_definition",
  "indicatif",
  "infra_utils",
- "itertools",
  "rayon",
  "reqwest",
  "semver",

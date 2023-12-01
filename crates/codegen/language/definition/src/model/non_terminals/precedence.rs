@@ -1,12 +1,10 @@
 use crate::model::{Field, FieldsErrorRecovery, Identifier, VersionSpecifier};
+use codegen_language_internal_macros::{derive_spanned_type, ParseInputTokens, WriteOutputTokens};
 use indexmap::IndexMap;
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
-#[codegen_language_internal_macros::derive_spanned_type(
-    codegen_language_internal_macros::ParseInputTokens,
-    codegen_language_internal_macros::WriteOutputTokens
-)]
+#[derive_spanned_type(ParseInputTokens, WriteOutputTokens)]
 pub struct PrecedenceItem {
     pub name: Identifier,
 
@@ -17,10 +15,7 @@ pub struct PrecedenceItem {
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
-#[codegen_language_internal_macros::derive_spanned_type(
-    codegen_language_internal_macros::ParseInputTokens,
-    codegen_language_internal_macros::WriteOutputTokens
-)]
+#[derive_spanned_type(ParseInputTokens, WriteOutputTokens)]
 pub struct PrecedenceExpression {
     pub name: Identifier,
 
@@ -31,10 +26,7 @@ pub struct PrecedenceExpression {
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
-#[codegen_language_internal_macros::derive_spanned_type(
-    codegen_language_internal_macros::ParseInputTokens,
-    codegen_language_internal_macros::WriteOutputTokens
-)]
+#[derive_spanned_type(ParseInputTokens, WriteOutputTokens)]
 pub struct PrecedenceOperator {
     pub model: OperatorModel,
 
@@ -45,10 +37,7 @@ pub struct PrecedenceOperator {
 }
 
 #[derive(Clone, Copy, Debug, Deserialize, Eq, PartialEq, Serialize)]
-#[codegen_language_internal_macros::derive_spanned_type(
-    codegen_language_internal_macros::ParseInputTokens,
-    codegen_language_internal_macros::WriteOutputTokens
-)]
+#[derive_spanned_type(ParseInputTokens, WriteOutputTokens)]
 pub enum OperatorModel {
     Prefix,
     Postfix,
@@ -57,10 +46,7 @@ pub enum OperatorModel {
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
-#[codegen_language_internal_macros::derive_spanned_type(
-    codegen_language_internal_macros::ParseInputTokens,
-    codegen_language_internal_macros::WriteOutputTokens
-)]
+#[derive_spanned_type(ParseInputTokens, WriteOutputTokens)]
 pub struct PrimaryExpression {
     pub expression: Identifier,
 

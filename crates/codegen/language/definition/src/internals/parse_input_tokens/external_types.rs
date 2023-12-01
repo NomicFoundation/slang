@@ -32,7 +32,7 @@ impl ParseInputTokens for char {
 }
 
 impl<K: ParseInputTokens + std::hash::Hash + Eq, V: ParseInputTokens> ParseInputTokens
-    for IndexMap<Spanned<K>, V>
+    for IndexMap<K, V>
 {
     fn parse_value(input: ParseStream, errors: &mut ErrorsCollection) -> Result<Self> {
         return ParseHelpers::map(input, errors);

@@ -4,7 +4,7 @@ use indicatif::{ProgressBar, ProgressStyle};
 use rayon::prelude::{IntoParallelRefIterator, ParallelIterator};
 use semver::Version;
 use solidity_language::SolidityDefinition;
-use std::{collections::HashSet, ops::Deref};
+use std::collections::HashSet;
 
 pub fn check_solidity_keywords() {
     println!();
@@ -144,7 +144,7 @@ impl TestCase {
                 None => true,
                 Some(specifier) => specifier.contains(version),
             })
-            .map(|v| v.deref().to_owned())
+            .cloned()
             .collect();
 
         return Self {

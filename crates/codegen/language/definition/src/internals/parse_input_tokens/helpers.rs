@@ -1,7 +1,7 @@
 use crate::internals::{Error, ErrorsCollection, ParseInputTokens, Result, Spanned};
 use indexmap::IndexMap;
 use proc_macro2::{extra::DelimSpan, Delimiter, Ident, TokenStream};
-use std::fmt::Debug;
+use std::{fmt::Debug, ops::Deref};
 use syn::{braced, bracketed, parenthesized, parse::ParseStream, Token};
 
 pub struct ParseHelpers;
@@ -57,16 +57,16 @@ impl ParseHelpers {
     pub fn map<K: ParseInputTokens + std::hash::Hash + Eq, V: ParseInputTokens>(
         input: ParseStream,
         errors: &mut ErrorsCollection,
-    ) -> Result<IndexMap<Spanned<K>, V>> {
+    ) -> Result<IndexMap<K, V>> {
         match Self::delimited(Delimiter::Parenthesis, input, |_, inner_input| {
             let mut result = IndexMap::new();
 
             while !inner_input.is_empty() {
-                let key = ParseInputTokens::parse_named_value(inner_input, errors)?;
+                let key = Spanned::<K>::parse_named_value(inner_input, errors)?;
 
                 Self::syn::<Token![=]>(inner_input)?;
 
-                let value = ParseInputTokens::parse_named_value(inner_input, errors)?;
+                let value = V::parse_named_value(inner_input, errors)?;
 
                 if !inner_input.is_empty() {
                     let comma = Self::syn::<Token![,]>(inner_input)?;
@@ -76,10 +76,10 @@ impl ParseHelpers {
                     }
                 }
 
-                if result.contains_key(&key) {
+                if result.contains_key(key.deref()) {
                     errors.add(&key, &Errors::DuplicateMapKey);
                 } else {
-                    result.insert(key, value);
+                    result.insert(key.into_value(), value);
                 }
             }
 

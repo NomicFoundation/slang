@@ -45,15 +45,6 @@ fn derive_struct(name: Ident, fields: &[InputField]) -> TokenStream {
 }
 
 fn derive_enum(name: Ident, variants: &[InputVariant]) -> TokenStream {
-    let unknown_variant_error = Literal::string(&format!(
-        "Expected a variant: {}",
-        variants
-            .iter()
-            .map(|variant| format!("'{}'", variant.name))
-            .collect_vec()
-            .join(" or ")
-    ));
-
     let match_arms = variants.iter().map(|variant| {
         let variant_ident = &variant.name;
         let variant_name = variant_ident.to_string();
@@ -78,6 +69,15 @@ fn derive_enum(name: Ident, variants: &[InputVariant]) -> TokenStream {
             };
         }
     });
+
+    let unknown_variant_error = Literal::string(&format!(
+        "Expected a variant: {}",
+        variants
+            .iter()
+            .map(|variant| format!("'{}'", variant.name))
+            .collect_vec()
+            .join(" or ")
+    ));
 
     return quote! {
         impl crate::internals::ParseInputTokens for #name {

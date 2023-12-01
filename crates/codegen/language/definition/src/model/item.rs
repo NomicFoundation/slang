@@ -2,13 +2,11 @@ use crate::model::{
     EnumItem, FragmentItem, Identifier, KeywordItem, PrecedenceItem, RepeatedItem, SeparatedItem,
     StructItem, TokenItem, TriviaItem,
 };
+use codegen_language_internal_macros::{derive_spanned_type, ParseInputTokens, WriteOutputTokens};
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
-#[codegen_language_internal_macros::derive_spanned_type(
-    codegen_language_internal_macros::ParseInputTokens,
-    codegen_language_internal_macros::WriteOutputTokens
-)]
+#[derive_spanned_type(ParseInputTokens, WriteOutputTokens)]
 pub enum Item {
     Struct { item: StructItem },
     Enum { item: EnumItem },

@@ -1,6 +1,6 @@
 use crate::internals::{ErrorsCollection, ParseInputTokens, Result, WriteOutputTokens};
 use proc_macro2::{Span, TokenStream};
-use std::{cmp::Ordering, ops::Deref};
+use std::cmp::Ordering;
 use syn::parse::ParseStream;
 
 #[derive(Clone, Debug)]
@@ -16,6 +16,10 @@ impl<T> Spanned<T> {
 
     pub fn span(&self) -> Span {
         return self.span;
+    }
+
+    pub fn into_value(self) -> T {
+        return self.value;
     }
 }
 
@@ -81,6 +85,6 @@ impl<T: ParseInputTokens> ParseInputTokens for Spanned<T> {
 impl<T: WriteOutputTokens> WriteOutputTokens for Spanned<T> {
     fn write_output_tokens(&self) -> TokenStream {
         // 'Spanned' is removed from macro output, leaving only the inner value:
-        return self.deref().write_output_tokens();
+        return self.value.write_output_tokens();
     }
 }

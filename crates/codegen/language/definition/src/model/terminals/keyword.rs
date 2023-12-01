@@ -1,12 +1,10 @@
 use crate::model::{Identifier, VersionSpecifier};
+use codegen_language_internal_macros::{derive_spanned_type, ParseInputTokens, WriteOutputTokens};
 use itertools::Itertools;
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
-#[codegen_language_internal_macros::derive_spanned_type(
-    codegen_language_internal_macros::ParseInputTokens,
-    codegen_language_internal_macros::WriteOutputTokens
-)]
+#[derive_spanned_type(ParseInputTokens, WriteOutputTokens)]
 pub struct KeywordItem {
     pub name: Identifier,
     pub identifier: Identifier,
@@ -15,10 +13,7 @@ pub struct KeywordItem {
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
-#[codegen_language_internal_macros::derive_spanned_type(
-    codegen_language_internal_macros::ParseInputTokens,
-    codegen_language_internal_macros::WriteOutputTokens
-)]
+#[derive_spanned_type(ParseInputTokens, WriteOutputTokens)]
 pub struct KeywordDefinition {
     pub enabled: Option<VersionSpecifier>,
     pub reserved: Option<VersionSpecifier>,
@@ -27,10 +22,7 @@ pub struct KeywordDefinition {
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
-#[codegen_language_internal_macros::derive_spanned_type(
-    codegen_language_internal_macros::ParseInputTokens,
-    codegen_language_internal_macros::WriteOutputTokens
-)]
+#[derive_spanned_type(ParseInputTokens, WriteOutputTokens)]
 pub enum KeywordValue {
     Sequence { values: Vec<KeywordValue> },
     Optional { value: Box<KeywordValue> },
@@ -43,7 +35,7 @@ impl KeywordValue {
     pub fn collect_variations(&self) -> Vec<String> {
         match self {
             KeywordValue::Atom { atom } => {
-                return vec![atom.to_string()];
+                return vec![atom.to_owned()];
             }
             KeywordValue::Optional { value } => {
                 let mut results = value.collect_variations();

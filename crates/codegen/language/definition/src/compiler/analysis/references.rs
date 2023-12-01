@@ -385,6 +385,8 @@ fn check_scanner(
     };
 }
 
+/// Used by different checks above to make sure that references to other items are valid.
+/// For example, struct fields can reference anything, but tokens can only reference fragments.
 #[derive(Debug, Display, PartialEq, Eq)]
 enum ReferenceFilter {
     Nodes,
@@ -401,10 +403,8 @@ enum ReferenceFilter {
 impl ReferenceFilter {
     fn apply(&self, item: &SpannedItem) -> bool {
         match (self, item) {
-            (Self::Nodes, item)
-                if Self::NonTerminals.apply(item) || Self::Terminals.apply(item) =>
-            {
-                return true;
+            (Self::Nodes, item) => {
+                return Self::NonTerminals.apply(item) || Self::Terminals.apply(item);
             }
             (
                 Self::NonTerminals,
