@@ -14,7 +14,7 @@ on:
     branches-ignore:
       - "main"
 
-# In the event that there is a new push to the ref, cancel any running jobs because there are now obsolete, and wasting resources.
+# In the event that there is a new push to the ref, cancel any running jobs because they are now obsolete, wasting resources.
 concurrency:
   group: "${{ github.workflow }}-${{ github.ref }}"
   cancel-in-progress: true
