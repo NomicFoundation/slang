@@ -11,9 +11,9 @@ on:
       - "main"
 
 # We publish multiple packages for each version.
-# Wait for any existing deploys to complete before starting a new one:
+# Wait for any deploys in-progress to complete, before starting a new one:
 concurrency:
-  group: "deploy"
+  group: "${{ github.workflow }}"
   cancel-in-progress: false
 
 jobs:
