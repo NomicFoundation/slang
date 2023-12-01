@@ -4,14 +4,14 @@ use std::{
 };
 
 use anyhow::{bail, Result};
-use codegen_schema::types::LanguageDefinition;
+use codegen_language_definition::model::Language;
 use infra_utils::{
     codegen::{Codegen, CodegenReadWrite},
     paths::{FileWalker, PathExtensions},
 };
 
 pub fn generate_cst_output_tests(
-    language: &LanguageDefinition,
+    language: &Language,
     data_dir: &Path,
     output_dir: &Path,
 ) -> Result<()> {
@@ -76,7 +76,7 @@ fn collect_parser_tests(data_dir: &Path) -> Result<BTreeMap<String, BTreeSet<Str
 }
 
 fn generate_mod_file(
-    language: &LanguageDefinition,
+    language: &Language,
     codegen: &mut CodegenReadWrite,
     mod_file_path: &Path,
     parser_tests: &BTreeMap<String, BTreeSet<String>>,
@@ -86,7 +86,7 @@ fn generate_mod_file(
         .map(|parser_name| format!("#[allow(non_snake_case)] mod {parser_name};"))
         .collect::<String>();
 
-    let version_breaks = language.collect_version_breaks();
+    let version_breaks = codegen_language_definition::model::collect_breaking_versions(language);
     let version_breaks_len = version_breaks.len();
     let version_breaks_str = version_breaks
         .iter()

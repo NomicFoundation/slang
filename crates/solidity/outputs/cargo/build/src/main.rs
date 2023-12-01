@@ -17,7 +17,7 @@ use solidity_language::GrammarConstructorDslV2;
 fn main() -> Result<()> {
     // Generate files in the source crate:
     {
-        let grammar = Grammar::from_dsl_v2();
+        let grammar = solidity_language::LANGUAGE_DEF.with(Grammar::from_dsl_v2);
 
         let crate_dir = CargoWorkspace::locate_source_crate("slang_solidity")?;
 

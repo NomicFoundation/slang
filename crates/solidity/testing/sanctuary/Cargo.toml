@@ -7,7 +7,7 @@ publish = false
 
 [dependencies]
 anyhow = { workspace = true }
-codegen_schema = { workspace = true }
+codegen_language_definition = { workspace = true }
 infra_utils = { workspace = true }
 indicatif = { workspace = true }
 rayon = { workspace = true }

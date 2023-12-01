@@ -4,12 +4,10 @@ mod reporting;
 use std::{collections::BTreeSet, path::Path};
 
 use anyhow::Result;
-use codegen_schema::types::LanguageDefinition;
 use infra_utils::paths::PathExtensions;
 use rayon::prelude::{IntoParallelRefIterator, ParallelIterator};
 use semver::Version;
 use slang_solidity::{kinds::ProductionKind, language::Language};
-use solidity_language::SolidityLanguageExtensions;
 use solidity_testing_utils::version_pragmas::extract_version_pragmas;
 
 use crate::{
@@ -18,11 +16,11 @@ use crate::{
 };
 
 fn main() {
+    let versions = solidity_language::LANGUAGE_DEF
+        .with(codegen_language_definition::model::collect_breaking_versions);
+
     // Fail the parent process if a child thread panics:
     std::panic::catch_unwind(|| -> Result<()> {
-        let language = &LanguageDefinition::load_solidity()?;
-        let versions = language.collect_version_breaks();
-
         for dataset in get_all_datasets()? {
             process_dataset(&dataset, &versions)?;
         }

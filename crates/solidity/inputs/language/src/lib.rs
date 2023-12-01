@@ -15,6 +15,10 @@ pub use grammar::GrammarConstructorDslV2;
 use anyhow::Result;
 use codegen_schema::types::{LanguageDefinition, LanguageDefinitionRef};
 
+thread_local! {
+ pub static LANGUAGE_DEF: codegen_language_definition::model::Language = SolidityDefinition::create();
+}
+
 pub trait SolidityLanguageExtensions {
     /// Loads the precompiled Solidity language definition.
     fn load_solidity() -> Result<LanguageDefinitionRef>;

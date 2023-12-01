@@ -500,7 +500,7 @@ name = "codegen_testing"
 version = "0.11.0"
 dependencies = [
  "anyhow",
- "codegen_schema",
+ "codegen_language_definition",
  "infra_utils",
 ]
 
@@ -2055,7 +2055,6 @@ name = "solidity_cargo_tests"
 version = "0.11.0"
 dependencies = [
  "anyhow",
- "codegen_schema",
  "codegen_testing",
  "infra_utils",
  "semver",
@@ -2128,7 +2127,7 @@ name = "solidity_testing_sanctuary"
 version = "0.11.0"
 dependencies = [
  "anyhow",
- "codegen_schema",
+ "codegen_language_definition",
  "indicatif",
  "infra_utils",
  "rayon",
