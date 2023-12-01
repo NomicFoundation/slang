@@ -1,15 +1,14 @@
 use crate::{
-    compiler::analysis::{Analysis, ItemMetadata},
-    internals::Spanned,
-    model::{
-        spanned::{Item, VersionSpecifier},
-        Identifier,
+    compiler::{
+        analysis::{Analysis, ItemMetadata},
+        version_set::VersionSet,
     },
-    utils::VersionSet,
+    internals::Spanned,
+    model::{Identifier, SpannedItem, SpannedVersionSpecifier},
 };
 use std::collections::HashSet;
 
-pub fn analyze_definitions(analysis: &mut Analysis) {
+pub(crate) fn analyze_definitions(analysis: &mut Analysis) {
     collect_top_level_items(analysis);
 
     check_enum_items(analysis);
@@ -31,7 +30,7 @@ fn collect_top_level_items(analysis: &mut Analysis) {
             (**name).to_owned(),
             ItemMetadata {
                 name: name.clone(),
-                kind: item.into(),
+                item: item.clone(),
 
                 defined_in,
                 used_in: VersionSet::new(),
@@ -45,7 +44,7 @@ fn collect_top_level_items(analysis: &mut Analysis) {
 
 fn check_enum_items(analysis: &mut Analysis) {
     for item in analysis.language.clone().items() {
-        let Item::Enum { item } = item else {
+        let SpannedItem::Enum { item } = item.as_ref() else {
             continue;
         };
 
@@ -66,7 +65,7 @@ fn check_precedence_items(analysis: &mut Analysis) {
     let mut all_expressions = HashSet::new();
 
     for item in analysis.language.clone().items() {
-        let Item::Precedence { item } = item else {
+        let SpannedItem::Precedence { item } = item.as_ref() else {
             continue;
         };
 
@@ -99,24 +98,24 @@ fn check_precedence_items(analysis: &mut Analysis) {
     }
 }
 
-fn get_item_name(item: &Item) -> &Spanned<Identifier> {
+fn get_item_name(item: &SpannedItem) -> &Spanned<Identifier> {
     match item {
-        Item::Struct { item } => &item.name,
-        Item::Enum { item } => &item.name,
-        Item::Repeated { item } => &item.name,
-        Item::Separated { item } => &item.name,
-        Item::Precedence { item } => &item.name,
-        Item::Trivia { item } => &item.name,
-        Item::Keyword { item } => &item.name,
-        Item::Token { item } => &item.name,
-        Item::Fragment { item } => &item.name,
+        SpannedItem::Struct { item } => &item.name,
+        SpannedItem::Enum { item } => &item.name,
+        SpannedItem::Repeated { item } => &item.name,
+        SpannedItem::Separated { item } => &item.name,
+        SpannedItem::Precedence { item } => &item.name,
+        SpannedItem::Trivia { item } => &item.name,
+        SpannedItem::Keyword { item } => &item.name,
+        SpannedItem::Token { item } => &item.name,
+        SpannedItem::Fragment { item } => &item.name,
     }
 }
 
-fn calculate_defined_in(analysis: &mut Analysis, item: &Item) -> VersionSet {
+fn calculate_defined_in(analysis: &mut Analysis, item: &SpannedItem) -> VersionSet {
     let mut defined_in = VersionSet::new();
 
-    let mut try_add_specifier = |specifier: &Option<Spanned<VersionSpecifier>>| {
+    let mut try_add_specifier = |specifier: &Option<Spanned<SpannedVersionSpecifier>>| {
         if let Some(specifier) = specifier {
             analysis.add_specifier(&mut defined_in, specifier);
         } else {
@@ -125,35 +124,35 @@ fn calculate_defined_in(analysis: &mut Analysis, item: &Item) -> VersionSet {
     };
 
     match item {
-        Item::Struct { item } => {
+        SpannedItem::Struct { item } => {
             try_add_specifier(&item.enabled);
         }
-        Item::Enum { item } => {
+        SpannedItem::Enum { item } => {
             try_add_specifier(&item.enabled);
         }
-        Item::Repeated { item } => {
+        SpannedItem::Repeated { item } => {
             try_add_specifier(&item.enabled);
         }
-        Item::Separated { item } => {
+        SpannedItem::Separated { item } => {
             try_add_specifier(&item.enabled);
         }
-        Item::Precedence { item } => {
+        SpannedItem::Precedence { item } => {
             try_add_specifier(&item.enabled);
         }
-        Item::Trivia { item: _ } => {
+        SpannedItem::Trivia { item: _ } => {
             try_add_specifier(&None);
         }
-        Item::Keyword { item } => {
+        SpannedItem::Keyword { item } => {
             for definition in &item.definitions {
                 try_add_specifier(&definition.enabled);
             }
         }
-        Item::Token { item } => {
+        SpannedItem::Token { item } => {
             for definition in &item.definitions {
                 try_add_specifier(&definition.enabled)
             }
         }
-        Item::Fragment { item } => {
+        SpannedItem::Fragment { item } => {
             try_add_specifier(&item.enabled);
         }
     };

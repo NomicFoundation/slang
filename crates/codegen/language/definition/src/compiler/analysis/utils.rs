@@ -1,18 +1,21 @@
-use crate::{compiler::analysis::Analysis, model::spanned::VersionSpecifier, utils::VersionSet};
+use crate::{
+    compiler::{analysis::Analysis, version_set::VersionSet},
+    model::SpannedVersionSpecifier,
+};
 
 impl Analysis {
-    pub fn add_specifier(&self, set: &mut VersionSet, specifier: &VersionSpecifier) {
+    pub fn add_specifier(&self, set: &mut VersionSet, specifier: &SpannedVersionSpecifier) {
         match specifier {
-            VersionSpecifier::Never => {
+            SpannedVersionSpecifier::Never => {
                 // Do nothing.
             }
-            VersionSpecifier::From { from } => {
+            SpannedVersionSpecifier::From { from } => {
                 set.add_versions_starting_from(from);
             }
-            VersionSpecifier::Till { till } => {
+            SpannedVersionSpecifier::Till { till } => {
                 set.add_version_range(&self.language.versions[0], till);
             }
-            VersionSpecifier::Range { from, till } => {
+            SpannedVersionSpecifier::Range { from, till } => {
                 set.add_version_range(from, till);
             }
         }

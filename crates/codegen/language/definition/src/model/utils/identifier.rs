@@ -1,0 +1,80 @@
+use crate::internals::{
+    ErrorsCollection, ParseHelpers, ParseInputTokens, Result, WriteOutputTokens,
+};
+use proc_macro2::{Literal, TokenStream};
+use quote::quote;
+use serde::{Deserialize, Serialize};
+use std::ops::Deref;
+use syn::{parse::ParseStream, Ident};
+
+/// A wrapper type to make sure the DSL token is written as an identifier instead of a string literal.
+#[derive(Clone, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
+pub struct Identifier {
+    value: String,
+}
+
+impl Deref for Identifier {
+    type Target = String;
+
+    fn deref(&self) -> &Self::Target {
+        return &self.value;
+    }
+}
+
+impl std::fmt::Display for Identifier {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        return self.value.fmt(f);
+    }
+}
+
+impl From<String> for Identifier {
+    fn from(value: String) -> Self {
+        return Self { value };
+    }
+}
+
+impl From<&str> for Identifier {
+    fn from(value: &str) -> Self {
+        return Self {
+            value: value.to_owned(),
+        };
+    }
+}
+
+impl<'de> Deserialize<'de> for Identifier {
+    fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        return Ok(Self {
+            value: Deserialize::deserialize(deserializer)?,
+        });
+    }
+}
+
+impl Serialize for Identifier {
+    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        return self.value.serialize(serializer);
+    }
+}
+
+impl ParseInputTokens for Identifier {
+    fn parse_value(input: ParseStream, _: &mut ErrorsCollection) -> Result<Self> {
+        let value = ParseHelpers::syn::<Ident>(input)?.to_string();
+
+        return Ok(value.into());
+    }
+}
+
+impl WriteOutputTokens for Identifier {
+    fn write_output_tokens(&self) -> TokenStream {
+        let value = Literal::string(self);
+
+        return quote! {
+            #value.into()
+        };
+    }
+}

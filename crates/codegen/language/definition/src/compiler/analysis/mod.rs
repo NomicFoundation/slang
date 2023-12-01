@@ -8,26 +8,23 @@ use crate::{
         definitions::analyze_definitions, reachability::analyze_reachability,
         references::analyze_references,
     },
+    compiler::version_set::VersionSet,
     internals::{ErrorsCollection, ParseOutput, Spanned},
-    model::{
-        spanned::{Item, ItemKind, Language},
-        Identifier,
-    },
-    utils::VersionSet,
+    model::{Identifier, SpannedItem, SpannedLanguage},
 };
 use indexmap::IndexMap;
 use proc_macro2::Span;
 use std::rc::Rc;
 
-pub struct Analysis {
+pub(crate) struct Analysis {
     pub errors: ErrorsCollection,
-    pub language: Rc<Language>,
+    pub language: Rc<SpannedLanguage>,
     pub metadata: IndexMap<Identifier, ItemMetadata>,
 }
 
-pub struct ItemMetadata {
+pub(crate) struct ItemMetadata {
     pub name: Spanned<Identifier>,
-    pub kind: ItemKind,
+    pub item: Rc<SpannedItem>,
 
     pub defined_in: VersionSet,
     pub used_in: VersionSet,
@@ -71,13 +68,12 @@ impl Analysis {
     }
 }
 
-impl Language {
-    fn items(&self) -> impl Iterator<Item = &Item> {
+impl SpannedLanguage {
+    fn items(&self) -> impl Iterator<Item = &Rc<SpannedItem>> {
         return self
             .sections
             .iter()
             .flat_map(|section| &section.topics)
-            .flat_map(|topic| &topic.items)
-            .map(|item| &***item);
+            .flat_map(|topic| &topic.items);
     }
 }

@@ -1,11 +1,11 @@
 use crate::{
     internals::{Error, ErrorsCollection, ParseInputTokens, Result},
-    model::spanned::Language,
+    model::SpannedLanguage,
 };
 use proc_macro2::TokenStream;
 use syn::parse::{Parse, ParseStream};
 
-pub struct ParseAdapter;
+pub(crate) struct ParseAdapter;
 
 impl ParseAdapter {
     pub fn parse(input: TokenStream) -> Result<ParseOutput> {
@@ -13,8 +13,8 @@ impl ParseAdapter {
     }
 }
 
-pub struct ParseOutput {
-    pub language: Language,
+pub(crate) struct ParseOutput {
+    pub language: SpannedLanguage,
     pub errors: ErrorsCollection,
 }
 
@@ -23,7 +23,7 @@ impl Parse for ParseOutput {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         let mut errors = ErrorsCollection::new();
 
-        match Language::parse_named_value(input, &mut errors) {
+        match SpannedLanguage::parse_named_value(input, &mut errors) {
             Ok(language) => {
                 return Ok(Self { language, errors });
             }

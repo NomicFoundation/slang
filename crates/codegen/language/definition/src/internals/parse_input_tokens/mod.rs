@@ -1,9 +1,9 @@
 mod adapter;
+mod external_types;
 mod helpers;
-mod implementations;
 
-pub use adapter::*;
-pub use helpers::*;
+pub(crate) use adapter::*;
+pub(crate) use helpers::*;
 
 use crate::internals::{ErrorsCollection, Result};
 use syn::parse::ParseStream;

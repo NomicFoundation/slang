@@ -1,6 +1,7 @@
-use proc_macro2::Span;
-use serde::Serialize;
+use crate::internals::{ErrorsCollection, ParseInputTokens, Result, WriteOutputTokens};
+use proc_macro2::{Span, TokenStream};
 use std::cmp::Ordering;
+use syn::parse::ParseStream;
 
 #[derive(Clone, Debug)]
 pub struct Spanned<T> {
@@ -15,6 +16,10 @@ impl<T> Spanned<T> {
 
     pub fn span(&self) -> Span {
         return self.span;
+    }
+
+    pub fn into_value(self) -> T {
+        return self.value;
     }
 }
 
@@ -61,11 +66,25 @@ impl<T: PartialOrd> PartialOrd for Spanned<T> {
     }
 }
 
-impl<T: Serialize> Serialize for Spanned<T> {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: serde::Serializer,
-    {
-        return self.value.serialize(serializer);
+impl<T: ParseInputTokens> ParseInputTokens for Spanned<T> {
+    fn parse_value(input: ParseStream, errors: &mut ErrorsCollection) -> Result<Self> {
+        let span = input.span();
+        let value = T::parse_value(input, errors)?;
+
+        return Ok(Self::new(span, value));
+    }
+
+    fn parse_named_value(input: ParseStream, errors: &mut ErrorsCollection) -> Result<Self> {
+        let span = input.span();
+        let value = ParseInputTokens::parse_named_value(input, errors)?;
+
+        return Ok(Self::new(span, value));
+    }
+}
+
+impl<T: WriteOutputTokens> WriteOutputTokens for Spanned<T> {
+    fn write_output_tokens(&self) -> TokenStream {
+        // 'Spanned' is removed from macro output, leaving only the inner value:
+        return self.value.write_output_tokens();
     }
 }

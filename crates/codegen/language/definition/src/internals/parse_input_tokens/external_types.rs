@@ -1,19 +1,10 @@
-use crate::{
-    internals::{
-        parse_input_tokens::ParseHelpers, Error, ErrorsCollection, ParseInputTokens, Result,
-        Spanned,
-    },
-    model::Identifier,
+use crate::internals::{
+    parse_input_tokens::ParseHelpers, Error, ErrorsCollection, ParseInputTokens, Result, Spanned,
 };
 use indexmap::{IndexMap, IndexSet};
-use infra_utils::paths::PathExtensions;
 use proc_macro2::Ident;
 use semver::Version;
-use std::{
-    fmt::Debug,
-    path::{Path, PathBuf},
-    rc::Rc,
-};
+use std::{fmt::Debug, rc::Rc};
 use syn::{parse::ParseStream, LitBool, LitChar, LitStr};
 
 impl ParseInputTokens for bool {
@@ -40,16 +31,8 @@ impl ParseInputTokens for char {
     }
 }
 
-impl ParseInputTokens for Identifier {
-    fn parse_value(input: ParseStream, _: &mut ErrorsCollection) -> Result<Self> {
-        let value = ParseHelpers::syn::<Ident>(input)?.to_string();
-
-        return Ok(value.into());
-    }
-}
-
 impl<K: ParseInputTokens + std::hash::Hash + Eq, V: ParseInputTokens> ParseInputTokens
-    for IndexMap<Spanned<K>, Spanned<V>>
+    for IndexMap<K, V>
 {
     fn parse_value(input: ParseStream, errors: &mut ErrorsCollection) -> Result<Self> {
         return ParseHelpers::map(input, errors);
@@ -95,41 +78,11 @@ impl<T: ParseInputTokens> ParseInputTokens for Option<T> {
     }
 }
 
-impl ParseInputTokens for PathBuf {
-    fn parse_value(input: ParseStream, errors: &mut ErrorsCollection) -> Result<Self> {
-        let literal = &ParseHelpers::syn::<LitStr>(input)?;
-        let value = literal.value();
-        let full_path = Path::repo_path(value);
-
-        if !full_path.exists() {
-            errors.add(literal, &Errors::PathNotFound(&full_path));
-        }
-
-        return Ok(full_path);
-    }
-}
-
 impl<T: ParseInputTokens> ParseInputTokens for Rc<T> {
     fn parse_value(input: ParseStream, errors: &mut ErrorsCollection) -> Result<Self> {
         let value = T::parse_value(input, errors)?;
 
         return Ok(value.into());
-    }
-}
-
-impl<T: ParseInputTokens> ParseInputTokens for Spanned<T> {
-    fn parse_value(input: ParseStream, errors: &mut ErrorsCollection) -> Result<Self> {
-        let span = input.span();
-        let value = T::parse_value(input, errors)?;
-
-        return Ok(Self::new(span, value));
-    }
-
-    fn parse_named_value(input: ParseStream, errors: &mut ErrorsCollection) -> Result<Self> {
-        let span = input.span();
-        let value = ParseInputTokens::parse_named_value(input, errors)?;
-
-        return Ok(Self::new(span, value));
     }
 }
 
@@ -178,11 +131,9 @@ impl ParseInputTokens for Version {
 }
 
 #[derive(thiserror::Error, Debug)]
-enum Errors<'err> {
+enum Errors {
     #[error("Set entries must be unique.")]
     DuplicateEntry,
     #[error("Expected a non-empty string.")]
     EmptyString,
-    #[error("Path not found: {0}")]
-    PathNotFound(&'err PathBuf),
 }

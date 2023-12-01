@@ -1,11 +1,10 @@
 use crate::{
-    compiler::analysis::Analysis,
-    model::{spanned::TriviaParser, Identifier},
-    utils::VersionSet,
+    compiler::{analysis::Analysis, version_set::VersionSet},
+    model::{Identifier, SpannedTriviaParser},
 };
 use std::collections::HashSet;
 
-pub fn analyze_reachability(analysis: &mut Analysis) {
+pub(crate) fn analyze_reachability(analysis: &mut Analysis) {
     check_unreachabable_items(analysis);
     check_unused_versions(analysis);
 }
@@ -53,19 +52,19 @@ fn check_unreachabable_items(analysis: &mut Analysis) {
     }
 }
 
-fn collect_trivia<'l>(parser: &'l TriviaParser, acc: &mut Vec<&'l Identifier>) {
+fn collect_trivia<'l>(parser: &'l SpannedTriviaParser, acc: &mut Vec<&'l Identifier>) {
     match parser {
-        TriviaParser::Sequence { parsers } | TriviaParser::Choice { parsers } => {
+        SpannedTriviaParser::Sequence { parsers } | SpannedTriviaParser::Choice { parsers } => {
             for parser in parsers {
                 collect_trivia(parser, acc);
             }
         }
-        TriviaParser::OneOrMore { parser }
-        | TriviaParser::ZeroOrMore { parser }
-        | TriviaParser::Optional { parser } => {
+        SpannedTriviaParser::OneOrMore { parser }
+        | SpannedTriviaParser::ZeroOrMore { parser }
+        | SpannedTriviaParser::Optional { parser } => {
             collect_trivia(parser, acc);
         }
-        TriviaParser::Trivia { trivia } => {
+        SpannedTriviaParser::Trivia { trivia } => {
             acc.push(trivia);
         }
     };

@@ -3,7 +3,7 @@ use inflector::Inflector;
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
 
-pub struct LanguageEmitter;
+pub(crate) struct LanguageEmitter;
 
 impl LanguageEmitter {
     pub fn emit(analysis: &Analysis) -> TokenStream {
