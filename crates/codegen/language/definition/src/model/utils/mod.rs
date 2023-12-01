@@ -61,6 +61,7 @@ pub fn collect_breaking_versions(lang: &model::Language) -> BTreeSet<Version> {
             Item::Keyword { item } => {
                 for definition in &item.definitions {
                     add_spec(&mut res, &definition.enabled);
+                    add_spec(&mut res, &definition.reserved);
                 }
             }
             Item::Token { item } => {
