@@ -33,12 +33,7 @@ pub fn collect_breaking_versions(lang: &model::Language) -> BTreeSet<Version> {
         }
     };
 
-    for item in lang
-        .sections
-        .iter()
-        .flat_map(|s| &s.topics)
-        .flat_map(|t| &t.items)
-    {
+    for (_, _, item) in lang.items() {
         match item.as_ref() {
             Item::Struct { item } => {
                 add_spec(&item.enabled);

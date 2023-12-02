@@ -61,27 +61,23 @@ fn generate_test_cases(language: &Language) -> Vec<TestCase> {
     let mut test_cases = vec![];
     let mut variations = HashSet::new();
 
-    for section in &language.sections {
-        for topic in &section.topics {
-            for item in &topic.items {
-                let Item::Keyword { item } = item.as_ref() else {
-                    continue;
-                };
+    for (_, _, item) in language.items() {
+        let Item::Keyword { item } = item.as_ref() else {
+            continue;
+        };
 
-                if !should_test_item(item.name.as_str()) {
-                    continue;
-                }
+        if !should_test_item(item.name.as_str()) {
+            continue;
+        }
 
-                for definition in &item.definitions {
-                    for variation in definition.value.collect_variations() {
-                        assert!(
-                            variations.insert(format!("{} -> {}", item.identifier, variation)),
-                            "Duplicate variation: {variation}"
-                        );
+        for definition in &item.definitions {
+            for variation in definition.value.collect_variations() {
+                assert!(
+                    variations.insert(format!("{} -> {}", item.identifier, variation)),
+                    "Duplicate variation: {variation}"
+                );
 
-                        test_cases.push(TestCase::new(language, item, definition, variation));
-                    }
-                }
+                test_cases.push(TestCase::new(language, item, definition, variation));
             }
         }
     }

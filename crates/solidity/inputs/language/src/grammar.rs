@@ -30,17 +30,13 @@ pub trait GrammarConstructorDslV2 {
 
 impl GrammarConstructorDslV2 for Grammar {
     fn from_dsl_v2(lang: &model::Language) -> Grammar {
-        let mut items = HashMap::new();
-
-        for section in &lang.sections {
-            for topic in &section.topics {
-                let ctx = &topic.lexical_context;
-
-                for item in &topic.items {
-                    items.insert(item.name().clone(), (ctx.clone(), Rc::clone(item)));
-                }
-            }
-        }
+        // Collect language items into a lookup table to speed up resolution
+        let mut items = HashMap::from_iter(lang.items().map(|(_, topic, item)| {
+            (
+                item.name().clone(),
+                (topic.lexical_context.clone(), Rc::clone(item)),
+            )
+        }));
 
         // TODO(#638): To minimize regression in the parser migration, we keep the existing DSL v1 model
         // of SourceUnit being followed by `EndOfFileTrivia`.

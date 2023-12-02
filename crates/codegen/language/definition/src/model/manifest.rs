@@ -36,3 +36,15 @@ pub struct Topic {
 
     pub items: Vec<Rc<Item>>,
 }
+
+impl Language {
+    /// Returns a flattened iterator over items along with section and topic they belong to.
+    pub fn items(&self) -> impl Iterator<Item = (&Section, &Topic, &Rc<Item>)> {
+        self.sections.iter().flat_map(|section| {
+            section
+                .topics
+                .iter()
+                .flat_map(move |topic| topic.items.iter().map(move |item| (section, topic, item)))
+        })
+    }
+}
