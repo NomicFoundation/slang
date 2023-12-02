@@ -64,6 +64,11 @@ impl Cursor {
         (&self.0.text_range()).into()
     }
 
+    #[napi(getter)]
+    pub fn depth(&self) -> u32 {
+        self.0.depth() as u32
+    }
+
     #[napi(ts_return_type = "Array<cst.RuleNode>")]
     pub fn ancestors(&self, env: Env) -> Vec<JsObject> {
         self.0

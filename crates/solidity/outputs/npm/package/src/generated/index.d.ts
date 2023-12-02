@@ -662,6 +662,7 @@ export namespace cursor {
     node(): cst.Node;
     get textOffset(): text_index.TextIndex;
     get textRange(): text_index.TextRange;
+    get depth(): number;
     ancestors(): Array<cst.RuleNode>;
     goToNext(): boolean;
     goToNextNonDescendent(): boolean;
