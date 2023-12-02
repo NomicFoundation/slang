@@ -13,7 +13,7 @@ pub fn collect_breaking_versions(lang: &model::Language) -> BTreeSet<Version> {
     let first = lang.versions.first().cloned().unwrap();
     let mut res = BTreeSet::from_iter([first]);
 
-    fn add_spec(res: &mut BTreeSet<Version>, spec: &Option<model::VersionSpecifier>) {
+    let mut add_spec = |spec: &Option<model::VersionSpecifier>| {
         let Some(spec) = spec else {
             return;
         };
@@ -31,7 +31,7 @@ pub fn collect_breaking_versions(lang: &model::Language) -> BTreeSet<Version> {
                 res.insert(till);
             }
         }
-    }
+    };
 
     for item in lang
         .sections
@@ -41,35 +41,35 @@ pub fn collect_breaking_versions(lang: &model::Language) -> BTreeSet<Version> {
     {
         match item.as_ref() {
             Item::Struct { item } => {
-                add_spec(&mut res, &item.enabled);
-                for field in &item.fields {
-                    match field.1 {
+                add_spec(&item.enabled);
+                for field in item.fields.values() {
+                    match field {
                         model::Field::Required { .. } => (),
-                        model::Field::Optional { enabled, .. } => add_spec(&mut res, enabled),
+                        model::Field::Optional { enabled, .. } => add_spec(enabled),
                     }
                 }
             }
             Item::Enum { item } => {
-                add_spec(&mut res, &item.enabled);
+                add_spec(&item.enabled);
                 for variant in &item.variants {
-                    add_spec(&mut res, &variant.enabled);
+                    add_spec(&variant.enabled);
                 }
             }
-            Item::Repeated { item } => add_spec(&mut res, &item.enabled),
-            Item::Separated { item } => add_spec(&mut res, &item.enabled),
-            Item::Precedence { item } => add_spec(&mut res, &item.enabled),
+            Item::Repeated { item } => add_spec(&item.enabled),
+            Item::Separated { item } => add_spec(&item.enabled),
+            Item::Precedence { item } => add_spec(&item.enabled),
             Item::Keyword { item } => {
                 for definition in &item.definitions {
-                    add_spec(&mut res, &definition.enabled);
-                    add_spec(&mut res, &definition.reserved);
+                    add_spec(&definition.enabled);
+                    add_spec(&definition.reserved);
                 }
             }
             Item::Token { item } => {
                 for definition in &item.definitions {
-                    add_spec(&mut res, &definition.enabled);
+                    add_spec(&definition.enabled);
                 }
             }
-            Item::Fragment { item } => add_spec(&mut res, &item.enabled),
+            Item::Fragment { item } => add_spec(&item.enabled),
             Item::Trivia { .. } => {}
         }
     }
