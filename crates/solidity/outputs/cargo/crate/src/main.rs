@@ -3,7 +3,7 @@ use std::{fs, path::PathBuf};
 use anyhow::{Context, Result};
 use clap::{Parser as ClapParser, Subcommand};
 use semver::Version;
-use slang_solidity::{kinds::ProductionKind, language::Language};
+use slang_solidity::{kinds::ProductionKind, language::Language, parse_error::WithColor};
 
 // Below are dependencies used by the API `lib.rs`, but not the CLI "main.rs".
 // However, we need to add a fake usage to suppress Cargo warnings about unused dependencies.
@@ -63,7 +63,7 @@ fn execute_parse_command(file_path_string: String, version: Version, json: bool)
 
     let errors = output.errors();
     for error in errors {
-        let report = error.to_error_report(&file_path_string, &input, /* with_color */ true);
+        let report = error.to_error_report(&file_path_string, &input, WithColor::Yes);
         eprintln!("{report}");
     }
 

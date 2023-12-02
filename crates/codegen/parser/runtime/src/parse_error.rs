@@ -11,6 +11,21 @@ pub struct ParseError {
     pub(crate) tokens_that_would_have_allowed_more_progress: Vec<TokenKind>,
 }
 
+#[derive(Clone, Copy, PartialEq, Eq)]
+pub enum WithColor {
+    Yes,
+    No,
+}
+
+impl From<WithColor> for bool {
+    fn from(value: WithColor) -> Self {
+        match value {
+            WithColor::Yes => true,
+            WithColor::No => false,
+        }
+    }
+}
+
 impl ParseError {
     pub fn text_range(&self) -> &TextRange {
         return &self.text_range;
@@ -28,8 +43,13 @@ impl ParseError {
             .collect();
     }
 
-    pub fn to_error_report(&self, source_id: &str, source: &str, with_color: bool) -> String {
-        return render_error_report(self, source_id, source, with_color);
+    pub fn to_error_report(
+        &self,
+        source_id: &str,
+        source: &str,
+        with_color: impl Into<bool>,
+    ) -> String {
+        return render_error_report(self, source_id, source, with_color.into());
     }
 }
 
