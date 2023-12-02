@@ -1825,12 +1825,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Token(
                             name = Colon,
-                            definitions = [TokenDefinition(
-                                scanner = TrailingContext(
-                                    scanner = Atom(":"),
-                                    not_followed_by = Atom("=")
-                                )
-                            )]
+                            definitions = [TokenDefinition(scanner = Atom(":"))]
                         ),
                         Token(
                             name = ColonEqual,
@@ -1838,12 +1833,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Token(
                             name = Equal,
-                            definitions = [TokenDefinition(
-                                scanner = TrailingContext(
-                                    scanner = Atom("="),
-                                    not_followed_by = Choice([Atom("="), Atom(">")])
-                                )
-                            )]
+                            definitions = [TokenDefinition(scanner = Atom("="))]
                         ),
                         Token(
                             name = EqualEqual,
@@ -1855,12 +1845,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Token(
                             name = Asterisk,
-                            definitions = [TokenDefinition(
-                                scanner = TrailingContext(
-                                    scanner = Atom("*"),
-                                    not_followed_by = Choice([Atom("="), Atom("*")])
-                                )
-                            )]
+                            definitions = [TokenDefinition(scanner = Atom("*"))]
                         ),
                         Token(
                             name = AsteriskEqual,
@@ -1872,12 +1857,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Token(
                             name = Bar,
-                            definitions = [TokenDefinition(
-                                scanner = TrailingContext(
-                                    scanner = Atom("|"),
-                                    not_followed_by = Choice([Atom("="), Atom("|")])
-                                )
-                            )]
+                            definitions = [TokenDefinition(scanner = Atom("|"))]
                         ),
                         Token(
                             name = BarEqual,
@@ -1889,12 +1869,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Token(
                             name = Ampersand,
-                            definitions = [TokenDefinition(
-                                scanner = TrailingContext(
-                                    scanner = Atom("&"),
-                                    not_followed_by = Choice([Atom("="), Atom("&")])
-                                )
-                            )]
+                            definitions = [TokenDefinition(scanner = Atom("&"))]
                         ),
                         Token(
                             name = AmpersandEqual,
@@ -1906,12 +1881,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Token(
                             name = LessThan,
-                            definitions = [TokenDefinition(
-                                scanner = TrailingContext(
-                                    scanner = Atom("<"),
-                                    not_followed_by = Choice([Atom("="), Atom("<")])
-                                )
-                            )]
+                            definitions = [TokenDefinition(scanner = Atom("<"))]
                         ),
                         Token(
                             name = LessThanEqual,
@@ -1919,12 +1889,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Token(
                             name = LessThanLessThan,
-                            definitions = [TokenDefinition(
-                                scanner = TrailingContext(
-                                    scanner = Atom("<<"),
-                                    not_followed_by = Atom("=")
-                                )
-                            )]
+                            definitions = [TokenDefinition(scanner = Atom("<<"))]
                         ),
                         Token(
                             name = LessThanLessThanEqual,
@@ -1932,12 +1897,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Token(
                             name = GreaterThan,
-                            definitions = [TokenDefinition(
-                                scanner = TrailingContext(
-                                    scanner = Atom(">"),
-                                    not_followed_by = Choice([Atom("="), Atom(">")])
-                                )
-                            )]
+                            definitions = [TokenDefinition(scanner = Atom(">"))]
                         ),
                         Token(
                             name = GreaterThanEqual,
@@ -1945,12 +1905,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Token(
                             name = GreaterThanGreaterThan,
-                            definitions = [TokenDefinition(
-                                scanner = TrailingContext(
-                                    scanner = Atom(">>"),
-                                    not_followed_by = Choice([Atom("="), Atom(">")])
-                                )
-                            )]
+                            definitions = [TokenDefinition(scanner = Atom(">>"))]
                         ),
                         Token(
                             name = GreaterThanGreaterThanEqual,
@@ -1958,12 +1913,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Token(
                             name = GreaterThanGreaterThanGreaterThan,
-                            definitions = [TokenDefinition(
-                                scanner = TrailingContext(
-                                    scanner = Atom(">>>"),
-                                    not_followed_by = Atom("=")
-                                )
-                            )]
+                            definitions = [TokenDefinition(scanner = Atom(">>>"))]
                         ),
                         Token(
                             name = GreaterThanGreaterThanGreaterThanEqual,
@@ -1971,12 +1921,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Token(
                             name = Plus,
-                            definitions = [TokenDefinition(
-                                scanner = TrailingContext(
-                                    scanner = Atom("+"),
-                                    not_followed_by = Choice([Atom("="), Atom("+")])
-                                )
-                            )]
+                            definitions = [TokenDefinition(scanner = Atom("+"))]
                         ),
                         Token(
                             name = PlusEqual,
@@ -1988,12 +1933,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Token(
                             name = Minus,
-                            definitions = [TokenDefinition(
-                                scanner = TrailingContext(
-                                    scanner = Atom("-"),
-                                    not_followed_by = Choice([Atom("="), Atom("-"), Atom(">")])
-                                )
-                            )]
+                            definitions = [TokenDefinition(scanner = Atom("-"))]
                         ),
                         Token(
                             name = MinusEqual,
@@ -2009,12 +1949,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Token(
                             name = Slash,
-                            definitions = [TokenDefinition(
-                                scanner = TrailingContext(
-                                    scanner = Atom("/"),
-                                    not_followed_by = Atom("=")
-                                )
-                            )]
+                            definitions = [TokenDefinition(scanner = Atom("/"))]
                         ),
                         Token(
                             name = SlashEqual,
@@ -2022,12 +1957,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Token(
                             name = Percent,
-                            definitions = [TokenDefinition(
-                                scanner = TrailingContext(
-                                    scanner = Atom("%"),
-                                    not_followed_by = Atom("=")
-                                )
-                            )]
+                            definitions = [TokenDefinition(scanner = Atom("%"))]
                         ),
                         Token(
                             name = PercentEqual,
@@ -2035,12 +1965,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Token(
                             name = Bang,
-                            definitions = [TokenDefinition(
-                                scanner = TrailingContext(
-                                    scanner = Atom("!"),
-                                    not_followed_by = Atom("=")
-                                )
-                            )]
+                            definitions = [TokenDefinition(scanner = Atom("!"))]
                         ),
                         Token(
                             name = BangEqual,
@@ -2048,12 +1973,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Token(
                             name = Caret,
-                            definitions = [TokenDefinition(
-                                scanner = TrailingContext(
-                                    scanner = Atom("^"),
-                                    not_followed_by = Atom("=")
-                                )
-                            )]
+                            definitions = [TokenDefinition(scanner = Atom("^"))]
                         ),
                         Token(
                             name = CaretEqual,
