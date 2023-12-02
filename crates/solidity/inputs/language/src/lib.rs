@@ -16,7 +16,7 @@ use anyhow::Result;
 use codegen_schema::types::{LanguageDefinition, LanguageDefinitionRef};
 
 thread_local! {
- pub static LANGUAGE_DEF: codegen_language_definition::model::Language = SolidityDefinition::create();
+ pub static DEFINITION: codegen_language_definition::model::Language = SolidityDefinition::create();
 }
 
 pub trait SolidityLanguageExtensions {

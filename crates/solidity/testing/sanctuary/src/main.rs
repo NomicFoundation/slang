@@ -16,7 +16,7 @@ use crate::{
 };
 
 fn main() {
-    let versions = solidity_language::LANGUAGE_DEF
+    let versions = solidity_language::DEFINITION
         .with(codegen_language_definition::model::collect_breaking_versions);
 
     // Fail the parent process if a child thread panics:
