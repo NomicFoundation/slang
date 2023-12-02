@@ -87,19 +87,20 @@ struct LicenseHeaderTemplate {
 
 fn process_generated_files(napi_output: &NapiCliOutput) -> Result<()> {
     let templates_dir =
-        CargoWorkspace::locate_source_crate("infra_cli")?.join("src/toolchains/napi");
+        CargoWorkspace::locate_source_crate("infra_cli")?.join("src/toolchains/napi/headers");
     let mut codegen = Codegen::read_write(&templates_dir)?;
 
-    let template_path = templates_dir.join("napi_license_header.js.jinja2");
-
     for source in &napi_output.source_files {
+        let file_name = source.unwrap_name();
         let contents = source.read_to_string()?;
-        let destination = NapiResolver::generated_dir().join(source.unwrap_name());
+
+        let destination_path = NapiResolver::generated_dir().join(file_name);
+        let template_path = templates_dir.join(format!("{file_name}.jinja2"));
 
         codegen.render(
             LicenseHeaderTemplate { contents },
             &template_path,
-            destination,
+            destination_path,
         )?;
     }
 

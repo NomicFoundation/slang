@@ -123,7 +123,10 @@ impl Cursor {
     }
 
     #[napi]
-    pub fn go_to_next_token_with_kinds(&mut self, kinds: Vec<TokenKind>) -> bool {
+    pub fn go_to_next_token_with_kinds(
+        &mut self,
+        #[napi(ts_arg_type = "Array<kinds.TokenKind>")] kinds: Vec<TokenKind>,
+    ) -> bool {
         self.0.go_to_next_token_with_kinds(&kinds)
     }
 
@@ -133,7 +136,10 @@ impl Cursor {
     }
 
     #[napi]
-    pub fn go_to_next_rule_with_kinds(&mut self, kinds: Vec<RuleKind>) -> bool {
+    pub fn go_to_next_rule_with_kinds(
+        &mut self,
+        #[napi(ts_arg_type = "Array<kinds.RuleKind>")] kinds: Vec<RuleKind>,
+    ) -> bool {
         self.0.go_to_next_rule_with_kinds(&kinds)
     }
 }

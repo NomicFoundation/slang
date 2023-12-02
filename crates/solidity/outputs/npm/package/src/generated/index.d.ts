@@ -3,8 +3,6 @@
 // Slang License: https://github.com/NomicFoundation/slang/blob/main/LICENSE
 // NAPI-RS License: https://github.com/napi-rs/napi-rs/blob/main/LICENSE
 
-// @ts-nocheck
-
 /* tslint:disable */
 /* eslint-disable */
 
@@ -644,14 +642,14 @@ export namespace cst {
     get kind(): kinds.RuleKind;
     get textLength(): text_index.TextIndex;
     children(): Array<cst.RuleNode | cst.TokenNode>;
-    createCursor(textOffset: TextIndex): cursor.Cursor;
+    createCursor(textOffset: text_index.TextIndex): cursor.Cursor;
   }
   export class TokenNode {
     get type(): NodeType.Token;
     get kind(): kinds.TokenKind;
     get textLength(): text_index.TextIndex;
     get text(): string;
-    createCursor(textOffset: TextIndex): cursor.Cursor;
+    createCursor(textOffset: text_index.TextIndex): cursor.Cursor;
   }
 }
 export namespace cursor {
@@ -675,9 +673,9 @@ export namespace cursor {
     goToNextSibling(): boolean;
     goToPreviousSibling(): boolean;
     goToNextToken(): boolean;
-    goToNextTokenWithKinds(kinds: Array<TokenKind>): boolean;
+    goToNextTokenWithKinds(kinds: Array<kinds.TokenKind>): boolean;
     goToNextRule(): boolean;
-    goToNextRuleWithKinds(kinds: Array<RuleKind>): boolean;
+    goToNextRuleWithKinds(kinds: Array<kinds.RuleKind>): boolean;
   }
 }
 export namespace parse_error {
