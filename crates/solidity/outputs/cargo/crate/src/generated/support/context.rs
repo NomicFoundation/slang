@@ -94,6 +94,7 @@ impl<'s> ParserContext<'s> {
         self.source[self.position.utf8..].chars().next()
     }
 
+    #[allow(clippy::should_implement_trait)]
     pub fn next(&mut self) -> Option<char> {
         self.undo_position = Some(self.position);
 

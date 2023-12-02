@@ -12,9 +12,5 @@ rustflags = [
 	# This is a list of allowed Clippy rules for the purposes of gradual migration.
 	# See https://github.com/NomicFoundation/slang/pull/626
 	"-A",
-	"clippy::comparison_chain",
-	"-A",
 	"clippy::needless_return",
-	"-A",
-	"clippy::should_implement_trait",
 ]

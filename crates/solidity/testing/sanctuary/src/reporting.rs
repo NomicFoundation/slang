@@ -67,27 +67,33 @@ impl Reporter {
 
         let failures_before_update = self.failed_tests.fetch_add(1, Ordering::Relaxed);
 
-        if failures_before_update < Self::MAX_PRINTED_FAILURES {
-            let reports = errors
-                .iter()
-                .take(Self::MAX_PRINTED_FAILURES - failures_before_update)
-                .map(|error| error.to_error_report(source_id, source, /* with_color */ true))
-                .collect::<Vec<String>>();
-
-            self.progress_bar.suspend(|| {
-                for report in reports {
+        match Self::MAX_PRINTED_FAILURES.checked_sub(failures_before_update) {
+            None => { /* Don't print more errors */ }
+            Some(0) => {
+                self.progress_bar.suspend(|| {
                     eprintln!();
-                    eprintln!("[{version}] {report}");
-                }
-            });
-        } else if failures_before_update == Self::MAX_PRINTED_FAILURES {
-            self.progress_bar.suspend(|| {
-                eprintln!();
-                eprintln!(
-                    "More than {max_failures} tests failed. Further errors will not be shown.",
-                    max_failures = Self::MAX_PRINTED_FAILURES
-                );
-            });
+                    eprintln!(
+                        "More than {max_failures} tests failed. Further errors will not be shown.",
+                        max_failures = Self::MAX_PRINTED_FAILURES
+                    );
+                });
+            }
+            Some(remaining) => {
+                let reports: Vec<_> = errors
+                    .iter()
+                    .take(remaining)
+                    .map(|error| {
+                        error.to_error_report(source_id, source, /* with_color */ true)
+                    })
+                    .collect();
+
+                self.progress_bar.suspend(|| {
+                    for report in reports {
+                        eprintln!();
+                        eprintln!("[{version}] {report}");
+                    }
+                });
+            }
         }
     }
 }
