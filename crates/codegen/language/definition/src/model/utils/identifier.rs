@@ -17,27 +17,27 @@ impl Deref for Identifier {
     type Target = String;
 
     fn deref(&self) -> &Self::Target {
-        return &self.value;
+        &self.value
     }
 }
 
 impl std::fmt::Display for Identifier {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        return self.value.fmt(f);
+        self.value.fmt(f)
     }
 }
 
 impl From<String> for Identifier {
     fn from(value: String) -> Self {
-        return Self { value };
+        Self { value }
     }
 }
 
 impl From<&str> for Identifier {
     fn from(value: &str) -> Self {
-        return Self {
+        Self {
             value: value.to_owned(),
-        };
+        }
     }
 }
 
@@ -46,9 +46,9 @@ impl<'de> Deserialize<'de> for Identifier {
     where
         D: serde::Deserializer<'de>,
     {
-        return Ok(Self {
+        Ok(Self {
             value: Deserialize::deserialize(deserializer)?,
-        });
+        })
     }
 }
 
@@ -57,7 +57,7 @@ impl Serialize for Identifier {
     where
         S: serde::Serializer,
     {
-        return self.value.serialize(serializer);
+        self.value.serialize(serializer)
     }
 }
 
@@ -65,7 +65,7 @@ impl ParseInputTokens for Identifier {
     fn parse_value(input: ParseStream, _: &mut ErrorsCollection) -> Result<Self> {
         let value = ParseHelpers::syn::<Ident>(input)?.to_string();
 
-        return Ok(value.into());
+        Ok(value.into())
     }
 }
 
@@ -73,8 +73,8 @@ impl WriteOutputTokens for Identifier {
     fn write_output_tokens(&self) -> TokenStream {
         let value = Literal::string(self);
 
-        return quote! {
+        quote! {
             #value.into()
-        };
+        }
     }
 }

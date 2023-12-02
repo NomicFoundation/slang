@@ -19,7 +19,7 @@ pub struct LintController {
 
 impl LintController {
     pub fn execute(&self) -> Result<()> {
-        return LintCommand::execute_in_order(&self.commands);
+        LintCommand::execute_in_order(&self.commands)
     }
 }
 
@@ -50,7 +50,7 @@ impl OrderedCommand for LintCommand {
     fn execute(&self) -> Result<()> {
         Terminal::step(format!("lint {name}", name = self.clap_name()));
 
-        return match self {
+        match self {
             LintCommand::Clippy => run_clippy(),
             LintCommand::CargoFmt => run_cargo_fmt(),
             LintCommand::Cspell => run_cspell(),
@@ -60,12 +60,12 @@ impl OrderedCommand for LintCommand {
             LintCommand::Shellcheck => run_shellcheck(),
             LintCommand::Tsc => run_tsc(),
             LintCommand::Yamllint => run_yamllint(),
-        };
+        }
     }
 }
 
 fn run_clippy() -> Result<()> {
-    return CargoWorkspace::get_command("clippy")?.run();
+    CargoWorkspace::get_command("clippy")?.run()
 }
 
 fn run_cargo_fmt() -> Result<()> {
@@ -75,25 +75,25 @@ fn run_cargo_fmt() -> Result<()> {
         command = command.flag("--check");
     }
 
-    return command.run();
+    command.run()
 }
 
 fn run_cspell() -> Result<()> {
-    return Command::new("cspell")
+    Command::new("cspell")
         .arg("lint")
         .flag("--show-context")
         .flag("--show-suggestions")
         .flag("--dot")
         .flag("--gitignore")
-        .run();
+        .run()
 }
 
 fn run_prettier() -> Result<()> {
-    return if GitHub::is_running_in_ci() {
+    if GitHub::is_running_in_ci() {
         Command::new("prettier").property("--check", ".").run()
     } else {
         Command::new("prettier").property("--write", ".").run()
-    };
+    }
 }
 
 fn run_markdown_link_check() -> Result<()> {
@@ -112,7 +112,7 @@ fn run_markdown_lint() -> Result<()> {
         .into_iter()
         .map(|path| {
             println!("{}", path.display());
-            return path;
+            path
         });
 
     let mut command = Command::new("markdownlint").flag("--dot");
@@ -121,7 +121,7 @@ fn run_markdown_lint() -> Result<()> {
         command = command.flag("--fix");
     }
 
-    return command.run_xargs(markdown_files);
+    command.run_xargs(markdown_files)
 }
 
 fn run_shellcheck() -> Result<()> {
@@ -130,10 +130,10 @@ fn run_shellcheck() -> Result<()> {
         .into_iter()
         .map(|path| {
             println!("{}", path.display());
-            return path;
+            path
         });
 
-    return Command::new("shellcheck").run_xargs(bash_files);
+    Command::new("shellcheck").run_xargs(bash_files)
 }
 
 fn run_tsc() -> Result<()> {
@@ -152,7 +152,7 @@ fn run_yamllint() -> Result<()> {
         .into_iter()
         .map(|path| {
             println!("{}", path.display());
-            return path;
+            path
         });
 
     // Run the command next to the Pipfile installing it:

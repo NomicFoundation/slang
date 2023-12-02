@@ -39,7 +39,7 @@ impl PathExtensions for Path {
             children.push(self.join(file_name));
         }
 
-        return Ok(children);
+        Ok(children)
     }
 
     fn generated_dir(&self) -> Result<PathBuf> {
@@ -59,11 +59,11 @@ impl PathExtensions for Path {
 
         let generated_dir = self.iter().take(generated_index + 1).collect();
 
-        return Ok(generated_dir);
+        Ok(generated_dir)
     }
 
     fn repo_path(relative_path: impl AsRef<Path>) -> PathBuf {
-        return Path::repo_root().join(relative_path);
+        Path::repo_root().join(relative_path)
     }
 
     fn strip_repo_root(&self) -> Result<&Path> {
@@ -99,8 +99,7 @@ impl PathExtensions for Path {
     }
 
     fn read_to_string(&self) -> Result<String> {
-        return std::fs::read_to_string(self)
-            .with_context(|| format!("Failed to read file: {self:?}"));
+        std::fs::read_to_string(self).with_context(|| format!("Failed to read file: {self:?}"))
     }
 
     fn write_string(&self, contents: impl AsRef<str>) -> Result<()> {
@@ -116,6 +115,6 @@ pub(crate) trait PrivatePathExtensions {
 
 impl PrivatePathExtensions for Path {
     fn repo_root() -> PathBuf {
-        return PathBuf::from(var("REPO_ROOT").expect("$REPO_ROOT is not defined."));
+        PathBuf::from(var("REPO_ROOT").expect("$REPO_ROOT is not defined."))
     }
 }

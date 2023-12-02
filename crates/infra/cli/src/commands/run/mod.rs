@@ -48,16 +48,16 @@ impl RunCommand {
             Self::SolidityTestingSanctuary => {
                 // This crate parses tens of thousands of Solidity files:
                 // It is worth spending the extra time to recompiling its dependencies.
-                return true;
+                true
             }
             Self::SlangSolidity
             | Self::SolidityCargoBuild
             | Self::SolidityNpmBuild
             | Self::SolidityTestingSolc => {
                 // These run during local development. Just build in debug mode.
-                return false;
+                false
             }
-        };
+        }
     }
 }
 

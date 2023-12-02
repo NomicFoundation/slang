@@ -5,5 +5,5 @@ use anyhow::Result;
 
 #[test]
 fn simple() -> Result<()> {
-    return run("FallbackFunctionDefinition", "simple");
+    run("FallbackFunctionDefinition", "simple")
 }

@@ -5,15 +5,15 @@ use anyhow::Result;
 
 #[test]
 fn constant_state_mutability() -> Result<()> {
-    return run("FunctionDefinition", "constant_state_mutability");
+    run("FunctionDefinition", "constant_state_mutability")
 }
 
 #[test]
 fn from_contextual_keyword() -> Result<()> {
-    return run("FunctionDefinition", "from_contextual_keyword");
+    run("FunctionDefinition", "from_contextual_keyword")
 }
 
 #[test]
 fn overridden() -> Result<()> {
-    return run("FunctionDefinition", "overridden");
+    run("FunctionDefinition", "overridden")
 }

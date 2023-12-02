@@ -37,7 +37,7 @@ impl CodegenReadWrite {
             ) -> Result<tera::Value, tera::Error> {
                 let value = value.as_str().unwrap();
                 let result = value.to_snake_case();
-                return Ok(tera::Value::String(result));
+                Ok(tera::Value::String(result))
             }
             tera.register_filter("snake_case", snake_case);
 
@@ -46,11 +46,11 @@ impl CodegenReadWrite {
             tera
         };
 
-        return Ok(Self {
+        Ok(Self {
             input_dir,
             writer,
             tera,
-        });
+        })
     }
 
     pub fn write_file(
@@ -58,7 +58,7 @@ impl CodegenReadWrite {
         file_path: impl AsRef<Path>,
         contents: impl AsRef<str>,
     ) -> Result<()> {
-        return self.writer.write_file(file_path, contents);
+        self.writer.write_file(file_path, contents)
     }
 
     pub fn read_file(&mut self, file_path: impl AsRef<Path>) -> Result<String> {
@@ -76,7 +76,7 @@ impl CodegenReadWrite {
             bail!("Cannot read from a generated directory: {file_path:?}");
         }
 
-        return file_path.read_to_string();
+        file_path.read_to_string()
     }
 
     pub fn copy_file(
@@ -90,7 +90,7 @@ impl CodegenReadWrite {
         // Go through write_file() API, to only touch/update the file if it changed.
         self.write_file(destination_path, contents)?;
 
-        return Ok(());
+        Ok(())
     }
 
     pub fn render(
@@ -113,7 +113,7 @@ impl CodegenReadWrite {
         let model = tera::Context::from_serialize(model)?;
         let rendered = self.tera.render(template_path, &model)?;
 
-        return self.write_file(output_path, rendered);
+        self.write_file(output_path, rendered)
     }
 }
 

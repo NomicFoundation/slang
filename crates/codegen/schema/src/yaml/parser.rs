@@ -36,7 +36,7 @@ impl<'context> Parser<'context> {
         assert_eq!(instance.consume()?.event, Event::DocumentEnd);
         assert_eq!(instance.consume()?.event, Event::StreamEnd);
 
-        return Ok(root);
+        Ok(root)
     }
 
     fn parse_value(&mut self) -> Result<NodeRef> {
@@ -136,13 +136,13 @@ impl<'context> Parser<'context> {
             }
         };
 
-        return Ok(NodeRef::new(value));
+        Ok(NodeRef::new(value))
     }
 
     fn consume(&mut self) -> Result<Token> {
         let token = self.peek()?;
         self.parser.next().unwrap(); // advance the iterator
-        return Ok(token);
+        Ok(token)
     }
 
     fn peek(&mut self) -> Result<Token> {
@@ -150,13 +150,13 @@ impl<'context> Parser<'context> {
             let position = marker_to_position(error.marker());
             let range = position..position;
 
-            return InfraErrors::single(self.file_path.to_owned(), range, error.to_string());
+            InfraErrors::single(self.file_path.to_owned(), range, error.to_string())
         })?;
 
-        return Ok(Token {
+        Ok(Token {
             event: event.to_owned(),
             position: marker_to_position(marker),
-        });
+        })
     }
 }
 
@@ -166,9 +166,9 @@ struct Token {
 }
 
 fn marker_to_position(marker: &Marker) -> Position {
-    return Position {
+    Position {
         offset: marker.index(),
         line: marker.line(),
         column: marker.col() + 1, // parser uses 0-based columns
-    };
+    }
 }

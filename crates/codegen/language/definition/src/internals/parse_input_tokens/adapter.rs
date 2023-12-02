@@ -9,7 +9,7 @@ pub(crate) struct ParseAdapter;
 
 impl ParseAdapter {
     pub fn parse(input: TokenStream) -> Result<ParseOutput> {
-        return syn::parse2(input).map_err(Error::from_syn);
+        syn::parse2(input).map_err(Error::from_syn)
     }
 }
 
@@ -24,12 +24,8 @@ impl Parse for ParseOutput {
         let mut errors = ErrorsCollection::new();
 
         match SpannedLanguage::parse_named_value(input, &mut errors) {
-            Ok(language) => {
-                return Ok(Self { language, errors });
-            }
-            Err(error) => {
-                return Err(error.to_syn());
-            }
-        };
+            Ok(language) => Ok(Self { language, errors }),
+            Err(error) => Err(error.to_syn()),
+        }
     }
 }

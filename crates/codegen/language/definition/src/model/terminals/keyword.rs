@@ -35,12 +35,12 @@ impl KeywordValue {
     pub fn collect_variations(&self) -> Vec<String> {
         match self {
             KeywordValue::Atom { atom } => {
-                return vec![atom.to_owned()];
+                vec![atom.to_owned()]
             }
             KeywordValue::Optional { value } => {
                 let mut results = value.collect_variations();
                 results.insert(0, String::new());
-                return results;
+                results
             }
             KeywordValue::Choice { values } => {
                 return values
@@ -67,7 +67,7 @@ impl KeywordValue {
                     }
                 }
 
-                return results;
+                results
             }
         }
     }

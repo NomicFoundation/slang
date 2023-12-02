@@ -36,7 +36,7 @@ impl Visitor for Versions {
             }
         }
 
-        return true;
+        true
     }
 
     fn visit_production(
@@ -71,7 +71,7 @@ impl Visitor for Versions {
             }
         }
 
-        return false;
+        false
     }
 }
 

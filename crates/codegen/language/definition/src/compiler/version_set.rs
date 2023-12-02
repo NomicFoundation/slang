@@ -10,11 +10,11 @@ pub struct VersionSet {
 
 impl VersionSet {
     pub fn new() -> Self {
-        return Self::default();
+        Self::default()
     }
 
     pub fn is_empty(&self) -> bool {
-        return self.ranges.is_empty();
+        self.ranges.is_empty()
     }
 
     pub fn add_versions_starting_from(&mut self, from: &Version) {
@@ -47,7 +47,7 @@ impl VersionSet {
             if till < range.end {
                 till = range.end.to_owned();
             }
-            return false;
+            false
         });
 
         self.ranges.push(from..till);
@@ -105,7 +105,7 @@ impl VersionSet {
         // Take anything remaining in first:
         ranges.extend(first_iter);
 
-        return Self { ranges };
+        Self { ranges }
     }
 }
 
@@ -135,7 +135,7 @@ impl Display for VersionSet {
             }
         }
 
-        return Ok(());
+        Ok(())
     }
 }
 

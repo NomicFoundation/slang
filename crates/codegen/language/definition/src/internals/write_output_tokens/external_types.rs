@@ -9,9 +9,9 @@ impl WriteOutputTokens for bool {
     fn write_output_tokens(&self) -> TokenStream {
         let value = format_ident!("{self}");
 
-        return quote! {
+        quote! {
             #value
-        };
+        }
     }
 }
 
@@ -19,9 +19,9 @@ impl<T: WriteOutputTokens> WriteOutputTokens for Box<T> {
     fn write_output_tokens(&self) -> TokenStream {
         let value = self.deref().write_output_tokens();
 
-        return quote! {
+        quote! {
             #value.into()
-        };
+        }
     }
 }
 
@@ -29,9 +29,9 @@ impl WriteOutputTokens for char {
     fn write_output_tokens(&self) -> TokenStream {
         let value = Literal::character(*self);
 
-        return quote! {
+        quote! {
             #value
-        };
+        }
     }
 }
 
@@ -40,9 +40,9 @@ impl<K: WriteOutputTokens, V: WriteOutputTokens> WriteOutputTokens for IndexMap<
         let keys = self.keys().map(|key| key.write_output_tokens());
         let values = self.values().map(|value| value.write_output_tokens());
 
-        return quote! {
+        quote! {
             [ #( (#keys, #values) ),* ].into()
-        };
+        }
     }
 }
 
@@ -50,9 +50,9 @@ impl<T: WriteOutputTokens> WriteOutputTokens for IndexSet<T> {
     fn write_output_tokens(&self) -> TokenStream {
         let items = self.iter().map(|item| item.write_output_tokens());
 
-        return quote! {
+        quote! {
             [ #( #items ),* ].into()
-        };
+        }
     }
 }
 
@@ -62,16 +62,16 @@ impl<T: WriteOutputTokens> WriteOutputTokens for Option<T> {
             Some(value) => {
                 let value = value.write_output_tokens();
 
-                return quote! {
+                quote! {
                     Some(#value)
-                };
+                }
             }
             None => {
-                return quote! {
+                quote! {
                     None
-                };
+                }
             }
-        };
+        }
     }
 }
 
@@ -79,9 +79,9 @@ impl<T: WriteOutputTokens> WriteOutputTokens for Rc<T> {
     fn write_output_tokens(&self) -> TokenStream {
         let value = self.deref().write_output_tokens();
 
-        return quote! {
+        quote! {
             #value.into()
-        };
+        }
     }
 }
 
@@ -89,9 +89,9 @@ impl WriteOutputTokens for String {
     fn write_output_tokens(&self) -> TokenStream {
         let value = Literal::string(self.as_str());
 
-        return quote! {
+        quote! {
             #value.into()
-        };
+        }
     }
 }
 
@@ -99,9 +99,9 @@ impl WriteOutputTokens for usize {
     fn write_output_tokens(&self) -> TokenStream {
         let value = Literal::usize_suffixed(*self);
 
-        return quote! {
+        quote! {
             #value.into()
-        };
+        }
     }
 }
 
@@ -109,9 +109,9 @@ impl<T: WriteOutputTokens> WriteOutputTokens for Vec<T> {
     fn write_output_tokens(&self) -> TokenStream {
         let items = self.iter().map(|item| item.write_output_tokens());
 
-        return quote! {
+        quote! {
             [ #( #items ),* ].into()
-        };
+        }
     }
 }
 
@@ -121,8 +121,8 @@ impl WriteOutputTokens for Version {
         let minor = Literal::u64_unsuffixed(self.minor);
         let patch = Literal::u64_unsuffixed(self.patch);
 
-        return quote! {
+        quote! {
             semver::Version::new(#major, #minor, #patch)
-        };
+        }
     }
 }

@@ -5,25 +5,25 @@ use anyhow::Result;
 
 #[test]
 fn named_both() -> Result<()> {
-    return run("MappingType", "named_both");
+    run("MappingType", "named_both")
 }
 
 #[test]
 fn named_key() -> Result<()> {
-    return run("MappingType", "named_key");
+    run("MappingType", "named_key")
 }
 
 #[test]
 fn named_value() -> Result<()> {
-    return run("MappingType", "named_value");
+    run("MappingType", "named_value")
 }
 
 #[test]
 fn stray_delimiter() -> Result<()> {
-    return run("MappingType", "stray_delimiter");
+    run("MappingType", "stray_delimiter")
 }
 
 #[test]
 fn unnamed() -> Result<()> {
-    return run("MappingType", "unnamed");
+    run("MappingType", "unnamed")
 }

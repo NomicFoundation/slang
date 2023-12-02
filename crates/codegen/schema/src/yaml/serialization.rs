@@ -13,7 +13,7 @@ pub fn deserialize_yaml<T: DeserializeOwned>(
 ) -> Result<T, InfraErrors> {
     let source = codegen.read_file(file_path).unwrap();
 
-    return serde_yaml::from_str(&source).map_err(|error| {
+    serde_yaml::from_str(&source).map_err(|error| {
         let location = error.location().unwrap();
         let start = Position::new(location.index(), location.line(), location.column());
 
@@ -21,6 +21,6 @@ pub fn deserialize_yaml<T: DeserializeOwned>(
         let end = Position::new(start.offset + width, start.line, start.column + width);
 
         let range = start..end;
-        return InfraErrors::single(file_path.to_owned(), range, error.to_string());
-    });
+        InfraErrors::single(file_path.to_owned(), range, error.to_string())
+    })
 }

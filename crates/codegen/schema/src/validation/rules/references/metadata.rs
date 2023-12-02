@@ -18,9 +18,9 @@ pub struct Metadata {
 
 impl Metadata {
     pub fn new() -> Self {
-        return Self {
+        Self {
             productions: IndexMap::new(),
-        };
+        }
     }
 
     pub fn add_production(&mut self, production: &str, location: &LocationRef) {
@@ -44,7 +44,7 @@ impl Metadata {
 
     pub fn is_defined_over(&self, production: &str, version_set: &VersionSet) -> bool {
         let production = self.productions.get(production).unwrap();
-        return version_set.difference(&production.defined_in).is_empty();
+        version_set.difference(&production.defined_in).is_empty()
     }
 
     pub fn add_reference(

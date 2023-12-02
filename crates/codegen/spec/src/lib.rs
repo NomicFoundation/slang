@@ -50,6 +50,6 @@ impl SpecGeneratorExtensions for LanguageDefinitionRef {
             ],
         };
 
-        return root_entry.write_files(&mut codegen, output_dir);
+        root_entry.write_files(&mut codegen, output_dir)
     }
 }

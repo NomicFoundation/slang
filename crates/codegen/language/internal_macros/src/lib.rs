@@ -16,19 +16,19 @@ pub fn derive_spanned_type(args: TokenStream, mut input: TokenStream) -> TokenSt
     };
 
     input.extend(TokenStream::from(spanned_type.into_token_stream()));
-    return input;
+    input
 }
 
 #[proc_macro_derive(ParseInputTokens)]
 pub fn derive_parse_input_tokens(input: TokenStream) -> TokenStream {
     let item = syn::parse_macro_input!(input as InputItem);
 
-    return derive::parse_input_tokens(item).into();
+    derive::parse_input_tokens(item).into()
 }
 
 #[proc_macro_derive(WriteOutputTokens)]
 pub fn derive_write_output_tokens(input: TokenStream) -> TokenStream {
     let item = syn::parse_macro_input!(input as InputItem);
 
-    return derive::write_output_tokens(item).into();
+    derive::write_output_tokens(item).into()
 }

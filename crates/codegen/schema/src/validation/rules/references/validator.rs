@@ -41,7 +41,7 @@ impl Visitor for Validator<'_> {
         _reporter: &mut Reporter,
     ) -> bool {
         self.current_production = Some(production.to_owned());
-        return true;
+        true
     }
 
     fn visit_version(
@@ -51,7 +51,7 @@ impl Visitor for Validator<'_> {
         _reporter: &mut Reporter,
     ) -> bool {
         self.current_version_set = Some(version_set.to_owned());
-        return true;
+        true
     }
 
     fn visit_scanner(
@@ -69,7 +69,7 @@ impl Visitor for Validator<'_> {
             );
         }
 
-        return true;
+        true
     }
 
     fn visit_parser(
@@ -120,7 +120,7 @@ impl Visitor for Validator<'_> {
             _ => {}
         };
 
-        return true;
+        true
     }
 }
 

@@ -18,7 +18,7 @@ impl LanguageDefinition {
             &output_dir.join("productions.schema.json"),
         )?;
 
-        return Ok(());
+        Ok(())
     }
 }
 
@@ -36,21 +36,17 @@ fn write_schema_file<TSchema: JsonSchema>(
         serde_json::to_string_pretty(&relaxed)?
     };
 
-    return codegen.write_file(file_path, schema_json);
+    codegen.write_file(file_path, schema_json)
 }
 
 fn relax_schema(value: Value) -> Value {
     match value {
-        Value::Null | Value::Bool(_) | Value::Number(_) | Value::String(_) => {
-            return value;
-        }
+        Value::Null | Value::Bool(_) | Value::Number(_) | Value::String(_) => value,
 
-        Value::Array(nodes) => {
-            return Value::Array(nodes.into_iter().map(relax_schema).collect());
-        }
+        Value::Array(nodes) => Value::Array(nodes.into_iter().map(relax_schema).collect()),
 
         Value::Object(entries) => {
-            return Value::Object(
+            Value::Object(
                 entries
                     .into_iter()
                     .filter_map(|(key, value)| {
@@ -68,10 +64,10 @@ fn relax_schema(value: Value) -> Value {
                             key
                         };
 
-                        return Some((key, relax_schema(value)));
+                        Some((key, relax_schema(value)))
                     })
                     .collect(),
-            );
+            )
         }
-    };
+    }
 }

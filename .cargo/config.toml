@@ -14,7 +14,5 @@ rustflags = [
 	"-A",
 	"clippy::comparison_chain",
 	"-A",
-	"clippy::needless_return",
-	"-A",
 	"clippy::should_implement_trait",
 ]

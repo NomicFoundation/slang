@@ -5,5 +5,5 @@ use anyhow::Result;
 
 #[test]
 fn sample_counter() -> Result<()> {
-    return run("InterfaceDefinition", "sample_counter");
+    run("InterfaceDefinition", "sample_counter")
 }

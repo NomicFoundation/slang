@@ -19,10 +19,10 @@ pub struct Snippets {
 
 impl Snippets {
     pub fn new(language: &LanguageDefinitionRef, output_dir: &Path) -> Self {
-        return Self {
+        Self {
             language: language.to_owned(),
             output_dir: output_dir.to_owned(),
-        };
+        }
     }
 
     pub fn write_files(&self, codegen: &mut CodegenWriteOnly) -> Result<()> {
@@ -41,7 +41,7 @@ impl Snippets {
             }
         }
 
-        return Ok(());
+        Ok(())
     }
 
     pub fn get_snippet_path(
@@ -79,14 +79,14 @@ impl Snippets {
             },
         };
 
-        return file_name.map(|file_name| {
+        file_name.map(|file_name| {
             self.output_dir
                 .join("ebnf")
                 .join(&section.path)
                 .join(&topic.path)
                 .join(production.name.to_kebab_case())
                 .join(format!("{file_name}.md"))
-        });
+        })
     }
 
     fn get_snippet(&self, production: &ProductionRef, version: &Version) -> Option<String> {
@@ -113,7 +113,7 @@ impl Snippets {
             snippet.write_code_block(language, class, &id, ebnf);
         }
 
-        return Some(snippet.into_string());
+        Some(snippet.into_string())
     }
 
     fn locate_production(&self, name: &str) -> (&LanguageSection, &LanguageTopic) {

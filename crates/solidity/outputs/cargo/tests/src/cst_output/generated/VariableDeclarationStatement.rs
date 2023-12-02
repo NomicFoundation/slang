@@ -5,5 +5,5 @@ use anyhow::Result;
 
 #[test]
 fn var() -> Result<()> {
-    return run("VariableDeclarationStatement", "var");
+    run("VariableDeclarationStatement", "var")
 }

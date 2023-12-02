@@ -42,7 +42,7 @@ impl Visitor for ChildrenCount {
             | ScannerDefinition::ZeroOrMore(_) => {}
         };
 
-        return true;
+        true
     }
 
     fn visit_parser(
@@ -66,7 +66,7 @@ impl Visitor for ChildrenCount {
             | ParserDefinition::ZeroOrMore(_) => {}
         };
 
-        return true;
+        true
     }
 
     fn visit_precedence_parser(
@@ -79,7 +79,7 @@ impl Visitor for ChildrenCount {
             reporter.report(location, Errors::MinChildrenCount(1));
         }
 
-        return true;
+        true
     }
 }
 

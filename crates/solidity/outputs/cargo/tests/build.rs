@@ -13,5 +13,5 @@ fn main() -> Result<()> {
             .join("src/cst_output/generated"),
     )?;
 
-    return Ok(());
+    Ok(())
 }

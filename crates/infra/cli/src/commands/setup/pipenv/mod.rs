@@ -18,7 +18,7 @@ pub fn setup_pipenv() -> Result<()> {
         install_project_packages(&pip_file)?;
     }
 
-    return Ok(());
+    Ok(())
 }
 
 #[derive(Deserialize)]
@@ -37,10 +37,10 @@ fn install_pipenv_binary() -> Result<()> {
         .context("Failed to find 'pipenv' in 'Pipfile' packages.")?;
 
     // pip3 install "pipenv==YYYY.MM.DD"
-    return Command::new("pip3")
+    Command::new("pip3")
         .arg("install")
         .arg(format!("pipenv{version}"))
-        .run();
+        .run()
 }
 
 fn install_project_packages(pip_file: &Path) -> Result<()> {
@@ -55,5 +55,5 @@ fn install_project_packages(pip_file: &Path) -> Result<()> {
         command = command.flag("--deploy");
     }
 
-    return command.run();
+    command.run()
 }
