@@ -10,7 +10,7 @@ pub use version_specifier::*;
 
 /// Collects all versions that changes the language grammar in a breaking way.
 pub fn collect_breaking_versions(lang: &model::Language) -> BTreeSet<Version> {
-    let first = lang.versions.first().cloned().unwrap();
+    let first = lang.versions.first().unwrap().clone();
     let mut res = BTreeSet::from_iter([first]);
 
     let mut add_spec = |spec: &Option<model::VersionSpecifier>| {
