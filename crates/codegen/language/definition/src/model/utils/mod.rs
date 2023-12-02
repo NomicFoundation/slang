@@ -52,7 +52,14 @@ pub fn collect_breaking_versions(lang: &model::Language) -> BTreeSet<Version> {
             }
             Item::Repeated { item } => add_spec(&item.enabled),
             Item::Separated { item } => add_spec(&item.enabled),
-            Item::Precedence { item } => add_spec(&item.enabled),
+            Item::Precedence { item } => {
+                add_spec(&item.enabled);
+                for prec in &item.precedence_expressions {
+                    for op in &prec.operators {
+                        add_spec(&op.enabled);
+                    }
+                }
+            }
             Item::Keyword { item } => {
                 for definition in &item.definitions {
                     add_spec(&definition.enabled);
