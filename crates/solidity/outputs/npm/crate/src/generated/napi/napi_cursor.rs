@@ -49,7 +49,7 @@ impl Cursor {
         self.0.is_completed()
     }
 
-    #[napi(ts_return_type = "cst.RuleNode | cst.TokenNode")]
+    #[napi(ts_return_type = "cst.Node")]
     pub fn node(&self, env: Env) -> JsObject {
         self.0.node().to_js(&env)
     }

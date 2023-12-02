@@ -47,7 +47,7 @@ impl Cursor {
         self.0.is_completed()
     }
 
-    #[napi(ts_return_type = "cst.RuleNode | cst.TokenNode")]
+    #[napi(ts_return_type = "cst.Node")]
     pub fn node(&self, env: Env) -> JsObject {
         self.0.node().to_js(&env)
     }
@@ -121,7 +121,10 @@ impl Cursor {
     }
 
     #[napi]
-    pub fn go_to_next_token_with_kinds(&mut self, #[napi(ts_arg_type = "Array<kinds.TokenKind>")]  kinds: Vec<TokenKind>) -> bool {
+    pub fn go_to_next_token_with_kinds(
+        &mut self,
+        #[napi(ts_arg_type = "Array<kinds.TokenKind>")] kinds: Vec<TokenKind>,
+    ) -> bool {
         self.0.go_to_next_token_with_kinds(&kinds)
     }
 
@@ -131,7 +134,10 @@ impl Cursor {
     }
 
     #[napi]
-    pub fn go_to_next_rule_with_kinds(&mut self,     #[napi(ts_arg_type = "Array<kinds.RuleKind>")]  kinds: Vec<RuleKind>) -> bool {
+    pub fn go_to_next_rule_with_kinds(
+        &mut self,
+        #[napi(ts_arg_type = "Array<kinds.RuleKind>")] kinds: Vec<RuleKind>,
+    ) -> bool {
         self.0.go_to_next_rule_with_kinds(&kinds)
     }
 }

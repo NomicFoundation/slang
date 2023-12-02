@@ -44,7 +44,7 @@ impl RuleNode {
         (&self.0.text_len).into()
     }
 
-    #[napi(ts_return_type = "Array<cst.RuleNode | cst.TokenNode>")]
+    #[napi(ts_return_type = "Array<cst.Node>")]
     pub fn children(&self, env: Env) -> Vec<JsObject> {
         self.0
             .children

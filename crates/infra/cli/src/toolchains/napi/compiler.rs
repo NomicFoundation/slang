@@ -87,7 +87,8 @@ struct LicenseHeaderTemplate {
 
 fn process_generated_files(napi_output: &NapiCliOutput) -> Result<()> {
     let templates_dir =
-        CargoWorkspace::locate_source_crate("infra_cli")?.join("src/toolchains/napi/headers");
+        CargoWorkspace::locate_source_crate("solidity_npm_package")?.join("templates");
+
     let mut codegen = Codegen::read_write(&templates_dir)?;
 
     for source in &napi_output.source_files {
