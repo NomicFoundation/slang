@@ -115,30 +115,23 @@ impl Cursor {
         self.0.go_to_previous_sibling()
     }
 
-    // TODO: find_matching (taking JS function)
-    #[napi(ts_return_type = "cst.TokenNode | null")]
-    pub fn find_token_with_kind(
-        &mut self,
-        #[napi(ts_arg_type = "Array<kinds.TokenKind>")] kinds: Vec<TokenKind>,
-        env: Env,
-    ) -> Option<JsObject> {
-        self.0
-            .find_token_with_kind(&kinds[..])
-            .map(|token_node| token_node.to_js(&env))
+    #[napi]
+    pub fn go_to_next_token(&mut self) -> bool {
+        self.0.go_to_next_token()
     }
 
-    // TODO: find_token_matching (taking JS function)
-
-    #[napi(ts_return_type = "cst.RuleNode | null")]
-    pub fn find_rule_with_kind(
-        &mut self,
-        #[napi(ts_arg_type = "Array<kinds.RuleKind>")] kinds: Vec<RuleKind>,
-        env: Env,
-    ) -> Option<JsObject> {
-        self.0
-            .find_rule_with_kind(&kinds[..])
-            .map(|token_node| token_node.to_js(&env))
+    #[napi]
+    pub fn go_to_next_token_with_kinds(&mut self, kinds: Vec<TokenKind>) -> bool {
+        self.0.go_to_next_token_with_kinds(&kinds)
     }
 
-    // TODO: find_rule_matching (taking JS function)
+    #[napi]
+    pub fn go_to_next_rule(&mut self) -> bool {
+        self.0.go_to_next_rule()
+    }
+
+    #[napi]
+    pub fn go_to_next_rule_with_kinds(&mut self, kinds: Vec<RuleKind>) -> bool {
+        self.0.go_to_next_rule_with_kinds(&kinds)
+    }
 }

@@ -5,7 +5,7 @@
 use std::rc::Rc;
 
 use super::{
-    cst::{Node, RuleNode, TokenNode},
+    cst::{Node, RuleNode},
     kinds::*,
     text_index::{TextIndex, TextRange},
 };
@@ -361,62 +361,55 @@ impl Cursor {
         false
     }
 
-    pub fn find_matching<R, F: Fn(&Cursor) -> Option<R>>(&mut self, filter_map: F) -> Option<R> {
-        while !self.is_completed {
-            if let Some(result) = filter_map(self) {
-                return Some(result);
-            }
-            self.go_to_next();
-        }
-
-        None
-    }
-
-    /// In contrast to `Iterator::find_*`, this does not consume the first item when found.
-    fn find_noconsume<F: Fn(&Node) -> Option<R>, R>(&mut self, predicate: F) -> Option<R> {
-        while !self.is_completed {
-            match predicate(&self.current.node) {
-                Some(result) => return Some(result),
-                _ => {
-                    self.go_to_next();
-                }
+    /// Attempts to go to the next token, according to the DFS pre-order traversal.
+    ///
+    /// Returns `false` if the cursor is finished and at the root.
+    pub fn go_to_next_token(&mut self) -> bool {
+        while self.go_to_next() {
+            if matches!(&self.current.node, Node::Token(_)) {
+                return true;
             }
         }
 
-        None
+        false
     }
 
-    /// Finds the first token with either of the given kinds.
+    /// Attempts to go to the next token with any of the given kinds, according to the DFS pre-order traversal.
     ///
-    /// Does not consume the iterator if the first item matches.
-    pub fn find_token_with_kind(&mut self, kinds: &[TokenKind]) -> Option<Rc<TokenNode>> {
-        self.find_noconsume(|node| node.as_token_with_kind(kinds).cloned())
+    /// Returns `false` if the cursor is finished and at the root.
+    pub fn go_to_next_token_with_kinds(&mut self, kinds: &[TokenKind]) -> bool {
+        while self.go_to_next() {
+            if matches!(&self.current.node, Node::Token(token) if kinds.contains(&token.kind)) {
+                return true;
+            }
+        }
+
+        false
     }
 
-    /// Finds the first token node matching the given predicate.
+    /// Attempts to go to the next rule, according to the DFS pre-order traversal.
     ///
-    /// Does not consume the iterator if the first item matches.
-    pub fn find_token_matching<F: Fn(&Rc<TokenNode>) -> bool>(
-        &mut self,
-        predicate: F,
-    ) -> Option<Rc<TokenNode>> {
-        self.find_noconsume(|node| node.as_token().filter(|node| predicate(node)).cloned())
+    /// Returns `false` if the cursor is finished and at the root.
+    pub fn go_to_next_rule(&mut self) -> bool {
+        while self.go_to_next() {
+            if matches!(&self.current.node, Node::Rule(_)) {
+                return true;
+            }
+        }
+
+        false
     }
 
-    /// Finds the first rule node with either of the given kinds.
+    /// Attempts to go to the next rule with any of the given kinds, according to the DFS pre-order traversal.
     ///
-    /// Does not consume the iterator if the first item matches.
-    pub fn find_rule_with_kind(&mut self, kinds: &[RuleKind]) -> Option<Rc<RuleNode>> {
-        self.find_noconsume(|node| node.as_rule_with_kind(kinds).cloned())
-    }
+    /// Returns `false` if the cursor is finished and at the root.
+    pub fn go_to_next_rule_with_kinds(&mut self, kinds: &[RuleKind]) -> bool {
+        while self.go_to_next() {
+            if matches!(&self.current.node, Node::Rule(rule) if kinds.contains(&rule.kind)) {
+                return true;
+            }
+        }
 
-    /// Finds the first rule node matching the given predicate.
-    ///
-    /// Does not consume the iterator if the first item matches.
-    pub fn find_rule_matching<F: Fn(&Rc<RuleNode>) -> bool>(
-        &mut self,
-        predicate: F,
-    ) -> Option<Rc<RuleNode>> {
-        self.find_noconsume(|node| node.as_rule().filter(|node| predicate(node)).cloned())
+        false
     }
 }

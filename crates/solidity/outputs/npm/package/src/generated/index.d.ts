@@ -674,8 +674,10 @@ export namespace cursor {
     goToNthChild(childNumber: number): boolean;
     goToNextSibling(): boolean;
     goToPreviousSibling(): boolean;
-    findTokenWithKind(kinds: Array<kinds.TokenKind>): cst.TokenNode | null;
-    findRuleWithKind(kinds: Array<kinds.RuleKind>): cst.RuleNode | null;
+    goToNextToken(): boolean;
+    goToNextTokenWithKinds(kinds: Array<TokenKind>): boolean;
+    goToNextRule(): boolean;
+    goToNextRuleWithKinds(kinds: Array<RuleKind>): boolean;
   }
 }
 export namespace parse_error {

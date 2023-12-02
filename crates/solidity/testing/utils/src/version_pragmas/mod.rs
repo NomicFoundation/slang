@@ -20,19 +20,26 @@ pub fn extract_version_pragmas(
     let language = &Language::new(latest_version.to_owned())?;
     let output = language.parse(ProductionKind::SourceUnit, source);
 
-    let mut cursor = output.create_tree_cursor();
     let mut pragmas = vec![];
-    while let Some(rule_node) = cursor.find_rule_with_kind(&[RuleKind::VersionPragmaExpression]) {
-        pragmas.push(
-            extract_pragma(&Node::Rule(rule_node.clone())).with_context(|| {
+    let mut cursor = output.create_tree_cursor();
+
+    while !cursor.is_completed() {
+        let node = &cursor.node();
+
+        if matches!(node, Node::Rule(rule) if rule.kind == RuleKind::VersionPragmaExpression) {
+            pragmas.push(extract_pragma(node).with_context(|| {
                 format!(
                     "Failed to extract pragma at {range:?}: '{value}'",
                     range = cursor.text_range(),
-                    value = rule_node.extract_non_trivia()
+                    value = node.extract_non_trivia()
                 )
-            })?,
-        );
-        cursor.go_to_next_non_descendent();
+            })?);
+
+            // Skip other VersionPragmaExpression nodes under the same node:
+            cursor.go_to_next_non_descendent();
+        } else {
+            cursor.go_to_next_rule();
+        }
     }
 
     Ok(pragmas)
