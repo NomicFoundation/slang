@@ -162,11 +162,7 @@ impl Cursor {
             return false;
         }
 
-        if !self.go_to_first_child() {
-            return self.go_to_next_non_descendent();
-        }
-
-        true
+        self.go_to_first_child() || self.go_to_next_non_descendent()
     }
 
     /// Attempts to go to current node's next non-descendent.
@@ -199,6 +195,7 @@ impl Cursor {
                 return false;
             }
         }
+
         while self.go_to_last_child() {}
 
         true
@@ -344,7 +341,7 @@ impl Cursor {
 
         if self.current.child_number > 0 {
             if let Some(parent_path_element) = self.path.last() {
-                let new_child_number = self.current.child_number + 1;
+                let new_child_number = self.current.child_number - 1;
                 let new_child = parent_path_element.rule_node.children[new_child_number].clone();
 
                 self.current = PathNode {
@@ -363,47 +360,37 @@ impl Cursor {
     ///
     /// Returns `false` if the cursor is finished and at the root.
     pub fn go_to_next_token(&mut self) -> bool {
-        while self.go_to_next() {
-            if matches!(&self.current.node, Node::Token(_)) {
-                return true;
-            }
-        }
-
-        false
+        self.go_to_next_matching(|node| matches!(node, Node::Token(_)))
     }
 
     /// Attempts to go to the next token with any of the given kinds, according to the DFS pre-order traversal.
     ///
     /// Returns `false` if the cursor is finished and at the root.
     pub fn go_to_next_token_with_kinds(&mut self, kinds: &[TokenKind]) -> bool {
-        while self.go_to_next() {
-            if matches!(&self.current.node, Node::Token(token) if kinds.contains(&token.kind)) {
-                return true;
-            }
-        }
-
-        false
+        self.go_to_next_matching(
+            |node| matches!(node, Node::Token(token) if kinds.contains(&token.kind)),
+        )
     }
 
     /// Attempts to go to the next rule, according to the DFS pre-order traversal.
     ///
     /// Returns `false` if the cursor is finished and at the root.
     pub fn go_to_next_rule(&mut self) -> bool {
-        while self.go_to_next() {
-            if matches!(&self.current.node, Node::Rule(_)) {
-                return true;
-            }
-        }
-
-        false
+        self.go_to_next_matching(|node| matches!(node, Node::Rule(_)))
     }
 
     /// Attempts to go to the next rule with any of the given kinds, according to the DFS pre-order traversal.
     ///
     /// Returns `false` if the cursor is finished and at the root.
     pub fn go_to_next_rule_with_kinds(&mut self, kinds: &[RuleKind]) -> bool {
+        self.go_to_next_matching(
+            |node| matches!(node, Node::Rule(rule) if kinds.contains(&rule.kind)),
+        )
+    }
+
+    fn go_to_next_matching(&mut self, pred: impl Fn(&Node) -> bool) -> bool {
         while self.go_to_next() {
-            if matches!(&self.current.node, Node::Rule(rule) if kinds.contains(&rule.kind)) {
+            if pred(&self.current.node) {
                 return true;
             }
         }
