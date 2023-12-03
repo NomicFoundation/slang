@@ -13,6 +13,7 @@
     "inheritdoc",
     "ipfs",
     "mkdocs",
+    "napi",
     "nomic",
     "nomicfoundation",
     "struct",

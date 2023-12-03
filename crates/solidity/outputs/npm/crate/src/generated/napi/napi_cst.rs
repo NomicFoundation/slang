@@ -44,7 +44,7 @@ impl RuleNode {
         (&self.0.text_len).into()
     }
 
-    #[napi(ts_return_type = "Array<cst.RuleNode | cst.TokenNode>")]
+    #[napi(ts_return_type = "Array<cst.Node>")]
     pub fn children(&self, env: Env) -> Vec<JsObject> {
         self.0
             .children
@@ -54,7 +54,10 @@ impl RuleNode {
     }
 
     #[napi(ts_return_type = "cursor.Cursor")]
-    pub fn create_cursor(&self, text_offset: TextIndex) -> Cursor {
+    pub fn create_cursor(
+        &self,
+        #[napi(ts_arg_type = "text_index.TextIndex")] text_offset: TextIndex,
+    ) -> Cursor {
         RustNode::Rule(self.0.clone())
             .cursor_with_offset((&text_offset).into())
             .into()
@@ -88,7 +91,10 @@ impl TokenNode {
     }
 
     #[napi(ts_return_type = "cursor.Cursor")]
-    pub fn create_cursor(&self, text_offset: TextIndex) -> Cursor {
+    pub fn create_cursor(
+        &self,
+        #[napi(ts_arg_type = "text_index.TextIndex")] text_offset: TextIndex,
+    ) -> Cursor {
         RustNode::Token(self.0.clone())
             .cursor_with_offset((&text_offset).into())
             .into()
