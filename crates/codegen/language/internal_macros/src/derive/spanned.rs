@@ -112,7 +112,6 @@ fn get_spanned_type(input: Type) -> Type {
         | "EnumVariant"
         | "Field"
         | "FieldDelimiters"
-        | "FieldKind"
         | "FieldsErrorRecovery"
         | "FragmentItem"
         | "InputItem"

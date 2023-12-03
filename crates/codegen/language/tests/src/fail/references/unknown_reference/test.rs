@@ -13,10 +13,7 @@ codegen_language_macros::compile!(Language(
             items = [
                 Struct(
                     name = Bar,
-                    fields = (
-                        field_1 = Required(Terminal([Baz])),
-                        field_2 = Required(Terminal([Unknown]))
-                    )
+                    fields = (field_1 = Required(Baz), field_2 = Required(Unknown))
                 ),
                 Token(
                     name = Baz,

@@ -1,6 +1,5 @@
 use crate::model::{Identifier, VersionSpecifier};
 use codegen_language_internal_macros::{derive_spanned_type, ParseInputTokens, WriteOutputTokens};
-use indexmap::IndexSet;
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
@@ -21,18 +20,11 @@ pub struct FieldDelimiters {
 #[derive_spanned_type(ParseInputTokens, WriteOutputTokens)]
 pub enum Field {
     Required {
-        kind: FieldKind,
+        reference: Identifier,
     },
     Optional {
-        kind: FieldKind,
+        reference: Identifier,
 
         enabled: Option<VersionSpecifier>,
     },
-}
-
-#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
-#[derive_spanned_type(ParseInputTokens, WriteOutputTokens)]
-pub enum FieldKind {
-    NonTerminal { item: Identifier },
-    Terminal { items: IndexSet<Identifier> },
 }

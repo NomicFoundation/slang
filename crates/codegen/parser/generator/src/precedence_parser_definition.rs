@@ -243,7 +243,12 @@ impl PrecedenceParserDefinitionNodeExtensions for PrecedenceParserDefinitionNode
         };
 
         quote! {
-            #(#operator_closures)*
+            #(
+                // TODO(#638): remove duplicates once we use DSL v2 versioning schema
+                #[allow(unused_variables)]
+                #operator_closures
+            )*
+
             PrecedenceHelper::reduce_precedence_result(#expression_kind_literal, linear_expression_parser(input))
         }
     }

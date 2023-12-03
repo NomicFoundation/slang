@@ -11,9 +11,9 @@ codegen_language_macros::compile!(Language(
         topics = [Topic(
             title = "Topic One",
             items = [
-                Struct(name = Bar1, fields = (field = Required(NonTerminal(Bar2)))),
-                Struct(name = Bar1, fields = (field = Required(NonTerminal(Bar2)))),
-                Struct(name = Bar2, fields = (field = Required(NonTerminal(Bar1))))
+                Struct(name = Bar1, fields = (field = Required(Bar2))),
+                Struct(name = Bar1, fields = (field = Required(Bar2))),
+                Struct(name = Bar2, fields = (field = Required(Bar1)))
             ]
         )]
     )]

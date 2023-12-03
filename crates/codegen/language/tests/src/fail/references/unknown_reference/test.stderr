@@ -1,5 +1,5 @@
 error: Reference to unknown item 'Unknown'.
-  --> src/fail/references/unknown_reference/test.rs:18:54
+  --> src/fail/references/unknown_reference/test.rs:16:75
    |
-18 |                         field_2 = Required(Terminal([Unknown]))
-   |                                                      ^^^^^^^
+16 |                     fields = (field_1 = Required(Baz), field_2 = Required(Unknown))
+   |                                                                           ^^^^^^^
