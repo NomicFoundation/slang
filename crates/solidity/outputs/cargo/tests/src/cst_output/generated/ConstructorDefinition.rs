@@ -5,5 +5,5 @@ use anyhow::Result;
 
 #[test]
 fn simple() -> Result<()> {
-    return run("ConstructorDefinition", "simple");
+    run("ConstructorDefinition", "simple")
 }

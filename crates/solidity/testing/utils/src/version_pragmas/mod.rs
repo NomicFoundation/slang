@@ -35,7 +35,7 @@ pub fn extract_version_pragmas(
         cursor.go_to_next_non_descendent();
     }
 
-    return Ok(pragmas);
+    Ok(pragmas)
 }
 
 fn extract_pragma(expression_node: &Node) -> Result<VersionPragma> {
@@ -76,7 +76,7 @@ fn extract_pragma(expression_node: &Node) -> Result<VersionPragma> {
                         let left = extract_pragma(left)?;
                         let right = extract_pragma(right)?;
 
-                        return Ok(VersionPragma::or(left, right));
+                        Ok(VersionPragma::or(left, right))
                     }
                     TokenKind::Minus => {
                         let mut left = extract_pragma(left)?.comparator()?;
@@ -87,14 +87,14 @@ fn extract_pragma(expression_node: &Node) -> Result<VersionPragma> {
                         left.op = Op::GreaterEq;
                         right.op = Op::LessEq;
 
-                        return Ok(VersionPragma::and(
+                        Ok(VersionPragma::and(
                             VersionPragma::single(left),
                             VersionPragma::single(right),
-                        ));
+                        ))
                     }
 
                     _ => bail!("Unexpected operator: {operator:?}"),
-                };
+                }
             }
 
             _ => bail!("Expected 3 children: {inner_expression:?}"),
@@ -103,16 +103,16 @@ fn extract_pragma(expression_node: &Node) -> Result<VersionPragma> {
             let value = inner_expression.extract_non_trivia();
             let comparator = Comparator::from_str(&value)?;
 
-            return Ok(VersionPragma::single(comparator));
+            Ok(VersionPragma::single(comparator))
         }
         RuleKind::VersionPragmaSpecifier => {
             let specifier = inner_expression.extract_non_trivia();
             let comparator = Comparator::from_str(&format!("={specifier}"))?;
 
-            return Ok(VersionPragma::single(comparator));
+            Ok(VersionPragma::single(comparator))
         }
         _ => bail!("Unexpected inner expression: {inner_expression:?}"),
-    };
+    }
 }
 
 #[derive(Debug)]
@@ -124,35 +124,29 @@ pub enum VersionPragma {
 
 impl VersionPragma {
     pub fn or(left: Self, right: Self) -> Self {
-        return Self::Or(Box::new(left), Box::new(right));
+        Self::Or(Box::new(left), Box::new(right))
     }
 
     pub fn and(left: Self, right: Self) -> Self {
-        return Self::And(Box::new(left), Box::new(right));
+        Self::And(Box::new(left), Box::new(right))
     }
 
     pub fn single(comparator: Comparator) -> Self {
-        return Self::Single(comparator);
+        Self::Single(comparator)
     }
 
     pub fn matches(&self, version: &Version) -> bool {
         match self {
-            Self::Or(left, right) => {
-                return left.matches(version) || right.matches(version);
-            }
-            Self::And(left, right) => {
-                return left.matches(version) && right.matches(version);
-            }
-            Self::Single(comparator) => {
-                return comparator.matches(version);
-            }
-        };
+            Self::Or(left, right) => left.matches(version) || right.matches(version),
+            Self::And(left, right) => left.matches(version) && right.matches(version),
+            Self::Single(comparator) => comparator.matches(version),
+        }
     }
 
     fn comparator(self) -> Result<Comparator> {
         match self {
-            Self::Single(comparator) => return Ok(comparator),
+            Self::Single(comparator) => Ok(comparator),
             _ => bail!("Expected Single Comparator: {self:?}"),
-        };
+        }
     }
 }

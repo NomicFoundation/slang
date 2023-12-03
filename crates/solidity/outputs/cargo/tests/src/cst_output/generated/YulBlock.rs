@@ -5,10 +5,10 @@ use anyhow::Result;
 
 #[test]
 fn function_def() -> Result<()> {
-    return run("YulBlock", "function_def");
+    run("YulBlock", "function_def")
 }
 
 #[test]
 fn ignore_unknown_delim() -> Result<()> {
-    return run("YulBlock", "ignore_unknown_delim");
+    run("YulBlock", "ignore_unknown_delim")
 }

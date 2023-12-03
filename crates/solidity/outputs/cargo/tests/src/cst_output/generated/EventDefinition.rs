@@ -5,10 +5,10 @@ use anyhow::Result;
 
 #[test]
 fn no_parens() -> Result<()> {
-    return run("EventDefinition", "no_parens");
+    run("EventDefinition", "no_parens")
 }
 
 #[test]
 fn transfer() -> Result<()> {
-    return run("EventDefinition", "transfer");
+    run("EventDefinition", "transfer")
 }

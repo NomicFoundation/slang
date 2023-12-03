@@ -8,19 +8,19 @@ pub struct ParseOutput {
 
 impl ParseOutput {
     pub fn tree(&self) -> cst::Node {
-        return self.parse_tree.clone();
+        self.parse_tree.clone()
     }
 
     pub fn errors(&self) -> &Vec<ParseError> {
-        return &self.errors;
+        &self.errors
     }
 
     pub fn is_valid(&self) -> bool {
-        return self.errors.is_empty();
+        self.errors.is_empty()
     }
 
     /// Creates a cursor that starts at the root of the parse tree.
     pub fn create_tree_cursor(&self) -> Cursor {
-        return self.parse_tree.cursor_with_offset(TextIndex::ZERO);
+        self.parse_tree.cursor_with_offset(TextIndex::ZERO)
     }
 }

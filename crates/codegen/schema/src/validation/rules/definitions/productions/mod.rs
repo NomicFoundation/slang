@@ -35,7 +35,7 @@ impl Visitor for Productions {
             }
         }
 
-        return true;
+        true
     }
 
     fn visit_production(
@@ -49,7 +49,7 @@ impl Visitor for Productions {
             reporter.report(location, Errors::DuplicateProduction(name.to_owned()));
         }
 
-        return false;
+        false
     }
 }
 

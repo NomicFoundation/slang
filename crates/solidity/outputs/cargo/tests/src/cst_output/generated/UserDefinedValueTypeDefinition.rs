@@ -5,5 +5,5 @@ use anyhow::Result;
 
 #[test]
 fn bool() -> Result<()> {
-    return run("UserDefinedValueTypeDefinition", "bool");
+    run("UserDefinedValueTypeDefinition", "bool")
 }

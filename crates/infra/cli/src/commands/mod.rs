@@ -43,7 +43,7 @@ enum AppCommand {
 
 impl CLI {
     pub fn execute(&self) -> Result<()> {
-        return match &self.command {
+        match &self.command {
             AppCommand::Setup(command) => command.execute(),
             AppCommand::Check(command) => command.execute(),
             AppCommand::Test(command) => command.execute(),
@@ -52,6 +52,6 @@ impl CLI {
             AppCommand::Run(command) => command.execute(),
             AppCommand::Watch(command) => command.execute(),
             AppCommand::Publish(command) => command.execute(),
-        };
+        }
     }
 }

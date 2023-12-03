@@ -29,14 +29,14 @@ impl CargoWorkspace {
             })?
             .to_string();
 
-        return Command::new("cargo")
+        Command::new("cargo")
             .args(["install", crate_name])
             .property("--version", version)
-            .run();
+            .run()
     }
 
     pub fn is_running_inside_build_scripts() -> bool {
-        return var("CARGO_MANIFEST_DIR").is_ok() && var("TARGET").is_ok();
+        var("CARGO_MANIFEST_DIR").is_ok() && var("TARGET").is_ok()
     }
 
     pub fn locate_source_crate(crate_name: impl AsRef<str>) -> Result<PathBuf> {
@@ -53,11 +53,11 @@ impl CargoWorkspace {
                 format!("Dependency '{crate_name}' did not specify a path in Cargo.toml.")
             })?;
 
-        return Ok(Path::repo_path(relative_path));
+        Ok(Path::repo_path(relative_path))
     }
 
     pub fn local_version() -> Result<Version> {
-        return Ok(WorkspaceManifest::load()?.workspace.package.version);
+        Ok(WorkspaceManifest::load()?.workspace.package.version)
     }
 
     pub fn published_version(crate_name: impl AsRef<str>) -> Result<Version> {
@@ -78,8 +78,7 @@ impl CargoWorkspace {
             .with_context(|| format!("Failed to extract version:\n{output}"))?
             .extract();
 
-        return Version::parse(version)
-            .with_context(|| format!("Failed to parse version: '{version}'"));
+        Version::parse(version).with_context(|| format!("Failed to parse version: '{version}'"))
     }
 
     pub fn update_version(existing_version: &Version, updated_version: &Version) -> Result<()> {
@@ -96,7 +95,7 @@ impl CargoWorkspace {
         let updated_contents = existing_contents.replace(&existing_header, &updated_header);
         ensure!(updated_contents.starts_with(&updated_header));
 
-        return cargo_toml.write_string(updated_contents);
+        cargo_toml.write_string(updated_contents)
     }
 
     pub fn get_command(subcommand: impl AsRef<str>) -> Result<Command> {
@@ -118,6 +117,6 @@ impl CargoWorkspace {
             );
         }
 
-        return Ok(command);
+        Ok(command)
     }
 }

@@ -5,20 +5,20 @@ use anyhow::Result;
 
 #[test]
 fn array_1d() -> Result<()> {
-    return run("NewExpression", "array_1d");
+    run("NewExpression", "array_1d")
 }
 
 #[test]
 fn array_1d_expression() -> Result<()> {
-    return run("NewExpression", "array_1d_expression");
+    run("NewExpression", "array_1d_expression")
 }
 
 #[test]
 fn array_2d() -> Result<()> {
-    return run("NewExpression", "array_2d");
+    run("NewExpression", "array_2d")
 }
 
 #[test]
 fn identifier_path() -> Result<()> {
-    return run("NewExpression", "identifier_path");
+    run("NewExpression", "identifier_path")
 }

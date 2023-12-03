@@ -23,7 +23,7 @@ pub struct LanguageDefinition {
 
 impl LanguageDefinition {
     pub fn required_productions(&self) -> IndexSet<&str> {
-        return IndexSet::from([&self.root_production, "LeadingTrivia", "TrailingTrivia"]);
+        IndexSet::from([&self.root_production, "LeadingTrivia", "TrailingTrivia"])
     }
 }
 

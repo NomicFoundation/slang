@@ -23,11 +23,11 @@ pub fn generate_reference_dir(language: &LanguageDefinition) -> NavigationEntry 
         });
     }
 
-    return NavigationEntry::Directory {
+    NavigationEntry::Directory {
         title: "Reference".to_owned(),
         path: "reference".to_owned(),
         children: sections,
-    };
+    }
 }
 
 fn generate_topic_page(
@@ -48,5 +48,5 @@ fn generate_topic_page(
             .join(LanguageTopic::NOTES_FILE_NAME),
     );
 
-    return page.into_string();
+    page.into_string()
 }

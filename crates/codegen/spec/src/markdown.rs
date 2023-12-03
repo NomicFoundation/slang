@@ -8,11 +8,11 @@ pub struct MarkdownWriter {
 
 impl MarkdownWriter {
     pub fn new() -> Self {
-        return Self { w: String::new() };
+        Self { w: String::new() }
     }
 
     pub fn into_string(self) -> String {
-        return self.w;
+        self.w
     }
 
     pub fn write_header(&mut self, level: usize, value: &str) {

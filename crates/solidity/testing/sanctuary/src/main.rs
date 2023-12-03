@@ -27,7 +27,7 @@ fn main() {
             process_dataset(&dataset, &versions)?;
         }
 
-        return Ok(());
+        Ok(())
     })
     .unwrap()
     .unwrap();
@@ -56,7 +56,7 @@ fn process_dataset(dataset: &impl Dataset, versions: &BTreeSet<Version>) -> Resu
         .map(|file_path| {
             process_source_file(file_path, versions, &reporter)?;
             reporter.report_file_completed();
-            return Ok(());
+            Ok(())
         })
         .collect::<Result<()>>()?;
 
@@ -65,7 +65,7 @@ fn process_dataset(dataset: &impl Dataset, versions: &BTreeSet<Version>) -> Resu
         std::process::exit(1);
     }
 
-    return Ok(());
+    Ok(())
 }
 
 fn process_source_file(
@@ -100,5 +100,5 @@ fn process_source_file(
         reporter.report_test_result(source_id, source, version, &output);
     }
 
-    return Ok(());
+    Ok(())
 }

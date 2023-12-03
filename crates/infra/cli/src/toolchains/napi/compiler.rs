@@ -46,7 +46,7 @@ impl NapiCompiler {
             }
         }
 
-        return Ok(());
+        Ok(())
     }
 }
 
@@ -69,7 +69,7 @@ fn compile_all_targets() -> Result<Vec<PathBuf>> {
         node_binaries.push(output.node_binary);
     }
 
-    return Ok(node_binaries);
+    Ok(node_binaries)
 }
 
 fn compile_target(target: &BuildTarget) -> Result<NapiCliOutput> {
@@ -77,7 +77,7 @@ fn compile_target(target: &BuildTarget) -> Result<NapiCliOutput> {
 
     std::fs::create_dir_all(&output_dir)?;
 
-    return NapiCli::build(output_dir, target);
+    NapiCli::build(output_dir, target)
 }
 
 #[derive(Serialize)]
@@ -103,7 +103,7 @@ fn process_generated_files(napi_output: &NapiCliOutput) -> Result<()> {
         )?;
     }
 
-    return Ok(());
+    Ok(())
 }
 
 fn compile_root_package(node_binary: Option<&Path>) -> Result<()> {
@@ -143,7 +143,7 @@ fn compile_root_package(node_binary: Option<&Path>) -> Result<()> {
         std::fs::copy(node_binary, destination)?;
     }
 
-    return Ok(());
+    Ok(())
 }
 
 fn compile_platform_packages(node_binaries: &[PathBuf]) -> Result<()> {
@@ -166,5 +166,5 @@ fn compile_platform_packages(node_binaries: &[PathBuf]) -> Result<()> {
         std::fs::copy(node_binary, output_dir.join(node_binary.unwrap_name()))?;
     }
 
-    return Ok(());
+    Ok(())
 }

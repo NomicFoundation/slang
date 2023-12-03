@@ -22,7 +22,7 @@ pub enum Item {
 
 impl Item {
     pub fn name(&self) -> &Identifier {
-        return match self {
+        match self {
             Item::Struct { item } => &item.name,
             Item::Enum { item } => &item.name,
             Item::Repeated { item } => &item.name,
@@ -33,6 +33,6 @@ impl Item {
             Item::Keyword { item } => &item.name,
             Item::Token { item } => &item.name,
             Item::Fragment { item } => &item.name,
-        };
+        }
     }
 }

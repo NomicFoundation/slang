@@ -3,5 +3,5 @@ use proc_macro::TokenStream;
 
 #[proc_macro]
 pub fn compile(input: TokenStream) -> TokenStream {
-    return LanguageCompiler::compile(input.into()).into();
+    LanguageCompiler::compile(input.into()).into()
 }

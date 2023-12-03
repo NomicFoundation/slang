@@ -38,7 +38,7 @@ impl Visitor for KeywordsValidator {
         self.current_production = Some(production.to_owned());
 
         // Skip validation if this is a keyword:
-        return !is_a_keyword_scanner(&production.name);
+        !is_a_keyword_scanner(&production.name)
     }
 
     fn visit_parser(
@@ -47,7 +47,7 @@ impl Visitor for KeywordsValidator {
         _location: &LocationRef,
         _reporter: &mut Reporter,
     ) -> bool {
-        return false;
+        false
     }
 
     fn visit_scanner(
@@ -67,7 +67,7 @@ impl Visitor for KeywordsValidator {
             }
         }
 
-        return true;
+        true
     }
 
     fn visit_precedence_parser(
@@ -76,7 +76,7 @@ impl Visitor for KeywordsValidator {
         _location: &LocationRef,
         _reporter: &mut Reporter,
     ) -> bool {
-        return false;
+        false
     }
 }
 

@@ -12,25 +12,25 @@ pub struct Error {
 
 impl Error {
     pub fn fatal<T>(has_span: &impl HasSpan, message: &impl Display) -> Result<T> {
-        return Err(Error {
+        Err(Error {
             message: message.to_string(),
             span: has_span.span(),
-        });
+        })
     }
 
     pub fn from_syn(error: syn::Error) -> Self {
-        return Self {
+        Self {
             message: error.to_string(),
             span: error.span(),
-        };
+        }
     }
 
     pub fn to_syn(&self) -> syn::Error {
-        return syn::Error::new(self.span, &self.message);
+        syn::Error::new(self.span, &self.message)
     }
 
     pub fn to_compile_error(&self) -> TokenStream {
-        return syn::Error::new(self.span, &self.message).to_compile_error();
+        syn::Error::new(self.span, &self.message).to_compile_error()
     }
 }
 
@@ -41,11 +41,11 @@ pub struct ErrorsCollection {
 
 impl ErrorsCollection {
     pub fn new() -> Self {
-        return Self { errors: vec![] };
+        Self { errors: vec![] }
     }
 
     pub fn has_errors(&self) -> bool {
-        return !self.errors.is_empty();
+        !self.errors.is_empty()
     }
 
     pub fn add(&mut self, has_span: &impl HasSpan, message: &impl Display) {
@@ -74,12 +74,12 @@ pub trait HasSpan {
 
 impl<T> HasSpan for crate::internals::Spanned<T> {
     fn span(&self) -> Span {
-        return self.span();
+        self.span()
     }
 }
 
 impl<T: syn::spanned::Spanned> HasSpan for T {
     fn span(&self) -> Span {
-        return self.span();
+        self.span()
     }
 }

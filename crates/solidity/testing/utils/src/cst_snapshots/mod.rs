@@ -24,7 +24,7 @@ impl CstSnapshots {
 
         write_tree(&mut w, cursor, source)?;
 
-        return Ok(w);
+        Ok(w)
     }
 }
 
@@ -65,7 +65,7 @@ fn write_source<W: Write>(w: &mut W, source: &str) -> Result<()> {
         offset = range.end + 1;
     }
 
-    return Ok(());
+    Ok(())
 }
 
 fn write_errors<W: Write>(w: &mut W, errors: &Vec<String>) -> Result<()> {
@@ -83,7 +83,7 @@ fn write_errors<W: Write>(w: &mut W, errors: &Vec<String>) -> Result<()> {
         }
     }
 
-    return Ok(());
+    Ok(())
 }
 
 fn write_tree<W: Write>(w: &mut W, mut cursor: Cursor, source: &str) -> Result<()> {
@@ -194,7 +194,7 @@ pub fn render_source_preview(source: &str, range: &TextRange) -> Result<String> 
         }
     };
 
-    return Ok(contents);
+    Ok(contents)
 }
 
 fn is_whitespace(kind: TokenKind) -> bool {

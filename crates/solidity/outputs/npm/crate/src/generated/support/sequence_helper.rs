@@ -44,7 +44,6 @@ impl SequenceHelper {
                 // Can't proceed further, return what we have
                 (ParserResult::IncompleteMatch(..) | ParserResult::NoMatch(..), _) => {
                     debug_assert!(self.is_done());
-                    return;
                 }
 
                 // If the accumulated result is valid, but empty (e.g. we accepted an empty optional)
@@ -161,7 +160,6 @@ impl SequenceHelper {
                         matches!(next.expected_tokens[..], [_]),
                         "Only a single token parse can immediately follow SkippedUntil in sequences"
                     );
-                    return;
                 }
                 (ParserResult::SkippedUntil(_), _) => unreachable!(
                     "Only a single token parse can immediately follow SkippedUntil in sequences and these can either be Match or NoMatch"
