@@ -1,7 +1,10 @@
 use std::fmt::Debug;
 use std::rc::Rc;
 
-use super::*;
+use super::{
+    GrammarVisitor, PrecedenceParserDefinitionRef, ScannerDefinitionRef, VersionQualityRange,
+    Visitable,
+};
 
 pub trait ParserDefinition: Debug {
     fn name(&self) -> &'static str;

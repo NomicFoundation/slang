@@ -6,7 +6,7 @@ use std::rc::Rc;
 
 use super::{
     cst::{Node, RuleNode},
-    kinds::*,
+    kinds::{RuleKind, TokenKind},
     text_index::{TextIndex, TextRange},
 };
 

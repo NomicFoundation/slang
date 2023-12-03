@@ -1,7 +1,7 @@
-use {napi::bindgen_prelude::*, napi_derive::napi};
+use {napi::bindgen_prelude::Env, napi_derive::napi};
 
-use super::*;
-use napi_cst::*;
+use super::{napi_cst, napi_cursor, napi_parse_error, RustParseOutput};
+use napi_cst::ToJS;
 
 #[napi(namespace = "parse_output")]
 pub struct ParseOutput(RustParseOutput);

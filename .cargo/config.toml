@@ -7,8 +7,12 @@ lto = true
 
 [build]
 rustflags = [
+	# rustc additional warnings:
 	"--warn",
 	"unused_crate_dependencies",
+	# clippy additional warnings:
+	"--warn",
+	"clippy::wildcard_imports",
 	# This is a list of allowed Clippy rules for the purposes of gradual migration.
 	# See https://github.com/NomicFoundation/slang/pull/626
 	"-A",

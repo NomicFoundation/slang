@@ -2,8 +2,8 @@
 
 use napi_derive::napi;
 
-use super::*;
-use napi_text_index::*;
+use super::{napi_text_index, RustParseError};
+use napi_text_index::TextRange;
 
 #[napi(namespace = "parse_error")]
 #[derive(PartialEq, Clone)]

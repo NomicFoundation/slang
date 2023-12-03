@@ -1,7 +1,9 @@
 use std::fmt::Debug;
 use std::rc::Rc;
 
-use super::*;
+use super::{
+    GrammarVisitor, ParserDefinitionNode, ParserDefinitionRef, VersionQualityRange, Visitable,
+};
 
 pub trait PrecedenceParserDefinition: Debug {
     fn name(&self) -> &'static str;
