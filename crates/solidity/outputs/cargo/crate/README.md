@@ -13,7 +13,7 @@ A modular set of compiler APIs empowering the next generation of Solidity code a
 Written in Rust and distributed in multiple languages.
 
 -   [Announcement Post](https://medium.com/nomic-foundation-blog/slang-rethnet-2ad465fd7880)
--   [User Guide](https://nomicfoundation.github.io/slang/user-guide/cargo-crate/)
+-   [User Guide](https://nomicfoundation.github.io/slang/user-guide/rust-crate/)
 
 <br/>
 
