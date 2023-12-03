@@ -21,13 +21,13 @@ impl Parse for InputItem {
     fn parse(input: ParseStream) -> Result<Self> {
         let input = DeriveInput::parse(input)?;
 
-        return Self::from_syn(input);
+        Self::from_syn(input)
     }
 }
 
 impl InputItem {
     fn from_syn(input: DeriveInput) -> Result<Self> {
-        return Ok(match input.data {
+        Ok(match input.data {
             Data::Struct(data) => InputItem::Struct {
                 name: input.ident,
                 fields: match data.fields {
@@ -44,7 +44,7 @@ impl InputItem {
                     .try_collect()?,
             },
             Data::Union(data) => error(data.union_token, "Unions are not supported.")?,
-        });
+        })
     }
 }
 
@@ -55,7 +55,7 @@ pub struct InputVariant {
 
 impl InputVariant {
     fn from_syn(input: Variant) -> Result<Self> {
-        return Ok(match input.fields {
+        Ok(match input.fields {
             Fields::Named(fields) => InputVariant {
                 name: input.ident,
                 fields: Some(InputField::from_syn(fields)?),
@@ -65,7 +65,7 @@ impl InputVariant {
                 fields: None,
             },
             Fields::Unnamed(fields) => error(fields, "Unnamed fields are not supported.")?,
-        });
+        })
     }
 }
 
@@ -76,7 +76,7 @@ pub struct InputField {
 
 impl InputField {
     fn from_syn(input: FieldsNamed) -> Result<Vec<Self>> {
-        return input
+        input
             .named
             .into_iter()
             .map(|field| match field.ident {
@@ -86,12 +86,12 @@ impl InputField {
                 }),
                 None => error(field, "Unnamed fields are not supported."),
             })
-            .try_collect();
+            .try_collect()
     }
 }
 
 pub fn add_spanned_prefix(input: String) -> String {
-    return format!("Spanned{input}");
+    format!("Spanned{input}")
 }
 
 pub fn strip_spanned_prefix(input: String) -> String {
@@ -102,5 +102,5 @@ pub fn strip_spanned_prefix(input: String) -> String {
 }
 
 fn error<T>(spanned: impl ToTokens, message: impl Display) -> Result<T> {
-    return Err(Error::new_spanned(spanned, message));
+    Err(Error::new_spanned(spanned, message))
 }

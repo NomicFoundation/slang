@@ -10,21 +10,21 @@ pub enum Location {
 
 impl Location {
     pub(super) fn root(file_path: PathBuf) -> LocationRef {
-        return LocationRef::new(Location::Root { file_path });
+        LocationRef::new(Location::Root { file_path })
     }
 
     pub(super) fn field<S: Into<String>>(self: &LocationRef, field: S) -> LocationRef {
-        return LocationRef::new(Location::Field {
+        LocationRef::new(Location::Field {
             parent: self.to_owned(),
             field: field.into(),
-        });
+        })
     }
 
     pub(super) fn index(self: &LocationRef, index: usize) -> LocationRef {
-        return LocationRef::new(Location::Index {
+        LocationRef::new(Location::Index {
             parent: self.to_owned(),
             index,
-        });
+        })
     }
 
     pub(super) fn flatten(self: &LocationRef) -> (PathBuf, Vec<LocationRef>) {
@@ -43,6 +43,6 @@ impl Location {
             }
         };
 
-        return (file_path, path);
+        (file_path, path)
     }
 }

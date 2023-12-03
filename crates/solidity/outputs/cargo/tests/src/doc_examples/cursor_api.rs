@@ -31,7 +31,7 @@ fn cursor_api() -> Result<()> {
     }
     assert!(matches!(&contract_names[..], [single] if single == "Foo"));
 
-    return Ok(());
+    Ok(())
 }
 
 #[test]
@@ -63,7 +63,7 @@ fn cursor_api_using_spawn() -> Result<()> {
     }
     assert!(matches!(&contract_names[..], [single] if single == "Foo"));
 
-    return Ok(());
+    Ok(())
 }
 
 #[test]
@@ -89,7 +89,7 @@ fn cursor_api_using_iter() -> Result<()> {
     }
     assert!(matches!(&contract_names[..], [single] if single == "Foo"));
 
-    return Ok(());
+    Ok(())
 }
 
 #[test]
@@ -113,7 +113,7 @@ fn cursor_api_using_iter_combinators() -> Result<()> {
 
     assert_eq!(contract_names, &["Foo"]);
 
-    return Ok(());
+    Ok(())
 }
 
 #[test]

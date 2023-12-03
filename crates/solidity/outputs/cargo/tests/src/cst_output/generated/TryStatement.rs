@@ -5,5 +5,5 @@ use anyhow::Result;
 
 #[test]
 fn try_catch() -> Result<()> {
-    return run("TryStatement", "try_catch");
+    run("TryStatement", "try_catch")
 }

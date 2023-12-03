@@ -17,7 +17,7 @@ pub struct VersionSet {
 
 impl VersionSet {
     pub fn empty() -> Self {
-        return Self { ranges: vec![] };
+        Self { ranges: vec![] }
     }
 
     pub fn from_range(range: VersionRange) -> Self {
@@ -25,7 +25,7 @@ impl VersionSet {
 
         instance.add(&range);
 
-        return instance;
+        instance
     }
 
     #[cfg(test)]
@@ -36,11 +36,11 @@ impl VersionSet {
             instance.add(range);
         }
 
-        return instance;
+        instance
     }
 
     pub fn is_empty(&self) -> bool {
-        return self.ranges.is_empty();
+        self.ranges.is_empty()
     }
 
     pub fn add(&mut self, range: &VersionRange) {
@@ -84,7 +84,7 @@ impl VersionSet {
             result.add(range);
         }
 
-        return result;
+        result
     }
 
     pub fn difference(&self, other: &Self) -> Self {
@@ -136,11 +136,11 @@ impl VersionSet {
         // Take anything remaining in first:
         result.extend(first_iter);
 
-        return Self { ranges: result };
+        Self { ranges: result }
     }
 
     pub fn max_version() -> Version {
-        return Version::new(u64::MAX, u64::MAX, u64::MAX);
+        Version::new(u64::MAX, u64::MAX, u64::MAX)
     }
 }
 
@@ -170,7 +170,7 @@ impl Display for VersionSet {
             }
         }
 
-        return Ok(());
+        Ok(())
     }
 }
 

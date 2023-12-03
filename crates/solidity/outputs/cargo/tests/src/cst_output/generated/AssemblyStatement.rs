@@ -5,5 +5,5 @@ use anyhow::Result;
 
 #[test]
 fn simple() -> Result<()> {
-    return run("AssemblyStatement", "simple");
+    run("AssemblyStatement", "simple")
 }

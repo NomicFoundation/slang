@@ -5,20 +5,20 @@ use anyhow::Result;
 
 #[test]
 fn constructor() -> Result<()> {
-    return run("ContractMembers", "constructor");
+    run("ContractMembers", "constructor")
 }
 
 #[test]
 fn local_expression() -> Result<()> {
-    return run("ContractMembers", "local_expression");
+    run("ContractMembers", "local_expression")
 }
 
 #[test]
 fn mismatched_delimiter() -> Result<()> {
-    return run("ContractMembers", "mismatched_delimiter");
+    run("ContractMembers", "mismatched_delimiter")
 }
 
 #[test]
 fn separated_recovery() -> Result<()> {
-    return run("ContractMembers", "separated_recovery");
+    run("ContractMembers", "separated_recovery")
 }

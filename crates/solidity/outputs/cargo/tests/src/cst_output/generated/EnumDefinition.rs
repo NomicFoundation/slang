@@ -5,10 +5,10 @@ use anyhow::Result;
 
 #[test]
 fn multiple_members() -> Result<()> {
-    return run("EnumDefinition", "multiple_members");
+    run("EnumDefinition", "multiple_members")
 }
 
 #[test]
 fn no_members() -> Result<()> {
-    return run("EnumDefinition", "no_members");
+    run("EnumDefinition", "no_members")
 }

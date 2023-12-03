@@ -91,5 +91,5 @@ pub fn publish_changesets() -> Result<()> {
     println!("The calling CI workflow will now publish them in a pull request.");
     println!();
 
-    return Ok(());
+    Ok(())
 }

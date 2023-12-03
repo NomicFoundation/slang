@@ -41,10 +41,10 @@ impl Binary {
 
                 progress_bar.inc(1);
 
-                return Self {
+                Self {
                     version: version.to_owned(),
                     local_path,
-                };
+                }
             })
             .collect();
 
@@ -53,7 +53,7 @@ impl Binary {
 
         binaries.sort_by_key(|binary| binary.version.to_owned());
 
-        return binaries;
+        binaries
     }
 
     pub fn run(&self, input: &ApiInput) -> Result<ApiOutput> {
@@ -63,7 +63,7 @@ impl Binary {
             .flag("--standard-json")
             .evaluate_with_input(input)?;
 
-        return Ok(serde_json::from_str(&output).unwrap());
+        Ok(serde_json::from_str(&output).unwrap())
     }
 }
 
@@ -81,7 +81,7 @@ fn fetch_releases(mirror_url: &Url, binaries_dir: &Path) -> HashMap<Version, Str
 
     let list_file = std::fs::read_to_string(list_path).unwrap();
     let list: MirrorList = serde_json::from_str(&list_file).unwrap();
-    return list.releases;
+    list.releases
 }
 
 fn download_file(url: Url, path: &Path) {
@@ -98,9 +98,9 @@ fn make_file_executable(local_path: &PathBuf) {
 }
 
 fn get_binaries_dir() -> PathBuf {
-    return CargoWorkspace::locate_source_crate("solidity_testing_solc")
+    CargoWorkspace::locate_source_crate("solidity_testing_solc")
         .unwrap()
-        .join("target/binaries");
+        .join("target/binaries")
 }
 
 fn get_mirror_url() -> Url {
@@ -113,7 +113,7 @@ fn get_mirror_url() -> Url {
         );
     };
 
-    return format!("https://binaries.soliditylang.org/{platform_dir}/")
+    format!("https://binaries.soliditylang.org/{platform_dir}/")
         .parse()
-        .unwrap();
+        .unwrap()
 }

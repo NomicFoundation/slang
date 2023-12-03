@@ -11,21 +11,21 @@ pub struct InfraErrors {
 
 impl InfraErrors {
     pub fn new() -> Self {
-        return Self::default();
+        Self::default()
     }
 
     pub fn len(&self) -> usize {
-        return self.contents.len();
+        self.contents.len()
     }
 
     pub fn is_empty(&self) -> bool {
-        return self.contents.is_empty();
+        self.contents.is_empty()
     }
 
     pub fn single(file_path: PathBuf, range: Range, message: String) -> Self {
         let mut errors = Self::new();
         errors.push(file_path, range, message);
-        return errors;
+        errors
     }
 
     pub fn push(&mut self, file_path: PathBuf, range: Range, message: String) {
@@ -42,7 +42,7 @@ impl InfraErrors {
 
     pub fn into_result(self) -> Result<()> {
         if self.contents.is_empty() {
-            return Ok(());
+            Ok(())
         } else {
             bail!(self);
         }
@@ -55,7 +55,7 @@ impl std::fmt::Display for InfraErrors {
             writeln!(f, "{error}")?;
         }
 
-        return Ok(());
+        Ok(())
     }
 }
 
@@ -77,7 +77,7 @@ impl std::fmt::Display for ErrorDescriptor {
 
         self.write_ariadne_report(f)?;
 
-        return Ok(());
+        Ok(())
     }
 }
 
@@ -111,7 +111,7 @@ impl ErrorDescriptor {
             .unwrap();
 
         writeln!(f, "{}", String::from_utf8(buffer).unwrap())?;
-        return Ok(());
+        Ok(())
     }
 
     fn write_problem_matcher(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
@@ -128,7 +128,7 @@ impl ErrorDescriptor {
             message = self.message,
         )?;
 
-        return Ok(());
+        Ok(())
     }
 }
 

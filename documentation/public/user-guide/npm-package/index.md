@@ -1,5 +1,7 @@
 # NPM Package
 
+[![npm](https://img.shields.io/npm/v/@nomicfoundation/slang?label=NPM%20Package&logo=npm&logoColor=white)](https://www.npmjs.com/package/@nomicfoundation/slang)
+
 ## Installation
 
 Start by adding the Slang package as a dependency to your project:

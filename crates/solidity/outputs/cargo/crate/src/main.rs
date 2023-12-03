@@ -43,13 +43,13 @@ enum Commands {
 }
 
 fn main() -> Result<()> {
-    return match Cli::parse().command {
+    match Cli::parse().command {
         Commands::Parse {
             file_path,
             version,
             json,
         } => execute_parse_command(file_path, version, json),
-    };
+    }
 }
 
 fn execute_parse_command(file_path_string: String, version: Version, json: bool) -> Result<()> {
@@ -77,7 +77,7 @@ fn execute_parse_command(file_path_string: String, version: Version, json: bool)
         std::process::exit(1);
     }
 
-    return Ok(());
+    Ok(())
 }
 
 #[test]

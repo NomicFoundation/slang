@@ -13,10 +13,10 @@ pub struct Codegen;
 
 impl Codegen {
     pub fn write_only() -> Result<CodegenWriteOnly> {
-        return CodegenWriteOnly::new();
+        CodegenWriteOnly::new()
     }
 
     pub fn read_write(input_dir: impl Into<PathBuf>) -> Result<CodegenReadWrite> {
-        return CodegenReadWrite::new(input_dir);
+        CodegenReadWrite::new(input_dir)
     }
 }

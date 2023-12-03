@@ -55,7 +55,7 @@ impl EbnfSerializer {
 
         instance.serialize_statement(&production.name, &root_node);
 
-        return Some(instance.outputs);
+        Some(instance.outputs)
     }
 
     /// Serializes a single EBNF statement.
@@ -105,7 +105,7 @@ impl EbnfSerializer {
             .map(|choice| {
                 let mut buffer = String::new();
                 self.serialize_node(choice, &mut buffer);
-                return buffer;
+                buffer
             })
             .collect::<Vec<_>>();
 
@@ -120,7 +120,7 @@ impl EbnfSerializer {
         }
 
         // Otherwise, break into multiple lines:
-        return choices.join(&format!("\n{padding} | ", padding = " ".repeat(name_width)));
+        choices.join(&format!("\n{padding} | ", padding = " ".repeat(name_width)))
     }
 
     /// Serialize and append an EBNF node to the buffer.
@@ -219,7 +219,7 @@ impl EbnfSerializer {
             name = format!("«{name}»");
         }
 
-        return name;
+        name
     }
 }
 
@@ -247,5 +247,5 @@ fn format_string_literal(value: &str) -> String {
         })
         .collect();
 
-    return format!("{delimiter}{formatted}{delimiter}");
+    format!("{delimiter}{formatted}{delimiter}")
 }

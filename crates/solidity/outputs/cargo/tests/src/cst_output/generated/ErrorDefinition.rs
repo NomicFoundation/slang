@@ -5,5 +5,5 @@ use anyhow::Result;
 
 #[test]
 fn top_level() -> Result<()> {
-    return run("ErrorDefinition", "top_level");
+    run("ErrorDefinition", "top_level")
 }

@@ -12,5 +12,5 @@ pub fn validate_language(language: &LanguageDefinitionRef) -> Result<()> {
     rules::references::run(language)?;
     rules::lints::run(language)?;
 
-    return Ok(());
+    Ok(())
 }

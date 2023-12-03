@@ -157,7 +157,7 @@ fn calculate_defined_in(analysis: &mut Analysis, item: &SpannedItem) -> VersionS
         }
     };
 
-    return defined_in;
+    defined_in
 }
 
 #[allow(clippy::enum_variant_names)]

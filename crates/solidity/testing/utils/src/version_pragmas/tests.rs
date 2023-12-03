@@ -5,18 +5,18 @@ use crate::version_pragmas::extract_version_pragmas;
 
 #[test]
 fn exact_single_version() -> Result<()> {
-    return test_aux(
+    test_aux(
         &["0.6.0", "0.7.0", "0.8.0"],
         "
             pragma solidity 0.7.0;
         ",
         &["0.7.0"],
-    );
+    )
 }
 
 #[test]
 fn multiple_versions() -> Result<()> {
-    return test_aux(
+    test_aux(
         &[
             "0.7.0", "0.7.1", "0.7.2", "0.7.3", "0.7.4", "0.7.5", "0.7.6",
         ],
@@ -24,12 +24,12 @@ fn multiple_versions() -> Result<()> {
             pragma solidity >=0.7.2 <=0.7.4;
         ",
         &["0.7.2", "0.7.3", "0.7.4"],
-    );
+    )
 }
 
 #[test]
 fn multiple_version_pragmas() -> Result<()> {
-    return test_aux(
+    test_aux(
         &[
             "0.8.0", "0.8.1", "0.8.2", "0.8.3", "0.8.4", "0.8.5", "0.8.6", "0.8.7", "0.8.8",
             "0.8.9",
@@ -39,12 +39,12 @@ fn multiple_version_pragmas() -> Result<()> {
             pragma solidity <0.8.7;
         ",
         &["0.8.3", "0.8.4", "0.8.5", "0.8.6"],
-    );
+    )
 }
 
 #[test]
 fn version_alternatives() -> Result<()> {
-    return test_aux(
+    test_aux(
         &[
             "0.8.0", "0.8.1", "0.8.2", "0.8.3", "0.8.4", "0.8.5", "0.8.6", "0.8.7", "0.8.8",
             "0.8.9",
@@ -53,12 +53,12 @@ fn version_alternatives() -> Result<()> {
             pragma solidity 0.8.3 || 0.8.7;
         ",
         &["0.8.3", "0.8.7"],
-    );
+    )
 }
 
 #[test]
 fn version_range() -> Result<()> {
-    return test_aux(
+    test_aux(
         &[
             "0.8.0", "0.8.1", "0.8.2", "0.8.3", "0.8.4", "0.8.5", "0.8.6", "0.8.7", "0.8.8",
             "0.8.9",
@@ -67,12 +67,12 @@ fn version_range() -> Result<()> {
             pragma solidity 0.8.3 - 0.8.7;
         ",
         &["0.8.3", "0.8.4", "0.8.5", "0.8.6", "0.8.7"],
-    );
+    )
 }
 
 #[test]
 fn nested_expressions() -> Result<()> {
-    return test_aux(
+    test_aux(
         &[
             "0.8.0", "0.8.1", "0.8.2", "0.8.3", "0.8.4", "0.8.5", "0.8.6", "0.8.7", "0.8.8",
             "0.8.9",
@@ -81,7 +81,7 @@ fn nested_expressions() -> Result<()> {
             pragma solidity 0.8.1 || 0.8.4 - 0.8.6;
         ",
         &["0.8.1", "0.8.4", "0.8.5", "0.8.6"],
-    );
+    )
 }
 
 fn test_aux(all_versions: &[&str], source: &str, expected: &[&str]) -> Result<()> {
@@ -105,5 +105,5 @@ fn test_aux(all_versions: &[&str], source: &str, expected: &[&str]) -> Result<()
 
     assert_eq!(expected, actual);
 
-    return Ok(());
+    Ok(())
 }

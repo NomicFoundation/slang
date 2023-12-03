@@ -32,7 +32,7 @@ impl Visitor for Operators {
         _reporter: &mut Reporter,
     ) -> bool {
         self.current_production = Some(production.to_owned());
-        return true;
+        true
     }
 
     fn visit_parser(
@@ -41,7 +41,7 @@ impl Visitor for Operators {
         _location: &LocationRef,
         _reporter: &mut Reporter,
     ) -> bool {
-        return false; // skip
+        false // skip
     }
 
     fn visit_scanner(
@@ -50,7 +50,7 @@ impl Visitor for Operators {
         _location: &LocationRef,
         _reporter: &mut Reporter,
     ) -> bool {
-        return false; // skip
+        false // skip
     }
 
     fn visit_precedence_parser(
@@ -90,7 +90,7 @@ impl Visitor for Operators {
             };
         }
 
-        return false;
+        false
     }
 }
 

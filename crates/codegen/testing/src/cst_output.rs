@@ -35,7 +35,7 @@ pub fn generate_cst_output_tests(
         )?;
     }
 
-    return Ok(());
+    Ok(())
 }
 
 fn collect_parser_tests(data_dir: &Path) -> Result<BTreeMap<String, BTreeSet<String>>> {
@@ -72,7 +72,7 @@ fn collect_parser_tests(data_dir: &Path) -> Result<BTreeMap<String, BTreeSet<Str
         };
     }
 
-    return Ok(parser_tests);
+    Ok(parser_tests)
 }
 
 fn generate_mod_file(
@@ -109,7 +109,7 @@ fn generate_mod_file(
         ",
     );
 
-    return codegen.write_file(mod_file_path, contents);
+    codegen.write_file(mod_file_path, contents)
 }
 
 fn generate_unit_test_file(
@@ -125,7 +125,7 @@ fn generate_unit_test_file(
                 "
                     #[test]
                     fn {test_name}() -> Result<()> {{
-                        return run(\"{parser_name}\", \"{test_name}\");
+                        run(\"{parser_name}\", \"{test_name}\")
                     }}
                 "
             )
@@ -141,5 +141,5 @@ fn generate_unit_test_file(
         "
     );
 
-    return codegen.write_file(unit_test_file_path, contents);
+    codegen.write_file(unit_test_file_path, contents)
 }

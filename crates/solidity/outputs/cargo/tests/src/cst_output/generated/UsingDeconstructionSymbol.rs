@@ -5,20 +5,20 @@ use anyhow::Result;
 
 #[test]
 fn identifier_path() -> Result<()> {
-    return run("UsingDeconstructionSymbol", "identifier_path");
+    run("UsingDeconstructionSymbol", "identifier_path")
 }
 
 #[test]
 fn identifier_path_as_operator() -> Result<()> {
-    return run("UsingDeconstructionSymbol", "identifier_path_as_operator");
+    run("UsingDeconstructionSymbol", "identifier_path_as_operator")
 }
 
 #[test]
 fn single_id() -> Result<()> {
-    return run("UsingDeconstructionSymbol", "single_id");
+    run("UsingDeconstructionSymbol", "single_id")
 }
 
 #[test]
 fn single_id_as_operator() -> Result<()> {
-    return run("UsingDeconstructionSymbol", "single_id_as_operator");
+    run("UsingDeconstructionSymbol", "single_id_as_operator")
 }

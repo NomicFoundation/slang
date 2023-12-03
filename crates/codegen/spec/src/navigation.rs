@@ -47,7 +47,7 @@ impl NavigationEntry {
             }
         };
 
-        return Ok(());
+        Ok(())
     }
 
     fn title(&self) -> &str {

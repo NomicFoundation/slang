@@ -101,7 +101,7 @@ impl ToJS for Rc<RustRuleNode> {
     fn to_js(&self, env: &Env) -> JsObject {
         let obj =
             unsafe { <RuleNode as ToNapiValue>::to_napi_value(env.raw(), RuleNode(self.clone())) };
-        return unsafe { JsObject::from_raw_unchecked(env.raw(), obj.unwrap()) };
+        unsafe { JsObject::from_raw_unchecked(env.raw(), obj.unwrap()) }
     }
 }
 
@@ -110,7 +110,7 @@ impl ToJS for Rc<RustTokenNode> {
         let obj = unsafe {
             <TokenNode as ToNapiValue>::to_napi_value(env.raw(), TokenNode(self.clone()))
         };
-        return unsafe { JsObject::from_raw_unchecked(env.raw(), obj.unwrap()) };
+        unsafe { JsObject::from_raw_unchecked(env.raw(), obj.unwrap()) }
     }
 }
 

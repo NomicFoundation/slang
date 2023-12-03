@@ -403,9 +403,7 @@ enum ReferenceFilter {
 impl ReferenceFilter {
     fn apply(&self, item: &SpannedItem) -> bool {
         match (self, item) {
-            (Self::Nodes, item) => {
-                return Self::NonTerminals.apply(item) || Self::Terminals.apply(item);
-            }
+            (Self::Nodes, item) => Self::NonTerminals.apply(item) || Self::Terminals.apply(item),
             (
                 Self::NonTerminals,
                 SpannedItem::Struct { .. }
@@ -422,14 +420,10 @@ impl ReferenceFilter {
             )
             | (Self::Trivia, SpannedItem::Trivia { .. })
             | (Self::Tokens, SpannedItem::Token { .. })
-            | (Self::Fragments, SpannedItem::Fragment { .. }) => {
-                return true;
-            }
+            | (Self::Fragments, SpannedItem::Fragment { .. }) => true,
 
-            _ => {
-                return false;
-            }
-        };
+            _ => false,
+        }
     }
 }
 
@@ -499,20 +493,14 @@ fn update_enablement(
             .add(new_specifier, &Errors::EnabledTooWide(existing_enablement));
     }
 
-    return new_enablement;
+    new_enablement
 }
 
 fn check_version_specifier(analysis: &mut Analysis, specifier: &SpannedVersionSpecifier) -> bool {
     match specifier {
-        SpannedVersionSpecifier::Never => {
-            return true;
-        }
-        SpannedVersionSpecifier::From { from } => {
-            return check_version(analysis, from);
-        }
-        SpannedVersionSpecifier::Till { till } => {
-            return check_version(analysis, till);
-        }
+        SpannedVersionSpecifier::Never => true,
+        SpannedVersionSpecifier::From { from } => check_version(analysis, from),
+        SpannedVersionSpecifier::Till { till } => check_version(analysis, till),
         SpannedVersionSpecifier::Range { from, till } => {
             if from >= till {
                 analysis
@@ -521,9 +509,9 @@ fn check_version_specifier(analysis: &mut Analysis, specifier: &SpannedVersionSp
                 return false;
             }
 
-            return check_version(analysis, from) || check_version(analysis, till);
+            check_version(analysis, from) || check_version(analysis, till)
         }
-    };
+    }
 }
 
 fn check_version(analysis: &mut Analysis, version: &Spanned<Version>) -> bool {
@@ -535,7 +523,7 @@ fn check_version(analysis: &mut Analysis, version: &Spanned<Version>) -> bool {
         return false;
     }
 
-    return true;
+    true
 }
 
 #[derive(thiserror::Error, Debug)]

@@ -27,24 +27,24 @@ pub struct Command {
 
 impl Command {
     pub fn new(name: impl Into<String>) -> Self {
-        return Self {
+        Self {
             name: name.into(),
             args: vec![],
             environment: HashMap::new(),
             current_dir: None,
-        };
+        }
     }
 
     pub fn flag(mut self, flag: impl Into<String>) -> Self {
         self.args.push(flag.into());
 
-        return self;
+        self
     }
 
     pub fn arg(mut self, arg: impl Into<String>) -> Self {
         self.args.push(arg.into());
 
-        return self;
+        self
     }
 
     pub fn args(mut self, args: impl IntoIterator<Item = impl Into<String>>) -> Self {
@@ -52,20 +52,20 @@ impl Command {
             self.args.push(arg.into());
         }
 
-        return self;
+        self
     }
 
     pub fn property(mut self, key: impl Into<String>, value: impl Into<String>) -> Self {
         self.args.push(key.into());
         self.args.push(value.into());
 
-        return self;
+        self
     }
 
     pub fn env(mut self, key: impl Into<String>, value: impl Into<String>) -> Self {
         self.environment.insert(key.into(), value.into());
 
-        return self;
+        self
     }
 
     pub fn current_dir(mut self, current_dir: impl Into<PathBuf>) -> Self {
@@ -74,7 +74,7 @@ impl Command {
             self.current_dir = Some(current_dir);
         }
 
-        return self;
+        self
     }
 
     pub fn evaluate(&self) -> Result<String> {
@@ -82,7 +82,7 @@ impl Command {
             .wait_with_output()
             .with_context(|| format!("Failed to wait for output: {self}"))?;
 
-        return extract_output(self, output);
+        extract_output(self, output)
     }
 
     pub fn evaluate_with_input(&self, input: impl AsRef<str>) -> Result<String> {
@@ -99,11 +99,11 @@ impl Command {
             .wait_with_output()
             .with_context(|| format!("Failed to wait for output: {self}"))?;
 
-        return extract_output(self, output);
+        extract_output(self, output)
     }
 
     pub fn run(&self) -> Result<()> {
-        return GitHub::collapse_group(format!("$ {self}"), || run_with_defaults(self));
+        GitHub::collapse_group(format!("$ {self}"), || run_with_defaults(self))
     }
 
     /// A quick replacement for `xargs`.
@@ -111,7 +111,7 @@ impl Command {
     pub fn run_xargs(&self, files: impl IntoIterator<Item = PathBuf>) -> Result<()> {
         const CHUNK_SIZE: usize = 50;
 
-        return GitHub::collapse_group(format!("$ {self}"), || {
+        GitHub::collapse_group(format!("$ {self}"), || {
             files
                 .into_iter()
                 .map(|file| file.unwrap_str().to_owned())
@@ -122,7 +122,7 @@ impl Command {
                 .into_par_iter()
                 .map(|batch| run_with_defaults(&self.clone().args(batch)))
                 .collect()
-        });
+        })
     }
 }
 
@@ -131,11 +131,11 @@ fn run_with_defaults(command: &Command) -> Result<()> {
         .wait()
         .with_context(|| format!("Failed to wait for status: {command}"))?;
 
-    return check_status(command, status).map_err(|error| {
+    check_status(command, status).map_err(|error| {
         // Print error and exit process, to skip printing irrelevant backtraces from the parent process:
         eprintln!("{error}");
         std::process::exit(1);
-    });
+    })
 }
 
 fn spawn_with_defaults(command: &Command, stdio: impl Fn() -> Stdio) -> Result<Child> {
@@ -160,9 +160,9 @@ fn spawn_with_defaults(command: &Command, stdio: impl Fn() -> Stdio) -> Result<C
         std_command.current_dir(repo_root);
     }
 
-    return std_command
+    std_command
         .spawn()
-        .with_context(|| format!("Failed to spawn command: {command}"));
+        .with_context(|| format!("Failed to spawn command: {command}"))
 }
 
 fn extract_output(command: &Command, output: Output) -> Result<String> {
@@ -170,21 +170,19 @@ fn extract_output(command: &Command, output: Output) -> Result<String> {
         .with_context(|| format!("Failed to read stdout: {command}"))?;
 
     match check_status(command, output.status) {
-        Ok(()) => {
-            return Ok(stdout);
-        }
+        Ok(()) => Ok(stdout),
         Err(error) => {
             let stderr = String::from_utf8(output.stderr)
                 .with_context(|| format!("Failed to read stderr: {command}"))?;
 
-            return Err(error).with_context(|| format!("stdout:\n{stdout}\n\nstderr:\n{stderr}"));
+            Err(error).with_context(|| format!("stdout:\n{stdout}\n\nstderr:\n{stderr}"))
         }
-    };
+    }
 }
 
 fn check_status(command: &Command, status: ExitStatus) -> Result<()> {
     if status.success() {
-        return Ok(());
+        Ok(())
     } else {
         bail!(
             "Command failed with code '{code}' and signal '{signal}':\n{command}",
@@ -230,6 +228,6 @@ impl Display for Command {
             parts.push(format!("{delimiter}{arg}{delimiter}"));
         }
 
-        return write!(formatter, "{}", parts.join(" "));
+        write!(formatter, "{}", parts.join(" "))
     }
 }

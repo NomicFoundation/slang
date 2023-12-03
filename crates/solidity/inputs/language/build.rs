@@ -22,13 +22,13 @@ fn main() -> Result<()> {
     );
     rerun_if_changed!(bin_file_path.unwrap_str());
 
-    return Ok(());
+    Ok(())
 }
 
 fn compile_language(crate_dir: &Path) -> Result<LanguageDefinitionRef> {
     let definition_dir = crate_dir.join("definition");
 
-    return LanguageDefinition::compile(definition_dir);
+    LanguageDefinition::compile(definition_dir)
 }
 
 fn write_binary(language: &LanguageDefinitionRef, bin_file_path: &Path) -> Result<()> {
@@ -48,5 +48,5 @@ fn write_binary(language: &LanguageDefinitionRef, bin_file_path: &Path) -> Resul
 
     std::fs::write(bin_file_path, &buffer)?;
 
-    return Ok(());
+    Ok(())
 }

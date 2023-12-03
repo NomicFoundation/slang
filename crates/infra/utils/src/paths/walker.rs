@@ -11,17 +11,17 @@ pub struct FileWalker {
 
 impl FileWalker {
     pub fn from_repo_root() -> Self {
-        return Self::from_directory(Path::repo_root());
+        Self::from_directory(Path::repo_root())
     }
 
     pub fn from_directory(root_dir: impl Into<PathBuf>) -> Self {
-        return Self {
+        Self {
             root_dir: root_dir.into(),
-        };
+        }
     }
 
     pub fn find_all(&self) -> Result<impl IntoIterator<Item = PathBuf>> {
-        return self.find(["**/*"]);
+        self.find(["**/*"])
     }
 
     pub fn find<G>(&self, globs: impl AsRef<[G]>) -> Result<impl IntoIterator<Item = PathBuf>>
@@ -55,12 +55,12 @@ impl FileWalker {
             let entry = entry.unwrap();
 
             if entry.file_type().unwrap().is_file() {
-                return Some(entry.into_path());
+                Some(entry.into_path())
             } else {
-                return None;
+                None
             }
         });
 
-        return Ok(iterator);
+        Ok(iterator)
     }
 }

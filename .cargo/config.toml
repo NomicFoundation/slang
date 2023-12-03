@@ -6,11 +6,4 @@ incremental = true
 lto = true
 
 [build]
-rustflags = [
-	"--warn",
-	"unused_crate_dependencies",
-	# This is a list of allowed Clippy rules for the purposes of gradual migration.
-	# See https://github.com/NomicFoundation/slang/pull/626
-	"-A",
-	"clippy::needless_return",
-]
+rustflags = ["--warn", "unused_crate_dependencies"]

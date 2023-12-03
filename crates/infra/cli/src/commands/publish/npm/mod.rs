@@ -20,7 +20,7 @@ pub fn publish_npm() -> Result<()> {
     //  Then publish the main package, that depends on the previously published platform-specific packages:
 
     let package_dir = NapiResolver::main_package_dir();
-    return publish_package(&package_dir, &NapiPackageKind::Main);
+    publish_package(&package_dir, &NapiPackageKind::Main)
 }
 
 fn publish_package(package_dir: &Path, kind: &NapiPackageKind) -> Result<()> {
@@ -48,5 +48,5 @@ fn publish_package(package_dir: &Path, kind: &NapiPackageKind) -> Result<()> {
         command = command.flag("--dry-run");
     }
 
-    return command.run();
+    command.run()
 }

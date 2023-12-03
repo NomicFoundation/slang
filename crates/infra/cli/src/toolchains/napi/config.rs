@@ -31,7 +31,7 @@ impl NapiConfig {
     pub fn local_version(package_dir: impl AsRef<Path>) -> Result<Version> {
         let package = load_package(package_dir.as_ref())?;
 
-        return Ok(package.version);
+        Ok(package.version)
     }
 
     pub fn published_version(package_dir: impl AsRef<Path>) -> Result<Version> {
@@ -41,7 +41,7 @@ impl NapiConfig {
             .args(["view", package.name.as_str(), "version"])
             .evaluate()?;
 
-        return Ok(Version::parse(version.trim())?);
+        Ok(Version::parse(version.trim())?)
     }
 
     pub fn list_all_targets() -> Result<Vec<String>> {
@@ -57,7 +57,7 @@ impl NapiConfig {
             "Package should explicitly list targets, instead of using defaults."
         );
 
-        return Ok(triples.additional.to_owned());
+        Ok(triples.additional.to_owned())
     }
 }
 
@@ -66,5 +66,5 @@ fn load_package(package_dir: &Path) -> Result<Package> {
 
     let package = serde_json::from_str::<Package>(&package_json)?;
 
-    return Ok(package);
+    Ok(package)
 }

@@ -5,5 +5,5 @@ use anyhow::Result;
 
 #[test]
 fn int() -> Result<()> {
-    return run("ConstantDefinition", "int");
+    run("ConstantDefinition", "int")
 }
