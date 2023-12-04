@@ -23,28 +23,20 @@ use codegen_language_definition::model::Identifier;
 use codegen_language_definition::model::Item;
 use indexmap::IndexMap;
 
-use crate::definition::SolidityDefinition;
-
-/// Materializes the DSL v2 model ([`SolidityDefinition`]) into [`Grammar`].
+/// Materializes the DSL v2 model ([`model::Language`]) into [`Grammar`].
 pub trait GrammarConstructorDslV2 {
-    fn from_dsl_v2() -> Rc<Grammar>;
+    fn from_dsl_v2(lang: &model::Language) -> Grammar;
 }
 
 impl GrammarConstructorDslV2 for Grammar {
-    fn from_dsl_v2() -> Rc<Grammar> {
-        let lang = SolidityDefinition::create();
-
-        let mut items = HashMap::new();
-
-        for section in lang.sections {
-            for topic in section.topics {
-                let ctx = topic.lexical_context;
-
-                for item in topic.items {
-                    items.insert(item.name().clone(), (ctx.clone(), Rc::clone(&item)));
-                }
-            }
-        }
+    fn from_dsl_v2(lang: &model::Language) -> Grammar {
+        // Collect language items into a lookup table to speed up resolution
+        let mut items = HashMap::from_iter(lang.items_with_section().map(|(_, topic, item)| {
+            (
+                item.name().clone(),
+                (topic.lexical_context.clone(), Rc::clone(item)),
+            )
+        }));
 
         // TODO(#638): To minimize regression in the parser migration, we keep the existing DSL v1 model
         // of SourceUnit being followed by `EndOfFileTrivia`.
@@ -95,12 +87,12 @@ impl GrammarConstructorDslV2 for Grammar {
 
         let trailing_trivia = Rc::new(NamedTriviaParser {
             name: "TrailingTrivia",
-            def: resolve_trivia(lang.trailing_trivia, &mut ctx),
+            def: resolve_trivia(lang.trailing_trivia.clone(), &mut ctx),
         }) as Rc<dyn TriviaParserDefinition>;
 
         let eof_trivia = Rc::new(NamedTriviaParser {
             name: "EndOfFileTrivia",
-            def: resolve_trivia(lang.leading_trivia, &mut ctx),
+            def: resolve_trivia(lang.leading_trivia.clone(), &mut ctx),
         }) as Rc<dyn TriviaParserDefinition>;
 
         ctx.resolved.insert(
@@ -159,9 +151,9 @@ impl GrammarConstructorDslV2 for Grammar {
             .iter()
             .map(|(name, elem)| (name.to_string().leak() as &_, elem.clone()));
 
-        Rc::new(Grammar {
+        Grammar {
             name: lang.name.to_string(),
-            versions: BTreeSet::from_iter(lang.versions),
+            versions: BTreeSet::from_iter(lang.versions.clone()),
             leading_trivia_parser: leading_trivia.clone(),
             trailing_trivia_parser: trailing_trivia.clone(),
             elements: HashMap::from_iter(
@@ -171,7 +163,7 @@ impl GrammarConstructorDslV2 for Grammar {
                         .map(|elem| (elem.name(), elem.into())),
                 ),
             ),
-        })
+        }
     }
 }
 

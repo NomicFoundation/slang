@@ -14,8 +14,8 @@ fn bytes_invalid_size_as_identifier() -> Result<()> {
 }
 
 #[test]
-fn bytes_no_size_as_identifier() -> Result<()> {
-    run("TypeName", "bytes_no_size_as_identifier")
+fn bytes_no_size_reserved() -> Result<()> {
+    run("TypeName", "bytes_no_size_reserved")
 }
 
 #[test]

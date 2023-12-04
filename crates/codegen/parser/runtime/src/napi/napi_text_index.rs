@@ -1,6 +1,6 @@
 use napi_derive::napi;
 
-use super::*;
+use super::{RustTextIndex, RustTextRange};
 
 #[napi(object, namespace = "text_index")]
 #[derive(Copy, Clone)]

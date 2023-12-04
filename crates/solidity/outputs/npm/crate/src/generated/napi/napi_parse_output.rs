@@ -1,9 +1,9 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-use {napi::bindgen_prelude::*, napi_derive::napi};
+use {napi::bindgen_prelude::Env, napi_derive::napi};
 
-use super::*;
-use napi_cst::*;
+use super::{napi_cst, napi_cursor, napi_parse_error, RustParseOutput};
+use napi_cst::ToJS;
 
 #[napi(namespace = "parse_output")]
 pub struct ParseOutput(RustParseOutput);
@@ -16,7 +16,7 @@ impl From<RustParseOutput> for ParseOutput {
 
 #[napi(namespace = "parse_output")]
 impl ParseOutput {
-    #[napi(ts_return_type = "cst.RuleNode | cst.TokenNode")]
+    #[napi(ts_return_type = "cst.Node")]
     pub fn tree(&self, env: Env) -> napi::JsObject {
         self.0.tree().to_js(&env)
     }

@@ -66,7 +66,7 @@ solidity_testing_utils = { path = "crates/solidity/testing/utils" }
 #
 # External
 #
-anyhow = { version = "1.0.70", features = ["backtrace", "std"] }
+anyhow = { version = "1.0.75", features = ["backtrace", "std"] }
 ariadne = { version = "0.2.0" }
 bson = { version = "2.6.1" }
 cargo-emit = { version = "0.2.1" }
