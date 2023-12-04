@@ -83,7 +83,7 @@ impl Reporter {
                     .iter()
                     .take(remaining)
                     .map(|error| {
-                        error.to_error_report(source_id, source, /* with color */ true)
+                        error.to_error_report(source_id, source, /* with_color */ true)
                     })
                     .collect();
 

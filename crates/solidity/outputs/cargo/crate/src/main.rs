@@ -63,7 +63,7 @@ fn execute_parse_command(file_path_string: String, version: Version, json: bool)
 
     let errors = output.errors();
     for error in errors {
-        let report = error.to_error_report(&file_path_string, &input, /* with color */ true);
+        let report = error.to_error_report(&file_path_string, &input, /* with_color */ true);
         eprintln!("{report}");
     }
 
