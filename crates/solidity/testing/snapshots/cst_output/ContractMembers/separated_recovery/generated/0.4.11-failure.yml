@@ -64,7 +64,7 @@ Errors: # 10 total
        │                                                               ╰────────────── Error occurred here.
     ───╯
   - >
-    Error: Expected Identifier.
+    Error: Expected AddressKeyword or Identifier.
         ╭─[crates/solidity/testing/snapshots/cst_output/ContractMembers/separated_recovery/input.sol:11:51]
         │
      11 │ function nested_lists() override(some.ident, next.do.that, other.while, next.one, final, ultimate);
@@ -72,7 +72,7 @@ Errors: # 10 total
         │                                                      ╰───── Error occurred here.
     ────╯
   - >
-    Error: Expected Identifier.
+    Error: Expected AddressKeyword or Identifier.
         ╭─[crates/solidity/testing/snapshots/cst_output/ContractMembers/separated_recovery/input.sol:11:66]
         │
      11 │ function nested_lists() override(some.ident, next.do.that, other.while, next.one, final, ultimate);
@@ -88,7 +88,7 @@ Errors: # 10 total
         │                                                                                          ╰───────── Error occurred here.
     ────╯
   - >
-    Error: Expected Identifier.
+    Error: Expected AddressKeyword or Identifier.
         ╭─[crates/solidity/testing/snapshots/cst_output/ContractMembers/separated_recovery/input.sol:12:39]
         │
      12 │ function nested_lists() override(some., next.arg, next.one, ultimate);

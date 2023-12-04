@@ -3419,22 +3419,13 @@ codegen_language_macros::compile!(Language(
                                 PrecedenceExpression(
                                     name = MemberAccessExpression,
                                     rule_name = MemberAccessExpression,
-                                    operators = [
-                                        PrecedenceOperator(
-                                            model = Postfix,
-                                            fields = (
-                                                period = Required(Period),
-                                                member = Required(Identifier)
-                                            )
-                                        ),
-                                        PrecedenceOperator(
-                                            model = Postfix,
-                                            fields = (
-                                                period = Required(Period),
-                                                member = Required(AddressKeyword)
-                                            )
+                                    operators = [PrecedenceOperator(
+                                        model = Postfix,
+                                        fields = (
+                                            period = Required(Period),
+                                            member = Required(MemberAccess)
                                         )
-                                    ]
+                                    )]
                                 ),
                                 PrecedenceExpression(
                                     name = IndexAccessExpression,
@@ -3471,6 +3462,13 @@ codegen_language_macros::compile!(Language(
                                 PrimaryExpression(reference = TrueKeyword),
                                 PrimaryExpression(reference = FalseKeyword),
                                 PrimaryExpression(reference = Identifier)
+                            ]
+                        ),
+                        Enum(
+                            name = MemberAccess,
+                            variants = [
+                                EnumVariant(name = Identifier, reference = Identifier),
+                                EnumVariant(name = AddressKeyword, reference = AddressKeyword)
                             ]
                         ),
                         Struct(

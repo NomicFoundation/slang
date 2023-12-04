@@ -2935,66 +2935,25 @@ impl Language {
             PrecedenceHelper::to_postfix_operator(
                 RuleKind::MemberAccessExpression,
                 87u8,
-                ChoiceHelper::run(input, |mut choice, input| {
-                    let result = SequenceHelper::run(|mut seq| {
-                        seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                            input,
-                            TokenKind::Period,
-                        ))?;
-                        seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                            input,
-                            TokenKind::Identifier,
-                        ))?;
-                        seq.finish()
-                    });
-                    choice.consider(input, result)?;
-                    let result = SequenceHelper::run(|mut seq| {
-                        seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                            input,
-                            TokenKind::Period,
-                        ))?;
-                        seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                            input,
-                            TokenKind::AddressKeyword,
-                        ))?;
-                        seq.finish()
-                    });
-                    choice.consider(input, result)?;
-                    choice.finish(input)
-                }),
-            )
-        };
-        #[allow(unused_variables)]
-        let parse_member_access_expression = |input: &mut ParserContext| {
-            PrecedenceHelper::to_postfix_operator(
-                RuleKind::MemberAccessExpression,
-                89u8,
-                ChoiceHelper::run(input, |mut choice, input| {
-                    let result = SequenceHelper::run(|mut seq| {
-                        seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                            input,
-                            TokenKind::Period,
-                        ))?;
-                        seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
+                SequenceHelper::run(|mut seq| {
+                    seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        input,
+                        TokenKind::Period,
+                    ))?;
+                    seq.elem(ChoiceHelper::run(input, |mut choice, input| {
+                        let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
                             TokenKind::Identifier,
-                        ))?;
-                        seq.finish()
-                    });
-                    choice.consider(input, result)?;
-                    let result = SequenceHelper::run(|mut seq| {
-                        seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                            input,
-                            TokenKind::Period,
-                        ))?;
-                        seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        );
+                        choice.consider(input, result)?;
+                        let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
                             TokenKind::AddressKeyword,
-                        ))?;
-                        seq.finish()
-                    });
-                    choice.consider(input, result)?;
-                    choice.finish(input)
+                        );
+                        choice.consider(input, result)?;
+                        choice.finish(input)
+                    }))?;
+                    seq.finish()
                 }),
             )
         };
@@ -3002,7 +2961,7 @@ impl Language {
         let parse_index_access_expression = |input: &mut ParserContext| {
             PrecedenceHelper::to_postfix_operator(
                 RuleKind::IndexAccessExpression,
-                91u8,
+                89u8,
                 SequenceHelper::run(|mut seq| {
                     let mut delim_guard = input.open_delim(TokenKind::CloseBracket);
                     let input = delim_guard.ctx();
@@ -3161,8 +3120,6 @@ impl Language {
                 let result = parse_postfix_expression(input);
                 choice.consider(input, result)?;
                 let result = parse_function_call_expression(input);
-                choice.consider(input, result)?;
-                let result = parse_member_access_expression(input);
                 choice.consider(input, result)?;
                 let result = parse_member_access_expression(input);
                 choice.consider(input, result)?;
