@@ -105,6 +105,12 @@ impl Language {
                     for prec in &item.precedence_expressions {
                         for op in &prec.operators {
                             add_spec(&op.enabled);
+                            for field in op.fields.values() {
+                                match field {
+                                    Field::Required { .. } => (),
+                                    Field::Optional { enabled, .. } => add_spec(enabled),
+                                }
+                            }
                         }
                     }
                     for prim in &item.primary_expressions {
