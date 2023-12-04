@@ -134,6 +134,7 @@ fn run_with_defaults(command: &Command) -> Result<()> {
     check_status(command, status).map_err(|error| {
         // Print error and exit process, to skip printing irrelevant backtraces from the parent process:
         eprintln!("{error}");
+        #[allow(clippy::exit)]
         std::process::exit(1);
     })
 }

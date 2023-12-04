@@ -3,7 +3,7 @@ use indexmap::{IndexMap, IndexSet};
 use proc_macro2::{Literal, TokenStream};
 use quote::{format_ident, quote};
 use semver::Version;
-use std::{ops::Deref, rc::Rc};
+use std::rc::Rc;
 
 impl WriteOutputTokens for bool {
     fn write_output_tokens(&self) -> TokenStream {
@@ -17,7 +17,7 @@ impl WriteOutputTokens for bool {
 
 impl<T: WriteOutputTokens> WriteOutputTokens for Box<T> {
     fn write_output_tokens(&self) -> TokenStream {
-        let value = self.deref().write_output_tokens();
+        let value = self.as_ref().write_output_tokens();
 
         quote! {
             #value.into()
@@ -77,7 +77,7 @@ impl<T: WriteOutputTokens> WriteOutputTokens for Option<T> {
 
 impl<T: WriteOutputTokens> WriteOutputTokens for Rc<T> {
     fn write_output_tokens(&self) -> TokenStream {
-        let value = self.deref().write_output_tokens();
+        let value = self.as_ref().write_output_tokens();
 
         quote! {
             #value.into()

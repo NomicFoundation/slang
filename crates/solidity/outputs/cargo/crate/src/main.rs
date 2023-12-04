@@ -1,6 +1,6 @@
 use std::{fs, path::PathBuf};
 
-use anyhow::{Context, Result};
+use anyhow::{bail, Context, Result};
 use clap::{Parser as ClapParser, Subcommand};
 use semver::Version;
 use slang_solidity::{kinds::ProductionKind, language::Language};
@@ -73,11 +73,11 @@ fn execute_parse_command(file_path_string: String, version: Version, json: bool)
         println!("{json}");
     }
 
-    if !errors.is_empty() {
-        std::process::exit(1);
+    if errors.is_empty() {
+        Ok(())
+    } else {
+        bail!("Couldn't parse the Solidity source file.")
     }
-
-    Ok(())
 }
 
 #[test]

@@ -3,7 +3,7 @@ mod reporting;
 
 use std::{collections::BTreeSet, path::Path};
 
-use anyhow::Result;
+use anyhow::{bail, Result};
 use infra_utils::paths::PathExtensions;
 use rayon::prelude::{IntoParallelRefIterator, ParallelIterator};
 use semver::Version;
@@ -60,10 +60,10 @@ fn process_dataset(dataset: &impl Dataset, versions: &BTreeSet<Version>) -> Resu
 
     let total_errors = reporter.finish();
     if total_errors > 0 {
-        std::process::exit(1);
+        bail!("There were errors processing the dataset.")
+    } else {
+        Ok(())
     }
-
-    Ok(())
 }
 
 fn process_source_file(

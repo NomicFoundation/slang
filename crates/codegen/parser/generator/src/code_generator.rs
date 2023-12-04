@@ -144,11 +144,11 @@ impl CodeGenerator {
             .entry(name)
             .or_insert_with(|| ScannerContext {
                 name,
-                scanner_definitions: Default::default(),
+                scanner_definitions: BTreeSet::default(),
                 alpha_literal_scanner: "".to_string(),
                 non_alpha_literal_scanner: "".to_string(),
                 compound_scanner_names: vec![],
-                delimiters: Default::default(),
+                delimiters: BTreeMap::default(),
             });
     }
 }
@@ -307,9 +307,10 @@ impl GrammarVisitor for CodeGenerator {
                     .unwrap()
                     .delimiters;
 
-                if delimiters.get(close).is_some() {
-                    panic!("Cannot use a closing delimiter as an opening one");
-                }
+                assert!(
+                    delimiters.get(close).is_none(),
+                    "Cannot use a closing delimiter as an opening one"
+                );
                 delimiters.insert(open, close);
             }
             _ => {}

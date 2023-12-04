@@ -33,7 +33,7 @@ where
             ParserResult::NoMatch(no_match) => ParseOutput {
                 parse_tree: cst::Node::token(TokenKind::SKIPPED, input.to_string()),
                 errors: vec![ParseError::new_covering_range(
-                    Default::default()..input.into(),
+                    TextIndex::ZERO..input.into(),
                     no_match.expected_tokens,
                 )],
             },

@@ -3,7 +3,7 @@ use std::fmt::Display;
 
 pub type Result<T> = std::result::Result<T, Error>;
 
-/// Our own proxy for [syn::Error] since the latter does not expose the underlying sub-errors.
+/// Our own proxy for [`syn::Error`] since the latter does not expose the underlying sub-errors.
 #[derive(Debug)]
 pub struct Error {
     message: String,

@@ -87,7 +87,8 @@ impl EbnfSerializer {
     }
 
     /// Naive version of formatting for long EBNF statements.
-    /// Tries to break long lines, which are usually choices of references (PrecedenceParser) or keywords (Scanner).
+    /// Tries to break long lines, which are usually choices of references
+    /// ([`PrecedenceParser`](ProductionDefinition::PrecedenceParser)) or keywords ([`Scanner`](ProductionDefinition::Scanner)).
     /// Otherwise, prints everything on a single line.
     fn serialize_root_node(&mut self, name: &str, root_node: &EbnfNode) -> String {
         let choices = match &root_node {

@@ -56,10 +56,8 @@ impl ChoiceHelper {
                 running.expected_tokens.extend(next.expected_tokens.clone());
                 false
             }
-            // Otherwise, we have some match and we ignore a missing next one.
-            (ParserResult::IncompleteMatch(..), ParserResult::NoMatch(..))
-            | (ParserResult::SkippedUntil(..), ParserResult::NoMatch(..))
-            | (ParserResult::Match(..), ParserResult::NoMatch(..)) => false,
+            // Otherwise, we already have some match, so we ignore a next missing one.
+            (_, ParserResult::NoMatch(..)) => false,
 
             // Try to improve our match.
             (_, ParserResult::Match(next)) if next.is_full_recursive() => true,

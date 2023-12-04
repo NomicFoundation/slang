@@ -47,13 +47,13 @@ impl ParserResult {
         expected: TokenKind,
         recover_from_no_match: RecoverFromNoMatch,
     ) -> ParserResult {
-        let before_recovery = input.position();
-
         enum ParseResultKind {
             Match,
             Incomplete,
             NoMatch,
         }
+
+        let before_recovery = input.position();
 
         let (mut nodes, mut expected_tokens, result_kind) = match self {
             ParserResult::IncompleteMatch(result) => (
@@ -91,9 +91,9 @@ impl ParserResult {
 
                 ParserResult::SkippedUntil(SkippedUntil {
                     nodes,
-                    expected,
                     skipped,
                     found,
+                    expected,
                 })
             }
             // Not found till EOF, revert any recovery attempt

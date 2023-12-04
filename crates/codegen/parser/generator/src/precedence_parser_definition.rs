@@ -158,6 +158,7 @@ impl PrecedenceParserDefinitionNodeExtensions for PrecedenceParserDefinitionNode
         // TODO: merge these three functions into parse_definition by changing
         // `to_parser_code` to use `(TokenStream, Vec<VersionQualityRange>)` as
         // the core type i.e. the `OperatorParser` type above
+        #[allow(clippy::items_after_statements)]
         fn make_sequence(parsers: Vec<TokenStream>) -> TokenStream {
             let parsers = parsers
                 .iter()
@@ -171,6 +172,7 @@ impl PrecedenceParserDefinitionNodeExtensions for PrecedenceParserDefinitionNode
             }
         }
 
+        #[allow(clippy::items_after_statements)]
         fn make_choice(parsers: Vec<OperatorParser>) -> TokenStream {
             let parsers = parsers
                 .iter()

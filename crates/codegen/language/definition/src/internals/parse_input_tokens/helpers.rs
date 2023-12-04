@@ -1,7 +1,7 @@
 use crate::internals::{Error, ErrorsCollection, ParseInputTokens, Result, Spanned};
 use indexmap::IndexMap;
 use proc_macro2::{extra::DelimSpan, Delimiter, Ident, TokenStream};
-use std::{fmt::Debug, ops::Deref};
+use std::fmt::Debug;
 use syn::{braced, bracketed, parenthesized, parse::ParseStream, Token};
 
 pub struct ParseHelpers;
@@ -71,7 +71,7 @@ impl ParseHelpers {
                     }
                 }
 
-                if result.contains_key(key.deref()) {
+                if result.contains_key(&*key) {
                     errors.add(&key, &Errors::DuplicateMapKey);
                 } else {
                     result.insert(key.into_value(), value);
@@ -116,7 +116,7 @@ impl ParseHelpers {
     }
 }
 
-/// A wrapper to convert error types in callsites, since the macros below requires returning [syn::Result].
+/// A wrapper to convert error types in callsites, since the macros below requires returning [`syn::Result`].
 fn delimited<T>(
     delimiter: Delimiter,
     input: ParseStream<'_>,

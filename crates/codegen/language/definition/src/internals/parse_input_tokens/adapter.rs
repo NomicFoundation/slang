@@ -18,7 +18,7 @@ pub(crate) struct ParseOutput {
     pub errors: ErrorsCollection,
 }
 
-/// A wrapper around [syn::parse::Parse] to convert to/from our own error types.
+/// A wrapper around [`syn::parse::Parse`] to convert to/from our own error types.
 impl Parse for ParseOutput {
     fn parse(input: ParseStream<'_>) -> syn::Result<Self> {
         let mut errors = ErrorsCollection::new();

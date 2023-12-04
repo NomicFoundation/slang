@@ -58,13 +58,12 @@ fn collect_parser_tests(data_dir: &Path) -> Result<BTreeMap<String, BTreeSet<Str
             .map(|p| p.to_str().unwrap())
             .collect();
 
-        match &parts[..] {
+        match parts[..] {
             [parser_name, test_name, "input.sol"] => {
-                let parser_tests = parser_tests
-                    .entry(parser_name.to_string())
-                    .or_insert_with(BTreeSet::new);
-
-                parser_tests.insert(test_name.to_string());
+                parser_tests
+                    .entry(parser_name.to_owned())
+                    .or_insert_with(BTreeSet::new)
+                    .insert(test_name.to_owned());
             }
             _ => {
                 bail!("Invalid test input. Should be in the form of '<tests-dir>/PARSER_NAME/TEST_NAME/input.sol', but found: {file:?}");

@@ -4,7 +4,7 @@ use super::{
     super::{cst, kinds::RuleKind},
     parser_result::{
         ParserResult,
-        PrattElement::{self, *},
+        PrattElement::{self, Binary, Expression, Postfix, Prefix},
     },
 };
 

@@ -4,7 +4,9 @@ use crate::{
     model::{
         Identifier, SpannedEnumItem, SpannedEnumVariant, SpannedField, SpannedFragmentItem,
         SpannedItem,
-        SpannedItemDiscriminants::{self, *},
+        SpannedItemDiscriminants::{
+            self, Enum, Fragment, Keyword, Precedence, Repeated, Separated, Struct, Token, Trivia,
+        },
         SpannedKeywordDefinition, SpannedKeywordItem, SpannedPrecedenceExpression,
         SpannedPrecedenceItem, SpannedPrecedenceOperator, SpannedPrimaryExpression,
         SpannedRepeatedItem, SpannedScanner, SpannedSeparatedItem, SpannedStructItem,

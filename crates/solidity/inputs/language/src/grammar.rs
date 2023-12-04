@@ -31,12 +31,15 @@ pub trait GrammarConstructorDslV2 {
 impl GrammarConstructorDslV2 for Grammar {
     fn from_dsl_v2(lang: &model::Language) -> Grammar {
         // Collect language items into a lookup table to speed up resolution
-        let mut items = HashMap::from_iter(lang.items_with_section().map(|(_, topic, item)| {
-            (
-                item.name().clone(),
-                (topic.lexical_context.clone(), Rc::clone(item)),
-            )
-        }));
+        let mut items: HashMap<_, _> = lang
+            .items_with_section()
+            .map(|(_, topic, item)| {
+                (
+                    item.name().clone(),
+                    (topic.lexical_context.clone(), Rc::clone(item)),
+                )
+            })
+            .collect();
 
         // TODO(#638): To minimize regression in the parser migration, we keep the existing DSL v1 model
         // of SourceUnit being followed by `EndOfFileTrivia`.
@@ -246,6 +249,26 @@ impl PrecedenceParserDefinition for NamedPrecedenceParserThunk {
     }
 }
 
+enum ParserThunk {
+    Regular(Rc<NamedParserThunk>),
+    Precedence(Rc<NamedPrecedenceParserThunk>),
+}
+impl ParserThunk {
+    fn as_regular_def(&self) -> &OnceCell<ParserDefinitionNode> {
+        match self {
+            ParserThunk::Regular(thunk) => &thunk.def,
+            _ => panic!("Expected a regular parser thunk"),
+        }
+    }
+
+    fn as_precedence_def(&self) -> &OnceCell<PrecedenceParserDefinitionNode> {
+        match self {
+            ParserThunk::Precedence(thunk) => &thunk.def,
+            _ => panic!("Expected a precedence parser thunk"),
+        }
+    }
+}
+
 fn enabled_to_range(spec: model::VersionSpecifier) -> Vec<VersionQualityRange> {
     match spec {
         model::VersionSpecifier::Never => vec![VersionQualityRange {
@@ -288,28 +311,8 @@ fn resolve_grammar_element(ident: &Identifier, ctx: &mut ResolveCtx<'_>) -> Gram
     // FIXME: Don't leak
     let lex_ctx = lex_ctx
         .as_ref()
-        .map(|l| l.to_string().leak() as &_)
-        .unwrap_or("Default");
+        .map_or("Default", |l| l.to_string().leak() as &_);
 
-    enum ParserThunk {
-        Regular(Rc<NamedParserThunk>),
-        Precedence(Rc<NamedPrecedenceParserThunk>),
-    }
-    impl ParserThunk {
-        fn as_regular_def(&self) -> &OnceCell<ParserDefinitionNode> {
-            match self {
-                ParserThunk::Regular(thunk) => &thunk.def,
-                _ => panic!("Expected a regular parser thunk"),
-            }
-        }
-
-        fn as_precedence_def(&self) -> &OnceCell<PrecedenceParserDefinitionNode> {
-            match self {
-                ParserThunk::Precedence(thunk) => &thunk.def,
-                _ => panic!("Expected a precedence parser thunk"),
-            }
-        }
-    }
     // The non-terminals are mutually recursive (so will be the resolution of their definitions),
     // so make sure to insert a thunk for non-terminals to resolve to break the cycle.
     let inserted_thunk = match (elem.as_ref(), ctx.resolved.contains_key(ident)) {
@@ -639,7 +642,6 @@ fn resolve_sequence_like(
             let mut delims = fields
                 .drain(open_idx..=open_idx + 1)
                 .map(|(_, field)| field);
-            dbg!(delims.size_hint());
             let open = delims.next().unwrap();
             let close = delims.next().unwrap();
 
@@ -725,6 +727,7 @@ fn resolve_precedence(
         _ => ParserDefinitionNode::Choice(primaries),
     });
 
+    #[allow(clippy::items_after_statements)] // simple and specific to this site
     fn model_to_enum(model: model::OperatorModel) -> PrecedenceOperatorModel {
         match model {
             model::OperatorModel::BinaryLeftAssociative => {
@@ -777,7 +780,7 @@ fn resolve_precedence(
             .collect();
 
         let def = match defs.len() {
-            0 => panic!("Precedence operator {} has no definitions", name),
+            0 => panic!("Precedence operator {name} has no definitions"),
             1 => defs.into_iter().next().unwrap(),
             _ => ParserDefinitionNode::Choice(defs),
         };

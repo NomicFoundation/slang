@@ -1,6 +1,6 @@
 /// These test cases are not actually part of this compilation, so they are not imported via 'mod' declarations here.
 /// Instead, they are individually picked up during runtime, and each is compiled separately, checking any errors they produce.
-/// For more info: https://crates.io/crates/trybuild
+/// For more info: <https://crates.io/crates/trybuild>
 use infra_utils::{cargo::CargoWorkspace, github::GitHub, paths::FileWalker};
 use rayon::prelude::*;
 
