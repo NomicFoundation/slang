@@ -107,7 +107,7 @@ impl ChoiceHelper {
 
     /// Aggregates a choice result into the accumulator.
     ///
-    /// Returns a [`Choice`] struct that can be used to either pick the value or backtrack the input.
+    /// If a value is considered as a full match, it is returned, otherwise we backtrack and continue.
     pub fn consider(
         &mut self,
         input: &mut ParserContext,
