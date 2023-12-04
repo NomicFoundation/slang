@@ -5595,15 +5595,6 @@ impl Language {
      ********************************************/
 
     #[allow(unused_assignments, unused_parens)]
-    fn ampersand(&self, input: &mut ParserContext) -> bool {
-        scan_not_followed_by!(
-            input,
-            scan_chars!(input, '&'),
-            scan_choice!(input, scan_chars!(input, '='), scan_chars!(input, '&'))
-        )
-    }
-
-    #[allow(unused_assignments, unused_parens)]
     fn ascii_escape(&self, input: &mut ParserContext) -> bool {
         scan_choice!(
             input,
@@ -5624,29 +5615,6 @@ impl Language {
             input,
             self.single_quoted_ascii_string_literal(input),
             self.double_quoted_ascii_string_literal(input)
-        )
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn asterisk(&self, input: &mut ParserContext) -> bool {
-        scan_not_followed_by!(
-            input,
-            scan_chars!(input, '*'),
-            scan_choice!(input, scan_chars!(input, '='), scan_chars!(input, '*'))
-        )
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn bang(&self, input: &mut ParserContext) -> bool {
-        scan_not_followed_by!(input, scan_chars!(input, '!'), scan_chars!(input, '='))
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn bar(&self, input: &mut ParserContext) -> bool {
-        scan_not_followed_by!(
-            input,
-            scan_chars!(input, '|'),
-            scan_choice!(input, scan_chars!(input, '|'), scan_chars!(input, '='))
         )
     }
 
@@ -5693,16 +5661,6 @@ impl Language {
                 )
             )
         )
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn caret(&self, input: &mut ParserContext) -> bool {
-        scan_not_followed_by!(input, scan_chars!(input, '^'), scan_chars!(input, '='))
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn colon(&self, input: &mut ParserContext) -> bool {
-        scan_not_followed_by!(input, scan_chars!(input, ':'), scan_chars!(input, '='))
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -5834,15 +5792,6 @@ impl Language {
         scan_sequence!(
             scan_optional!(input, scan_chars!(input, '\r')),
             scan_chars!(input, '\n')
-        )
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn equal(&self, input: &mut ParserContext) -> bool {
-        scan_not_followed_by!(
-            input,
-            scan_chars!(input, '='),
-            scan_choice!(input, scan_chars!(input, '>'), scan_chars!(input, '='))
         )
     }
 
@@ -6143,33 +6092,6 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn greater_than(&self, input: &mut ParserContext) -> bool {
-        scan_not_followed_by!(
-            input,
-            scan_chars!(input, '>'),
-            scan_choice!(input, scan_chars!(input, '>'), scan_chars!(input, '='))
-        )
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn greater_than_greater_than(&self, input: &mut ParserContext) -> bool {
-        scan_not_followed_by!(
-            input,
-            scan_chars!(input, '>', '>'),
-            scan_choice!(input, scan_chars!(input, '>'), scan_chars!(input, '='))
-        )
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn greater_than_greater_than_greater_than(&self, input: &mut ParserContext) -> bool {
-        scan_not_followed_by!(
-            input,
-            scan_chars!(input, '>', '>', '>'),
-            scan_chars!(input, '=')
-        )
-    }
-
-    #[allow(unused_assignments, unused_parens)]
     fn hex_byte_escape(&self, input: &mut ParserContext) -> bool {
         scan_sequence!(
             scan_chars!(input, 'x'),
@@ -6325,34 +6247,6 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn less_than(&self, input: &mut ParserContext) -> bool {
-        scan_not_followed_by!(
-            input,
-            scan_chars!(input, '<'),
-            scan_choice!(input, scan_chars!(input, '='), scan_chars!(input, '<'))
-        )
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn less_than_less_than(&self, input: &mut ParserContext) -> bool {
-        scan_not_followed_by!(input, scan_chars!(input, '<', '<'), scan_chars!(input, '='))
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn minus(&self, input: &mut ParserContext) -> bool {
-        scan_not_followed_by!(
-            input,
-            scan_chars!(input, '-'),
-            scan_choice!(
-                input,
-                scan_chars!(input, '>'),
-                scan_chars!(input, '='),
-                scan_chars!(input, '-')
-            )
-        )
-    }
-
-    #[allow(unused_assignments, unused_parens)]
     fn multiline_comment(&self, input: &mut ParserContext) -> bool {
         scan_sequence!(
             scan_chars!(input, '/'),
@@ -6367,20 +6261,6 @@ impl Language {
             ),
             scan_chars!(input, '*'),
             scan_chars!(input, '/')
-        )
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn percent(&self, input: &mut ParserContext) -> bool {
-        scan_not_followed_by!(input, scan_chars!(input, '%'), scan_chars!(input, '='))
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn plus(&self, input: &mut ParserContext) -> bool {
-        scan_not_followed_by!(
-            input,
-            scan_chars!(input, '+'),
-            scan_choice!(input, scan_chars!(input, '='), scan_chars!(input, '+'))
         )
     }
 
@@ -6445,11 +6325,6 @@ impl Language {
         } else {
             false
         }
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn slash(&self, input: &mut ParserContext) -> bool {
-        scan_not_followed_by!(input, scan_chars!(input, '/'), scan_chars!(input, '='))
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -8644,16 +8519,30 @@ impl Lexer for Language {
                 input.set_position(save);
 
                 if let Some(kind) = match input.next() {
-                    Some('!') => scan_chars!(input, '=').then_some(TokenKind::BangEqual),
-                    Some('%') => scan_chars!(input, '=').then_some(TokenKind::PercentEqual),
+                    Some('!') => match input.next() {
+                        Some('=') => Some(TokenKind::BangEqual),
+                        Some(_) => {
+                            input.undo();
+                            Some(TokenKind::Bang)
+                        }
+                        None => Some(TokenKind::Bang),
+                    },
+                    Some('%') => match input.next() {
+                        Some('=') => Some(TokenKind::PercentEqual),
+                        Some(_) => {
+                            input.undo();
+                            Some(TokenKind::Percent)
+                        }
+                        None => Some(TokenKind::Percent),
+                    },
                     Some('&') => match input.next() {
                         Some('&') => Some(TokenKind::AmpersandAmpersand),
                         Some('=') => Some(TokenKind::AmpersandEqual),
                         Some(_) => {
                             input.undo();
-                            None
+                            Some(TokenKind::Ampersand)
                         }
-                        None => None,
+                        None => Some(TokenKind::Ampersand),
                     },
                     Some('(') => Some(TokenKind::OpenParen),
                     Some(')') => Some(TokenKind::CloseParen),
@@ -8662,18 +8551,18 @@ impl Lexer for Language {
                         Some('=') => Some(TokenKind::AsteriskEqual),
                         Some(_) => {
                             input.undo();
-                            None
+                            Some(TokenKind::Asterisk)
                         }
-                        None => None,
+                        None => Some(TokenKind::Asterisk),
                     },
                     Some('+') => match input.next() {
                         Some('+') => Some(TokenKind::PlusPlus),
                         Some('=') => Some(TokenKind::PlusEqual),
                         Some(_) => {
                             input.undo();
-                            None
+                            Some(TokenKind::Plus)
                         }
-                        None => None,
+                        None => Some(TokenKind::Plus),
                     },
                     Some(',') => Some(TokenKind::Comma),
                     Some('-') => match input.next() {
@@ -8681,64 +8570,92 @@ impl Lexer for Language {
                         Some('=') => Some(TokenKind::MinusEqual),
                         Some(_) => {
                             input.undo();
-                            None
+                            Some(TokenKind::Minus)
                         }
-                        None => None,
+                        None => Some(TokenKind::Minus),
                     },
                     Some('.') => Some(TokenKind::Period),
-                    Some('/') => scan_chars!(input, '=').then_some(TokenKind::SlashEqual),
+                    Some('/') => match input.next() {
+                        Some('=') => Some(TokenKind::SlashEqual),
+                        Some(_) => {
+                            input.undo();
+                            Some(TokenKind::Slash)
+                        }
+                        None => Some(TokenKind::Slash),
+                    },
+                    Some(':') => Some(TokenKind::Colon),
                     Some(';') => Some(TokenKind::Semicolon),
                     Some('<') => match input.next() {
-                        Some('<') => {
-                            scan_chars!(input, '=').then_some(TokenKind::LessThanLessThanEqual)
-                        }
+                        Some('<') => match input.next() {
+                            Some('=') => Some(TokenKind::LessThanLessThanEqual),
+                            Some(_) => {
+                                input.undo();
+                                Some(TokenKind::LessThanLessThan)
+                            }
+                            None => Some(TokenKind::LessThanLessThan),
+                        },
                         Some('=') => Some(TokenKind::LessThanEqual),
                         Some(_) => {
                             input.undo();
-                            None
+                            Some(TokenKind::LessThan)
                         }
-                        None => None,
+                        None => Some(TokenKind::LessThan),
                     },
                     Some('=') => match input.next() {
                         Some('=') => Some(TokenKind::EqualEqual),
                         Some('>') => Some(TokenKind::EqualGreaterThan),
                         Some(_) => {
                             input.undo();
-                            None
+                            Some(TokenKind::Equal)
                         }
-                        None => None,
+                        None => Some(TokenKind::Equal),
                     },
                     Some('>') => match input.next() {
                         Some('=') => Some(TokenKind::GreaterThanEqual),
                         Some('>') => match input.next() {
                             Some('=') => Some(TokenKind::GreaterThanGreaterThanEqual),
-                            Some('>') => scan_chars!(input, '=')
-                                .then_some(TokenKind::GreaterThanGreaterThanGreaterThanEqual),
+                            Some('>') => match input.next() {
+                                Some('=') => {
+                                    Some(TokenKind::GreaterThanGreaterThanGreaterThanEqual)
+                                }
+                                Some(_) => {
+                                    input.undo();
+                                    Some(TokenKind::GreaterThanGreaterThanGreaterThan)
+                                }
+                                None => Some(TokenKind::GreaterThanGreaterThanGreaterThan),
+                            },
                             Some(_) => {
                                 input.undo();
-                                None
+                                Some(TokenKind::GreaterThanGreaterThan)
                             }
-                            None => None,
+                            None => Some(TokenKind::GreaterThanGreaterThan),
                         },
                         Some(_) => {
                             input.undo();
-                            None
+                            Some(TokenKind::GreaterThan)
                         }
-                        None => None,
+                        None => Some(TokenKind::GreaterThan),
                     },
                     Some('?') => Some(TokenKind::QuestionMark),
                     Some('[') => Some(TokenKind::OpenBracket),
                     Some(']') => Some(TokenKind::CloseBracket),
-                    Some('^') => scan_chars!(input, '=').then_some(TokenKind::CaretEqual),
+                    Some('^') => match input.next() {
+                        Some('=') => Some(TokenKind::CaretEqual),
+                        Some(_) => {
+                            input.undo();
+                            Some(TokenKind::Caret)
+                        }
+                        None => Some(TokenKind::Caret),
+                    },
                     Some('{') => Some(TokenKind::OpenBrace),
                     Some('|') => match input.next() {
                         Some('=') => Some(TokenKind::BarEqual),
                         Some('|') => Some(TokenKind::BarBar),
                         Some(_) => {
                             input.undo();
-                            None
+                            Some(TokenKind::Bar)
                         }
-                        None => None,
+                        None => Some(TokenKind::Bar),
                     },
                     Some('}') => Some(TokenKind::CloseBrace),
                     Some('~') => Some(TokenKind::Tilde),
@@ -8754,32 +8671,16 @@ impl Lexer for Language {
                 input.set_position(save);
 
                 longest_match! {
-                        { Ampersand = ampersand }
                         { AsciiStringLiteral = ascii_string_literal }
-                        { Asterisk = asterisk }
-                        { Bang = bang }
-                        { Bar = bar }
                         { BytesKeyword = bytes_keyword }
-                        { Caret = caret }
-                        { Colon = colon }
                         { DecimalLiteral = decimal_literal }
                         { EndOfLine = end_of_line }
-                        { Equal = equal }
                         { FixedKeyword = fixed_keyword }
-                        { GreaterThan = greater_than }
-                        { GreaterThanGreaterThan = greater_than_greater_than }
-                        { GreaterThanGreaterThanGreaterThan = greater_than_greater_than_greater_than }
                         { HexLiteral = hex_literal }
                         { HexStringLiteral = hex_string_literal }
                         { IntKeyword = int_keyword }
-                        { LessThan = less_than }
-                        { LessThanLessThan = less_than_less_than }
-                        { Minus = minus }
                         { MultilineComment = multiline_comment }
-                        { Percent = percent }
-                        { Plus = plus }
                         { SingleLineComment = single_line_comment }
-                        { Slash = slash }
                         { UfixedKeyword = ufixed_keyword }
                         { UintKeyword = uint_keyword }
                         { UnicodeStringLiteral = unicode_string_literal }
@@ -8826,10 +8727,27 @@ impl Lexer for Language {
                 input.set_position(save);
 
                 if let Some(kind) = match input.next() {
+                    Some('-') => Some(TokenKind::Minus),
                     Some('.') => Some(TokenKind::Period),
                     Some(';') => Some(TokenKind::Semicolon),
-                    Some('<') => scan_chars!(input, '=').then_some(TokenKind::LessThanEqual),
-                    Some('>') => scan_chars!(input, '=').then_some(TokenKind::GreaterThanEqual),
+                    Some('<') => match input.next() {
+                        Some('=') => Some(TokenKind::LessThanEqual),
+                        Some(_) => {
+                            input.undo();
+                            Some(TokenKind::LessThan)
+                        }
+                        None => Some(TokenKind::LessThan),
+                    },
+                    Some('=') => Some(TokenKind::Equal),
+                    Some('>') => match input.next() {
+                        Some('=') => Some(TokenKind::GreaterThanEqual),
+                        Some(_) => {
+                            input.undo();
+                            Some(TokenKind::GreaterThan)
+                        }
+                        None => Some(TokenKind::GreaterThan),
+                    },
+                    Some('^') => Some(TokenKind::Caret),
                     Some('|') => scan_chars!(input, '|').then_some(TokenKind::BarBar),
                     Some('~') => Some(TokenKind::Tilde),
                     Some(_) => {
@@ -8845,11 +8763,6 @@ impl Lexer for Language {
 
                 longest_match! {
                         { AsciiStringLiteral = ascii_string_literal }
-                        { Caret = caret }
-                        { Equal = equal }
-                        { GreaterThan = greater_than }
-                        { LessThan = less_than }
-                        { Minus = minus }
                         { VersionPragmaValue = version_pragma_value }
                         { Identifier = identifier }
                 }

@@ -1,0 +1,138 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ a && b;                                                                          │ 0..7
+  2  │ a &= b;                                                                          │ 8..15
+  3  │ a || b;                                                                          │ 16..23
+  4  │ a |= b;                                                                          │ 24..31
+  5  │ a / b;                                                                           │ 32..38
+  6  │ a /= b;                                                                          │ 39..46
+  7  │ a > b;                                                                           │ 47..53
+  8  │ a >= b;                                                                          │ 54..61
+  9  │ a >> b;                                                                          │ 62..69
+  10 │ a >>= b;                                                                         │ 70..78
+  11 │ a >>>= b;                                                                        │ 79..88
+  12 │ a << b;                                                                          │ 89..96
+  13 │ a <<= b;                                                                         │ 97..105
+
+Errors: []
+
+Tree:
+  - Statements (Rule): # 0..106 "a && b;\na &= b;\na || b;\na |= b;\na / b;\na /= b;\na >..."
+      - ExpressionStatement (Rule): # 0..8 "a && b;\n"
+          - Expression (Rule): # 0..6 "a && b"
+              - BinaryExpression (Rule): # 0..6 "a && b"
+                  - Expression (Rule): # 0..1 "a"
+                      - Identifier (Token): "a" # 0..1
+                  - AmpersandAmpersand (Token): "&&" # 2..4
+                  - Expression (Rule): # 4..6 " b"
+                      - Identifier (Token): "b" # 5..6
+          - Semicolon (Token): ";" # 6..7
+      - ExpressionStatement (Rule): # 8..16 "a &= b;\n"
+          - Expression (Rule): # 8..14 "a &= b"
+              - BinaryExpression (Rule): # 8..14 "a &= b"
+                  - Expression (Rule): # 8..9 "a"
+                      - Identifier (Token): "a" # 8..9
+                  - AmpersandEqual (Token): "&=" # 10..12
+                  - Expression (Rule): # 12..14 " b"
+                      - Identifier (Token): "b" # 13..14
+          - Semicolon (Token): ";" # 14..15
+      - ExpressionStatement (Rule): # 16..24 "a || b;\n"
+          - Expression (Rule): # 16..22 "a || b"
+              - BinaryExpression (Rule): # 16..22 "a || b"
+                  - Expression (Rule): # 16..17 "a"
+                      - Identifier (Token): "a" # 16..17
+                  - BarBar (Token): "||" # 18..20
+                  - Expression (Rule): # 20..22 " b"
+                      - Identifier (Token): "b" # 21..22
+          - Semicolon (Token): ";" # 22..23
+      - ExpressionStatement (Rule): # 24..32 "a |= b;\n"
+          - Expression (Rule): # 24..30 "a |= b"
+              - BinaryExpression (Rule): # 24..30 "a |= b"
+                  - Expression (Rule): # 24..25 "a"
+                      - Identifier (Token): "a" # 24..25
+                  - BarEqual (Token): "|=" # 26..28
+                  - Expression (Rule): # 28..30 " b"
+                      - Identifier (Token): "b" # 29..30
+          - Semicolon (Token): ";" # 30..31
+      - ExpressionStatement (Rule): # 32..39 "a / b;\n"
+          - Expression (Rule): # 32..37 "a / b"
+              - BinaryExpression (Rule): # 32..37 "a / b"
+                  - Expression (Rule): # 32..33 "a"
+                      - Identifier (Token): "a" # 32..33
+                  - Slash (Token): "/" # 34..35
+                  - Expression (Rule): # 35..37 " b"
+                      - Identifier (Token): "b" # 36..37
+          - Semicolon (Token): ";" # 37..38
+      - ExpressionStatement (Rule): # 39..47 "a /= b;\n"
+          - Expression (Rule): # 39..45 "a /= b"
+              - BinaryExpression (Rule): # 39..45 "a /= b"
+                  - Expression (Rule): # 39..40 "a"
+                      - Identifier (Token): "a" # 39..40
+                  - SlashEqual (Token): "/=" # 41..43
+                  - Expression (Rule): # 43..45 " b"
+                      - Identifier (Token): "b" # 44..45
+          - Semicolon (Token): ";" # 45..46
+      - ExpressionStatement (Rule): # 47..54 "a > b;\n"
+          - Expression (Rule): # 47..52 "a > b"
+              - BinaryExpression (Rule): # 47..52 "a > b"
+                  - Expression (Rule): # 47..48 "a"
+                      - Identifier (Token): "a" # 47..48
+                  - GreaterThan (Token): ">" # 49..50
+                  - Expression (Rule): # 50..52 " b"
+                      - Identifier (Token): "b" # 51..52
+          - Semicolon (Token): ";" # 52..53
+      - ExpressionStatement (Rule): # 54..62 "a >= b;\n"
+          - Expression (Rule): # 54..60 "a >= b"
+              - BinaryExpression (Rule): # 54..60 "a >= b"
+                  - Expression (Rule): # 54..55 "a"
+                      - Identifier (Token): "a" # 54..55
+                  - GreaterThanEqual (Token): ">=" # 56..58
+                  - Expression (Rule): # 58..60 " b"
+                      - Identifier (Token): "b" # 59..60
+          - Semicolon (Token): ";" # 60..61
+      - ExpressionStatement (Rule): # 62..70 "a >> b;\n"
+          - Expression (Rule): # 62..68 "a >> b"
+              - BinaryExpression (Rule): # 62..68 "a >> b"
+                  - Expression (Rule): # 62..63 "a"
+                      - Identifier (Token): "a" # 62..63
+                  - GreaterThanGreaterThan (Token): ">>" # 64..66
+                  - Expression (Rule): # 66..68 " b"
+                      - Identifier (Token): "b" # 67..68
+          - Semicolon (Token): ";" # 68..69
+      - ExpressionStatement (Rule): # 70..79 "a >>= b;\n"
+          - Expression (Rule): # 70..77 "a >>= b"
+              - BinaryExpression (Rule): # 70..77 "a >>= b"
+                  - Expression (Rule): # 70..71 "a"
+                      - Identifier (Token): "a" # 70..71
+                  - GreaterThanGreaterThanEqual (Token): ">>=" # 72..75
+                  - Expression (Rule): # 75..77 " b"
+                      - Identifier (Token): "b" # 76..77
+          - Semicolon (Token): ";" # 77..78
+      - ExpressionStatement (Rule): # 79..89 "a >>>= b;\n"
+          - Expression (Rule): # 79..87 "a >>>= b"
+              - BinaryExpression (Rule): # 79..87 "a >>>= b"
+                  - Expression (Rule): # 79..80 "a"
+                      - Identifier (Token): "a" # 79..80
+                  - GreaterThanGreaterThanGreaterThanEqual (Token): ">>>=" # 81..85
+                  - Expression (Rule): # 85..87 " b"
+                      - Identifier (Token): "b" # 86..87
+          - Semicolon (Token): ";" # 87..88
+      - ExpressionStatement (Rule): # 89..97 "a << b;\n"
+          - Expression (Rule): # 89..95 "a << b"
+              - BinaryExpression (Rule): # 89..95 "a << b"
+                  - Expression (Rule): # 89..90 "a"
+                      - Identifier (Token): "a" # 89..90
+                  - LessThanLessThan (Token): "<<" # 91..93
+                  - Expression (Rule): # 93..95 " b"
+                      - Identifier (Token): "b" # 94..95
+          - Semicolon (Token): ";" # 95..96
+      - ExpressionStatement (Rule): # 97..106 "a <<= b;\n"
+          - Expression (Rule): # 97..104 "a <<= b"
+              - BinaryExpression (Rule): # 97..104 "a <<= b"
+                  - Expression (Rule): # 97..98 "a"
+                      - Identifier (Token): "a" # 97..98
+                  - LessThanLessThanEqual (Token): "<<=" # 99..102
+                  - Expression (Rule): # 102..104 " b"
+                      - Identifier (Token): "b" # 103..104
+          - Semicolon (Token): ";" # 104..105
