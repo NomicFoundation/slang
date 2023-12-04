@@ -74,7 +74,7 @@ impl Language {
 
     {% for function in code.parser_functions %}
         #[allow(unused_assignments, unused_parens)]
-        fn {{ function.0 | snake_case }}(&self, input: &mut ParserContext) -> ParserResult { {{ function.1 }} }
+        fn {{ function.0 | snake_case }}(&self, input: &mut ParserContext<'_>) -> ParserResult { {{ function.1 }} }
     {% endfor %}
 
     /********************************************
@@ -83,7 +83,7 @@ impl Language {
 
     {% for function in code.scanner_functions %}
         #[allow(unused_assignments, unused_parens)]
-        fn {{ function.0 | snake_case }}(&self, input: &mut ParserContext) -> bool { {{ function.1 }} }
+        fn {{ function.0 | snake_case }}(&self, input: &mut ParserContext<'_>) -> bool { {{ function.1 }} }
     {% endfor %}
 
     pub fn scan(&self, lexical_context: LexicalContext, input: &str) -> Option<TokenKind> {
@@ -106,11 +106,11 @@ impl Language {
 }
 
 impl Lexer for Language {
-    fn leading_trivia(&self, input: &mut ParserContext) -> ParserResult {
+    fn leading_trivia(&self, input: &mut ParserContext<'_>) -> ParserResult {
         Language::leading_trivia(self, input)
     }
 
-    fn trailing_trivia(&self, input: &mut ParserContext) -> ParserResult {
+    fn trailing_trivia(&self, input: &mut ParserContext<'_>) -> ParserResult {
         Language::trailing_trivia(self, input)
     }
 
@@ -126,7 +126,7 @@ impl Lexer for Language {
         }
     }
 
-    fn next_token<LexCtx: IsLexicalContext>(&self, input: &mut ParserContext) -> Option<TokenKind> {
+    fn next_token<LexCtx: IsLexicalContext>(&self, input: &mut ParserContext<'_>) -> Option<TokenKind> {
         let save = input.position();
         let mut furthest_position = input.position();
         let mut longest_token = None;

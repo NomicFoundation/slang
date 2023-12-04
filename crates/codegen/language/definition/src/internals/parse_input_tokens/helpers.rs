@@ -7,20 +7,20 @@ use syn::{braced, bracketed, parenthesized, parse::ParseStream, Token};
 pub struct ParseHelpers;
 
 impl ParseHelpers {
-    pub fn syn<T: syn::parse::Parse>(input: ParseStream) -> Result<T> {
+    pub fn syn<T: syn::parse::Parse>(input: ParseStream<'_>) -> Result<T> {
         input.parse::<T>().map_err(Error::from_syn)
     }
 
     pub fn delimited<T>(
         delimiter: Delimiter,
-        input: ParseStream,
-        inner_parser: impl FnOnce(DelimSpan, ParseStream) -> Result<T>,
+        input: ParseStream<'_>,
+        inner_parser: impl FnOnce(DelimSpan, ParseStream<'_>) -> Result<T>,
     ) -> Result<T> {
         delimited(delimiter, input, inner_parser).map_err(Error::from_syn)
     }
 
     pub fn sequence<T: ParseInputTokens>(
-        input: ParseStream,
+        input: ParseStream<'_>,
         errors: &mut ErrorsCollection,
     ) -> Result<Vec<T>> {
         match Self::delimited(Delimiter::Bracket, input, |_, inner_input| {
@@ -50,7 +50,7 @@ impl ParseHelpers {
     }
 
     pub fn map<K: ParseInputTokens + std::hash::Hash + Eq, V: ParseInputTokens>(
-        input: ParseStream,
+        input: ParseStream<'_>,
         errors: &mut ErrorsCollection,
     ) -> Result<IndexMap<K, V>> {
         match Self::delimited(Delimiter::Parenthesis, input, |_, inner_input| {
@@ -91,7 +91,7 @@ impl ParseHelpers {
 
     pub fn field<T: ParseInputTokens>(
         name: &str,
-        input: ParseStream,
+        input: ParseStream<'_>,
         errors: &mut ErrorsCollection,
     ) -> Result<T> {
         let span = input.span();
@@ -119,8 +119,8 @@ impl ParseHelpers {
 /// A wrapper to convert error types in callsites, since the macros below requires returning [syn::Result].
 fn delimited<T>(
     delimiter: Delimiter,
-    input: ParseStream,
-    inner_parser: impl FnOnce(DelimSpan, ParseStream) -> Result<T>,
+    input: ParseStream<'_>,
+    inner_parser: impl FnOnce(DelimSpan, ParseStream<'_>) -> Result<T>,
 ) -> syn::Result<T> {
     let inner_input;
     let span = match delimiter {

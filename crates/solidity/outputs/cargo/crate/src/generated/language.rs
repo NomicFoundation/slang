@@ -185,7 +185,7 @@ impl Language {
      ********************************************/
 
     #[allow(unused_assignments, unused_parens)]
-    fn abi_coder_pragma(&self, input: &mut ParserContext) -> ParserResult {
+    fn abi_coder_pragma(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(self.parse_token_with_trivia::<LexicalContextType::Pragma>(
                 input,
@@ -201,7 +201,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn address_type(&self, input: &mut ParserContext) -> ParserResult {
+    fn address_type(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
                 input,
@@ -219,7 +219,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn array_expression(&self, input: &mut ParserContext) -> ParserResult {
+    fn array_expression(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             let mut delim_guard = input.open_delim(TokenKind::CloseBracket);
             let input = delim_guard.ctx();
@@ -246,7 +246,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn array_values(&self, input: &mut ParserContext) -> ParserResult {
+    fn array_values(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SeparatedHelper::run::<_, LexicalContextType::Default>(
             input,
             self,
@@ -257,7 +257,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn ascii_string_literals(&self, input: &mut ParserContext) -> ParserResult {
+    fn ascii_string_literals(&self, input: &mut ParserContext<'_>) -> ParserResult {
         OneOrMoreHelper::run(input, |input| {
             self.parse_token_with_trivia::<LexicalContextType::Default>(
                 input,
@@ -268,7 +268,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn assembly_flags(&self, input: &mut ParserContext) -> ParserResult {
+    fn assembly_flags(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SeparatedHelper::run::<_, LexicalContextType::Default>(
             input,
             self,
@@ -284,7 +284,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn assembly_flags_declaration(&self, input: &mut ParserContext) -> ParserResult {
+    fn assembly_flags_declaration(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             let mut delim_guard = input.open_delim(TokenKind::CloseParen);
             let input = delim_guard.ctx();
@@ -311,7 +311,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn assembly_statement(&self, input: &mut ParserContext) -> ParserResult {
+    fn assembly_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
                 input,
@@ -333,7 +333,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn block(&self, input: &mut ParserContext) -> ParserResult {
+    fn block(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             let mut delim_guard = input.open_delim(TokenKind::CloseBrace);
             let input = delim_guard.ctx();
@@ -360,7 +360,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn break_statement(&self, input: &mut ParserContext) -> ParserResult {
+    fn break_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
@@ -384,7 +384,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn catch_clause(&self, input: &mut ParserContext) -> ParserResult {
+    fn catch_clause(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if self.version_is_at_least_0_6_0 {
             SequenceHelper::run(|mut seq| {
                 seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
@@ -402,7 +402,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn catch_clause_error(&self, input: &mut ParserContext) -> ParserResult {
+    fn catch_clause_error(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if self.version_is_at_least_0_6_0 {
             SequenceHelper::run(|mut seq| {
                 seq.elem(OptionalHelper::transform(
@@ -421,7 +421,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn catch_clauses(&self, input: &mut ParserContext) -> ParserResult {
+    fn catch_clauses(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if self.version_is_at_least_0_6_0 {
             OneOrMoreHelper::run(input, |input| self.catch_clause(input))
         } else {
@@ -431,7 +431,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn constant_definition(&self, input: &mut ParserContext) -> ParserResult {
+    fn constant_definition(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if self.version_is_at_least_0_7_4 {
             SequenceHelper::run(|mut seq| {
                 seq.elem(
@@ -472,7 +472,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn constructor_attributes(&self, input: &mut ParserContext) -> ParserResult {
+    fn constructor_attributes(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if self.version_is_at_least_0_4_22 {
             OneOrMoreHelper::run(input, |input| {
                 if self.version_is_at_least_0_4_22 {
@@ -507,7 +507,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn constructor_definition(&self, input: &mut ParserContext) -> ParserResult {
+    fn constructor_definition(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if self.version_is_at_least_0_4_22 {
             SequenceHelper::run(|mut seq| {
                 seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
@@ -528,7 +528,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn continue_statement(&self, input: &mut ParserContext) -> ParserResult {
+    fn continue_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
@@ -552,7 +552,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn contract_definition(&self, input: &mut ParserContext) -> ParserResult {
+    fn contract_definition(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             if self.version_is_at_least_0_6_0 {
                 seq.elem(OptionalHelper::transform(
@@ -599,7 +599,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn contract_members(&self, input: &mut ParserContext) -> ParserResult {
+    fn contract_members(&self, input: &mut ParserContext<'_>) -> ParserResult {
         OneOrMoreHelper::run(input, |input| {
             ChoiceHelper::run(input, |mut choice, input| {
                 let result = self.using_directive(input);
@@ -647,7 +647,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn decimal_number_expression(&self, input: &mut ParserContext) -> ParserResult {
+    fn decimal_number_expression(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
                 input,
@@ -728,7 +728,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn delete_statement(&self, input: &mut ParserContext) -> ParserResult {
+    fn delete_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(
                 SequenceHelper::run(|mut seq| {
@@ -756,7 +756,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn do_while_statement(&self, input: &mut ParserContext) -> ParserResult {
+    fn do_while_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(
                 SequenceHelper::run(|mut seq| {
@@ -858,7 +858,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn else_branch(&self, input: &mut ParserContext) -> ParserResult {
+    fn else_branch(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
                 input,
@@ -919,7 +919,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn emit_statement(&self, input: &mut ParserContext) -> ParserResult {
+    fn emit_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if self.version_is_at_least_0_4_21 {
             SequenceHelper::run(|mut seq| {
                 seq.elem(
@@ -958,7 +958,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn end_of_file_trivia(&self, input: &mut ParserContext) -> ParserResult {
+    fn end_of_file_trivia(&self, input: &mut ParserContext<'_>) -> ParserResult {
         OneOrMoreHelper::run(input, |input| {
             ChoiceHelper::run(input, |mut choice, input| {
                 let result =
@@ -982,7 +982,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn enum_definition(&self, input: &mut ParserContext) -> ParserResult {
+    fn enum_definition(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
                 input,
@@ -1020,7 +1020,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn enum_members(&self, input: &mut ParserContext) -> ParserResult {
+    fn enum_members(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SeparatedHelper::run::<_, LexicalContextType::Default>(
             input,
             self,
@@ -1036,7 +1036,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn error_definition(&self, input: &mut ParserContext) -> ParserResult {
+    fn error_definition(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if self.version_is_at_least_0_8_4 {
             SequenceHelper::run(|mut seq| {
                 seq.elem(
@@ -1072,7 +1072,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn error_parameter(&self, input: &mut ParserContext) -> ParserResult {
+    fn error_parameter(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if self.version_is_at_least_0_8_4 {
             SequenceHelper::run(|mut seq| {
                 seq.elem(self.type_name(input))?;
@@ -1091,7 +1091,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn error_parameters(&self, input: &mut ParserContext) -> ParserResult {
+    fn error_parameters(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if self.version_is_at_least_0_8_4 {
             SeparatedHelper::run::<_, LexicalContextType::Default>(
                 input,
@@ -1106,7 +1106,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn error_parameters_declaration(&self, input: &mut ParserContext) -> ParserResult {
+    fn error_parameters_declaration(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if self.version_is_at_least_0_8_4 {
             SequenceHelper::run(|mut seq| {
                 let mut delim_guard = input.open_delim(TokenKind::CloseParen);
@@ -1137,7 +1137,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn event_definition(&self, input: &mut ParserContext) -> ParserResult {
+    fn event_definition(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(
                 SequenceHelper::run(|mut seq| {
@@ -1175,7 +1175,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn event_parameter(&self, input: &mut ParserContext) -> ParserResult {
+    fn event_parameter(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(self.type_name(input))?;
             seq.elem(OptionalHelper::transform(
@@ -1196,7 +1196,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn event_parameters(&self, input: &mut ParserContext) -> ParserResult {
+    fn event_parameters(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SeparatedHelper::run::<_, LexicalContextType::Default>(
             input,
             self,
@@ -1207,7 +1207,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn event_parameters_declaration(&self, input: &mut ParserContext) -> ParserResult {
+    fn event_parameters_declaration(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             let mut delim_guard = input.open_delim(TokenKind::CloseParen);
             let input = delim_guard.ctx();
@@ -1234,7 +1234,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn experimental_pragma(&self, input: &mut ParserContext) -> ParserResult {
+    fn experimental_pragma(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(self.parse_token_with_trivia::<LexicalContextType::Pragma>(
                 input,
@@ -1259,9 +1259,9 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn expression(&self, input: &mut ParserContext) -> ParserResult {
+    fn expression(&self, input: &mut ParserContext<'_>) -> ParserResult {
         #[allow(unused_variables)]
-        let parse_assignment_expression = |input: &mut ParserContext| {
+        let parse_assignment_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
                 RuleKind::BinaryExpression,
                 1u8,
@@ -1332,7 +1332,7 @@ impl Language {
             )
         };
         #[allow(unused_variables)]
-        let parse_assignment_expression = |input: &mut ParserContext| {
+        let parse_assignment_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
                 RuleKind::BinaryExpression,
                 3u8,
@@ -1403,7 +1403,7 @@ impl Language {
             )
         };
         #[allow(unused_variables)]
-        let parse_assignment_expression = |input: &mut ParserContext| {
+        let parse_assignment_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
                 RuleKind::BinaryExpression,
                 5u8,
@@ -1474,7 +1474,7 @@ impl Language {
             )
         };
         #[allow(unused_variables)]
-        let parse_assignment_expression = |input: &mut ParserContext| {
+        let parse_assignment_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
                 RuleKind::BinaryExpression,
                 7u8,
@@ -1545,7 +1545,7 @@ impl Language {
             )
         };
         #[allow(unused_variables)]
-        let parse_assignment_expression = |input: &mut ParserContext| {
+        let parse_assignment_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
                 RuleKind::BinaryExpression,
                 9u8,
@@ -1616,7 +1616,7 @@ impl Language {
             )
         };
         #[allow(unused_variables)]
-        let parse_assignment_expression = |input: &mut ParserContext| {
+        let parse_assignment_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
                 RuleKind::BinaryExpression,
                 11u8,
@@ -1687,7 +1687,7 @@ impl Language {
             )
         };
         #[allow(unused_variables)]
-        let parse_assignment_expression = |input: &mut ParserContext| {
+        let parse_assignment_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
                 RuleKind::BinaryExpression,
                 13u8,
@@ -1758,7 +1758,7 @@ impl Language {
             )
         };
         #[allow(unused_variables)]
-        let parse_assignment_expression = |input: &mut ParserContext| {
+        let parse_assignment_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
                 RuleKind::BinaryExpression,
                 15u8,
@@ -1829,7 +1829,7 @@ impl Language {
             )
         };
         #[allow(unused_variables)]
-        let parse_assignment_expression = |input: &mut ParserContext| {
+        let parse_assignment_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
                 RuleKind::BinaryExpression,
                 17u8,
@@ -1900,7 +1900,7 @@ impl Language {
             )
         };
         #[allow(unused_variables)]
-        let parse_assignment_expression = |input: &mut ParserContext| {
+        let parse_assignment_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
                 RuleKind::BinaryExpression,
                 19u8,
@@ -1971,7 +1971,7 @@ impl Language {
             )
         };
         #[allow(unused_variables)]
-        let parse_assignment_expression = |input: &mut ParserContext| {
+        let parse_assignment_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
                 RuleKind::BinaryExpression,
                 21u8,
@@ -2042,7 +2042,7 @@ impl Language {
             )
         };
         #[allow(unused_variables)]
-        let parse_assignment_expression = |input: &mut ParserContext| {
+        let parse_assignment_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
                 RuleKind::BinaryExpression,
                 23u8,
@@ -2113,7 +2113,7 @@ impl Language {
             )
         };
         #[allow(unused_variables)]
-        let parse_conditional_expression = |input: &mut ParserContext| {
+        let parse_conditional_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_postfix_operator(
                 RuleKind::ConditionalExpression,
                 25u8,
@@ -2133,7 +2133,7 @@ impl Language {
             )
         };
         #[allow(unused_variables)]
-        let parse_or_expression = |input: &mut ParserContext| {
+        let parse_or_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
                 RuleKind::BinaryExpression,
                 27u8,
@@ -2145,7 +2145,7 @@ impl Language {
             )
         };
         #[allow(unused_variables)]
-        let parse_and_expression = |input: &mut ParserContext| {
+        let parse_and_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
                 RuleKind::BinaryExpression,
                 29u8,
@@ -2157,7 +2157,7 @@ impl Language {
             )
         };
         #[allow(unused_variables)]
-        let parse_equality_expression = |input: &mut ParserContext| {
+        let parse_equality_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
                 RuleKind::BinaryExpression,
                 31u8,
@@ -2178,7 +2178,7 @@ impl Language {
             )
         };
         #[allow(unused_variables)]
-        let parse_equality_expression = |input: &mut ParserContext| {
+        let parse_equality_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
                 RuleKind::BinaryExpression,
                 33u8,
@@ -2199,7 +2199,7 @@ impl Language {
             )
         };
         #[allow(unused_variables)]
-        let parse_comparison_expression = |input: &mut ParserContext| {
+        let parse_comparison_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
                 RuleKind::BinaryExpression,
                 35u8,
@@ -2230,7 +2230,7 @@ impl Language {
             )
         };
         #[allow(unused_variables)]
-        let parse_comparison_expression = |input: &mut ParserContext| {
+        let parse_comparison_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
                 RuleKind::BinaryExpression,
                 37u8,
@@ -2261,7 +2261,7 @@ impl Language {
             )
         };
         #[allow(unused_variables)]
-        let parse_comparison_expression = |input: &mut ParserContext| {
+        let parse_comparison_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
                 RuleKind::BinaryExpression,
                 39u8,
@@ -2292,7 +2292,7 @@ impl Language {
             )
         };
         #[allow(unused_variables)]
-        let parse_comparison_expression = |input: &mut ParserContext| {
+        let parse_comparison_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
                 RuleKind::BinaryExpression,
                 41u8,
@@ -2323,7 +2323,7 @@ impl Language {
             )
         };
         #[allow(unused_variables)]
-        let parse_bitwise_or_expression = |input: &mut ParserContext| {
+        let parse_bitwise_or_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
                 RuleKind::BinaryExpression,
                 43u8,
@@ -2332,7 +2332,7 @@ impl Language {
             )
         };
         #[allow(unused_variables)]
-        let parse_bitwise_xor_expression = |input: &mut ParserContext| {
+        let parse_bitwise_xor_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
                 RuleKind::BinaryExpression,
                 45u8,
@@ -2344,7 +2344,7 @@ impl Language {
             )
         };
         #[allow(unused_variables)]
-        let parse_bitwise_and_expression = |input: &mut ParserContext| {
+        let parse_bitwise_and_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
                 RuleKind::BinaryExpression,
                 47u8,
@@ -2356,7 +2356,7 @@ impl Language {
             )
         };
         #[allow(unused_variables)]
-        let parse_shift_expression = |input: &mut ParserContext| {
+        let parse_shift_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
                 RuleKind::BinaryExpression,
                 49u8,
@@ -2382,7 +2382,7 @@ impl Language {
             )
         };
         #[allow(unused_variables)]
-        let parse_shift_expression = |input: &mut ParserContext| {
+        let parse_shift_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
                 RuleKind::BinaryExpression,
                 51u8,
@@ -2408,7 +2408,7 @@ impl Language {
             )
         };
         #[allow(unused_variables)]
-        let parse_shift_expression = |input: &mut ParserContext| {
+        let parse_shift_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
                 RuleKind::BinaryExpression,
                 53u8,
@@ -2434,7 +2434,7 @@ impl Language {
             )
         };
         #[allow(unused_variables)]
-        let parse_additive_expression = |input: &mut ParserContext| {
+        let parse_additive_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
                 RuleKind::BinaryExpression,
                 55u8,
@@ -2455,7 +2455,7 @@ impl Language {
             )
         };
         #[allow(unused_variables)]
-        let parse_additive_expression = |input: &mut ParserContext| {
+        let parse_additive_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
                 RuleKind::BinaryExpression,
                 57u8,
@@ -2476,7 +2476,7 @@ impl Language {
             )
         };
         #[allow(unused_variables)]
-        let parse_multiplicative_expression = |input: &mut ParserContext| {
+        let parse_multiplicative_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
                 RuleKind::BinaryExpression,
                 59u8,
@@ -2502,7 +2502,7 @@ impl Language {
             )
         };
         #[allow(unused_variables)]
-        let parse_multiplicative_expression = |input: &mut ParserContext| {
+        let parse_multiplicative_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
                 RuleKind::BinaryExpression,
                 61u8,
@@ -2528,7 +2528,7 @@ impl Language {
             )
         };
         #[allow(unused_variables)]
-        let parse_multiplicative_expression = |input: &mut ParserContext| {
+        let parse_multiplicative_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
                 RuleKind::BinaryExpression,
                 63u8,
@@ -2554,7 +2554,7 @@ impl Language {
             )
         };
         #[allow(unused_variables)]
-        let parse_exponentiation_expression_removed_from_0_6_0 = |input: &mut ParserContext| {
+        let parse_exponentiation_expression_removed_from_0_6_0 = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
                 RuleKind::BinaryExpression,
                 65u8,
@@ -2579,7 +2579,9 @@ impl Language {
             )
         };
         #[allow(unused_variables)]
-        let parse_exponentiation_expression_introduced_from_0_6_0 = |input: &mut ParserContext| {
+        let parse_exponentiation_expression_introduced_from_0_6_0 = |input: &mut ParserContext<
+            '_,
+        >| {
             PrecedenceHelper::to_binary_operator(
                 RuleKind::BinaryExpression,
                 67u8 + 1,
@@ -2604,7 +2606,7 @@ impl Language {
             )
         };
         #[allow(unused_variables)]
-        let parse_postfix_expression = |input: &mut ParserContext| {
+        let parse_postfix_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_postfix_operator(
                 RuleKind::UnaryPostfixExpression,
                 69u8,
@@ -2624,7 +2626,7 @@ impl Language {
             )
         };
         #[allow(unused_variables)]
-        let parse_postfix_expression = |input: &mut ParserContext| {
+        let parse_postfix_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_postfix_operator(
                 RuleKind::UnaryPostfixExpression,
                 71u8,
@@ -2644,7 +2646,7 @@ impl Language {
             )
         };
         #[allow(unused_variables)]
-        let parse_prefix_expression = |input: &mut ParserContext| {
+        let parse_prefix_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_prefix_operator(
                 RuleKind::UnaryPrefixExpression,
                 73u8,
@@ -2686,7 +2688,7 @@ impl Language {
             )
         };
         #[allow(unused_variables)]
-        let parse_prefix_expression = |input: &mut ParserContext| {
+        let parse_prefix_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_prefix_operator(
                 RuleKind::UnaryPrefixExpression,
                 75u8,
@@ -2728,7 +2730,7 @@ impl Language {
             )
         };
         #[allow(unused_variables)]
-        let parse_prefix_expression = |input: &mut ParserContext| {
+        let parse_prefix_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_prefix_operator(
                 RuleKind::UnaryPrefixExpression,
                 77u8,
@@ -2770,7 +2772,7 @@ impl Language {
             )
         };
         #[allow(unused_variables)]
-        let parse_prefix_expression = |input: &mut ParserContext| {
+        let parse_prefix_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_prefix_operator(
                 RuleKind::UnaryPrefixExpression,
                 79u8,
@@ -2812,7 +2814,7 @@ impl Language {
             )
         };
         #[allow(unused_variables)]
-        let parse_prefix_expression = |input: &mut ParserContext| {
+        let parse_prefix_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_prefix_operator(
                 RuleKind::UnaryPrefixExpression,
                 81u8,
@@ -2854,7 +2856,7 @@ impl Language {
             )
         };
         #[allow(unused_variables)]
-        let parse_prefix_expression_removed_from_0_5_0 = |input: &mut ParserContext| {
+        let parse_prefix_expression_removed_from_0_5_0 = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_prefix_operator(
                 RuleKind::UnaryPrefixExpression,
                 83u8,
@@ -2896,7 +2898,7 @@ impl Language {
             )
         };
         #[allow(unused_variables)]
-        let parse_function_call_expression = |input: &mut ParserContext| {
+        let parse_function_call_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_postfix_operator(
                 RuleKind::FunctionCallExpression,
                 85u8,
@@ -2934,7 +2936,7 @@ impl Language {
             )
         };
         #[allow(unused_variables)]
-        let parse_member_access_expression = |input: &mut ParserContext| {
+        let parse_member_access_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_postfix_operator(
                 RuleKind::MemberAccessExpression,
                 87u8,
@@ -2961,7 +2963,7 @@ impl Language {
             )
         };
         #[allow(unused_variables)]
-        let parse_index_access_expression = |input: &mut ParserContext| {
+        let parse_index_access_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_postfix_operator(
                 RuleKind::IndexAccessExpression,
                 89u8,
@@ -2994,7 +2996,7 @@ impl Language {
             )
         };
         #[allow(unused_variables)]
-        let prefix_operator_parser = |input: &mut ParserContext| {
+        let prefix_operator_parser = |input: &mut ParserContext<'_>| {
             ChoiceHelper::run(input, |mut choice, input| {
                 let result = parse_prefix_expression(input);
                 choice.consider(input, result)?;
@@ -3014,7 +3016,7 @@ impl Language {
             })
         };
         #[allow(unused_variables)]
-        let primary_expression_parser = |input: &mut ParserContext| {
+        let primary_expression_parser = |input: &mut ParserContext<'_>| {
             ChoiceHelper::run(input, |mut choice, input| {
                 let result = self.new_expression(input);
                 choice.consider(input, result)?;
@@ -3114,7 +3116,7 @@ impl Language {
             })
         };
         #[allow(unused_variables)]
-        let postfix_operator_parser = |input: &mut ParserContext| {
+        let postfix_operator_parser = |input: &mut ParserContext<'_>| {
             ChoiceHelper::run(input, |mut choice, input| {
                 let result = parse_conditional_expression(input);
                 choice.consider(input, result)?;
@@ -3132,7 +3134,7 @@ impl Language {
             })
         };
         #[allow(unused_variables)]
-        let binary_operand_parser = |input: &mut ParserContext| {
+        let binary_operand_parser = |input: &mut ParserContext<'_>| {
             SequenceHelper::run(|mut seq| {
                 seq.elem(ZeroOrMoreHelper::run(input, |input| {
                     prefix_operator_parser(input)
@@ -3145,7 +3147,7 @@ impl Language {
             })
         };
         #[allow(unused_variables)]
-        let binary_operator_parser = |input: &mut ParserContext| {
+        let binary_operator_parser = |input: &mut ParserContext<'_>| {
             ChoiceHelper::run(input, |mut choice, input| {
                 let result = parse_assignment_expression(input);
                 choice.consider(input, result)?;
@@ -3221,7 +3223,7 @@ impl Language {
             })
         };
         #[allow(unused_variables)]
-        let linear_expression_parser = |input: &mut ParserContext| {
+        let linear_expression_parser = |input: &mut ParserContext<'_>| {
             SequenceHelper::run(|mut seq| {
                 seq.elem(binary_operand_parser(input))?;
                 seq.elem(ZeroOrMoreHelper::run(input, |input| {
@@ -3242,7 +3244,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn expression_statement(&self, input: &mut ParserContext) -> ParserResult {
+    fn expression_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(
                 self.expression(input)
@@ -3263,7 +3265,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn fallback_function_attributes(&self, input: &mut ParserContext) -> ParserResult {
+    fn fallback_function_attributes(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if self.version_is_at_least_0_6_0 {
             OneOrMoreHelper::run(input, |input| {
                 if self.version_is_at_least_0_6_0 {
@@ -3310,7 +3312,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn fallback_function_definition(&self, input: &mut ParserContext) -> ParserResult {
+    fn fallback_function_definition(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if self.version_is_at_least_0_6_0 {
             SequenceHelper::run(|mut seq| {
                 seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
@@ -3341,7 +3343,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn for_statement(&self, input: &mut ParserContext) -> ParserResult {
+    fn for_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
                 input,
@@ -3453,7 +3455,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn function_attributes(&self, input: &mut ParserContext) -> ParserResult {
+    fn function_attributes(&self, input: &mut ParserContext<'_>) -> ParserResult {
         OneOrMoreHelper::run(input, |input| {
             ChoiceHelper::run(input, |mut choice, input| {
                 let result = self.modifier_invocation(input);
@@ -3516,7 +3518,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn function_definition(&self, input: &mut ParserContext) -> ParserResult {
+    fn function_definition(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
                 input,
@@ -3559,7 +3561,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn function_type(&self, input: &mut ParserContext) -> ParserResult {
+    fn function_type(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
                 input,
@@ -3576,7 +3578,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn function_type_attributes(&self, input: &mut ParserContext) -> ParserResult {
+    fn function_type_attributes(&self, input: &mut ParserContext<'_>) -> ParserResult {
         OneOrMoreHelper::run(input, |input| {
             ChoiceHelper::run(input, |mut choice, input| {
                 let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
@@ -3621,7 +3623,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn hex_number_expression(&self, input: &mut ParserContext) -> ParserResult {
+    fn hex_number_expression(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
                 input,
@@ -3708,7 +3710,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn hex_string_literals(&self, input: &mut ParserContext) -> ParserResult {
+    fn hex_string_literals(&self, input: &mut ParserContext<'_>) -> ParserResult {
         OneOrMoreHelper::run(input, |input| {
             self.parse_token_with_trivia::<LexicalContextType::Default>(
                 input,
@@ -3719,7 +3721,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn identifier_path(&self, input: &mut ParserContext) -> ParserResult {
+    fn identifier_path(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SeparatedHelper::run::<_, LexicalContextType::Default>(
             input,
             self,
@@ -3735,7 +3737,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn if_statement(&self, input: &mut ParserContext) -> ParserResult {
+    fn if_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
                 input,
@@ -3819,7 +3821,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn import_alias(&self, input: &mut ParserContext) -> ParserResult {
+    fn import_alias(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
                 input,
@@ -3835,7 +3837,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn import_deconstruction(&self, input: &mut ParserContext) -> ParserResult {
+    fn import_deconstruction(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(SequenceHelper::run(|mut seq| {
                 let mut delim_guard = input.open_delim(TokenKind::CloseBrace);
@@ -3873,7 +3875,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn import_deconstruction_symbol(&self, input: &mut ParserContext) -> ParserResult {
+    fn import_deconstruction_symbol(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
                 input,
@@ -3886,7 +3888,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn import_deconstruction_symbols(&self, input: &mut ParserContext) -> ParserResult {
+    fn import_deconstruction_symbols(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SeparatedHelper::run::<_, LexicalContextType::Default>(
             input,
             self,
@@ -3897,7 +3899,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn import_directive(&self, input: &mut ParserContext) -> ParserResult {
+    fn import_directive(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(
                 SequenceHelper::run(|mut seq| {
@@ -3933,7 +3935,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn index_access_end(&self, input: &mut ParserContext) -> ParserResult {
+    fn index_access_end(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
@@ -3948,7 +3950,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn inheritance_specifier(&self, input: &mut ParserContext) -> ParserResult {
+    fn inheritance_specifier(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
                 input,
@@ -3961,7 +3963,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn inheritance_type(&self, input: &mut ParserContext) -> ParserResult {
+    fn inheritance_type(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(self.identifier_path(input))?;
             seq.elem(OptionalHelper::transform(ChoiceHelper::run(
@@ -3980,7 +3982,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn inheritance_types(&self, input: &mut ParserContext) -> ParserResult {
+    fn inheritance_types(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SeparatedHelper::run::<_, LexicalContextType::Default>(
             input,
             self,
@@ -3991,7 +3993,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn interface_definition(&self, input: &mut ParserContext) -> ParserResult {
+    fn interface_definition(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
                 input,
@@ -4030,7 +4032,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn interface_members(&self, input: &mut ParserContext) -> ParserResult {
+    fn interface_members(&self, input: &mut ParserContext<'_>) -> ParserResult {
         OneOrMoreHelper::run(input, |input| {
             ChoiceHelper::run(input, |mut choice, input| {
                 let result = self.using_directive(input);
@@ -4078,7 +4080,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn leading_trivia(&self, input: &mut ParserContext) -> ParserResult {
+    fn leading_trivia(&self, input: &mut ParserContext<'_>) -> ParserResult {
         OneOrMoreHelper::run(input, |input| {
             ChoiceHelper::run(input, |mut choice, input| {
                 let result =
@@ -4102,7 +4104,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn library_definition(&self, input: &mut ParserContext) -> ParserResult {
+    fn library_definition(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
                 input,
@@ -4140,7 +4142,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn library_members(&self, input: &mut ParserContext) -> ParserResult {
+    fn library_members(&self, input: &mut ParserContext<'_>) -> ParserResult {
         OneOrMoreHelper::run(input, |input| {
             ChoiceHelper::run(input, |mut choice, input| {
                 let result = self.using_directive(input);
@@ -4188,7 +4190,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn mapping_key(&self, input: &mut ParserContext) -> ParserResult {
+    fn mapping_key(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(ChoiceHelper::run(input, |mut choice, input| {
                 let result = ChoiceHelper::run(input, |mut choice, input| {
@@ -4262,7 +4264,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn mapping_type(&self, input: &mut ParserContext) -> ParserResult {
+    fn mapping_type(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
                 input,
@@ -4304,7 +4306,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn mapping_value(&self, input: &mut ParserContext) -> ParserResult {
+    fn mapping_value(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(self.type_name(input))?;
             if self.version_is_at_least_0_8_18 {
@@ -4321,7 +4323,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn modifier_attributes(&self, input: &mut ParserContext) -> ParserResult {
+    fn modifier_attributes(&self, input: &mut ParserContext<'_>) -> ParserResult {
         OneOrMoreHelper::run(input, |input| {
             ChoiceHelper::run(input, |mut choice, input| {
                 let result = self.override_specifier(input);
@@ -4340,7 +4342,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn modifier_definition(&self, input: &mut ParserContext) -> ParserResult {
+    fn modifier_definition(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
                 input,
@@ -4370,7 +4372,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn modifier_invocation(&self, input: &mut ParserContext) -> ParserResult {
+    fn modifier_invocation(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(self.identifier_path(input))?;
             seq.elem(OptionalHelper::transform(ChoiceHelper::run(
@@ -4389,7 +4391,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn named_argument(&self, input: &mut ParserContext) -> ParserResult {
+    fn named_argument(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
                 input,
@@ -4408,7 +4410,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn named_argument_group(&self, input: &mut ParserContext) -> ParserResult {
+    fn named_argument_group(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             let mut delim_guard = input.open_delim(TokenKind::CloseBrace);
             let input = delim_guard.ctx();
@@ -4435,7 +4437,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn named_argument_groups(&self, input: &mut ParserContext) -> ParserResult {
+    fn named_argument_groups(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if self.version_is_at_least_0_6_2 && !self.version_is_at_least_0_8_0 {
             OneOrMoreHelper::run(input, |input| self.named_argument_group(input))
         } else {
@@ -4445,7 +4447,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn named_arguments(&self, input: &mut ParserContext) -> ParserResult {
+    fn named_arguments(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SeparatedHelper::run::<_, LexicalContextType::Default>(
             input,
             self,
@@ -4456,7 +4458,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn named_arguments_declaration(&self, input: &mut ParserContext) -> ParserResult {
+    fn named_arguments_declaration(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             let mut delim_guard = input.open_delim(TokenKind::CloseParen);
             let input = delim_guard.ctx();
@@ -4483,7 +4485,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn named_import(&self, input: &mut ParserContext) -> ParserResult {
+    fn named_import(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
                 input,
@@ -4504,7 +4506,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn new_expression(&self, input: &mut ParserContext) -> ParserResult {
+    fn new_expression(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
                 input,
@@ -4517,7 +4519,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn override_paths(&self, input: &mut ParserContext) -> ParserResult {
+    fn override_paths(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SeparatedHelper::run::<_, LexicalContextType::Default>(
             input,
             self,
@@ -4528,7 +4530,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn override_paths_declaration(&self, input: &mut ParserContext) -> ParserResult {
+    fn override_paths_declaration(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             let mut delim_guard = input.open_delim(TokenKind::CloseParen);
             let input = delim_guard.ctx();
@@ -4555,7 +4557,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn override_specifier(&self, input: &mut ParserContext) -> ParserResult {
+    fn override_specifier(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
                 input,
@@ -4570,7 +4572,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn parameter(&self, input: &mut ParserContext) -> ParserResult {
+    fn parameter(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(self.type_name(input))?;
             seq.elem(OptionalHelper::transform(ChoiceHelper::run(
@@ -4608,7 +4610,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn parameters(&self, input: &mut ParserContext) -> ParserResult {
+    fn parameters(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SeparatedHelper::run::<_, LexicalContextType::Default>(
             input,
             self,
@@ -4619,7 +4621,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn parameters_declaration(&self, input: &mut ParserContext) -> ParserResult {
+    fn parameters_declaration(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             let mut delim_guard = input.open_delim(TokenKind::CloseParen);
             let input = delim_guard.ctx();
@@ -4646,7 +4648,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn path_import(&self, input: &mut ParserContext) -> ParserResult {
+    fn path_import(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
                 input,
@@ -4659,7 +4661,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn positional_arguments(&self, input: &mut ParserContext) -> ParserResult {
+    fn positional_arguments(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SeparatedHelper::run::<_, LexicalContextType::Default>(
             input,
             self,
@@ -4670,7 +4672,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn positional_arguments_declaration(&self, input: &mut ParserContext) -> ParserResult {
+    fn positional_arguments_declaration(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             let mut delim_guard = input.open_delim(TokenKind::CloseParen);
             let input = delim_guard.ctx();
@@ -4697,7 +4699,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn pragma_directive(&self, input: &mut ParserContext) -> ParserResult {
+    fn pragma_directive(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(
                 SequenceHelper::run(|mut seq| {
@@ -4733,7 +4735,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn receive_function_attributes(&self, input: &mut ParserContext) -> ParserResult {
+    fn receive_function_attributes(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if self.version_is_at_least_0_6_0 {
             OneOrMoreHelper::run(input, |input| {
                 if self.version_is_at_least_0_6_0 {
@@ -4770,7 +4772,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn receive_function_definition(&self, input: &mut ParserContext) -> ParserResult {
+    fn receive_function_definition(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if self.version_is_at_least_0_6_0 {
             SequenceHelper::run(|mut seq| {
                 seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
@@ -4800,7 +4802,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn return_statement(&self, input: &mut ParserContext) -> ParserResult {
+    fn return_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(
                 SequenceHelper::run(|mut seq| {
@@ -4828,7 +4830,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn returns_declaration(&self, input: &mut ParserContext) -> ParserResult {
+    fn returns_declaration(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
                 input,
@@ -4841,7 +4843,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn revert_statement(&self, input: &mut ParserContext) -> ParserResult {
+    fn revert_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if self.version_is_at_least_0_8_4 {
             SequenceHelper::run(|mut seq| {
                 seq.elem(
@@ -4880,7 +4882,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn source_unit(&self, input: &mut ParserContext) -> ParserResult {
+    fn source_unit(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(OptionalHelper::transform(self.source_unit_members(input)))?;
             seq.elem(OptionalHelper::transform(self.end_of_file_trivia(input)))?;
@@ -4890,7 +4892,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn source_unit_members(&self, input: &mut ParserContext) -> ParserResult {
+    fn source_unit_members(&self, input: &mut ParserContext<'_>) -> ParserResult {
         OneOrMoreHelper::run(input, |input| {
             ChoiceHelper::run(input, |mut choice, input| {
                 let result = self.pragma_directive(input);
@@ -4942,7 +4944,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn state_variable_attributes(&self, input: &mut ParserContext) -> ParserResult {
+    fn state_variable_attributes(&self, input: &mut ParserContext<'_>) -> ParserResult {
         OneOrMoreHelper::run(input, |input| {
             ChoiceHelper::run(input, |mut choice, input| {
                 let result = self.override_specifier(input);
@@ -4981,7 +4983,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn state_variable_definition(&self, input: &mut ParserContext) -> ParserResult {
+    fn state_variable_definition(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(
                 SequenceHelper::run(|mut seq| {
@@ -5015,7 +5017,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn state_variable_definition_value(&self, input: &mut ParserContext) -> ParserResult {
+    fn state_variable_definition_value(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
@@ -5030,7 +5032,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn statements(&self, input: &mut ParserContext) -> ParserResult {
+    fn statements(&self, input: &mut ParserContext<'_>) -> ParserResult {
         OneOrMoreHelper::run(input, |input| {
             ChoiceHelper::run(input, |mut choice, input| {
                 let result = self.expression_statement(input);
@@ -5086,7 +5088,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn struct_definition(&self, input: &mut ParserContext) -> ParserResult {
+    fn struct_definition(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
                 input,
@@ -5124,7 +5126,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn struct_member(&self, input: &mut ParserContext) -> ParserResult {
+    fn struct_member(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(
                 SequenceHelper::run(|mut seq| {
@@ -5152,13 +5154,13 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn struct_members(&self, input: &mut ParserContext) -> ParserResult {
+    fn struct_members(&self, input: &mut ParserContext<'_>) -> ParserResult {
         OneOrMoreHelper::run(input, |input| self.struct_member(input))
             .with_kind(RuleKind::StructMembers)
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn throw_statement(&self, input: &mut ParserContext) -> ParserResult {
+    fn throw_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if !self.version_is_at_least_0_5_0 {
             SequenceHelper::run(|mut seq| {
                 seq.elem(
@@ -5186,7 +5188,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn trailing_trivia(&self, input: &mut ParserContext) -> ParserResult {
+    fn trailing_trivia(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(OptionalHelper::transform(
                 self.parse_token::<LexicalContextType::Default>(input, TokenKind::Whitespace),
@@ -5204,7 +5206,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn try_statement(&self, input: &mut ParserContext) -> ParserResult {
+    fn try_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if self.version_is_at_least_0_6_0 {
             SequenceHelper::run(|mut seq| {
                 seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
@@ -5224,7 +5226,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn tuple_deconstruction_element(&self, input: &mut ParserContext) -> ParserResult {
+    fn tuple_deconstruction_element(&self, input: &mut ParserContext<'_>) -> ParserResult {
         OptionalHelper::transform(ChoiceHelper::run(input, |mut choice, input| {
             let result = self.typed_tuple_member(input);
             choice.consider(input, result)?;
@@ -5236,7 +5238,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn tuple_deconstruction_elements(&self, input: &mut ParserContext) -> ParserResult {
+    fn tuple_deconstruction_elements(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SeparatedHelper::run::<_, LexicalContextType::Default>(
             input,
             self,
@@ -5247,7 +5249,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn tuple_deconstruction_statement(&self, input: &mut ParserContext) -> ParserResult {
+    fn tuple_deconstruction_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(
                 SequenceHelper::run(|mut seq| {
@@ -5297,7 +5299,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn tuple_expression(&self, input: &mut ParserContext) -> ParserResult {
+    fn tuple_expression(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             let mut delim_guard = input.open_delim(TokenKind::CloseParen);
             let input = delim_guard.ctx();
@@ -5324,12 +5326,12 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn tuple_value(&self, input: &mut ParserContext) -> ParserResult {
+    fn tuple_value(&self, input: &mut ParserContext<'_>) -> ParserResult {
         OptionalHelper::transform(self.expression(input)).with_kind(RuleKind::TupleValue)
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn tuple_values(&self, input: &mut ParserContext) -> ParserResult {
+    fn tuple_values(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SeparatedHelper::run::<_, LexicalContextType::Default>(
             input,
             self,
@@ -5340,7 +5342,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn type_expression(&self, input: &mut ParserContext) -> ParserResult {
+    fn type_expression(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if self.version_is_at_least_0_5_3 {
             SequenceHelper::run(|mut seq| {
                 seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
@@ -5378,9 +5380,9 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn type_name(&self, input: &mut ParserContext) -> ParserResult {
+    fn type_name(&self, input: &mut ParserContext<'_>) -> ParserResult {
         #[allow(unused_variables)]
-        let parse_array_type_name = |input: &mut ParserContext| {
+        let parse_array_type_name = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_postfix_operator(
                 RuleKind::ArrayTypeName,
                 1u8,
@@ -5409,7 +5411,7 @@ impl Language {
             )
         };
         #[allow(unused_variables)]
-        let primary_expression_parser = |input: &mut ParserContext| {
+        let primary_expression_parser = |input: &mut ParserContext<'_>| {
             ChoiceHelper::run(input, |mut choice, input| {
                 let result = self.function_type(input);
                 choice.consider(input, result)?;
@@ -5474,7 +5476,7 @@ impl Language {
             })
         };
         #[allow(unused_variables)]
-        let postfix_operator_parser = |input: &mut ParserContext| {
+        let postfix_operator_parser = |input: &mut ParserContext<'_>| {
             ChoiceHelper::run(input, |mut choice, input| {
                 let result = parse_array_type_name(input);
                 choice.consider(input, result)?;
@@ -5482,7 +5484,7 @@ impl Language {
             })
         };
         #[allow(unused_variables)]
-        let linear_expression_parser = |input: &mut ParserContext| {
+        let linear_expression_parser = |input: &mut ParserContext<'_>| {
             SequenceHelper::run(|mut seq| {
                 seq.elem(primary_expression_parser(input))?;
                 seq.elem(ZeroOrMoreHelper::run(input, |input| {
@@ -5499,7 +5501,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn typed_tuple_member(&self, input: &mut ParserContext) -> ParserResult {
+    fn typed_tuple_member(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(self.type_name(input))?;
             seq.elem(OptionalHelper::transform(ChoiceHelper::run(
@@ -5535,7 +5537,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn unchecked_block(&self, input: &mut ParserContext) -> ParserResult {
+    fn unchecked_block(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if self.version_is_at_least_0_8_0 {
             SequenceHelper::run(|mut seq| {
                 seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
@@ -5552,7 +5554,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn unicode_string_literals(&self, input: &mut ParserContext) -> ParserResult {
+    fn unicode_string_literals(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if self.version_is_at_least_0_7_0 {
             OneOrMoreHelper::run(input, |input| {
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
@@ -5567,7 +5569,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn unnamed_function_attributes(&self, input: &mut ParserContext) -> ParserResult {
+    fn unnamed_function_attributes(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if !self.version_is_at_least_0_6_0 {
             OneOrMoreHelper::run(input, |input| {
                 if !self.version_is_at_least_0_6_0 {
@@ -5609,7 +5611,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn unnamed_function_definition(&self, input: &mut ParserContext) -> ParserResult {
+    fn unnamed_function_definition(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if !self.version_is_at_least_0_6_0 {
             SequenceHelper::run(|mut seq| {
                 seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
@@ -5639,7 +5641,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn untyped_tuple_member(&self, input: &mut ParserContext) -> ParserResult {
+    fn untyped_tuple_member(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(OptionalHelper::transform(ChoiceHelper::run(
                 input,
@@ -5674,7 +5676,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn user_defined_value_type_definition(&self, input: &mut ParserContext) -> ParserResult {
+    fn user_defined_value_type_definition(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if self.version_is_at_least_0_8_8 {
             SequenceHelper::run(|mut seq| {
                 seq.elem(
@@ -5774,7 +5776,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn using_alias(&self, input: &mut ParserContext) -> ParserResult {
+    fn using_alias(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if self.version_is_at_least_0_8_19 {
             SequenceHelper::run(|mut seq| {
                 seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
@@ -5872,7 +5874,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn using_deconstruction(&self, input: &mut ParserContext) -> ParserResult {
+    fn using_deconstruction(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if self.version_is_at_least_0_8_13 {
             SequenceHelper::run(|mut seq| {
                 let mut delim_guard = input.open_delim(TokenKind::CloseBrace);
@@ -5903,7 +5905,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn using_deconstruction_symbol(&self, input: &mut ParserContext) -> ParserResult {
+    fn using_deconstruction_symbol(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if self.version_is_at_least_0_8_13 {
             SequenceHelper::run(|mut seq| {
                 seq.elem(self.identifier_path(input))?;
@@ -5919,7 +5921,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn using_deconstruction_symbols(&self, input: &mut ParserContext) -> ParserResult {
+    fn using_deconstruction_symbols(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if self.version_is_at_least_0_8_13 {
             SeparatedHelper::run::<_, LexicalContextType::Default>(
                 input,
@@ -5934,7 +5936,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn using_directive(&self, input: &mut ParserContext) -> ParserResult {
+    fn using_directive(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(
                 SequenceHelper::run(|mut seq| {
@@ -5992,7 +5994,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn variable_declaration_statement(&self, input: &mut ParserContext) -> ParserResult {
+    fn variable_declaration_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(
                 SequenceHelper::run(|mut seq| {
@@ -6061,7 +6063,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn variable_declaration_value(&self, input: &mut ParserContext) -> ParserResult {
+    fn variable_declaration_value(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
@@ -6076,7 +6078,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn version_pragma(&self, input: &mut ParserContext) -> ParserResult {
+    fn version_pragma(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(self.parse_token_with_trivia::<LexicalContextType::Pragma>(
                 input,
@@ -6089,9 +6091,9 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn version_pragma_expression(&self, input: &mut ParserContext) -> ParserResult {
+    fn version_pragma_expression(&self, input: &mut ParserContext<'_>) -> ParserResult {
         #[allow(unused_variables)]
-        let parse_version_pragma_or_expression = |input: &mut ParserContext| {
+        let parse_version_pragma_or_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
                 RuleKind::VersionPragmaBinaryExpression,
                 1u8,
@@ -6103,7 +6105,7 @@ impl Language {
             )
         };
         #[allow(unused_variables)]
-        let parse_version_pragma_range_expression = |input: &mut ParserContext| {
+        let parse_version_pragma_range_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
                 RuleKind::VersionPragmaBinaryExpression,
                 3u8,
@@ -6112,7 +6114,7 @@ impl Language {
             )
         };
         #[allow(unused_variables)]
-        let parse_version_pragma_prefix_expression = |input: &mut ParserContext| {
+        let parse_version_pragma_prefix_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_prefix_operator(
                 RuleKind::VersionPragmaUnaryExpression,
                 5u8,
@@ -6157,7 +6159,7 @@ impl Language {
             )
         };
         #[allow(unused_variables)]
-        let parse_version_pragma_prefix_expression = |input: &mut ParserContext| {
+        let parse_version_pragma_prefix_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_prefix_operator(
                 RuleKind::VersionPragmaUnaryExpression,
                 7u8,
@@ -6202,7 +6204,7 @@ impl Language {
             )
         };
         #[allow(unused_variables)]
-        let parse_version_pragma_prefix_expression = |input: &mut ParserContext| {
+        let parse_version_pragma_prefix_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_prefix_operator(
                 RuleKind::VersionPragmaUnaryExpression,
                 9u8,
@@ -6247,7 +6249,7 @@ impl Language {
             )
         };
         #[allow(unused_variables)]
-        let parse_version_pragma_prefix_expression = |input: &mut ParserContext| {
+        let parse_version_pragma_prefix_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_prefix_operator(
                 RuleKind::VersionPragmaUnaryExpression,
                 11u8,
@@ -6292,7 +6294,7 @@ impl Language {
             )
         };
         #[allow(unused_variables)]
-        let parse_version_pragma_prefix_expression = |input: &mut ParserContext| {
+        let parse_version_pragma_prefix_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_prefix_operator(
                 RuleKind::VersionPragmaUnaryExpression,
                 13u8,
@@ -6337,7 +6339,7 @@ impl Language {
             )
         };
         #[allow(unused_variables)]
-        let parse_version_pragma_prefix_expression = |input: &mut ParserContext| {
+        let parse_version_pragma_prefix_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_prefix_operator(
                 RuleKind::VersionPragmaUnaryExpression,
                 15u8,
@@ -6382,7 +6384,7 @@ impl Language {
             )
         };
         #[allow(unused_variables)]
-        let parse_version_pragma_prefix_expression = |input: &mut ParserContext| {
+        let parse_version_pragma_prefix_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_prefix_operator(
                 RuleKind::VersionPragmaUnaryExpression,
                 17u8,
@@ -6427,7 +6429,7 @@ impl Language {
             )
         };
         #[allow(unused_variables)]
-        let prefix_operator_parser = |input: &mut ParserContext| {
+        let prefix_operator_parser = |input: &mut ParserContext<'_>| {
             ChoiceHelper::run(input, |mut choice, input| {
                 let result = parse_version_pragma_prefix_expression(input);
                 choice.consider(input, result)?;
@@ -6448,9 +6450,9 @@ impl Language {
         };
         #[allow(unused_variables)]
         let primary_expression_parser =
-            |input: &mut ParserContext| self.version_pragma_specifier(input);
+            |input: &mut ParserContext<'_>| self.version_pragma_specifier(input);
         #[allow(unused_variables)]
-        let binary_operand_parser = |input: &mut ParserContext| {
+        let binary_operand_parser = |input: &mut ParserContext<'_>| {
             SequenceHelper::run(|mut seq| {
                 seq.elem(ZeroOrMoreHelper::run(input, |input| {
                     prefix_operator_parser(input)
@@ -6460,7 +6462,7 @@ impl Language {
             })
         };
         #[allow(unused_variables)]
-        let binary_operator_parser = |input: &mut ParserContext| {
+        let binary_operator_parser = |input: &mut ParserContext<'_>| {
             ChoiceHelper::run(input, |mut choice, input| {
                 let result = parse_version_pragma_or_expression(input);
                 choice.consider(input, result)?;
@@ -6470,7 +6472,7 @@ impl Language {
             })
         };
         #[allow(unused_variables)]
-        let linear_expression_parser = |input: &mut ParserContext| {
+        let linear_expression_parser = |input: &mut ParserContext<'_>| {
             SequenceHelper::run(|mut seq| {
                 seq.elem(binary_operand_parser(input))?;
                 seq.elem(ZeroOrMoreHelper::run(input, |input| {
@@ -6491,13 +6493,13 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn version_pragma_expressions(&self, input: &mut ParserContext) -> ParserResult {
+    fn version_pragma_expressions(&self, input: &mut ParserContext<'_>) -> ParserResult {
         OneOrMoreHelper::run(input, |input| self.version_pragma_expression(input))
             .with_kind(RuleKind::VersionPragmaExpressions)
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn version_pragma_specifier(&self, input: &mut ParserContext) -> ParserResult {
+    fn version_pragma_specifier(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SeparatedHelper::run::<_, LexicalContextType::Pragma>(
             input,
             self,
@@ -6513,7 +6515,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn while_statement(&self, input: &mut ParserContext) -> ParserResult {
+    fn while_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
                 input,
@@ -6596,7 +6598,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn yul_arguments(&self, input: &mut ParserContext) -> ParserResult {
+    fn yul_arguments(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SeparatedHelper::run::<_, LexicalContextType::Yul>(
             input,
             self,
@@ -6607,7 +6609,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn yul_assignment_statement(&self, input: &mut ParserContext) -> ParserResult {
+    fn yul_assignment_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(self.yul_identifier_paths(input))?;
             seq.elem(
@@ -6623,7 +6625,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn yul_block(&self, input: &mut ParserContext) -> ParserResult {
+    fn yul_block(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             let mut delim_guard = input.open_delim(TokenKind::CloseBrace);
             let input = delim_guard.ctx();
@@ -6654,13 +6656,13 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn yul_break_statement(&self, input: &mut ParserContext) -> ParserResult {
+    fn yul_break_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
         self.parse_token_with_trivia::<LexicalContextType::Yul>(input, TokenKind::YulBreakKeyword)
             .with_kind(RuleKind::YulBreakStatement)
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn yul_continue_statement(&self, input: &mut ParserContext) -> ParserResult {
+    fn yul_continue_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
         self.parse_token_with_trivia::<LexicalContextType::Yul>(
             input,
             TokenKind::YulContinueKeyword,
@@ -6669,7 +6671,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn yul_default_case(&self, input: &mut ParserContext) -> ParserResult {
+    fn yul_default_case(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
@@ -6682,9 +6684,9 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn yul_expression(&self, input: &mut ParserContext) -> ParserResult {
+    fn yul_expression(&self, input: &mut ParserContext<'_>) -> ParserResult {
         #[allow(unused_variables)]
-        let parse_yul_function_call_expression = |input: &mut ParserContext| {
+        let parse_yul_function_call_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_postfix_operator(
                 RuleKind::YulFunctionCallExpression,
                 1u8,
@@ -6713,7 +6715,7 @@ impl Language {
             )
         };
         #[allow(unused_variables)]
-        let primary_expression_parser = |input: &mut ParserContext| {
+        let primary_expression_parser = |input: &mut ParserContext<'_>| {
             ChoiceHelper::run(input, |mut choice, input| {
                 let result = ChoiceHelper::run(input, |mut choice, input| {
                     let result = self.parse_token_with_trivia::<LexicalContextType::Yul>(
@@ -6755,7 +6757,7 @@ impl Language {
             })
         };
         #[allow(unused_variables)]
-        let postfix_operator_parser = |input: &mut ParserContext| {
+        let postfix_operator_parser = |input: &mut ParserContext<'_>| {
             ChoiceHelper::run(input, |mut choice, input| {
                 let result = parse_yul_function_call_expression(input);
                 choice.consider(input, result)?;
@@ -6763,7 +6765,7 @@ impl Language {
             })
         };
         #[allow(unused_variables)]
-        let linear_expression_parser = |input: &mut ParserContext| {
+        let linear_expression_parser = |input: &mut ParserContext<'_>| {
             SequenceHelper::run(|mut seq| {
                 seq.elem(primary_expression_parser(input))?;
                 seq.elem(ZeroOrMoreHelper::run(input, |input| {
@@ -6780,7 +6782,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn yul_for_statement(&self, input: &mut ParserContext) -> ParserResult {
+    fn yul_for_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
@@ -6796,7 +6798,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn yul_function_definition(&self, input: &mut ParserContext) -> ParserResult {
+    fn yul_function_definition(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
@@ -6817,7 +6819,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn yul_identifier_path(&self, input: &mut ParserContext) -> ParserResult {
+    fn yul_identifier_path(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SeparatedHelper::run::<_, LexicalContextType::Yul>(
             input,
             self,
@@ -6833,7 +6835,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn yul_identifier_paths(&self, input: &mut ParserContext) -> ParserResult {
+    fn yul_identifier_paths(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SeparatedHelper::run::<_, LexicalContextType::Yul>(
             input,
             self,
@@ -6844,7 +6846,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn yul_if_statement(&self, input: &mut ParserContext) -> ParserResult {
+    fn yul_if_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
@@ -6858,7 +6860,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn yul_leave_statement(&self, input: &mut ParserContext) -> ParserResult {
+    fn yul_leave_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if self.version_is_at_least_0_6_0 {
             self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
@@ -6871,7 +6873,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn yul_parameters(&self, input: &mut ParserContext) -> ParserResult {
+    fn yul_parameters(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SeparatedHelper::run::<_, LexicalContextType::Yul>(
             input,
             self,
@@ -6887,7 +6889,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn yul_parameters_declaration(&self, input: &mut ParserContext) -> ParserResult {
+    fn yul_parameters_declaration(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             let mut delim_guard = input.open_delim(TokenKind::CloseParen);
             let input = delim_guard.ctx();
@@ -6918,7 +6920,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn yul_return_variables(&self, input: &mut ParserContext) -> ParserResult {
+    fn yul_return_variables(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SeparatedHelper::run::<_, LexicalContextType::Yul>(
             input,
             self,
@@ -6934,7 +6936,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn yul_returns_declaration(&self, input: &mut ParserContext) -> ParserResult {
+    fn yul_returns_declaration(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
@@ -6947,7 +6949,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn yul_statements(&self, input: &mut ParserContext) -> ParserResult {
+    fn yul_statements(&self, input: &mut ParserContext<'_>) -> ParserResult {
         OneOrMoreHelper::run(input, |input| {
             ChoiceHelper::run(input, |mut choice, input| {
                 let result = self.yul_block(input);
@@ -6981,7 +6983,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn yul_switch_cases(&self, input: &mut ParserContext) -> ParserResult {
+    fn yul_switch_cases(&self, input: &mut ParserContext<'_>) -> ParserResult {
         OneOrMoreHelper::run(input, |input| {
             ChoiceHelper::run(input, |mut choice, input| {
                 let result = self.yul_default_case(input);
@@ -6995,7 +6997,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn yul_switch_statement(&self, input: &mut ParserContext) -> ParserResult {
+    fn yul_switch_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
@@ -7009,7 +7011,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn yul_value_case(&self, input: &mut ParserContext) -> ParserResult {
+    fn yul_value_case(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
@@ -7055,7 +7057,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn yul_variable_declaration_statement(&self, input: &mut ParserContext) -> ParserResult {
+    fn yul_variable_declaration_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(self.parse_token_with_trivia::<LexicalContextType::Yul>(
                 input,
@@ -7071,7 +7073,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn yul_variable_declaration_value(&self, input: &mut ParserContext) -> ParserResult {
+    fn yul_variable_declaration_value(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(
                 self.parse_token_with_trivia::<LexicalContextType::Yul>(
@@ -7090,7 +7092,7 @@ impl Language {
      ********************************************/
 
     #[allow(unused_assignments, unused_parens)]
-    fn ascii_escape(&self, input: &mut ParserContext) -> bool {
+    fn ascii_escape(&self, input: &mut ParserContext<'_>) -> bool {
         scan_choice!(
             input,
             scan_chars!(input, 't'),
@@ -7105,7 +7107,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn ascii_string_literal(&self, input: &mut ParserContext) -> bool {
+    fn ascii_string_literal(&self, input: &mut ParserContext<'_>) -> bool {
         scan_choice!(
             input,
             self.single_quoted_ascii_string_literal(input),
@@ -7114,7 +7116,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn bytes_keyword(&self, input: &mut ParserContext) -> bool {
+    fn bytes_keyword(&self, input: &mut ParserContext<'_>) -> bool {
         scan_sequence!(
             scan_chars!(input, 'b', 'y', 't', 'e', 's'),
             scan_optional!(
@@ -7159,7 +7161,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn decimal_digits(&self, input: &mut ParserContext) -> bool {
+    fn decimal_digits(&self, input: &mut ParserContext<'_>) -> bool {
         scan_sequence!(
             scan_one_or_more!(input, scan_char_range!(input, '0'..='9')),
             scan_zero_or_more!(
@@ -7173,7 +7175,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn decimal_exponent(&self, input: &mut ParserContext) -> bool {
+    fn decimal_exponent(&self, input: &mut ParserContext<'_>) -> bool {
         scan_sequence!(
             scan_choice!(input, scan_chars!(input, 'e'), scan_chars!(input, 'E')),
             scan_optional!(input, scan_chars!(input, '-')),
@@ -7182,7 +7184,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn decimal_literal(&self, input: &mut ParserContext) -> bool {
+    fn decimal_literal(&self, input: &mut ParserContext<'_>) -> bool {
         scan_choice!(
             input,
             scan_not_followed_by!(
@@ -7236,7 +7238,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn double_quoted_ascii_string_literal(&self, input: &mut ParserContext) -> bool {
+    fn double_quoted_ascii_string_literal(&self, input: &mut ParserContext<'_>) -> bool {
         scan_sequence!(
             scan_chars!(input, '"'),
             scan_zero_or_more!(
@@ -7254,7 +7256,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn double_quoted_hex_string_literal(&self, input: &mut ParserContext) -> bool {
+    fn double_quoted_hex_string_literal(&self, input: &mut ParserContext<'_>) -> bool {
         scan_sequence!(
             scan_chars!(input, 'h', 'e', 'x', '"'),
             scan_optional!(input, self.hex_string_contents(input)),
@@ -7263,7 +7265,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn double_quoted_unicode_string_literal(&self, input: &mut ParserContext) -> bool {
+    fn double_quoted_unicode_string_literal(&self, input: &mut ParserContext<'_>) -> bool {
         if self.version_is_at_least_0_7_0 {
             scan_sequence!(
                 scan_chars!(input, 'u', 'n', 'i', 'c', 'o', 'd', 'e', '"'),
@@ -7283,7 +7285,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn end_of_line(&self, input: &mut ParserContext) -> bool {
+    fn end_of_line(&self, input: &mut ParserContext<'_>) -> bool {
         scan_sequence!(
             scan_optional!(input, scan_chars!(input, '\r')),
             scan_chars!(input, '\n')
@@ -7291,7 +7293,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn escape_sequence(&self, input: &mut ParserContext) -> bool {
+    fn escape_sequence(&self, input: &mut ParserContext<'_>) -> bool {
         scan_sequence!(
             scan_chars!(input, '\\'),
             scan_choice!(
@@ -7304,7 +7306,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn fixed_keyword(&self, input: &mut ParserContext) -> bool {
+    fn fixed_keyword(&self, input: &mut ParserContext<'_>) -> bool {
         scan_choice!(
             input,
             scan_chars!(input, 'f', 'i', 'x', 'e', 'd'),
@@ -7587,7 +7589,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn hex_byte_escape(&self, input: &mut ParserContext) -> bool {
+    fn hex_byte_escape(&self, input: &mut ParserContext<'_>) -> bool {
         scan_sequence!(
             scan_chars!(input, 'x'),
             self.hex_character(input),
@@ -7596,7 +7598,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn hex_character(&self, input: &mut ParserContext) -> bool {
+    fn hex_character(&self, input: &mut ParserContext<'_>) -> bool {
         scan_choice!(
             input,
             scan_char_range!(input, '0'..='9'),
@@ -7606,7 +7608,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn hex_literal(&self, input: &mut ParserContext) -> bool {
+    fn hex_literal(&self, input: &mut ParserContext<'_>) -> bool {
         scan_choice!(
             input,
             scan_not_followed_by!(
@@ -7647,7 +7649,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn hex_string_contents(&self, input: &mut ParserContext) -> bool {
+    fn hex_string_contents(&self, input: &mut ParserContext<'_>) -> bool {
         scan_sequence!(
             self.hex_character(input),
             self.hex_character(input),
@@ -7663,7 +7665,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn hex_string_literal(&self, input: &mut ParserContext) -> bool {
+    fn hex_string_literal(&self, input: &mut ParserContext<'_>) -> bool {
         scan_choice!(
             input,
             self.single_quoted_hex_string_literal(input),
@@ -7672,12 +7674,12 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn identifier(&self, input: &mut ParserContext) -> bool {
+    fn identifier(&self, input: &mut ParserContext<'_>) -> bool {
         self.raw_identifier(input)
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn identifier_part(&self, input: &mut ParserContext) -> bool {
+    fn identifier_part(&self, input: &mut ParserContext<'_>) -> bool {
         scan_choice!(
             input,
             self.identifier_start(input),
@@ -7686,7 +7688,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn identifier_start(&self, input: &mut ParserContext) -> bool {
+    fn identifier_start(&self, input: &mut ParserContext<'_>) -> bool {
         scan_choice!(
             input,
             scan_chars!(input, '_'),
@@ -7697,7 +7699,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn int_keyword(&self, input: &mut ParserContext) -> bool {
+    fn int_keyword(&self, input: &mut ParserContext<'_>) -> bool {
         scan_sequence!(
             scan_chars!(input, 'i', 'n', 't'),
             scan_optional!(
@@ -7742,7 +7744,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn multiline_comment(&self, input: &mut ParserContext) -> bool {
+    fn multiline_comment(&self, input: &mut ParserContext<'_>) -> bool {
         scan_sequence!(
             scan_chars!(input, '/'),
             scan_chars!(input, '*'),
@@ -7760,7 +7762,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn raw_identifier(&self, input: &mut ParserContext) -> bool {
+    fn raw_identifier(&self, input: &mut ParserContext<'_>) -> bool {
         scan_sequence!(
             self.identifier_start(input),
             scan_zero_or_more!(input, self.identifier_part(input))
@@ -7768,7 +7770,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn single_line_comment(&self, input: &mut ParserContext) -> bool {
+    fn single_line_comment(&self, input: &mut ParserContext<'_>) -> bool {
         scan_sequence!(
             scan_chars!(input, '/', '/'),
             scan_zero_or_more!(input, scan_none_of!(input, '\r', '\n'))
@@ -7776,7 +7778,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn single_quoted_ascii_string_literal(&self, input: &mut ParserContext) -> bool {
+    fn single_quoted_ascii_string_literal(&self, input: &mut ParserContext<'_>) -> bool {
         scan_sequence!(
             scan_chars!(input, '\''),
             scan_zero_or_more!(
@@ -7794,7 +7796,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn single_quoted_hex_string_literal(&self, input: &mut ParserContext) -> bool {
+    fn single_quoted_hex_string_literal(&self, input: &mut ParserContext<'_>) -> bool {
         scan_sequence!(
             scan_chars!(input, 'h', 'e', 'x', '\''),
             scan_optional!(input, self.hex_string_contents(input)),
@@ -7803,7 +7805,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn single_quoted_unicode_string_literal(&self, input: &mut ParserContext) -> bool {
+    fn single_quoted_unicode_string_literal(&self, input: &mut ParserContext<'_>) -> bool {
         if self.version_is_at_least_0_7_0 {
             scan_sequence!(
                 scan_chars!(input, 'u', 'n', 'i', 'c', 'o', 'd', 'e', '\''),
@@ -7823,7 +7825,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn ufixed_keyword(&self, input: &mut ParserContext) -> bool {
+    fn ufixed_keyword(&self, input: &mut ParserContext<'_>) -> bool {
         scan_choice!(
             input,
             scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd'),
@@ -8106,7 +8108,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn uint_keyword(&self, input: &mut ParserContext) -> bool {
+    fn uint_keyword(&self, input: &mut ParserContext<'_>) -> bool {
         scan_sequence!(
             scan_chars!(input, 'u', 'i', 'n', 't'),
             scan_optional!(
@@ -8151,7 +8153,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn unicode_escape(&self, input: &mut ParserContext) -> bool {
+    fn unicode_escape(&self, input: &mut ParserContext<'_>) -> bool {
         scan_sequence!(
             scan_chars!(input, 'u'),
             self.hex_character(input),
@@ -8162,7 +8164,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn unicode_string_literal(&self, input: &mut ParserContext) -> bool {
+    fn unicode_string_literal(&self, input: &mut ParserContext<'_>) -> bool {
         scan_choice!(
             input,
             if self.version_is_at_least_0_7_0 {
@@ -8179,7 +8181,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn version_pragma_value(&self, input: &mut ParserContext) -> bool {
+    fn version_pragma_value(&self, input: &mut ParserContext<'_>) -> bool {
         scan_one_or_more!(
             input,
             scan_choice!(
@@ -8193,7 +8195,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn whitespace(&self, input: &mut ParserContext) -> bool {
+    fn whitespace(&self, input: &mut ParserContext<'_>) -> bool {
         scan_one_or_more!(
             input,
             scan_choice!(input, scan_chars!(input, ' '), scan_chars!(input, '\t'))
@@ -8201,7 +8203,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn yul_bytes_keyword(&self, input: &mut ParserContext) -> bool {
+    fn yul_bytes_keyword(&self, input: &mut ParserContext<'_>) -> bool {
         if !self.version_is_at_least_0_7_1 {
             scan_sequence!(
                 scan_chars!(input, 'b', 'y', 't', 'e', 's'),
@@ -8250,7 +8252,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn yul_decimal_literal(&self, input: &mut ParserContext) -> bool {
+    fn yul_decimal_literal(&self, input: &mut ParserContext<'_>) -> bool {
         scan_not_followed_by!(
             input,
             scan_choice!(
@@ -8266,7 +8268,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn yul_fixed_keyword(&self, input: &mut ParserContext) -> bool {
+    fn yul_fixed_keyword(&self, input: &mut ParserContext<'_>) -> bool {
         scan_choice!(
             input,
             if !self.version_is_at_least_0_7_1 {
@@ -8561,7 +8563,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn yul_hex_literal(&self, input: &mut ParserContext) -> bool {
+    fn yul_hex_literal(&self, input: &mut ParserContext<'_>) -> bool {
         scan_not_followed_by!(
             input,
             scan_sequence!(
@@ -8573,12 +8575,12 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn yul_identifier(&self, input: &mut ParserContext) -> bool {
+    fn yul_identifier(&self, input: &mut ParserContext<'_>) -> bool {
         self.raw_identifier(input)
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn yul_int_keyword(&self, input: &mut ParserContext) -> bool {
+    fn yul_int_keyword(&self, input: &mut ParserContext<'_>) -> bool {
         if !self.version_is_at_least_0_7_1 {
             scan_sequence!(
                 scan_chars!(input, 'i', 'n', 't'),
@@ -8627,7 +8629,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn yul_ufixed_keyword(&self, input: &mut ParserContext) -> bool {
+    fn yul_ufixed_keyword(&self, input: &mut ParserContext<'_>) -> bool {
         scan_choice!(
             input,
             if !self.version_is_at_least_0_7_1 {
@@ -8922,7 +8924,7 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn yul_uint_keyword(&self, input: &mut ParserContext) -> bool {
+    fn yul_uint_keyword(&self, input: &mut ParserContext<'_>) -> bool {
         if !self.version_is_at_least_0_7_1 {
             scan_sequence!(
                 scan_chars!(input, 'u', 'i', 'n', 't'),
@@ -9223,11 +9225,11 @@ impl Language {
 }
 
 impl Lexer for Language {
-    fn leading_trivia(&self, input: &mut ParserContext) -> ParserResult {
+    fn leading_trivia(&self, input: &mut ParserContext<'_>) -> ParserResult {
         Language::leading_trivia(self, input)
     }
 
-    fn trailing_trivia(&self, input: &mut ParserContext) -> ParserResult {
+    fn trailing_trivia(&self, input: &mut ParserContext<'_>) -> ParserResult {
         Language::trailing_trivia(self, input)
     }
 
@@ -9246,7 +9248,10 @@ impl Lexer for Language {
         }
     }
 
-    fn next_token<LexCtx: IsLexicalContext>(&self, input: &mut ParserContext) -> Option<TokenKind> {
+    fn next_token<LexCtx: IsLexicalContext>(
+        &self,
+        input: &mut ParserContext<'_>,
+    ) -> Option<TokenKind> {
         let save = input.position();
         let mut furthest_position = input.position();
         let mut longest_token = None;

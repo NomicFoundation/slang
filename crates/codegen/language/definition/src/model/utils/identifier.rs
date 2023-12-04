@@ -62,7 +62,7 @@ impl Serialize for Identifier {
 }
 
 impl ParseInputTokens for Identifier {
-    fn parse_value(input: ParseStream, _: &mut ErrorsCollection) -> Result<Self> {
+    fn parse_value(input: ParseStream<'_>, _: &mut ErrorsCollection) -> Result<Self> {
         let value = ParseHelpers::syn::<Ident>(input)?.to_string();
 
         Ok(value.into())

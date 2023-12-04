@@ -12,6 +12,10 @@ rustflags = [
 	# rustc additional warnings:
 	"--warn",
 	"unused_crate_dependencies",
+	"--warn",
+	"nonstandard_style",
+	"--warn",
+	"rust_2018_idioms",
 	# clippy additional warnings:
 	"--warn",
 	"clippy::wildcard_imports",

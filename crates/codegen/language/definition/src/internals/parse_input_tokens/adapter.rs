@@ -20,7 +20,7 @@ pub(crate) struct ParseOutput {
 
 /// A wrapper around [syn::parse::Parse] to convert to/from our own error types.
 impl Parse for ParseOutput {
-    fn parse(input: ParseStream) -> syn::Result<Self> {
+    fn parse(input: ParseStream<'_>) -> syn::Result<Self> {
         let mut errors = ErrorsCollection::new();
 
         match SpannedLanguage::parse_named_value(input, &mut errors) {

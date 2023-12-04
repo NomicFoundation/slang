@@ -278,7 +278,7 @@ struct ResolveCtx<'a> {
     resolved: &'a mut HashMap<Identifier, GrammarElement>,
 }
 
-fn resolve_grammar_element(ident: &Identifier, ctx: &mut ResolveCtx) -> GrammarElement {
+fn resolve_grammar_element(ident: &Identifier, ctx: &mut ResolveCtx<'_>) -> GrammarElement {
     if ident.as_str() == "EndOfFileTrivia" {
         return ctx.resolved.get(ident).unwrap().clone();
     }
@@ -428,7 +428,7 @@ fn resolve_grammar_element(ident: &Identifier, ctx: &mut ResolveCtx) -> GrammarE
     }
 }
 
-fn resolve_scanner(scanner: model::Scanner, ctx: &mut ResolveCtx) -> ScannerDefinitionNode {
+fn resolve_scanner(scanner: model::Scanner, ctx: &mut ResolveCtx<'_>) -> ScannerDefinitionNode {
     match scanner {
         model::Scanner::Optional { scanner } => {
             ScannerDefinitionNode::Optional(Box::new(resolve_scanner(*scanner, ctx)))
@@ -473,11 +473,14 @@ fn resolve_scanner(scanner: model::Scanner, ctx: &mut ResolveCtx) -> ScannerDefi
     }
 }
 
-fn resolve_fragment(fragment: model::FragmentItem, ctx: &mut ResolveCtx) -> ScannerDefinitionNode {
+fn resolve_fragment(
+    fragment: model::FragmentItem,
+    ctx: &mut ResolveCtx<'_>,
+) -> ScannerDefinitionNode {
     resolve_scanner(fragment.scanner, ctx).versioned(fragment.enabled)
 }
 
-fn resolve_token(token: model::TokenItem, ctx: &mut ResolveCtx) -> ScannerDefinitionNode {
+fn resolve_token(token: model::TokenItem, ctx: &mut ResolveCtx<'_>) -> ScannerDefinitionNode {
     let resolved_defs: Vec<_> = token
         .definitions
         .into_iter()
@@ -547,7 +550,7 @@ fn resolve_keyword_value(value: model::KeywordValue) -> ScannerDefinitionNode {
     }
 }
 
-fn resolve_trivia(parser: model::TriviaParser, ctx: &mut ResolveCtx) -> ParserDefinitionNode {
+fn resolve_trivia(parser: model::TriviaParser, ctx: &mut ResolveCtx<'_>) -> ParserDefinitionNode {
     match parser {
         model::TriviaParser::Optional { parser } => {
             ParserDefinitionNode::Optional(Box::new(resolve_trivia(*parser, ctx)))
@@ -579,7 +582,7 @@ fn resolve_trivia(parser: model::TriviaParser, ctx: &mut ResolveCtx) -> ParserDe
     }
 }
 
-fn resolve_field(field: model::Field, ctx: &mut ResolveCtx) -> ParserDefinitionNode {
+fn resolve_field(field: model::Field, ctx: &mut ResolveCtx<'_>) -> ParserDefinitionNode {
     match field {
         model::Field::Required { reference } => {
             resolve_grammar_element(&reference, ctx).into_parser_def_node()
@@ -596,7 +599,7 @@ fn resolve_sequence_like(
     enabled: Option<model::VersionSpecifier>,
     fields: IndexMap<Identifier, model::Field>,
     error_recovery: Option<FieldsErrorRecovery>,
-    ctx: &mut ResolveCtx,
+    ctx: &mut ResolveCtx<'_>,
 ) -> ParserDefinitionNode {
     let (terminator, delimiters) = match error_recovery {
         Some(FieldsErrorRecovery {
@@ -675,7 +678,7 @@ fn resolve_sequence_like(
     .versioned(enabled)
 }
 
-fn resolve_choice(item: model::EnumItem, ctx: &mut ResolveCtx) -> ParserDefinitionNode {
+fn resolve_choice(item: model::EnumItem, ctx: &mut ResolveCtx<'_>) -> ParserDefinitionNode {
     let variants = item
         .variants
         .into_iter()
@@ -689,13 +692,13 @@ fn resolve_choice(item: model::EnumItem, ctx: &mut ResolveCtx) -> ParserDefiniti
     ParserDefinitionNode::Choice(variants).versioned(item.enabled)
 }
 
-fn resolve_repeated(item: model::RepeatedItem, ctx: &mut ResolveCtx) -> ParserDefinitionNode {
+fn resolve_repeated(item: model::RepeatedItem, ctx: &mut ResolveCtx<'_>) -> ParserDefinitionNode {
     let body = Box::new(resolve_grammar_element(&item.repeated, ctx).into_parser_def_node());
 
     ParserDefinitionNode::OneOrMore(body).versioned(item.enabled)
 }
 
-fn resolve_separated(item: model::SeparatedItem, ctx: &mut ResolveCtx) -> ParserDefinitionNode {
+fn resolve_separated(item: model::SeparatedItem, ctx: &mut ResolveCtx<'_>) -> ParserDefinitionNode {
     let body = resolve_grammar_element(&item.separated, ctx).into_parser_def_node();
     let separator = resolve_grammar_element(&item.separator, ctx).into_parser_def_node();
 
@@ -705,7 +708,7 @@ fn resolve_separated(item: model::SeparatedItem, ctx: &mut ResolveCtx) -> Parser
 fn resolve_precedence(
     item: model::PrecedenceItem,
     lex_ctx: &'static str,
-    ctx: &mut ResolveCtx,
+    ctx: &mut ResolveCtx<'_>,
 ) -> PrecedenceParserDefinitionNode {
     let primaries: Vec<_> = item
         .primary_expressions

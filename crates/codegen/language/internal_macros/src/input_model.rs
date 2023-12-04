@@ -18,7 +18,7 @@ pub enum InputItem {
 }
 
 impl Parse for InputItem {
-    fn parse(input: ParseStream) -> Result<Self> {
+    fn parse(input: ParseStream<'_>) -> Result<Self> {
         let input = DeriveInput::parse(input)?;
 
         Self::from_syn(input)

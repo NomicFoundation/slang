@@ -18,7 +18,7 @@ pub struct ChoiceHelper {
 }
 
 impl ChoiceHelper {
-    pub fn new(input: &mut ParserContext) -> Self {
+    pub fn new(input: &mut ParserContext<'_>) -> Self {
         Self {
             result: ParserResult::no_match(vec![]),
             start_position: input.mark(),
@@ -37,7 +37,7 @@ impl ChoiceHelper {
     }
 
     /// Store the next result if it's a better match; otherwise, we retain the existing one.
-    fn attempt_pick(&mut self, input: &mut ParserContext, next_result: ParserResult) {
+    fn attempt_pick(&mut self, input: &mut ParserContext<'_>, next_result: ParserResult) {
         let better_pick = match (&mut self.result, &next_result) {
             // We settle for the first full match.
             (ParserResult::Match(running), _) if running.is_full_recursive() => {
@@ -92,8 +92,8 @@ impl ChoiceHelper {
     /// });
     /// ```
     pub fn run(
-        input: &mut ParserContext,
-        f: impl FnOnce(Self, &mut ParserContext) -> ControlFlow<ParserResult, Self>,
+        input: &mut ParserContext<'_>,
+        f: impl FnOnce(Self, &mut ParserContext<'_>) -> ControlFlow<ParserResult, Self>,
     ) -> ParserResult {
         match f(ChoiceHelper::new(input), input) {
             ControlFlow::Break(result) => result,
@@ -108,7 +108,7 @@ impl ChoiceHelper {
     /// Returns a [`Choice`] struct that can be used to either pick the value or backtrack the input.
     pub fn consider(
         &mut self,
-        input: &mut ParserContext,
+        input: &mut ParserContext<'_>,
         value: ParserResult,
     ) -> ControlFlow<ParserResult, &mut ChoiceHelper> {
         self.attempt_pick(input, value);
@@ -122,7 +122,7 @@ impl ChoiceHelper {
     }
 
     /// Finishes the choice parse, returning the accumulated match.
-    pub fn finish(self, input: &mut ParserContext) -> ControlFlow<ParserResult, Self> {
+    pub fn finish(self, input: &mut ParserContext<'_>) -> ControlFlow<ParserResult, Self> {
         assert!(!self.is_done());
         // We didn't break early, so undo the rewind that has happened in the meantime.
         input.set_position(self.last_progress);

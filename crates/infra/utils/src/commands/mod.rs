@@ -199,7 +199,7 @@ fn check_status(command: &Command, status: ExitStatus) -> Result<()> {
 }
 
 impl Display for Command {
-    fn fmt(&self, formatter: &mut Formatter) -> std::fmt::Result {
+    fn fmt(&self, formatter: &mut Formatter<'_>) -> std::fmt::Result {
         let mut parts = vec![];
 
         for (key, value) in &self.environment {

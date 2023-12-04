@@ -67,14 +67,14 @@ impl<T: PartialOrd> PartialOrd for Spanned<T> {
 }
 
 impl<T: ParseInputTokens> ParseInputTokens for Spanned<T> {
-    fn parse_value(input: ParseStream, errors: &mut ErrorsCollection) -> Result<Self> {
+    fn parse_value(input: ParseStream<'_>, errors: &mut ErrorsCollection) -> Result<Self> {
         let span = input.span();
         let value = T::parse_value(input, errors)?;
 
         Ok(Self::new(span, value))
     }
 
-    fn parse_named_value(input: ParseStream, errors: &mut ErrorsCollection) -> Result<Self> {
+    fn parse_named_value(input: ParseStream<'_>, errors: &mut ErrorsCollection) -> Result<Self> {
         let span = input.span();
         let value = ParseInputTokens::parse_named_value(input, errors)?;
 

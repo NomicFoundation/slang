@@ -11,14 +11,14 @@ use super::{
 
 pub trait ParserFunction<L>
 where
-    Self: Fn(&L, &mut ParserContext) -> ParserResult,
+    Self: Fn(&L, &mut ParserContext<'_>) -> ParserResult,
 {
     fn parse(&self, language: &L, input: &str) -> ParseOutput;
 }
 
 impl<L, F> ParserFunction<L> for F
 where
-    F: Fn(&L, &mut ParserContext) -> ParserResult,
+    F: Fn(&L, &mut ParserContext<'_>) -> ParserResult,
 {
     fn parse(&self, language: &L, input: &str) -> ParseOutput {
         let mut stream = ParserContext::new(input);

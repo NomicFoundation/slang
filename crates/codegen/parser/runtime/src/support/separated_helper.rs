@@ -15,9 +15,9 @@ pub struct SeparatedHelper;
 
 impl SeparatedHelper {
     pub fn run<L: Lexer, LexCtx: IsLexicalContext>(
-        input: &mut ParserContext,
+        input: &mut ParserContext<'_>,
         lexer: &L,
-        body_parser: impl Fn(&mut ParserContext) -> ParserResult,
+        body_parser: impl Fn(&mut ParserContext<'_>) -> ParserResult,
         separator: TokenKind,
     ) -> ParserResult {
         let mut accum = vec![];

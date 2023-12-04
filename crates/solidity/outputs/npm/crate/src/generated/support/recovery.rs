@@ -23,8 +23,8 @@ impl RecoverFromNoMatch {
 }
 
 fn opt_parse(
-    input: &mut ParserContext,
-    parse: impl Fn(&mut ParserContext) -> ParserResult,
+    input: &mut ParserContext<'_>,
+    parse: impl Fn(&mut ParserContext<'_>) -> ParserResult,
 ) -> Vec<cst::Node> {
     let start = input.position();
     if let ParserResult::Match(r#match) = parse(input) {
@@ -44,7 +44,7 @@ impl ParserResult {
     /// Does not consume the `expected` token.
     pub fn recover_until_with_nested_delims<L: Lexer, LexCtx: IsLexicalContext>(
         self,
-        input: &mut ParserContext,
+        input: &mut ParserContext<'_>,
         lexer: &L,
         expected: TokenKind,
         recover_from_no_match: RecoverFromNoMatch,
@@ -120,7 +120,7 @@ impl ParserResult {
 ///
 /// Returns the found token and the range of skipped tokens on success.
 pub fn skip_until_with_nested_delims<L: Lexer, LexCtx: IsLexicalContext>(
-    input: &mut ParserContext,
+    input: &mut ParserContext<'_>,
     lexer: &L,
     until: TokenKind,
 ) -> Option<(TokenKind, TextRange)> {
