@@ -4,9 +4,10 @@ use crate::model::{
 };
 use codegen_language_internal_macros::{derive_spanned_type, ParseInputTokens, WriteOutputTokens};
 use serde::{Deserialize, Serialize};
+use strum_macros::EnumDiscriminants;
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
-#[derive_spanned_type(ParseInputTokens, WriteOutputTokens)]
+#[derive_spanned_type(EnumDiscriminants, ParseInputTokens, WriteOutputTokens)]
 pub enum Item {
     Struct { item: StructItem },
     Enum { item: EnumItem },

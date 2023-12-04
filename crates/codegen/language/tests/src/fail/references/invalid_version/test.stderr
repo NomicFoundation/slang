@@ -1,17 +1,17 @@
 error: Reference 'Baz' is only defined in '2.0.0..3.0.0', but not in '3.0.0..MAX'.
-  --> src/fail/references/invalid_version/test.rs:19:46
+  --> src/fail/references/invalid_version/test.rs:19:41
    |
-19 | ...                   kind = Terminal([Baz]),
-   |                                        ^^^
+19 | ...                   reference = Baz,
+   |                                   ^^^
 
 error: Reference 'Baz' is only defined in '2.0.0..3.0.0', but not in '1.0.0..2.0.0'.
-  --> src/fail/references/invalid_version/test.rs:24:46
+  --> src/fail/references/invalid_version/test.rs:24:41
    |
-24 | ...                   kind = Terminal([Baz]),
-   |                                        ^^^
+24 | ...                   reference = Baz,
+   |                                   ^^^
 
 error: Reference 'Baz' is only defined in '2.0.0..3.0.0', but not in '1.0.0..2.0.0 | 3.0.0..MAX'.
-  --> src/fail/references/invalid_version/test.rs:29:46
+  --> src/fail/references/invalid_version/test.rs:29:41
    |
-29 | ...                   kind = Terminal([Baz])
-   |                                        ^^^
+29 | ...                   reference = Baz
+   |                                   ^^^

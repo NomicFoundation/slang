@@ -87,12 +87,12 @@ fn check_precedence_items(analysis: &mut Analysis) {
         }
 
         for primary_expression in &item.primary_expressions {
-            let expression = &primary_expression.expression;
+            let reference = &primary_expression.reference;
 
-            if !current_expressions.insert(expression) {
+            if !current_expressions.insert(reference) {
                 analysis
                     .errors
-                    .add(expression, &Errors::ExistingExpression(expression));
+                    .add(reference, &Errors::ExistingExpression(reference));
             }
         }
     }

@@ -1,6 +1,6 @@
 use codegen_language_definition::model::{
-    Field, FieldKind, Item, Language, Scanner, Section, StructItem, TokenDefinition, TokenItem,
-    Topic, TriviaParser,
+    Field, Item, Language, Scanner, Section, StructItem, TokenDefinition, TokenItem, Topic,
+    TriviaParser,
 };
 use semver::Version;
 
@@ -18,9 +18,9 @@ codegen_language_macros::compile!(Language(
                 Struct(
                     name = Foo,
                     fields = (
-                        bar = Required(Terminal([Bar])),
-                        baz = Required(Terminal([Baz])),
-                        baz_again = Required(Terminal([Baz]))
+                        bar = Required(Bar),
+                        baz = Required(Baz),
+                        baz_again = Required(Baz)
                     )
                 ),
                 Token(
@@ -67,25 +67,19 @@ fn definition() {
                                     (
                                         "bar".into(),
                                         Field::Required {
-                                            kind: FieldKind::Terminal {
-                                                items: ["Bar".into()].into()
-                                            }
+                                            reference: "Bar".into()
                                         }
                                     ),
                                     (
                                         "baz".into(),
                                         Field::Required {
-                                            kind: FieldKind::Terminal {
-                                                items: ["Baz".into()].into()
-                                            }
+                                            reference: "Baz".into()
                                         }
                                     ),
                                     (
                                         "baz_again".into(),
                                         Field::Required {
-                                            kind: FieldKind::Terminal {
-                                                items: ["Baz".into()].into()
-                                            }
+                                            reference: "Baz".into()
                                         }
                                     )
                                 ]

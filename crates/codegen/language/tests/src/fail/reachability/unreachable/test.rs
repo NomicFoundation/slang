@@ -12,11 +12,11 @@ codegen_language_macros::compile!(Language(
             title = "Topic One",
             items = [
                 // reachable (from root)
-                Struct(name = Bar1, fields = (field = Required(NonTerminal(Bar2)))),
-                Struct(name = Bar2, fields = (field = Required(NonTerminal(Bar1)))),
+                Struct(name = Bar1, fields = (field = Required(Bar2))),
+                Struct(name = Bar2, fields = (field = Required(Bar1))),
                 // not-reachable
-                Struct(name = Baz1, fields = (field = Required(NonTerminal(Baz2)))),
-                Struct(name = Baz2, fields = (field = Required(NonTerminal(Baz1))))
+                Struct(name = Baz1, fields = (field = Required(Baz2))),
+                Struct(name = Baz2, fields = (field = Required(Baz1)))
             ]
         )]
     )]

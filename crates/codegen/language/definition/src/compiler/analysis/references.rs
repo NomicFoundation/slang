@@ -2,18 +2,19 @@ use crate::{
     compiler::{analysis::Analysis, version_set::VersionSet},
     internals::Spanned,
     model::{
-        Identifier, SpannedEnumItem, SpannedEnumVariant, SpannedField, SpannedFieldKind,
-        SpannedFragmentItem, SpannedItem, SpannedKeywordDefinition, SpannedKeywordItem,
-        SpannedPrecedenceExpression, SpannedPrecedenceItem, SpannedPrecedenceOperator,
-        SpannedPrimaryExpression, SpannedRepeatedItem, SpannedScanner, SpannedSeparatedItem,
-        SpannedStructItem, SpannedTokenDefinition, SpannedTokenItem, SpannedTriviaItem,
-        SpannedTriviaParser, SpannedVersionSpecifier,
+        Identifier, SpannedEnumItem, SpannedEnumVariant, SpannedField, SpannedFragmentItem,
+        SpannedItem,
+        SpannedItemDiscriminants::{self, *},
+        SpannedKeywordDefinition, SpannedKeywordItem, SpannedPrecedenceExpression,
+        SpannedPrecedenceItem, SpannedPrecedenceOperator, SpannedPrimaryExpression,
+        SpannedRepeatedItem, SpannedScanner, SpannedSeparatedItem, SpannedStructItem,
+        SpannedTokenDefinition, SpannedTokenItem, SpannedTriviaItem, SpannedTriviaParser,
+        SpannedVersionSpecifier,
     },
 };
 use indexmap::IndexMap;
 use semver::Version;
 use std::fmt::Debug;
-use strum_macros::Display;
 
 pub(crate) fn analyze_references(analysis: &mut Analysis) {
     let language = analysis.language.clone();
@@ -26,7 +27,7 @@ pub(crate) fn analyze_references(analysis: &mut Analysis) {
         None,
         &language.root_item,
         &enablement,
-        ReferenceFilter::NonTerminals,
+        &[Struct, Enum, Repeated, Separated, Precedence],
     );
 
     check_trivia_parser(analysis, &language.leading_trivia, &enablement);
@@ -105,7 +106,9 @@ fn check_enum(analysis: &mut Analysis, item: &SpannedEnumItem, enablement: &Vers
             Some(name),
             reference,
             &enablement,
-            ReferenceFilter::Nodes,
+            &[
+                Struct, Enum, Repeated, Separated, Precedence, Keyword, Token,
+            ],
         );
     }
 }
@@ -124,7 +127,9 @@ fn check_repeated(analysis: &mut Analysis, item: &SpannedRepeatedItem, enablemen
         Some(name),
         repeated,
         &enablement,
-        ReferenceFilter::Nodes,
+        &[
+            Struct, Enum, Repeated, Separated, Precedence, Keyword, Token,
+        ],
     );
 }
 
@@ -143,15 +148,12 @@ fn check_separated(analysis: &mut Analysis, item: &SpannedSeparatedItem, enablem
         Some(name),
         separated,
         &enablement,
-        ReferenceFilter::Nodes,
+        &[
+            Struct, Enum, Repeated, Separated, Precedence, Keyword, Token,
+        ],
     );
-    check_reference(
-        analysis,
-        Some(name),
-        separator,
-        &enablement,
-        ReferenceFilter::Tokens,
-    );
+
+    check_reference(analysis, Some(name), separator, &enablement, &[Token]);
 }
 
 fn check_precedence(
@@ -190,19 +192,18 @@ fn check_precedence(
     }
 
     for primary_expression in primary_expressions {
-        let SpannedPrimaryExpression {
-            expression,
-            enabled,
-        } = primary_expression;
+        let SpannedPrimaryExpression { reference, enabled } = primary_expression;
 
         let enablement = update_enablement(analysis, &enablement, enabled);
 
         check_reference(
             analysis,
             Some(name),
-            expression,
+            reference,
             &enablement,
-            ReferenceFilter::Nodes,
+            &[
+                Struct, Enum, Repeated, Separated, Precedence, Keyword, Token,
+            ],
         );
     }
 }
@@ -215,46 +216,34 @@ fn check_fields(
 ) {
     for field in fields.values() {
         match field {
-            SpannedField::Required { kind } => {
-                check_field_kind(analysis, source, kind, enablement);
-            }
-            SpannedField::Optional { kind, enabled } => {
-                let enablement = update_enablement(analysis, enablement, enabled);
-
-                check_field_kind(analysis, source, kind, &enablement);
-            }
-        };
-    }
-}
-
-fn check_field_kind(
-    analysis: &mut Analysis,
-    source: Option<&Identifier>,
-    kind: &SpannedFieldKind,
-    enablement: &VersionSet,
-) {
-    match kind {
-        SpannedFieldKind::NonTerminal { item } => {
-            check_reference(
-                analysis,
-                source,
-                item,
-                enablement,
-                ReferenceFilter::NonTerminals,
-            );
-        }
-        SpannedFieldKind::Terminal { items } => {
-            for item in items {
+            SpannedField::Required { reference } => {
                 check_reference(
                     analysis,
                     source,
-                    item,
+                    reference,
                     enablement,
-                    ReferenceFilter::Terminals,
+                    &[
+                        Struct, Enum, Repeated, Separated, Precedence, Keyword, Token,
+                    ],
                 );
             }
-        }
-    };
+            SpannedField::Optional { reference, enabled } => {
+                let enablement = update_enablement(analysis, enablement, enabled);
+
+                check_reference(
+                    analysis,
+                    source,
+                    reference,
+                    &enablement,
+                    &[
+                        // TODO(#638): remove [Separated] and [Repeated] from here, once they are allowed to be empty.
+                        // Therefore, we ensure we always produce the parent node, even if it has no children.
+                        Struct, Enum, Repeated, Separated, Precedence, Keyword, Token,
+                    ],
+                );
+            }
+        };
+    }
 }
 
 fn check_trivia_parser(
@@ -274,7 +263,7 @@ fn check_trivia_parser(
             check_trivia_parser(analysis, parser, enablement);
         }
         SpannedTriviaParser::Trivia { trivia } => {
-            check_reference(analysis, None, trivia, enablement, ReferenceFilter::Trivia);
+            check_reference(analysis, None, trivia, enablement, &[Trivia]);
         }
     };
 }
@@ -292,13 +281,7 @@ fn check_keyword(analysis: &mut Analysis, item: &SpannedKeywordItem, enablement:
         definitions,
     } = item;
 
-    check_reference(
-        analysis,
-        Some(name),
-        identifier,
-        enablement,
-        ReferenceFilter::Tokens,
-    );
+    check_reference(analysis, Some(name), identifier, enablement, &[Token]);
 
     for definition in definitions {
         let SpannedKeywordDefinition {
@@ -372,57 +355,9 @@ fn check_scanner(
             check_scanner(analysis, source, not_followed_by, enablement);
         }
         SpannedScanner::Fragment { reference } => {
-            check_reference(
-                analysis,
-                source,
-                reference,
-                enablement,
-                ReferenceFilter::Fragments,
-            );
+            check_reference(analysis, source, reference, enablement, &[Fragment]);
         }
     };
-}
-
-/// Used by different checks above to make sure that references to other items are valid.
-/// For example, struct fields can reference anything, but tokens can only reference fragments.
-#[derive(Debug, Display, PartialEq, Eq)]
-enum ReferenceFilter {
-    Nodes,
-
-    NonTerminals,
-    Terminals,
-
-    Trivia,
-    Tokens,
-
-    Fragments,
-}
-
-impl ReferenceFilter {
-    fn apply(&self, item: &SpannedItem) -> bool {
-        match (self, item) {
-            (Self::Nodes, item) => Self::NonTerminals.apply(item) || Self::Terminals.apply(item),
-            (
-                Self::NonTerminals,
-                SpannedItem::Struct { .. }
-                | SpannedItem::Enum { .. }
-                | SpannedItem::Repeated { .. }
-                | SpannedItem::Separated { .. }
-                | SpannedItem::Precedence { .. },
-            )
-            | (
-                Self::Terminals,
-                SpannedItem::Trivia { .. }
-                | SpannedItem::Keyword { .. }
-                | SpannedItem::Token { .. },
-            )
-            | (Self::Trivia, SpannedItem::Trivia { .. })
-            | (Self::Tokens, SpannedItem::Token { .. })
-            | (Self::Fragments, SpannedItem::Fragment { .. }) => true,
-
-            _ => false,
-        }
-    }
 }
 
 fn check_reference(
@@ -430,7 +365,7 @@ fn check_reference(
     source: Option<&Identifier>,
     reference: &Spanned<Identifier>,
     enablement: &VersionSet,
-    filter: ReferenceFilter,
+    expected_kinds: &[SpannedItemDiscriminants],
 ) {
     let target = match analysis.metadata.get_mut(&**reference) {
         Some(target) => target,
@@ -450,10 +385,11 @@ fn check_reference(
         );
     }
 
-    if !filter.apply(&target.item) {
+    let actual_kind: SpannedItemDiscriminants = target.item.as_ref().into();
+    if !expected_kinds.contains(&actual_kind) {
         analysis.errors.add(
             reference,
-            &Errors::InvalidReferenceFilter(reference, &filter),
+            &Errors::InvalidReferenceFilter(reference, &actual_kind, expected_kinds),
         );
     }
 
@@ -536,6 +472,10 @@ enum Errors<'err> {
     UnknownReference(&'err Identifier),
     #[error("Reference '{0}' is only defined in '{1}', but not in '{2}'.")]
     InvalidReferenceVersion(&'err Identifier, &'err VersionSet, &'err VersionSet),
-    #[error("Reference '{0}' is not valid. Expected: {1}.")]
-    InvalidReferenceFilter(&'err Identifier, &'err ReferenceFilter),
+    #[error("Reference '{0}' of kind '{1:?}' is not valid. Expected: {2:?}")]
+    InvalidReferenceFilter(
+        &'err Identifier,
+        &'err SpannedItemDiscriminants,
+        &'err [SpannedItemDiscriminants],
+    ),
 }

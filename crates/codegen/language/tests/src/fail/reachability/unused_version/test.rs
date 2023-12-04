@@ -13,7 +13,7 @@ codegen_language_macros::compile!(Language(
             items = [
                 Struct(
                     name = Bar,
-                    fields = (field_1 = Optional(kind = Terminal([Baz]), enabled = From("2.0.0")))
+                    fields = (field_1 = Optional(reference = Baz, enabled = From("2.0.0")))
                 ),
                 Token(
                     name = Baz,

@@ -16,21 +16,21 @@ codegen_language_macros::compile!(Language(
                     fields = (
                         field_1 = Optional(
                             // should have been disabled in "3.0.0"
-                            kind = Terminal([Baz]),
+                            reference = Baz,
                             enabled = From("2.0.0")
                         ),
                         field_2 = Optional(
                             // should have been enabled in "2.0.0"
-                            kind = Terminal([Baz]),
+                            reference = Baz,
                             enabled = Till("3.0.0")
                         ),
                         field_3 = Optional(
                             // should have been enabled in "2.0.0" and disabled in "3.0.0"
-                            kind = Terminal([Baz])
+                            reference = Baz
                         ),
                         field_4 = Optional(
                             // correct
-                            kind = Terminal([Baz]),
+                            reference = Baz,
                             enabled = Range(from = "2.0.0", till = "3.0.0")
                         )
                     )

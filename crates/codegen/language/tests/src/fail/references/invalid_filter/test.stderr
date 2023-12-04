@@ -1,5 +1,5 @@
-error: Reference 'Baz' is not valid. Expected: NonTerminals.
-  --> src/fail/references/invalid_filter/test.rs:14:75
+error: Reference 'Baz' of kind 'Fragment' is not valid. Expected: [Struct, Enum, Repeated, Separated, Precedence, Keyword, Token]
+  --> src/fail/references/invalid_filter/test.rs:14:63
    |
-14 |                 Struct(name = Bar, fields = (field = Required(NonTerminal(Baz)))),
-   |                                                                           ^^^
+14 |                 Struct(name = Bar, fields = (field = Required(Baz))),
+   |                                                               ^^^

@@ -48,7 +48,7 @@ pub enum OperatorModel {
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 #[derive_spanned_type(ParseInputTokens, WriteOutputTokens)]
 pub struct PrimaryExpression {
-    pub expression: Identifier,
+    pub reference: Identifier,
 
     pub enabled: Option<VersionSpecifier>,
 }

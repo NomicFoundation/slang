@@ -11,7 +11,7 @@ codegen_language_macros::compile!(Language(
         topics = [Topic(
             title = "Topic One",
             items = [
-                Struct(name = Bar, fields = (field = Required(NonTerminal(Baz)))),
+                Struct(name = Bar, fields = (field = Required(Baz))),
                 Fragment(name = Baz, scanner = Atom("baz"))
             ]
         )]

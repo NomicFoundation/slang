@@ -53,18 +53,15 @@ impl GrammarConstructorDslV2 for Grammar {
                             (
                                 Identifier::from("members"),
                                 model::Field::Optional {
-                                    kind: model::FieldKind::NonTerminal {
-                                        item: Identifier::from("SourceUnitMembers"),
-                                    },
+                                    reference: Identifier::from("SourceUnitMembers"),
+
                                     enabled: None,
                                 },
                             ),
                             (
                                 Identifier::from("eof_trivia"),
                                 model::Field::Optional {
-                                    kind: model::FieldKind::NonTerminal {
-                                        item: Identifier::from("EndOfFileTrivia"),
-                                    },
+                                    reference: Identifier::from("EndOfFileTrivia"),
                                     enabled: None,
                                 },
                             ),
@@ -584,30 +581,14 @@ fn resolve_trivia(parser: model::TriviaParser, ctx: &mut ResolveCtx) -> ParserDe
 
 fn resolve_field(field: model::Field, ctx: &mut ResolveCtx) -> ParserDefinitionNode {
     match field {
-        model::Field::Required { kind } => resolve_field_kind(kind, ctx),
-        model::Field::Optional { kind, enabled } => ParserDefinitionNode::Optional(Box::new(
-            resolve_field_kind(kind, ctx).versioned(enabled),
+        model::Field::Required { reference } => {
+            resolve_grammar_element(&reference, ctx).into_parser_def_node()
+        }
+        model::Field::Optional { reference, enabled } => ParserDefinitionNode::Optional(Box::new(
+            resolve_grammar_element(&reference, ctx)
+                .into_parser_def_node()
+                .versioned(enabled),
         )),
-    }
-}
-
-fn resolve_field_kind(kind: model::FieldKind, ctx: &mut ResolveCtx) -> ParserDefinitionNode {
-    match kind {
-        model::FieldKind::NonTerminal { item } => {
-            resolve_grammar_element(&item, ctx).into_parser_def_node()
-        }
-        model::FieldKind::Terminal { items } => {
-            let refs: Vec<_> = items
-                .iter()
-                .map(|ident| resolve_grammar_element(ident, ctx).into_parser_def_node())
-                .collect();
-
-            match refs.len() {
-                0 => panic!("Field has no definitions"),
-                1 => refs.into_iter().next().unwrap(),
-                _ => ParserDefinitionNode::Choice(refs),
-            }
-        }
     }
 }
 
@@ -730,7 +711,7 @@ fn resolve_precedence(
         .primary_expressions
         .into_iter()
         .map(|prim| {
-            resolve_grammar_element(&prim.expression, ctx)
+            resolve_grammar_element(&prim.reference, ctx)
                 .into_parser_def_node()
                 .versioned(prim.enabled)
         })
