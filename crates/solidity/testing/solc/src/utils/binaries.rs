@@ -6,7 +6,10 @@ use infra_utils::{cargo::CargoWorkspace, commands::Command};
 use rayon::prelude::{ParallelBridge, ParallelIterator};
 use semver::Version;
 use serde::Deserialize;
-use std::{collections::HashMap, os::unix::prelude::PermissionsExt, path::Path, path::PathBuf};
+use std::{
+    collections::HashMap, os::unix::prelude::PermissionsExt, path::Path, path::PathBuf,
+    time::Duration,
+};
 use url::Url;
 
 #[derive(Debug)]
@@ -34,7 +37,11 @@ impl Binary {
             .map(|version| {
                 let local_path = binaries_dir.join(version.to_string());
                 if !local_path.exists() {
-                    let remote_url = mirror_url.join(&releases[version]).unwrap();
+                    let release = releases.get(version).unwrap_or_else(|| {
+                        panic!("Expected release '{version}' to exist at: {mirror_url}")
+                    });
+
+                    let remote_url = mirror_url.join(release).unwrap();
                     download_file(remote_url, &local_path);
                     make_file_executable(&local_path);
                 }
@@ -74,7 +81,19 @@ fn fetch_releases(mirror_url: &Url, binaries_dir: &Path) -> HashMap<Version, Str
     }
 
     let list_path = binaries_dir.join("list.json");
-    if !list_path.exists() {
+
+    let should_download_list = if list_path.exists() {
+        let created = list_path.metadata().unwrap().created().unwrap();
+        let one_day = Duration::from_secs(60 * 60 * 24);
+
+        // Download if if it is older than one day:
+        created.elapsed().unwrap() > one_day
+    } else {
+        // Doesn't exist. Download it:
+        true
+    };
+
+    if should_download_list {
         let list_url = mirror_url.join("list.json").unwrap();
         download_file(list_url, &list_path);
     }
