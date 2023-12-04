@@ -23,7 +23,7 @@ use codegen_language_definition::model::Identifier;
 use codegen_language_definition::model::Item;
 use indexmap::IndexMap;
 
-/// Materializes the DSL v2 model ([`SolidityDefinition`]) into [`Grammar`].
+/// Materializes the DSL v2 model ([`model::Language`]) into [`Grammar`].
 pub trait GrammarConstructorDslV2 {
     fn from_dsl_v2(lang: &model::Language) -> Grammar;
 }
@@ -31,7 +31,7 @@ pub trait GrammarConstructorDslV2 {
 impl GrammarConstructorDslV2 for Grammar {
     fn from_dsl_v2(lang: &model::Language) -> Grammar {
         // Collect language items into a lookup table to speed up resolution
-        let mut items = HashMap::from_iter(lang.items().map(|(_, topic, item)| {
+        let mut items = HashMap::from_iter(lang.items_with_section().map(|(_, topic, item)| {
             (
                 item.name().clone(),
                 (topic.lexical_context.clone(), Rc::clone(item)),

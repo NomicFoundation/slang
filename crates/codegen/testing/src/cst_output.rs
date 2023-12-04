@@ -86,7 +86,7 @@ fn generate_mod_file(
         .map(|parser_name| format!("#[allow(non_snake_case)] mod {parser_name};"))
         .collect::<String>();
 
-    let version_breaks = codegen_language_definition::model::collect_breaking_versions(language);
+    let version_breaks = language.collect_breaking_versions();
     let version_breaks_len = version_breaks.len();
     let version_breaks_str = version_breaks
         .iter()

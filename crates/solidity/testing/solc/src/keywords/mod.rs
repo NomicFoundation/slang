@@ -61,8 +61,8 @@ fn generate_test_cases(language: &Language) -> Vec<TestCase> {
     let mut test_cases = vec![];
     let mut variations = HashSet::new();
 
-    for (_, _, item) in language.items() {
-        let Item::Keyword { item } = item.as_ref() else {
+    for item in language.items() {
+        let Item::Keyword { item } = item else {
             continue;
         };
 

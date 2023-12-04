@@ -8,6 +8,7 @@ use infra_utils::paths::PathExtensions;
 use rayon::prelude::{IntoParallelRefIterator, ParallelIterator};
 use semver::Version;
 use slang_solidity::{kinds::ProductionKind, language::Language};
+use solidity_language::SolidityDefinition;
 use solidity_testing_utils::version_pragmas::extract_version_pragmas;
 
 use crate::{
@@ -16,8 +17,7 @@ use crate::{
 };
 
 fn main() {
-    let versions = solidity_language::DEFINITION
-        .with(codegen_language_definition::model::collect_breaking_versions);
+    let versions = SolidityDefinition::create().collect_breaking_versions();
 
     // Fail the parent process if a child thread panics:
     std::panic::catch_unwind(|| -> Result<()> {

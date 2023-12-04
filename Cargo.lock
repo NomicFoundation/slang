@@ -2127,7 +2127,6 @@ name = "solidity_testing_sanctuary"
 version = "0.11.0"
 dependencies = [
  "anyhow",
- "codegen_language_definition",
  "indicatif",
  "infra_utils",
  "rayon",
