@@ -123,7 +123,7 @@ impl EbnfNode {
     pub fn precedence(&self) -> u8 {
         // We are specifying precedence "groups" instead of a flat list.
         // This separates members of the same precedence, like both "a b (c | d)" and "a | b | (c d)".
-        return match self {
+        match self {
             // Not an operator
             EbnfNode::WithComment { .. } => 0,
 
@@ -142,6 +142,6 @@ impl EbnfNode {
             EbnfNode::ProductionRef { .. } | EbnfNode::Range { .. } | EbnfNode::Terminal { .. } => {
                 4
             }
-        };
+        }
     }
 }

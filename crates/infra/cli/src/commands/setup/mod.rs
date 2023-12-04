@@ -21,7 +21,7 @@ pub struct SetupController {
 
 impl SetupController {
     pub fn execute(&self) -> Result<()> {
-        return SetupCommand::execute_in_order(&self.commands);
+        SetupCommand::execute_in_order(&self.commands)
     }
 }
 
@@ -41,11 +41,11 @@ impl OrderedCommand for SetupCommand {
     fn execute(&self) -> Result<()> {
         Terminal::step(format!("setup {name}", name = self.clap_name()));
 
-        return match self {
+        match self {
             SetupCommand::Workspace => setup_workspace(),
             SetupCommand::Cargo => setup_cargo(),
             SetupCommand::Npm => setup_npm(),
             SetupCommand::Pipenv => setup_pipenv(),
-        };
+        }
     }
 }

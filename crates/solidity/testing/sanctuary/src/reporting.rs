@@ -36,7 +36,7 @@ impl Reporter {
     pub fn finish(&self) -> usize {
         self.progress_bar.finish();
 
-        return self.failed_tests.load(Ordering::Relaxed);
+        self.failed_tests.load(Ordering::Relaxed)
     }
 
     pub fn report_file_completed(&self) {

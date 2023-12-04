@@ -28,6 +28,6 @@ impl SolidityLanguageExtensions for LanguageDefinition {
         let buffer = std::fs::read(LANGUAGE_DEFINITION_BIN)?;
         let language: LanguageDefinition = bson::from_slice(&buffer)?;
 
-        return Ok(LanguageDefinitionRef::new(language));
+        Ok(LanguageDefinitionRef::new(language))
     }
 }

@@ -5,5 +5,5 @@ use anyhow::Result;
 
 #[test]
 fn invalid_termination() -> Result<()> {
-    return run("Statements", "invalid_termination");
+    run("Statements", "invalid_termination")
 }

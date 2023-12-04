@@ -13,6 +13,6 @@ pub trait TestingGeneratorExtensions {
 
 impl TestingGeneratorExtensions for Language {
     fn generate_cst_output_tests(&self, data_dir: &Path, output_dir: &Path) -> Result<()> {
-        return generate_cst_output_tests(self, data_dir, output_dir);
+        generate_cst_output_tests(self, data_dir, output_dir)
     }
 }

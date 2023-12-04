@@ -11,7 +11,7 @@ impl ParseInputTokens for bool {
     fn parse_value(input: ParseStream, _: &mut ErrorsCollection) -> Result<Self> {
         let literal = ParseHelpers::syn::<LitBool>(input)?;
 
-        return Ok(literal.value());
+        Ok(literal.value())
     }
 }
 
@@ -19,7 +19,7 @@ impl<T: ParseInputTokens> ParseInputTokens for Box<T> {
     fn parse_value(input: ParseStream, errors: &mut ErrorsCollection) -> Result<Self> {
         let value = T::parse_value(input, errors)?;
 
-        return Ok(value.into());
+        Ok(value.into())
     }
 }
 
@@ -27,7 +27,7 @@ impl ParseInputTokens for char {
     fn parse_value(input: ParseStream, _: &mut ErrorsCollection) -> Result<Self> {
         let literal = ParseHelpers::syn::<LitChar>(input)?;
 
-        return Ok(literal.value());
+        Ok(literal.value())
     }
 }
 
@@ -35,7 +35,7 @@ impl<K: ParseInputTokens + std::hash::Hash + Eq, V: ParseInputTokens> ParseInput
     for IndexMap<K, V>
 {
     fn parse_value(input: ParseStream, errors: &mut ErrorsCollection) -> Result<Self> {
-        return ParseHelpers::map(input, errors);
+        ParseHelpers::map(input, errors)
     }
 }
 
@@ -53,28 +53,24 @@ impl<T: ParseInputTokens + std::hash::Hash + Ord> ParseInputTokens for IndexSet<
             set.insert(item);
         }
 
-        return Ok(set);
+        Ok(set)
     }
 }
 
 impl<T: ParseInputTokens> ParseInputTokens for Option<T> {
     fn parse_value(input: ParseStream, errors: &mut ErrorsCollection) -> Result<Self> {
         if input.is_empty() {
-            return Ok(None);
+            Ok(None)
         } else {
-            return Ok(Some(T::parse_value(input, errors)?));
+            Ok(Some(T::parse_value(input, errors)?))
         }
     }
 
     fn parse_field(name: &str, input: ParseStream, errors: &mut ErrorsCollection) -> Result<Self> {
         match ParseHelpers::syn::<Ident>(&input.fork()) {
-            Ok(key) if key == name => {
-                return Ok(Some(ParseHelpers::field(name, input, errors)?));
-            }
-            _ => {
-                return Ok(None);
-            }
-        };
+            Ok(key) if key == name => Ok(Some(ParseHelpers::field(name, input, errors)?)),
+            _ => Ok(None),
+        }
     }
 }
 
@@ -82,7 +78,7 @@ impl<T: ParseInputTokens> ParseInputTokens for Rc<T> {
     fn parse_value(input: ParseStream, errors: &mut ErrorsCollection) -> Result<Self> {
         let value = T::parse_value(input, errors)?;
 
-        return Ok(value.into());
+        Ok(value.into())
     }
 }
 
@@ -95,7 +91,7 @@ impl ParseInputTokens for String {
             errors.add(&literal, &Errors::EmptyString);
         }
 
-        return Ok(value);
+        Ok(value)
     }
 }
 
@@ -103,13 +99,13 @@ impl ParseInputTokens for usize {
     fn parse_value(input: ParseStream, _: &mut ErrorsCollection) -> Result<Self> {
         let literal = ParseHelpers::syn::<syn::LitInt>(input)?;
 
-        return literal.base10_parse::<usize>().map_err(Error::from_syn);
+        literal.base10_parse::<usize>().map_err(Error::from_syn)
     }
 }
 
 impl<T: ParseInputTokens> ParseInputTokens for Vec<T> {
     fn parse_value(input: ParseStream, errors: &mut ErrorsCollection) -> Result<Self> {
-        return ParseHelpers::sequence(input, errors);
+        ParseHelpers::sequence(input, errors)
     }
 }
 
@@ -118,15 +114,13 @@ impl ParseInputTokens for Version {
         let literal = ParseHelpers::syn::<LitStr>(input)?;
 
         match Self::parse(&literal.value()) {
-            Ok(version) => {
-                return Ok(version);
-            }
+            Ok(version) => Ok(version),
             Err(error) => {
                 errors.add(&literal, &error);
 
-                return Ok(Version::new(0, 0, 0));
+                Ok(Version::new(0, 0, 0))
             }
-        };
+        }
     }
 }
 

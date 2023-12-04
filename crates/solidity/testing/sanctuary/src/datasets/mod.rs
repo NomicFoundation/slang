@@ -59,5 +59,5 @@ pub fn get_all_datasets() -> Result<Vec<impl Dataset>> {
         ]);
     }
 
-    return Ok(result);
+    Ok(result)
 }

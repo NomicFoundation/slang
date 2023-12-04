@@ -104,8 +104,7 @@ Tree:
                       - Semicolon (Token): ";" # 772..773
                   - StructMember (Rule): # 774..791 "  bytes message;\n"
                       - TypeName (Rule): # 774..781 "  bytes"
-                          - IdentifierPath (Rule): # 774..781 "  bytes"
-                              - Identifier (Token): "bytes" # 776..781
+                          - BytesKeyword (Token): "bytes" # 776..781
                       - Identifier (Token): "message" # 782..789
                       - Semicolon (Token): ";" # 789..790
               - CloseBrace (Token): "}" # 791..792

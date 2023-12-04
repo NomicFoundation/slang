@@ -8,8 +8,8 @@ use crate::{
 };
 
 pub fn delete_file(file_path: &Path) -> Result<()> {
-    return std::fs::remove_file(file_path)
-        .with_context(|| format!("Failed to delete source file: {file_path:?}"));
+    std::fs::remove_file(file_path)
+        .with_context(|| format!("Failed to delete source file: {file_path:?}"))
 }
 
 pub fn write_file(file_path: &Path, contents: &str) -> Result<()> {
@@ -27,7 +27,7 @@ pub fn write_file(file_path: &Path, contents: &str) -> Result<()> {
         warning!("Updating: {}", file_path.strip_repo_root()?.unwrap_str());
     }
 
-    return file_path.write_string(formatted);
+    file_path.write_string(formatted)
 }
 
 pub fn verify_file(file_path: &Path, contents: &str) -> Result<()> {
@@ -45,5 +45,5 @@ pub fn verify_file(file_path: &Path, contents: &str) -> Result<()> {
         "Generated file is out of date: {file_path:?}"
     );
 
-    return Ok(());
+    Ok(())
 }

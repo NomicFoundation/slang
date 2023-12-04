@@ -21,8 +21,6 @@ impl LanguageCompiler {
 
         let analysis = Analysis::analyze(parse_output);
 
-        let output = LanguageEmitter::emit(&analysis);
-
-        return output;
+        LanguageEmitter::emit(&analysis)
     }
 }

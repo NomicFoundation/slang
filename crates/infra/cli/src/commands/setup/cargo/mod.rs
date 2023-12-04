@@ -10,5 +10,5 @@ pub fn setup_cargo() -> Result<()> {
         command = command.flag("--locked");
     }
 
-    return command.run();
+    command.run()
 }

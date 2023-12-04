@@ -14,7 +14,7 @@ pub struct Reporter {
 
 impl Reporter {
     pub fn new() -> Self {
-        return Self { errors: Vec::new() };
+        Self { errors: Vec::new() }
     }
 
     pub fn report(&mut self, location: &LocationRef, error: impl Error) {
@@ -31,8 +31,8 @@ impl Reporter {
             let cst = cst_cache.entry(file_path.to_owned()).or_insert_with(|| {
                 let source = file_path.read_to_string().unwrap();
 
-                return Parser::run_parser(&file_path, &source)
-                    .unwrap_or_else(|_| panic!("File cannot be parsed: {file_path:?}"));
+                Parser::run_parser(&file_path, &source)
+                    .unwrap_or_else(|_| panic!("File cannot be parsed: {file_path:?}"))
             });
 
             let mut current_node = cst.as_ref();
@@ -50,6 +50,6 @@ impl Reporter {
             errors.push(file_path, range, message);
         }
 
-        return errors.into_result();
+        errors.into_result()
     }
 }

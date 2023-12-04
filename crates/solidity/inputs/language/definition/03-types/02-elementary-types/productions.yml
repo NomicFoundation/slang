@@ -44,7 +44,8 @@
       scanner:
         sequence:
           - terminal: "bytes"
-          - reference: "FixedBytesTypeSize"
+          - optional:
+              reference: "FixedBytesTypeSize"
       notFollowedBy:
         reference: "IdentifierPart"
 

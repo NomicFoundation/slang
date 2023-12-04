@@ -5,40 +5,40 @@ use anyhow::Result;
 
 #[test]
 fn alternatives() -> Result<()> {
-    return run("VersionPragma", "alternatives");
+    run("VersionPragma", "alternatives")
 }
 
 #[test]
 fn equal_operator() -> Result<()> {
-    return run("VersionPragma", "equal_operator");
+    run("VersionPragma", "equal_operator")
 }
 
 #[test]
 fn exact_version() -> Result<()> {
-    return run("VersionPragma", "exact_version");
+    run("VersionPragma", "exact_version")
 }
 
 #[test]
 fn less_than_operator() -> Result<()> {
-    return run("VersionPragma", "less_than_operator");
+    run("VersionPragma", "less_than_operator")
 }
 
 #[test]
 fn multiple_exact_versions() -> Result<()> {
-    return run("VersionPragma", "multiple_exact_versions");
+    run("VersionPragma", "multiple_exact_versions")
 }
 
 #[test]
 fn nested_expressions() -> Result<()> {
-    return run("VersionPragma", "nested_expressions");
+    run("VersionPragma", "nested_expressions")
 }
 
 #[test]
 fn ranges() -> Result<()> {
-    return run("VersionPragma", "ranges");
+    run("VersionPragma", "ranges")
 }
 
 #[test]
 fn with_trivia() -> Result<()> {
-    return run("VersionPragma", "with_trivia");
+    run("VersionPragma", "with_trivia")
 }

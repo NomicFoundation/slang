@@ -6,7 +6,7 @@ pub fn setup_workspace() -> Result<()> {
         warm_up_ide_tools()?;
     }
 
-    return Ok(());
+    Ok(())
 }
 
 /// Warm up IDE tools in case it was a fresh installation.
@@ -14,5 +14,5 @@ fn warm_up_ide_tools() -> Result<()> {
     Command::new("rust-analyzer").flag("--version").run()?;
     Command::new("rust-src").flag("--version").run()?;
 
-    return Ok(());
+    Ok(())
 }

@@ -30,11 +30,11 @@ pub struct NodeField {
 
 impl Node {
     pub fn range(&self) -> &Range {
-        return match self {
+        match self {
             Node::Value { range, .. } | Node::Array { range, .. } | Node::Object { range, .. } => {
                 range
             }
-        };
+        }
     }
 
     pub fn index(&self, index: usize) -> &NodeRef {

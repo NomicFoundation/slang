@@ -5,30 +5,30 @@ use anyhow::Result;
 
 #[test]
 fn destructure_empty() -> Result<()> {
-    return run("UsingDirective", "destructure_empty");
+    run("UsingDirective", "destructure_empty")
 }
 
 #[test]
 fn destructure_multiple() -> Result<()> {
-    return run("UsingDirective", "destructure_multiple");
+    run("UsingDirective", "destructure_multiple")
 }
 
 #[test]
 fn destructure_single() -> Result<()> {
-    return run("UsingDirective", "destructure_single");
+    run("UsingDirective", "destructure_single")
 }
 
 #[test]
 fn path_named() -> Result<()> {
-    return run("UsingDirective", "path_named");
+    run("UsingDirective", "path_named")
 }
 
 #[test]
 fn path_unnamed() -> Result<()> {
-    return run("UsingDirective", "path_unnamed");
+    run("UsingDirective", "path_unnamed")
 }
 
 #[test]
 fn user_defined_operator() -> Result<()> {
-    return run("UsingDirective", "user_defined_operator");
+    run("UsingDirective", "user_defined_operator")
 }

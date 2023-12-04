@@ -5,5 +5,5 @@ use anyhow::Result;
 
 #[test]
 fn unchecked() -> Result<()> {
-    return run("Block", "unchecked");
+    run("Block", "unchecked")
 }

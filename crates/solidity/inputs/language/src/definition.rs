@@ -503,7 +503,7 @@ codegen_language_macros::compile!(Language(
                             definitions = [KeywordDefinition(
                                 value = Sequence([
                                     Atom("bytes"),
-                                    Choice([
+                                    Optional(Choice([
                                         Atom("1"),
                                         Atom("2"),
                                         Atom("3"),
@@ -536,7 +536,7 @@ codegen_language_macros::compile!(Language(
                                         Atom("30"),
                                         Atom("31"),
                                         Atom("32")
-                                    ])
+                                    ]))
                                 ])
                             )]
                         ),
@@ -4372,7 +4372,7 @@ codegen_language_macros::compile!(Language(
                                 reserved = Till("0.7.1"),
                                 value = Sequence([
                                     Atom("bytes"),
-                                    Choice([
+                                    Optional(Choice([
                                         Atom("1"),
                                         Atom("2"),
                                         Atom("3"),
@@ -4405,7 +4405,7 @@ codegen_language_macros::compile!(Language(
                                         Atom("30"),
                                         Atom("31"),
                                         Atom("32")
-                                    ])
+                                    ]))
                                 ])
                             )]
                         ),

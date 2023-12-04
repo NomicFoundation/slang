@@ -30,5 +30,5 @@ fn simple_contract() -> Result<()> {
 
     assert_eq!(rule.unparse(), "contract Foo {}");
 
-    return Ok(());
+    Ok(())
 }

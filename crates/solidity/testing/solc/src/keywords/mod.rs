@@ -82,7 +82,7 @@ fn generate_test_cases(language: &Language) -> Vec<TestCase> {
         }
     }
 
-    return test_cases;
+    test_cases
 }
 
 struct TestCase {
@@ -143,13 +143,13 @@ impl TestCase {
             .cloned()
             .collect();
 
-        return Self {
+        Self {
             item: item.name.to_string(),
             variation,
             reserved_in,
 
             source,
-        };
+        }
     }
 
     fn execute(&self, binaries: &Vec<Binary>) -> TestResult {
@@ -172,10 +172,10 @@ impl TestCase {
             }
         }
 
-        return TestResult {
+        TestResult {
             should_be_reserved_in,
             should_be_unreserved_in,
-        };
+        }
     }
 
     fn test_version(&self, binary: &Binary) -> bool {
@@ -245,7 +245,7 @@ impl TestCase {
             std::process::exit(1);
         }
 
-        return true;
+        true
     }
 }
 
@@ -253,10 +253,8 @@ fn should_test_item(item: &str) -> bool {
     match item {
         "FixedKeyword" | "UfixedKeyword" | "YulUfixedKeyword" | "YulFixedKeyword" => {
             println!("WARNING: skipping '{item}' by default, as it generates thousands of variations. Enable manually if needed.");
-            return false;
+            false
         }
-        _ => {
-            return true;
-        }
+        _ => true,
     }
 }
