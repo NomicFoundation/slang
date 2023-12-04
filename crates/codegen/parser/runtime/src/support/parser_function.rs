@@ -6,7 +6,7 @@ use super::{
         text_index::TextIndex,
     },
     context::ParserContext,
-    parser_result::*,
+    parser_result::{IncompleteMatch, Match, ParserResult, SkippedUntil},
 };
 
 pub trait ParserFunction<L>

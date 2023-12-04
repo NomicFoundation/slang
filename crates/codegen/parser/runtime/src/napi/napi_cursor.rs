@@ -1,11 +1,11 @@
 use {
-    napi::{bindgen_prelude::*, JsObject},
+    napi::{bindgen_prelude::Env, JsObject},
     napi_derive::napi,
 };
 
-use super::*;
-use napi_cst::*;
-use napi_text_index::*;
+use super::{napi_cst, napi_text_index, RuleKind, RustCursor, TokenKind};
+use napi_cst::ToJS;
+use napi_text_index::{TextIndex, TextRange};
 
 #[napi(namespace = "cursor")]
 pub struct Cursor(Box<RustCursor>);

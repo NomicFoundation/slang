@@ -682,7 +682,7 @@ pub trait IsLexicalContext {
 
 #[allow(non_snake_case)]
 pub mod LexicalContextType {
-    use super::*;
+    use super::{IsLexicalContext, LexicalContext};
     pub struct Default {}
     impl IsLexicalContext for Default {
         fn value() -> LexicalContext {

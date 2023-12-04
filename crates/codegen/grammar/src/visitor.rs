@@ -1,4 +1,8 @@
-use super::*;
+use super::{
+    Grammar, ParserDefinitionNode, ParserDefinitionRef, PrecedenceParserDefinitionNode,
+    PrecedenceParserDefinitionRef, ScannerDefinitionNode, ScannerDefinitionRef,
+    TriviaParserDefinitionRef,
+};
 
 pub trait GrammarVisitor {
     fn grammar_enter(&mut self, _grammar: &Grammar) {}

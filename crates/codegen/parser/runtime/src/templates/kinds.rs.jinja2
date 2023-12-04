@@ -92,7 +92,7 @@ pub trait IsLexicalContext {
 
 #[allow(non_snake_case)]
 pub mod LexicalContextType {
-    use super::*;
+    use super::{IsLexicalContext, LexicalContext};
 
     {%- for context in code.scanner_contexts %}
         pub struct {{ context.name }} {}
