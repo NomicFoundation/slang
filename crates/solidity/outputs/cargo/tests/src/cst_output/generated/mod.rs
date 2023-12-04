@@ -86,15 +86,18 @@ mod YulExpression;
 #[allow(non_snake_case)]
 mod YulLeaveStatement;
 
-pub const VERSION_BREAKS: [Version; 19] = [
+pub const VERSION_BREAKS: [Version; 22] = [
     Version::new(0, 4, 11),
+    Version::new(0, 4, 14),
     Version::new(0, 4, 21),
     Version::new(0, 4, 22),
     Version::new(0, 5, 0),
     Version::new(0, 5, 3),
+    Version::new(0, 5, 10),
     Version::new(0, 6, 0),
     Version::new(0, 6, 2),
     Version::new(0, 6, 5),
+    Version::new(0, 6, 8),
     Version::new(0, 6, 11),
     Version::new(0, 7, 0),
     Version::new(0, 7, 1),
