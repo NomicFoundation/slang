@@ -14,14 +14,18 @@ codegen_language_macros::compile!(Language(
                 Enum(
                     name = Bar,
                     variants = [
-                        EnumVariant(name = Variant1, reference = Baz),
-                        EnumVariant(name = Variant2, reference = Baz),
-                        EnumVariant(name = Variant1, reference = Baz)
+                        EnumVariant(reference = Baz1),
+                        EnumVariant(reference = Baz2),
+                        EnumVariant(reference = Baz1)
                     ]
                 ),
                 Token(
-                    name = Baz,
-                    definitions = [TokenDefinition(scanner = Atom("baz"))]
+                    name = Baz1,
+                    definitions = [TokenDefinition(scanner = Atom("baz1"))]
+                ),
+                Token(
+                    name = Baz2,
+                    definitions = [TokenDefinition(scanner = Atom("baz2"))]
                 )
             ]
         )]

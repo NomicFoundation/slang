@@ -51,9 +51,11 @@ fn check_enum_items(analysis: &mut Analysis) {
         let mut variants = HashSet::new();
 
         for variant in &item.variants {
-            let name = &variant.name;
-            if !variants.insert(&**name) {
-                analysis.errors.add(name, &Errors::ExistingVariant(name));
+            let reference = &variant.reference;
+            if !variants.insert(&**reference) {
+                analysis
+                    .errors
+                    .add(reference, &Errors::ExistingVariant(reference));
             }
         }
     }
@@ -165,7 +167,7 @@ fn calculate_defined_in(analysis: &mut Analysis, item: &SpannedItem) -> VersionS
 enum Errors<'err> {
     #[error("An item with the name '{0}' already exists.")]
     ExistingItem(&'err Identifier),
-    #[error("A variant with the name '{0}' already exists.")]
+    #[error("A variant referencing '{0}' already exists.")]
     ExistingVariant(&'err Identifier),
     #[error("An expression with the name '{0}' already exists.")]
     ExistingExpression(&'err Identifier),

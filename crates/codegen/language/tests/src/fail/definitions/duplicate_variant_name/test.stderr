@@ -1,5 +1,5 @@
-error: A variant with the name 'Variant1' already exists.
-  --> src/fail/definitions/duplicate_variant_name/test.rs:19:44
+error: A variant referencing 'Baz1' already exists.
+  --> src/fail/definitions/duplicate_variant_name/test.rs:19:49
    |
-19 |                         EnumVariant(name = Variant1, reference = Baz)
-   |                                            ^^^^^^^^
+19 |                         EnumVariant(reference = Baz1)
+   |                                                 ^^^^
