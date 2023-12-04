@@ -711,27 +711,14 @@ fn resolve_choice(item: model::EnumItem, ctx: &mut ResolveCtx) -> ParserDefiniti
 fn resolve_repeated(item: model::RepeatedItem, ctx: &mut ResolveCtx) -> ParserDefinitionNode {
     let body = Box::new(resolve_grammar_element(&item.repeated, ctx).into_parser_def_node());
 
-    let repeated = if item.allow_empty.unwrap_or(false) {
-        ParserDefinitionNode::ZeroOrMore
-    } else {
-        ParserDefinitionNode::OneOrMore
-    };
-
-    repeated(body).versioned(item.enabled)
+    ParserDefinitionNode::OneOrMore(body).versioned(item.enabled)
 }
 
 fn resolve_separated(item: model::SeparatedItem, ctx: &mut ResolveCtx) -> ParserDefinitionNode {
     let body = resolve_grammar_element(&item.separated, ctx).into_parser_def_node();
     let separator = resolve_grammar_element(&item.separator, ctx).into_parser_def_node();
 
-    let separated_by = ParserDefinitionNode::SeparatedBy(Box::new(body), Box::new(separator))
-        .versioned(item.enabled);
-
-    if item.allow_empty.unwrap_or(false) {
-        ParserDefinitionNode::Optional(Box::new(separated_by))
-    } else {
-        separated_by
-    }
+    ParserDefinitionNode::SeparatedBy(Box::new(body), Box::new(separator)).versioned(item.enabled)
 }
 
 fn resolve_precedence(
