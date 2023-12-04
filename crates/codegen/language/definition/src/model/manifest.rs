@@ -107,6 +107,9 @@ impl Language {
                             add_spec(&op.enabled);
                         }
                     }
+                    for prim in &item.primary_expressions {
+                        add_spec(&prim.enabled);
+                    }
                 }
                 Item::Keyword { item } => {
                     for definition in &item.definitions {
