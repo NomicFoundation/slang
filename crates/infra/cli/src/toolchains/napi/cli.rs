@@ -87,10 +87,10 @@ impl NapiCli {
         let node_binary =
             node_binary.with_context(|| format!("No .node file in {output_dir:?}"))?;
 
-        return Ok(NapiCliOutput {
+        Ok(NapiCliOutput {
             source_files,
             node_binary,
-        });
+        })
     }
 
     pub fn prepublish() -> Result<()> {

@@ -22,7 +22,7 @@
     "**/Pipfile.lock": true
   },
   "triggerTaskOnSave.tasks": {
-    "Run Rust Analyzer Checks": ["**/*.rs.jinja2"],
+    "Run Rust Analyzer Checks": ["**/*.jinja2"],
     "Validate Solidity Definition": ["crates/solidity/inputs/language/definition/**/*.yml"]
   },
   "typescript.tsdk": "node_modules/typescript/lib",

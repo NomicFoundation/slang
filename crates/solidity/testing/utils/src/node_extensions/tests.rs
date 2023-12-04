@@ -23,5 +23,5 @@ fn extract_non_trivia() -> Result<()> {
 
     assert_eq!(value, "x=(1+2)");
 
-    return Ok(());
+    Ok(())
 }

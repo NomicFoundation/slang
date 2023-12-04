@@ -5,10 +5,10 @@ use anyhow::Result;
 
 #[test]
 fn delete_identifier() -> Result<()> {
-    return run("DeleteStatement", "delete_identifier");
+    run("DeleteStatement", "delete_identifier")
 }
 
 #[test]
 fn delete_index() -> Result<()> {
-    return run("DeleteStatement", "delete_index");
+    run("DeleteStatement", "delete_index")
 }

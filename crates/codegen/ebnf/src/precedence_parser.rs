@@ -69,6 +69,6 @@ impl EbnfNode {
 
         choices.push(Self::from_parser(&precedence_parser.primary_expression));
 
-        return Self::choice(choices);
+        Self::choice(choices)
     }
 }

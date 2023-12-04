@@ -15,6 +15,6 @@ impl LanguageDefinition {
             }
         }
 
-        return version_breaks;
+        version_breaks
     }
 }

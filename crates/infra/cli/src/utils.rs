@@ -25,7 +25,7 @@ pub trait OrderedCommand: Clone + Ord + PartialEq + ValueEnum {
             command.execute()?;
         }
 
-        return Ok(());
+        Ok(())
     }
 }
 

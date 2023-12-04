@@ -5,5 +5,5 @@ use anyhow::Result;
 
 #[test]
 fn no_members() -> Result<()> {
-    return run("StructDefinition", "no_members");
+    run("StructDefinition", "no_members")
 }

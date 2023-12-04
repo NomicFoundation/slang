@@ -47,7 +47,7 @@ impl Cursor {
         self.0.is_completed()
     }
 
-    #[napi(ts_return_type = "cst.RuleNode | cst.TokenNode")]
+    #[napi(ts_return_type = "cst.Node")]
     pub fn node(&self, env: Env) -> JsObject {
         self.0.node().to_js(&env)
     }
@@ -60,6 +60,11 @@ impl Cursor {
     #[napi(getter, ts_return_type = "text_index.TextRange")]
     pub fn text_range(&self) -> TextRange {
         (&self.0.text_range()).into()
+    }
+
+    #[napi(getter)]
+    pub fn depth(&self) -> u32 {
+        self.0.depth() as u32
     }
 
     #[napi(ts_return_type = "Array<cst.RuleNode>")]
@@ -115,30 +120,29 @@ impl Cursor {
         self.0.go_to_previous_sibling()
     }
 
-    // TODO: find_matching (taking JS function)
-    #[napi(ts_return_type = "cst.TokenNode | null")]
-    pub fn find_token_with_kind(
+    #[napi]
+    pub fn go_to_next_token(&mut self) -> bool {
+        self.0.go_to_next_token()
+    }
+
+    #[napi]
+    pub fn go_to_next_token_with_kinds(
         &mut self,
         #[napi(ts_arg_type = "Array<kinds.TokenKind>")] kinds: Vec<TokenKind>,
-        env: Env,
-    ) -> Option<JsObject> {
-        self.0
-            .find_token_with_kind(&kinds[..])
-            .map(|token_node| token_node.to_js(&env))
+    ) -> bool {
+        self.0.go_to_next_token_with_kinds(&kinds)
     }
 
-    // TODO: find_token_matching (taking JS function)
+    #[napi]
+    pub fn go_to_next_rule(&mut self) -> bool {
+        self.0.go_to_next_rule()
+    }
 
-    #[napi(ts_return_type = "cst.RuleNode | null")]
-    pub fn find_rule_with_kind(
+    #[napi]
+    pub fn go_to_next_rule_with_kinds(
         &mut self,
         #[napi(ts_arg_type = "Array<kinds.RuleKind>")] kinds: Vec<RuleKind>,
-        env: Env,
-    ) -> Option<JsObject> {
-        self.0
-            .find_rule_with_kind(&kinds[..])
-            .map(|token_node| token_node.to_js(&env))
+    ) -> bool {
+        self.0.go_to_next_rule_with_kinds(&kinds)
     }
-
-    // TODO: find_rule_matching (taking JS function)
 }

@@ -12,7 +12,7 @@ pub fn format_source_file(file_path: &Path, contents: &str) -> Result<String> {
     let header = generate_header(file_path);
     let unformatted = format!("{header}\n\n{contents}");
 
-    return match run_formatter(file_path, &unformatted) {
+    match run_formatter(file_path, &unformatted) {
         Ok(formatted) => Ok(formatted),
         Err(formatter_error) => {
             // Try to backup the unformatted version to disk, to be able to debug what went wrong.
@@ -23,11 +23,11 @@ pub fn format_source_file(file_path: &Path, contents: &str) -> Result<String> {
                 Err(backup_error) => backup_error.context("Failed to back up unformatted version"),
             };
 
-            return Err(formatter_error)
+            Err(formatter_error)
                 .context(backup_error)
-                .with_context(|| format!("Failed to format {file_path:?}"));
+                .with_context(|| format!("Failed to format {file_path:?}"))
         }
-    };
+    }
 }
 
 fn backup_raw_file(file_path: &Path, unformatted: &str) -> Result<PathBuf> {
@@ -48,7 +48,7 @@ fn backup_raw_file(file_path: &Path, unformatted: &str) -> Result<PathBuf> {
 
     backup_file_path.write_string(unformatted)?;
 
-    return Ok(backup_file_path);
+    Ok(backup_file_path)
 }
 
 fn generate_header(file_path: &Path) -> String {
@@ -103,7 +103,7 @@ fn run_prettier(file_path: &Path, contents: &str) -> Result<String> {
 }
 
 fn run_rustfmt(contents: &str) -> Result<String> {
-    return Command::new("rustfmt")
+    Command::new("rustfmt")
         .property("--emit", "stdout")
-        .evaluate_with_input(contents);
+        .evaluate_with_input(contents)
 }

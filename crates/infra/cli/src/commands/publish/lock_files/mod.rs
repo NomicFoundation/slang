@@ -90,5 +90,5 @@ pub fn publish_lock_files() -> Result<()> {
 
     Command::new("git").args(["checkout", &base_branch]).run()?;
 
-    return Ok(());
+    Ok(())
 }

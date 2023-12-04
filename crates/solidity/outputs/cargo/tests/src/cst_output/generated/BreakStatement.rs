@@ -5,10 +5,10 @@ use anyhow::Result;
 
 #[test]
 fn error_recovery() -> Result<()> {
-    return run("BreakStatement", "error_recovery");
+    run("BreakStatement", "error_recovery")
 }
 
 #[test]
 fn valid() -> Result<()> {
-    return run("BreakStatement", "valid");
+    run("BreakStatement", "valid")
 }

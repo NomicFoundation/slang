@@ -4,10 +4,10 @@ use proc_macro2::{Ident, Literal, TokenStream};
 use quote::quote;
 
 pub fn parse_input_tokens(item: InputItem) -> TokenStream {
-    return match item {
+    match item {
         InputItem::Struct { name, fields } => derive_struct(name, &fields),
         InputItem::Enum { name, variants } => derive_enum(name, &variants),
-    };
+    }
 }
 
 fn derive_struct(name: Ident, fields: &[InputField]) -> TokenStream {
@@ -16,7 +16,7 @@ fn derive_struct(name: Ident, fields: &[InputField]) -> TokenStream {
 
     let fields_return = derive_fields_return(quote!(Self), fields);
 
-    return quote! {
+    quote! {
         impl crate::internals::ParseInputTokens for #name {
             fn parse_value(
                 input: syn::parse::ParseStream,
@@ -41,7 +41,7 @@ fn derive_struct(name: Ident, fields: &[InputField]) -> TokenStream {
                 );
             }
         }
-    };
+    }
 }
 
 fn derive_enum(name: Ident, variants: &[InputVariant]) -> TokenStream {
@@ -52,7 +52,7 @@ fn derive_enum(name: Ident, variants: &[InputVariant]) -> TokenStream {
         if let Some(fields) = &variant.fields {
             let fields_return = derive_fields_return(quote!(Self::#variant_ident), fields);
 
-            return quote! {
+            quote! {
                 #variant_name => {
                     return crate::internals::ParseHelpers::delimited(
                         proc_macro2::Delimiter::Parenthesis,
@@ -60,13 +60,13 @@ fn derive_enum(name: Ident, variants: &[InputVariant]) -> TokenStream {
                         |_, input| { #fields_return }
                     );
                 }
-            };
+            }
         } else {
-            return quote! {
+            quote! {
                 #variant_name => {
                     return Ok(Self::#variant_ident);
                 }
-            };
+            }
         }
     });
 
@@ -79,7 +79,7 @@ fn derive_enum(name: Ident, variants: &[InputVariant]) -> TokenStream {
             .join(" or ")
     ));
 
-    return quote! {
+    quote! {
         impl crate::internals::ParseInputTokens for #name {
             fn parse_value(
                 input: syn::parse::ParseStream,
@@ -95,7 +95,7 @@ fn derive_enum(name: Ident, variants: &[InputVariant]) -> TokenStream {
                 };
             }
         }
-    };
+    }
 }
 
 fn derive_fields_return(type_name: TokenStream, fields: &[InputField]) -> TokenStream {
@@ -111,15 +111,15 @@ fn derive_fields_return(type_name: TokenStream, fields: &[InputField]) -> TokenS
             let name = &field.name;
             let name_string = name.to_string();
 
-            return quote!(
+            quote!(
                 #name: crate::internals::ParseInputTokens::parse_field(#name_string, &input, errors)?,
-            );
+            )
         }).collect()
     };
 
-    return quote! {
+    quote! {
         return Ok(#type_name {
             #assignments
         });
-    };
+    }
 }

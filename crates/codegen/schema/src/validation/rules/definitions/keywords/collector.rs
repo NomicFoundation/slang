@@ -22,7 +22,7 @@ impl KeywordsCollector {
 
         run_visitor(&mut instance, language, reporter);
 
-        return instance.keywords;
+        instance.keywords
     }
 }
 
@@ -34,7 +34,7 @@ impl Visitor for KeywordsCollector {
         _reporter: &mut Reporter,
     ) -> bool {
         self.current_production = Some(production.to_owned());
-        return true;
+        true
     }
 
     fn visit_parser(
@@ -43,7 +43,7 @@ impl Visitor for KeywordsCollector {
         _location: &LocationRef,
         _reporter: &mut Reporter,
     ) -> bool {
-        return false;
+        false
     }
 
     fn visit_scanner(
@@ -85,7 +85,7 @@ impl Visitor for KeywordsCollector {
             };
         }
 
-        return false;
+        false
     }
 }
 
@@ -102,15 +102,13 @@ impl KeywordsCollector {
                     variations.extend(Self::collect_variations(scanner)?);
                 }
 
-                return Some(variations);
+                Some(variations)
             }
-            ScannerDefinition::Difference { minuend, .. } => {
-                return Self::collect_variations(minuend);
-            }
+            ScannerDefinition::Difference { minuend, .. } => Self::collect_variations(minuend),
             ScannerDefinition::Optional(child) => {
                 let mut variations = Self::collect_variations(child)?;
                 variations.push("".to_owned());
-                return Some(variations);
+                Some(variations)
             }
             ScannerDefinition::Range { from, to } => {
                 let mut variations = Vec::new();
@@ -118,7 +116,7 @@ impl KeywordsCollector {
                     variations.push(i.to_string());
                 }
 
-                return Some(variations);
+                Some(variations)
             }
             ScannerDefinition::Sequence(children) => {
                 let mut existing_variations = vec![];
@@ -141,16 +139,14 @@ impl KeywordsCollector {
                     }
                 }
 
-                return Some(existing_variations);
+                Some(existing_variations)
             }
-            ScannerDefinition::TrailingContext { scanner, .. } => {
-                return Self::collect_variations(scanner);
-            }
+            ScannerDefinition::TrailingContext { scanner, .. } => Self::collect_variations(scanner),
             ScannerDefinition::Terminal(terminal) => {
                 if terminal.chars().all(|c| c == '_' || c.is_alphanumeric()) {
-                    return Some(vec![terminal.to_owned()]);
+                    Some(vec![terminal.to_owned()])
                 } else {
-                    return None;
+                    None
                 }
             }
             ScannerDefinition::Not(_)
@@ -158,9 +154,9 @@ impl KeywordsCollector {
             | ScannerDefinition::Reference(_)
             | ScannerDefinition::ZeroOrMore(_) => {
                 // Cannot be a keyword
-                return None;
+                None
             }
-        };
+        }
     }
 }
 

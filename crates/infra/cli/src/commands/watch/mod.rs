@@ -14,7 +14,7 @@ pub struct WatchController {
 
 impl WatchController {
     pub fn execute(&self) -> Result<()> {
-        return WatchCommand::execute_in_order(&self.commands);
+        WatchCommand::execute_in_order(&self.commands)
     }
 }
 
@@ -28,12 +28,12 @@ impl OrderedCommand for WatchCommand {
     fn execute(&self) -> Result<()> {
         Terminal::step(format!("watch {name}", name = self.clap_name()));
 
-        return match self {
+        match self {
             WatchCommand::Mkdocs => watch_mkdocs(),
-        };
+        }
     }
 }
 
 fn watch_mkdocs() -> Result<()> {
-    return Mkdocs::watch();
+    Mkdocs::watch()
 }

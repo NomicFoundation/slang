@@ -34,7 +34,7 @@ impl Visitor for ConsistentShape {
         _reporter: &mut Reporter,
     ) -> bool {
         self.current_production = Some(production.to_owned());
-        return true;
+        true
     }
 
     fn visit_version(
@@ -44,7 +44,7 @@ impl Visitor for ConsistentShape {
         _reporter: &mut Reporter,
     ) -> bool {
         self.is_root_parser = true;
-        return true;
+        true
     }
 
     fn visit_parser(
@@ -65,7 +65,7 @@ impl Visitor for ConsistentShape {
             reporter.report(location, Errors::MustProduceSingleNamed);
         }
 
-        return true;
+        true
     }
 
     fn visit_scanner(
@@ -74,7 +74,7 @@ impl Visitor for ConsistentShape {
         _location: &LocationRef,
         _reporter: &mut Reporter,
     ) -> bool {
-        return false;
+        false
     }
 }
 
@@ -86,20 +86,20 @@ impl ConsistentShape {
             | ParserDefinition::Sequence(_)
             | ParserDefinition::TerminatedBy { .. } => {
                 // Constant number of children. Doesn't have to be named:
-                return true;
+                true
             }
 
             ParserDefinition::OneOrMore(_)
             | ParserDefinition::SeparatedBy { .. }
             | ParserDefinition::ZeroOrMore(_) => {
                 // Variable number of children. Must be named:
-                return false;
+                false
             }
 
             ParserDefinition::Optional(optional) => {
                 // Optional doesn't have to be named, but its child must be.
                 // Otherwise, it will be indistinguishable from the parent's other children.
-                return self.is_single_named(optional);
+                self.is_single_named(optional)
             }
 
             ParserDefinition::Reference(reference) => {
@@ -112,42 +112,34 @@ impl ConsistentShape {
                 match &production.definition {
                     ProductionDefinition::Scanner { .. } => {
                         // If not inlined, it will always produce a named node:
-                        return !production.inlined;
+                        !production.inlined
                     }
 
                     ProductionDefinition::Parser { version_map }
-                    | ProductionDefinition::TriviaParser { version_map } => {
-                        match &version_map {
-                            VersionMap::Unversioned(parser) => {
-                                return self.is_single_named(parser);
-                            }
-                            VersionMap::Versioned(versioned) => {
-                                return versioned.values().all(|parser| match &parser {
-                                    Some(parser) => self.is_single_named(parser),
-                                    None => true,
-                                });
-                            }
-                        };
-                    }
+                    | ProductionDefinition::TriviaParser { version_map } => match &version_map {
+                        VersionMap::Unversioned(parser) => self.is_single_named(parser),
+                        VersionMap::Versioned(versioned) => {
+                            versioned.values().all(|parser| match &parser {
+                                Some(parser) => self.is_single_named(parser),
+                                None => true,
+                            })
+                        }
+                    },
 
-                    ProductionDefinition::PrecedenceParser { version_map } => {
-                        match &version_map {
-                            VersionMap::Unversioned(parser) => {
-                                return self.is_single_named(&parser.primary_expression);
-                            }
-                            VersionMap::Versioned(versioned) => {
-                                return versioned.values().all(|parser| match &parser {
-                                    Some(parser) => {
-                                        self.is_single_named(&parser.primary_expression)
-                                    }
-                                    None => true,
-                                });
-                            }
-                        };
-                    }
-                };
+                    ProductionDefinition::PrecedenceParser { version_map } => match &version_map {
+                        VersionMap::Unversioned(parser) => {
+                            self.is_single_named(&parser.primary_expression)
+                        }
+                        VersionMap::Versioned(versioned) => {
+                            versioned.values().all(|parser| match &parser {
+                                Some(parser) => self.is_single_named(&parser.primary_expression),
+                                None => true,
+                            })
+                        }
+                    },
+                }
             }
-        };
+        }
     }
 }
 

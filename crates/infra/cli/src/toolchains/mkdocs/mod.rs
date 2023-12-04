@@ -7,28 +7,28 @@ pub struct Mkdocs;
 
 impl Mkdocs {
     pub fn build() -> Result<()> {
-        return mkdocs_command()
+        mkdocs_command()
             .arg("build")
             .flag("--clean")
             .flag("--strict")
-            .run();
+            .run()
     }
 
     pub fn watch() -> Result<()> {
         // _MKDOCS_WATCH_PORT_ | keep in sync with the port number defined in "$REPO_ROOT/.devcontainer/devcontainer.json"
         const PORT: usize = 5353;
 
-        return mkdocs_command()
+        mkdocs_command()
             .arg("serve")
             .flag("--watch-theme")
             .property("--dev-addr", format!("localhost:{PORT}"))
-            .run();
+            .run()
     }
 }
 
 fn mkdocs_command() -> Command {
-    return Command::new("python3")
+    Command::new("python3")
         .property("-m", "pipenv")
         .args(["run", "mkdocs"])
-        .current_dir(Path::repo_path("documentation"));
+        .current_dir(Path::repo_path("documentation"))
 }

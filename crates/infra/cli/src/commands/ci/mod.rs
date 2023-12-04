@@ -17,6 +17,6 @@ impl CiController {
         TestController::default().execute()?;
         LintController::default().execute()?;
 
-        return Ok(());
+        Ok(())
     }
 }

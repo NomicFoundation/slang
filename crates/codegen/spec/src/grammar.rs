@@ -29,11 +29,11 @@ pub fn generate_supported_versions_page(language: &LanguageDefinition) -> Naviga
         page.write_text(&format!("`{version}`"));
     }
 
-    return NavigationEntry::Page {
+    NavigationEntry::Page {
         title: "Supported Versions".to_owned(),
         path: "supported-versions".to_owned(),
         contents: page.into_string(),
-    };
+    }
 }
 
 pub fn generate_grammar_dir(language: &LanguageDefinition, snippets: &Snippets) -> NavigationEntry {
@@ -47,11 +47,11 @@ pub fn generate_grammar_dir(language: &LanguageDefinition, snippets: &Snippets) 
         });
     }
 
-    return NavigationEntry::Directory {
+    NavigationEntry::Directory {
         title: "Grammar".to_owned(),
         path: "grammar".to_owned(),
         children: pages,
-    };
+    }
 }
 
 fn generate_grammar_page(
@@ -88,5 +88,5 @@ fn generate_grammar_page(
         }
     }
 
-    return page.into_string();
+    page.into_string()
 }

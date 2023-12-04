@@ -13,17 +13,17 @@ pub trait NodeExtensions {
 
 impl NodeExtensions for Node {
     fn is_trivia(&self) -> bool {
-        return match self {
+        match self {
             Node::Token(token) => token.is_trivia(),
             Node::Rule(rule) => rule.is_trivia(),
-        };
+        }
     }
 
     fn extract_non_trivia(&self) -> String {
-        return match self {
+        match self {
             Node::Token(token) => token.extract_non_trivia(),
             Node::Rule(rule) => rule.extract_non_trivia(),
-        };
+        }
     }
 }
 
@@ -47,10 +47,10 @@ impl NodeExtensions for RuleNode {
 
 impl NodeExtensions for TokenNode {
     fn is_trivia(&self) -> bool {
-        return false;
+        false
     }
 
     fn extract_non_trivia(&self) -> String {
-        return self.text.clone();
+        self.text.clone()
     }
 }

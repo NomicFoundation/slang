@@ -12,48 +12,29 @@ impl EbnfNode {
             ScannerDefinition::Difference {
                 minuend,
                 subtrahend,
-            } => {
-                return Self::difference(
-                    Self::from_scanner(minuend),
-                    Self::from_scanner(subtrahend),
-                );
-            }
+            } => Self::difference(Self::from_scanner(minuend), Self::from_scanner(subtrahend)),
 
-            ScannerDefinition::Not(scanner) => {
-                return Self::not(Self::from_scanner(scanner));
-            }
+            ScannerDefinition::Not(scanner) => Self::not(Self::from_scanner(scanner)),
 
-            ScannerDefinition::OneOrMore(scanner) => {
-                return Self::one_or_more(Self::from_scanner(scanner));
-            }
+            ScannerDefinition::OneOrMore(scanner) => Self::one_or_more(Self::from_scanner(scanner)),
 
-            ScannerDefinition::Optional(scanner) => {
-                return Self::optional(Self::from_scanner(scanner));
-            }
+            ScannerDefinition::Optional(scanner) => Self::optional(Self::from_scanner(scanner)),
 
-            ScannerDefinition::Range { from, to } => {
-                return Self::range(*from, *to);
-            }
+            ScannerDefinition::Range { from, to } => Self::range(*from, *to),
 
-            ScannerDefinition::Reference(name) => {
-                return Self::production_ref(name);
-            }
+            ScannerDefinition::Reference(name) => Self::production_ref(name),
 
             ScannerDefinition::Sequence(scanners) => {
                 return Self::sequence(scanners.iter().map(Self::from_scanner).collect());
             }
 
-            ScannerDefinition::Terminal(terminal) => {
-                return Self::terminal(terminal);
-            }
+            ScannerDefinition::Terminal(terminal) => Self::terminal(terminal),
 
-            ScannerDefinition::TrailingContext { scanner, .. } => {
-                return Self::from_scanner(scanner);
-            }
+            ScannerDefinition::TrailingContext { scanner, .. } => Self::from_scanner(scanner),
 
             ScannerDefinition::ZeroOrMore(scanner) => {
-                return Self::zero_or_more(Self::from_scanner(scanner));
+                Self::zero_or_more(Self::from_scanner(scanner))
             }
-        };
+        }
     }
 }

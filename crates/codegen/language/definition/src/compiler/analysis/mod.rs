@@ -64,7 +64,7 @@ impl Analysis {
 
         analyze_reachability(&mut analysis);
 
-        return analysis;
+        analysis
     }
 }
 

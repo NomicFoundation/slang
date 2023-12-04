@@ -11,7 +11,7 @@ pub use crate_main::*;
 fn main() -> Result<()> {
     generate_zsh_completions()?;
 
-    return Ok(());
+    Ok(())
 }
 
 /// Generate auto-completions for the shell.
@@ -23,8 +23,8 @@ fn generate_zsh_completions() -> Result<()> {
 
     let crate_dir = CargoWorkspace::locate_source_crate("infra_cli")?;
 
-    return Codegen::write_only()?.write_file(
+    Codegen::write_only()?.write_file(
         crate_dir.join("generated/infra.zsh-completions"),
         String::from_utf8(buffer)?,
-    );
+    )
 }

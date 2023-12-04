@@ -13,7 +13,7 @@ use crate::{
 
 pub trait Visitor {
     fn visit_manifest(&mut self, _location: &LocationRef, _reporter: &mut Reporter) -> bool {
-        return true;
+        true
     }
 
     fn visit_production(
@@ -22,7 +22,7 @@ pub trait Visitor {
         _location: &LocationRef,
         _reporter: &mut Reporter,
     ) -> bool {
-        return true;
+        true
     }
 
     fn visit_version(
@@ -31,7 +31,7 @@ pub trait Visitor {
         _location: &LocationRef,
         _reporter: &mut Reporter,
     ) -> bool {
-        return true;
+        true
     }
 
     fn visit_scanner(
@@ -40,7 +40,7 @@ pub trait Visitor {
         _location: &LocationRef,
         _reporter: &mut Reporter,
     ) -> bool {
-        return true;
+        true
     }
 
     fn visit_parser(
@@ -49,7 +49,7 @@ pub trait Visitor {
         _location: &LocationRef,
         _reporter: &mut Reporter,
     ) -> bool {
-        return true;
+        true
     }
 
     fn visit_precedence_parser(
@@ -58,7 +58,7 @@ pub trait Visitor {
         _location: &LocationRef,
         _reporter: &mut Reporter,
     ) -> bool {
-        return true;
+        true
     }
 
     fn finish(&mut self, _reporter: &mut Reporter) {}

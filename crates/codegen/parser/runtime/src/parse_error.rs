@@ -13,7 +13,7 @@ pub struct ParseError {
 
 impl ParseError {
     pub fn text_range(&self) -> &TextRange {
-        return &self.text_range;
+        &self.text_range
     }
 
     pub fn tokens_that_would_have_allowed_more_progress(&self) -> Vec<String> {
@@ -22,14 +22,15 @@ impl ParseError {
             .iter()
             .map(|kind| kind.as_ref())
             .collect::<BTreeSet<_>>();
-        return tokens_that_would_have_allowed_more_progress
+
+        tokens_that_would_have_allowed_more_progress
             .into_iter()
             .map(|token| token.to_string())
-            .collect();
+            .collect()
     }
 
     pub fn to_error_report(&self, source_id: &str, source: &str, with_color: bool) -> String {
-        return render_error_report(self, source_id, source, with_color);
+        render_error_report(self, source_id, source, with_color)
     }
 }
 

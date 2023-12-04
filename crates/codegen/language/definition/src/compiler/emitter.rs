@@ -17,7 +17,7 @@ impl LanguageEmitter {
 
         let intellisense_types = Self::emit_intellisense_types(analysis);
 
-        return quote! {
+        quote! {
             mod #container_mod {
                 // Main entry-point to create language definitions:
                 pub struct #definition_struct;
@@ -36,7 +36,7 @@ impl LanguageEmitter {
                     #intellisense_types
                 }
             }
-        };
+        }
     }
 
     fn emit_intellisense_types(analysis: &Analysis) -> TokenStream {
@@ -66,6 +66,6 @@ impl LanguageEmitter {
             }
         }
 
-        return result;
+        result
     }
 }

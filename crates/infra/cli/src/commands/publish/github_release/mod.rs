@@ -31,7 +31,7 @@ pub fn publish_github_release() -> Result<()> {
         return Ok(());
     }
 
-    return GitHub::create_new_release(tag_name, notes);
+    GitHub::create_new_release(tag_name, notes)
 }
 
 fn extract_latest_changelogs(
@@ -59,19 +59,15 @@ fn extract_latest_changelogs(
             // H2 for previous_version: '## 1.2.3'
             Block::Header(contents, level) if *level == 2 => {
                 assert_eq!(contents, &vec![Span::Text(format!("{previous_version}"))]);
-                return false;
+                false
             }
             // H3 for change kinds: breaking changes, features, or fixes.
-            Block::Header(_, level) if *level == 3 => {
-                return true;
-            }
+            Block::Header(_, level) if *level == 3 => true,
             // Individual changelog entries.
-            Block::UnorderedList(_) => {
-                return true;
-            }
+            Block::UnorderedList(_) => true,
             _ => panic!("Unexpected block: {block:#?}"),
         })
         .collect::<Vec<_>>();
 
-    return Ok(markdown::generate_markdown(latest_version_blocks));
+    Ok(markdown::generate_markdown(latest_version_blocks))
 }
