@@ -3,8 +3,6 @@
 // Slang License: https://github.com/NomicFoundation/slang/blob/main/LICENSE
 // NAPI-RS License: https://github.com/napi-rs/napi-rs/blob/main/LICENSE
 
-// @ts-nocheck
-
 /* tslint:disable */
 /* eslint-disable */
 
@@ -643,15 +641,15 @@ export namespace cst {
     get type(): NodeType.Rule;
     get kind(): kinds.RuleKind;
     get textLength(): text_index.TextIndex;
-    children(): Array<cst.RuleNode | cst.TokenNode>;
-    createCursor(textOffset: TextIndex): cursor.Cursor;
+    children(): Array<cst.Node>;
+    createCursor(textOffset: text_index.TextIndex): cursor.Cursor;
   }
   export class TokenNode {
     get type(): NodeType.Token;
     get kind(): kinds.TokenKind;
     get textLength(): text_index.TextIndex;
     get text(): string;
-    createCursor(textOffset: TextIndex): cursor.Cursor;
+    createCursor(textOffset: text_index.TextIndex): cursor.Cursor;
   }
 }
 export namespace cursor {
@@ -661,9 +659,10 @@ export namespace cursor {
     clone(): Cursor;
     spawn(): Cursor;
     get isCompleted(): boolean;
-    node(): cst.RuleNode | cst.TokenNode;
+    node(): cst.Node;
     get textOffset(): text_index.TextIndex;
     get textRange(): text_index.TextRange;
+    get depth(): number;
     ancestors(): Array<cst.RuleNode>;
     goToNext(): boolean;
     goToNextNonDescendent(): boolean;
@@ -674,8 +673,10 @@ export namespace cursor {
     goToNthChild(childNumber: number): boolean;
     goToNextSibling(): boolean;
     goToPreviousSibling(): boolean;
-    findTokenWithKind(kinds: Array<kinds.TokenKind>): cst.TokenNode | null;
-    findRuleWithKind(kinds: Array<kinds.RuleKind>): cst.RuleNode | null;
+    goToNextToken(): boolean;
+    goToNextTokenWithKinds(kinds: Array<kinds.TokenKind>): boolean;
+    goToNextRule(): boolean;
+    goToNextRuleWithKinds(kinds: Array<kinds.RuleKind>): boolean;
   }
 }
 export namespace parse_error {
@@ -686,7 +687,7 @@ export namespace parse_error {
 }
 export namespace parse_output {
   export class ParseOutput {
-    tree(): cst.RuleNode | cst.TokenNode;
+    tree(): cst.Node;
     errors(): Array<parse_error.ParseError>;
     get isValid(): boolean;
     /** Creates a cursor that starts at the root of the parse tree. */
@@ -703,4 +704,8 @@ export namespace text_index {
     start: TextIndex;
     end: TextIndex;
   }
+}
+
+export namespace cst {
+  export type Node = RuleNode | TokenNode;
 }

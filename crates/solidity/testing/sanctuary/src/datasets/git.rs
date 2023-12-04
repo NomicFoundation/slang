@@ -20,7 +20,7 @@ pub struct GitDataset {
 
 impl Dataset for GitDataset {
     fn get_title(&self) -> &'static str {
-        return self.name;
+        self.name
     }
 
     fn prepare(&self) -> Result<Vec<PathBuf>> {
@@ -39,7 +39,7 @@ impl Dataset for GitDataset {
             .into_iter()
             .collect();
 
-        return Ok(source_files);
+        Ok(source_files)
     }
 }
 
@@ -47,7 +47,7 @@ impl GitDataset {
     const MAX_REPO_STALENESS: Duration = Duration::from_secs(60 * 60 * 24); // one day
 
     pub fn new(name: &'static str, url: Url) -> Self {
-        return Self { name, git_url: url };
+        Self { name, git_url: url }
     }
 
     fn clone(git_url: &Url, dataset_dir: &Path) -> Result<()> {
@@ -87,6 +87,6 @@ impl GitDataset {
             .current_dir(dataset_dir)
             .run()?;
 
-        return Ok(());
+        Ok(())
     }
 }

@@ -5,5 +5,5 @@ use anyhow::Result;
 
 #[test]
 fn throw() -> Result<()> {
-    return run("ThrowStatement", "throw");
+    run("ThrowStatement", "throw")
 }

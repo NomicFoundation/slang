@@ -17,5 +17,5 @@ pub fn run(language: &LanguageDefinitionRef) -> Result<()> {
     ChildrenCount::validate(language, &mut reporter);
     ConsistentShape::validate(language, &mut reporter);
 
-    return reporter.into_result();
+    reporter.into_result()
 }

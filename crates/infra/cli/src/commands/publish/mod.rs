@@ -38,12 +38,12 @@ impl PublishController {
     pub fn execute(&self) -> Result<()> {
         Terminal::step(format!("publish {name}", name = self.command.clap_name()));
 
-        return match self.command {
+        match self.command {
             PublishCommand::Changesets => publish_changesets(),
             PublishCommand::Npm => publish_npm(),
             PublishCommand::Cargo => publish_cargo(),
             PublishCommand::GithubRelease => publish_github_release(),
             PublishCommand::LockFiles => publish_lock_files(),
-        };
+        }
     }
 }

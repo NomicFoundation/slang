@@ -11,7 +11,7 @@ pub struct TestController {
 
 impl TestController {
     pub fn execute(&self) -> Result<()> {
-        return TestCommand::execute_in_order(&self.commands);
+        TestCommand::execute_in_order(&self.commands)
     }
 }
 
@@ -27,10 +27,10 @@ impl OrderedCommand for TestCommand {
     fn execute(&self) -> Result<()> {
         Terminal::step(format!("test {name}", name = self.clap_name()));
 
-        return match self {
+        match self {
             TestCommand::Cargo => test_cargo(),
             TestCommand::Npm => test_npm(),
-        };
+        }
     }
 }
 
@@ -41,13 +41,13 @@ fn test_cargo() -> Result<()> {
         command = command.flag("--no-fail-fast");
     }
 
-    return command.run();
+    command.run()
 }
 
 fn test_npm() -> Result<()> {
-    return Command::new("npm")
+    Command::new("npm")
         .args(["run", "test"])
         .flag("--workspaces")
         .flag("--if-present")
-        .run();
+        .run()
 }

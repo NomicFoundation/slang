@@ -17,7 +17,7 @@ use crate::{
 
 impl LanguageDefinition {
     pub fn compile(language_dir: PathBuf) -> Result<LanguageDefinitionRef> {
-        return compile_language(language_dir).map_err(|error| {
+        compile_language(language_dir).map_err(|error| {
             if let Some(errors) = error.downcast_ref::<InfraErrors>() {
                 eprintln!();
                 eprintln!("{errors}");
@@ -31,9 +31,9 @@ impl LanguageDefinition {
                 // `process::exit()` instead of `panic!()`. No need to pollute the output with useless stack traces:
                 std::process::exit(1);
             } else {
-                return error;
+                error
             }
-        });
+        })
     }
 }
 
@@ -65,7 +65,7 @@ fn compile_language(language_dir: PathBuf) -> Result<LanguageDefinitionRef> {
 
     validate_language(&language)?;
 
-    return Ok(language);
+    Ok(language)
 }
 
 fn load_sections(
@@ -98,7 +98,7 @@ fn load_sections(
         });
     }
 
-    return errors.into_result().map(|_| results);
+    errors.into_result().map(|_| results)
 }
 
 fn load_topic(
@@ -128,5 +128,5 @@ fn load_topic(
         productions,
     };
 
-    return Ok(topic);
+    Ok(topic)
 }

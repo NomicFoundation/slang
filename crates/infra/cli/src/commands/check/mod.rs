@@ -18,7 +18,7 @@ pub struct CheckController {
 
 impl CheckController {
     pub fn execute(&self) -> Result<()> {
-        return CheckCommand::execute_in_order(&self.commands);
+        CheckCommand::execute_in_order(&self.commands)
     }
 }
 
@@ -36,22 +36,22 @@ impl OrderedCommand for CheckCommand {
     fn execute(&self) -> Result<()> {
         Terminal::step(format!("check {name}", name = self.clap_name()));
 
-        return match self {
+        match self {
             CheckCommand::Cargo => check_cargo(),
             CheckCommand::Npm => check_npm(),
             CheckCommand::Mkdocs => check_mkdocs(),
-        };
+        }
     }
 }
 
 fn check_cargo() -> Result<()> {
-    return CargoWorkspace::get_command("check")?.run();
+    CargoWorkspace::get_command("check")?.run()
 }
 
 fn check_npm() -> Result<()> {
-    return NapiCompiler::run(NapiProfile::Debug);
+    NapiCompiler::run(NapiProfile::Debug)
 }
 
 fn check_mkdocs() -> Result<()> {
-    return Mkdocs::build();
+    Mkdocs::build()
 }

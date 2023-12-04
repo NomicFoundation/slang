@@ -20,10 +20,10 @@ pub struct CodegenWriteOnly {
 
 impl CodegenWriteOnly {
     pub fn new() -> Result<Self> {
-        return Ok(Self {
+        Ok(Self {
             generated_dirs: HashSet::new(),
             generated_files: HashSet::new(),
-        });
+        })
     }
 }
 

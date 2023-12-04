@@ -8,5 +8,5 @@ fn main() -> Result<()> {
     let language = LanguageDefinition::load_solidity()?;
     let output_dir = CargoWorkspace::locate_source_crate("solidity_spec")?.join("generated");
 
-    return language.generate_spec(&output_dir);
+    language.generate_spec(&output_dir)
 }

@@ -4,10 +4,10 @@ use proc_macro2::{Ident, TokenStream};
 use quote::{format_ident, quote};
 
 pub fn write_output_tokens(item: InputItem) -> TokenStream {
-    return match item {
+    match item {
         InputItem::Struct { name, fields } => derive_struct(name, &fields),
         InputItem::Enum { name, variants } => derive_enum(name, &variants),
-    };
+    }
 }
 
 fn derive_struct(name: Ident, fields: &[InputField]) -> TokenStream {
@@ -15,7 +15,7 @@ fn derive_struct(name: Ident, fields: &[InputField]) -> TokenStream {
 
     let keys = fields.iter().map(|field| &field.name).collect_vec();
 
-    return quote! {
+    quote! {
         impl crate::internals::WriteOutputTokens for #name {
             fn write_output_tokens(&self) -> proc_macro2::TokenStream {
                 #( let #keys = self.#keys.write_output_tokens(); )*
@@ -27,7 +27,7 @@ fn derive_struct(name: Ident, fields: &[InputField]) -> TokenStream {
                 };
             }
         }
-    };
+    }
 }
 
 fn derive_enum(name: Ident, variants: &[InputVariant]) -> TokenStream {
@@ -38,18 +38,18 @@ fn derive_enum(name: Ident, variants: &[InputVariant]) -> TokenStream {
 
         match &variant.fields {
             None => {
-                return quote! {
+                quote! {
                     Self::#variant_name => {
                         return quote::quote! {
                             codegen_language_definition::model::#stripped_name::#variant_name
                         };
                     }
-                };
+                }
             }
             Some(fields) => {
                 let keys = fields.iter().map(|field| &field.name).collect_vec();
 
-                return quote! {
+                quote! {
                     Self::#variant_name {
                         #( #keys ),*
                     } => {
@@ -61,12 +61,12 @@ fn derive_enum(name: Ident, variants: &[InputVariant]) -> TokenStream {
                             }
                         };
                     }
-                };
+                }
             }
-        };
+        }
     });
 
-    return quote! {
+    quote! {
         impl crate::internals::WriteOutputTokens for #name {
             fn write_output_tokens(&self) -> proc_macro2::TokenStream {
                 match self {
@@ -74,5 +74,5 @@ fn derive_enum(name: Ident, variants: &[InputVariant]) -> TokenStream {
                 };
             }
         }
-    };
+    }
 }

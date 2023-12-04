@@ -36,7 +36,7 @@ impl Visitor for Collector<'_> {
         self.metadata.add_production(&production.name, location);
         self.current_production = Some(production.to_owned());
 
-        return true;
+        true
     }
 
     fn visit_version(
@@ -48,6 +48,6 @@ impl Visitor for Collector<'_> {
         let production = self.current_production.as_ref().unwrap();
         self.metadata.add_version(&production.name, version_set);
 
-        return false;
+        false
     }
 }

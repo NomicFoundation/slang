@@ -25,5 +25,5 @@ pub fn publish_cargo() -> Result<()> {
         command = command.flag("--dry-run");
     }
 
-    return command.run();
+    command.run()
 }

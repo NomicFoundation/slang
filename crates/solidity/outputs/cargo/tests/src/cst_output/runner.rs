@@ -68,5 +68,5 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
         codegen.write_file(snapshot_path, &snapshot)?;
     }
 
-    return Ok(());
+    Ok(())
 }

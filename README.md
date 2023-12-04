@@ -17,7 +17,7 @@ Written in Rust and distributed in multiple languages.
 
 This repository maintains the source code and release process for these projects:
 
--   [Slang Rust Crate + CLI](https://nomicfoundation.github.io/slang/user-guide/cargo-crate/)
+-   [Slang Rust Crate + CLI](https://nomicfoundation.github.io/slang/user-guide/rust-crate/)
 -   [Slang TypeScript Package](https://nomicfoundation.github.io/slang/user-guide/npm-package/)
 -   [Solidity Language Specification](https://nomicfoundation.github.io/slang/solidity-specification/)
 

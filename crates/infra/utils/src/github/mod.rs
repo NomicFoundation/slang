@@ -10,7 +10,7 @@ pub struct GitHub;
 
 impl GitHub {
     pub fn is_running_in_ci() -> bool {
-        return var("CI").is_ok();
+        var("CI").is_ok()
     }
 
     /// Collapses the output of the given operation in the GitHub log viewer.
@@ -35,7 +35,7 @@ impl GitHub {
             println!();
         }
 
-        return result;
+        result
     }
 
     pub fn latest_release_version() -> Result<Version> {
@@ -56,7 +56,7 @@ impl GitHub {
             .strip_prefix('v')
             .with_context(|| format!("Cannot extract version out of tag: {tag_name:#?}"))?;
 
-        return Ok(Version::parse(version)?);
+        Ok(Version::parse(version)?)
     }
 
     pub fn create_new_release(tag_name: impl AsRef<str>, notes: impl AsRef<str>) -> Result<()> {

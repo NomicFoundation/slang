@@ -1,5 +1,7 @@
 import * as generated from "../generated";
 
+export type Node = generated.cst.Node;
+
 export const NodeType = generated.cst.NodeType;
 export type NodeType = generated.cst.NodeType;
 

@@ -8,9 +8,7 @@ pub struct ParseHelpers;
 
 impl ParseHelpers {
     pub fn syn<T: syn::parse::Parse>(input: ParseStream) -> Result<T> {
-        return input.parse::<T>().map_err(|error| {
-            return Error::from_syn(error);
-        });
+        input.parse::<T>().map_err(Error::from_syn)
     }
 
     pub fn delimited<T>(
@@ -18,9 +16,7 @@ impl ParseHelpers {
         input: ParseStream,
         inner_parser: impl FnOnce(DelimSpan, ParseStream) -> Result<T>,
     ) -> Result<T> {
-        return delimited(delimiter, input, inner_parser).map_err(|error| {
-            return Error::from_syn(error);
-        });
+        delimited(delimiter, input, inner_parser).map_err(Error::from_syn)
     }
 
     pub fn sequence<T: ParseInputTokens>(
@@ -42,16 +38,15 @@ impl ParseHelpers {
                 }
             }
 
-            return Ok(result);
+            Ok(result)
         }) {
-            Ok(value) => {
-                return Ok(value);
-            }
+            Ok(value) => Ok(value),
             Err(error) => {
                 errors.push(error);
-                return Ok(vec![]);
+
+                Ok(vec![])
             }
-        };
+        }
     }
 
     pub fn map<K: ParseInputTokens + std::hash::Hash + Eq, V: ParseInputTokens>(
@@ -83,14 +78,13 @@ impl ParseHelpers {
                 }
             }
 
-            return Ok(result);
+            Ok(result)
         }) {
-            Ok(value) => {
-                return Ok(value);
-            }
+            Ok(value) => Ok(value),
             Err(error) => {
                 errors.push(error);
-                return Ok(IndexMap::new());
+
+                Ok(IndexMap::new())
             }
         }
     }
@@ -118,7 +112,7 @@ impl ParseHelpers {
             }
         }
 
-        return Ok(value);
+        Ok(value)
     }
 }
 
@@ -138,13 +132,13 @@ fn delimited<T>(
         }
     };
 
-    return inner_parser(span, &inner_input).map_err(|error| {
+    inner_parser(span, &inner_input).map_err(|error| {
         // consume the rest of 'inner_input' so that we don't end up
         // reporting an extra/unnecessary "unexpected token" error:
         inner_input.parse::<TokenStream>().ok();
 
-        return error.to_syn();
-    });
+        error.to_syn()
+    })
 }
 
 #[derive(thiserror::Error, Debug)]
