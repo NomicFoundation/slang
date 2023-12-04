@@ -35,6 +35,7 @@ impl Cursor {
     }
 
     #[napi]
+    #[allow(clippy::should_implement_trait)] // These are meant to be explicitly exposed to NAPI
     pub fn clone(&self) -> Self {
         Self(self.0.clone())
     }

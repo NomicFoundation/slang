@@ -46,9 +46,7 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
         let errors = output
             .errors()
             .iter()
-            .map(|error| {
-                error.to_error_report(source_id, &source, /* with_color */ false)
-            })
+            .map(|error| error.to_error_report(source_id, &source, /* with_color */ false))
             .collect();
 
         let cursor = output.create_tree_cursor();
