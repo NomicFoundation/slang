@@ -2,6 +2,7 @@ mod keywords;
 mod utils;
 
 use crate::keywords::check_solidity_keywords;
+use anyhow::Result;
 use clap::{Parser, Subcommand};
 
 #[derive(Debug, Parser)]
@@ -16,12 +17,10 @@ enum AppCommand {
     CheckSolidityKeywords,
 }
 
-fn main() {
+fn main() -> Result<()> {
     match CLI::parse().command {
-        AppCommand::CheckSolidityKeywords => {
-            check_solidity_keywords();
-        }
-    };
+        AppCommand::CheckSolidityKeywords => check_solidity_keywords(),
+    }
 }
 
 #[test]
