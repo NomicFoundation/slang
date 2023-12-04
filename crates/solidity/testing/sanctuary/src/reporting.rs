@@ -6,7 +6,7 @@ use std::{
 use anyhow::Result;
 use indicatif::ProgressBar;
 use semver::Version;
-use slang_solidity::{parse_error::WithColor, parse_output::ParseOutput};
+use slang_solidity::parse_output::ParseOutput;
 
 pub struct Reporter {
     progress_bar: ProgressBar,
@@ -82,7 +82,9 @@ impl Reporter {
                 let reports: Vec<_> = errors
                     .iter()
                     .take(remaining)
-                    .map(|error| error.to_error_report(source_id, source, WithColor::Yes))
+                    .map(|error| {
+                        error.to_error_report(source_id, source, /* with color */ true)
+                    })
                     .collect();
 
                 self.progress_bar.suspend(|| {

@@ -2,7 +2,7 @@ use std::str::FromStr;
 
 use anyhow::Result;
 use infra_utils::{cargo::CargoWorkspace, codegen::Codegen, paths::PathExtensions};
-use slang_solidity::{kinds::ProductionKind, language::Language, parse_error::WithColor};
+use slang_solidity::{kinds::ProductionKind, language::Language};
 use solidity_testing_utils::cst_snapshots::CstSnapshots;
 use strum_macros::Display;
 
@@ -46,7 +46,7 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
         let errors = output
             .errors()
             .iter()
-            .map(|error| error.to_error_report(source_id, &source, WithColor::No))
+            .map(|error| error.to_error_report(source_id, &source, /* with color */ false))
             .collect();
 
         let cursor = output.create_tree_cursor();
