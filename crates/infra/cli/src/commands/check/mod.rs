@@ -26,6 +26,8 @@ impl CheckController {
 enum CheckCommand {
     /// Run 'cargo check' for all crates, features, and targets.
     Cargo,
+    /// Run `cargo doc` to generate Rustdoc documentation and check for any broken links.
+    Rustdoc,
     /// Check NPM packages for any outdated codegen steps.
     Npm,
     /// Check mkdocs documentation for any build issues or broken links.
@@ -38,6 +40,7 @@ impl OrderedCommand for CheckCommand {
 
         match self {
             CheckCommand::Cargo => check_cargo(),
+            CheckCommand::Rustdoc => check_rustdoc(),
             CheckCommand::Npm => check_npm(),
             CheckCommand::Mkdocs => check_mkdocs(),
         }
@@ -46,6 +49,10 @@ impl OrderedCommand for CheckCommand {
 
 fn check_cargo() -> Result<()> {
     CargoWorkspace::get_command("check")?.run()
+}
+
+fn check_rustdoc() -> Result<()> {
+    CargoWorkspace::get_command("doc")?.run()
 }
 
 fn check_npm() -> Result<()> {

@@ -99,11 +99,20 @@ impl CargoWorkspace {
     }
 
     pub fn get_command(subcommand: impl AsRef<str>) -> Result<Command> {
+        let subcommand = subcommand.as_ref();
+
         let mut command = Command::new("cargo")
-            .arg(subcommand.as_ref())
+            .arg(subcommand)
             .flag("--all")
-            .flag("--all-targets")
             .flag("--all-features");
+
+        if subcommand == "doc" {
+            // Rustdoc does not support '--all-targets' and it makes sense to only check default --lib/--bins anyway.
+            // Since this is primarily used to check our own documentation, skip documenting dependencies.
+            command = command.flag("--no-deps");
+        } else {
+            command = command.flag("--all-targets");
+        }
 
         if GitHub::is_running_in_ci() {
             // Using `$RUSTFLAGS' or '--' overrides any rustflags from `.cargo/config.toml'.
