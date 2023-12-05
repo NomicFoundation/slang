@@ -16,8 +16,8 @@ rustflags = [
 	"-Wunused_extern_crates",
 	"-Wexplicit_outlives_requirements",
 	# clippy additional warnings:
-	# Suspicious
-	"-Wclippy::await_holding_lock",
+	# Lints that are enabled (warn/deny) by default
+	"-Wclippy::all",
 	# Restriction
 	"-Wclippy::dbg_macro",
 	"-Wclippy::exit",
@@ -30,15 +30,6 @@ rustflags = [
 	"-Wclippy::string_to_string",
 	"-Wclippy::todo",
 	"-Wclippy::verbose_file_reads",
-	# Complexity
-	"-Wclippy::char_lit_as_u8",
-	"-Wclippy::checked_conversions",
-	"-Wclippy::map_flatten",
-	"-Wclippy::useless_transmute",
-	# Style
-	"-Wclippy::let_unit_value",
-	"-Wclippy::missing_enforced_import_renames",
-	"-Wclippy::needless_borrow",
 	# Pedantic
 	"-Wclippy::bool-to-int-with-if",
 	"-Wclippy::cast_lossless",
