@@ -48,11 +48,19 @@ impl OrderedCommand for CheckCommand {
 }
 
 fn check_cargo() -> Result<()> {
-    CargoWorkspace::get_command("check")?.run()
+    CargoWorkspace::get_command("check")?
+        .flag("--all-targets")
+        .run()
 }
 
 fn check_rustdoc() -> Result<()> {
-    CargoWorkspace::get_command("doc")?.run()
+    CargoWorkspace::get_command("doc")?
+        .flag("--no-deps")
+        .flag("--document-private-items")
+        .flag("--lib")
+        .flag("--bins")
+        .flag("--examples")
+        .run()
 }
 
 fn check_npm() -> Result<()> {

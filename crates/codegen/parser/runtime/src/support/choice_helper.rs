@@ -79,18 +79,6 @@ impl ChoiceHelper {
     /// Executes a closure that allows the caller to drive the choice parse.
     ///
     /// Useful when you want to eagerly return a result from the parse function (e.g. when the choice was fully matched).
-    ///
-    /// Usage:
-    /// ```no_run
-    /// # use codegen_parser_runtime::support::{ParserResult, ChoiceHelper, Stream};
-    /// # fn parse_something() -> ParserResult { ParserResult::r#match(vec![], vec![]) }
-    /// # fn parse_another() -> ParserResult { ParserResult::r#match(vec![], vec![]) }
-    /// ChoiceHelper::run(input, |mut choice| {
-    ///     choice.consider(parse_something()).pick_or_backtrack(input)?;
-    ///     choice.consider(parse_another()).pick_or_backtrack(input)?;
-    ///     choice.finish(input)
-    /// });
-    /// ```
     pub fn run(
         input: &mut ParserContext,
         f: impl FnOnce(Self, &mut ParserContext) -> ControlFlow<ParserResult, Self>,
