@@ -1,5 +1,5 @@
 use crate::internals::{
-    parse_input_tokens::ParseHelpers, Error, ErrorsCollection, ParseInputTokens, Result, Spanned,
+    parse_input_tokens::ParseHelpers, ErrorsCollection, ParseInputTokens, Result, Spanned,
 };
 use indexmap::{IndexMap, IndexSet};
 use proc_macro2::Ident;
@@ -35,13 +35,13 @@ impl<K: ParseInputTokens + std::hash::Hash + Eq, V: ParseInputTokens> ParseInput
     for IndexMap<K, V>
 {
     fn parse_value(input: ParseStream<'_>, errors: &mut ErrorsCollection) -> Result<Self> {
-        ParseHelpers::map(input, errors)
+        Ok(ParseHelpers::map(input, errors))
     }
 }
 
 impl<T: ParseInputTokens + std::hash::Hash + Ord> ParseInputTokens for IndexSet<Spanned<T>> {
     fn parse_value(input: ParseStream<'_>, errors: &mut ErrorsCollection) -> Result<Self> {
-        let sequence: Vec<Spanned<T>> = ParseHelpers::sequence(input, errors)?;
+        let sequence: Vec<Spanned<T>> = ParseHelpers::sequence(input, errors);
 
         let mut set = Self::new();
 
@@ -102,14 +102,15 @@ impl ParseInputTokens for String {
 impl ParseInputTokens for usize {
     fn parse_value(input: ParseStream<'_>, _: &mut ErrorsCollection) -> Result<Self> {
         let literal = ParseHelpers::syn::<syn::LitInt>(input)?;
+        let value = literal.base10_parse::<usize>()?;
 
-        literal.base10_parse::<usize>().map_err(Error::from_syn)
+        Ok(value)
     }
 }
 
 impl<T: ParseInputTokens> ParseInputTokens for Vec<T> {
     fn parse_value(input: ParseStream<'_>, errors: &mut ErrorsCollection) -> Result<Self> {
-        ParseHelpers::sequence(input, errors)
+        Ok(ParseHelpers::sequence(input, errors))
     }
 }
 

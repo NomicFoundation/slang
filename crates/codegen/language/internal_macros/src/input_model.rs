@@ -90,15 +90,15 @@ impl InputField {
     }
 }
 
-pub fn add_spanned_prefix(input: String) -> String {
+pub fn add_spanned_prefix(input: impl Display) -> String {
     format!("Spanned{input}")
 }
 
 pub fn strip_spanned_prefix(input: String) -> String {
-    return match input.strip_prefix("Spanned") {
+    match input.strip_prefix("Spanned") {
         Some(suffix) if !suffix.is_empty() => suffix.to_owned(),
         _ => input,
-    };
+    }
 }
 
 fn error<T>(spanned: impl ToTokens, message: impl Display) -> Result<T> {

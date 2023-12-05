@@ -22,12 +22,11 @@ impl ParseError {
         let tokens_that_would_have_allowed_more_progress = self
             .tokens_that_would_have_allowed_more_progress
             .iter()
-            .map(|kind| kind.as_ref())
             .collect::<BTreeSet<_>>();
 
         tokens_that_would_have_allowed_more_progress
             .into_iter()
-            .map(|token| token.to_string())
+            .map(ToString::to_string)
             .collect()
     }
 

@@ -56,7 +56,7 @@ fn generate_header(file_path: &Path) -> String {
         "This file is generated automatically by infrastructure scripts. Please don't edit by hand.";
 
     return match get_extension(file_path) {
-        "json" => "".to_string(),
+        "json" => String::new(),
         "html" | "md" => format!("<!-- {warning_line} -->"),
         "js" | "rs" | "ts" => format!("// {warning_line}"),
         "yml" | "zsh-completions" => format!("# {warning_line}"),

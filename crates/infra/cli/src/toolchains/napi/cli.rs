@@ -69,7 +69,11 @@ impl NapiCli {
                 "index.js" | "index.d.ts" => {
                     source_files.push(output_dir.join(file_name));
                 }
-                file if file.ends_with(".node") && node_binary.is_none() => {
+                file if Path::new(file)
+                    .extension()
+                    .map_or(false, |ext| ext.eq_ignore_ascii_case("node"))
+                    && node_binary.is_none() =>
+                {
                     node_binary = Some(output_dir.join(file));
                 }
                 _ => {

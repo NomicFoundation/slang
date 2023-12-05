@@ -53,7 +53,7 @@ fn write_source<W: Write>(w: &mut W, source: &str) -> Result<()> {
     writeln!(w, "Source: >")?;
 
     let mut offset = 0;
-    for (index, line, bytes, chars) in line_data.iter() {
+    for (index, line, bytes, chars) in &line_data {
         let range = offset..(offset + bytes);
         writeln!(
             w,
@@ -141,7 +141,7 @@ fn write_node<W: Write>(
             (format!(" {preview}"), range_string)
         } else {
             // # 1..2 "foo"
-            ("".to_owned(), format!("{range_string} {preview}"))
+            (String::new(), format!("{range_string} {preview}"))
         }
     };
 

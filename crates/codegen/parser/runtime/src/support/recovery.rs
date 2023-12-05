@@ -9,13 +9,14 @@ use super::parser_result::SkippedUntil;
 use super::ParserContext;
 
 /// An explicit parameter for the [`ParserResult::recover_until_with_nested_delims`] method.
+#[derive(Clone, Copy)]
 pub enum RecoverFromNoMatch {
     Yes,
     No,
 }
 
 impl RecoverFromNoMatch {
-    pub fn as_bool(&self) -> bool {
+    pub fn as_bool(self) -> bool {
         matches!(self, RecoverFromNoMatch::Yes)
     }
 }
@@ -40,6 +41,7 @@ impl ParserResult {
     ///
     /// Respects nested delimiters, i.e. the `expected` token is only accepted if it's not nested inside.
     /// Does not consume the `expected` token.
+    #[must_use]
     pub fn recover_until_with_nested_delims<L: Lexer, LexCtx: IsLexicalContext>(
         self,
         input: &mut ParserContext<'_>,
@@ -75,38 +77,37 @@ impl ParserResult {
 
         let leading_trivia = opt_parse(input, |input| lexer.leading_trivia(input));
 
-        match skip_until_with_nested_delims::<_, LexCtx>(input, lexer, expected) {
-            Some((found, skipped_range)) => {
-                nodes.extend(leading_trivia);
-                if matches!(result_kind, ParseResultKind::Match) {
-                    expected_tokens.push(expected);
-                }
-
-                let skipped = input.content(skipped_range.utf8());
-
-                input.emit(ParseError {
-                    text_range: skipped_range,
-                    tokens_that_would_have_allowed_more_progress: expected_tokens.clone(),
-                });
-
-                ParserResult::SkippedUntil(SkippedUntil {
-                    nodes,
-                    skipped,
-                    found,
-                    expected,
-                })
+        if let Some((found, skipped_range)) =
+            skip_until_with_nested_delims::<_, LexCtx>(input, lexer, expected)
+        {
+            nodes.extend(leading_trivia);
+            if matches!(result_kind, ParseResultKind::Match) {
+                expected_tokens.push(expected);
             }
-            // Not found till EOF, revert any recovery attempt
-            None => {
-                input.set_position(before_recovery);
 
-                match result_kind {
-                    ParseResultKind::Match => ParserResult::r#match(nodes, expected_tokens),
-                    ParseResultKind::Incomplete => {
-                        ParserResult::incomplete_match(nodes, expected_tokens)
-                    }
-                    ParseResultKind::NoMatch => ParserResult::no_match(expected_tokens),
+            let skipped = input.content(skipped_range.utf8());
+
+            input.emit(ParseError {
+                text_range: skipped_range,
+                tokens_that_would_have_allowed_more_progress: expected_tokens.clone(),
+            });
+
+            ParserResult::SkippedUntil(SkippedUntil {
+                nodes,
+                skipped,
+                found,
+                expected,
+            })
+        } else {
+            // Not found till EOF, revert any recovery attempt
+            input.set_position(before_recovery);
+
+            match result_kind {
+                ParseResultKind::Match => ParserResult::r#match(nodes, expected_tokens),
+                ParseResultKind::Incomplete => {
+                    ParserResult::incomplete_match(nodes, expected_tokens)
                 }
+                ParseResultKind::NoMatch => ParserResult::no_match(expected_tokens),
             }
         }
     }

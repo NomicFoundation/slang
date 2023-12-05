@@ -45,9 +45,8 @@ impl Visitor for Versions {
         location: &LocationRef,
         reporter: &mut Reporter,
     ) -> bool {
-        let versions = match production.versions() {
-            Some(versions) => versions,
-            None => return false,
+        let Some(versions) = production.versions() else {
+            return false;
         };
 
         if versions.is_empty() {

@@ -5,12 +5,12 @@ use quote::{format_ident, quote};
 
 pub fn write_output_tokens(item: InputItem) -> TokenStream {
     match item {
-        InputItem::Struct { name, fields } => derive_struct(name, &fields),
-        InputItem::Enum { name, variants } => derive_enum(name, &variants),
+        InputItem::Struct { name, fields } => derive_struct(&name, &fields),
+        InputItem::Enum { name, variants } => derive_enum(&name, &variants),
     }
 }
 
-fn derive_struct(name: Ident, fields: &[InputField]) -> TokenStream {
+fn derive_struct(name: &Ident, fields: &[InputField]) -> TokenStream {
     let stripped_name = format_ident!("{}", strip_spanned_prefix(name.to_string()));
 
     let keys = fields.iter().map(|field| &field.name).collect_vec();
@@ -30,7 +30,7 @@ fn derive_struct(name: Ident, fields: &[InputField]) -> TokenStream {
     }
 }
 
-fn derive_enum(name: Ident, variants: &[InputVariant]) -> TokenStream {
+fn derive_enum(name: &Ident, variants: &[InputVariant]) -> TokenStream {
     let stripped_name = format_ident!("{}", strip_spanned_prefix(name.to_string()));
 
     let match_arms = variants.iter().map(|variant| {

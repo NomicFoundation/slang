@@ -145,8 +145,8 @@ impl CodeGenerator {
             .or_insert_with(|| ScannerContext {
                 name,
                 scanner_definitions: BTreeSet::default(),
-                alpha_literal_scanner: "".to_string(),
-                non_alpha_literal_scanner: "".to_string(),
+                alpha_literal_scanner: String::new(),
+                non_alpha_literal_scanner: String::new(),
                 compound_scanner_names: vec![],
                 delimiters: BTreeMap::default(),
             });
@@ -228,7 +228,7 @@ impl GrammarVisitor for CodeGenerator {
                 quote! { #code.with_kind(RuleKind::#rule_kind) }
             }
             .to_string(),
-        ))
+        ));
     }
 
     fn parser_definition_enter(&mut self, parser: &ParserDefinitionRef) {
@@ -264,7 +264,7 @@ impl GrammarVisitor for CodeGenerator {
                 quote! { #code.with_kind(RuleKind::#rule_kind) }
             }
             .to_string(),
-        ))
+        ));
     }
 
     fn scanner_definition_node_enter(&mut self, node: &ScannerDefinitionNode) {

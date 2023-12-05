@@ -1,5 +1,14 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
+// This file is generated; we can't reasonably satisfy some of these lints.
+#![allow(
+    clippy::if_not_else,
+    clippy::too_many_lines,
+    clippy::unused_self,
+    clippy::struct_excessive_bools,
+    clippy::similar_names
+)]
+
 #[cfg(feature = "slang_napi_interfaces")]
 use {napi::bindgen_prelude::*, napi_derive::napi};
 
@@ -11439,6 +11448,8 @@ impl Lexer for Language {
 }
 
 #[cfg(feature = "slang_napi_interfaces")]
+// NAPI-exposed functions have to accept owned values.
+#[allow(clippy::needless_pass_by_value)]
 #[napi(namespace = "language")]
 impl Language {
     #[napi(constructor)]

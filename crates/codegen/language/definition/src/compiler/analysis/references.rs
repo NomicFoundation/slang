@@ -369,14 +369,11 @@ fn check_reference(
     enablement: &VersionSet,
     expected_kinds: &[SpannedItemDiscriminants],
 ) {
-    let target = match analysis.metadata.get_mut(&**reference) {
-        Some(target) => target,
-        None => {
-            analysis
-                .errors
-                .add(reference, &Errors::UnknownReference(reference));
-            return;
-        }
+    let Some(target) = analysis.metadata.get_mut(&**reference) else {
+        analysis
+            .errors
+            .add(reference, &Errors::UnknownReference(reference));
+        return;
     };
 
     let not_defined_in = enablement.difference(&target.defined_in);

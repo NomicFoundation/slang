@@ -118,6 +118,7 @@ impl Cursor {
     /// Unlike `clone`, this re-roots at the current node.
     /// It does preserve the correct text offset however,
     /// even though the path is reset.
+    #[must_use]
     pub fn spawn(&self) -> Self {
         Self {
             path: vec![],
@@ -207,17 +208,14 @@ impl Cursor {
     ///
     /// Returns `false` if the cursor is finished and at the root.
     pub fn go_to_parent(&mut self) -> bool {
-        match self.path.pop() {
-            Some(parent) => {
-                self.current = parent.into_path_node();
+        if let Some(parent) = self.path.pop() {
+            self.current = parent.into_path_node();
 
-                true
-            }
-            None => {
-                self.is_completed = true;
+            true
+        } else {
+            self.is_completed = true;
 
-                false
-            }
+            false
         }
     }
 

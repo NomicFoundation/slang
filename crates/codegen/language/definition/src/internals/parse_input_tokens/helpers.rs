@@ -8,7 +8,7 @@ pub struct ParseHelpers;
 
 impl ParseHelpers {
     pub fn syn<T: syn::parse::Parse>(input: ParseStream<'_>) -> Result<T> {
-        input.parse::<T>().map_err(Error::from_syn)
+        Ok(input.parse::<T>()?)
     }
 
     pub fn delimited<T>(
@@ -16,13 +16,13 @@ impl ParseHelpers {
         input: ParseStream<'_>,
         inner_parser: impl FnOnce(DelimSpan, ParseStream<'_>) -> Result<T>,
     ) -> Result<T> {
-        delimited(delimiter, input, inner_parser).map_err(Error::from_syn)
+        Ok(delimited(delimiter, input, inner_parser)?)
     }
 
     pub fn sequence<T: ParseInputTokens>(
         input: ParseStream<'_>,
         errors: &mut ErrorsCollection,
-    ) -> Result<Vec<T>> {
+    ) -> Vec<T> {
         match Self::delimited(Delimiter::Bracket, input, |_, inner_input| {
             let mut result = Vec::new();
 
@@ -40,11 +40,11 @@ impl ParseHelpers {
 
             Ok(result)
         }) {
-            Ok(value) => Ok(value),
+            Ok(value) => value,
             Err(error) => {
                 errors.push(error);
 
-                Ok(vec![])
+                vec![]
             }
         }
     }
@@ -52,7 +52,7 @@ impl ParseHelpers {
     pub fn map<K: ParseInputTokens + std::hash::Hash + Eq, V: ParseInputTokens>(
         input: ParseStream<'_>,
         errors: &mut ErrorsCollection,
-    ) -> Result<IndexMap<K, V>> {
+    ) -> indexmap::IndexMap<K, V> {
         match Self::delimited(Delimiter::Parenthesis, input, |_, inner_input| {
             let mut result = IndexMap::new();
 
@@ -80,11 +80,11 @@ impl ParseHelpers {
 
             Ok(result)
         }) {
-            Ok(value) => Ok(value),
+            Ok(value) => value,
             Err(error) => {
                 errors.push(error);
 
-                Ok(IndexMap::new())
+                IndexMap::new()
             }
         }
     }

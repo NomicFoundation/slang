@@ -44,7 +44,7 @@ impl<T: Eq> Eq for Spanned<T> {}
 
 impl<T: std::hash::Hash> std::hash::Hash for Spanned<T> {
     fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
-        self.value.hash(state)
+        self.value.hash(state);
     }
 }
 

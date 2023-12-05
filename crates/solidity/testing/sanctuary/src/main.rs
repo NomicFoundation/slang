@@ -3,7 +3,7 @@ mod reporting;
 
 use std::{collections::BTreeSet, path::Path};
 
-use anyhow::{bail, Result};
+use anyhow::{anyhow, Result};
 use infra_utils::paths::PathExtensions;
 use rayon::prelude::{IntoParallelRefIterator, ParallelIterator};
 use semver::Version;
@@ -60,7 +60,7 @@ fn process_dataset(dataset: &impl Dataset, versions: &BTreeSet<Version>) -> Resu
 
     let total_errors = reporter.finish();
     if total_errors > 0 {
-        bail!("There were errors processing the dataset.")
+        Err(anyhow!("There were errors processing the dataset."))
     } else {
         Ok(())
     }
@@ -75,9 +75,7 @@ fn process_source_file(
     let source = &file_path.read_to_string()?;
 
     let latest_version = versions.iter().max().unwrap();
-    let pragmas = if let Ok(pragmas) = extract_version_pragmas(source, latest_version) {
-        pragmas
-    } else {
+    let Ok(pragmas) = extract_version_pragmas(source, latest_version) else {
         // Skip this file if we failed to filter compatible versions.
         return Ok(());
     };

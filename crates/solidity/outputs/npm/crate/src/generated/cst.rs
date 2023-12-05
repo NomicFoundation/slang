@@ -30,6 +30,7 @@ pub enum Node {
     Token(Rc<TokenNode>),
 }
 
+#[allow(clippy::match_wildcard_for_single_variants)]
 impl Node {
     pub fn rule(kind: RuleKind, children: Vec<Self>) -> Self {
         let text_len = children.iter().map(Node::text_len).sum();

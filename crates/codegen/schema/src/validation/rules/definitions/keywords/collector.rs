@@ -52,16 +52,11 @@ impl Visitor for KeywordsCollector {
         location: &LocationRef,
         reporter: &mut Reporter,
     ) -> bool {
-        let identifier =
-            if let ScannerDefinition::TrailingContext { scanner, .. } = &scanner.definition {
-                scanner
-            } else {
-                return true;
-            };
+        let ScannerDefinition::TrailingContext { scanner, .. } = &scanner.definition else {
+            return true;
+        };
 
-        let variations = if let Some(variations) = Self::collect_variations(identifier) {
-            variations
-        } else {
+        let Some(variations) = Self::collect_variations(scanner) else {
             return false;
         };
 
@@ -107,7 +102,7 @@ impl KeywordsCollector {
             ScannerDefinition::Difference { minuend, .. } => Self::collect_variations(minuend),
             ScannerDefinition::Optional(child) => {
                 let mut variations = Self::collect_variations(child)?;
-                variations.push("".to_owned());
+                variations.push(String::new());
                 Some(variations)
             }
             ScannerDefinition::Range { from, to } => {

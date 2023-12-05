@@ -71,6 +71,7 @@ impl PrecedenceParserDefinitionNodeExtensions for PrecedenceParserDefinitionNode
     // The second pass is in the method `PrecedenceHelper::reduce_precedence_result` because it
     // is independent of the grammar.
 
+    #[allow(clippy::too_many_lines)] // Repetition-heavy with 4 kinds of precedence operators
     fn to_parser_code(
         &self,
         context_name: &'static str,
@@ -86,7 +87,7 @@ impl PrecedenceParserDefinitionNodeExtensions for PrecedenceParserDefinitionNode
         let mut operator_closures = Vec::new();
 
         let mut binding_power = 1u8;
-        for (version_quality_ranges, model, name, operator_definition) in self.operators.iter() {
+        for (version_quality_ranges, model, name, operator_definition) in &self.operators {
             let operator_code = operator_definition
                 .node()
                 .to_parser_code(context_name, false);
@@ -161,7 +162,7 @@ impl PrecedenceParserDefinitionNodeExtensions for PrecedenceParserDefinitionNode
         #[allow(clippy::items_after_statements)]
         fn make_sequence(parsers: Vec<TokenStream>) -> TokenStream {
             let parsers = parsers
-                .iter()
+                .into_iter()
                 .map(|parser| quote! { seq.elem(#parser)?; })
                 .collect::<Vec<_>>();
             quote! {
@@ -175,7 +176,7 @@ impl PrecedenceParserDefinitionNodeExtensions for PrecedenceParserDefinitionNode
         #[allow(clippy::items_after_statements)]
         fn make_choice(parsers: Vec<OperatorParser>) -> TokenStream {
             let parsers = parsers
-                .iter()
+                .into_iter()
                 .map(|(parser, version_quality_ranges)| {
                     version_quality_ranges.wrap_code(
                         quote! {

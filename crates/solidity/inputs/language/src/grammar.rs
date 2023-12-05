@@ -29,6 +29,7 @@ pub trait GrammarConstructorDslV2 {
 }
 
 impl GrammarConstructorDslV2 for Grammar {
+    #[allow(clippy::too_many_lines)] // TODO: Remove me once the hack below is removed
     fn from_dsl_v2(lang: &model::Language) -> Grammar {
         // Collect language items into a lookup table to speed up resolution
         let mut items: HashMap<_, _> = lang
@@ -156,13 +157,13 @@ impl GrammarConstructorDslV2 for Grammar {
             versions: BTreeSet::from_iter(lang.versions.clone()),
             leading_trivia_parser: leading_trivia.clone(),
             trailing_trivia_parser: trailing_trivia.clone(),
-            elements: HashMap::from_iter(
-                resolved_items.chain(
+            elements: resolved_items
+                .chain(
                     [leading_trivia, trailing_trivia, eof_trivia]
                         .into_iter()
                         .map(|elem| (elem.name(), elem.into())),
-                ),
-            ),
+                )
+                .collect(),
         }
     }
 }
@@ -253,6 +254,7 @@ enum ParserThunk {
     Regular(Rc<NamedParserThunk>),
     Precedence(Rc<NamedPrecedenceParserThunk>),
 }
+#[allow(clippy::match_wildcard_for_single_variants)]
 impl ParserThunk {
     fn as_regular_def(&self) -> &OnceCell<ParserDefinitionNode> {
         match self {
@@ -301,6 +303,7 @@ struct ResolveCtx<'a> {
     resolved: &'a mut HashMap<Identifier, GrammarElement>,
 }
 
+#[allow(clippy::too_many_lines)] // FIXME: Simplify me when we simplify the v2-to-v1 interface
 fn resolve_grammar_element(ident: &Identifier, ctx: &mut ResolveCtx<'_>) -> GrammarElement {
     if ident.as_str() == "EndOfFileTrivia" {
         return ctx.resolved.get(ident).unwrap().clone();

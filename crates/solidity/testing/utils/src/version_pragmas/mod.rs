@@ -46,9 +46,8 @@ pub fn extract_version_pragmas(
 }
 
 fn extract_pragma(expression_node: &Node) -> Result<VersionPragma> {
-    let expression_rule = match expression_node {
-        Node::Rule(rule) => rule,
-        _ => bail!("Expected rule: {expression_node:?}"),
+    let Node::Rule(expression_rule) = expression_node else {
+        bail!("Expected rule: {expression_node:?}")
     };
 
     ensure!(
@@ -57,10 +56,8 @@ fn extract_pragma(expression_node: &Node) -> Result<VersionPragma> {
     );
 
     let inner_expression = match &expression_rule.children[..] {
-        [child] => match child {
-            Node::Rule(rule) => rule,
-            _ => bail!("Expected rule: {child:?}"),
-        },
+        [Node::Rule(rule)] => rule,
+        [Node::Token(token)] => bail!("Expected rule: {token:?}"),
         _ => unreachable!("Expected single child: {expression_rule:?}"),
     };
 
@@ -73,12 +70,11 @@ fn extract_pragma(expression_node: &Node) -> Result<VersionPragma> {
     match inner_expression.kind {
         RuleKind::VersionPragmaBinaryExpression => match &inner_children[..] {
             [left, operator, right] => {
-                let operator_kind = match operator {
-                    Node::Token(token) => token.kind,
-                    _ => bail!("Expected rule: {operator:?}"),
+                let Node::Token(operator) = operator else {
+                    bail!("Expected rule: {operator:?}");
                 };
 
-                match operator_kind {
+                match operator.kind {
                     TokenKind::BarBar => {
                         let left = extract_pragma(left)?;
                         let right = extract_pragma(right)?;

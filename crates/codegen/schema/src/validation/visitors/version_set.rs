@@ -29,11 +29,11 @@ impl VersionSet {
     }
 
     #[cfg(test)]
-    fn from_ranges(ranges: Vec<VersionRange>) -> Self {
+    fn from_ranges(ranges: impl IntoIterator<Item = VersionRange>) -> Self {
         let mut instance = Self::empty();
 
-        for range in &ranges {
-            instance.add(range);
+        for range in ranges {
+            instance.add(&range);
         }
 
         instance

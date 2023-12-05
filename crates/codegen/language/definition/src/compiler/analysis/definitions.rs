@@ -149,7 +149,7 @@ fn calculate_defined_in(analysis: &mut Analysis, item: &SpannedItem) -> VersionS
         }
         SpannedItem::Token { item } => {
             for definition in &item.definitions {
-                try_add_specifier(&definition.enabled)
+                try_add_specifier(&definition.enabled);
             }
         }
         SpannedItem::Fragment { item } => {

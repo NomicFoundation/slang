@@ -85,6 +85,7 @@ macro_rules! scan_zero_or_more {
 macro_rules! scan_one_or_more {
     ($stream:ident, $scanner:expr) => {{
         let mut count = 0;
+        #[allow(clippy::redundant_else)]
         loop {
             let save = $stream.position();
             if !($scanner) {

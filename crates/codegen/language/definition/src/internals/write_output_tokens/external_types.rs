@@ -37,8 +37,8 @@ impl WriteOutputTokens for char {
 
 impl<K: WriteOutputTokens, V: WriteOutputTokens> WriteOutputTokens for IndexMap<K, V> {
     fn write_output_tokens(&self) -> TokenStream {
-        let keys = self.keys().map(|key| key.write_output_tokens());
-        let values = self.values().map(|value| value.write_output_tokens());
+        let keys = self.keys().map(WriteOutputTokens::write_output_tokens);
+        let values = self.values().map(WriteOutputTokens::write_output_tokens);
 
         quote! {
             [ #( (#keys, #values) ),* ].into()
@@ -48,7 +48,7 @@ impl<K: WriteOutputTokens, V: WriteOutputTokens> WriteOutputTokens for IndexMap<
 
 impl<T: WriteOutputTokens> WriteOutputTokens for IndexSet<T> {
     fn write_output_tokens(&self) -> TokenStream {
-        let items = self.iter().map(|item| item.write_output_tokens());
+        let items = self.iter().map(WriteOutputTokens::write_output_tokens);
 
         quote! {
             [ #( #items ),* ].into()
@@ -107,7 +107,7 @@ impl WriteOutputTokens for usize {
 
 impl<T: WriteOutputTokens> WriteOutputTokens for Vec<T> {
     fn write_output_tokens(&self) -> TokenStream {
-        let items = self.iter().map(|item| item.write_output_tokens());
+        let items = self.iter().map(WriteOutputTokens::write_output_tokens);
 
         quote! {
             [ #( #items ),* ].into()

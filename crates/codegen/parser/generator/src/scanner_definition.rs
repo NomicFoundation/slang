@@ -95,7 +95,7 @@ impl ScannerDefinitionNodeExtensions for ScannerDefinitionNode {
                     if let ScannerDefinitionNode::Literal(string) = node {
                         scanners.push(string);
                     } else {
-                        non_literal_scanners.push(node.to_scanner_code())
+                        non_literal_scanners.push(node.to_scanner_code());
                     }
                 }
                 scanners.sort();

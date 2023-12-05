@@ -32,6 +32,7 @@ pub trait ParserDefinitionNodeExtensions {
 }
 
 impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
+    #[allow(clippy::too_many_lines)] // giant switch over parser definition node types
     fn to_parser_code(&self, context_name: &'static str, is_trivia: bool) -> TokenStream {
         let context = format_ident!("{context_name}");
         let lex_ctx = quote! { LexicalContextType::#context };

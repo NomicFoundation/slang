@@ -44,7 +44,8 @@ impl Reporter {
 
         let failed_tests = self.failed_tests.load(Ordering::Relaxed);
         let total_tests = self.total_tests.load(Ordering::Relaxed);
-        let failure_percent = (100_f64 * (failed_tests as f64) / (total_tests as f64)) as usize;
+        #[allow(clippy::cast_possible_truncation, clippy::cast_precision_loss)]
+        let failure_percent = (100_f64 * (failed_tests as f64) / (total_tests as f64)) as isize;
 
         self.progress_bar.set_message(format!(
             "{failed_tests}/{total_tests} tests failed ({failure_percent}%)",
