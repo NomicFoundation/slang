@@ -24,18 +24,26 @@ pub struct CLI {
 #[derive(Debug, Subcommand)]
 enum AppCommand {
     /// Setup toolchains and dependencies.
+    ///
+    /// Running this command without any args will setup everything.
     Setup(SetupController),
     /// Run codegen checks, and makes sure source files are up to date.
+    ///
+    /// Running this command without any args will check everything.
     Check(CheckController),
     /// Run unit tests.
+    ///
+    /// Running this command without any args will test everything.
     Test(TestController),
     /// Run linters for formatting, spelling, broken links, and other issues.
+    ///
+    /// Running this command without any args will lint everything.
     Lint(LintController),
     /// Perform a full CI run locally, by running 'setup', 'check', 'test', and 'lint' (in that order).
     Ci(CiController),
-    /// Run a local binary within this repository, forwarding any additional arguments along.
+    /// Runs local binaries within this repository, forwarding any additional arguments along.
     Run(RunController),
-    /// Build and serve documentation locally, watching for changes.
+    /// Watch for repository file changes, and run the specified workflows as needed.
     Watch(WatchController),
     /// Publish different artifacts from this repository.
     Publish(PublishController),

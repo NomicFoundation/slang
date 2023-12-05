@@ -1,15 +1,12 @@
 mod cargo;
 mod npm;
 mod pipenv;
-mod workspace;
 
 use anyhow::Result;
 use clap::{Parser, ValueEnum};
 
 use crate::{
-    commands::setup::{
-        cargo::setup_cargo, npm::setup_npm, pipenv::setup_pipenv, workspace::setup_workspace,
-    },
+    commands::setup::{cargo::setup_cargo, npm::setup_npm, pipenv::setup_pipenv},
     utils::{ClapExtensions, OrderedCommand, Terminal},
 };
 
@@ -27,8 +24,6 @@ impl SetupController {
 
 #[derive(Clone, Debug, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
 enum SetupCommand {
-    /// Configure binaries used by editors for local development..
-    Workspace,
     /// Install Cargo dependencies.
     Cargo,
     /// Install NPM dependencies.
@@ -42,7 +37,6 @@ impl OrderedCommand for SetupCommand {
         Terminal::step(format!("setup {name}", name = self.clap_name()));
 
         match self {
-            SetupCommand::Workspace => setup_workspace(),
             SetupCommand::Cargo => setup_cargo(),
             SetupCommand::Npm => setup_npm(),
             SetupCommand::Pipenv => setup_pipenv(),

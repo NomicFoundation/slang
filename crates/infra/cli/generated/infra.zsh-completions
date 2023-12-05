@@ -32,8 +32,7 @@ _infra() {
 _arguments "${_arguments_options[@]}" \
 '-h[Print help (see more with '\''--help'\'')]' \
 '--help[Print help (see more with '\''--help'\'')]' \
-'*::commands:((workspace\:"Configure binaries used by editors for local development.."
-cargo\:"Install Cargo dependencies"
+'*::commands:((cargo\:"Install Cargo dependencies"
 npm\:"Install NPM dependencies"
 pipenv\:"Install Pipenv dependencies"))' \
 && ret=0
@@ -60,12 +59,11 @@ npm\:"Run '\''test'\'' scripts in each NPM package in the repository"))' \
 _arguments "${_arguments_options[@]}" \
 '-h[Print help (see more with '\''--help'\'')]' \
 '--help[Print help (see more with '\''--help'\'')]' \
-'*::commands:((clippy\:"Lints all Rust source files"
-cargo-fmt\:"Format all Rust source files"
-cspell\:"Check for spelling issues in Markdown files"
+'*::commands:((cspell\:"Check for spelling issues in Markdown files"
 prettier\:"Format all non-Rust source files"
 markdown-link-check\:"Check for broken links in Markdown files"
 markdown-lint\:"Check for violations in Markdown files"
+rustfmt\:"Format all Rust source files"
 shellcheck\:"Check for violations in Bash files"
 tsc\:"Check for type errors in TypeScript files"
 yamllint\:"Check for violations issues in Yaml files"))' \
@@ -91,7 +89,7 @@ solidity_testing_solc\:"Runs compatability tests between our language definition
 _arguments "${_arguments_options[@]}" \
 '-h[Print help (see more with '\''--help'\'')]' \
 '--help[Print help (see more with '\''--help'\'')]' \
-'*::commands:((mkdocs\:"Build and serve documentation locally, watching for changes"))' \
+':command:((mkdocs\:"Build and serve documentation locally, watching for changes"))' \
 && ret=0
 ;;
 (publish)
@@ -170,8 +168,8 @@ _infra_commands() {
 'test:Run unit tests' \
 'lint:Run linters for formatting, spelling, broken links, and other issues' \
 'ci:Perform a full CI run locally, by running '\''setup'\'', '\''check'\'', '\''test'\'', and '\''lint'\'' (in that order)' \
-'run:Run a local binary within this repository, forwarding any additional arguments along' \
-'watch:Build and serve documentation locally, watching for changes' \
+'run:Runs local binaries within this repository, forwarding any additional arguments along' \
+'watch:Watch for repository file changes, and run the specified workflows as needed' \
 'publish:Publish different artifacts from this repository' \
 'help:Print this message or the help of the given subcommand(s)' \
     )
@@ -205,8 +203,8 @@ _infra__help_commands() {
 'test:Run unit tests' \
 'lint:Run linters for formatting, spelling, broken links, and other issues' \
 'ci:Perform a full CI run locally, by running '\''setup'\'', '\''check'\'', '\''test'\'', and '\''lint'\'' (in that order)' \
-'run:Run a local binary within this repository, forwarding any additional arguments along' \
-'watch:Build and serve documentation locally, watching for changes' \
+'run:Runs local binaries within this repository, forwarding any additional arguments along' \
+'watch:Watch for repository file changes, and run the specified workflows as needed' \
 'publish:Publish different artifacts from this repository' \
 'help:Print this message or the help of the given subcommand(s)' \
     )
