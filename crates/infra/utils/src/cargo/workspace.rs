@@ -124,6 +124,15 @@ impl CargoWorkspace {
                     rustflags = serde_json::to_string(&["--deny", "warnings"])?,
                 ),
             );
+            // Rustdoc requires specifying RUSTDOCFLAGS, instead:
+            // See <https://github.com/rust-lang/cargo/issues/8424#issuecomment-1070988443>.
+            command = command.property(
+                "--config",
+                format!(
+                    "build.rustdocflags = {rustdocflags}",
+                    rustdocflags = serde_json::to_string(&["--deny", "warnings"])?,
+                ),
+            );
         }
 
         Ok(command)
