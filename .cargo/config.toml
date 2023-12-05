@@ -10,10 +10,11 @@ lto = true
 # https://blog.rust-lang.org/2023/11/16/Rust-1.74.0.html#lint-configuration-through-cargo
 rustflags = [
 	# rustc additional warnings:
-	"--warn",
-	"unused_crate_dependencies",
-	"--warn",
-	"rust_2018_idioms",
+	"-Wunused_crate_dependencies",
+	# Rust 2018 idioms that are not yet warn-by-default:
+	"-Welided_lifetimes_in_paths",
+	"-Wunused_extern_crates",
+	"-Wexplicit_outlives_requirements",
 	# clippy additional warnings:
 	# Suspicious
 	"-Wclippy::await_holding_lock",
