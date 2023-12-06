@@ -7,7 +7,7 @@ use anyhow::{bail, ensure, Context, Result};
 use semver::{Comparator, Op, Version};
 use slang_solidity::{
     cst::Node,
-    kinds::{ProductionKind, RuleKind, TokenKind},
+    kinds::{RuleKind, TokenKind},
     language::Language,
 };
 
@@ -18,7 +18,7 @@ pub fn extract_version_pragmas(
     latest_version: &Version,
 ) -> Result<Vec<VersionPragma>> {
     let language = &Language::new(latest_version.to_owned())?;
-    let output = language.parse(ProductionKind::SourceUnit, source);
+    let output = language.parse(RuleKind::SourceUnit, source);
 
     let mut pragmas = vec![];
     let mut cursor = output.create_tree_cursor();

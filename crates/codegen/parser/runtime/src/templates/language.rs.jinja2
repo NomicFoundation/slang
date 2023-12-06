@@ -7,7 +7,7 @@ use {napi::bindgen_prelude::*, napi_derive::napi};
 use semver::Version;
 
 use super::{
-    kinds::{RuleKind, TokenKind, ProductionKind, IsLexicalContext, LexicalContextType},
+    kinds::{RuleKind, TokenKind, IsLexicalContext, LexicalContextType},
     lexer::Lexer,
     parse_output::ParseOutput,
     support::{
@@ -99,11 +99,13 @@ impl Language {
         }
     }
 
-    pub fn parse(&self, production_kind: ProductionKind, input: &str) -> ParseOutput {
-        match production_kind {
+    pub fn parse(&self, kind: RuleKind, input: &str) -> ParseOutput {
+        match kind {
             {%- for function in code.parser_functions -%}
-                ProductionKind::{{ function.0 }} => Self::{{ function.0 | snake_case }}.parse(self, input),
+                RuleKind::{{ function.0 }} => Self::{{ function.0 | snake_case }}.parse(self, input),
             {%- endfor -%}
+            // TODO(#638): Expose parsing individual operators
+            _ => unimplemented!("Parsing individual precedence operators is not supported at the moment")
         }
     }
 }
@@ -220,10 +222,10 @@ impl Language {
     #[napi(js_name = "parse", ts_return_type = "parse_output.ParseOutput")]
     pub fn parse_napi(
         &self,
-        #[napi(ts_arg_type = "kinds.ProductionKind")] production_kind: ProductionKind,
+        #[napi(ts_arg_type = "kinds.RuleKind")] kind: RuleKind,
         input: String
     ) -> NAPIParseOutput {
-        self.parse(production_kind, input.as_str()).into()
+        self.parse(kind, input.as_str()).into()
     }
 
 }

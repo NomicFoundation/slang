@@ -2,7 +2,7 @@ use std::str::FromStr;
 
 use anyhow::Result;
 use infra_utils::{cargo::CargoWorkspace, codegen::Codegen, paths::PathExtensions};
-use slang_solidity::{kinds::ProductionKind, language::Language};
+use slang_solidity::{kinds::RuleKind, language::Language};
 use solidity_testing_utils::cst_snapshots::CstSnapshots;
 use strum_macros::Display;
 
@@ -31,10 +31,10 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
     let mut last_output = None;
 
     for version in VERSION_BREAKS {
-        let production_kind = ProductionKind::from_str(parser_name)
+        let rule_kind = RuleKind::from_str(parser_name)
             .unwrap_or_else(|_| panic!("No such parser: {parser_name}"));
 
-        let output = Language::new(version.clone())?.parse(production_kind, &source);
+        let output = Language::new(version.clone())?.parse(rule_kind, &source);
 
         let output = match last_output {
             // Skip this version if it produces the same output.

@@ -1,5 +1,5 @@
 import { Language } from "@nomicfoundation/slang/language";
-import { ProductionKind, RuleKind, TokenKind } from "@nomicfoundation/slang/kinds";
+import { RuleKind, TokenKind } from "@nomicfoundation/slang/kinds";
 import { Cursor } from "@nomicfoundation/slang/cursor";
 import { expectRule, expectToken } from "../utils/cst-helpers";
 
@@ -7,7 +7,7 @@ test("use cursor", () => {
   const source = "int256 constant z = 1 + 2;";
   const language = new Language("0.8.1");
 
-  const parseOutput = language.parse(ProductionKind.SourceUnit, source);
+  const parseOutput = language.parse(RuleKind.SourceUnit, source);
   const cursor: Cursor = parseOutput.createTreeCursor();
 
   expectRule(cursor.node(), RuleKind.SourceUnit);

@@ -28,7 +28,6 @@ pub struct CodeGenerator {
 
     rule_kinds: BTreeSet<&'static str>,
     token_kinds: BTreeSet<&'static str>,
-    production_kinds: BTreeSet<&'static str>,
     trivia_kinds: BTreeSet<&'static str>,
 
     top_level_scanner_names: BTreeSet<&'static str>,
@@ -217,7 +216,6 @@ impl GrammarVisitor for CodeGenerator {
 
     fn trivia_parser_definition_enter(&mut self, parser: &TriviaParserDefinitionRef) {
         self.set_current_context(parser.context());
-        self.production_kinds.insert(parser.name());
         self.rule_kinds.insert(parser.name());
         self.trivia_kinds.insert(parser.name());
         self.parser_functions.push((
@@ -235,7 +233,6 @@ impl GrammarVisitor for CodeGenerator {
         // Have to set this regardless so that we can collect referenced scanners
         self.set_current_context(parser.context());
         if !parser.is_inline() {
-            self.production_kinds.insert(parser.name());
             self.rule_kinds.insert(parser.name());
             let code = parser.to_parser_code();
             self.parser_functions.push((
@@ -251,7 +248,6 @@ impl GrammarVisitor for CodeGenerator {
 
     fn precedence_parser_definition_enter(&mut self, parser: &PrecedenceParserDefinitionRef) {
         self.set_current_context(parser.context());
-        self.production_kinds.insert(parser.name());
         self.rule_kinds.insert(parser.name());
         for (_, _, name, _) in &parser.node().operators {
             self.rule_kinds.insert(name);

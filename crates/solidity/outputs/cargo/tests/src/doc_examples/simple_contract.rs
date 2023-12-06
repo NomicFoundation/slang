@@ -3,14 +3,14 @@ use semver::Version;
 
 use slang_solidity::{
     cst::Node,
-    kinds::{ProductionKind, RuleKind, TokenKind},
+    kinds::{RuleKind, TokenKind},
     language::Language,
 };
 
 #[test]
 fn simple_contract() -> Result<()> {
     let language = Language::new(Version::parse("0.8.0")?)?;
-    let parse_output = language.parse(ProductionKind::ContractDefinition, "contract Foo {}");
+    let parse_output = language.parse(RuleKind::ContractDefinition, "contract Foo {}");
 
     let parse_tree = parse_output.tree();
     let rule = parse_tree
