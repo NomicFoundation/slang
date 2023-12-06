@@ -260,7 +260,6 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
 
 pub trait VersionQualityRangeVecExtensions {
     fn wrap_code(&self, if_true: TokenStream, if_false: Option<TokenStream>) -> TokenStream;
-    fn disambiguating_name_suffix(&self) -> String;
 }
 
 impl VersionQualityRangeVecExtensions for Vec<VersionQualityRange> {
@@ -282,16 +281,5 @@ impl VersionQualityRangeVecExtensions for Vec<VersionQualityRange> {
             let else_part = if_false.map(|if_false| quote! { else { #if_false } });
             quote! { if #(#flags)&&* { #if_true } #else_part }
         }
-    }
-
-    fn disambiguating_name_suffix(&self) -> String {
-        let mut suffix = String::new();
-        for vqr in self {
-            suffix.push('_');
-            suffix.push_str(&vqr.quality.to_string().to_lowercase());
-            suffix.push_str("_from_");
-            suffix.push_str(&vqr.from.to_string().replace('.', "_"));
-        }
-        suffix
     }
 }

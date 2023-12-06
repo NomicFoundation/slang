@@ -95,7 +95,7 @@ impl PrecedenceParserDefinitionNodeExtensions for PrecedenceParserDefinitionNode
             let closure_name = format_ident!(
                 // Make a name that won't conflict with the parsers we define below
                 "parse_{name}{version_tag}",
-                version_tag = version_quality_ranges.disambiguating_name_suffix(),
+                version_tag = disambiguating_name_suffix(version_quality_ranges),
                 name = operator_definition.name().to_snake_case()
             );
 
@@ -255,4 +255,15 @@ impl PrecedenceParserDefinitionNodeExtensions for PrecedenceParserDefinitionNode
             PrecedenceHelper::reduce_precedence_result(#expression_kind_literal, linear_expression_parser(input))
         }
     }
+}
+
+fn disambiguating_name_suffix(ranges: &[VersionQualityRange]) -> String {
+    let mut suffix = String::new();
+    for vqr in ranges {
+        suffix.push('_');
+        suffix.push_str(&vqr.quality.to_string().to_lowercase());
+        suffix.push_str("_from_");
+        suffix.push_str(&vqr.from.to_string().replace('.', "_"));
+    }
+    suffix
 }
