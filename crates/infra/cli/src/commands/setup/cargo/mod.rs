@@ -10,19 +10,16 @@ pub fn setup_cargo() -> Result<()> {
     // - 'rust-std'
     // - 'rustc'
     //
-    // Which are enough to build, test, and run source code.
-    // But we need these additional optional components:
-    //
-    // - 'clippy' for linting
-    // - 'rust-docs' and 'rust-src' for local development
-    //
-    // So let's install these here:
+    // Which are enough to run infra scripts.
+    // But we need these additional optional components for local development:
 
-    rustup_add_component(env!("RUST_STABLE_VERSION"), "clippy")?;
+    rustup_add_components(env!("RUST_STABLE_VERSION"), ["clippy"])?;
 
     if !GitHub::is_running_in_ci() {
-        rustup_add_component(env!("RUST_STABLE_VERSION"), "rust-docs")?;
-        rustup_add_component(env!("RUST_STABLE_VERSION"), "rust-src")?;
+        rustup_add_components(
+            env!("RUST_STABLE_VERSION"),
+            ["rust-analyzer", "rust-docs", "rust-src"],
+        )?;
     }
 
     // Additionally, we also need 'rustfmt nightly', as we use experimental options.
@@ -30,7 +27,7 @@ pub fn setup_cargo() -> Result<()> {
 
     rustup_install_toolchain(env!("RUST_NIGHTLY_VERSION"))?;
 
-    rustup_add_component(env!("RUST_NIGHTLY_VERSION"), "rustfmt")?;
+    rustup_add_components(env!("RUST_NIGHTLY_VERSION"), ["rustfmt"])?;
 
     // Make sure we have the latest dependencies:
 
@@ -48,11 +45,14 @@ fn rustup_install_toolchain(toolchain: &str) -> Result<()> {
         .run()
 }
 
-fn rustup_add_component(toolchain: &str, component: &str) -> Result<()> {
+fn rustup_add_components(
+    toolchain: &str,
+    components: impl IntoIterator<Item = impl Into<String>>,
+) -> Result<()> {
     Command::new("rustup")
         .args(["component", "add"])
         .property("--toolchain", toolchain)
-        .arg(component)
+        .args(components)
         .run()
 }
 

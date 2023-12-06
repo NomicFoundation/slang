@@ -104,6 +104,7 @@ fn run_prettier(file_path: &Path, contents: &str) -> Result<String> {
 
 fn run_rustfmt(contents: &str) -> Result<String> {
     Command::new("rustfmt")
+        .arg(format!("+{}", env!("RUST_NIGHTLY_VERSION")))
         .property("--emit", "stdout")
         .evaluate_with_input(contents)
 }

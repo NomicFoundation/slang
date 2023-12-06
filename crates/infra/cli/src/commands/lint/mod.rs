@@ -108,7 +108,7 @@ fn run_markdown_lint() -> Result<()> {
 
 fn run_rustfmt() -> Result<()> {
     let mut command = Command::new("cargo-fmt")
-        .flag("+nightly")
+        .arg(format!("+{}", env!("RUST_NIGHTLY_VERSION")))
         .flag("--all")
         .flag("--verbose");
 

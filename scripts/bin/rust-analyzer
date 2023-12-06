@@ -1,0 +1,15 @@
+#!/bin/bash
+set -euo pipefail
+
+source "$(dirname "${BASH_SOURCE[0]}")/../_common.sh"
+
+(
+  # Running "rustup default" will print: "TOOLCHAIN (default)"
+  # and we want to extract the "TOOLCHAIN" name only.
+  # This splits by spaces and gets the first part:
+
+  rustup_default="$(rustup default)"
+  toolchain="${rustup_default%% *}"
+
+  "${REPO_ROOT:?}/.hermit/rustup/toolchains/${toolchain}/bin/rust-analyzer" "$@"
+)
