@@ -24,7 +24,7 @@ impl ParseError {
 
         tokens_that_would_have_allowed_more_progress
             .into_iter()
-            .map(ToString::to_string)
+            .map(TokenKind::to_string)
             .collect()
     }
 
