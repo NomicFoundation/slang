@@ -1,6 +1,6 @@
-use std::{fs, path::PathBuf};
+use std::{fs, path::PathBuf, process::ExitCode};
 
-use anyhow::{bail, Context, Result};
+use anyhow::{Context, Result};
 use clap::{Parser as ClapParser, Subcommand};
 use semver::Version;
 use slang_solidity::{kinds::ProductionKind, language::Language};
@@ -42,7 +42,7 @@ enum Commands {
     },
 }
 
-fn main() -> Result<()> {
+fn main() -> Result<ExitCode> {
     match Cli::parse().command {
         Commands::Parse {
             file_path,
@@ -52,7 +52,7 @@ fn main() -> Result<()> {
     }
 }
 
-fn execute_parse_command(file_path_string: &str, version: Version, json: bool) -> Result<()> {
+fn execute_parse_command(file_path_string: &str, version: Version, json: bool) -> Result<ExitCode> {
     let file_path = PathBuf::from(&file_path_string)
         .canonicalize()
         .with_context(|| format!("Failed to find file path: {file_path_string:?}"))?;
@@ -74,9 +74,10 @@ fn execute_parse_command(file_path_string: &str, version: Version, json: bool) -
     }
 
     if errors.is_empty() {
-        Ok(())
+        Ok(ExitCode::SUCCESS)
     } else {
-        bail!("Couldn't parse the Solidity source file.")
+        eprintln!("Couldn't parse the Solidity source file.");
+        Ok(ExitCode::FAILURE)
     }
 }
 

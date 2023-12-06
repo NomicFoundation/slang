@@ -1,9 +1,11 @@
 mod datasets;
 mod reporting;
 
-use std::{collections::BTreeSet, path::Path};
+use std::{
+    collections::BTreeSet, ops::ControlFlow, panic::catch_unwind, path::Path, process::ExitCode,
+};
 
-use anyhow::{anyhow, Result};
+use anyhow::Result;
 use infra_utils::paths::PathExtensions;
 use rayon::prelude::{IntoParallelRefIterator, ParallelIterator};
 use semver::Version;
@@ -16,22 +18,25 @@ use crate::{
     reporting::Reporter,
 };
 
-fn main() {
+fn main() -> Result<ExitCode> {
     let versions = SolidityDefinition::create().collect_breaking_versions();
 
-    // Fail the parent process if a child thread panics:
-    std::panic::catch_unwind(|| -> Result<()> {
-        for dataset in get_all_datasets()? {
-            process_dataset(&dataset, &versions)?;
-        }
+    for dataset in get_all_datasets()? {
+        let res = catch_unwind(|| process_dataset(&dataset, &versions)).expect("A child panicked.");
 
-        Ok(())
-    })
-    .unwrap()
-    .unwrap();
+        match res? {
+            ControlFlow::Break(exit_code) => return Ok(exit_code),
+            ControlFlow::Continue(..) => {}
+        }
+    }
+
+    Ok(ExitCode::SUCCESS)
 }
 
-fn process_dataset(dataset: &impl Dataset, versions: &BTreeSet<Version>) -> Result<()> {
+fn process_dataset(
+    dataset: &impl Dataset,
+    versions: &BTreeSet<Version>,
+) -> Result<ControlFlow<ExitCode>> {
     println!();
     println!();
     println!("  🧪 Dataset: {title}", title = dataset.get_title());
@@ -60,9 +65,10 @@ fn process_dataset(dataset: &impl Dataset, versions: &BTreeSet<Version>) -> Resu
 
     let total_errors = reporter.finish();
     if total_errors > 0 {
-        Err(anyhow!("There were errors processing the dataset."))
+        println!("There were errors processing the dataset.");
+        Ok(ControlFlow::Break(ExitCode::FAILURE))
     } else {
-        Ok(())
+        Ok(ControlFlow::Continue(()))
     }
 }
 
