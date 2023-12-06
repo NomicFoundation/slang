@@ -48,7 +48,7 @@ impl Reporter {
         let failure_percent = 100f64 * (failed_tests as f64) / (total_tests as f64);
 
         self.progress_bar.set_message(format!(
-            "{failed_tests}/{total_tests} tests failed ({failure_percent:.}%)",
+            "{failed_tests}/{total_tests} tests failed ({failure_percent:.0}%)",
         ));
     }
 
