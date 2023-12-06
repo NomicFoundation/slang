@@ -152,9 +152,8 @@ impl PrecedenceParserDefinitionNodeExtensions for PrecedenceParserDefinitionNode
         if !prefix_operator_parsers.is_empty() {
             let prefix_operator_parser = make_choice(prefix_operator_parsers);
             operator_closures.push(quote! { let prefix_operator_parser = |input: &mut ParserContext<'_>| #prefix_operator_parser; });
-            binary_operand_terms.push(
-                quote! { ZeroOrMoreHelper::run(input, |input| prefix_operator_parser(input)) },
-            );
+            binary_operand_terms
+                .push(quote! { ZeroOrMoreHelper::run(input, prefix_operator_parser) });
         }
 
         let primary_expression_parser = self.primary_expression.to_parser_code(context_name, false);
@@ -164,9 +163,8 @@ impl PrecedenceParserDefinitionNodeExtensions for PrecedenceParserDefinitionNode
         if !postfix_operator_parsers.is_empty() {
             let postfix_operator_parser = make_choice(postfix_operator_parsers);
             operator_closures.push(quote! { let postfix_operator_parser = |input: &mut ParserContext<'_>| #postfix_operator_parser; });
-            binary_operand_terms.push(
-                quote! { ZeroOrMoreHelper::run(input, |input| postfix_operator_parser(input)) },
-            );
+            binary_operand_terms
+                .push(quote! { ZeroOrMoreHelper::run(input, postfix_operator_parser) });
         }
 
         let binary_operand_parser = make_sequence(binary_operand_terms);

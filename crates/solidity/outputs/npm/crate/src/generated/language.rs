@@ -2961,13 +2961,9 @@ impl Language {
         #[allow(unused_variables)]
         let binary_operand_parser = |input: &mut ParserContext<'_>| {
             SequenceHelper::run(|mut seq| {
-                seq.elem(ZeroOrMoreHelper::run(input, |input| {
-                    prefix_operator_parser(input)
-                }))?;
+                seq.elem(ZeroOrMoreHelper::run(input, prefix_operator_parser))?;
                 seq.elem(primary_expression_parser(input))?;
-                seq.elem(ZeroOrMoreHelper::run(input, |input| {
-                    postfix_operator_parser(input)
-                }))?;
+                seq.elem(ZeroOrMoreHelper::run(input, postfix_operator_parser))?;
                 seq.finish()
             })
         };
@@ -5112,9 +5108,7 @@ impl Language {
         let linear_expression_parser = |input: &mut ParserContext<'_>| {
             SequenceHelper::run(|mut seq| {
                 seq.elem(primary_expression_parser(input))?;
-                seq.elem(ZeroOrMoreHelper::run(input, |input| {
-                    postfix_operator_parser(input)
-                }))?;
+                seq.elem(ZeroOrMoreHelper::run(input, postfix_operator_parser))?;
                 seq.finish()
             })
         };
@@ -5962,9 +5956,7 @@ impl Language {
         #[allow(unused_variables)]
         let binary_operand_parser = |input: &mut ParserContext<'_>| {
             SequenceHelper::run(|mut seq| {
-                seq.elem(ZeroOrMoreHelper::run(input, |input| {
-                    prefix_operator_parser(input)
-                }))?;
+                seq.elem(ZeroOrMoreHelper::run(input, prefix_operator_parser))?;
                 seq.elem(primary_expression_parser(input))?;
                 seq.finish()
             })
@@ -6196,9 +6188,7 @@ impl Language {
         let linear_expression_parser = |input: &mut ParserContext<'_>| {
             SequenceHelper::run(|mut seq| {
                 seq.elem(primary_expression_parser(input))?;
-                seq.elem(ZeroOrMoreHelper::run(input, |input| {
-                    postfix_operator_parser(input)
-                }))?;
+                seq.elem(ZeroOrMoreHelper::run(input, postfix_operator_parser))?;
                 seq.finish()
             })
         };
