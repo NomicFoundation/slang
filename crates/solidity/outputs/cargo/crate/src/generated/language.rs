@@ -3062,7 +3062,7 @@ impl Language {
             })
         };
         PrecedenceHelper::reduce_precedence_result(
-            Some(RuleKind::Expression),
+            RuleKind::Expression,
             linear_expression_parser(input),
         )
         .with_kind(RuleKind::Expression)
@@ -5119,7 +5119,7 @@ impl Language {
             })
         };
         PrecedenceHelper::reduce_precedence_result(
-            Some(RuleKind::TypeName),
+            RuleKind::TypeName,
             linear_expression_parser(input),
         )
         .with_kind(RuleKind::TypeName)
@@ -5994,7 +5994,7 @@ impl Language {
             })
         };
         PrecedenceHelper::reduce_precedence_result(
-            Some(RuleKind::VersionPragmaExpression),
+            RuleKind::VersionPragmaExpression,
             linear_expression_parser(input),
         )
         .with_kind(RuleKind::VersionPragmaExpression)
@@ -6203,7 +6203,7 @@ impl Language {
             })
         };
         PrecedenceHelper::reduce_precedence_result(
-            Some(RuleKind::YulExpression),
+            RuleKind::YulExpression,
             linear_expression_parser(input),
         )
         .with_kind(RuleKind::YulExpression)

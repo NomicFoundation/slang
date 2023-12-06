@@ -17,17 +17,13 @@ impl PrecedenceParserDefinitionExtensions for PrecedenceParserDefinitionRef {
     fn to_parser_code(&self) -> TokenStream {
         self.node().to_parser_code(
             self.context(),
-            Some(format_ident!("{name}", name = self.name().to_pascal_case())),
+            format_ident!("{name}", name = self.name().to_pascal_case()),
         )
     }
 }
 
 pub trait PrecedenceParserDefinitionNodeExtensions {
-    fn to_parser_code(
-        &self,
-        context_name: &'static str,
-        expression_kind: Option<Ident>,
-    ) -> TokenStream;
+    fn to_parser_code(&self, context_name: &'static str, expression_kind: Ident) -> TokenStream;
 }
 
 impl PrecedenceParserDefinitionNodeExtensions for PrecedenceParserDefinitionNode {
@@ -72,11 +68,7 @@ impl PrecedenceParserDefinitionNodeExtensions for PrecedenceParserDefinitionNode
     // is independent of the grammar.
 
     #[allow(clippy::too_many_lines)] // Repetition-heavy with 4 kinds of precedence operators
-    fn to_parser_code(
-        &self,
-        context_name: &'static str,
-        expression_kind: Option<Ident>,
-    ) -> TokenStream {
+    fn to_parser_code(&self, context_name: &'static str, expression_kind: Ident) -> TokenStream {
         type OperatorParser = (TokenStream, Vec<VersionQualityRange>);
         let mut prefix_operator_parsers: Vec<OperatorParser> = Vec::new();
         let mut postfix_operator_parsers: Vec<OperatorParser> = Vec::new();
@@ -239,12 +231,6 @@ impl PrecedenceParserDefinitionNodeExtensions for PrecedenceParserDefinitionNode
                 .push(quote! { let linear_expression_parser = |input: &mut ParserContext<'_>| #linear_expression_parser; });
         }
 
-        let expression_kind_literal = if let Some(kind) = expression_kind {
-            quote! { Some(RuleKind::#kind) }
-        } else {
-            quote! { None }
-        };
-
         quote! {
             #(
                 // TODO(#638): remove duplicates once we use DSL v2 versioning schema
@@ -252,7 +238,7 @@ impl PrecedenceParserDefinitionNodeExtensions for PrecedenceParserDefinitionNode
                 #operator_closures
             )*
 
-            PrecedenceHelper::reduce_precedence_result(#expression_kind_literal, linear_expression_parser(input))
+            PrecedenceHelper::reduce_precedence_result(RuleKind::#expression_kind, linear_expression_parser(input))
         }
     }
 }
