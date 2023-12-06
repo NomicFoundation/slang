@@ -22,7 +22,7 @@ Tree:
       - Statement (Rule): # 0..8 "a && b;\n"
           - ExpressionStatement (Rule): # 0..8 "a && b;\n"
               - Expression (Rule): # 0..6 "a && b"
-                  - BinaryExpression (Rule): # 0..6 "a && b"
+                  - AndExpression (Rule): # 0..6 "a && b"
                       - Expression (Rule): # 0..1 "a"
                           - Identifier (Token): "a" # 0..1
                       - AmpersandAmpersand (Token): "&&" # 2..4
@@ -32,7 +32,7 @@ Tree:
       - Statement (Rule): # 8..16 "a &= b;\n"
           - ExpressionStatement (Rule): # 8..16 "a &= b;\n"
               - Expression (Rule): # 8..14 "a &= b"
-                  - BinaryExpression (Rule): # 8..14 "a &= b"
+                  - AssignmentExpression (Rule): # 8..14 "a &= b"
                       - Expression (Rule): # 8..9 "a"
                           - Identifier (Token): "a" # 8..9
                       - AmpersandEqual (Token): "&=" # 10..12
@@ -42,7 +42,7 @@ Tree:
       - Statement (Rule): # 16..24 "a || b;\n"
           - ExpressionStatement (Rule): # 16..24 "a || b;\n"
               - Expression (Rule): # 16..22 "a || b"
-                  - BinaryExpression (Rule): # 16..22 "a || b"
+                  - OrExpression (Rule): # 16..22 "a || b"
                       - Expression (Rule): # 16..17 "a"
                           - Identifier (Token): "a" # 16..17
                       - BarBar (Token): "||" # 18..20
@@ -52,7 +52,7 @@ Tree:
       - Statement (Rule): # 24..32 "a |= b;\n"
           - ExpressionStatement (Rule): # 24..32 "a |= b;\n"
               - Expression (Rule): # 24..30 "a |= b"
-                  - BinaryExpression (Rule): # 24..30 "a |= b"
+                  - AssignmentExpression (Rule): # 24..30 "a |= b"
                       - Expression (Rule): # 24..25 "a"
                           - Identifier (Token): "a" # 24..25
                       - BarEqual (Token): "|=" # 26..28
@@ -62,7 +62,7 @@ Tree:
       - Statement (Rule): # 32..39 "a / b;\n"
           - ExpressionStatement (Rule): # 32..39 "a / b;\n"
               - Expression (Rule): # 32..37 "a / b"
-                  - BinaryExpression (Rule): # 32..37 "a / b"
+                  - MultiplicativeExpression (Rule): # 32..37 "a / b"
                       - Expression (Rule): # 32..33 "a"
                           - Identifier (Token): "a" # 32..33
                       - Slash (Token): "/" # 34..35
@@ -72,7 +72,7 @@ Tree:
       - Statement (Rule): # 39..47 "a /= b;\n"
           - ExpressionStatement (Rule): # 39..47 "a /= b;\n"
               - Expression (Rule): # 39..45 "a /= b"
-                  - BinaryExpression (Rule): # 39..45 "a /= b"
+                  - AssignmentExpression (Rule): # 39..45 "a /= b"
                       - Expression (Rule): # 39..40 "a"
                           - Identifier (Token): "a" # 39..40
                       - SlashEqual (Token): "/=" # 41..43
@@ -82,7 +82,7 @@ Tree:
       - Statement (Rule): # 47..54 "a > b;\n"
           - ExpressionStatement (Rule): # 47..54 "a > b;\n"
               - Expression (Rule): # 47..52 "a > b"
-                  - BinaryExpression (Rule): # 47..52 "a > b"
+                  - ComparisonExpression (Rule): # 47..52 "a > b"
                       - Expression (Rule): # 47..48 "a"
                           - Identifier (Token): "a" # 47..48
                       - GreaterThan (Token): ">" # 49..50
@@ -92,7 +92,7 @@ Tree:
       - Statement (Rule): # 54..62 "a >= b;\n"
           - ExpressionStatement (Rule): # 54..62 "a >= b;\n"
               - Expression (Rule): # 54..60 "a >= b"
-                  - BinaryExpression (Rule): # 54..60 "a >= b"
+                  - ComparisonExpression (Rule): # 54..60 "a >= b"
                       - Expression (Rule): # 54..55 "a"
                           - Identifier (Token): "a" # 54..55
                       - GreaterThanEqual (Token): ">=" # 56..58
@@ -102,7 +102,7 @@ Tree:
       - Statement (Rule): # 62..70 "a >> b;\n"
           - ExpressionStatement (Rule): # 62..70 "a >> b;\n"
               - Expression (Rule): # 62..68 "a >> b"
-                  - BinaryExpression (Rule): # 62..68 "a >> b"
+                  - ShiftExpression (Rule): # 62..68 "a >> b"
                       - Expression (Rule): # 62..63 "a"
                           - Identifier (Token): "a" # 62..63
                       - GreaterThanGreaterThan (Token): ">>" # 64..66
@@ -112,7 +112,7 @@ Tree:
       - Statement (Rule): # 70..79 "a >>= b;\n"
           - ExpressionStatement (Rule): # 70..79 "a >>= b;\n"
               - Expression (Rule): # 70..77 "a >>= b"
-                  - BinaryExpression (Rule): # 70..77 "a >>= b"
+                  - AssignmentExpression (Rule): # 70..77 "a >>= b"
                       - Expression (Rule): # 70..71 "a"
                           - Identifier (Token): "a" # 70..71
                       - GreaterThanGreaterThanEqual (Token): ">>=" # 72..75
@@ -122,7 +122,7 @@ Tree:
       - Statement (Rule): # 79..89 "a >>>= b;\n"
           - ExpressionStatement (Rule): # 79..89 "a >>>= b;\n"
               - Expression (Rule): # 79..87 "a >>>= b"
-                  - BinaryExpression (Rule): # 79..87 "a >>>= b"
+                  - AssignmentExpression (Rule): # 79..87 "a >>>= b"
                       - Expression (Rule): # 79..80 "a"
                           - Identifier (Token): "a" # 79..80
                       - GreaterThanGreaterThanGreaterThanEqual (Token): ">>>=" # 81..85
@@ -132,7 +132,7 @@ Tree:
       - Statement (Rule): # 89..97 "a << b;\n"
           - ExpressionStatement (Rule): # 89..97 "a << b;\n"
               - Expression (Rule): # 89..95 "a << b"
-                  - BinaryExpression (Rule): # 89..95 "a << b"
+                  - ShiftExpression (Rule): # 89..95 "a << b"
                       - Expression (Rule): # 89..90 "a"
                           - Identifier (Token): "a" # 89..90
                       - LessThanLessThan (Token): "<<" # 91..93
@@ -142,7 +142,7 @@ Tree:
       - Statement (Rule): # 97..106 "a <<= b;\n"
           - ExpressionStatement (Rule): # 97..106 "a <<= b;\n"
               - Expression (Rule): # 97..104 "a <<= b"
-                  - BinaryExpression (Rule): # 97..104 "a <<= b"
+                  - AssignmentExpression (Rule): # 97..104 "a <<= b"
                       - Expression (Rule): # 97..98 "a"
                           - Identifier (Token): "a" # 97..98
                       - LessThanLessThanEqual (Token): "<<=" # 99..102

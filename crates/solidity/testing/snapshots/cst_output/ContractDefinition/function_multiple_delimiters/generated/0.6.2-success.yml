@@ -61,7 +61,7 @@ Tree:
                                                       - OpenParen (Token): "(" # 133..134
                                                       - PositionalArguments (Rule): # 134..198 'address(this).balance >= amount, "Address: insuffi...'
                                                           - Expression (Rule): # 134..165 "address(this).balance >= amount"
-                                                              - BinaryExpression (Rule): # 134..165 "address(this).balance >= amount"
+                                                              - ComparisonExpression (Rule): # 134..165 "address(this).balance >= amount"
                                                                   - Expression (Rule): # 134..155 "address(this).balance"
                                                                       - MemberAccessExpression (Rule): # 134..155 "address(this).balance"
                                                                           - Expression (Rule): # 134..147 "address(this)"

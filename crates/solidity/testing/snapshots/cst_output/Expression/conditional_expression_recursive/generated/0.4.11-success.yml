@@ -14,7 +14,7 @@ Tree:
           - Expression (Rule): # 5..40 " a == b ? a + b * c : a + b * c + d"
               - ConditionalExpression (Rule): # 5..40 " a == b ? a + b * c : a + b * c + d"
                   - Expression (Rule): # 5..12 " a == b"
-                      - BinaryExpression (Rule): # 5..12 " a == b"
+                      - EqualityExpression (Rule): # 5..12 " a == b"
                           - Expression (Rule): # 5..7 " a"
                               - Identifier (Token): "a" # 6..7
                           - EqualEqual (Token): "==" # 8..10
@@ -22,12 +22,12 @@ Tree:
                               - Identifier (Token): "b" # 11..12
                   - QuestionMark (Token): "?" # 13..14
                   - Expression (Rule): # 14..24 " a + b * c"
-                      - BinaryExpression (Rule): # 14..24 " a + b * c"
+                      - AdditiveExpression (Rule): # 14..24 " a + b * c"
                           - Expression (Rule): # 14..16 " a"
                               - Identifier (Token): "a" # 15..16
                           - Plus (Token): "+" # 17..18
                           - Expression (Rule): # 18..24 " b * c"
-                              - BinaryExpression (Rule): # 18..24 " b * c"
+                              - MultiplicativeExpression (Rule): # 18..24 " b * c"
                                   - Expression (Rule): # 18..20 " b"
                                       - Identifier (Token): "b" # 19..20
                                   - Asterisk (Token): "*" # 21..22
@@ -35,14 +35,14 @@ Tree:
                                       - Identifier (Token): "c" # 23..24
                   - Colon (Token): ":" # 25..26
                   - Expression (Rule): # 26..40 " a + b * c + d"
-                      - BinaryExpression (Rule): # 26..40 " a + b * c + d"
+                      - AdditiveExpression (Rule): # 26..40 " a + b * c + d"
                           - Expression (Rule): # 26..36 " a + b * c"
-                              - BinaryExpression (Rule): # 26..36 " a + b * c"
+                              - AdditiveExpression (Rule): # 26..36 " a + b * c"
                                   - Expression (Rule): # 26..28 " a"
                                       - Identifier (Token): "a" # 27..28
                                   - Plus (Token): "+" # 29..30
                                   - Expression (Rule): # 30..36 " b * c"
-                                      - BinaryExpression (Rule): # 30..36 " b * c"
+                                      - MultiplicativeExpression (Rule): # 30..36 " b * c"
                                           - Expression (Rule): # 30..32 " b"
                                               - Identifier (Token): "b" # 31..32
                                           - Asterisk (Token): "*" # 33..34
@@ -55,13 +55,13 @@ Tree:
           - Expression (Rule): # 42..63 " !bar ? e + f : g + h"
               - ConditionalExpression (Rule): # 42..63 " !bar ? e + f : g + h"
                   - Expression (Rule): # 42..47 " !bar"
-                      - UnaryPrefixExpression (Rule): # 42..47 " !bar"
+                      - PrefixExpression (Rule): # 42..47 " !bar"
                           - Bang (Token): "!" # 43..44
                           - Expression (Rule): # 44..47 "bar"
                               - Identifier (Token): "bar" # 44..47
                   - QuestionMark (Token): "?" # 48..49
                   - Expression (Rule): # 49..55 " e + f"
-                      - BinaryExpression (Rule): # 49..55 " e + f"
+                      - AdditiveExpression (Rule): # 49..55 " e + f"
                           - Expression (Rule): # 49..51 " e"
                               - Identifier (Token): "e" # 50..51
                           - Plus (Token): "+" # 52..53
@@ -69,7 +69,7 @@ Tree:
                               - Identifier (Token): "f" # 54..55
                   - Colon (Token): ":" # 56..57
                   - Expression (Rule): # 57..63 " g + h"
-                      - BinaryExpression (Rule): # 57..63 " g + h"
+                      - AdditiveExpression (Rule): # 57..63 " g + h"
                           - Expression (Rule): # 57..59 " g"
                               - Identifier (Token): "g" # 58..59
                           - Plus (Token): "+" # 60..61

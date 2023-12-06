@@ -10,9 +10,9 @@ Tree:
       - SolidityKeyword (Token): "solidity" # 0..8
       - VersionPragmaExpressions (Rule): # 8..30 " ^1.0.0 || 2.0.0-3.0.0"
           - VersionPragmaExpression (Rule): # 8..30 " ^1.0.0 || 2.0.0-3.0.0"
-              - VersionPragmaBinaryExpression (Rule): # 8..30 " ^1.0.0 || 2.0.0-3.0.0"
+              - VersionPragmaOrExpression (Rule): # 8..30 " ^1.0.0 || 2.0.0-3.0.0"
                   - VersionPragmaExpression (Rule): # 8..15 " ^1.0.0"
-                      - VersionPragmaUnaryExpression (Rule): # 8..15 " ^1.0.0"
+                      - VersionPragmaPrefixExpression (Rule): # 8..15 " ^1.0.0"
                           - Caret (Token): "^" # 9..10
                           - VersionPragmaExpression (Rule): # 10..15 "1.0.0"
                               - VersionPragmaSpecifier (Rule): # 10..15 "1.0.0"
@@ -23,7 +23,7 @@ Tree:
                                   - VersionPragmaValue (Token): "0" # 14..15
                   - BarBar (Token): "||" # 16..18
                   - VersionPragmaExpression (Rule): # 18..30 " 2.0.0-3.0.0"
-                      - VersionPragmaBinaryExpression (Rule): # 18..30 " 2.0.0-3.0.0"
+                      - VersionPragmaRangeExpression (Rule): # 18..30 " 2.0.0-3.0.0"
                           - VersionPragmaExpression (Rule): # 18..24 " 2.0.0"
                               - VersionPragmaSpecifier (Rule): # 18..24 " 2.0.0"
                                   - VersionPragmaValue (Token): "2" # 19..20

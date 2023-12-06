@@ -20,12 +20,12 @@ Tree:
   - ReturnStatement (Rule): # 0..38 "return a + 2 * some invalid tokens\n\n;\n"
       - ReturnKeyword (Token): "return" # 0..6
       - Expression (Rule): # 6..19 " a + 2 * some"
-          - BinaryExpression (Rule): # 6..19 " a + 2 * some"
+          - AdditiveExpression (Rule): # 6..19 " a + 2 * some"
               - Expression (Rule): # 6..8 " a"
                   - Identifier (Token): "a" # 7..8
               - Plus (Token): "+" # 9..10
               - Expression (Rule): # 10..19 " 2 * some"
-                  - BinaryExpression (Rule): # 10..19 " 2 * some"
+                  - MultiplicativeExpression (Rule): # 10..19 " 2 * some"
                       - Expression (Rule): # 10..12 " 2"
                           - DecimalNumberExpression (Rule): # 10..12 " 2"
                               - DecimalLiteral (Token): "2" # 11..12

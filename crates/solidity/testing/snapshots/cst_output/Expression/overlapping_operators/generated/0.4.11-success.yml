@@ -7,9 +7,9 @@ Errors: []
 
 Tree:
   - Expression (Rule): # 0..10 "a & b && c"
-      - BinaryExpression (Rule): # 0..10 "a & b && c"
+      - AndExpression (Rule): # 0..10 "a & b && c"
           - Expression (Rule): # 0..5 "a & b"
-              - BinaryExpression (Rule): # 0..5 "a & b"
+              - BitwiseAndExpression (Rule): # 0..5 "a & b"
                   - Expression (Rule): # 0..1 "a"
                       - Identifier (Token): "a" # 0..1
                   - Ampersand (Token): "&" # 2..3

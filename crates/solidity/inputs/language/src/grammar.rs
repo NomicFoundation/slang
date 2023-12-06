@@ -752,7 +752,6 @@ fn resolve_precedence(
         let thunk = Rc::new(NamedParserThunk {
             name: name.to_string().leak(),
             context: lex_ctx,
-            // The operators are inlined but should be exposed under grouping `rule_name` below
             is_inline: true,
             def: OnceCell::new(),
         });
@@ -768,7 +767,7 @@ fn resolve_precedence(
                 op.enabled.clone().map(enabled_to_range).unwrap_or_default(),
                 model_to_enum(op.model),
                 // TODO: Don't leak
-                expr.rule_name.to_string().leak() as &_,
+                name.to_string().leak() as &_,
                 thunk.clone() as Rc<dyn ParserDefinition>,
             ));
         }

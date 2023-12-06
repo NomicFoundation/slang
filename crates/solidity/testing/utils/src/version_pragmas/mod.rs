@@ -68,41 +68,43 @@ fn extract_pragma(expression_node: &Node) -> Result<VersionPragma> {
         .collect();
 
     match inner_expression.kind {
-        RuleKind::VersionPragmaBinaryExpression => match &inner_children[..] {
-            [left, operator, right] => {
-                let Node::Token(operator) = operator else {
-                    bail!("Expected rule: {operator:?}");
-                };
+        RuleKind::VersionPragmaOrExpression | RuleKind::VersionPragmaRangeExpression => {
+            match &inner_children[..] {
+                [left, operator, right] => {
+                    let Node::Token(operator) = operator else {
+                        bail!("Expected rule: {operator:?}");
+                    };
 
-                match operator.kind {
-                    TokenKind::BarBar => {
-                        let left = extract_pragma(left)?;
-                        let right = extract_pragma(right)?;
+                    match operator.kind {
+                        TokenKind::BarBar => {
+                            let left = extract_pragma(left)?;
+                            let right = extract_pragma(right)?;
 
-                        Ok(VersionPragma::or(left, right))
+                            Ok(VersionPragma::or(left, right))
+                        }
+                        TokenKind::Minus => {
+                            let mut left = extract_pragma(left)?.comparator()?;
+                            let mut right = extract_pragma(right)?.comparator()?;
+
+                            // Simulate solc bug:
+                            // https://github.com/ethereum/solidity/issues/13920
+                            left.op = Op::GreaterEq;
+                            right.op = Op::LessEq;
+
+                            Ok(VersionPragma::and(
+                                VersionPragma::single(left),
+                                VersionPragma::single(right),
+                            ))
+                        }
+
+                        _ => bail!("Unexpected operator: {operator:?}"),
                     }
-                    TokenKind::Minus => {
-                        let mut left = extract_pragma(left)?.comparator()?;
-                        let mut right = extract_pragma(right)?.comparator()?;
-
-                        // Simulate solc bug:
-                        // https://github.com/ethereum/solidity/issues/13920
-                        left.op = Op::GreaterEq;
-                        right.op = Op::LessEq;
-
-                        Ok(VersionPragma::and(
-                            VersionPragma::single(left),
-                            VersionPragma::single(right),
-                        ))
-                    }
-
-                    _ => bail!("Unexpected operator: {operator:?}"),
                 }
-            }
 
-            _ => bail!("Expected 3 children: {inner_expression:?}"),
-        },
-        RuleKind::VersionPragmaUnaryExpression => {
+                _ => bail!("Expected 3 children: {inner_expression:?}"),
+            }
+        }
+        RuleKind::VersionPragmaPrefixExpression => {
             let value = inner_expression.extract_non_trivia();
             let comparator = Comparator::from_str(&value)?;
 

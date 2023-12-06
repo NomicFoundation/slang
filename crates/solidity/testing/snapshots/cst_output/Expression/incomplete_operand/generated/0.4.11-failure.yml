@@ -17,7 +17,7 @@ Tree:
   - Expression (Rule): # 0..8 "2 * new\n"
       - DecimalNumberExpression (Rule): # 0..1 "2"
           - DecimalLiteral (Token): "2" # 0..1
-      - BinaryExpression (Rule): # 1..3 " *"
+      - MultiplicativeExpression (Rule): # 1..3 " *"
           - Asterisk (Token): "*" # 2..3
       - NewExpression (Rule): # 3..8 " new\n"
           - NewKeyword (Token): "new" # 4..7

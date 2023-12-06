@@ -1185,7 +1185,7 @@ impl Language {
         #[allow(unused_variables)]
         let parse_assignment_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
-                RuleKind::BinaryExpression,
+                RuleKind::AssignmentExpression,
                 1u8,
                 1u8 + 1,
                 ChoiceHelper::run(input, |mut choice, input| {
@@ -1256,7 +1256,7 @@ impl Language {
         #[allow(unused_variables)]
         let parse_assignment_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
-                RuleKind::BinaryExpression,
+                RuleKind::AssignmentExpression,
                 3u8,
                 3u8 + 1,
                 ChoiceHelper::run(input, |mut choice, input| {
@@ -1327,7 +1327,7 @@ impl Language {
         #[allow(unused_variables)]
         let parse_assignment_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
-                RuleKind::BinaryExpression,
+                RuleKind::AssignmentExpression,
                 5u8,
                 5u8 + 1,
                 ChoiceHelper::run(input, |mut choice, input| {
@@ -1398,7 +1398,7 @@ impl Language {
         #[allow(unused_variables)]
         let parse_assignment_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
-                RuleKind::BinaryExpression,
+                RuleKind::AssignmentExpression,
                 7u8,
                 7u8 + 1,
                 ChoiceHelper::run(input, |mut choice, input| {
@@ -1469,7 +1469,7 @@ impl Language {
         #[allow(unused_variables)]
         let parse_assignment_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
-                RuleKind::BinaryExpression,
+                RuleKind::AssignmentExpression,
                 9u8,
                 9u8 + 1,
                 ChoiceHelper::run(input, |mut choice, input| {
@@ -1540,7 +1540,7 @@ impl Language {
         #[allow(unused_variables)]
         let parse_assignment_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
-                RuleKind::BinaryExpression,
+                RuleKind::AssignmentExpression,
                 11u8,
                 11u8 + 1,
                 ChoiceHelper::run(input, |mut choice, input| {
@@ -1611,7 +1611,7 @@ impl Language {
         #[allow(unused_variables)]
         let parse_assignment_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
-                RuleKind::BinaryExpression,
+                RuleKind::AssignmentExpression,
                 13u8,
                 13u8 + 1,
                 ChoiceHelper::run(input, |mut choice, input| {
@@ -1682,7 +1682,7 @@ impl Language {
         #[allow(unused_variables)]
         let parse_assignment_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
-                RuleKind::BinaryExpression,
+                RuleKind::AssignmentExpression,
                 15u8,
                 15u8 + 1,
                 ChoiceHelper::run(input, |mut choice, input| {
@@ -1753,7 +1753,7 @@ impl Language {
         #[allow(unused_variables)]
         let parse_assignment_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
-                RuleKind::BinaryExpression,
+                RuleKind::AssignmentExpression,
                 17u8,
                 17u8 + 1,
                 ChoiceHelper::run(input, |mut choice, input| {
@@ -1824,7 +1824,7 @@ impl Language {
         #[allow(unused_variables)]
         let parse_assignment_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
-                RuleKind::BinaryExpression,
+                RuleKind::AssignmentExpression,
                 19u8,
                 19u8 + 1,
                 ChoiceHelper::run(input, |mut choice, input| {
@@ -1895,7 +1895,7 @@ impl Language {
         #[allow(unused_variables)]
         let parse_assignment_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
-                RuleKind::BinaryExpression,
+                RuleKind::AssignmentExpression,
                 21u8,
                 21u8 + 1,
                 ChoiceHelper::run(input, |mut choice, input| {
@@ -1966,7 +1966,7 @@ impl Language {
         #[allow(unused_variables)]
         let parse_assignment_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
-                RuleKind::BinaryExpression,
+                RuleKind::AssignmentExpression,
                 23u8,
                 23u8 + 1,
                 ChoiceHelper::run(input, |mut choice, input| {
@@ -2057,7 +2057,7 @@ impl Language {
         #[allow(unused_variables)]
         let parse_or_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
-                RuleKind::BinaryExpression,
+                RuleKind::OrExpression,
                 27u8,
                 27u8 + 1,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
@@ -2069,7 +2069,7 @@ impl Language {
         #[allow(unused_variables)]
         let parse_and_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
-                RuleKind::BinaryExpression,
+                RuleKind::AndExpression,
                 29u8,
                 29u8 + 1,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
@@ -2081,7 +2081,7 @@ impl Language {
         #[allow(unused_variables)]
         let parse_equality_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
-                RuleKind::BinaryExpression,
+                RuleKind::EqualityExpression,
                 31u8,
                 31u8 + 1,
                 ChoiceHelper::run(input, |mut choice, input| {
@@ -2102,7 +2102,7 @@ impl Language {
         #[allow(unused_variables)]
         let parse_equality_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
-                RuleKind::BinaryExpression,
+                RuleKind::EqualityExpression,
                 33u8,
                 33u8 + 1,
                 ChoiceHelper::run(input, |mut choice, input| {
@@ -2123,7 +2123,7 @@ impl Language {
         #[allow(unused_variables)]
         let parse_comparison_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
-                RuleKind::BinaryExpression,
+                RuleKind::ComparisonExpression,
                 35u8,
                 35u8 + 1,
                 ChoiceHelper::run(input, |mut choice, input| {
@@ -2154,7 +2154,7 @@ impl Language {
         #[allow(unused_variables)]
         let parse_comparison_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
-                RuleKind::BinaryExpression,
+                RuleKind::ComparisonExpression,
                 37u8,
                 37u8 + 1,
                 ChoiceHelper::run(input, |mut choice, input| {
@@ -2185,7 +2185,7 @@ impl Language {
         #[allow(unused_variables)]
         let parse_comparison_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
-                RuleKind::BinaryExpression,
+                RuleKind::ComparisonExpression,
                 39u8,
                 39u8 + 1,
                 ChoiceHelper::run(input, |mut choice, input| {
@@ -2216,7 +2216,7 @@ impl Language {
         #[allow(unused_variables)]
         let parse_comparison_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
-                RuleKind::BinaryExpression,
+                RuleKind::ComparisonExpression,
                 41u8,
                 41u8 + 1,
                 ChoiceHelper::run(input, |mut choice, input| {
@@ -2247,7 +2247,7 @@ impl Language {
         #[allow(unused_variables)]
         let parse_bitwise_or_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
-                RuleKind::BinaryExpression,
+                RuleKind::BitwiseOrExpression,
                 43u8,
                 43u8 + 1,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(input, TokenKind::Bar),
@@ -2256,7 +2256,7 @@ impl Language {
         #[allow(unused_variables)]
         let parse_bitwise_xor_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
-                RuleKind::BinaryExpression,
+                RuleKind::BitwiseXorExpression,
                 45u8,
                 45u8 + 1,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
@@ -2268,7 +2268,7 @@ impl Language {
         #[allow(unused_variables)]
         let parse_bitwise_and_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
-                RuleKind::BinaryExpression,
+                RuleKind::BitwiseAndExpression,
                 47u8,
                 47u8 + 1,
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
@@ -2280,7 +2280,7 @@ impl Language {
         #[allow(unused_variables)]
         let parse_shift_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
-                RuleKind::BinaryExpression,
+                RuleKind::ShiftExpression,
                 49u8,
                 49u8 + 1,
                 ChoiceHelper::run(input, |mut choice, input| {
@@ -2306,7 +2306,7 @@ impl Language {
         #[allow(unused_variables)]
         let parse_shift_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
-                RuleKind::BinaryExpression,
+                RuleKind::ShiftExpression,
                 51u8,
                 51u8 + 1,
                 ChoiceHelper::run(input, |mut choice, input| {
@@ -2332,7 +2332,7 @@ impl Language {
         #[allow(unused_variables)]
         let parse_shift_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
-                RuleKind::BinaryExpression,
+                RuleKind::ShiftExpression,
                 53u8,
                 53u8 + 1,
                 ChoiceHelper::run(input, |mut choice, input| {
@@ -2358,7 +2358,7 @@ impl Language {
         #[allow(unused_variables)]
         let parse_additive_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
-                RuleKind::BinaryExpression,
+                RuleKind::AdditiveExpression,
                 55u8,
                 55u8 + 1,
                 ChoiceHelper::run(input, |mut choice, input| {
@@ -2379,7 +2379,7 @@ impl Language {
         #[allow(unused_variables)]
         let parse_additive_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
-                RuleKind::BinaryExpression,
+                RuleKind::AdditiveExpression,
                 57u8,
                 57u8 + 1,
                 ChoiceHelper::run(input, |mut choice, input| {
@@ -2400,7 +2400,7 @@ impl Language {
         #[allow(unused_variables)]
         let parse_multiplicative_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
-                RuleKind::BinaryExpression,
+                RuleKind::MultiplicativeExpression,
                 59u8,
                 59u8 + 1,
                 ChoiceHelper::run(input, |mut choice, input| {
@@ -2426,7 +2426,7 @@ impl Language {
         #[allow(unused_variables)]
         let parse_multiplicative_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
-                RuleKind::BinaryExpression,
+                RuleKind::MultiplicativeExpression,
                 61u8,
                 61u8 + 1,
                 ChoiceHelper::run(input, |mut choice, input| {
@@ -2452,7 +2452,7 @@ impl Language {
         #[allow(unused_variables)]
         let parse_multiplicative_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
-                RuleKind::BinaryExpression,
+                RuleKind::MultiplicativeExpression,
                 63u8,
                 63u8 + 1,
                 ChoiceHelper::run(input, |mut choice, input| {
@@ -2478,7 +2478,7 @@ impl Language {
         #[allow(unused_variables)]
         let parse_exponentiation_expression_removed_from_0_6_0 = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
-                RuleKind::BinaryExpression,
+                RuleKind::ExponentiationExpression,
                 65u8,
                 65u8 + 1,
                 ChoiceHelper::run(input, |mut choice, input| {
@@ -2505,7 +2505,7 @@ impl Language {
             '_,
         >| {
             PrecedenceHelper::to_binary_operator(
-                RuleKind::BinaryExpression,
+                RuleKind::ExponentiationExpression,
                 67u8 + 1,
                 67u8,
                 ChoiceHelper::run(input, |mut choice, input| {
@@ -2530,7 +2530,7 @@ impl Language {
         #[allow(unused_variables)]
         let parse_postfix_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_postfix_operator(
-                RuleKind::UnaryPostfixExpression,
+                RuleKind::PostfixExpression,
                 69u8,
                 ChoiceHelper::run(input, |mut choice, input| {
                     let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
@@ -2550,7 +2550,7 @@ impl Language {
         #[allow(unused_variables)]
         let parse_postfix_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_postfix_operator(
-                RuleKind::UnaryPostfixExpression,
+                RuleKind::PostfixExpression,
                 71u8,
                 ChoiceHelper::run(input, |mut choice, input| {
                     let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
@@ -2570,7 +2570,7 @@ impl Language {
         #[allow(unused_variables)]
         let parse_prefix_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_prefix_operator(
-                RuleKind::UnaryPrefixExpression,
+                RuleKind::PrefixExpression,
                 73u8,
                 ChoiceHelper::run(input, |mut choice, input| {
                     let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
@@ -2612,7 +2612,7 @@ impl Language {
         #[allow(unused_variables)]
         let parse_prefix_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_prefix_operator(
-                RuleKind::UnaryPrefixExpression,
+                RuleKind::PrefixExpression,
                 75u8,
                 ChoiceHelper::run(input, |mut choice, input| {
                     let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
@@ -2654,7 +2654,7 @@ impl Language {
         #[allow(unused_variables)]
         let parse_prefix_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_prefix_operator(
-                RuleKind::UnaryPrefixExpression,
+                RuleKind::PrefixExpression,
                 77u8,
                 ChoiceHelper::run(input, |mut choice, input| {
                     let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
@@ -2696,7 +2696,7 @@ impl Language {
         #[allow(unused_variables)]
         let parse_prefix_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_prefix_operator(
-                RuleKind::UnaryPrefixExpression,
+                RuleKind::PrefixExpression,
                 79u8,
                 ChoiceHelper::run(input, |mut choice, input| {
                     let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
@@ -2738,7 +2738,7 @@ impl Language {
         #[allow(unused_variables)]
         let parse_prefix_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_prefix_operator(
-                RuleKind::UnaryPrefixExpression,
+                RuleKind::PrefixExpression,
                 81u8,
                 ChoiceHelper::run(input, |mut choice, input| {
                     let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
@@ -2780,7 +2780,7 @@ impl Language {
         #[allow(unused_variables)]
         let parse_prefix_expression_removed_from_0_5_0 = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_prefix_operator(
-                RuleKind::UnaryPrefixExpression,
+                RuleKind::PrefixExpression,
                 83u8,
                 ChoiceHelper::run(input, |mut choice, input| {
                     let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
@@ -5603,7 +5603,7 @@ impl Language {
         #[allow(unused_variables)]
         let parse_version_pragma_or_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
-                RuleKind::VersionPragmaBinaryExpression,
+                RuleKind::VersionPragmaOrExpression,
                 1u8,
                 1u8 + 1,
                 self.parse_token_with_trivia::<LexicalContextType::Pragma>(
@@ -5615,7 +5615,7 @@ impl Language {
         #[allow(unused_variables)]
         let parse_version_pragma_range_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
-                RuleKind::VersionPragmaBinaryExpression,
+                RuleKind::VersionPragmaRangeExpression,
                 3u8,
                 3u8 + 1,
                 self.parse_token_with_trivia::<LexicalContextType::Pragma>(input, TokenKind::Minus),
@@ -5624,7 +5624,7 @@ impl Language {
         #[allow(unused_variables)]
         let parse_version_pragma_prefix_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_prefix_operator(
-                RuleKind::VersionPragmaUnaryExpression,
+                RuleKind::VersionPragmaPrefixExpression,
                 5u8,
                 ChoiceHelper::run(input, |mut choice, input| {
                     let result = self.parse_token_with_trivia::<LexicalContextType::Pragma>(
@@ -5669,7 +5669,7 @@ impl Language {
         #[allow(unused_variables)]
         let parse_version_pragma_prefix_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_prefix_operator(
-                RuleKind::VersionPragmaUnaryExpression,
+                RuleKind::VersionPragmaPrefixExpression,
                 7u8,
                 ChoiceHelper::run(input, |mut choice, input| {
                     let result = self.parse_token_with_trivia::<LexicalContextType::Pragma>(
@@ -5714,7 +5714,7 @@ impl Language {
         #[allow(unused_variables)]
         let parse_version_pragma_prefix_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_prefix_operator(
-                RuleKind::VersionPragmaUnaryExpression,
+                RuleKind::VersionPragmaPrefixExpression,
                 9u8,
                 ChoiceHelper::run(input, |mut choice, input| {
                     let result = self.parse_token_with_trivia::<LexicalContextType::Pragma>(
@@ -5759,7 +5759,7 @@ impl Language {
         #[allow(unused_variables)]
         let parse_version_pragma_prefix_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_prefix_operator(
-                RuleKind::VersionPragmaUnaryExpression,
+                RuleKind::VersionPragmaPrefixExpression,
                 11u8,
                 ChoiceHelper::run(input, |mut choice, input| {
                     let result = self.parse_token_with_trivia::<LexicalContextType::Pragma>(
@@ -5804,7 +5804,7 @@ impl Language {
         #[allow(unused_variables)]
         let parse_version_pragma_prefix_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_prefix_operator(
-                RuleKind::VersionPragmaUnaryExpression,
+                RuleKind::VersionPragmaPrefixExpression,
                 13u8,
                 ChoiceHelper::run(input, |mut choice, input| {
                     let result = self.parse_token_with_trivia::<LexicalContextType::Pragma>(
@@ -5849,7 +5849,7 @@ impl Language {
         #[allow(unused_variables)]
         let parse_version_pragma_prefix_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_prefix_operator(
-                RuleKind::VersionPragmaUnaryExpression,
+                RuleKind::VersionPragmaPrefixExpression,
                 15u8,
                 ChoiceHelper::run(input, |mut choice, input| {
                     let result = self.parse_token_with_trivia::<LexicalContextType::Pragma>(
@@ -5894,7 +5894,7 @@ impl Language {
         #[allow(unused_variables)]
         let parse_version_pragma_prefix_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_prefix_operator(
-                RuleKind::VersionPragmaUnaryExpression,
+                RuleKind::VersionPragmaPrefixExpression,
                 17u8,
                 ChoiceHelper::run(input, |mut choice, input| {
                     let result = self.parse_token_with_trivia::<LexicalContextType::Pragma>(

@@ -7,9 +7,9 @@ Errors: []
 
 Tree:
   - Expression (Rule): # 0..13 "a * b + c * d"
-      - BinaryExpression (Rule): # 0..13 "a * b + c * d"
+      - AdditiveExpression (Rule): # 0..13 "a * b + c * d"
           - Expression (Rule): # 0..5 "a * b"
-              - BinaryExpression (Rule): # 0..5 "a * b"
+              - MultiplicativeExpression (Rule): # 0..5 "a * b"
                   - Expression (Rule): # 0..1 "a"
                       - Identifier (Token): "a" # 0..1
                   - Asterisk (Token): "*" # 2..3
@@ -17,7 +17,7 @@ Tree:
                       - Identifier (Token): "b" # 4..5
           - Plus (Token): "+" # 6..7
           - Expression (Rule): # 7..13 " c * d"
-              - BinaryExpression (Rule): # 7..13 " c * d"
+              - MultiplicativeExpression (Rule): # 7..13 " c * d"
                   - Expression (Rule): # 7..9 " c"
                       - Identifier (Token): "c" # 8..9
                   - Asterisk (Token): "*" # 10..11

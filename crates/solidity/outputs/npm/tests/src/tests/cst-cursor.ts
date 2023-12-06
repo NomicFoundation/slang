@@ -61,7 +61,7 @@ test("use cursor", () => {
   expectRule(cursor.node(), RuleKind.Expression);
   expect(cursor.goToNext()).toBe(true);
 
-  expectRule(cursor.node(), RuleKind.BinaryExpression);
+  expectRule(cursor.node(), RuleKind.AdditiveExpression);
   expect(cursor.goToNext()).toBe(true);
 
   expectRule(cursor.node(), RuleKind.Expression);

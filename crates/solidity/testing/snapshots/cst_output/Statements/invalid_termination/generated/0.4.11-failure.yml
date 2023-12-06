@@ -37,7 +37,7 @@ Tree:
                   - Statement (Rule): # 18..25 " 1 * 2;"
                       - ExpressionStatement (Rule): # 18..25 " 1 * 2;"
                           - Expression (Rule): # 18..24 " 1 * 2"
-                              - BinaryExpression (Rule): # 18..24 " 1 * 2"
+                              - MultiplicativeExpression (Rule): # 18..24 " 1 * 2"
                                   - Expression (Rule): # 18..20 " 1"
                                       - DecimalNumberExpression (Rule): # 18..20 " 1"
                                           - DecimalLiteral (Token): "1" # 19..20
@@ -49,7 +49,7 @@ Tree:
                   - Statement (Rule): # 25..40 " 3 * b invalid;"
                       - ExpressionStatement (Rule): # 25..40 " 3 * b invalid;"
                           - Expression (Rule): # 25..31 " 3 * b"
-                              - BinaryExpression (Rule): # 25..31 " 3 * b"
+                              - MultiplicativeExpression (Rule): # 25..31 " 3 * b"
                                   - Expression (Rule): # 25..27 " 3"
                                       - DecimalNumberExpression (Rule): # 25..27 " 3"
                                           - DecimalLiteral (Token): "3" # 26..27

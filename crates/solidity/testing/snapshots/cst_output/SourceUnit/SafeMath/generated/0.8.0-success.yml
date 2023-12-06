@@ -82,7 +82,7 @@ Tree:
                                                                   - VariableDeclarationValue (Rule): # 130..138 " = a + b"
                                                                       - Equal (Token): "=" # 131..132
                                                                       - Expression (Rule): # 132..138 " a + b"
-                                                                          - BinaryExpression (Rule): # 132..138 " a + b"
+                                                                          - AdditiveExpression (Rule): # 132..138 " a + b"
                                                                               - Expression (Rule): # 132..134 " a"
                                                                                   - Identifier (Token): "a" # 133..134
                                                                               - Plus (Token): "+" # 135..136
@@ -94,7 +94,7 @@ Tree:
                                                                   - IfKeyword (Token): "if" # 146..148
                                                                   - OpenParen (Token): "(" # 149..150
                                                                   - Expression (Rule): # 150..155 "c < a"
-                                                                      - BinaryExpression (Rule): # 150..155 "c < a"
+                                                                      - ComparisonExpression (Rule): # 150..155 "c < a"
                                                                           - Expression (Rule): # 150..151 "c"
                                                                               - Identifier (Token): "c" # 150..151
                                                                           - LessThan (Token): "<" # 152..153

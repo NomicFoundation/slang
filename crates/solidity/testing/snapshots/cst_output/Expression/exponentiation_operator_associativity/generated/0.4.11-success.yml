@@ -7,9 +7,9 @@ Errors: []
 
 Tree:
   - Expression (Rule): # 0..12 "x ** y ** z\n"
-      - BinaryExpression (Rule): # 0..12 "x ** y ** z\n"
+      - ExponentiationExpression (Rule): # 0..12 "x ** y ** z\n"
           - Expression (Rule): # 0..6 "x ** y"
-              - BinaryExpression (Rule): # 0..6 "x ** y"
+              - ExponentiationExpression (Rule): # 0..6 "x ** y"
                   - Expression (Rule): # 0..1 "x"
                       - Identifier (Token): "x" # 0..1
                   - AsteriskAsterisk (Token): "**" # 2..4

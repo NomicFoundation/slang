@@ -14,7 +14,7 @@ Tree:
                   - TupleValues (Rule): # 1..11 "foo == bar"
                       - TupleValue (Rule): # 1..11 "foo == bar"
                           - Expression (Rule): # 1..11 "foo == bar"
-                              - BinaryExpression (Rule): # 1..11 "foo == bar"
+                              - EqualityExpression (Rule): # 1..11 "foo == bar"
                                   - Expression (Rule): # 1..4 "foo"
                                       - Identifier (Token): "foo" # 1..4
                                   - EqualEqual (Token): "==" # 5..7
