@@ -124,9 +124,8 @@ impl GrammarConstructorDslV2 for Grammar {
                 variants: keywords
                     .iter()
                     .map(|&ident| model::EnumVariant {
-                        name: Identifier::from("unused"),
-                        enabled: None,
                         reference: ident.clone(),
+                        enabled: None,
                     })
                     .collect(),
             };

@@ -15,9 +15,7 @@ pub struct EnumItem {
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 #[derive_spanned_type(ParseInputTokens, WriteOutputTokens)]
 pub struct EnumVariant {
-    pub name: Identifier,
+    pub reference: Identifier,
 
     pub enabled: Option<VersionSpecifier>,
-
-    pub reference: Identifier,
 }

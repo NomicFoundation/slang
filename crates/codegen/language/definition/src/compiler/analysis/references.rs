@@ -93,11 +93,7 @@ fn check_enum(analysis: &mut Analysis, item: &SpannedEnumItem, enablement: &Vers
     let enablement = update_enablement(analysis, enablement, enabled);
 
     for variant in variants {
-        let SpannedEnumVariant {
-            name: _,
-            enabled,
-            reference,
-        } = variant;
+        let SpannedEnumVariant { reference, enabled } = variant;
 
         let enablement = update_enablement(analysis, &enablement, enabled);
 

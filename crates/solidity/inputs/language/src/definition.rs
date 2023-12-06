@@ -42,51 +42,28 @@ codegen_language_macros::compile!(Language(
                         Enum(
                             name = SourceUnitMember,
                             variants = [
-                                EnumVariant(name = Pragma, reference = PragmaDirective),
-                                EnumVariant(name = Import, reference = ImportDirective),
-                                EnumVariant(name = Contract, reference = ContractDefinition),
-                                EnumVariant(name = Interface, reference = InterfaceDefinition),
-                                EnumVariant(name = Library, reference = LibraryDefinition),
+                                EnumVariant(reference = PragmaDirective),
+                                EnumVariant(reference = ImportDirective),
+                                EnumVariant(reference = ContractDefinition),
+                                EnumVariant(reference = InterfaceDefinition),
+                                EnumVariant(reference = LibraryDefinition),
+                                EnumVariant(reference = StructDefinition, enabled = From("0.6.0")),
+                                EnumVariant(reference = EnumDefinition, enabled = From("0.6.0")),
                                 EnumVariant(
-                                    name = Struct,
-                                    enabled = From("0.6.0"),
-                                    reference = StructDefinition
+                                    reference = FunctionDefinition,
+                                    enabled = From("0.7.1")
                                 ),
                                 EnumVariant(
-                                    name = Enum,
-                                    enabled = From("0.6.0"),
-                                    reference = EnumDefinition
+                                    reference = ConstantDefinition,
+                                    enabled = From("0.7.4")
                                 ),
+                                EnumVariant(reference = ErrorDefinition, enabled = From("0.8.4")),
                                 EnumVariant(
-                                    name = Function,
-                                    enabled = From("0.7.1"),
-                                    reference = FunctionDefinition
+                                    reference = UserDefinedValueTypeDefinition,
+                                    enabled = From("0.8.8")
                                 ),
-                                EnumVariant(
-                                    name = Constant,
-                                    enabled = From("0.7.4"),
-                                    reference = ConstantDefinition
-                                ),
-                                EnumVariant(
-                                    name = Error,
-                                    enabled = From("0.8.4"),
-                                    reference = ErrorDefinition
-                                ),
-                                EnumVariant(
-                                    name = UserDefinedValueType,
-                                    enabled = From("0.8.8"),
-                                    reference = UserDefinedValueTypeDefinition
-                                ),
-                                EnumVariant(
-                                    name = Using,
-                                    enabled = From("0.8.13"),
-                                    reference = UsingDirective
-                                ),
-                                EnumVariant(
-                                    name = Event,
-                                    enabled = From("0.8.22"),
-                                    reference = EventDefinition
-                                )
+                                EnumVariant(reference = UsingDirective, enabled = From("0.8.13")),
+                                EnumVariant(reference = EventDefinition, enabled = From("0.8.22"))
                             ]
                         )
                     ]
@@ -107,9 +84,9 @@ codegen_language_macros::compile!(Language(
                         Enum(
                             name = Pragma,
                             variants = [
-                                EnumVariant(name = ABICoder, reference = ABICoderPragma),
-                                EnumVariant(name = Experimental, reference = ExperimentalPragma),
-                                EnumVariant(name = Version, reference = VersionPragma)
+                                EnumVariant(reference = ABICoderPragma),
+                                EnumVariant(reference = ExperimentalPragma),
+                                EnumVariant(reference = VersionPragma)
                             ]
                         ),
                         Struct(
@@ -129,8 +106,8 @@ codegen_language_macros::compile!(Language(
                         Enum(
                             name = ExperimentalFeature,
                             variants = [
-                                EnumVariant(name = Identifier, reference = Identifier),
-                                EnumVariant(name = String, reference = AsciiStringLiteral)
+                                EnumVariant(reference = Identifier),
+                                EnumVariant(reference = AsciiStringLiteral)
                             ]
                         ),
                         Struct(
@@ -249,12 +226,9 @@ codegen_language_macros::compile!(Language(
                         Enum(
                             name = ImportClause,
                             variants = [
-                                EnumVariant(name = Path, reference = PathImport),
-                                EnumVariant(name = Named, reference = NamedImport),
-                                EnumVariant(
-                                    name = Deconstruction,
-                                    reference = ImportDeconstruction
-                                )
+                                EnumVariant(reference = PathImport),
+                                EnumVariant(reference = NamedImport),
+                                EnumVariant(reference = ImportDeconstruction)
                             ]
                         ),
                         Struct(
@@ -327,11 +301,10 @@ codegen_language_macros::compile!(Language(
                         Enum(
                             name = UsingClause,
                             variants = [
-                                EnumVariant(name = Path, reference = IdentifierPath),
+                                EnumVariant(reference = IdentifierPath),
                                 EnumVariant(
-                                    name = Deconstruction,
-                                    enabled = From("0.8.13"),
-                                    reference = UsingDeconstruction
+                                    reference = UsingDeconstruction,
+                                    enabled = From("0.8.13")
                                 )
                             ]
                         ),
@@ -374,28 +347,28 @@ codegen_language_macros::compile!(Language(
                             name = UsingOperator,
                             enabled = From("0.8.19"),
                             variants = [
-                                EnumVariant(name = Ampersand, reference = Ampersand),
-                                EnumVariant(name = Asterisk, reference = Asterisk),
-                                EnumVariant(name = BangEqual, reference = BangEqual),
-                                EnumVariant(name = Bar, reference = Bar),
-                                EnumVariant(name = Caret, reference = Caret),
-                                EnumVariant(name = EqualEqual, reference = EqualEqual),
-                                EnumVariant(name = GreaterThan, reference = GreaterThan),
-                                EnumVariant(name = GreaterThanEqual, reference = GreaterThanEqual),
-                                EnumVariant(name = LessThan, reference = LessThan),
-                                EnumVariant(name = LessThanEqual, reference = LessThanEqual),
-                                EnumVariant(name = Minus, reference = Minus),
-                                EnumVariant(name = Percent, reference = Percent),
-                                EnumVariant(name = Plus, reference = Plus),
-                                EnumVariant(name = Slash, reference = Slash),
-                                EnumVariant(name = Tilde, reference = Tilde)
+                                EnumVariant(reference = Ampersand),
+                                EnumVariant(reference = Asterisk),
+                                EnumVariant(reference = BangEqual),
+                                EnumVariant(reference = Bar),
+                                EnumVariant(reference = Caret),
+                                EnumVariant(reference = EqualEqual),
+                                EnumVariant(reference = GreaterThan),
+                                EnumVariant(reference = GreaterThanEqual),
+                                EnumVariant(reference = LessThan),
+                                EnumVariant(reference = LessThanEqual),
+                                EnumVariant(reference = Minus),
+                                EnumVariant(reference = Percent),
+                                EnumVariant(reference = Plus),
+                                EnumVariant(reference = Slash),
+                                EnumVariant(reference = Tilde)
                             ]
                         ),
                         Enum(
                             name = UsingTarget,
                             variants = [
-                                EnumVariant(name = TypeName, reference = TypeName),
-                                EnumVariant(name = Asterisk, reference = Asterisk)
+                                EnumVariant(reference = TypeName),
+                                EnumVariant(reference = Asterisk)
                             ]
                         )
                     ]
@@ -2051,45 +2024,33 @@ codegen_language_macros::compile!(Language(
                         Enum(
                             name = ContractMember,
                             variants = [
-                                EnumVariant(name = Using, reference = UsingDirective),
-                                EnumVariant(name = Function, reference = FunctionDefinition),
+                                EnumVariant(reference = UsingDirective),
+                                EnumVariant(reference = FunctionDefinition),
                                 EnumVariant(
-                                    name = Constructor,
-                                    enabled = From("0.4.22"),
-                                    reference = ConstructorDefinition
+                                    reference = ConstructorDefinition,
+                                    enabled = From("0.4.22")
                                 ),
                                 EnumVariant(
-                                    name = ReceiveFunction,
-                                    enabled = From("0.6.0"),
-                                    reference = ReceiveFunctionDefinition
+                                    reference = ReceiveFunctionDefinition,
+                                    enabled = From("0.6.0")
                                 ),
                                 EnumVariant(
-                                    name = FallbackFunction,
-                                    enabled = From("0.6.0"),
-                                    reference = FallbackFunctionDefinition
+                                    reference = FallbackFunctionDefinition,
+                                    enabled = From("0.6.0")
                                 ),
                                 EnumVariant(
-                                    name = UnnamedFunction,
-                                    enabled = Till("0.6.0"),
-                                    reference = UnnamedFunctionDefinition
+                                    reference = UnnamedFunctionDefinition,
+                                    enabled = Till("0.6.0")
                                 ),
-                                EnumVariant(name = Modifier, reference = ModifierDefinition),
-                                EnumVariant(name = Struct, reference = StructDefinition),
-                                EnumVariant(name = Enum, reference = EnumDefinition),
-                                EnumVariant(name = Event, reference = EventDefinition),
+                                EnumVariant(reference = ModifierDefinition),
+                                EnumVariant(reference = StructDefinition),
+                                EnumVariant(reference = EnumDefinition),
+                                EnumVariant(reference = EventDefinition),
+                                EnumVariant(reference = StateVariableDefinition),
+                                EnumVariant(reference = ErrorDefinition, enabled = From("0.8.4")),
                                 EnumVariant(
-                                    name = StateVariable,
-                                    reference = StateVariableDefinition
-                                ),
-                                EnumVariant(
-                                    name = Error,
-                                    enabled = From("0.8.4"),
-                                    reference = ErrorDefinition
-                                ),
-                                EnumVariant(
-                                    name = UserDefinedValueType,
-                                    enabled = From("0.8.8"),
-                                    reference = UserDefinedValueTypeDefinition
+                                    reference = UserDefinedValueTypeDefinition,
+                                    enabled = From("0.8.8")
                                 )
                             ]
                         )
@@ -2230,16 +2191,12 @@ codegen_language_macros::compile!(Language(
                         Enum(
                             name = StateVariableAttribute,
                             variants = [
-                                EnumVariant(name = Override, reference = OverrideSpecifier),
-                                EnumVariant(name = Constant, reference = ConstantKeyword),
-                                EnumVariant(name = Internal, reference = InternalKeyword),
-                                EnumVariant(name = Private, reference = PrivateKeyword),
-                                EnumVariant(name = Public, reference = PublicKeyword),
-                                EnumVariant(
-                                    name = Immutable,
-                                    enabled = From("0.6.5"),
-                                    reference = ImmutableKeyword
-                                )
+                                EnumVariant(reference = OverrideSpecifier),
+                                EnumVariant(reference = ConstantKeyword),
+                                EnumVariant(reference = InternalKeyword),
+                                EnumVariant(reference = PrivateKeyword),
+                                EnumVariant(reference = PublicKeyword),
+                                EnumVariant(reference = ImmutableKeyword, enabled = From("0.6.5"))
                             ]
                         )
                     ]
@@ -2261,9 +2218,9 @@ codegen_language_macros::compile!(Language(
                         Enum(
                             name = FunctionName,
                             variants = [
-                                EnumVariant(name = Identifier, reference = Identifier),
-                                EnumVariant(name = Fallback, reference = FallbackKeyword),
-                                EnumVariant(name = Receive, reference = ReceiveKeyword)
+                                EnumVariant(reference = Identifier),
+                                EnumVariant(reference = FallbackKeyword),
+                                EnumVariant(reference = ReceiveKeyword)
                             ]
                         ),
                         Struct(
@@ -2291,25 +2248,17 @@ codegen_language_macros::compile!(Language(
                         Enum(
                             name = FunctionAttribute,
                             variants = [
-                                EnumVariant(name = Modifier, reference = ModifierInvocation),
-                                EnumVariant(name = Override, reference = OverrideSpecifier),
-                                EnumVariant(
-                                    name = Constant,
-                                    enabled = Till("0.5.0"),
-                                    reference = ConstantKeyword
-                                ),
-                                EnumVariant(name = External, reference = ExternalKeyword),
-                                EnumVariant(name = Internal, reference = InternalKeyword),
-                                EnumVariant(name = Payable, reference = PayableKeyword),
-                                EnumVariant(name = Private, reference = PrivateKeyword),
-                                EnumVariant(name = Public, reference = PublicKeyword),
-                                EnumVariant(name = Pure, reference = PureKeyword),
-                                EnumVariant(name = View, reference = ViewKeyword),
-                                EnumVariant(
-                                    name = Virtual,
-                                    enabled = From("0.6.0"),
-                                    reference = VirtualKeyword
-                                )
+                                EnumVariant(reference = ModifierInvocation),
+                                EnumVariant(reference = OverrideSpecifier),
+                                EnumVariant(reference = ConstantKeyword, enabled = Till("0.5.0")),
+                                EnumVariant(reference = ExternalKeyword),
+                                EnumVariant(reference = InternalKeyword),
+                                EnumVariant(reference = PayableKeyword),
+                                EnumVariant(reference = PrivateKeyword),
+                                EnumVariant(reference = PublicKeyword),
+                                EnumVariant(reference = PureKeyword),
+                                EnumVariant(reference = ViewKeyword),
+                                EnumVariant(reference = VirtualKeyword, enabled = From("0.6.0"))
                             ]
                         ),
                         Struct(
@@ -2346,8 +2295,8 @@ codegen_language_macros::compile!(Language(
                         Enum(
                             name = FunctionBody,
                             variants = [
-                                EnumVariant(name = Block, reference = Block),
-                                EnumVariant(name = Semicolon, reference = Semicolon)
+                                EnumVariant(reference = Block),
+                                EnumVariant(reference = Semicolon)
                             ]
                         ),
                         Struct(
@@ -2369,10 +2318,10 @@ codegen_language_macros::compile!(Language(
                             name = ConstructorAttribute,
                             enabled = From("0.4.22"),
                             variants = [
-                                EnumVariant(name = Modifier, reference = ModifierInvocation),
-                                EnumVariant(name = Internal, reference = InternalKeyword),
-                                EnumVariant(name = Payable, reference = PayableKeyword),
-                                EnumVariant(name = Public, reference = PublicKeyword)
+                                EnumVariant(reference = ModifierInvocation),
+                                EnumVariant(reference = InternalKeyword),
+                                EnumVariant(reference = PayableKeyword),
+                                EnumVariant(reference = PublicKeyword)
                             ]
                         ),
                         Struct(
@@ -2394,12 +2343,12 @@ codegen_language_macros::compile!(Language(
                             name = UnnamedFunctionAttribute,
                             enabled = Till("0.6.0"),
                             variants = [
-                                EnumVariant(name = Modifier, reference = ModifierInvocation),
-                                EnumVariant(name = Override, reference = OverrideSpecifier),
-                                EnumVariant(name = External, reference = ExternalKeyword),
-                                EnumVariant(name = Payable, reference = PayableKeyword),
-                                EnumVariant(name = Pure, reference = PureKeyword),
-                                EnumVariant(name = View, reference = ViewKeyword)
+                                EnumVariant(reference = ModifierInvocation),
+                                EnumVariant(reference = OverrideSpecifier),
+                                EnumVariant(reference = ExternalKeyword),
+                                EnumVariant(reference = PayableKeyword),
+                                EnumVariant(reference = PureKeyword),
+                                EnumVariant(reference = ViewKeyword)
                             ]
                         ),
                         Struct(
@@ -2422,13 +2371,13 @@ codegen_language_macros::compile!(Language(
                             name = FallbackFunctionAttribute,
                             enabled = From("0.6.0"),
                             variants = [
-                                EnumVariant(name = Modifier, reference = ModifierInvocation),
-                                EnumVariant(name = Override, reference = OverrideSpecifier),
-                                EnumVariant(name = External, reference = ExternalKeyword),
-                                EnumVariant(name = Payable, reference = PayableKeyword),
-                                EnumVariant(name = Pure, reference = PureKeyword),
-                                EnumVariant(name = View, reference = ViewKeyword),
-                                EnumVariant(name = Virtual, reference = VirtualKeyword)
+                                EnumVariant(reference = ModifierInvocation),
+                                EnumVariant(reference = OverrideSpecifier),
+                                EnumVariant(reference = ExternalKeyword),
+                                EnumVariant(reference = PayableKeyword),
+                                EnumVariant(reference = PureKeyword),
+                                EnumVariant(reference = ViewKeyword),
+                                EnumVariant(reference = VirtualKeyword)
                             ]
                         ),
                         Struct(
@@ -2450,11 +2399,11 @@ codegen_language_macros::compile!(Language(
                             name = ReceiveFunctionAttribute,
                             enabled = From("0.6.0"),
                             variants = [
-                                EnumVariant(name = Modifier, reference = ModifierInvocation),
-                                EnumVariant(name = Override, reference = OverrideSpecifier),
-                                EnumVariant(name = External, reference = ExternalKeyword),
-                                EnumVariant(name = Payable, reference = PayableKeyword),
-                                EnumVariant(name = Virtual, reference = VirtualKeyword)
+                                EnumVariant(reference = ModifierInvocation),
+                                EnumVariant(reference = OverrideSpecifier),
+                                EnumVariant(reference = ExternalKeyword),
+                                EnumVariant(reference = PayableKeyword),
+                                EnumVariant(reference = VirtualKeyword)
                             ]
                         )
                     ]
@@ -2476,12 +2425,8 @@ codegen_language_macros::compile!(Language(
                         Enum(
                             name = ModifierAttribute,
                             variants = [
-                                EnumVariant(name = Override, reference = OverrideSpecifier),
-                                EnumVariant(
-                                    name = Virtual,
-                                    enabled = From("0.6.0"),
-                                    reference = VirtualKeyword
-                                )
+                                EnumVariant(reference = OverrideSpecifier),
+                                EnumVariant(reference = VirtualKeyword, enabled = From("0.6.0"))
                             ]
                         ),
                         Struct(
@@ -2643,13 +2588,13 @@ codegen_language_macros::compile!(Language(
                         Enum(
                             name = FunctionTypeAttribute,
                             variants = [
-                                EnumVariant(name = Internal, reference = InternalKeyword),
-                                EnumVariant(name = External, reference = ExternalKeyword),
-                                EnumVariant(name = Private, reference = PrivateKeyword),
-                                EnumVariant(name = Public, reference = PublicKeyword),
-                                EnumVariant(name = Pure, reference = PureKeyword),
-                                EnumVariant(name = View, reference = ViewKeyword),
-                                EnumVariant(name = Payable, reference = PayableKeyword)
+                                EnumVariant(reference = InternalKeyword),
+                                EnumVariant(reference = ExternalKeyword),
+                                EnumVariant(reference = PrivateKeyword),
+                                EnumVariant(reference = PublicKeyword),
+                                EnumVariant(reference = PureKeyword),
+                                EnumVariant(reference = ViewKeyword),
+                                EnumVariant(reference = PayableKeyword)
                             ]
                         ),
                         Struct(
@@ -2677,8 +2622,8 @@ codegen_language_macros::compile!(Language(
                         Enum(
                             name = MappingKeyType,
                             variants = [
-                                EnumVariant(name = ElementaryType, reference = ElementaryType),
-                                EnumVariant(name = IdentifierPath, reference = IdentifierPath)
+                                EnumVariant(reference = ElementaryType),
+                                EnumVariant(reference = IdentifierPath)
                             ]
                         ),
                         Struct(
@@ -2696,26 +2641,16 @@ codegen_language_macros::compile!(Language(
                         Enum(
                             name = ElementaryType,
                             variants = [
-                                EnumVariant(name = Bool, reference = BoolKeyword),
-                                EnumVariant(
-                                    name = Byte,
-                                    enabled = Till("0.8.0"),
-                                    reference = ByteKeyword
-                                ),
-                                EnumVariant(name = String, reference = StringKeyword),
-                                EnumVariant(name = Address, reference = AddressType),
-                                EnumVariant(name = Payable, reference = PayableKeyword),
-                                EnumVariant(name = ByteArray, reference = BytesKeyword),
-                                EnumVariant(name = SignedInteger, reference = IntKeyword),
-                                EnumVariant(name = UnsignedInteger, reference = UintKeyword),
-                                EnumVariant(
-                                    name = SignedFixedPointNumber,
-                                    reference = FixedKeyword
-                                ),
-                                EnumVariant(
-                                    name = UnsignedFixedPointNumber,
-                                    reference = UfixedKeyword
-                                )
+                                EnumVariant(reference = BoolKeyword),
+                                EnumVariant(reference = ByteKeyword, enabled = Till("0.8.0")),
+                                EnumVariant(reference = StringKeyword),
+                                EnumVariant(reference = AddressType),
+                                EnumVariant(reference = PayableKeyword),
+                                EnumVariant(reference = BytesKeyword),
+                                EnumVariant(reference = IntKeyword),
+                                EnumVariant(reference = UintKeyword),
+                                EnumVariant(reference = FixedKeyword),
+                                EnumVariant(reference = UfixedKeyword)
                             ]
                         ),
                         Struct(
@@ -2752,51 +2687,25 @@ codegen_language_macros::compile!(Language(
                             name = Statement,
                             variants = [
                                 // Simple statements
-                                EnumVariant(name = Expression, reference = ExpressionStatement),
-                                EnumVariant(
-                                    name = VariableDeclaration,
-                                    reference = VariableDeclarationStatement
-                                ),
-                                EnumVariant(
-                                    name = TupleDeconstruction,
-                                    reference = TupleDeconstructionStatement
-                                ),
+                                EnumVariant(reference = ExpressionStatement),
+                                EnumVariant(reference = VariableDeclarationStatement),
+                                EnumVariant(reference = TupleDeconstructionStatement),
                                 // Control statements
-                                EnumVariant(name = If, reference = IfStatement),
-                                EnumVariant(name = For, reference = ForStatement),
-                                EnumVariant(name = While, reference = WhileStatement),
-                                EnumVariant(name = DoWhile, reference = DoWhileStatement),
-                                EnumVariant(name = Continue, reference = ContinueStatement),
-                                EnumVariant(name = Break, reference = BreakStatement),
-                                EnumVariant(name = Delete, reference = DeleteStatement),
-                                EnumVariant(name = Return, reference = ReturnStatement),
-                                EnumVariant(
-                                    name = Throw,
-                                    enabled = Till("0.5.0"),
-                                    reference = ThrowStatement
-                                ),
-                                EnumVariant(
-                                    name = Emit,
-                                    enabled = From("0.4.21"),
-                                    reference = EmitStatement
-                                ),
-                                EnumVariant(
-                                    name = Try,
-                                    enabled = From("0.6.0"),
-                                    reference = TryStatement
-                                ),
-                                EnumVariant(
-                                    name = Revert,
-                                    enabled = From("0.8.4"),
-                                    reference = RevertStatement
-                                ),
-                                EnumVariant(name = Assembly, reference = AssemblyStatement),
-                                EnumVariant(name = Block, reference = Block),
-                                EnumVariant(
-                                    name = UncheckedBlock,
-                                    enabled = From("0.8.0"),
-                                    reference = UncheckedBlock
-                                )
+                                EnumVariant(reference = IfStatement),
+                                EnumVariant(reference = ForStatement),
+                                EnumVariant(reference = WhileStatement),
+                                EnumVariant(reference = DoWhileStatement),
+                                EnumVariant(reference = ContinueStatement),
+                                EnumVariant(reference = BreakStatement),
+                                EnumVariant(reference = DeleteStatement),
+                                EnumVariant(reference = ReturnStatement),
+                                EnumVariant(reference = ThrowStatement, enabled = Till("0.5.0")),
+                                EnumVariant(reference = EmitStatement, enabled = From("0.4.21")),
+                                EnumVariant(reference = TryStatement, enabled = From("0.6.0")),
+                                EnumVariant(reference = RevertStatement, enabled = From("0.8.4")),
+                                EnumVariant(reference = AssemblyStatement),
+                                EnumVariant(reference = Block),
+                                EnumVariant(reference = UncheckedBlock, enabled = From("0.8.0"))
                             ]
                         ),
                         Struct(
@@ -2874,8 +2783,8 @@ codegen_language_macros::compile!(Language(
                         Enum(
                             name = TupleMember,
                             variants = [
-                                EnumVariant(name = Typed, reference = TypedTupleMember),
-                                EnumVariant(name = Untyped, reference = UntypedTupleMember)
+                                EnumVariant(reference = TypedTupleMember),
+                                EnumVariant(reference = UntypedTupleMember)
                             ]
                         ),
                         Struct(
@@ -2907,12 +2816,8 @@ codegen_language_macros::compile!(Language(
                         Enum(
                             name = VariableDeclarationType,
                             variants = [
-                                EnumVariant(name = Typed, reference = TypeName),
-                                EnumVariant(
-                                    name = Untyped,
-                                    enabled = Till("0.5.0"),
-                                    reference = VarKeyword
-                                )
+                                EnumVariant(reference = TypeName),
+                                EnumVariant(reference = VarKeyword, enabled = Till("0.5.0"))
                             ]
                         ),
                         Struct(
@@ -2922,13 +2827,9 @@ codegen_language_macros::compile!(Language(
                         Enum(
                             name = StorageLocation,
                             variants = [
-                                EnumVariant(name = Memory, reference = MemoryKeyword),
-                                EnumVariant(name = Storage, reference = StorageKeyword),
-                                EnumVariant(
-                                    name = CallData,
-                                    enabled = From("0.5.0"),
-                                    reference = CallDataKeyword
-                                )
+                                EnumVariant(reference = MemoryKeyword),
+                                EnumVariant(reference = StorageKeyword),
+                                EnumVariant(reference = CallDataKeyword, enabled = From("0.5.0"))
                             ]
                         )
                     ]
@@ -2977,23 +2878,17 @@ codegen_language_macros::compile!(Language(
                         Enum(
                             name = ForStatementInitialization,
                             variants = [
-                                EnumVariant(name = Expression, reference = ExpressionStatement),
-                                EnumVariant(
-                                    name = VariableDeclaration,
-                                    reference = VariableDeclarationStatement
-                                ),
-                                EnumVariant(
-                                    name = TupleDeconstruction,
-                                    reference = TupleDeconstructionStatement
-                                ),
-                                EnumVariant(name = Semicolon, reference = Semicolon)
+                                EnumVariant(reference = ExpressionStatement),
+                                EnumVariant(reference = VariableDeclarationStatement),
+                                EnumVariant(reference = TupleDeconstructionStatement),
+                                EnumVariant(reference = Semicolon)
                             ]
                         ),
                         Enum(
                             name = ForStatementCondition,
                             variants = [
-                                EnumVariant(name = Expression, reference = ExpressionStatement),
-                                EnumVariant(name = Semicolon, reference = Semicolon)
+                                EnumVariant(reference = ExpressionStatement),
+                                EnumVariant(reference = Semicolon)
                             ]
                         ),
                         Struct(
@@ -3467,8 +3362,8 @@ codegen_language_macros::compile!(Language(
                         Enum(
                             name = MemberAccess,
                             variants = [
-                                EnumVariant(name = Identifier, reference = Identifier),
-                                EnumVariant(name = AddressKeyword, reference = AddressKeyword)
+                                EnumVariant(reference = Identifier),
+                                EnumVariant(reference = AddressKeyword)
                             ]
                         ),
                         Struct(
@@ -3488,25 +3383,20 @@ codegen_language_macros::compile!(Language(
                             enabled = From("0.6.2"),
                             variants = [
                                 EnumVariant(
-                                    name = Multiple,
-                                    enabled = Range(from = "0.6.2", till = "0.8.0"),
-                                    reference = NamedArgumentGroups
+                                    reference = NamedArgumentGroups,
+                                    enabled = Range(from = "0.6.2", till = "0.8.0")
                                 ),
                                 EnumVariant(
-                                    name = Single,
-                                    enabled = From("0.8.0"),
-                                    reference = NamedArgumentGroup
+                                    reference = NamedArgumentGroup,
+                                    enabled = From("0.8.0")
                                 )
                             ]
                         ),
                         Enum(
                             name = ArgumentsDeclaration,
                             variants = [
-                                EnumVariant(
-                                    name = Positional,
-                                    reference = PositionalArgumentsDeclaration
-                                ),
-                                EnumVariant(name = Named, reference = NamedArgumentsDeclaration)
+                                EnumVariant(reference = PositionalArgumentsDeclaration),
+                                EnumVariant(reference = NamedArgumentsDeclaration)
                             ]
                         ),
                         Struct(
@@ -3763,37 +3653,21 @@ codegen_language_macros::compile!(Language(
                             name = NumberUnit,
                             variants = [
                                 // 1e-18 ETH
-                                EnumVariant(name = Wei, reference = WeiKeyword),
+                                EnumVariant(reference = WeiKeyword),
                                 // 1e-9 ETH
-                                EnumVariant(
-                                    name = Gwei,
-                                    enabled = From("0.6.11"),
-                                    reference = GweiKeyword
-                                ),
+                                EnumVariant(reference = GweiKeyword, enabled = From("0.6.11")),
                                 // 1e-6 ETH
-                                EnumVariant(
-                                    name = Szabo,
-                                    enabled = Till("0.7.0"),
-                                    reference = SzaboKeyword
-                                ),
+                                EnumVariant(reference = SzaboKeyword, enabled = Till("0.7.0")),
                                 // 1e-3 ETH
-                                EnumVariant(
-                                    name = Finney,
-                                    enabled = Till("0.7.0"),
-                                    reference = FinneyKeyword
-                                ),
+                                EnumVariant(reference = FinneyKeyword, enabled = Till("0.7.0")),
                                 // 1 ETH
-                                EnumVariant(name = Ether, reference = EtherKeyword),
-                                EnumVariant(name = Seconds, reference = SecondsKeyword),
-                                EnumVariant(name = Minutes, reference = MinutesKeyword),
-                                EnumVariant(name = Hours, reference = HoursKeyword),
-                                EnumVariant(name = Days, reference = DaysKeyword),
-                                EnumVariant(name = Weeks, reference = WeeksKeyword),
-                                EnumVariant(
-                                    name = Years,
-                                    enabled = Till("0.5.0"),
-                                    reference = YearsKeyword
-                                )
+                                EnumVariant(reference = EtherKeyword),
+                                EnumVariant(reference = SecondsKeyword),
+                                EnumVariant(reference = MinutesKeyword),
+                                EnumVariant(reference = HoursKeyword),
+                                EnumVariant(reference = DaysKeyword),
+                                EnumVariant(reference = WeeksKeyword),
+                                EnumVariant(reference = YearsKeyword, enabled = Till("0.5.0"))
                             ]
                         )
                     ]
@@ -3804,12 +3678,11 @@ codegen_language_macros::compile!(Language(
                         Enum(
                             name = StringExpression,
                             variants = [
-                                EnumVariant(name = Hex, reference = HexStringLiterals),
-                                EnumVariant(name = Ascii, reference = AsciiStringLiterals),
+                                EnumVariant(reference = HexStringLiterals),
+                                EnumVariant(reference = AsciiStringLiterals),
                                 EnumVariant(
-                                    name = Unicode,
-                                    enabled = From("0.7.0"),
-                                    reference = UnicodeStringLiterals
+                                    reference = UnicodeStringLiterals,
+                                    enabled = From("0.7.0")
                                 )
                             ]
                         ),
@@ -4039,24 +3912,17 @@ codegen_language_macros::compile!(Language(
                         Enum(
                             name = YulStatement,
                             variants = [
-                                EnumVariant(name = Block, reference = YulBlock),
-                                EnumVariant(name = Function, reference = YulFunctionDefinition),
-                                EnumVariant(
-                                    name = VariableDeclaration,
-                                    reference = YulVariableDeclarationStatement
-                                ),
-                                EnumVariant(name = Assignment, reference = YulAssignmentStatement),
-                                EnumVariant(name = If, reference = YulIfStatement),
-                                EnumVariant(name = For, reference = YulForStatement),
-                                EnumVariant(name = Switch, reference = YulSwitchStatement),
-                                EnumVariant(
-                                    name = Leave,
-                                    enabled = From("0.6.0"),
-                                    reference = YulLeaveStatement
-                                ),
-                                EnumVariant(name = Break, reference = YulBreakStatement),
-                                EnumVariant(name = Continue, reference = YulContinueStatement),
-                                EnumVariant(name = Expression, reference = YulExpression)
+                                EnumVariant(reference = YulBlock),
+                                EnumVariant(reference = YulFunctionDefinition),
+                                EnumVariant(reference = YulVariableDeclarationStatement),
+                                EnumVariant(reference = YulAssignmentStatement),
+                                EnumVariant(reference = YulIfStatement),
+                                EnumVariant(reference = YulForStatement),
+                                EnumVariant(reference = YulSwitchStatement),
+                                EnumVariant(reference = YulLeaveStatement, enabled = From("0.6.0")),
+                                EnumVariant(reference = YulBreakStatement),
+                                EnumVariant(reference = YulContinueStatement),
+                                EnumVariant(reference = YulExpression)
                             ]
                         ),
                         Struct(
@@ -4164,8 +4030,8 @@ codegen_language_macros::compile!(Language(
                         Enum(
                             name = YulSwitchCase,
                             variants = [
-                                EnumVariant(name = Default, reference = YulDefaultCase),
-                                EnumVariant(name = Value, reference = YulValueCase)
+                                EnumVariant(reference = YulDefaultCase),
+                                EnumVariant(reference = YulValueCase)
                             ]
                         ),
                         Struct(
@@ -4234,12 +4100,12 @@ codegen_language_macros::compile!(Language(
                         Enum(
                             name = YulLiteral,
                             variants = [
-                                EnumVariant(name = True, reference = YulTrueKeyword),
-                                EnumVariant(name = False, reference = YulFalseKeyword),
-                                EnumVariant(name = Decimal, reference = YulDecimalLiteral),
-                                EnumVariant(name = Hex, reference = YulHexLiteral),
-                                EnumVariant(name = HexString, reference = HexStringLiteral),
-                                EnumVariant(name = AsciiString, reference = AsciiStringLiteral)
+                                EnumVariant(reference = YulTrueKeyword),
+                                EnumVariant(reference = YulFalseKeyword),
+                                EnumVariant(reference = YulDecimalLiteral),
+                                EnumVariant(reference = YulHexLiteral),
+                                EnumVariant(reference = HexStringLiteral),
+                                EnumVariant(reference = AsciiStringLiteral)
                             ]
                         ),
                         Token(
