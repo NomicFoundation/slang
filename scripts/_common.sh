@@ -26,7 +26,7 @@ set -euo pipefail
 }
 
 #
-# This installs the minimal profile of the '$RUST_VERSION' toolchain.
+# This installs the minimal profile of the '$RUST_STABLE_VERSION' toolchain.
 # Any additional toolchains, or optional components, should be installed
 # during 'infra setup cargo' step instead of here, as this is the hot path
 # for every other command.
@@ -36,7 +36,7 @@ set -euo pipefail
 #
 
 {
-  rustup install --no-self-update --profile "minimal" "${RUST_VERSION:?}"
+  rustup install --no-self-update --profile "minimal" "${RUST_STABLE_VERSION:?}"
 
-  rustup default "${RUST_VERSION:?}"
+  rustup default "${RUST_STABLE_VERSION:?}"
 }

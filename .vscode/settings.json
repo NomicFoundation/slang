@@ -10,7 +10,6 @@
   "rust-analyzer.check.command": "clippy",
   "rust-analyzer.check.features": "all",
   "rust-analyzer.rustfmt.extraArgs": ["+nightly"],
-  "rust-analyzer.server.path": "${workspaceFolder}/bin/rust-analyzer",
   "search.exclude": {
     // Packages and Dependencies
     "**/.hermit/": true,
