@@ -327,8 +327,7 @@ fn resolve_grammar_element(ident: &Identifier, ctx: &mut ResolveCtx<'_>) -> Gram
             let thunk = Rc::new(NamedParserThunk {
                 name: ident.to_string().leak(),
                 context: lex_ctx,
-                // Enums have a single reference per variant, so they should be inlined.
-                is_inline: matches!(elem.as_ref(), Item::Enum { .. }),
+                is_inline: false,
                 def: OnceCell::new(),
             });
             ctx.resolved.insert(
