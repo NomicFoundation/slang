@@ -43,6 +43,7 @@ _arguments "${_arguments_options[@]}" \
 '-h[Print help (see more with '\''--help'\'')]' \
 '--help[Print help (see more with '\''--help'\'')]' \
 '*::commands:((cargo\:"Run '\''cargo check'\'' for all crates, features, and targets"
+rustdoc\:"Run \`cargo doc\` to generate Rustdoc documentation and check for any broken links"
 npm\:"Check NPM packages for any outdated codegen steps"
 mkdocs\:"Check mkdocs documentation for any build issues or broken links"))' \
 && ret=0

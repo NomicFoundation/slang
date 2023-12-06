@@ -170,18 +170,6 @@ impl SequenceHelper {
     /// Executes a closure that allows the caller to drive the sequence parse.
     ///
     /// Useful when you want to eagerly return a result from the parse function (e.g. when we can't make more progress).
-    ///
-    /// Usage:
-    /// ```no_run
-    /// # use codegen_parser_runtime::support::{ParserResult, SequenceHelper};
-    /// # fn parse_something() -> ParserResult { ParserResult::r#match(vec![], vec![]) }
-    /// # fn parse_another() -> ParserResult { ParserResult::r#match(vec![], vec![]) }
-    /// SequenceHelper::run(|mut sequence| {
-    ///     sequence.elem(parse_something())?;
-    ///     sequence.elem(parse_another())?;
-    ///     sequence.finish()
-    /// });
-    /// ```
     pub fn run(f: impl FnOnce(Self) -> ControlFlow<ParserResult, Self>) -> ParserResult {
         match f(SequenceHelper::default()) {
             ControlFlow::Break(result) => result,
