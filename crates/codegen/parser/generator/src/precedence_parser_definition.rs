@@ -69,7 +69,6 @@ impl PrecedenceParserDefinitionNodeExtensions for PrecedenceParserDefinitionNode
 
     #[allow(clippy::too_many_lines)] // Repetition-heavy with 4 kinds of precedence operators
     fn to_parser_code(&self, context_name: &'static str, expression_kind: Ident) -> TokenStream {
-        type OperatorParser = (TokenStream, Vec<VersionQualityRange>);
         let mut prefix_operator_parsers: Vec<OperatorParser> = Vec::new();
         let mut postfix_operator_parsers: Vec<OperatorParser> = Vec::new();
         let mut binary_operator_parsers: Vec<OperatorParser> = Vec::new();
@@ -148,45 +147,6 @@ impl PrecedenceParserDefinitionNodeExtensions for PrecedenceParserDefinitionNode
             binding_power += 2;
         }
 
-        // TODO: merge these three functions into parse_definition by changing
-        // `to_parser_code` to use `(TokenStream, Vec<VersionQualityRange>)` as
-        // the core type i.e. the `OperatorParser` type above
-        #[allow(clippy::items_after_statements)]
-        fn make_sequence(parsers: Vec<TokenStream>) -> TokenStream {
-            let parsers = parsers
-                .into_iter()
-                .map(|parser| quote! { seq.elem(#parser)?; })
-                .collect::<Vec<_>>();
-            quote! {
-                SequenceHelper::run(|mut seq| {
-                    #(#parsers)*
-                    seq.finish()
-                })
-            }
-        }
-
-        #[allow(clippy::items_after_statements)]
-        fn make_choice(parsers: Vec<OperatorParser>) -> TokenStream {
-            let parsers = parsers
-                .into_iter()
-                .map(|(parser, version_quality_ranges)| {
-                    version_quality_ranges.wrap_code(
-                        quote! {
-                            let result = #parser;
-                            choice.consider(input, result)?;
-                        },
-                        None,
-                    )
-                })
-                .collect::<Vec<_>>();
-            quote! {
-                ChoiceHelper::run(input, |mut choice, input| {
-                    #(#parsers)*
-                    choice.finish(input)
-                })
-            }
-        }
-
         let mut binary_operand_terms = vec![];
 
         if !prefix_operator_parsers.is_empty() {
@@ -252,4 +212,43 @@ fn disambiguating_name_suffix(ranges: &[VersionQualityRange]) -> String {
         suffix.push_str(&vqr.from.to_string().replace('.', "_"));
     }
     suffix
+}
+
+// TODO: merge these three functions into parse_definition by changing
+// `to_parser_code` to use `(TokenStream, Vec<VersionQualityRange>)` as
+// the core type i.e. the `OperatorParser` type above
+type OperatorParser = (TokenStream, Vec<VersionQualityRange>);
+
+fn make_sequence(parsers: Vec<TokenStream>) -> TokenStream {
+    let parsers = parsers
+        .into_iter()
+        .map(|parser| quote! { seq.elem(#parser)?; })
+        .collect::<Vec<_>>();
+    quote! {
+        SequenceHelper::run(|mut seq| {
+            #(#parsers)*
+            seq.finish()
+        })
+    }
+}
+
+fn make_choice(parsers: Vec<OperatorParser>) -> TokenStream {
+    let parsers = parsers
+        .into_iter()
+        .map(|(parser, version_quality_ranges)| {
+            version_quality_ranges.wrap_code(
+                quote! {
+                    let result = #parser;
+                    choice.consider(input, result)?;
+                },
+                None,
+            )
+        })
+        .collect::<Vec<_>>();
+    quote! {
+        ChoiceHelper::run(input, |mut choice, input| {
+            #(#parsers)*
+            choice.finish(input)
+        })
+    }
 }
