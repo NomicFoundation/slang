@@ -30,7 +30,6 @@ pub enum Node {
     Token(Rc<TokenNode>),
 }
 
-#[allow(clippy::match_wildcard_for_single_variants)]
 impl Node {
     pub fn rule(kind: RuleKind, children: Vec<Self>) -> Self {
         let text_len = children.iter().map(Node::text_len).sum();
@@ -76,29 +75,29 @@ impl Node {
 
     pub fn as_rule(&self) -> Option<&Rc<RuleNode>> {
         match self {
-            Self::Rule(node) => Some(node),
-            _ => None,
+            Self::Rule(rule) => Some(rule),
+            Self::Token(..) => None,
         }
     }
 
     pub fn into_rule(self) -> Option<Rc<RuleNode>> {
         match self {
-            Self::Rule(node) => Some(node),
-            _ => None,
+            Self::Rule(rule) => Some(rule),
+            Self::Token(..) => None,
         }
     }
 
     pub fn as_token(&self) -> Option<&Rc<TokenNode>> {
         match self {
-            Self::Token(node) => Some(node),
-            _ => None,
+            Self::Token(token) => Some(token),
+            Self::Rule(..) => None,
         }
     }
 
     pub fn into_token(self) -> Option<Rc<TokenNode>> {
         match self {
-            Self::Token(node) => Some(node),
-            _ => None,
+            Self::Token(token) => Some(token),
+            Self::Rule(..) => None,
         }
     }
 

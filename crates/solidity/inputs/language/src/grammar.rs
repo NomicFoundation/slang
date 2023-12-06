@@ -254,19 +254,18 @@ enum ParserThunk {
     Regular(Rc<NamedParserThunk>),
     Precedence(Rc<NamedPrecedenceParserThunk>),
 }
-#[allow(clippy::match_wildcard_for_single_variants)]
 impl ParserThunk {
     fn as_regular_def(&self) -> &OnceCell<ParserDefinitionNode> {
         match self {
             ParserThunk::Regular(thunk) => &thunk.def,
-            _ => panic!("Expected a regular parser thunk"),
+            ParserThunk::Precedence(..) => panic!("Expected a regular parser thunk"),
         }
     }
 
     fn as_precedence_def(&self) -> &OnceCell<PrecedenceParserDefinitionNode> {
         match self {
             ParserThunk::Precedence(thunk) => &thunk.def,
-            _ => panic!("Expected a precedence parser thunk"),
+            ParserThunk::Regular(..) => panic!("Expected a precedence parser thunk"),
         }
     }
 }
