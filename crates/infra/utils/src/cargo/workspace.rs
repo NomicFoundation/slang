@@ -114,8 +114,8 @@ impl CargoWorkspace {
                 format!(
                     "build.rustflags = {rustflags}",
                     rustflags = serde_json::to_string(&[
-                        "--deny",
-                        "warnings",
+                        // Deny any warnings in CI:
+                        "-Dwarnings",
                         // Lint against leftover `dbg/todo!` macros in CI:
                         "-Wclippy::dbg_macro",
                         "-Wclippy::todo"
@@ -128,7 +128,10 @@ impl CargoWorkspace {
                 "--config",
                 format!(
                     "build.rustdocflags = {rustdocflags}",
-                    rustdocflags = serde_json::to_string(&["--deny", "warnings"])?,
+                    rustdocflags = serde_json::to_string(&[
+                        // Deny any warnings in CI:
+                        "-Dwarnings"
+                    ])?,
                 ),
             );
         }
