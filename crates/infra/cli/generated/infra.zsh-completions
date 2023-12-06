@@ -168,7 +168,7 @@ _infra_commands() {
 'test:Run unit tests' \
 'lint:Run linters for formatting, spelling, broken links, and other issues' \
 'ci:Perform a full CI run locally, by running '\''setup'\'', '\''check'\'', '\''test'\'', and '\''lint'\'' (in that order)' \
-'run:Runs local binaries within this repository, forwarding any additional arguments along' \
+'run:Run specific local binaries within this repository, forwarding any additional arguments along' \
 'watch:Watch for repository file changes, and run the specified workflows as needed' \
 'publish:Publish different artifacts from this repository' \
 'help:Print this message or the help of the given subcommand(s)' \
@@ -203,7 +203,7 @@ _infra__help_commands() {
 'test:Run unit tests' \
 'lint:Run linters for formatting, spelling, broken links, and other issues' \
 'ci:Perform a full CI run locally, by running '\''setup'\'', '\''check'\'', '\''test'\'', and '\''lint'\'' (in that order)' \
-'run:Runs local binaries within this repository, forwarding any additional arguments along' \
+'run:Run specific local binaries within this repository, forwarding any additional arguments along' \
 'watch:Watch for repository file changes, and run the specified workflows as needed' \
 'publish:Publish different artifacts from this repository' \
 'help:Print this message or the help of the given subcommand(s)' \

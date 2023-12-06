@@ -41,7 +41,7 @@ enum AppCommand {
     Lint(LintController),
     /// Perform a full CI run locally, by running 'setup', 'check', 'test', and 'lint' (in that order).
     Ci(CiController),
-    /// Runs local binaries within this repository, forwarding any additional arguments along.
+    /// Run specific local binaries within this repository, forwarding any additional arguments along.
     Run(RunController),
     /// Watch for repository file changes, and run the specified workflows as needed.
     Watch(WatchController),
