@@ -65,7 +65,9 @@ impl OrderedCommand for LintCommand {
 }
 
 fn run_clippy() -> Result<()> {
-    CargoWorkspace::get_command("clippy")?.run()
+    CargoWorkspace::get_command("clippy")?
+        .flag("--all-targets")
+        .run()
 }
 
 fn run_cargo_fmt() -> Result<()> {

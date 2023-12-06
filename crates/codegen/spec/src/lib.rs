@@ -7,7 +7,7 @@
 //!
 //! and the auxiliary snippet files included by the grammar mkdocs pages.
 //!
-//! Exposes a [`SpecGeneratorExtensions`] trait that generates all the pages in a given [`CodegenContext`].
+//! Exposes a [`SpecGeneratorExtensions`] trait that generates all the pages in a given [`Codegen`] context.
 mod grammar;
 mod markdown;
 mod navigation;

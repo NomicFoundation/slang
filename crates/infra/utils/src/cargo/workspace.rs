@@ -99,10 +99,11 @@ impl CargoWorkspace {
     }
 
     pub fn get_command(subcommand: impl AsRef<str>) -> Result<Command> {
+        let subcommand = subcommand.as_ref();
+
         let mut command = Command::new("cargo")
-            .arg(subcommand.as_ref())
-            .flag("--all")
-            .flag("--all-targets")
+            .arg(subcommand)
+            .flag("--workspace")
             .flag("--all-features");
 
         if GitHub::is_running_in_ci() {
@@ -113,6 +114,15 @@ impl CargoWorkspace {
                 format!(
                     "build.rustflags = {rustflags}",
                     rustflags = serde_json::to_string(&["--deny", "warnings"])?,
+                ),
+            );
+            // Rustdoc requires specifying RUSTDOCFLAGS, instead:
+            // See <https://github.com/rust-lang/cargo/issues/8424#issuecomment-1070988443>.
+            command = command.property(
+                "--config",
+                format!(
+                    "build.rustdocflags = {rustdocflags}",
+                    rustdocflags = serde_json::to_string(&["--deny", "warnings"])?,
                 ),
             );
         }
