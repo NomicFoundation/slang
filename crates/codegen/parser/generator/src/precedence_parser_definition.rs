@@ -149,6 +149,7 @@ impl PrecedenceParserDefinitionNodeExtensions for PrecedenceParserDefinitionNode
 
         let mut binary_operand_terms = vec![];
 
+        // First, establish the binary operand parser `BinaryOperand ::= PrefixOperator* PrimaryExpression PostfixOperator*`
         if !prefix_operator_parsers.is_empty() {
             let prefix_operator_parser = make_choice(prefix_operator_parsers);
             operator_closures.push(quote! { let prefix_operator_parser = |input: &mut ParserContext<'_>| #prefix_operator_parser; });
@@ -169,25 +170,28 @@ impl PrecedenceParserDefinitionNodeExtensions for PrecedenceParserDefinitionNode
 
         let binary_operand_parser = make_sequence(binary_operand_terms);
 
-        if binary_operator_parsers.is_empty() {
-            operator_closures.push(quote! { let linear_expression_parser = |input: &mut ParserContext<'_>| #binary_operand_parser; });
+        // Now, establish the linear expression parser `Expression ::= BinaryOperand ( BinaryOperator BinaryOperand )*`
+        let linear_expression_parser = if binary_operator_parsers.is_empty() {
+            // No binary operators, so the expression is simply `BinaryOperand`
+            binary_operand_parser
         } else {
             operator_closures.push(quote! { let binary_operand_parser = |input: &mut ParserContext<'_>| #binary_operand_parser; });
 
             let binary_operator_parser = make_choice(binary_operator_parsers);
             operator_closures.push(quote! { let binary_operator_parser = |input: &mut ParserContext<'_>| #binary_operator_parser; });
 
-            let linear_expression_parser =
-                make_sequence(vec![quote! { binary_operand_parser(input) }, {
-                    let pairs = make_sequence(vec![
-                        quote! { binary_operator_parser(input) },
-                        quote! { binary_operand_parser(input)  },
-                    ]);
-                    quote! { ZeroOrMoreHelper::run(input, |input| #pairs) }
-                }]);
-            operator_closures
+            // `BinaryOperand ( BinaryOperator BinaryOperand )*`
+            make_sequence(vec![quote! { binary_operand_parser(input) }, {
+                let pairs = make_sequence(vec![
+                    quote! { binary_operator_parser(input) },
+                    quote! { binary_operand_parser(input)  },
+                ]);
+                quote! { ZeroOrMoreHelper::run(input, |input| #pairs) }
+            }])
+        };
+
+        operator_closures
                 .push(quote! { let linear_expression_parser = |input: &mut ParserContext<'_>| #linear_expression_parser; });
-        }
 
         quote! {
             #(
