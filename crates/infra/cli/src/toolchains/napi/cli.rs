@@ -71,7 +71,7 @@ impl NapiCli {
                 }
                 file if Path::new(file)
                     .extension()
-                    .map_or(false, |ext| ext.eq_ignore_ascii_case("node"))
+                    .is_some_and(|ext| ext.eq_ignore_ascii_case("node"))
                     && node_binary.is_none() =>
                 {
                     node_binary = Some(output_dir.join(file));
