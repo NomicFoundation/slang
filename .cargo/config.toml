@@ -18,8 +18,6 @@ rustflags = [
 	# 📎 Lints that are enabled (warn/deny) by default
 	"-Wclippy::all",
 	# Restriction (optional, neutral lints)
-	"-Wclippy::dbg_macro",                       # Lint against leftover `dbg!` macros
-	"-Wclippy::todo",                            # Lint against leftover `todo!` macros
 	"-Wclippy::exit",                            # Prefer not `process::exit`ing directly
 	"-Wclippy::rest_pat_in_fully_bound_structs", # Prefer not to use `..` in fully bound structs
 	"-Wclippy::verbose_file_reads",              # Prefer simpler and more concise `fs::read_to_string`
