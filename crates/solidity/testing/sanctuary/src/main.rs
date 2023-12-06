@@ -1,9 +1,7 @@
 mod datasets;
 mod reporting;
 
-use std::{
-    collections::BTreeSet, ops::ControlFlow, panic::catch_unwind, path::Path, process::ExitCode,
-};
+use std::{collections::BTreeSet, ops::ControlFlow, path::Path, process::ExitCode};
 
 use anyhow::Result;
 use infra_utils::paths::PathExtensions;
@@ -22,11 +20,9 @@ fn main() -> Result<ExitCode> {
     let versions = SolidityDefinition::create().collect_breaking_versions();
 
     for dataset in get_all_datasets()? {
-        let res = catch_unwind(|| process_dataset(&dataset, &versions)).expect("A child panicked.");
-
-        match res? {
-            ControlFlow::Break(exit_code) => return Ok(exit_code),
+        match process_dataset(&dataset, &versions)? {
             ControlFlow::Continue(..) => {}
+            ControlFlow::Break(exit_code) => return Ok(exit_code),
         }
     }
 
@@ -56,6 +52,8 @@ fn process_dataset(
 
     source_files
         .par_iter()
+        // Halt as soon as possible if a child panics.
+        .panic_fuse()
         .map(|file_path| {
             process_source_file(file_path, versions, &reporter)?;
             reporter.report_file_completed();
