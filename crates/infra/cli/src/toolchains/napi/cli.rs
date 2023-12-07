@@ -65,15 +65,13 @@ impl NapiCli {
         for child in output_dir.collect_children()? {
             let file_name = child.unwrap_name();
 
+            // NAPI emits files with lowercase names.
+            #[allow(clippy::case_sensitive_file_extension_comparisons)]
             match file_name {
                 "index.js" | "index.d.ts" => {
                     source_files.push(output_dir.join(file_name));
                 }
-                file if Path::new(file)
-                    .extension()
-                    .is_some_and(|ext| ext.eq_ignore_ascii_case("node"))
-                    && node_binary.is_none() =>
-                {
+                file if file.ends_with(".node") && node_binary.is_none() => {
                     node_binary = Some(output_dir.join(file));
                 }
                 _ => {
