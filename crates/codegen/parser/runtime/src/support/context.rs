@@ -30,7 +30,7 @@ impl<'s> ParserContext<'s> {
     pub fn new(source: &'s str) -> Self {
         Self {
             source,
-            position: Default::default(),
+            position: TextIndex::ZERO,
             undo_position: None,
             errors: vec![],
             closing_delimiters: vec![],

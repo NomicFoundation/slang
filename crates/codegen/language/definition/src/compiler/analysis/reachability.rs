@@ -33,7 +33,7 @@ fn check_unreachabable_items(analysis: &mut Analysis) {
     collect_trivia(&language.leading_trivia, &mut queue);
     collect_trivia(&language.trailing_trivia, &mut queue);
 
-    let mut visited = queue.iter().cloned().collect::<HashSet<_>>();
+    let mut visited = queue.iter().copied().collect::<HashSet<_>>();
 
     while let Some(name) = queue.pop() {
         for referenced_item in &analysis.metadata[name].referenced_items {

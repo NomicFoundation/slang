@@ -56,6 +56,7 @@ impl ParserResult {
         matches!(self, ParserResult::NoMatch(_))
     }
 
+    #[must_use]
     pub fn with_kind(self, new_kind: RuleKind) -> ParserResult {
         match self {
             ParserResult::Match(r#match) => ParserResult::r#match(

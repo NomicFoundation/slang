@@ -1,3 +1,6 @@
+// NAPI-exposed functions have to accept owned values.
+#![allow(clippy::needless_pass_by_value)]
+
 use napi_derive::napi;
 
 use super::{napi_text_index, RustParseError};
@@ -21,11 +24,7 @@ impl ParseError {
     }
 
     pub fn tokens_that_would_have_allowed_more_progress(&self) -> Vec<String> {
-        self.0
-            .tokens_that_would_have_allowed_more_progress()
-            .iter()
-            .map(|x| x.to_string())
-            .collect()
+        self.0.tokens_that_would_have_allowed_more_progress()
     }
 
     #[napi(namespace = "parse_error")]

@@ -144,11 +144,11 @@ impl CodeGenerator {
             .entry(name)
             .or_insert_with(|| ScannerContext {
                 name,
-                scanner_definitions: Default::default(),
-                alpha_literal_scanner: "".to_string(),
-                non_alpha_literal_scanner: "".to_string(),
+                scanner_definitions: BTreeSet::default(),
+                alpha_literal_scanner: String::new(),
+                non_alpha_literal_scanner: String::new(),
                 compound_scanner_names: vec![],
-                delimiters: Default::default(),
+                delimiters: BTreeMap::default(),
             });
     }
 }
@@ -228,7 +228,7 @@ impl GrammarVisitor for CodeGenerator {
                 quote! { #code.with_kind(RuleKind::#rule_kind) }
             }
             .to_string(),
-        ))
+        ));
     }
 
     fn parser_definition_enter(&mut self, parser: &ParserDefinitionRef) {
@@ -264,7 +264,7 @@ impl GrammarVisitor for CodeGenerator {
                 quote! { #code.with_kind(RuleKind::#rule_kind) }
             }
             .to_string(),
-        ))
+        ));
     }
 
     fn scanner_definition_node_enter(&mut self, node: &ScannerDefinitionNode) {
@@ -307,9 +307,10 @@ impl GrammarVisitor for CodeGenerator {
                     .unwrap()
                     .delimiters;
 
-                if delimiters.get(close).is_some() {
-                    panic!("Cannot use a closing delimiter as an opening one");
-                }
+                assert!(
+                    delimiters.get(close).is_none(),
+                    "Cannot use a closing delimiter as an opening one"
+                );
                 delimiters.insert(open, close);
             }
             _ => {}

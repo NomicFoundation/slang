@@ -57,7 +57,7 @@ impl NapiConfig {
             "Package should explicitly list targets, instead of using defaults."
         );
 
-        Ok(triples.additional.to_owned())
+        Ok(triples.additional)
     }
 }
 

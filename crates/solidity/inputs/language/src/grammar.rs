@@ -29,14 +29,18 @@ pub trait GrammarConstructorDslV2 {
 }
 
 impl GrammarConstructorDslV2 for Grammar {
+    #[allow(clippy::too_many_lines)] // TODO: Remove me once the hack below is removed
     fn from_dsl_v2(lang: &model::Language) -> Grammar {
         // Collect language items into a lookup table to speed up resolution
-        let mut items = HashMap::from_iter(lang.items_with_section().map(|(_, topic, item)| {
-            (
-                item.name().clone(),
-                (topic.lexical_context.clone(), Rc::clone(item)),
-            )
-        }));
+        let mut items: HashMap<_, _> = lang
+            .items_with_section()
+            .map(|(_, topic, item)| {
+                (
+                    item.name().clone(),
+                    (topic.lexical_context.clone(), Rc::clone(item)),
+                )
+            })
+            .collect();
 
         // TODO(#638): To minimize regression in the parser migration, we keep the existing DSL v1 model
         // of SourceUnit being followed by `EndOfFileTrivia`.
@@ -152,13 +156,13 @@ impl GrammarConstructorDslV2 for Grammar {
             versions: BTreeSet::from_iter(lang.versions.clone()),
             leading_trivia_parser: leading_trivia.clone(),
             trailing_trivia_parser: trailing_trivia.clone(),
-            elements: HashMap::from_iter(
-                resolved_items.chain(
+            elements: resolved_items
+                .chain(
                     [leading_trivia, trailing_trivia, eof_trivia]
                         .into_iter()
                         .map(|elem| (elem.name(), elem.into())),
-                ),
-            ),
+                )
+                .collect(),
         }
     }
 }
@@ -245,6 +249,26 @@ impl PrecedenceParserDefinition for NamedPrecedenceParserThunk {
     }
 }
 
+enum ParserThunk {
+    Regular(Rc<NamedParserThunk>),
+    Precedence(Rc<NamedPrecedenceParserThunk>),
+}
+impl ParserThunk {
+    fn as_regular_def(&self) -> &OnceCell<ParserDefinitionNode> {
+        match self {
+            ParserThunk::Regular(thunk) => &thunk.def,
+            ParserThunk::Precedence(..) => panic!("Expected a regular parser thunk"),
+        }
+    }
+
+    fn as_precedence_def(&self) -> &OnceCell<PrecedenceParserDefinitionNode> {
+        match self {
+            ParserThunk::Precedence(thunk) => &thunk.def,
+            ParserThunk::Regular(..) => panic!("Expected a precedence parser thunk"),
+        }
+    }
+}
+
 fn enabled_to_range(spec: model::VersionSpecifier) -> Vec<VersionQualityRange> {
     match spec {
         model::VersionSpecifier::Never => vec![VersionQualityRange {
@@ -277,7 +301,8 @@ struct ResolveCtx<'a> {
     resolved: &'a mut HashMap<Identifier, GrammarElement>,
 }
 
-fn resolve_grammar_element(ident: &Identifier, ctx: &mut ResolveCtx) -> GrammarElement {
+#[allow(clippy::too_many_lines)] // FIXME: Simplify me when we simplify the v2-to-v1 interface
+fn resolve_grammar_element(ident: &Identifier, ctx: &mut ResolveCtx<'_>) -> GrammarElement {
     if ident.as_str() == "EndOfFileTrivia" {
         return ctx.resolved.get(ident).unwrap().clone();
     }
@@ -287,28 +312,8 @@ fn resolve_grammar_element(ident: &Identifier, ctx: &mut ResolveCtx) -> GrammarE
     // FIXME: Don't leak
     let lex_ctx = lex_ctx
         .as_ref()
-        .map(|l| l.to_string().leak() as &_)
-        .unwrap_or("Default");
+        .map_or("Default", |l| l.to_string().leak() as &_);
 
-    enum ParserThunk {
-        Regular(Rc<NamedParserThunk>),
-        Precedence(Rc<NamedPrecedenceParserThunk>),
-    }
-    impl ParserThunk {
-        fn as_regular_def(&self) -> &OnceCell<ParserDefinitionNode> {
-            match self {
-                ParserThunk::Regular(thunk) => &thunk.def,
-                _ => panic!("Expected a regular parser thunk"),
-            }
-        }
-
-        fn as_precedence_def(&self) -> &OnceCell<PrecedenceParserDefinitionNode> {
-            match self {
-                ParserThunk::Precedence(thunk) => &thunk.def,
-                _ => panic!("Expected a precedence parser thunk"),
-            }
-        }
-    }
     // The non-terminals are mutually recursive (so will be the resolution of their definitions),
     // so make sure to insert a thunk for non-terminals to resolve to break the cycle.
     let inserted_thunk = match (elem.as_ref(), ctx.resolved.contains_key(ident)) {
@@ -427,7 +432,7 @@ fn resolve_grammar_element(ident: &Identifier, ctx: &mut ResolveCtx) -> GrammarE
     }
 }
 
-fn resolve_scanner(scanner: model::Scanner, ctx: &mut ResolveCtx) -> ScannerDefinitionNode {
+fn resolve_scanner(scanner: model::Scanner, ctx: &mut ResolveCtx<'_>) -> ScannerDefinitionNode {
     match scanner {
         model::Scanner::Optional { scanner } => {
             ScannerDefinitionNode::Optional(Box::new(resolve_scanner(*scanner, ctx)))
@@ -472,11 +477,14 @@ fn resolve_scanner(scanner: model::Scanner, ctx: &mut ResolveCtx) -> ScannerDefi
     }
 }
 
-fn resolve_fragment(fragment: model::FragmentItem, ctx: &mut ResolveCtx) -> ScannerDefinitionNode {
+fn resolve_fragment(
+    fragment: model::FragmentItem,
+    ctx: &mut ResolveCtx<'_>,
+) -> ScannerDefinitionNode {
     resolve_scanner(fragment.scanner, ctx).versioned(fragment.enabled)
 }
 
-fn resolve_token(token: model::TokenItem, ctx: &mut ResolveCtx) -> ScannerDefinitionNode {
+fn resolve_token(token: model::TokenItem, ctx: &mut ResolveCtx<'_>) -> ScannerDefinitionNode {
     let resolved_defs: Vec<_> = token
         .definitions
         .into_iter()
@@ -546,7 +554,7 @@ fn resolve_keyword_value(value: model::KeywordValue) -> ScannerDefinitionNode {
     }
 }
 
-fn resolve_trivia(parser: model::TriviaParser, ctx: &mut ResolveCtx) -> ParserDefinitionNode {
+fn resolve_trivia(parser: model::TriviaParser, ctx: &mut ResolveCtx<'_>) -> ParserDefinitionNode {
     match parser {
         model::TriviaParser::Optional { parser } => {
             ParserDefinitionNode::Optional(Box::new(resolve_trivia(*parser, ctx)))
@@ -578,7 +586,7 @@ fn resolve_trivia(parser: model::TriviaParser, ctx: &mut ResolveCtx) -> ParserDe
     }
 }
 
-fn resolve_field(field: model::Field, ctx: &mut ResolveCtx) -> ParserDefinitionNode {
+fn resolve_field(field: model::Field, ctx: &mut ResolveCtx<'_>) -> ParserDefinitionNode {
     match field {
         model::Field::Required { reference } => {
             resolve_grammar_element(&reference, ctx).into_parser_def_node()
@@ -595,7 +603,7 @@ fn resolve_sequence_like(
     enabled: Option<model::VersionSpecifier>,
     fields: IndexMap<Identifier, model::Field>,
     error_recovery: Option<FieldsErrorRecovery>,
-    ctx: &mut ResolveCtx,
+    ctx: &mut ResolveCtx<'_>,
 ) -> ParserDefinitionNode {
     let (terminator, delimiters) = match error_recovery {
         Some(FieldsErrorRecovery {
@@ -635,7 +643,6 @@ fn resolve_sequence_like(
             let mut delims = fields
                 .drain(open_idx..=open_idx + 1)
                 .map(|(_, field)| field);
-            dbg!(delims.size_hint());
             let open = delims.next().unwrap();
             let close = delims.next().unwrap();
 
@@ -674,7 +681,7 @@ fn resolve_sequence_like(
     .versioned(enabled)
 }
 
-fn resolve_choice(item: model::EnumItem, ctx: &mut ResolveCtx) -> ParserDefinitionNode {
+fn resolve_choice(item: model::EnumItem, ctx: &mut ResolveCtx<'_>) -> ParserDefinitionNode {
     let variants = item
         .variants
         .into_iter()
@@ -688,13 +695,13 @@ fn resolve_choice(item: model::EnumItem, ctx: &mut ResolveCtx) -> ParserDefiniti
     ParserDefinitionNode::Choice(variants).versioned(item.enabled)
 }
 
-fn resolve_repeated(item: model::RepeatedItem, ctx: &mut ResolveCtx) -> ParserDefinitionNode {
+fn resolve_repeated(item: model::RepeatedItem, ctx: &mut ResolveCtx<'_>) -> ParserDefinitionNode {
     let body = Box::new(resolve_grammar_element(&item.repeated, ctx).into_parser_def_node());
 
     ParserDefinitionNode::OneOrMore(body).versioned(item.enabled)
 }
 
-fn resolve_separated(item: model::SeparatedItem, ctx: &mut ResolveCtx) -> ParserDefinitionNode {
+fn resolve_separated(item: model::SeparatedItem, ctx: &mut ResolveCtx<'_>) -> ParserDefinitionNode {
     let body = resolve_grammar_element(&item.separated, ctx).into_parser_def_node();
     let separator = resolve_grammar_element(&item.separator, ctx).into_parser_def_node();
 
@@ -704,7 +711,7 @@ fn resolve_separated(item: model::SeparatedItem, ctx: &mut ResolveCtx) -> Parser
 fn resolve_precedence(
     item: model::PrecedenceItem,
     lex_ctx: &'static str,
-    ctx: &mut ResolveCtx,
+    ctx: &mut ResolveCtx<'_>,
 ) -> PrecedenceParserDefinitionNode {
     let primaries: Vec<_> = item
         .primary_expressions
@@ -721,6 +728,7 @@ fn resolve_precedence(
         _ => ParserDefinitionNode::Choice(primaries),
     });
 
+    #[allow(clippy::items_after_statements)] // simple and specific to this site
     fn model_to_enum(model: model::OperatorModel) -> PrecedenceOperatorModel {
         match model {
             model::OperatorModel::BinaryLeftAssociative => {
@@ -773,7 +781,7 @@ fn resolve_precedence(
             .collect();
 
         let def = match defs.len() {
-            0 => panic!("Precedence operator {} has no definitions", name),
+            0 => panic!("Precedence operator {name} has no definitions"),
             1 => defs.into_iter().next().unwrap(),
             _ => ParserDefinitionNode::Choice(defs),
         };

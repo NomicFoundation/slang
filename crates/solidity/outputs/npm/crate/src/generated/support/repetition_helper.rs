@@ -11,8 +11,8 @@ pub type ZeroOrMoreHelper = RepetitionHelper<0>;
 pub type OneOrMoreHelper = RepetitionHelper<1>;
 
 impl<const MIN_COUNT: usize> RepetitionHelper<MIN_COUNT> {
-    pub fn run<F: Fn(&mut ParserContext) -> ParserResult>(
-        input: &mut ParserContext,
+    pub fn run<F: Fn(&mut ParserContext<'_>) -> ParserResult>(
+        input: &mut ParserContext<'_>,
         parser: F,
     ) -> ParserResult {
         if MIN_COUNT > 1 {
@@ -28,9 +28,7 @@ impl<const MIN_COUNT: usize> RepetitionHelper<MIN_COUNT> {
 
             // Couldn't get a full match but we allow 0 items - return an empty match
             // so the parse is considered valid but note the expected tokens
-            ParserResult::NoMatch(NoMatch {
-                expected_tokens, ..
-            }) if MIN_COUNT == 0 => {
+            ParserResult::NoMatch(NoMatch { expected_tokens }) if MIN_COUNT == 0 => {
                 return ParserResult::r#match(vec![], expected_tokens);
             }
             // Don't try repeating if we don't have a full match and we require at least one
@@ -86,7 +84,9 @@ impl<const MIN_COUNT: usize> RepetitionHelper<MIN_COUNT> {
                     return ParserResult::SkippedUntil(skipped);
                 }
 
-                (ParserResult::PrattOperatorMatch(..), ParserResult::SkippedUntil(_)) => todo!(),
+                (ParserResult::PrattOperatorMatch(..), ParserResult::SkippedUntil(_)) => {
+                    unreachable!("We don't do recovery when reducing the Pratt matches")
+                }
 
                 (
                     ParserResult::IncompleteMatch(..)

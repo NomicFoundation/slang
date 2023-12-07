@@ -4,7 +4,7 @@ use super::{
     super::{cst, kinds::RuleKind},
     parser_result::{
         ParserResult,
-        PrattElement::{self, *},
+        PrattElement::{self, Binary, Expression, Postfix, Prefix},
     },
 };
 
@@ -58,6 +58,8 @@ impl PrecedenceHelper {
             _ => result,
         }
     }
+
+    #[allow(clippy::too_many_lines)] // Explicit on purpose, see below.
     pub fn reduce_precedence_result(
         child_kind: Option<RuleKind>,
         result: ParserResult,
@@ -69,6 +71,7 @@ impl PrecedenceHelper {
 
         // If the input is valid this should be correct by construction.
 
+        #[allow(clippy::redundant_else)]
         match result {
             ParserResult::PrattOperatorMatch(pratt_operator_match) => {
                 let mut pratt_elements = pratt_operator_match.elements;

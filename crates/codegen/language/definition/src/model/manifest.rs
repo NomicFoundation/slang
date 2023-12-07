@@ -43,7 +43,7 @@ impl Language {
         self.sections
             .iter()
             .flat_map(|section| &*section.topics)
-            .flat_map(|topic| topic.items.iter().map(AsRef::as_ref))
+            .flat_map(|topic| topic.items.iter().map(Rc::as_ref))
     }
 
     /// Returns a flattened iterator over items along with section and topic they belong to.

@@ -17,9 +17,9 @@ pub struct SeparatedHelper;
 
 impl SeparatedHelper {
     pub fn run<L: Lexer, LexCtx: IsLexicalContext>(
-        input: &mut ParserContext,
+        input: &mut ParserContext<'_>,
         lexer: &L,
-        body_parser: impl Fn(&mut ParserContext) -> ParserResult,
+        body_parser: impl Fn(&mut ParserContext<'_>) -> ParserResult,
         separator: TokenKind,
     ) -> ParserResult {
         let mut accum = vec![];
@@ -88,11 +88,11 @@ impl SeparatedHelper {
                     }
                 }
                 ParserResult::NoMatch(no_match) => {
-                    if accum.is_empty() {
-                        return ParserResult::no_match(no_match.expected_tokens);
+                    return if accum.is_empty() {
+                        ParserResult::no_match(no_match.expected_tokens)
                     } else {
-                        return ParserResult::incomplete_match(accum, no_match.expected_tokens);
-                    }
+                        ParserResult::incomplete_match(accum, no_match.expected_tokens)
+                    };
                 }
 
                 ParserResult::SkippedUntil(skipped) => {

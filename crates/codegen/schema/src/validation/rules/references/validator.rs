@@ -124,6 +124,7 @@ impl Visitor for Validator<'_> {
     }
 }
 
+#[derive(Clone, Copy)]
 enum ReferenceKind {
     ParserToAnything,
     ParserToScanner,
@@ -151,12 +152,9 @@ impl Validator<'_> {
             return;
         }
 
-        let reference = match self.language.productions.get(reference_name) {
-            Some(reference) => reference,
-            None => {
-                reporter.report(location, Errors::NotDefined(reference_name.to_owned()));
-                return;
-            }
+        let Some(reference) = self.language.productions.get(reference_name) else {
+            reporter.report(location, Errors::NotDefined(reference_name.to_owned()));
+            return;
         };
 
         if !self.metadata.is_defined_over(reference_name, version_set) {

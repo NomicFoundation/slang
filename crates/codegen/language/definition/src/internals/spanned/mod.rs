@@ -44,7 +44,7 @@ impl<T: Eq> Eq for Spanned<T> {}
 
 impl<T: std::hash::Hash> std::hash::Hash for Spanned<T> {
     fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
-        self.value.hash(state)
+        self.value.hash(state);
     }
 }
 
@@ -67,14 +67,14 @@ impl<T: PartialOrd> PartialOrd for Spanned<T> {
 }
 
 impl<T: ParseInputTokens> ParseInputTokens for Spanned<T> {
-    fn parse_value(input: ParseStream, errors: &mut ErrorsCollection) -> Result<Self> {
+    fn parse_value(input: ParseStream<'_>, errors: &mut ErrorsCollection) -> Result<Self> {
         let span = input.span();
         let value = T::parse_value(input, errors)?;
 
         Ok(Self::new(span, value))
     }
 
-    fn parse_named_value(input: ParseStream, errors: &mut ErrorsCollection) -> Result<Self> {
+    fn parse_named_value(input: ParseStream<'_>, errors: &mut ErrorsCollection) -> Result<Self> {
         let span = input.span();
         let value = ParseInputTokens::parse_named_value(input, errors)?;
 

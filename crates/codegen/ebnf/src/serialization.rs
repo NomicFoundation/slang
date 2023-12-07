@@ -87,17 +87,15 @@ impl EbnfSerializer {
     }
 
     /// Naive version of formatting for long EBNF statements.
-    /// Tries to break long lines, which are usually choices of references (PrecedenceParser) or keywords (Scanner).
+    /// Tries to break long lines, which are usually choices of references
+    /// ([`PrecedenceParser`](ProductionDefinition::PrecedenceParser)) or keywords ([`Scanner`](ProductionDefinition::Scanner)).
     /// Otherwise, prints everything on a single line.
     fn serialize_root_node(&mut self, name: &str, root_node: &EbnfNode) -> String {
-        let choices = match &root_node {
-            EbnfNode::Choice { nodes } => nodes,
-            _ => {
-                // Not a choice: Just flush everything on a single line:
-                let mut buffer = String::new();
-                self.serialize_node(root_node, &mut buffer);
-                return buffer;
-            }
+        let EbnfNode::Choice { nodes: choices } = &root_node else {
+            // Not a choice: Just flush everything on a single line:
+            let mut buffer = String::new();
+            self.serialize_node(root_node, &mut buffer);
+            return buffer;
         };
 
         let choices = choices
@@ -202,13 +200,10 @@ impl EbnfSerializer {
     fn display_name(&self, name: &str) -> String {
         let mut name = name.to_owned();
 
-        let production = match self.language.productions.get(&name) {
-            Some(production) => production,
-            None => {
-                // Not a top-level production, so it is an named parser.
-                // Therefore, it is neither inlined nor a scanner. Return name as-is:
-                return name;
-            }
+        let Some(production) = self.language.productions.get(&name) else {
+            // Not a top-level production, so it is an named parser.
+            // Therefore, it is neither inlined nor a scanner. Return name as-is:
+            return name;
         };
 
         if matches!(production.definition, ProductionDefinition::Scanner { .. }) {

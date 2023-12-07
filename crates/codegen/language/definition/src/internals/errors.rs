@@ -3,7 +3,7 @@ use std::fmt::Display;
 
 pub type Result<T> = std::result::Result<T, Error>;
 
-/// Our own proxy for [syn::Error] since the latter does not expose the underlying sub-errors.
+/// Our own proxy for [`syn::Error`] since the latter does not expose the underlying sub-errors.
 #[derive(Debug)]
 pub struct Error {
     message: String,
@@ -18,7 +18,7 @@ impl Error {
         })
     }
 
-    pub fn from_syn(error: syn::Error) -> Self {
+    pub fn from_syn(error: &syn::Error) -> Self {
         Self {
             message: error.to_string(),
             span: error.span(),
@@ -31,6 +31,18 @@ impl Error {
 
     pub fn to_compile_error(&self) -> TokenStream {
         syn::Error::new(self.span, &self.message).to_compile_error()
+    }
+}
+
+impl From<syn::Error> for Error {
+    fn from(error: syn::Error) -> Self {
+        Self::from_syn(&error)
+    }
+}
+
+impl From<Error> for syn::Error {
+    fn from(error: Error) -> Self {
+        Error::to_syn(&error)
     }
 }
 
@@ -60,11 +72,7 @@ impl ErrorsCollection {
     }
 
     pub fn to_compile_errors(&self) -> TokenStream {
-        return self
-            .errors
-            .iter()
-            .map(|error| error.to_compile_error())
-            .collect();
+        self.errors.iter().map(Error::to_compile_error).collect()
     }
 }
 

@@ -12,6 +12,7 @@ use crate::toolchains::napi::{
     resolver::{NapiPackageKind, NapiResolver},
 };
 
+#[derive(Clone, Copy)]
 pub enum NapiProfile {
     /// Build only the main package for local development.
     Debug,

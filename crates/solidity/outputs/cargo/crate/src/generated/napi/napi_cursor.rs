@@ -1,5 +1,10 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
+// NAPI-exposed functions have to accept owned values
+#![allow(clippy::needless_pass_by_value)]
+// The functions are meant to be definitions for export, so they're not really used
+#![allow(clippy::return_self_not_must_use)]
+
 use {
     napi::{bindgen_prelude::Env, JsObject},
     napi_derive::napi,
@@ -26,12 +31,12 @@ impl Cursor {
 
     #[napi]
     pub fn reset(&mut self) {
-        self.0.reset()
+        self.0.reset();
     }
 
     #[napi]
     pub fn complete(&mut self) {
-        self.0.complete()
+        self.0.complete();
     }
 
     #[napi]
@@ -65,6 +70,7 @@ impl Cursor {
         (&self.0.text_range()).into()
     }
 
+    #[allow(clippy::cast_possible_truncation)] // Cursor depth can't reasonably be larger than u32
     #[napi(getter)]
     pub fn depth(&self) -> u32 {
         self.0.depth() as u32

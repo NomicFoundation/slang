@@ -26,6 +26,7 @@ pub struct Command {
 }
 
 impl Command {
+    #[must_use]
     pub fn new(name: impl Into<String>) -> Self {
         Self {
             name: name.into(),
@@ -35,18 +36,21 @@ impl Command {
         }
     }
 
+    #[must_use]
     pub fn flag(mut self, flag: impl Into<String>) -> Self {
         self.args.push(flag.into());
 
         self
     }
 
+    #[must_use]
     pub fn arg(mut self, arg: impl Into<String>) -> Self {
         self.args.push(arg.into());
 
         self
     }
 
+    #[must_use]
     pub fn args(mut self, args: impl IntoIterator<Item = impl Into<String>>) -> Self {
         for arg in args {
             self.args.push(arg.into());
@@ -55,6 +59,7 @@ impl Command {
         self
     }
 
+    #[must_use]
     pub fn property(mut self, key: impl Into<String>, value: impl Into<String>) -> Self {
         self.args.push(key.into());
         self.args.push(value.into());
@@ -62,12 +67,14 @@ impl Command {
         self
     }
 
+    #[must_use]
     pub fn env(mut self, key: impl Into<String>, value: impl Into<String>) -> Self {
         self.environment.insert(key.into(), value.into());
 
         self
     }
 
+    #[must_use]
     pub fn current_dir(mut self, current_dir: impl Into<PathBuf>) -> Self {
         let current_dir = current_dir.into();
         if current_dir != Path::repo_root() {
@@ -134,6 +141,7 @@ fn run_with_defaults(command: &Command) -> Result<()> {
     check_status(command, status).map_err(|error| {
         // Print error and exit process, to skip printing irrelevant backtraces from the parent process:
         eprintln!("{error}");
+        #[allow(clippy::exit)]
         std::process::exit(1);
     })
 }
@@ -199,7 +207,7 @@ fn check_status(command: &Command, status: ExitStatus) -> Result<()> {
 }
 
 impl Display for Command {
-    fn fmt(&self, formatter: &mut Formatter) -> std::fmt::Result {
+    fn fmt(&self, formatter: &mut Formatter<'_>) -> std::fmt::Result {
         let mut parts = vec![];
 
         for (key, value) in &self.environment {

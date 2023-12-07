@@ -35,6 +35,7 @@ impl SequenceHelper {
         )
     }
 
+    #[allow(clippy::too_many_lines)] // Big switch that purely defines the sequence logic
     /// Attempts to append the next result until we hit an incomplete/no match.
     fn attempt_append(&mut self, next_result: ParserResult) {
         match self.result {
@@ -95,7 +96,7 @@ impl SequenceHelper {
                     self.result = State::Running(ParserResult::incomplete_match(
                         std::mem::take(&mut cur.elements)
                             .into_iter()
-                            .flat_map(|pratt| pratt.into_nodes())
+                            .flat_map(PrattElement::into_nodes)
                             .chain(next.nodes)
                             .collect(),
                         next.expected_tokens,
@@ -105,7 +106,7 @@ impl SequenceHelper {
                     self.result = State::Running(ParserResult::incomplete_match(
                         std::mem::take(&mut cur.elements)
                             .into_iter()
-                            .flat_map(|pratt| pratt.into_nodes())
+                            .flat_map(PrattElement::into_nodes)
                             .collect(),
                         next.expected_tokens,
                     ));

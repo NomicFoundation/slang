@@ -50,7 +50,7 @@ impl InfraErrors {
 }
 
 impl std::fmt::Display for InfraErrors {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         for error in &self.contents {
             writeln!(f, "{error}")?;
         }
@@ -69,7 +69,7 @@ struct ErrorDescriptor {
 }
 
 impl std::fmt::Display for ErrorDescriptor {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         if var("VSCODE_PROBLEM_MATCHER").is_ok() {
             self.write_problem_matcher(f)?;
             writeln!(f)?;
@@ -82,7 +82,7 @@ impl std::fmt::Display for ErrorDescriptor {
 }
 
 impl ErrorDescriptor {
-    fn write_ariadne_report(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+    fn write_ariadne_report(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let source_id = self.file_path.unwrap_str();
         let source = {
             let source = self.file_path.read_to_string().unwrap();
@@ -114,7 +114,7 @@ impl ErrorDescriptor {
         Ok(())
     }
 
-    fn write_problem_matcher(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+    fn write_problem_matcher(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let severity = "error";
 
         writeln!(

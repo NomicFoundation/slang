@@ -84,7 +84,7 @@ impl Visitable for GrammarElement {
             Self::TriviaParserDefinition(trivia_parser) => trivia_parser.accept_visitor(visitor),
             Self::ParserDefinition(parser) => parser.accept_visitor(visitor),
             Self::PrecedenceParserDefinition(precedence_parser) => {
-                precedence_parser.accept_visitor(visitor)
+                precedence_parser.accept_visitor(visitor);
             }
         }
     }

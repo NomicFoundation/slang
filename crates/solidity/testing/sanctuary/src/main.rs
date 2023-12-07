@@ -1,7 +1,7 @@
 mod datasets;
 mod reporting;
 
-use std::{collections::BTreeSet, path::Path};
+use std::{collections::BTreeSet, ops::ControlFlow, path::Path, process::ExitCode};
 
 use anyhow::Result;
 use infra_utils::paths::PathExtensions;
@@ -16,22 +16,23 @@ use crate::{
     reporting::Reporter,
 };
 
-fn main() {
+fn main() -> Result<ExitCode> {
     let versions = SolidityDefinition::create().collect_breaking_versions();
 
-    // Fail the parent process if a child thread panics:
-    std::panic::catch_unwind(|| -> Result<()> {
-        for dataset in get_all_datasets()? {
-            process_dataset(&dataset, &versions)?;
+    for dataset in get_all_datasets()? {
+        match process_dataset(&dataset, &versions)? {
+            ControlFlow::Continue(..) => {}
+            ControlFlow::Break(exit_code) => return Ok(exit_code),
         }
+    }
 
-        Ok(())
-    })
-    .unwrap()
-    .unwrap();
+    Ok(ExitCode::SUCCESS)
 }
 
-fn process_dataset(dataset: &impl Dataset, versions: &BTreeSet<Version>) -> Result<()> {
+fn process_dataset(
+    dataset: &impl Dataset,
+    versions: &BTreeSet<Version>,
+) -> Result<ControlFlow<ExitCode>> {
     println!();
     println!();
     println!("  🧪 Dataset: {title}", title = dataset.get_title());
@@ -51,6 +52,8 @@ fn process_dataset(dataset: &impl Dataset, versions: &BTreeSet<Version>) -> Resu
 
     source_files
         .par_iter()
+        // Halt as soon as possible if a child panics.
+        .panic_fuse()
         .map(|file_path| {
             process_source_file(file_path, versions, &reporter)?;
             reporter.report_file_completed();
@@ -60,10 +63,11 @@ fn process_dataset(dataset: &impl Dataset, versions: &BTreeSet<Version>) -> Resu
 
     let total_errors = reporter.finish();
     if total_errors > 0 {
-        std::process::exit(1);
+        println!("There were errors processing the dataset.");
+        Ok(ControlFlow::Break(ExitCode::FAILURE))
+    } else {
+        Ok(ControlFlow::Continue(()))
     }
-
-    Ok(())
 }
 
 fn process_source_file(
@@ -75,9 +79,7 @@ fn process_source_file(
     let source = &file_path.read_to_string()?;
 
     let latest_version = versions.iter().max().unwrap();
-    let pragmas = if let Ok(pragmas) = extract_version_pragmas(source, latest_version) {
-        pragmas
-    } else {
+    let Ok(pragmas) = extract_version_pragmas(source, latest_version) else {
         // Skip this file if we failed to filter compatible versions.
         return Ok(());
     };

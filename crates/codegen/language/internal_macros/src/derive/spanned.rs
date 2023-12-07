@@ -14,7 +14,7 @@ pub fn spanned(item: InputItem, spanned_derive_args: TokenStream) -> TokenStream
 
     match item {
         InputItem::Struct { name, fields } => {
-            let name = format_ident!("{}", add_spanned_prefix(name.to_string()));
+            let name = format_ident!("{}", add_spanned_prefix(name));
             let fields = fields.into_iter().map(derive_field);
 
             quote! {
@@ -25,7 +25,7 @@ pub fn spanned(item: InputItem, spanned_derive_args: TokenStream) -> TokenStream
             }
         }
         InputItem::Enum { name, variants } => {
-            let name = format_ident!("{}", add_spanned_prefix(name.to_string()));
+            let name = format_ident!("{}", add_spanned_prefix(name));
             let variants = variants.into_iter().map(derive_variant);
 
             quote! {

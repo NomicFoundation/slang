@@ -1,13 +1,10 @@
-use std::{
-    collections::HashMap,
-    path::{Path, PathBuf},
-};
+use std::path::{Path, PathBuf};
 
 use anyhow::{bail, Context, Result};
 use cargo_emit::rerun_if_changed;
 use inflector::Inflector;
 use serde::Serialize;
-use tera::Tera;
+use tera::{Tera, Value};
 
 use crate::{cargo::CargoWorkspace, codegen::write_only::CodegenWriteOnly, paths::PathExtensions};
 
@@ -31,15 +28,12 @@ impl CodegenReadWrite {
             let templates_glob = input_dir.join("**/*.jinja2");
             let mut tera = Tera::new(templates_glob.unwrap_str())?;
 
-            fn snake_case(
-                value: &tera::Value,
-                _params: &HashMap<String, tera::Value>,
-            ) -> Result<tera::Value, tera::Error> {
-                let value = value.as_str().unwrap();
-                let result = value.to_snake_case();
-                Ok(tera::Value::String(result))
-            }
-            tera.register_filter("snake_case", snake_case);
+            tera.register_filter("snake_case", |value: &Value, _params: &_| {
+                value
+                    .as_str()
+                    .ok_or_else(|| tera::Error::msg("Expected a string"))
+                    .map(|s| Value::String(s.to_snake_case()))
+            });
 
             tera.autoescape_on(vec![]); // disable autoescaping
 
@@ -47,9 +41,9 @@ impl CodegenReadWrite {
         };
 
         Ok(Self {
-            input_dir,
             writer,
             tera,
+            input_dir,
         })
     }
 

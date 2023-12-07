@@ -14,6 +14,8 @@ pub struct TextIndex {
 
 impl From<&RustTextIndex> for TextIndex {
     fn from(value: &RustTextIndex) -> Self {
+        // We only support 32-byte indices on TS side.
+        #[allow(clippy::cast_possible_truncation)]
         Self {
             utf8: value.utf8 as u32,
             utf16: value.utf16 as u32,

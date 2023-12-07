@@ -9,6 +9,7 @@ use crate::commands::{
 pub struct CiController;
 
 impl CiController {
+    #[allow(clippy::unused_self)] // For symmetry with other commands
     pub fn execute(&self) -> Result<()> {
         // Run all CI steps in order: _SLANG_INFRA_CI_STEPS_ORDERED_ (keep in sync)
 
