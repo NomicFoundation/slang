@@ -25,11 +25,6 @@ impl LintController {
 
 #[derive(Clone, Debug, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
 enum LintCommand {
-    /// Lints all Rust source files.
-    // Automatically applied lints may need to be formatted again, so we run this before formatting.
-    Clippy,
-    /// Format all Rust source files.
-    CargoFmt,
     /// Check for spelling issues in Markdown files.
     Cspell,
     /// Format all non-Rust source files.
@@ -38,6 +33,8 @@ enum LintCommand {
     MarkdownLinkCheck,
     /// Check for violations in Markdown files.
     MarkdownLint,
+    /// Format all Rust source files.
+    Rustfmt,
     /// Check for violations in Bash files.
     Shellcheck,
     /// Check for type errors in TypeScript files.
@@ -51,33 +48,16 @@ impl OrderedCommand for LintCommand {
         Terminal::step(format!("lint {name}", name = self.clap_name()));
 
         match self {
-            LintCommand::Clippy => run_clippy(),
-            LintCommand::CargoFmt => run_cargo_fmt(),
             LintCommand::Cspell => run_cspell(),
             LintCommand::Prettier => run_prettier(),
             LintCommand::MarkdownLinkCheck => run_markdown_link_check(),
             LintCommand::MarkdownLint => run_markdown_lint(),
+            LintCommand::Rustfmt => run_rustfmt(),
             LintCommand::Shellcheck => run_shellcheck(),
             LintCommand::Tsc => run_tsc(),
             LintCommand::Yamllint => run_yamllint(),
         }
     }
-}
-
-fn run_clippy() -> Result<()> {
-    CargoWorkspace::get_command("clippy")?
-        .flag("--all-targets")
-        .run()
-}
-
-fn run_cargo_fmt() -> Result<()> {
-    let mut command = Command::new("cargo-fmt").flag("--all").flag("--verbose");
-
-    if GitHub::is_running_in_ci() {
-        command = command.flag("--check");
-    }
-
-    command.run()
 }
 
 fn run_cspell() -> Result<()> {
@@ -124,6 +104,19 @@ fn run_markdown_lint() -> Result<()> {
     }
 
     command.run_xargs(markdown_files)
+}
+
+fn run_rustfmt() -> Result<()> {
+    let mut command = Command::new("cargo-fmt")
+        .arg(format!("+{}", env!("RUST_NIGHTLY_VERSION")))
+        .flag("--all")
+        .flag("--verbose");
+
+    if GitHub::is_running_in_ci() {
+        command = command.flag("--check");
+    }
+
+    command.run()
 }
 
 fn run_shellcheck() -> Result<()> {

@@ -9,7 +9,8 @@ env = {
 
   // Rust:
   "RUST_BACKTRACE": "FULL",
-  "RUST_VERSION": "1.72.0", // Keep this version in sync with "rust-version" in "$REPO_ROOT/Cargo.toml" and "rust-src" in "$REPO_ROOT/bin"
+  "RUST_STABLE_VERSION": "1.72.0", // Keep in sync with other "RUST_STABLE_VERSION" references
+  "RUST_NIGHTLY_VERSION": "nightly-2023-12-01", // Keep in sync with other "RUST_NIGHTLY_VERSION" references
   "RUSTC_WRAPPER": "${HERMIT_ENV}/bin/sccache",
   "SCCACHE_DIR": "${HERMIT_ENV}/.hermit/sccache",
 

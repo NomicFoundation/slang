@@ -48,7 +48,8 @@ impl OrderedCommand for CheckCommand {
 }
 
 fn check_cargo() -> Result<()> {
-    CargoWorkspace::get_command("check")?
+    // 'cargo clippy' will run both 'cargo check', and 'clippy' lints:
+    CargoWorkspace::get_command("clippy")?
         .flag("--all-targets")
         .run()
 }

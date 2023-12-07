@@ -8,13 +8,12 @@ use crate::{
 
 #[derive(Clone, Debug, Parser)]
 pub struct WatchController {
-    #[clap(trailing_var_arg = true)]
-    commands: Vec<WatchCommand>,
+    command: WatchCommand,
 }
 
 impl WatchController {
     pub fn execute(&self) -> Result<()> {
-        WatchCommand::execute_in_order(&self.commands)
+        self.command.execute()
     }
 }
 

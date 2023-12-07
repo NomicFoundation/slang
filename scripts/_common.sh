@@ -26,24 +26,23 @@ set -euo pipefail
 }
 
 #
-# Use the repository's Rust version:
+# This installs the minimal profile of the '$RUST_STABLE_VERSION' toolchain.
+# Any additional toolchains, or optional components, should be installed
+# during 'infra setup cargo' step instead of here, as this is the hot path
+# for every other command.
+#
+# See the comments here for more information:
+# $REPO_ROOT/crates/infra/cli/src/commands/setup/cargo/mod.rs
 #
 
-{
-  # Components included in the minimal profile:
-  # - 'cargo'
-  # - 'rust-std'
-  # - 'rustc'
-  #
-  # Components only included in the default profile:
-  # - 'clippy'
-  # - 'rust-docs'
-  # - 'rustfmt'
-  #
-  # No need to install 'rust-docs' (large offline copy). Add the rest manually:
-  rustup install --no-self-update --profile "minimal" "${RUST_VERSION:?}"
-  rustup component add "clippy" "rustfmt"
+if ! output=$(
+  rustup install --no-self-update --profile "minimal" "${RUST_STABLE_VERSION:?}" \
+    && rustup default "${RUST_STABLE_VERSION:?}" \
+      2>&1
+); then
+  # Only print the output if the command failed:
+  echo "Running 'rustup' failed:"
+  echo >&2 "${output}"
 
-  # Make sure we chose the right version, if multiple toolchains are installed:
-  rustup default "${RUST_VERSION:?}"
-}
+  exit 1
+fi
