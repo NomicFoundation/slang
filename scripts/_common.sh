@@ -41,7 +41,6 @@ if ! output=$(
       2>&1
 ); then
   # Only print the output if the command failed:
-
   echo "Running 'rustup' failed:"
   echo >&2 "${output}"
 

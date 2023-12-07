@@ -12,9 +12,7 @@ pub fn setup_cargo() -> Result<()> {
     //
     // Which are enough to run infra scripts.
     // But we need these additional optional components for local development:
-
     rustup_add_components(env!("RUST_STABLE_VERSION"), ["clippy"])?;
-
     if !GitHub::is_running_in_ci() {
         rustup_add_components(
             env!("RUST_STABLE_VERSION"),
@@ -24,13 +22,10 @@ pub fn setup_cargo() -> Result<()> {
 
     // Additionally, we also need 'rustfmt nightly', as we use experimental options.
     // So let's install the '$RUST_NIGHTLY_VERSION' toolchain along with the 'rustfmt' component.
-
     rustup_install_toolchain(env!("RUST_NIGHTLY_VERSION"))?;
-
     rustup_add_components(env!("RUST_NIGHTLY_VERSION"), ["rustfmt"])?;
 
     // Make sure we have the latest dependencies:
-
     run_cargo_fetch()?;
 
     Ok(())
