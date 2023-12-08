@@ -13,7 +13,9 @@ Tree:
                   - Expression (Rule): # 0..1 "x"
                       - Identifier (Token): "x" # 0..1
                   - Period (Token): "." # 1..2
-                  - Identifier (Token): "y" # 2..3
-          - PositionalArgumentsDeclaration (Rule): # 3..5 "()"
-              - OpenParen (Token): "(" # 3..4
-              - CloseParen (Token): ")" # 4..5
+                  - MemberAccess (Rule): # 2..3 "y"
+                      - Identifier (Token): "y" # 2..3
+          - ArgumentsDeclaration (Rule): # 3..5 "()"
+              - PositionalArgumentsDeclaration (Rule): # 3..5 "()"
+                  - OpenParen (Token): "(" # 3..4
+                  - CloseParen (Token): ")" # 4..5

@@ -7,4 +7,5 @@ Errors: []
 
 Tree:
   - TypeName (Rule): # 0..5 "bytes"
-      - BytesKeyword (Token): "bytes" # 0..5
+      - ElementaryType (Rule): # 0..5 "bytes"
+          - BytesKeyword (Token): "bytes" # 0..5

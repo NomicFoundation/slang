@@ -20,12 +20,14 @@ Tree:
       - OpenParen (Token): "(" # 0..1
       - TupleDeconstructionElements (Rule): # 1..5 "a, b"
           - TupleDeconstructionElement (Rule): # 1..2 "a"
-              - UntypedTupleMember (Rule): # 1..2 "a"
-                  - Identifier (Token): "a" # 1..2
+              - TupleMember (Rule): # 1..2 "a"
+                  - UntypedTupleMember (Rule): # 1..2 "a"
+                      - Identifier (Token): "a" # 1..2
           - Comma (Token): "," # 2..3
           - TupleDeconstructionElement (Rule): # 3..5 " b"
-              - UntypedTupleMember (Rule): # 3..5 " b"
-                  - Identifier (Token): "b" # 4..5
+              - TupleMember (Rule): # 3..5 " b"
+                  - UntypedTupleMember (Rule): # 3..5 " b"
+                      - Identifier (Token): "b" # 4..5
       - CloseParen (Token): ")" # 5..6
       - Equal (Token): "=" # 7..8
       - Expression (Rule): # 8..26 " (123, 135)\n/**/\n{"
@@ -42,10 +44,11 @@ Tree:
                           - DecimalNumberExpression (Rule): # 14..18 " 135"
                               - DecimalLiteral (Token): "135" # 15..18
               - CloseParen (Token): ")" # 18..19
-          - NamedArgumentGroups (Rule): # 20..26 "/**/\n{"
-              - NamedArgumentGroup (Rule): # 20..26 "/**/\n{"
-                  - LeadingTrivia (Rule): # 20..25 "/**/\n"
-                      - MultilineComment (Trivia): "/**/" # 20..24
-                  - OpenBrace (Token): "{" # 25..26
+          - FunctionCallOptions (Rule): # 20..26 "/**/\n{"
+              - NamedArgumentGroups (Rule): # 20..26 "/**/\n{"
+                  - NamedArgumentGroup (Rule): # 20..26 "/**/\n{"
+                      - LeadingTrivia (Rule): # 20..25 "/**/\n"
+                          - MultilineComment (Trivia): "/**/" # 20..24
+                      - OpenBrace (Token): "{" # 25..26
       - SKIPPED (Token): "throw" # 27..32
       - Semicolon (Token): ";" # 32..33

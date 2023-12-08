@@ -7,4 +7,5 @@ Errors: []
 
 Tree:
   - TypeName (Rule): # 0..6 "uint32"
-      - UintKeyword (Token): "uint32" # 0..6
+      - ElementaryType (Rule): # 0..6 "uint32"
+          - UintKeyword (Token): "uint32" # 0..6

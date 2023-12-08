@@ -7,5 +7,6 @@ Errors: []
 
 Tree:
   - Expression (Rule): # 0..25 'unicode"This Emoji: 😃"'
-      - UnicodeStringLiterals (Rule): # 0..25 'unicode"This Emoji: 😃"'
-          - UnicodeStringLiteral (Token): 'unicode"This Emoji: 😃"' # 0..25
+      - StringExpression (Rule): # 0..25 'unicode"This Emoji: 😃"'
+          - UnicodeStringLiterals (Rule): # 0..25 'unicode"This Emoji: 😃"'
+              - UnicodeStringLiteral (Token): 'unicode"This Emoji: 😃"' # 0..25

@@ -13,11 +13,14 @@ Tree:
       - Identifier (Token): "Sample" # 9..15
       - OpenBrace (Token): "{" # 16..17
       - ContractMembers (Rule): # 18..35 "  using x for *;\n"
-          - UsingDirective (Rule): # 18..35 "  using x for *;\n"
-              - UsingKeyword (Token): "using" # 20..25
-              - IdentifierPath (Rule): # 25..27 " x"
-                  - Identifier (Token): "x" # 26..27
-              - ForKeyword (Token): "for" # 28..31
-              - Asterisk (Token): "*" # 32..33
-              - Semicolon (Token): ";" # 33..34
+          - ContractMember (Rule): # 18..35 "  using x for *;\n"
+              - UsingDirective (Rule): # 18..35 "  using x for *;\n"
+                  - UsingKeyword (Token): "using" # 20..25
+                  - UsingClause (Rule): # 25..27 " x"
+                      - IdentifierPath (Rule): # 25..27 " x"
+                          - Identifier (Token): "x" # 26..27
+                  - ForKeyword (Token): "for" # 28..31
+                  - UsingTarget (Rule): # 31..33 " *"
+                      - Asterisk (Token): "*" # 32..33
+                  - Semicolon (Token): ";" # 33..34
       - CloseBrace (Token): "}" # 35..36

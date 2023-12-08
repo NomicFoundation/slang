@@ -21,15 +21,18 @@ Tree:
       - Identifier (Token): "Sample" # 9..15
       - OpenBrace (Token): "{" # 16..17
       - ContractMembers (Rule): # 18..48 "  function() external payable "
-          - StateVariableDefinition (Rule): # 18..48 "  function() external payable "
-              - TypeName (Rule): # 18..47 "  function() external payable"
-                  - FunctionType (Rule): # 18..47 "  function() external payable"
-                      - FunctionKeyword (Token): "function" # 20..28
-                      - ParametersDeclaration (Rule): # 28..30 "()"
-                          - OpenParen (Token): "(" # 28..29
-                          - CloseParen (Token): ")" # 29..30
-                      - FunctionTypeAttributes (Rule): # 30..47 " external payable"
-                          - ExternalKeyword (Token): "external" # 31..39
-                          - PayableKeyword (Token): "payable" # 40..47
+          - ContractMember (Rule): # 18..48 "  function() external payable "
+              - StateVariableDefinition (Rule): # 18..48 "  function() external payable "
+                  - TypeName (Rule): # 18..47 "  function() external payable"
+                      - FunctionType (Rule): # 18..47 "  function() external payable"
+                          - FunctionKeyword (Token): "function" # 20..28
+                          - ParametersDeclaration (Rule): # 28..30 "()"
+                              - OpenParen (Token): "(" # 28..29
+                              - CloseParen (Token): ")" # 29..30
+                          - FunctionTypeAttributes (Rule): # 30..47 " external payable"
+                              - FunctionTypeAttribute (Rule): # 30..39 " external"
+                                  - ExternalKeyword (Token): "external" # 31..39
+                              - FunctionTypeAttribute (Rule): # 39..47 " payable"
+                                  - PayableKeyword (Token): "payable" # 40..47
       - SKIPPED (Token): "{}\n" # 48..51
       - CloseBrace (Token): "}" # 51..52

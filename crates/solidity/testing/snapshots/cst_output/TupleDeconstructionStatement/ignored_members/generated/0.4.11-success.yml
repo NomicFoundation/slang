@@ -12,14 +12,16 @@ Tree:
           - TupleDeconstructionElement (Rule): [] # 1..1
           - Comma (Token): "," # 1..2
           - TupleDeconstructionElement (Rule): # 2..9 " second"
-              - UntypedTupleMember (Rule): # 2..9 " second"
-                  - Identifier (Token): "second" # 3..9
+              - TupleMember (Rule): # 2..9 " second"
+                  - UntypedTupleMember (Rule): # 2..9 " second"
+                      - Identifier (Token): "second" # 3..9
           - Comma (Token): "," # 9..10
           - TupleDeconstructionElement (Rule): [] # 10..10
           - Comma (Token): "," # 11..12
           - TupleDeconstructionElement (Rule): # 12..19 " fourth"
-              - UntypedTupleMember (Rule): # 12..19 " fourth"
-                  - Identifier (Token): "fourth" # 13..19
+              - TupleMember (Rule): # 12..19 " fourth"
+                  - UntypedTupleMember (Rule): # 12..19 " fourth"
+                      - Identifier (Token): "fourth" # 13..19
       - CloseParen (Token): ")" # 19..20
       - Equal (Token): "=" # 21..22
       - Expression (Rule): # 22..26 " rhs"

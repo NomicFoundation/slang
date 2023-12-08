@@ -8,7 +8,8 @@ Errors: []
 Tree:
   - ConstantDefinition (Rule): # 0..21 "int constant foo = 0;"
       - TypeName (Rule): # 0..3 "int"
-          - IntKeyword (Token): "int" # 0..3
+          - ElementaryType (Rule): # 0..3 "int"
+              - IntKeyword (Token): "int" # 0..3
       - ConstantKeyword (Token): "constant" # 4..12
       - Identifier (Token): "foo" # 13..16
       - Equal (Token): "=" # 17..18

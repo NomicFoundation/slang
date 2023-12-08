@@ -16,10 +16,16 @@ test("use cursor", () => {
   expectRule(cursor.node(), RuleKind.SourceUnitMembers);
   expect(cursor.goToNext()).toBe(true);
 
+  expectRule(cursor.node(), RuleKind.SourceUnitMember);
+  expect(cursor.goToNext()).toBe(true);
+
   expectRule(cursor.node(), RuleKind.ConstantDefinition);
   expect(cursor.goToNext()).toBe(true);
 
   expectRule(cursor.node(), RuleKind.TypeName);
+  expect(cursor.goToNext()).toBe(true);
+
+  expectRule(cursor.node(), RuleKind.ElementaryType);
   expect(cursor.goToNext()).toBe(true);
 
   expectToken(cursor.node(), TokenKind.IntKeyword, "int256");

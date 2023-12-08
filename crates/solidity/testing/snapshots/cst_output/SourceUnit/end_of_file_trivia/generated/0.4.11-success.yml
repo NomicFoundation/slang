@@ -13,11 +13,12 @@ Errors: []
 Tree:
   - SourceUnit (Rule): # 0..71 "contract X { }\n    \n// spaces before this\n\n/* new ..."
       - SourceUnitMembers (Rule): # 0..15 "contract X { }\n"
-          - ContractDefinition (Rule): # 0..15 "contract X { }\n"
-              - ContractKeyword (Token): "contract" # 0..8
-              - Identifier (Token): "X" # 9..10
-              - OpenBrace (Token): "{" # 11..12
-              - CloseBrace (Token): "}" # 13..14
+          - SourceUnitMember (Rule): # 0..15 "contract X { }\n"
+              - ContractDefinition (Rule): # 0..15 "contract X { }\n"
+                  - ContractKeyword (Token): "contract" # 0..8
+                  - Identifier (Token): "X" # 9..10
+                  - OpenBrace (Token): "{" # 11..12
+                  - CloseBrace (Token): "}" # 13..14
       - EndOfFileTrivia (Rule): # 15..71 "    \n// spaces before this\n\n/* new lines after thi..."
           - SingleLineComment (Trivia): "// spaces before this" # 20..41
           - MultilineComment (Trivia): "/* new lines after this */" # 43..69

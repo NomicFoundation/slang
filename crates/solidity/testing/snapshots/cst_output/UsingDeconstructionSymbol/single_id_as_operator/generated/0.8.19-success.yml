@@ -11,4 +11,5 @@ Tree:
           - Identifier (Token): "foo" # 0..3
       - UsingAlias (Rule): # 3..8 " as /"
           - AsKeyword (Token): "as" # 4..6
-          - Slash (Token): "/" # 7..8
+          - UsingOperator (Rule): # 6..8 " /"
+              - Slash (Token): "/" # 7..8

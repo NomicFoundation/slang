@@ -8,34 +8,38 @@ Errors: []
 Tree:
   - UsingDirective (Rule): # 0..52 "using {add as +, sub, mul, div as /} for Int globa..."
       - UsingKeyword (Token): "using" # 0..5
-      - UsingDeconstruction (Rule): # 5..36 " {add as +, sub, mul, div as /}"
-          - OpenBrace (Token): "{" # 6..7
-          - UsingDeconstructionSymbols (Rule): # 7..35 "add as +, sub, mul, div as /"
-              - UsingDeconstructionSymbol (Rule): # 7..15 "add as +"
-                  - IdentifierPath (Rule): # 7..10 "add"
-                      - Identifier (Token): "add" # 7..10
-                  - UsingAlias (Rule): # 10..15 " as +"
-                      - AsKeyword (Token): "as" # 11..13
-                      - Plus (Token): "+" # 14..15
-              - Comma (Token): "," # 15..16
-              - UsingDeconstructionSymbol (Rule): # 16..20 " sub"
-                  - IdentifierPath (Rule): # 16..20 " sub"
-                      - Identifier (Token): "sub" # 17..20
-              - Comma (Token): "," # 20..21
-              - UsingDeconstructionSymbol (Rule): # 21..25 " mul"
-                  - IdentifierPath (Rule): # 21..25 " mul"
-                      - Identifier (Token): "mul" # 22..25
-              - Comma (Token): "," # 25..26
-              - UsingDeconstructionSymbol (Rule): # 26..35 " div as /"
-                  - IdentifierPath (Rule): # 26..30 " div"
-                      - Identifier (Token): "div" # 27..30
-                  - UsingAlias (Rule): # 30..35 " as /"
-                      - AsKeyword (Token): "as" # 31..33
-                      - Slash (Token): "/" # 34..35
-          - CloseBrace (Token): "}" # 35..36
+      - UsingClause (Rule): # 5..36 " {add as +, sub, mul, div as /}"
+          - UsingDeconstruction (Rule): # 5..36 " {add as +, sub, mul, div as /}"
+              - OpenBrace (Token): "{" # 6..7
+              - UsingDeconstructionSymbols (Rule): # 7..35 "add as +, sub, mul, div as /"
+                  - UsingDeconstructionSymbol (Rule): # 7..15 "add as +"
+                      - IdentifierPath (Rule): # 7..10 "add"
+                          - Identifier (Token): "add" # 7..10
+                      - UsingAlias (Rule): # 10..15 " as +"
+                          - AsKeyword (Token): "as" # 11..13
+                          - UsingOperator (Rule): # 13..15 " +"
+                              - Plus (Token): "+" # 14..15
+                  - Comma (Token): "," # 15..16
+                  - UsingDeconstructionSymbol (Rule): # 16..20 " sub"
+                      - IdentifierPath (Rule): # 16..20 " sub"
+                          - Identifier (Token): "sub" # 17..20
+                  - Comma (Token): "," # 20..21
+                  - UsingDeconstructionSymbol (Rule): # 21..25 " mul"
+                      - IdentifierPath (Rule): # 21..25 " mul"
+                          - Identifier (Token): "mul" # 22..25
+                  - Comma (Token): "," # 25..26
+                  - UsingDeconstructionSymbol (Rule): # 26..35 " div as /"
+                      - IdentifierPath (Rule): # 26..30 " div"
+                          - Identifier (Token): "div" # 27..30
+                      - UsingAlias (Rule): # 30..35 " as /"
+                          - AsKeyword (Token): "as" # 31..33
+                          - UsingOperator (Rule): # 33..35 " /"
+                              - Slash (Token): "/" # 34..35
+              - CloseBrace (Token): "}" # 35..36
       - ForKeyword (Token): "for" # 37..40
-      - TypeName (Rule): # 40..44 " Int"
-          - IdentifierPath (Rule): # 40..44 " Int"
-              - Identifier (Token): "Int" # 41..44
+      - UsingTarget (Rule): # 40..44 " Int"
+          - TypeName (Rule): # 40..44 " Int"
+              - IdentifierPath (Rule): # 40..44 " Int"
+                  - Identifier (Token): "Int" # 41..44
       - GlobalKeyword (Token): "global" # 45..51
       - Semicolon (Token): ";" # 51..52

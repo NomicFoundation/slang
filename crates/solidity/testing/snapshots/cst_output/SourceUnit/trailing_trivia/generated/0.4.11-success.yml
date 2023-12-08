@@ -15,16 +15,18 @@ Errors: []
 Tree:
   - SourceUnit (Rule): # 0..148 "contract First {}\n\n\n// Newlines both before and af..."
       - SourceUnitMembers (Rule): # 0..148 "contract First {}\n\n\n// Newlines both before and af..."
-          - ContractDefinition (Rule): # 0..18 "contract First {}\n"
-              - ContractKeyword (Token): "contract" # 0..8
-              - Identifier (Token): "First" # 9..14
-              - OpenBrace (Token): "{" # 15..16
-              - CloseBrace (Token): "}" # 16..17
-          - ContractDefinition (Rule): # 18..148 "\n\n// Newlines both before and after this comment s..."
-              - LeadingTrivia (Rule): # 18..129 "\n\n// Newlines both before and after this comment s..."
-                  - SingleLineComment (Trivia): "// Newlines both before and after this comment sho..." # 20..73
-                  - SingleLineComment (Trivia): "// be included in the trivia of the second contrac..." # 74..126
-              - ContractKeyword (Token): "contract" # 129..137
-              - Identifier (Token): "Second" # 138..144
-              - OpenBrace (Token): "{" # 145..146
-              - CloseBrace (Token): "}" # 146..147
+          - SourceUnitMember (Rule): # 0..18 "contract First {}\n"
+              - ContractDefinition (Rule): # 0..18 "contract First {}\n"
+                  - ContractKeyword (Token): "contract" # 0..8
+                  - Identifier (Token): "First" # 9..14
+                  - OpenBrace (Token): "{" # 15..16
+                  - CloseBrace (Token): "}" # 16..17
+          - SourceUnitMember (Rule): # 18..148 "\n\n// Newlines both before and after this comment s..."
+              - ContractDefinition (Rule): # 18..148 "\n\n// Newlines both before and after this comment s..."
+                  - LeadingTrivia (Rule): # 18..129 "\n\n// Newlines both before and after this comment s..."
+                      - SingleLineComment (Trivia): "// Newlines both before and after this comment sho..." # 20..73
+                      - SingleLineComment (Trivia): "// be included in the trivia of the second contrac..." # 74..126
+                  - ContractKeyword (Token): "contract" # 129..137
+                  - Identifier (Token): "Second" # 138..144
+                  - OpenBrace (Token): "{" # 145..146
+                  - CloseBrace (Token): "}" # 146..147

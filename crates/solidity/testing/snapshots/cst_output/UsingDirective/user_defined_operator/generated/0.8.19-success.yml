@@ -8,19 +8,22 @@ Errors: []
 Tree:
   - UsingDirective (Rule): # 0..32 "using {div as /} for Int global;"
       - UsingKeyword (Token): "using" # 0..5
-      - UsingDeconstruction (Rule): # 5..16 " {div as /}"
-          - OpenBrace (Token): "{" # 6..7
-          - UsingDeconstructionSymbols (Rule): # 7..15 "div as /"
-              - UsingDeconstructionSymbol (Rule): # 7..15 "div as /"
-                  - IdentifierPath (Rule): # 7..10 "div"
-                      - Identifier (Token): "div" # 7..10
-                  - UsingAlias (Rule): # 10..15 " as /"
-                      - AsKeyword (Token): "as" # 11..13
-                      - Slash (Token): "/" # 14..15
-          - CloseBrace (Token): "}" # 15..16
+      - UsingClause (Rule): # 5..16 " {div as /}"
+          - UsingDeconstruction (Rule): # 5..16 " {div as /}"
+              - OpenBrace (Token): "{" # 6..7
+              - UsingDeconstructionSymbols (Rule): # 7..15 "div as /"
+                  - UsingDeconstructionSymbol (Rule): # 7..15 "div as /"
+                      - IdentifierPath (Rule): # 7..10 "div"
+                          - Identifier (Token): "div" # 7..10
+                      - UsingAlias (Rule): # 10..15 " as /"
+                          - AsKeyword (Token): "as" # 11..13
+                          - UsingOperator (Rule): # 13..15 " /"
+                              - Slash (Token): "/" # 14..15
+              - CloseBrace (Token): "}" # 15..16
       - ForKeyword (Token): "for" # 17..20
-      - TypeName (Rule): # 20..24 " Int"
-          - IdentifierPath (Rule): # 20..24 " Int"
-              - Identifier (Token): "Int" # 21..24
+      - UsingTarget (Rule): # 20..24 " Int"
+          - TypeName (Rule): # 20..24 " Int"
+              - IdentifierPath (Rule): # 20..24 " Int"
+                  - Identifier (Token): "Int" # 21..24
       - GlobalKeyword (Token): "global" # 25..31
       - Semicolon (Token): ";" # 31..32

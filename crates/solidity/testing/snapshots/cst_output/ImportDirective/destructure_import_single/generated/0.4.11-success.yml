@@ -8,15 +8,16 @@ Errors: []
 Tree:
   - ImportDirective (Rule): # 0..29 'import { x as y } from "foo";'
       - ImportKeyword (Token): "import" # 0..6
-      - ImportDeconstruction (Rule): # 6..28 ' { x as y } from "foo"'
-          - OpenBrace (Token): "{" # 7..8
-          - ImportDeconstructionSymbols (Rule): # 8..15 " x as y"
-              - ImportDeconstructionSymbol (Rule): # 8..15 " x as y"
-                  - Identifier (Token): "x" # 9..10
-                  - ImportAlias (Rule): # 10..15 " as y"
-                      - AsKeyword (Token): "as" # 11..13
-                      - Identifier (Token): "y" # 14..15
-          - CloseBrace (Token): "}" # 16..17
-          - FromKeyword (Token): "from" # 18..22
-          - AsciiStringLiteral (Token): '"foo"' # 23..28
+      - ImportClause (Rule): # 6..28 ' { x as y } from "foo"'
+          - ImportDeconstruction (Rule): # 6..28 ' { x as y } from "foo"'
+              - OpenBrace (Token): "{" # 7..8
+              - ImportDeconstructionSymbols (Rule): # 8..15 " x as y"
+                  - ImportDeconstructionSymbol (Rule): # 8..15 " x as y"
+                      - Identifier (Token): "x" # 9..10
+                      - ImportAlias (Rule): # 10..15 " as y"
+                          - AsKeyword (Token): "as" # 11..13
+                          - Identifier (Token): "y" # 14..15
+              - CloseBrace (Token): "}" # 16..17
+              - FromKeyword (Token): "from" # 18..22
+              - AsciiStringLiteral (Token): '"foo"' # 23..28
       - Semicolon (Token): ";" # 28..29

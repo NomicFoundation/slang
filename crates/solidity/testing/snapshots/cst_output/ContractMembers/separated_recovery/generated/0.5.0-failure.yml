@@ -98,166 +98,195 @@ Errors: # 10 total
 
 Tree:
   - ContractMembers (Rule): # 0..560 "function all() override(some.ident unexpected toke..."
-      - FunctionDefinition (Rule): # 0..309 "function all() override(some.ident unexpected toke..."
-          - FunctionKeyword (Token): "function" # 0..8
-          - Identifier (Token): "all" # 9..12
-          - ParametersDeclaration (Rule): # 12..14 "()"
-              - OpenParen (Token): "(" # 12..13
-              - CloseParen (Token): ")" # 13..14
-          - FunctionAttributes (Rule): # 14..83 " override(some.ident unexpected tokens, ISomeInter..."
-              - OverrideSpecifier (Rule): # 14..76 " override(some.ident unexpected tokens, ISomeInter..."
-                  - OverrideKeyword (Token): "override" # 15..23
-                  - OverridePathsDeclaration (Rule): # 23..76 "(some.ident unexpected tokens, ISomeInterface, Oth..."
-                      - OpenParen (Token): "(" # 23..24
-                      - OverridePaths (Rule): # 24..34 "some.ident"
-                          - IdentifierPath (Rule): # 24..34 "some.ident"
-                              - Identifier (Token): "some" # 24..28
-                              - Period (Token): "." # 28..29
-                              - Identifier (Token): "ident" # 29..34
-                      - SKIPPED (Token): "unexpected tokens, ISomeInterface, Other" # 35..75
-                      - CloseParen (Token): ")" # 75..76
-              - PublicKeyword (Token): "public" # 77..83
-          - Block (Rule): # 83..309 " {\n  msg.sender.call{do: 1, arg: 1 }();\n  msg.send..."
-              - OpenBrace (Token): "{" # 84..85
-              - Statements (Rule): # 86..306 "  msg.sender.call{do: 1, arg: 1 }();\n  msg.sender...."
-                  - ExpressionStatement (Rule): # 86..123 "  msg.sender.call{do: 1, arg: 1 }();\n"
-                      - Expression (Rule): # 86..103 "  msg.sender.call"
-                          - MemberAccessExpression (Rule): # 86..103 "  msg.sender.call"
-                              - Expression (Rule): # 86..98 "  msg.sender"
-                                  - MemberAccessExpression (Rule): # 86..98 "  msg.sender"
-                                      - Expression (Rule): # 86..91 "  msg"
-                                          - Identifier (Token): "msg" # 88..91
-                                      - Period (Token): "." # 91..92
-                                      - Identifier (Token): "sender" # 92..98
-                              - Period (Token): "." # 98..99
-                              - Identifier (Token): "call" # 99..103
-                      - SKIPPED (Token): "{do: 1, arg: 1 }()" # 103..121
-                      - Semicolon (Token): ";" # 121..122
-                  - ExpressionStatement (Rule): # 123..167 "  msg.sender.call{, empty: 1, parse: 2 }();\n"
-                      - Expression (Rule): # 123..140 "  msg.sender.call"
-                          - MemberAccessExpression (Rule): # 123..140 "  msg.sender.call"
-                              - Expression (Rule): # 123..135 "  msg.sender"
-                                  - MemberAccessExpression (Rule): # 123..135 "  msg.sender"
-                                      - Expression (Rule): # 123..128 "  msg"
-                                          - Identifier (Token): "msg" # 125..128
-                                      - Period (Token): "." # 128..129
-                                      - Identifier (Token): "sender" # 129..135
-                              - Period (Token): "." # 135..136
-                              - Identifier (Token): "call" # 136..140
-                      - SKIPPED (Token): "{, empty: 1, parse: 2 }()" # 140..165
-                      - Semicolon (Token): ";" # 165..166
-                  - ExpressionStatement (Rule): # 167..230 "  msg.sender.call{arg: 1, missing_expr: , no_semic..."
-                      - Expression (Rule): # 167..184 "  msg.sender.call"
-                          - MemberAccessExpression (Rule): # 167..184 "  msg.sender.call"
-                              - Expression (Rule): # 167..179 "  msg.sender"
-                                  - MemberAccessExpression (Rule): # 167..179 "  msg.sender"
-                                      - Expression (Rule): # 167..172 "  msg"
-                                          - Identifier (Token): "msg" # 169..172
-                                      - Period (Token): "." # 172..173
-                                      - Identifier (Token): "sender" # 173..179
-                              - Period (Token): "." # 179..180
-                              - Identifier (Token): "call" # 180..184
-                      - SKIPPED (Token): "{arg: 1, missing_expr: , no_semicolon, , }()" # 184..228
-                      - Semicolon (Token): ";" # 228..229
-                  - ExpressionStatement (Rule): # 230..306 "  msg.sender.call{arg: 1 unexpected tokens, not: 2..."
-                      - Expression (Rule): # 230..247 "  msg.sender.call"
-                          - MemberAccessExpression (Rule): # 230..247 "  msg.sender.call"
-                              - Expression (Rule): # 230..242 "  msg.sender"
-                                  - MemberAccessExpression (Rule): # 230..242 "  msg.sender"
-                                      - Expression (Rule): # 230..235 "  msg"
-                                          - Identifier (Token): "msg" # 232..235
-                                      - Period (Token): "." # 235..236
-                                      - Identifier (Token): "sender" # 236..242
-                              - Period (Token): "." # 242..243
-                              - Identifier (Token): "call" # 243..247
-                      - SKIPPED (Token): "{arg: 1 unexpected tokens, not: 2, recovered, yet:..." # 247..304
-                      - Semicolon (Token): ";" # 304..305
-              - CloseBrace (Token): "}" # 307..308
-      - FunctionDefinition (Rule): # 309..388 "\nfunction empty() override(some.ident, /* empty */..."
-          - FunctionKeyword (Token): "function" # 310..318
-          - Identifier (Token): "empty" # 319..324
-          - ParametersDeclaration (Rule): # 324..326 "()"
-              - OpenParen (Token): "(" # 324..325
-              - CloseParen (Token): ")" # 325..326
-          - FunctionAttributes (Rule): # 326..386 " override(some.ident, /* empty */, other.arg.here,..."
-              - OverrideSpecifier (Rule): # 326..386 " override(some.ident, /* empty */, other.arg.here,..."
-                  - OverrideKeyword (Token): "override" # 327..335
-                  - OverridePathsDeclaration (Rule): # 335..386 "(some.ident, /* empty */, other.arg.here, and.here..."
-                      - OpenParen (Token): "(" # 335..336
-                      - OverridePaths (Rule): # 336..347 "some.ident,"
-                          - IdentifierPath (Rule): # 336..346 "some.ident"
-                              - Identifier (Token): "some" # 336..340
-                              - Period (Token): "." # 340..341
-                              - Identifier (Token): "ident" # 341..346
-                          - Comma (Token): "," # 346..347
-                      - LeadingTrivia (Rule): # 347..359 " /* empty */"
-                          - MultilineComment (Trivia): "/* empty */" # 348..359
-                      - SKIPPED (Token): ", other.arg.here, and.here" # 359..385
-                      - CloseParen (Token): ")" # 385..386
-          - Semicolon (Token): ";" # 386..387
-      - FunctionDefinition (Rule): # 388..489 "\nfunction nested_lists() override(some.ident, next..."
-          - FunctionKeyword (Token): "function" # 389..397
-          - Identifier (Token): "nested_lists" # 398..410
-          - ParametersDeclaration (Rule): # 410..412 "()"
-              - OpenParen (Token): "(" # 410..411
-              - CloseParen (Token): ")" # 411..412
-          - FunctionAttributes (Rule): # 412..487 " override(some.ident, next.do.that, other.while, n..."
-              - OverrideSpecifier (Rule): # 412..487 " override(some.ident, next.do.that, other.while, n..."
-                  - OverrideKeyword (Token): "override" # 413..421
-                  - OverridePathsDeclaration (Rule): # 421..487 "(some.ident, next.do.that, other.while, next.one, ..."
-                      - OpenParen (Token): "(" # 421..422
-                      - OverridePaths (Rule): # 422..470 "some.ident, next.do.that, other.while, next.one,"
-                          - IdentifierPath (Rule): # 422..432 "some.ident"
-                              - Identifier (Token): "some" # 422..426
-                              - Period (Token): "." # 426..427
-                              - Identifier (Token): "ident" # 427..432
-                          - Comma (Token): "," # 432..433
-                          - IdentifierPath (Rule): # 433..439 " next."
-                              - Identifier (Token): "next" # 434..438
-                              - Period (Token): "." # 438..439
-                          - SKIPPED (Token): "do.that" # 439..446
-                          - Comma (Token): "," # 446..447
-                          - IdentifierPath (Rule): # 447..454 " other."
-                              - Identifier (Token): "other" # 448..453
-                              - Period (Token): "." # 453..454
-                          - SKIPPED (Token): "while" # 454..459
-                          - Comma (Token): "," # 459..460
-                          - IdentifierPath (Rule): # 460..469 " next.one"
-                              - Identifier (Token): "next" # 461..465
-                              - Period (Token): "." # 465..466
-                              - Identifier (Token): "one" # 466..469
-                          - Comma (Token): "," # 469..470
-                      - SKIPPED (Token): "final, ultimate" # 471..486
-                      - CloseParen (Token): ")" # 486..487
-          - Semicolon (Token): ";" # 487..488
-      - FunctionDefinition (Rule): # 489..560 "function nested_lists() override(some., next.arg, ..."
-          - FunctionKeyword (Token): "function" # 489..497
-          - Identifier (Token): "nested_lists" # 498..510
-          - ParametersDeclaration (Rule): # 510..512 "()"
-              - OpenParen (Token): "(" # 510..511
-              - CloseParen (Token): ")" # 511..512
-          - FunctionAttributes (Rule): # 512..558 " override(some., next.arg, next.one, ultimate)"
-              - OverrideSpecifier (Rule): # 512..558 " override(some., next.arg, next.one, ultimate)"
-                  - OverrideKeyword (Token): "override" # 513..521
-                  - OverridePathsDeclaration (Rule): # 521..558 "(some., next.arg, next.one, ultimate)"
-                      - OpenParen (Token): "(" # 521..522
-                      - OverridePaths (Rule): # 522..557 "some., next.arg, next.one, ultimate"
-                          - IdentifierPath (Rule): # 522..527 "some."
-                              - Identifier (Token): "some" # 522..526
-                              - Period (Token): "." # 526..527
-                          - SKIPPED (Token): "" # 527..527
-                          - Comma (Token): "," # 527..528
-                          - IdentifierPath (Rule): # 528..537 " next.arg"
-                              - Identifier (Token): "next" # 529..533
-                              - Period (Token): "." # 533..534
-                              - Identifier (Token): "arg" # 534..537
-                          - Comma (Token): "," # 537..538
-                          - IdentifierPath (Rule): # 538..547 " next.one"
-                              - Identifier (Token): "next" # 539..543
-                              - Period (Token): "." # 543..544
-                              - Identifier (Token): "one" # 544..547
-                          - Comma (Token): "," # 547..548
-                          - IdentifierPath (Rule): # 548..557 " ultimate"
-                              - Identifier (Token): "ultimate" # 549..557
-                      - CloseParen (Token): ")" # 557..558
-          - Semicolon (Token): ";" # 558..559
+      - ContractMember (Rule): # 0..309 "function all() override(some.ident unexpected toke..."
+          - FunctionDefinition (Rule): # 0..309 "function all() override(some.ident unexpected toke..."
+              - FunctionKeyword (Token): "function" # 0..8
+              - FunctionName (Rule): # 8..12 " all"
+                  - Identifier (Token): "all" # 9..12
+              - ParametersDeclaration (Rule): # 12..14 "()"
+                  - OpenParen (Token): "(" # 12..13
+                  - CloseParen (Token): ")" # 13..14
+              - FunctionAttributes (Rule): # 14..83 " override(some.ident unexpected tokens, ISomeInter..."
+                  - FunctionAttribute (Rule): # 14..76 " override(some.ident unexpected tokens, ISomeInter..."
+                      - OverrideSpecifier (Rule): # 14..76 " override(some.ident unexpected tokens, ISomeInter..."
+                          - OverrideKeyword (Token): "override" # 15..23
+                          - OverridePathsDeclaration (Rule): # 23..76 "(some.ident unexpected tokens, ISomeInterface, Oth..."
+                              - OpenParen (Token): "(" # 23..24
+                              - OverridePaths (Rule): # 24..34 "some.ident"
+                                  - IdentifierPath (Rule): # 24..34 "some.ident"
+                                      - Identifier (Token): "some" # 24..28
+                                      - Period (Token): "." # 28..29
+                                      - Identifier (Token): "ident" # 29..34
+                              - SKIPPED (Token): "unexpected tokens, ISomeInterface, Other" # 35..75
+                              - CloseParen (Token): ")" # 75..76
+                  - FunctionAttribute (Rule): # 76..83 " public"
+                      - PublicKeyword (Token): "public" # 77..83
+              - FunctionBody (Rule): # 83..309 " {\n  msg.sender.call{do: 1, arg: 1 }();\n  msg.send..."
+                  - Block (Rule): # 83..309 " {\n  msg.sender.call{do: 1, arg: 1 }();\n  msg.send..."
+                      - OpenBrace (Token): "{" # 84..85
+                      - Statements (Rule): # 86..306 "  msg.sender.call{do: 1, arg: 1 }();\n  msg.sender...."
+                          - Statement (Rule): # 86..123 "  msg.sender.call{do: 1, arg: 1 }();\n"
+                              - ExpressionStatement (Rule): # 86..123 "  msg.sender.call{do: 1, arg: 1 }();\n"
+                                  - Expression (Rule): # 86..103 "  msg.sender.call"
+                                      - MemberAccessExpression (Rule): # 86..103 "  msg.sender.call"
+                                          - Expression (Rule): # 86..98 "  msg.sender"
+                                              - MemberAccessExpression (Rule): # 86..98 "  msg.sender"
+                                                  - Expression (Rule): # 86..91 "  msg"
+                                                      - Identifier (Token): "msg" # 88..91
+                                                  - Period (Token): "." # 91..92
+                                                  - MemberAccess (Rule): # 92..98 "sender"
+                                                      - Identifier (Token): "sender" # 92..98
+                                          - Period (Token): "." # 98..99
+                                          - MemberAccess (Rule): # 99..103 "call"
+                                              - Identifier (Token): "call" # 99..103
+                                  - SKIPPED (Token): "{do: 1, arg: 1 }()" # 103..121
+                                  - Semicolon (Token): ";" # 121..122
+                          - Statement (Rule): # 123..167 "  msg.sender.call{, empty: 1, parse: 2 }();\n"
+                              - ExpressionStatement (Rule): # 123..167 "  msg.sender.call{, empty: 1, parse: 2 }();\n"
+                                  - Expression (Rule): # 123..140 "  msg.sender.call"
+                                      - MemberAccessExpression (Rule): # 123..140 "  msg.sender.call"
+                                          - Expression (Rule): # 123..135 "  msg.sender"
+                                              - MemberAccessExpression (Rule): # 123..135 "  msg.sender"
+                                                  - Expression (Rule): # 123..128 "  msg"
+                                                      - Identifier (Token): "msg" # 125..128
+                                                  - Period (Token): "." # 128..129
+                                                  - MemberAccess (Rule): # 129..135 "sender"
+                                                      - Identifier (Token): "sender" # 129..135
+                                          - Period (Token): "." # 135..136
+                                          - MemberAccess (Rule): # 136..140 "call"
+                                              - Identifier (Token): "call" # 136..140
+                                  - SKIPPED (Token): "{, empty: 1, parse: 2 }()" # 140..165
+                                  - Semicolon (Token): ";" # 165..166
+                          - Statement (Rule): # 167..230 "  msg.sender.call{arg: 1, missing_expr: , no_semic..."
+                              - ExpressionStatement (Rule): # 167..230 "  msg.sender.call{arg: 1, missing_expr: , no_semic..."
+                                  - Expression (Rule): # 167..184 "  msg.sender.call"
+                                      - MemberAccessExpression (Rule): # 167..184 "  msg.sender.call"
+                                          - Expression (Rule): # 167..179 "  msg.sender"
+                                              - MemberAccessExpression (Rule): # 167..179 "  msg.sender"
+                                                  - Expression (Rule): # 167..172 "  msg"
+                                                      - Identifier (Token): "msg" # 169..172
+                                                  - Period (Token): "." # 172..173
+                                                  - MemberAccess (Rule): # 173..179 "sender"
+                                                      - Identifier (Token): "sender" # 173..179
+                                          - Period (Token): "." # 179..180
+                                          - MemberAccess (Rule): # 180..184 "call"
+                                              - Identifier (Token): "call" # 180..184
+                                  - SKIPPED (Token): "{arg: 1, missing_expr: , no_semicolon, , }()" # 184..228
+                                  - Semicolon (Token): ";" # 228..229
+                          - Statement (Rule): # 230..306 "  msg.sender.call{arg: 1 unexpected tokens, not: 2..."
+                              - ExpressionStatement (Rule): # 230..306 "  msg.sender.call{arg: 1 unexpected tokens, not: 2..."
+                                  - Expression (Rule): # 230..247 "  msg.sender.call"
+                                      - MemberAccessExpression (Rule): # 230..247 "  msg.sender.call"
+                                          - Expression (Rule): # 230..242 "  msg.sender"
+                                              - MemberAccessExpression (Rule): # 230..242 "  msg.sender"
+                                                  - Expression (Rule): # 230..235 "  msg"
+                                                      - Identifier (Token): "msg" # 232..235
+                                                  - Period (Token): "." # 235..236
+                                                  - MemberAccess (Rule): # 236..242 "sender"
+                                                      - Identifier (Token): "sender" # 236..242
+                                          - Period (Token): "." # 242..243
+                                          - MemberAccess (Rule): # 243..247 "call"
+                                              - Identifier (Token): "call" # 243..247
+                                  - SKIPPED (Token): "{arg: 1 unexpected tokens, not: 2, recovered, yet:..." # 247..304
+                                  - Semicolon (Token): ";" # 304..305
+                      - CloseBrace (Token): "}" # 307..308
+      - ContractMember (Rule): # 309..388 "\nfunction empty() override(some.ident, /* empty */..."
+          - FunctionDefinition (Rule): # 309..388 "\nfunction empty() override(some.ident, /* empty */..."
+              - FunctionKeyword (Token): "function" # 310..318
+              - FunctionName (Rule): # 318..324 " empty"
+                  - Identifier (Token): "empty" # 319..324
+              - ParametersDeclaration (Rule): # 324..326 "()"
+                  - OpenParen (Token): "(" # 324..325
+                  - CloseParen (Token): ")" # 325..326
+              - FunctionAttributes (Rule): # 326..386 " override(some.ident, /* empty */, other.arg.here,..."
+                  - FunctionAttribute (Rule): # 326..386 " override(some.ident, /* empty */, other.arg.here,..."
+                      - OverrideSpecifier (Rule): # 326..386 " override(some.ident, /* empty */, other.arg.here,..."
+                          - OverrideKeyword (Token): "override" # 327..335
+                          - OverridePathsDeclaration (Rule): # 335..386 "(some.ident, /* empty */, other.arg.here, and.here..."
+                              - OpenParen (Token): "(" # 335..336
+                              - OverridePaths (Rule): # 336..347 "some.ident,"
+                                  - IdentifierPath (Rule): # 336..346 "some.ident"
+                                      - Identifier (Token): "some" # 336..340
+                                      - Period (Token): "." # 340..341
+                                      - Identifier (Token): "ident" # 341..346
+                                  - Comma (Token): "," # 346..347
+                              - LeadingTrivia (Rule): # 347..359 " /* empty */"
+                                  - MultilineComment (Trivia): "/* empty */" # 348..359
+                              - SKIPPED (Token): ", other.arg.here, and.here" # 359..385
+                              - CloseParen (Token): ")" # 385..386
+              - FunctionBody (Rule): # 386..388 ";\n"
+                  - Semicolon (Token): ";" # 386..387
+      - ContractMember (Rule): # 388..489 "\nfunction nested_lists() override(some.ident, next..."
+          - FunctionDefinition (Rule): # 388..489 "\nfunction nested_lists() override(some.ident, next..."
+              - FunctionKeyword (Token): "function" # 389..397
+              - FunctionName (Rule): # 397..410 " nested_lists"
+                  - Identifier (Token): "nested_lists" # 398..410
+              - ParametersDeclaration (Rule): # 410..412 "()"
+                  - OpenParen (Token): "(" # 410..411
+                  - CloseParen (Token): ")" # 411..412
+              - FunctionAttributes (Rule): # 412..487 " override(some.ident, next.do.that, other.while, n..."
+                  - FunctionAttribute (Rule): # 412..487 " override(some.ident, next.do.that, other.while, n..."
+                      - OverrideSpecifier (Rule): # 412..487 " override(some.ident, next.do.that, other.while, n..."
+                          - OverrideKeyword (Token): "override" # 413..421
+                          - OverridePathsDeclaration (Rule): # 421..487 "(some.ident, next.do.that, other.while, next.one, ..."
+                              - OpenParen (Token): "(" # 421..422
+                              - OverridePaths (Rule): # 422..470 "some.ident, next.do.that, other.while, next.one,"
+                                  - IdentifierPath (Rule): # 422..432 "some.ident"
+                                      - Identifier (Token): "some" # 422..426
+                                      - Period (Token): "." # 426..427
+                                      - Identifier (Token): "ident" # 427..432
+                                  - Comma (Token): "," # 432..433
+                                  - IdentifierPath (Rule): # 433..439 " next."
+                                      - Identifier (Token): "next" # 434..438
+                                      - Period (Token): "." # 438..439
+                                  - SKIPPED (Token): "do.that" # 439..446
+                                  - Comma (Token): "," # 446..447
+                                  - IdentifierPath (Rule): # 447..454 " other."
+                                      - Identifier (Token): "other" # 448..453
+                                      - Period (Token): "." # 453..454
+                                  - SKIPPED (Token): "while" # 454..459
+                                  - Comma (Token): "," # 459..460
+                                  - IdentifierPath (Rule): # 460..469 " next.one"
+                                      - Identifier (Token): "next" # 461..465
+                                      - Period (Token): "." # 465..466
+                                      - Identifier (Token): "one" # 466..469
+                                  - Comma (Token): "," # 469..470
+                              - SKIPPED (Token): "final, ultimate" # 471..486
+                              - CloseParen (Token): ")" # 486..487
+              - FunctionBody (Rule): # 487..489 ";\n"
+                  - Semicolon (Token): ";" # 487..488
+      - ContractMember (Rule): # 489..560 "function nested_lists() override(some., next.arg, ..."
+          - FunctionDefinition (Rule): # 489..560 "function nested_lists() override(some., next.arg, ..."
+              - FunctionKeyword (Token): "function" # 489..497
+              - FunctionName (Rule): # 497..510 " nested_lists"
+                  - Identifier (Token): "nested_lists" # 498..510
+              - ParametersDeclaration (Rule): # 510..512 "()"
+                  - OpenParen (Token): "(" # 510..511
+                  - CloseParen (Token): ")" # 511..512
+              - FunctionAttributes (Rule): # 512..558 " override(some., next.arg, next.one, ultimate)"
+                  - FunctionAttribute (Rule): # 512..558 " override(some., next.arg, next.one, ultimate)"
+                      - OverrideSpecifier (Rule): # 512..558 " override(some., next.arg, next.one, ultimate)"
+                          - OverrideKeyword (Token): "override" # 513..521
+                          - OverridePathsDeclaration (Rule): # 521..558 "(some., next.arg, next.one, ultimate)"
+                              - OpenParen (Token): "(" # 521..522
+                              - OverridePaths (Rule): # 522..557 "some., next.arg, next.one, ultimate"
+                                  - IdentifierPath (Rule): # 522..527 "some."
+                                      - Identifier (Token): "some" # 522..526
+                                      - Period (Token): "." # 526..527
+                                  - SKIPPED (Token): "" # 527..527
+                                  - Comma (Token): "," # 527..528
+                                  - IdentifierPath (Rule): # 528..537 " next.arg"
+                                      - Identifier (Token): "next" # 529..533
+                                      - Period (Token): "." # 533..534
+                                      - Identifier (Token): "arg" # 534..537
+                                  - Comma (Token): "," # 537..538
+                                  - IdentifierPath (Rule): # 538..547 " next.one"
+                                      - Identifier (Token): "next" # 539..543
+                                      - Period (Token): "." # 543..544
+                                      - Identifier (Token): "one" # 544..547
+                                  - Comma (Token): "," # 547..548
+                                  - IdentifierPath (Rule): # 548..557 " ultimate"
+                                      - Identifier (Token): "ultimate" # 549..557
+                              - CloseParen (Token): ")" # 557..558
+              - FunctionBody (Rule): # 558..560 ";\n"
+                  - Semicolon (Token): ";" # 558..559

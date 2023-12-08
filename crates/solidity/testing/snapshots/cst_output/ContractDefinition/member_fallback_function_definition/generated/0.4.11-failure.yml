@@ -23,9 +23,10 @@ Tree:
       - Identifier (Token): "Sample" # 9..15
       - OpenBrace (Token): "{" # 16..17
       - ContractMembers (Rule): # 18..28 "  fallback"
-          - StateVariableDefinition (Rule): # 18..28 "  fallback"
-              - TypeName (Rule): # 18..28 "  fallback"
-                  - IdentifierPath (Rule): # 18..28 "  fallback"
-                      - Identifier (Token): "fallback" # 20..28
+          - ContractMember (Rule): # 18..28 "  fallback"
+              - StateVariableDefinition (Rule): # 18..28 "  fallback"
+                  - TypeName (Rule): # 18..28 "  fallback"
+                      - IdentifierPath (Rule): # 18..28 "  fallback"
+                          - Identifier (Token): "fallback" # 20..28
       - SKIPPED (Token): "() {\n  }\n" # 28..37
       - CloseBrace (Token): "}" # 37..38

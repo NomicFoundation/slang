@@ -19,17 +19,18 @@ Tree:
               - InheritanceType (Rule): # 23..33 " Bar(1, 2)"
                   - IdentifierPath (Rule): # 23..27 " Bar"
                       - Identifier (Token): "Bar" # 24..27
-                  - PositionalArgumentsDeclaration (Rule): # 27..33 "(1, 2)"
-                      - OpenParen (Token): "(" # 27..28
-                      - PositionalArguments (Rule): # 28..32 "1, 2"
-                          - Expression (Rule): # 28..29 "1"
-                              - DecimalNumberExpression (Rule): # 28..29 "1"
-                                  - DecimalLiteral (Token): "1" # 28..29
-                          - Comma (Token): "," # 29..30
-                          - Expression (Rule): # 30..32 " 2"
-                              - DecimalNumberExpression (Rule): # 30..32 " 2"
-                                  - DecimalLiteral (Token): "2" # 31..32
-                      - CloseParen (Token): ")" # 32..33
+                  - ArgumentsDeclaration (Rule): # 27..33 "(1, 2)"
+                      - PositionalArgumentsDeclaration (Rule): # 27..33 "(1, 2)"
+                          - OpenParen (Token): "(" # 27..28
+                          - PositionalArguments (Rule): # 28..32 "1, 2"
+                              - Expression (Rule): # 28..29 "1"
+                                  - DecimalNumberExpression (Rule): # 28..29 "1"
+                                      - DecimalLiteral (Token): "1" # 28..29
+                              - Comma (Token): "," # 29..30
+                              - Expression (Rule): # 30..32 " 2"
+                                  - DecimalNumberExpression (Rule): # 30..32 " 2"
+                                      - DecimalLiteral (Token): "2" # 31..32
+                          - CloseParen (Token): ")" # 32..33
               - Comma (Token): "," # 33..34
               - InheritanceType (Rule): # 34..38 " Baz"
                   - IdentifierPath (Rule): # 34..38 " Baz"

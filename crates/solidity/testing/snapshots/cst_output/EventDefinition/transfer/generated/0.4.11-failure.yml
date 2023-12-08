@@ -22,8 +22,9 @@ Tree:
           - EventParameters (Rule): # 15..30 "address indexed"
               - EventParameter (Rule): # 15..30 "address indexed"
                   - TypeName (Rule): # 15..22 "address"
-                      - AddressType (Rule): # 15..22 "address"
-                          - AddressKeyword (Token): "address" # 15..22
+                      - ElementaryType (Rule): # 15..22 "address"
+                          - AddressType (Rule): # 15..22 "address"
+                              - AddressKeyword (Token): "address" # 15..22
                   - IndexedKeyword (Token): "indexed" # 23..30
           - SKIPPED (Token): "from, address indexed to, uint256 value" # 31..70
           - CloseParen (Token): ")" # 70..71

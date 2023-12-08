@@ -13,15 +13,19 @@ Tree:
       - Identifier (Token): "Sample" # 9..15
       - OpenBrace (Token): "{" # 16..17
       - ContractMembers (Rule): # 18..51 "  function() external payable {}\n"
-          - UnnamedFunctionDefinition (Rule): # 18..51 "  function() external payable {}\n"
-              - FunctionKeyword (Token): "function" # 20..28
-              - ParametersDeclaration (Rule): # 28..30 "()"
-                  - OpenParen (Token): "(" # 28..29
-                  - CloseParen (Token): ")" # 29..30
-              - UnnamedFunctionAttributes (Rule): # 30..47 " external payable"
-                  - ExternalKeyword (Token): "external" # 31..39
-                  - PayableKeyword (Token): "payable" # 40..47
-              - Block (Rule): # 47..51 " {}\n"
-                  - OpenBrace (Token): "{" # 48..49
-                  - CloseBrace (Token): "}" # 49..50
+          - ContractMember (Rule): # 18..51 "  function() external payable {}\n"
+              - UnnamedFunctionDefinition (Rule): # 18..51 "  function() external payable {}\n"
+                  - FunctionKeyword (Token): "function" # 20..28
+                  - ParametersDeclaration (Rule): # 28..30 "()"
+                      - OpenParen (Token): "(" # 28..29
+                      - CloseParen (Token): ")" # 29..30
+                  - UnnamedFunctionAttributes (Rule): # 30..47 " external payable"
+                      - UnnamedFunctionAttribute (Rule): # 30..39 " external"
+                          - ExternalKeyword (Token): "external" # 31..39
+                      - UnnamedFunctionAttribute (Rule): # 39..47 " payable"
+                          - PayableKeyword (Token): "payable" # 40..47
+                  - FunctionBody (Rule): # 47..51 " {}\n"
+                      - Block (Rule): # 47..51 " {}\n"
+                          - OpenBrace (Token): "{" # 48..49
+                          - CloseBrace (Token): "}" # 49..50
       - CloseBrace (Token): "}" # 51..52

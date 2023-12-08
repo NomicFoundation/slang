@@ -23,9 +23,10 @@ Tree:
       - Identifier (Token): "Sample" # 9..15
       - OpenBrace (Token): "{" # 16..17
       - ContractMembers (Rule): # 18..27 "  receive"
-          - StateVariableDefinition (Rule): # 18..27 "  receive"
-              - TypeName (Rule): # 18..27 "  receive"
-                  - IdentifierPath (Rule): # 18..27 "  receive"
-                      - Identifier (Token): "receive" # 20..27
+          - ContractMember (Rule): # 18..27 "  receive"
+              - StateVariableDefinition (Rule): # 18..27 "  receive"
+                  - TypeName (Rule): # 18..27 "  receive"
+                      - IdentifierPath (Rule): # 18..27 "  receive"
+                          - Identifier (Token): "receive" # 20..27
       - SKIPPED (Token): "() {\n  }\n" # 27..36
       - CloseBrace (Token): "}" # 36..37

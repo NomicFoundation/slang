@@ -11,6 +11,7 @@ Tree:
       - ParametersDeclaration (Rule): # 8..11 " ()"
           - OpenParen (Token): "(" # 9..10
           - CloseParen (Token): ")" # 10..11
-      - Block (Rule): # 11..14 " {}"
-          - OpenBrace (Token): "{" # 12..13
-          - CloseBrace (Token): "}" # 13..14
+      - FunctionBody (Rule): # 11..14 " {}"
+          - Block (Rule): # 11..14 " {}"
+              - OpenBrace (Token): "{" # 12..13
+              - CloseBrace (Token): "}" # 13..14

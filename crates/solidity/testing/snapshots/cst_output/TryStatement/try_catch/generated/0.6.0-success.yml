@@ -15,10 +15,12 @@ Tree:
                       - Expression (Rule): # 3..5 " a"
                           - Identifier (Token): "a" # 4..5
                       - Period (Token): "." # 5..6
-                      - Identifier (Token): "b" # 6..7
-              - PositionalArgumentsDeclaration (Rule): # 7..9 "()"
-                  - OpenParen (Token): "(" # 7..8
-                  - CloseParen (Token): ")" # 8..9
+                      - MemberAccess (Rule): # 6..7 "b"
+                          - Identifier (Token): "b" # 6..7
+              - ArgumentsDeclaration (Rule): # 7..9 "()"
+                  - PositionalArgumentsDeclaration (Rule): # 7..9 "()"
+                      - OpenParen (Token): "(" # 7..8
+                      - CloseParen (Token): ")" # 8..9
       - Block (Rule): # 9..12 " {}"
           - OpenBrace (Token): "{" # 10..11
           - CloseBrace (Token): "}" # 11..12

@@ -7,4 +7,5 @@ Errors: []
 
 Tree:
   - YulExpression (Rule): # 0..3 "123"
-      - YulDecimalLiteral (Token): "123" # 0..3
+      - YulLiteral (Rule): # 0..3 "123"
+          - YulDecimalLiteral (Token): "123" # 0..3

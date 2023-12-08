@@ -11,4 +11,5 @@ Tree:
           - Expression (Rule): # 0..1 "x"
               - Identifier (Token): "x" # 0..1
           - Period (Token): "." # 1..2
-          - Identifier (Token): "y" # 2..3
+          - MemberAccess (Rule): # 2..3 "y"
+              - Identifier (Token): "y" # 2..3

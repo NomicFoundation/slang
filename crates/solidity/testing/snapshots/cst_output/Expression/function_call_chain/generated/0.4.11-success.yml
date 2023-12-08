@@ -12,9 +12,11 @@ Tree:
               - FunctionCallExpression (Rule): # 0..3 "x()"
                   - Expression (Rule): # 0..1 "x"
                       - Identifier (Token): "x" # 0..1
-                  - PositionalArgumentsDeclaration (Rule): # 1..3 "()"
-                      - OpenParen (Token): "(" # 1..2
-                      - CloseParen (Token): ")" # 2..3
-          - PositionalArgumentsDeclaration (Rule): # 3..5 "()"
-              - OpenParen (Token): "(" # 3..4
-              - CloseParen (Token): ")" # 4..5
+                  - ArgumentsDeclaration (Rule): # 1..3 "()"
+                      - PositionalArgumentsDeclaration (Rule): # 1..3 "()"
+                          - OpenParen (Token): "(" # 1..2
+                          - CloseParen (Token): ")" # 2..3
+          - ArgumentsDeclaration (Rule): # 3..5 "()"
+              - PositionalArgumentsDeclaration (Rule): # 3..5 "()"
+                  - OpenParen (Token): "(" # 3..4
+                  - CloseParen (Token): ")" # 4..5
