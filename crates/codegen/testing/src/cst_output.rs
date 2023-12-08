@@ -133,8 +133,9 @@ fn generate_unit_test_file(
 
     let contents = format!(
         "
-            use crate::cst_output::runner::run;
             use anyhow::Result;
+
+            use crate::cst_output::runner::run;
 
             {unit_tests}
         "

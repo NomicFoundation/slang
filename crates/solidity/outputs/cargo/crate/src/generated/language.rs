@@ -9,11 +9,13 @@
     clippy::similar_names
 )]
 
+use semver::Version;
 #[cfg(feature = "slang_napi_interfaces")]
 use {napi::bindgen_prelude::*, napi_derive::napi};
 
-use semver::Version;
-
+pub use super::kinds::LexicalContext;
+#[cfg(feature = "slang_napi_interfaces")]
+use super::napi::napi_parse_output::ParseOutput as NAPIParseOutput;
 use super::{
     kinds::{IsLexicalContext, LexicalContextType, ProductionKind, RuleKind, TokenKind},
     lexer::Lexer,
@@ -23,11 +25,6 @@ use super::{
         PrecedenceHelper, RecoverFromNoMatch, SeparatedHelper, SequenceHelper, ZeroOrMoreHelper,
     },
 };
-
-pub use super::kinds::LexicalContext;
-
-#[cfg(feature = "slang_napi_interfaces")]
-use super::napi::napi_parse_output::ParseOutput as NAPIParseOutput;
 
 #[derive(Debug)]
 #[cfg_attr(feature = "slang_napi_interfaces", napi(namespace = "language"))]
