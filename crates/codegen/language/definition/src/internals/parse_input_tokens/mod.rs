@@ -4,9 +4,9 @@ mod helpers;
 
 pub(crate) use adapter::*;
 pub(crate) use helpers::*;
+use syn::parse::ParseStream;
 
 use crate::internals::{ErrorsCollection, Result};
-use syn::parse::ParseStream;
 
 pub trait ParseInputTokens: Sized {
     /// Main parser entrypoint, and should be implemented by all types.

@@ -1,5 +1,6 @@
-use proc_macro2::{Span, TokenStream};
 use std::fmt::Display;
+
+use proc_macro2::{Span, TokenStream};
 
 pub type Result<T> = std::result::Result<T, Error>;
 

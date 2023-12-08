@@ -1,8 +1,9 @@
 use std::{env::var, path::PathBuf};
 
-use crate::paths::PathExtensions;
 use anyhow::{bail, Result};
 use ariadne::{Color, Label, Report, ReportKind, Source};
+
+use crate::paths::PathExtensions;
 
 #[derive(Debug, Default)]
 pub struct InfraErrors {

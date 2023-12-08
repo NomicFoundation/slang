@@ -1,6 +1,5 @@
 use anyhow::Result;
 use cargo_emit::rerun_if_changed;
-
 use codegen_grammar::Grammar;
 use codegen_parser_generator::code_generator::CodeGenerator;
 use infra_utils::{cargo::CargoWorkspace, paths::PathExtensions};

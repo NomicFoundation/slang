@@ -9,11 +9,10 @@
 mod definition;
 mod grammar;
 
-pub use definition::SolidityDefinition;
-pub use grammar::GrammarConstructorDslV2;
-
 use anyhow::Result;
 use codegen_schema::types::{LanguageDefinition, LanguageDefinitionRef};
+pub use definition::SolidityDefinition;
+pub use grammar::GrammarConstructorDslV2;
 
 pub trait SolidityLanguageExtensions {
     /// Loads the precompiled Solidity language definition.

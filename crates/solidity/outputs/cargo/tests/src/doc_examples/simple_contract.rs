@@ -1,6 +1,5 @@
 use anyhow::Result;
 use semver::Version;
-
 use slang_solidity::{
     cst::Node,
     kinds::{ProductionKind, RuleKind, TokenKind},

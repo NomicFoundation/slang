@@ -1,9 +1,10 @@
 mod keywords;
 mod utils;
 
-use crate::keywords::check_solidity_keywords;
 use anyhow::Result;
 use clap::{Parser, Subcommand};
+
+use crate::keywords::check_solidity_keywords;
 
 #[derive(Debug, Parser)]
 pub struct CLI {

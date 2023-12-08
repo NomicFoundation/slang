@@ -1,7 +1,8 @@
-use crate::{compiler::analysis::Analysis, internals::WriteOutputTokens};
 use inflector::Inflector;
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
+
+use crate::{compiler::analysis::Analysis, internals::WriteOutputTokens};
 
 pub(crate) struct LanguageEmitter;
 

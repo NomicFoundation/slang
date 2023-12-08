@@ -1,7 +1,8 @@
-use crate::model::{Field, FieldsErrorRecovery, Identifier, VersionSpecifier};
 use codegen_language_internal_macros::{derive_spanned_type, ParseInputTokens, WriteOutputTokens};
 use indexmap::IndexMap;
 use serde::{Deserialize, Serialize};
+
+use crate::model::{Field, FieldsErrorRecovery, Identifier, VersionSpecifier};
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 #[derive_spanned_type(ParseInputTokens, WriteOutputTokens)]

@@ -5,16 +5,15 @@ use std::{
 };
 
 use anyhow::Result;
-use infra_utils::{cargo::CargoWorkspace, codegen::Codegen};
-use quote::{format_ident, quote};
-use semver::Version;
-use serde::Serialize;
-
 use codegen_grammar::{
     Grammar, GrammarVisitor, ParserDefinitionNode, ParserDefinitionRef,
     PrecedenceParserDefinitionNode, PrecedenceParserDefinitionRef, ScannerDefinitionNode,
     ScannerDefinitionRef, TriviaParserDefinitionRef,
 };
+use infra_utils::{cargo::CargoWorkspace, codegen::Codegen};
+use quote::{format_ident, quote};
+use semver::Version;
+use serde::Serialize;
 
 use super::{
     parser_definition::ParserDefinitionExtensions,

@@ -1,11 +1,13 @@
-use crate::internals::{
-    parse_input_tokens::ParseHelpers, ErrorsCollection, ParseInputTokens, Result, Spanned,
-};
+use std::{fmt::Debug, rc::Rc};
+
 use indexmap::{IndexMap, IndexSet};
 use proc_macro2::Ident;
 use semver::Version;
-use std::{fmt::Debug, rc::Rc};
 use syn::{parse::ParseStream, LitBool, LitChar, LitStr};
+
+use crate::internals::{
+    parse_input_tokens::ParseHelpers, ErrorsCollection, ParseInputTokens, Result, Spanned,
+};
 
 impl ParseInputTokens for bool {
     fn parse_value(input: ParseStream<'_>, _: &mut ErrorsCollection) -> Result<Self> {

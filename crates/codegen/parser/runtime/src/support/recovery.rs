@@ -1,12 +1,11 @@
+use super::parser_result::SkippedUntil;
+use super::ParserContext;
 use crate::cst;
 use crate::kinds::{IsLexicalContext, TokenKind};
 use crate::lexer::Lexer;
 use crate::parse_error::ParseError;
 use crate::support::ParserResult;
 use crate::text_index::{TextRange, TextRangeExtensions as _};
-
-use super::parser_result::SkippedUntil;
-use super::ParserContext;
 
 /// An explicit parameter for the [`ParserResult::recover_until_with_nested_delims`] method.
 #[derive(Clone, Copy)]
