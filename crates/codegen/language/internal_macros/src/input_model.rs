@@ -1,6 +1,7 @@
+use std::fmt::Display;
+
 use itertools::Itertools;
 use quote::ToTokens;
-use std::fmt::Display;
 use syn::{
     parse::{Parse, ParseStream},
     Data, DeriveInput, Error, Fields, FieldsNamed, Ident, Result, Type, Variant,

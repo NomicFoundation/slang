@@ -3,9 +3,8 @@
 use std::mem;
 use std::ops::ControlFlow;
 
-use crate::{cst, kinds::TokenKind, parse_error::ParseError, text_index::TextIndex};
-
 use super::{context::Marker, ParserContext, ParserResult};
+use crate::{cst, kinds::TokenKind, parse_error::ParseError, text_index::TextIndex};
 
 /// Starting from a given position in the input, this helper will try to pick (and remember) a best match. Settles on
 /// a first full match if possible, otherwise on the best incomplete match.

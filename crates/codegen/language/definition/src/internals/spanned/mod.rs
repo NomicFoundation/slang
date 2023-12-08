@@ -1,7 +1,9 @@
-use crate::internals::{ErrorsCollection, ParseInputTokens, Result, WriteOutputTokens};
-use proc_macro2::{Span, TokenStream};
 use std::cmp::Ordering;
+
+use proc_macro2::{Span, TokenStream};
 use syn::parse::ParseStream;
+
+use crate::internals::{ErrorsCollection, ParseInputTokens, Result, WriteOutputTokens};
 
 #[derive(Clone, Debug)]
 pub struct Spanned<T> {

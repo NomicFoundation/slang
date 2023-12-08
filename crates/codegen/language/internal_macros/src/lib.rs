@@ -1,9 +1,10 @@
 mod derive;
 mod input_model;
 
-use crate::input_model::InputItem;
 use proc_macro::TokenStream;
 use quote::ToTokens;
+
+use crate::input_model::InputItem;
 
 #[proc_macro_attribute]
 pub fn derive_spanned_type(args: TokenStream, mut input: TokenStream) -> TokenStream {

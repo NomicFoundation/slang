@@ -1,4 +1,8 @@
-use crate::utils::{ApiInput, ApiOutput};
+use std::{
+    collections::HashMap, os::unix::prelude::PermissionsExt, path::Path, path::PathBuf,
+    time::Duration,
+};
+
 use anyhow::Result;
 use codegen_language_definition::model::Language;
 use indicatif::{ProgressBar, ProgressStyle};
@@ -6,11 +10,9 @@ use infra_utils::{cargo::CargoWorkspace, commands::Command, paths::PathExtension
 use rayon::prelude::{ParallelBridge, ParallelIterator};
 use semver::Version;
 use serde::Deserialize;
-use std::{
-    collections::HashMap, os::unix::prelude::PermissionsExt, path::Path, path::PathBuf,
-    time::Duration,
-};
 use url::Url;
+
+use crate::utils::{ApiInput, ApiOutput};
 
 #[derive(Debug)]
 pub struct Binary {

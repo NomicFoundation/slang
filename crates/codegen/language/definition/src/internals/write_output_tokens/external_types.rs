@@ -1,9 +1,11 @@
-use crate::internals::WriteOutputTokens;
+use std::rc::Rc;
+
 use indexmap::{IndexMap, IndexSet};
 use proc_macro2::{Literal, TokenStream};
 use quote::{format_ident, quote};
 use semver::Version;
-use std::rc::Rc;
+
+use crate::internals::WriteOutputTokens;
 
 impl WriteOutputTokens for bool {
     fn write_output_tokens(&self) -> TokenStream {

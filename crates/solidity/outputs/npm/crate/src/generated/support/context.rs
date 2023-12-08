@@ -3,10 +3,9 @@
 use std::mem;
 use std::ops::Range;
 
+use super::super::text_index::TextIndex;
 use crate::kinds::TokenKind;
 use crate::parse_error::ParseError;
-
-use super::super::text_index::TextIndex;
 
 pub struct ParserContext<'s> {
     source: &'s str,

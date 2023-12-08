@@ -3,6 +3,11 @@ mod reachability;
 mod references;
 mod utils;
 
+use std::rc::Rc;
+
+use indexmap::IndexMap;
+use proc_macro2::Span;
+
 use crate::{
     compiler::analysis::{
         definitions::analyze_definitions, reachability::analyze_reachability,
@@ -12,9 +17,6 @@ use crate::{
     internals::{ErrorsCollection, ParseOutput, Spanned},
     model::{Identifier, SpannedItem, SpannedLanguage},
 };
-use indexmap::IndexMap;
-use proc_macro2::Span;
-use std::rc::Rc;
 
 pub(crate) struct Analysis {
     pub errors: ErrorsCollection,

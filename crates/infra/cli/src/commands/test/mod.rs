@@ -1,7 +1,8 @@
-use crate::utils::{ClapExtensions, OrderedCommand, Terminal};
 use anyhow::Result;
 use clap::{Parser, ValueEnum};
 use infra_utils::{cargo::CargoWorkspace, commands::Command, github::GitHub};
+
+use crate::utils::{ClapExtensions, OrderedCommand, Terminal};
 
 #[derive(Clone, Debug, Default, Parser)]
 pub struct TestController {
