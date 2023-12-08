@@ -1182,8 +1182,7 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn expression(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        #[allow(unused_variables)]
-        let parse_assignment_expression = |input: &mut ParserContext<'_>| {
+        let parse_left_assignment_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
                 RuleKind::AssignmentExpression,
                 1u8,
@@ -1253,1325 +1252,281 @@ impl Language {
                 }),
             )
         };
-        #[allow(unused_variables)]
-        let parse_assignment_expression = |input: &mut ParserContext<'_>| {
-            PrecedenceHelper::to_binary_operator(
-                RuleKind::AssignmentExpression,
+        let parse_postfix_conditional_expression = |input: &mut ParserContext<'_>| {
+            PrecedenceHelper::to_postfix_operator(
+                RuleKind::ConditionalExpression,
                 3u8,
-                3u8 + 1,
                 ChoiceHelper::run(input, |mut choice, input| {
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::Equal,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::BarEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::PlusEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::MinusEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::CaretEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::SlashEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::PercentEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::AsteriskEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::AmpersandEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::LessThanLessThanEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::GreaterThanGreaterThanEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::GreaterThanGreaterThanGreaterThanEqual,
-                    );
+                    let result = SequenceHelper::run(|mut seq| {
+                        seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            input,
+                            TokenKind::QuestionMark,
+                        ))?;
+                        seq.elem(self.expression(input))?;
+                        seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            input,
+                            TokenKind::Colon,
+                        ))?;
+                        seq.elem(self.expression(input))?;
+                        seq.finish()
+                    });
                     choice.consider(input, result)?;
                     choice.finish(input)
                 }),
             )
         };
-        #[allow(unused_variables)]
-        let parse_assignment_expression = |input: &mut ParserContext<'_>| {
+        let parse_left_or_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
-                RuleKind::AssignmentExpression,
+                RuleKind::OrExpression,
                 5u8,
                 5u8 + 1,
                 ChoiceHelper::run(input, |mut choice, input| {
                     let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::Equal,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::BarEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::PlusEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::MinusEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::CaretEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::SlashEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::PercentEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::AsteriskEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::AmpersandEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::LessThanLessThanEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::GreaterThanGreaterThanEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::GreaterThanGreaterThanGreaterThanEqual,
+                        TokenKind::BarBar,
                     );
                     choice.consider(input, result)?;
                     choice.finish(input)
                 }),
             )
         };
-        #[allow(unused_variables)]
-        let parse_assignment_expression = |input: &mut ParserContext<'_>| {
+        let parse_left_and_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
-                RuleKind::AssignmentExpression,
+                RuleKind::AndExpression,
                 7u8,
                 7u8 + 1,
                 ChoiceHelper::run(input, |mut choice, input| {
                     let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::Equal,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::BarEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::PlusEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::MinusEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::CaretEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::SlashEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::PercentEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::AsteriskEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::AmpersandEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::LessThanLessThanEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::GreaterThanGreaterThanEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::GreaterThanGreaterThanGreaterThanEqual,
+                        TokenKind::AmpersandAmpersand,
                     );
                     choice.consider(input, result)?;
                     choice.finish(input)
                 }),
             )
         };
-        #[allow(unused_variables)]
-        let parse_assignment_expression = |input: &mut ParserContext<'_>| {
+        let parse_left_equality_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
-                RuleKind::AssignmentExpression,
+                RuleKind::EqualityExpression,
                 9u8,
                 9u8 + 1,
                 ChoiceHelper::run(input, |mut choice, input| {
                     let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::Equal,
+                        TokenKind::EqualEqual,
                     );
                     choice.consider(input, result)?;
                     let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::BarEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::PlusEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::MinusEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::CaretEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::SlashEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::PercentEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::AsteriskEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::AmpersandEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::LessThanLessThanEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::GreaterThanGreaterThanEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::GreaterThanGreaterThanGreaterThanEqual,
+                        TokenKind::BangEqual,
                     );
                     choice.consider(input, result)?;
                     choice.finish(input)
                 }),
             )
         };
-        #[allow(unused_variables)]
-        let parse_assignment_expression = |input: &mut ParserContext<'_>| {
+        let parse_left_comparison_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
-                RuleKind::AssignmentExpression,
+                RuleKind::ComparisonExpression,
                 11u8,
                 11u8 + 1,
                 ChoiceHelper::run(input, |mut choice, input| {
                     let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::Equal,
+                        TokenKind::LessThan,
                     );
                     choice.consider(input, result)?;
                     let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::BarEqual,
+                        TokenKind::GreaterThan,
                     );
                     choice.consider(input, result)?;
                     let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::PlusEqual,
+                        TokenKind::LessThanEqual,
                     );
                     choice.consider(input, result)?;
                     let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::MinusEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::CaretEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::SlashEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::PercentEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::AsteriskEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::AmpersandEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::LessThanLessThanEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::GreaterThanGreaterThanEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::GreaterThanGreaterThanGreaterThanEqual,
+                        TokenKind::GreaterThanEqual,
                     );
                     choice.consider(input, result)?;
                     choice.finish(input)
                 }),
             )
         };
-        #[allow(unused_variables)]
-        let parse_assignment_expression = |input: &mut ParserContext<'_>| {
+        let parse_left_bitwise_or_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
-                RuleKind::AssignmentExpression,
+                RuleKind::BitwiseOrExpression,
                 13u8,
                 13u8 + 1,
                 ChoiceHelper::run(input, |mut choice, input| {
                     let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::Equal,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::BarEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::PlusEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::MinusEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::CaretEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::SlashEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::PercentEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::AsteriskEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::AmpersandEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::LessThanLessThanEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::GreaterThanGreaterThanEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::GreaterThanGreaterThanGreaterThanEqual,
+                        TokenKind::Bar,
                     );
                     choice.consider(input, result)?;
                     choice.finish(input)
                 }),
             )
         };
-        #[allow(unused_variables)]
-        let parse_assignment_expression = |input: &mut ParserContext<'_>| {
+        let parse_left_bitwise_xor_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
-                RuleKind::AssignmentExpression,
+                RuleKind::BitwiseXorExpression,
                 15u8,
                 15u8 + 1,
                 ChoiceHelper::run(input, |mut choice, input| {
                     let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::Equal,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::BarEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::PlusEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::MinusEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::CaretEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::SlashEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::PercentEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::AsteriskEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::AmpersandEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::LessThanLessThanEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::GreaterThanGreaterThanEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::GreaterThanGreaterThanGreaterThanEqual,
+                        TokenKind::Caret,
                     );
                     choice.consider(input, result)?;
                     choice.finish(input)
                 }),
             )
         };
-        #[allow(unused_variables)]
-        let parse_assignment_expression = |input: &mut ParserContext<'_>| {
+        let parse_left_bitwise_and_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
-                RuleKind::AssignmentExpression,
+                RuleKind::BitwiseAndExpression,
                 17u8,
                 17u8 + 1,
                 ChoiceHelper::run(input, |mut choice, input| {
                     let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::Equal,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::BarEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::PlusEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::MinusEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::CaretEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::SlashEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::PercentEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::AsteriskEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::AmpersandEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::LessThanLessThanEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::GreaterThanGreaterThanEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::GreaterThanGreaterThanGreaterThanEqual,
+                        TokenKind::Ampersand,
                     );
                     choice.consider(input, result)?;
                     choice.finish(input)
                 }),
             )
         };
-        #[allow(unused_variables)]
-        let parse_assignment_expression = |input: &mut ParserContext<'_>| {
+        let parse_left_shift_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
-                RuleKind::AssignmentExpression,
+                RuleKind::ShiftExpression,
                 19u8,
                 19u8 + 1,
                 ChoiceHelper::run(input, |mut choice, input| {
                     let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::Equal,
+                        TokenKind::LessThanLessThan,
                     );
                     choice.consider(input, result)?;
                     let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::BarEqual,
+                        TokenKind::GreaterThanGreaterThan,
                     );
                     choice.consider(input, result)?;
                     let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::PlusEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::MinusEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::CaretEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::SlashEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::PercentEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::AsteriskEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::AmpersandEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::LessThanLessThanEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::GreaterThanGreaterThanEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::GreaterThanGreaterThanGreaterThanEqual,
+                        TokenKind::GreaterThanGreaterThanGreaterThan,
                     );
                     choice.consider(input, result)?;
                     choice.finish(input)
                 }),
             )
         };
-        #[allow(unused_variables)]
-        let parse_assignment_expression = |input: &mut ParserContext<'_>| {
+        let parse_left_additive_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
-                RuleKind::AssignmentExpression,
+                RuleKind::AdditiveExpression,
                 21u8,
                 21u8 + 1,
                 ChoiceHelper::run(input, |mut choice, input| {
                     let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::Equal,
+                        TokenKind::Plus,
                     );
                     choice.consider(input, result)?;
                     let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::BarEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::PlusEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::MinusEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::CaretEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::SlashEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::PercentEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::AsteriskEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::AmpersandEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::LessThanLessThanEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::GreaterThanGreaterThanEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::GreaterThanGreaterThanGreaterThanEqual,
+                        TokenKind::Minus,
                     );
                     choice.consider(input, result)?;
                     choice.finish(input)
                 }),
             )
         };
-        #[allow(unused_variables)]
-        let parse_assignment_expression = |input: &mut ParserContext<'_>| {
+        let parse_left_multiplicative_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
-                RuleKind::AssignmentExpression,
+                RuleKind::MultiplicativeExpression,
                 23u8,
                 23u8 + 1,
                 ChoiceHelper::run(input, |mut choice, input| {
                     let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::Equal,
+                        TokenKind::Asterisk,
                     );
                     choice.consider(input, result)?;
                     let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::BarEqual,
+                        TokenKind::Slash,
                     );
                     choice.consider(input, result)?;
                     let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
-                        TokenKind::PlusEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::MinusEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::CaretEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::SlashEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::PercentEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::AsteriskEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::AmpersandEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::LessThanLessThanEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::GreaterThanGreaterThanEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::GreaterThanGreaterThanGreaterThanEqual,
+                        TokenKind::Percent,
                     );
                     choice.consider(input, result)?;
                     choice.finish(input)
                 }),
             )
         };
-        #[allow(unused_variables)]
-        let parse_conditional_expression = |input: &mut ParserContext<'_>| {
-            PrecedenceHelper::to_postfix_operator(
-                RuleKind::ConditionalExpression,
+        let parse_left_exponentiation_expression = |input: &mut ParserContext<'_>| {
+            PrecedenceHelper::to_binary_operator(
+                RuleKind::ExponentiationExpression,
                 25u8,
-                SequenceHelper::run(|mut seq| {
-                    seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::QuestionMark,
-                    ))?;
-                    seq.elem(self.expression(input))?;
-                    seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::Colon,
-                    ))?;
-                    seq.elem(self.expression(input))?;
-                    seq.finish()
+                25u8 + 1,
+                ChoiceHelper::run(input, |mut choice, input| {
+                    if !self.version_is_at_least_0_6_0 {
+                        let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            input,
+                            TokenKind::AsteriskAsterisk,
+                        );
+                        choice.consider(input, result)?;
+                    }
+                    choice.finish(input)
                 }),
             )
         };
-        #[allow(unused_variables)]
-        let parse_or_expression = |input: &mut ParserContext<'_>| {
+        let parse_right_exponentiation_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
-                RuleKind::OrExpression,
-                27u8,
+                RuleKind::ExponentiationExpression,
                 27u8 + 1,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
-                    input,
-                    TokenKind::BarBar,
-                ),
+                27u8,
+                ChoiceHelper::run(input, |mut choice, input| {
+                    if self.version_is_at_least_0_6_0 {
+                        let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            input,
+                            TokenKind::AsteriskAsterisk,
+                        );
+                        choice.consider(input, result)?;
+                    }
+                    choice.finish(input)
+                }),
             )
         };
-        #[allow(unused_variables)]
-        let parse_and_expression = |input: &mut ParserContext<'_>| {
-            PrecedenceHelper::to_binary_operator(
-                RuleKind::AndExpression,
+        let parse_postfix_postfix_expression = |input: &mut ParserContext<'_>| {
+            PrecedenceHelper::to_postfix_operator(
+                RuleKind::PostfixExpression,
                 29u8,
-                29u8 + 1,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
-                    input,
-                    TokenKind::AmpersandAmpersand,
-                ),
+                ChoiceHelper::run(input, |mut choice, input| {
+                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        input,
+                        TokenKind::PlusPlus,
+                    );
+                    choice.consider(input, result)?;
+                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        input,
+                        TokenKind::MinusMinus,
+                    );
+                    choice.consider(input, result)?;
+                    choice.finish(input)
+                }),
             )
         };
-        #[allow(unused_variables)]
-        let parse_equality_expression = |input: &mut ParserContext<'_>| {
-            PrecedenceHelper::to_binary_operator(
-                RuleKind::EqualityExpression,
+        let parse_prefix_prefix_expression = |input: &mut ParserContext<'_>| {
+            PrecedenceHelper::to_prefix_operator(
+                RuleKind::PrefixExpression,
                 31u8,
-                31u8 + 1,
-                ChoiceHelper::run(input, |mut choice, input| {
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::EqualEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::BangEqual,
-                    );
-                    choice.consider(input, result)?;
-                    choice.finish(input)
-                }),
-            )
-        };
-        #[allow(unused_variables)]
-        let parse_equality_expression = |input: &mut ParserContext<'_>| {
-            PrecedenceHelper::to_binary_operator(
-                RuleKind::EqualityExpression,
-                33u8,
-                33u8 + 1,
-                ChoiceHelper::run(input, |mut choice, input| {
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::EqualEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::BangEqual,
-                    );
-                    choice.consider(input, result)?;
-                    choice.finish(input)
-                }),
-            )
-        };
-        #[allow(unused_variables)]
-        let parse_comparison_expression = |input: &mut ParserContext<'_>| {
-            PrecedenceHelper::to_binary_operator(
-                RuleKind::ComparisonExpression,
-                35u8,
-                35u8 + 1,
-                ChoiceHelper::run(input, |mut choice, input| {
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::LessThan,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::GreaterThan,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::LessThanEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::GreaterThanEqual,
-                    );
-                    choice.consider(input, result)?;
-                    choice.finish(input)
-                }),
-            )
-        };
-        #[allow(unused_variables)]
-        let parse_comparison_expression = |input: &mut ParserContext<'_>| {
-            PrecedenceHelper::to_binary_operator(
-                RuleKind::ComparisonExpression,
-                37u8,
-                37u8 + 1,
-                ChoiceHelper::run(input, |mut choice, input| {
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::LessThan,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::GreaterThan,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::LessThanEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::GreaterThanEqual,
-                    );
-                    choice.consider(input, result)?;
-                    choice.finish(input)
-                }),
-            )
-        };
-        #[allow(unused_variables)]
-        let parse_comparison_expression = |input: &mut ParserContext<'_>| {
-            PrecedenceHelper::to_binary_operator(
-                RuleKind::ComparisonExpression,
-                39u8,
-                39u8 + 1,
-                ChoiceHelper::run(input, |mut choice, input| {
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::LessThan,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::GreaterThan,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::LessThanEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::GreaterThanEqual,
-                    );
-                    choice.consider(input, result)?;
-                    choice.finish(input)
-                }),
-            )
-        };
-        #[allow(unused_variables)]
-        let parse_comparison_expression = |input: &mut ParserContext<'_>| {
-            PrecedenceHelper::to_binary_operator(
-                RuleKind::ComparisonExpression,
-                41u8,
-                41u8 + 1,
-                ChoiceHelper::run(input, |mut choice, input| {
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::LessThan,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::GreaterThan,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::LessThanEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::GreaterThanEqual,
-                    );
-                    choice.consider(input, result)?;
-                    choice.finish(input)
-                }),
-            )
-        };
-        #[allow(unused_variables)]
-        let parse_bitwise_or_expression = |input: &mut ParserContext<'_>| {
-            PrecedenceHelper::to_binary_operator(
-                RuleKind::BitwiseOrExpression,
-                43u8,
-                43u8 + 1,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(input, TokenKind::Bar),
-            )
-        };
-        #[allow(unused_variables)]
-        let parse_bitwise_xor_expression = |input: &mut ParserContext<'_>| {
-            PrecedenceHelper::to_binary_operator(
-                RuleKind::BitwiseXorExpression,
-                45u8,
-                45u8 + 1,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
-                    input,
-                    TokenKind::Caret,
-                ),
-            )
-        };
-        #[allow(unused_variables)]
-        let parse_bitwise_and_expression = |input: &mut ParserContext<'_>| {
-            PrecedenceHelper::to_binary_operator(
-                RuleKind::BitwiseAndExpression,
-                47u8,
-                47u8 + 1,
-                self.parse_token_with_trivia::<LexicalContextType::Default>(
-                    input,
-                    TokenKind::Ampersand,
-                ),
-            )
-        };
-        #[allow(unused_variables)]
-        let parse_shift_expression = |input: &mut ParserContext<'_>| {
-            PrecedenceHelper::to_binary_operator(
-                RuleKind::ShiftExpression,
-                49u8,
-                49u8 + 1,
-                ChoiceHelper::run(input, |mut choice, input| {
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::LessThanLessThan,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::GreaterThanGreaterThan,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::GreaterThanGreaterThanGreaterThan,
-                    );
-                    choice.consider(input, result)?;
-                    choice.finish(input)
-                }),
-            )
-        };
-        #[allow(unused_variables)]
-        let parse_shift_expression = |input: &mut ParserContext<'_>| {
-            PrecedenceHelper::to_binary_operator(
-                RuleKind::ShiftExpression,
-                51u8,
-                51u8 + 1,
-                ChoiceHelper::run(input, |mut choice, input| {
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::LessThanLessThan,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::GreaterThanGreaterThan,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::GreaterThanGreaterThanGreaterThan,
-                    );
-                    choice.consider(input, result)?;
-                    choice.finish(input)
-                }),
-            )
-        };
-        #[allow(unused_variables)]
-        let parse_shift_expression = |input: &mut ParserContext<'_>| {
-            PrecedenceHelper::to_binary_operator(
-                RuleKind::ShiftExpression,
-                53u8,
-                53u8 + 1,
-                ChoiceHelper::run(input, |mut choice, input| {
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::LessThanLessThan,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::GreaterThanGreaterThan,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::GreaterThanGreaterThanGreaterThan,
-                    );
-                    choice.consider(input, result)?;
-                    choice.finish(input)
-                }),
-            )
-        };
-        #[allow(unused_variables)]
-        let parse_additive_expression = |input: &mut ParserContext<'_>| {
-            PrecedenceHelper::to_binary_operator(
-                RuleKind::AdditiveExpression,
-                55u8,
-                55u8 + 1,
-                ChoiceHelper::run(input, |mut choice, input| {
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::Plus,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::Minus,
-                    );
-                    choice.consider(input, result)?;
-                    choice.finish(input)
-                }),
-            )
-        };
-        #[allow(unused_variables)]
-        let parse_additive_expression = |input: &mut ParserContext<'_>| {
-            PrecedenceHelper::to_binary_operator(
-                RuleKind::AdditiveExpression,
-                57u8,
-                57u8 + 1,
-                ChoiceHelper::run(input, |mut choice, input| {
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::Plus,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::Minus,
-                    );
-                    choice.consider(input, result)?;
-                    choice.finish(input)
-                }),
-            )
-        };
-        #[allow(unused_variables)]
-        let parse_multiplicative_expression = |input: &mut ParserContext<'_>| {
-            PrecedenceHelper::to_binary_operator(
-                RuleKind::MultiplicativeExpression,
-                59u8,
-                59u8 + 1,
-                ChoiceHelper::run(input, |mut choice, input| {
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::Asterisk,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::Slash,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::Percent,
-                    );
-                    choice.consider(input, result)?;
-                    choice.finish(input)
-                }),
-            )
-        };
-        #[allow(unused_variables)]
-        let parse_multiplicative_expression = |input: &mut ParserContext<'_>| {
-            PrecedenceHelper::to_binary_operator(
-                RuleKind::MultiplicativeExpression,
-                61u8,
-                61u8 + 1,
-                ChoiceHelper::run(input, |mut choice, input| {
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::Asterisk,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::Slash,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::Percent,
-                    );
-                    choice.consider(input, result)?;
-                    choice.finish(input)
-                }),
-            )
-        };
-        #[allow(unused_variables)]
-        let parse_multiplicative_expression = |input: &mut ParserContext<'_>| {
-            PrecedenceHelper::to_binary_operator(
-                RuleKind::MultiplicativeExpression,
-                63u8,
-                63u8 + 1,
-                ChoiceHelper::run(input, |mut choice, input| {
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::Asterisk,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::Slash,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::Percent,
-                    );
-                    choice.consider(input, result)?;
-                    choice.finish(input)
-                }),
-            )
-        };
-        #[allow(unused_variables)]
-        let parse_exponentiation_expression_removed_from_0_6_0 = |input: &mut ParserContext<'_>| {
-            PrecedenceHelper::to_binary_operator(
-                RuleKind::ExponentiationExpression,
-                65u8,
-                65u8 + 1,
-                ChoiceHelper::run(input, |mut choice, input| {
-                    if !self.version_is_at_least_0_6_0 {
-                        let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                            input,
-                            TokenKind::AsteriskAsterisk,
-                        );
-                        choice.consider(input, result)?;
-                    }
-                    if self.version_is_at_least_0_6_0 {
-                        let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                            input,
-                            TokenKind::AsteriskAsterisk,
-                        );
-                        choice.consider(input, result)?;
-                    }
-                    choice.finish(input)
-                }),
-            )
-        };
-        #[allow(unused_variables)]
-        let parse_exponentiation_expression_introduced_from_0_6_0 = |input: &mut ParserContext<
-            '_,
-        >| {
-            PrecedenceHelper::to_binary_operator(
-                RuleKind::ExponentiationExpression,
-                67u8 + 1,
-                67u8,
-                ChoiceHelper::run(input, |mut choice, input| {
-                    if !self.version_is_at_least_0_6_0 {
-                        let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                            input,
-                            TokenKind::AsteriskAsterisk,
-                        );
-                        choice.consider(input, result)?;
-                    }
-                    if self.version_is_at_least_0_6_0 {
-                        let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                            input,
-                            TokenKind::AsteriskAsterisk,
-                        );
-                        choice.consider(input, result)?;
-                    }
-                    choice.finish(input)
-                }),
-            )
-        };
-        #[allow(unused_variables)]
-        let parse_postfix_expression = |input: &mut ParserContext<'_>| {
-            PrecedenceHelper::to_postfix_operator(
-                RuleKind::PostfixExpression,
-                69u8,
-                ChoiceHelper::run(input, |mut choice, input| {
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::PlusPlus,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::MinusMinus,
-                    );
-                    choice.consider(input, result)?;
-                    choice.finish(input)
-                }),
-            )
-        };
-        #[allow(unused_variables)]
-        let parse_postfix_expression = |input: &mut ParserContext<'_>| {
-            PrecedenceHelper::to_postfix_operator(
-                RuleKind::PostfixExpression,
-                71u8,
-                ChoiceHelper::run(input, |mut choice, input| {
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::PlusPlus,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::MinusMinus,
-                    );
-                    choice.consider(input, result)?;
-                    choice.finish(input)
-                }),
-            )
-        };
-        #[allow(unused_variables)]
-        let parse_prefix_expression = |input: &mut ParserContext<'_>| {
-            PrecedenceHelper::to_prefix_operator(
-                RuleKind::PrefixExpression,
-                73u8,
                 ChoiceHelper::run(input, |mut choice, input| {
                     let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
@@ -2609,299 +1564,84 @@ impl Language {
                 }),
             )
         };
-        #[allow(unused_variables)]
-        let parse_prefix_expression = |input: &mut ParserContext<'_>| {
-            PrecedenceHelper::to_prefix_operator(
-                RuleKind::PrefixExpression,
-                75u8,
-                ChoiceHelper::run(input, |mut choice, input| {
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::PlusPlus,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::MinusMinus,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::Tilde,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::Bang,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::Minus,
-                    );
-                    choice.consider(input, result)?;
-                    if !self.version_is_at_least_0_5_0 {
-                        let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                            input,
-                            TokenKind::Plus,
-                        );
-                        choice.consider(input, result)?;
-                    }
-                    choice.finish(input)
-                }),
-            )
-        };
-        #[allow(unused_variables)]
-        let parse_prefix_expression = |input: &mut ParserContext<'_>| {
-            PrecedenceHelper::to_prefix_operator(
-                RuleKind::PrefixExpression,
-                77u8,
-                ChoiceHelper::run(input, |mut choice, input| {
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::PlusPlus,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::MinusMinus,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::Tilde,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::Bang,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::Minus,
-                    );
-                    choice.consider(input, result)?;
-                    if !self.version_is_at_least_0_5_0 {
-                        let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                            input,
-                            TokenKind::Plus,
-                        );
-                        choice.consider(input, result)?;
-                    }
-                    choice.finish(input)
-                }),
-            )
-        };
-        #[allow(unused_variables)]
-        let parse_prefix_expression = |input: &mut ParserContext<'_>| {
-            PrecedenceHelper::to_prefix_operator(
-                RuleKind::PrefixExpression,
-                79u8,
-                ChoiceHelper::run(input, |mut choice, input| {
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::PlusPlus,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::MinusMinus,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::Tilde,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::Bang,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::Minus,
-                    );
-                    choice.consider(input, result)?;
-                    if !self.version_is_at_least_0_5_0 {
-                        let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                            input,
-                            TokenKind::Plus,
-                        );
-                        choice.consider(input, result)?;
-                    }
-                    choice.finish(input)
-                }),
-            )
-        };
-        #[allow(unused_variables)]
-        let parse_prefix_expression = |input: &mut ParserContext<'_>| {
-            PrecedenceHelper::to_prefix_operator(
-                RuleKind::PrefixExpression,
-                81u8,
-                ChoiceHelper::run(input, |mut choice, input| {
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::PlusPlus,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::MinusMinus,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::Tilde,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::Bang,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::Minus,
-                    );
-                    choice.consider(input, result)?;
-                    if !self.version_is_at_least_0_5_0 {
-                        let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                            input,
-                            TokenKind::Plus,
-                        );
-                        choice.consider(input, result)?;
-                    }
-                    choice.finish(input)
-                }),
-            )
-        };
-        #[allow(unused_variables)]
-        let parse_prefix_expression_removed_from_0_5_0 = |input: &mut ParserContext<'_>| {
-            PrecedenceHelper::to_prefix_operator(
-                RuleKind::PrefixExpression,
-                83u8,
-                ChoiceHelper::run(input, |mut choice, input| {
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::PlusPlus,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::MinusMinus,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::Tilde,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::Bang,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::Minus,
-                    );
-                    choice.consider(input, result)?;
-                    if !self.version_is_at_least_0_5_0 {
-                        let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                            input,
-                            TokenKind::Plus,
-                        );
-                        choice.consider(input, result)?;
-                    }
-                    choice.finish(input)
-                }),
-            )
-        };
-        #[allow(unused_variables)]
-        let parse_function_call_expression = |input: &mut ParserContext<'_>| {
+        let parse_postfix_function_call_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_postfix_operator(
                 RuleKind::FunctionCallExpression,
-                85u8,
-                SequenceHelper::run(|mut seq| {
-                    if self.version_is_at_least_0_6_2 {
-                        seq.elem(OptionalHelper::transform(self.function_call_options(input)))?;
-                    }
-                    seq.elem(self.arguments_declaration(input))?;
-                    seq.finish()
+                33u8,
+                ChoiceHelper::run(input, |mut choice, input| {
+                    let result = SequenceHelper::run(|mut seq| {
+                        if self.version_is_at_least_0_6_2 {
+                            seq.elem(OptionalHelper::transform(self.function_call_options(input)))?;
+                        }
+                        seq.elem(self.arguments_declaration(input))?;
+                        seq.finish()
+                    });
+                    choice.consider(input, result)?;
+                    choice.finish(input)
                 }),
             )
         };
-        #[allow(unused_variables)]
-        let parse_member_access_expression = |input: &mut ParserContext<'_>| {
+        let parse_postfix_member_access_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_postfix_operator(
                 RuleKind::MemberAccessExpression,
-                87u8,
-                SequenceHelper::run(|mut seq| {
-                    seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::Period,
-                    ))?;
-                    seq.elem(self.member_access(input))?;
-                    seq.finish()
+                35u8,
+                ChoiceHelper::run(input, |mut choice, input| {
+                    let result = SequenceHelper::run(|mut seq| {
+                        seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            input,
+                            TokenKind::Period,
+                        ))?;
+                        seq.elem(self.member_access(input))?;
+                        seq.finish()
+                    });
+                    choice.consider(input, result)?;
+                    choice.finish(input)
                 }),
             )
         };
-        #[allow(unused_variables)]
-        let parse_index_access_expression = |input: &mut ParserContext<'_>| {
+        let parse_postfix_index_access_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_postfix_operator(
                 RuleKind::IndexAccessExpression,
-                89u8,
-                SequenceHelper::run(|mut seq| {
-                    let mut delim_guard = input.open_delim(TokenKind::CloseBracket);
-                    let input = delim_guard.ctx();
-                    seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::OpenBracket,
-                    ))?;
-                    seq.elem(
-                        SequenceHelper::run(|mut seq| {
-                            seq.elem(OptionalHelper::transform(self.expression(input)))?;
-                            seq.elem(OptionalHelper::transform(self.index_access_end(input)))?;
-                            seq.finish()
-                        })
-                        .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
+                37u8,
+                ChoiceHelper::run(input, |mut choice, input| {
+                    let result = SequenceHelper::run(|mut seq| {
+                        let mut delim_guard = input.open_delim(TokenKind::CloseBracket);
+                        let input = delim_guard.ctx();
+                        seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
-                            self,
+                            TokenKind::OpenBracket,
+                        ))?;
+                        seq.elem(
+                            SequenceHelper::run(|mut seq| {
+                                seq.elem(OptionalHelper::transform(self.expression(input)))?;
+                                seq.elem(OptionalHelper::transform(self.index_access_end(input)))?;
+                                seq.finish()
+                            })
+                            .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
+                                input,
+                                self,
+                                TokenKind::CloseBracket,
+                                RecoverFromNoMatch::Yes,
+                            ),
+                        )?;
+                        seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            input,
                             TokenKind::CloseBracket,
-                            RecoverFromNoMatch::Yes,
-                        ),
-                    )?;
-                    seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::CloseBracket,
-                    ))?;
-                    seq.finish()
+                        ))?;
+                        seq.finish()
+                    });
+                    choice.consider(input, result)?;
+                    choice.finish(input)
                 }),
             )
         };
-        #[allow(unused_variables)]
         let prefix_operator_parser = |input: &mut ParserContext<'_>| {
             ChoiceHelper::run(input, |mut choice, input| {
-                let result = parse_prefix_expression(input);
+                let result = parse_prefix_prefix_expression(input);
                 choice.consider(input, result)?;
-                let result = parse_prefix_expression(input);
-                choice.consider(input, result)?;
-                let result = parse_prefix_expression(input);
-                choice.consider(input, result)?;
-                let result = parse_prefix_expression(input);
-                choice.consider(input, result)?;
-                let result = parse_prefix_expression(input);
-                choice.consider(input, result)?;
-                if !self.version_is_at_least_0_5_0 {
-                    let result = parse_prefix_expression_removed_from_0_5_0(input);
-                    choice.consider(input, result)?;
-                }
                 choice.finish(input)
             })
         };
-        #[allow(unused_variables)]
         let primary_expression_parser = |input: &mut ParserContext<'_>| {
             ChoiceHelper::run(input, |mut choice, input| {
                 let result = self.new_expression(input);
@@ -2940,25 +1680,21 @@ impl Language {
                 choice.finish(input)
             })
         };
-        #[allow(unused_variables)]
         let postfix_operator_parser = |input: &mut ParserContext<'_>| {
             ChoiceHelper::run(input, |mut choice, input| {
-                let result = parse_conditional_expression(input);
+                let result = parse_postfix_conditional_expression(input);
                 choice.consider(input, result)?;
-                let result = parse_postfix_expression(input);
+                let result = parse_postfix_postfix_expression(input);
                 choice.consider(input, result)?;
-                let result = parse_postfix_expression(input);
+                let result = parse_postfix_function_call_expression(input);
                 choice.consider(input, result)?;
-                let result = parse_function_call_expression(input);
+                let result = parse_postfix_member_access_expression(input);
                 choice.consider(input, result)?;
-                let result = parse_member_access_expression(input);
-                choice.consider(input, result)?;
-                let result = parse_index_access_expression(input);
+                let result = parse_postfix_index_access_expression(input);
                 choice.consider(input, result)?;
                 choice.finish(input)
             })
         };
-        #[allow(unused_variables)]
         let binary_operand_parser = |input: &mut ParserContext<'_>| {
             SequenceHelper::run(|mut seq| {
                 seq.elem(ZeroOrMoreHelper::run(input, prefix_operator_parser))?;
@@ -2967,83 +1703,37 @@ impl Language {
                 seq.finish()
             })
         };
-        #[allow(unused_variables)]
         let binary_operator_parser = |input: &mut ParserContext<'_>| {
             ChoiceHelper::run(input, |mut choice, input| {
-                let result = parse_assignment_expression(input);
+                let result = parse_left_assignment_expression(input);
                 choice.consider(input, result)?;
-                let result = parse_assignment_expression(input);
+                let result = parse_left_or_expression(input);
                 choice.consider(input, result)?;
-                let result = parse_assignment_expression(input);
+                let result = parse_left_and_expression(input);
                 choice.consider(input, result)?;
-                let result = parse_assignment_expression(input);
+                let result = parse_left_equality_expression(input);
                 choice.consider(input, result)?;
-                let result = parse_assignment_expression(input);
+                let result = parse_left_comparison_expression(input);
                 choice.consider(input, result)?;
-                let result = parse_assignment_expression(input);
+                let result = parse_left_bitwise_or_expression(input);
                 choice.consider(input, result)?;
-                let result = parse_assignment_expression(input);
+                let result = parse_left_bitwise_xor_expression(input);
                 choice.consider(input, result)?;
-                let result = parse_assignment_expression(input);
+                let result = parse_left_bitwise_and_expression(input);
                 choice.consider(input, result)?;
-                let result = parse_assignment_expression(input);
+                let result = parse_left_shift_expression(input);
                 choice.consider(input, result)?;
-                let result = parse_assignment_expression(input);
+                let result = parse_left_additive_expression(input);
                 choice.consider(input, result)?;
-                let result = parse_assignment_expression(input);
+                let result = parse_left_multiplicative_expression(input);
                 choice.consider(input, result)?;
-                let result = parse_assignment_expression(input);
+                let result = parse_left_exponentiation_expression(input);
                 choice.consider(input, result)?;
-                let result = parse_or_expression(input);
+                let result = parse_right_exponentiation_expression(input);
                 choice.consider(input, result)?;
-                let result = parse_and_expression(input);
-                choice.consider(input, result)?;
-                let result = parse_equality_expression(input);
-                choice.consider(input, result)?;
-                let result = parse_equality_expression(input);
-                choice.consider(input, result)?;
-                let result = parse_comparison_expression(input);
-                choice.consider(input, result)?;
-                let result = parse_comparison_expression(input);
-                choice.consider(input, result)?;
-                let result = parse_comparison_expression(input);
-                choice.consider(input, result)?;
-                let result = parse_comparison_expression(input);
-                choice.consider(input, result)?;
-                let result = parse_bitwise_or_expression(input);
-                choice.consider(input, result)?;
-                let result = parse_bitwise_xor_expression(input);
-                choice.consider(input, result)?;
-                let result = parse_bitwise_and_expression(input);
-                choice.consider(input, result)?;
-                let result = parse_shift_expression(input);
-                choice.consider(input, result)?;
-                let result = parse_shift_expression(input);
-                choice.consider(input, result)?;
-                let result = parse_shift_expression(input);
-                choice.consider(input, result)?;
-                let result = parse_additive_expression(input);
-                choice.consider(input, result)?;
-                let result = parse_additive_expression(input);
-                choice.consider(input, result)?;
-                let result = parse_multiplicative_expression(input);
-                choice.consider(input, result)?;
-                let result = parse_multiplicative_expression(input);
-                choice.consider(input, result)?;
-                let result = parse_multiplicative_expression(input);
-                choice.consider(input, result)?;
-                if !self.version_is_at_least_0_6_0 {
-                    let result = parse_exponentiation_expression_removed_from_0_6_0(input);
-                    choice.consider(input, result)?;
-                }
-                if self.version_is_at_least_0_6_0 {
-                    let result = parse_exponentiation_expression_introduced_from_0_6_0(input);
-                    choice.consider(input, result)?;
-                }
                 choice.finish(input)
             })
         };
-        #[allow(unused_variables)]
         let linear_expression_parser = |input: &mut ParserContext<'_>| {
             SequenceHelper::run(|mut seq| {
                 seq.elem(binary_operand_parser(input))?;
@@ -5053,36 +3743,38 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn type_name(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        #[allow(unused_variables)]
-        let parse_array_type_name = |input: &mut ParserContext<'_>| {
+        let parse_postfix_array_type_name = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_postfix_operator(
                 RuleKind::ArrayTypeName,
                 1u8,
-                SequenceHelper::run(|mut seq| {
-                    let mut delim_guard = input.open_delim(TokenKind::CloseBracket);
-                    let input = delim_guard.ctx();
-                    seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::OpenBracket,
-                    ))?;
-                    seq.elem(
-                        OptionalHelper::transform(self.expression(input))
-                            .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
+                ChoiceHelper::run(input, |mut choice, input| {
+                    let result = SequenceHelper::run(|mut seq| {
+                        let mut delim_guard = input.open_delim(TokenKind::CloseBracket);
+                        let input = delim_guard.ctx();
+                        seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
                             input,
-                            self,
+                            TokenKind::OpenBracket,
+                        ))?;
+                        seq.elem(
+                            OptionalHelper::transform(self.expression(input))
+                                .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
+                                input,
+                                self,
+                                TokenKind::CloseBracket,
+                                RecoverFromNoMatch::Yes,
+                            ),
+                        )?;
+                        seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            input,
                             TokenKind::CloseBracket,
-                            RecoverFromNoMatch::Yes,
-                        ),
-                    )?;
-                    seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::CloseBracket,
-                    ))?;
-                    seq.finish()
+                        ))?;
+                        seq.finish()
+                    });
+                    choice.consider(input, result)?;
+                    choice.finish(input)
                 }),
             )
         };
-        #[allow(unused_variables)]
         let primary_expression_parser = |input: &mut ParserContext<'_>| {
             ChoiceHelper::run(input, |mut choice, input| {
                 let result = self.function_type(input);
@@ -5096,15 +3788,13 @@ impl Language {
                 choice.finish(input)
             })
         };
-        #[allow(unused_variables)]
         let postfix_operator_parser = |input: &mut ParserContext<'_>| {
             ChoiceHelper::run(input, |mut choice, input| {
-                let result = parse_array_type_name(input);
+                let result = parse_postfix_array_type_name(input);
                 choice.consider(input, result)?;
                 choice.finish(input)
             })
         };
-        #[allow(unused_variables)]
         let linear_expression_parser = |input: &mut ParserContext<'_>| {
             SequenceHelper::run(|mut seq| {
                 seq.elem(primary_expression_parser(input))?;
@@ -5594,29 +4284,37 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn version_pragma_expression(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        #[allow(unused_variables)]
-        let parse_version_pragma_or_expression = |input: &mut ParserContext<'_>| {
+        let parse_left_version_pragma_or_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
                 RuleKind::VersionPragmaOrExpression,
                 1u8,
                 1u8 + 1,
-                self.parse_token_with_trivia::<LexicalContextType::Pragma>(
-                    input,
-                    TokenKind::BarBar,
-                ),
+                ChoiceHelper::run(input, |mut choice, input| {
+                    let result = self.parse_token_with_trivia::<LexicalContextType::Pragma>(
+                        input,
+                        TokenKind::BarBar,
+                    );
+                    choice.consider(input, result)?;
+                    choice.finish(input)
+                }),
             )
         };
-        #[allow(unused_variables)]
-        let parse_version_pragma_range_expression = |input: &mut ParserContext<'_>| {
+        let parse_left_version_pragma_range_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
                 RuleKind::VersionPragmaRangeExpression,
                 3u8,
                 3u8 + 1,
-                self.parse_token_with_trivia::<LexicalContextType::Pragma>(input, TokenKind::Minus),
+                ChoiceHelper::run(input, |mut choice, input| {
+                    let result = self.parse_token_with_trivia::<LexicalContextType::Pragma>(
+                        input,
+                        TokenKind::Minus,
+                    );
+                    choice.consider(input, result)?;
+                    choice.finish(input)
+                }),
             )
         };
-        #[allow(unused_variables)]
-        let parse_version_pragma_prefix_expression = |input: &mut ParserContext<'_>| {
+        let parse_prefix_version_pragma_prefix_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_prefix_operator(
                 RuleKind::VersionPragmaPrefixExpression,
                 5u8,
@@ -5660,300 +4358,15 @@ impl Language {
                 }),
             )
         };
-        #[allow(unused_variables)]
-        let parse_version_pragma_prefix_expression = |input: &mut ParserContext<'_>| {
-            PrecedenceHelper::to_prefix_operator(
-                RuleKind::VersionPragmaPrefixExpression,
-                7u8,
-                ChoiceHelper::run(input, |mut choice, input| {
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Pragma>(
-                        input,
-                        TokenKind::Caret,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Pragma>(
-                        input,
-                        TokenKind::Tilde,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Pragma>(
-                        input,
-                        TokenKind::Equal,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Pragma>(
-                        input,
-                        TokenKind::LessThan,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Pragma>(
-                        input,
-                        TokenKind::GreaterThan,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Pragma>(
-                        input,
-                        TokenKind::LessThanEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Pragma>(
-                        input,
-                        TokenKind::GreaterThanEqual,
-                    );
-                    choice.consider(input, result)?;
-                    choice.finish(input)
-                }),
-            )
-        };
-        #[allow(unused_variables)]
-        let parse_version_pragma_prefix_expression = |input: &mut ParserContext<'_>| {
-            PrecedenceHelper::to_prefix_operator(
-                RuleKind::VersionPragmaPrefixExpression,
-                9u8,
-                ChoiceHelper::run(input, |mut choice, input| {
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Pragma>(
-                        input,
-                        TokenKind::Caret,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Pragma>(
-                        input,
-                        TokenKind::Tilde,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Pragma>(
-                        input,
-                        TokenKind::Equal,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Pragma>(
-                        input,
-                        TokenKind::LessThan,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Pragma>(
-                        input,
-                        TokenKind::GreaterThan,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Pragma>(
-                        input,
-                        TokenKind::LessThanEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Pragma>(
-                        input,
-                        TokenKind::GreaterThanEqual,
-                    );
-                    choice.consider(input, result)?;
-                    choice.finish(input)
-                }),
-            )
-        };
-        #[allow(unused_variables)]
-        let parse_version_pragma_prefix_expression = |input: &mut ParserContext<'_>| {
-            PrecedenceHelper::to_prefix_operator(
-                RuleKind::VersionPragmaPrefixExpression,
-                11u8,
-                ChoiceHelper::run(input, |mut choice, input| {
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Pragma>(
-                        input,
-                        TokenKind::Caret,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Pragma>(
-                        input,
-                        TokenKind::Tilde,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Pragma>(
-                        input,
-                        TokenKind::Equal,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Pragma>(
-                        input,
-                        TokenKind::LessThan,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Pragma>(
-                        input,
-                        TokenKind::GreaterThan,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Pragma>(
-                        input,
-                        TokenKind::LessThanEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Pragma>(
-                        input,
-                        TokenKind::GreaterThanEqual,
-                    );
-                    choice.consider(input, result)?;
-                    choice.finish(input)
-                }),
-            )
-        };
-        #[allow(unused_variables)]
-        let parse_version_pragma_prefix_expression = |input: &mut ParserContext<'_>| {
-            PrecedenceHelper::to_prefix_operator(
-                RuleKind::VersionPragmaPrefixExpression,
-                13u8,
-                ChoiceHelper::run(input, |mut choice, input| {
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Pragma>(
-                        input,
-                        TokenKind::Caret,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Pragma>(
-                        input,
-                        TokenKind::Tilde,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Pragma>(
-                        input,
-                        TokenKind::Equal,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Pragma>(
-                        input,
-                        TokenKind::LessThan,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Pragma>(
-                        input,
-                        TokenKind::GreaterThan,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Pragma>(
-                        input,
-                        TokenKind::LessThanEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Pragma>(
-                        input,
-                        TokenKind::GreaterThanEqual,
-                    );
-                    choice.consider(input, result)?;
-                    choice.finish(input)
-                }),
-            )
-        };
-        #[allow(unused_variables)]
-        let parse_version_pragma_prefix_expression = |input: &mut ParserContext<'_>| {
-            PrecedenceHelper::to_prefix_operator(
-                RuleKind::VersionPragmaPrefixExpression,
-                15u8,
-                ChoiceHelper::run(input, |mut choice, input| {
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Pragma>(
-                        input,
-                        TokenKind::Caret,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Pragma>(
-                        input,
-                        TokenKind::Tilde,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Pragma>(
-                        input,
-                        TokenKind::Equal,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Pragma>(
-                        input,
-                        TokenKind::LessThan,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Pragma>(
-                        input,
-                        TokenKind::GreaterThan,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Pragma>(
-                        input,
-                        TokenKind::LessThanEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Pragma>(
-                        input,
-                        TokenKind::GreaterThanEqual,
-                    );
-                    choice.consider(input, result)?;
-                    choice.finish(input)
-                }),
-            )
-        };
-        #[allow(unused_variables)]
-        let parse_version_pragma_prefix_expression = |input: &mut ParserContext<'_>| {
-            PrecedenceHelper::to_prefix_operator(
-                RuleKind::VersionPragmaPrefixExpression,
-                17u8,
-                ChoiceHelper::run(input, |mut choice, input| {
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Pragma>(
-                        input,
-                        TokenKind::Caret,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Pragma>(
-                        input,
-                        TokenKind::Tilde,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Pragma>(
-                        input,
-                        TokenKind::Equal,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Pragma>(
-                        input,
-                        TokenKind::LessThan,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Pragma>(
-                        input,
-                        TokenKind::GreaterThan,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Pragma>(
-                        input,
-                        TokenKind::LessThanEqual,
-                    );
-                    choice.consider(input, result)?;
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Pragma>(
-                        input,
-                        TokenKind::GreaterThanEqual,
-                    );
-                    choice.consider(input, result)?;
-                    choice.finish(input)
-                }),
-            )
-        };
-        #[allow(unused_variables)]
         let prefix_operator_parser = |input: &mut ParserContext<'_>| {
             ChoiceHelper::run(input, |mut choice, input| {
-                let result = parse_version_pragma_prefix_expression(input);
-                choice.consider(input, result)?;
-                let result = parse_version_pragma_prefix_expression(input);
-                choice.consider(input, result)?;
-                let result = parse_version_pragma_prefix_expression(input);
-                choice.consider(input, result)?;
-                let result = parse_version_pragma_prefix_expression(input);
-                choice.consider(input, result)?;
-                let result = parse_version_pragma_prefix_expression(input);
-                choice.consider(input, result)?;
-                let result = parse_version_pragma_prefix_expression(input);
-                choice.consider(input, result)?;
-                let result = parse_version_pragma_prefix_expression(input);
+                let result = parse_prefix_version_pragma_prefix_expression(input);
                 choice.consider(input, result)?;
                 choice.finish(input)
             })
         };
-        #[allow(unused_variables)]
         let primary_expression_parser =
             |input: &mut ParserContext<'_>| self.version_pragma_specifier(input);
-        #[allow(unused_variables)]
         let binary_operand_parser = |input: &mut ParserContext<'_>| {
             SequenceHelper::run(|mut seq| {
                 seq.elem(ZeroOrMoreHelper::run(input, prefix_operator_parser))?;
@@ -5961,17 +4374,15 @@ impl Language {
                 seq.finish()
             })
         };
-        #[allow(unused_variables)]
         let binary_operator_parser = |input: &mut ParserContext<'_>| {
             ChoiceHelper::run(input, |mut choice, input| {
-                let result = parse_version_pragma_or_expression(input);
+                let result = parse_left_version_pragma_or_expression(input);
                 choice.consider(input, result)?;
-                let result = parse_version_pragma_range_expression(input);
+                let result = parse_left_version_pragma_range_expression(input);
                 choice.consider(input, result)?;
                 choice.finish(input)
             })
         };
-        #[allow(unused_variables)]
         let linear_expression_parser = |input: &mut ParserContext<'_>| {
             SequenceHelper::run(|mut seq| {
                 seq.elem(binary_operand_parser(input))?;
@@ -6137,36 +4548,38 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn yul_expression(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        #[allow(unused_variables)]
-        let parse_yul_function_call_expression = |input: &mut ParserContext<'_>| {
+        let parse_postfix_yul_function_call_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_postfix_operator(
                 RuleKind::YulFunctionCallExpression,
                 1u8,
-                SequenceHelper::run(|mut seq| {
-                    let mut delim_guard = input.open_delim(TokenKind::CloseParen);
-                    let input = delim_guard.ctx();
-                    seq.elem(self.parse_token_with_trivia::<LexicalContextType::Yul>(
-                        input,
-                        TokenKind::OpenParen,
-                    ))?;
-                    seq.elem(
-                        OptionalHelper::transform(self.yul_arguments(input))
-                            .recover_until_with_nested_delims::<_, LexicalContextType::Yul>(
+                ChoiceHelper::run(input, |mut choice, input| {
+                    let result = SequenceHelper::run(|mut seq| {
+                        let mut delim_guard = input.open_delim(TokenKind::CloseParen);
+                        let input = delim_guard.ctx();
+                        seq.elem(self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                            input,
+                            TokenKind::OpenParen,
+                        ))?;
+                        seq.elem(
+                            OptionalHelper::transform(self.yul_arguments(input))
+                                .recover_until_with_nested_delims::<_, LexicalContextType::Yul>(
                                 input,
                                 self,
                                 TokenKind::CloseParen,
                                 RecoverFromNoMatch::Yes,
                             ),
-                    )?;
-                    seq.elem(self.parse_token_with_trivia::<LexicalContextType::Yul>(
-                        input,
-                        TokenKind::CloseParen,
-                    ))?;
-                    seq.finish()
+                        )?;
+                        seq.elem(self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                            input,
+                            TokenKind::CloseParen,
+                        ))?;
+                        seq.finish()
+                    });
+                    choice.consider(input, result)?;
+                    choice.finish(input)
                 }),
             )
         };
-        #[allow(unused_variables)]
         let primary_expression_parser = |input: &mut ParserContext<'_>| {
             ChoiceHelper::run(input, |mut choice, input| {
                 let result = self.yul_literal(input);
@@ -6176,15 +4589,13 @@ impl Language {
                 choice.finish(input)
             })
         };
-        #[allow(unused_variables)]
         let postfix_operator_parser = |input: &mut ParserContext<'_>| {
             ChoiceHelper::run(input, |mut choice, input| {
-                let result = parse_yul_function_call_expression(input);
+                let result = parse_postfix_yul_function_call_expression(input);
                 choice.consider(input, result)?;
                 choice.finish(input)
             })
         };
-        #[allow(unused_variables)]
         let linear_expression_parser = |input: &mut ParserContext<'_>| {
             SequenceHelper::run(|mut seq| {
                 seq.elem(primary_expression_parser(input))?;

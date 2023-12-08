@@ -33,13 +33,22 @@ pub struct PrecedenceOperator {
     pub fields: IndexMap<Identifier, Field>,
 }
 
-#[derive(Clone, Copy, Debug, Deserialize, Eq, PartialEq, Serialize)]
+#[derive(Clone, Copy, Debug, Deserialize, Eq, PartialEq, Hash, PartialOrd, Ord, Serialize)]
 #[derive_spanned_type(ParseInputTokens, WriteOutputTokens)]
 pub enum OperatorModel {
     Prefix,
     Postfix,
     BinaryLeftAssociative,
     BinaryRightAssociative,
+}
+
+impl OperatorModel {
+    pub fn is_binary(&self) -> bool {
+        matches!(
+            self,
+            OperatorModel::BinaryLeftAssociative | OperatorModel::BinaryRightAssociative
+        )
+    }
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]

@@ -2,7 +2,7 @@
 //! (used for generating the parser and the CST).
 
 use std::cell::OnceCell;
-use std::collections::{BTreeSet, HashMap};
+use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::rc::Rc;
 
 use codegen_grammar::Grammar;
@@ -756,41 +756,43 @@ fn resolve_precedence(
             def: OnceCell::new(),
         });
 
-        // NOTE: The DSL v1 model defines operators as having the same body definitions but uses a specific
-        // versioning mechanism. This is in contrast to the DSL v2, which allows for different body definitions and
-        // different versions.
-        // Thus, we shoehorn the v2 model into the first one, by creating a single parser definition node as
-        // a choice over the different versions of the operator body, but still define it multiple times in the DSL v1
-        // model with an explicit version, that the codegen handles for us.
+        // Each precedence expression can have multiple operators with different modes and versions
+        // We partition them by model and then resolve each group separately
+        let mut operators_per_model = BTreeMap::<_, Vec<_>>::new();
         for op in &expr.operators {
-            operators.push((
-                op.enabled.clone().map(enabled_to_range).unwrap_or_default(),
-                model_to_enum(op.model),
-                // TODO: Don't leak
-                name.to_string().leak() as &_,
-                thunk.clone() as Rc<dyn ParserDefinition>,
-            ));
+            operators_per_model.entry(op.model).or_default().push(op);
         }
 
-        let defs: Vec<_> = expr
-            .operators
-            .into_iter()
-            .map(|op| resolve_sequence_like(op.enabled, op.fields, op.error_recovery, ctx))
-            .collect();
+        let mut all_operators = vec![];
+        for (model, model_operators) in operators_per_model {
+            let defs: Vec<_> = model_operators
+                .into_iter()
+                .map(ToOwned::to_owned)
+                .map(|op| resolve_sequence_like(op.enabled, op.fields, op.error_recovery, ctx))
+                .collect();
 
-        let def = match defs.len() {
-            0 => panic!("Precedence operator {name} has no definitions"),
-            1 => defs.into_iter().next().unwrap(),
-            _ => ParserDefinitionNode::Choice(defs),
-        };
+            // NOTE: This is unconditionally a choice to always account for a versioned
+            // model operator, even if there's only one definition.
+            let def = ParserDefinitionNode::Choice(defs);
 
-        thunk.def.set(def).unwrap();
+            all_operators.push(def.clone());
+            operators.push((model_to_enum(model), name.to_string().leak() as &_, def));
+        }
+
+        // Register the combined parser definition to appease the codegen and to mark terminals
+        // as reachable and ensure we emit a token kind for each
+        thunk
+            .def
+            .set(ParserDefinitionNode::Choice(all_operators))
+            .unwrap();
         assert!(
             !ctx.resolved.contains_key(&name),
-            "Encountered a duplicate Precedence Operator named {name} when resolving"
+            "Encountered a duplicate Precedence Expression named {name} when resolving"
         );
-        ctx.resolved
-            .insert(name.clone(), GrammarElement::ParserDefinition(thunk));
+        ctx.resolved.insert(
+            name.clone(),
+            GrammarElement::ParserDefinition(thunk.clone()),
+        );
     }
 
     PrecedenceParserDefinitionNode {

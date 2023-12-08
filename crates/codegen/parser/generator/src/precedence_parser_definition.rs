@@ -4,10 +4,9 @@ use quote::{format_ident, quote};
 
 use codegen_grammar::{
     PrecedenceOperatorModel, PrecedenceParserDefinitionNode, PrecedenceParserDefinitionRef,
-    VersionQualityRange,
 };
 
-use super::parser_definition::{ParserDefinitionNodeExtensions, VersionQualityRangeVecExtensions};
+use super::parser_definition::ParserDefinitionNodeExtensions;
 
 pub trait PrecedenceParserDefinitionExtensions {
     fn to_parser_code(&self) -> TokenStream;
@@ -78,22 +77,19 @@ impl PrecedenceParserDefinitionNodeExtensions for PrecedenceParserDefinitionNode
         let mut operator_closures = Vec::new();
 
         let mut binding_power = 1u8;
-        for (version_quality_ranges, model, name, operator_definition) in &self.operators {
-            let operator_code = operator_definition
-                .node()
-                .to_parser_code(context_name, false);
+        for (model, name, operator_definition) in &self.operators {
+            let operator_code = operator_definition.to_parser_code(context_name, false);
             let rule_kind = format_ident!("{}", name);
-            let closure_name = format_ident!(
-                // Make a name that won't conflict with the parsers we define below
-                "parse_{name}{version_tag}",
-                version_tag = disambiguating_name_suffix(version_quality_ranges),
-                name = operator_definition.name().to_snake_case()
-            );
+            let model_name = match model {
+                PrecedenceOperatorModel::BinaryLeftAssociative => "left",
+                PrecedenceOperatorModel::BinaryRightAssociative => "right",
+                PrecedenceOperatorModel::Prefix => "prefix",
+                PrecedenceOperatorModel::Postfix => "postfix",
+            };
+            let closure_name =
+                format_ident!("parse_{model_name}_{name}", name = name.to_snake_case());
 
-            let parser = (
-                quote! { #closure_name(input) },
-                version_quality_ranges.clone(),
-            );
+            let parser = quote! { #closure_name(input) };
 
             match model {
                 PrecedenceOperatorModel::BinaryLeftAssociative => {
@@ -195,8 +191,6 @@ impl PrecedenceParserDefinitionNodeExtensions for PrecedenceParserDefinitionNode
 
         quote! {
             #(
-                // TODO(#638): remove duplicates once we use DSL v2 versioning schema
-                #[allow(unused_variables)]
                 #operator_closures
             )*
 
@@ -205,21 +199,9 @@ impl PrecedenceParserDefinitionNodeExtensions for PrecedenceParserDefinitionNode
     }
 }
 
-fn disambiguating_name_suffix(ranges: &[VersionQualityRange]) -> String {
-    let mut suffix = String::new();
-    for vqr in ranges {
-        suffix.push('_');
-        suffix.push_str(&vqr.quality.to_string().to_lowercase());
-        suffix.push_str("_from_");
-        suffix.push_str(&vqr.from.to_string().replace('.', "_"));
-    }
-    suffix
-}
-
 // TODO: merge these three functions into parse_definition by changing
-// `to_parser_code` to use `(TokenStream, Vec<VersionQualityRange>)` as
-// the core type i.e. the `OperatorParser` type above
-type OperatorParser = (TokenStream, Vec<VersionQualityRange>);
+// `to_parser_code` to use `TokenStream`
+type OperatorParser = TokenStream;
 
 fn make_sequence(parsers: Vec<TokenStream>) -> TokenStream {
     let parsers = parsers
@@ -237,14 +219,11 @@ fn make_sequence(parsers: Vec<TokenStream>) -> TokenStream {
 fn make_choice(parsers: Vec<OperatorParser>) -> TokenStream {
     let parsers = parsers
         .into_iter()
-        .map(|(parser, version_quality_ranges)| {
-            version_quality_ranges.wrap_code(
-                quote! {
-                    let result = #parser;
-                    choice.consider(input, result)?;
-                },
-                None,
-            )
+        .map(|parser| {
+            quote! {
+                let result = #parser;
+                choice.consider(input, result)?;
+            }
         })
         .collect::<Vec<_>>();
     quote! {

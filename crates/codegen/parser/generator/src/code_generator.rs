@@ -12,8 +12,8 @@ use serde::Serialize;
 
 use codegen_grammar::{
     Grammar, GrammarVisitor, ParserDefinitionNode, ParserDefinitionRef,
-    PrecedenceParserDefinitionNode, PrecedenceParserDefinitionRef, ScannerDefinitionNode,
-    ScannerDefinitionRef, TriviaParserDefinitionRef,
+    PrecedenceParserDefinitionRef, ScannerDefinitionNode, ScannerDefinitionRef,
+    TriviaParserDefinitionRef,
 };
 
 use super::{
@@ -249,7 +249,7 @@ impl GrammarVisitor for CodeGenerator {
     fn precedence_parser_definition_enter(&mut self, parser: &PrecedenceParserDefinitionRef) {
         self.set_current_context(parser.context());
         self.rule_kinds.insert(parser.name());
-        for (_, _, name, _) in &parser.node().operators {
+        for (_, name, _) in &parser.node().operators {
             self.rule_kinds.insert(name);
         }
         self.parser_functions.push((
@@ -311,13 +311,5 @@ impl GrammarVisitor for CodeGenerator {
             }
             _ => {}
         };
-    }
-
-    fn precedence_parser_definition_node_enter(&mut self, node: &PrecedenceParserDefinitionNode) {
-        for operator in &node.operators {
-            for vqr in &operator.0 {
-                self.referenced_versions.insert(vqr.from.clone());
-            }
-        }
     }
 }
