@@ -13,11 +13,14 @@ Tree:
       - Identifier (Token): "Sample" # 9..15
       - OpenBrace (Token): "{" # 16..17
       - ContractMembers (Rule): # 18..35 "  uint public a;\n"
-          - StateVariableDefinition (Rule): # 18..35 "  uint public a;\n"
-              - TypeName (Rule): # 18..24 "  uint"
-                  - UintKeyword (Token): "uint" # 20..24
-              - StateVariableAttributes (Rule): # 24..31 " public"
-                  - PublicKeyword (Token): "public" # 25..31
-              - Identifier (Token): "a" # 32..33
-              - Semicolon (Token): ";" # 33..34
+          - ContractMember (Rule): # 18..35 "  uint public a;\n"
+              - StateVariableDefinition (Rule): # 18..35 "  uint public a;\n"
+                  - TypeName (Rule): # 18..24 "  uint"
+                      - ElementaryType (Rule): # 18..24 "  uint"
+                          - UintKeyword (Token): "uint" # 20..24
+                  - StateVariableAttributes (Rule): # 24..31 " public"
+                      - StateVariableAttribute (Rule): # 24..31 " public"
+                          - PublicKeyword (Token): "public" # 25..31
+                  - Identifier (Token): "a" # 32..33
+                  - Semicolon (Token): ";" # 33..34
       - CloseBrace (Token): "}" # 35..36

@@ -8,16 +8,18 @@ Errors: []
 Tree:
   - UsingDirective (Rule): # 0..27 "using {add} for Int global;"
       - UsingKeyword (Token): "using" # 0..5
-      - UsingDeconstruction (Rule): # 5..11 " {add}"
-          - OpenBrace (Token): "{" # 6..7
-          - UsingDeconstructionSymbols (Rule): # 7..10 "add"
-              - UsingDeconstructionSymbol (Rule): # 7..10 "add"
-                  - IdentifierPath (Rule): # 7..10 "add"
-                      - Identifier (Token): "add" # 7..10
-          - CloseBrace (Token): "}" # 10..11
+      - UsingClause (Rule): # 5..11 " {add}"
+          - UsingDeconstruction (Rule): # 5..11 " {add}"
+              - OpenBrace (Token): "{" # 6..7
+              - UsingDeconstructionSymbols (Rule): # 7..10 "add"
+                  - UsingDeconstructionSymbol (Rule): # 7..10 "add"
+                      - IdentifierPath (Rule): # 7..10 "add"
+                          - Identifier (Token): "add" # 7..10
+              - CloseBrace (Token): "}" # 10..11
       - ForKeyword (Token): "for" # 12..15
-      - TypeName (Rule): # 15..19 " Int"
-          - IdentifierPath (Rule): # 15..19 " Int"
-              - Identifier (Token): "Int" # 16..19
+      - UsingTarget (Rule): # 15..19 " Int"
+          - TypeName (Rule): # 15..19 " Int"
+              - IdentifierPath (Rule): # 15..19 " Int"
+                  - Identifier (Token): "Int" # 16..19
       - GlobalKeyword (Token): "global" # 20..26
       - Semicolon (Token): ";" # 26..27

@@ -19,5 +19,6 @@ Tree:
           - Expression (Rule): # 0..1 "a"
               - Identifier (Token): "a" # 0..1
           - Period (Token): "." # 1..2
-          - Identifier (Token): "b" # 2..3
+          - MemberAccess (Rule): # 2..3 "b"
+              - Identifier (Token): "b" # 2..3
       - SKIPPED (Token): '{value: 0, gas: 1}("")' # 3..25

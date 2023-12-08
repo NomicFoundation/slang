@@ -16,7 +16,8 @@ Errors: # 1 total
 Tree:
   - FunctionDefinition (Rule): # 0..24 "function a() constant {}"
       - FunctionKeyword (Token): "function" # 0..8
-      - Identifier (Token): "a" # 9..10
+      - FunctionName (Rule): # 8..10 " a"
+          - Identifier (Token): "a" # 9..10
       - ParametersDeclaration (Rule): # 10..12 "()"
           - OpenParen (Token): "(" # 10..11
           - CloseParen (Token): ")" # 11..12

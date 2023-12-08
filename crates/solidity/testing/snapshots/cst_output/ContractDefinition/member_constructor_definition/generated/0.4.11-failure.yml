@@ -23,9 +23,10 @@ Tree:
       - Identifier (Token): "Sample" # 9..15
       - OpenBrace (Token): "{" # 16..17
       - ContractMembers (Rule): # 18..31 "  constructor"
-          - StateVariableDefinition (Rule): # 18..31 "  constructor"
-              - TypeName (Rule): # 18..31 "  constructor"
-                  - IdentifierPath (Rule): # 18..31 "  constructor"
-                      - Identifier (Token): "constructor" # 20..31
+          - ContractMember (Rule): # 18..31 "  constructor"
+              - StateVariableDefinition (Rule): # 18..31 "  constructor"
+                  - TypeName (Rule): # 18..31 "  constructor"
+                      - IdentifierPath (Rule): # 18..31 "  constructor"
+                          - Identifier (Token): "constructor" # 20..31
       - SKIPPED (Token): "() public {\n  }\n" # 31..47
       - CloseBrace (Token): "}" # 47..48

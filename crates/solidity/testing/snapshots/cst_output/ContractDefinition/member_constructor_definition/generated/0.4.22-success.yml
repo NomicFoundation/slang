@@ -14,14 +14,16 @@ Tree:
       - Identifier (Token): "Sample" # 9..15
       - OpenBrace (Token): "{" # 16..17
       - ContractMembers (Rule): # 18..47 "  constructor() public {\n  }\n"
-          - ConstructorDefinition (Rule): # 18..47 "  constructor() public {\n  }\n"
-              - ConstructorKeyword (Token): "constructor" # 20..31
-              - ParametersDeclaration (Rule): # 31..33 "()"
-                  - OpenParen (Token): "(" # 31..32
-                  - CloseParen (Token): ")" # 32..33
-              - ConstructorAttributes (Rule): # 33..40 " public"
-                  - PublicKeyword (Token): "public" # 34..40
-              - Block (Rule): # 40..47 " {\n  }\n"
-                  - OpenBrace (Token): "{" # 41..42
-                  - CloseBrace (Token): "}" # 45..46
+          - ContractMember (Rule): # 18..47 "  constructor() public {\n  }\n"
+              - ConstructorDefinition (Rule): # 18..47 "  constructor() public {\n  }\n"
+                  - ConstructorKeyword (Token): "constructor" # 20..31
+                  - ParametersDeclaration (Rule): # 31..33 "()"
+                      - OpenParen (Token): "(" # 31..32
+                      - CloseParen (Token): ")" # 32..33
+                  - ConstructorAttributes (Rule): # 33..40 " public"
+                      - ConstructorAttribute (Rule): # 33..40 " public"
+                          - PublicKeyword (Token): "public" # 34..40
+                  - Block (Rule): # 40..47 " {\n  }\n"
+                      - OpenBrace (Token): "{" # 41..42
+                      - CloseBrace (Token): "}" # 45..46
       - CloseBrace (Token): "}" # 47..48

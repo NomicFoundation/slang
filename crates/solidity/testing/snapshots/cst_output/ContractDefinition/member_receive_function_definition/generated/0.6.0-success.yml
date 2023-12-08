@@ -14,12 +14,14 @@ Tree:
       - Identifier (Token): "Sample" # 9..15
       - OpenBrace (Token): "{" # 16..17
       - ContractMembers (Rule): # 18..36 "  receive() {\n  }\n"
-          - ReceiveFunctionDefinition (Rule): # 18..36 "  receive() {\n  }\n"
-              - ReceiveKeyword (Token): "receive" # 20..27
-              - ParametersDeclaration (Rule): # 27..29 "()"
-                  - OpenParen (Token): "(" # 27..28
-                  - CloseParen (Token): ")" # 28..29
-              - Block (Rule): # 29..36 " {\n  }\n"
-                  - OpenBrace (Token): "{" # 30..31
-                  - CloseBrace (Token): "}" # 34..35
+          - ContractMember (Rule): # 18..36 "  receive() {\n  }\n"
+              - ReceiveFunctionDefinition (Rule): # 18..36 "  receive() {\n  }\n"
+                  - ReceiveKeyword (Token): "receive" # 20..27
+                  - ParametersDeclaration (Rule): # 27..29 "()"
+                      - OpenParen (Token): "(" # 27..28
+                      - CloseParen (Token): ")" # 28..29
+                  - FunctionBody (Rule): # 29..36 " {\n  }\n"
+                      - Block (Rule): # 29..36 " {\n  }\n"
+                          - OpenBrace (Token): "{" # 30..31
+                          - CloseBrace (Token): "}" # 34..35
       - CloseBrace (Token): "}" # 36..37

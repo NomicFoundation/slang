@@ -28,41 +28,49 @@ Errors: # 2 total
 
 Tree:
   - ContractMembers (Rule): # 0..74 "function someFunc() public {\n    {\n        uint256..."
-      - FunctionDefinition (Rule): # 0..74 "function someFunc() public {\n    {\n        uint256..."
-          - FunctionKeyword (Token): "function" # 0..8
-          - Identifier (Token): "someFunc" # 9..17
-          - ParametersDeclaration (Rule): # 17..19 "()"
-              - OpenParen (Token): "(" # 17..18
-              - CloseParen (Token): ")" # 18..19
-          - FunctionAttributes (Rule): # 19..26 " public"
-              - PublicKeyword (Token): "public" # 20..26
-          - Block (Rule): # 26..74 " {\n    {\n        uint256 arg = (1 + 2;\n    })\n}\n"
-              - OpenBrace (Token): "{" # 27..28
-              - Statements (Rule): # 29..70 "    {\n        uint256 arg = (1 + 2;\n    }"
-                  - Block (Rule): # 29..70 "    {\n        uint256 arg = (1 + 2;\n    }"
-                      - OpenBrace (Token): "{" # 33..34
-                      - Statements (Rule): # 35..63 "        uint256 arg = (1 + 2"
-                          - VariableDeclarationStatement (Rule): # 35..63 "        uint256 arg = (1 + 2"
-                              - TypeName (Rule): # 35..50 "        uint256"
-                                  - UintKeyword (Token): "uint256" # 43..50
-                              - Identifier (Token): "arg" # 51..54
-                              - VariableDeclarationValue (Rule): # 54..63 " = (1 + 2"
-                                  - Equal (Token): "=" # 55..56
-                                  - Expression (Rule): # 56..63 " (1 + 2"
-                                      - TupleExpression (Rule): # 56..63 " (1 + 2"
-                                          - OpenParen (Token): "(" # 57..58
-                                          - TupleValues (Rule): # 58..63 "1 + 2"
-                                              - TupleValue (Rule): # 58..63 "1 + 2"
-                                                  - Expression (Rule): # 58..63 "1 + 2"
-                                                      - BinaryExpression (Rule): # 58..63 "1 + 2"
-                                                          - Expression (Rule): # 58..59 "1"
-                                                              - DecimalNumberExpression (Rule): # 58..59 "1"
-                                                                  - DecimalLiteral (Token): "1" # 58..59
-                                                          - Plus (Token): "+" # 60..61
-                                                          - Expression (Rule): # 61..63 " 2"
-                                                              - DecimalNumberExpression (Rule): # 61..63 " 2"
-                                                                  - DecimalLiteral (Token): "2" # 62..63
-                      - SKIPPED (Token): ";\n    " # 63..69
-                      - CloseBrace (Token): "}" # 69..70
-              - SKIPPED (Token): ")\n" # 70..72
-              - CloseBrace (Token): "}" # 72..73
+      - ContractMember (Rule): # 0..74 "function someFunc() public {\n    {\n        uint256..."
+          - FunctionDefinition (Rule): # 0..74 "function someFunc() public {\n    {\n        uint256..."
+              - FunctionKeyword (Token): "function" # 0..8
+              - FunctionName (Rule): # 8..17 " someFunc"
+                  - Identifier (Token): "someFunc" # 9..17
+              - ParametersDeclaration (Rule): # 17..19 "()"
+                  - OpenParen (Token): "(" # 17..18
+                  - CloseParen (Token): ")" # 18..19
+              - FunctionAttributes (Rule): # 19..26 " public"
+                  - FunctionAttribute (Rule): # 19..26 " public"
+                      - PublicKeyword (Token): "public" # 20..26
+              - FunctionBody (Rule): # 26..74 " {\n    {\n        uint256 arg = (1 + 2;\n    })\n}\n"
+                  - Block (Rule): # 26..74 " {\n    {\n        uint256 arg = (1 + 2;\n    })\n}\n"
+                      - OpenBrace (Token): "{" # 27..28
+                      - Statements (Rule): # 29..70 "    {\n        uint256 arg = (1 + 2;\n    }"
+                          - Statement (Rule): # 29..70 "    {\n        uint256 arg = (1 + 2;\n    }"
+                              - Block (Rule): # 29..70 "    {\n        uint256 arg = (1 + 2;\n    }"
+                                  - OpenBrace (Token): "{" # 33..34
+                                  - Statements (Rule): # 35..63 "        uint256 arg = (1 + 2"
+                                      - Statement (Rule): # 35..63 "        uint256 arg = (1 + 2"
+                                          - VariableDeclarationStatement (Rule): # 35..63 "        uint256 arg = (1 + 2"
+                                              - VariableDeclarationType (Rule): # 35..50 "        uint256"
+                                                  - TypeName (Rule): # 35..50 "        uint256"
+                                                      - ElementaryType (Rule): # 35..50 "        uint256"
+                                                          - UintKeyword (Token): "uint256" # 43..50
+                                              - Identifier (Token): "arg" # 51..54
+                                              - VariableDeclarationValue (Rule): # 54..63 " = (1 + 2"
+                                                  - Equal (Token): "=" # 55..56
+                                                  - Expression (Rule): # 56..63 " (1 + 2"
+                                                      - TupleExpression (Rule): # 56..63 " (1 + 2"
+                                                          - OpenParen (Token): "(" # 57..58
+                                                          - TupleValues (Rule): # 58..63 "1 + 2"
+                                                              - TupleValue (Rule): # 58..63 "1 + 2"
+                                                                  - Expression (Rule): # 58..63 "1 + 2"
+                                                                      - BinaryExpression (Rule): # 58..63 "1 + 2"
+                                                                          - Expression (Rule): # 58..59 "1"
+                                                                              - DecimalNumberExpression (Rule): # 58..59 "1"
+                                                                                  - DecimalLiteral (Token): "1" # 58..59
+                                                                          - Plus (Token): "+" # 60..61
+                                                                          - Expression (Rule): # 61..63 " 2"
+                                                                              - DecimalNumberExpression (Rule): # 61..63 " 2"
+                                                                                  - DecimalLiteral (Token): "2" # 62..63
+                                  - SKIPPED (Token): ";\n    " # 63..69
+                                  - CloseBrace (Token): "}" # 69..70
+                      - SKIPPED (Token): ")\n" # 70..72
+                      - CloseBrace (Token): "}" # 72..73

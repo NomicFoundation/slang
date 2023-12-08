@@ -10,9 +10,10 @@ Tree:
       - FunctionCallExpression (Rule): # 0..13 "x(interested)"
           - Expression (Rule): # 0..1 "x"
               - Identifier (Token): "x" # 0..1
-          - PositionalArgumentsDeclaration (Rule): # 1..13 "(interested)"
-              - OpenParen (Token): "(" # 1..2
-              - PositionalArguments (Rule): # 2..12 "interested"
-                  - Expression (Rule): # 2..12 "interested"
-                      - Identifier (Token): "interested" # 2..12
-              - CloseParen (Token): ")" # 12..13
+          - ArgumentsDeclaration (Rule): # 1..13 "(interested)"
+              - PositionalArgumentsDeclaration (Rule): # 1..13 "(interested)"
+                  - OpenParen (Token): "(" # 1..2
+                  - PositionalArguments (Rule): # 2..12 "interested"
+                      - Expression (Rule): # 2..12 "interested"
+                          - Identifier (Token): "interested" # 2..12
+                  - CloseParen (Token): ")" # 12..13

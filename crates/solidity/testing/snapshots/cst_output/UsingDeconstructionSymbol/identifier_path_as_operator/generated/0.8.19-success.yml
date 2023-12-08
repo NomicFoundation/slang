@@ -13,4 +13,5 @@ Tree:
           - Identifier (Token): "bar" # 4..7
       - UsingAlias (Rule): # 7..12 " as /"
           - AsKeyword (Token): "as" # 8..10
-          - Slash (Token): "/" # 11..12
+          - UsingOperator (Rule): # 10..12 " /"
+              - Slash (Token): "/" # 11..12

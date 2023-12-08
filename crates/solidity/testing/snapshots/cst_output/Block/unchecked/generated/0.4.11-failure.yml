@@ -17,8 +17,9 @@ Tree:
   - Block (Rule): # 0..24 "{ unchecked { x = 1; } }"
       - OpenBrace (Token): "{" # 0..1
       - Statements (Rule): # 1..12 " unchecked "
-          - ExpressionStatement (Rule): # 1..12 " unchecked "
-              - Expression (Rule): # 1..11 " unchecked"
-                  - Identifier (Token): "unchecked" # 2..11
+          - Statement (Rule): # 1..12 " unchecked "
+              - ExpressionStatement (Rule): # 1..12 " unchecked "
+                  - Expression (Rule): # 1..11 " unchecked"
+                      - Identifier (Token): "unchecked" # 2..11
       - SKIPPED (Token): "{ x = 1; } " # 12..23
       - CloseBrace (Token): "}" # 23..24

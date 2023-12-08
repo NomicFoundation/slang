@@ -16,11 +16,13 @@ Errors: # 1 total
 Tree:
   - UsingDirective (Rule): # 0..25 "using foo for bar global;"
       - UsingKeyword (Token): "using" # 0..5
-      - IdentifierPath (Rule): # 5..9 " foo"
-          - Identifier (Token): "foo" # 6..9
+      - UsingClause (Rule): # 5..9 " foo"
+          - IdentifierPath (Rule): # 5..9 " foo"
+              - Identifier (Token): "foo" # 6..9
       - ForKeyword (Token): "for" # 10..13
-      - TypeName (Rule): # 13..17 " bar"
-          - IdentifierPath (Rule): # 13..17 " bar"
-              - Identifier (Token): "bar" # 14..17
+      - UsingTarget (Rule): # 13..17 " bar"
+          - TypeName (Rule): # 13..17 " bar"
+              - IdentifierPath (Rule): # 13..17 " bar"
+                  - Identifier (Token): "bar" # 14..17
       - SKIPPED (Token): "global" # 18..24
       - Semicolon (Token): ";" # 24..25

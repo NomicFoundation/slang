@@ -18,6 +18,8 @@ Tree:
       - MappingKeyword (Token): "mapping" # 0..7
       - OpenParen (Token): "(" # 7..8
       - MappingKey (Rule): # 8..14 "string"
-          - StringKeyword (Token): "string" # 8..14
+          - MappingKeyType (Rule): # 8..14 "string"
+              - ElementaryType (Rule): # 8..14 "string"
+                  - StringKeyword (Token): "string" # 8..14
       - SKIPPED (Token): "Foo => bytes32 Bar" # 15..33
       - CloseParen (Token): ")" # 33..34

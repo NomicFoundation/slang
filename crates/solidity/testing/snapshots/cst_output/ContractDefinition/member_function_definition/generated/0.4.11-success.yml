@@ -15,29 +15,34 @@ Tree:
       - Identifier (Token): "Sample" # 9..15
       - OpenBrace (Token): "{" # 16..17
       - ContractMembers (Rule): # 18..70 "  function foo() returns (uint) {\n    return 1;\n  ..."
-          - FunctionDefinition (Rule): # 18..70 "  function foo() returns (uint) {\n    return 1;\n  ..."
-              - FunctionKeyword (Token): "function" # 20..28
-              - Identifier (Token): "foo" # 29..32
-              - ParametersDeclaration (Rule): # 32..34 "()"
-                  - OpenParen (Token): "(" # 32..33
-                  - CloseParen (Token): ")" # 33..34
-              - ReturnsDeclaration (Rule): # 34..49 " returns (uint)"
-                  - ReturnsKeyword (Token): "returns" # 35..42
-                  - ParametersDeclaration (Rule): # 42..49 " (uint)"
-                      - OpenParen (Token): "(" # 43..44
-                      - Parameters (Rule): # 44..48 "uint"
-                          - Parameter (Rule): # 44..48 "uint"
-                              - TypeName (Rule): # 44..48 "uint"
-                                  - UintKeyword (Token): "uint" # 44..48
-                      - CloseParen (Token): ")" # 48..49
-              - Block (Rule): # 49..70 " {\n    return 1;\n  }\n"
-                  - OpenBrace (Token): "{" # 50..51
-                  - Statements (Rule): # 52..66 "    return 1;\n"
-                      - ReturnStatement (Rule): # 52..66 "    return 1;\n"
-                          - ReturnKeyword (Token): "return" # 56..62
-                          - Expression (Rule): # 62..64 " 1"
-                              - DecimalNumberExpression (Rule): # 62..64 " 1"
-                                  - DecimalLiteral (Token): "1" # 63..64
-                          - Semicolon (Token): ";" # 64..65
-                  - CloseBrace (Token): "}" # 68..69
+          - ContractMember (Rule): # 18..70 "  function foo() returns (uint) {\n    return 1;\n  ..."
+              - FunctionDefinition (Rule): # 18..70 "  function foo() returns (uint) {\n    return 1;\n  ..."
+                  - FunctionKeyword (Token): "function" # 20..28
+                  - FunctionName (Rule): # 28..32 " foo"
+                      - Identifier (Token): "foo" # 29..32
+                  - ParametersDeclaration (Rule): # 32..34 "()"
+                      - OpenParen (Token): "(" # 32..33
+                      - CloseParen (Token): ")" # 33..34
+                  - ReturnsDeclaration (Rule): # 34..49 " returns (uint)"
+                      - ReturnsKeyword (Token): "returns" # 35..42
+                      - ParametersDeclaration (Rule): # 42..49 " (uint)"
+                          - OpenParen (Token): "(" # 43..44
+                          - Parameters (Rule): # 44..48 "uint"
+                              - Parameter (Rule): # 44..48 "uint"
+                                  - TypeName (Rule): # 44..48 "uint"
+                                      - ElementaryType (Rule): # 44..48 "uint"
+                                          - UintKeyword (Token): "uint" # 44..48
+                          - CloseParen (Token): ")" # 48..49
+                  - FunctionBody (Rule): # 49..70 " {\n    return 1;\n  }\n"
+                      - Block (Rule): # 49..70 " {\n    return 1;\n  }\n"
+                          - OpenBrace (Token): "{" # 50..51
+                          - Statements (Rule): # 52..66 "    return 1;\n"
+                              - Statement (Rule): # 52..66 "    return 1;\n"
+                                  - ReturnStatement (Rule): # 52..66 "    return 1;\n"
+                                      - ReturnKeyword (Token): "return" # 56..62
+                                      - Expression (Rule): # 62..64 " 1"
+                                          - DecimalNumberExpression (Rule): # 62..64 " 1"
+                                              - DecimalLiteral (Token): "1" # 63..64
+                                      - Semicolon (Token): ";" # 64..65
+                          - CloseBrace (Token): "}" # 68..69
       - CloseBrace (Token): "}" # 70..71

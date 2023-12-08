@@ -8,12 +8,15 @@ Errors: []
 Tree:
   - SourceUnit (Rule): # 0..18 "function foo() { }"
       - SourceUnitMembers (Rule): # 0..18 "function foo() { }"
-          - FunctionDefinition (Rule): # 0..18 "function foo() { }"
-              - FunctionKeyword (Token): "function" # 0..8
-              - Identifier (Token): "foo" # 9..12
-              - ParametersDeclaration (Rule): # 12..14 "()"
-                  - OpenParen (Token): "(" # 12..13
-                  - CloseParen (Token): ")" # 13..14
-              - Block (Rule): # 14..18 " { }"
-                  - OpenBrace (Token): "{" # 15..16
-                  - CloseBrace (Token): "}" # 17..18
+          - SourceUnitMember (Rule): # 0..18 "function foo() { }"
+              - FunctionDefinition (Rule): # 0..18 "function foo() { }"
+                  - FunctionKeyword (Token): "function" # 0..8
+                  - FunctionName (Rule): # 8..12 " foo"
+                      - Identifier (Token): "foo" # 9..12
+                  - ParametersDeclaration (Rule): # 12..14 "()"
+                      - OpenParen (Token): "(" # 12..13
+                      - CloseParen (Token): ")" # 13..14
+                  - FunctionBody (Rule): # 14..18 " { }"
+                      - Block (Rule): # 14..18 " { }"
+                          - OpenBrace (Token): "{" # 15..16
+                          - CloseBrace (Token): "}" # 17..18

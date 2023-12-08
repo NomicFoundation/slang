@@ -7,4 +7,5 @@ Errors: []
 
 Tree:
   - TypeName (Rule): # 0..5 "int32"
-      - IntKeyword (Token): "int32" # 0..5
+      - ElementaryType (Rule): # 0..5 "int32"
+          - IntKeyword (Token): "int32" # 0..5

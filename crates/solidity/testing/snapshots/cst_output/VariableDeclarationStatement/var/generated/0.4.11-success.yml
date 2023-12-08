@@ -7,7 +7,8 @@ Errors: []
 
 Tree:
   - VariableDeclarationStatement (Rule): # 0..10 "var z = 0;"
-      - VarKeyword (Token): "var" # 0..3
+      - VariableDeclarationType (Rule): # 0..3 "var"
+          - VarKeyword (Token): "var" # 0..3
       - Identifier (Token): "z" # 4..5
       - VariableDeclarationValue (Rule): # 5..9 " = 0"
           - Equal (Token): "=" # 6..7

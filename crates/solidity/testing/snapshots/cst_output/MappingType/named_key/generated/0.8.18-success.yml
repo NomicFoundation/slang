@@ -10,10 +10,13 @@ Tree:
       - MappingKeyword (Token): "mapping" # 0..7
       - OpenParen (Token): "(" # 7..8
       - MappingKey (Rule): # 8..18 "string Foo"
-          - StringKeyword (Token): "string" # 8..14
+          - MappingKeyType (Rule): # 8..14 "string"
+              - ElementaryType (Rule): # 8..14 "string"
+                  - StringKeyword (Token): "string" # 8..14
           - Identifier (Token): "Foo" # 15..18
       - EqualGreaterThan (Token): "=>" # 19..21
       - MappingValue (Rule): # 21..29 " bytes32"
           - TypeName (Rule): # 21..29 " bytes32"
-              - BytesKeyword (Token): "bytes32" # 22..29
+              - ElementaryType (Rule): # 21..29 " bytes32"
+                  - BytesKeyword (Token): "bytes32" # 22..29
       - CloseParen (Token): ")" # 29..30

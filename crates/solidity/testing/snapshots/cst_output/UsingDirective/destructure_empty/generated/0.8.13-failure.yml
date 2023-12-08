@@ -19,10 +19,12 @@ Tree:
       - LeadingTrivia (Rule): # 0..41 "// Empty using symbols list is not valid\n"
           - SingleLineComment (Trivia): "// Empty using symbols list is not valid" # 0..40
       - UsingKeyword (Token): "using" # 41..46
-      - UsingDeconstruction (Rule): # 46..49 " {}"
-          - OpenBrace (Token): "{" # 47..48
-          - SKIPPED (Token): "" # 48..48
-          - CloseBrace (Token): "}" # 48..49
+      - UsingClause (Rule): # 46..49 " {}"
+          - UsingDeconstruction (Rule): # 46..49 " {}"
+              - OpenBrace (Token): "{" # 47..48
+              - SKIPPED (Token): "" # 48..48
+              - CloseBrace (Token): "}" # 48..49
       - ForKeyword (Token): "for" # 50..53
-      - Asterisk (Token): "*" # 54..55
+      - UsingTarget (Rule): # 53..55 " *"
+          - Asterisk (Token): "*" # 54..55
       - Semicolon (Token): ";" # 55..56

@@ -15,18 +15,21 @@ Tree:
       - Identifier (Token): "Sample" # 9..15
       - OpenBrace (Token): "{" # 16..17
       - ContractMembers (Rule): # 18..48 "  modifier foo() {\n    _;\n  }\n"
-          - ModifierDefinition (Rule): # 18..48 "  modifier foo() {\n    _;\n  }\n"
-              - ModifierKeyword (Token): "modifier" # 20..28
-              - Identifier (Token): "foo" # 29..32
-              - ParametersDeclaration (Rule): # 32..34 "()"
-                  - OpenParen (Token): "(" # 32..33
-                  - CloseParen (Token): ")" # 33..34
-              - Block (Rule): # 34..48 " {\n    _;\n  }\n"
-                  - OpenBrace (Token): "{" # 35..36
-                  - Statements (Rule): # 37..44 "    _;\n"
-                      - ExpressionStatement (Rule): # 37..44 "    _;\n"
-                          - Expression (Rule): # 37..42 "    _"
-                              - Identifier (Token): "_" # 41..42
-                          - Semicolon (Token): ";" # 42..43
-                  - CloseBrace (Token): "}" # 46..47
+          - ContractMember (Rule): # 18..48 "  modifier foo() {\n    _;\n  }\n"
+              - ModifierDefinition (Rule): # 18..48 "  modifier foo() {\n    _;\n  }\n"
+                  - ModifierKeyword (Token): "modifier" # 20..28
+                  - Identifier (Token): "foo" # 29..32
+                  - ParametersDeclaration (Rule): # 32..34 "()"
+                      - OpenParen (Token): "(" # 32..33
+                      - CloseParen (Token): ")" # 33..34
+                  - FunctionBody (Rule): # 34..48 " {\n    _;\n  }\n"
+                      - Block (Rule): # 34..48 " {\n    _;\n  }\n"
+                          - OpenBrace (Token): "{" # 35..36
+                          - Statements (Rule): # 37..44 "    _;\n"
+                              - Statement (Rule): # 37..44 "    _;\n"
+                                  - ExpressionStatement (Rule): # 37..44 "    _;\n"
+                                      - Expression (Rule): # 37..42 "    _"
+                                          - Identifier (Token): "_" # 41..42
+                                      - Semicolon (Token): ";" # 42..43
+                          - CloseBrace (Token): "}" # 46..47
       - CloseBrace (Token): "}" # 48..49

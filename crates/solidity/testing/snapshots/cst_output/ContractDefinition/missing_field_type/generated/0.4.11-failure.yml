@@ -21,10 +21,11 @@ Tree:
       - Identifier (Token): "Test" # 9..13
       - OpenBrace (Token): "{" # 14..15
       - ContractMembers (Rule): # 16..25 "  field;\n"
-          - StateVariableDefinition (Rule): # 16..25 "  field;\n"
-              - TypeName (Rule): # 16..23 "  field"
-                  - IdentifierPath (Rule): # 16..23 "  field"
-                      - Identifier (Token): "field" # 18..23
-              - SKIPPED (Token): "" # 23..23
-              - Semicolon (Token): ";" # 23..24
+          - ContractMember (Rule): # 16..25 "  field;\n"
+              - StateVariableDefinition (Rule): # 16..25 "  field;\n"
+                  - TypeName (Rule): # 16..23 "  field"
+                      - IdentifierPath (Rule): # 16..23 "  field"
+                          - Identifier (Token): "field" # 18..23
+                  - SKIPPED (Token): "" # 23..23
+                  - Semicolon (Token): ";" # 23..24
       - CloseBrace (Token): "}" # 25..26
