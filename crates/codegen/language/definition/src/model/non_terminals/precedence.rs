@@ -42,15 +42,6 @@ pub enum OperatorModel {
     BinaryRightAssociative,
 }
 
-impl OperatorModel {
-    pub fn is_binary(&self) -> bool {
-        matches!(
-            self,
-            OperatorModel::BinaryLeftAssociative | OperatorModel::BinaryRightAssociative
-        )
-    }
-}
-
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 #[derive_spanned_type(ParseInputTokens, WriteOutputTokens)]
 pub struct PrimaryExpression {

@@ -10,6 +10,10 @@ use super::parser_definition::ParserDefinitionNodeExtensions;
 
 pub trait PrecedenceParserDefinitionExtensions {
     fn to_parser_code(&self) -> TokenStream;
+    /// Emit a helper parser function for each precedence expression that ensures the main parser
+    /// identifies a single node of the expected type, with a child node being the expected
+    /// precedence expression.
+    fn to_precedence_expression_parser_code(&self) -> Vec<(&'static str, TokenStream)>;
 }
 
 impl PrecedenceParserDefinitionExtensions for PrecedenceParserDefinitionRef {
@@ -18,6 +22,37 @@ impl PrecedenceParserDefinitionExtensions for PrecedenceParserDefinitionRef {
             self.context(),
             format_ident!("{name}", name = self.name().to_pascal_case()),
         )
+    }
+
+    fn to_precedence_expression_parser_code(&self) -> Vec<(&'static str, TokenStream)> {
+        let mut res = vec![];
+        let parser_name = format_ident!("{}", self.name().to_snake_case());
+        let rule_name = format_ident!("{}", self.name().to_pascal_case());
+
+        for name in &self.node().precedence_expression_names {
+            let op_rule_name = format_ident!("{}", name.to_pascal_case());
+
+            // Ensure that the parser correctly identifies a single node of the expected type,
+            // which contains a single child node representing the expected precedence operator.
+            let code = quote! {
+                let result = self.#parser_name(input);
+                let ParserResult::Match(r#match) = &result else { return result; };
+
+                // If the result won't match exactly, we return a dummy `ParserResult::no_match`, since
+                // can't precisely determine the expected tokens or completeness of the match otherwise.
+                match &r#match.nodes[..] {
+                    [cst::Node::Rule(node)] if node.kind == RuleKind::#rule_name => match &node.children[..] {
+                        [inner @ cst::Node::Rule(rule)] if rule.kind == RuleKind::#op_rule_name => {
+                            ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
+                        }
+                        _ => ParserResult::no_match(vec![]),
+                    }
+                    _ => ParserResult::no_match(vec![]),
+                }
+            };
+            res.push((*name, code));
+        }
+        res
     }
 }
 

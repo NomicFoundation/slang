@@ -252,6 +252,13 @@ impl GrammarVisitor for CodeGenerator {
         for (_, name, _) in &parser.node().operators {
             self.rule_kinds.insert(name);
         }
+
+        // While it's not common to parse a precedence expression as a standalone rule,
+        // we generate a function for completeness.
+        for (name, code) in parser.to_precedence_expression_parser_code() {
+            self.parser_functions.push((name, code.to_string()));
+        }
+
         self.parser_functions.push((
             parser.name(),
             {

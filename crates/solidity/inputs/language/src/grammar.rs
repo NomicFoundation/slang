@@ -742,15 +742,19 @@ fn resolve_precedence(
     }
 
     let mut operators = vec![];
+    let mut precedence_expression_names = Vec::with_capacity(item.precedence_expressions.len());
     for expr in item.precedence_expressions {
         let name = expr.name;
+        // TODO: Don't leak
+        let leaked_name = name.to_string().leak() as &_;
 
+        precedence_expression_names.push(leaked_name);
         // Register it as a regular parser with a given name, however we need to
         // define it as a choice over the "operator" sequences
         // Then, when returning, we should actually return a node ref pointing to that combined parser
         // And ideally, we shouldn't even use the "enabled" mode of the original DSL
         let thunk = Rc::new(NamedParserThunk {
-            name: name.to_string().leak(),
+            name: leaked_name,
             context: lex_ctx,
             is_inline: true,
             def: OnceCell::new(),
@@ -776,7 +780,7 @@ fn resolve_precedence(
             let def = ParserDefinitionNode::Choice(defs);
 
             all_operators.push(def.clone());
-            operators.push((model_to_enum(model), name.to_string().leak() as &_, def));
+            operators.push((model_to_enum(model), leaked_name, def));
         }
 
         // Register the combined parser definition to appease the codegen and to mark terminals
@@ -798,6 +802,7 @@ fn resolve_precedence(
     PrecedenceParserDefinitionNode {
         primary_expression,
         operators,
+        precedence_expression_names,
     }
 }
 

@@ -26,6 +26,7 @@ pub struct PrecedenceParserDefinitionNode {
         &'static str, // name
         ParserDefinitionNode,
     )>,
+    pub precedence_expression_names: Vec<&'static str>,
 }
 
 impl Visitable for PrecedenceParserDefinitionNode {

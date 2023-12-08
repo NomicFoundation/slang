@@ -15,6 +15,7 @@ use {napi::bindgen_prelude::*, napi_derive::napi};
 use semver::Version;
 
 use super::{
+    cst,
     kinds::{IsLexicalContext, LexicalContextType, RuleKind, TokenKind},
     lexer::Lexer,
     parse_output::ParseOutput,
@@ -210,6 +211,27 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
+    fn additive_expression(&self, input: &mut ParserContext<'_>) -> ParserResult {
+        let result = self.expression(input);
+        let ParserResult::Match(r#match) = &result else {
+            return result;
+        };
+        match &r#match.nodes[..] {
+            [cst::Node::Rule(node)] if node.kind == RuleKind::Expression => {
+                match &node.children[..] {
+                    [inner @ cst::Node::Rule(rule)]
+                        if rule.kind == RuleKind::AdditiveExpression =>
+                    {
+                        ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
+                    }
+                    _ => ParserResult::no_match(vec![]),
+                }
+            }
+            _ => ParserResult::no_match(vec![]),
+        }
+    }
+
+    #[allow(unused_assignments, unused_parens)]
     fn address_type(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
@@ -225,6 +247,25 @@ impl Language {
             seq.finish()
         })
         .with_kind(RuleKind::AddressType)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn and_expression(&self, input: &mut ParserContext<'_>) -> ParserResult {
+        let result = self.expression(input);
+        let ParserResult::Match(r#match) = &result else {
+            return result;
+        };
+        match &r#match.nodes[..] {
+            [cst::Node::Rule(node)] if node.kind == RuleKind::Expression => {
+                match &node.children[..] {
+                    [inner @ cst::Node::Rule(rule)] if rule.kind == RuleKind::AndExpression => {
+                        ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
+                    }
+                    _ => ParserResult::no_match(vec![]),
+                }
+            }
+            _ => ParserResult::no_match(vec![]),
+        }
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -264,6 +305,25 @@ impl Language {
             seq.finish()
         })
         .with_kind(RuleKind::ArrayExpression)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn array_type_name(&self, input: &mut ParserContext<'_>) -> ParserResult {
+        let result = self.type_name(input);
+        let ParserResult::Match(r#match) = &result else {
+            return result;
+        };
+        match &r#match.nodes[..] {
+            [cst::Node::Rule(node)] if node.kind == RuleKind::TypeName => {
+                match &node.children[..] {
+                    [inner @ cst::Node::Rule(rule)] if rule.kind == RuleKind::ArrayTypeName => {
+                        ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
+                    }
+                    _ => ParserResult::no_match(vec![]),
+                }
+            }
+            _ => ParserResult::no_match(vec![]),
+        }
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -351,6 +411,90 @@ impl Language {
             seq.finish()
         })
         .with_kind(RuleKind::AssemblyStatement)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn assignment_expression(&self, input: &mut ParserContext<'_>) -> ParserResult {
+        let result = self.expression(input);
+        let ParserResult::Match(r#match) = &result else {
+            return result;
+        };
+        match &r#match.nodes[..] {
+            [cst::Node::Rule(node)] if node.kind == RuleKind::Expression => {
+                match &node.children[..] {
+                    [inner @ cst::Node::Rule(rule)]
+                        if rule.kind == RuleKind::AssignmentExpression =>
+                    {
+                        ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
+                    }
+                    _ => ParserResult::no_match(vec![]),
+                }
+            }
+            _ => ParserResult::no_match(vec![]),
+        }
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn bitwise_and_expression(&self, input: &mut ParserContext<'_>) -> ParserResult {
+        let result = self.expression(input);
+        let ParserResult::Match(r#match) = &result else {
+            return result;
+        };
+        match &r#match.nodes[..] {
+            [cst::Node::Rule(node)] if node.kind == RuleKind::Expression => {
+                match &node.children[..] {
+                    [inner @ cst::Node::Rule(rule)]
+                        if rule.kind == RuleKind::BitwiseAndExpression =>
+                    {
+                        ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
+                    }
+                    _ => ParserResult::no_match(vec![]),
+                }
+            }
+            _ => ParserResult::no_match(vec![]),
+        }
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn bitwise_or_expression(&self, input: &mut ParserContext<'_>) -> ParserResult {
+        let result = self.expression(input);
+        let ParserResult::Match(r#match) = &result else {
+            return result;
+        };
+        match &r#match.nodes[..] {
+            [cst::Node::Rule(node)] if node.kind == RuleKind::Expression => {
+                match &node.children[..] {
+                    [inner @ cst::Node::Rule(rule)]
+                        if rule.kind == RuleKind::BitwiseOrExpression =>
+                    {
+                        ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
+                    }
+                    _ => ParserResult::no_match(vec![]),
+                }
+            }
+            _ => ParserResult::no_match(vec![]),
+        }
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn bitwise_xor_expression(&self, input: &mut ParserContext<'_>) -> ParserResult {
+        let result = self.expression(input);
+        let ParserResult::Match(r#match) = &result else {
+            return result;
+        };
+        match &r#match.nodes[..] {
+            [cst::Node::Rule(node)] if node.kind == RuleKind::Expression => {
+                match &node.children[..] {
+                    [inner @ cst::Node::Rule(rule)]
+                        if rule.kind == RuleKind::BitwiseXorExpression =>
+                    {
+                        ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
+                    }
+                    _ => ParserResult::no_match(vec![]),
+                }
+            }
+            _ => ParserResult::no_match(vec![]),
+        }
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -449,6 +593,48 @@ impl Language {
             ParserResult::disabled()
         }
         .with_kind(RuleKind::CatchClauses)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn comparison_expression(&self, input: &mut ParserContext<'_>) -> ParserResult {
+        let result = self.expression(input);
+        let ParserResult::Match(r#match) = &result else {
+            return result;
+        };
+        match &r#match.nodes[..] {
+            [cst::Node::Rule(node)] if node.kind == RuleKind::Expression => {
+                match &node.children[..] {
+                    [inner @ cst::Node::Rule(rule)]
+                        if rule.kind == RuleKind::ComparisonExpression =>
+                    {
+                        ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
+                    }
+                    _ => ParserResult::no_match(vec![]),
+                }
+            }
+            _ => ParserResult::no_match(vec![]),
+        }
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn conditional_expression(&self, input: &mut ParserContext<'_>) -> ParserResult {
+        let result = self.expression(input);
+        let ParserResult::Match(r#match) = &result else {
+            return result;
+        };
+        match &r#match.nodes[..] {
+            [cst::Node::Rule(node)] if node.kind == RuleKind::Expression => {
+                match &node.children[..] {
+                    [inner @ cst::Node::Rule(rule)]
+                        if rule.kind == RuleKind::ConditionalExpression =>
+                    {
+                        ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
+                    }
+                    _ => ParserResult::no_match(vec![]),
+                }
+            }
+            _ => ParserResult::no_match(vec![]),
+        }
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -952,6 +1138,27 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
+    fn equality_expression(&self, input: &mut ParserContext<'_>) -> ParserResult {
+        let result = self.expression(input);
+        let ParserResult::Match(r#match) = &result else {
+            return result;
+        };
+        match &r#match.nodes[..] {
+            [cst::Node::Rule(node)] if node.kind == RuleKind::Expression => {
+                match &node.children[..] {
+                    [inner @ cst::Node::Rule(rule)]
+                        if rule.kind == RuleKind::EqualityExpression =>
+                    {
+                        ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
+                    }
+                    _ => ParserResult::no_match(vec![]),
+                }
+            }
+            _ => ParserResult::no_match(vec![]),
+        }
+    }
+
+    #[allow(unused_assignments, unused_parens)]
     fn error_definition(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if self.version_is_at_least_0_8_4 {
             SequenceHelper::run(|mut seq| {
@@ -1178,6 +1385,27 @@ impl Language {
             seq.finish()
         })
         .with_kind(RuleKind::ExperimentalPragma)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn exponentiation_expression(&self, input: &mut ParserContext<'_>) -> ParserResult {
+        let result = self.expression(input);
+        let ParserResult::Match(r#match) = &result else {
+            return result;
+        };
+        match &r#match.nodes[..] {
+            [cst::Node::Rule(node)] if node.kind == RuleKind::Expression => {
+                match &node.children[..] {
+                    [inner @ cst::Node::Rule(rule)]
+                        if rule.kind == RuleKind::ExponentiationExpression =>
+                    {
+                        ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
+                    }
+                    _ => ParserResult::no_match(vec![]),
+                }
+            }
+            _ => ParserResult::no_match(vec![]),
+        }
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -2005,6 +2233,27 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
+    fn function_call_expression(&self, input: &mut ParserContext<'_>) -> ParserResult {
+        let result = self.expression(input);
+        let ParserResult::Match(r#match) = &result else {
+            return result;
+        };
+        match &r#match.nodes[..] {
+            [cst::Node::Rule(node)] if node.kind == RuleKind::Expression => {
+                match &node.children[..] {
+                    [inner @ cst::Node::Rule(rule)]
+                        if rule.kind == RuleKind::FunctionCallExpression =>
+                    {
+                        ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
+                    }
+                    _ => ParserResult::no_match(vec![]),
+                }
+            }
+            _ => ParserResult::no_match(vec![]),
+        }
+    }
+
+    #[allow(unused_assignments, unused_parens)]
     fn function_call_options(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if self.version_is_at_least_0_6_2 {
             ChoiceHelper::run(input, |mut choice, input| {
@@ -2344,6 +2593,27 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
+    fn index_access_expression(&self, input: &mut ParserContext<'_>) -> ParserResult {
+        let result = self.expression(input);
+        let ParserResult::Match(r#match) = &result else {
+            return result;
+        };
+        match &r#match.nodes[..] {
+            [cst::Node::Rule(node)] if node.kind == RuleKind::Expression => {
+                match &node.children[..] {
+                    [inner @ cst::Node::Rule(rule)]
+                        if rule.kind == RuleKind::IndexAccessExpression =>
+                    {
+                        ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
+                    }
+                    _ => ParserResult::no_match(vec![]),
+                }
+            }
+            _ => ParserResult::no_match(vec![]),
+        }
+    }
+
+    #[allow(unused_assignments, unused_parens)]
     fn inheritance_specifier(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
@@ -2597,6 +2867,27 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
+    fn member_access_expression(&self, input: &mut ParserContext<'_>) -> ParserResult {
+        let result = self.expression(input);
+        let ParserResult::Match(r#match) = &result else {
+            return result;
+        };
+        match &r#match.nodes[..] {
+            [cst::Node::Rule(node)] if node.kind == RuleKind::Expression => {
+                match &node.children[..] {
+                    [inner @ cst::Node::Rule(rule)]
+                        if rule.kind == RuleKind::MemberAccessExpression =>
+                    {
+                        ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
+                    }
+                    _ => ParserResult::no_match(vec![]),
+                }
+            }
+            _ => ParserResult::no_match(vec![]),
+        }
+    }
+
+    #[allow(unused_assignments, unused_parens)]
     fn modifier_attribute(&self, input: &mut ParserContext<'_>) -> ParserResult {
         ChoiceHelper::run(input, |mut choice, input| {
             let result = self.override_specifier(input);
@@ -2648,6 +2939,27 @@ impl Language {
             seq.finish()
         })
         .with_kind(RuleKind::ModifierInvocation)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn multiplicative_expression(&self, input: &mut ParserContext<'_>) -> ParserResult {
+        let result = self.expression(input);
+        let ParserResult::Match(r#match) = &result else {
+            return result;
+        };
+        match &r#match.nodes[..] {
+            [cst::Node::Rule(node)] if node.kind == RuleKind::Expression => {
+                match &node.children[..] {
+                    [inner @ cst::Node::Rule(rule)]
+                        if rule.kind == RuleKind::MultiplicativeExpression =>
+                    {
+                        ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
+                    }
+                    _ => ParserResult::no_match(vec![]),
+                }
+            }
+            _ => ParserResult::no_match(vec![]),
+        }
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -2850,6 +3162,25 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
+    fn or_expression(&self, input: &mut ParserContext<'_>) -> ParserResult {
+        let result = self.expression(input);
+        let ParserResult::Match(r#match) = &result else {
+            return result;
+        };
+        match &r#match.nodes[..] {
+            [cst::Node::Rule(node)] if node.kind == RuleKind::Expression => {
+                match &node.children[..] {
+                    [inner @ cst::Node::Rule(rule)] if rule.kind == RuleKind::OrExpression => {
+                        ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
+                    }
+                    _ => ParserResult::no_match(vec![]),
+                }
+            }
+            _ => ParserResult::no_match(vec![]),
+        }
+    }
+
+    #[allow(unused_assignments, unused_parens)]
     fn override_paths(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SeparatedHelper::run::<_, LexicalContextType::Default>(
             input,
@@ -3008,6 +3339,25 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
+    fn postfix_expression(&self, input: &mut ParserContext<'_>) -> ParserResult {
+        let result = self.expression(input);
+        let ParserResult::Match(r#match) = &result else {
+            return result;
+        };
+        match &r#match.nodes[..] {
+            [cst::Node::Rule(node)] if node.kind == RuleKind::Expression => {
+                match &node.children[..] {
+                    [inner @ cst::Node::Rule(rule)] if rule.kind == RuleKind::PostfixExpression => {
+                        ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
+                    }
+                    _ => ParserResult::no_match(vec![]),
+                }
+            }
+            _ => ParserResult::no_match(vec![]),
+        }
+    }
+
+    #[allow(unused_assignments, unused_parens)]
     fn pragma(&self, input: &mut ParserContext<'_>) -> ParserResult {
         ChoiceHelper::run(input, |mut choice, input| {
             let result = self.abi_coder_pragma(input);
@@ -3047,6 +3397,25 @@ impl Language {
             seq.finish()
         })
         .with_kind(RuleKind::PragmaDirective)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn prefix_expression(&self, input: &mut ParserContext<'_>) -> ParserResult {
+        let result = self.expression(input);
+        let ParserResult::Match(r#match) = &result else {
+            return result;
+        };
+        match &r#match.nodes[..] {
+            [cst::Node::Rule(node)] if node.kind == RuleKind::Expression => {
+                match &node.children[..] {
+                    [inner @ cst::Node::Rule(rule)] if rule.kind == RuleKind::PrefixExpression => {
+                        ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
+                    }
+                    _ => ParserResult::no_match(vec![]),
+                }
+            }
+            _ => ParserResult::no_match(vec![]),
+        }
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -3183,6 +3552,25 @@ impl Language {
             ParserResult::disabled()
         }
         .with_kind(RuleKind::RevertStatement)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn shift_expression(&self, input: &mut ParserContext<'_>) -> ParserResult {
+        let result = self.expression(input);
+        let ParserResult::Match(r#match) = &result else {
+            return result;
+        };
+        match &r#match.nodes[..] {
+            [cst::Node::Rule(node)] if node.kind == RuleKind::Expression => {
+                match &node.children[..] {
+                    [inner @ cst::Node::Rule(rule)] if rule.kind == RuleKind::ShiftExpression => {
+                        ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
+                    }
+                    _ => ParserResult::no_match(vec![]),
+                }
+            }
+            _ => ParserResult::no_match(vec![]),
+        }
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -4410,6 +4798,69 @@ impl Language {
     }
 
     #[allow(unused_assignments, unused_parens)]
+    fn version_pragma_or_expression(&self, input: &mut ParserContext<'_>) -> ParserResult {
+        let result = self.version_pragma_expression(input);
+        let ParserResult::Match(r#match) = &result else {
+            return result;
+        };
+        match &r#match.nodes[..] {
+            [cst::Node::Rule(node)] if node.kind == RuleKind::VersionPragmaExpression => {
+                match &node.children[..] {
+                    [inner @ cst::Node::Rule(rule)]
+                        if rule.kind == RuleKind::VersionPragmaOrExpression =>
+                    {
+                        ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
+                    }
+                    _ => ParserResult::no_match(vec![]),
+                }
+            }
+            _ => ParserResult::no_match(vec![]),
+        }
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn version_pragma_prefix_expression(&self, input: &mut ParserContext<'_>) -> ParserResult {
+        let result = self.version_pragma_expression(input);
+        let ParserResult::Match(r#match) = &result else {
+            return result;
+        };
+        match &r#match.nodes[..] {
+            [cst::Node::Rule(node)] if node.kind == RuleKind::VersionPragmaExpression => {
+                match &node.children[..] {
+                    [inner @ cst::Node::Rule(rule)]
+                        if rule.kind == RuleKind::VersionPragmaPrefixExpression =>
+                    {
+                        ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
+                    }
+                    _ => ParserResult::no_match(vec![]),
+                }
+            }
+            _ => ParserResult::no_match(vec![]),
+        }
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn version_pragma_range_expression(&self, input: &mut ParserContext<'_>) -> ParserResult {
+        let result = self.version_pragma_expression(input);
+        let ParserResult::Match(r#match) = &result else {
+            return result;
+        };
+        match &r#match.nodes[..] {
+            [cst::Node::Rule(node)] if node.kind == RuleKind::VersionPragmaExpression => {
+                match &node.children[..] {
+                    [inner @ cst::Node::Rule(rule)]
+                        if rule.kind == RuleKind::VersionPragmaRangeExpression =>
+                    {
+                        ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
+                    }
+                    _ => ParserResult::no_match(vec![]),
+                }
+            }
+            _ => ParserResult::no_match(vec![]),
+        }
+    }
+
+    #[allow(unused_assignments, unused_parens)]
     fn version_pragma_specifier(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SeparatedHelper::run::<_, LexicalContextType::Pragma>(
             input,
@@ -4624,6 +5075,27 @@ impl Language {
             seq.finish()
         })
         .with_kind(RuleKind::YulForStatement)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn yul_function_call_expression(&self, input: &mut ParserContext<'_>) -> ParserResult {
+        let result = self.yul_expression(input);
+        let ParserResult::Match(r#match) = &result else {
+            return result;
+        };
+        match &r#match.nodes[..] {
+            [cst::Node::Rule(node)] if node.kind == RuleKind::YulExpression => {
+                match &node.children[..] {
+                    [inner @ cst::Node::Rule(rule)]
+                        if rule.kind == RuleKind::YulFunctionCallExpression =>
+                    {
+                        ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
+                    }
+                    _ => ParserResult::no_match(vec![]),
+                }
+            }
+            _ => ParserResult::no_match(vec![]),
+        }
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -6831,9 +7303,12 @@ impl Language {
     pub fn parse(&self, kind: RuleKind, input: &str) -> ParseOutput {
         match kind {
             RuleKind::ABICoderPragma => Self::abi_coder_pragma.parse(self, input),
+            RuleKind::AdditiveExpression => Self::additive_expression.parse(self, input),
             RuleKind::AddressType => Self::address_type.parse(self, input),
+            RuleKind::AndExpression => Self::and_expression.parse(self, input),
             RuleKind::ArgumentsDeclaration => Self::arguments_declaration.parse(self, input),
             RuleKind::ArrayExpression => Self::array_expression.parse(self, input),
+            RuleKind::ArrayTypeName => Self::array_type_name.parse(self, input),
             RuleKind::ArrayValues => Self::array_values.parse(self, input),
             RuleKind::AsciiStringLiterals => Self::ascii_string_literals.parse(self, input),
             RuleKind::AssemblyFlags => Self::assembly_flags.parse(self, input),
@@ -6841,11 +7316,17 @@ impl Language {
                 Self::assembly_flags_declaration.parse(self, input)
             }
             RuleKind::AssemblyStatement => Self::assembly_statement.parse(self, input),
+            RuleKind::AssignmentExpression => Self::assignment_expression.parse(self, input),
+            RuleKind::BitwiseAndExpression => Self::bitwise_and_expression.parse(self, input),
+            RuleKind::BitwiseOrExpression => Self::bitwise_or_expression.parse(self, input),
+            RuleKind::BitwiseXorExpression => Self::bitwise_xor_expression.parse(self, input),
             RuleKind::Block => Self::block.parse(self, input),
             RuleKind::BreakStatement => Self::break_statement.parse(self, input),
             RuleKind::CatchClause => Self::catch_clause.parse(self, input),
             RuleKind::CatchClauseError => Self::catch_clause_error.parse(self, input),
             RuleKind::CatchClauses => Self::catch_clauses.parse(self, input),
+            RuleKind::ComparisonExpression => Self::comparison_expression.parse(self, input),
+            RuleKind::ConditionalExpression => Self::conditional_expression.parse(self, input),
             RuleKind::ConstantDefinition => Self::constant_definition.parse(self, input),
             RuleKind::ConstructorAttribute => Self::constructor_attribute.parse(self, input),
             RuleKind::ConstructorAttributes => Self::constructor_attributes.parse(self, input),
@@ -6863,6 +7344,7 @@ impl Language {
             RuleKind::EndOfFileTrivia => Self::end_of_file_trivia.parse(self, input),
             RuleKind::EnumDefinition => Self::enum_definition.parse(self, input),
             RuleKind::EnumMembers => Self::enum_members.parse(self, input),
+            RuleKind::EqualityExpression => Self::equality_expression.parse(self, input),
             RuleKind::ErrorDefinition => Self::error_definition.parse(self, input),
             RuleKind::ErrorParameter => Self::error_parameter.parse(self, input),
             RuleKind::ErrorParameters => Self::error_parameters.parse(self, input),
@@ -6877,6 +7359,9 @@ impl Language {
             }
             RuleKind::ExperimentalFeature => Self::experimental_feature.parse(self, input),
             RuleKind::ExperimentalPragma => Self::experimental_pragma.parse(self, input),
+            RuleKind::ExponentiationExpression => {
+                Self::exponentiation_expression.parse(self, input)
+            }
             RuleKind::Expression => Self::expression.parse(self, input),
             RuleKind::ExpressionStatement => Self::expression_statement.parse(self, input),
             RuleKind::FallbackFunctionAttribute => {
@@ -6896,6 +7381,7 @@ impl Language {
             RuleKind::FunctionAttribute => Self::function_attribute.parse(self, input),
             RuleKind::FunctionAttributes => Self::function_attributes.parse(self, input),
             RuleKind::FunctionBody => Self::function_body.parse(self, input),
+            RuleKind::FunctionCallExpression => Self::function_call_expression.parse(self, input),
             RuleKind::FunctionCallOptions => Self::function_call_options.parse(self, input),
             RuleKind::FunctionDefinition => Self::function_definition.parse(self, input),
             RuleKind::FunctionName => Self::function_name.parse(self, input),
@@ -6917,6 +7403,7 @@ impl Language {
             }
             RuleKind::ImportDirective => Self::import_directive.parse(self, input),
             RuleKind::IndexAccessEnd => Self::index_access_end.parse(self, input),
+            RuleKind::IndexAccessExpression => Self::index_access_expression.parse(self, input),
             RuleKind::InheritanceSpecifier => Self::inheritance_specifier.parse(self, input),
             RuleKind::InheritanceType => Self::inheritance_type.parse(self, input),
             RuleKind::InheritanceTypes => Self::inheritance_types.parse(self, input),
@@ -6930,10 +7417,14 @@ impl Language {
             RuleKind::MappingType => Self::mapping_type.parse(self, input),
             RuleKind::MappingValue => Self::mapping_value.parse(self, input),
             RuleKind::MemberAccess => Self::member_access.parse(self, input),
+            RuleKind::MemberAccessExpression => Self::member_access_expression.parse(self, input),
             RuleKind::ModifierAttribute => Self::modifier_attribute.parse(self, input),
             RuleKind::ModifierAttributes => Self::modifier_attributes.parse(self, input),
             RuleKind::ModifierDefinition => Self::modifier_definition.parse(self, input),
             RuleKind::ModifierInvocation => Self::modifier_invocation.parse(self, input),
+            RuleKind::MultiplicativeExpression => {
+                Self::multiplicative_expression.parse(self, input)
+            }
             RuleKind::NamedArgument => Self::named_argument.parse(self, input),
             RuleKind::NamedArgumentGroup => Self::named_argument_group.parse(self, input),
             RuleKind::NamedArgumentGroups => Self::named_argument_groups.parse(self, input),
@@ -6944,6 +7435,7 @@ impl Language {
             RuleKind::NamedImport => Self::named_import.parse(self, input),
             RuleKind::NewExpression => Self::new_expression.parse(self, input),
             RuleKind::NumberUnit => Self::number_unit.parse(self, input),
+            RuleKind::OrExpression => Self::or_expression.parse(self, input),
             RuleKind::OverridePaths => Self::override_paths.parse(self, input),
             RuleKind::OverridePathsDeclaration => {
                 Self::override_paths_declaration.parse(self, input)
@@ -6957,8 +7449,10 @@ impl Language {
             RuleKind::PositionalArgumentsDeclaration => {
                 Self::positional_arguments_declaration.parse(self, input)
             }
+            RuleKind::PostfixExpression => Self::postfix_expression.parse(self, input),
             RuleKind::Pragma => Self::pragma.parse(self, input),
             RuleKind::PragmaDirective => Self::pragma_directive.parse(self, input),
+            RuleKind::PrefixExpression => Self::prefix_expression.parse(self, input),
             RuleKind::ReceiveFunctionAttribute => {
                 Self::receive_function_attribute.parse(self, input)
             }
@@ -6971,6 +7465,7 @@ impl Language {
             RuleKind::ReturnStatement => Self::return_statement.parse(self, input),
             RuleKind::ReturnsDeclaration => Self::returns_declaration.parse(self, input),
             RuleKind::RevertStatement => Self::revert_statement.parse(self, input),
+            RuleKind::ShiftExpression => Self::shift_expression.parse(self, input),
             RuleKind::SourceUnit => Self::source_unit.parse(self, input),
             RuleKind::SourceUnitMember => Self::source_unit_member.parse(self, input),
             RuleKind::SourceUnitMembers => Self::source_unit_members.parse(self, input),
@@ -7045,6 +7540,15 @@ impl Language {
             RuleKind::VersionPragmaExpressions => {
                 Self::version_pragma_expressions.parse(self, input)
             }
+            RuleKind::VersionPragmaOrExpression => {
+                Self::version_pragma_or_expression.parse(self, input)
+            }
+            RuleKind::VersionPragmaPrefixExpression => {
+                Self::version_pragma_prefix_expression.parse(self, input)
+            }
+            RuleKind::VersionPragmaRangeExpression => {
+                Self::version_pragma_range_expression.parse(self, input)
+            }
             RuleKind::VersionPragmaSpecifier => Self::version_pragma_specifier.parse(self, input),
             RuleKind::WhileStatement => Self::while_statement.parse(self, input),
             RuleKind::YulArguments => Self::yul_arguments.parse(self, input),
@@ -7055,6 +7559,9 @@ impl Language {
             RuleKind::YulDefaultCase => Self::yul_default_case.parse(self, input),
             RuleKind::YulExpression => Self::yul_expression.parse(self, input),
             RuleKind::YulForStatement => Self::yul_for_statement.parse(self, input),
+            RuleKind::YulFunctionCallExpression => {
+                Self::yul_function_call_expression.parse(self, input)
+            }
             RuleKind::YulFunctionDefinition => Self::yul_function_definition.parse(self, input),
             RuleKind::YulIdentifierPath => Self::yul_identifier_path.parse(self, input),
             RuleKind::YulIdentifierPaths => Self::yul_identifier_paths.parse(self, input),
@@ -7078,10 +7585,7 @@ impl Language {
             }
             RuleKind::YulVariableDeclarationValue => {
                 Self::yul_variable_declaration_value.parse(self, input)
-            } // TODO(#638): Expose parsing individual operators
-            _ => unimplemented!(
-                "Parsing individual precedence operators is not supported at the moment"
-            ),
+            }
         }
     }
 }
