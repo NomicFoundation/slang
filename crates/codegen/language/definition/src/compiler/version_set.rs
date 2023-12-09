@@ -1,5 +1,6 @@
-use semver::Version;
 use std::{fmt::Display, mem::swap, ops::Range};
+
+use semver::Version;
 
 const MAX_VERSION: Version = Version::new(u64::MAX, u64::MAX, u64::MAX);
 

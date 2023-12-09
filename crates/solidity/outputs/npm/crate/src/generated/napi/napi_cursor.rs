@@ -5,14 +5,14 @@
 // The functions are meant to be definitions for export, so they're not really used
 #![allow(clippy::return_self_not_must_use)]
 
+use napi_cst::ToJS;
+use napi_text_index::{TextIndex, TextRange};
 use {
     napi::{bindgen_prelude::Env, JsObject},
     napi_derive::napi,
 };
 
 use super::{napi_cst, napi_text_index, RuleKind, RustCursor, TokenKind};
-use napi_cst::ToJS;
-use napi_text_index::{TextIndex, TextRange};
 
 #[napi(namespace = "cursor")]
 pub struct Cursor(Box<RustCursor>);

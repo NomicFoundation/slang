@@ -1,11 +1,13 @@
-use crate::utils::{ApiInput, Binary, InputSource};
+use std::collections::HashSet;
+
 use anyhow::Result;
 use codegen_language_definition::model::{Item, KeywordDefinition, KeywordItem, Language};
 use indicatif::{ProgressBar, ProgressStyle};
 use rayon::prelude::{IntoParallelRefIterator, ParallelIterator};
 use semver::Version;
 use solidity_language::SolidityDefinition;
-use std::collections::HashSet;
+
+use crate::utils::{ApiInput, Binary, InputSource};
 
 pub fn check_solidity_keywords() -> Result<()> {
     println!();

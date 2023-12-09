@@ -1,8 +1,10 @@
-use crate::internals::{Error, ErrorsCollection, ParseInputTokens, Result, Spanned};
+use std::fmt::Debug;
+
 use indexmap::IndexMap;
 use proc_macro2::{extra::DelimSpan, Delimiter, Ident, TokenStream};
-use std::fmt::Debug;
 use syn::{braced, bracketed, parenthesized, parse::ParseStream, Token};
+
+use crate::internals::{Error, ErrorsCollection, ParseInputTokens, Result, Spanned};
 
 pub struct ParseHelpers;
 

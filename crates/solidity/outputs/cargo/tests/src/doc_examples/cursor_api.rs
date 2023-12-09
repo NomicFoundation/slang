@@ -1,6 +1,5 @@
 use anyhow::Result;
 use semver::Version;
-
 use slang_solidity::{
     kinds::{RuleKind, TokenKind},
     language::Language,

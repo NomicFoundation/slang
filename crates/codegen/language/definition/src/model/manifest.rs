@@ -1,9 +1,11 @@
-use crate::model::{Field, Identifier, Item, TriviaParser, VersionSpecifier};
+use std::{collections::BTreeSet, rc::Rc};
+
 use codegen_language_internal_macros::{derive_spanned_type, ParseInputTokens, WriteOutputTokens};
 use indexmap::IndexSet;
 use semver::Version;
 use serde::{Deserialize, Serialize};
-use std::{collections::BTreeSet, rc::Rc};
+
+use crate::model::{Field, Identifier, Item, TriviaParser, VersionSpecifier};
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 #[derive_spanned_type(ParseInputTokens, WriteOutputTokens)]

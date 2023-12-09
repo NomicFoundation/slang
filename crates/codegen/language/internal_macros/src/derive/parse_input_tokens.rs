@@ -1,7 +1,8 @@
-use crate::input_model::{strip_spanned_prefix, InputField, InputItem, InputVariant};
 use itertools::Itertools;
 use proc_macro2::{Ident, Literal, TokenStream};
 use quote::quote;
+
+use crate::input_model::{strip_spanned_prefix, InputField, InputItem, InputVariant};
 
 pub fn parse_input_tokens(item: InputItem) -> TokenStream {
     match item {

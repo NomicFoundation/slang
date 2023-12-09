@@ -1,11 +1,10 @@
-use inflector::Inflector;
-use proc_macro2::TokenStream;
-use quote::{format_ident, quote};
-
 use codegen_grammar::{
     ParserDefinitionNode, ParserDefinitionRef, TriviaParserDefinitionRef, VersionQuality,
     VersionQualityRange,
 };
+use inflector::Inflector;
+use proc_macro2::TokenStream;
+use quote::{format_ident, quote};
 
 pub trait ParserDefinitionExtensions {
     fn to_parser_code(&self) -> TokenStream;

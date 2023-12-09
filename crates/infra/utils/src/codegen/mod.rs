@@ -2,12 +2,11 @@ mod common;
 mod read_write;
 mod write_only;
 
-pub use read_write::*;
-pub use write_only::*;
-
 use std::path::PathBuf;
 
 use anyhow::Result;
+pub use read_write::*;
+pub use write_only::*;
 
 pub struct Codegen;
 

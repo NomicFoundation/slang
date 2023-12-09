@@ -1,9 +1,10 @@
+use proc_macro2::TokenStream;
+use syn::parse::{Parse, ParseStream};
+
 use crate::{
     internals::{ErrorsCollection, ParseInputTokens, Result},
     model::SpannedLanguage,
 };
-use proc_macro2::TokenStream;
-use syn::parse::{Parse, ParseStream};
 
 pub(crate) struct ParseAdapter;
 

@@ -1,3 +1,8 @@
+use std::fmt::Debug;
+
+use indexmap::IndexMap;
+use semver::Version;
+
 use crate::{
     compiler::{analysis::Analysis, version_set::VersionSet},
     internals::Spanned,
@@ -14,9 +19,6 @@ use crate::{
         SpannedVersionSpecifier,
     },
 };
-use indexmap::IndexMap;
-use semver::Version;
-use std::fmt::Debug;
 
 pub(crate) fn analyze_references(analysis: &mut Analysis) {
     let language = analysis.language.clone();

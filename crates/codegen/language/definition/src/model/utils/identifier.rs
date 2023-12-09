@@ -1,11 +1,13 @@
-use crate::internals::{
-    ErrorsCollection, ParseHelpers, ParseInputTokens, Result, WriteOutputTokens,
-};
+use std::ops::Deref;
+
 use proc_macro2::{Literal, TokenStream};
 use quote::quote;
 use serde::{Deserialize, Serialize};
-use std::ops::Deref;
 use syn::{parse::ParseStream, Ident};
+
+use crate::internals::{
+    ErrorsCollection, ParseHelpers, ParseInputTokens, Result, WriteOutputTokens,
+};
 
 /// A wrapper type to make sure the DSL token is written as an identifier instead of a string literal.
 #[derive(Clone, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]

@@ -1,10 +1,9 @@
-use inflector::Inflector;
-use proc_macro2::{Ident, TokenStream};
-use quote::{format_ident, quote};
-
 use codegen_grammar::{
     PrecedenceOperatorModel, PrecedenceParserDefinitionNode, PrecedenceParserDefinitionRef,
 };
+use inflector::Inflector;
+use proc_macro2::{Ident, TokenStream};
+use quote::{format_ident, quote};
 
 use super::parser_definition::ParserDefinitionNodeExtensions;
 
