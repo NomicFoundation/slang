@@ -2,4 +2,4 @@
 "@nomicfoundation/slang": minor
 ---
 
-Remove ProductionKind in favor of RuleKind
+Remove `ProductionKind` in favor of `RuleKind`
