@@ -2,7 +2,7 @@
 //! (used for generating the parser and the CST).
 
 use std::cell::OnceCell;
-use std::collections::{BTreeSet, HashMap};
+use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::rc::Rc;
 
 use codegen_grammar::Grammar;
@@ -742,61 +742,71 @@ fn resolve_precedence(
     }
 
     let mut operators = vec![];
+    let mut precedence_expression_names = Vec::with_capacity(item.precedence_expressions.len());
     for expr in item.precedence_expressions {
         let name = expr.name;
+        // TODO: Don't leak
+        let leaked_name = name.to_string().leak() as &_;
 
+        precedence_expression_names.push(leaked_name);
         // Register it as a regular parser with a given name, however we need to
         // define it as a choice over the "operator" sequences
         // Then, when returning, we should actually return a node ref pointing to that combined parser
         // And ideally, we shouldn't even use the "enabled" mode of the original DSL
         let thunk = Rc::new(NamedParserThunk {
-            name: name.to_string().leak(),
+            name: leaked_name,
             context: lex_ctx,
-            // The operators are inlined but should be exposed under grouping `rule_name` below
             is_inline: true,
             def: OnceCell::new(),
         });
 
-        // NOTE: The DSL v1 model defines operators as having the same body definitions but uses a specific
-        // versioning mechanism. This is in contrast to the DSL v2, which allows for different body definitions and
-        // different versions.
-        // Thus, we shoehorn the v2 model into the first one, by creating a single parser definition node as
-        // a choice over the different versions of the operator body, but still define it multiple times in the DSL v1
-        // model with an explicit version, that the codegen handles for us.
+        // Each precedence expression can have multiple operators with different modes and versions
+        // We partition them by model and then resolve each group separately
+        let mut operators_per_model = BTreeMap::<_, Vec<_>>::new();
         for op in &expr.operators {
-            operators.push((
-                op.enabled.clone().map(enabled_to_range).unwrap_or_default(),
-                model_to_enum(op.model),
-                // TODO: Don't leak
-                expr.rule_name.to_string().leak() as &_,
-                thunk.clone() as Rc<dyn ParserDefinition>,
-            ));
+            operators_per_model.entry(op.model).or_default().push(op);
         }
 
-        let defs: Vec<_> = expr
-            .operators
-            .into_iter()
-            .map(|op| resolve_sequence_like(op.enabled, op.fields, op.error_recovery, ctx))
-            .collect();
+        let mut all_operators = vec![];
+        for (model, model_operators) in operators_per_model {
+            let defs: Vec<_> = model_operators
+                .into_iter()
+                .map(ToOwned::to_owned)
+                .map(|op| resolve_sequence_like(op.enabled, op.fields, op.error_recovery, ctx))
+                .collect();
 
-        let def = match defs.len() {
-            0 => panic!("Precedence operator {name} has no definitions"),
-            1 => defs.into_iter().next().unwrap(),
-            _ => ParserDefinitionNode::Choice(defs),
-        };
+            let def = match &defs[..] {
+                // HACK: Despite it being a single definition, we still need to wrap a versioned
+                // node around the choice for it to emit the version checks for the node.
+                [ParserDefinitionNode::Versioned(..)] => ParserDefinitionNode::Choice(defs),
+                [_] => defs.into_iter().next().unwrap(),
+                _ => ParserDefinitionNode::Choice(defs),
+            };
 
-        thunk.def.set(def).unwrap();
+            all_operators.push(def.clone());
+            operators.push((model_to_enum(model), leaked_name, def));
+        }
+
+        // Register the combined parser definition to appease the codegen and to mark terminals
+        // as reachable and ensure we emit a token kind for each
+        thunk
+            .def
+            .set(ParserDefinitionNode::Choice(all_operators))
+            .unwrap();
         assert!(
             !ctx.resolved.contains_key(&name),
-            "Encountered a duplicate Precedence Operator named {name} when resolving"
+            "Encountered a duplicate Precedence Expression named {name} when resolving"
         );
-        ctx.resolved
-            .insert(name.clone(), GrammarElement::ParserDefinition(thunk));
+        ctx.resolved.insert(
+            name.clone(),
+            GrammarElement::ParserDefinition(thunk.clone()),
+        );
     }
 
     PrecedenceParserDefinitionNode {
         primary_expression,
         operators,
+        precedence_expression_names,
     }
 }
 

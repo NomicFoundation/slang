@@ -10,6 +10,8 @@ mod Block;
 #[allow(non_snake_case)]
 mod BreakStatement;
 #[allow(non_snake_case)]
+mod ConditionalExpression;
+#[allow(non_snake_case)]
 mod ConstantDefinition;
 #[allow(non_snake_case)]
 mod ConstructorDefinition;
@@ -27,6 +29,8 @@ mod EnumDefinition;
 mod ErrorDefinition;
 #[allow(non_snake_case)]
 mod EventDefinition;
+#[allow(non_snake_case)]
+mod ExponentiationExpression;
 #[allow(non_snake_case)]
 mod Expression;
 #[allow(non_snake_case)]

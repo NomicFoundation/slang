@@ -126,7 +126,6 @@ codegen_language_macros::compile!(Language(
                             precedence_expressions = [
                                 PrecedenceExpression(
                                     name = VersionPragmaOrExpression,
-                                    rule_name = VersionPragmaBinaryExpression,
                                     operators = [PrecedenceOperator(
                                         model = BinaryLeftAssociative,
                                         fields = (operator = Required(BarBar))
@@ -134,7 +133,6 @@ codegen_language_macros::compile!(Language(
                                 ),
                                 PrecedenceExpression(
                                     name = VersionPragmaRangeExpression,
-                                    rule_name = VersionPragmaBinaryExpression,
                                     operators = [PrecedenceOperator(
                                         model = BinaryLeftAssociative,
                                         fields = (operator = Required(Minus))
@@ -142,7 +140,6 @@ codegen_language_macros::compile!(Language(
                                 ),
                                 PrecedenceExpression(
                                     name = VersionPragmaPrefixExpression,
-                                    rule_name = VersionPragmaUnaryExpression,
                                     operators = [
                                         PrecedenceOperator(
                                             model = Prefix,
@@ -2549,7 +2546,6 @@ codegen_language_macros::compile!(Language(
                             name = TypeName,
                             precedence_expressions = [PrecedenceExpression(
                                 name = ArrayTypeName,
-                                rule_name = ArrayTypeName,
                                 operators = [PrecedenceOperator(
                                     model = Postfix,
                                     error_recovery = FieldsErrorRecovery(
@@ -3040,7 +3036,6 @@ codegen_language_macros::compile!(Language(
                             precedence_expressions = [
                                 PrecedenceExpression(
                                     name = AssignmentExpression,
-                                    rule_name = BinaryExpression,
                                     operators = [
                                         PrecedenceOperator(
                                             model = BinaryLeftAssociative,
@@ -3096,7 +3091,6 @@ codegen_language_macros::compile!(Language(
                                 ),
                                 PrecedenceExpression(
                                     name = ConditionalExpression,
-                                    rule_name = ConditionalExpression,
                                     operators = [PrecedenceOperator(
                                         model = Postfix,
                                         fields = (
@@ -3109,7 +3103,6 @@ codegen_language_macros::compile!(Language(
                                 ),
                                 PrecedenceExpression(
                                     name = OrExpression,
-                                    rule_name = BinaryExpression,
                                     operators = [PrecedenceOperator(
                                         model = BinaryLeftAssociative,
                                         fields = (operator = Required(BarBar))
@@ -3117,7 +3110,6 @@ codegen_language_macros::compile!(Language(
                                 ),
                                 PrecedenceExpression(
                                     name = AndExpression,
-                                    rule_name = BinaryExpression,
                                     operators = [PrecedenceOperator(
                                         model = BinaryLeftAssociative,
                                         fields = (operator = Required(AmpersandAmpersand))
@@ -3125,7 +3117,6 @@ codegen_language_macros::compile!(Language(
                                 ),
                                 PrecedenceExpression(
                                     name = EqualityExpression,
-                                    rule_name = BinaryExpression,
                                     operators = [
                                         PrecedenceOperator(
                                             model = BinaryLeftAssociative,
@@ -3139,7 +3130,6 @@ codegen_language_macros::compile!(Language(
                                 ),
                                 PrecedenceExpression(
                                     name = ComparisonExpression,
-                                    rule_name = BinaryExpression,
                                     operators = [
                                         PrecedenceOperator(
                                             model = BinaryLeftAssociative,
@@ -3161,7 +3151,6 @@ codegen_language_macros::compile!(Language(
                                 ),
                                 PrecedenceExpression(
                                     name = BitwiseOrExpression,
-                                    rule_name = BinaryExpression,
                                     operators = [PrecedenceOperator(
                                         model = BinaryLeftAssociative,
                                         fields = (operator = Required(Bar))
@@ -3169,7 +3158,6 @@ codegen_language_macros::compile!(Language(
                                 ),
                                 PrecedenceExpression(
                                     name = BitwiseXorExpression,
-                                    rule_name = BinaryExpression,
                                     operators = [PrecedenceOperator(
                                         model = BinaryLeftAssociative,
                                         fields = (operator = Required(Caret))
@@ -3177,7 +3165,6 @@ codegen_language_macros::compile!(Language(
                                 ),
                                 PrecedenceExpression(
                                     name = BitwiseAndExpression,
-                                    rule_name = BinaryExpression,
                                     operators = [PrecedenceOperator(
                                         model = BinaryLeftAssociative,
                                         fields = (operator = Required(Ampersand))
@@ -3185,7 +3172,6 @@ codegen_language_macros::compile!(Language(
                                 ),
                                 PrecedenceExpression(
                                     name = ShiftExpression,
-                                    rule_name = BinaryExpression,
                                     operators = [
                                         PrecedenceOperator(
                                             model = BinaryLeftAssociative,
@@ -3204,7 +3190,6 @@ codegen_language_macros::compile!(Language(
                                 ),
                                 PrecedenceExpression(
                                     name = AdditiveExpression,
-                                    rule_name = BinaryExpression,
                                     operators = [
                                         PrecedenceOperator(
                                             model = BinaryLeftAssociative,
@@ -3218,7 +3203,6 @@ codegen_language_macros::compile!(Language(
                                 ),
                                 PrecedenceExpression(
                                     name = MultiplicativeExpression,
-                                    rule_name = BinaryExpression,
                                     operators = [
                                         PrecedenceOperator(
                                             model = BinaryLeftAssociative,
@@ -3236,7 +3220,6 @@ codegen_language_macros::compile!(Language(
                                 ),
                                 PrecedenceExpression(
                                     name = ExponentiationExpression,
-                                    rule_name = BinaryExpression,
                                     operators = [
                                         // Before '0.6.0', it was left-associative:
                                         PrecedenceOperator(
@@ -3254,7 +3237,6 @@ codegen_language_macros::compile!(Language(
                                 ),
                                 PrecedenceExpression(
                                     name = PostfixExpression,
-                                    rule_name = UnaryPostfixExpression,
                                     operators = [
                                         PrecedenceOperator(
                                             model = Postfix,
@@ -3268,7 +3250,6 @@ codegen_language_macros::compile!(Language(
                                 ),
                                 PrecedenceExpression(
                                     name = PrefixExpression,
-                                    rule_name = UnaryPrefixExpression,
                                     operators = [
                                         PrecedenceOperator(
                                             model = Prefix,
@@ -3299,7 +3280,6 @@ codegen_language_macros::compile!(Language(
                                 ),
                                 PrecedenceExpression(
                                     name = FunctionCallExpression,
-                                    rule_name = FunctionCallExpression,
                                     operators = [PrecedenceOperator(
                                         model = Postfix,
                                         fields = (
@@ -3313,7 +3293,6 @@ codegen_language_macros::compile!(Language(
                                 ),
                                 PrecedenceExpression(
                                     name = MemberAccessExpression,
-                                    rule_name = MemberAccessExpression,
                                     operators = [PrecedenceOperator(
                                         model = Postfix,
                                         fields = (
@@ -3324,7 +3303,6 @@ codegen_language_macros::compile!(Language(
                                 ),
                                 PrecedenceExpression(
                                     name = IndexAccessExpression,
-                                    rule_name = IndexAccessExpression,
                                     operators = [PrecedenceOperator(
                                         model = Postfix,
                                         error_recovery = FieldsErrorRecovery(
@@ -4059,7 +4037,6 @@ codegen_language_macros::compile!(Language(
                             name = YulExpression,
                             precedence_expressions = [PrecedenceExpression(
                                 name = YulFunctionCallExpression,
-                                rule_name = YulFunctionCallExpression,
                                 operators = [PrecedenceOperator(
                                     model = Postfix,
                                     error_recovery = FieldsErrorRecovery(

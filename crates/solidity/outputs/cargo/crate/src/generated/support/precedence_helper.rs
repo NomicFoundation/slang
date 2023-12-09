@@ -60,10 +60,7 @@ impl PrecedenceHelper {
     }
 
     #[allow(clippy::too_many_lines)] // Explicit on purpose, see below.
-    pub fn reduce_precedence_result(
-        child_kind: Option<RuleKind>,
-        result: ParserResult,
-    ) -> ParserResult {
+    pub fn reduce_precedence_result(child_kind: RuleKind, result: ParserResult) -> ParserResult {
         // This requires some careful thinking. It could be more compact,
         // but I'm favouring obviousness here. That is also why there are
         // so many `unreachable!` - not only should they never be reached,
@@ -164,10 +161,8 @@ impl PrecedenceHelper {
                             let wrap_children = |children: Vec<cst::Node>| {
                                 if children.is_empty() {
                                     children
-                                } else if let Some(kind) = child_kind {
-                                    vec![cst::Node::rule(kind, children)]
                                 } else {
-                                    children
+                                    vec![cst::Node::rule(child_kind, children)]
                                 }
                             };
 

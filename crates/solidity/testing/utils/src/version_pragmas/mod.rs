@@ -5,11 +5,7 @@ use std::str::FromStr;
 
 use anyhow::{bail, ensure, Context, Result};
 use semver::{Comparator, Op, Version};
-use slang_solidity::{
-    cst::Node,
-    kinds::{ProductionKind, RuleKind, TokenKind},
-    language::Language,
-};
+use slang_solidity::{cst::Node, kinds::RuleKind, language::Language};
 
 use crate::node_extensions::NodeExtensions;
 
@@ -18,7 +14,7 @@ pub fn extract_version_pragmas(
     latest_version: &Version,
 ) -> Result<Vec<VersionPragma>> {
     let language = &Language::new(latest_version.to_owned())?;
-    let output = language.parse(ProductionKind::SourceUnit, source);
+    let output = language.parse(RuleKind::SourceUnit, source);
 
     let mut pragmas = vec![];
     let mut cursor = output.create_tree_cursor();
@@ -68,41 +64,34 @@ fn extract_pragma(expression_node: &Node) -> Result<VersionPragma> {
         .collect();
 
     match inner_expression.kind {
-        RuleKind::VersionPragmaBinaryExpression => match &inner_children[..] {
-            [left, operator, right] => {
-                let Node::Token(operator) = operator else {
-                    bail!("Expected rule: {operator:?}");
-                };
+        RuleKind::VersionPragmaOrExpression => {
+            let [left, Node::Token(_op), right] = &inner_children[..] else {
+                bail!("Expected 3 children: {inner_expression:?}");
+            };
+            let left = extract_pragma(left)?;
+            let right = extract_pragma(right)?;
 
-                match operator.kind {
-                    TokenKind::BarBar => {
-                        let left = extract_pragma(left)?;
-                        let right = extract_pragma(right)?;
+            Ok(VersionPragma::or(left, right))
+        }
+        RuleKind::VersionPragmaRangeExpression => {
+            let [left, Node::Token(_op), right] = &inner_children[..] else {
+                bail!("Expected 3 children: {inner_expression:?}");
+            };
 
-                        Ok(VersionPragma::or(left, right))
-                    }
-                    TokenKind::Minus => {
-                        let mut left = extract_pragma(left)?.comparator()?;
-                        let mut right = extract_pragma(right)?.comparator()?;
+            let mut left = extract_pragma(left)?.comparator()?;
+            let mut right = extract_pragma(right)?.comparator()?;
 
-                        // Simulate solc bug:
-                        // https://github.com/ethereum/solidity/issues/13920
-                        left.op = Op::GreaterEq;
-                        right.op = Op::LessEq;
+            // Simulate solc bug:
+            // https://github.com/ethereum/solidity/issues/13920
+            left.op = Op::GreaterEq;
+            right.op = Op::LessEq;
 
-                        Ok(VersionPragma::and(
-                            VersionPragma::single(left),
-                            VersionPragma::single(right),
-                        ))
-                    }
-
-                    _ => bail!("Unexpected operator: {operator:?}"),
-                }
-            }
-
-            _ => bail!("Expected 3 children: {inner_expression:?}"),
-        },
-        RuleKind::VersionPragmaUnaryExpression => {
+            Ok(VersionPragma::and(
+                VersionPragma::single(left),
+                VersionPragma::single(right),
+            ))
+        }
+        RuleKind::VersionPragmaPrefixExpression => {
             let value = inner_expression.extract_non_trivia();
             let comparator = Comparator::from_str(&value)?;
 

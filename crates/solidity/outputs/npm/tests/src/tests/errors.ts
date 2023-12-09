@@ -1,11 +1,11 @@
 import { Language } from "@nomicfoundation/slang/language";
-import { ProductionKind } from "@nomicfoundation/slang/kinds";
+import { RuleKind } from "@nomicfoundation/slang/kinds";
 
 test("render error reports", () => {
   const source = "int256 constant";
   const language = new Language("0.8.1");
 
-  const errors = language.parse(ProductionKind.SourceUnit, source).errors();
+  const errors = language.parse(RuleKind.SourceUnit, source).errors();
   expect(errors).toHaveLength(1);
 
   const report = errors[0]!.toErrorReport("test.sol", source, /* withColor */ false);

@@ -1,7 +1,7 @@
 use anyhow::Result;
 use semver::Version;
 use slang_solidity::{
-    kinds::{ProductionKind, RuleKind, TokenKind},
+    kinds::{RuleKind, TokenKind},
     language::Language,
 };
 
@@ -14,7 +14,7 @@ const SOURCE: &str = "
 #[test]
 fn using_cursor_api() -> Result<()> {
     let language = Language::new(Version::parse("0.8.0")?)?;
-    let parse_output = language.parse(ProductionKind::SourceUnit, SOURCE);
+    let parse_output = language.parse(RuleKind::SourceUnit, SOURCE);
 
     let mut contract_names = Vec::new();
     let mut cursor = parse_output.create_tree_cursor();
@@ -37,7 +37,7 @@ fn using_cursor_api() -> Result<()> {
 #[test]
 fn using_spawn() -> Result<()> {
     let language = Language::new(Version::parse("0.8.0")?)?;
-    let parse_output = language.parse(ProductionKind::SourceUnit, SOURCE);
+    let parse_output = language.parse(RuleKind::SourceUnit, SOURCE);
 
     let mut contract_names = Vec::new();
     let mut cursor = parse_output.create_tree_cursor();
@@ -61,7 +61,7 @@ fn using_spawn() -> Result<()> {
 #[test]
 fn using_iter() -> Result<()> {
     let language = Language::new(Version::parse("0.8.0")?)?;
-    let parse_output = language.parse(ProductionKind::SourceUnit, SOURCE);
+    let parse_output = language.parse(RuleKind::SourceUnit, SOURCE);
 
     let mut contract_names = Vec::new();
     let mut cursor = parse_output.create_tree_cursor();
@@ -86,7 +86,7 @@ fn using_iter() -> Result<()> {
 #[test]
 fn using_iter_combinators() -> Result<()> {
     let language = Language::new(Version::parse("0.8.0")?)?;
-    let parse_output = language.parse(ProductionKind::SourceUnit, SOURCE);
+    let parse_output = language.parse(RuleKind::SourceUnit, SOURCE);
 
     let contract_names: Vec<_> = parse_output
         .create_tree_cursor()

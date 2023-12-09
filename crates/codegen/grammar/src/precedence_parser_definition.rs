@@ -1,9 +1,7 @@
 use std::fmt::Debug;
 use std::rc::Rc;
 
-use super::{
-    GrammarVisitor, ParserDefinitionNode, ParserDefinitionRef, VersionQualityRange, Visitable,
-};
+use super::{GrammarVisitor, ParserDefinitionNode, Visitable};
 
 pub trait PrecedenceParserDefinition: Debug {
     fn name(&self) -> &'static str;
@@ -24,11 +22,11 @@ impl Visitable for PrecedenceParserDefinitionRef {
 pub struct PrecedenceParserDefinitionNode {
     pub primary_expression: Box<ParserDefinitionNode>,
     pub operators: Vec<(
-        Vec<VersionQualityRange>,
         PrecedenceOperatorModel,
         &'static str, // name
-        ParserDefinitionRef,
+        ParserDefinitionNode,
     )>,
+    pub precedence_expression_names: Vec<&'static str>,
 }
 
 impl Visitable for PrecedenceParserDefinitionNode {

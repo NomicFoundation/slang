@@ -7,8 +7,8 @@ use std::{
 use anyhow::Result;
 use codegen_grammar::{
     Grammar, GrammarVisitor, ParserDefinitionNode, ParserDefinitionRef,
-    PrecedenceParserDefinitionNode, PrecedenceParserDefinitionRef, ScannerDefinitionNode,
-    ScannerDefinitionRef, TriviaParserDefinitionRef,
+    PrecedenceParserDefinitionRef, ScannerDefinitionNode, ScannerDefinitionRef,
+    TriviaParserDefinitionRef,
 };
 use infra_utils::{cargo::CargoWorkspace, codegen::Codegen};
 use quote::{format_ident, quote};
@@ -27,7 +27,6 @@ pub struct CodeGenerator {
 
     rule_kinds: BTreeSet<&'static str>,
     token_kinds: BTreeSet<&'static str>,
-    production_kinds: BTreeSet<&'static str>,
     trivia_kinds: BTreeSet<&'static str>,
 
     top_level_scanner_names: BTreeSet<&'static str>,
@@ -216,7 +215,6 @@ impl GrammarVisitor for CodeGenerator {
 
     fn trivia_parser_definition_enter(&mut self, parser: &TriviaParserDefinitionRef) {
         self.set_current_context(parser.context());
-        self.production_kinds.insert(parser.name());
         self.rule_kinds.insert(parser.name());
         self.trivia_kinds.insert(parser.name());
         self.parser_functions.push((
@@ -234,7 +232,6 @@ impl GrammarVisitor for CodeGenerator {
         // Have to set this regardless so that we can collect referenced scanners
         self.set_current_context(parser.context());
         if !parser.is_inline() {
-            self.production_kinds.insert(parser.name());
             self.rule_kinds.insert(parser.name());
             let code = parser.to_parser_code();
             self.parser_functions.push((
@@ -250,11 +247,17 @@ impl GrammarVisitor for CodeGenerator {
 
     fn precedence_parser_definition_enter(&mut self, parser: &PrecedenceParserDefinitionRef) {
         self.set_current_context(parser.context());
-        self.production_kinds.insert(parser.name());
         self.rule_kinds.insert(parser.name());
-        for (_, _, name, _) in &parser.node().operators {
+        for (_, name, _) in &parser.node().operators {
             self.rule_kinds.insert(name);
         }
+
+        // While it's not common to parse a precedence expression as a standalone rule,
+        // we generate a function for completeness.
+        for (name, code) in parser.to_precedence_expression_parser_code() {
+            self.parser_functions.push((name, code.to_string()));
+        }
+
         self.parser_functions.push((
             parser.name(),
             {
@@ -314,13 +317,5 @@ impl GrammarVisitor for CodeGenerator {
             }
             _ => {}
         };
-    }
-
-    fn precedence_parser_definition_node_enter(&mut self, node: &PrecedenceParserDefinitionNode) {
-        for operator in &node.operators {
-            for vqr in &operator.0 {
-                self.referenced_versions.insert(vqr.from.clone());
-            }
-        }
     }
 }

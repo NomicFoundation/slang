@@ -7,7 +7,7 @@ Errors: []
 
 Tree:
   - Expression (Rule): # 0..5 "foo--"
-      - UnaryPostfixExpression (Rule): # 0..5 "foo--"
+      - PostfixExpression (Rule): # 0..5 "foo--"
           - Expression (Rule): # 0..3 "foo"
               - Identifier (Token): "foo" # 0..3
           - MinusMinus (Token): "--" # 3..5

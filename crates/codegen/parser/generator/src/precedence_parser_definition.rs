@@ -1,32 +1,62 @@
 use codegen_grammar::{
     PrecedenceOperatorModel, PrecedenceParserDefinitionNode, PrecedenceParserDefinitionRef,
-    VersionQualityRange,
 };
 use inflector::Inflector;
 use proc_macro2::{Ident, TokenStream};
 use quote::{format_ident, quote};
 
-use super::parser_definition::{ParserDefinitionNodeExtensions, VersionQualityRangeVecExtensions};
+use super::parser_definition::ParserDefinitionNodeExtensions;
 
 pub trait PrecedenceParserDefinitionExtensions {
     fn to_parser_code(&self) -> TokenStream;
+    /// Emit a helper parser function for each precedence expression that ensures the main parser
+    /// identifies a single node of the expected type, with a child node being the expected
+    /// precedence expression.
+    fn to_precedence_expression_parser_code(&self) -> Vec<(&'static str, TokenStream)>;
 }
 
 impl PrecedenceParserDefinitionExtensions for PrecedenceParserDefinitionRef {
     fn to_parser_code(&self) -> TokenStream {
         self.node().to_parser_code(
             self.context(),
-            Some(format_ident!("{name}", name = self.name().to_pascal_case())),
+            format_ident!("{name}", name = self.name().to_pascal_case()),
         )
+    }
+
+    fn to_precedence_expression_parser_code(&self) -> Vec<(&'static str, TokenStream)> {
+        let mut res = vec![];
+        let parser_name = format_ident!("{}", self.name().to_snake_case());
+        let rule_name = format_ident!("{}", self.name().to_pascal_case());
+
+        for name in &self.node().precedence_expression_names {
+            let op_rule_name = format_ident!("{}", name.to_pascal_case());
+
+            // Ensure that the parser correctly identifies a single node of the expected type,
+            // which contains a single child node representing the expected precedence operator.
+            let code = quote! {
+                let result = self.#parser_name(input);
+                let ParserResult::Match(r#match) = &result else { return result; };
+
+                // If the result won't match exactly, we return a dummy `ParserResult::no_match`, since
+                // can't precisely determine the expected tokens or completeness of the match otherwise.
+                match &r#match.nodes[..] {
+                    [cst::Node::Rule(node)] if node.kind == RuleKind::#rule_name => match &node.children[..] {
+                        [inner @ cst::Node::Rule(rule)] if rule.kind == RuleKind::#op_rule_name => {
+                            ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
+                        }
+                        _ => ParserResult::no_match(vec![]),
+                    }
+                    _ => ParserResult::no_match(vec![]),
+                }
+            };
+            res.push((*name, code));
+        }
+        res
     }
 }
 
 pub trait PrecedenceParserDefinitionNodeExtensions {
-    fn to_parser_code(
-        &self,
-        context_name: &'static str,
-        expression_kind: Option<Ident>,
-    ) -> TokenStream;
+    fn to_parser_code(&self, context_name: &'static str, expression_kind: Ident) -> TokenStream;
 }
 
 impl PrecedenceParserDefinitionNodeExtensions for PrecedenceParserDefinitionNode {
@@ -71,12 +101,7 @@ impl PrecedenceParserDefinitionNodeExtensions for PrecedenceParserDefinitionNode
     // is independent of the grammar.
 
     #[allow(clippy::too_many_lines)] // Repetition-heavy with 4 kinds of precedence operators
-    fn to_parser_code(
-        &self,
-        context_name: &'static str,
-        expression_kind: Option<Ident>,
-    ) -> TokenStream {
-        type OperatorParser = (TokenStream, Vec<VersionQualityRange>);
+    fn to_parser_code(&self, context_name: &'static str, expression_kind: Ident) -> TokenStream {
         let mut prefix_operator_parsers: Vec<OperatorParser> = Vec::new();
         let mut postfix_operator_parsers: Vec<OperatorParser> = Vec::new();
         let mut binary_operator_parsers: Vec<OperatorParser> = Vec::new();
@@ -86,22 +111,19 @@ impl PrecedenceParserDefinitionNodeExtensions for PrecedenceParserDefinitionNode
         let mut operator_closures = Vec::new();
 
         let mut binding_power = 1u8;
-        for (version_quality_ranges, model, name, operator_definition) in &self.operators {
-            let operator_code = operator_definition
-                .node()
-                .to_parser_code(context_name, false);
+        for (model, name, operator_definition) in &self.operators {
+            let operator_code = operator_definition.to_parser_code(context_name, false);
             let rule_kind = format_ident!("{}", name);
-            let closure_name = format_ident!(
-                // Make a name that won't conflict with the parsers we define below
-                "parse_{name}{version_tag}",
-                version_tag = version_quality_ranges.disambiguating_name_suffix(),
-                name = operator_definition.name().to_snake_case()
-            );
+            let model_name = match model {
+                PrecedenceOperatorModel::BinaryLeftAssociative => "left",
+                PrecedenceOperatorModel::BinaryRightAssociative => "right",
+                PrecedenceOperatorModel::Prefix => "prefix",
+                PrecedenceOperatorModel::Postfix => "postfix",
+            };
+            let closure_name =
+                format_ident!("parse_{model_name}_{name}", name = name.to_snake_case());
 
-            let parser = (
-                quote! { #closure_name(input) },
-                version_quality_ranges.clone(),
-            );
+            let parser = quote! { #closure_name(input) };
 
             match model {
                 PrecedenceOperatorModel::BinaryLeftAssociative => {
@@ -155,53 +177,14 @@ impl PrecedenceParserDefinitionNodeExtensions for PrecedenceParserDefinitionNode
             binding_power += 2;
         }
 
-        // TODO: merge these three functions into parse_definition by changing
-        // `to_parser_code` to use `(TokenStream, Vec<VersionQualityRange>)` as
-        // the core type i.e. the `OperatorParser` type above
-        #[allow(clippy::items_after_statements)]
-        fn make_sequence(parsers: Vec<TokenStream>) -> TokenStream {
-            let parsers = parsers
-                .into_iter()
-                .map(|parser| quote! { seq.elem(#parser)?; })
-                .collect::<Vec<_>>();
-            quote! {
-                SequenceHelper::run(|mut seq| {
-                    #(#parsers)*
-                    seq.finish()
-                })
-            }
-        }
-
-        #[allow(clippy::items_after_statements)]
-        fn make_choice(parsers: Vec<OperatorParser>) -> TokenStream {
-            let parsers = parsers
-                .into_iter()
-                .map(|(parser, version_quality_ranges)| {
-                    version_quality_ranges.wrap_code(
-                        quote! {
-                            let result = #parser;
-                            choice.consider(input, result)?;
-                        },
-                        None,
-                    )
-                })
-                .collect::<Vec<_>>();
-            quote! {
-                ChoiceHelper::run(input, |mut choice, input| {
-                    #(#parsers)*
-                    choice.finish(input)
-                })
-            }
-        }
-
         let mut binary_operand_terms = vec![];
 
+        // First, establish the binary operand parser `BinaryOperand ::= PrefixOperator* PrimaryExpression PostfixOperator*`
         if !prefix_operator_parsers.is_empty() {
             let prefix_operator_parser = make_choice(prefix_operator_parsers);
             operator_closures.push(quote! { let prefix_operator_parser = |input: &mut ParserContext<'_>| #prefix_operator_parser; });
-            binary_operand_terms.push(
-                quote! { ZeroOrMoreHelper::run(input, |input| prefix_operator_parser(input)) },
-            );
+            binary_operand_terms
+                .push(quote! { ZeroOrMoreHelper::run(input, prefix_operator_parser) });
         }
 
         let primary_expression_parser = self.primary_expression.to_parser_code(context_name, false);
@@ -211,47 +194,76 @@ impl PrecedenceParserDefinitionNodeExtensions for PrecedenceParserDefinitionNode
         if !postfix_operator_parsers.is_empty() {
             let postfix_operator_parser = make_choice(postfix_operator_parsers);
             operator_closures.push(quote! { let postfix_operator_parser = |input: &mut ParserContext<'_>| #postfix_operator_parser; });
-            binary_operand_terms.push(
-                quote! { ZeroOrMoreHelper::run(input, |input| postfix_operator_parser(input)) },
-            );
+            binary_operand_terms
+                .push(quote! { ZeroOrMoreHelper::run(input, postfix_operator_parser) });
         }
 
         let binary_operand_parser = make_sequence(binary_operand_terms);
 
-        if binary_operator_parsers.is_empty() {
-            operator_closures.push(quote! { let linear_expression_parser = |input: &mut ParserContext<'_>| #binary_operand_parser; });
+        // Now, establish the linear expression parser `Expression ::= BinaryOperand ( BinaryOperator BinaryOperand )*`
+        let linear_expression_parser = if binary_operator_parsers.is_empty() {
+            // No binary operators, so the expression is simply `BinaryOperand`
+            binary_operand_parser
         } else {
             operator_closures.push(quote! { let binary_operand_parser = |input: &mut ParserContext<'_>| #binary_operand_parser; });
 
             let binary_operator_parser = make_choice(binary_operator_parsers);
             operator_closures.push(quote! { let binary_operator_parser = |input: &mut ParserContext<'_>| #binary_operator_parser; });
 
-            let linear_expression_parser =
-                make_sequence(vec![quote! { binary_operand_parser(input) }, {
-                    let pairs = make_sequence(vec![
-                        quote! { binary_operator_parser(input) },
-                        quote! { binary_operand_parser(input)  },
-                    ]);
-                    quote! { ZeroOrMoreHelper::run(input, |input| #pairs) }
-                }]);
-            operator_closures
-                .push(quote! { let linear_expression_parser = |input: &mut ParserContext<'_>| #linear_expression_parser; });
-        }
-
-        let expression_kind_literal = if let Some(kind) = expression_kind {
-            quote! { Some(RuleKind::#kind) }
-        } else {
-            quote! { None }
+            // `BinaryOperand ( BinaryOperator BinaryOperand )*`
+            make_sequence(vec![quote! { binary_operand_parser(input) }, {
+                let pairs = make_sequence(vec![
+                    quote! { binary_operator_parser(input) },
+                    quote! { binary_operand_parser(input)  },
+                ]);
+                quote! { ZeroOrMoreHelper::run(input, |input| #pairs) }
+            }])
         };
+
+        operator_closures
+                .push(quote! { let linear_expression_parser = |input: &mut ParserContext<'_>| #linear_expression_parser; });
 
         quote! {
             #(
-                // TODO(#638): remove duplicates once we use DSL v2 versioning schema
-                #[allow(unused_variables)]
                 #operator_closures
             )*
 
-            PrecedenceHelper::reduce_precedence_result(#expression_kind_literal, linear_expression_parser(input))
+            PrecedenceHelper::reduce_precedence_result(RuleKind::#expression_kind, linear_expression_parser(input))
         }
+    }
+}
+
+// TODO: merge these three functions into parse_definition by changing
+// `to_parser_code` to use `TokenStream`
+type OperatorParser = TokenStream;
+
+fn make_sequence(parsers: Vec<TokenStream>) -> TokenStream {
+    let parsers = parsers
+        .into_iter()
+        .map(|parser| quote! { seq.elem(#parser)?; })
+        .collect::<Vec<_>>();
+    quote! {
+        SequenceHelper::run(|mut seq| {
+            #(#parsers)*
+            seq.finish()
+        })
+    }
+}
+
+fn make_choice(parsers: Vec<OperatorParser>) -> TokenStream {
+    let parsers = parsers
+        .into_iter()
+        .map(|parser| {
+            quote! {
+                let result = #parser;
+                choice.consider(input, result)?;
+            }
+        })
+        .collect::<Vec<_>>();
+    quote! {
+        ChoiceHelper::run(input, |mut choice, input| {
+            #(#parsers)*
+            choice.finish(input)
+        })
     }
 }

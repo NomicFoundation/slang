@@ -7,7 +7,7 @@ use anyhow::Result;
 use infra_utils::paths::PathExtensions;
 use rayon::prelude::{IntoParallelRefIterator, ParallelIterator};
 use semver::Version;
-use slang_solidity::{kinds::ProductionKind, language::Language};
+use slang_solidity::{kinds::RuleKind, language::Language};
 use solidity_language::SolidityDefinition;
 use solidity_testing_utils::version_pragmas::extract_version_pragmas;
 
@@ -95,7 +95,7 @@ fn process_source_file(
         }
 
         let language = Language::new(version.to_owned())?;
-        let output = language.parse(ProductionKind::SourceUnit, source);
+        let output = language.parse(RuleKind::SourceUnit, source);
 
         reporter.report_test_result(source_id, source, version, &output);
     }

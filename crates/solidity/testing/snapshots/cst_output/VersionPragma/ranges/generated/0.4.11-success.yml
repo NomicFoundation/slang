@@ -10,7 +10,7 @@ Tree:
       - SolidityKeyword (Token): "solidity" # 0..8
       - VersionPragmaExpressions (Rule): # 8..22 " 0.6.0 - 0.7.0"
           - VersionPragmaExpression (Rule): # 8..22 " 0.6.0 - 0.7.0"
-              - VersionPragmaBinaryExpression (Rule): # 8..22 " 0.6.0 - 0.7.0"
+              - VersionPragmaRangeExpression (Rule): # 8..22 " 0.6.0 - 0.7.0"
                   - VersionPragmaExpression (Rule): # 8..14 " 0.6.0"
                       - VersionPragmaSpecifier (Rule): # 8..14 " 0.6.0"
                           - VersionPragmaValue (Token): "0" # 9..10

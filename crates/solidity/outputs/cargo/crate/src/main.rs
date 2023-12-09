@@ -3,7 +3,7 @@ use std::{fs, path::PathBuf, process::ExitCode};
 use anyhow::{Context, Result};
 use clap::{Parser as ClapParser, Subcommand};
 use semver::Version;
-use slang_solidity::{kinds::ProductionKind, language::Language};
+use slang_solidity::{kinds::RuleKind, language::Language};
 
 // Below are dependencies used by the API `lib.rs`, but not the CLI "main.rs".
 // However, we need to add a fake usage to suppress Cargo warnings about unused dependencies.
@@ -59,7 +59,7 @@ fn execute_parse_command(file_path_string: &str, version: Version, json: bool) -
 
     let input = fs::read_to_string(file_path)?;
     let language = Language::new(version)?;
-    let output = language.parse(ProductionKind::SourceUnit, &input);
+    let output = language.parse(RuleKind::SourceUnit, &input);
 
     let errors = output.errors();
     for error in errors {

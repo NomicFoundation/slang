@@ -171,11 +171,7 @@ fn check_precedence(
     let enablement = update_enablement(analysis, enablement, enabled);
 
     for precedence_expression in precedence_expressions {
-        let SpannedPrecedenceExpression {
-            name: _,
-            rule_name: _,
-            operators,
-        } = precedence_expression;
+        let SpannedPrecedenceExpression { name: _, operators } = precedence_expression;
 
         for operator in operators {
             let SpannedPrecedenceOperator {

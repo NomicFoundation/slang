@@ -1,10 +1,10 @@
 import { Language } from "@nomicfoundation/slang/language";
 import { RuleNode, TokenNode } from "@nomicfoundation/slang/cst";
-import { ProductionKind, RuleKind, TokenKind } from "@nomicfoundation/slang/kinds";
+import { RuleKind, TokenKind } from "@nomicfoundation/slang/kinds";
 
 test("simple contract", () => {
   const language = new Language("0.8.0");
-  const parseOutput = language.parse(ProductionKind.ContractDefinition, "contract Foo {}");
+  const parseOutput = language.parse(RuleKind.ContractDefinition, "contract Foo {}");
 
   const parseTree = parseOutput.tree() as RuleNode;
   expect(parseTree.kind).toEqual(RuleKind.ContractDefinition);

@@ -10,7 +10,7 @@ Tree:
       - SolidityKeyword (Token): "solidity" # 0..8
       - VersionPragmaExpressions (Rule): # 8..15 " <1.0.0"
           - VersionPragmaExpression (Rule): # 8..15 " <1.0.0"
-              - VersionPragmaUnaryExpression (Rule): # 8..15 " <1.0.0"
+              - VersionPragmaPrefixExpression (Rule): # 8..15 " <1.0.0"
                   - LessThan (Token): "<" # 9..10
                   - VersionPragmaExpression (Rule): # 10..15 "1.0.0"
                       - VersionPragmaSpecifier (Rule): # 10..15 "1.0.0"
