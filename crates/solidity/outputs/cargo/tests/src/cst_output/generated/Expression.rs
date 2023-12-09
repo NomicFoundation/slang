@@ -34,31 +34,6 @@ fn areturn() -> Result<()> {
 }
 
 #[test]
-fn conditional_expression_identifier_base() -> Result<()> {
-    run("Expression", "conditional_expression_identifier_base")
-}
-
-#[test]
-fn conditional_expression_nested_base() -> Result<()> {
-    run("Expression", "conditional_expression_nested_base")
-}
-
-#[test]
-fn conditional_expression_nested_conditions() -> Result<()> {
-    run("Expression", "conditional_expression_nested_conditions")
-}
-
-#[test]
-fn conditional_expression_recursive() -> Result<()> {
-    run("Expression", "conditional_expression_recursive")
-}
-
-#[test]
-fn exponentiation_operator_associativity() -> Result<()> {
-    run("Expression", "exponentiation_operator_associativity")
-}
-
-#[test]
 fn function_call() -> Result<()> {
     run("Expression", "function_call")
 }
