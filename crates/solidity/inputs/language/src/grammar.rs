@@ -775,9 +775,13 @@ fn resolve_precedence(
                 .map(|op| resolve_sequence_like(op.enabled, op.fields, op.error_recovery, ctx))
                 .collect();
 
-            // NOTE: This is unconditionally a choice to always account for a versioned
-            // model operator, even if there's only one definition.
-            let def = ParserDefinitionNode::Choice(defs);
+            let def = match &defs[..] {
+                // HACK: Despite it being a single definition, we still need to wrap a versioned
+                // node around the choice for it to emit the version checks for the node.
+                [ParserDefinitionNode::Versioned(..)] => ParserDefinitionNode::Choice(defs),
+                [_] => defs.into_iter().next().unwrap(),
+                _ => ParserDefinitionNode::Choice(defs),
+            };
 
             all_operators.push(def.clone());
             operators.push((model_to_enum(model), leaked_name, def));

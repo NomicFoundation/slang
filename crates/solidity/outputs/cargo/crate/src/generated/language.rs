@@ -1484,22 +1484,18 @@ impl Language {
             PrecedenceHelper::to_postfix_operator(
                 RuleKind::ConditionalExpression,
                 3u8,
-                ChoiceHelper::run(input, |mut choice, input| {
-                    let result = SequenceHelper::run(|mut seq| {
-                        seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                            input,
-                            TokenKind::QuestionMark,
-                        ))?;
-                        seq.elem(self.expression(input))?;
-                        seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                            input,
-                            TokenKind::Colon,
-                        ))?;
-                        seq.elem(self.expression(input))?;
-                        seq.finish()
-                    });
-                    choice.consider(input, result)?;
-                    choice.finish(input)
+                SequenceHelper::run(|mut seq| {
+                    seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        input,
+                        TokenKind::QuestionMark,
+                    ))?;
+                    seq.elem(self.expression(input))?;
+                    seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        input,
+                        TokenKind::Colon,
+                    ))?;
+                    seq.elem(self.expression(input))?;
+                    seq.finish()
                 }),
             )
         };
@@ -1508,14 +1504,10 @@ impl Language {
                 RuleKind::OrExpression,
                 5u8,
                 5u8 + 1,
-                ChoiceHelper::run(input, |mut choice, input| {
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::BarBar,
-                    );
-                    choice.consider(input, result)?;
-                    choice.finish(input)
-                }),
+                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    input,
+                    TokenKind::BarBar,
+                ),
             )
         };
         let parse_left_and_expression = |input: &mut ParserContext<'_>| {
@@ -1523,14 +1515,10 @@ impl Language {
                 RuleKind::AndExpression,
                 7u8,
                 7u8 + 1,
-                ChoiceHelper::run(input, |mut choice, input| {
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::AmpersandAmpersand,
-                    );
-                    choice.consider(input, result)?;
-                    choice.finish(input)
-                }),
+                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    input,
+                    TokenKind::AmpersandAmpersand,
+                ),
             )
         };
         let parse_left_equality_expression = |input: &mut ParserContext<'_>| {
@@ -1588,14 +1576,7 @@ impl Language {
                 RuleKind::BitwiseOrExpression,
                 13u8,
                 13u8 + 1,
-                ChoiceHelper::run(input, |mut choice, input| {
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::Bar,
-                    );
-                    choice.consider(input, result)?;
-                    choice.finish(input)
-                }),
+                self.parse_token_with_trivia::<LexicalContextType::Default>(input, TokenKind::Bar),
             )
         };
         let parse_left_bitwise_xor_expression = |input: &mut ParserContext<'_>| {
@@ -1603,14 +1584,10 @@ impl Language {
                 RuleKind::BitwiseXorExpression,
                 15u8,
                 15u8 + 1,
-                ChoiceHelper::run(input, |mut choice, input| {
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::Caret,
-                    );
-                    choice.consider(input, result)?;
-                    choice.finish(input)
-                }),
+                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    input,
+                    TokenKind::Caret,
+                ),
             )
         };
         let parse_left_bitwise_and_expression = |input: &mut ParserContext<'_>| {
@@ -1618,14 +1595,10 @@ impl Language {
                 RuleKind::BitwiseAndExpression,
                 17u8,
                 17u8 + 1,
-                ChoiceHelper::run(input, |mut choice, input| {
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::Ampersand,
-                    );
-                    choice.consider(input, result)?;
-                    choice.finish(input)
-                }),
+                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    input,
+                    TokenKind::Ampersand,
+                ),
             )
         };
         let parse_left_shift_expression = |input: &mut ParserContext<'_>| {
@@ -1796,16 +1769,12 @@ impl Language {
             PrecedenceHelper::to_postfix_operator(
                 RuleKind::FunctionCallExpression,
                 33u8,
-                ChoiceHelper::run(input, |mut choice, input| {
-                    let result = SequenceHelper::run(|mut seq| {
-                        if self.version_is_at_least_0_6_2 {
-                            seq.elem(OptionalHelper::transform(self.function_call_options(input)))?;
-                        }
-                        seq.elem(self.arguments_declaration(input))?;
-                        seq.finish()
-                    });
-                    choice.consider(input, result)?;
-                    choice.finish(input)
+                SequenceHelper::run(|mut seq| {
+                    if self.version_is_at_least_0_6_2 {
+                        seq.elem(OptionalHelper::transform(self.function_call_options(input)))?;
+                    }
+                    seq.elem(self.arguments_declaration(input))?;
+                    seq.finish()
                 }),
             )
         };
@@ -1813,17 +1782,13 @@ impl Language {
             PrecedenceHelper::to_postfix_operator(
                 RuleKind::MemberAccessExpression,
                 35u8,
-                ChoiceHelper::run(input, |mut choice, input| {
-                    let result = SequenceHelper::run(|mut seq| {
-                        seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                            input,
-                            TokenKind::Period,
-                        ))?;
-                        seq.elem(self.member_access(input))?;
-                        seq.finish()
-                    });
-                    choice.consider(input, result)?;
-                    choice.finish(input)
+                SequenceHelper::run(|mut seq| {
+                    seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        input,
+                        TokenKind::Period,
+                    ))?;
+                    seq.elem(self.member_access(input))?;
+                    seq.finish()
                 }),
             )
         };
@@ -1831,35 +1796,31 @@ impl Language {
             PrecedenceHelper::to_postfix_operator(
                 RuleKind::IndexAccessExpression,
                 37u8,
-                ChoiceHelper::run(input, |mut choice, input| {
-                    let result = SequenceHelper::run(|mut seq| {
-                        let mut delim_guard = input.open_delim(TokenKind::CloseBracket);
-                        let input = delim_guard.ctx();
-                        seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
+                SequenceHelper::run(|mut seq| {
+                    let mut delim_guard = input.open_delim(TokenKind::CloseBracket);
+                    let input = delim_guard.ctx();
+                    seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        input,
+                        TokenKind::OpenBracket,
+                    ))?;
+                    seq.elem(
+                        SequenceHelper::run(|mut seq| {
+                            seq.elem(OptionalHelper::transform(self.expression(input)))?;
+                            seq.elem(OptionalHelper::transform(self.index_access_end(input)))?;
+                            seq.finish()
+                        })
+                        .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                             input,
-                            TokenKind::OpenBracket,
-                        ))?;
-                        seq.elem(
-                            SequenceHelper::run(|mut seq| {
-                                seq.elem(OptionalHelper::transform(self.expression(input)))?;
-                                seq.elem(OptionalHelper::transform(self.index_access_end(input)))?;
-                                seq.finish()
-                            })
-                            .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
-                                input,
-                                self,
-                                TokenKind::CloseBracket,
-                                RecoverFromNoMatch::Yes,
-                            ),
-                        )?;
-                        seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                            input,
+                            self,
                             TokenKind::CloseBracket,
-                        ))?;
-                        seq.finish()
-                    });
-                    choice.consider(input, result)?;
-                    choice.finish(input)
+                            RecoverFromNoMatch::Yes,
+                        ),
+                    )?;
+                    seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        input,
+                        TokenKind::CloseBracket,
+                    ))?;
+                    seq.finish()
                 }),
             )
         };
@@ -4135,31 +4096,27 @@ impl Language {
             PrecedenceHelper::to_postfix_operator(
                 RuleKind::ArrayTypeName,
                 1u8,
-                ChoiceHelper::run(input, |mut choice, input| {
-                    let result = SequenceHelper::run(|mut seq| {
-                        let mut delim_guard = input.open_delim(TokenKind::CloseBracket);
-                        let input = delim_guard.ctx();
-                        seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
+                SequenceHelper::run(|mut seq| {
+                    let mut delim_guard = input.open_delim(TokenKind::CloseBracket);
+                    let input = delim_guard.ctx();
+                    seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        input,
+                        TokenKind::OpenBracket,
+                    ))?;
+                    seq.elem(
+                        OptionalHelper::transform(self.expression(input))
+                            .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                             input,
-                            TokenKind::OpenBracket,
-                        ))?;
-                        seq.elem(
-                            OptionalHelper::transform(self.expression(input))
-                                .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
-                                input,
-                                self,
-                                TokenKind::CloseBracket,
-                                RecoverFromNoMatch::Yes,
-                            ),
-                        )?;
-                        seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                            input,
+                            self,
                             TokenKind::CloseBracket,
-                        ))?;
-                        seq.finish()
-                    });
-                    choice.consider(input, result)?;
-                    choice.finish(input)
+                            RecoverFromNoMatch::Yes,
+                        ),
+                    )?;
+                    seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        input,
+                        TokenKind::CloseBracket,
+                    ))?;
+                    seq.finish()
                 }),
             )
         };
@@ -4677,14 +4634,10 @@ impl Language {
                 RuleKind::VersionPragmaOrExpression,
                 1u8,
                 1u8 + 1,
-                ChoiceHelper::run(input, |mut choice, input| {
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Pragma>(
-                        input,
-                        TokenKind::BarBar,
-                    );
-                    choice.consider(input, result)?;
-                    choice.finish(input)
-                }),
+                self.parse_token_with_trivia::<LexicalContextType::Pragma>(
+                    input,
+                    TokenKind::BarBar,
+                ),
             )
         };
         let parse_left_version_pragma_range_expression = |input: &mut ParserContext<'_>| {
@@ -4692,14 +4645,7 @@ impl Language {
                 RuleKind::VersionPragmaRangeExpression,
                 3u8,
                 3u8 + 1,
-                ChoiceHelper::run(input, |mut choice, input| {
-                    let result = self.parse_token_with_trivia::<LexicalContextType::Pragma>(
-                        input,
-                        TokenKind::Minus,
-                    );
-                    choice.consider(input, result)?;
-                    choice.finish(input)
-                }),
+                self.parse_token_with_trivia::<LexicalContextType::Pragma>(input, TokenKind::Minus),
             )
         };
         let parse_prefix_version_pragma_prefix_expression = |input: &mut ParserContext<'_>| {
@@ -5003,31 +4949,27 @@ impl Language {
             PrecedenceHelper::to_postfix_operator(
                 RuleKind::YulFunctionCallExpression,
                 1u8,
-                ChoiceHelper::run(input, |mut choice, input| {
-                    let result = SequenceHelper::run(|mut seq| {
-                        let mut delim_guard = input.open_delim(TokenKind::CloseParen);
-                        let input = delim_guard.ctx();
-                        seq.elem(self.parse_token_with_trivia::<LexicalContextType::Yul>(
-                            input,
-                            TokenKind::OpenParen,
-                        ))?;
-                        seq.elem(
-                            OptionalHelper::transform(self.yul_arguments(input))
-                                .recover_until_with_nested_delims::<_, LexicalContextType::Yul>(
+                SequenceHelper::run(|mut seq| {
+                    let mut delim_guard = input.open_delim(TokenKind::CloseParen);
+                    let input = delim_guard.ctx();
+                    seq.elem(self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                        input,
+                        TokenKind::OpenParen,
+                    ))?;
+                    seq.elem(
+                        OptionalHelper::transform(self.yul_arguments(input))
+                            .recover_until_with_nested_delims::<_, LexicalContextType::Yul>(
                                 input,
                                 self,
                                 TokenKind::CloseParen,
                                 RecoverFromNoMatch::Yes,
                             ),
-                        )?;
-                        seq.elem(self.parse_token_with_trivia::<LexicalContextType::Yul>(
-                            input,
-                            TokenKind::CloseParen,
-                        ))?;
-                        seq.finish()
-                    });
-                    choice.consider(input, result)?;
-                    choice.finish(input)
+                    )?;
+                    seq.elem(self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                        input,
+                        TokenKind::CloseParen,
+                    ))?;
+                    seq.finish()
                 }),
             )
         };
