@@ -9,11 +9,13 @@ use indexmap::IndexMap;
 use proc_macro2::Span;
 
 use crate::{
-    compiler::analysis::{
-        definitions::analyze_definitions, reachability::analyze_reachability,
-        references::analyze_references,
+    compiler::{
+        analysis::{
+            definitions::analyze_definitions, reachability::analyze_reachability,
+            references::analyze_references,
+        },
+        version_set::VersionSet,
     },
-    compiler::version_set::VersionSet,
     internals::{ErrorsCollection, ParseOutput, Spanned},
     model::{Identifier, SpannedItem, SpannedLanguage},
 };

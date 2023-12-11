@@ -1,5 +1,7 @@
 use std::{
-    collections::HashMap, os::unix::prelude::PermissionsExt, path::Path, path::PathBuf,
+    collections::HashMap,
+    os::unix::prelude::PermissionsExt,
+    path::{Path, PathBuf},
     time::Duration,
 };
 

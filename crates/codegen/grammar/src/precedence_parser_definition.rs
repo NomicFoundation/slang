@@ -1,5 +1,4 @@
-use std::fmt::Debug;
-use std::rc::Rc;
+use std::{fmt::Debug, rc::Rc};
 
 use super::{GrammarVisitor, ParserDefinitionNode, Visitable};
 

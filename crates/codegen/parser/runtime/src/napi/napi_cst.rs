@@ -1,14 +1,12 @@
 use std::rc::Rc;
 
-use napi_cursor::Cursor;
-use napi_text_index::TextIndex;
-use {
-    napi::{
-        bindgen_prelude::{Env, FromNapiValue, ToNapiValue},
-        JsObject, NapiValue,
-    },
-    napi_derive::napi,
+use napi::{
+    bindgen_prelude::{Env, FromNapiValue, ToNapiValue},
+    JsObject, NapiValue,
 };
+use napi_cursor::Cursor;
+use napi_derive::napi;
+use napi_text_index::TextIndex;
 
 use super::{
     napi_cursor, napi_text_index, RuleKind, RustNode, RustRuleNode, RustTextIndex, RustTokenNode,

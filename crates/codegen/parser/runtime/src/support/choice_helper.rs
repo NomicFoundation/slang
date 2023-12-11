@@ -1,5 +1,4 @@
-use std::mem;
-use std::ops::ControlFlow;
+use std::{mem, ops::ControlFlow};
 
 use super::{context::Marker, ParserContext, ParserResult};
 use crate::{cst, kinds::TokenKind, parse_error::ParseError, text_index::TextIndex};
