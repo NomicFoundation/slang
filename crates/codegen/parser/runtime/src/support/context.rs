@@ -1,7 +1,9 @@
-use std::{mem, ops::Range};
+use std::mem;
+use std::ops::Range;
 
 use super::super::text_index::TextIndex;
-use crate::{kinds::TokenKind, parse_error::ParseError};
+use crate::kinds::TokenKind;
+use crate::parse_error::ParseError;
 
 pub struct ParserContext<'s> {
     source: &'s str,

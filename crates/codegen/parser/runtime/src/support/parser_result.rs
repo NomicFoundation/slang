@@ -1,8 +1,6 @@
-use super::super::{
-    cst,
-    kinds::{RuleKind, TokenKind},
-    text_index::TextIndex,
-};
+use super::super::cst;
+use super::super::kinds::{RuleKind, TokenKind};
+use super::super::text_index::TextIndex;
 
 #[derive(PartialEq, Eq, Clone, Debug)]
 pub enum ParserResult {

@@ -8,17 +8,12 @@ use std::rc::Rc;
 use indexmap::IndexMap;
 use proc_macro2::Span;
 
-use crate::{
-    compiler::{
-        analysis::{
-            definitions::analyze_definitions, reachability::analyze_reachability,
-            references::analyze_references,
-        },
-        version_set::VersionSet,
-    },
-    internals::{ErrorsCollection, ParseOutput, Spanned},
-    model::{Identifier, SpannedItem, SpannedLanguage},
-};
+use crate::compiler::analysis::definitions::analyze_definitions;
+use crate::compiler::analysis::reachability::analyze_reachability;
+use crate::compiler::analysis::references::analyze_references;
+use crate::compiler::version_set::VersionSet;
+use crate::internals::{ErrorsCollection, ParseOutput, Spanned};
+use crate::model::{Identifier, SpannedItem, SpannedLanguage};
 
 pub(crate) struct Analysis {
     pub errors: ErrorsCollection,

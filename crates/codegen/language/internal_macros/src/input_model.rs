@@ -2,10 +2,8 @@ use std::fmt::Display;
 
 use itertools::Itertools;
 use quote::ToTokens;
-use syn::{
-    parse::{Parse, ParseStream},
-    Data, DeriveInput, Error, Fields, FieldsNamed, Ident, Result, Type, Variant,
-};
+use syn::parse::{Parse, ParseStream};
+use syn::{Data, DeriveInput, Error, Fields, FieldsNamed, Ident, Result, Type, Variant};
 
 pub enum InputItem {
     Struct {

@@ -1,7 +1,5 @@
-use std::{
-    fmt::Display,
-    ops::{Add, AddAssign, Range, Sub, SubAssign},
-};
+use std::fmt::Display;
+use std::ops::{Add, AddAssign, Range, Sub, SubAssign};
 
 use serde::Serialize;
 

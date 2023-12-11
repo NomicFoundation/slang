@@ -1,4 +1,5 @@
-use std::{fmt::Debug, rc::Rc};
+use std::fmt::Debug;
+use std::rc::Rc;
 
 use super::{GrammarVisitor, VersionQualityRange, Visitable};
 

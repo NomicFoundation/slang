@@ -3,7 +3,8 @@ use std::path::Path;
 use anyhow::Result;
 use cargo_emit::{rerun_if_changed, rustc_env};
 use codegen_schema::types::{LanguageDefinition, LanguageDefinitionRef};
-use infra_utils::{cargo::CargoWorkspace, paths::PathExtensions};
+use infra_utils::cargo::CargoWorkspace;
+use infra_utils::paths::PathExtensions;
 
 fn main() -> Result<()> {
     let crate_dir = CargoWorkspace::locate_source_crate("solidity_language")?;

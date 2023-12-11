@@ -1,10 +1,8 @@
-use crate::{
-    types::{
-        LanguageDefinitionRef, ParserDefinition, ParserRef, ProductionDefinition, ProductionRef,
-        ScannerRef, VersionMap,
-    },
-    validation::visitors::{run_visitor, LocationRef, Reporter, Visitor},
+use crate::types::{
+    LanguageDefinitionRef, ParserDefinition, ParserRef, ProductionDefinition, ProductionRef,
+    ScannerRef, VersionMap,
 };
+use crate::validation::visitors::{run_visitor, LocationRef, Reporter, Visitor};
 
 pub struct ConsistentShape {
     language: LanguageDefinitionRef,

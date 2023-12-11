@@ -1,7 +1,9 @@
 use anyhow::Result;
 use clap::CommandFactory;
-use clap_complete::{generate, shells::Zsh};
-use infra_utils::{cargo::CargoWorkspace, codegen::Codegen};
+use clap_complete::generate;
+use clap_complete::shells::Zsh;
+use infra_utils::cargo::CargoWorkspace;
+use infra_utils::codegen::Codegen;
 
 // Need this hack to import the source crate as a module:
 #[path = "./src/main.rs"]

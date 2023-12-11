@@ -1,6 +1,7 @@
 use codegen_schema::types::{OperatorModel, PrecedenceParserRef};
 
-use crate::{nodes::EbnfNode, EbnfSerializer};
+use crate::nodes::EbnfNode;
+use crate::EbnfSerializer;
 
 impl EbnfNode {
     pub fn from_precedence_parser(

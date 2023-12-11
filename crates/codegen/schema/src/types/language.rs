@@ -1,4 +1,5 @@
-use std::{path::PathBuf, rc::Rc};
+use std::path::PathBuf;
+use std::rc::Rc;
 
 use indexmap::{IndexMap, IndexSet};
 use semver::Version;

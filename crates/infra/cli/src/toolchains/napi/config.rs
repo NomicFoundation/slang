@@ -1,7 +1,8 @@
 use std::path::Path;
 
 use anyhow::{Context, Result};
-use infra_utils::{commands::Command, paths::PathExtensions};
+use infra_utils::commands::Command;
+use infra_utils::paths::PathExtensions;
 use semver::Version;
 use serde::Deserialize;
 

@@ -1,4 +1,5 @@
-use std::{collections::BTreeSet, rc::Rc};
+use std::collections::BTreeSet;
+use std::rc::Rc;
 
 use codegen_language_internal_macros::{derive_spanned_type, ParseInputTokens, WriteOutputTokens};
 use indexmap::IndexSet;

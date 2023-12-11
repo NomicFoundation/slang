@@ -2,10 +2,8 @@
 
 use std::rc::Rc;
 
-use napi::{
-    bindgen_prelude::{Env, FromNapiValue, ToNapiValue},
-    JsObject, NapiValue,
-};
+use napi::bindgen_prelude::{Env, FromNapiValue, ToNapiValue};
+use napi::{JsObject, NapiValue};
 use napi_cursor::Cursor;
 use napi_derive::napi;
 use napi_text_index::TextIndex;

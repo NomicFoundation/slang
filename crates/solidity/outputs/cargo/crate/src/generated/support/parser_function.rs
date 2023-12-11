@@ -2,14 +2,13 @@
 
 use std::rc::Rc;
 
-use super::{
-    super::{
-        cst, kinds::TokenKind, parse_error::ParseError, parse_output::ParseOutput,
-        text_index::TextIndex,
-    },
-    context::ParserContext,
-    parser_result::{IncompleteMatch, Match, ParserResult, SkippedUntil},
-};
+use super::super::cst;
+use super::super::kinds::TokenKind;
+use super::super::parse_error::ParseError;
+use super::super::parse_output::ParseOutput;
+use super::super::text_index::TextIndex;
+use super::context::ParserContext;
+use super::parser_result::{IncompleteMatch, Match, ParserResult, SkippedUntil};
 
 pub trait ParserFunction<L>
 where

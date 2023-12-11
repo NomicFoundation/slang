@@ -1,6 +1,7 @@
 use anyhow::Result;
 use semver::Version;
-use slang_solidity::{kinds::RuleKind, language::Language};
+use slang_solidity::kinds::RuleKind;
+use slang_solidity::language::Language;
 
 use crate::node_extensions::NodeExtensions;
 

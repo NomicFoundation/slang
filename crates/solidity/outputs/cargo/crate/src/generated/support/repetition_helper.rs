@@ -1,9 +1,7 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-use super::{
-    context::ParserContext,
-    parser_result::{IncompleteMatch, NoMatch, ParserResult},
-};
+use super::context::ParserContext;
+use super::parser_result::{IncompleteMatch, NoMatch, ParserResult};
 
 pub struct RepetitionHelper<const MIN_COUNT: usize>;
 

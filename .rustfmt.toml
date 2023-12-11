@@ -2,4 +2,4 @@
 # https://github.com/rust-lang/rustfmt/blob/master/Configurations.md
 
 group_imports = "StdExternalCrate"
-imports_granularity = "Crate"
+imports_granularity = "Module"

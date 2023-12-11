@@ -1,5 +1,7 @@
 use anyhow::Result;
-use infra_utils::{cargo::CargoWorkspace, commands::Command, github::GitHub};
+use infra_utils::cargo::CargoWorkspace;
+use infra_utils::commands::Command;
+use infra_utils::github::GitHub;
 
 const USER_FACING_CRATE: &str = "slang_solidity";
 

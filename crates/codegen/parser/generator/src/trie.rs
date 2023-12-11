@@ -1,4 +1,5 @@
-use std::{collections::BTreeMap, fmt::Debug};
+use std::collections::BTreeMap;
+use std::fmt::Debug;
 
 use codegen_grammar::{ScannerDefinitionNode, ScannerDefinitionRef};
 use proc_macro2::TokenStream;

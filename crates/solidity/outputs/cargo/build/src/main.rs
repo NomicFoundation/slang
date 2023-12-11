@@ -2,7 +2,8 @@ use anyhow::Result;
 use cargo_emit::rerun_if_changed;
 use codegen_grammar::Grammar;
 use codegen_parser_generator::code_generator::CodeGenerator;
-use infra_utils::{cargo::CargoWorkspace, paths::PathExtensions};
+use infra_utils::cargo::CargoWorkspace;
+use infra_utils::paths::PathExtensions;
 use solidity_language::{GrammarConstructorDslV2, SolidityDefinition};
 
 // Instead of the soure crate calling codegen APIs directly in the build script, it invokes this binary, which in turn

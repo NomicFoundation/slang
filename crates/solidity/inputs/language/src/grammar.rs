@@ -1,21 +1,17 @@
 //! Defines [`GrammarConstructorDslV2`], which allows turning the DSL v2 model into [`Grammar`]
 //! (used for generating the parser and the CST).
 
-use std::{
-    cell::OnceCell,
-    collections::{BTreeMap, BTreeSet, HashMap},
-    rc::Rc,
-};
+use std::cell::OnceCell;
+use std::collections::{BTreeMap, BTreeSet, HashMap};
+use std::rc::Rc;
 
 use codegen_grammar::{
     Grammar, GrammarElement, ParserDefinition, ParserDefinitionNode, PrecedenceOperatorModel,
     PrecedenceParserDefinition, PrecedenceParserDefinitionNode, ScannerDefinition,
     ScannerDefinitionNode, TriviaParserDefinition, VersionQuality, VersionQualityRange,
 };
-use codegen_language_definition::{
-    model,
-    model::{FieldsErrorRecovery, Identifier, Item},
-};
+use codegen_language_definition::model;
+use codegen_language_definition::model::{FieldsErrorRecovery, Identifier, Item};
 use indexmap::IndexMap;
 
 /// Materializes the DSL v2 model ([`model::Language`]) into [`Grammar`].

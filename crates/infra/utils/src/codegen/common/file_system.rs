@@ -3,9 +3,9 @@ use std::path::Path;
 use anyhow::{bail, Context, Result};
 use cargo_emit::warning;
 
-use crate::{
-    cargo::CargoWorkspace, codegen::common::formatting::format_source_file, paths::PathExtensions,
-};
+use crate::cargo::CargoWorkspace;
+use crate::codegen::common::formatting::format_source_file;
+use crate::paths::PathExtensions;
 
 pub fn delete_file(file_path: &Path) -> Result<()> {
     std::fs::remove_file(file_path)

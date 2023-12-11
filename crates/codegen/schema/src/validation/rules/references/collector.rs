@@ -1,10 +1,6 @@
-use crate::{
-    types::{LanguageDefinitionRef, ProductionRef},
-    validation::{
-        rules::references::metadata::Metadata,
-        visitors::{run_visitor, LocationRef, Reporter, VersionSet, Visitor},
-    },
-};
+use crate::types::{LanguageDefinitionRef, ProductionRef};
+use crate::validation::rules::references::metadata::Metadata;
+use crate::validation::visitors::{run_visitor, LocationRef, Reporter, VersionSet, Visitor};
 
 pub struct Collector<'collector> {
     metadata: &'collector mut Metadata,

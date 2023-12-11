@@ -1,10 +1,8 @@
 use std::path::Path;
 
 use anyhow::Result;
-use infra_utils::{
-    codegen::CodegenReadWrite,
-    errors::{InfraErrors, Position},
-};
+use infra_utils::codegen::CodegenReadWrite;
+use infra_utils::errors::{InfraErrors, Position};
 use serde::de::DeserializeOwned;
 
 pub fn deserialize_yaml<T: DeserializeOwned>(

@@ -1,15 +1,14 @@
-use std::{
-    env::var,
-    path::{Path, PathBuf},
-};
+use std::env::var;
+use std::path::{Path, PathBuf};
 
 use anyhow::{ensure, Context, Result};
 use regex::Regex;
 use semver::Version;
 
-use crate::{
-    cargo::manifest::WorkspaceManifest, commands::Command, github::GitHub, paths::PathExtensions,
-};
+use crate::cargo::manifest::WorkspaceManifest;
+use crate::commands::Command;
+use crate::github::GitHub;
+use crate::paths::PathExtensions;
 
 pub struct CargoWorkspace;
 

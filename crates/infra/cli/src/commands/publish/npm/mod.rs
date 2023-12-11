@@ -1,7 +1,9 @@
 use std::path::Path;
 
 use anyhow::Result;
-use infra_utils::{commands::Command, github::GitHub, paths::PathExtensions};
+use infra_utils::commands::Command;
+use infra_utils::github::GitHub;
+use infra_utils::paths::PathExtensions;
 
 use crate::toolchains::napi::{
     NapiCompiler, NapiConfig, NapiPackageKind, NapiProfile, NapiResolver,

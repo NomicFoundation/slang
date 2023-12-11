@@ -3,21 +3,19 @@ use std::fmt::Debug;
 use indexmap::IndexMap;
 use semver::Version;
 
-use crate::{
-    compiler::{analysis::Analysis, version_set::VersionSet},
-    internals::Spanned,
-    model::{
-        Identifier, SpannedEnumItem, SpannedEnumVariant, SpannedField, SpannedFragmentItem,
-        SpannedItem,
-        SpannedItemDiscriminants::{
-            self, Enum, Fragment, Keyword, Precedence, Repeated, Separated, Struct, Token, Trivia,
-        },
-        SpannedKeywordDefinition, SpannedKeywordItem, SpannedPrecedenceExpression,
-        SpannedPrecedenceItem, SpannedPrecedenceOperator, SpannedPrimaryExpression,
-        SpannedRepeatedItem, SpannedScanner, SpannedSeparatedItem, SpannedStructItem,
-        SpannedTokenDefinition, SpannedTokenItem, SpannedTriviaItem, SpannedTriviaParser,
-        SpannedVersionSpecifier,
-    },
+use crate::compiler::analysis::Analysis;
+use crate::compiler::version_set::VersionSet;
+use crate::internals::Spanned;
+use crate::model::SpannedItemDiscriminants::{
+    self, Enum, Fragment, Keyword, Precedence, Repeated, Separated, Struct, Token, Trivia,
+};
+use crate::model::{
+    Identifier, SpannedEnumItem, SpannedEnumVariant, SpannedField, SpannedFragmentItem,
+    SpannedItem, SpannedKeywordDefinition, SpannedKeywordItem, SpannedPrecedenceExpression,
+    SpannedPrecedenceItem, SpannedPrecedenceOperator, SpannedPrimaryExpression,
+    SpannedRepeatedItem, SpannedScanner, SpannedSeparatedItem, SpannedStructItem,
+    SpannedTokenDefinition, SpannedTokenItem, SpannedTriviaItem, SpannedTriviaParser,
+    SpannedVersionSpecifier,
 };
 
 pub(crate) fn analyze_references(analysis: &mut Analysis) {

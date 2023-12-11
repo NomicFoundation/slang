@@ -1,7 +1,8 @@
 use std::path::{Path, PathBuf};
 
 use anyhow::{bail, Context, Result};
-use infra_utils::{commands::Command, paths::PathExtensions};
+use infra_utils::commands::Command;
+use infra_utils::paths::PathExtensions;
 
 use crate::toolchains::napi::resolver::NapiResolver;
 

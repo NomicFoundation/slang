@@ -1,7 +1,5 @@
-use std::{
-    env::var,
-    path::{Path, PathBuf},
-};
+use std::env::var;
+use std::path::{Path, PathBuf};
 
 use anyhow::{bail, Context, Result};
 

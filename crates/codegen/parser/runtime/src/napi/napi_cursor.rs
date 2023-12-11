@@ -3,7 +3,8 @@
 // The functions are meant to be definitions for export, so they're not really used
 #![allow(clippy::return_self_not_must_use)]
 
-use napi::{bindgen_prelude::Env, JsObject};
+use napi::bindgen_prelude::Env;
+use napi::JsObject;
 use napi_cst::ToJS;
 use napi_derive::napi;
 use napi_text_index::{TextIndex, TextRange};

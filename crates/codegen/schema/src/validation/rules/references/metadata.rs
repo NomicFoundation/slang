@@ -1,9 +1,7 @@
 use indexmap::{IndexMap, IndexSet};
 
-use crate::{
-    types::LanguageDefinitionRef,
-    validation::visitors::{LocationRef, Reporter, VersionSet},
-};
+use crate::types::LanguageDefinitionRef;
+use crate::validation::visitors::{LocationRef, Reporter, VersionSet};
 
 pub struct Entry {
     location: LocationRef,
