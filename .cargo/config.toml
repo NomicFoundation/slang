@@ -30,4 +30,8 @@ rustflags = [
 	"-Aclippy::module_name_repetitions",            # It seems we prefer it this way; we'd need to discuss that
 	"-Aclippy::must_use_candidate",                 # Overzealous, we'd have to `[must_use]` a lot of things
 	"-Aclippy::redundant_closure_for_method_calls", # Not always clearer, let's not pepper `allow`s whenever needed
+	# Nursery
+	"-Wclippy::collection_is_never_read", # Lint against collections not used after creation
+	"-Wclippy::equatable_if_let",         # Prefer regular `==` checks over Yoda `if let $pat = $value`
+	"-Wclippy::useless_let_if_seq",       # Use idiomatic direct assignment of `let $val = if $cond { .. } else { ..};`
 ]

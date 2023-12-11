@@ -51,10 +51,8 @@ fn relax_schema(value: Value) -> Value {
                     .into_iter()
                     .filter_map(|(key, value)| {
                         // Remove `additionalProperties: false`
-                        if key == "additionalProperties" {
-                            if let Value::Bool(false) = value {
-                                return None;
-                            }
+                        if key == "additionalProperties" && value == Value::Bool(false) {
+                            return None;
                         }
 
                         // Replace `oneOf` and `allOf` with `anyOf`
