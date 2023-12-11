@@ -15,6 +15,9 @@ rustflags = [
 	"-Welided_lifetimes_in_paths",
 	"-Wunused_extern_crates",
 	"-Wexplicit_outlives_requirements",
+	# Cargo
+	"-Wclippy::cargo",                   # Warn about Cargo.toml issues, except...
+	"-Aclippy::multiple_crate_versions", # Not possible to deduplicate, should be done periodically ourselves
 	# 📎 Lints that are enabled (warn/deny) by default
 	"-Wclippy::all",
 	# Restriction (optional, neutral lints)
