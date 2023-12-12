@@ -1,13 +1,13 @@
 use nom::branch::alt;
 use nom::bytes::complete::{tag, take_while, take_while1};
-use nom::character::complete::{char, multispace0, one_of, satisfy};
+use nom::character::complete::{char, multispace0, satisfy};
 use nom::combinator::{opt, recognize, value};
 use nom::error::VerboseError;
 use nom::multi::{many0, many1};
 use nom::sequence::{delimited, pair, preceded, terminated};
 use nom::{IResult, Parser};
 
-use super::query_model::*;
+use super::query_model::{Node, NodeChild, NodeId, Quantifier, Query};
 
 impl Query {
     pub fn parse(input: &str) -> IResult<&str, Self, VerboseError<&str>> {
@@ -56,8 +56,8 @@ impl NodeId {
         opt(field_name_token)
             .and(alt((
                 token('_').map(|_| Tail::Anonymous),
-                kind_name_token.map(|s| Tail::Kind(s)),
-                string_token.map(|s| Tail::String(s)),
+                kind_name_token.map(Tail::Kind),
+                string_token.map(Tail::String),
             )))
             .map(|(field, tail)| match (field, tail) {
                 (None, Tail::Anonymous) => Self::Anonymous,
