@@ -6,16 +6,16 @@ Source: >
 Errors: []
 
 Tree:
-  - MappingType: # 0..26 "mapping(string => bytes32)"
-      - MappingKeyword: "mapping" # 0..7
-      - OpenParen: "(" # 7..8
-      - MappingKey: # 8..14 "string"
-          - MappingKeyType: # 8..14 "string"
-              - ElementaryType: # 8..14 "string"
-                  - StringKeyword: "string" # 8..14
-      - EqualGreaterThan: "=>" # 15..17
-      - MappingValue: # 17..25 " bytes32"
-          - TypeName: # 17..25 " bytes32"
-              - ElementaryType: # 17..25 " bytes32"
-                  - BytesKeyword: "bytes32" # 18..25
-      - CloseParen: ")" # 25..26
+  - (TODO:) MappingType: # 0..26 "mapping(string => bytes32)"
+      - (dummy:) MappingKeyword: "mapping" # 0..7
+      - (dummy:) OpenParen: "(" # 7..8
+      - (inner:) MappingKey: # 8..14 "string"
+          - (inner:) MappingKeyType: # 8..14 "string"
+              - (inner:) ElementaryType: # 8..14 "string"
+                  - (dummy:) StringKeyword: "string" # 8..14
+      - (dummy:) EqualGreaterThan: "=>" # 15..17
+      - (inner:) MappingValue: # 17..25 " bytes32"
+          - (inner:) TypeName: # 17..25 " bytes32"
+              - (inner:) ElementaryType: # 17..25 " bytes32"
+                  - (dummy:) BytesKeyword: "bytes32" # 18..25
+      - (dummy:) CloseParen: ")" # 25..26

@@ -9,19 +9,19 @@ Source: >
 Errors: []
 
 Tree:
-  - ContractDefinition: # 0..37 "contract Sample {\n  receive() {\n  }\n}"
-      - ContractKeyword: "contract" # 0..8
-      - Identifier: "Sample" # 9..15
-      - OpenBrace: "{" # 16..17
-      - ContractMembers: # 18..36 "  receive() {\n  }\n"
-          - ContractMember: # 18..36 "  receive() {\n  }\n"
-              - ReceiveFunctionDefinition: # 18..36 "  receive() {\n  }\n"
-                  - ReceiveKeyword: "receive" # 20..27
-                  - ParametersDeclaration: # 27..29 "()"
-                      - OpenParen: "(" # 27..28
-                      - CloseParen: ")" # 28..29
-                  - FunctionBody: # 29..36 " {\n  }\n"
-                      - Block: # 29..36 " {\n  }\n"
-                          - OpenBrace: "{" # 30..31
-                          - CloseBrace: "}" # 34..35
-      - CloseBrace: "}" # 36..37
+  - (TODO:) ContractDefinition: # 0..37 "contract Sample {\n  receive() {\n  }\n}"
+      - (dummy:) ContractKeyword: "contract" # 0..8
+      - (dummy:) Identifier: "Sample" # 9..15
+      - (dummy:) OpenBrace: "{" # 16..17
+      - (inner:) ContractMembers: # 18..36 "  receive() {\n  }\n"
+          - (inner:) ContractMember: # 18..36 "  receive() {\n  }\n"
+              - (inner:) ReceiveFunctionDefinition: # 18..36 "  receive() {\n  }\n"
+                  - (dummy:) ReceiveKeyword: "receive" # 20..27
+                  - (inner:) ParametersDeclaration: # 27..29 "()"
+                      - (dummy:) OpenParen: "(" # 27..28
+                      - (dummy:) CloseParen: ")" # 28..29
+                  - (inner:) FunctionBody: # 29..36 " {\n  }\n"
+                      - (inner:) Block: # 29..36 " {\n  }\n"
+                          - (dummy:) OpenBrace: "{" # 30..31
+                          - (dummy:) CloseBrace: "}" # 34..35
+      - (dummy:) CloseBrace: "}" # 36..37

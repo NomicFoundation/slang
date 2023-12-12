@@ -99,7 +99,7 @@ impl Match {
         self.nodes
             .iter()
             .flat_map(|node| cst::Node::cursor_with_offset(&node.1, TextIndex::ZERO))
-            .all(|node| node.as_token_with_kind(&[TokenKind::SKIPPED]).is_none())
+            .all(|(_name, node)| node.as_token_with_kind(&[TokenKind::SKIPPED]).is_none())
     }
 }
 

@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - HexNumberExpression: # 0..7 "0x1 wei"
-      - HexLiteral: "0x1" # 0..3
-      - NumberUnit: # 3..7 " wei"
-          - WeiKeyword: "wei" # 4..7
+  - (TODO:) HexNumberExpression: # 0..7 "0x1 wei"
+      - (dummy:) HexLiteral: "0x1" # 0..3
+      - (inner:) NumberUnit: # 3..7 " wei"
+          - (dummy:) WeiKeyword: "wei" # 4..7

@@ -6,23 +6,23 @@ Source: >
 Errors: []
 
 Tree:
-  - ConditionalExpression: # 0..27 "(foo == bar) ? true : false"
-      - Expression: # 0..12 "(foo == bar)"
-          - TupleExpression: # 0..12 "(foo == bar)"
-              - OpenParen: "(" # 0..1
-              - TupleValues: # 1..11 "foo == bar"
-                  - TupleValue: # 1..11 "foo == bar"
-                      - Expression: # 1..11 "foo == bar"
-                          - EqualityExpression: # 1..11 "foo == bar"
-                              - Expression: # 1..4 "foo"
-                                  - Identifier: "foo" # 1..4
-                              - EqualEqual: "==" # 5..7
-                              - Expression: # 7..11 " bar"
-                                  - Identifier: "bar" # 8..11
-              - CloseParen: ")" # 11..12
-      - QuestionMark: "?" # 13..14
-      - Expression: # 14..19 " true"
-          - TrueKeyword: "true" # 15..19
-      - Colon: ":" # 20..21
-      - Expression: # 21..27 " false"
-          - FalseKeyword: "false" # 22..27
+  - (TODO:) ConditionalExpression: # 0..27 "(foo == bar) ? true : false"
+      - (left_operand:) Expression: # 0..12 "(foo == bar)"
+          - (inner:) TupleExpression: # 0..12 "(foo == bar)"
+              - (dummy:) OpenParen: "(" # 0..1
+              - (inner:) TupleValues: # 1..11 "foo == bar"
+                  - (inner:) TupleValue: # 1..11 "foo == bar"
+                      - (inner:) Expression: # 1..11 "foo == bar"
+                          - (operand:) EqualityExpression: # 1..11 "foo == bar"
+                              - (left_operand:) Expression: # 1..4 "foo"
+                                  - (dummy:) Identifier: "foo" # 1..4
+                              - (operator:) EqualEqual: "==" # 5..7
+                              - (right_operand:) Expression: # 7..11 " bar"
+                                  - (dummy:) Identifier: "bar" # 8..11
+              - (dummy:) CloseParen: ")" # 11..12
+      - (operator:) QuestionMark: "?" # 13..14
+      - (operator:) Expression: # 14..19 " true"
+          - (dummy:) TrueKeyword: "true" # 15..19
+      - (operator:) Colon: ":" # 20..21
+      - (operator:) Expression: # 21..27 " false"
+          - (dummy:) FalseKeyword: "false" # 22..27

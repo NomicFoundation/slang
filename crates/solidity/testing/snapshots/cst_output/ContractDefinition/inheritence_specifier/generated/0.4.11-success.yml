@@ -6,34 +6,34 @@ Source: >
 Errors: []
 
 Tree:
-  - ContractDefinition: # 0..41 "contract Sample is Foo, Bar(1, 2), Baz {}"
-      - ContractKeyword: "contract" # 0..8
-      - Identifier: "Sample" # 9..15
-      - InheritanceSpecifier: # 15..38 " is Foo, Bar(1, 2), Baz"
-          - IsKeyword: "is" # 16..18
-          - InheritanceTypes: # 18..38 " Foo, Bar(1, 2), Baz"
-              - InheritanceType: # 18..22 " Foo"
-                  - IdentifierPath: # 18..22 " Foo"
-                      - Identifier: "Foo" # 19..22
-              - Comma: "," # 22..23
-              - InheritanceType: # 23..33 " Bar(1, 2)"
-                  - IdentifierPath: # 23..27 " Bar"
-                      - Identifier: "Bar" # 24..27
-                  - ArgumentsDeclaration: # 27..33 "(1, 2)"
-                      - PositionalArgumentsDeclaration: # 27..33 "(1, 2)"
-                          - OpenParen: "(" # 27..28
-                          - PositionalArguments: # 28..32 "1, 2"
-                              - Expression: # 28..29 "1"
-                                  - DecimalNumberExpression: # 28..29 "1"
-                                      - DecimalLiteral: "1" # 28..29
-                              - Comma: "," # 29..30
-                              - Expression: # 30..32 " 2"
-                                  - DecimalNumberExpression: # 30..32 " 2"
-                                      - DecimalLiteral: "2" # 31..32
-                          - CloseParen: ")" # 32..33
-              - Comma: "," # 33..34
-              - InheritanceType: # 34..38 " Baz"
-                  - IdentifierPath: # 34..38 " Baz"
-                      - Identifier: "Baz" # 35..38
-      - OpenBrace: "{" # 39..40
-      - CloseBrace: "}" # 40..41
+  - (TODO:) ContractDefinition: # 0..41 "contract Sample is Foo, Bar(1, 2), Baz {}"
+      - (dummy:) ContractKeyword: "contract" # 0..8
+      - (dummy:) Identifier: "Sample" # 9..15
+      - (inner:) InheritanceSpecifier: # 15..38 " is Foo, Bar(1, 2), Baz"
+          - (dummy:) IsKeyword: "is" # 16..18
+          - (inner:) InheritanceTypes: # 18..38 " Foo, Bar(1, 2), Baz"
+              - (inner:) InheritanceType: # 18..22 " Foo"
+                  - (inner:) IdentifierPath: # 18..22 " Foo"
+                      - (dummy:) Identifier: "Foo" # 19..22
+              - (dummy:) Comma: "," # 22..23
+              - (inner:) InheritanceType: # 23..33 " Bar(1, 2)"
+                  - (inner:) IdentifierPath: # 23..27 " Bar"
+                      - (dummy:) Identifier: "Bar" # 24..27
+                  - (inner:) ArgumentsDeclaration: # 27..33 "(1, 2)"
+                      - (inner:) PositionalArgumentsDeclaration: # 27..33 "(1, 2)"
+                          - (dummy:) OpenParen: "(" # 27..28
+                          - (inner:) PositionalArguments: # 28..32 "1, 2"
+                              - (inner:) Expression: # 28..29 "1"
+                                  - (inner:) DecimalNumberExpression: # 28..29 "1"
+                                      - (dummy:) DecimalLiteral: "1" # 28..29
+                              - (dummy:) Comma: "," # 29..30
+                              - (inner:) Expression: # 30..32 " 2"
+                                  - (inner:) DecimalNumberExpression: # 30..32 " 2"
+                                      - (dummy:) DecimalLiteral: "2" # 31..32
+                          - (dummy:) CloseParen: ")" # 32..33
+              - (dummy:) Comma: "," # 33..34
+              - (inner:) InheritanceType: # 34..38 " Baz"
+                  - (inner:) IdentifierPath: # 34..38 " Baz"
+                      - (dummy:) Identifier: "Baz" # 35..38
+      - (dummy:) OpenBrace: "{" # 39..40
+      - (dummy:) CloseBrace: "}" # 40..41

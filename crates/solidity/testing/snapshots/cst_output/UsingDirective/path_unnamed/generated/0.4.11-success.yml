@@ -6,12 +6,12 @@ Source: >
 Errors: []
 
 Tree:
-  - UsingDirective: # 0..16 "using foo for *;"
-      - UsingKeyword: "using" # 0..5
-      - UsingClause: # 5..9 " foo"
-          - IdentifierPath: # 5..9 " foo"
-              - Identifier: "foo" # 6..9
-      - ForKeyword: "for" # 10..13
-      - UsingTarget: # 13..15 " *"
-          - Asterisk: "*" # 14..15
-      - Semicolon: ";" # 15..16
+  - (TODO:) UsingDirective: # 0..16 "using foo for *;"
+      - (dummy:) UsingKeyword: "using" # 0..5
+      - (inner:) UsingClause: # 5..9 " foo"
+          - (inner:) IdentifierPath: # 5..9 " foo"
+              - (dummy:) Identifier: "foo" # 6..9
+      - (dummy:) ForKeyword: "for" # 10..13
+      - (inner:) UsingTarget: # 13..15 " *"
+          - (dummy:) Asterisk: "*" # 14..15
+      - (dummy:) Semicolon: ";" # 15..16

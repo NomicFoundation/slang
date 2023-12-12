@@ -6,16 +6,16 @@ Source: >
 Errors: []
 
 Tree:
-  - VersionPragma: # 0..15 "solidity =0.8.0"
-      - SolidityKeyword: "solidity" # 0..8
-      - VersionPragmaExpressions: # 8..15 " =0.8.0"
-          - VersionPragmaExpression: # 8..15 " =0.8.0"
-              - VersionPragmaPrefixExpression: # 8..15 " =0.8.0"
-                  - Equal: "=" # 9..10
-                  - VersionPragmaExpression: # 10..15 "0.8.0"
-                      - VersionPragmaSpecifier: # 10..15 "0.8.0"
-                          - VersionPragmaValue: "0" # 10..11
-                          - Period: "." # 11..12
-                          - VersionPragmaValue: "8" # 12..13
-                          - Period: "." # 13..14
-                          - VersionPragmaValue: "0" # 14..15
+  - (TODO:) VersionPragma: # 0..15 "solidity =0.8.0"
+      - (dummy:) SolidityKeyword: "solidity" # 0..8
+      - (inner:) VersionPragmaExpressions: # 8..15 " =0.8.0"
+          - (inner:) VersionPragmaExpression: # 8..15 " =0.8.0"
+              - (operand:) VersionPragmaPrefixExpression: # 8..15 " =0.8.0"
+                  - (operator:) Equal: "=" # 9..10
+                  - (right_operand:) VersionPragmaExpression: # 10..15 "0.8.0"
+                      - (inner:) VersionPragmaSpecifier: # 10..15 "0.8.0"
+                          - (dummy:) VersionPragmaValue: "0" # 10..11
+                          - (dummy:) Period: "." # 11..12
+                          - (dummy:) VersionPragmaValue: "8" # 12..13
+                          - (dummy:) Period: "." # 13..14
+                          - (dummy:) VersionPragmaValue: "0" # 14..15

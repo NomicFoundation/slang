@@ -28,98 +28,98 @@ Source: >
 Errors: []
 
 Tree:
-  - SourceUnit: # 0..793 "// SPDX-License-Identifier: MIT\npragma solidity ^0..."
-      - SourceUnitMembers: # 0..793 "// SPDX-License-Identifier: MIT\npragma solidity ^0..."
-          - SourceUnitMember: # 0..56 "// SPDX-License-Identifier: MIT\npragma solidity ^0..."
-              - PragmaDirective: # 0..56 "// SPDX-License-Identifier: MIT\npragma solidity ^0..."
-                  - LeadingTrivia: # 0..32 "// SPDX-License-Identifier: MIT\n"
-                      - SingleLineComment: "// SPDX-License-Identifier: MIT" # 0..31
-                  - PragmaKeyword: "pragma" # 32..38
-                  - Pragma: # 38..54 " solidity ^0.8.0"
-                      - VersionPragma: # 38..54 " solidity ^0.8.0"
-                          - SolidityKeyword: "solidity" # 39..47
-                          - VersionPragmaExpressions: # 47..54 " ^0.8.0"
-                              - VersionPragmaExpression: # 47..54 " ^0.8.0"
-                                  - VersionPragmaPrefixExpression: # 47..54 " ^0.8.0"
-                                      - Caret: "^" # 48..49
-                                      - VersionPragmaExpression: # 49..54 "0.8.0"
-                                          - VersionPragmaSpecifier: # 49..54 "0.8.0"
-                                              - VersionPragmaValue: "0" # 49..50
-                                              - Period: "." # 50..51
-                                              - VersionPragmaValue: "8" # 51..52
-                                              - Period: "." # 52..53
-                                              - VersionPragmaValue: "0" # 53..54
-                  - Semicolon: ";" # 54..55
-          - SourceUnitMember: # 56..98 "\nusing EnvelopeUtils for Envelope global;\n"
-              - UsingDirective: # 56..98 "\nusing EnvelopeUtils for Envelope global;\n"
-                  - UsingKeyword: "using" # 57..62
-                  - UsingClause: # 62..76 " EnvelopeUtils"
-                      - IdentifierPath: # 62..76 " EnvelopeUtils"
-                          - Identifier: "EnvelopeUtils" # 63..76
-                  - ForKeyword: "for" # 77..80
-                  - UsingTarget: # 80..89 " Envelope"
-                      - TypeName: # 80..89 " Envelope"
-                          - IdentifierPath: # 80..89 " Envelope"
-                              - Identifier: "Envelope" # 81..89
-                  - GlobalKeyword: "global" # 90..96
-                  - Semicolon: ";" # 96..97
-          - SourceUnitMember: # 98..145 "using TransactionUtils for Transaction global;\n"
-              - UsingDirective: # 98..145 "using TransactionUtils for Transaction global;\n"
-                  - UsingKeyword: "using" # 98..103
-                  - UsingClause: # 103..120 " TransactionUtils"
-                      - IdentifierPath: # 103..120 " TransactionUtils"
-                          - Identifier: "TransactionUtils" # 104..120
-                  - ForKeyword: "for" # 121..124
-                  - UsingTarget: # 124..136 " Transaction"
-                      - TypeName: # 124..136 " Transaction"
-                          - IdentifierPath: # 124..136 " Transaction"
-                              - Identifier: "Transaction" # 125..136
-                  - GlobalKeyword: "global" # 137..143
-                  - Semicolon: ";" # 143..144
-          - SourceUnitMember: # 145..793 "\n/**\n * @notice Object with the necessary informat..."
-              - StructDefinition: # 145..793 "\n/**\n * @notice Object with the necessary informat..."
-                  - LeadingTrivia: # 145..643 "\n/**\n * @notice Object with the necessary informat..."
-                      - MultilineComment: "/**\n * @notice Object with the necessary informati..." # 146..642
-                  - StructKeyword: "struct" # 643..649
-                  - Identifier: "Envelope" # 650..658
-                  - OpenBrace: "{" # 659..660
-                  - StructMembers: # 661..791 "  uint256 nonce;\n  address origin;\n  address desti..."
-                      - StructMember: # 661..678 "  uint256 nonce;\n"
-                          - TypeName: # 661..670 "  uint256"
-                              - ElementaryType: # 661..670 "  uint256"
-                                  - UintKeyword: "uint256" # 663..670
-                          - Identifier: "nonce" # 671..676
-                          - Semicolon: ";" # 676..677
-                      - StructMember: # 678..696 "  address origin;\n"
-                          - TypeName: # 678..687 "  address"
-                              - ElementaryType: # 678..687 "  address"
-                                  - AddressType: # 678..687 "  address"
-                                      - AddressKeyword: "address" # 680..687
-                          - Identifier: "origin" # 688..694
-                          - Semicolon: ";" # 694..695
-                      - StructMember: # 696..719 "  address destination;\n"
-                          - TypeName: # 696..705 "  address"
-                              - ElementaryType: # 696..705 "  address"
-                                  - AddressType: # 696..705 "  address"
-                                      - AddressKeyword: "address" # 698..705
-                          - Identifier: "destination" # 706..717
-                          - Semicolon: ";" # 717..718
-                      - StructMember: # 719..744 "  uint256 originChainId;\n"
-                          - TypeName: # 719..728 "  uint256"
-                              - ElementaryType: # 719..728 "  uint256"
-                                  - UintKeyword: "uint256" # 721..728
-                          - Identifier: "originChainId" # 729..742
-                          - Semicolon: ";" # 742..743
-                      - StructMember: # 744..774 "  uint256 destinationChainId;\n"
-                          - TypeName: # 744..753 "  uint256"
-                              - ElementaryType: # 744..753 "  uint256"
-                                  - UintKeyword: "uint256" # 746..753
-                          - Identifier: "destinationChainId" # 754..772
-                          - Semicolon: ";" # 772..773
-                      - StructMember: # 774..791 "  bytes message;\n"
-                          - TypeName: # 774..781 "  bytes"
-                              - ElementaryType: # 774..781 "  bytes"
-                                  - BytesKeyword: "bytes" # 776..781
-                          - Identifier: "message" # 782..789
-                          - Semicolon: ";" # 789..790
-                  - CloseBrace: "}" # 791..792
+  - (TODO:) SourceUnit: # 0..793 "// SPDX-License-Identifier: MIT\npragma solidity ^0..."
+      - (inner:) SourceUnitMembers: # 0..793 "// SPDX-License-Identifier: MIT\npragma solidity ^0..."
+          - (inner:) SourceUnitMember: # 0..56 "// SPDX-License-Identifier: MIT\npragma solidity ^0..."
+              - (inner:) PragmaDirective: # 0..56 "// SPDX-License-Identifier: MIT\npragma solidity ^0..."
+                  - (inner:) LeadingTrivia: # 0..32 "// SPDX-License-Identifier: MIT\n"
+                      - (dummy:) SingleLineComment: "// SPDX-License-Identifier: MIT" # 0..31
+                  - (dummy:) PragmaKeyword: "pragma" # 32..38
+                  - (inner:) Pragma: # 38..54 " solidity ^0.8.0"
+                      - (inner:) VersionPragma: # 38..54 " solidity ^0.8.0"
+                          - (dummy:) SolidityKeyword: "solidity" # 39..47
+                          - (inner:) VersionPragmaExpressions: # 47..54 " ^0.8.0"
+                              - (inner:) VersionPragmaExpression: # 47..54 " ^0.8.0"
+                                  - (operand:) VersionPragmaPrefixExpression: # 47..54 " ^0.8.0"
+                                      - (operator:) Caret: "^" # 48..49
+                                      - (right_operand:) VersionPragmaExpression: # 49..54 "0.8.0"
+                                          - (inner:) VersionPragmaSpecifier: # 49..54 "0.8.0"
+                                              - (dummy:) VersionPragmaValue: "0" # 49..50
+                                              - (dummy:) Period: "." # 50..51
+                                              - (dummy:) VersionPragmaValue: "8" # 51..52
+                                              - (dummy:) Period: "." # 52..53
+                                              - (dummy:) VersionPragmaValue: "0" # 53..54
+                  - (dummy:) Semicolon: ";" # 54..55
+          - (inner:) SourceUnitMember: # 56..98 "\nusing EnvelopeUtils for Envelope global;\n"
+              - (inner:) UsingDirective: # 56..98 "\nusing EnvelopeUtils for Envelope global;\n"
+                  - (dummy:) UsingKeyword: "using" # 57..62
+                  - (inner:) UsingClause: # 62..76 " EnvelopeUtils"
+                      - (inner:) IdentifierPath: # 62..76 " EnvelopeUtils"
+                          - (dummy:) Identifier: "EnvelopeUtils" # 63..76
+                  - (dummy:) ForKeyword: "for" # 77..80
+                  - (inner:) UsingTarget: # 80..89 " Envelope"
+                      - (inner:) TypeName: # 80..89 " Envelope"
+                          - (inner:) IdentifierPath: # 80..89 " Envelope"
+                              - (dummy:) Identifier: "Envelope" # 81..89
+                  - (dummy:) GlobalKeyword: "global" # 90..96
+                  - (dummy:) Semicolon: ";" # 96..97
+          - (inner:) SourceUnitMember: # 98..145 "using TransactionUtils for Transaction global;\n"
+              - (inner:) UsingDirective: # 98..145 "using TransactionUtils for Transaction global;\n"
+                  - (dummy:) UsingKeyword: "using" # 98..103
+                  - (inner:) UsingClause: # 103..120 " TransactionUtils"
+                      - (inner:) IdentifierPath: # 103..120 " TransactionUtils"
+                          - (dummy:) Identifier: "TransactionUtils" # 104..120
+                  - (dummy:) ForKeyword: "for" # 121..124
+                  - (inner:) UsingTarget: # 124..136 " Transaction"
+                      - (inner:) TypeName: # 124..136 " Transaction"
+                          - (inner:) IdentifierPath: # 124..136 " Transaction"
+                              - (dummy:) Identifier: "Transaction" # 125..136
+                  - (dummy:) GlobalKeyword: "global" # 137..143
+                  - (dummy:) Semicolon: ";" # 143..144
+          - (inner:) SourceUnitMember: # 145..793 "\n/**\n * @notice Object with the necessary informat..."
+              - (inner:) StructDefinition: # 145..793 "\n/**\n * @notice Object with the necessary informat..."
+                  - (inner:) LeadingTrivia: # 145..643 "\n/**\n * @notice Object with the necessary informat..."
+                      - (dummy:) MultilineComment: "/**\n * @notice Object with the necessary informati..." # 146..642
+                  - (dummy:) StructKeyword: "struct" # 643..649
+                  - (dummy:) Identifier: "Envelope" # 650..658
+                  - (dummy:) OpenBrace: "{" # 659..660
+                  - (inner:) StructMembers: # 661..791 "  uint256 nonce;\n  address origin;\n  address desti..."
+                      - (inner:) StructMember: # 661..678 "  uint256 nonce;\n"
+                          - (inner:) TypeName: # 661..670 "  uint256"
+                              - (inner:) ElementaryType: # 661..670 "  uint256"
+                                  - (dummy:) UintKeyword: "uint256" # 663..670
+                          - (dummy:) Identifier: "nonce" # 671..676
+                          - (dummy:) Semicolon: ";" # 676..677
+                      - (inner:) StructMember: # 678..696 "  address origin;\n"
+                          - (inner:) TypeName: # 678..687 "  address"
+                              - (inner:) ElementaryType: # 678..687 "  address"
+                                  - (inner:) AddressType: # 678..687 "  address"
+                                      - (dummy:) AddressKeyword: "address" # 680..687
+                          - (dummy:) Identifier: "origin" # 688..694
+                          - (dummy:) Semicolon: ";" # 694..695
+                      - (inner:) StructMember: # 696..719 "  address destination;\n"
+                          - (inner:) TypeName: # 696..705 "  address"
+                              - (inner:) ElementaryType: # 696..705 "  address"
+                                  - (inner:) AddressType: # 696..705 "  address"
+                                      - (dummy:) AddressKeyword: "address" # 698..705
+                          - (dummy:) Identifier: "destination" # 706..717
+                          - (dummy:) Semicolon: ";" # 717..718
+                      - (inner:) StructMember: # 719..744 "  uint256 originChainId;\n"
+                          - (inner:) TypeName: # 719..728 "  uint256"
+                              - (inner:) ElementaryType: # 719..728 "  uint256"
+                                  - (dummy:) UintKeyword: "uint256" # 721..728
+                          - (dummy:) Identifier: "originChainId" # 729..742
+                          - (dummy:) Semicolon: ";" # 742..743
+                      - (inner:) StructMember: # 744..774 "  uint256 destinationChainId;\n"
+                          - (inner:) TypeName: # 744..753 "  uint256"
+                              - (inner:) ElementaryType: # 744..753 "  uint256"
+                                  - (dummy:) UintKeyword: "uint256" # 746..753
+                          - (dummy:) Identifier: "destinationChainId" # 754..772
+                          - (dummy:) Semicolon: ";" # 772..773
+                      - (inner:) StructMember: # 774..791 "  bytes message;\n"
+                          - (inner:) TypeName: # 774..781 "  bytes"
+                              - (inner:) ElementaryType: # 774..781 "  bytes"
+                                  - (dummy:) BytesKeyword: "bytes" # 776..781
+                          - (dummy:) Identifier: "message" # 782..789
+                          - (dummy:) Semicolon: ";" # 789..790
+                  - (dummy:) CloseBrace: "}" # 791..792

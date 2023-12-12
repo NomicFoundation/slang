@@ -24,7 +24,7 @@ fn using_cursor_api() -> Result<()> {
         assert!(cursor.go_to_first_child());
         assert!(cursor.go_to_next_token_with_kinds(&[TokenKind::Identifier]));
 
-        let token_node = cursor.node();
+        let token_node = cursor.node().1;
         contract_names.push(token_node.as_token().unwrap().text.clone());
 
         assert!(cursor.go_to_parent());
@@ -50,7 +50,7 @@ fn using_spawn() -> Result<()> {
         let mut child_cursor = cursor.spawn();
         assert!(child_cursor.go_to_next_token_with_kinds(&[TokenKind::Identifier]));
 
-        let token_node = child_cursor.node();
+        let token_node = child_cursor.node().1;
         contract_names.push(token_node.as_token().unwrap().text.clone());
     }
 
@@ -67,7 +67,7 @@ fn using_iter() -> Result<()> {
     let mut cursor = parse_output.create_tree_cursor();
 
     while cursor.go_to_next_rule_with_kinds(&[RuleKind::ContractDefinition]) {
-        let rule_node = cursor.node();
+        let rule_node = cursor.node().1;
         if let Some(token_node) = rule_node
             .as_rule()
             .unwrap()
@@ -90,14 +90,14 @@ fn using_iter_combinators() -> Result<()> {
 
     let contract_names: Vec<_> = parse_output
         .create_tree_cursor()
-        .filter_map(|node| {
+        .filter_map(|(_name, node)| {
             let node = node.as_rule_with_kind(&[RuleKind::ContractDefinition])?;
-            let name = node
+            let contract_name = node
                 .children
                 .iter()
                 .find_map(|(_name, node)| node.as_token_with_kind(&[TokenKind::Identifier]))?;
 
-            Some(name.text.clone())
+            Some(contract_name.text.clone())
         })
         .collect();
 

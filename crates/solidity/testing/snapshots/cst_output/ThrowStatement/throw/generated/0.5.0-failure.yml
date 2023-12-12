@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - SKIPPED: "throw;" # 0..6
+  - (TODO:) SKIPPED: "throw;" # 0..6

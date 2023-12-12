@@ -6,17 +6,17 @@ Source: >
 Errors: []
 
 Tree:
-  - PragmaDirective: # 0..22 "pragma solidity 1.0.0;"
-      - PragmaKeyword: "pragma" # 0..6
-      - Pragma: # 6..21 " solidity 1.0.0"
-          - VersionPragma: # 6..21 " solidity 1.0.0"
-              - SolidityKeyword: "solidity" # 7..15
-              - VersionPragmaExpressions: # 15..21 " 1.0.0"
-                  - VersionPragmaExpression: # 15..21 " 1.0.0"
-                      - VersionPragmaSpecifier: # 15..21 " 1.0.0"
-                          - VersionPragmaValue: "1" # 16..17
-                          - Period: "." # 17..18
-                          - VersionPragmaValue: "0" # 18..19
-                          - Period: "." # 19..20
-                          - VersionPragmaValue: "0" # 20..21
-      - Semicolon: ";" # 21..22
+  - (TODO:) PragmaDirective: # 0..22 "pragma solidity 1.0.0;"
+      - (dummy:) PragmaKeyword: "pragma" # 0..6
+      - (inner:) Pragma: # 6..21 " solidity 1.0.0"
+          - (inner:) VersionPragma: # 6..21 " solidity 1.0.0"
+              - (dummy:) SolidityKeyword: "solidity" # 7..15
+              - (inner:) VersionPragmaExpressions: # 15..21 " 1.0.0"
+                  - (inner:) VersionPragmaExpression: # 15..21 " 1.0.0"
+                      - (inner:) VersionPragmaSpecifier: # 15..21 " 1.0.0"
+                          - (dummy:) VersionPragmaValue: "1" # 16..17
+                          - (dummy:) Period: "." # 17..18
+                          - (dummy:) VersionPragmaValue: "0" # 18..19
+                          - (dummy:) Period: "." # 19..20
+                          - (dummy:) VersionPragmaValue: "0" # 20..21
+      - (dummy:) Semicolon: ";" # 21..22

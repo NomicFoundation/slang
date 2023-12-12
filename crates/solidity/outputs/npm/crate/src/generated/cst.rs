@@ -135,7 +135,7 @@ impl RuleNode {
         let acc = String::with_capacity(self.text_len.utf8);
 
         self.cursor_with_offset(TextIndex::ZERO)
-            .filter_map(Node::into_token)
+            .filter_map(|(_, node)| node.into_token())
             .fold(acc, |mut acc, token| {
                 acc.push_str(&token.text);
                 acc

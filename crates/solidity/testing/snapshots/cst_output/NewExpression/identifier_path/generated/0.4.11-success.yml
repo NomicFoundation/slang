@@ -6,12 +6,12 @@ Source: >
 Errors: []
 
 Tree:
-  - NewExpression: # 0..15 "new Foo.Bar.Baz"
-      - NewKeyword: "new" # 0..3
-      - TypeName: # 3..15 " Foo.Bar.Baz"
-          - IdentifierPath: # 3..15 " Foo.Bar.Baz"
-              - Identifier: "Foo" # 4..7
-              - Period: "." # 7..8
-              - Identifier: "Bar" # 8..11
-              - Period: "." # 11..12
-              - Identifier: "Baz" # 12..15
+  - (TODO:) NewExpression: # 0..15 "new Foo.Bar.Baz"
+      - (dummy:) NewKeyword: "new" # 0..3
+      - (inner:) TypeName: # 3..15 " Foo.Bar.Baz"
+          - (inner:) IdentifierPath: # 3..15 " Foo.Bar.Baz"
+              - (dummy:) Identifier: "Foo" # 4..7
+              - (dummy:) Period: "." # 7..8
+              - (dummy:) Identifier: "Bar" # 8..11
+              - (dummy:) Period: "." # 11..12
+              - (dummy:) Identifier: "Baz" # 12..15

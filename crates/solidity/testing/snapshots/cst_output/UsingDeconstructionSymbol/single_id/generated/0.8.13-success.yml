@@ -6,6 +6,6 @@ Source: >
 Errors: []
 
 Tree:
-  - UsingDeconstructionSymbol: # 0..3 "foo"
-      - IdentifierPath: # 0..3 "foo"
-          - Identifier: "foo" # 0..3
+  - (TODO:) UsingDeconstructionSymbol: # 0..3 "foo"
+      - (inner:) IdentifierPath: # 0..3 "foo"
+          - (dummy:) Identifier: "foo" # 0..3

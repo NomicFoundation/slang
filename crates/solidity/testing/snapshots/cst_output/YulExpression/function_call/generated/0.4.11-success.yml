@@ -6,14 +6,14 @@ Source: >
 Errors: []
 
 Tree:
-  - YulExpression: # 0..6 "foo(1)"
-      - YulFunctionCallExpression: # 0..6 "foo(1)"
-          - YulExpression: # 0..3 "foo"
-              - YulIdentifierPath: # 0..3 "foo"
-                  - YulIdentifier: "foo" # 0..3
-          - OpenParen: "(" # 3..4
-          - YulArguments: # 4..5 "1"
-              - YulExpression: # 4..5 "1"
-                  - YulLiteral: # 4..5 "1"
-                      - YulDecimalLiteral: "1" # 4..5
-          - CloseParen: ")" # 5..6
+  - (TODO:) YulExpression: # 0..6 "foo(1)"
+      - (operand:) YulFunctionCallExpression: # 0..6 "foo(1)"
+          - (left_operand:) YulExpression: # 0..3 "foo"
+              - (inner:) YulIdentifierPath: # 0..3 "foo"
+                  - (dummy:) YulIdentifier: "foo" # 0..3
+          - (operator:) OpenParen: "(" # 3..4
+          - (operator:) YulArguments: # 4..5 "1"
+              - (inner:) YulExpression: # 4..5 "1"
+                  - (inner:) YulLiteral: # 4..5 "1"
+                      - (dummy:) YulDecimalLiteral: "1" # 4..5
+          - (operator:) CloseParen: ")" # 5..6

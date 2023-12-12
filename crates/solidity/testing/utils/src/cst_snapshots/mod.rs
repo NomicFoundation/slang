@@ -95,7 +95,7 @@ fn write_tree<W: Write>(w: &mut W, mut cursor: Cursor, source: &str) -> Result<(
 
         // Skip whitespace and trivia rules containing only those tokens
         match cursor.next() {
-            Some(cst::Node::Rule(rule))
+            Some((_, cst::Node::Rule(rule)))
                 if rule.is_trivia()
                     && rule.children.iter().all(|(_name, node)| {
                         node.as_token().map_or(false, |t| is_whitespace(t.kind))
@@ -103,7 +103,7 @@ fn write_tree<W: Write>(w: &mut W, mut cursor: Cursor, source: &str) -> Result<(
             {
                 continue
             }
-            Some(cst::Node::Token(token)) if is_whitespace(token.kind) => continue,
+            Some((_, cst::Node::Token(token))) if is_whitespace(token.kind) => continue,
             next => break next.map(|item| (item, depth, range)),
         }
     });
@@ -117,7 +117,7 @@ fn write_tree<W: Write>(w: &mut W, mut cursor: Cursor, source: &str) -> Result<(
 
 fn write_node<W: Write>(
     w: &mut W,
-    node: &cst::Node,
+    node: &cst::NamedNode,
     range: &TextRange,
     source: &str,
     indentation: usize,
@@ -125,8 +125,8 @@ fn write_node<W: Write>(
     let range_string = format!("{range:?}", range = range.utf8());
 
     let (node_value, node_comment) = if range.is_empty() {
-        let preview = match node {
-            cst::Node::Rule(_) if !node.children().is_empty() => "",
+        let preview = match node.1 {
+            cst::Node::Rule(_) if !node.1.children().is_empty() => "",
             cst::Node::Rule(_) => " []",
             cst::Node::Token(_) => " \"\"",
         };
@@ -135,7 +135,7 @@ fn write_node<W: Write>(
     } else {
         let preview = render_source_preview(source, range)?;
 
-        if node.children().is_empty() {
+        if node.1.children().is_empty() {
             // "foo" # 1..2
             (format!(" {preview}"), range_string)
         } else {
@@ -145,8 +145,8 @@ fn write_node<W: Write>(
     };
 
     let name = match node {
-        cst::Node::Rule(rule) => format!("{:?}", rule.kind),
-        cst::Node::Token(token) => format!("{:?}", token.kind),
+        (name, cst::Node::Rule(rule)) => format!("({}:) {:?}", name, rule.kind),
+        (name, cst::Node::Token(token)) => format!("({}:) {:?}", name, token.kind),
     };
 
     writeln!(

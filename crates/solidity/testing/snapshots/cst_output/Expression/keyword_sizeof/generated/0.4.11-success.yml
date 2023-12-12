@@ -6,5 +6,5 @@ Source: >
 Errors: []
 
 Tree:
-  - Expression: # 0..6 "sizeof"
-      - Identifier: "sizeof" # 0..6
+  - (TODO:) Expression: # 0..6 "sizeof"
+      - (dummy:) Identifier: "sizeof" # 0..6

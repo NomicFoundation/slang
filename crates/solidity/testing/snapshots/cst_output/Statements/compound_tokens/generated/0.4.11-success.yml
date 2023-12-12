@@ -18,134 +18,134 @@ Source: >
 Errors: []
 
 Tree:
-  - Statements: # 0..106 "a && b;\na &= b;\na || b;\na |= b;\na / b;\na /= b;\na >..."
-      - Statement: # 0..8 "a && b;\n"
-          - ExpressionStatement: # 0..8 "a && b;\n"
-              - Expression: # 0..6 "a && b"
-                  - AndExpression: # 0..6 "a && b"
-                      - Expression: # 0..1 "a"
-                          - Identifier: "a" # 0..1
-                      - AmpersandAmpersand: "&&" # 2..4
-                      - Expression: # 4..6 " b"
-                          - Identifier: "b" # 5..6
-              - Semicolon: ";" # 6..7
-      - Statement: # 8..16 "a &= b;\n"
-          - ExpressionStatement: # 8..16 "a &= b;\n"
-              - Expression: # 8..14 "a &= b"
-                  - AssignmentExpression: # 8..14 "a &= b"
-                      - Expression: # 8..9 "a"
-                          - Identifier: "a" # 8..9
-                      - AmpersandEqual: "&=" # 10..12
-                      - Expression: # 12..14 " b"
-                          - Identifier: "b" # 13..14
-              - Semicolon: ";" # 14..15
-      - Statement: # 16..24 "a || b;\n"
-          - ExpressionStatement: # 16..24 "a || b;\n"
-              - Expression: # 16..22 "a || b"
-                  - OrExpression: # 16..22 "a || b"
-                      - Expression: # 16..17 "a"
-                          - Identifier: "a" # 16..17
-                      - BarBar: "||" # 18..20
-                      - Expression: # 20..22 " b"
-                          - Identifier: "b" # 21..22
-              - Semicolon: ";" # 22..23
-      - Statement: # 24..32 "a |= b;\n"
-          - ExpressionStatement: # 24..32 "a |= b;\n"
-              - Expression: # 24..30 "a |= b"
-                  - AssignmentExpression: # 24..30 "a |= b"
-                      - Expression: # 24..25 "a"
-                          - Identifier: "a" # 24..25
-                      - BarEqual: "|=" # 26..28
-                      - Expression: # 28..30 " b"
-                          - Identifier: "b" # 29..30
-              - Semicolon: ";" # 30..31
-      - Statement: # 32..39 "a / b;\n"
-          - ExpressionStatement: # 32..39 "a / b;\n"
-              - Expression: # 32..37 "a / b"
-                  - MultiplicativeExpression: # 32..37 "a / b"
-                      - Expression: # 32..33 "a"
-                          - Identifier: "a" # 32..33
-                      - Slash: "/" # 34..35
-                      - Expression: # 35..37 " b"
-                          - Identifier: "b" # 36..37
-              - Semicolon: ";" # 37..38
-      - Statement: # 39..47 "a /= b;\n"
-          - ExpressionStatement: # 39..47 "a /= b;\n"
-              - Expression: # 39..45 "a /= b"
-                  - AssignmentExpression: # 39..45 "a /= b"
-                      - Expression: # 39..40 "a"
-                          - Identifier: "a" # 39..40
-                      - SlashEqual: "/=" # 41..43
-                      - Expression: # 43..45 " b"
-                          - Identifier: "b" # 44..45
-              - Semicolon: ";" # 45..46
-      - Statement: # 47..54 "a > b;\n"
-          - ExpressionStatement: # 47..54 "a > b;\n"
-              - Expression: # 47..52 "a > b"
-                  - ComparisonExpression: # 47..52 "a > b"
-                      - Expression: # 47..48 "a"
-                          - Identifier: "a" # 47..48
-                      - GreaterThan: ">" # 49..50
-                      - Expression: # 50..52 " b"
-                          - Identifier: "b" # 51..52
-              - Semicolon: ";" # 52..53
-      - Statement: # 54..62 "a >= b;\n"
-          - ExpressionStatement: # 54..62 "a >= b;\n"
-              - Expression: # 54..60 "a >= b"
-                  - ComparisonExpression: # 54..60 "a >= b"
-                      - Expression: # 54..55 "a"
-                          - Identifier: "a" # 54..55
-                      - GreaterThanEqual: ">=" # 56..58
-                      - Expression: # 58..60 " b"
-                          - Identifier: "b" # 59..60
-              - Semicolon: ";" # 60..61
-      - Statement: # 62..70 "a >> b;\n"
-          - ExpressionStatement: # 62..70 "a >> b;\n"
-              - Expression: # 62..68 "a >> b"
-                  - ShiftExpression: # 62..68 "a >> b"
-                      - Expression: # 62..63 "a"
-                          - Identifier: "a" # 62..63
-                      - GreaterThanGreaterThan: ">>" # 64..66
-                      - Expression: # 66..68 " b"
-                          - Identifier: "b" # 67..68
-              - Semicolon: ";" # 68..69
-      - Statement: # 70..79 "a >>= b;\n"
-          - ExpressionStatement: # 70..79 "a >>= b;\n"
-              - Expression: # 70..77 "a >>= b"
-                  - AssignmentExpression: # 70..77 "a >>= b"
-                      - Expression: # 70..71 "a"
-                          - Identifier: "a" # 70..71
-                      - GreaterThanGreaterThanEqual: ">>=" # 72..75
-                      - Expression: # 75..77 " b"
-                          - Identifier: "b" # 76..77
-              - Semicolon: ";" # 77..78
-      - Statement: # 79..89 "a >>>= b;\n"
-          - ExpressionStatement: # 79..89 "a >>>= b;\n"
-              - Expression: # 79..87 "a >>>= b"
-                  - AssignmentExpression: # 79..87 "a >>>= b"
-                      - Expression: # 79..80 "a"
-                          - Identifier: "a" # 79..80
-                      - GreaterThanGreaterThanGreaterThanEqual: ">>>=" # 81..85
-                      - Expression: # 85..87 " b"
-                          - Identifier: "b" # 86..87
-              - Semicolon: ";" # 87..88
-      - Statement: # 89..97 "a << b;\n"
-          - ExpressionStatement: # 89..97 "a << b;\n"
-              - Expression: # 89..95 "a << b"
-                  - ShiftExpression: # 89..95 "a << b"
-                      - Expression: # 89..90 "a"
-                          - Identifier: "a" # 89..90
-                      - LessThanLessThan: "<<" # 91..93
-                      - Expression: # 93..95 " b"
-                          - Identifier: "b" # 94..95
-              - Semicolon: ";" # 95..96
-      - Statement: # 97..106 "a <<= b;\n"
-          - ExpressionStatement: # 97..106 "a <<= b;\n"
-              - Expression: # 97..104 "a <<= b"
-                  - AssignmentExpression: # 97..104 "a <<= b"
-                      - Expression: # 97..98 "a"
-                          - Identifier: "a" # 97..98
-                      - LessThanLessThanEqual: "<<=" # 99..102
-                      - Expression: # 102..104 " b"
-                          - Identifier: "b" # 103..104
-              - Semicolon: ";" # 104..105
+  - (TODO:) Statements: # 0..106 "a && b;\na &= b;\na || b;\na |= b;\na / b;\na /= b;\na >..."
+      - (inner:) Statement: # 0..8 "a && b;\n"
+          - (inner:) ExpressionStatement: # 0..8 "a && b;\n"
+              - (inner:) Expression: # 0..6 "a && b"
+                  - (operand:) AndExpression: # 0..6 "a && b"
+                      - (left_operand:) Expression: # 0..1 "a"
+                          - (dummy:) Identifier: "a" # 0..1
+                      - (operator:) AmpersandAmpersand: "&&" # 2..4
+                      - (right_operand:) Expression: # 4..6 " b"
+                          - (dummy:) Identifier: "b" # 5..6
+              - (dummy:) Semicolon: ";" # 6..7
+      - (inner:) Statement: # 8..16 "a &= b;\n"
+          - (inner:) ExpressionStatement: # 8..16 "a &= b;\n"
+              - (inner:) Expression: # 8..14 "a &= b"
+                  - (operand:) AssignmentExpression: # 8..14 "a &= b"
+                      - (left_operand:) Expression: # 8..9 "a"
+                          - (dummy:) Identifier: "a" # 8..9
+                      - (operator:) AmpersandEqual: "&=" # 10..12
+                      - (right_operand:) Expression: # 12..14 " b"
+                          - (dummy:) Identifier: "b" # 13..14
+              - (dummy:) Semicolon: ";" # 14..15
+      - (inner:) Statement: # 16..24 "a || b;\n"
+          - (inner:) ExpressionStatement: # 16..24 "a || b;\n"
+              - (inner:) Expression: # 16..22 "a || b"
+                  - (operand:) OrExpression: # 16..22 "a || b"
+                      - (left_operand:) Expression: # 16..17 "a"
+                          - (dummy:) Identifier: "a" # 16..17
+                      - (operator:) BarBar: "||" # 18..20
+                      - (right_operand:) Expression: # 20..22 " b"
+                          - (dummy:) Identifier: "b" # 21..22
+              - (dummy:) Semicolon: ";" # 22..23
+      - (inner:) Statement: # 24..32 "a |= b;\n"
+          - (inner:) ExpressionStatement: # 24..32 "a |= b;\n"
+              - (inner:) Expression: # 24..30 "a |= b"
+                  - (operand:) AssignmentExpression: # 24..30 "a |= b"
+                      - (left_operand:) Expression: # 24..25 "a"
+                          - (dummy:) Identifier: "a" # 24..25
+                      - (operator:) BarEqual: "|=" # 26..28
+                      - (right_operand:) Expression: # 28..30 " b"
+                          - (dummy:) Identifier: "b" # 29..30
+              - (dummy:) Semicolon: ";" # 30..31
+      - (inner:) Statement: # 32..39 "a / b;\n"
+          - (inner:) ExpressionStatement: # 32..39 "a / b;\n"
+              - (inner:) Expression: # 32..37 "a / b"
+                  - (operand:) MultiplicativeExpression: # 32..37 "a / b"
+                      - (left_operand:) Expression: # 32..33 "a"
+                          - (dummy:) Identifier: "a" # 32..33
+                      - (operator:) Slash: "/" # 34..35
+                      - (right_operand:) Expression: # 35..37 " b"
+                          - (dummy:) Identifier: "b" # 36..37
+              - (dummy:) Semicolon: ";" # 37..38
+      - (inner:) Statement: # 39..47 "a /= b;\n"
+          - (inner:) ExpressionStatement: # 39..47 "a /= b;\n"
+              - (inner:) Expression: # 39..45 "a /= b"
+                  - (operand:) AssignmentExpression: # 39..45 "a /= b"
+                      - (left_operand:) Expression: # 39..40 "a"
+                          - (dummy:) Identifier: "a" # 39..40
+                      - (operator:) SlashEqual: "/=" # 41..43
+                      - (right_operand:) Expression: # 43..45 " b"
+                          - (dummy:) Identifier: "b" # 44..45
+              - (dummy:) Semicolon: ";" # 45..46
+      - (inner:) Statement: # 47..54 "a > b;\n"
+          - (inner:) ExpressionStatement: # 47..54 "a > b;\n"
+              - (inner:) Expression: # 47..52 "a > b"
+                  - (operand:) ComparisonExpression: # 47..52 "a > b"
+                      - (left_operand:) Expression: # 47..48 "a"
+                          - (dummy:) Identifier: "a" # 47..48
+                      - (operator:) GreaterThan: ">" # 49..50
+                      - (right_operand:) Expression: # 50..52 " b"
+                          - (dummy:) Identifier: "b" # 51..52
+              - (dummy:) Semicolon: ";" # 52..53
+      - (inner:) Statement: # 54..62 "a >= b;\n"
+          - (inner:) ExpressionStatement: # 54..62 "a >= b;\n"
+              - (inner:) Expression: # 54..60 "a >= b"
+                  - (operand:) ComparisonExpression: # 54..60 "a >= b"
+                      - (left_operand:) Expression: # 54..55 "a"
+                          - (dummy:) Identifier: "a" # 54..55
+                      - (operator:) GreaterThanEqual: ">=" # 56..58
+                      - (right_operand:) Expression: # 58..60 " b"
+                          - (dummy:) Identifier: "b" # 59..60
+              - (dummy:) Semicolon: ";" # 60..61
+      - (inner:) Statement: # 62..70 "a >> b;\n"
+          - (inner:) ExpressionStatement: # 62..70 "a >> b;\n"
+              - (inner:) Expression: # 62..68 "a >> b"
+                  - (operand:) ShiftExpression: # 62..68 "a >> b"
+                      - (left_operand:) Expression: # 62..63 "a"
+                          - (dummy:) Identifier: "a" # 62..63
+                      - (operator:) GreaterThanGreaterThan: ">>" # 64..66
+                      - (right_operand:) Expression: # 66..68 " b"
+                          - (dummy:) Identifier: "b" # 67..68
+              - (dummy:) Semicolon: ";" # 68..69
+      - (inner:) Statement: # 70..79 "a >>= b;\n"
+          - (inner:) ExpressionStatement: # 70..79 "a >>= b;\n"
+              - (inner:) Expression: # 70..77 "a >>= b"
+                  - (operand:) AssignmentExpression: # 70..77 "a >>= b"
+                      - (left_operand:) Expression: # 70..71 "a"
+                          - (dummy:) Identifier: "a" # 70..71
+                      - (operator:) GreaterThanGreaterThanEqual: ">>=" # 72..75
+                      - (right_operand:) Expression: # 75..77 " b"
+                          - (dummy:) Identifier: "b" # 76..77
+              - (dummy:) Semicolon: ";" # 77..78
+      - (inner:) Statement: # 79..89 "a >>>= b;\n"
+          - (inner:) ExpressionStatement: # 79..89 "a >>>= b;\n"
+              - (inner:) Expression: # 79..87 "a >>>= b"
+                  - (operand:) AssignmentExpression: # 79..87 "a >>>= b"
+                      - (left_operand:) Expression: # 79..80 "a"
+                          - (dummy:) Identifier: "a" # 79..80
+                      - (operator:) GreaterThanGreaterThanGreaterThanEqual: ">>>=" # 81..85
+                      - (right_operand:) Expression: # 85..87 " b"
+                          - (dummy:) Identifier: "b" # 86..87
+              - (dummy:) Semicolon: ";" # 87..88
+      - (inner:) Statement: # 89..97 "a << b;\n"
+          - (inner:) ExpressionStatement: # 89..97 "a << b;\n"
+              - (inner:) Expression: # 89..95 "a << b"
+                  - (operand:) ShiftExpression: # 89..95 "a << b"
+                      - (left_operand:) Expression: # 89..90 "a"
+                          - (dummy:) Identifier: "a" # 89..90
+                      - (operator:) LessThanLessThan: "<<" # 91..93
+                      - (right_operand:) Expression: # 93..95 " b"
+                          - (dummy:) Identifier: "b" # 94..95
+              - (dummy:) Semicolon: ";" # 95..96
+      - (inner:) Statement: # 97..106 "a <<= b;\n"
+          - (inner:) ExpressionStatement: # 97..106 "a <<= b;\n"
+              - (inner:) Expression: # 97..104 "a <<= b"
+                  - (operand:) AssignmentExpression: # 97..104 "a <<= b"
+                      - (left_operand:) Expression: # 97..98 "a"
+                          - (dummy:) Identifier: "a" # 97..98
+                      - (operator:) LessThanLessThanEqual: "<<=" # 99..102
+                      - (right_operand:) Expression: # 102..104 " b"
+                          - (dummy:) Identifier: "b" # 103..104
+              - (dummy:) Semicolon: ";" # 104..105

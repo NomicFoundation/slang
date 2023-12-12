@@ -6,5 +6,5 @@ Source: >
 Errors: []
 
 Tree:
-  - Expression: # 0..6 "sealed"
-      - Identifier: "sealed" # 0..6
+  - (TODO:) Expression: # 0..6 "sealed"
+      - (dummy:) Identifier: "sealed" # 0..6

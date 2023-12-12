@@ -6,18 +6,18 @@ Source: >
 Errors: []
 
 Tree:
-  - ImportDirective: # 0..29 'import { x as y } from "foo";'
-      - ImportKeyword: "import" # 0..6
-      - ImportClause: # 6..28 ' { x as y } from "foo"'
-          - ImportDeconstruction: # 6..28 ' { x as y } from "foo"'
-              - OpenBrace: "{" # 7..8
-              - ImportDeconstructionSymbols: # 8..15 " x as y"
-                  - ImportDeconstructionSymbol: # 8..15 " x as y"
-                      - Identifier: "x" # 9..10
-                      - ImportAlias: # 10..15 " as y"
-                          - AsKeyword: "as" # 11..13
-                          - Identifier: "y" # 14..15
-              - CloseBrace: "}" # 16..17
-              - FromKeyword: "from" # 18..22
-              - AsciiStringLiteral: '"foo"' # 23..28
-      - Semicolon: ";" # 28..29
+  - (TODO:) ImportDirective: # 0..29 'import { x as y } from "foo";'
+      - (dummy:) ImportKeyword: "import" # 0..6
+      - (inner:) ImportClause: # 6..28 ' { x as y } from "foo"'
+          - (inner:) ImportDeconstruction: # 6..28 ' { x as y } from "foo"'
+              - (dummy:) OpenBrace: "{" # 7..8
+              - (inner:) ImportDeconstructionSymbols: # 8..15 " x as y"
+                  - (inner:) ImportDeconstructionSymbol: # 8..15 " x as y"
+                      - (dummy:) Identifier: "x" # 9..10
+                      - (inner:) ImportAlias: # 10..15 " as y"
+                          - (dummy:) AsKeyword: "as" # 11..13
+                          - (dummy:) Identifier: "y" # 14..15
+              - (dummy:) CloseBrace: "}" # 16..17
+              - (dummy:) FromKeyword: "from" # 18..22
+              - (dummy:) AsciiStringLiteral: '"foo"' # 23..28
+      - (dummy:) Semicolon: ";" # 28..29

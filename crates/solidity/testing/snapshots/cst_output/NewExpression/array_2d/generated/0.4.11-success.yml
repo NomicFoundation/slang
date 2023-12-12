@@ -6,16 +6,16 @@ Source: >
 Errors: []
 
 Tree:
-  - NewExpression: # 0..11 "new Foo[][]"
-      - NewKeyword: "new" # 0..3
-      - TypeName: # 3..11 " Foo[][]"
-          - ArrayTypeName: # 3..11 " Foo[][]"
-              - TypeName: # 3..9 " Foo[]"
-                  - ArrayTypeName: # 3..9 " Foo[]"
-                      - TypeName: # 3..7 " Foo"
-                          - IdentifierPath: # 3..7 " Foo"
-                              - Identifier: "Foo" # 4..7
-                      - OpenBracket: "[" # 7..8
-                      - CloseBracket: "]" # 8..9
-              - OpenBracket: "[" # 9..10
-              - CloseBracket: "]" # 10..11
+  - (TODO:) NewExpression: # 0..11 "new Foo[][]"
+      - (dummy:) NewKeyword: "new" # 0..3
+      - (inner:) TypeName: # 3..11 " Foo[][]"
+          - (operand:) ArrayTypeName: # 3..11 " Foo[][]"
+              - (left_operand:) TypeName: # 3..9 " Foo[]"
+                  - (operand:) ArrayTypeName: # 3..9 " Foo[]"
+                      - (left_operand:) TypeName: # 3..7 " Foo"
+                          - (inner:) IdentifierPath: # 3..7 " Foo"
+                              - (dummy:) Identifier: "Foo" # 4..7
+                      - (operator:) OpenBracket: "[" # 7..8
+                      - (operator:) CloseBracket: "]" # 8..9
+              - (operator:) OpenBracket: "[" # 9..10
+              - (operator:) CloseBracket: "]" # 10..11

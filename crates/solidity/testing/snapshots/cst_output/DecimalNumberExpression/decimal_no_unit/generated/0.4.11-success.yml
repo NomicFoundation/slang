@@ -6,5 +6,5 @@ Source: >
 Errors: []
 
 Tree:
-  - DecimalNumberExpression: # 0..9 "123456789"
-      - DecimalLiteral: "123456789" # 0..9
+  - (TODO:) DecimalNumberExpression: # 0..9 "123456789"
+      - (dummy:) DecimalLiteral: "123456789" # 0..9

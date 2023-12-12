@@ -6,8 +6,8 @@ Source: >
 Errors: []
 
 Tree:
-  - ContractDefinition: # 0..19 "contract Sample {}\n"
-      - ContractKeyword: "contract" # 0..8
-      - Identifier: "Sample" # 9..15
-      - OpenBrace: "{" # 16..17
-      - CloseBrace: "}" # 17..18
+  - (TODO:) ContractDefinition: # 0..19 "contract Sample {}\n"
+      - (dummy:) ContractKeyword: "contract" # 0..8
+      - (dummy:) Identifier: "Sample" # 9..15
+      - (dummy:) OpenBrace: "{" # 16..17
+      - (dummy:) CloseBrace: "}" # 17..18

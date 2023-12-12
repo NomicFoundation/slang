@@ -11,28 +11,28 @@ Source: >
 Errors: []
 
 Tree:
-  - ContractDefinition: # 0..60 "contract Sample {\n  struct S {\n    uint a;\n    uin..."
-      - ContractKeyword: "contract" # 0..8
-      - Identifier: "Sample" # 9..15
-      - OpenBrace: "{" # 16..17
-      - ContractMembers: # 18..59 "  struct S {\n    uint a;\n    uint b;\n  }\n"
-          - ContractMember: # 18..59 "  struct S {\n    uint a;\n    uint b;\n  }\n"
-              - StructDefinition: # 18..59 "  struct S {\n    uint a;\n    uint b;\n  }\n"
-                  - StructKeyword: "struct" # 20..26
-                  - Identifier: "S" # 27..28
-                  - OpenBrace: "{" # 29..30
-                  - StructMembers: # 31..55 "    uint a;\n    uint b;\n"
-                      - StructMember: # 31..43 "    uint a;\n"
-                          - TypeName: # 31..39 "    uint"
-                              - ElementaryType: # 31..39 "    uint"
-                                  - UintKeyword: "uint" # 35..39
-                          - Identifier: "a" # 40..41
-                          - Semicolon: ";" # 41..42
-                      - StructMember: # 43..55 "    uint b;\n"
-                          - TypeName: # 43..51 "    uint"
-                              - ElementaryType: # 43..51 "    uint"
-                                  - UintKeyword: "uint" # 47..51
-                          - Identifier: "b" # 52..53
-                          - Semicolon: ";" # 53..54
-                  - CloseBrace: "}" # 57..58
-      - CloseBrace: "}" # 59..60
+  - (TODO:) ContractDefinition: # 0..60 "contract Sample {\n  struct S {\n    uint a;\n    uin..."
+      - (dummy:) ContractKeyword: "contract" # 0..8
+      - (dummy:) Identifier: "Sample" # 9..15
+      - (dummy:) OpenBrace: "{" # 16..17
+      - (inner:) ContractMembers: # 18..59 "  struct S {\n    uint a;\n    uint b;\n  }\n"
+          - (inner:) ContractMember: # 18..59 "  struct S {\n    uint a;\n    uint b;\n  }\n"
+              - (inner:) StructDefinition: # 18..59 "  struct S {\n    uint a;\n    uint b;\n  }\n"
+                  - (dummy:) StructKeyword: "struct" # 20..26
+                  - (dummy:) Identifier: "S" # 27..28
+                  - (dummy:) OpenBrace: "{" # 29..30
+                  - (inner:) StructMembers: # 31..55 "    uint a;\n    uint b;\n"
+                      - (inner:) StructMember: # 31..43 "    uint a;\n"
+                          - (inner:) TypeName: # 31..39 "    uint"
+                              - (inner:) ElementaryType: # 31..39 "    uint"
+                                  - (dummy:) UintKeyword: "uint" # 35..39
+                          - (dummy:) Identifier: "a" # 40..41
+                          - (dummy:) Semicolon: ";" # 41..42
+                      - (inner:) StructMember: # 43..55 "    uint b;\n"
+                          - (inner:) TypeName: # 43..51 "    uint"
+                              - (inner:) ElementaryType: # 43..51 "    uint"
+                                  - (dummy:) UintKeyword: "uint" # 47..51
+                          - (dummy:) Identifier: "b" # 52..53
+                          - (dummy:) Semicolon: ";" # 53..54
+                  - (dummy:) CloseBrace: "}" # 57..58
+      - (dummy:) CloseBrace: "}" # 59..60

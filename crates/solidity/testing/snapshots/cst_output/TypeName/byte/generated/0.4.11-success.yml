@@ -6,6 +6,6 @@ Source: >
 Errors: []
 
 Tree:
-  - TypeName: # 0..4 "byte"
-      - ElementaryType: # 0..4 "byte"
-          - ByteKeyword: "byte" # 0..4
+  - (TODO:) TypeName: # 0..4 "byte"
+      - (inner:) ElementaryType: # 0..4 "byte"
+          - (dummy:) ByteKeyword: "byte" # 0..4

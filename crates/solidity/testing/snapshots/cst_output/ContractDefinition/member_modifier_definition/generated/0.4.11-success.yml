@@ -10,26 +10,26 @@ Source: >
 Errors: []
 
 Tree:
-  - ContractDefinition: # 0..49 "contract Sample {\n  modifier foo() {\n    _;\n  }\n}"
-      - ContractKeyword: "contract" # 0..8
-      - Identifier: "Sample" # 9..15
-      - OpenBrace: "{" # 16..17
-      - ContractMembers: # 18..48 "  modifier foo() {\n    _;\n  }\n"
-          - ContractMember: # 18..48 "  modifier foo() {\n    _;\n  }\n"
-              - ModifierDefinition: # 18..48 "  modifier foo() {\n    _;\n  }\n"
-                  - ModifierKeyword: "modifier" # 20..28
-                  - Identifier: "foo" # 29..32
-                  - ParametersDeclaration: # 32..34 "()"
-                      - OpenParen: "(" # 32..33
-                      - CloseParen: ")" # 33..34
-                  - FunctionBody: # 34..48 " {\n    _;\n  }\n"
-                      - Block: # 34..48 " {\n    _;\n  }\n"
-                          - OpenBrace: "{" # 35..36
-                          - Statements: # 37..44 "    _;\n"
-                              - Statement: # 37..44 "    _;\n"
-                                  - ExpressionStatement: # 37..44 "    _;\n"
-                                      - Expression: # 37..42 "    _"
-                                          - Identifier: "_" # 41..42
-                                      - Semicolon: ";" # 42..43
-                          - CloseBrace: "}" # 46..47
-      - CloseBrace: "}" # 48..49
+  - (TODO:) ContractDefinition: # 0..49 "contract Sample {\n  modifier foo() {\n    _;\n  }\n}"
+      - (dummy:) ContractKeyword: "contract" # 0..8
+      - (dummy:) Identifier: "Sample" # 9..15
+      - (dummy:) OpenBrace: "{" # 16..17
+      - (inner:) ContractMembers: # 18..48 "  modifier foo() {\n    _;\n  }\n"
+          - (inner:) ContractMember: # 18..48 "  modifier foo() {\n    _;\n  }\n"
+              - (inner:) ModifierDefinition: # 18..48 "  modifier foo() {\n    _;\n  }\n"
+                  - (dummy:) ModifierKeyword: "modifier" # 20..28
+                  - (dummy:) Identifier: "foo" # 29..32
+                  - (inner:) ParametersDeclaration: # 32..34 "()"
+                      - (dummy:) OpenParen: "(" # 32..33
+                      - (dummy:) CloseParen: ")" # 33..34
+                  - (inner:) FunctionBody: # 34..48 " {\n    _;\n  }\n"
+                      - (inner:) Block: # 34..48 " {\n    _;\n  }\n"
+                          - (dummy:) OpenBrace: "{" # 35..36
+                          - (inner:) Statements: # 37..44 "    _;\n"
+                              - (inner:) Statement: # 37..44 "    _;\n"
+                                  - (inner:) ExpressionStatement: # 37..44 "    _;\n"
+                                      - (inner:) Expression: # 37..42 "    _"
+                                          - (dummy:) Identifier: "_" # 41..42
+                                      - (dummy:) Semicolon: ";" # 42..43
+                          - (dummy:) CloseBrace: "}" # 46..47
+      - (dummy:) CloseBrace: "}" # 48..49

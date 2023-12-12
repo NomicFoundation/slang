@@ -6,8 +6,8 @@ Source: >
 Errors: []
 
 Tree:
-  - Expression: # 0..5 "--foo"
-      - PrefixExpression: # 0..5 "--foo"
-          - MinusMinus: "--" # 0..2
-          - Expression: # 2..5 "foo"
-              - Identifier: "foo" # 2..5
+  - (TODO:) Expression: # 0..5 "--foo"
+      - (operand:) PrefixExpression: # 0..5 "--foo"
+          - (operator:) MinusMinus: "--" # 0..2
+          - (right_operand:) Expression: # 2..5 "foo"
+              - (dummy:) Identifier: "foo" # 2..5

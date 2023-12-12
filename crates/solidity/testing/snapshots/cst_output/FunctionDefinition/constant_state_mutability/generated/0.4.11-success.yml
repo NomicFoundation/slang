@@ -6,17 +6,17 @@ Source: >
 Errors: []
 
 Tree:
-  - FunctionDefinition: # 0..24 "function a() constant {}"
-      - FunctionKeyword: "function" # 0..8
-      - FunctionName: # 8..10 " a"
-          - Identifier: "a" # 9..10
-      - ParametersDeclaration: # 10..12 "()"
-          - OpenParen: "(" # 10..11
-          - CloseParen: ")" # 11..12
-      - FunctionAttributes: # 12..21 " constant"
-          - FunctionAttribute: # 12..21 " constant"
-              - ConstantKeyword: "constant" # 13..21
-      - FunctionBody: # 21..24 " {}"
-          - Block: # 21..24 " {}"
-              - OpenBrace: "{" # 22..23
-              - CloseBrace: "}" # 23..24
+  - (TODO:) FunctionDefinition: # 0..24 "function a() constant {}"
+      - (dummy:) FunctionKeyword: "function" # 0..8
+      - (inner:) FunctionName: # 8..10 " a"
+          - (dummy:) Identifier: "a" # 9..10
+      - (inner:) ParametersDeclaration: # 10..12 "()"
+          - (dummy:) OpenParen: "(" # 10..11
+          - (dummy:) CloseParen: ")" # 11..12
+      - (inner:) FunctionAttributes: # 12..21 " constant"
+          - (inner:) FunctionAttribute: # 12..21 " constant"
+              - (dummy:) ConstantKeyword: "constant" # 13..21
+      - (inner:) FunctionBody: # 21..24 " {}"
+          - (inner:) Block: # 21..24 " {}"
+              - (dummy:) OpenBrace: "{" # 22..23
+              - (dummy:) CloseBrace: "}" # 23..24

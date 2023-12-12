@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - SKIPPED: "+foo" # 0..4
+  - (TODO:) SKIPPED: "+foo" # 0..4

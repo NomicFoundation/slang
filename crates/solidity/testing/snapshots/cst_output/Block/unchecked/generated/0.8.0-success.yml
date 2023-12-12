@@ -6,25 +6,25 @@ Source: >
 Errors: []
 
 Tree:
-  - Block: # 0..24 "{ unchecked { x = 1; } }"
-      - OpenBrace: "{" # 0..1
-      - Statements: # 1..22 " unchecked { x = 1; }"
-          - Statement: # 1..22 " unchecked { x = 1; }"
-              - UncheckedBlock: # 1..22 " unchecked { x = 1; }"
-                  - UncheckedKeyword: "unchecked" # 2..11
-                  - Block: # 11..22 " { x = 1; }"
-                      - OpenBrace: "{" # 12..13
-                      - Statements: # 13..20 " x = 1;"
-                          - Statement: # 13..20 " x = 1;"
-                              - ExpressionStatement: # 13..20 " x = 1;"
-                                  - Expression: # 13..19 " x = 1"
-                                      - AssignmentExpression: # 13..19 " x = 1"
-                                          - Expression: # 13..15 " x"
-                                              - Identifier: "x" # 14..15
-                                          - Equal: "=" # 16..17
-                                          - Expression: # 17..19 " 1"
-                                              - DecimalNumberExpression: # 17..19 " 1"
-                                                  - DecimalLiteral: "1" # 18..19
-                                  - Semicolon: ";" # 19..20
-                      - CloseBrace: "}" # 21..22
-      - CloseBrace: "}" # 23..24
+  - (TODO:) Block: # 0..24 "{ unchecked { x = 1; } }"
+      - (dummy:) OpenBrace: "{" # 0..1
+      - (inner:) Statements: # 1..22 " unchecked { x = 1; }"
+          - (inner:) Statement: # 1..22 " unchecked { x = 1; }"
+              - (inner:) UncheckedBlock: # 1..22 " unchecked { x = 1; }"
+                  - (dummy:) UncheckedKeyword: "unchecked" # 2..11
+                  - (inner:) Block: # 11..22 " { x = 1; }"
+                      - (dummy:) OpenBrace: "{" # 12..13
+                      - (inner:) Statements: # 13..20 " x = 1;"
+                          - (inner:) Statement: # 13..20 " x = 1;"
+                              - (inner:) ExpressionStatement: # 13..20 " x = 1;"
+                                  - (inner:) Expression: # 13..19 " x = 1"
+                                      - (operand:) AssignmentExpression: # 13..19 " x = 1"
+                                          - (left_operand:) Expression: # 13..15 " x"
+                                              - (dummy:) Identifier: "x" # 14..15
+                                          - (operator:) Equal: "=" # 16..17
+                                          - (right_operand:) Expression: # 17..19 " 1"
+                                              - (inner:) DecimalNumberExpression: # 17..19 " 1"
+                                                  - (dummy:) DecimalLiteral: "1" # 18..19
+                                  - (dummy:) Semicolon: ";" # 19..20
+                      - (dummy:) CloseBrace: "}" # 21..22
+      - (dummy:) CloseBrace: "}" # 23..24

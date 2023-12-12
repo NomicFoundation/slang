@@ -8,17 +8,17 @@ Source: >
 Errors: []
 
 Tree:
-  - ContractDefinition: # 0..39 "contract Sample {\n  type Foo is bool;\n}"
-      - ContractKeyword: "contract" # 0..8
-      - Identifier: "Sample" # 9..15
-      - OpenBrace: "{" # 16..17
-      - ContractMembers: # 18..38 "  type Foo is bool;\n"
-          - ContractMember: # 18..38 "  type Foo is bool;\n"
-              - UserDefinedValueTypeDefinition: # 18..38 "  type Foo is bool;\n"
-                  - TypeKeyword: "type" # 20..24
-                  - Identifier: "Foo" # 25..28
-                  - IsKeyword: "is" # 29..31
-                  - ElementaryType: # 31..36 " bool"
-                      - BoolKeyword: "bool" # 32..36
-                  - Semicolon: ";" # 36..37
-      - CloseBrace: "}" # 38..39
+  - (TODO:) ContractDefinition: # 0..39 "contract Sample {\n  type Foo is bool;\n}"
+      - (dummy:) ContractKeyword: "contract" # 0..8
+      - (dummy:) Identifier: "Sample" # 9..15
+      - (dummy:) OpenBrace: "{" # 16..17
+      - (inner:) ContractMembers: # 18..38 "  type Foo is bool;\n"
+          - (inner:) ContractMember: # 18..38 "  type Foo is bool;\n"
+              - (inner:) UserDefinedValueTypeDefinition: # 18..38 "  type Foo is bool;\n"
+                  - (dummy:) TypeKeyword: "type" # 20..24
+                  - (dummy:) Identifier: "Foo" # 25..28
+                  - (dummy:) IsKeyword: "is" # 29..31
+                  - (inner:) ElementaryType: # 31..36 " bool"
+                      - (dummy:) BoolKeyword: "bool" # 32..36
+                  - (dummy:) Semicolon: ";" # 36..37
+      - (dummy:) CloseBrace: "}" # 38..39

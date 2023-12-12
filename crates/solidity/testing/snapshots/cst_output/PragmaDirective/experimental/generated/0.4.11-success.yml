@@ -6,11 +6,11 @@ Source: >
 Errors: []
 
 Tree:
-  - PragmaDirective: # 0..24 "pragma experimental foo;"
-      - PragmaKeyword: "pragma" # 0..6
-      - Pragma: # 6..23 " experimental foo"
-          - ExperimentalPragma: # 6..23 " experimental foo"
-              - ExperimentalKeyword: "experimental" # 7..19
-              - ExperimentalFeature: # 19..23 " foo"
-                  - Identifier: "foo" # 20..23
-      - Semicolon: ";" # 23..24
+  - (TODO:) PragmaDirective: # 0..24 "pragma experimental foo;"
+      - (dummy:) PragmaKeyword: "pragma" # 0..6
+      - (inner:) Pragma: # 6..23 " experimental foo"
+          - (inner:) ExperimentalPragma: # 6..23 " experimental foo"
+              - (dummy:) ExperimentalKeyword: "experimental" # 7..19
+              - (inner:) ExperimentalFeature: # 19..23 " foo"
+                  - (dummy:) Identifier: "foo" # 20..23
+      - (dummy:) Semicolon: ";" # 23..24

@@ -6,5 +6,5 @@ Source: >
 Errors: []
 
 Tree:
-  - Expression: # 0..4 "auto"
-      - Identifier: "auto" # 0..4
+  - (TODO:) Expression: # 0..4 "auto"
+      - (dummy:) Identifier: "auto" # 0..4

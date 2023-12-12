@@ -14,126 +14,126 @@ Source: >
 Errors: []
 
 Tree:
-  - SourceUnit: # 0..212 "library SafeMath {\n  function tryAdd(uint256 a, ui..."
-      - SourceUnitMembers: # 0..212 "library SafeMath {\n  function tryAdd(uint256 a, ui..."
-          - SourceUnitMember: # 0..212 "library SafeMath {\n  function tryAdd(uint256 a, ui..."
-              - LibraryDefinition: # 0..212 "library SafeMath {\n  function tryAdd(uint256 a, ui..."
-                  - LibraryKeyword: "library" # 0..7
-                  - Identifier: "SafeMath" # 8..16
-                  - OpenBrace: "{" # 17..18
-                  - LibraryMembers: # 19..210 "  function tryAdd(uint256 a, uint256 b) internal p..."
-                      - ContractMember: # 19..210 "  function tryAdd(uint256 a, uint256 b) internal p..."
-                          - FunctionDefinition: # 19..210 "  function tryAdd(uint256 a, uint256 b) internal p..."
-                              - FunctionKeyword: "function" # 21..29
-                              - FunctionName: # 29..36 " tryAdd"
-                                  - Identifier: "tryAdd" # 30..36
-                              - ParametersDeclaration: # 36..58 "(uint256 a, uint256 b)"
-                                  - OpenParen: "(" # 36..37
-                                  - Parameters: # 37..57 "uint256 a, uint256 b"
-                                      - Parameter: # 37..46 "uint256 a"
-                                          - TypeName: # 37..44 "uint256"
-                                              - ElementaryType: # 37..44 "uint256"
-                                                  - UintKeyword: "uint256" # 37..44
-                                          - Identifier: "a" # 45..46
-                                      - Comma: "," # 46..47
-                                      - Parameter: # 47..57 " uint256 b"
-                                          - TypeName: # 47..55 " uint256"
-                                              - ElementaryType: # 47..55 " uint256"
-                                                  - UintKeyword: "uint256" # 48..55
-                                          - Identifier: "b" # 56..57
-                                  - CloseParen: ")" # 57..58
-                              - FunctionAttributes: # 58..72 " internal pure"
-                                  - FunctionAttribute: # 58..67 " internal"
-                                      - InternalKeyword: "internal" # 59..67
-                                  - FunctionAttribute: # 67..72 " pure"
-                                      - PureKeyword: "pure" # 68..72
-                              - ReturnsDeclaration: # 72..96 " returns (bool, uint256)"
-                                  - ReturnsKeyword: "returns" # 73..80
-                                  - ParametersDeclaration: # 80..96 " (bool, uint256)"
-                                      - OpenParen: "(" # 81..82
-                                      - Parameters: # 82..95 "bool, uint256"
-                                          - Parameter: # 82..86 "bool"
-                                              - TypeName: # 82..86 "bool"
-                                                  - ElementaryType: # 82..86 "bool"
-                                                      - BoolKeyword: "bool" # 82..86
-                                          - Comma: "," # 86..87
-                                          - Parameter: # 87..95 " uint256"
-                                              - TypeName: # 87..95 " uint256"
-                                                  - ElementaryType: # 87..95 " uint256"
-                                                      - UintKeyword: "uint256" # 88..95
-                                      - CloseParen: ")" # 95..96
-                              - FunctionBody: # 96..210 " {\n    unchecked {\n      uint256 c = a + b;\n      ..."
-                                  - Block: # 96..210 " {\n    unchecked {\n      uint256 c = a + b;\n      ..."
-                                      - OpenBrace: "{" # 97..98
-                                      - Statements: # 99..206 "    unchecked {\n      uint256 c = a + b;\n      if ..."
-                                          - Statement: # 99..206 "    unchecked {\n      uint256 c = a + b;\n      if ..."
-                                              - UncheckedBlock: # 99..206 "    unchecked {\n      uint256 c = a + b;\n      if ..."
-                                                  - UncheckedKeyword: "unchecked" # 103..112
-                                                  - Block: # 112..206 " {\n      uint256 c = a + b;\n      if (c < a) retur..."
-                                                      - OpenBrace: "{" # 113..114
-                                                      - Statements: # 115..200 "      uint256 c = a + b;\n      if (c < a) return (..."
-                                                          - Statement: # 115..140 "      uint256 c = a + b;\n"
-                                                              - VariableDeclarationStatement: # 115..140 "      uint256 c = a + b;\n"
-                                                                  - VariableDeclarationType: # 115..128 "      uint256"
-                                                                      - TypeName: # 115..128 "      uint256"
-                                                                          - ElementaryType: # 115..128 "      uint256"
-                                                                              - UintKeyword: "uint256" # 121..128
-                                                                  - Identifier: "c" # 129..130
-                                                                  - VariableDeclarationValue: # 130..138 " = a + b"
-                                                                      - Equal: "=" # 131..132
-                                                                      - Expression: # 132..138 " a + b"
-                                                                          - AdditiveExpression: # 132..138 " a + b"
-                                                                              - Expression: # 132..134 " a"
-                                                                                  - Identifier: "a" # 133..134
-                                                                              - Plus: "+" # 135..136
-                                                                              - Expression: # 136..138 " b"
-                                                                                  - Identifier: "b" # 137..138
-                                                                  - Semicolon: ";" # 138..139
-                                                          - Statement: # 140..176 "      if (c < a) return (false, 0);\n"
-                                                              - IfStatement: # 140..176 "      if (c < a) return (false, 0);\n"
-                                                                  - IfKeyword: "if" # 146..148
-                                                                  - OpenParen: "(" # 149..150
-                                                                  - Expression: # 150..155 "c < a"
-                                                                      - ComparisonExpression: # 150..155 "c < a"
-                                                                          - Expression: # 150..151 "c"
-                                                                              - Identifier: "c" # 150..151
-                                                                          - LessThan: "<" # 152..153
-                                                                          - Expression: # 153..155 " a"
-                                                                              - Identifier: "a" # 154..155
-                                                                  - CloseParen: ")" # 155..156
-                                                                  - Statement: # 156..176 " return (false, 0);\n"
-                                                                      - ReturnStatement: # 156..176 " return (false, 0);\n"
-                                                                          - ReturnKeyword: "return" # 157..163
-                                                                          - Expression: # 163..174 " (false, 0)"
-                                                                              - TupleExpression: # 163..174 " (false, 0)"
-                                                                                  - OpenParen: "(" # 164..165
-                                                                                  - TupleValues: # 165..173 "false, 0"
-                                                                                      - TupleValue: # 165..170 "false"
-                                                                                          - Expression: # 165..170 "false"
-                                                                                              - FalseKeyword: "false" # 165..170
-                                                                                      - Comma: "," # 170..171
-                                                                                      - TupleValue: # 171..173 " 0"
-                                                                                          - Expression: # 171..173 " 0"
-                                                                                              - DecimalNumberExpression: # 171..173 " 0"
-                                                                                                  - DecimalLiteral: "0" # 172..173
-                                                                                  - CloseParen: ")" # 173..174
-                                                                          - Semicolon: ";" # 174..175
-                                                          - Statement: # 176..200 "      return (true, c);\n"
-                                                              - ReturnStatement: # 176..200 "      return (true, c);\n"
-                                                                  - ReturnKeyword: "return" # 182..188
-                                                                  - Expression: # 188..198 " (true, c)"
-                                                                      - TupleExpression: # 188..198 " (true, c)"
-                                                                          - OpenParen: "(" # 189..190
-                                                                          - TupleValues: # 190..197 "true, c"
-                                                                              - TupleValue: # 190..194 "true"
-                                                                                  - Expression: # 190..194 "true"
-                                                                                      - TrueKeyword: "true" # 190..194
-                                                                              - Comma: "," # 194..195
-                                                                              - TupleValue: # 195..197 " c"
-                                                                                  - Expression: # 195..197 " c"
-                                                                                      - Identifier: "c" # 196..197
-                                                                          - CloseParen: ")" # 197..198
-                                                                  - Semicolon: ";" # 198..199
-                                                      - CloseBrace: "}" # 204..205
-                                      - CloseBrace: "}" # 208..209
-                  - CloseBrace: "}" # 210..211
+  - (TODO:) SourceUnit: # 0..212 "library SafeMath {\n  function tryAdd(uint256 a, ui..."
+      - (inner:) SourceUnitMembers: # 0..212 "library SafeMath {\n  function tryAdd(uint256 a, ui..."
+          - (inner:) SourceUnitMember: # 0..212 "library SafeMath {\n  function tryAdd(uint256 a, ui..."
+              - (inner:) LibraryDefinition: # 0..212 "library SafeMath {\n  function tryAdd(uint256 a, ui..."
+                  - (dummy:) LibraryKeyword: "library" # 0..7
+                  - (dummy:) Identifier: "SafeMath" # 8..16
+                  - (dummy:) OpenBrace: "{" # 17..18
+                  - (inner:) LibraryMembers: # 19..210 "  function tryAdd(uint256 a, uint256 b) internal p..."
+                      - (inner:) ContractMember: # 19..210 "  function tryAdd(uint256 a, uint256 b) internal p..."
+                          - (inner:) FunctionDefinition: # 19..210 "  function tryAdd(uint256 a, uint256 b) internal p..."
+                              - (dummy:) FunctionKeyword: "function" # 21..29
+                              - (inner:) FunctionName: # 29..36 " tryAdd"
+                                  - (dummy:) Identifier: "tryAdd" # 30..36
+                              - (inner:) ParametersDeclaration: # 36..58 "(uint256 a, uint256 b)"
+                                  - (dummy:) OpenParen: "(" # 36..37
+                                  - (inner:) Parameters: # 37..57 "uint256 a, uint256 b"
+                                      - (inner:) Parameter: # 37..46 "uint256 a"
+                                          - (inner:) TypeName: # 37..44 "uint256"
+                                              - (inner:) ElementaryType: # 37..44 "uint256"
+                                                  - (dummy:) UintKeyword: "uint256" # 37..44
+                                          - (dummy:) Identifier: "a" # 45..46
+                                      - (dummy:) Comma: "," # 46..47
+                                      - (inner:) Parameter: # 47..57 " uint256 b"
+                                          - (inner:) TypeName: # 47..55 " uint256"
+                                              - (inner:) ElementaryType: # 47..55 " uint256"
+                                                  - (dummy:) UintKeyword: "uint256" # 48..55
+                                          - (dummy:) Identifier: "b" # 56..57
+                                  - (dummy:) CloseParen: ")" # 57..58
+                              - (inner:) FunctionAttributes: # 58..72 " internal pure"
+                                  - (inner:) FunctionAttribute: # 58..67 " internal"
+                                      - (dummy:) InternalKeyword: "internal" # 59..67
+                                  - (inner:) FunctionAttribute: # 67..72 " pure"
+                                      - (dummy:) PureKeyword: "pure" # 68..72
+                              - (inner:) ReturnsDeclaration: # 72..96 " returns (bool, uint256)"
+                                  - (dummy:) ReturnsKeyword: "returns" # 73..80
+                                  - (inner:) ParametersDeclaration: # 80..96 " (bool, uint256)"
+                                      - (dummy:) OpenParen: "(" # 81..82
+                                      - (inner:) Parameters: # 82..95 "bool, uint256"
+                                          - (inner:) Parameter: # 82..86 "bool"
+                                              - (inner:) TypeName: # 82..86 "bool"
+                                                  - (inner:) ElementaryType: # 82..86 "bool"
+                                                      - (dummy:) BoolKeyword: "bool" # 82..86
+                                          - (dummy:) Comma: "," # 86..87
+                                          - (inner:) Parameter: # 87..95 " uint256"
+                                              - (inner:) TypeName: # 87..95 " uint256"
+                                                  - (inner:) ElementaryType: # 87..95 " uint256"
+                                                      - (dummy:) UintKeyword: "uint256" # 88..95
+                                      - (dummy:) CloseParen: ")" # 95..96
+                              - (inner:) FunctionBody: # 96..210 " {\n    unchecked {\n      uint256 c = a + b;\n      ..."
+                                  - (inner:) Block: # 96..210 " {\n    unchecked {\n      uint256 c = a + b;\n      ..."
+                                      - (dummy:) OpenBrace: "{" # 97..98
+                                      - (inner:) Statements: # 99..206 "    unchecked {\n      uint256 c = a + b;\n      if ..."
+                                          - (inner:) Statement: # 99..206 "    unchecked {\n      uint256 c = a + b;\n      if ..."
+                                              - (inner:) UncheckedBlock: # 99..206 "    unchecked {\n      uint256 c = a + b;\n      if ..."
+                                                  - (dummy:) UncheckedKeyword: "unchecked" # 103..112
+                                                  - (inner:) Block: # 112..206 " {\n      uint256 c = a + b;\n      if (c < a) retur..."
+                                                      - (dummy:) OpenBrace: "{" # 113..114
+                                                      - (inner:) Statements: # 115..200 "      uint256 c = a + b;\n      if (c < a) return (..."
+                                                          - (inner:) Statement: # 115..140 "      uint256 c = a + b;\n"
+                                                              - (inner:) VariableDeclarationStatement: # 115..140 "      uint256 c = a + b;\n"
+                                                                  - (inner:) VariableDeclarationType: # 115..128 "      uint256"
+                                                                      - (inner:) TypeName: # 115..128 "      uint256"
+                                                                          - (inner:) ElementaryType: # 115..128 "      uint256"
+                                                                              - (dummy:) UintKeyword: "uint256" # 121..128
+                                                                  - (dummy:) Identifier: "c" # 129..130
+                                                                  - (inner:) VariableDeclarationValue: # 130..138 " = a + b"
+                                                                      - (dummy:) Equal: "=" # 131..132
+                                                                      - (inner:) Expression: # 132..138 " a + b"
+                                                                          - (operand:) AdditiveExpression: # 132..138 " a + b"
+                                                                              - (left_operand:) Expression: # 132..134 " a"
+                                                                                  - (dummy:) Identifier: "a" # 133..134
+                                                                              - (operator:) Plus: "+" # 135..136
+                                                                              - (right_operand:) Expression: # 136..138 " b"
+                                                                                  - (dummy:) Identifier: "b" # 137..138
+                                                                  - (dummy:) Semicolon: ";" # 138..139
+                                                          - (inner:) Statement: # 140..176 "      if (c < a) return (false, 0);\n"
+                                                              - (inner:) IfStatement: # 140..176 "      if (c < a) return (false, 0);\n"
+                                                                  - (dummy:) IfKeyword: "if" # 146..148
+                                                                  - (dummy:) OpenParen: "(" # 149..150
+                                                                  - (inner:) Expression: # 150..155 "c < a"
+                                                                      - (operand:) ComparisonExpression: # 150..155 "c < a"
+                                                                          - (left_operand:) Expression: # 150..151 "c"
+                                                                              - (dummy:) Identifier: "c" # 150..151
+                                                                          - (operator:) LessThan: "<" # 152..153
+                                                                          - (right_operand:) Expression: # 153..155 " a"
+                                                                              - (dummy:) Identifier: "a" # 154..155
+                                                                  - (dummy:) CloseParen: ")" # 155..156
+                                                                  - (inner:) Statement: # 156..176 " return (false, 0);\n"
+                                                                      - (inner:) ReturnStatement: # 156..176 " return (false, 0);\n"
+                                                                          - (dummy:) ReturnKeyword: "return" # 157..163
+                                                                          - (inner:) Expression: # 163..174 " (false, 0)"
+                                                                              - (inner:) TupleExpression: # 163..174 " (false, 0)"
+                                                                                  - (dummy:) OpenParen: "(" # 164..165
+                                                                                  - (inner:) TupleValues: # 165..173 "false, 0"
+                                                                                      - (inner:) TupleValue: # 165..170 "false"
+                                                                                          - (inner:) Expression: # 165..170 "false"
+                                                                                              - (dummy:) FalseKeyword: "false" # 165..170
+                                                                                      - (dummy:) Comma: "," # 170..171
+                                                                                      - (inner:) TupleValue: # 171..173 " 0"
+                                                                                          - (inner:) Expression: # 171..173 " 0"
+                                                                                              - (inner:) DecimalNumberExpression: # 171..173 " 0"
+                                                                                                  - (dummy:) DecimalLiteral: "0" # 172..173
+                                                                                  - (dummy:) CloseParen: ")" # 173..174
+                                                                          - (dummy:) Semicolon: ";" # 174..175
+                                                          - (inner:) Statement: # 176..200 "      return (true, c);\n"
+                                                              - (inner:) ReturnStatement: # 176..200 "      return (true, c);\n"
+                                                                  - (dummy:) ReturnKeyword: "return" # 182..188
+                                                                  - (inner:) Expression: # 188..198 " (true, c)"
+                                                                      - (inner:) TupleExpression: # 188..198 " (true, c)"
+                                                                          - (dummy:) OpenParen: "(" # 189..190
+                                                                          - (inner:) TupleValues: # 190..197 "true, c"
+                                                                              - (inner:) TupleValue: # 190..194 "true"
+                                                                                  - (inner:) Expression: # 190..194 "true"
+                                                                                      - (dummy:) TrueKeyword: "true" # 190..194
+                                                                              - (dummy:) Comma: "," # 194..195
+                                                                              - (inner:) TupleValue: # 195..197 " c"
+                                                                                  - (inner:) Expression: # 195..197 " c"
+                                                                                      - (dummy:) Identifier: "c" # 196..197
+                                                                          - (dummy:) CloseParen: ")" # 197..198
+                                                                  - (dummy:) Semicolon: ";" # 198..199
+                                                      - (dummy:) CloseBrace: "}" # 204..205
+                                      - (dummy:) CloseBrace: "}" # 208..209
+                  - (dummy:) CloseBrace: "}" # 210..211

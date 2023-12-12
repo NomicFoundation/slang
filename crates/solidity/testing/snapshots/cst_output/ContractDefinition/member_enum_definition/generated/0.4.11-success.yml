@@ -12,21 +12,21 @@ Source: >
 Errors: []
 
 Tree:
-  - ContractDefinition: # 0..58 "contract Sample {\n  enum State {\n    A,\n    B,\n   ..."
-      - ContractKeyword: "contract" # 0..8
-      - Identifier: "Sample" # 9..15
-      - OpenBrace: "{" # 16..17
-      - ContractMembers: # 18..57 "  enum State {\n    A,\n    B,\n    C\n  }\n"
-          - ContractMember: # 18..57 "  enum State {\n    A,\n    B,\n    C\n  }\n"
-              - EnumDefinition: # 18..57 "  enum State {\n    A,\n    B,\n    C\n  }\n"
-                  - EnumKeyword: "enum" # 20..24
-                  - Identifier: "State" # 25..30
-                  - OpenBrace: "{" # 31..32
-                  - EnumMembers: # 33..53 "    A,\n    B,\n    C\n"
-                      - Identifier: "A" # 37..38
-                      - Comma: "," # 38..39
-                      - Identifier: "B" # 44..45
-                      - Comma: "," # 45..46
-                      - Identifier: "C" # 51..52
-                  - CloseBrace: "}" # 55..56
-      - CloseBrace: "}" # 57..58
+  - (TODO:) ContractDefinition: # 0..58 "contract Sample {\n  enum State {\n    A,\n    B,\n   ..."
+      - (dummy:) ContractKeyword: "contract" # 0..8
+      - (dummy:) Identifier: "Sample" # 9..15
+      - (dummy:) OpenBrace: "{" # 16..17
+      - (inner:) ContractMembers: # 18..57 "  enum State {\n    A,\n    B,\n    C\n  }\n"
+          - (inner:) ContractMember: # 18..57 "  enum State {\n    A,\n    B,\n    C\n  }\n"
+              - (inner:) EnumDefinition: # 18..57 "  enum State {\n    A,\n    B,\n    C\n  }\n"
+                  - (dummy:) EnumKeyword: "enum" # 20..24
+                  - (dummy:) Identifier: "State" # 25..30
+                  - (dummy:) OpenBrace: "{" # 31..32
+                  - (inner:) EnumMembers: # 33..53 "    A,\n    B,\n    C\n"
+                      - (dummy:) Identifier: "A" # 37..38
+                      - (dummy:) Comma: "," # 38..39
+                      - (dummy:) Identifier: "B" # 44..45
+                      - (dummy:) Comma: "," # 45..46
+                      - (dummy:) Identifier: "C" # 51..52
+                  - (dummy:) CloseBrace: "}" # 55..56
+      - (dummy:) CloseBrace: "}" # 57..58

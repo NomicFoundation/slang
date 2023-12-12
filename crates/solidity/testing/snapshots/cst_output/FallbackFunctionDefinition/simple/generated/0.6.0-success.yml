@@ -6,12 +6,12 @@ Source: >
 Errors: []
 
 Tree:
-  - FallbackFunctionDefinition: # 0..14 "fallback () {}"
-      - FallbackKeyword: "fallback" # 0..8
-      - ParametersDeclaration: # 8..11 " ()"
-          - OpenParen: "(" # 9..10
-          - CloseParen: ")" # 10..11
-      - FunctionBody: # 11..14 " {}"
-          - Block: # 11..14 " {}"
-              - OpenBrace: "{" # 12..13
-              - CloseBrace: "}" # 13..14
+  - (TODO:) FallbackFunctionDefinition: # 0..14 "fallback () {}"
+      - (dummy:) FallbackKeyword: "fallback" # 0..8
+      - (inner:) ParametersDeclaration: # 8..11 " ()"
+          - (dummy:) OpenParen: "(" # 9..10
+          - (dummy:) CloseParen: ")" # 10..11
+      - (inner:) FunctionBody: # 11..14 " {}"
+          - (inner:) Block: # 11..14 " {}"
+              - (dummy:) OpenBrace: "{" # 12..13
+              - (dummy:) CloseBrace: "}" # 13..14

@@ -6,10 +6,10 @@ Source: >
 Errors: []
 
 Tree:
-  - UserDefinedValueTypeDefinition: # 0..17 "type Foo is bool;"
-      - TypeKeyword: "type" # 0..4
-      - Identifier: "Foo" # 5..8
-      - IsKeyword: "is" # 9..11
-      - ElementaryType: # 11..16 " bool"
-          - BoolKeyword: "bool" # 12..16
-      - Semicolon: ";" # 16..17
+  - (TODO:) UserDefinedValueTypeDefinition: # 0..17 "type Foo is bool;"
+      - (dummy:) TypeKeyword: "type" # 0..4
+      - (dummy:) Identifier: "Foo" # 5..8
+      - (dummy:) IsKeyword: "is" # 9..11
+      - (inner:) ElementaryType: # 11..16 " bool"
+          - (dummy:) BoolKeyword: "bool" # 12..16
+      - (dummy:) Semicolon: ";" # 16..17

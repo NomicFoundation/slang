@@ -20,7 +20,7 @@ pub fn extract_version_pragmas(
     let mut cursor = output.create_tree_cursor();
 
     while !cursor.is_completed() {
-        let node = &cursor.node();
+        let node = &cursor.node().1;
 
         if matches!(node, Node::Rule(rule) if rule.kind == RuleKind::VersionPragmaExpression) {
             pragmas.push(extract_pragma(node).with_context(|| {

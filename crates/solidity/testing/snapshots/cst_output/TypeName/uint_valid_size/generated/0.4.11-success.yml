@@ -6,6 +6,6 @@ Source: >
 Errors: []
 
 Tree:
-  - TypeName: # 0..6 "uint32"
-      - ElementaryType: # 0..6 "uint32"
-          - UintKeyword: "uint32" # 0..6
+  - (TODO:) TypeName: # 0..6 "uint32"
+      - (inner:) ElementaryType: # 0..6 "uint32"
+          - (dummy:) UintKeyword: "uint32" # 0..6

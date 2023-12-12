@@ -6,20 +6,20 @@ Source: >
 Errors: []
 
 Tree:
-  - Expression: # 0..13 "a * b + c * d"
-      - AdditiveExpression: # 0..13 "a * b + c * d"
-          - Expression: # 0..5 "a * b"
-              - MultiplicativeExpression: # 0..5 "a * b"
-                  - Expression: # 0..1 "a"
-                      - Identifier: "a" # 0..1
-                  - Asterisk: "*" # 2..3
-                  - Expression: # 3..5 " b"
-                      - Identifier: "b" # 4..5
-          - Plus: "+" # 6..7
-          - Expression: # 7..13 " c * d"
-              - MultiplicativeExpression: # 7..13 " c * d"
-                  - Expression: # 7..9 " c"
-                      - Identifier: "c" # 8..9
-                  - Asterisk: "*" # 10..11
-                  - Expression: # 11..13 " d"
-                      - Identifier: "d" # 12..13
+  - (TODO:) Expression: # 0..13 "a * b + c * d"
+      - (operand:) AdditiveExpression: # 0..13 "a * b + c * d"
+          - (left_operand:) Expression: # 0..5 "a * b"
+              - (operand:) MultiplicativeExpression: # 0..5 "a * b"
+                  - (left_operand:) Expression: # 0..1 "a"
+                      - (dummy:) Identifier: "a" # 0..1
+                  - (operator:) Asterisk: "*" # 2..3
+                  - (right_operand:) Expression: # 3..5 " b"
+                      - (dummy:) Identifier: "b" # 4..5
+          - (operator:) Plus: "+" # 6..7
+          - (right_operand:) Expression: # 7..13 " c * d"
+              - (operand:) MultiplicativeExpression: # 7..13 " c * d"
+                  - (left_operand:) Expression: # 7..9 " c"
+                      - (dummy:) Identifier: "c" # 8..9
+                  - (operator:) Asterisk: "*" # 10..11
+                  - (right_operand:) Expression: # 11..13 " d"
+                      - (dummy:) Identifier: "d" # 12..13
