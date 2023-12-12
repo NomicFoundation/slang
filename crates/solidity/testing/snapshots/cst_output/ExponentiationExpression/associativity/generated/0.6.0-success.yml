@@ -6,14 +6,14 @@ Source: >
 Errors: []
 
 Tree:
-  - ExponentiationExpression (Rule): # 0..12 "x ** y ** z\n"
-      - Expression (Rule): # 0..1 "x"
-          - Identifier (Token): "x" # 0..1
-      - AsteriskAsterisk (Token): "**" # 2..4
-      - Expression (Rule): # 4..12 " y ** z\n"
-          - ExponentiationExpression (Rule): # 4..12 " y ** z\n"
-              - Expression (Rule): # 4..6 " y"
-                  - Identifier (Token): "y" # 5..6
-              - AsteriskAsterisk (Token): "**" # 7..9
-              - Expression (Rule): # 9..12 " z\n"
-                  - Identifier (Token): "z" # 10..11
+  - ExponentiationExpression: # 0..12 "x ** y ** z\n"
+      - Expression: # 0..1 "x"
+          - Identifier: "x" # 0..1
+      - AsteriskAsterisk: "**" # 2..4
+      - Expression: # 4..12 " y ** z\n"
+          - ExponentiationExpression: # 4..12 " y ** z\n"
+              - Expression: # 4..6 " y"
+                  - Identifier: "y" # 5..6
+              - AsteriskAsterisk: "**" # 7..9
+              - Expression: # 9..12 " z\n"
+                  - Identifier: "z" # 10..11

@@ -6,6 +6,6 @@ Source: >
 Errors: []
 
 Tree:
-  - TypeName (Rule): # 0..8 "bytes320"
-      - IdentifierPath (Rule): # 0..8 "bytes320"
-          - Identifier (Token): "bytes320" # 0..8
+  - TypeName: # 0..8 "bytes320"
+      - IdentifierPath: # 0..8 "bytes320"
+          - Identifier: "bytes320" # 0..8

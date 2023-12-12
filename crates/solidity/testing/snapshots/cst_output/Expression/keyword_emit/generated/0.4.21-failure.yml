@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - SKIPPED (Token): "emit" # 0..4
+  - SKIPPED: "emit" # 0..4

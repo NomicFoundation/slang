@@ -6,6 +6,6 @@ Source: >
 Errors: []
 
 Tree:
-  - YulExpression (Rule): # 0..5 "0x123"
-      - YulLiteral (Rule): # 0..5 "0x123"
-          - YulHexLiteral (Token): "0x123" # 0..5
+  - YulExpression: # 0..5 "0x123"
+      - YulLiteral: # 0..5 "0x123"
+          - YulHexLiteral: "0x123" # 0..5

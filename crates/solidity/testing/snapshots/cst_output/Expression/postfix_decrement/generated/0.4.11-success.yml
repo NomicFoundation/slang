@@ -6,8 +6,8 @@ Source: >
 Errors: []
 
 Tree:
-  - Expression (Rule): # 0..5 "foo--"
-      - PostfixExpression (Rule): # 0..5 "foo--"
-          - Expression (Rule): # 0..3 "foo"
-              - Identifier (Token): "foo" # 0..3
-          - MinusMinus (Token): "--" # 3..5
+  - Expression: # 0..5 "foo--"
+      - PostfixExpression: # 0..5 "foo--"
+          - Expression: # 0..3 "foo"
+              - Identifier: "foo" # 0..3
+          - MinusMinus: "--" # 3..5

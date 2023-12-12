@@ -16,9 +16,9 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - ContractDefinition (Rule): # 0..39 "contract Sample {\n  type Foo is bool;\n}"
-      - ContractKeyword (Token): "contract" # 0..8
-      - Identifier (Token): "Sample" # 9..15
-      - OpenBrace (Token): "{" # 16..17
-      - SKIPPED (Token): "type Foo is bool;\n" # 20..38
-      - CloseBrace (Token): "}" # 38..39
+  - ContractDefinition: # 0..39 "contract Sample {\n  type Foo is bool;\n}"
+      - ContractKeyword: "contract" # 0..8
+      - Identifier: "Sample" # 9..15
+      - OpenBrace: "{" # 16..17
+      - SKIPPED: "type Foo is bool;\n" # 20..38
+      - CloseBrace: "}" # 38..39

@@ -14,7 +14,7 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - Block (Rule): # 0..24 "{ unchecked { x = 1; } }"
-      - OpenBrace (Token): "{" # 0..1
-      - SKIPPED (Token): "unchecked { x = 1; } " # 2..23
-      - CloseBrace (Token): "}" # 23..24
+  - Block: # 0..24 "{ unchecked { x = 1; } }"
+      - OpenBrace: "{" # 0..1
+      - SKIPPED: "unchecked { x = 1; } " # 2..23
+      - CloseBrace: "}" # 23..24

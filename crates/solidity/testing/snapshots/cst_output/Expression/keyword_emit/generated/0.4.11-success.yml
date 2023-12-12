@@ -6,5 +6,5 @@ Source: >
 Errors: []
 
 Tree:
-  - Expression (Rule): # 0..4 "emit"
-      - Identifier (Token): "emit" # 0..4
+  - Expression: # 0..4 "emit"
+      - Identifier: "emit" # 0..4

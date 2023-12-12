@@ -6,5 +6,5 @@ Source: >
 Errors: []
 
 Tree:
-  - Expression (Rule): # 0..6 "finney"
-      - Identifier (Token): "finney" # 0..6
+  - Expression: # 0..6 "finney"
+      - Identifier: "finney" # 0..6

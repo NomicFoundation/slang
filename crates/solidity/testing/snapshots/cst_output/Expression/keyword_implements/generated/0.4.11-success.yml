@@ -6,5 +6,5 @@ Source: >
 Errors: []
 
 Tree:
-  - Expression (Rule): # 0..10 "implements"
-      - Identifier (Token): "implements" # 0..10
+  - Expression: # 0..10 "implements"
+      - Identifier: "implements" # 0..10

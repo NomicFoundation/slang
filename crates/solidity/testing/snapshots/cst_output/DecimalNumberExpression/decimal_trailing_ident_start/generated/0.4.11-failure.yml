@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - SKIPPED (Token): "1a\n" # 0..3
+  - SKIPPED: "1a\n" # 0..3

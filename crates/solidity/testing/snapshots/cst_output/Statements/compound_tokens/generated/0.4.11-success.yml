@@ -18,134 +18,134 @@ Source: >
 Errors: []
 
 Tree:
-  - Statements (Rule): # 0..106 "a && b;\na &= b;\na || b;\na |= b;\na / b;\na /= b;\na >..."
-      - Statement (Rule): # 0..8 "a && b;\n"
-          - ExpressionStatement (Rule): # 0..8 "a && b;\n"
-              - Expression (Rule): # 0..6 "a && b"
-                  - AndExpression (Rule): # 0..6 "a && b"
-                      - Expression (Rule): # 0..1 "a"
-                          - Identifier (Token): "a" # 0..1
-                      - AmpersandAmpersand (Token): "&&" # 2..4
-                      - Expression (Rule): # 4..6 " b"
-                          - Identifier (Token): "b" # 5..6
-              - Semicolon (Token): ";" # 6..7
-      - Statement (Rule): # 8..16 "a &= b;\n"
-          - ExpressionStatement (Rule): # 8..16 "a &= b;\n"
-              - Expression (Rule): # 8..14 "a &= b"
-                  - AssignmentExpression (Rule): # 8..14 "a &= b"
-                      - Expression (Rule): # 8..9 "a"
-                          - Identifier (Token): "a" # 8..9
-                      - AmpersandEqual (Token): "&=" # 10..12
-                      - Expression (Rule): # 12..14 " b"
-                          - Identifier (Token): "b" # 13..14
-              - Semicolon (Token): ";" # 14..15
-      - Statement (Rule): # 16..24 "a || b;\n"
-          - ExpressionStatement (Rule): # 16..24 "a || b;\n"
-              - Expression (Rule): # 16..22 "a || b"
-                  - OrExpression (Rule): # 16..22 "a || b"
-                      - Expression (Rule): # 16..17 "a"
-                          - Identifier (Token): "a" # 16..17
-                      - BarBar (Token): "||" # 18..20
-                      - Expression (Rule): # 20..22 " b"
-                          - Identifier (Token): "b" # 21..22
-              - Semicolon (Token): ";" # 22..23
-      - Statement (Rule): # 24..32 "a |= b;\n"
-          - ExpressionStatement (Rule): # 24..32 "a |= b;\n"
-              - Expression (Rule): # 24..30 "a |= b"
-                  - AssignmentExpression (Rule): # 24..30 "a |= b"
-                      - Expression (Rule): # 24..25 "a"
-                          - Identifier (Token): "a" # 24..25
-                      - BarEqual (Token): "|=" # 26..28
-                      - Expression (Rule): # 28..30 " b"
-                          - Identifier (Token): "b" # 29..30
-              - Semicolon (Token): ";" # 30..31
-      - Statement (Rule): # 32..39 "a / b;\n"
-          - ExpressionStatement (Rule): # 32..39 "a / b;\n"
-              - Expression (Rule): # 32..37 "a / b"
-                  - MultiplicativeExpression (Rule): # 32..37 "a / b"
-                      - Expression (Rule): # 32..33 "a"
-                          - Identifier (Token): "a" # 32..33
-                      - Slash (Token): "/" # 34..35
-                      - Expression (Rule): # 35..37 " b"
-                          - Identifier (Token): "b" # 36..37
-              - Semicolon (Token): ";" # 37..38
-      - Statement (Rule): # 39..47 "a /= b;\n"
-          - ExpressionStatement (Rule): # 39..47 "a /= b;\n"
-              - Expression (Rule): # 39..45 "a /= b"
-                  - AssignmentExpression (Rule): # 39..45 "a /= b"
-                      - Expression (Rule): # 39..40 "a"
-                          - Identifier (Token): "a" # 39..40
-                      - SlashEqual (Token): "/=" # 41..43
-                      - Expression (Rule): # 43..45 " b"
-                          - Identifier (Token): "b" # 44..45
-              - Semicolon (Token): ";" # 45..46
-      - Statement (Rule): # 47..54 "a > b;\n"
-          - ExpressionStatement (Rule): # 47..54 "a > b;\n"
-              - Expression (Rule): # 47..52 "a > b"
-                  - ComparisonExpression (Rule): # 47..52 "a > b"
-                      - Expression (Rule): # 47..48 "a"
-                          - Identifier (Token): "a" # 47..48
-                      - GreaterThan (Token): ">" # 49..50
-                      - Expression (Rule): # 50..52 " b"
-                          - Identifier (Token): "b" # 51..52
-              - Semicolon (Token): ";" # 52..53
-      - Statement (Rule): # 54..62 "a >= b;\n"
-          - ExpressionStatement (Rule): # 54..62 "a >= b;\n"
-              - Expression (Rule): # 54..60 "a >= b"
-                  - ComparisonExpression (Rule): # 54..60 "a >= b"
-                      - Expression (Rule): # 54..55 "a"
-                          - Identifier (Token): "a" # 54..55
-                      - GreaterThanEqual (Token): ">=" # 56..58
-                      - Expression (Rule): # 58..60 " b"
-                          - Identifier (Token): "b" # 59..60
-              - Semicolon (Token): ";" # 60..61
-      - Statement (Rule): # 62..70 "a >> b;\n"
-          - ExpressionStatement (Rule): # 62..70 "a >> b;\n"
-              - Expression (Rule): # 62..68 "a >> b"
-                  - ShiftExpression (Rule): # 62..68 "a >> b"
-                      - Expression (Rule): # 62..63 "a"
-                          - Identifier (Token): "a" # 62..63
-                      - GreaterThanGreaterThan (Token): ">>" # 64..66
-                      - Expression (Rule): # 66..68 " b"
-                          - Identifier (Token): "b" # 67..68
-              - Semicolon (Token): ";" # 68..69
-      - Statement (Rule): # 70..79 "a >>= b;\n"
-          - ExpressionStatement (Rule): # 70..79 "a >>= b;\n"
-              - Expression (Rule): # 70..77 "a >>= b"
-                  - AssignmentExpression (Rule): # 70..77 "a >>= b"
-                      - Expression (Rule): # 70..71 "a"
-                          - Identifier (Token): "a" # 70..71
-                      - GreaterThanGreaterThanEqual (Token): ">>=" # 72..75
-                      - Expression (Rule): # 75..77 " b"
-                          - Identifier (Token): "b" # 76..77
-              - Semicolon (Token): ";" # 77..78
-      - Statement (Rule): # 79..89 "a >>>= b;\n"
-          - ExpressionStatement (Rule): # 79..89 "a >>>= b;\n"
-              - Expression (Rule): # 79..87 "a >>>= b"
-                  - AssignmentExpression (Rule): # 79..87 "a >>>= b"
-                      - Expression (Rule): # 79..80 "a"
-                          - Identifier (Token): "a" # 79..80
-                      - GreaterThanGreaterThanGreaterThanEqual (Token): ">>>=" # 81..85
-                      - Expression (Rule): # 85..87 " b"
-                          - Identifier (Token): "b" # 86..87
-              - Semicolon (Token): ";" # 87..88
-      - Statement (Rule): # 89..97 "a << b;\n"
-          - ExpressionStatement (Rule): # 89..97 "a << b;\n"
-              - Expression (Rule): # 89..95 "a << b"
-                  - ShiftExpression (Rule): # 89..95 "a << b"
-                      - Expression (Rule): # 89..90 "a"
-                          - Identifier (Token): "a" # 89..90
-                      - LessThanLessThan (Token): "<<" # 91..93
-                      - Expression (Rule): # 93..95 " b"
-                          - Identifier (Token): "b" # 94..95
-              - Semicolon (Token): ";" # 95..96
-      - Statement (Rule): # 97..106 "a <<= b;\n"
-          - ExpressionStatement (Rule): # 97..106 "a <<= b;\n"
-              - Expression (Rule): # 97..104 "a <<= b"
-                  - AssignmentExpression (Rule): # 97..104 "a <<= b"
-                      - Expression (Rule): # 97..98 "a"
-                          - Identifier (Token): "a" # 97..98
-                      - LessThanLessThanEqual (Token): "<<=" # 99..102
-                      - Expression (Rule): # 102..104 " b"
-                          - Identifier (Token): "b" # 103..104
-              - Semicolon (Token): ";" # 104..105
+  - Statements: # 0..106 "a && b;\na &= b;\na || b;\na |= b;\na / b;\na /= b;\na >..."
+      - Statement: # 0..8 "a && b;\n"
+          - ExpressionStatement: # 0..8 "a && b;\n"
+              - Expression: # 0..6 "a && b"
+                  - AndExpression: # 0..6 "a && b"
+                      - Expression: # 0..1 "a"
+                          - Identifier: "a" # 0..1
+                      - AmpersandAmpersand: "&&" # 2..4
+                      - Expression: # 4..6 " b"
+                          - Identifier: "b" # 5..6
+              - Semicolon: ";" # 6..7
+      - Statement: # 8..16 "a &= b;\n"
+          - ExpressionStatement: # 8..16 "a &= b;\n"
+              - Expression: # 8..14 "a &= b"
+                  - AssignmentExpression: # 8..14 "a &= b"
+                      - Expression: # 8..9 "a"
+                          - Identifier: "a" # 8..9
+                      - AmpersandEqual: "&=" # 10..12
+                      - Expression: # 12..14 " b"
+                          - Identifier: "b" # 13..14
+              - Semicolon: ";" # 14..15
+      - Statement: # 16..24 "a || b;\n"
+          - ExpressionStatement: # 16..24 "a || b;\n"
+              - Expression: # 16..22 "a || b"
+                  - OrExpression: # 16..22 "a || b"
+                      - Expression: # 16..17 "a"
+                          - Identifier: "a" # 16..17
+                      - BarBar: "||" # 18..20
+                      - Expression: # 20..22 " b"
+                          - Identifier: "b" # 21..22
+              - Semicolon: ";" # 22..23
+      - Statement: # 24..32 "a |= b;\n"
+          - ExpressionStatement: # 24..32 "a |= b;\n"
+              - Expression: # 24..30 "a |= b"
+                  - AssignmentExpression: # 24..30 "a |= b"
+                      - Expression: # 24..25 "a"
+                          - Identifier: "a" # 24..25
+                      - BarEqual: "|=" # 26..28
+                      - Expression: # 28..30 " b"
+                          - Identifier: "b" # 29..30
+              - Semicolon: ";" # 30..31
+      - Statement: # 32..39 "a / b;\n"
+          - ExpressionStatement: # 32..39 "a / b;\n"
+              - Expression: # 32..37 "a / b"
+                  - MultiplicativeExpression: # 32..37 "a / b"
+                      - Expression: # 32..33 "a"
+                          - Identifier: "a" # 32..33
+                      - Slash: "/" # 34..35
+                      - Expression: # 35..37 " b"
+                          - Identifier: "b" # 36..37
+              - Semicolon: ";" # 37..38
+      - Statement: # 39..47 "a /= b;\n"
+          - ExpressionStatement: # 39..47 "a /= b;\n"
+              - Expression: # 39..45 "a /= b"
+                  - AssignmentExpression: # 39..45 "a /= b"
+                      - Expression: # 39..40 "a"
+                          - Identifier: "a" # 39..40
+                      - SlashEqual: "/=" # 41..43
+                      - Expression: # 43..45 " b"
+                          - Identifier: "b" # 44..45
+              - Semicolon: ";" # 45..46
+      - Statement: # 47..54 "a > b;\n"
+          - ExpressionStatement: # 47..54 "a > b;\n"
+              - Expression: # 47..52 "a > b"
+                  - ComparisonExpression: # 47..52 "a > b"
+                      - Expression: # 47..48 "a"
+                          - Identifier: "a" # 47..48
+                      - GreaterThan: ">" # 49..50
+                      - Expression: # 50..52 " b"
+                          - Identifier: "b" # 51..52
+              - Semicolon: ";" # 52..53
+      - Statement: # 54..62 "a >= b;\n"
+          - ExpressionStatement: # 54..62 "a >= b;\n"
+              - Expression: # 54..60 "a >= b"
+                  - ComparisonExpression: # 54..60 "a >= b"
+                      - Expression: # 54..55 "a"
+                          - Identifier: "a" # 54..55
+                      - GreaterThanEqual: ">=" # 56..58
+                      - Expression: # 58..60 " b"
+                          - Identifier: "b" # 59..60
+              - Semicolon: ";" # 60..61
+      - Statement: # 62..70 "a >> b;\n"
+          - ExpressionStatement: # 62..70 "a >> b;\n"
+              - Expression: # 62..68 "a >> b"
+                  - ShiftExpression: # 62..68 "a >> b"
+                      - Expression: # 62..63 "a"
+                          - Identifier: "a" # 62..63
+                      - GreaterThanGreaterThan: ">>" # 64..66
+                      - Expression: # 66..68 " b"
+                          - Identifier: "b" # 67..68
+              - Semicolon: ";" # 68..69
+      - Statement: # 70..79 "a >>= b;\n"
+          - ExpressionStatement: # 70..79 "a >>= b;\n"
+              - Expression: # 70..77 "a >>= b"
+                  - AssignmentExpression: # 70..77 "a >>= b"
+                      - Expression: # 70..71 "a"
+                          - Identifier: "a" # 70..71
+                      - GreaterThanGreaterThanEqual: ">>=" # 72..75
+                      - Expression: # 75..77 " b"
+                          - Identifier: "b" # 76..77
+              - Semicolon: ";" # 77..78
+      - Statement: # 79..89 "a >>>= b;\n"
+          - ExpressionStatement: # 79..89 "a >>>= b;\n"
+              - Expression: # 79..87 "a >>>= b"
+                  - AssignmentExpression: # 79..87 "a >>>= b"
+                      - Expression: # 79..80 "a"
+                          - Identifier: "a" # 79..80
+                      - GreaterThanGreaterThanGreaterThanEqual: ">>>=" # 81..85
+                      - Expression: # 85..87 " b"
+                          - Identifier: "b" # 86..87
+              - Semicolon: ";" # 87..88
+      - Statement: # 89..97 "a << b;\n"
+          - ExpressionStatement: # 89..97 "a << b;\n"
+              - Expression: # 89..95 "a << b"
+                  - ShiftExpression: # 89..95 "a << b"
+                      - Expression: # 89..90 "a"
+                          - Identifier: "a" # 89..90
+                      - LessThanLessThan: "<<" # 91..93
+                      - Expression: # 93..95 " b"
+                          - Identifier: "b" # 94..95
+              - Semicolon: ";" # 95..96
+      - Statement: # 97..106 "a <<= b;\n"
+          - ExpressionStatement: # 97..106 "a <<= b;\n"
+              - Expression: # 97..104 "a <<= b"
+                  - AssignmentExpression: # 97..104 "a <<= b"
+                      - Expression: # 97..98 "a"
+                          - Identifier: "a" # 97..98
+                      - LessThanLessThanEqual: "<<=" # 99..102
+                      - Expression: # 102..104 " b"
+                          - Identifier: "b" # 103..104
+              - Semicolon: ";" # 104..105

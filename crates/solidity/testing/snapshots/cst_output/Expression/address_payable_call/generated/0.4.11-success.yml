@@ -6,17 +6,17 @@ Source: >
 Errors: []
 
 Tree:
-  - Expression (Rule): # 0..22 "address payable(value)"
-      - FunctionCallExpression (Rule): # 0..22 "address payable(value)"
-          - Expression (Rule): # 0..15 "address payable"
-              - ElementaryType (Rule): # 0..15 "address payable"
-                  - AddressType (Rule): # 0..15 "address payable"
-                      - AddressKeyword (Token): "address" # 0..7
-                      - PayableKeyword (Token): "payable" # 8..15
-          - ArgumentsDeclaration (Rule): # 15..22 "(value)"
-              - PositionalArgumentsDeclaration (Rule): # 15..22 "(value)"
-                  - OpenParen (Token): "(" # 15..16
-                  - PositionalArguments (Rule): # 16..21 "value"
-                      - Expression (Rule): # 16..21 "value"
-                          - Identifier (Token): "value" # 16..21
-                  - CloseParen (Token): ")" # 21..22
+  - Expression: # 0..22 "address payable(value)"
+      - FunctionCallExpression: # 0..22 "address payable(value)"
+          - Expression: # 0..15 "address payable"
+              - ElementaryType: # 0..15 "address payable"
+                  - AddressType: # 0..15 "address payable"
+                      - AddressKeyword: "address" # 0..7
+                      - PayableKeyword: "payable" # 8..15
+          - ArgumentsDeclaration: # 15..22 "(value)"
+              - PositionalArgumentsDeclaration: # 15..22 "(value)"
+                  - OpenParen: "(" # 15..16
+                  - PositionalArguments: # 16..21 "value"
+                      - Expression: # 16..21 "value"
+                          - Identifier: "value" # 16..21
+                  - CloseParen: ")" # 21..22

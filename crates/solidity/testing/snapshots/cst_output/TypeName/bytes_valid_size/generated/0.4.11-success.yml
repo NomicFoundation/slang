@@ -6,6 +6,6 @@ Source: >
 Errors: []
 
 Tree:
-  - TypeName (Rule): # 0..7 "bytes32"
-      - ElementaryType (Rule): # 0..7 "bytes32"
-          - BytesKeyword (Token): "bytes32" # 0..7
+  - TypeName: # 0..7 "bytes32"
+      - ElementaryType: # 0..7 "bytes32"
+          - BytesKeyword: "bytes32" # 0..7

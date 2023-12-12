@@ -6,17 +6,17 @@ Source: >
 Errors: []
 
 Tree:
-  - MappingType (Rule): # 0..30 "mapping(string => bytes32 Bar)"
-      - MappingKeyword (Token): "mapping" # 0..7
-      - OpenParen (Token): "(" # 7..8
-      - MappingKey (Rule): # 8..14 "string"
-          - MappingKeyType (Rule): # 8..14 "string"
-              - ElementaryType (Rule): # 8..14 "string"
-                  - StringKeyword (Token): "string" # 8..14
-      - EqualGreaterThan (Token): "=>" # 15..17
-      - MappingValue (Rule): # 17..29 " bytes32 Bar"
-          - TypeName (Rule): # 17..25 " bytes32"
-              - ElementaryType (Rule): # 17..25 " bytes32"
-                  - BytesKeyword (Token): "bytes32" # 18..25
-          - Identifier (Token): "Bar" # 26..29
-      - CloseParen (Token): ")" # 29..30
+  - MappingType: # 0..30 "mapping(string => bytes32 Bar)"
+      - MappingKeyword: "mapping" # 0..7
+      - OpenParen: "(" # 7..8
+      - MappingKey: # 8..14 "string"
+          - MappingKeyType: # 8..14 "string"
+              - ElementaryType: # 8..14 "string"
+                  - StringKeyword: "string" # 8..14
+      - EqualGreaterThan: "=>" # 15..17
+      - MappingValue: # 17..29 " bytes32 Bar"
+          - TypeName: # 17..25 " bytes32"
+              - ElementaryType: # 17..25 " bytes32"
+                  - BytesKeyword: "bytes32" # 18..25
+          - Identifier: "Bar" # 26..29
+      - CloseParen: ")" # 29..30

@@ -6,5 +6,5 @@ Source: >
 Errors: []
 
 Tree:
-  - Expression (Rule): # 0..9 "reference"
-      - Identifier (Token): "reference" # 0..9
+  - Expression: # 0..9 "reference"
+      - Identifier: "reference" # 0..9

@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - SKIPPED (Token): "type Foo is bool;" # 0..17
+  - SKIPPED: "type Foo is bool;" # 0..17

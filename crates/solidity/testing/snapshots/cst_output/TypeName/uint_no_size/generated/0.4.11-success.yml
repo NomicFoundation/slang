@@ -6,6 +6,6 @@ Source: >
 Errors: []
 
 Tree:
-  - TypeName (Rule): # 0..4 "uint"
-      - ElementaryType (Rule): # 0..4 "uint"
-          - UintKeyword (Token): "uint" # 0..4
+  - TypeName: # 0..4 "uint"
+      - ElementaryType: # 0..4 "uint"
+          - UintKeyword: "uint" # 0..4

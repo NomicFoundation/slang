@@ -6,14 +6,14 @@ Source: >
 Errors: []
 
 Tree:
-  - YulExpression (Rule): # 0..6 "foo(1)"
-      - YulFunctionCallExpression (Rule): # 0..6 "foo(1)"
-          - YulExpression (Rule): # 0..3 "foo"
-              - YulIdentifierPath (Rule): # 0..3 "foo"
-                  - YulIdentifier (Token): "foo" # 0..3
-          - OpenParen (Token): "(" # 3..4
-          - YulArguments (Rule): # 4..5 "1"
-              - YulExpression (Rule): # 4..5 "1"
-                  - YulLiteral (Rule): # 4..5 "1"
-                      - YulDecimalLiteral (Token): "1" # 4..5
-          - CloseParen (Token): ")" # 5..6
+  - YulExpression: # 0..6 "foo(1)"
+      - YulFunctionCallExpression: # 0..6 "foo(1)"
+          - YulExpression: # 0..3 "foo"
+              - YulIdentifierPath: # 0..3 "foo"
+                  - YulIdentifier: "foo" # 0..3
+          - OpenParen: "(" # 3..4
+          - YulArguments: # 4..5 "1"
+              - YulExpression: # 4..5 "1"
+                  - YulLiteral: # 4..5 "1"
+                      - YulDecimalLiteral: "1" # 4..5
+          - CloseParen: ")" # 5..6

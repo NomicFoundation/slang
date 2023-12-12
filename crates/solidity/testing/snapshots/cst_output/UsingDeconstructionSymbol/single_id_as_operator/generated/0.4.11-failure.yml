@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - SKIPPED (Token): "foo as /" # 0..8
+  - SKIPPED: "foo as /" # 0..8

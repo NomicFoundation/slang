@@ -6,5 +6,5 @@ Source: >
 Errors: []
 
 Tree:
-  - Expression (Rule): # 0..4 "auto"
-      - Identifier (Token): "auto" # 0..4
+  - Expression: # 0..4 "auto"
+      - Identifier: "auto" # 0..4

@@ -6,6 +6,6 @@ Source: >
 Errors: []
 
 Tree:
-  - TypeName (Rule): # 0..3 "int"
-      - ElementaryType (Rule): # 0..3 "int"
-          - IntKeyword (Token): "int" # 0..3
+  - TypeName: # 0..3 "int"
+      - ElementaryType: # 0..3 "int"
+          - IntKeyword: "int" # 0..3

@@ -6,71 +6,71 @@ Source: >
 Errors: []
 
 Tree:
-  - ConditionalExpression (Rule): # 0..63 "foo ? a == b ? a + b * c : a + b * c + d : !bar ? ..."
-      - Expression (Rule): # 0..3 "foo"
-          - Identifier (Token): "foo" # 0..3
-      - QuestionMark (Token): "?" # 4..5
-      - Expression (Rule): # 5..40 " a == b ? a + b * c : a + b * c + d"
-          - ConditionalExpression (Rule): # 5..40 " a == b ? a + b * c : a + b * c + d"
-              - Expression (Rule): # 5..12 " a == b"
-                  - EqualityExpression (Rule): # 5..12 " a == b"
-                      - Expression (Rule): # 5..7 " a"
-                          - Identifier (Token): "a" # 6..7
-                      - EqualEqual (Token): "==" # 8..10
-                      - Expression (Rule): # 10..12 " b"
-                          - Identifier (Token): "b" # 11..12
-              - QuestionMark (Token): "?" # 13..14
-              - Expression (Rule): # 14..24 " a + b * c"
-                  - AdditiveExpression (Rule): # 14..24 " a + b * c"
-                      - Expression (Rule): # 14..16 " a"
-                          - Identifier (Token): "a" # 15..16
-                      - Plus (Token): "+" # 17..18
-                      - Expression (Rule): # 18..24 " b * c"
-                          - MultiplicativeExpression (Rule): # 18..24 " b * c"
-                              - Expression (Rule): # 18..20 " b"
-                                  - Identifier (Token): "b" # 19..20
-                              - Asterisk (Token): "*" # 21..22
-                              - Expression (Rule): # 22..24 " c"
-                                  - Identifier (Token): "c" # 23..24
-              - Colon (Token): ":" # 25..26
-              - Expression (Rule): # 26..40 " a + b * c + d"
-                  - AdditiveExpression (Rule): # 26..40 " a + b * c + d"
-                      - Expression (Rule): # 26..36 " a + b * c"
-                          - AdditiveExpression (Rule): # 26..36 " a + b * c"
-                              - Expression (Rule): # 26..28 " a"
-                                  - Identifier (Token): "a" # 27..28
-                              - Plus (Token): "+" # 29..30
-                              - Expression (Rule): # 30..36 " b * c"
-                                  - MultiplicativeExpression (Rule): # 30..36 " b * c"
-                                      - Expression (Rule): # 30..32 " b"
-                                          - Identifier (Token): "b" # 31..32
-                                      - Asterisk (Token): "*" # 33..34
-                                      - Expression (Rule): # 34..36 " c"
-                                          - Identifier (Token): "c" # 35..36
-                      - Plus (Token): "+" # 37..38
-                      - Expression (Rule): # 38..40 " d"
-                          - Identifier (Token): "d" # 39..40
-      - Colon (Token): ":" # 41..42
-      - Expression (Rule): # 42..63 " !bar ? e + f : g + h"
-          - ConditionalExpression (Rule): # 42..63 " !bar ? e + f : g + h"
-              - Expression (Rule): # 42..47 " !bar"
-                  - PrefixExpression (Rule): # 42..47 " !bar"
-                      - Bang (Token): "!" # 43..44
-                      - Expression (Rule): # 44..47 "bar"
-                          - Identifier (Token): "bar" # 44..47
-              - QuestionMark (Token): "?" # 48..49
-              - Expression (Rule): # 49..55 " e + f"
-                  - AdditiveExpression (Rule): # 49..55 " e + f"
-                      - Expression (Rule): # 49..51 " e"
-                          - Identifier (Token): "e" # 50..51
-                      - Plus (Token): "+" # 52..53
-                      - Expression (Rule): # 53..55 " f"
-                          - Identifier (Token): "f" # 54..55
-              - Colon (Token): ":" # 56..57
-              - Expression (Rule): # 57..63 " g + h"
-                  - AdditiveExpression (Rule): # 57..63 " g + h"
-                      - Expression (Rule): # 57..59 " g"
-                          - Identifier (Token): "g" # 58..59
-                      - Plus (Token): "+" # 60..61
-                      - Expression (Rule): # 61..63 " h"
-                          - Identifier (Token): "h" # 62..63
+  - ConditionalExpression: # 0..63 "foo ? a == b ? a + b * c : a + b * c + d : !bar ? ..."
+      - Expression: # 0..3 "foo"
+          - Identifier: "foo" # 0..3
+      - QuestionMark: "?" # 4..5
+      - Expression: # 5..40 " a == b ? a + b * c : a + b * c + d"
+          - ConditionalExpression: # 5..40 " a == b ? a + b * c : a + b * c + d"
+              - Expression: # 5..12 " a == b"
+                  - EqualityExpression: # 5..12 " a == b"
+                      - Expression: # 5..7 " a"
+                          - Identifier: "a" # 6..7
+                      - EqualEqual: "==" # 8..10
+                      - Expression: # 10..12 " b"
+                          - Identifier: "b" # 11..12
+              - QuestionMark: "?" # 13..14
+              - Expression: # 14..24 " a + b * c"
+                  - AdditiveExpression: # 14..24 " a + b * c"
+                      - Expression: # 14..16 " a"
+                          - Identifier: "a" # 15..16
+                      - Plus: "+" # 17..18
+                      - Expression: # 18..24 " b * c"
+                          - MultiplicativeExpression: # 18..24 " b * c"
+                              - Expression: # 18..20 " b"
+                                  - Identifier: "b" # 19..20
+                              - Asterisk: "*" # 21..22
+                              - Expression: # 22..24 " c"
+                                  - Identifier: "c" # 23..24
+              - Colon: ":" # 25..26
+              - Expression: # 26..40 " a + b * c + d"
+                  - AdditiveExpression: # 26..40 " a + b * c + d"
+                      - Expression: # 26..36 " a + b * c"
+                          - AdditiveExpression: # 26..36 " a + b * c"
+                              - Expression: # 26..28 " a"
+                                  - Identifier: "a" # 27..28
+                              - Plus: "+" # 29..30
+                              - Expression: # 30..36 " b * c"
+                                  - MultiplicativeExpression: # 30..36 " b * c"
+                                      - Expression: # 30..32 " b"
+                                          - Identifier: "b" # 31..32
+                                      - Asterisk: "*" # 33..34
+                                      - Expression: # 34..36 " c"
+                                          - Identifier: "c" # 35..36
+                      - Plus: "+" # 37..38
+                      - Expression: # 38..40 " d"
+                          - Identifier: "d" # 39..40
+      - Colon: ":" # 41..42
+      - Expression: # 42..63 " !bar ? e + f : g + h"
+          - ConditionalExpression: # 42..63 " !bar ? e + f : g + h"
+              - Expression: # 42..47 " !bar"
+                  - PrefixExpression: # 42..47 " !bar"
+                      - Bang: "!" # 43..44
+                      - Expression: # 44..47 "bar"
+                          - Identifier: "bar" # 44..47
+              - QuestionMark: "?" # 48..49
+              - Expression: # 49..55 " e + f"
+                  - AdditiveExpression: # 49..55 " e + f"
+                      - Expression: # 49..51 " e"
+                          - Identifier: "e" # 50..51
+                      - Plus: "+" # 52..53
+                      - Expression: # 53..55 " f"
+                          - Identifier: "f" # 54..55
+              - Colon: ":" # 56..57
+              - Expression: # 57..63 " g + h"
+                  - AdditiveExpression: # 57..63 " g + h"
+                      - Expression: # 57..59 " g"
+                          - Identifier: "g" # 58..59
+                      - Plus: "+" # 60..61
+                      - Expression: # 61..63 " h"
+                          - Identifier: "h" # 62..63

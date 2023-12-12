@@ -14,21 +14,21 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - UsingDirective (Rule): # 0..52 "using {add as +, sub, mul, div as /} for Int globa..."
-      - UsingKeyword (Token): "using" # 0..5
-      - UsingClause (Rule): # 5..36 " {add as +, sub, mul, div as /}"
-          - UsingDeconstruction (Rule): # 5..36 " {add as +, sub, mul, div as /}"
-              - OpenBrace (Token): "{" # 6..7
-              - UsingDeconstructionSymbols (Rule): # 7..10 "add"
-                  - UsingDeconstructionSymbol (Rule): # 7..10 "add"
-                      - IdentifierPath (Rule): # 7..10 "add"
-                          - Identifier (Token): "add" # 7..10
-              - SKIPPED (Token): "as +, sub, mul, div as /" # 11..35
-              - CloseBrace (Token): "}" # 35..36
-      - ForKeyword (Token): "for" # 37..40
-      - UsingTarget (Rule): # 40..44 " Int"
-          - TypeName (Rule): # 40..44 " Int"
-              - IdentifierPath (Rule): # 40..44 " Int"
-                  - Identifier (Token): "Int" # 41..44
-      - GlobalKeyword (Token): "global" # 45..51
-      - Semicolon (Token): ";" # 51..52
+  - UsingDirective: # 0..52 "using {add as +, sub, mul, div as /} for Int globa..."
+      - UsingKeyword: "using" # 0..5
+      - UsingClause: # 5..36 " {add as +, sub, mul, div as /}"
+          - UsingDeconstruction: # 5..36 " {add as +, sub, mul, div as /}"
+              - OpenBrace: "{" # 6..7
+              - UsingDeconstructionSymbols: # 7..10 "add"
+                  - UsingDeconstructionSymbol: # 7..10 "add"
+                      - IdentifierPath: # 7..10 "add"
+                          - Identifier: "add" # 7..10
+              - SKIPPED: "as +, sub, mul, div as /" # 11..35
+              - CloseBrace: "}" # 35..36
+      - ForKeyword: "for" # 37..40
+      - UsingTarget: # 40..44 " Int"
+          - TypeName: # 40..44 " Int"
+              - IdentifierPath: # 40..44 " Int"
+                  - Identifier: "Int" # 41..44
+      - GlobalKeyword: "global" # 45..51
+      - Semicolon: ";" # 51..52

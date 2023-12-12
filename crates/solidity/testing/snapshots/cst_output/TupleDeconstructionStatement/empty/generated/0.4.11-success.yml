@@ -7,18 +7,18 @@ Source: >
 Errors: []
 
 Tree:
-  - TupleDeconstructionStatement (Rule): # 0..57 "// TODO(#671): Tuple expressions can't be empty\n()..."
-      - LeadingTrivia (Rule): # 0..48 "// TODO(#671): Tuple expressions can't be empty\n"
-          - SingleLineComment (Trivia): "// TODO(#671): Tuple expressions can't be empty" # 0..47
-      - OpenParen (Token): "(" # 48..49
-      - TupleDeconstructionElements (Rule): # 49..49
-          - TupleDeconstructionElement (Rule): [] # 49..49
-      - CloseParen (Token): ")" # 49..50
-      - Equal (Token): "=" # 51..52
-      - Expression (Rule): # 52..55 " ()"
-          - TupleExpression (Rule): # 52..55 " ()"
-              - OpenParen (Token): "(" # 53..54
-              - TupleValues (Rule): # 54..54
-                  - TupleValue (Rule): [] # 54..54
-              - CloseParen (Token): ")" # 54..55
-      - Semicolon (Token): ";" # 55..56
+  - TupleDeconstructionStatement: # 0..57 "// TODO(#671): Tuple expressions can't be empty\n()..."
+      - LeadingTrivia: # 0..48 "// TODO(#671): Tuple expressions can't be empty\n"
+          - SingleLineComment: "// TODO(#671): Tuple expressions can't be empty" # 0..47
+      - OpenParen: "(" # 48..49
+      - TupleDeconstructionElements: # 49..49
+          - TupleDeconstructionElement: [] # 49..49
+      - CloseParen: ")" # 49..50
+      - Equal: "=" # 51..52
+      - Expression: # 52..55 " ()"
+          - TupleExpression: # 52..55 " ()"
+              - OpenParen: "(" # 53..54
+              - TupleValues: # 54..54
+                  - TupleValue: [] # 54..54
+              - CloseParen: ")" # 54..55
+      - Semicolon: ";" # 55..56

@@ -6,5 +6,5 @@ Source: >
 Errors: []
 
 Tree:
-  - Expression (Rule): # 0..9 "unchecked"
-      - Identifier (Token): "unchecked" # 0..9
+  - Expression: # 0..9 "unchecked"
+      - Identifier: "unchecked" # 0..9

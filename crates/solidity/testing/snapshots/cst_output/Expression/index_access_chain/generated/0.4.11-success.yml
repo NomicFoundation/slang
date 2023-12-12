@@ -6,17 +6,17 @@ Source: >
 Errors: []
 
 Tree:
-  - Expression (Rule): # 0..19 "arr[index1][index2]"
-      - IndexAccessExpression (Rule): # 0..19 "arr[index1][index2]"
-          - Expression (Rule): # 0..11 "arr[index1]"
-              - IndexAccessExpression (Rule): # 0..11 "arr[index1]"
-                  - Expression (Rule): # 0..3 "arr"
-                      - Identifier (Token): "arr" # 0..3
-                  - OpenBracket (Token): "[" # 3..4
-                  - Expression (Rule): # 4..10 "index1"
-                      - Identifier (Token): "index1" # 4..10
-                  - CloseBracket (Token): "]" # 10..11
-          - OpenBracket (Token): "[" # 11..12
-          - Expression (Rule): # 12..18 "index2"
-              - Identifier (Token): "index2" # 12..18
-          - CloseBracket (Token): "]" # 18..19
+  - Expression: # 0..19 "arr[index1][index2]"
+      - IndexAccessExpression: # 0..19 "arr[index1][index2]"
+          - Expression: # 0..11 "arr[index1]"
+              - IndexAccessExpression: # 0..11 "arr[index1]"
+                  - Expression: # 0..3 "arr"
+                      - Identifier: "arr" # 0..3
+                  - OpenBracket: "[" # 3..4
+                  - Expression: # 4..10 "index1"
+                      - Identifier: "index1" # 4..10
+                  - CloseBracket: "]" # 10..11
+          - OpenBracket: "[" # 11..12
+          - Expression: # 12..18 "index2"
+              - Identifier: "index2" # 12..18
+          - CloseBracket: "]" # 18..19

@@ -6,15 +6,15 @@ Source: >
 Errors: []
 
 Tree:
-  - Expression (Rule): # 0..14 "arr[start:end]"
-      - IndexAccessExpression (Rule): # 0..14 "arr[start:end]"
-          - Expression (Rule): # 0..3 "arr"
-              - Identifier (Token): "arr" # 0..3
-          - OpenBracket (Token): "[" # 3..4
-          - Expression (Rule): # 4..9 "start"
-              - Identifier (Token): "start" # 4..9
-          - IndexAccessEnd (Rule): # 9..13 ":end"
-              - Colon (Token): ":" # 9..10
-              - Expression (Rule): # 10..13 "end"
-                  - Identifier (Token): "end" # 10..13
-          - CloseBracket (Token): "]" # 13..14
+  - Expression: # 0..14 "arr[start:end]"
+      - IndexAccessExpression: # 0..14 "arr[start:end]"
+          - Expression: # 0..3 "arr"
+              - Identifier: "arr" # 0..3
+          - OpenBracket: "[" # 3..4
+          - Expression: # 4..9 "start"
+              - Identifier: "start" # 4..9
+          - IndexAccessEnd: # 9..13 ":end"
+              - Colon: ":" # 9..10
+              - Expression: # 10..13 "end"
+                  - Identifier: "end" # 10..13
+          - CloseBracket: "]" # 13..14

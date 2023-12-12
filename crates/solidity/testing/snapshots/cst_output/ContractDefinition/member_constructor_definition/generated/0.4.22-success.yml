@@ -9,21 +9,21 @@ Source: >
 Errors: []
 
 Tree:
-  - ContractDefinition (Rule): # 0..48 "contract Sample {\n  constructor() public {\n  }\n}"
-      - ContractKeyword (Token): "contract" # 0..8
-      - Identifier (Token): "Sample" # 9..15
-      - OpenBrace (Token): "{" # 16..17
-      - ContractMembers (Rule): # 18..47 "  constructor() public {\n  }\n"
-          - ContractMember (Rule): # 18..47 "  constructor() public {\n  }\n"
-              - ConstructorDefinition (Rule): # 18..47 "  constructor() public {\n  }\n"
-                  - ConstructorKeyword (Token): "constructor" # 20..31
-                  - ParametersDeclaration (Rule): # 31..33 "()"
-                      - OpenParen (Token): "(" # 31..32
-                      - CloseParen (Token): ")" # 32..33
-                  - ConstructorAttributes (Rule): # 33..40 " public"
-                      - ConstructorAttribute (Rule): # 33..40 " public"
-                          - PublicKeyword (Token): "public" # 34..40
-                  - Block (Rule): # 40..47 " {\n  }\n"
-                      - OpenBrace (Token): "{" # 41..42
-                      - CloseBrace (Token): "}" # 45..46
-      - CloseBrace (Token): "}" # 47..48
+  - ContractDefinition: # 0..48 "contract Sample {\n  constructor() public {\n  }\n}"
+      - ContractKeyword: "contract" # 0..8
+      - Identifier: "Sample" # 9..15
+      - OpenBrace: "{" # 16..17
+      - ContractMembers: # 18..47 "  constructor() public {\n  }\n"
+          - ContractMember: # 18..47 "  constructor() public {\n  }\n"
+              - ConstructorDefinition: # 18..47 "  constructor() public {\n  }\n"
+                  - ConstructorKeyword: "constructor" # 20..31
+                  - ParametersDeclaration: # 31..33 "()"
+                      - OpenParen: "(" # 31..32
+                      - CloseParen: ")" # 32..33
+                  - ConstructorAttributes: # 33..40 " public"
+                      - ConstructorAttribute: # 33..40 " public"
+                          - PublicKeyword: "public" # 34..40
+                  - Block: # 40..47 " {\n  }\n"
+                      - OpenBrace: "{" # 41..42
+                      - CloseBrace: "}" # 45..46
+      - CloseBrace: "}" # 47..48

@@ -8,17 +8,17 @@ Source: >
 Errors: []
 
 Tree:
-  - ContractDefinition (Rule): # 0..39 "contract Sample {\n  type Foo is bool;\n}"
-      - ContractKeyword (Token): "contract" # 0..8
-      - Identifier (Token): "Sample" # 9..15
-      - OpenBrace (Token): "{" # 16..17
-      - ContractMembers (Rule): # 18..38 "  type Foo is bool;\n"
-          - ContractMember (Rule): # 18..38 "  type Foo is bool;\n"
-              - UserDefinedValueTypeDefinition (Rule): # 18..38 "  type Foo is bool;\n"
-                  - TypeKeyword (Token): "type" # 20..24
-                  - Identifier (Token): "Foo" # 25..28
-                  - IsKeyword (Token): "is" # 29..31
-                  - ElementaryType (Rule): # 31..36 " bool"
-                      - BoolKeyword (Token): "bool" # 32..36
-                  - Semicolon (Token): ";" # 36..37
-      - CloseBrace (Token): "}" # 38..39
+  - ContractDefinition: # 0..39 "contract Sample {\n  type Foo is bool;\n}"
+      - ContractKeyword: "contract" # 0..8
+      - Identifier: "Sample" # 9..15
+      - OpenBrace: "{" # 16..17
+      - ContractMembers: # 18..38 "  type Foo is bool;\n"
+          - ContractMember: # 18..38 "  type Foo is bool;\n"
+              - UserDefinedValueTypeDefinition: # 18..38 "  type Foo is bool;\n"
+                  - TypeKeyword: "type" # 20..24
+                  - Identifier: "Foo" # 25..28
+                  - IsKeyword: "is" # 29..31
+                  - ElementaryType: # 31..36 " bool"
+                      - BoolKeyword: "bool" # 32..36
+                  - Semicolon: ";" # 36..37
+      - CloseBrace: "}" # 38..39

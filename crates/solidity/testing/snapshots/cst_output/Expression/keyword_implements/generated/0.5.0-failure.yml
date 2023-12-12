@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - SKIPPED (Token): "implements" # 0..10
+  - SKIPPED: "implements" # 0..10

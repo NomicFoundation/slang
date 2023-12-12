@@ -6,14 +6,14 @@ Source: >
 Errors: []
 
 Tree:
-  - ImportDirective (Rule): # 0..27 'import * as foo from "bar";'
-      - ImportKeyword (Token): "import" # 0..6
-      - ImportClause (Rule): # 6..26 ' * as foo from "bar"'
-          - NamedImport (Rule): # 6..26 ' * as foo from "bar"'
-              - Asterisk (Token): "*" # 7..8
-              - ImportAlias (Rule): # 8..15 " as foo"
-                  - AsKeyword (Token): "as" # 9..11
-                  - Identifier (Token): "foo" # 12..15
-              - FromKeyword (Token): "from" # 16..20
-              - AsciiStringLiteral (Token): '"bar"' # 21..26
-      - Semicolon (Token): ";" # 26..27
+  - ImportDirective: # 0..27 'import * as foo from "bar";'
+      - ImportKeyword: "import" # 0..6
+      - ImportClause: # 6..26 ' * as foo from "bar"'
+          - NamedImport: # 6..26 ' * as foo from "bar"'
+              - Asterisk: "*" # 7..8
+              - ImportAlias: # 8..15 " as foo"
+                  - AsKeyword: "as" # 9..11
+                  - Identifier: "foo" # 12..15
+              - FromKeyword: "from" # 16..20
+              - AsciiStringLiteral: '"bar"' # 21..26
+      - Semicolon: ";" # 26..27

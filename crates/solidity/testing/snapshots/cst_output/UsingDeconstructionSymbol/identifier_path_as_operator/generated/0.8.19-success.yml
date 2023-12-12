@@ -6,12 +6,12 @@ Source: >
 Errors: []
 
 Tree:
-  - UsingDeconstructionSymbol (Rule): # 0..12 "foo.bar as /"
-      - IdentifierPath (Rule): # 0..7 "foo.bar"
-          - Identifier (Token): "foo" # 0..3
-          - Period (Token): "." # 3..4
-          - Identifier (Token): "bar" # 4..7
-      - UsingAlias (Rule): # 7..12 " as /"
-          - AsKeyword (Token): "as" # 8..10
-          - UsingOperator (Rule): # 10..12 " /"
-              - Slash (Token): "/" # 11..12
+  - UsingDeconstructionSymbol: # 0..12 "foo.bar as /"
+      - IdentifierPath: # 0..7 "foo.bar"
+          - Identifier: "foo" # 0..3
+          - Period: "." # 3..4
+          - Identifier: "bar" # 4..7
+      - UsingAlias: # 7..12 " as /"
+          - AsKeyword: "as" # 8..10
+          - UsingOperator: # 10..12 " /"
+              - Slash: "/" # 11..12

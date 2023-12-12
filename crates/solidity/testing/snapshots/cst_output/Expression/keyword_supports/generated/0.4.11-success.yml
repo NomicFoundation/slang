@@ -6,5 +6,5 @@ Source: >
 Errors: []
 
 Tree:
-  - Expression (Rule): # 0..8 "supports"
-      - Identifier (Token): "supports" # 0..8
+  - Expression: # 0..8 "supports"
+      - Identifier: "supports" # 0..8
