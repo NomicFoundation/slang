@@ -6,5 +6,5 @@ Source: >
 Errors: []
 
 Tree:
-  - Expression (Rule): # 0..7 "virtual"
-      - Identifier (Token): "virtual" # 0..7
+  - Expression: # 0..7 "virtual"
+      - Identifier: "virtual" # 0..7

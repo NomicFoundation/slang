@@ -14,8 +14,8 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - EventDefinition (Rule): # 0..15 "event MyEvent;\n"
-      - EventKeyword (Token): "event" # 0..5
-      - Identifier (Token): "MyEvent" # 6..13
-      - SKIPPED (Token): "" # 13..13
-      - Semicolon (Token): ";" # 13..14
+  - EventDefinition: # 0..15 "event MyEvent;\n"
+      - EventKeyword: "event" # 0..5
+      - Identifier: "MyEvent" # 6..13
+      - SKIPPED: "" # 13..13
+      - Semicolon: ";" # 13..14

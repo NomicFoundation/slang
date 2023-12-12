@@ -6,5 +6,5 @@ Source: >
 Errors: []
 
 Tree:
-  - Expression (Rule): # 0..7 "partial"
-      - Identifier (Token): "partial" # 0..7
+  - Expression: # 0..7 "partial"
+      - Identifier: "partial" # 0..7

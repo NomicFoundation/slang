@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - DecimalNumberExpression (Rule): # 0..8 "10 ether"
-      - DecimalLiteral (Token): "10" # 0..2
-      - NumberUnit (Rule): # 2..8 " ether"
-          - EtherKeyword (Token): "ether" # 3..8
+  - DecimalNumberExpression: # 0..8 "10 ether"
+      - DecimalLiteral: "10" # 0..2
+      - NumberUnit: # 2..8 " ether"
+          - EtherKeyword: "ether" # 3..8

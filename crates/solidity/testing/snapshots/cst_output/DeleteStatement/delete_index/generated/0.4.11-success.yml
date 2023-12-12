@@ -6,14 +6,14 @@ Source: >
 Errors: []
 
 Tree:
-  - DeleteStatement (Rule): # 0..16 "delete foo[bar];"
-      - DeleteKeyword (Token): "delete" # 0..6
-      - Expression (Rule): # 6..15 " foo[bar]"
-          - IndexAccessExpression (Rule): # 6..15 " foo[bar]"
-              - Expression (Rule): # 6..10 " foo"
-                  - Identifier (Token): "foo" # 7..10
-              - OpenBracket (Token): "[" # 10..11
-              - Expression (Rule): # 11..14 "bar"
-                  - Identifier (Token): "bar" # 11..14
-              - CloseBracket (Token): "]" # 14..15
-      - Semicolon (Token): ";" # 15..16
+  - DeleteStatement: # 0..16 "delete foo[bar];"
+      - DeleteKeyword: "delete" # 0..6
+      - Expression: # 6..15 " foo[bar]"
+          - IndexAccessExpression: # 6..15 " foo[bar]"
+              - Expression: # 6..10 " foo"
+                  - Identifier: "foo" # 7..10
+              - OpenBracket: "[" # 10..11
+              - Expression: # 11..14 "bar"
+                  - Identifier: "bar" # 11..14
+              - CloseBracket: "]" # 14..15
+      - Semicolon: ";" # 15..16

@@ -14,11 +14,11 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - Expression (Rule): # 0..25 'a.b{value: 0, gas: 1}("")'
-      - MemberAccessExpression (Rule): # 0..3 "a.b"
-          - Expression (Rule): # 0..1 "a"
-              - Identifier (Token): "a" # 0..1
-          - Period (Token): "." # 1..2
-          - MemberAccess (Rule): # 2..3 "b"
-              - Identifier (Token): "b" # 2..3
-      - SKIPPED (Token): '{value: 0, gas: 1}("")' # 3..25
+  - Expression: # 0..25 'a.b{value: 0, gas: 1}("")'
+      - MemberAccessExpression: # 0..3 "a.b"
+          - Expression: # 0..1 "a"
+              - Identifier: "a" # 0..1
+          - Period: "." # 1..2
+          - MemberAccess: # 2..3 "b"
+              - Identifier: "b" # 2..3
+      - SKIPPED: '{value: 0, gas: 1}("")' # 3..25

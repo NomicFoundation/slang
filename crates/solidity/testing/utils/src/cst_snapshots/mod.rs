@@ -146,9 +146,8 @@ fn write_node<W: Write>(
     };
 
     let name = match node {
-        cst::Node::Rule(rule) => format!("{:?} (Rule)", rule.kind),
-        cst::Node::Token(token) if is_comment(token.kind) => format!("{:?} (Trivia)", token.kind),
-        cst::Node::Token(token) => format!("{:?} (Token)", token.kind),
+        cst::Node::Rule(rule) => format!("{:?}", rule.kind),
+        cst::Node::Token(token) => format!("{:?}", token.kind),
     };
 
     writeln!(
@@ -199,11 +198,4 @@ pub fn render_source_preview(source: &str, range: &TextRange) -> Result<String> 
 
 fn is_whitespace(kind: TokenKind) -> bool {
     matches!(kind, TokenKind::Whitespace | TokenKind::EndOfLine)
-}
-
-fn is_comment(kind: TokenKind) -> bool {
-    matches!(
-        kind,
-        TokenKind::SingleLineComment | TokenKind::MultilineComment
-    )
 }

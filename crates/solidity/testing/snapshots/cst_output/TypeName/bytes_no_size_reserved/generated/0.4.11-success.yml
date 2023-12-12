@@ -6,6 +6,6 @@ Source: >
 Errors: []
 
 Tree:
-  - TypeName (Rule): # 0..5 "bytes"
-      - ElementaryType (Rule): # 0..5 "bytes"
-          - BytesKeyword (Token): "bytes" # 0..5
+  - TypeName: # 0..5 "bytes"
+      - ElementaryType: # 0..5 "bytes"
+          - BytesKeyword: "bytes" # 0..5

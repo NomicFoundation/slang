@@ -6,19 +6,19 @@ Source: >
 Errors: []
 
 Tree:
-  - Expression (Rule): # 0..7 "x(1, 2)"
-      - FunctionCallExpression (Rule): # 0..7 "x(1, 2)"
-          - Expression (Rule): # 0..1 "x"
-              - Identifier (Token): "x" # 0..1
-          - ArgumentsDeclaration (Rule): # 1..7 "(1, 2)"
-              - PositionalArgumentsDeclaration (Rule): # 1..7 "(1, 2)"
-                  - OpenParen (Token): "(" # 1..2
-                  - PositionalArguments (Rule): # 2..6 "1, 2"
-                      - Expression (Rule): # 2..3 "1"
-                          - DecimalNumberExpression (Rule): # 2..3 "1"
-                              - DecimalLiteral (Token): "1" # 2..3
-                      - Comma (Token): "," # 3..4
-                      - Expression (Rule): # 4..6 " 2"
-                          - DecimalNumberExpression (Rule): # 4..6 " 2"
-                              - DecimalLiteral (Token): "2" # 5..6
-                  - CloseParen (Token): ")" # 6..7
+  - Expression: # 0..7 "x(1, 2)"
+      - FunctionCallExpression: # 0..7 "x(1, 2)"
+          - Expression: # 0..1 "x"
+              - Identifier: "x" # 0..1
+          - ArgumentsDeclaration: # 1..7 "(1, 2)"
+              - PositionalArgumentsDeclaration: # 1..7 "(1, 2)"
+                  - OpenParen: "(" # 1..2
+                  - PositionalArguments: # 2..6 "1, 2"
+                      - Expression: # 2..3 "1"
+                          - DecimalNumberExpression: # 2..3 "1"
+                              - DecimalLiteral: "1" # 2..3
+                      - Comma: "," # 3..4
+                      - Expression: # 4..6 " 2"
+                          - DecimalNumberExpression: # 4..6 " 2"
+                              - DecimalLiteral: "2" # 5..6
+                  - CloseParen: ")" # 6..7

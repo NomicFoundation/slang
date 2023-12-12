@@ -8,19 +8,19 @@ Source: >
 Errors: []
 
 Tree:
-  - ContractDefinition (Rule): # 0..36 "contract Sample {\n  using x for *;\n}"
-      - ContractKeyword (Token): "contract" # 0..8
-      - Identifier (Token): "Sample" # 9..15
-      - OpenBrace (Token): "{" # 16..17
-      - ContractMembers (Rule): # 18..35 "  using x for *;\n"
-          - ContractMember (Rule): # 18..35 "  using x for *;\n"
-              - UsingDirective (Rule): # 18..35 "  using x for *;\n"
-                  - UsingKeyword (Token): "using" # 20..25
-                  - UsingClause (Rule): # 25..27 " x"
-                      - IdentifierPath (Rule): # 25..27 " x"
-                          - Identifier (Token): "x" # 26..27
-                  - ForKeyword (Token): "for" # 28..31
-                  - UsingTarget (Rule): # 31..33 " *"
-                      - Asterisk (Token): "*" # 32..33
-                  - Semicolon (Token): ";" # 33..34
-      - CloseBrace (Token): "}" # 35..36
+  - ContractDefinition: # 0..36 "contract Sample {\n  using x for *;\n}"
+      - ContractKeyword: "contract" # 0..8
+      - Identifier: "Sample" # 9..15
+      - OpenBrace: "{" # 16..17
+      - ContractMembers: # 18..35 "  using x for *;\n"
+          - ContractMember: # 18..35 "  using x for *;\n"
+              - UsingDirective: # 18..35 "  using x for *;\n"
+                  - UsingKeyword: "using" # 20..25
+                  - UsingClause: # 25..27 " x"
+                      - IdentifierPath: # 25..27 " x"
+                          - Identifier: "x" # 26..27
+                  - ForKeyword: "for" # 28..31
+                  - UsingTarget: # 31..33 " *"
+                      - Asterisk: "*" # 32..33
+                  - Semicolon: ";" # 33..34
+      - CloseBrace: "}" # 35..36

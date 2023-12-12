@@ -6,16 +6,16 @@ Source: >
 Errors: []
 
 Tree:
-  - VersionPragma (Rule): # 0..15 "solidity <1.0.0"
-      - SolidityKeyword (Token): "solidity" # 0..8
-      - VersionPragmaExpressions (Rule): # 8..15 " <1.0.0"
-          - VersionPragmaExpression (Rule): # 8..15 " <1.0.0"
-              - VersionPragmaPrefixExpression (Rule): # 8..15 " <1.0.0"
-                  - LessThan (Token): "<" # 9..10
-                  - VersionPragmaExpression (Rule): # 10..15 "1.0.0"
-                      - VersionPragmaSpecifier (Rule): # 10..15 "1.0.0"
-                          - VersionPragmaValue (Token): "1" # 10..11
-                          - Period (Token): "." # 11..12
-                          - VersionPragmaValue (Token): "0" # 12..13
-                          - Period (Token): "." # 13..14
-                          - VersionPragmaValue (Token): "0" # 14..15
+  - VersionPragma: # 0..15 "solidity <1.0.0"
+      - SolidityKeyword: "solidity" # 0..8
+      - VersionPragmaExpressions: # 8..15 " <1.0.0"
+          - VersionPragmaExpression: # 8..15 " <1.0.0"
+              - VersionPragmaPrefixExpression: # 8..15 " <1.0.0"
+                  - LessThan: "<" # 9..10
+                  - VersionPragmaExpression: # 10..15 "1.0.0"
+                      - VersionPragmaSpecifier: # 10..15 "1.0.0"
+                          - VersionPragmaValue: "1" # 10..11
+                          - Period: "." # 11..12
+                          - VersionPragmaValue: "0" # 12..13
+                          - Period: "." # 13..14
+                          - VersionPragmaValue: "0" # 14..15

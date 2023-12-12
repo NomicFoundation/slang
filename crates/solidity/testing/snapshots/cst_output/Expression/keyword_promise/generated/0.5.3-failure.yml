@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - SKIPPED (Token): "promise" # 0..7
+  - SKIPPED: "promise" # 0..7

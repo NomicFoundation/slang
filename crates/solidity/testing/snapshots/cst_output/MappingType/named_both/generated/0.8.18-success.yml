@@ -6,18 +6,18 @@ Source: >
 Errors: []
 
 Tree:
-  - MappingType (Rule): # 0..34 "mapping(string Foo => bytes32 Bar)"
-      - MappingKeyword (Token): "mapping" # 0..7
-      - OpenParen (Token): "(" # 7..8
-      - MappingKey (Rule): # 8..18 "string Foo"
-          - MappingKeyType (Rule): # 8..14 "string"
-              - ElementaryType (Rule): # 8..14 "string"
-                  - StringKeyword (Token): "string" # 8..14
-          - Identifier (Token): "Foo" # 15..18
-      - EqualGreaterThan (Token): "=>" # 19..21
-      - MappingValue (Rule): # 21..33 " bytes32 Bar"
-          - TypeName (Rule): # 21..29 " bytes32"
-              - ElementaryType (Rule): # 21..29 " bytes32"
-                  - BytesKeyword (Token): "bytes32" # 22..29
-          - Identifier (Token): "Bar" # 30..33
-      - CloseParen (Token): ")" # 33..34
+  - MappingType: # 0..34 "mapping(string Foo => bytes32 Bar)"
+      - MappingKeyword: "mapping" # 0..7
+      - OpenParen: "(" # 7..8
+      - MappingKey: # 8..18 "string Foo"
+          - MappingKeyType: # 8..14 "string"
+              - ElementaryType: # 8..14 "string"
+                  - StringKeyword: "string" # 8..14
+          - Identifier: "Foo" # 15..18
+      - EqualGreaterThan: "=>" # 19..21
+      - MappingValue: # 21..33 " bytes32 Bar"
+          - TypeName: # 21..29 " bytes32"
+              - ElementaryType: # 21..29 " bytes32"
+                  - BytesKeyword: "bytes32" # 22..29
+          - Identifier: "Bar" # 30..33
+      - CloseParen: ")" # 33..34

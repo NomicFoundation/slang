@@ -14,8 +14,8 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - ContractDefinition (Rule): # 0..17 "contract Sample {"
-      - ContractKeyword (Token): "contract" # 0..8
-      - Identifier (Token): "Sample" # 9..15
-      - OpenBrace (Token): "{" # 16..17
-      - SKIPPED (Token): "" # 17..17
+  - ContractDefinition: # 0..17 "contract Sample {"
+      - ContractKeyword: "contract" # 0..8
+      - Identifier: "Sample" # 9..15
+      - OpenBrace: "{" # 16..17
+      - SKIPPED: "" # 17..17

@@ -6,23 +6,23 @@ Source: >
 Errors: []
 
 Tree:
-  - TupleDeconstructionStatement (Rule): # 0..37 "(bool with_type, without_type) = rhs;"
-      - OpenParen (Token): "(" # 0..1
-      - TupleDeconstructionElements (Rule): # 1..29 "bool with_type, without_type"
-          - TupleDeconstructionElement (Rule): # 1..15 "bool with_type"
-              - TupleMember (Rule): # 1..15 "bool with_type"
-                  - TypedTupleMember (Rule): # 1..15 "bool with_type"
-                      - TypeName (Rule): # 1..5 "bool"
-                          - ElementaryType (Rule): # 1..5 "bool"
-                              - BoolKeyword (Token): "bool" # 1..5
-                      - Identifier (Token): "with_type" # 6..15
-          - Comma (Token): "," # 15..16
-          - TupleDeconstructionElement (Rule): # 16..29 " without_type"
-              - TupleMember (Rule): # 16..29 " without_type"
-                  - UntypedTupleMember (Rule): # 16..29 " without_type"
-                      - Identifier (Token): "without_type" # 17..29
-      - CloseParen (Token): ")" # 29..30
-      - Equal (Token): "=" # 31..32
-      - Expression (Rule): # 32..36 " rhs"
-          - Identifier (Token): "rhs" # 33..36
-      - Semicolon (Token): ";" # 36..37
+  - TupleDeconstructionStatement: # 0..37 "(bool with_type, without_type) = rhs;"
+      - OpenParen: "(" # 0..1
+      - TupleDeconstructionElements: # 1..29 "bool with_type, without_type"
+          - TupleDeconstructionElement: # 1..15 "bool with_type"
+              - TupleMember: # 1..15 "bool with_type"
+                  - TypedTupleMember: # 1..15 "bool with_type"
+                      - TypeName: # 1..5 "bool"
+                          - ElementaryType: # 1..5 "bool"
+                              - BoolKeyword: "bool" # 1..5
+                      - Identifier: "with_type" # 6..15
+          - Comma: "," # 15..16
+          - TupleDeconstructionElement: # 16..29 " without_type"
+              - TupleMember: # 16..29 " without_type"
+                  - UntypedTupleMember: # 16..29 " without_type"
+                      - Identifier: "without_type" # 17..29
+      - CloseParen: ")" # 29..30
+      - Equal: "=" # 31..32
+      - Expression: # 32..36 " rhs"
+          - Identifier: "rhs" # 33..36
+      - Semicolon: ";" # 36..37

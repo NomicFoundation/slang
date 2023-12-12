@@ -6,5 +6,5 @@ Source: >
 Errors: []
 
 Tree:
-  - Expression (Rule): # 0..1 "_"
-      - Identifier (Token): "_" # 0..1
+  - Expression: # 0..1 "_"
+      - Identifier: "_" # 0..1

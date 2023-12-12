@@ -14,7 +14,7 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - BreakStatement (Rule): # 0..16 "break invalid ;\n"
-      - BreakKeyword (Token): "break" # 0..5
-      - SKIPPED (Token): "invalid " # 6..14
-      - Semicolon (Token): ";" # 14..15
+  - BreakStatement: # 0..16 "break invalid ;\n"
+      - BreakKeyword: "break" # 0..5
+      - SKIPPED: "invalid " # 6..14
+      - Semicolon: ";" # 14..15

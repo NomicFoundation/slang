@@ -6,22 +6,22 @@ Source: >
 Errors: []
 
 Tree:
-  - TupleExpression (Rule): # 0..30 "(first, second, third, fourth)"
-      - OpenParen (Token): "(" # 0..1
-      - TupleValues (Rule): # 1..29 "first, second, third, fourth"
-          - TupleValue (Rule): # 1..6 "first"
-              - Expression (Rule): # 1..6 "first"
-                  - Identifier (Token): "first" # 1..6
-          - Comma (Token): "," # 6..7
-          - TupleValue (Rule): # 7..14 " second"
-              - Expression (Rule): # 7..14 " second"
-                  - Identifier (Token): "second" # 8..14
-          - Comma (Token): "," # 14..15
-          - TupleValue (Rule): # 15..21 " third"
-              - Expression (Rule): # 15..21 " third"
-                  - Identifier (Token): "third" # 16..21
-          - Comma (Token): "," # 21..22
-          - TupleValue (Rule): # 22..29 " fourth"
-              - Expression (Rule): # 22..29 " fourth"
-                  - Identifier (Token): "fourth" # 23..29
-      - CloseParen (Token): ")" # 29..30
+  - TupleExpression: # 0..30 "(first, second, third, fourth)"
+      - OpenParen: "(" # 0..1
+      - TupleValues: # 1..29 "first, second, third, fourth"
+          - TupleValue: # 1..6 "first"
+              - Expression: # 1..6 "first"
+                  - Identifier: "first" # 1..6
+          - Comma: "," # 6..7
+          - TupleValue: # 7..14 " second"
+              - Expression: # 7..14 " second"
+                  - Identifier: "second" # 8..14
+          - Comma: "," # 14..15
+          - TupleValue: # 15..21 " third"
+              - Expression: # 15..21 " third"
+                  - Identifier: "third" # 16..21
+          - Comma: "," # 21..22
+          - TupleValue: # 22..29 " fourth"
+              - Expression: # 22..29 " fourth"
+                  - Identifier: "fourth" # 23..29
+      - CloseParen: ")" # 29..30

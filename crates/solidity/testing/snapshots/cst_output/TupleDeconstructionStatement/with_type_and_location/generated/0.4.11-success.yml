@@ -6,30 +6,30 @@ Source: >
 Errors: []
 
 Tree:
-  - TupleDeconstructionStatement (Rule): # 0..38 "(bool memory x, bool storage y) = rhs;"
-      - OpenParen (Token): "(" # 0..1
-      - TupleDeconstructionElements (Rule): # 1..30 "bool memory x, bool storage y"
-          - TupleDeconstructionElement (Rule): # 1..14 "bool memory x"
-              - TupleMember (Rule): # 1..14 "bool memory x"
-                  - TypedTupleMember (Rule): # 1..14 "bool memory x"
-                      - TypeName (Rule): # 1..5 "bool"
-                          - ElementaryType (Rule): # 1..5 "bool"
-                              - BoolKeyword (Token): "bool" # 1..5
-                      - StorageLocation (Rule): # 5..12 " memory"
-                          - MemoryKeyword (Token): "memory" # 6..12
-                      - Identifier (Token): "x" # 13..14
-          - Comma (Token): "," # 14..15
-          - TupleDeconstructionElement (Rule): # 15..30 " bool storage y"
-              - TupleMember (Rule): # 15..30 " bool storage y"
-                  - TypedTupleMember (Rule): # 15..30 " bool storage y"
-                      - TypeName (Rule): # 15..20 " bool"
-                          - ElementaryType (Rule): # 15..20 " bool"
-                              - BoolKeyword (Token): "bool" # 16..20
-                      - StorageLocation (Rule): # 20..28 " storage"
-                          - StorageKeyword (Token): "storage" # 21..28
-                      - Identifier (Token): "y" # 29..30
-      - CloseParen (Token): ")" # 30..31
-      - Equal (Token): "=" # 32..33
-      - Expression (Rule): # 33..37 " rhs"
-          - Identifier (Token): "rhs" # 34..37
-      - Semicolon (Token): ";" # 37..38
+  - TupleDeconstructionStatement: # 0..38 "(bool memory x, bool storage y) = rhs;"
+      - OpenParen: "(" # 0..1
+      - TupleDeconstructionElements: # 1..30 "bool memory x, bool storage y"
+          - TupleDeconstructionElement: # 1..14 "bool memory x"
+              - TupleMember: # 1..14 "bool memory x"
+                  - TypedTupleMember: # 1..14 "bool memory x"
+                      - TypeName: # 1..5 "bool"
+                          - ElementaryType: # 1..5 "bool"
+                              - BoolKeyword: "bool" # 1..5
+                      - StorageLocation: # 5..12 " memory"
+                          - MemoryKeyword: "memory" # 6..12
+                      - Identifier: "x" # 13..14
+          - Comma: "," # 14..15
+          - TupleDeconstructionElement: # 15..30 " bool storage y"
+              - TupleMember: # 15..30 " bool storage y"
+                  - TypedTupleMember: # 15..30 " bool storage y"
+                      - TypeName: # 15..20 " bool"
+                          - ElementaryType: # 15..20 " bool"
+                              - BoolKeyword: "bool" # 16..20
+                      - StorageLocation: # 20..28 " storage"
+                          - StorageKeyword: "storage" # 21..28
+                      - Identifier: "y" # 29..30
+      - CloseParen: ")" # 30..31
+      - Equal: "=" # 32..33
+      - Expression: # 33..37 " rhs"
+          - Identifier: "rhs" # 34..37
+      - Semicolon: ";" # 37..38

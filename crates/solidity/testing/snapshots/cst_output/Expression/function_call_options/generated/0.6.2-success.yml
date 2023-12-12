@@ -6,40 +6,40 @@ Source: >
 Errors: []
 
 Tree:
-  - Expression (Rule): # 0..25 'a.b{value: 0, gas: 1}("")'
-      - FunctionCallExpression (Rule): # 0..25 'a.b{value: 0, gas: 1}("")'
-          - Expression (Rule): # 0..3 "a.b"
-              - MemberAccessExpression (Rule): # 0..3 "a.b"
-                  - Expression (Rule): # 0..1 "a"
-                      - Identifier (Token): "a" # 0..1
-                  - Period (Token): "." # 1..2
-                  - MemberAccess (Rule): # 2..3 "b"
-                      - Identifier (Token): "b" # 2..3
-          - FunctionCallOptions (Rule): # 3..21 "{value: 0, gas: 1}"
-              - NamedArgumentGroups (Rule): # 3..21 "{value: 0, gas: 1}"
-                  - NamedArgumentGroup (Rule): # 3..21 "{value: 0, gas: 1}"
-                      - OpenBrace (Token): "{" # 3..4
-                      - NamedArguments (Rule): # 4..20 "value: 0, gas: 1"
-                          - NamedArgument (Rule): # 4..12 "value: 0"
-                              - Identifier (Token): "value" # 4..9
-                              - Colon (Token): ":" # 9..10
-                              - Expression (Rule): # 10..12 " 0"
-                                  - DecimalNumberExpression (Rule): # 10..12 " 0"
-                                      - DecimalLiteral (Token): "0" # 11..12
-                          - Comma (Token): "," # 12..13
-                          - NamedArgument (Rule): # 13..20 " gas: 1"
-                              - Identifier (Token): "gas" # 14..17
-                              - Colon (Token): ":" # 17..18
-                              - Expression (Rule): # 18..20 " 1"
-                                  - DecimalNumberExpression (Rule): # 18..20 " 1"
-                                      - DecimalLiteral (Token): "1" # 19..20
-                      - CloseBrace (Token): "}" # 20..21
-          - ArgumentsDeclaration (Rule): # 21..25 '("")'
-              - PositionalArgumentsDeclaration (Rule): # 21..25 '("")'
-                  - OpenParen (Token): "(" # 21..22
-                  - PositionalArguments (Rule): # 22..24 '""'
-                      - Expression (Rule): # 22..24 '""'
-                          - StringExpression (Rule): # 22..24 '""'
-                              - AsciiStringLiterals (Rule): # 22..24 '""'
-                                  - AsciiStringLiteral (Token): '""' # 22..24
-                  - CloseParen (Token): ")" # 24..25
+  - Expression: # 0..25 'a.b{value: 0, gas: 1}("")'
+      - FunctionCallExpression: # 0..25 'a.b{value: 0, gas: 1}("")'
+          - Expression: # 0..3 "a.b"
+              - MemberAccessExpression: # 0..3 "a.b"
+                  - Expression: # 0..1 "a"
+                      - Identifier: "a" # 0..1
+                  - Period: "." # 1..2
+                  - MemberAccess: # 2..3 "b"
+                      - Identifier: "b" # 2..3
+          - FunctionCallOptions: # 3..21 "{value: 0, gas: 1}"
+              - NamedArgumentGroups: # 3..21 "{value: 0, gas: 1}"
+                  - NamedArgumentGroup: # 3..21 "{value: 0, gas: 1}"
+                      - OpenBrace: "{" # 3..4
+                      - NamedArguments: # 4..20 "value: 0, gas: 1"
+                          - NamedArgument: # 4..12 "value: 0"
+                              - Identifier: "value" # 4..9
+                              - Colon: ":" # 9..10
+                              - Expression: # 10..12 " 0"
+                                  - DecimalNumberExpression: # 10..12 " 0"
+                                      - DecimalLiteral: "0" # 11..12
+                          - Comma: "," # 12..13
+                          - NamedArgument: # 13..20 " gas: 1"
+                              - Identifier: "gas" # 14..17
+                              - Colon: ":" # 17..18
+                              - Expression: # 18..20 " 1"
+                                  - DecimalNumberExpression: # 18..20 " 1"
+                                      - DecimalLiteral: "1" # 19..20
+                      - CloseBrace: "}" # 20..21
+          - ArgumentsDeclaration: # 21..25 '("")'
+              - PositionalArgumentsDeclaration: # 21..25 '("")'
+                  - OpenParen: "(" # 21..22
+                  - PositionalArguments: # 22..24 '""'
+                      - Expression: # 22..24 '""'
+                          - StringExpression: # 22..24 '""'
+                              - AsciiStringLiterals: # 22..24 '""'
+                                  - AsciiStringLiteral: '""' # 22..24
+                  - CloseParen: ")" # 24..25

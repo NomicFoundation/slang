@@ -6,15 +6,15 @@ Source: >
 Errors: []
 
 Tree:
-  - Expression (Rule): # 0..10 "a & b && c"
-      - AndExpression (Rule): # 0..10 "a & b && c"
-          - Expression (Rule): # 0..5 "a & b"
-              - BitwiseAndExpression (Rule): # 0..5 "a & b"
-                  - Expression (Rule): # 0..1 "a"
-                      - Identifier (Token): "a" # 0..1
-                  - Ampersand (Token): "&" # 2..3
-                  - Expression (Rule): # 3..5 " b"
-                      - Identifier (Token): "b" # 4..5
-          - AmpersandAmpersand (Token): "&&" # 6..8
-          - Expression (Rule): # 8..10 " c"
-              - Identifier (Token): "c" # 9..10
+  - Expression: # 0..10 "a & b && c"
+      - AndExpression: # 0..10 "a & b && c"
+          - Expression: # 0..5 "a & b"
+              - BitwiseAndExpression: # 0..5 "a & b"
+                  - Expression: # 0..1 "a"
+                      - Identifier: "a" # 0..1
+                  - Ampersand: "&" # 2..3
+                  - Expression: # 3..5 " b"
+                      - Identifier: "b" # 4..5
+          - AmpersandAmpersand: "&&" # 6..8
+          - Expression: # 8..10 " c"
+              - Identifier: "c" # 9..10

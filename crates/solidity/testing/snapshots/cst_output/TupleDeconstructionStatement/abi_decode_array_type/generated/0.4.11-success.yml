@@ -6,65 +6,65 @@ Source: >
 Errors: []
 
 Tree:
-  - TupleDeconstructionStatement (Rule): # 0..69 "(uint32 a, uint32[] memory b) = abi.decode(data, (..."
-      - OpenParen (Token): "(" # 0..1
-      - TupleDeconstructionElements (Rule): # 1..28 "uint32 a, uint32[] memory b"
-          - TupleDeconstructionElement (Rule): # 1..9 "uint32 a"
-              - TupleMember (Rule): # 1..9 "uint32 a"
-                  - TypedTupleMember (Rule): # 1..9 "uint32 a"
-                      - TypeName (Rule): # 1..7 "uint32"
-                          - ElementaryType (Rule): # 1..7 "uint32"
-                              - UintKeyword (Token): "uint32" # 1..7
-                      - Identifier (Token): "a" # 8..9
-          - Comma (Token): "," # 9..10
-          - TupleDeconstructionElement (Rule): # 10..28 " uint32[] memory b"
-              - TupleMember (Rule): # 10..28 " uint32[] memory b"
-                  - TypedTupleMember (Rule): # 10..28 " uint32[] memory b"
-                      - TypeName (Rule): # 10..19 " uint32[]"
-                          - ArrayTypeName (Rule): # 10..19 " uint32[]"
-                              - TypeName (Rule): # 10..17 " uint32"
-                                  - ElementaryType (Rule): # 10..17 " uint32"
-                                      - UintKeyword (Token): "uint32" # 11..17
-                              - OpenBracket (Token): "[" # 17..18
-                              - CloseBracket (Token): "]" # 18..19
-                      - StorageLocation (Rule): # 19..26 " memory"
-                          - MemoryKeyword (Token): "memory" # 20..26
-                      - Identifier (Token): "b" # 27..28
-      - CloseParen (Token): ")" # 28..29
-      - Equal (Token): "=" # 30..31
-      - Expression (Rule): # 31..68 " abi.decode(data, (uint32, uint32[]))"
-          - FunctionCallExpression (Rule): # 31..68 " abi.decode(data, (uint32, uint32[]))"
-              - Expression (Rule): # 31..42 " abi.decode"
-                  - MemberAccessExpression (Rule): # 31..42 " abi.decode"
-                      - Expression (Rule): # 31..35 " abi"
-                          - Identifier (Token): "abi" # 32..35
-                      - Period (Token): "." # 35..36
-                      - MemberAccess (Rule): # 36..42 "decode"
-                          - Identifier (Token): "decode" # 36..42
-              - ArgumentsDeclaration (Rule): # 42..68 "(data, (uint32, uint32[]))"
-                  - PositionalArgumentsDeclaration (Rule): # 42..68 "(data, (uint32, uint32[]))"
-                      - OpenParen (Token): "(" # 42..43
-                      - PositionalArguments (Rule): # 43..67 "data, (uint32, uint32[])"
-                          - Expression (Rule): # 43..47 "data"
-                              - Identifier (Token): "data" # 43..47
-                          - Comma (Token): "," # 47..48
-                          - Expression (Rule): # 48..67 " (uint32, uint32[])"
-                              - TupleExpression (Rule): # 48..67 " (uint32, uint32[])"
-                                  - OpenParen (Token): "(" # 49..50
-                                  - TupleValues (Rule): # 50..66 "uint32, uint32[]"
-                                      - TupleValue (Rule): # 50..56 "uint32"
-                                          - Expression (Rule): # 50..56 "uint32"
-                                              - ElementaryType (Rule): # 50..56 "uint32"
-                                                  - UintKeyword (Token): "uint32" # 50..56
-                                      - Comma (Token): "," # 56..57
-                                      - TupleValue (Rule): # 57..66 " uint32[]"
-                                          - Expression (Rule): # 57..66 " uint32[]"
-                                              - IndexAccessExpression (Rule): # 57..66 " uint32[]"
-                                                  - Expression (Rule): # 57..64 " uint32"
-                                                      - ElementaryType (Rule): # 57..64 " uint32"
-                                                          - UintKeyword (Token): "uint32" # 58..64
-                                                  - OpenBracket (Token): "[" # 64..65
-                                                  - CloseBracket (Token): "]" # 65..66
-                                  - CloseParen (Token): ")" # 66..67
-                      - CloseParen (Token): ")" # 67..68
-      - Semicolon (Token): ";" # 68..69
+  - TupleDeconstructionStatement: # 0..69 "(uint32 a, uint32[] memory b) = abi.decode(data, (..."
+      - OpenParen: "(" # 0..1
+      - TupleDeconstructionElements: # 1..28 "uint32 a, uint32[] memory b"
+          - TupleDeconstructionElement: # 1..9 "uint32 a"
+              - TupleMember: # 1..9 "uint32 a"
+                  - TypedTupleMember: # 1..9 "uint32 a"
+                      - TypeName: # 1..7 "uint32"
+                          - ElementaryType: # 1..7 "uint32"
+                              - UintKeyword: "uint32" # 1..7
+                      - Identifier: "a" # 8..9
+          - Comma: "," # 9..10
+          - TupleDeconstructionElement: # 10..28 " uint32[] memory b"
+              - TupleMember: # 10..28 " uint32[] memory b"
+                  - TypedTupleMember: # 10..28 " uint32[] memory b"
+                      - TypeName: # 10..19 " uint32[]"
+                          - ArrayTypeName: # 10..19 " uint32[]"
+                              - TypeName: # 10..17 " uint32"
+                                  - ElementaryType: # 10..17 " uint32"
+                                      - UintKeyword: "uint32" # 11..17
+                              - OpenBracket: "[" # 17..18
+                              - CloseBracket: "]" # 18..19
+                      - StorageLocation: # 19..26 " memory"
+                          - MemoryKeyword: "memory" # 20..26
+                      - Identifier: "b" # 27..28
+      - CloseParen: ")" # 28..29
+      - Equal: "=" # 30..31
+      - Expression: # 31..68 " abi.decode(data, (uint32, uint32[]))"
+          - FunctionCallExpression: # 31..68 " abi.decode(data, (uint32, uint32[]))"
+              - Expression: # 31..42 " abi.decode"
+                  - MemberAccessExpression: # 31..42 " abi.decode"
+                      - Expression: # 31..35 " abi"
+                          - Identifier: "abi" # 32..35
+                      - Period: "." # 35..36
+                      - MemberAccess: # 36..42 "decode"
+                          - Identifier: "decode" # 36..42
+              - ArgumentsDeclaration: # 42..68 "(data, (uint32, uint32[]))"
+                  - PositionalArgumentsDeclaration: # 42..68 "(data, (uint32, uint32[]))"
+                      - OpenParen: "(" # 42..43
+                      - PositionalArguments: # 43..67 "data, (uint32, uint32[])"
+                          - Expression: # 43..47 "data"
+                              - Identifier: "data" # 43..47
+                          - Comma: "," # 47..48
+                          - Expression: # 48..67 " (uint32, uint32[])"
+                              - TupleExpression: # 48..67 " (uint32, uint32[])"
+                                  - OpenParen: "(" # 49..50
+                                  - TupleValues: # 50..66 "uint32, uint32[]"
+                                      - TupleValue: # 50..56 "uint32"
+                                          - Expression: # 50..56 "uint32"
+                                              - ElementaryType: # 50..56 "uint32"
+                                                  - UintKeyword: "uint32" # 50..56
+                                      - Comma: "," # 56..57
+                                      - TupleValue: # 57..66 " uint32[]"
+                                          - Expression: # 57..66 " uint32[]"
+                                              - IndexAccessExpression: # 57..66 " uint32[]"
+                                                  - Expression: # 57..64 " uint32"
+                                                      - ElementaryType: # 57..64 " uint32"
+                                                          - UintKeyword: "uint32" # 58..64
+                                                  - OpenBracket: "[" # 64..65
+                                                  - CloseBracket: "]" # 65..66
+                                  - CloseParen: ")" # 66..67
+                      - CloseParen: ")" # 67..68
+      - Semicolon: ";" # 68..69

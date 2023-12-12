@@ -6,5 +6,5 @@ Source: >
 Errors: []
 
 Tree:
-  - Expression (Rule): # 0..7 "typedef"
-      - Identifier (Token): "typedef" # 0..7
+  - Expression: # 0..7 "typedef"
+      - Identifier: "typedef" # 0..7

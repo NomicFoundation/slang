@@ -6,22 +6,22 @@ Source: >
 Errors: []
 
 Tree:
-  - TupleDeconstructionStatement (Rule): # 0..47 "(memory with_location, without_location) = rhs;"
-      - OpenParen (Token): "(" # 0..1
-      - TupleDeconstructionElements (Rule): # 1..39 "memory with_location, without_location"
-          - TupleDeconstructionElement (Rule): # 1..21 "memory with_location"
-              - TupleMember (Rule): # 1..21 "memory with_location"
-                  - UntypedTupleMember (Rule): # 1..21 "memory with_location"
-                      - StorageLocation (Rule): # 1..7 "memory"
-                          - MemoryKeyword (Token): "memory" # 1..7
-                      - Identifier (Token): "with_location" # 8..21
-          - Comma (Token): "," # 21..22
-          - TupleDeconstructionElement (Rule): # 22..39 " without_location"
-              - TupleMember (Rule): # 22..39 " without_location"
-                  - UntypedTupleMember (Rule): # 22..39 " without_location"
-                      - Identifier (Token): "without_location" # 23..39
-      - CloseParen (Token): ")" # 39..40
-      - Equal (Token): "=" # 41..42
-      - Expression (Rule): # 42..46 " rhs"
-          - Identifier (Token): "rhs" # 43..46
-      - Semicolon (Token): ";" # 46..47
+  - TupleDeconstructionStatement: # 0..47 "(memory with_location, without_location) = rhs;"
+      - OpenParen: "(" # 0..1
+      - TupleDeconstructionElements: # 1..39 "memory with_location, without_location"
+          - TupleDeconstructionElement: # 1..21 "memory with_location"
+              - TupleMember: # 1..21 "memory with_location"
+                  - UntypedTupleMember: # 1..21 "memory with_location"
+                      - StorageLocation: # 1..7 "memory"
+                          - MemoryKeyword: "memory" # 1..7
+                      - Identifier: "with_location" # 8..21
+          - Comma: "," # 21..22
+          - TupleDeconstructionElement: # 22..39 " without_location"
+              - TupleMember: # 22..39 " without_location"
+                  - UntypedTupleMember: # 22..39 " without_location"
+                      - Identifier: "without_location" # 23..39
+      - CloseParen: ")" # 39..40
+      - Equal: "=" # 41..42
+      - Expression: # 42..46 " rhs"
+          - Identifier: "rhs" # 43..46
+      - Semicolon: ";" # 46..47

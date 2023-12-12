@@ -6,14 +6,14 @@ Source: >
 Errors: []
 
 Tree:
-  - Expression (Rule): # 0..20 "function_name(value)"
-      - FunctionCallExpression (Rule): # 0..20 "function_name(value)"
-          - Expression (Rule): # 0..13 "function_name"
-              - Identifier (Token): "function_name" # 0..13
-          - ArgumentsDeclaration (Rule): # 13..20 "(value)"
-              - PositionalArgumentsDeclaration (Rule): # 13..20 "(value)"
-                  - OpenParen (Token): "(" # 13..14
-                  - PositionalArguments (Rule): # 14..19 "value"
-                      - Expression (Rule): # 14..19 "value"
-                          - Identifier (Token): "value" # 14..19
-                  - CloseParen (Token): ")" # 19..20
+  - Expression: # 0..20 "function_name(value)"
+      - FunctionCallExpression: # 0..20 "function_name(value)"
+          - Expression: # 0..13 "function_name"
+              - Identifier: "function_name" # 0..13
+          - ArgumentsDeclaration: # 13..20 "(value)"
+              - PositionalArgumentsDeclaration: # 13..20 "(value)"
+                  - OpenParen: "(" # 13..14
+                  - PositionalArguments: # 14..19 "value"
+                      - Expression: # 14..19 "value"
+                          - Identifier: "value" # 14..19
+                  - CloseParen: ")" # 19..20

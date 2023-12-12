@@ -6,5 +6,5 @@ Source: >
 Errors: []
 
 Tree:
-  - Expression (Rule): # 0..7 "mutable"
-      - Identifier (Token): "mutable" # 0..7
+  - Expression: # 0..7 "mutable"
+      - Identifier: "mutable" # 0..7

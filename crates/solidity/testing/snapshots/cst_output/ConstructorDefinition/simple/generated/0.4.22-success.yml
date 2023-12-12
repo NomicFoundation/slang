@@ -6,11 +6,11 @@ Source: >
 Errors: []
 
 Tree:
-  - ConstructorDefinition (Rule): # 0..17 "constructor () {}"
-      - ConstructorKeyword (Token): "constructor" # 0..11
-      - ParametersDeclaration (Rule): # 11..14 " ()"
-          - OpenParen (Token): "(" # 12..13
-          - CloseParen (Token): ")" # 13..14
-      - Block (Rule): # 14..17 " {}"
-          - OpenBrace (Token): "{" # 15..16
-          - CloseBrace (Token): "}" # 16..17
+  - ConstructorDefinition: # 0..17 "constructor () {}"
+      - ConstructorKeyword: "constructor" # 0..11
+      - ParametersDeclaration: # 11..14 " ()"
+          - OpenParen: "(" # 12..13
+          - CloseParen: ")" # 13..14
+      - Block: # 14..17 " {}"
+          - OpenBrace: "{" # 15..16
+          - CloseBrace: "}" # 16..17

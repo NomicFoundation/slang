@@ -8,19 +8,19 @@ Source: >
 Errors: []
 
 Tree:
-  - ContractDefinition (Rule): # 0..36 "contract Sample {\n  uint public a;\n}"
-      - ContractKeyword (Token): "contract" # 0..8
-      - Identifier (Token): "Sample" # 9..15
-      - OpenBrace (Token): "{" # 16..17
-      - ContractMembers (Rule): # 18..35 "  uint public a;\n"
-          - ContractMember (Rule): # 18..35 "  uint public a;\n"
-              - StateVariableDefinition (Rule): # 18..35 "  uint public a;\n"
-                  - TypeName (Rule): # 18..24 "  uint"
-                      - ElementaryType (Rule): # 18..24 "  uint"
-                          - UintKeyword (Token): "uint" # 20..24
-                  - StateVariableAttributes (Rule): # 24..31 " public"
-                      - StateVariableAttribute (Rule): # 24..31 " public"
-                          - PublicKeyword (Token): "public" # 25..31
-                  - Identifier (Token): "a" # 32..33
-                  - Semicolon (Token): ";" # 33..34
-      - CloseBrace (Token): "}" # 35..36
+  - ContractDefinition: # 0..36 "contract Sample {\n  uint public a;\n}"
+      - ContractKeyword: "contract" # 0..8
+      - Identifier: "Sample" # 9..15
+      - OpenBrace: "{" # 16..17
+      - ContractMembers: # 18..35 "  uint public a;\n"
+          - ContractMember: # 18..35 "  uint public a;\n"
+              - StateVariableDefinition: # 18..35 "  uint public a;\n"
+                  - TypeName: # 18..24 "  uint"
+                      - ElementaryType: # 18..24 "  uint"
+                          - UintKeyword: "uint" # 20..24
+                  - StateVariableAttributes: # 24..31 " public"
+                      - StateVariableAttribute: # 24..31 " public"
+                          - PublicKeyword: "public" # 25..31
+                  - Identifier: "a" # 32..33
+                  - Semicolon: ";" # 33..34
+      - CloseBrace: "}" # 35..36

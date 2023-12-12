@@ -6,5 +6,5 @@ Source: >
 Errors: []
 
 Tree:
-  - DecimalNumberExpression (Rule): # 0..3 "1.2"
-      - DecimalLiteral (Token): "1.2" # 0..3
+  - DecimalNumberExpression: # 0..3 "1.2"
+      - DecimalLiteral: "1.2" # 0..3

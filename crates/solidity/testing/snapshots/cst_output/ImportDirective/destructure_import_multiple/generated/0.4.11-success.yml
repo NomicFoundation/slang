@@ -6,27 +6,27 @@ Source: >
 Errors: []
 
 Tree:
-  - ImportDirective (Rule): # 0..45 'import { A1 as A2, B1, C1 as C2 } from "foo";'
-      - ImportKeyword (Token): "import" # 0..6
-      - ImportClause (Rule): # 6..44 ' { A1 as A2, B1, C1 as C2 } from "foo"'
-          - ImportDeconstruction (Rule): # 6..44 ' { A1 as A2, B1, C1 as C2 } from "foo"'
-              - OpenBrace (Token): "{" # 7..8
-              - ImportDeconstructionSymbols (Rule): # 8..31 " A1 as A2, B1, C1 as C2"
-                  - ImportDeconstructionSymbol (Rule): # 8..17 " A1 as A2"
-                      - Identifier (Token): "A1" # 9..11
-                      - ImportAlias (Rule): # 11..17 " as A2"
-                          - AsKeyword (Token): "as" # 12..14
-                          - Identifier (Token): "A2" # 15..17
-                  - Comma (Token): "," # 17..18
-                  - ImportDeconstructionSymbol (Rule): # 18..21 " B1"
-                      - Identifier (Token): "B1" # 19..21
-                  - Comma (Token): "," # 21..22
-                  - ImportDeconstructionSymbol (Rule): # 22..31 " C1 as C2"
-                      - Identifier (Token): "C1" # 23..25
-                      - ImportAlias (Rule): # 25..31 " as C2"
-                          - AsKeyword (Token): "as" # 26..28
-                          - Identifier (Token): "C2" # 29..31
-              - CloseBrace (Token): "}" # 32..33
-              - FromKeyword (Token): "from" # 34..38
-              - AsciiStringLiteral (Token): '"foo"' # 39..44
-      - Semicolon (Token): ";" # 44..45
+  - ImportDirective: # 0..45 'import { A1 as A2, B1, C1 as C2 } from "foo";'
+      - ImportKeyword: "import" # 0..6
+      - ImportClause: # 6..44 ' { A1 as A2, B1, C1 as C2 } from "foo"'
+          - ImportDeconstruction: # 6..44 ' { A1 as A2, B1, C1 as C2 } from "foo"'
+              - OpenBrace: "{" # 7..8
+              - ImportDeconstructionSymbols: # 8..31 " A1 as A2, B1, C1 as C2"
+                  - ImportDeconstructionSymbol: # 8..17 " A1 as A2"
+                      - Identifier: "A1" # 9..11
+                      - ImportAlias: # 11..17 " as A2"
+                          - AsKeyword: "as" # 12..14
+                          - Identifier: "A2" # 15..17
+                  - Comma: "," # 17..18
+                  - ImportDeconstructionSymbol: # 18..21 " B1"
+                      - Identifier: "B1" # 19..21
+                  - Comma: "," # 21..22
+                  - ImportDeconstructionSymbol: # 22..31 " C1 as C2"
+                      - Identifier: "C1" # 23..25
+                      - ImportAlias: # 25..31 " as C2"
+                          - AsKeyword: "as" # 26..28
+                          - Identifier: "C2" # 29..31
+              - CloseBrace: "}" # 32..33
+              - FromKeyword: "from" # 34..38
+              - AsciiStringLiteral: '"foo"' # 39..44
+      - Semicolon: ";" # 44..45

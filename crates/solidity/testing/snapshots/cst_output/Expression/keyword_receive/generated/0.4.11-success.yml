@@ -6,5 +6,5 @@ Source: >
 Errors: []
 
 Tree:
-  - Expression (Rule): # 0..7 "receive"
-      - Identifier (Token): "receive" # 0..7
+  - Expression: # 0..7 "receive"
+      - Identifier: "receive" # 0..7

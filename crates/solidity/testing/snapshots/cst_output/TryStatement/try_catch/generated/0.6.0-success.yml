@@ -6,27 +6,27 @@ Source: >
 Errors: []
 
 Tree:
-  - TryStatement (Rule): # 0..21 "try a.b() {} catch {}"
-      - TryKeyword (Token): "try" # 0..3
-      - Expression (Rule): # 3..9 " a.b()"
-          - FunctionCallExpression (Rule): # 3..9 " a.b()"
-              - Expression (Rule): # 3..7 " a.b"
-                  - MemberAccessExpression (Rule): # 3..7 " a.b"
-                      - Expression (Rule): # 3..5 " a"
-                          - Identifier (Token): "a" # 4..5
-                      - Period (Token): "." # 5..6
-                      - MemberAccess (Rule): # 6..7 "b"
-                          - Identifier (Token): "b" # 6..7
-              - ArgumentsDeclaration (Rule): # 7..9 "()"
-                  - PositionalArgumentsDeclaration (Rule): # 7..9 "()"
-                      - OpenParen (Token): "(" # 7..8
-                      - CloseParen (Token): ")" # 8..9
-      - Block (Rule): # 9..12 " {}"
-          - OpenBrace (Token): "{" # 10..11
-          - CloseBrace (Token): "}" # 11..12
-      - CatchClauses (Rule): # 12..21 " catch {}"
-          - CatchClause (Rule): # 12..21 " catch {}"
-              - CatchKeyword (Token): "catch" # 13..18
-              - Block (Rule): # 18..21 " {}"
-                  - OpenBrace (Token): "{" # 19..20
-                  - CloseBrace (Token): "}" # 20..21
+  - TryStatement: # 0..21 "try a.b() {} catch {}"
+      - TryKeyword: "try" # 0..3
+      - Expression: # 3..9 " a.b()"
+          - FunctionCallExpression: # 3..9 " a.b()"
+              - Expression: # 3..7 " a.b"
+                  - MemberAccessExpression: # 3..7 " a.b"
+                      - Expression: # 3..5 " a"
+                          - Identifier: "a" # 4..5
+                      - Period: "." # 5..6
+                      - MemberAccess: # 6..7 "b"
+                          - Identifier: "b" # 6..7
+              - ArgumentsDeclaration: # 7..9 "()"
+                  - PositionalArgumentsDeclaration: # 7..9 "()"
+                      - OpenParen: "(" # 7..8
+                      - CloseParen: ")" # 8..9
+      - Block: # 9..12 " {}"
+          - OpenBrace: "{" # 10..11
+          - CloseBrace: "}" # 11..12
+      - CatchClauses: # 12..21 " catch {}"
+          - CatchClause: # 12..21 " catch {}"
+              - CatchKeyword: "catch" # 13..18
+              - Block: # 18..21 " {}"
+                  - OpenBrace: "{" # 19..20
+                  - CloseBrace: "}" # 20..21

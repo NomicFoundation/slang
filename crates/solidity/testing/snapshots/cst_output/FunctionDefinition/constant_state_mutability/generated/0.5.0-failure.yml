@@ -14,11 +14,11 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - FunctionDefinition (Rule): # 0..24 "function a() constant {}"
-      - FunctionKeyword (Token): "function" # 0..8
-      - FunctionName (Rule): # 8..10 " a"
-          - Identifier (Token): "a" # 9..10
-      - ParametersDeclaration (Rule): # 10..12 "()"
-          - OpenParen (Token): "(" # 10..11
-          - CloseParen (Token): ")" # 11..12
-      - SKIPPED (Token): " constant {}" # 12..24
+  - FunctionDefinition: # 0..24 "function a() constant {}"
+      - FunctionKeyword: "function" # 0..8
+      - FunctionName: # 8..10 " a"
+          - Identifier: "a" # 9..10
+      - ParametersDeclaration: # 10..12 "()"
+          - OpenParen: "(" # 10..11
+          - CloseParen: ")" # 11..12
+      - SKIPPED: " constant {}" # 12..24

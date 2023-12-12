@@ -6,13 +6,13 @@ Source: >
 Errors: []
 
 Tree:
-  - VariableDeclarationStatement (Rule): # 0..10 "var z = 0;"
-      - VariableDeclarationType (Rule): # 0..3 "var"
-          - VarKeyword (Token): "var" # 0..3
-      - Identifier (Token): "z" # 4..5
-      - VariableDeclarationValue (Rule): # 5..9 " = 0"
-          - Equal (Token): "=" # 6..7
-          - Expression (Rule): # 7..9 " 0"
-              - DecimalNumberExpression (Rule): # 7..9 " 0"
-                  - DecimalLiteral (Token): "0" # 8..9
-      - Semicolon (Token): ";" # 9..10
+  - VariableDeclarationStatement: # 0..10 "var z = 0;"
+      - VariableDeclarationType: # 0..3 "var"
+          - VarKeyword: "var" # 0..3
+      - Identifier: "z" # 4..5
+      - VariableDeclarationValue: # 5..9 " = 0"
+          - Equal: "=" # 6..7
+          - Expression: # 7..9 " 0"
+              - DecimalNumberExpression: # 7..9 " 0"
+                  - DecimalLiteral: "0" # 8..9
+      - Semicolon: ";" # 9..10

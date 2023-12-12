@@ -14,9 +14,9 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - UsingDeconstructionSymbol (Rule): # 0..12 "foo.bar as /"
-      - IdentifierPath (Rule): # 0..7 "foo.bar"
-          - Identifier (Token): "foo" # 0..3
-          - Period (Token): "." # 3..4
-          - Identifier (Token): "bar" # 4..7
-      - SKIPPED (Token): " as /" # 7..12
+  - UsingDeconstructionSymbol: # 0..12 "foo.bar as /"
+      - IdentifierPath: # 0..7 "foo.bar"
+          - Identifier: "foo" # 0..3
+          - Period: "." # 3..4
+          - Identifier: "bar" # 4..7
+      - SKIPPED: " as /" # 7..12

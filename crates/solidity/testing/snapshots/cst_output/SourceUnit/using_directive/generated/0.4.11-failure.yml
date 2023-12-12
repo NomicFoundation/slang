@@ -38,26 +38,26 @@ Errors: # 1 total
     ────╯
 
 Tree:
-  - SourceUnit (Rule): # 0..793 "// SPDX-License-Identifier: MIT\npragma solidity ^0..."
-      - SourceUnitMembers (Rule): # 0..56 "// SPDX-License-Identifier: MIT\npragma solidity ^0..."
-          - SourceUnitMember (Rule): # 0..56 "// SPDX-License-Identifier: MIT\npragma solidity ^0..."
-              - PragmaDirective (Rule): # 0..56 "// SPDX-License-Identifier: MIT\npragma solidity ^0..."
-                  - LeadingTrivia (Rule): # 0..32 "// SPDX-License-Identifier: MIT\n"
-                      - SingleLineComment (Trivia): "// SPDX-License-Identifier: MIT" # 0..31
-                  - PragmaKeyword (Token): "pragma" # 32..38
-                  - Pragma (Rule): # 38..54 " solidity ^0.8.0"
-                      - VersionPragma (Rule): # 38..54 " solidity ^0.8.0"
-                          - SolidityKeyword (Token): "solidity" # 39..47
-                          - VersionPragmaExpressions (Rule): # 47..54 " ^0.8.0"
-                              - VersionPragmaExpression (Rule): # 47..54 " ^0.8.0"
-                                  - VersionPragmaPrefixExpression (Rule): # 47..54 " ^0.8.0"
-                                      - Caret (Token): "^" # 48..49
-                                      - VersionPragmaExpression (Rule): # 49..54 "0.8.0"
-                                          - VersionPragmaSpecifier (Rule): # 49..54 "0.8.0"
-                                              - VersionPragmaValue (Token): "0" # 49..50
-                                              - Period (Token): "." # 50..51
-                                              - VersionPragmaValue (Token): "8" # 51..52
-                                              - Period (Token): "." # 52..53
-                                              - VersionPragmaValue (Token): "0" # 53..54
-                  - Semicolon (Token): ";" # 54..55
-      - SKIPPED (Token): "using EnvelopeUtils for Envelope global;\nusing Tra..." # 57..793
+  - SourceUnit: # 0..793 "// SPDX-License-Identifier: MIT\npragma solidity ^0..."
+      - SourceUnitMembers: # 0..56 "// SPDX-License-Identifier: MIT\npragma solidity ^0..."
+          - SourceUnitMember: # 0..56 "// SPDX-License-Identifier: MIT\npragma solidity ^0..."
+              - PragmaDirective: # 0..56 "// SPDX-License-Identifier: MIT\npragma solidity ^0..."
+                  - LeadingTrivia: # 0..32 "// SPDX-License-Identifier: MIT\n"
+                      - SingleLineComment: "// SPDX-License-Identifier: MIT" # 0..31
+                  - PragmaKeyword: "pragma" # 32..38
+                  - Pragma: # 38..54 " solidity ^0.8.0"
+                      - VersionPragma: # 38..54 " solidity ^0.8.0"
+                          - SolidityKeyword: "solidity" # 39..47
+                          - VersionPragmaExpressions: # 47..54 " ^0.8.0"
+                              - VersionPragmaExpression: # 47..54 " ^0.8.0"
+                                  - VersionPragmaPrefixExpression: # 47..54 " ^0.8.0"
+                                      - Caret: "^" # 48..49
+                                      - VersionPragmaExpression: # 49..54 "0.8.0"
+                                          - VersionPragmaSpecifier: # 49..54 "0.8.0"
+                                              - VersionPragmaValue: "0" # 49..50
+                                              - Period: "." # 50..51
+                                              - VersionPragmaValue: "8" # 51..52
+                                              - Period: "." # 52..53
+                                              - VersionPragmaValue: "0" # 53..54
+                  - Semicolon: ";" # 54..55
+      - SKIPPED: "using EnvelopeUtils for Envelope global;\nusing Tra..." # 57..793
