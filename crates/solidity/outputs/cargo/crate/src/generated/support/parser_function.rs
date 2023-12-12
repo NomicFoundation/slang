@@ -83,7 +83,7 @@ where
                     let skipped_node =
                         cst::Node::token(TokenKind::SKIPPED, input[start.utf8..].to_string());
                     let mut new_children = topmost_rule.children.clone();
-                    new_children.push(skipped_node);
+                    new_children.push((String::from("skipped"), skipped_node));
                     let mut errors = errors;
                     errors.push(ParseError::new_covering_range(
                         start..input.into(),

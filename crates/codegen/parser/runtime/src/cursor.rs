@@ -229,7 +229,7 @@ impl Cursor {
         if let Some(parent) = self.current.to_path_rule_node() {
             if let Some(child_node) = parent.rule_node.children.first().cloned() {
                 self.current = PathNode {
-                    node: child_node,
+                    node: child_node.1,
                     text_offset: parent.text_offset,
                     child_number: 0,
                 };
@@ -256,12 +256,12 @@ impl Cursor {
             if let Some(child_node) = parent.rule_node.children.get(child_number).cloned() {
                 // This is cheaper than summing up the length of the children
                 let text_offset =
-                    parent.text_offset + parent.rule_node.text_len - child_node.text_len();
+                    parent.text_offset + parent.rule_node.text_len - child_node.1.text_len();
 
                 self.path.push(parent);
 
                 self.current = PathNode {
-                    node: child_node,
+                    node: child_node.1,
                     text_offset,
                     child_number,
                 };
@@ -288,12 +288,12 @@ impl Cursor {
                 let text_offset = parent.text_offset
                     + parent.rule_node.children[..child_number]
                         .iter()
-                        .map(Node::text_len)
+                        .map(|(name, node)| node.text_len())
                         .sum();
 
                 self.path.push(parent);
                 self.current = PathNode {
-                    node: child_node,
+                    node: child_node.1,
                     text_offset,
                     child_number,
                 };
@@ -317,7 +317,7 @@ impl Cursor {
             let new_child_number = self.current.child_number + 1;
             if let Some(new_child) = parent_path_element.rule_node.children.get(new_child_number) {
                 self.current = PathNode {
-                    node: new_child.clone(),
+                    node: new_child.1.clone(),
                     text_offset: self.current.text_offset + self.current.node.text_len(),
                     child_number: new_child_number,
                 };
@@ -343,7 +343,7 @@ impl Cursor {
                 let new_child = parent_path_element.rule_node.children[new_child_number].clone();
 
                 self.current = PathNode {
-                    node: new_child,
+                    node: new_child.1,
                     text_offset: self.current.text_offset - self.current.node.text_len(),
                     child_number: new_child_number,
                 };

@@ -8,12 +8,14 @@ use super::{
     text_index::TextIndex,
 };
 
+pub type NamedNode = (String, Node);
+
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
 pub struct RuleNode {
     pub kind: RuleKind,
     pub text_len: TextIndex,
     #[serde(skip_serializing_if = "Vec::is_empty")]
-    pub children: Vec<Node>,
+    pub children: Vec<NamedNode>,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
@@ -29,8 +31,8 @@ pub enum Node {
 }
 
 impl Node {
-    pub fn rule(kind: RuleKind, children: Vec<Self>) -> Self {
-        let text_len = children.iter().map(Node::text_len).sum();
+    pub fn rule(kind: RuleKind, children: Vec<NamedNode>) -> Self {
+        let text_len = children.iter().map(|(name, node)| node.text_len()).sum();
 
         Self::Rule(Rc::new(RuleNode {
             kind,
@@ -51,7 +53,7 @@ impl Node {
     }
 
     /// Returns a slice of the children (not all descendants) of this node.
-    pub fn children(&self) -> &[Node] {
+    pub fn children(&self) -> &[NamedNode] {
         match self {
             Self::Rule(node) => &node.children,
             Self::Token(_) => &[],
