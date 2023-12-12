@@ -11,6 +11,8 @@ lto = true
 rustflags = [
 	# rustc additional warnings:
 	"-Wunused_crate_dependencies",
+	"-Wunused_lifetimes",
+	"-Wunused_tuple_struct_fields", # Will be uplifed into `dead_code` (warn-by-default) with https://github.com/rust-lang/rust/pull/118297
 	# Rust 2018 idioms that are not yet warn-by-default:
 	"-Welided_lifetimes_in_paths",
 	"-Wunused_extern_crates",
