@@ -97,10 +97,9 @@ fn write_tree<W: Write>(w: &mut W, mut cursor: Cursor, source: &str) -> Result<(
         match cursor.next() {
             Some(cst::Node::Rule(rule))
                 if rule.is_trivia()
-                    && rule
-                        .children
-                        .iter()
-                        .all(|node| node.as_token().map_or(false, |t| is_whitespace(t.kind))) =>
+                    && rule.children.iter().all(|(_name, node)| {
+                        node.as_token().map_or(false, |t| is_whitespace(t.kind))
+                    }) =>
             {
                 continue
             }

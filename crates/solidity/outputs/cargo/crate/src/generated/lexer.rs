@@ -61,7 +61,10 @@ pub trait Lexer {
         let end = input.position();
 
         ParserResult::r#match(
-            vec![cst::Node::token(kind, input.content(start.utf8..end.utf8))],
+            vec![(
+                String::from("dummy"),
+                cst::Node::token(kind, input.content(start.utf8..end.utf8)),
+            )],
             vec![],
         )
     }
@@ -88,7 +91,10 @@ pub trait Lexer {
             return ParserResult::no_match(vec![kind]);
         }
         let end = input.position();
-        children.push(cst::Node::token(kind, input.content(start.utf8..end.utf8)));
+        children.push((
+            String::from("dummy"),
+            cst::Node::token(kind, input.content(start.utf8..end.utf8)),
+        ));
 
         let restore = input.position();
         if let ParserResult::Match(r#match) = self.trailing_trivia(input) {

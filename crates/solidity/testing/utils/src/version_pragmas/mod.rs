@@ -52,34 +52,34 @@ fn extract_pragma(expression_node: &Node) -> Result<VersionPragma> {
     );
 
     let inner_expression = match &expression_rule.children[..] {
-        [Node::Rule(rule)] => rule,
-        [Node::Token(token)] => bail!("Expected rule: {token:?}"),
+        [(_, Node::Rule(rule))] => rule,
+        [(_, Node::Token(token))] => bail!("Expected rule: {token:?}"),
         _ => unreachable!("Expected single child: {expression_rule:?}"),
     };
 
     let inner_children: Vec<_> = inner_expression
         .children
         .iter()
-        .filter(|child| !child.is_trivia())
+        .filter(|(_name, child)| !child.is_trivia())
         .collect();
 
     match inner_expression.kind {
         RuleKind::VersionPragmaOrExpression => {
-            let [left, Node::Token(_op), right] = &inner_children[..] else {
+            let [left, (_, Node::Token(_op)), right] = &inner_children[..] else {
                 bail!("Expected 3 children: {inner_expression:?}");
             };
-            let left = extract_pragma(left)?;
-            let right = extract_pragma(right)?;
+            let left = extract_pragma(&left.1)?;
+            let right = extract_pragma(&right.1)?;
 
             Ok(VersionPragma::or(left, right))
         }
         RuleKind::VersionPragmaRangeExpression => {
-            let [left, Node::Token(_op), right] = &inner_children[..] else {
+            let [left, (_, Node::Token(_op)), right] = &inner_children[..] else {
                 bail!("Expected 3 children: {inner_expression:?}");
             };
 
-            let mut left = extract_pragma(left)?.comparator()?;
-            let mut right = extract_pragma(right)?.comparator()?;
+            let mut left = extract_pragma(&left.1)?.comparator()?;
+            let mut right = extract_pragma(&right.1)?.comparator()?;
 
             // Simulate solc bug:
             // https://github.com/ethereum/solidity/issues/13920

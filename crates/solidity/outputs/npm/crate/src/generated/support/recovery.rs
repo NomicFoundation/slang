@@ -25,7 +25,7 @@ impl RecoverFromNoMatch {
 fn opt_parse(
     input: &mut ParserContext<'_>,
     parse: impl Fn(&mut ParserContext<'_>) -> ParserResult,
-) -> Vec<cst::Node> {
+) -> Vec<cst::NamedNode> {
     let start = input.position();
     if let ParserResult::Match(r#match) = parse(input) {
         r#match.nodes

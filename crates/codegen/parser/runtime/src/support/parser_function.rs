@@ -57,7 +57,7 @@ where
                 };
 
                 let topmost_rule = match &nodes[..] {
-                    [cst::Node::Rule(rule)] => Rc::clone(rule),
+                    [(_name, cst::Node::Rule(rule))] => Rc::clone(rule),
                     [_] => unreachable!(
                         "(Incomplete)Match at the top level of a parser is not a Rule node"
                     ),

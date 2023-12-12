@@ -129,8 +129,8 @@ impl SequenceHelper {
                     }
 
                     let tokens: Vec<_> =
-                        next.nodes.iter().filter_map(cst::Node::as_token).collect();
-                    let mut rules = next.nodes.iter().filter_map(cst::Node::as_rule);
+                        next.nodes.iter().filter_map(|(_name, node)| node.as_token()).collect();
+                    let mut rules = next.nodes.iter().filter_map(|(_name, node)| node.as_rule());
 
                     let is_single_token_with_trivia =
                         tokens.len() == 1 && rules.all(|rule| rule.kind.is_trivia());
@@ -140,10 +140,10 @@ impl SequenceHelper {
                     debug_assert!(is_single_token_with_trivia);
                     debug_assert_eq!(next_token, Some(running.found));
 
-                    running.nodes.push(cst::Node::token(
+                    running.nodes.push(("skipped".into(), cst::Node::token(
                         TokenKind::SKIPPED,
                         std::mem::take(&mut running.skipped),
-                    ));
+                    )));
                     running.nodes.extend(next.nodes);
 
                     self.result = State::Running(ParserResult::Match(Match {

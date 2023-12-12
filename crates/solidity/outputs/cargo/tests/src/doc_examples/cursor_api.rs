@@ -73,7 +73,7 @@ fn using_iter() -> Result<()> {
             .unwrap()
             .children
             .iter()
-            .find_map(|node| node.as_token_with_kind(&[TokenKind::Identifier]))
+            .find_map(|(_name, node)| node.as_token_with_kind(&[TokenKind::Identifier]))
         {
             contract_names.push(token_node.text.clone());
         }
@@ -95,7 +95,7 @@ fn using_iter_combinators() -> Result<()> {
             let name = node
                 .children
                 .iter()
-                .find_map(|node| node.as_token_with_kind(&[TokenKind::Identifier]))?;
+                .find_map(|(_name, node)| node.as_token_with_kind(&[TokenKind::Identifier]))?;
 
             Some(name.text.clone())
         })

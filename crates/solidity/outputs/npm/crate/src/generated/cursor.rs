@@ -290,7 +290,7 @@ impl Cursor {
                 let text_offset = parent.text_offset
                     + parent.rule_node.children[..child_number]
                         .iter()
-                        .map(|(name, node)| node.text_len())
+                        .map(|(_name, node)| node.text_len())
                         .sum();
 
                 self.path.push(parent);

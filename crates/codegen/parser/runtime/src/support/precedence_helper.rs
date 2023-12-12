@@ -12,7 +12,7 @@ impl PrecedenceHelper {
     pub fn to_prefix_operator(kind: RuleKind, right: u8, result: ParserResult) -> ParserResult {
         match result {
             ParserResult::Match(r#match) => ParserResult::pratt_operator_match(vec![Prefix {
-                nodes: r#match.nodes,
+                nodes: r#match.nodes.into_iter().map(|(_, node)| node).collect(),
                 kind,
                 right,
             }]),
@@ -26,7 +26,7 @@ impl PrecedenceHelper {
     pub fn to_postfix_operator(kind: RuleKind, left: u8, result: ParserResult) -> ParserResult {
         match result {
             ParserResult::Match(r#match) => ParserResult::pratt_operator_match(vec![Postfix {
-                nodes: r#match.nodes,
+                nodes: r#match.nodes.into_iter().map(|(_, node)| node).collect(),
                 kind,
                 left,
             }]),
@@ -45,7 +45,7 @@ impl PrecedenceHelper {
     ) -> ParserResult {
         match result {
             ParserResult::Match(r#match) => ParserResult::pratt_operator_match(vec![Binary {
-                nodes: r#match.nodes,
+                nodes: r#match.nodes.into_iter().map(|(_, node)| node).collect(),
                 kind,
                 left,
                 right,
@@ -156,11 +156,11 @@ impl PrecedenceHelper {
                          kind: RuleKind,
                          nodes: Vec<cst::Node>,
                          right: Option<PrattElement>| {
-                            let wrap_children = |children: Vec<cst::Node>| {
+                            let wrap_children = |name: String, children: Vec<cst::NamedNode>| {
                                 if children.is_empty() {
                                     children
                                 } else {
-                                    vec![cst::Node::rule(child_kind, children)]
+                                    vec![(name, cst::Node::rule(child_kind, children))]
                                 }
                             };
 
@@ -179,11 +179,12 @@ impl PrecedenceHelper {
                             let mut children = Vec::with_capacity(
                                 left_nodes.len() + nodes.len() + right_nodes.len(),
                             );
-                            children.extend(wrap_children(left_nodes));
-                            children.extend(nodes);
-                            children.extend(wrap_children(right_nodes));
+                            children.extend(wrap_children("left_operand".into(), left_nodes));
+                            children
+                                .extend(nodes.into_iter().map(|node| ("operator".into(), node)));
+                            children.extend(wrap_children("right_operand".into(), right_nodes));
                             Expression {
-                                nodes: vec![cst::Node::rule(kind, children)],
+                                nodes: vec![("operand".into(), cst::Node::rule(kind, children))],
                             }
                         };
 

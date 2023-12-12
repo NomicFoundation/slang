@@ -53,9 +53,12 @@ impl SeparatedHelper {
                     match skip_until_with_nested_delims::<_, LexCtx>(input, lexer, separator) {
                         // A separator was found, so we can recover the incomplete match
                         Some((found, skipped_range)) if found == separator => {
-                            accum.push(cst::Node::token(
-                                TokenKind::SKIPPED,
-                                input.content(skipped_range.utf8()),
+                            accum.push((
+                                "skipped".into(),
+                                cst::Node::token(
+                                    TokenKind::SKIPPED,
+                                    input.content(skipped_range.utf8()),
+                                ),
                             ));
                             input.emit(ParseError {
                                 text_range: skipped_range,

@@ -24,7 +24,7 @@ impl Default for ParserResult {
 }
 
 impl ParserResult {
-    pub fn r#match(nodes: Vec<cst::Node>, expected_tokens: Vec<TokenKind>) -> Self {
+    pub fn r#match(nodes: Vec<cst::NamedNode>, expected_tokens: Vec<TokenKind>) -> Self {
         ParserResult::Match(Match::new(nodes, expected_tokens))
     }
 
@@ -32,7 +32,7 @@ impl ParserResult {
         ParserResult::PrattOperatorMatch(PrattOperatorMatch::new(elements))
     }
 
-    pub fn incomplete_match(nodes: Vec<cst::Node>, expected_tokens: Vec<TokenKind>) -> Self {
+    pub fn incomplete_match(nodes: Vec<cst::NamedNode>, expected_tokens: Vec<TokenKind>) -> Self {
         ParserResult::IncompleteMatch(IncompleteMatch::new(nodes, expected_tokens))
     }
 
@@ -60,15 +60,18 @@ impl ParserResult {
     pub fn with_kind(self, new_kind: RuleKind) -> ParserResult {
         match self {
             ParserResult::Match(r#match) => ParserResult::r#match(
-                vec![cst::Node::rule(new_kind, r#match.nodes)],
+                vec![("inner".into(), cst::Node::rule(new_kind, r#match.nodes))],
                 r#match.expected_tokens,
             ),
             ParserResult::IncompleteMatch(incomplete_match) => ParserResult::incomplete_match(
-                vec![cst::Node::rule(new_kind, incomplete_match.nodes)],
+                vec![(
+                    "inner".into(),
+                    cst::Node::rule(new_kind, incomplete_match.nodes),
+                )],
                 incomplete_match.expected_tokens,
             ),
             ParserResult::SkippedUntil(skipped) => ParserResult::SkippedUntil(SkippedUntil {
-                nodes: vec![cst::Node::rule(new_kind, skipped.nodes)],
+                nodes: vec![("inner".into(), cst::Node::rule(new_kind, skipped.nodes))],
                 ..skipped
             }),
             ParserResult::NoMatch(_) => self,
@@ -81,13 +84,13 @@ impl ParserResult {
 
 #[derive(PartialEq, Eq, Clone, Debug)]
 pub struct Match {
-    pub nodes: Vec<cst::Node>,
+    pub nodes: Vec<cst::NamedNode>,
     /// Tokens that would have allowed for more progress. Collected for the purposes of error reporting.
     pub expected_tokens: Vec<TokenKind>,
 }
 
 impl Match {
-    pub fn new(nodes: Vec<cst::Node>, expected_tokens: Vec<TokenKind>) -> Self {
+    pub fn new(nodes: Vec<cst::NamedNode>, expected_tokens: Vec<TokenKind>) -> Self {
         Self {
             nodes,
             expected_tokens,
@@ -97,7 +100,7 @@ impl Match {
     pub fn is_full_recursive(&self) -> bool {
         self.nodes
             .iter()
-            .flat_map(|node| cst::Node::cursor_with_offset(node, TextIndex::ZERO))
+            .flat_map(|node| cst::Node::cursor_with_offset(&node.1, TextIndex::ZERO))
             .all(|node| node.as_token_with_kind(&[TokenKind::SKIPPED]).is_none())
     }
 }
@@ -105,7 +108,7 @@ impl Match {
 #[derive(PartialEq, Eq, Clone, Debug)]
 pub enum PrattElement {
     Expression {
-        nodes: Vec<cst::Node>,
+        nodes: Vec<cst::NamedNode>,
     },
     Prefix {
         kind: RuleKind,
@@ -126,13 +129,22 @@ pub enum PrattElement {
 }
 
 impl PrattElement {
-    pub fn into_nodes(self) -> Vec<cst::Node> {
+    pub fn into_nodes(self) -> Vec<cst::NamedNode> {
         match self {
             Self::Expression { nodes } => nodes,
             Self::Binary { kind, nodes, .. }
             | Self::Prefix { kind, nodes, .. }
             | Self::Postfix { kind, nodes, .. } => {
-                vec![cst::Node::rule(kind, nodes)]
+                vec![(
+                    String::from("TODO"),
+                    cst::Node::rule(
+                        kind,
+                        nodes
+                            .into_iter()
+                            .map(|n| (String::from("TODO"), n))
+                            .collect(),
+                    ),
+                )]
             }
         }
     }
@@ -151,13 +163,13 @@ impl PrattOperatorMatch {
 
 #[derive(PartialEq, Eq, Clone, Debug)]
 pub struct IncompleteMatch {
-    pub nodes: Vec<cst::Node>,
+    pub nodes: Vec<cst::NamedNode>,
     /// Tokens that would have allowed for more progress. Collected for the purposes of error reporting.
     pub expected_tokens: Vec<TokenKind>,
 }
 
 impl IncompleteMatch {
-    pub fn new(nodes: Vec<cst::Node>, expected_tokens: Vec<TokenKind>) -> Self {
+    pub fn new(nodes: Vec<cst::NamedNode>, expected_tokens: Vec<TokenKind>) -> Self {
         Self {
             nodes,
             expected_tokens,
@@ -179,7 +191,7 @@ impl NoMatch {
 
 #[derive(PartialEq, Eq, Clone, Debug)]
 pub struct SkippedUntil {
-    pub nodes: Vec<cst::Node>,
+    pub nodes: Vec<cst::NamedNode>,
     /// Skipped text following the last node
     pub skipped: String,
     /// At which token was the stream pointing at when we bailed

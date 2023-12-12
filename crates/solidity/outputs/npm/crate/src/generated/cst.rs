@@ -34,7 +34,7 @@ pub enum Node {
 
 impl Node {
     pub fn rule(kind: RuleKind, children: Vec<NamedNode>) -> Self {
-        let text_len = children.iter().map(|(name, node)| node.text_len()).sum();
+        let text_len = children.iter().map(|(_name, node)| node.text_len()).sum();
 
         Self::Rule(Rc::new(RuleNode {
             kind,
