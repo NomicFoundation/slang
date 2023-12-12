@@ -64,44 +64,21 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                 if nodes.len() == 1 {
                     nodes[0].to_parser_code(context_name, is_trivia)
                 } else {
-                    let parsers = nodes
-                        .iter()
-                        .map(|node| {
-                            let parser = node.to_parser_code(context_name, is_trivia);
-                            node.applicable_version_quality_ranges()
-                                .wrap_code(quote! { seq.elem(#parser)?; }, None)
-                        })
-                        .collect::<Vec<_>>();
-                    quote! {
-                        SequenceHelper::run(|mut seq| {
-                            #(#parsers)*
-                            seq.finish()
-                        })
-                    }
+                    make_sequence_versioned(nodes.iter().map(|node| {
+                        (
+                            node.to_parser_code(context_name, is_trivia),
+                            node.applicable_version_quality_ranges(),
+                        )
+                    }))
                 }
             }
 
-            Self::Choice(nodes) => {
-                let parsers = nodes
-                    .iter()
-                    .map(|node| {
-                        let parser = node.to_parser_code(context_name, is_trivia);
-                        node.applicable_version_quality_ranges().wrap_code(
-                            quote! {
-                                let result = #parser;
-                                choice.consider(input, result)?;
-                            },
-                            None,
-                        )
-                    })
-                    .collect::<Vec<_>>();
-                quote! {
-                    ChoiceHelper::run(input, |mut choice, input| {
-                        #(#parsers)*
-                        choice.finish(input)
-                    })
-                }
-            }
+            Self::Choice(nodes) => make_choice_versioned(nodes.iter().map(|node| {
+                (
+                    node.to_parser_code(context_name, is_trivia),
+                    node.applicable_version_quality_ranges(),
+                )
+            })),
 
             Self::ScannerDefinition(scanner_definition) => {
                 let kind = format_ident!("{name}", name = scanner_definition.name());
@@ -280,5 +257,51 @@ impl VersionQualityRangeVecExtensions for Vec<VersionQualityRange> {
             let else_part = if_false.map(|if_false| quote! { else { #if_false } });
             quote! { if #(#flags)&&* { #if_true } #else_part }
         }
+    }
+}
+
+pub fn make_sequence(parsers: impl IntoIterator<Item = TokenStream>) -> TokenStream {
+    make_sequence_versioned(parsers.into_iter().map(|parser| (parser, vec![])))
+}
+
+pub fn make_sequence_versioned(
+    parsers: impl IntoIterator<Item = (TokenStream, Vec<VersionQualityRange>)>,
+) -> TokenStream {
+    let parsers = parsers
+        .into_iter()
+        .map(|(parser, versions)| versions.wrap_code(quote! { seq.elem(#parser)?; }, None))
+        .collect::<Vec<_>>();
+    quote! {
+        SequenceHelper::run(|mut seq| {
+            #(#parsers)*
+            seq.finish()
+        })
+    }
+}
+
+pub fn make_choice(parsers: impl IntoIterator<Item = TokenStream>) -> TokenStream {
+    make_choice_versioned(parsers.into_iter().map(|parser| (parser, vec![])))
+}
+
+fn make_choice_versioned(
+    parsers: impl IntoIterator<Item = (TokenStream, Vec<VersionQualityRange>)>,
+) -> TokenStream {
+    let parsers = parsers
+        .into_iter()
+        .map(|(parser, versions)| {
+            versions.wrap_code(
+                quote! {
+                    let result = #parser;
+                    choice.consider(input, result)?;
+                },
+                None,
+            )
+        })
+        .collect::<Vec<_>>();
+    quote! {
+        ChoiceHelper::run(input, |mut choice, input| {
+            #(#parsers)*
+            choice.finish(input)
+        })
     }
 }
