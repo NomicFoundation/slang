@@ -1,4 +1,4 @@
-use std::rc::Rc;
+use std::rc::{Rc, Weak};
 
 use serde::Serialize;
 
@@ -16,10 +16,55 @@ pub struct RuleNode {
     pub children: Vec<Node>,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+#[derive(Clone, Debug, Serialize)]
 pub struct TokenNode {
     pub kind: TokenKind,
     pub text: String,
+    #[serde(skip)]
+    pub scope_links: Vec<Rc<ScopeLink>>,
+}
+
+impl PartialEq for TokenNode {
+    fn eq(&self, other: &Self) -> bool {
+        self.kind == other.kind && self.text == other.text
+    }
+}
+
+impl Eq for TokenNode {}
+
+#[derive(Clone, Debug)]
+pub struct NameLink {
+    pub scope: Rc<Scope>,
+    pub name: Weak<TokenNode>,
+    pub link_type: NameLinkType,
+}
+
+// TODO: these need to be parameters in the input binding spec
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum NameLinkType {
+    Reference,
+    Definition,
+    Inheritance,
+    AssociatedScope,
+}
+
+#[derive(Clone, Debug, Default)]
+pub struct Scope {
+    pub scope_links: Vec<Rc<ScopeLink>>,
+    pub name_links: Vec<Rc<NameLink>>,
+}
+
+#[derive(Clone, Debug)]
+pub struct ScopeLink {
+    pub src: Weak<Scope>,
+    pub dest: Rc<Scope>,
+    pub link_type: ScopeLinkType,
+}
+
+// TODO: these need to be parameters in the input binding spec
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum ScopeLinkType {
+    Parent,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
@@ -40,7 +85,11 @@ impl Node {
     }
 
     pub fn token(kind: TokenKind, text: String) -> Self {
-        Self::Token(Rc::new(TokenNode { kind, text }))
+        Self::Token(Rc::new(TokenNode {
+            kind,
+            text,
+            scope_links: vec![],
+        }))
     }
 
     pub fn text_len(&self) -> TextIndex {
@@ -83,6 +132,10 @@ impl Node {
             Self::Rule(rule) => Some(rule),
             Self::Token(..) => None,
         }
+    }
+
+    pub fn is_token(&self) -> bool {
+        matches!(self, Self::Token(_))
     }
 
     pub fn as_token(&self) -> Option<&Rc<TokenNode>> {

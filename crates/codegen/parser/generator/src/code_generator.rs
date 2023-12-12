@@ -110,6 +110,8 @@ impl CodeGenerator {
             "lexer.rs",
             "parse_error.rs",
             "parse_output.rs",
+            "query_model.rs",
+            "query_parser.rs",
             "text_index.rs",
             "napi/napi_cst.rs",
             "napi/napi_cursor.rs",

@@ -19,6 +19,7 @@ use {
 #[cfg_attr(not(feature = "slang_napi_interfaces"), derive(Clone, Copy))]
 pub enum TokenKind {
     SKIPPED,
+    Identifier,
     XXX,
 }
 
