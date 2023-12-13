@@ -188,6 +188,15 @@ impl SequenceHelper {
         }
     }
 
+    /// Aggregates a parse result into the sequence. If we cannot make progress, returns the accumulated match.
+    pub fn elem_named(
+        &mut self,
+        name: String,
+        value: ParserResult,
+    ) -> ControlFlow<ParserResult, &mut Self> {
+        self.elem(value.with_name(name))
+    }
+
     /// Finishes the sequence parse, returning the accumulated match.
     pub fn finish(self) -> ControlFlow<ParserResult, Self> {
         ControlFlow::Break(self.unwrap_result())

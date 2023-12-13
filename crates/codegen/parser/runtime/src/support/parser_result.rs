@@ -76,6 +76,25 @@ impl ParserResult {
             }
         }
     }
+
+    #[allow(clippy::single_match)] // TODO: This is still WIP code
+    #[must_use]
+    pub fn with_name(mut self, name: String) -> ParserResult {
+        match &mut self {
+            ParserResult::Match(r#match) => match &mut r#match.nodes[..] {
+                [(prev_name, _)] => {
+                    *prev_name = name;
+                }
+                _ => {}
+            },
+            ParserResult::IncompleteMatch(_) => {}
+            ParserResult::NoMatch(_) => {}
+            ParserResult::SkippedUntil(_) => {}
+            ParserResult::PrattOperatorMatch(_) => todo!(),
+        }
+
+        self
+    }
 }
 
 #[derive(PartialEq, Eq, Clone, Debug)]
