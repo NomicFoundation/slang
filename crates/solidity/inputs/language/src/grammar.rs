@@ -650,10 +650,12 @@ fn resolve_sequence_like(
                 Box::new(close),
             )
         };
+        // Replace with a new delimited node
         fields.insert(
             open_idx,
             (
-                delimiters.open, // dummy, identifiers are stripped here anyway
+                // Inner nodes will be flattened by PG, let's use an empty name for clarity
+                Identifier::from(""),
                 delimited,
             ),
         );

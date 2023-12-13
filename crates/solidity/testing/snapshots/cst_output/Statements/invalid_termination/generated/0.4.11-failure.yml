@@ -27,7 +27,7 @@ Tree:
   - Statements: # 0..43 "\nthrow invalid ;\n{ 1 * 2; 3 * b invalid; }\n"
       - Statement: # 0..17 "\nthrow invalid ;\n"
           - (variant:) ThrowStatement: # 0..17 "\nthrow invalid ;\n"
-              - ThrowKeyword: "throw" # 1..6
+              - (throw_keyword:) ThrowKeyword: "throw" # 1..6
               - SKIPPED: "invalid " # 7..15
               - (semicolon:) Semicolon: ";" # 15..16
       - Statement: # 17..43 "{ 1 * 2; 3 * b invalid; }\n"
@@ -48,7 +48,7 @@ Tree:
                           - (semicolon:) Semicolon: ";" # 24..25
                   - Statement: # 25..40 " 3 * b invalid;"
                       - (variant:) ExpressionStatement: # 25..40 " 3 * b invalid;"
-                          - Expression: # 25..31 " 3 * b"
+                          - (expression:) Expression: # 25..31 " 3 * b"
                               - (variant:) MultiplicativeExpression: # 25..31 " 3 * b"
                                   - (left_operand:) Expression: # 25..27 " 3"
                                       - DecimalNumberExpression: # 25..27 " 3"

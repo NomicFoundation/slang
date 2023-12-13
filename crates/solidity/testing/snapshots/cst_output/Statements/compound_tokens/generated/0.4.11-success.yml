@@ -25,7 +25,7 @@ Tree:
                   - (variant:) AndExpression: # 0..6 "a && b"
                       - (left_operand:) Expression: # 0..1 "a"
                           - Identifier: "a" # 0..1
-                      - AmpersandAmpersand: "&&" # 2..4
+                      - (operator:) AmpersandAmpersand: "&&" # 2..4
                       - (right_operand:) Expression: # 4..6 " b"
                           - Identifier: "b" # 5..6
               - (semicolon:) Semicolon: ";" # 6..7
@@ -45,7 +45,7 @@ Tree:
                   - (variant:) OrExpression: # 16..22 "a || b"
                       - (left_operand:) Expression: # 16..17 "a"
                           - Identifier: "a" # 16..17
-                      - BarBar: "||" # 18..20
+                      - (operator:) BarBar: "||" # 18..20
                       - (right_operand:) Expression: # 20..22 " b"
                           - Identifier: "b" # 21..22
               - (semicolon:) Semicolon: ";" # 22..23

@@ -10,7 +10,7 @@ Tree:
       - (open_paren:) OpenParen: "(" # 0..1
       - (elements:) TupleDeconstructionElements: # 1..29 "bool with_type, without_type"
           - TupleDeconstructionElement: # 1..15 "bool with_type"
-              - TupleMember: # 1..15 "bool with_type"
+              - (member:) TupleMember: # 1..15 "bool with_type"
                   - (variant:) TypedTupleMember: # 1..15 "bool with_type"
                       - (type_name:) TypeName: # 1..5 "bool"
                           - ElementaryType: # 1..5 "bool"
@@ -18,7 +18,7 @@ Tree:
                       - (name:) Identifier: "with_type" # 6..15
           - Comma: "," # 15..16
           - TupleDeconstructionElement: # 16..29 " without_type"
-              - TupleMember: # 16..29 " without_type"
+              - (member:) TupleMember: # 16..29 " without_type"
                   - (variant:) UntypedTupleMember: # 16..29 " without_type"
                       - (name:) Identifier: "without_type" # 17..29
       - (close_paren:) CloseParen: ")" # 29..30

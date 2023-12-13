@@ -18,7 +18,7 @@ Tree:
                           - VersionPragmaValue: "6" # 11..12
                           - Period: "." # 12..13
                           - VersionPragmaValue: "0" # 13..14
-                  - Minus: "-" # 15..16
+                  - (operator:) Minus: "-" # 15..16
                   - (right_operand:) VersionPragmaExpression: # 16..22 " 0.7.0"
                       - VersionPragmaSpecifier: # 16..22 " 0.7.0"
                           - VersionPragmaValue: "0" # 17..18

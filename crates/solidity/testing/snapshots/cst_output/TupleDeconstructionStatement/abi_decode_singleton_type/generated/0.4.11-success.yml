@@ -10,7 +10,7 @@ Tree:
       - (open_paren:) OpenParen: "(" # 0..1
       - (elements:) TupleDeconstructionElements: # 1..19 "uint32 a, uint32 b"
           - TupleDeconstructionElement: # 1..9 "uint32 a"
-              - TupleMember: # 1..9 "uint32 a"
+              - (member:) TupleMember: # 1..9 "uint32 a"
                   - (variant:) TypedTupleMember: # 1..9 "uint32 a"
                       - (type_name:) TypeName: # 1..7 "uint32"
                           - ElementaryType: # 1..7 "uint32"
@@ -18,7 +18,7 @@ Tree:
                       - (name:) Identifier: "a" # 8..9
           - Comma: "," # 9..10
           - TupleDeconstructionElement: # 10..19 " uint32 b"
-              - TupleMember: # 10..19 " uint32 b"
+              - (member:) TupleMember: # 10..19 " uint32 b"
                   - (variant:) TypedTupleMember: # 10..19 " uint32 b"
                       - (type_name:) TypeName: # 10..17 " uint32"
                           - ElementaryType: # 10..17 " uint32"
@@ -47,12 +47,12 @@ Tree:
                                   - (open_paren:) OpenParen: "(" # 40..41
                                   - (items:) TupleValues: # 41..55 "uint32, uint32"
                                       - TupleValue: # 41..47 "uint32"
-                                          - Expression: # 41..47 "uint32"
+                                          - (expression:) Expression: # 41..47 "uint32"
                                               - ElementaryType: # 41..47 "uint32"
                                                   - (variant:) UintKeyword: "uint32" # 41..47
                                       - Comma: "," # 47..48
                                       - TupleValue: # 48..55 " uint32"
-                                          - Expression: # 48..55 " uint32"
+                                          - (expression:) Expression: # 48..55 " uint32"
                                               - ElementaryType: # 48..55 " uint32"
                                                   - (variant:) UintKeyword: "uint32" # 49..55
                                   - (close_paren:) CloseParen: ")" # 55..56

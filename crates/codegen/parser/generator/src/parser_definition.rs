@@ -60,21 +60,26 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                 }
             }
 
-            Self::Sequence(nodes) => {
-                // TODO: We need to emit a proper name for sequences with a single, named element (struct)
-                // unconditionally calling make_sequence weirdly nests sequences, so that's a no-go
-                if nodes.len() == 1 {
-                    nodes[0].1.to_parser_code(context_name, is_trivia)
-                } else {
-                    make_sequence_versioned(nodes.iter().map(|(name, node)| {
-                        (
-                            node.to_parser_code(context_name, is_trivia),
-                            name.clone(),
-                            node.applicable_version_quality_ranges(),
-                        )
-                    }))
+            Self::Sequence(nodes) => match &nodes[..] {
+                [(name, node)] => {
+                    let parser = node.to_parser_code(context_name, is_trivia);
+
+                    if name.is_empty() {
+                        parser
+                    } else {
+                        quote! {
+                            #parser.with_name(#name)
+                        }
+                    }
                 }
-            }
+                nodes => make_sequence_versioned(nodes.iter().map(|(name, node)| {
+                    (
+                        node.to_parser_code(context_name, is_trivia),
+                        name.clone(),
+                        node.applicable_version_quality_ranges(),
+                    )
+                })),
+            },
 
             Self::Choice(nodes) => make_choice_versioned(nodes.iter().map(|node| {
                 (

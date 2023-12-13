@@ -21,7 +21,7 @@ Tree:
                                   - VersionPragmaValue: "0" # 12..13
                                   - Period: "." # 13..14
                                   - VersionPragmaValue: "0" # 14..15
-                  - BarBar: "||" # 16..18
+                  - (operator:) BarBar: "||" # 16..18
                   - (right_operand:) VersionPragmaExpression: # 18..30 " 2.0.0-3.0.0"
                       - (variant:) VersionPragmaRangeExpression: # 18..30 " 2.0.0-3.0.0"
                           - (left_operand:) VersionPragmaExpression: # 18..24 " 2.0.0"
@@ -31,7 +31,7 @@ Tree:
                                   - VersionPragmaValue: "0" # 21..22
                                   - Period: "." # 22..23
                                   - VersionPragmaValue: "0" # 23..24
-                          - Minus: "-" # 24..25
+                          - (operator:) Minus: "-" # 24..25
                           - (right_operand:) VersionPragmaExpression: # 25..30 "3.0.0"
                               - VersionPragmaSpecifier: # 25..30 "3.0.0"
                                   - VersionPragmaValue: "3" # 25..26

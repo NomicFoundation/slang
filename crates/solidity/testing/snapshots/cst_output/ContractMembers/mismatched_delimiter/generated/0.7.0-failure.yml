@@ -61,7 +61,7 @@ Tree:
                                                           - (open_paren:) OpenParen: "(" # 57..58
                                                           - TupleValues: # 58..63 "1 + 2"
                                                               - TupleValue: # 58..63 "1 + 2"
-                                                                  - Expression: # 58..63 "1 + 2"
+                                                                  - (expression:) Expression: # 58..63 "1 + 2"
                                                                       - (variant:) AdditiveExpression: # 58..63 "1 + 2"
                                                                           - (left_operand:) Expression: # 58..59 "1"
                                                                               - DecimalNumberExpression: # 58..59 "1"

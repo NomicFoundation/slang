@@ -12,9 +12,9 @@ Tree:
               - (variant:) BitwiseAndExpression: # 0..5 "a & b"
                   - (left_operand:) Expression: # 0..1 "a"
                       - Identifier: "a" # 0..1
-                  - Ampersand: "&" # 2..3
+                  - (operator:) Ampersand: "&" # 2..3
                   - (right_operand:) Expression: # 3..5 " b"
                       - Identifier: "b" # 4..5
-          - AmpersandAmpersand: "&&" # 6..8
+          - (operator:) AmpersandAmpersand: "&&" # 6..8
           - (right_operand:) Expression: # 8..10 " c"
               - Identifier: "c" # 9..10

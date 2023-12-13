@@ -10,7 +10,7 @@ Tree:
       - (open_paren:) OpenParen: "(" # 0..1
       - (elements:) TupleDeconstructionElements: # 1..30 "bool memory x, bool storage y"
           - TupleDeconstructionElement: # 1..14 "bool memory x"
-              - TupleMember: # 1..14 "bool memory x"
+              - (member:) TupleMember: # 1..14 "bool memory x"
                   - (variant:) TypedTupleMember: # 1..14 "bool memory x"
                       - (type_name:) TypeName: # 1..5 "bool"
                           - ElementaryType: # 1..5 "bool"
@@ -20,7 +20,7 @@ Tree:
                       - (name:) Identifier: "x" # 13..14
           - Comma: "," # 14..15
           - TupleDeconstructionElement: # 15..30 " bool storage y"
-              - TupleMember: # 15..30 " bool storage y"
+              - (member:) TupleMember: # 15..30 " bool storage y"
                   - (variant:) TypedTupleMember: # 15..30 " bool storage y"
                       - (type_name:) TypeName: # 15..20 " bool"
                           - ElementaryType: # 15..20 " bool"

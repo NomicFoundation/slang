@@ -10,14 +10,14 @@ Tree:
       - (open_paren:) OpenParen: "(" # 0..1
       - (elements:) TupleDeconstructionElements: # 1..39 "memory with_location, without_location"
           - TupleDeconstructionElement: # 1..21 "memory with_location"
-              - TupleMember: # 1..21 "memory with_location"
+              - (member:) TupleMember: # 1..21 "memory with_location"
                   - (variant:) UntypedTupleMember: # 1..21 "memory with_location"
                       - (storage_location:) StorageLocation: # 1..7 "memory"
                           - (variant:) MemoryKeyword: "memory" # 1..7
                       - (name:) Identifier: "with_location" # 8..21
           - Comma: "," # 21..22
           - TupleDeconstructionElement: # 22..39 " without_location"
-              - TupleMember: # 22..39 " without_location"
+              - (member:) TupleMember: # 22..39 " without_location"
                   - (variant:) UntypedTupleMember: # 22..39 " without_location"
                       - (name:) Identifier: "without_location" # 23..39
       - (close_paren:) CloseParen: ")" # 39..40
