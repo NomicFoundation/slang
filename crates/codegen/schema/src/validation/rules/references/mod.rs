@@ -4,13 +4,11 @@ mod validator;
 
 use anyhow::Result;
 
-use crate::{
-    types::LanguageDefinitionRef,
-    validation::{
-        rules::references::{collector::Collector, metadata::Metadata, validator::Validator},
-        visitors::Reporter,
-    },
-};
+use crate::types::LanguageDefinitionRef;
+use crate::validation::rules::references::collector::Collector;
+use crate::validation::rules::references::metadata::Metadata;
+use crate::validation::rules::references::validator::Validator;
+use crate::validation::visitors::Reporter;
 
 pub fn run(language: &LanguageDefinitionRef) -> Result<()> {
     let mut metadata = Metadata::new();

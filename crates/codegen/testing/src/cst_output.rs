@@ -1,14 +1,10 @@
-use std::{
-    collections::{BTreeMap, BTreeSet},
-    path::Path,
-};
+use std::collections::{BTreeMap, BTreeSet};
+use std::path::Path;
 
 use anyhow::{bail, Result};
 use codegen_language_definition::model::Language;
-use infra_utils::{
-    codegen::{Codegen, CodegenReadWrite},
-    paths::{FileWalker, PathExtensions},
-};
+use infra_utils::codegen::{Codegen, CodegenReadWrite};
+use infra_utils::paths::{FileWalker, PathExtensions};
 
 pub fn generate_cst_output_tests(
     language: &Language,

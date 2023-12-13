@@ -1,9 +1,7 @@
 use anyhow::Result;
-use infra_utils::{
-    cargo::CargoWorkspace,
-    commands::Command,
-    paths::{FileWalker, PathExtensions},
-};
+use infra_utils::cargo::CargoWorkspace;
+use infra_utils::commands::Command;
+use infra_utils::paths::{FileWalker, PathExtensions};
 
 use crate::toolchains::napi::{NapiCli, NapiConfig, NapiResolver};
 

@@ -1,12 +1,9 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-use super::{
-    super::{cst, kinds::RuleKind},
-    parser_result::{
-        ParserResult,
-        PrattElement::{self, Binary, Expression, Postfix, Prefix},
-    },
-};
+use crate::cst;
+use crate::kinds::RuleKind;
+use crate::support::parser_result::ParserResult;
+use crate::support::parser_result::PrattElement::{self, Binary, Expression, Postfix, Prefix};
 
 pub struct PrecedenceHelper;
 

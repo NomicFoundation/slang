@@ -1,18 +1,14 @@
-use std::{
-    cmp::{max, min},
-    path::PathBuf,
-    str::Chars,
-    unreachable,
-};
+use std::cmp::{max, min};
+use std::path::PathBuf;
+use std::str::Chars;
+use std::unreachable;
 
 use anyhow::Result;
 use indexmap::IndexMap;
 use infra_utils::errors::{InfraErrors, Position};
-use yaml_rust::{
-    parser::Parser as YamlParser,
-    scanner::{Marker, TScalarStyle},
-    Event,
-};
+use yaml_rust::parser::Parser as YamlParser;
+use yaml_rust::scanner::{Marker, TScalarStyle};
+use yaml_rust::Event;
 
 use crate::yaml::{Node, NodeField, NodeFieldRef, NodeRef};
 

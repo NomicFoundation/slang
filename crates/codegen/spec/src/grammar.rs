@@ -3,7 +3,9 @@ use std::path::PathBuf;
 use codegen_schema::types::LanguageDefinition;
 use semver::Version;
 
-use crate::{markdown::MarkdownWriter, navigation::NavigationEntry, snippets::Snippets};
+use crate::markdown::MarkdownWriter;
+use crate::navigation::NavigationEntry;
+use crate::snippets::Snippets;
 
 pub fn generate_supported_versions_page(language: &LanguageDefinition) -> NavigationEntry {
     let versions = &language.versions;

@@ -1,7 +1,8 @@
 use std::path::Path;
 
 use anyhow::Result;
-use infra_utils::{commands::Command, paths::PathExtensions};
+use infra_utils::commands::Command;
+use infra_utils::paths::PathExtensions;
 
 pub struct Mkdocs;
 

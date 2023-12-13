@@ -1,9 +1,10 @@
 use anyhow::Result;
 use clap::Parser;
 
-use crate::commands::{
-    check::CheckController, lint::LintController, setup::SetupController, test::TestController,
-};
+use crate::commands::check::CheckController;
+use crate::commands::lint::LintController;
+use crate::commands::setup::SetupController;
+use crate::commands::test::TestController;
 
 #[derive(Clone, Debug, Parser)]
 pub struct CiController;

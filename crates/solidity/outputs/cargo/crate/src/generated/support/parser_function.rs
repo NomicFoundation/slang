@@ -2,14 +2,13 @@
 
 use std::rc::Rc;
 
-use super::{
-    super::{
-        cst, kinds::TokenKind, parse_error::ParseError, parse_output::ParseOutput,
-        text_index::TextIndex,
-    },
-    context::ParserContext,
-    parser_result::{IncompleteMatch, Match, ParserResult, SkippedUntil},
-};
+use crate::cst;
+use crate::kinds::TokenKind;
+use crate::parse_error::ParseError;
+use crate::parse_output::ParseOutput;
+use crate::support::context::ParserContext;
+use crate::support::parser_result::{IncompleteMatch, Match, ParserResult, SkippedUntil};
+use crate::text_index::TextIndex;
 
 pub trait ParserFunction<L>
 where

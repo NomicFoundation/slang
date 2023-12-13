@@ -1,8 +1,10 @@
 use std::fmt::Debug;
 
 use indexmap::IndexMap;
-use proc_macro2::{extra::DelimSpan, Delimiter, Ident, TokenStream};
-use syn::{braced, bracketed, parenthesized, parse::ParseStream, Token};
+use proc_macro2::extra::DelimSpan;
+use proc_macro2::{Delimiter, Ident, TokenStream};
+use syn::parse::ParseStream;
+use syn::{braced, bracketed, parenthesized, Token};
 
 use crate::internals::{Error, ErrorsCollection, ParseInputTokens, Result, Spanned};
 

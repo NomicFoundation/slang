@@ -1,7 +1,6 @@
-use crate::{
-    compiler::{analysis::Analysis, version_set::VersionSet},
-    model::SpannedVersionSpecifier,
-};
+use crate::compiler::analysis::Analysis;
+use crate::compiler::version_set::VersionSet;
+use crate::model::SpannedVersionSpecifier;
 
 impl Analysis {
     pub fn add_specifier(&self, set: &mut VersionSet, specifier: &SpannedVersionSpecifier) {

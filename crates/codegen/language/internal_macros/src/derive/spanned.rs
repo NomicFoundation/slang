@@ -1,6 +1,7 @@
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote, ToTokens};
-use syn::{fold::Fold, parse_quote, Error, GenericArgument, Type};
+use syn::fold::Fold;
+use syn::{parse_quote, Error, GenericArgument, Type};
 
 use crate::input_model::{add_spanned_prefix, InputField, InputItem, InputVariant};
 

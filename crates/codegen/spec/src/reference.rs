@@ -1,6 +1,7 @@
 use codegen_schema::types::{LanguageDefinition, LanguageSection, LanguageTopic};
 
-use crate::{markdown::MarkdownWriter, navigation::NavigationEntry};
+use crate::markdown::MarkdownWriter;
+use crate::navigation::NavigationEntry;
 
 pub fn generate_reference_dir(language: &LanguageDefinition) -> NavigationEntry {
     let mut sections = Vec::<NavigationEntry>::new();

@@ -1,9 +1,10 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
+use napi::bindgen_prelude::Env;
 use napi_cst::ToJS;
-use {napi::bindgen_prelude::Env, napi_derive::napi};
+use napi_derive::napi;
 
-use super::{napi_cst, napi_cursor, napi_parse_error, RustParseOutput};
+use crate::napi::{napi_cst, napi_cursor, napi_parse_error, RustParseOutput};
 
 #[napi(namespace = "parse_output")]
 pub struct ParseOutput(RustParseOutput);

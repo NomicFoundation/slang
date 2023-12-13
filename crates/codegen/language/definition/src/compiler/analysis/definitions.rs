@@ -1,13 +1,9 @@
 use std::collections::HashSet;
 
-use crate::{
-    compiler::{
-        analysis::{Analysis, ItemMetadata},
-        version_set::VersionSet,
-    },
-    internals::Spanned,
-    model::{Identifier, SpannedItem, SpannedVersionSpecifier},
-};
+use crate::compiler::analysis::{Analysis, ItemMetadata};
+use crate::compiler::version_set::VersionSet;
+use crate::internals::Spanned;
+use crate::model::{Identifier, SpannedItem, SpannedVersionSpecifier};
 
 pub(crate) fn analyze_definitions(analysis: &mut Analysis) {
     collect_top_level_items(analysis);

@@ -1,5 +1,6 @@
 use anyhow::Result;
-use infra_utils::{commands::Command, github::GitHub};
+use infra_utils::commands::Command;
+use infra_utils::github::GitHub;
 
 pub fn setup_npm() -> Result<()> {
     if GitHub::is_running_in_ci() {

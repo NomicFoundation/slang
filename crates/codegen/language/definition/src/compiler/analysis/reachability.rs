@@ -1,9 +1,8 @@
 use std::collections::HashSet;
 
-use crate::{
-    compiler::{analysis::Analysis, version_set::VersionSet},
-    model::{Identifier, SpannedTriviaParser},
-};
+use crate::compiler::analysis::Analysis;
+use crate::compiler::version_set::VersionSet;
+use crate::model::{Identifier, SpannedTriviaParser};
 
 pub(crate) fn analyze_reachability(analysis: &mut Analysis) {
     check_unreachabable_items(analysis);

@@ -1,9 +1,7 @@
-use std::{
-    cmp::{max, min},
-    fmt::Display,
-    iter::once,
-    ops::Range,
-};
+use std::cmp::{max, min};
+use std::fmt::Display;
+use std::iter::once;
+use std::ops::Range;
 
 use itertools::Itertools;
 use semver::Version;

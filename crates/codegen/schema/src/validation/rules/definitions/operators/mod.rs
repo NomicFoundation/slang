@@ -1,9 +1,7 @@
 use std::collections::HashMap;
 
-use crate::{
-    types::{LanguageDefinitionRef, PrecedenceParserRef, ProductionRef},
-    validation::visitors::{run_visitor, LocationRef, Reporter, Visitor},
-};
+use crate::types::{LanguageDefinitionRef, PrecedenceParserRef, ProductionRef};
+use crate::validation::visitors::{run_visitor, LocationRef, Reporter, Visitor};
 
 pub struct Operators {
     language: LanguageDefinitionRef,

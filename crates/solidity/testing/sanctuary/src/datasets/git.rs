@@ -1,14 +1,10 @@
-use std::{
-    path::{Path, PathBuf},
-    time::{Duration, SystemTime},
-};
+use std::path::{Path, PathBuf};
+use std::time::{Duration, SystemTime};
 
 use anyhow::Result;
-use infra_utils::{
-    cargo::CargoWorkspace,
-    commands::Command,
-    paths::{FileWalker, PathExtensions},
-};
+use infra_utils::cargo::CargoWorkspace;
+use infra_utils::commands::Command;
+use infra_utils::paths::{FileWalker, PathExtensions};
 use url::Url;
 
 use crate::datasets::Dataset;

@@ -1,6 +1,7 @@
 use anyhow::Result;
 use clap::{Parser, ValueEnum};
-use infra_utils::{cargo::CargoWorkspace, commands::Command};
+use infra_utils::cargo::CargoWorkspace;
+use infra_utils::commands::Command;
 
 use crate::utils::{ClapExtensions, Terminal};
 

@@ -1,15 +1,11 @@
-use crate::{
-    types::{
-        LanguageDefinition, LanguageDefinitionRef, LanguageTopic, ParserRef, PrecedenceParserRef,
-        ProductionRef, ScannerRef,
-    },
-    validation::visitors::{
-        location::{Location, LocationRef},
-        receivers::Receiver,
-        reporter::Reporter,
-        VersionSet,
-    },
+use crate::types::{
+    LanguageDefinition, LanguageDefinitionRef, LanguageTopic, ParserRef, PrecedenceParserRef,
+    ProductionRef, ScannerRef,
 };
+use crate::validation::visitors::location::{Location, LocationRef};
+use crate::validation::visitors::receivers::Receiver;
+use crate::validation::visitors::reporter::Reporter;
+use crate::validation::visitors::VersionSet;
 
 pub trait Visitor {
     fn visit_manifest(&mut self, _location: &LocationRef, _reporter: &mut Reporter) -> bool {

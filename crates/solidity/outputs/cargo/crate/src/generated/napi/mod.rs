@@ -6,13 +6,13 @@ pub mod napi_parse_error;
 pub mod napi_parse_output;
 pub mod napi_text_index;
 
-pub type RustCursor = super::cursor::Cursor;
-pub type RustNode = super::cst::Node;
-pub type RustParseOutput = super::parse_output::ParseOutput;
-pub type RustParseError = super::parse_error::ParseError;
-pub type RustRuleNode = super::cst::RuleNode;
-pub type RustTokenNode = super::cst::TokenNode;
-pub type RustTextIndex = super::text_index::TextIndex;
-pub type RustTextRange = super::text_index::TextRange;
+pub type RustCursor = crate::cursor::Cursor;
+pub type RustNode = crate::cst::Node;
+pub type RustParseOutput = crate::parse_output::ParseOutput;
+pub type RustParseError = crate::parse_error::ParseError;
+pub type RustRuleNode = crate::cst::RuleNode;
+pub type RustTokenNode = crate::cst::TokenNode;
+pub type RustTextIndex = crate::text_index::TextIndex;
+pub type RustTextRange = crate::text_index::TextRange;
 
-pub use super::kinds::*;
+pub use crate::kinds::*;

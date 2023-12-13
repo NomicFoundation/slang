@@ -13,18 +13,16 @@
 use napi_derive::napi;
 use semver::Version;
 
-pub use super::kinds::LexicalContext;
+use crate::cst;
+pub use crate::kinds::LexicalContext;
+use crate::kinds::{IsLexicalContext, LexicalContextType, RuleKind, TokenKind};
+use crate::lexer::Lexer;
 #[cfg(feature = "slang_napi_interfaces")]
-use super::napi::napi_parse_output::ParseOutput as NAPIParseOutput;
-use super::{
-    cst,
-    kinds::{IsLexicalContext, LexicalContextType, RuleKind, TokenKind},
-    lexer::Lexer,
-    parse_output::ParseOutput,
-    support::{
-        ChoiceHelper, OneOrMoreHelper, OptionalHelper, ParserContext, ParserFunction, ParserResult,
-        PrecedenceHelper, RecoverFromNoMatch, SeparatedHelper, SequenceHelper, ZeroOrMoreHelper,
-    },
+use crate::napi::napi_parse_output::ParseOutput as NAPIParseOutput;
+use crate::parse_output::ParseOutput;
+use crate::support::{
+    ChoiceHelper, OneOrMoreHelper, OptionalHelper, ParserContext, ParserFunction, ParserResult,
+    PrecedenceHelper, RecoverFromNoMatch, SeparatedHelper, SequenceHelper, ZeroOrMoreHelper,
 };
 
 #[derive(Debug)]

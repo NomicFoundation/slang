@@ -1,11 +1,10 @@
-use std::{collections::HashMap, path::Path};
+use std::collections::HashMap;
+use std::path::Path;
 
 use anyhow::{Context, Result};
-use infra_utils::{
-    commands::Command,
-    github::GitHub,
-    paths::{FileWalker, PathExtensions},
-};
+use infra_utils::commands::Command;
+use infra_utils::github::GitHub;
+use infra_utils::paths::{FileWalker, PathExtensions};
 use serde::Deserialize;
 
 pub fn setup_pipenv() -> Result<()> {

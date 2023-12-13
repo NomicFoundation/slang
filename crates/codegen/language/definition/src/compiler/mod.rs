@@ -4,10 +4,9 @@ mod version_set;
 
 use proc_macro2::TokenStream;
 
-use crate::{
-    compiler::{analysis::Analysis, emitter::LanguageEmitter},
-    internals::ParseAdapter,
-};
+use crate::compiler::analysis::Analysis;
+use crate::compiler::emitter::LanguageEmitter;
+use crate::internals::ParseAdapter;
 
 pub struct LanguageCompiler;
 

@@ -2,10 +2,9 @@ use std::collections::{BTreeSet, HashMap};
 
 use semver::Version;
 
-use super::{
-    GrammarVisitor, ParserDefinitionRef, PrecedenceParserDefinitionRef, ScannerDefinitionRef,
-    TriviaParserDefinitionRef, Visitable,
-};
+use crate::parser_definition::{ParserDefinitionRef, TriviaParserDefinitionRef};
+use crate::visitor::{GrammarVisitor, Visitable};
+use crate::{PrecedenceParserDefinitionRef, ScannerDefinitionRef};
 
 pub struct Grammar {
     pub name: String,

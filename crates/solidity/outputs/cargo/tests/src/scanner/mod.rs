@@ -1,8 +1,6 @@
 use semver::Version;
-use slang_solidity::{
-    kinds::TokenKind::*,
-    language::{Language, LexicalContext},
-};
+use slang_solidity::kinds::TokenKind::*;
+use slang_solidity::language::{Language, LexicalContext};
 
 #[test]
 fn test_next_token() {

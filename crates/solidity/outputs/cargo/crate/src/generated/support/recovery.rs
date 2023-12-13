@@ -1,11 +1,11 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-use super::parser_result::SkippedUntil;
-use super::ParserContext;
 use crate::cst;
 use crate::kinds::{IsLexicalContext, TokenKind};
 use crate::lexer::Lexer;
 use crate::parse_error::ParseError;
+use crate::support::context::ParserContext;
+use crate::support::parser_result::SkippedUntil;
 use crate::support::ParserResult;
 use crate::text_index::{TextRange, TextRangeExtensions as _};
 

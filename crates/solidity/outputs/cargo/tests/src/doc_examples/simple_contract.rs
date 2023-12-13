@@ -1,10 +1,8 @@
 use anyhow::Result;
 use semver::Version;
-use slang_solidity::{
-    cst::Node,
-    kinds::{RuleKind, TokenKind},
-    language::Language,
-};
+use slang_solidity::cst::Node;
+use slang_solidity::kinds::{RuleKind, TokenKind};
+use slang_solidity::language::Language;
 
 #[test]
 fn simple_contract() -> Result<()> {

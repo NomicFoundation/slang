@@ -1,4 +1,5 @@
-use std::{env::var, path::PathBuf};
+use std::env::var;
+use std::path::PathBuf;
 
 use anyhow::{bail, Result};
 use ariadne::{Color, Label, Report, ReportKind, Source};

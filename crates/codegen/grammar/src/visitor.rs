@@ -1,4 +1,4 @@
-use super::{
+use crate::{
     Grammar, ParserDefinitionNode, ParserDefinitionRef, PrecedenceParserDefinitionNode,
     PrecedenceParserDefinitionRef, ScannerDefinitionNode, ScannerDefinitionRef,
     TriviaParserDefinitionRef,

@@ -1,20 +1,19 @@
-use std::{fs, path::PathBuf, process::ExitCode};
+use std::fs;
+use std::path::PathBuf;
+use std::process::ExitCode;
 
 use anyhow::{Context, Result};
 use clap::{Parser as ClapParser, Subcommand};
 use semver::Version;
-use slang_solidity::{kinds::RuleKind, language::Language};
+use slang_solidity::kinds::RuleKind;
+use slang_solidity::language::Language;
 
 // Below are dependencies used by the API `lib.rs`, but not the CLI "main.rs".
 // However, we need to add a fake usage to suppress Cargo warnings about unused dependencies.
 // This is a known issue, and we should remove this hack once there is a better solution from Cargo.
 // https://github.com/rust-lang/cargo/issues/1982
 mod supress_api_dependencies {
-    use ariadne as _;
-    use serde as _;
-    use strum as _;
-    use strum_macros as _;
-    use thiserror as _;
+    use {ariadne as _, serde as _, strum as _, strum_macros as _, thiserror as _};
 }
 
 #[derive(ClapParser, Debug)]

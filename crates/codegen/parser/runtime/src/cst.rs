@@ -2,11 +2,9 @@ use std::rc::Rc;
 
 use serde::Serialize;
 
-use super::{
-    cursor::Cursor,
-    kinds::{RuleKind, TokenKind},
-    text_index::TextIndex,
-};
+use crate::cursor::Cursor;
+use crate::kinds::{RuleKind, TokenKind};
+use crate::text_index::TextIndex;
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
 pub struct RuleNode {

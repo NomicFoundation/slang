@@ -1,9 +1,7 @@
 use anyhow::{Ok, Result};
 use clap::ValueEnum;
-use owo_colors::{
-    colors::{BrightBlue, BrightGreen, BrightRed},
-    Color, OwoColorize,
-};
+use owo_colors::colors::{BrightBlue, BrightGreen, BrightRed};
+use owo_colors::{Color, OwoColorize};
 use terminal_size::terminal_size;
 
 pub trait OrderedCommand: Clone + Ord + PartialEq + ValueEnum {

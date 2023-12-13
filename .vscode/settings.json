@@ -9,6 +9,9 @@
   "rust-analyzer.check.allTargets": true,
   "rust-analyzer.check.command": "clippy",
   "rust-analyzer.check.features": "all",
+  "rust-analyzer.imports.granularity.enforce": true,
+  "rust-analyzer.imports.granularity.group": "module",
+  "rust-analyzer.imports.prefix": "crate",
   "rust-analyzer.rustfmt.extraArgs": [
     "+nightly-2023-12-01" // Keep in sync with other "RUST_NIGHTLY_VERSION" references
   ],

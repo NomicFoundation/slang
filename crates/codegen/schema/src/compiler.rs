@@ -1,19 +1,15 @@
 use std::path::{Path, PathBuf};
 
 use anyhow::Result;
-use infra_utils::{
-    codegen::{Codegen, CodegenReadWrite},
-    errors::{InfraErrors, Position},
-};
+use infra_utils::codegen::{Codegen, CodegenReadWrite};
+use infra_utils::errors::{InfraErrors, Position};
 
-use crate::{
-    types::{
-        LanguageDefinition, LanguageDefinitionRef, LanguageSection, LanguageTopic, ManifestFile,
-        ManifestSection, ManifestTopic, ProductionsFile,
-    },
-    validation::validate_language,
-    yaml::deserialize_yaml,
+use crate::types::{
+    LanguageDefinition, LanguageDefinitionRef, LanguageSection, LanguageTopic, ManifestFile,
+    ManifestSection, ManifestTopic, ProductionsFile,
 };
+use crate::validation::validate_language;
+use crate::yaml::deserialize_yaml;
 
 impl LanguageDefinition {
     pub fn compile(language_dir: PathBuf) -> Result<LanguageDefinitionRef> {
