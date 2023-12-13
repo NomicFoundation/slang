@@ -1,12 +1,13 @@
-use std::{collections::HashMap, error::Error, path::PathBuf};
+use std::collections::HashMap;
+use std::error::Error;
+use std::path::PathBuf;
 
 use anyhow::Result;
-use infra_utils::{errors::InfraErrors, paths::PathExtensions};
+use infra_utils::errors::InfraErrors;
+use infra_utils::paths::PathExtensions;
 
-use crate::{
-    validation::visitors::location::{Location, LocationRef},
-    yaml::{NodeRef, Parser},
-};
+use crate::validation::visitors::location::{Location, LocationRef};
+use crate::yaml::{NodeRef, Parser};
 
 pub struct Reporter {
     errors: Vec<(LocationRef, String)>,

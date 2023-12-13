@@ -5,15 +5,12 @@ mod versions;
 
 use anyhow::Result;
 
-use crate::{
-    types::LanguageDefinitionRef,
-    validation::{
-        rules::definitions::{
-            keywords::Keywords, operators::Operators, productions::Productions, versions::Versions,
-        },
-        visitors::Reporter,
-    },
-};
+use crate::types::LanguageDefinitionRef;
+use crate::validation::rules::definitions::keywords::Keywords;
+use crate::validation::rules::definitions::operators::Operators;
+use crate::validation::rules::definitions::productions::Productions;
+use crate::validation::rules::definitions::versions::Versions;
+use crate::validation::visitors::Reporter;
 
 pub fn run(language: &LanguageDefinitionRef) -> Result<()> {
     let mut reporter = Reporter::new();

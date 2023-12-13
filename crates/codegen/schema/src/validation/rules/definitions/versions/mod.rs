@@ -1,9 +1,7 @@
 use semver::Version;
 
-use crate::{
-    types::{LanguageDefinitionRef, ProductionRef},
-    validation::visitors::{run_visitor, LocationRef, Reporter, Visitor},
-};
+use crate::types::{LanguageDefinitionRef, ProductionRef};
+use crate::validation::visitors::{run_visitor, LocationRef, Reporter, Visitor};
 
 pub struct Versions {
     language: LanguageDefinitionRef,

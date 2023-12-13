@@ -6,7 +6,9 @@ use inflector::Inflector;
 use serde::Serialize;
 use tera::{Tera, Value};
 
-use crate::{cargo::CargoWorkspace, codegen::write_only::CodegenWriteOnly, paths::PathExtensions};
+use crate::cargo::CargoWorkspace;
+use crate::codegen::write_only::CodegenWriteOnly;
+use crate::paths::PathExtensions;
 
 pub struct CodegenReadWrite {
     writer: CodegenWriteOnly,

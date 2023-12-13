@@ -1,12 +1,8 @@
 use std::collections::HashMap;
 
-use crate::{
-    types::{LanguageDefinitionRef, ProductionRef, ScannerDefinition, ScannerRef},
-    validation::{
-        rules::utils::is_a_keyword_scanner,
-        visitors::{run_visitor, LocationRef, Reporter, Visitor},
-    },
-};
+use crate::types::{LanguageDefinitionRef, ProductionRef, ScannerDefinition, ScannerRef};
+use crate::validation::rules::utils::is_a_keyword_scanner;
+use crate::validation::visitors::{run_visitor, LocationRef, Reporter, Visitor};
 
 pub struct KeywordsValidator {
     keywords: HashMap<String, ProductionRef>,

@@ -5,7 +5,9 @@ use std::str::FromStr;
 
 use anyhow::{bail, ensure, Context, Result};
 use semver::{Comparator, Op, Version};
-use slang_solidity::{cst::Node, kinds::RuleKind, language::Language};
+use slang_solidity::cst::Node;
+use slang_solidity::kinds::RuleKind;
+use slang_solidity::language::Language;
 
 use crate::node_extensions::NodeExtensions;
 

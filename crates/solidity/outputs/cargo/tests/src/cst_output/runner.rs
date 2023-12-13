@@ -1,8 +1,11 @@
 use std::str::FromStr;
 
 use anyhow::Result;
-use infra_utils::{cargo::CargoWorkspace, codegen::Codegen, paths::PathExtensions};
-use slang_solidity::{kinds::RuleKind, language::Language};
+use infra_utils::cargo::CargoWorkspace;
+use infra_utils::codegen::Codegen;
+use infra_utils::paths::PathExtensions;
+use slang_solidity::kinds::RuleKind;
+use slang_solidity::language::Language;
 use solidity_testing_utils::cst_snapshots::CstSnapshots;
 use strum_macros::Display;
 

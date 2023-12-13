@@ -9,22 +9,20 @@
     clippy::similar_names
 )]
 
+#[cfg(feature = "slang_napi_interfaces")]
+use napi_derive::napi;
 use semver::Version;
-#[cfg(feature = "slang_napi_interfaces")]
-use {napi::bindgen_prelude::*, napi_derive::napi};
 
-pub use super::kinds::LexicalContext;
+use crate::cst;
+pub use crate::kinds::LexicalContext;
+use crate::kinds::{IsLexicalContext, LexicalContextType, RuleKind, TokenKind};
+use crate::lexer::Lexer;
 #[cfg(feature = "slang_napi_interfaces")]
-use super::napi::napi_parse_output::ParseOutput as NAPIParseOutput;
-use super::{
-    cst,
-    kinds::{IsLexicalContext, LexicalContextType, RuleKind, TokenKind},
-    lexer::Lexer,
-    parse_output::ParseOutput,
-    support::{
-        ChoiceHelper, OneOrMoreHelper, OptionalHelper, ParserContext, ParserFunction, ParserResult,
-        PrecedenceHelper, RecoverFromNoMatch, SeparatedHelper, SequenceHelper, ZeroOrMoreHelper,
-    },
+use crate::napi::napi_parse_output::ParseOutput as NAPIParseOutput;
+use crate::parse_output::ParseOutput;
+use crate::support::{
+    ChoiceHelper, OneOrMoreHelper, OptionalHelper, ParserContext, ParserFunction, ParserResult,
+    PrecedenceHelper, RecoverFromNoMatch, SeparatedHelper, SequenceHelper, ZeroOrMoreHelper,
 };
 
 #[derive(Debug)]
@@ -9752,17 +9750,22 @@ impl Lexer for Language {
 impl Language {
     #[napi(constructor)]
     pub fn new_napi(version: String) -> std::result::Result<Self, napi::Error> {
+        // IMPORTANT:
+        // Make sure this does NOT panic.
+        // '#[napi(catch_unwind)]' is not supported on constructors yet.
+        // More Info: https://github.com/napi-rs/napi-rs/issues/1852
+
         let version =
             Version::parse(&version).map_err(|_| Error::InvalidSemanticVersion(version))?;
         Self::new(version).map_err(|e| e.into())
     }
 
-    #[napi(getter, js_name = "version")]
+    #[napi(getter, js_name = "version", catch_unwind)]
     pub fn version_napi(&self) -> String {
         self.version.to_string()
     }
 
-    #[napi(js_name = "supportedVersions")]
+    #[napi(js_name = "supportedVersions", catch_unwind)]
     pub fn supported_versions_napi() -> Vec<String> {
         return Self::SUPPORTED_VERSIONS
             .iter()
@@ -9770,12 +9773,20 @@ impl Language {
             .collect();
     }
 
-    #[napi(js_name = "scan", ts_return_type = "kinds.TokenKind | null")]
+    #[napi(
+        js_name = "scan",
+        ts_return_type = "kinds.TokenKind | null",
+        catch_unwind
+    )]
     pub fn scan_napi(&self, lexical_context: LexicalContext, input: String) -> Option<TokenKind> {
         self.scan(lexical_context, input.as_str())
     }
 
-    #[napi(js_name = "parse", ts_return_type = "parse_output.ParseOutput")]
+    #[napi(
+        js_name = "parse",
+        ts_return_type = "parse_output.ParseOutput",
+        catch_unwind
+    )]
     pub fn parse_napi(
         &self,
         #[napi(ts_arg_type = "kinds.RuleKind")] kind: RuleKind,

@@ -1,8 +1,6 @@
-use std::{
-    collections::{BTreeMap, BTreeSet},
-    mem,
-    path::Path,
-};
+use std::collections::{BTreeMap, BTreeSet};
+use std::mem;
+use std::path::Path;
 
 use anyhow::Result;
 use codegen_grammar::{
@@ -10,16 +8,16 @@ use codegen_grammar::{
     PrecedenceParserDefinitionRef, ScannerDefinitionNode, ScannerDefinitionRef,
     TriviaParserDefinitionRef,
 };
-use infra_utils::{cargo::CargoWorkspace, codegen::Codegen};
+use infra_utils::cargo::CargoWorkspace;
+use infra_utils::codegen::Codegen;
 use quote::{format_ident, quote};
 use semver::Version;
 use serde::Serialize;
 
-use super::{
-    parser_definition::ParserDefinitionExtensions,
-    precedence_parser_definition::PrecedenceParserDefinitionExtensions,
-    scanner_definition::ScannerDefinitionExtensions, trie::Trie,
-};
+use crate::parser_definition::ParserDefinitionExtensions;
+use crate::precedence_parser_definition::PrecedenceParserDefinitionExtensions;
+use crate::scanner_definition::ScannerDefinitionExtensions;
+use crate::trie::Trie;
 
 #[derive(Default, Serialize)]
 pub struct CodeGenerator {

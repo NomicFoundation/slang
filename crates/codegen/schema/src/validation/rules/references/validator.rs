@@ -1,13 +1,10 @@
-use crate::{
-    types::{
-        LanguageDefinitionRef, ParserDefinition, ParserRef, ProductionDefinition, ProductionRef,
-        ScannerDefinition, ScannerRef,
-    },
-    validation::{
-        rules::{references::metadata::Metadata, utils::is_a_keyword_scanner},
-        visitors::{run_visitor, LocationRef, Reporter, VersionSet, Visitor},
-    },
+use crate::types::{
+    LanguageDefinitionRef, ParserDefinition, ParserRef, ProductionDefinition, ProductionRef,
+    ScannerDefinition, ScannerRef,
 };
+use crate::validation::rules::references::metadata::Metadata;
+use crate::validation::rules::utils::is_a_keyword_scanner;
+use crate::validation::visitors::{run_visitor, LocationRef, Reporter, VersionSet, Visitor};
 
 pub struct Validator<'validator> {
     language: LanguageDefinitionRef,

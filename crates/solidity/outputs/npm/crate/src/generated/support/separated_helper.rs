@@ -1,17 +1,13 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-use crate::{
-    cst,
-    kinds::{IsLexicalContext, TokenKind},
-    lexer::Lexer,
-    parse_error::ParseError,
-    support::{
-        parser_result::{ParserResult, SkippedUntil},
-        recovery::skip_until_with_nested_delims,
-        ParserContext,
-    },
-    text_index::TextRangeExtensions,
-};
+use crate::cst;
+use crate::kinds::{IsLexicalContext, TokenKind};
+use crate::lexer::Lexer;
+use crate::parse_error::ParseError;
+use crate::support::parser_result::{ParserResult, SkippedUntil};
+use crate::support::recovery::skip_until_with_nested_delims;
+use crate::support::ParserContext;
+use crate::text_index::TextRangeExtensions;
 
 pub struct SeparatedHelper;
 

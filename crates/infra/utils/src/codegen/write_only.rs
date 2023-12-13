@@ -1,17 +1,13 @@
-use std::{
-    collections::HashSet,
-    path::{Path, PathBuf},
-};
+use std::collections::HashSet;
+use std::path::{Path, PathBuf};
 
 use anyhow::{bail, Result};
 use cargo_emit::rerun_if_changed;
 
-use crate::{
-    cargo::CargoWorkspace,
-    codegen::common::file_system::{delete_file, verify_file, write_file},
-    github::GitHub,
-    paths::{FileWalker, PathExtensions},
-};
+use crate::cargo::CargoWorkspace;
+use crate::codegen::common::file_system::{delete_file, verify_file, write_file};
+use crate::github::GitHub;
+use crate::paths::{FileWalker, PathExtensions};
 
 pub struct CodegenWriteOnly {
     generated_dirs: HashSet<PathBuf>,

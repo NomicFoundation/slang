@@ -5,22 +5,13 @@ use std::cell::OnceCell;
 use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::rc::Rc;
 
-use codegen_grammar::Grammar;
-use codegen_grammar::GrammarElement;
-use codegen_grammar::ParserDefinition;
-use codegen_grammar::ParserDefinitionNode;
-use codegen_grammar::PrecedenceOperatorModel;
-use codegen_grammar::PrecedenceParserDefinition;
-use codegen_grammar::PrecedenceParserDefinitionNode;
-use codegen_grammar::ScannerDefinition;
-use codegen_grammar::ScannerDefinitionNode;
-use codegen_grammar::TriviaParserDefinition;
-use codegen_grammar::VersionQuality;
-use codegen_grammar::VersionQualityRange;
+use codegen_grammar::{
+    Grammar, GrammarElement, ParserDefinition, ParserDefinitionNode, PrecedenceOperatorModel,
+    PrecedenceParserDefinition, PrecedenceParserDefinitionNode, ScannerDefinition,
+    ScannerDefinitionNode, TriviaParserDefinition, VersionQuality, VersionQualityRange,
+};
 use codegen_language_definition::model;
-use codegen_language_definition::model::FieldsErrorRecovery;
-use codegen_language_definition::model::Identifier;
-use codegen_language_definition::model::Item;
+use codegen_language_definition::model::{FieldsErrorRecovery, Identifier, Item};
 use indexmap::IndexMap;
 
 /// Materializes the DSL v2 model ([`model::Language`]) into [`Grammar`].

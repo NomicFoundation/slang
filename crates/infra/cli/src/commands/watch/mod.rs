@@ -1,10 +1,8 @@
 use anyhow::Result;
 use clap::{Parser, ValueEnum};
 
-use crate::{
-    toolchains::mkdocs::Mkdocs,
-    utils::{ClapExtensions, OrderedCommand, Terminal},
-};
+use crate::toolchains::mkdocs::Mkdocs;
+use crate::utils::{ClapExtensions, OrderedCommand, Terminal};
 
 #[derive(Clone, Debug, Parser)]
 pub struct WatchController {

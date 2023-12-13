@@ -1,7 +1,9 @@
 use std::path::Path;
 
 use anyhow::Result;
-use infra_utils::{cargo::CargoWorkspace, github::GitHub, paths::PathExtensions};
+use infra_utils::cargo::CargoWorkspace;
+use infra_utils::github::GitHub;
+use infra_utils::paths::PathExtensions;
 use itertools::Itertools;
 use markdown::{Block, Span};
 use semver::Version;

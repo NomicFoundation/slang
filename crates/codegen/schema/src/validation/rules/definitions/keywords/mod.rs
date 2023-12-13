@@ -1,15 +1,10 @@
 mod collector;
 mod validator;
 
-use crate::{
-    types::LanguageDefinitionRef,
-    validation::{
-        rules::definitions::keywords::{
-            collector::KeywordsCollector, validator::KeywordsValidator,
-        },
-        visitors::Reporter,
-    },
-};
+use crate::types::LanguageDefinitionRef;
+use crate::validation::rules::definitions::keywords::collector::KeywordsCollector;
+use crate::validation::rules::definitions::keywords::validator::KeywordsValidator;
+use crate::validation::visitors::Reporter;
 
 pub struct Keywords;
 

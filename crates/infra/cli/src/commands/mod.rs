@@ -10,10 +10,14 @@ mod watch;
 use anyhow::Result;
 use clap::{Parser, Subcommand};
 
-use crate::commands::{
-    check::CheckController, ci::CiController, lint::LintController, publish::PublishController,
-    run::RunController, setup::SetupController, test::TestController, watch::WatchController,
-};
+use crate::commands::check::CheckController;
+use crate::commands::ci::CiController;
+use crate::commands::lint::LintController;
+use crate::commands::publish::PublishController;
+use crate::commands::run::RunController;
+use crate::commands::setup::SetupController;
+use crate::commands::test::TestController;
+use crate::commands::watch::WatchController;
 
 #[derive(Debug, Parser)]
 pub struct CLI {

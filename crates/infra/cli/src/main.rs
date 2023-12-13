@@ -4,7 +4,8 @@ pub mod utils;
 
 use clap::Parser;
 
-use crate::{commands::CLI, utils::Terminal};
+use crate::commands::CLI;
+use crate::utils::Terminal;
 
 #[allow(dead_code)] // as it is referenced from 'build.rs' of the same crate.
 fn main() {

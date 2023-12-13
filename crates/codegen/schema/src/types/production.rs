@@ -5,7 +5,9 @@ use schemars::JsonSchema;
 use semver::Version;
 use serde::{Deserialize, Serialize};
 
-use super::{parser::Parser, precedence_parser::PrecedenceParser, scanner::Scanner};
+use crate::types::parser::Parser;
+use crate::types::precedence_parser::PrecedenceParser;
+use crate::types::scanner::Scanner;
 
 pub type ProductionRef = Rc<Production>;
 

@@ -1,6 +1,9 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-use crate::{cst, cursor::Cursor, parse_error::ParseError, text_index::TextIndex};
+use crate::cst;
+use crate::cursor::Cursor;
+use crate::parse_error::ParseError;
+use crate::text_index::TextIndex;
 
 #[derive(Debug, PartialEq)]
 pub struct ParseOutput {

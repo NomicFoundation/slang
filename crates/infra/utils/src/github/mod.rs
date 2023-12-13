@@ -1,10 +1,12 @@
-use std::{env::var, path::Path};
+use std::env::var;
+use std::path::Path;
 
 use anyhow::{Context, Result};
 use semver::Version;
 use serde::Deserialize;
 
-use crate::{commands::Command, paths::PathExtensions};
+use crate::commands::Command;
+use crate::paths::PathExtensions;
 
 pub struct GitHub;
 

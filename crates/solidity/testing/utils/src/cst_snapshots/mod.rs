@@ -1,12 +1,11 @@
-use std::{cmp::max, fmt::Write};
+use std::cmp::max;
+use std::fmt::Write;
 
 use anyhow::Result;
-use slang_solidity::{
-    cst,
-    cursor::Cursor,
-    kinds::TokenKind,
-    text_index::{TextRange, TextRangeExtensions},
-};
+use slang_solidity::cst;
+use slang_solidity::cursor::Cursor;
+use slang_solidity::kinds::TokenKind;
+use slang_solidity::text_index::{TextRange, TextRangeExtensions};
 
 use crate::node_extensions::NodeExtensions;
 

@@ -1,14 +1,13 @@
 use std::rc::Rc;
 
-use crate::{
-    types::{
-        LanguageDefinitionRef, ParserDefinition, ParserRef, PrecedenceParserRef,
-        ProductionDefinition, ProductionRef, ScannerDefinition, ScannerRef, VersionMap,
-    },
-    validation::visitors::{
-        location::LocationRef, reporter::Reporter, visitor::Visitor, VersionSet,
-    },
+use crate::types::{
+    LanguageDefinitionRef, ParserDefinition, ParserRef, PrecedenceParserRef, ProductionDefinition,
+    ProductionRef, ScannerDefinition, ScannerRef, VersionMap,
 };
+use crate::validation::visitors::location::LocationRef;
+use crate::validation::visitors::reporter::Reporter;
+use crate::validation::visitors::visitor::Visitor;
+use crate::validation::visitors::VersionSet;
 
 pub trait Receiver {
     fn receive(

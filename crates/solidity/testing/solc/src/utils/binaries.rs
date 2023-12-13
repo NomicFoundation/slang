@@ -1,12 +1,14 @@
-use std::{
-    collections::HashMap, os::unix::prelude::PermissionsExt, path::Path, path::PathBuf,
-    time::Duration,
-};
+use std::collections::HashMap;
+use std::os::unix::prelude::PermissionsExt;
+use std::path::{Path, PathBuf};
+use std::time::Duration;
 
 use anyhow::Result;
 use codegen_language_definition::model::Language;
 use indicatif::{ProgressBar, ProgressStyle};
-use infra_utils::{cargo::CargoWorkspace, commands::Command, paths::PathExtensions};
+use infra_utils::cargo::CargoWorkspace;
+use infra_utils::commands::Command;
+use infra_utils::paths::PathExtensions;
 use rayon::prelude::{ParallelBridge, ParallelIterator};
 use semver::Version;
 use serde::Deserialize;

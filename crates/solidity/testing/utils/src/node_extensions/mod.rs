@@ -1,10 +1,8 @@
 #[cfg(test)]
 mod tests;
 
-use slang_solidity::{
-    cst::{Node, RuleNode, TokenNode},
-    kinds::RuleKind,
-};
+use slang_solidity::cst::{Node, RuleNode, TokenNode};
+use slang_solidity::kinds::RuleKind;
 
 pub trait NodeExtensions {
     fn is_trivia(&self) -> bool;

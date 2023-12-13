@@ -2,11 +2,9 @@
 
 use std::rc::Rc;
 
-use super::{
-    cst::{NamedNode, Node, RuleNode},
-    kinds::{RuleKind, TokenKind},
-    text_index::{TextIndex, TextRange},
-};
+use crate::cst::{NamedNode, Node, RuleNode};
+use crate::kinds::{RuleKind, TokenKind};
+use crate::text_index::{TextIndex, TextRange};
 
 /// A [`PathNode`] that points to a [`RuleNode`].
 #[derive(Clone, Debug, PartialEq, Eq)]

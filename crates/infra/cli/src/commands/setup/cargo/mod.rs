@@ -1,5 +1,6 @@
 use anyhow::Result;
-use infra_utils::{commands::Command, github::GitHub};
+use infra_utils::commands::Command;
+use infra_utils::github::GitHub;
 
 pub fn setup_cargo() -> Result<()> {
     // The bootstrap bash script defined in '$REPO_ROOT/scripts/_common.sh'

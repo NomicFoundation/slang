@@ -1,10 +1,8 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-use super::super::{
-    cst,
-    kinds::{RuleKind, TokenKind},
-    text_index::TextIndex,
-};
+use crate::cst;
+use crate::kinds::{RuleKind, TokenKind};
+use crate::text_index::TextIndex;
 
 #[derive(PartialEq, Eq, Clone, Debug)]
 pub enum ParserResult {

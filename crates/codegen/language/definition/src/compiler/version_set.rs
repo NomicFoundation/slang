@@ -1,4 +1,6 @@
-use std::{fmt::Display, mem::swap, ops::Range};
+use std::fmt::Display;
+use std::mem::swap;
+use std::ops::Range;
 
 use semver::Version;
 

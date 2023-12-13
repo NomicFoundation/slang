@@ -2,12 +2,10 @@ use std::path::Path;
 
 use anyhow::Result;
 use clap::{Parser, ValueEnum};
-use infra_utils::{
-    cargo::CargoWorkspace,
-    commands::Command,
-    github::GitHub,
-    paths::{FileWalker, PathExtensions},
-};
+use infra_utils::cargo::CargoWorkspace;
+use infra_utils::commands::Command;
+use infra_utils::github::GitHub;
+use infra_utils::paths::{FileWalker, PathExtensions};
 
 use crate::utils::{ClapExtensions, OrderedCommand, Terminal};
 

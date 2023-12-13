@@ -1,10 +1,8 @@
-use crate::{
-    types::{
-        LanguageDefinitionRef, ParserDefinition, ParserRef, PrecedenceParserRef, ScannerDefinition,
-        ScannerRef,
-    },
-    validation::visitors::{run_visitor, LocationRef, Reporter, Visitor},
+use crate::types::{
+    LanguageDefinitionRef, ParserDefinition, ParserRef, PrecedenceParserRef, ScannerDefinition,
+    ScannerRef,
 };
+use crate::validation::visitors::{run_visitor, LocationRef, Reporter, Visitor};
 
 pub struct ChildrenCount;
 

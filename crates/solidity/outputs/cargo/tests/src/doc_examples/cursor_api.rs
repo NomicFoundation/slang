@@ -1,9 +1,7 @@
 use anyhow::Result;
 use semver::Version;
-use slang_solidity::{
-    kinds::{RuleKind, TokenKind},
-    language::Language,
-};
+use slang_solidity::kinds::{RuleKind, TokenKind};
+use slang_solidity::language::Language;
 
 const SOURCE: &str = "
     contract Foo {}

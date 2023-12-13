@@ -6,7 +6,7 @@
 use napi_derive::napi;
 use napi_text_index::TextRange;
 
-use super::{napi_text_index, RustParseError};
+use crate::napi::{napi_text_index, RustParseError};
 
 #[napi(namespace = "parse_error")]
 #[derive(PartialEq, Clone)]
@@ -20,16 +20,12 @@ impl From<RustParseError> for ParseError {
 
 #[napi(namespace = "parse_error")]
 impl ParseError {
-    #[napi(getter, ts_return_type = "text_index.TextRange")]
+    #[napi(getter, ts_return_type = "text_index.TextRange", catch_unwind)]
     pub fn text_range(&self) -> TextRange {
         self.0.text_range().into()
     }
 
-    pub fn tokens_that_would_have_allowed_more_progress(&self) -> Vec<String> {
-        self.0.tokens_that_would_have_allowed_more_progress()
-    }
-
-    #[napi(namespace = "parse_error")]
+    #[napi(catch_unwind)]
     pub fn to_error_report(&self, source_id: String, source: String, with_color: bool) -> String {
         self.0.to_error_report(&source_id, &source, with_color)
     }

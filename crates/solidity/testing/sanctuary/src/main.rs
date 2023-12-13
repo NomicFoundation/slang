@@ -1,20 +1,22 @@
 mod datasets;
 mod reporting;
 
-use std::{collections::BTreeSet, ops::ControlFlow, path::Path, process::ExitCode};
+use std::collections::BTreeSet;
+use std::ops::ControlFlow;
+use std::path::Path;
+use std::process::ExitCode;
 
 use anyhow::Result;
 use infra_utils::paths::PathExtensions;
 use rayon::prelude::{IntoParallelRefIterator, ParallelIterator};
 use semver::Version;
-use slang_solidity::{kinds::RuleKind, language::Language};
+use slang_solidity::kinds::RuleKind;
+use slang_solidity::language::Language;
 use solidity_language::SolidityDefinition;
 use solidity_testing_utils::version_pragmas::extract_version_pragmas;
 
-use crate::{
-    datasets::{get_all_datasets, Dataset},
-    reporting::Reporter,
-};
+use crate::datasets::{get_all_datasets, Dataset};
+use crate::reporting::Reporter;
 
 fn main() -> Result<ExitCode> {
     let versions = SolidityDefinition::create().collect_breaking_versions();

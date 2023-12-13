@@ -3,13 +3,10 @@ mod consistent_shape;
 
 use anyhow::Result;
 
-use crate::{
-    types::LanguageDefinitionRef,
-    validation::{
-        rules::lints::{children_count::ChildrenCount, consistent_shape::ConsistentShape},
-        visitors::Reporter,
-    },
-};
+use crate::types::LanguageDefinitionRef;
+use crate::validation::rules::lints::children_count::ChildrenCount;
+use crate::validation::rules::lints::consistent_shape::ConsistentShape;
+use crate::validation::visitors::Reporter;
 
 pub fn run(language: &LanguageDefinitionRef) -> Result<()> {
     let mut reporter = Reporter::new();

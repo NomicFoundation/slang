@@ -1,16 +1,15 @@
 use std::path::{Path, PathBuf};
 
 use anyhow::Result;
-use infra_utils::{
-    cargo::CargoWorkspace, codegen::Codegen, commands::Command, paths::PathExtensions,
-};
+use infra_utils::cargo::CargoWorkspace;
+use infra_utils::codegen::Codegen;
+use infra_utils::commands::Command;
+use infra_utils::paths::PathExtensions;
 use serde::Serialize;
 
-use crate::toolchains::napi::{
-    cli::{BuildTarget, NapiCli, NapiCliOutput},
-    config::NapiConfig,
-    resolver::{NapiPackageKind, NapiResolver},
-};
+use crate::toolchains::napi::cli::{BuildTarget, NapiCli, NapiCliOutput};
+use crate::toolchains::napi::config::NapiConfig;
+use crate::toolchains::napi::resolver::{NapiPackageKind, NapiResolver};
 
 #[derive(Clone, Copy)]
 pub enum NapiProfile {

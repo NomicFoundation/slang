@@ -1,9 +1,9 @@
 use std::mem;
 use std::ops::Range;
 
-use super::super::text_index::TextIndex;
 use crate::kinds::TokenKind;
 use crate::parse_error::ParseError;
+use crate::text_index::TextIndex;
 
 pub struct ParserContext<'s> {
     source: &'s str,
@@ -120,14 +120,14 @@ pub(crate) struct DelimiterGuard<'a, 's> {
     closing_delim: TokenKind,
 }
 
-impl<'a, 's> Drop for DelimiterGuard<'a, 's> {
+impl Drop for DelimiterGuard<'_, '_> {
     fn drop(&mut self) {
         let popped = self.input.closing_delimiters.pop();
         debug_assert_eq!(popped, Some(self.closing_delim));
     }
 }
 
-impl<'a, 's> DelimiterGuard<'a, 's> {
+impl<'s> DelimiterGuard<'_, 's> {
     pub(crate) fn ctx(&mut self) -> &mut ParserContext<'s> {
         self.input
     }

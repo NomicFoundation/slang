@@ -1,4 +1,5 @@
-use std::{env::var, process::Command};
+use std::env::var;
+use std::process::Command;
 
 fn main() {
     // Codegen does not need to run during 'napi build' (when cross-compiling).

@@ -1,12 +1,12 @@
-use std::{
-    collections::hash_map::DefaultHasher,
-    hash::{Hash, Hasher},
-    path::{Path, PathBuf},
-};
+use std::collections::hash_map::DefaultHasher;
+use std::hash::{Hash, Hasher};
+use std::path::{Path, PathBuf};
 
 use anyhow::{anyhow, Context, Result};
 
-use crate::{cargo::CargoWorkspace, commands::Command, paths::PathExtensions};
+use crate::cargo::CargoWorkspace;
+use crate::commands::Command;
+use crate::paths::PathExtensions;
 
 pub fn format_source_file(file_path: &Path, contents: &str) -> Result<String> {
     let header = generate_header(file_path);

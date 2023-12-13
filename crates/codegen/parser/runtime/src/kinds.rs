@@ -1,8 +1,5 @@
 #[cfg(feature = "slang_napi_interfaces")]
-use {
-    napi::bindgen_prelude::{FromNapiValue, ToNapiValue},
-    napi_derive::napi,
-};
+use napi_derive::napi;
 
 #[derive(
     Debug,

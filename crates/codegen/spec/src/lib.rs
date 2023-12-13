@@ -20,12 +20,10 @@ use anyhow::Result;
 use codegen_schema::types::LanguageDefinitionRef;
 use infra_utils::codegen::Codegen;
 
-use crate::{
-    grammar::{generate_grammar_dir, generate_supported_versions_page},
-    navigation::NavigationEntry,
-    reference::generate_reference_dir,
-    snippets::Snippets,
-};
+use crate::grammar::{generate_grammar_dir, generate_supported_versions_page};
+use crate::navigation::NavigationEntry;
+use crate::reference::generate_reference_dir;
+use crate::snippets::Snippets;
 
 /// Extension trait for [`LanguageDefinitionRef`] that generates the specification files.
 pub trait SpecGeneratorExtensions {

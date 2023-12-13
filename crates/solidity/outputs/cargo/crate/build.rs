@@ -1,4 +1,5 @@
-use std::{env::var, process::Command};
+use std::env::var;
+use std::process::Command;
 
 fn main() {
     // Codegen does not need to run in production (when users install the crate).

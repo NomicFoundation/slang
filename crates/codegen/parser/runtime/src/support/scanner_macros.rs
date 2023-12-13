@@ -1,7 +1,7 @@
 #[allow(unused_macros)]
 macro_rules! scan_chars {
     ($stream:ident, $($char:literal),+) => {
-        if $( $stream.next() == Some($char) )&&* {
+        if $( $stream.next() == Some($char) )&&+ {
             true
         } else {
             $stream.undo();
@@ -14,7 +14,7 @@ macro_rules! scan_chars {
 macro_rules! scan_none_of {
     ($stream:ident, $($char:literal),+) => {
         if let Some(c) = $stream.next() {
-            if $(c != $char)&&* {
+            if $(c != $char)&&+ {
                 true
             } else {
                 $stream.undo();

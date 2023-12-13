@@ -1,21 +1,17 @@
-use std::{
-    collections::HashMap,
-    env::vars,
-    fmt::{Display, Formatter},
-    io::Write,
-    os::unix::process::ExitStatusExt,
-    path::{Path, PathBuf},
-    process::{Child, Command as StdCommand, ExitStatus, Output, Stdio},
-};
+use std::collections::HashMap;
+use std::env::vars;
+use std::fmt::{Display, Formatter};
+use std::io::Write;
+use std::os::unix::process::ExitStatusExt;
+use std::path::{Path, PathBuf};
+use std::process::{Child, Command as StdCommand, ExitStatus, Output, Stdio};
 
 use anyhow::{bail, Context, Result};
 use itertools::Itertools;
 use rayon::prelude::{IntoParallelIterator, ParallelIterator};
 
-use crate::{
-    github::GitHub,
-    paths::{PathExtensions, PrivatePathExtensions},
-};
+use crate::github::GitHub;
+use crate::paths::{PathExtensions, PrivatePathExtensions};
 
 #[derive(Clone, Debug)]
 pub struct Command {

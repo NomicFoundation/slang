@@ -1,9 +1,7 @@
 use std::collections::HashMap;
 
-use crate::{
-    types::{LanguageDefinitionRef, ProductionRef, ScannerDefinition, ScannerRef},
-    validation::visitors::{run_visitor, LocationRef, Reporter, Visitor},
-};
+use crate::types::{LanguageDefinitionRef, ProductionRef, ScannerDefinition, ScannerRef};
+use crate::validation::visitors::{run_visitor, LocationRef, Reporter, Visitor};
 
 pub struct KeywordsCollector {
     keywords: HashMap<String, ProductionRef>,
