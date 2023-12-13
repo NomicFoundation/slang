@@ -11,9 +11,9 @@ Tree:
           - (variant:) ExponentiationExpression: # 0..6 "x ** y"
               - (left_operand:) Expression: # 0..1 "x"
                   - Identifier: "x" # 0..1
-              - (variant:) AsteriskAsterisk: "**" # 2..4
+              - (operator:) AsteriskAsterisk: "**" # 2..4
               - (right_operand:) Expression: # 4..6 " y"
                   - Identifier: "y" # 5..6
-      - (variant:) AsteriskAsterisk: "**" # 7..9
+      - (operator:) AsteriskAsterisk: "**" # 7..9
       - (right_operand:) Expression: # 9..12 " z\n"
           - Identifier: "z" # 10..11

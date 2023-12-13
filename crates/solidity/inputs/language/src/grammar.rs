@@ -545,6 +545,9 @@ fn resolve_keyword_value(value: model::KeywordValue) -> ScannerDefinitionNode {
 }
 
 fn resolve_trivia(parser: model::TriviaParser, ctx: &mut ResolveCtx<'_>) -> ParserDefinitionNode {
+    // Don't name the nodes for trivia
+    const EMPTY_NAME: String = String::new();
+
     match parser {
         model::TriviaParser::Optional { parser } => {
             ParserDefinitionNode::Optional(Box::new(resolve_trivia(*parser, ctx)))
@@ -558,10 +561,11 @@ fn resolve_trivia(parser: model::TriviaParser, ctx: &mut ResolveCtx<'_>) -> Pars
         model::TriviaParser::Sequence { parsers } => ParserDefinitionNode::Sequence(
             parsers
                 .into_iter()
-                .map(|scanner| (String::new(), resolve_trivia(scanner, ctx)))
+                .map(|scanner| (EMPTY_NAME, resolve_trivia(scanner, ctx)))
                 .collect(),
         ),
         model::TriviaParser::Choice { parsers } => ParserDefinitionNode::Choice(
+            EMPTY_NAME,
             parsers
                 .into_iter()
                 .map(|scanner| resolve_trivia(scanner, ctx))
@@ -706,7 +710,7 @@ fn resolve_choice(item: model::EnumItem, ctx: &mut ResolveCtx<'_>) -> ParserDefi
         })
         .collect();
 
-    ParserDefinitionNode::Choice(variants).versioned(item.enabled)
+    ParserDefinitionNode::Choice(String::from("variant"), variants).versioned(item.enabled)
 }
 
 fn resolve_repeated(item: model::RepeatedItem, ctx: &mut ResolveCtx<'_>) -> ParserDefinitionNode {
@@ -739,7 +743,7 @@ fn resolve_precedence(
     let primary_expression = Box::new(match primaries.len() {
         0 => panic!("Precedence operator has no primary expressions"),
         1 => primaries.into_iter().next().unwrap(),
-        _ => ParserDefinitionNode::Choice(primaries),
+        _ => ParserDefinitionNode::Choice(String::from("variant"), primaries),
     });
 
     #[allow(clippy::items_after_statements)] // simple and specific to this site
@@ -793,9 +797,12 @@ fn resolve_precedence(
             let def = match &defs[..] {
                 // HACK: Despite it being a single definition, we still need to wrap a versioned
                 // node around the choice for it to emit the version checks for the node.
-                [ParserDefinitionNode::Versioned(..)] => ParserDefinitionNode::Choice(defs),
+                [ParserDefinitionNode::Versioned(..)] => {
+                    ParserDefinitionNode::Choice(String::new(), defs)
+                }
                 [_] => defs.into_iter().next().unwrap(),
-                _ => ParserDefinitionNode::Choice(defs),
+                // NOTE: We give empty names to not ovewrite the names of the flattened fields of the operators
+                _ => ParserDefinitionNode::Choice(String::new(), defs),
             };
 
             all_operators.push(def.clone());
@@ -806,7 +813,7 @@ fn resolve_precedence(
         // as reachable and ensure we emit a token kind for each
         thunk
             .def
-            .set(ParserDefinitionNode::Choice(all_operators))
+            .set(ParserDefinitionNode::Choice(String::new(), all_operators))
             .unwrap();
         assert!(
             !ctx.resolved.contains_key(&name),

@@ -24,7 +24,7 @@ Errors: # 1 total
 Tree:
   - ContractDefinition: # 0..352 "// SPDX-License-Identifier: MIT\ncontract ABC {\n  f..."
       - LeadingTrivia: # 0..32 "// SPDX-License-Identifier: MIT\n"
-          - (variant:) SingleLineComment: "// SPDX-License-Identifier: MIT" # 0..31
+          - SingleLineComment: "// SPDX-License-Identifier: MIT" # 0..31
       - (contract_keyword:) ContractKeyword: "contract" # 32..40
       - (name:) Identifier: "ABC" # 41..44
       - (open_brace:) OpenBrace: "{" # 45..46
@@ -88,7 +88,7 @@ Tree:
                                                                           - (period:) Period: "." # 147..148
                                                                           - (member:) MemberAccess: # 148..155 "balance"
                                                                               - (variant:) Identifier: "balance" # 148..155
-                                                                  - (variant:) GreaterThanEqual: ">=" # 156..158
+                                                                  - (operator:) GreaterThanEqual: ">=" # 156..158
                                                                   - (right_operand:) Expression: # 158..165 " amount"
                                                                       - Identifier: "amount" # 159..165
                                                           - Comma: "," # 165..166

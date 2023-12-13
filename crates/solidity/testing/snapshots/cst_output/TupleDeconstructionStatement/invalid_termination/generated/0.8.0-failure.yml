@@ -47,7 +47,7 @@ Tree:
           - FunctionCallOptions: # 20..26 "/**/\n{"
               - NamedArgumentGroup: # 20..26 "/**/\n{"
                   - LeadingTrivia: # 20..25 "/**/\n"
-                      - (variant:) MultilineComment: "/**/" # 20..24
+                      - MultilineComment: "/**/" # 20..24
                   - (open_brace:) OpenBrace: "{" # 25..26
       - SKIPPED: "throw" # 27..32
       - (semicolon:) Semicolon: ";" # 32..33

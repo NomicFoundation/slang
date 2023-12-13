@@ -216,7 +216,7 @@ impl PrecedenceHelper {
         // 3. Until we have a single expression.
 
         match <[_; 1]>::try_from(elements) {
-            Ok([Expression { nodes }]) => ParserResult::r#match(nodes, vec![]).with_name("variant"),
+            Ok([Expression { nodes }]) => ParserResult::r#match(nodes, vec![]),
             Ok([head]) => unreachable!("Expected an expression: {:#?}", head),
             Err(elems) => unreachable!("Expected a single element: {:#?}", elems),
         }

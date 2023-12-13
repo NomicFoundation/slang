@@ -20,7 +20,7 @@ Tree:
           - ContractMember: # 21..105 "    // returns the current count\n    function coun..."
               - (variant:) FunctionDefinition: # 21..105 "    // returns the current count\n    function coun..."
                   - LeadingTrivia: # 21..58 "    // returns the current count\n    "
-                      - (variant:) SingleLineComment: "// returns the current count" # 25..53
+                      - SingleLineComment: "// returns the current count" # 25..53
                   - (function_keyword:) FunctionKeyword: "function" # 58..66
                   - (name:) FunctionName: # 66..72 " count"
                       - (variant:) Identifier: "count" # 67..72
@@ -47,7 +47,7 @@ Tree:
           - ContractMember: # 105..171 "\n    // increments the counter\n    function increm..."
               - (variant:) FunctionDefinition: # 105..171 "\n    // increments the counter\n    function increm..."
                   - LeadingTrivia: # 105..140 "\n    // increments the counter\n    "
-                      - (variant:) SingleLineComment: "// increments the counter" # 110..135
+                      - SingleLineComment: "// increments the counter" # 110..135
                   - (function_keyword:) FunctionKeyword: "function" # 140..148
                   - (name:) FunctionName: # 148..158 " increment"
                       - (variant:) Identifier: "increment" # 149..158

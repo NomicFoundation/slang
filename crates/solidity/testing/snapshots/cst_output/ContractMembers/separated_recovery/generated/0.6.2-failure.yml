@@ -295,7 +295,7 @@ Tree:
                                       - Identifier: "ident" # 341..346
                                   - Comma: "," # 346..347
                               - LeadingTrivia: # 347..359 " /* empty */"
-                                  - (variant:) MultilineComment: "/* empty */" # 348..359
+                                  - MultilineComment: "/* empty */" # 348..359
                               - SKIPPED: ", other.arg.here, and.here" # 359..385
                               - (close_paren:) CloseParen: ")" # 385..386
               - (body:) FunctionBody: # 386..388 ";\n"

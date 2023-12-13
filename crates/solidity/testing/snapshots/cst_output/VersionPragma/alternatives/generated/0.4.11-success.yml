@@ -31,7 +31,7 @@ Tree:
                   - (operator:) BarBar: "||" # 24..26
                   - (right_operand:) VersionPragmaExpression: # 26..33 " ^0.7.0"
                       - (variant:) VersionPragmaPrefixExpression: # 26..33 " ^0.7.0"
-                          - (variant:) Caret: "^" # 27..28
+                          - (operator:) Caret: "^" # 27..28
                           - (operand:) VersionPragmaExpression: # 28..33 "0.7.0"
                               - VersionPragmaSpecifier: # 28..33 "0.7.0"
                                   - VersionPragmaValue: "0" # 28..29

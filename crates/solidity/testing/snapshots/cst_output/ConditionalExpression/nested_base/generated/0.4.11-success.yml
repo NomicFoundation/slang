@@ -16,7 +16,7 @@ Tree:
                           - (variant:) EqualityExpression: # 1..11 "foo == bar"
                               - (left_operand:) Expression: # 1..4 "foo"
                                   - Identifier: "foo" # 1..4
-                              - (variant:) EqualEqual: "==" # 5..7
+                              - (operator:) EqualEqual: "==" # 5..7
                               - (right_operand:) Expression: # 7..11 " bar"
                                   - Identifier: "bar" # 8..11
               - (close_paren:) CloseParen: ")" # 11..12

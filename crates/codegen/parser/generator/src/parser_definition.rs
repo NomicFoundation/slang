@@ -81,12 +81,22 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                 })),
             },
 
-            Self::Choice(nodes) => make_choice_versioned(nodes.iter().map(|node| {
-                (
-                    node.to_parser_code(context_name, is_trivia),
-                    node.applicable_version_quality_ranges(),
-                )
-            })),
+            Self::Choice(name, nodes) => {
+                let parser = make_choice_versioned(nodes.iter().map(|node| {
+                    (
+                        node.to_parser_code(context_name, is_trivia),
+                        node.applicable_version_quality_ranges(),
+                    )
+                }));
+
+                if name.is_empty() {
+                    parser
+                } else {
+                    quote! {
+                        #parser.with_name(#name)
+                    }
+                }
+            }
 
             Self::ScannerDefinition(scanner_definition) => {
                 let kind = format_ident!("{name}", name = scanner_definition.name());

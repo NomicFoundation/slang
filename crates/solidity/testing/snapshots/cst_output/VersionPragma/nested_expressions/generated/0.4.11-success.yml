@@ -13,7 +13,7 @@ Tree:
               - (variant:) VersionPragmaOrExpression: # 8..30 " ^1.0.0 || 2.0.0-3.0.0"
                   - (left_operand:) VersionPragmaExpression: # 8..15 " ^1.0.0"
                       - (variant:) VersionPragmaPrefixExpression: # 8..15 " ^1.0.0"
-                          - (variant:) Caret: "^" # 9..10
+                          - (operator:) Caret: "^" # 9..10
                           - (operand:) VersionPragmaExpression: # 10..15 "1.0.0"
                               - VersionPragmaSpecifier: # 10..15 "1.0.0"
                                   - VersionPragmaValue: "1" # 10..11

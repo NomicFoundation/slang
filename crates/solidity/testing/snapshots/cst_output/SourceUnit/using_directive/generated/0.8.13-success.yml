@@ -33,7 +33,7 @@ Tree:
           - SourceUnitMember: # 0..56 "// SPDX-License-Identifier: MIT\npragma solidity ^0..."
               - (variant:) PragmaDirective: # 0..56 "// SPDX-License-Identifier: MIT\npragma solidity ^0..."
                   - LeadingTrivia: # 0..32 "// SPDX-License-Identifier: MIT\n"
-                      - (variant:) SingleLineComment: "// SPDX-License-Identifier: MIT" # 0..31
+                      - SingleLineComment: "// SPDX-License-Identifier: MIT" # 0..31
                   - (pragma_keyword:) PragmaKeyword: "pragma" # 32..38
                   - (pragma:) Pragma: # 38..54 " solidity ^0.8.0"
                       - (variant:) VersionPragma: # 38..54 " solidity ^0.8.0"
@@ -41,7 +41,7 @@ Tree:
                           - (expressions:) VersionPragmaExpressions: # 47..54 " ^0.8.0"
                               - VersionPragmaExpression: # 47..54 " ^0.8.0"
                                   - (variant:) VersionPragmaPrefixExpression: # 47..54 " ^0.8.0"
-                                      - (variant:) Caret: "^" # 48..49
+                                      - (operator:) Caret: "^" # 48..49
                                       - (operand:) VersionPragmaExpression: # 49..54 "0.8.0"
                                           - VersionPragmaSpecifier: # 49..54 "0.8.0"
                                               - VersionPragmaValue: "0" # 49..50
@@ -79,7 +79,7 @@ Tree:
           - SourceUnitMember: # 145..793 "\n/**\n * @notice Object with the necessary informat..."
               - (variant:) StructDefinition: # 145..793 "\n/**\n * @notice Object with the necessary informat..."
                   - LeadingTrivia: # 145..643 "\n/**\n * @notice Object with the necessary informat..."
-                      - (variant:) MultilineComment: "/**\n * @notice Object with the necessary informati..." # 146..642
+                      - MultilineComment: "/**\n * @notice Object with the necessary informati..." # 146..642
                   - (struct_keyword:) StructKeyword: "struct" # 643..649
                   - (name:) Identifier: "Envelope" # 650..658
                   - (open_brace:) OpenBrace: "{" # 659..660

@@ -10,4 +10,4 @@ Tree:
       - (variant:) PostfixExpression: # 0..5 "foo--"
           - (operand:) Expression: # 0..3 "foo"
               - Identifier: "foo" # 0..3
-          - (variant:) MinusMinus: "--" # 3..5
+          - (operator:) MinusMinus: "--" # 3..5

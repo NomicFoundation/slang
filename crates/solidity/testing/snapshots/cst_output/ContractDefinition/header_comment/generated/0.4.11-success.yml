@@ -28,7 +28,7 @@ Errors: []
 Tree:
   - ContractDefinition: # 0..2001 "/*\n * Lorem ipsum dolor sit amet, consectetur adip..."
       - LeadingTrivia: # 0..1986 "/*\n * Lorem ipsum dolor sit amet, consectetur adip..."
-          - (variant:) MultilineComment: "/*\n * Lorem ipsum dolor sit amet, consectetur adip..." # 0..1985
+          - MultilineComment: "/*\n * Lorem ipsum dolor sit amet, consectetur adip..." # 0..1985
       - (contract_keyword:) ContractKeyword: "contract" # 1986..1994
       - (name:) Identifier: "Foo" # 1995..1998
       - (open_brace:) OpenBrace: "{" # 1999..2000

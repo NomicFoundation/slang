@@ -103,7 +103,7 @@ impl ChoiceHelper {
         self.attempt_pick(input, value);
 
         if self.is_done() {
-            ControlFlow::Break(mem::take(&mut self.result).with_name("variant"))
+            ControlFlow::Break(mem::take(&mut self.result))
         } else {
             input.rewind(self.start_position);
             ControlFlow::Continue(self)
@@ -117,7 +117,7 @@ impl ChoiceHelper {
         input.set_position(self.last_progress);
         input.extend_errors(self.recovered_errors);
 
-        ControlFlow::Break(self.result.with_name("variant"))
+        ControlFlow::Break(self.result)
     }
 }
 

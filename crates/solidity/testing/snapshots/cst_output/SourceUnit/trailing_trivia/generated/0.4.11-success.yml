@@ -24,8 +24,8 @@ Tree:
           - SourceUnitMember: # 18..148 "\n\n// Newlines both before and after this comment s..."
               - (variant:) ContractDefinition: # 18..148 "\n\n// Newlines both before and after this comment s..."
                   - LeadingTrivia: # 18..129 "\n\n// Newlines both before and after this comment s..."
-                      - (variant:) SingleLineComment: "// Newlines both before and after this comment sho..." # 20..73
-                      - (variant:) SingleLineComment: "// be included in the trivia of the second contrac..." # 74..126
+                      - SingleLineComment: "// Newlines both before and after this comment sho..." # 20..73
+                      - SingleLineComment: "// be included in the trivia of the second contrac..." # 74..126
                   - (contract_keyword:) ContractKeyword: "contract" # 129..137
                   - (name:) Identifier: "Second" # 138..144
                   - (open_brace:) OpenBrace: "{" # 145..146

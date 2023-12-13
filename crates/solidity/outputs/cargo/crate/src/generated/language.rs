@@ -284,6 +284,7 @@ impl Language {
             choice.consider(input, result)?;
             choice.finish(input)
         })
+        .with_name("variant")
         .with_kind(RuleKind::ArgumentsDeclaration)
     }
 
@@ -763,6 +764,7 @@ impl Language {
                 choice.consider(input, result)?;
                 choice.finish(input)
             })
+            .with_name("variant")
         } else {
             ParserResult::disabled()
         }
@@ -945,6 +947,7 @@ impl Language {
             }
             choice.finish(input)
         })
+        .with_name("variant")
         .with_kind(RuleKind::ContractMember)
     }
 
@@ -1064,6 +1067,7 @@ impl Language {
             choice.consider(input, result)?;
             choice.finish(input)
         })
+        .with_name("variant")
         .with_kind(RuleKind::ElementaryType)
     }
 
@@ -1497,6 +1501,7 @@ impl Language {
             choice.consider(input, result)?;
             choice.finish(input)
         })
+        .with_name("variant")
         .with_kind(RuleKind::ExperimentalFeature)
     }
 
@@ -2099,6 +2104,7 @@ impl Language {
                 choice.consider(input, result)?;
                 choice.finish(input)
             })
+            .with_name("variant")
         };
         let postfix_operator_parser = |input: &mut ParserContext<'_>| {
             ChoiceHelper::run(input, |mut choice, input| {
@@ -2238,6 +2244,7 @@ impl Language {
                 choice.consider(input, result)?;
                 choice.finish(input)
             })
+            .with_name("variant")
         } else {
             ParserResult::disabled()
         }
@@ -2354,6 +2361,7 @@ impl Language {
             choice.consider(input, result)?;
             choice.finish(input)
         })
+        .with_name("variant")
         .with_kind(RuleKind::ForStatementCondition)
     }
 
@@ -2373,6 +2381,7 @@ impl Language {
             choice.consider(input, result)?;
             choice.finish(input)
         })
+        .with_name("variant")
         .with_kind(RuleKind::ForStatementInitialization)
     }
 
@@ -2434,6 +2443,7 @@ impl Language {
             }
             choice.finish(input)
         })
+        .with_name("variant")
         .with_kind(RuleKind::FunctionAttribute)
     }
 
@@ -2455,6 +2465,7 @@ impl Language {
             choice.consider(input, result)?;
             choice.finish(input)
         })
+        .with_name("variant")
         .with_kind(RuleKind::FunctionBody)
     }
 
@@ -2493,6 +2504,7 @@ impl Language {
                 }
                 choice.finish(input)
             })
+            .with_name("variant")
         } else {
             ParserResult::disabled()
         }
@@ -2545,6 +2557,7 @@ impl Language {
             choice.consider(input, result)?;
             choice.finish(input)
         })
+        .with_name("variant")
         .with_kind(RuleKind::FunctionName)
     }
 
@@ -2612,6 +2625,7 @@ impl Language {
             choice.consider(input, result)?;
             choice.finish(input)
         })
+        .with_name("variant")
         .with_kind(RuleKind::FunctionTypeAttribute)
     }
 
@@ -2751,6 +2765,7 @@ impl Language {
             choice.consider(input, result)?;
             choice.finish(input)
         })
+        .with_name("variant")
         .with_kind(RuleKind::ImportClause)
     }
 
@@ -3124,6 +3139,7 @@ impl Language {
             choice.consider(input, result)?;
             choice.finish(input)
         })
+        .with_name("variant")
         .with_kind(RuleKind::MappingKeyType)
     }
 
@@ -3220,6 +3236,7 @@ impl Language {
             choice.consider(input, result)?;
             choice.finish(input)
         })
+        .with_name("variant")
         .with_kind(RuleKind::MemberAccess)
     }
 
@@ -3258,6 +3275,7 @@ impl Language {
             }
             choice.finish(input)
         })
+        .with_name("variant")
         .with_kind(RuleKind::ModifierAttribute)
     }
 
@@ -3558,6 +3576,7 @@ impl Language {
             }
             choice.finish(input)
         })
+        .with_name("variant")
         .with_kind(RuleKind::NumberUnit)
     }
 
@@ -3804,6 +3823,7 @@ impl Language {
             choice.consider(input, result)?;
             choice.finish(input)
         })
+        .with_name("variant")
         .with_kind(RuleKind::Pragma)
     }
 
@@ -3886,6 +3906,7 @@ impl Language {
                 choice.consider(input, result)?;
                 choice.finish(input)
             })
+            .with_name("variant")
         } else {
             ParserResult::disabled()
         }
@@ -4106,6 +4127,7 @@ impl Language {
             }
             choice.finish(input)
         })
+        .with_name("variant")
         .with_kind(RuleKind::SourceUnitMember)
     }
 
@@ -4149,6 +4171,7 @@ impl Language {
             }
             choice.finish(input)
         })
+        .with_name("variant")
         .with_kind(RuleKind::StateVariableAttribute)
     }
 
@@ -4268,6 +4291,7 @@ impl Language {
             }
             choice.finish(input)
         })
+        .with_name("variant")
         .with_kind(RuleKind::Statement)
     }
 
@@ -4298,6 +4322,7 @@ impl Language {
             }
             choice.finish(input)
         })
+        .with_name("variant")
         .with_kind(RuleKind::StorageLocation)
     }
 
@@ -4314,6 +4339,7 @@ impl Language {
             }
             choice.finish(input)
         })
+        .with_name("variant")
         .with_kind(RuleKind::StringExpression)
     }
 
@@ -4562,6 +4588,7 @@ impl Language {
             choice.consider(input, result)?;
             choice.finish(input)
         })
+        .with_name("variant")
         .with_kind(RuleKind::TupleMember)
     }
 
@@ -4683,6 +4710,7 @@ impl Language {
                 choice.consider(input, result)?;
                 choice.finish(input)
             })
+            .with_name("variant")
         };
         let postfix_operator_parser = |input: &mut ParserContext<'_>| {
             ChoiceHelper::run(input, |mut choice, input| {
@@ -4790,6 +4818,7 @@ impl Language {
                 choice.consider(input, result)?;
                 choice.finish(input)
             })
+            .with_name("variant")
         } else {
             ParserResult::disabled()
         }
@@ -4934,6 +4963,7 @@ impl Language {
             }
             choice.finish(input)
         })
+        .with_name("variant")
         .with_kind(RuleKind::UsingClause)
     }
 
@@ -5137,6 +5167,7 @@ impl Language {
                 choice.consider(input, result)?;
                 choice.finish(input)
             })
+            .with_name("variant")
         } else {
             ParserResult::disabled()
         }
@@ -5153,6 +5184,7 @@ impl Language {
             choice.consider(input, result)?;
             choice.finish(input)
         })
+        .with_name("variant")
         .with_kind(RuleKind::UsingTarget)
     }
 
@@ -5213,6 +5245,7 @@ impl Language {
             }
             choice.finish(input)
         })
+        .with_name("variant")
         .with_kind(RuleKind::VariableDeclarationType)
     }
 
@@ -5650,6 +5683,7 @@ impl Language {
                 choice.consider(input, result)?;
                 choice.finish(input)
             })
+            .with_name("variant")
         };
         let postfix_operator_parser = |input: &mut ParserContext<'_>| {
             ChoiceHelper::run(input, |mut choice, input| {
@@ -5833,6 +5867,7 @@ impl Language {
             choice.consider(input, result)?;
             choice.finish(input)
         })
+        .with_name("variant")
         .with_kind(RuleKind::YulLiteral)
     }
 
@@ -5947,6 +5982,7 @@ impl Language {
             choice.consider(input, result)?;
             choice.finish(input)
         })
+        .with_name("variant")
         .with_kind(RuleKind::YulStatement)
     }
 
@@ -5965,6 +6001,7 @@ impl Language {
             choice.consider(input, result)?;
             choice.finish(input)
         })
+        .with_name("variant")
         .with_kind(RuleKind::YulSwitchCase)
     }
 
