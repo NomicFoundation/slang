@@ -1,5 +1,27 @@
 # changelog
 
+## 0.12.0
+
+### Minor Changes
+
+-   [#699](https://github.com/NomicFoundation/slang/pull/699) [`ddfebfe9`](https://github.com/NomicFoundation/slang/commit/ddfebfe988345136007431f8ea2efac19fd7e887) Thanks [@Xanewok](https://github.com/Xanewok)! - Remove `ProductionKind` in favor of `RuleKind`
+
+-   [#699](https://github.com/NomicFoundation/slang/pull/699) [`ddfebfe9`](https://github.com/NomicFoundation/slang/commit/ddfebfe988345136007431f8ea2efac19fd7e887) Thanks [@Xanewok](https://github.com/Xanewok)! - Allow parsing individual precedence expressions, like `ShiftExpression`
+
+-   [#665](https://github.com/NomicFoundation/slang/pull/665) [`4b5f8b46`](https://github.com/NomicFoundation/slang/commit/4b5f8b467d4cbab72cf27a539bb5ca8c71090dd6) Thanks [@Xanewok](https://github.com/Xanewok)! - Remove the CST Visitor API in favor of the Cursor API
+
+-   [#666](https://github.com/NomicFoundation/slang/pull/666) [`0434b68c`](https://github.com/NomicFoundation/slang/commit/0434b68c9ef9cd1d1dcc07d7ed50e6d63645319b) Thanks [@Xanewok](https://github.com/Xanewok)! - Add `Node::unparse()` that allows to reconstruct the source code from the CST node
+
+-   [#675](https://github.com/NomicFoundation/slang/pull/675) [`daea4b7f`](https://github.com/NomicFoundation/slang/commit/daea4b7f954ff1e918b9191aff40ee95c10a4db2) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - rename `Cursor`'s `pathRuleNodes()` to `ancestors()` in the NodeJS API.
+
+-   [#676](https://github.com/NomicFoundation/slang/pull/676) [`b496d361`](https://github.com/NomicFoundation/slang/commit/b496d36120700347bcbcc25b948eb46814fd5412) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - Fix NAPI `cursor` types and expose `cursor.depth`.
+
+### Patch Changes
+
+-   [#685](https://github.com/NomicFoundation/slang/pull/685) [`b5fca94a`](https://github.com/NomicFoundation/slang/commit/b5fca94af917a2f0418c224b3101885c02e5cb9c) Thanks [@Xanewok](https://github.com/Xanewok)! - `bytes` is now properly recognized as a reserved word
+
+-   [#660](https://github.com/NomicFoundation/slang/pull/660) [`97028991`](https://github.com/NomicFoundation/slang/commit/9702899164f0540a49f2e0f7f19d82fbd04b1d1b) Thanks [@Xanewok](https://github.com/Xanewok)! - Drop List suffix from collection grammar rule names
+
 ## 0.11.0
 
 ### Minor Changes
