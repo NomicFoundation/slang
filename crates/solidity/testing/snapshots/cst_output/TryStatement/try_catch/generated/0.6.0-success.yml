@@ -9,7 +9,7 @@ Tree:
   - TryStatement: # 0..21 "try a.b() {} catch {}"
       - (try_keyword:) TryKeyword: "try" # 0..3
       - (expression:) Expression: # 3..9 " a.b()"
-          - (operand:) FunctionCallExpression: # 3..9 " a.b()"
+          - (variant:) FunctionCallExpression: # 3..9 " a.b()"
               - (left_operand:) Expression: # 3..7 " a.b"
                   - (operand:) MemberAccessExpression: # 3..7 " a.b"
                       - (left_operand:) Expression: # 3..5 " a"

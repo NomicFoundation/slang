@@ -21,7 +21,7 @@ Tree:
               - TupleMember: # 10..28 " uint32[] memory b"
                   - (variant:) TypedTupleMember: # 10..28 " uint32[] memory b"
                       - (type_name:) TypeName: # 10..19 " uint32[]"
-                          - (operand:) ArrayTypeName: # 10..19 " uint32[]"
+                          - (variant:) ArrayTypeName: # 10..19 " uint32[]"
                               - (left_operand:) TypeName: # 10..17 " uint32"
                                   - ElementaryType: # 10..17 " uint32"
                                       - (variant:) UintKeyword: "uint32" # 11..17
@@ -33,7 +33,7 @@ Tree:
       - CloseParen: ")" # 28..29
       - (equal:) Equal: "=" # 30..31
       - (expression:) Expression: # 31..68 " abi.decode(data, (uint32, uint32[]))"
-          - (operand:) FunctionCallExpression: # 31..68 " abi.decode(data, (uint32, uint32[]))"
+          - (variant:) FunctionCallExpression: # 31..68 " abi.decode(data, (uint32, uint32[]))"
               - (left_operand:) Expression: # 31..42 " abi.decode"
                   - (operand:) MemberAccessExpression: # 31..42 " abi.decode"
                       - (left_operand:) Expression: # 31..35 " abi"
@@ -59,7 +59,7 @@ Tree:
                                       - Comma: "," # 56..57
                                       - TupleValue: # 57..66 " uint32[]"
                                           - Expression: # 57..66 " uint32[]"
-                                              - (operand:) IndexAccessExpression: # 57..66 " uint32[]"
+                                              - (variant:) IndexAccessExpression: # 57..66 " uint32[]"
                                                   - (left_operand:) Expression: # 57..64 " uint32"
                                                       - ElementaryType: # 57..64 " uint32"
                                                           - (variant:) UintKeyword: "uint32" # 58..64

@@ -7,7 +7,7 @@ Errors: []
 
 Tree:
   - Expression: # 0..11 "arr[start:]"
-      - (operand:) IndexAccessExpression: # 0..11 "arr[start:]"
+      - (variant:) IndexAccessExpression: # 0..11 "arr[start:]"
           - (left_operand:) Expression: # 0..3 "arr"
               - Identifier: "arr" # 0..3
           - (operator:) OpenBracket: "[" # 3..4

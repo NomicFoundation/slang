@@ -9,7 +9,7 @@ Tree:
   - NewExpression: # 0..11 "new Foo[][]"
       - (new_keyword:) NewKeyword: "new" # 0..3
       - (type_name:) TypeName: # 3..11 " Foo[][]"
-          - (operand:) ArrayTypeName: # 3..11 " Foo[][]"
+          - (variant:) ArrayTypeName: # 3..11 " Foo[][]"
               - (left_operand:) TypeName: # 3..9 " Foo[]"
                   - (operand:) ArrayTypeName: # 3..9 " Foo[]"
                       - (left_operand:) TypeName: # 3..7 " Foo"

@@ -40,7 +40,7 @@ Tree:
                           - (solidity_keyword:) SolidityKeyword: "solidity" # 39..47
                           - (expressions:) VersionPragmaExpressions: # 47..54 " ^0.8.0"
                               - VersionPragmaExpression: # 47..54 " ^0.8.0"
-                                  - (operand:) VersionPragmaPrefixExpression: # 47..54 " ^0.8.0"
+                                  - (variant:) VersionPragmaPrefixExpression: # 47..54 " ^0.8.0"
                                       - (operator:) Caret: "^" # 48..49
                                       - (right_operand:) VersionPragmaExpression: # 49..54 "0.8.0"
                                           - VersionPragmaSpecifier: # 49..54 "0.8.0"

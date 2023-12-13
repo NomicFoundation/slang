@@ -27,7 +27,7 @@ Tree:
       - CloseParen: ")" # 19..20
       - (equal:) Equal: "=" # 21..22
       - (expression:) Expression: # 22..57 " abi.decode(data, (uint32, uint32))"
-          - (operand:) FunctionCallExpression: # 22..57 " abi.decode(data, (uint32, uint32))"
+          - (variant:) FunctionCallExpression: # 22..57 " abi.decode(data, (uint32, uint32))"
               - (left_operand:) Expression: # 22..33 " abi.decode"
                   - (operand:) MemberAccessExpression: # 22..33 " abi.decode"
                       - (left_operand:) Expression: # 22..26 " abi"

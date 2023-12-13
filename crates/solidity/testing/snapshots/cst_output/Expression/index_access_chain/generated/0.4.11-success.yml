@@ -7,7 +7,7 @@ Errors: []
 
 Tree:
   - Expression: # 0..19 "arr[index1][index2]"
-      - (operand:) IndexAccessExpression: # 0..19 "arr[index1][index2]"
+      - (variant:) IndexAccessExpression: # 0..19 "arr[index1][index2]"
           - (left_operand:) Expression: # 0..11 "arr[index1]"
               - (operand:) IndexAccessExpression: # 0..11 "arr[index1]"
                   - (left_operand:) Expression: # 0..3 "arr"

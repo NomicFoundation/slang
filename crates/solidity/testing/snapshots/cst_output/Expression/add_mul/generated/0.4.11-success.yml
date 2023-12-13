@@ -7,7 +7,7 @@ Errors: []
 
 Tree:
   - Expression: # 0..13 "a * b + c * d"
-      - (operand:) AdditiveExpression: # 0..13 "a * b + c * d"
+      - (variant:) AdditiveExpression: # 0..13 "a * b + c * d"
           - (left_operand:) Expression: # 0..5 "a * b"
               - (operand:) MultiplicativeExpression: # 0..5 "a * b"
                   - (left_operand:) Expression: # 0..1 "a"

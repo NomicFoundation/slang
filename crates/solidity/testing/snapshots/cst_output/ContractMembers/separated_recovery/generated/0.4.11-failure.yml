@@ -116,7 +116,7 @@ Tree:
                                   - OpenParen: "(" # 23..24
                                   - PositionalArguments: # 24..34 "some.ident"
                                       - Expression: # 24..34 "some.ident"
-                                          - (operand:) MemberAccessExpression: # 24..34 "some.ident"
+                                          - (variant:) MemberAccessExpression: # 24..34 "some.ident"
                                               - (left_operand:) Expression: # 24..28 "some"
                                                   - Identifier: "some" # 24..28
                                               - (operator:) Period: "." # 28..29
@@ -133,7 +133,7 @@ Tree:
                           - Statement: # 86..123 "  msg.sender.call{do: 1, arg: 1 }();\n"
                               - (variant:) ExpressionStatement: # 86..123 "  msg.sender.call{do: 1, arg: 1 }();\n"
                                   - Expression: # 86..103 "  msg.sender.call"
-                                      - (operand:) MemberAccessExpression: # 86..103 "  msg.sender.call"
+                                      - (variant:) MemberAccessExpression: # 86..103 "  msg.sender.call"
                                           - (left_operand:) Expression: # 86..98 "  msg.sender"
                                               - (operand:) MemberAccessExpression: # 86..98 "  msg.sender"
                                                   - (left_operand:) Expression: # 86..91 "  msg"
@@ -149,7 +149,7 @@ Tree:
                           - Statement: # 123..167 "  msg.sender.call{, empty: 1, parse: 2 }();\n"
                               - (variant:) ExpressionStatement: # 123..167 "  msg.sender.call{, empty: 1, parse: 2 }();\n"
                                   - Expression: # 123..140 "  msg.sender.call"
-                                      - (operand:) MemberAccessExpression: # 123..140 "  msg.sender.call"
+                                      - (variant:) MemberAccessExpression: # 123..140 "  msg.sender.call"
                                           - (left_operand:) Expression: # 123..135 "  msg.sender"
                                               - (operand:) MemberAccessExpression: # 123..135 "  msg.sender"
                                                   - (left_operand:) Expression: # 123..128 "  msg"
@@ -165,7 +165,7 @@ Tree:
                           - Statement: # 167..230 "  msg.sender.call{arg: 1, missing_expr: , no_semic..."
                               - (variant:) ExpressionStatement: # 167..230 "  msg.sender.call{arg: 1, missing_expr: , no_semic..."
                                   - Expression: # 167..184 "  msg.sender.call"
-                                      - (operand:) MemberAccessExpression: # 167..184 "  msg.sender.call"
+                                      - (variant:) MemberAccessExpression: # 167..184 "  msg.sender.call"
                                           - (left_operand:) Expression: # 167..179 "  msg.sender"
                                               - (operand:) MemberAccessExpression: # 167..179 "  msg.sender"
                                                   - (left_operand:) Expression: # 167..172 "  msg"
@@ -181,7 +181,7 @@ Tree:
                           - Statement: # 230..306 "  msg.sender.call{arg: 1 unexpected tokens, not: 2..."
                               - (variant:) ExpressionStatement: # 230..306 "  msg.sender.call{arg: 1 unexpected tokens, not: 2..."
                                   - Expression: # 230..247 "  msg.sender.call"
-                                      - (operand:) MemberAccessExpression: # 230..247 "  msg.sender.call"
+                                      - (variant:) MemberAccessExpression: # 230..247 "  msg.sender.call"
                                           - (left_operand:) Expression: # 230..242 "  msg.sender"
                                               - (operand:) MemberAccessExpression: # 230..242 "  msg.sender"
                                                   - (left_operand:) Expression: # 230..235 "  msg"
@@ -213,7 +213,7 @@ Tree:
                                   - OpenParen: "(" # 335..336
                                   - PositionalArguments: # 336..347 "some.ident,"
                                       - Expression: # 336..346 "some.ident"
-                                          - (operand:) MemberAccessExpression: # 336..346 "some.ident"
+                                          - (variant:) MemberAccessExpression: # 336..346 "some.ident"
                                               - (left_operand:) Expression: # 336..340 "some"
                                                   - Identifier: "some" # 336..340
                                               - (operator:) Period: "." # 340..341
@@ -244,7 +244,7 @@ Tree:
                                   - OpenParen: "(" # 421..422
                                   - PositionalArguments: # 422..470 "some.ident, next.do.that, other.while, next.one,"
                                       - Expression: # 422..432 "some.ident"
-                                          - (operand:) MemberAccessExpression: # 422..432 "some.ident"
+                                          - (variant:) MemberAccessExpression: # 422..432 "some.ident"
                                               - (left_operand:) Expression: # 422..426 "some"
                                                   - Identifier: "some" # 422..426
                                               - (operator:) Period: "." # 426..427
@@ -262,7 +262,7 @@ Tree:
                                       - SKIPPED: "while" # 454..459
                                       - Comma: "," # 459..460
                                       - Expression: # 460..469 " next.one"
-                                          - (operand:) MemberAccessExpression: # 460..469 " next.one"
+                                          - (variant:) MemberAccessExpression: # 460..469 " next.one"
                                               - (left_operand:) Expression: # 460..465 " next"
                                                   - Identifier: "next" # 461..465
                                               - (operator:) Period: "." # 465..466
@@ -296,7 +296,7 @@ Tree:
                                       - SKIPPED: "" # 527..527
                                       - Comma: "," # 527..528
                                       - Expression: # 528..537 " next.arg"
-                                          - (operand:) MemberAccessExpression: # 528..537 " next.arg"
+                                          - (variant:) MemberAccessExpression: # 528..537 " next.arg"
                                               - (left_operand:) Expression: # 528..533 " next"
                                                   - Identifier: "next" # 529..533
                                               - (operator:) Period: "." # 533..534
@@ -304,7 +304,7 @@ Tree:
                                                   - (variant:) Identifier: "arg" # 534..537
                                       - Comma: "," # 537..538
                                       - Expression: # 538..547 " next.one"
-                                          - (operand:) MemberAccessExpression: # 538..547 " next.one"
+                                          - (variant:) MemberAccessExpression: # 538..547 " next.one"
                                               - (left_operand:) Expression: # 538..543 " next"
                                                   - Identifier: "next" # 539..543
                                               - (operator:) Period: "." # 543..544

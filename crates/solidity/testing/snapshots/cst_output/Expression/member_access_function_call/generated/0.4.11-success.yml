@@ -7,7 +7,7 @@ Errors: []
 
 Tree:
   - Expression: # 0..5 "x.y()"
-      - (operand:) FunctionCallExpression: # 0..5 "x.y()"
+      - (variant:) FunctionCallExpression: # 0..5 "x.y()"
           - (left_operand:) Expression: # 0..3 "x.y"
               - (operand:) MemberAccessExpression: # 0..3 "x.y"
                   - (left_operand:) Expression: # 0..1 "x"

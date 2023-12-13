@@ -82,7 +82,7 @@ Tree:
                                                                   - (value:) VariableDeclarationValue: # 130..138 " = a + b"
                                                                       - (equal:) Equal: "=" # 131..132
                                                                       - (expression:) Expression: # 132..138 " a + b"
-                                                                          - (operand:) AdditiveExpression: # 132..138 " a + b"
+                                                                          - (variant:) AdditiveExpression: # 132..138 " a + b"
                                                                               - (left_operand:) Expression: # 132..134 " a"
                                                                                   - Identifier: "a" # 133..134
                                                                               - (operator:) Plus: "+" # 135..136
@@ -94,7 +94,7 @@ Tree:
                                                                   - (if_keyword:) IfKeyword: "if" # 146..148
                                                                   - OpenParen: "(" # 149..150
                                                                   - Expression: # 150..155 "c < a"
-                                                                      - (operand:) ComparisonExpression: # 150..155 "c < a"
+                                                                      - (variant:) ComparisonExpression: # 150..155 "c < a"
                                                                           - (left_operand:) Expression: # 150..151 "c"
                                                                               - Identifier: "c" # 150..151
                                                                           - (operator:) LessThan: "<" # 152..153

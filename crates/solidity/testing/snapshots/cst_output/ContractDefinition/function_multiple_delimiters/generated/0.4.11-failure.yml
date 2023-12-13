@@ -61,7 +61,7 @@ Tree:
                               - Statement: # 122..201 '    require(address(this).balance >= amount, "Addr...'
                                   - (variant:) ExpressionStatement: # 122..201 '    require(address(this).balance >= amount, "Addr...'
                                       - (expression:) Expression: # 122..199 '    require(address(this).balance >= amount, "Addr...'
-                                          - (operand:) FunctionCallExpression: # 122..199 '    require(address(this).balance >= amount, "Addr...'
+                                          - (variant:) FunctionCallExpression: # 122..199 '    require(address(this).balance >= amount, "Addr...'
                                               - (left_operand:) Expression: # 122..133 "    require"
                                                   - Identifier: "require" # 126..133
                                               - (operator:) ArgumentsDeclaration: # 133..199 '(address(this).balance >= amount, "Address: insuff...'
@@ -69,7 +69,7 @@ Tree:
                                                       - OpenParen: "(" # 133..134
                                                       - PositionalArguments: # 134..198 'address(this).balance >= amount, "Address: insuffi...'
                                                           - Expression: # 134..165 "address(this).balance >= amount"
-                                                              - (operand:) ComparisonExpression: # 134..165 "address(this).balance >= amount"
+                                                              - (variant:) ComparisonExpression: # 134..165 "address(this).balance >= amount"
                                                                   - (left_operand:) Expression: # 134..155 "address(this).balance"
                                                                       - (operand:) MemberAccessExpression: # 134..155 "address(this).balance"
                                                                           - (left_operand:) Expression: # 134..147 "address(this)"
@@ -114,7 +114,7 @@ Tree:
                                       - CloseParen: ")" # 221..222
                                       - (equal:) Equal: "=" # 223..224
                                       - (expression:) Expression: # 224..239 " recipient.call"
-                                          - (operand:) MemberAccessExpression: # 224..239 " recipient.call"
+                                          - (variant:) MemberAccessExpression: # 224..239 " recipient.call"
                                               - (left_operand:) Expression: # 224..234 " recipient"
                                                   - Identifier: "recipient" # 225..234
                                               - (operator:) Period: "." # 234..235
@@ -125,7 +125,7 @@ Tree:
                               - Statement: # 262..346 '    require(success, "Address: unable to send valu...'
                                   - (variant:) ExpressionStatement: # 262..346 '    require(success, "Address: unable to send valu...'
                                       - (expression:) Expression: # 262..344 '    require(success, "Address: unable to send valu...'
-                                          - (operand:) FunctionCallExpression: # 262..344 '    require(success, "Address: unable to send valu...'
+                                          - (variant:) FunctionCallExpression: # 262..344 '    require(success, "Address: unable to send valu...'
                                               - (left_operand:) Expression: # 262..273 "    require"
                                                   - Identifier: "require" # 266..273
                                               - (operator:) ArgumentsDeclaration: # 273..344 '(success, "Address: unable to send value, recipien...'

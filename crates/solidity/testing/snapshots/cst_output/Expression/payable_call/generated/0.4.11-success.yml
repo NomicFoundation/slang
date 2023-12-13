@@ -7,7 +7,7 @@ Errors: []
 
 Tree:
   - Expression: # 0..14 "payable(value)"
-      - (operand:) FunctionCallExpression: # 0..14 "payable(value)"
+      - (variant:) FunctionCallExpression: # 0..14 "payable(value)"
           - (left_operand:) Expression: # 0..7 "payable"
               - ElementaryType: # 0..7 "payable"
                   - (variant:) PayableKeyword: "payable" # 0..7

@@ -48,7 +48,7 @@ Tree:
                                           - YulIdentifier: "result" # 37..43
                                   - (colon_equal:) ColonEqual: ":=" # 44..46
                                   - (expression:) YulExpression: # 46..57 " mul(a, b)\n"
-                                      - (operand:) YulFunctionCallExpression: # 46..57 " mul(a, b)\n"
+                                      - (variant:) YulFunctionCallExpression: # 46..57 " mul(a, b)\n"
                                           - (left_operand:) YulExpression: # 46..50 " mul"
                                               - YulIdentifierPath: # 46..50 " mul"
                                                   - YulIdentifier: "mul" # 47..50

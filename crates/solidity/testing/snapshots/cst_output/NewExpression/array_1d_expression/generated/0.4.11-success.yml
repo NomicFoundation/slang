@@ -9,7 +9,7 @@ Tree:
   - NewExpression: # 0..11 "new Foo[10]"
       - (new_keyword:) NewKeyword: "new" # 0..3
       - (type_name:) TypeName: # 3..11 " Foo[10]"
-          - (operand:) ArrayTypeName: # 3..11 " Foo[10]"
+          - (variant:) ArrayTypeName: # 3..11 " Foo[10]"
               - (left_operand:) TypeName: # 3..7 " Foo"
                   - IdentifierPath: # 3..7 " Foo"
                       - Identifier: "Foo" # 4..7

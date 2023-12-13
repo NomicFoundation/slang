@@ -7,7 +7,7 @@ Errors: []
 
 Tree:
   - Expression: # 0..3 "x.y"
-      - (operand:) MemberAccessExpression: # 0..3 "x.y"
+      - (variant:) MemberAccessExpression: # 0..3 "x.y"
           - (left_operand:) Expression: # 0..1 "x"
               - Identifier: "x" # 0..1
           - (operator:) Period: "." # 1..2

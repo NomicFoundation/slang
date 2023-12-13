@@ -7,7 +7,7 @@ Errors: []
 
 Tree:
   - Expression: # 0..20 "function_name(value)"
-      - (operand:) FunctionCallExpression: # 0..20 "function_name(value)"
+      - (variant:) FunctionCallExpression: # 0..20 "function_name(value)"
           - (left_operand:) Expression: # 0..13 "function_name"
               - Identifier: "function_name" # 0..13
           - (operator:) ArgumentsDeclaration: # 13..20 "(value)"

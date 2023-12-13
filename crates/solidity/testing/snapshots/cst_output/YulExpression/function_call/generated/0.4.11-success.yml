@@ -7,7 +7,7 @@ Errors: []
 
 Tree:
   - YulExpression: # 0..6 "foo(1)"
-      - (operand:) YulFunctionCallExpression: # 0..6 "foo(1)"
+      - (variant:) YulFunctionCallExpression: # 0..6 "foo(1)"
           - (left_operand:) YulExpression: # 0..3 "foo"
               - YulIdentifierPath: # 0..3 "foo"
                   - YulIdentifier: "foo" # 0..3

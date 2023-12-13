@@ -15,7 +15,7 @@ Errors: # 1 total
 
 Tree:
   - Expression: # 0..25 'a.b{value: 0}{gas: 1}("")'
-      - (operand:) MemberAccessExpression: # 0..3 "a.b"
+      - (variant:) MemberAccessExpression: # 0..3 "a.b"
           - (left_operand:) Expression: # 0..1 "a"
               - Identifier: "a" # 0..1
           - (operator:) Period: "." # 1..2

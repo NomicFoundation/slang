@@ -37,7 +37,7 @@ Tree:
                   - Statement: # 18..25 " 1 * 2;"
                       - (variant:) ExpressionStatement: # 18..25 " 1 * 2;"
                           - (expression:) Expression: # 18..24 " 1 * 2"
-                              - (operand:) MultiplicativeExpression: # 18..24 " 1 * 2"
+                              - (variant:) MultiplicativeExpression: # 18..24 " 1 * 2"
                                   - (left_operand:) Expression: # 18..20 " 1"
                                       - DecimalNumberExpression: # 18..20 " 1"
                                           - (literal:) DecimalLiteral: "1" # 19..20
@@ -49,7 +49,7 @@ Tree:
                   - Statement: # 25..40 " 3 * b invalid;"
                       - (variant:) ExpressionStatement: # 25..40 " 3 * b invalid;"
                           - Expression: # 25..31 " 3 * b"
-                              - (operand:) MultiplicativeExpression: # 25..31 " 3 * b"
+                              - (variant:) MultiplicativeExpression: # 25..31 " 3 * b"
                                   - (left_operand:) Expression: # 25..27 " 3"
                                       - DecimalNumberExpression: # 25..27 " 3"
                                           - (literal:) DecimalLiteral: "3" # 26..27

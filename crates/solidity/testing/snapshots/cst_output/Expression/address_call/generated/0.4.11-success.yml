@@ -7,7 +7,7 @@ Errors: []
 
 Tree:
   - Expression: # 0..14 "address(value)"
-      - (operand:) FunctionCallExpression: # 0..14 "address(value)"
+      - (variant:) FunctionCallExpression: # 0..14 "address(value)"
           - (left_operand:) Expression: # 0..7 "address"
               - ElementaryType: # 0..7 "address"
                   - (variant:) AddressType: # 0..7 "address"

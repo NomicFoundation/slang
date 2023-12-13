@@ -16,7 +16,7 @@ Tree:
               - TupleValues: # 7..12 "a + b"
                   - TupleValue: # 7..12 "a + b"
                       - Expression: # 7..12 "a + b"
-                          - (operand:) AdditiveExpression: # 7..12 "a + b"
+                          - (variant:) AdditiveExpression: # 7..12 "a + b"
                               - (left_operand:) Expression: # 7..8 "a"
                                   - Identifier: "a" # 7..8
                               - (operator:) Plus: "+" # 9..10
@@ -30,7 +30,7 @@ Tree:
               - TupleValues: # 17..22 "c + d"
                   - TupleValue: # 17..22 "c + d"
                       - Expression: # 17..22 "c + d"
-                          - (operand:) AdditiveExpression: # 17..22 "c + d"
+                          - (variant:) AdditiveExpression: # 17..22 "c + d"
                               - (left_operand:) Expression: # 17..18 "c"
                                   - Identifier: "c" # 17..18
                               - (operator:) Plus: "+" # 19..20
