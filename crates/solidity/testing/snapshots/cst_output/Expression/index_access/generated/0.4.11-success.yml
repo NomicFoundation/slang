@@ -8,9 +8,9 @@ Errors: []
 Tree:
   - Expression: # 0..10 "arr[index]"
       - (variant:) IndexAccessExpression: # 0..10 "arr[index]"
-          - (left_operand:) Expression: # 0..3 "arr"
+          - (operand:) Expression: # 0..3 "arr"
               - Identifier: "arr" # 0..3
-          - (operator:) OpenBracket: "[" # 3..4
-          - (operator:) Expression: # 4..9 "index"
+          - (postfix_operator:) OpenBracket: "[" # 3..4
+          - (postfix_operator:) Expression: # 4..9 "index"
               - Identifier: "index" # 4..9
-          - (operator:) CloseBracket: "]" # 9..10
+          - (postfix_operator:) CloseBracket: "]" # 9..10

@@ -7,11 +7,11 @@ Errors: []
 
 Tree:
   - ConditionalExpression: # 0..18 "foo ? true : false"
-      - (left_operand:) Expression: # 0..3 "foo"
+      - (operand:) Expression: # 0..3 "foo"
           - Identifier: "foo" # 0..3
-      - (operator:) QuestionMark: "?" # 4..5
-      - (operator:) Expression: # 5..10 " true"
+      - (postfix_operator:) QuestionMark: "?" # 4..5
+      - (postfix_operator:) Expression: # 5..10 " true"
           - TrueKeyword: "true" # 6..10
-      - (operator:) Colon: ":" # 11..12
-      - (operator:) Expression: # 12..18 " false"
+      - (postfix_operator:) Colon: ":" # 11..12
+      - (postfix_operator:) Expression: # 12..18 " false"
           - FalseKeyword: "false" # 13..18

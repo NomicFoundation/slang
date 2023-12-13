@@ -7,7 +7,7 @@ Errors: []
 
 Tree:
   - ConditionalExpression: # 0..27 "(foo == bar) ? true : false"
-      - (left_operand:) Expression: # 0..12 "(foo == bar)"
+      - (operand:) Expression: # 0..12 "(foo == bar)"
           - TupleExpression: # 0..12 "(foo == bar)"
               - (open_paren:) OpenParen: "(" # 0..1
               - (items:) TupleValues: # 1..11 "foo == bar"
@@ -20,9 +20,9 @@ Tree:
                               - (right_operand:) Expression: # 7..11 " bar"
                                   - Identifier: "bar" # 8..11
               - (close_paren:) CloseParen: ")" # 11..12
-      - (operator:) QuestionMark: "?" # 13..14
-      - (operator:) Expression: # 14..19 " true"
+      - (postfix_operator:) QuestionMark: "?" # 13..14
+      - (postfix_operator:) Expression: # 14..19 " true"
           - TrueKeyword: "true" # 15..19
-      - (operator:) Colon: ":" # 20..21
-      - (operator:) Expression: # 21..27 " false"
+      - (postfix_operator:) Colon: ":" # 20..21
+      - (postfix_operator:) Expression: # 21..27 " false"
           - FalseKeyword: "false" # 22..27

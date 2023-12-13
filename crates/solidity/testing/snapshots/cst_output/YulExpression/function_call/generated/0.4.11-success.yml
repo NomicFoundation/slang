@@ -8,12 +8,12 @@ Errors: []
 Tree:
   - YulExpression: # 0..6 "foo(1)"
       - (variant:) YulFunctionCallExpression: # 0..6 "foo(1)"
-          - (left_operand:) YulExpression: # 0..3 "foo"
+          - (operand:) YulExpression: # 0..3 "foo"
               - YulIdentifierPath: # 0..3 "foo"
                   - YulIdentifier: "foo" # 0..3
-          - (operator:) OpenParen: "(" # 3..4
-          - (operator:) YulArguments: # 4..5 "1"
+          - (postfix_operator:) OpenParen: "(" # 3..4
+          - (postfix_operator:) YulArguments: # 4..5 "1"
               - YulExpression: # 4..5 "1"
                   - YulLiteral: # 4..5 "1"
                       - (variant:) YulDecimalLiteral: "1" # 4..5
-          - (operator:) CloseParen: ")" # 5..6
+          - (postfix_operator:) CloseParen: ")" # 5..6

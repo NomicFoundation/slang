@@ -8,6 +8,6 @@ Errors: []
 Tree:
   - Expression: # 0..5 "foo--"
       - (variant:) PostfixExpression: # 0..5 "foo--"
-          - (left_operand:) Expression: # 0..3 "foo"
+          - (operand:) Expression: # 0..3 "foo"
               - Identifier: "foo" # 0..3
-          - (operator:) MinusMinus: "--" # 3..5
+          - (postfix_operator:) MinusMinus: "--" # 3..5

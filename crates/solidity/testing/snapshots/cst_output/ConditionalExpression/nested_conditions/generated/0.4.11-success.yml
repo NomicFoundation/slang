@@ -7,10 +7,10 @@ Errors: []
 
 Tree:
   - ConditionalExpression: # 0..23 "foo ? (a + b) : (c + d)"
-      - (left_operand:) Expression: # 0..3 "foo"
+      - (operand:) Expression: # 0..3 "foo"
           - Identifier: "foo" # 0..3
-      - (operator:) QuestionMark: "?" # 4..5
-      - (operator:) Expression: # 5..13 " (a + b)"
+      - (postfix_operator:) QuestionMark: "?" # 4..5
+      - (postfix_operator:) Expression: # 5..13 " (a + b)"
           - TupleExpression: # 5..13 " (a + b)"
               - (open_paren:) OpenParen: "(" # 6..7
               - (items:) TupleValues: # 7..12 "a + b"
@@ -23,8 +23,8 @@ Tree:
                               - (right_operand:) Expression: # 10..12 " b"
                                   - Identifier: "b" # 11..12
               - (close_paren:) CloseParen: ")" # 12..13
-      - (operator:) Colon: ":" # 14..15
-      - (operator:) Expression: # 15..23 " (c + d)"
+      - (postfix_operator:) Colon: ":" # 14..15
+      - (postfix_operator:) Expression: # 15..23 " (c + d)"
           - TupleExpression: # 15..23 " (c + d)"
               - (open_paren:) OpenParen: "(" # 16..17
               - (items:) TupleValues: # 17..22 "c + d"

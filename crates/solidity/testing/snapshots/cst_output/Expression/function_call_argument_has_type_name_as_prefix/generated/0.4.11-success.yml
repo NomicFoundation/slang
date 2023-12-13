@@ -8,9 +8,9 @@ Errors: []
 Tree:
   - Expression: # 0..13 "x(interested)"
       - (variant:) FunctionCallExpression: # 0..13 "x(interested)"
-          - (left_operand:) Expression: # 0..1 "x"
+          - (operand:) Expression: # 0..1 "x"
               - Identifier: "x" # 0..1
-          - (operator:) ArgumentsDeclaration: # 1..13 "(interested)"
+          - (postfix_operator:) ArgumentsDeclaration: # 1..13 "(interested)"
               - (variant:) PositionalArgumentsDeclaration: # 1..13 "(interested)"
                   - (open_paren:) OpenParen: "(" # 1..2
                   - (arguments:) PositionalArguments: # 2..12 "interested"

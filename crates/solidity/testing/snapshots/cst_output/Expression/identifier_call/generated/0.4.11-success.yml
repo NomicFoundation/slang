@@ -8,9 +8,9 @@ Errors: []
 Tree:
   - Expression: # 0..20 "function_name(value)"
       - (variant:) FunctionCallExpression: # 0..20 "function_name(value)"
-          - (left_operand:) Expression: # 0..13 "function_name"
+          - (operand:) Expression: # 0..13 "function_name"
               - Identifier: "function_name" # 0..13
-          - (operator:) ArgumentsDeclaration: # 13..20 "(value)"
+          - (postfix_operator:) ArgumentsDeclaration: # 13..20 "(value)"
               - (variant:) PositionalArgumentsDeclaration: # 13..20 "(value)"
                   - (open_paren:) OpenParen: "(" # 13..14
                   - (arguments:) PositionalArguments: # 14..19 "value"

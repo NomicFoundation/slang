@@ -8,7 +8,7 @@ Errors: []
 Tree:
   - ExponentiationExpression: # 0..12 "x ** y ** z\n"
       - (left_operand:) Expression: # 0..6 "x ** y"
-          - (operand:) ExponentiationExpression: # 0..6 "x ** y"
+          - (exprrrrr:) ExponentiationExpression: # 0..6 "x ** y"
               - (left_operand:) Expression: # 0..1 "x"
                   - Identifier: "x" # 0..1
               - (operator:) AsteriskAsterisk: "**" # 2..4

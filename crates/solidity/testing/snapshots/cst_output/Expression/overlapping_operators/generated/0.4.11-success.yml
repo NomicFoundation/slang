@@ -9,7 +9,7 @@ Tree:
   - Expression: # 0..10 "a & b && c"
       - (variant:) AndExpression: # 0..10 "a & b && c"
           - (left_operand:) Expression: # 0..5 "a & b"
-              - (operand:) BitwiseAndExpression: # 0..5 "a & b"
+              - (exprrrrr:) BitwiseAndExpression: # 0..5 "a & b"
                   - (left_operand:) Expression: # 0..1 "a"
                       - Identifier: "a" # 0..1
                   - (operator:) Ampersand: "&" # 2..3

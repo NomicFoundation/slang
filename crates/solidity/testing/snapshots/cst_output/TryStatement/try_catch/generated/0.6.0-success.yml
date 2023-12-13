@@ -10,14 +10,14 @@ Tree:
       - (try_keyword:) TryKeyword: "try" # 0..3
       - (expression:) Expression: # 3..9 " a.b()"
           - (variant:) FunctionCallExpression: # 3..9 " a.b()"
-              - (left_operand:) Expression: # 3..7 " a.b"
-                  - (operand:) MemberAccessExpression: # 3..7 " a.b"
-                      - (left_operand:) Expression: # 3..5 " a"
+              - (operand:) Expression: # 3..7 " a.b"
+                  - (exprrrrr:) MemberAccessExpression: # 3..7 " a.b"
+                      - (operand:) Expression: # 3..5 " a"
                           - Identifier: "a" # 4..5
-                      - (operator:) Period: "." # 5..6
-                      - (operator:) MemberAccess: # 6..7 "b"
+                      - (postfix_operator:) Period: "." # 5..6
+                      - (postfix_operator:) MemberAccess: # 6..7 "b"
                           - (variant:) Identifier: "b" # 6..7
-              - (operator:) ArgumentsDeclaration: # 7..9 "()"
+              - (postfix_operator:) ArgumentsDeclaration: # 7..9 "()"
                   - (variant:) PositionalArgumentsDeclaration: # 7..9 "()"
                       - (open_paren:) OpenParen: "(" # 7..8
                       - (close_paren:) CloseParen: ")" # 8..9

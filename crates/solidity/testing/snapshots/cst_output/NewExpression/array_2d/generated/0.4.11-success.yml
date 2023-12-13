@@ -10,12 +10,12 @@ Tree:
       - (new_keyword:) NewKeyword: "new" # 0..3
       - (type_name:) TypeName: # 3..11 " Foo[][]"
           - (variant:) ArrayTypeName: # 3..11 " Foo[][]"
-              - (left_operand:) TypeName: # 3..9 " Foo[]"
-                  - (operand:) ArrayTypeName: # 3..9 " Foo[]"
-                      - (left_operand:) TypeName: # 3..7 " Foo"
+              - (operand:) TypeName: # 3..9 " Foo[]"
+                  - (exprrrrr:) ArrayTypeName: # 3..9 " Foo[]"
+                      - (operand:) TypeName: # 3..7 " Foo"
                           - IdentifierPath: # 3..7 " Foo"
                               - Identifier: "Foo" # 4..7
-                      - (operator:) OpenBracket: "[" # 7..8
-                      - (operator:) CloseBracket: "]" # 8..9
-              - (operator:) OpenBracket: "[" # 9..10
-              - (operator:) CloseBracket: "]" # 10..11
+                      - (postfix_operator:) OpenBracket: "[" # 7..8
+                      - (postfix_operator:) CloseBracket: "]" # 8..9
+              - (postfix_operator:) OpenBracket: "[" # 9..10
+              - (postfix_operator:) CloseBracket: "]" # 10..11

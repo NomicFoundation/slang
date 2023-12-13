@@ -8,10 +8,10 @@ Errors: []
 Tree:
   - Expression: # 0..14 "payable(value)"
       - (variant:) FunctionCallExpression: # 0..14 "payable(value)"
-          - (left_operand:) Expression: # 0..7 "payable"
+          - (operand:) Expression: # 0..7 "payable"
               - ElementaryType: # 0..7 "payable"
                   - (variant:) PayableKeyword: "payable" # 0..7
-          - (operator:) ArgumentsDeclaration: # 7..14 "(value)"
+          - (postfix_operator:) ArgumentsDeclaration: # 7..14 "(value)"
               - (variant:) PositionalArgumentsDeclaration: # 7..14 "(value)"
                   - (open_paren:) OpenParen: "(" # 7..8
                   - (arguments:) PositionalArguments: # 8..13 "value"

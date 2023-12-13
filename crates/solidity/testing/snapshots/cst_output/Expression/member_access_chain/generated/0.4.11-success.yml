@@ -8,13 +8,13 @@ Errors: []
 Tree:
   - Expression: # 0..5 "x.y.z"
       - (variant:) MemberAccessExpression: # 0..5 "x.y.z"
-          - (left_operand:) Expression: # 0..3 "x.y"
-              - (operand:) MemberAccessExpression: # 0..3 "x.y"
-                  - (left_operand:) Expression: # 0..1 "x"
+          - (operand:) Expression: # 0..3 "x.y"
+              - (exprrrrr:) MemberAccessExpression: # 0..3 "x.y"
+                  - (operand:) Expression: # 0..1 "x"
                       - Identifier: "x" # 0..1
-                  - (operator:) Period: "." # 1..2
-                  - (operator:) MemberAccess: # 2..3 "y"
+                  - (postfix_operator:) Period: "." # 1..2
+                  - (postfix_operator:) MemberAccess: # 2..3 "y"
                       - (variant:) Identifier: "y" # 2..3
-          - (operator:) Period: "." # 3..4
-          - (operator:) MemberAccess: # 4..5 "z"
+          - (postfix_operator:) Period: "." # 3..4
+          - (postfix_operator:) MemberAccess: # 4..5 "z"
               - (variant:) Identifier: "z" # 4..5

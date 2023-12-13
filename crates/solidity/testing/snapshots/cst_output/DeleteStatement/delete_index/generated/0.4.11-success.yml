@@ -10,10 +10,10 @@ Tree:
       - (delete_keyword:) DeleteKeyword: "delete" # 0..6
       - (expression:) Expression: # 6..15 " foo[bar]"
           - (variant:) IndexAccessExpression: # 6..15 " foo[bar]"
-              - (left_operand:) Expression: # 6..10 " foo"
+              - (operand:) Expression: # 6..10 " foo"
                   - Identifier: "foo" # 7..10
-              - (operator:) OpenBracket: "[" # 10..11
-              - (operator:) Expression: # 11..14 "bar"
+              - (postfix_operator:) OpenBracket: "[" # 10..11
+              - (postfix_operator:) Expression: # 11..14 "bar"
                   - Identifier: "bar" # 11..14
-              - (operator:) CloseBracket: "]" # 14..15
+              - (postfix_operator:) CloseBracket: "]" # 14..15
       - (semicolon:) Semicolon: ";" # 15..16

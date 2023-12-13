@@ -9,7 +9,7 @@ Tree:
   - Expression: # 0..13 "a * b + c * d"
       - (variant:) AdditiveExpression: # 0..13 "a * b + c * d"
           - (left_operand:) Expression: # 0..5 "a * b"
-              - (operand:) MultiplicativeExpression: # 0..5 "a * b"
+              - (exprrrrr:) MultiplicativeExpression: # 0..5 "a * b"
                   - (left_operand:) Expression: # 0..1 "a"
                       - Identifier: "a" # 0..1
                   - (operator:) Asterisk: "*" # 2..3
@@ -17,7 +17,7 @@ Tree:
                       - Identifier: "b" # 4..5
           - (operator:) Plus: "+" # 6..7
           - (right_operand:) Expression: # 7..13 " c * d"
-              - (operand:) MultiplicativeExpression: # 7..13 " c * d"
+              - (exprrrrr:) MultiplicativeExpression: # 7..13 " c * d"
                   - (left_operand:) Expression: # 7..9 " c"
                       - Identifier: "c" # 8..9
                   - (operator:) Asterisk: "*" # 10..11

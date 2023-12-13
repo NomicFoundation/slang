@@ -54,31 +54,31 @@ Tree:
                                   - (variant:) ExpressionStatement: # 122..201 '    require(address(this).balance >= amount, "Addr...'
                                       - (expression:) Expression: # 122..199 '    require(address(this).balance >= amount, "Addr...'
                                           - (variant:) FunctionCallExpression: # 122..199 '    require(address(this).balance >= amount, "Addr...'
-                                              - (left_operand:) Expression: # 122..133 "    require"
+                                              - (operand:) Expression: # 122..133 "    require"
                                                   - Identifier: "require" # 126..133
-                                              - (operator:) ArgumentsDeclaration: # 133..199 '(address(this).balance >= amount, "Address: insuff...'
+                                              - (postfix_operator:) ArgumentsDeclaration: # 133..199 '(address(this).balance >= amount, "Address: insuff...'
                                                   - (variant:) PositionalArgumentsDeclaration: # 133..199 '(address(this).balance >= amount, "Address: insuff...'
                                                       - (open_paren:) OpenParen: "(" # 133..134
                                                       - (arguments:) PositionalArguments: # 134..198 'address(this).balance >= amount, "Address: insuffi...'
                                                           - Expression: # 134..165 "address(this).balance >= amount"
                                                               - (variant:) ComparisonExpression: # 134..165 "address(this).balance >= amount"
                                                                   - (left_operand:) Expression: # 134..155 "address(this).balance"
-                                                                      - (operand:) MemberAccessExpression: # 134..155 "address(this).balance"
-                                                                          - (left_operand:) Expression: # 134..147 "address(this)"
-                                                                              - (operand:) FunctionCallExpression: # 134..147 "address(this)"
-                                                                                  - (left_operand:) Expression: # 134..141 "address"
+                                                                      - (exprrrrr:) MemberAccessExpression: # 134..155 "address(this).balance"
+                                                                          - (operand:) Expression: # 134..147 "address(this)"
+                                                                              - (exprrrrr:) FunctionCallExpression: # 134..147 "address(this)"
+                                                                                  - (operand:) Expression: # 134..141 "address"
                                                                                       - ElementaryType: # 134..141 "address"
                                                                                           - (variant:) AddressType: # 134..141 "address"
                                                                                               - (address_keyword:) AddressKeyword: "address" # 134..141
-                                                                                  - (operator:) ArgumentsDeclaration: # 141..147 "(this)"
+                                                                                  - (postfix_operator:) ArgumentsDeclaration: # 141..147 "(this)"
                                                                                       - (variant:) PositionalArgumentsDeclaration: # 141..147 "(this)"
                                                                                           - (open_paren:) OpenParen: "(" # 141..142
                                                                                           - (arguments:) PositionalArguments: # 142..146 "this"
                                                                                               - Expression: # 142..146 "this"
                                                                                                   - Identifier: "this" # 142..146
                                                                                           - (close_paren:) CloseParen: ")" # 146..147
-                                                                          - (operator:) Period: "." # 147..148
-                                                                          - (operator:) MemberAccess: # 148..155 "balance"
+                                                                          - (postfix_operator:) Period: "." # 147..148
+                                                                          - (postfix_operator:) MemberAccess: # 148..155 "balance"
                                                                               - (variant:) Identifier: "balance" # 148..155
                                                                   - (operator:) GreaterThanEqual: ">=" # 156..158
                                                                   - (right_operand:) Expression: # 158..165 " amount"
@@ -107,14 +107,14 @@ Tree:
                                       - (equal:) Equal: "=" # 223..224
                                       - (expression:) Expression: # 224..260 ' recipient.call{ value: amount }("")'
                                           - (variant:) FunctionCallExpression: # 224..260 ' recipient.call{ value: amount }("")'
-                                              - (left_operand:) Expression: # 224..239 " recipient.call"
-                                                  - (operand:) MemberAccessExpression: # 224..239 " recipient.call"
-                                                      - (left_operand:) Expression: # 224..234 " recipient"
+                                              - (operand:) Expression: # 224..239 " recipient.call"
+                                                  - (exprrrrr:) MemberAccessExpression: # 224..239 " recipient.call"
+                                                      - (operand:) Expression: # 224..234 " recipient"
                                                           - Identifier: "recipient" # 225..234
-                                                      - (operator:) Period: "." # 234..235
-                                                      - (operator:) MemberAccess: # 235..239 "call"
+                                                      - (postfix_operator:) Period: "." # 234..235
+                                                      - (postfix_operator:) MemberAccess: # 235..239 "call"
                                                           - (variant:) Identifier: "call" # 235..239
-                                              - (operator:) FunctionCallOptions: # 239..256 "{ value: amount }"
+                                              - (postfix_operator:) FunctionCallOptions: # 239..256 "{ value: amount }"
                                                   - (variant:) NamedArgumentGroup: # 239..256 "{ value: amount }"
                                                       - (open_brace:) OpenBrace: "{" # 239..240
                                                       - (arguments:) NamedArguments: # 240..254 " value: amount"
@@ -124,7 +124,7 @@ Tree:
                                                               - (value:) Expression: # 247..254 " amount"
                                                                   - Identifier: "amount" # 248..254
                                                       - (close_brace:) CloseBrace: "}" # 255..256
-                                              - (operator:) ArgumentsDeclaration: # 256..260 '("")'
+                                              - (postfix_operator:) ArgumentsDeclaration: # 256..260 '("")'
                                                   - (variant:) PositionalArgumentsDeclaration: # 256..260 '("")'
                                                       - (open_paren:) OpenParen: "(" # 256..257
                                                       - (arguments:) PositionalArguments: # 257..259 '""'
@@ -138,9 +138,9 @@ Tree:
                                   - (variant:) ExpressionStatement: # 262..346 '    require(success, "Address: unable to send valu...'
                                       - (expression:) Expression: # 262..344 '    require(success, "Address: unable to send valu...'
                                           - (variant:) FunctionCallExpression: # 262..344 '    require(success, "Address: unable to send valu...'
-                                              - (left_operand:) Expression: # 262..273 "    require"
+                                              - (operand:) Expression: # 262..273 "    require"
                                                   - Identifier: "require" # 266..273
-                                              - (operator:) ArgumentsDeclaration: # 273..344 '(success, "Address: unable to send value, recipien...'
+                                              - (postfix_operator:) ArgumentsDeclaration: # 273..344 '(success, "Address: unable to send value, recipien...'
                                                   - (variant:) PositionalArgumentsDeclaration: # 273..344 '(success, "Address: unable to send value, recipien...'
                                                       - (open_paren:) OpenParen: "(" # 273..274
                                                       - (arguments:) PositionalArguments: # 274..343 'success, "Address: unable to send value, recipient...'

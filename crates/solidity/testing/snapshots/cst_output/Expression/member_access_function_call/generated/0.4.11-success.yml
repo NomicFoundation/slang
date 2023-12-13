@@ -8,14 +8,14 @@ Errors: []
 Tree:
   - Expression: # 0..5 "x.y()"
       - (variant:) FunctionCallExpression: # 0..5 "x.y()"
-          - (left_operand:) Expression: # 0..3 "x.y"
-              - (operand:) MemberAccessExpression: # 0..3 "x.y"
-                  - (left_operand:) Expression: # 0..1 "x"
+          - (operand:) Expression: # 0..3 "x.y"
+              - (exprrrrr:) MemberAccessExpression: # 0..3 "x.y"
+                  - (operand:) Expression: # 0..1 "x"
                       - Identifier: "x" # 0..1
-                  - (operator:) Period: "." # 1..2
-                  - (operator:) MemberAccess: # 2..3 "y"
+                  - (postfix_operator:) Period: "." # 1..2
+                  - (postfix_operator:) MemberAccess: # 2..3 "y"
                       - (variant:) Identifier: "y" # 2..3
-          - (operator:) ArgumentsDeclaration: # 3..5 "()"
+          - (postfix_operator:) ArgumentsDeclaration: # 3..5 "()"
               - (variant:) PositionalArgumentsDeclaration: # 3..5 "()"
                   - (open_paren:) OpenParen: "(" # 3..4
                   - (close_paren:) CloseParen: ")" # 4..5

@@ -12,9 +12,9 @@ Tree:
           - VersionPragmaExpression: # 8..30 " ^1.0.0 || 2.0.0-3.0.0"
               - (variant:) VersionPragmaOrExpression: # 8..30 " ^1.0.0 || 2.0.0-3.0.0"
                   - (left_operand:) VersionPragmaExpression: # 8..15 " ^1.0.0"
-                      - (operand:) VersionPragmaPrefixExpression: # 8..15 " ^1.0.0"
-                          - (operator:) Caret: "^" # 9..10
-                          - (right_operand:) VersionPragmaExpression: # 10..15 "1.0.0"
+                      - (exprrrrr:) VersionPragmaPrefixExpression: # 8..15 " ^1.0.0"
+                          - (prefix_operator:) Caret: "^" # 9..10
+                          - (operand:) VersionPragmaExpression: # 10..15 "1.0.0"
                               - VersionPragmaSpecifier: # 10..15 "1.0.0"
                                   - VersionPragmaValue: "1" # 10..11
                                   - Period: "." # 11..12
@@ -23,7 +23,7 @@ Tree:
                                   - VersionPragmaValue: "0" # 14..15
                   - (operator:) BarBar: "||" # 16..18
                   - (right_operand:) VersionPragmaExpression: # 18..30 " 2.0.0-3.0.0"
-                      - (operand:) VersionPragmaRangeExpression: # 18..30 " 2.0.0-3.0.0"
+                      - (exprrrrr:) VersionPragmaRangeExpression: # 18..30 " 2.0.0-3.0.0"
                           - (left_operand:) VersionPragmaExpression: # 18..24 " 2.0.0"
                               - VersionPragmaSpecifier: # 18..24 " 2.0.0"
                                   - VersionPragmaValue: "2" # 19..20

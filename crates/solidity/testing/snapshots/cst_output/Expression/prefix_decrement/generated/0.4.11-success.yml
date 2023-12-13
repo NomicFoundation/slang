@@ -8,6 +8,6 @@ Errors: []
 Tree:
   - Expression: # 0..5 "--foo"
       - (variant:) PrefixExpression: # 0..5 "--foo"
-          - (operator:) MinusMinus: "--" # 0..2
-          - (right_operand:) Expression: # 2..5 "foo"
+          - (prefix_operator:) MinusMinus: "--" # 0..2
+          - (operand:) Expression: # 2..5 "foo"
               - Identifier: "foo" # 2..5

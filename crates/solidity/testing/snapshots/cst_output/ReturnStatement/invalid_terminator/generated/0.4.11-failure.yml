@@ -25,7 +25,7 @@ Tree:
                   - Identifier: "a" # 7..8
               - (operator:) Plus: "+" # 9..10
               - (right_operand:) Expression: # 10..19 " 2 * some"
-                  - (operand:) MultiplicativeExpression: # 10..19 " 2 * some"
+                  - (exprrrrr:) MultiplicativeExpression: # 10..19 " 2 * some"
                       - (left_operand:) Expression: # 10..12 " 2"
                           - DecimalNumberExpression: # 10..12 " 2"
                               - (literal:) DecimalLiteral: "2" # 11..12

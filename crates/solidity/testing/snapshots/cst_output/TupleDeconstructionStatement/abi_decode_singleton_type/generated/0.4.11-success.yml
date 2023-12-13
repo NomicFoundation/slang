@@ -28,14 +28,14 @@ Tree:
       - (equal:) Equal: "=" # 21..22
       - (expression:) Expression: # 22..57 " abi.decode(data, (uint32, uint32))"
           - (variant:) FunctionCallExpression: # 22..57 " abi.decode(data, (uint32, uint32))"
-              - (left_operand:) Expression: # 22..33 " abi.decode"
-                  - (operand:) MemberAccessExpression: # 22..33 " abi.decode"
-                      - (left_operand:) Expression: # 22..26 " abi"
+              - (operand:) Expression: # 22..33 " abi.decode"
+                  - (exprrrrr:) MemberAccessExpression: # 22..33 " abi.decode"
+                      - (operand:) Expression: # 22..26 " abi"
                           - Identifier: "abi" # 23..26
-                      - (operator:) Period: "." # 26..27
-                      - (operator:) MemberAccess: # 27..33 "decode"
+                      - (postfix_operator:) Period: "." # 26..27
+                      - (postfix_operator:) MemberAccess: # 27..33 "decode"
                           - (variant:) Identifier: "decode" # 27..33
-              - (operator:) ArgumentsDeclaration: # 33..57 "(data, (uint32, uint32))"
+              - (postfix_operator:) ArgumentsDeclaration: # 33..57 "(data, (uint32, uint32))"
                   - (variant:) PositionalArgumentsDeclaration: # 33..57 "(data, (uint32, uint32))"
                       - (open_paren:) OpenParen: "(" # 33..34
                       - (arguments:) PositionalArguments: # 34..56 "data, (uint32, uint32)"

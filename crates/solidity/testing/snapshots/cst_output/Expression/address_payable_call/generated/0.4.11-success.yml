@@ -8,12 +8,12 @@ Errors: []
 Tree:
   - Expression: # 0..22 "address payable(value)"
       - (variant:) FunctionCallExpression: # 0..22 "address payable(value)"
-          - (left_operand:) Expression: # 0..15 "address payable"
+          - (operand:) Expression: # 0..15 "address payable"
               - ElementaryType: # 0..15 "address payable"
                   - (variant:) AddressType: # 0..15 "address payable"
                       - (address_keyword:) AddressKeyword: "address" # 0..7
                       - (payable_keyword:) PayableKeyword: "payable" # 8..15
-          - (operator:) ArgumentsDeclaration: # 15..22 "(value)"
+          - (postfix_operator:) ArgumentsDeclaration: # 15..22 "(value)"
               - (variant:) PositionalArgumentsDeclaration: # 15..22 "(value)"
                   - (open_paren:) OpenParen: "(" # 15..16
                   - (arguments:) PositionalArguments: # 16..21 "value"

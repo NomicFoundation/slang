@@ -10,11 +10,11 @@ Tree:
       - (new_keyword:) NewKeyword: "new" # 0..3
       - (type_name:) TypeName: # 3..11 " Foo[10]"
           - (variant:) ArrayTypeName: # 3..11 " Foo[10]"
-              - (left_operand:) TypeName: # 3..7 " Foo"
+              - (operand:) TypeName: # 3..7 " Foo"
                   - IdentifierPath: # 3..7 " Foo"
                       - Identifier: "Foo" # 4..7
-              - (operator:) OpenBracket: "[" # 7..8
-              - (operator:) Expression: # 8..10 "10"
+              - (postfix_operator:) OpenBracket: "[" # 7..8
+              - (postfix_operator:) Expression: # 8..10 "10"
                   - DecimalNumberExpression: # 8..10 "10"
                       - (literal:) DecimalLiteral: "10" # 8..10
-              - (operator:) CloseBracket: "]" # 10..11
+              - (postfix_operator:) CloseBracket: "]" # 10..11

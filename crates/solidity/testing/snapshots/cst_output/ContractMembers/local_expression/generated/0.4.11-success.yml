@@ -37,7 +37,7 @@ Tree:
                                                       - (literal:) DecimalLiteral: "1" # 29..30
                                               - (operator:) Plus: "+" # 31..32
                                               - (right_operand:) Expression: # 32..38 " 2 * 3"
-                                                  - (operand:) MultiplicativeExpression: # 32..38 " 2 * 3"
+                                                  - (exprrrrr:) MultiplicativeExpression: # 32..38 " 2 * 3"
                                                       - (left_operand:) Expression: # 32..34 " 2"
                                                           - DecimalNumberExpression: # 32..34 " 2"
                                                               - (literal:) DecimalLiteral: "2" # 33..34
