@@ -226,14 +226,10 @@ impl PrecedenceHelper {
 
                 // 3. Until we have a single expression.
 
-                if pratt_elements.len() != 1 {
-                    unreachable!("Expected a single element: {:#?}", pratt_elements)
-                }
-
-                if let Expression { nodes } = pratt_elements.pop().unwrap() {
-                    ParserResult::r#match(nodes, vec![])
-                } else {
-                    unreachable!("Expected an expression: {:#?}", pratt_elements)
+                match <[_; 1]>::try_from(pratt_elements) {
+                    Ok([Expression { nodes }]) => ParserResult::r#match(nodes, vec![]),
+                    Ok([head]) => unreachable!("Expected an expression: {:#?}", head),
+                    Err(elems) => unreachable!("Expected a single element: {:#?}", elems),
                 }
             }
 
