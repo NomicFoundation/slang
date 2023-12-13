@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - SKIPPED (Token): "sealed" # 0..6
+  - SKIPPED: "sealed" # 0..6

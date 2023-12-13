@@ -6,16 +6,16 @@ Source: >
 Errors: []
 
 Tree:
-  - NewExpression (Rule): # 0..11 "new Foo[][]"
-      - NewKeyword (Token): "new" # 0..3
-      - TypeName (Rule): # 3..11 " Foo[][]"
-          - ArrayTypeName (Rule): # 3..11 " Foo[][]"
-              - TypeName (Rule): # 3..9 " Foo[]"
-                  - ArrayTypeName (Rule): # 3..9 " Foo[]"
-                      - TypeName (Rule): # 3..7 " Foo"
-                          - IdentifierPath (Rule): # 3..7 " Foo"
-                              - Identifier (Token): "Foo" # 4..7
-                      - OpenBracket (Token): "[" # 7..8
-                      - CloseBracket (Token): "]" # 8..9
-              - OpenBracket (Token): "[" # 9..10
-              - CloseBracket (Token): "]" # 10..11
+  - NewExpression: # 0..11 "new Foo[][]"
+      - NewKeyword: "new" # 0..3
+      - TypeName: # 3..11 " Foo[][]"
+          - ArrayTypeName: # 3..11 " Foo[][]"
+              - TypeName: # 3..9 " Foo[]"
+                  - ArrayTypeName: # 3..9 " Foo[]"
+                      - TypeName: # 3..7 " Foo"
+                          - IdentifierPath: # 3..7 " Foo"
+                              - Identifier: "Foo" # 4..7
+                      - OpenBracket: "[" # 7..8
+                      - CloseBracket: "]" # 8..9
+              - OpenBracket: "[" # 9..10
+              - CloseBracket: "]" # 10..11

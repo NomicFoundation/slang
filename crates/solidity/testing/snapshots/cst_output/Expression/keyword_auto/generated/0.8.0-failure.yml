@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - SKIPPED (Token): "auto" # 0..4
+  - SKIPPED: "auto" # 0..4

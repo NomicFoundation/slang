@@ -6,6 +6,6 @@ Source: >
 Errors: []
 
 Tree:
-  - TypeName (Rule): # 0..7 "uint320"
-      - IdentifierPath (Rule): # 0..7 "uint320"
-          - Identifier (Token): "uint320" # 0..7
+  - TypeName: # 0..7 "uint320"
+      - IdentifierPath: # 0..7 "uint320"
+          - Identifier: "uint320" # 0..7

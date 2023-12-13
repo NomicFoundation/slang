@@ -28,54 +28,54 @@ impl Cursor {
         Self(Box::new(cursor))
     }
 
-    #[napi]
+    #[napi(catch_unwind)]
     pub fn reset(&mut self) {
         self.0.reset();
     }
 
-    #[napi]
+    #[napi(catch_unwind)]
     pub fn complete(&mut self) {
         self.0.complete();
     }
 
-    #[napi]
+    #[napi(catch_unwind)]
     #[allow(clippy::should_implement_trait)] // These are meant to be explicitly exposed to NAPI
     pub fn clone(&self) -> Self {
         Self(self.0.clone())
     }
 
-    #[napi]
+    #[napi(catch_unwind)]
     pub fn spawn(&self) -> Self {
         Self::new(self.0.spawn())
     }
 
-    #[napi(getter)]
+    #[napi(getter, catch_unwind)]
     pub fn is_completed(&self) -> bool {
         self.0.is_completed()
     }
 
-    #[napi(ts_return_type = "cst.Node")]
+    #[napi(ts_return_type = "cst.Node", catch_unwind)]
     pub fn node(&self, env: Env) -> JsObject {
         self.0.node().to_js(&env)
     }
 
-    #[napi(getter, ts_return_type = "text_index.TextIndex")]
+    #[napi(getter, ts_return_type = "text_index.TextIndex", catch_unwind)]
     pub fn text_offset(&self) -> TextIndex {
         (&self.0.text_offset()).into()
     }
 
-    #[napi(getter, ts_return_type = "text_index.TextRange")]
+    #[napi(getter, ts_return_type = "text_index.TextRange", catch_unwind)]
     pub fn text_range(&self) -> TextRange {
         (&self.0.text_range()).into()
     }
 
     #[allow(clippy::cast_possible_truncation)] // Cursor depth can't reasonably be larger than u32
-    #[napi(getter)]
+    #[napi(getter, catch_unwind)]
     pub fn depth(&self) -> u32 {
         self.0.depth() as u32
     }
 
-    #[napi(ts_return_type = "Array<cst.RuleNode>")]
+    #[napi(ts_return_type = "Array<cst.RuleNode>", catch_unwind)]
     pub fn ancestors(&self, env: Env) -> Vec<JsObject> {
         self.0
             .ancestors()
@@ -83,57 +83,57 @@ impl Cursor {
             .collect()
     }
 
-    #[napi]
+    #[napi(catch_unwind)]
     pub fn go_to_next(&mut self) -> bool {
         self.0.go_to_next()
     }
 
-    #[napi]
+    #[napi(catch_unwind)]
     pub fn go_to_next_non_descendent(&mut self) -> bool {
         self.0.go_to_next_non_descendent()
     }
 
-    #[napi]
+    #[napi(catch_unwind)]
     pub fn go_to_previous(&mut self) -> bool {
         self.0.go_to_previous()
     }
 
-    #[napi]
+    #[napi(catch_unwind)]
     pub fn go_to_parent(&mut self) -> bool {
         self.0.go_to_parent()
     }
 
-    #[napi]
+    #[napi(catch_unwind)]
     pub fn go_to_first_child(&mut self) -> bool {
         self.0.go_to_first_child()
     }
 
-    #[napi]
+    #[napi(catch_unwind)]
     pub fn go_to_last_child(&mut self) -> bool {
         self.0.go_to_last_child()
     }
 
-    #[napi]
+    #[napi(catch_unwind)]
     pub fn go_to_nth_child(&mut self, child_number: u32) -> bool {
         self.0.go_to_nth_child(child_number as usize)
     }
 
-    #[napi]
+    #[napi(catch_unwind)]
     pub fn go_to_next_sibling(&mut self) -> bool {
         self.0.go_to_next_sibling()
     }
 
-    #[napi]
+    #[napi(catch_unwind)]
     pub fn go_to_previous_sibling(&mut self) -> bool {
         self.0.go_to_previous_sibling()
     }
 
-    #[napi]
+    #[napi(catch_unwind)]
     pub fn go_to_next_token(&mut self) -> bool {
         self.0.go_to_next_token()
     }
 
-    #[napi]
+    #[napi(catch_unwind)]
     pub fn go_to_next_token_with_kinds(
         &mut self,
         #[napi(ts_arg_type = "Array<kinds.TokenKind>")] kinds: Vec<TokenKind>,
@@ -141,12 +141,12 @@ impl Cursor {
         self.0.go_to_next_token_with_kinds(&kinds)
     }
 
-    #[napi]
+    #[napi(catch_unwind)]
     pub fn go_to_next_rule(&mut self) -> bool {
         self.0.go_to_next_rule()
     }
 
-    #[napi]
+    #[napi(catch_unwind)]
     pub fn go_to_next_rule_with_kinds(
         &mut self,
         #[napi(ts_arg_type = "Array<kinds.RuleKind>")] kinds: Vec<RuleKind>,

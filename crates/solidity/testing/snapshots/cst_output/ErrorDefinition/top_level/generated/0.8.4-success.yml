@@ -6,10 +6,10 @@ Source: >
 Errors: []
 
 Tree:
-  - ErrorDefinition (Rule): # 0..16 "error MyError();"
-      - ErrorKeyword (Token): "error" # 0..5
-      - Identifier (Token): "MyError" # 6..13
-      - ErrorParametersDeclaration (Rule): # 13..15 "()"
-          - OpenParen (Token): "(" # 13..14
-          - CloseParen (Token): ")" # 14..15
-      - Semicolon (Token): ";" # 15..16
+  - ErrorDefinition: # 0..16 "error MyError();"
+      - ErrorKeyword: "error" # 0..5
+      - Identifier: "MyError" # 6..13
+      - ErrorParametersDeclaration: # 13..15 "()"
+          - OpenParen: "(" # 13..14
+          - CloseParen: ")" # 14..15
+      - Semicolon: ";" # 15..16

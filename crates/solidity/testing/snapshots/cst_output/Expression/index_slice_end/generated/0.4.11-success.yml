@@ -6,13 +6,13 @@ Source: >
 Errors: []
 
 Tree:
-  - Expression (Rule): # 0..9 "arr[:end]"
-      - IndexAccessExpression (Rule): # 0..9 "arr[:end]"
-          - Expression (Rule): # 0..3 "arr"
-              - Identifier (Token): "arr" # 0..3
-          - OpenBracket (Token): "[" # 3..4
-          - IndexAccessEnd (Rule): # 4..8 ":end"
-              - Colon (Token): ":" # 4..5
-              - Expression (Rule): # 5..8 "end"
-                  - Identifier (Token): "end" # 5..8
-          - CloseBracket (Token): "]" # 8..9
+  - Expression: # 0..9 "arr[:end]"
+      - IndexAccessExpression: # 0..9 "arr[:end]"
+          - Expression: # 0..3 "arr"
+              - Identifier: "arr" # 0..3
+          - OpenBracket: "[" # 3..4
+          - IndexAccessEnd: # 4..8 ":end"
+              - Colon: ":" # 4..5
+              - Expression: # 5..8 "end"
+                  - Identifier: "end" # 5..8
+          - CloseBracket: "]" # 8..9

@@ -6,5 +6,5 @@ Source: >
 Errors: []
 
 Tree:
-  - UnicodeStringLiterals (Rule): # 0..19 'unicode"emoji 😃"'
-      - UnicodeStringLiteral (Token): 'unicode"emoji 😃"' # 0..19
+  - UnicodeStringLiterals: # 0..19 'unicode"emoji 😃"'
+      - UnicodeStringLiteral: 'unicode"emoji 😃"' # 0..19

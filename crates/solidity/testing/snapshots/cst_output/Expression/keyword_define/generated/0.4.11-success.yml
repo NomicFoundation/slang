@@ -6,5 +6,5 @@ Source: >
 Errors: []
 
 Tree:
-  - Expression (Rule): # 0..6 "define"
-      - Identifier (Token): "define" # 0..6
+  - Expression: # 0..6 "define"
+      - Identifier: "define" # 0..6

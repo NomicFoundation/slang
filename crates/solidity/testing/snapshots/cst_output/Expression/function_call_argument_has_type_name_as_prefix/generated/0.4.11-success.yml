@@ -6,14 +6,14 @@ Source: >
 Errors: []
 
 Tree:
-  - Expression (Rule): # 0..13 "x(interested)"
-      - FunctionCallExpression (Rule): # 0..13 "x(interested)"
-          - Expression (Rule): # 0..1 "x"
-              - Identifier (Token): "x" # 0..1
-          - ArgumentsDeclaration (Rule): # 1..13 "(interested)"
-              - PositionalArgumentsDeclaration (Rule): # 1..13 "(interested)"
-                  - OpenParen (Token): "(" # 1..2
-                  - PositionalArguments (Rule): # 2..12 "interested"
-                      - Expression (Rule): # 2..12 "interested"
-                          - Identifier (Token): "interested" # 2..12
-                  - CloseParen (Token): ")" # 12..13
+  - Expression: # 0..13 "x(interested)"
+      - FunctionCallExpression: # 0..13 "x(interested)"
+          - Expression: # 0..1 "x"
+              - Identifier: "x" # 0..1
+          - ArgumentsDeclaration: # 1..13 "(interested)"
+              - PositionalArgumentsDeclaration: # 1..13 "(interested)"
+                  - OpenParen: "(" # 1..2
+                  - PositionalArguments: # 2..12 "interested"
+                      - Expression: # 2..12 "interested"
+                          - Identifier: "interested" # 2..12
+                  - CloseParen: ")" # 12..13

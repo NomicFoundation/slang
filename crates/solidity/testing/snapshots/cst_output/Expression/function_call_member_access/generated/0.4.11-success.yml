@@ -6,16 +6,16 @@ Source: >
 Errors: []
 
 Tree:
-  - Expression (Rule): # 0..5 "x().y"
-      - MemberAccessExpression (Rule): # 0..5 "x().y"
-          - Expression (Rule): # 0..3 "x()"
-              - FunctionCallExpression (Rule): # 0..3 "x()"
-                  - Expression (Rule): # 0..1 "x"
-                      - Identifier (Token): "x" # 0..1
-                  - ArgumentsDeclaration (Rule): # 1..3 "()"
-                      - PositionalArgumentsDeclaration (Rule): # 1..3 "()"
-                          - OpenParen (Token): "(" # 1..2
-                          - CloseParen (Token): ")" # 2..3
-          - Period (Token): "." # 3..4
-          - MemberAccess (Rule): # 4..5 "y"
-              - Identifier (Token): "y" # 4..5
+  - Expression: # 0..5 "x().y"
+      - MemberAccessExpression: # 0..5 "x().y"
+          - Expression: # 0..3 "x()"
+              - FunctionCallExpression: # 0..3 "x()"
+                  - Expression: # 0..1 "x"
+                      - Identifier: "x" # 0..1
+                  - ArgumentsDeclaration: # 1..3 "()"
+                      - PositionalArgumentsDeclaration: # 1..3 "()"
+                          - OpenParen: "(" # 1..2
+                          - CloseParen: ")" # 2..3
+          - Period: "." # 3..4
+          - MemberAccess: # 4..5 "y"
+              - Identifier: "y" # 4..5

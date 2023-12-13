@@ -14,6 +14,6 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - HexStringLiterals (Rule): # 0..9 'hex"12"b\n'
-      - HexStringLiteral (Token): 'hex"12"' # 0..7
-      - SKIPPED (Token): "b\n" # 7..9
+  - HexStringLiterals: # 0..9 'hex"12"b\n'
+      - HexStringLiteral: 'hex"12"' # 0..7
+      - SKIPPED: "b\n" # 7..9

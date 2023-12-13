@@ -6,16 +6,16 @@ Source: >
 Errors: []
 
 Tree:
-  - Expression (Rule): # 0..14 "address(value)"
-      - FunctionCallExpression (Rule): # 0..14 "address(value)"
-          - Expression (Rule): # 0..7 "address"
-              - ElementaryType (Rule): # 0..7 "address"
-                  - AddressType (Rule): # 0..7 "address"
-                      - AddressKeyword (Token): "address" # 0..7
-          - ArgumentsDeclaration (Rule): # 7..14 "(value)"
-              - PositionalArgumentsDeclaration (Rule): # 7..14 "(value)"
-                  - OpenParen (Token): "(" # 7..8
-                  - PositionalArguments (Rule): # 8..13 "value"
-                      - Expression (Rule): # 8..13 "value"
-                          - Identifier (Token): "value" # 8..13
-                  - CloseParen (Token): ")" # 13..14
+  - Expression: # 0..14 "address(value)"
+      - FunctionCallExpression: # 0..14 "address(value)"
+          - Expression: # 0..7 "address"
+              - ElementaryType: # 0..7 "address"
+                  - AddressType: # 0..7 "address"
+                      - AddressKeyword: "address" # 0..7
+          - ArgumentsDeclaration: # 7..14 "(value)"
+              - PositionalArgumentsDeclaration: # 7..14 "(value)"
+                  - OpenParen: "(" # 7..8
+                  - PositionalArguments: # 8..13 "value"
+                      - Expression: # 8..13 "value"
+                          - Identifier: "value" # 8..13
+                  - CloseParen: ")" # 13..14

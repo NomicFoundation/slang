@@ -79,9 +79,9 @@ indicatif = { version = "0.17.3" }
 Inflector = { version = "0.11.4" }
 itertools = { version = "0.10.5" }
 markdown = { version = "0.3.0" }
-napi = { version = "2.13.1", features = ["compat-mode", "napi8", "serde-json"] }
-napi-build = { version = "2.0.1" }
-napi-derive = { version = "2.13.0" }
+napi = { version = "2.14.1", features = ["compat-mode", "napi8", "serde-json"] }
+napi-build = { version = "2.1.0" }
+napi-derive = { version = "2.14.3" }
 owo-colors = { version = "3.5.0", features = ["supports-colors"] }
 proc-macro2 = { version = "1.0.53" }
 quote = { version = "1.0.26" }

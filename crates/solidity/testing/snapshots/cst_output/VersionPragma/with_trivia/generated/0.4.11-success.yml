@@ -6,21 +6,21 @@ Source: >
 Errors: []
 
 Tree:
-  - VersionPragma (Rule): # 0..68 "solidity /* comments */ 0 /* are */ . /* allowed *..."
-      - SolidityKeyword (Token): "solidity" # 0..8
-      - VersionPragmaExpressions (Rule): # 8..68 " /* comments */ 0 /* are */ . /* allowed */ 0 . /*..."
-          - VersionPragmaExpression (Rule): # 8..68 " /* comments */ 0 /* are */ . /* allowed */ 0 . /*..."
-              - VersionPragmaSpecifier (Rule): # 8..68 " /* comments */ 0 /* are */ . /* allowed */ 0 . /*..."
-                  - LeadingTrivia (Rule): # 8..24 " /* comments */ "
-                      - MultilineComment (Trivia): "/* comments */" # 9..23
-                  - VersionPragmaValue (Token): "0" # 24..25
-                  - LeadingTrivia (Rule): # 25..36 " /* are */ "
-                      - MultilineComment (Trivia): "/* are */" # 26..35
-                  - Period (Token): "." # 36..37
-                  - LeadingTrivia (Rule): # 37..52 " /* allowed */ "
-                      - MultilineComment (Trivia): "/* allowed */" # 38..51
-                  - VersionPragmaValue (Token): "0" # 52..53
-                  - Period (Token): "." # 54..55
-                  - LeadingTrivia (Rule): # 55..67 " /* here */ "
-                      - MultilineComment (Trivia): "/* here */" # 56..66
-                  - VersionPragmaValue (Token): "0" # 67..68
+  - VersionPragma: # 0..68 "solidity /* comments */ 0 /* are */ . /* allowed *..."
+      - SolidityKeyword: "solidity" # 0..8
+      - VersionPragmaExpressions: # 8..68 " /* comments */ 0 /* are */ . /* allowed */ 0 . /*..."
+          - VersionPragmaExpression: # 8..68 " /* comments */ 0 /* are */ . /* allowed */ 0 . /*..."
+              - VersionPragmaSpecifier: # 8..68 " /* comments */ 0 /* are */ . /* allowed */ 0 . /*..."
+                  - LeadingTrivia: # 8..24 " /* comments */ "
+                      - MultilineComment: "/* comments */" # 9..23
+                  - VersionPragmaValue: "0" # 24..25
+                  - LeadingTrivia: # 25..36 " /* are */ "
+                      - MultilineComment: "/* are */" # 26..35
+                  - Period: "." # 36..37
+                  - LeadingTrivia: # 37..52 " /* allowed */ "
+                      - MultilineComment: "/* allowed */" # 38..51
+                  - VersionPragmaValue: "0" # 52..53
+                  - Period: "." # 54..55
+                  - LeadingTrivia: # 55..67 " /* here */ "
+                      - MultilineComment: "/* here */" # 56..66
+                  - VersionPragmaValue: "0" # 67..68

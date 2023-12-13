@@ -8,43 +8,43 @@ Source: >
 Errors: []
 
 Tree:
-  - FunctionDefinition (Rule): # 0..73 "function some() public virtual override returns (u..."
-      - FunctionKeyword (Token): "function" # 0..8
-      - FunctionName (Rule): # 8..13 " some"
-          - Identifier (Token): "some" # 9..13
-      - ParametersDeclaration (Rule): # 13..15 "()"
-          - OpenParen (Token): "(" # 13..14
-          - CloseParen (Token): ")" # 14..15
-      - FunctionAttributes (Rule): # 15..39 " public virtual override"
-          - FunctionAttribute (Rule): # 15..22 " public"
-              - PublicKeyword (Token): "public" # 16..22
-          - FunctionAttribute (Rule): # 22..30 " virtual"
-              - ModifierInvocation (Rule): # 22..30 " virtual"
-                  - IdentifierPath (Rule): # 22..30 " virtual"
-                      - Identifier (Token): "virtual" # 23..30
-          - FunctionAttribute (Rule): # 30..39 " override"
-              - ModifierInvocation (Rule): # 30..39 " override"
-                  - IdentifierPath (Rule): # 30..39 " override"
-                      - Identifier (Token): "override" # 31..39
-      - ReturnsDeclaration (Rule): # 39..57 " returns (uint256)"
-          - ReturnsKeyword (Token): "returns" # 40..47
-          - ParametersDeclaration (Rule): # 47..57 " (uint256)"
-              - OpenParen (Token): "(" # 48..49
-              - Parameters (Rule): # 49..56 "uint256"
-                  - Parameter (Rule): # 49..56 "uint256"
-                      - TypeName (Rule): # 49..56 "uint256"
-                          - ElementaryType (Rule): # 49..56 "uint256"
-                              - UintKeyword (Token): "uint256" # 49..56
-              - CloseParen (Token): ")" # 56..57
-      - FunctionBody (Rule): # 57..73 " {\n\treturn 1;\n}\n"
-          - Block (Rule): # 57..73 " {\n\treturn 1;\n}\n"
-              - OpenBrace (Token): "{" # 58..59
-              - Statements (Rule): # 60..71 "\treturn 1;\n"
-                  - Statement (Rule): # 60..71 "\treturn 1;\n"
-                      - ReturnStatement (Rule): # 60..71 "\treturn 1;\n"
-                          - ReturnKeyword (Token): "return" # 61..67
-                          - Expression (Rule): # 67..69 " 1"
-                              - DecimalNumberExpression (Rule): # 67..69 " 1"
-                                  - DecimalLiteral (Token): "1" # 68..69
-                          - Semicolon (Token): ";" # 69..70
-              - CloseBrace (Token): "}" # 71..72
+  - FunctionDefinition: # 0..73 "function some() public virtual override returns (u..."
+      - FunctionKeyword: "function" # 0..8
+      - FunctionName: # 8..13 " some"
+          - Identifier: "some" # 9..13
+      - ParametersDeclaration: # 13..15 "()"
+          - OpenParen: "(" # 13..14
+          - CloseParen: ")" # 14..15
+      - FunctionAttributes: # 15..39 " public virtual override"
+          - FunctionAttribute: # 15..22 " public"
+              - PublicKeyword: "public" # 16..22
+          - FunctionAttribute: # 22..30 " virtual"
+              - ModifierInvocation: # 22..30 " virtual"
+                  - IdentifierPath: # 22..30 " virtual"
+                      - Identifier: "virtual" # 23..30
+          - FunctionAttribute: # 30..39 " override"
+              - ModifierInvocation: # 30..39 " override"
+                  - IdentifierPath: # 30..39 " override"
+                      - Identifier: "override" # 31..39
+      - ReturnsDeclaration: # 39..57 " returns (uint256)"
+          - ReturnsKeyword: "returns" # 40..47
+          - ParametersDeclaration: # 47..57 " (uint256)"
+              - OpenParen: "(" # 48..49
+              - Parameters: # 49..56 "uint256"
+                  - Parameter: # 49..56 "uint256"
+                      - TypeName: # 49..56 "uint256"
+                          - ElementaryType: # 49..56 "uint256"
+                              - UintKeyword: "uint256" # 49..56
+              - CloseParen: ")" # 56..57
+      - FunctionBody: # 57..73 " {\n\treturn 1;\n}\n"
+          - Block: # 57..73 " {\n\treturn 1;\n}\n"
+              - OpenBrace: "{" # 58..59
+              - Statements: # 60..71 "\treturn 1;\n"
+                  - Statement: # 60..71 "\treturn 1;\n"
+                      - ReturnStatement: # 60..71 "\treturn 1;\n"
+                          - ReturnKeyword: "return" # 61..67
+                          - Expression: # 67..69 " 1"
+                              - DecimalNumberExpression: # 67..69 " 1"
+                                  - DecimalLiteral: "1" # 68..69
+                          - Semicolon: ";" # 69..70
+              - CloseBrace: "}" # 71..72

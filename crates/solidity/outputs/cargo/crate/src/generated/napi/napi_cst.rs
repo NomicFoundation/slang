@@ -2,7 +2,7 @@
 
 use std::rc::Rc;
 
-use napi::bindgen_prelude::{Env, FromNapiValue, ToNapiValue};
+use napi::bindgen_prelude::{Env, ToNapiValue};
 use napi::{JsObject, NapiValue};
 use napi_cursor::Cursor;
 use napi_derive::napi;
@@ -27,12 +27,17 @@ pub struct TokenNode(Rc<RustTokenNode>);
 
 #[napi(namespace = "cst")]
 impl RuleNode {
-    #[napi(getter, js_name = "type", ts_return_type = "NodeType.Rule")]
+    #[napi(
+        getter,
+        js_name = "type",
+        ts_return_type = "NodeType.Rule",
+        catch_unwind
+    )]
     pub fn tipe(&self) -> NodeType {
         NodeType::Rule
     }
 
-    #[napi(getter, ts_return_type = "kinds.RuleKind")]
+    #[napi(getter, ts_return_type = "kinds.RuleKind", catch_unwind)]
     pub fn kind(&self) -> RuleKind {
         self.0.kind
     }
@@ -40,13 +45,14 @@ impl RuleNode {
     #[napi(
         getter,
         js_name = "textLength",
-        ts_return_type = "text_index.TextIndex"
+        ts_return_type = "text_index.TextIndex",
+        catch_unwind
     )]
     pub fn text_len(&self) -> TextIndex {
         (&self.0.text_len).into()
     }
 
-    #[napi(ts_return_type = "Array<cst.Node>")]
+    #[napi(ts_return_type = "Array<cst.Node>", catch_unwind)]
     pub fn children(&self, env: Env) -> Vec<JsObject> {
         self.0
             .children
@@ -55,7 +61,7 @@ impl RuleNode {
             .collect()
     }
 
-    #[napi(ts_return_type = "cursor.Cursor")]
+    #[napi(ts_return_type = "cursor.Cursor", catch_unwind)]
     pub fn create_cursor(
         &self,
         #[napi(ts_arg_type = "text_index.TextIndex")] text_offset: TextIndex,
@@ -68,31 +74,38 @@ impl RuleNode {
 
 #[napi(namespace = "cst")]
 impl TokenNode {
-    #[napi(getter, js_name = "type", ts_return_type = "NodeType.Token")]
+    #[napi(
+        getter,
+        js_name = "type",
+        ts_return_type = "NodeType.Token",
+        catch_unwind
+    )]
     pub fn tipe(&self) -> NodeType {
         NodeType::Token
     }
 
-    #[napi(getter, ts_return_type = "kinds.TokenKind")]
+    #[napi(getter, ts_return_type = "kinds.TokenKind", catch_unwind)]
     pub fn kind(&self) -> TokenKind {
         self.0.kind
     }
+
     #[napi(
         getter,
         js_name = "textLength",
-        ts_return_type = "text_index.TextIndex"
+        ts_return_type = "text_index.TextIndex",
+        catch_unwind
     )]
     pub fn text_len(&self) -> TextIndex {
         let text_len: RustTextIndex = (&self.0.text).into();
         (&text_len).into()
     }
 
-    #[napi(getter)]
+    #[napi(getter, catch_unwind)]
     pub fn text(&self) -> String {
         self.0.text.clone()
     }
 
-    #[napi(ts_return_type = "cursor.Cursor")]
+    #[napi(ts_return_type = "cursor.Cursor", catch_unwind)]
     pub fn create_cursor(
         &self,
         #[napi(ts_arg_type = "text_index.TextIndex")] text_offset: TextIndex,

@@ -18,15 +18,15 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - ContractDefinition (Rule): # 0..48 "contract Sample {\n  constructor() public {\n  }\n}"
-      - ContractKeyword (Token): "contract" # 0..8
-      - Identifier (Token): "Sample" # 9..15
-      - OpenBrace (Token): "{" # 16..17
-      - ContractMembers (Rule): # 18..31 "  constructor"
-          - ContractMember (Rule): # 18..31 "  constructor"
-              - StateVariableDefinition (Rule): # 18..31 "  constructor"
-                  - TypeName (Rule): # 18..31 "  constructor"
-                      - IdentifierPath (Rule): # 18..31 "  constructor"
-                          - Identifier (Token): "constructor" # 20..31
-      - SKIPPED (Token): "() public {\n  }\n" # 31..47
-      - CloseBrace (Token): "}" # 47..48
+  - ContractDefinition: # 0..48 "contract Sample {\n  constructor() public {\n  }\n}"
+      - ContractKeyword: "contract" # 0..8
+      - Identifier: "Sample" # 9..15
+      - OpenBrace: "{" # 16..17
+      - ContractMembers: # 18..31 "  constructor"
+          - ContractMember: # 18..31 "  constructor"
+              - StateVariableDefinition: # 18..31 "  constructor"
+                  - TypeName: # 18..31 "  constructor"
+                      - IdentifierPath: # 18..31 "  constructor"
+                          - Identifier: "constructor" # 20..31
+      - SKIPPED: "() public {\n  }\n" # 31..47
+      - CloseBrace: "}" # 47..48

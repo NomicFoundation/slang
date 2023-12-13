@@ -6,5 +6,5 @@ Source: >
 Errors: []
 
 Tree:
-  - Expression (Rule): # 0..7 "returna"
-      - Identifier (Token): "returna" # 0..7
+  - Expression: # 0..7 "returna"
+      - Identifier: "returna" # 0..7

@@ -6,6 +6,6 @@ Source: >
 Errors: []
 
 Tree:
-  - YulExpression (Rule): # 0..3 "123"
-      - YulLiteral (Rule): # 0..3 "123"
-          - YulDecimalLiteral (Token): "123" # 0..3
+  - YulExpression: # 0..3 "123"
+      - YulLiteral: # 0..3 "123"
+          - YulDecimalLiteral: "123" # 0..3

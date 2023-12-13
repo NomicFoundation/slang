@@ -6,12 +6,12 @@ Source: >
 Errors: []
 
 Tree:
-  - ReceiveFunctionDefinition (Rule): # 0..13 "receive () {}"
-      - ReceiveKeyword (Token): "receive" # 0..7
-      - ParametersDeclaration (Rule): # 7..10 " ()"
-          - OpenParen (Token): "(" # 8..9
-          - CloseParen (Token): ")" # 9..10
-      - FunctionBody (Rule): # 10..13 " {}"
-          - Block (Rule): # 10..13 " {}"
-              - OpenBrace (Token): "{" # 11..12
-              - CloseBrace (Token): "}" # 12..13
+  - ReceiveFunctionDefinition: # 0..13 "receive () {}"
+      - ReceiveKeyword: "receive" # 0..7
+      - ParametersDeclaration: # 7..10 " ()"
+          - OpenParen: "(" # 8..9
+          - CloseParen: ")" # 9..10
+      - FunctionBody: # 10..13 " {}"
+          - Block: # 10..13 " {}"
+              - OpenBrace: "{" # 11..12
+              - CloseBrace: "}" # 12..13

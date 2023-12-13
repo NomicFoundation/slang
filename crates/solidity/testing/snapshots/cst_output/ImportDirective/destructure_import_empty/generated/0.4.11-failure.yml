@@ -15,15 +15,15 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - ImportDirective (Rule): # 0..53 '// Empty imports are not valid\nimport {} from "foo...'
-      - LeadingTrivia (Rule): # 0..31 "// Empty imports are not valid\n"
-          - SingleLineComment (Trivia): "// Empty imports are not valid" # 0..30
-      - ImportKeyword (Token): "import" # 31..37
-      - ImportClause (Rule): # 37..51 ' {} from "foo"'
-          - ImportDeconstruction (Rule): # 37..51 ' {} from "foo"'
-              - OpenBrace (Token): "{" # 38..39
-              - SKIPPED (Token): "" # 39..39
-              - CloseBrace (Token): "}" # 39..40
-              - FromKeyword (Token): "from" # 41..45
-              - AsciiStringLiteral (Token): '"foo"' # 46..51
-      - Semicolon (Token): ";" # 51..52
+  - ImportDirective: # 0..53 '// Empty imports are not valid\nimport {} from "foo...'
+      - LeadingTrivia: # 0..31 "// Empty imports are not valid\n"
+          - SingleLineComment: "// Empty imports are not valid" # 0..30
+      - ImportKeyword: "import" # 31..37
+      - ImportClause: # 37..51 ' {} from "foo"'
+          - ImportDeconstruction: # 37..51 ' {} from "foo"'
+              - OpenBrace: "{" # 38..39
+              - SKIPPED: "" # 39..39
+              - CloseBrace: "}" # 39..40
+              - FromKeyword: "from" # 41..45
+              - AsciiStringLiteral: '"foo"' # 46..51
+      - Semicolon: ";" # 51..52

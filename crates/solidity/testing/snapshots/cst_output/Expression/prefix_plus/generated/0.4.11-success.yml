@@ -6,8 +6,8 @@ Source: >
 Errors: []
 
 Tree:
-  - Expression (Rule): # 0..4 "+foo"
-      - PrefixExpression (Rule): # 0..4 "+foo"
-          - Plus (Token): "+" # 0..1
-          - Expression (Rule): # 1..4 "foo"
-              - Identifier (Token): "foo" # 1..4
+  - Expression: # 0..4 "+foo"
+      - PrefixExpression: # 0..4 "+foo"
+          - Plus: "+" # 0..1
+          - Expression: # 1..4 "foo"
+              - Identifier: "foo" # 1..4
