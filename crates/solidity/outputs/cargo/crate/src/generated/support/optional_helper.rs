@@ -1,6 +1,6 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-use super::parser_result::ParserResult;
+use crate::support::parser_result::ParserResult;
 
 pub struct OptionalHelper;
 

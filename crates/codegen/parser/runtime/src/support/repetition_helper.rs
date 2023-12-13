@@ -1,5 +1,5 @@
-use super::context::ParserContext;
-use super::parser_result::{IncompleteMatch, NoMatch, ParserResult};
+use crate::support::context::ParserContext;
+use crate::support::parser_result::{IncompleteMatch, NoMatch, ParserResult};
 
 pub struct RepetitionHelper<const MIN_COUNT: usize>;
 

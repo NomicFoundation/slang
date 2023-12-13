@@ -2,8 +2,8 @@
 
 use std::collections::BTreeSet;
 
-use super::kinds::TokenKind;
-use super::text_index::{TextIndex, TextRange};
+use crate::kinds::TokenKind;
+use crate::text_index::{TextIndex, TextRange};
 
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub struct ParseError {

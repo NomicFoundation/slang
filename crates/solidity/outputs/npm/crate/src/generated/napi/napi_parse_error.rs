@@ -6,7 +6,7 @@
 use napi_derive::napi;
 use napi_text_index::TextRange;
 
-use super::{napi_text_index, RustParseError};
+use crate::napi::{napi_text_index, RustParseError};
 
 #[napi(namespace = "parse_error")]
 #[derive(PartialEq, Clone)]

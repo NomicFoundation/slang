@@ -13,4 +13,4 @@ pub type RustTokenNode = super::cst::TokenNode;
 pub type RustTextIndex = super::text_index::TextIndex;
 pub type RustTextRange = super::text_index::TextRange;
 
-pub use super::kinds::*;
+pub use crate::kinds::*;

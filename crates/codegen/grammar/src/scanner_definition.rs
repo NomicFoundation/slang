@@ -1,7 +1,7 @@
 use std::fmt::Debug;
 use std::rc::Rc;
 
-use super::{GrammarVisitor, VersionQualityRange, Visitable};
+use crate::{GrammarVisitor, VersionQualityRange, Visitable};
 
 pub trait ScannerDefinition: Debug {
     fn name(&self) -> &'static str;

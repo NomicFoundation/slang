@@ -1,7 +1,7 @@
-use super::super::cst;
-use super::super::kinds::RuleKind;
-use super::parser_result::ParserResult;
-use super::parser_result::PrattElement::{self, Binary, Expression, Postfix, Prefix};
+use crate::cst;
+use crate::kinds::RuleKind;
+use crate::support::parser_result::ParserResult;
+use crate::support::parser_result::PrattElement::{self, Binary, Expression, Postfix, Prefix};
 
 pub struct PrecedenceHelper;
 

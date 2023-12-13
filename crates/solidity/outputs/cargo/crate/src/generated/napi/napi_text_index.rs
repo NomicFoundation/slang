@@ -2,7 +2,7 @@
 
 use napi_derive::napi;
 
-use super::{RustTextIndex, RustTextRange};
+use crate::napi::{RustTextIndex, RustTextRange};
 
 #[napi(object, namespace = "text_index")]
 #[derive(Copy, Clone)]

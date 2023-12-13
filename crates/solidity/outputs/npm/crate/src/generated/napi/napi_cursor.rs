@@ -11,7 +11,7 @@ use napi_cst::ToJS;
 use napi_derive::napi;
 use napi_text_index::{TextIndex, TextRange};
 
-use super::{napi_cst, napi_text_index, RuleKind, RustCursor, TokenKind};
+use crate::napi::{napi_cst, napi_text_index, RuleKind, RustCursor, TokenKind};
 
 #[napi(namespace = "cursor")]
 pub struct Cursor(Box<RustCursor>);

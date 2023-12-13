@@ -14,10 +14,10 @@ use quote::{format_ident, quote};
 use semver::Version;
 use serde::Serialize;
 
-use super::parser_definition::ParserDefinitionExtensions;
-use super::precedence_parser_definition::PrecedenceParserDefinitionExtensions;
-use super::scanner_definition::ScannerDefinitionExtensions;
-use super::trie::Trie;
+use crate::parser_definition::ParserDefinitionExtensions;
+use crate::precedence_parser_definition::PrecedenceParserDefinitionExtensions;
+use crate::scanner_definition::ScannerDefinitionExtensions;
+use crate::trie::Trie;
 
 #[derive(Default, Serialize)]
 pub struct CodeGenerator {

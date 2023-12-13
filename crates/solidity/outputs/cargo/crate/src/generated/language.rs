@@ -13,14 +13,14 @@ use semver::Version;
 #[cfg(feature = "slang_napi_interfaces")]
 use {napi::bindgen_prelude::*, napi_derive::napi};
 
-use super::cst;
-pub use super::kinds::LexicalContext;
-use super::kinds::{IsLexicalContext, LexicalContextType, RuleKind, TokenKind};
-use super::lexer::Lexer;
+use crate::cst;
+pub use crate::kinds::LexicalContext;
+use crate::kinds::{IsLexicalContext, LexicalContextType, RuleKind, TokenKind};
+use crate::lexer::Lexer;
 #[cfg(feature = "slang_napi_interfaces")]
-use super::napi::napi_parse_output::ParseOutput as NAPIParseOutput;
-use super::parse_output::ParseOutput;
-use super::support::{
+use crate::napi::napi_parse_output::ParseOutput as NAPIParseOutput;
+use crate::parse_output::ParseOutput;
+use crate::support::{
     ChoiceHelper, OneOrMoreHelper, OptionalHelper, ParserContext, ParserFunction, ParserResult,
     PrecedenceHelper, RecoverFromNoMatch, SeparatedHelper, SequenceHelper, ZeroOrMoreHelper,
 };

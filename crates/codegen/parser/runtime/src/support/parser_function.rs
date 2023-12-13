@@ -1,12 +1,12 @@
 use std::rc::Rc;
 
-use super::super::cst;
-use super::super::kinds::TokenKind;
-use super::super::parse_error::ParseError;
-use super::super::parse_output::ParseOutput;
-use super::super::text_index::TextIndex;
-use super::context::ParserContext;
-use super::parser_result::{IncompleteMatch, Match, ParserResult, SkippedUntil};
+use crate::cst;
+use crate::kinds::TokenKind;
+use crate::parse_error::ParseError;
+use crate::parse_output::ParseOutput;
+use crate::support::context::ParserContext;
+use crate::support::parser_result::{IncompleteMatch, Match, ParserResult, SkippedUntil};
+use crate::text_index::TextIndex;
 
 pub trait ParserFunction<L>
 where
