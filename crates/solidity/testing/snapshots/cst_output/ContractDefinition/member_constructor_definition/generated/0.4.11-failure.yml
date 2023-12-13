@@ -28,5 +28,5 @@ Tree:
                   - (inner:) TypeName: # 18..31 "  constructor"
                       - (inner:) IdentifierPath: # 18..31 "  constructor"
                           - Identifier: "constructor" # 20..31
-      - (skipped:) SKIPPED: "() public {\n  }\n" # 31..47
+      - SKIPPED: "() public {\n  }\n" # 31..47
       - CloseBrace: "}" # 47..48

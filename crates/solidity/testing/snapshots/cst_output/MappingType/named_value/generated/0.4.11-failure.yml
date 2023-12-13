@@ -26,5 +26,5 @@ Tree:
           - (inner:) TypeName: # 17..25 " bytes32"
               - (inner:) ElementaryType: # 17..25 " bytes32"
                   - BytesKeyword: "bytes32" # 18..25
-      - (skipped:) SKIPPED: "Bar" # 26..29
+      - SKIPPED: "Bar" # 26..29
       - CloseParen: ")" # 29..30

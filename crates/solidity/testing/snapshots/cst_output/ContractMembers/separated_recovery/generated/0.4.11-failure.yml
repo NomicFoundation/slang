@@ -122,7 +122,7 @@ Tree:
                                               - (operator:) Period: "." # 28..29
                                               - (operator:) MemberAccess: # 29..34 "ident"
                                                   - Identifier: "ident" # 29..34
-                                  - (skipped:) SKIPPED: "unexpected tokens, ISomeInterface, Other" # 35..75
+                                  - SKIPPED: "unexpected tokens, ISomeInterface, Other" # 35..75
                                   - CloseParen: ")" # 75..76
                   - (inner:) FunctionAttribute: # 76..83 " public"
                       - PublicKeyword: "public" # 77..83
@@ -144,7 +144,7 @@ Tree:
                                           - (operator:) Period: "." # 98..99
                                           - (operator:) MemberAccess: # 99..103 "call"
                                               - Identifier: "call" # 99..103
-                                  - (skipped:) SKIPPED: "{do: 1, arg: 1 }()" # 103..121
+                                  - SKIPPED: "{do: 1, arg: 1 }()" # 103..121
                                   - Semicolon: ";" # 121..122
                           - (inner:) Statement: # 123..167 "  msg.sender.call{, empty: 1, parse: 2 }();\n"
                               - (inner:) ExpressionStatement: # 123..167 "  msg.sender.call{, empty: 1, parse: 2 }();\n"
@@ -160,7 +160,7 @@ Tree:
                                           - (operator:) Period: "." # 135..136
                                           - (operator:) MemberAccess: # 136..140 "call"
                                               - Identifier: "call" # 136..140
-                                  - (skipped:) SKIPPED: "{, empty: 1, parse: 2 }()" # 140..165
+                                  - SKIPPED: "{, empty: 1, parse: 2 }()" # 140..165
                                   - Semicolon: ";" # 165..166
                           - (inner:) Statement: # 167..230 "  msg.sender.call{arg: 1, missing_expr: , no_semic..."
                               - (inner:) ExpressionStatement: # 167..230 "  msg.sender.call{arg: 1, missing_expr: , no_semic..."
@@ -176,7 +176,7 @@ Tree:
                                           - (operator:) Period: "." # 179..180
                                           - (operator:) MemberAccess: # 180..184 "call"
                                               - Identifier: "call" # 180..184
-                                  - (skipped:) SKIPPED: "{arg: 1, missing_expr: , no_semicolon, , }()" # 184..228
+                                  - SKIPPED: "{arg: 1, missing_expr: , no_semicolon, , }()" # 184..228
                                   - Semicolon: ";" # 228..229
                           - (inner:) Statement: # 230..306 "  msg.sender.call{arg: 1 unexpected tokens, not: 2..."
                               - (inner:) ExpressionStatement: # 230..306 "  msg.sender.call{arg: 1 unexpected tokens, not: 2..."
@@ -192,7 +192,7 @@ Tree:
                                           - (operator:) Period: "." # 242..243
                                           - (operator:) MemberAccess: # 243..247 "call"
                                               - Identifier: "call" # 243..247
-                                  - (skipped:) SKIPPED: "{arg: 1 unexpected tokens, not: 2, recovered, yet:..." # 247..304
+                                  - SKIPPED: "{arg: 1 unexpected tokens, not: 2, recovered, yet:..." # 247..304
                                   - Semicolon: ";" # 304..305
                       - CloseBrace: "}" # 307..308
       - (inner:) ContractMember: # 309..388 "\nfunction empty() override(some.ident, /* empty */..."
@@ -222,7 +222,7 @@ Tree:
                                       - Comma: "," # 346..347
                                   - (inner:) LeadingTrivia: # 347..359 " /* empty */"
                                       - MultilineComment: "/* empty */" # 348..359
-                                  - (skipped:) SKIPPED: ", other.arg.here, and.here" # 359..385
+                                  - SKIPPED: ", other.arg.here, and.here" # 359..385
                                   - CloseParen: ")" # 385..386
               - (inner:) FunctionBody: # 386..388 ";\n"
                   - Semicolon: ";" # 386..387
@@ -254,12 +254,12 @@ Tree:
                                       - (inner:) Expression: # 433..439 " next."
                                           - Identifier: "next" # 434..438
                                           - Period: "." # 438..439
-                                      - (skipped:) SKIPPED: "do.that" # 439..446
+                                      - SKIPPED: "do.that" # 439..446
                                       - Comma: "," # 446..447
                                       - (inner:) Expression: # 447..454 " other."
                                           - Identifier: "other" # 448..453
                                           - Period: "." # 453..454
-                                      - (skipped:) SKIPPED: "while" # 454..459
+                                      - SKIPPED: "while" # 454..459
                                       - Comma: "," # 459..460
                                       - (inner:) Expression: # 460..469 " next.one"
                                           - (operand:) MemberAccessExpression: # 460..469 " next.one"
@@ -269,7 +269,7 @@ Tree:
                                               - (operator:) MemberAccess: # 466..469 "one"
                                                   - Identifier: "one" # 466..469
                                       - Comma: "," # 469..470
-                                  - (skipped:) SKIPPED: "final, ultimate" # 471..486
+                                  - SKIPPED: "final, ultimate" # 471..486
                                   - CloseParen: ")" # 486..487
               - (inner:) FunctionBody: # 487..489 ";\n"
                   - Semicolon: ";" # 487..488
@@ -293,7 +293,7 @@ Tree:
                                       - (inner:) Expression: # 522..527 "some."
                                           - Identifier: "some" # 522..526
                                           - Period: "." # 526..527
-                                      - (skipped:) SKIPPED: "" # 527..527
+                                      - SKIPPED: "" # 527..527
                                       - Comma: "," # 527..528
                                       - (inner:) Expression: # 528..537 " next.arg"
                                           - (operand:) MemberAccessExpression: # 528..537 " next.arg"

@@ -21,4 +21,4 @@ Tree:
       - (inner:) ParametersDeclaration: # 10..12 "()"
           - OpenParen: "(" # 10..11
           - CloseParen: ")" # 11..12
-      - (skipped:) SKIPPED: " constant {}" # 12..24
+      - SKIPPED: " constant {}" # 12..24

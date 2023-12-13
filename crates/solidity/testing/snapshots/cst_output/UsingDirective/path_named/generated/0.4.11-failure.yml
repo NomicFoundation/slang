@@ -24,5 +24,5 @@ Tree:
           - (inner:) TypeName: # 13..17 " bar"
               - (inner:) IdentifierPath: # 13..17 " bar"
                   - Identifier: "bar" # 14..17
-      - (skipped:) SKIPPED: "global" # 18..24
+      - SKIPPED: "global" # 18..24
       - Semicolon: ";" # 24..25

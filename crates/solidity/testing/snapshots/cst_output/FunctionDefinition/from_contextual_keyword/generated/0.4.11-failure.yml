@@ -26,7 +26,7 @@ Tree:
                       - (inner:) ElementaryType: # 22..29 "address"
                           - (inner:) AddressType: # 22..29 "address"
                               - AddressKeyword: "address" # 22..29
-          - (skipped:) SKIPPED: "from, address to, uint256 amount" # 30..62
+          - SKIPPED: "from, address to, uint256 amount" # 30..62
           - CloseParen: ")" # 62..63
       - (inner:) FunctionAttributes: # 63..72 " external"
           - (inner:) FunctionAttribute: # 63..72 " external"

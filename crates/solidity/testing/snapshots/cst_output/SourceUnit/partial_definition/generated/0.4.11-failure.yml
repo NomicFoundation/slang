@@ -26,4 +26,4 @@ Tree:
                       - (inner:) ContractMember: # 18..28 "  function"
                           - (inner:) FunctionDefinition: # 18..28 "  function"
                               - FunctionKeyword: "function" # 20..28
-      - (skipped:) SKIPPED: "" # 28..28
+      - SKIPPED: "" # 28..28

@@ -28,7 +28,7 @@ Tree:
       - (inner:) Statement: # 0..17 "\nthrow invalid ;\n"
           - (inner:) ThrowStatement: # 0..17 "\nthrow invalid ;\n"
               - ThrowKeyword: "throw" # 1..6
-              - (skipped:) SKIPPED: "invalid " # 7..15
+              - SKIPPED: "invalid " # 7..15
               - Semicolon: ";" # 15..16
       - (inner:) Statement: # 17..43 "{ 1 * 2; 3 * b invalid; }\n"
           - (inner:) Block: # 17..43 "{ 1 * 2; 3 * b invalid; }\n"
@@ -56,6 +56,6 @@ Tree:
                                   - (operator:) Asterisk: "*" # 28..29
                                   - (right_operand:) Expression: # 29..31 " b"
                                       - Identifier: "b" # 30..31
-                          - (skipped:) SKIPPED: "invalid" # 32..39
+                          - SKIPPED: "invalid" # 32..39
                           - Semicolon: ";" # 39..40
               - CloseBrace: "}" # 41..42

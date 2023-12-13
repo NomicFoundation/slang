@@ -80,6 +80,6 @@ Tree:
                                               - (inner:) ExpressionStatement: # 99..113 "    unchecked "
                                                   - (inner:) Expression: # 99..112 "    unchecked"
                                                       - Identifier: "unchecked" # 103..112
-                                      - (skipped:) SKIPPED: "{\n      uint256 c = a + b;\n      if (c < a) return..." # 113..208
+                                      - SKIPPED: "{\n      uint256 c = a + b;\n      if (c < a) return..." # 113..208
                                       - CloseBrace: "}" # 208..209
                   - CloseBrace: "}" # 210..211

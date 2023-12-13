@@ -19,5 +19,5 @@ Tree:
       - (inner:) LeadingTrivia: # 0..41 "// Empty using symbols list is not valid\n"
           - SingleLineComment: "// Empty using symbols list is not valid" # 0..40
       - UsingKeyword: "using" # 41..46
-      - (skipped:) SKIPPED: "{} for *" # 47..55
+      - SKIPPED: "{} for *" # 47..55
       - Semicolon: ";" # 55..56

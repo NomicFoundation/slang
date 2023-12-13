@@ -52,7 +52,7 @@ impl SeparatedHelper {
                         // A separator was found, so we can recover the incomplete match
                         Some((found, skipped_range)) if found == separator => {
                             accum.push((
-                                "skipped".into(),
+                                String::new(),
                                 cst::Node::token(
                                     TokenKind::SKIPPED,
                                     input.content(skipped_range.utf8()),

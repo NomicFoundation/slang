@@ -133,7 +133,7 @@ Tree:
                                       - Identifier: "some" # 24..28
                                       - Period: "." # 28..29
                                       - Identifier: "ident" # 29..34
-                              - (skipped:) SKIPPED: "unexpected tokens, ISomeInterface, Other" # 35..75
+                              - SKIPPED: "unexpected tokens, ISomeInterface, Other" # 35..75
                               - CloseParen: ")" # 75..76
                   - (inner:) FunctionAttribute: # 76..83 " public"
                       - PublicKeyword: "public" # 77..83
@@ -161,7 +161,7 @@ Tree:
                                               - (inner:) NamedArgumentGroups: # 103..119 "{do: 1, arg: 1 }"
                                                   - (inner:) NamedArgumentGroup: # 103..119 "{do: 1, arg: 1 }"
                                                       - OpenBrace: "{" # 103..104
-                                                      - (skipped:) SKIPPED: "do: 1, arg: 1 " # 104..118
+                                                      - SKIPPED: "do: 1, arg: 1 " # 104..118
                                                       - CloseBrace: "}" # 118..119
                                           - (operator:) ArgumentsDeclaration: # 119..121 "()"
                                               - (inner:) PositionalArgumentsDeclaration: # 119..121 "()"
@@ -188,7 +188,7 @@ Tree:
                                               - (inner:) NamedArgumentGroups: # 140..163 "{, empty: 1, parse: 2 }"
                                                   - (inner:) NamedArgumentGroup: # 140..163 "{, empty: 1, parse: 2 }"
                                                       - OpenBrace: "{" # 140..141
-                                                      - (skipped:) SKIPPED: ", empty: 1, parse: 2 " # 141..162
+                                                      - SKIPPED: ", empty: 1, parse: 2 " # 141..162
                                                       - CloseBrace: "}" # 162..163
                                           - (operator:) ArgumentsDeclaration: # 163..165 "()"
                                               - (inner:) PositionalArgumentsDeclaration: # 163..165 "()"
@@ -226,13 +226,13 @@ Tree:
                                                           - (inner:) NamedArgument: # 192..206 " missing_expr:"
                                                               - Identifier: "missing_expr" # 193..205
                                                               - Colon: ":" # 205..206
-                                                          - (skipped:) SKIPPED: " " # 206..207
+                                                          - SKIPPED: " " # 206..207
                                                           - Comma: "," # 207..208
                                                           - (inner:) NamedArgument: # 208..221 " no_semicolon"
                                                               - Identifier: "no_semicolon" # 209..221
-                                                          - (skipped:) SKIPPED: "" # 221..221
+                                                          - SKIPPED: "" # 221..221
                                                           - Comma: "," # 221..222
-                                                      - (skipped:) SKIPPED: ", " # 223..225
+                                                      - SKIPPED: ", " # 223..225
                                                       - CloseBrace: "}" # 225..226
                                           - (operator:) ArgumentsDeclaration: # 226..228 "()"
                                               - (inner:) PositionalArgumentsDeclaration: # 226..228 "()"
@@ -266,7 +266,7 @@ Tree:
                                                               - (inner:) Expression: # 252..254 " 1"
                                                                   - (inner:) DecimalNumberExpression: # 252..254 " 1"
                                                                       - DecimalLiteral: "1" # 253..254
-                                                      - (skipped:) SKIPPED: "unexpected tokens, not: 2, recovered, yet: 3, " # 255..301
+                                                      - SKIPPED: "unexpected tokens, not: 2, recovered, yet: 3, " # 255..301
                                                       - CloseBrace: "}" # 301..302
                                           - (operator:) ArgumentsDeclaration: # 302..304 "()"
                                               - (inner:) PositionalArgumentsDeclaration: # 302..304 "()"
@@ -296,7 +296,7 @@ Tree:
                                   - Comma: "," # 346..347
                               - (inner:) LeadingTrivia: # 347..359 " /* empty */"
                                   - MultilineComment: "/* empty */" # 348..359
-                              - (skipped:) SKIPPED: ", other.arg.here, and.here" # 359..385
+                              - SKIPPED: ", other.arg.here, and.here" # 359..385
                               - CloseParen: ")" # 385..386
               - (inner:) FunctionBody: # 386..388 ";\n"
                   - Semicolon: ";" # 386..387
@@ -323,19 +323,19 @@ Tree:
                                   - (inner:) IdentifierPath: # 433..439 " next."
                                       - Identifier: "next" # 434..438
                                       - Period: "." # 438..439
-                                  - (skipped:) SKIPPED: "do.that" # 439..446
+                                  - SKIPPED: "do.that" # 439..446
                                   - Comma: "," # 446..447
                                   - (inner:) IdentifierPath: # 447..454 " other."
                                       - Identifier: "other" # 448..453
                                       - Period: "." # 453..454
-                                  - (skipped:) SKIPPED: "while" # 454..459
+                                  - SKIPPED: "while" # 454..459
                                   - Comma: "," # 459..460
                                   - (inner:) IdentifierPath: # 460..469 " next.one"
                                       - Identifier: "next" # 461..465
                                       - Period: "." # 465..466
                                       - Identifier: "one" # 466..469
                                   - Comma: "," # 469..470
-                              - (skipped:) SKIPPED: "final, ultimate" # 471..486
+                              - SKIPPED: "final, ultimate" # 471..486
                               - CloseParen: ")" # 486..487
               - (inner:) FunctionBody: # 487..489 ";\n"
                   - Semicolon: ";" # 487..488
@@ -357,7 +357,7 @@ Tree:
                                   - (inner:) IdentifierPath: # 522..527 "some."
                                       - Identifier: "some" # 522..526
                                       - Period: "." # 526..527
-                                  - (skipped:) SKIPPED: "" # 527..527
+                                  - SKIPPED: "" # 527..527
                                   - Comma: "," # 527..528
                                   - (inner:) IdentifierPath: # 528..537 " next.arg"
                                       - Identifier: "next" # 529..533

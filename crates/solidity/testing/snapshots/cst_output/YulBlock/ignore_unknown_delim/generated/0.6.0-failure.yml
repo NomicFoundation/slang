@@ -66,6 +66,6 @@ Tree:
                               - (inner:) YulExpression: # 57..65 "\t\tresult"
                                   - (inner:) YulIdentifierPath: # 57..65 "\t\tresult"
                                       - YulIdentifier: "result" # 59..65
-                      - (skipped:) SKIPPED: ":= [mul(a, b)\n\t" # 66..81
+                      - SKIPPED: ":= [mul(a, b)\n\t" # 66..81
                       - CloseBrace: "}" # 81..82
       - CloseBrace: "}" # 83..84

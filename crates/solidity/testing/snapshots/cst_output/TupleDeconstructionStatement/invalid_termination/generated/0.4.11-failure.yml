@@ -45,4 +45,4 @@ Tree:
                           - (inner:) DecimalNumberExpression: # 14..18 " 135"
                               - DecimalLiteral: "135" # 15..18
               - CloseParen: ")" # 18..19
-      - (skipped:) SKIPPED: "/**/\n{ throw; \n" # 20..35
+      - SKIPPED: "/**/\n{ throw; \n" # 20..35

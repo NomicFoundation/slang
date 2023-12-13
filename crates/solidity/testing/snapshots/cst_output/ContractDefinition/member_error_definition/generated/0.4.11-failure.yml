@@ -27,6 +27,6 @@ Tree:
                       - (inner:) IdentifierPath: # 18..25 "  error"
                           - Identifier: "error" # 20..25
                   - Identifier: "Error1" # 26..32
-                  - (skipped:) SKIPPED: "()" # 32..34
+                  - SKIPPED: "()" # 32..34
                   - Semicolon: ";" # 34..35
       - CloseBrace: "}" # 36..37

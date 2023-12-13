@@ -34,5 +34,5 @@ Tree:
                                   - ExternalKeyword: "external" # 31..39
                               - (inner:) FunctionTypeAttribute: # 39..47 " payable"
                                   - PayableKeyword: "payable" # 40..47
-      - (skipped:) SKIPPED: "{}\n" # 48..51
+      - SKIPPED: "{}\n" # 48..51
       - CloseBrace: "}" # 51..52

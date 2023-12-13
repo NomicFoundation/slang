@@ -50,5 +50,5 @@ Tree:
                       - (inner:) LeadingTrivia: # 20..25 "/**/\n"
                           - MultilineComment: "/**/" # 20..24
                       - OpenBrace: "{" # 25..26
-      - (skipped:) SKIPPED: "throw" # 27..32
+      - SKIPPED: "throw" # 27..32
       - Semicolon: ";" # 32..33

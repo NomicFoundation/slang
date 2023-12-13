@@ -75,6 +75,6 @@ Tree:
                               - (inner:) FunctionBody: # 96..210 " {\n    unchecked {\n      uint256 c = a + b;\n      ..."
                                   - (inner:) Block: # 96..210 " {\n    unchecked {\n      uint256 c = a + b;\n      ..."
                                       - OpenBrace: "{" # 97..98
-                                      - (skipped:) SKIPPED: "unchecked {\n      uint256 c = a + b;\n      if (c <..." # 103..208
+                                      - SKIPPED: "unchecked {\n      uint256 c = a + b;\n      if (c <..." # 103..208
                                       - CloseBrace: "}" # 208..209
                   - CloseBrace: "}" # 210..211

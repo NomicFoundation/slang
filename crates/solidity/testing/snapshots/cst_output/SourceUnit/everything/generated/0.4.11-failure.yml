@@ -64,4 +64,4 @@ Tree:
                       - (inner:) PathImport: # 30..40 ' "foo.sol"'
                           - AsciiStringLiteral: '"foo.sol"' # 31..40
                   - Semicolon: ";" # 40..41
-      - (skipped:) SKIPPED: "using A for B;\n\ncontract C { }\n\ninterface I { }\n\nl..." # 43..243
+      - SKIPPED: "using A for B;\n\ncontract C { }\n\ninterface I { }\n\nl..." # 43..243

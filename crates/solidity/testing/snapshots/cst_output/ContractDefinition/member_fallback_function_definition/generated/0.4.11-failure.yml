@@ -28,5 +28,5 @@ Tree:
                   - (inner:) TypeName: # 18..28 "  fallback"
                       - (inner:) IdentifierPath: # 18..28 "  fallback"
                           - Identifier: "fallback" # 20..28
-      - (skipped:) SKIPPED: "() {\n  }\n" # 28..37
+      - SKIPPED: "() {\n  }\n" # 28..37
       - CloseBrace: "}" # 37..38

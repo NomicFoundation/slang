@@ -28,5 +28,5 @@ Tree:
                   - (inner:) TypeName: # 18..27 "  receive"
                       - (inner:) IdentifierPath: # 18..27 "  receive"
                           - Identifier: "receive" # 20..27
-      - (skipped:) SKIPPED: "() {\n  }\n" # 27..36
+      - SKIPPED: "() {\n  }\n" # 27..36
       - CloseBrace: "}" # 36..37

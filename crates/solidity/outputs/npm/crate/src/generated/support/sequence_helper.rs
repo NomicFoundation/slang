@@ -143,7 +143,7 @@ impl SequenceHelper {
                     debug_assert!(is_single_token_with_trivia);
                     debug_assert_eq!(next_token, Some(running.found));
 
-                    running.nodes.push(("skipped".into(), cst::Node::token(
+                    running.nodes.push((String::new(), cst::Node::token(
                         TokenKind::SKIPPED,
                         std::mem::take(&mut running.skipped),
                     )));

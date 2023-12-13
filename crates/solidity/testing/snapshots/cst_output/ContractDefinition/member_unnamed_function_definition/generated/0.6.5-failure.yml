@@ -31,5 +31,5 @@ Tree:
                           - (inner:) ParametersDeclaration: # 28..31 " ()"
                               - OpenParen: "(" # 29..30
                               - CloseParen: ")" # 30..31
-      - (skipped:) SKIPPED: "{\n  }\n" # 32..38
+      - SKIPPED: "{\n  }\n" # 32..38
       - CloseBrace: "}" # 38..39

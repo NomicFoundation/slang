@@ -59,7 +59,7 @@ Tree:
                                   - (inner:) ElementaryType: # 40..47 "address"
                                       - (inner:) AddressType: # 40..47 "address"
                                           - AddressKeyword: "address" # 40..47
-                      - (skipped:) SKIPPED: "while" # 48..53
+                      - SKIPPED: "while" # 48..53
                       - CloseParen: ")" # 53..54
                   - (inner:) FunctionAttributes: # 54..62 " private"
                       - (inner:) FunctionAttribute: # 54..62 " private"
@@ -72,7 +72,7 @@ Tree:
                                   - (inner:) IfStatement: # 65..135 "\t\tif(while == pair && !_isExcludedFromFee[to]){\n\t\t..."
                                       - IfKeyword: "if" # 67..69
                                       - OpenParen: "(" # 69..70
-                                      - (skipped:) SKIPPED: "while == pair && !_isExcludedFromFee[to]" # 70..110
+                                      - SKIPPED: "while == pair && !_isExcludedFromFee[to]" # 70..110
                                       - CloseParen: ")" # 110..111
                                       - (inner:) Statement: # 111..135 "{\n\t\t\tuint256 a = 1;\n\t\t}\n"
                                           - (inner:) Block: # 111..135 "{\n\t\t\tuint256 a = 1;\n\t\t}\n"
@@ -131,7 +131,7 @@ Tree:
                                                               - (inner:) IdentifierPath: # 187..195 " invalid"
                                                                   - Identifier: "invalid" # 188..195
                                                       - Identifier: "sequence" # 196..204
-                                          - (skipped:) SKIPPED: "" # 205..205
+                                          - SKIPPED: "" # 205..205
                                           - CloseBrace: "}" # 205..206
                           - CloseBrace: "}" # 208..209
       - CloseBrace: "}" # 210..211

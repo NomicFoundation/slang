@@ -16,5 +16,5 @@ Errors: # 1 total
 Tree:
   - Block: # 0..24 "{ unchecked { x = 1; } }"
       - OpenBrace: "{" # 0..1
-      - (skipped:) SKIPPED: "unchecked { x = 1; } " # 2..23
+      - SKIPPED: "unchecked { x = 1; } " # 2..23
       - CloseBrace: "}" # 23..24

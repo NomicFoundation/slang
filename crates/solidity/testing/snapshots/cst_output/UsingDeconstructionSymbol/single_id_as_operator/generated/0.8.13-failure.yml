@@ -17,4 +17,4 @@ Tree:
   - UsingDeconstructionSymbol: # 0..8 "foo as /"
       - (inner:) IdentifierPath: # 0..3 "foo"
           - Identifier: "foo" # 0..3
-      - (skipped:) SKIPPED: " as /" # 3..8
+      - SKIPPED: " as /" # 3..8

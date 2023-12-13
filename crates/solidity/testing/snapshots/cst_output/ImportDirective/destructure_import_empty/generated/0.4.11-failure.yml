@@ -22,7 +22,7 @@ Tree:
       - (inner:) ImportClause: # 37..51 ' {} from "foo"'
           - (inner:) ImportDeconstruction: # 37..51 ' {} from "foo"'
               - OpenBrace: "{" # 38..39
-              - (skipped:) SKIPPED: "" # 39..39
+              - SKIPPED: "" # 39..39
               - CloseBrace: "}" # 39..40
               - FromKeyword: "from" # 41..45
               - AsciiStringLiteral: '"foo"' # 46..51

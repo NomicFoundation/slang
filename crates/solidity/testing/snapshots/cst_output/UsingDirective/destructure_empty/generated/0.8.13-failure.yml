@@ -22,7 +22,7 @@ Tree:
       - (inner:) UsingClause: # 46..49 " {}"
           - (inner:) UsingDeconstruction: # 46..49 " {}"
               - OpenBrace: "{" # 47..48
-              - (skipped:) SKIPPED: "" # 48..48
+              - SKIPPED: "" # 48..48
               - CloseBrace: "}" # 48..49
       - ForKeyword: "for" # 50..53
       - (inner:) UsingTarget: # 53..55 " *"

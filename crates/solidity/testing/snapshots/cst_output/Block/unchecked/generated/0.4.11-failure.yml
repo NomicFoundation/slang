@@ -21,5 +21,5 @@ Tree:
               - (inner:) ExpressionStatement: # 1..12 " unchecked "
                   - (inner:) Expression: # 1..11 " unchecked"
                       - Identifier: "unchecked" # 2..11
-      - (skipped:) SKIPPED: "{ x = 1; } " # 12..23
+      - SKIPPED: "{ x = 1; } " # 12..23
       - CloseBrace: "}" # 23..24

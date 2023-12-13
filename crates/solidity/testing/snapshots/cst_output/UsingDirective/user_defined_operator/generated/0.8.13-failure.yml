@@ -23,7 +23,7 @@ Tree:
                   - (inner:) UsingDeconstructionSymbol: # 7..10 "div"
                       - (inner:) IdentifierPath: # 7..10 "div"
                           - Identifier: "div" # 7..10
-              - (skipped:) SKIPPED: "as /" # 11..15
+              - SKIPPED: "as /" # 11..15
               - CloseBrace: "}" # 15..16
       - ForKeyword: "for" # 17..20
       - (inner:) UsingTarget: # 20..24 " Int"

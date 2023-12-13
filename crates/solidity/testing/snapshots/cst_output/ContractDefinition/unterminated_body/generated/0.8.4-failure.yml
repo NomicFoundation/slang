@@ -18,4 +18,4 @@ Tree:
       - ContractKeyword: "contract" # 0..8
       - Identifier: "Sample" # 9..15
       - OpenBrace: "{" # 16..17
-      - (skipped:) SKIPPED: "" # 17..17
+      - SKIPPED: "" # 17..17

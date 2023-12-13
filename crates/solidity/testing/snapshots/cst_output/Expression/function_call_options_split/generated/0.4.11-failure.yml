@@ -21,4 +21,4 @@ Tree:
           - (operator:) Period: "." # 1..2
           - (operator:) MemberAccess: # 2..3 "b"
               - Identifier: "b" # 2..3
-      - (skipped:) SKIPPED: '{value: 0}{gas: 1}("")' # 3..25
+      - SKIPPED: '{value: 0}{gas: 1}("")' # 3..25

@@ -17,5 +17,5 @@ Tree:
   - EventDefinition: # 0..15 "event MyEvent;\n"
       - EventKeyword: "event" # 0..5
       - Identifier: "MyEvent" # 6..13
-      - (skipped:) SKIPPED: "" # 13..13
+      - SKIPPED: "" # 13..13
       - Semicolon: ";" # 13..14

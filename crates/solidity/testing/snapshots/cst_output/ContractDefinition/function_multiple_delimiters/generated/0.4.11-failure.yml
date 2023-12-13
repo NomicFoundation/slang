@@ -120,7 +120,7 @@ Tree:
                                               - (operator:) Period: "." # 234..235
                                               - (operator:) MemberAccess: # 235..239 "call"
                                                   - Identifier: "call" # 235..239
-                                      - (skipped:) SKIPPED: '{ value: amount }("")' # 239..260
+                                      - SKIPPED: '{ value: amount }("")' # 239..260
                                       - Semicolon: ";" # 260..261
                               - (inner:) Statement: # 262..346 '    require(success, "Address: unable to send valu...'
                                   - (inner:) ExpressionStatement: # 262..346 '    require(success, "Address: unable to send valu...'

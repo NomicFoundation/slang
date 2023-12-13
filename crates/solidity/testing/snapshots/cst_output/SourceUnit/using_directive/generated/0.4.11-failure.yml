@@ -60,4 +60,4 @@ Tree:
                                               - Period: "." # 52..53
                                               - VersionPragmaValue: "0" # 53..54
                   - Semicolon: ";" # 54..55
-      - (skipped:) SKIPPED: "using EnvelopeUtils for Envelope global;\nusing Tra..." # 57..793
+      - SKIPPED: "using EnvelopeUtils for Envelope global;\nusing Tra..." # 57..793

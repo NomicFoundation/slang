@@ -15,4 +15,4 @@ Errors: # 1 total
 
 Tree:
   - SourceUnit: # 0..18 "function foo() { }"
-      - (skipped:) SKIPPED: "function foo() { }" # 0..18
+      - SKIPPED: "function foo() { }" # 0..18

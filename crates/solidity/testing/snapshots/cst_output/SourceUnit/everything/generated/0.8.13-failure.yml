@@ -152,4 +152,4 @@ Tree:
                   - (inner:) ElementaryType: # 210..215 " bool"
                       - BoolKeyword: "bool" # 211..215
                   - Semicolon: ";" # 215..216
-      - (skipped:) SKIPPED: "event E1(uint256 value);\n" # 218..243
+      - SKIPPED: "event E1(uint256 value);\n" # 218..243

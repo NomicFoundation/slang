@@ -16,5 +16,5 @@ Errors: # 1 total
 Tree:
   - UsingDirective: # 0..52 "using {add as +, sub, mul, div as /} for Int globa..."
       - UsingKeyword: "using" # 0..5
-      - (skipped:) SKIPPED: "{add as +, sub, mul, div as /} for Int global" # 6..51
+      - SKIPPED: "{add as +, sub, mul, div as /} for Int global" # 6..51
       - Semicolon: ";" # 51..52

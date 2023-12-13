@@ -19,4 +19,4 @@ Tree:
           - Identifier: "foo" # 0..3
           - Period: "." # 3..4
           - Identifier: "bar" # 4..7
-      - (skipped:) SKIPPED: " as /" # 7..12
+      - SKIPPED: " as /" # 7..12

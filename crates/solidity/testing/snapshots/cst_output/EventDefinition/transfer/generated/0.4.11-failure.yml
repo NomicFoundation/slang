@@ -26,6 +26,6 @@ Tree:
                           - (inner:) AddressType: # 15..22 "address"
                               - AddressKeyword: "address" # 15..22
                   - IndexedKeyword: "indexed" # 23..30
-          - (skipped:) SKIPPED: "from, address indexed to, uint256 value" # 31..70
+          - SKIPPED: "from, address indexed to, uint256 value" # 31..70
           - CloseParen: ")" # 70..71
       - Semicolon: ";" # 71..72
