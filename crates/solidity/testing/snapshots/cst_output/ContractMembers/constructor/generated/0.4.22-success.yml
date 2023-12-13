@@ -9,13 +9,13 @@ Tree:
   - ContractMembers: # 0..24 "constructor() public {}\n"
       - ContractMember: # 0..24 "constructor() public {}\n"
           - ConstructorDefinition: # 0..24 "constructor() public {}\n"
-              - ConstructorKeyword: "constructor" # 0..11
-              - ParametersDeclaration: # 11..13 "()"
+              - (constructor_keyword:) ConstructorKeyword: "constructor" # 0..11
+              - (parameters:) ParametersDeclaration: # 11..13 "()"
                   - OpenParen: "(" # 11..12
                   - CloseParen: ")" # 12..13
-              - ConstructorAttributes: # 13..20 " public"
+              - (attributes:) ConstructorAttributes: # 13..20 " public"
                   - ConstructorAttribute: # 13..20 " public"
                       - PublicKeyword: "public" # 14..20
-              - Block: # 20..24 " {}\n"
+              - (body:) Block: # 20..24 " {}\n"
                   - OpenBrace: "{" # 21..22
                   - CloseBrace: "}" # 22..23

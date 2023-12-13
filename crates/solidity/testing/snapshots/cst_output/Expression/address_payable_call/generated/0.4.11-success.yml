@@ -11,8 +11,8 @@ Tree:
           - (left_operand:) Expression: # 0..15 "address payable"
               - ElementaryType: # 0..15 "address payable"
                   - AddressType: # 0..15 "address payable"
-                      - AddressKeyword: "address" # 0..7
-                      - PayableKeyword: "payable" # 8..15
+                      - (address_keyword:) AddressKeyword: "address" # 0..7
+                      - (payable_keyword:) PayableKeyword: "payable" # 8..15
           - (operator:) ArgumentsDeclaration: # 15..22 "(value)"
               - PositionalArgumentsDeclaration: # 15..22 "(value)"
                   - OpenParen: "(" # 15..16

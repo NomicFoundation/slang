@@ -11,8 +11,8 @@ Tree:
       - Statements: # 1..22 " unchecked { x = 1; }"
           - Statement: # 1..22 " unchecked { x = 1; }"
               - UncheckedBlock: # 1..22 " unchecked { x = 1; }"
-                  - UncheckedKeyword: "unchecked" # 2..11
-                  - Block: # 11..22 " { x = 1; }"
+                  - (unchecked_keyword:) UncheckedKeyword: "unchecked" # 2..11
+                  - (block:) Block: # 11..22 " { x = 1; }"
                       - OpenBrace: "{" # 12..13
                       - Statements: # 13..20 " x = 1;"
                           - Statement: # 13..20 " x = 1;"
@@ -24,7 +24,7 @@ Tree:
                                           - (operator:) Equal: "=" # 16..17
                                           - (right_operand:) Expression: # 17..19 " 1"
                                               - DecimalNumberExpression: # 17..19 " 1"
-                                                  - DecimalLiteral: "1" # 18..19
+                                                  - (literal:) DecimalLiteral: "1" # 18..19
                                   - Semicolon: ";" # 19..20
                       - CloseBrace: "}" # 21..22
       - CloseBrace: "}" # 23..24

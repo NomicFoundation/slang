@@ -12,27 +12,27 @@ Tree:
           - TupleDeconstructionElement: # 1..9 "uint32 a"
               - TupleMember: # 1..9 "uint32 a"
                   - TypedTupleMember: # 1..9 "uint32 a"
-                      - TypeName: # 1..7 "uint32"
+                      - (type_name:) TypeName: # 1..7 "uint32"
                           - ElementaryType: # 1..7 "uint32"
                               - UintKeyword: "uint32" # 1..7
-                      - Identifier: "a" # 8..9
+                      - (name:) Identifier: "a" # 8..9
           - Comma: "," # 9..10
           - TupleDeconstructionElement: # 10..28 " uint32[] memory b"
               - TupleMember: # 10..28 " uint32[] memory b"
                   - TypedTupleMember: # 10..28 " uint32[] memory b"
-                      - TypeName: # 10..19 " uint32[]"
+                      - (type_name:) TypeName: # 10..19 " uint32[]"
                           - (operand:) ArrayTypeName: # 10..19 " uint32[]"
                               - (left_operand:) TypeName: # 10..17 " uint32"
                                   - ElementaryType: # 10..17 " uint32"
                                       - UintKeyword: "uint32" # 11..17
                               - (operator:) OpenBracket: "[" # 17..18
                               - (operator:) CloseBracket: "]" # 18..19
-                      - StorageLocation: # 19..26 " memory"
+                      - (storage_location:) StorageLocation: # 19..26 " memory"
                           - MemoryKeyword: "memory" # 20..26
-                      - Identifier: "b" # 27..28
+                      - (name:) Identifier: "b" # 27..28
       - CloseParen: ")" # 28..29
-      - Equal: "=" # 30..31
-      - Expression: # 31..68 " abi.decode(data, (uint32, uint32[]))"
+      - (equal:) Equal: "=" # 30..31
+      - (expression:) Expression: # 31..68 " abi.decode(data, (uint32, uint32[]))"
           - (operand:) FunctionCallExpression: # 31..68 " abi.decode(data, (uint32, uint32[]))"
               - (left_operand:) Expression: # 31..42 " abi.decode"
                   - (operand:) MemberAccessExpression: # 31..42 " abi.decode"

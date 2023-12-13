@@ -12,21 +12,21 @@ Tree:
           - TupleDeconstructionElement: # 1..9 "uint32 a"
               - TupleMember: # 1..9 "uint32 a"
                   - TypedTupleMember: # 1..9 "uint32 a"
-                      - TypeName: # 1..7 "uint32"
+                      - (type_name:) TypeName: # 1..7 "uint32"
                           - ElementaryType: # 1..7 "uint32"
                               - UintKeyword: "uint32" # 1..7
-                      - Identifier: "a" # 8..9
+                      - (name:) Identifier: "a" # 8..9
           - Comma: "," # 9..10
           - TupleDeconstructionElement: # 10..19 " uint32 b"
               - TupleMember: # 10..19 " uint32 b"
                   - TypedTupleMember: # 10..19 " uint32 b"
-                      - TypeName: # 10..17 " uint32"
+                      - (type_name:) TypeName: # 10..17 " uint32"
                           - ElementaryType: # 10..17 " uint32"
                               - UintKeyword: "uint32" # 11..17
-                      - Identifier: "b" # 18..19
+                      - (name:) Identifier: "b" # 18..19
       - CloseParen: ")" # 19..20
-      - Equal: "=" # 21..22
-      - Expression: # 22..57 " abi.decode(data, (uint32, uint32))"
+      - (equal:) Equal: "=" # 21..22
+      - (expression:) Expression: # 22..57 " abi.decode(data, (uint32, uint32))"
           - (operand:) FunctionCallExpression: # 22..57 " abi.decode(data, (uint32, uint32))"
               - (left_operand:) Expression: # 22..33 " abi.decode"
                   - (operand:) MemberAccessExpression: # 22..33 " abi.decode"

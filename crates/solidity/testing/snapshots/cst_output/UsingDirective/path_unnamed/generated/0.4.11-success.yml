@@ -7,11 +7,11 @@ Errors: []
 
 Tree:
   - UsingDirective: # 0..16 "using foo for *;"
-      - UsingKeyword: "using" # 0..5
-      - UsingClause: # 5..9 " foo"
+      - (using_keyword:) UsingKeyword: "using" # 0..5
+      - (clause:) UsingClause: # 5..9 " foo"
           - IdentifierPath: # 5..9 " foo"
               - Identifier: "foo" # 6..9
-      - ForKeyword: "for" # 10..13
-      - UsingTarget: # 13..15 " *"
+      - (for_keyword:) ForKeyword: "for" # 10..13
+      - (target:) UsingTarget: # 13..15 " *"
           - Asterisk: "*" # 14..15
       - Semicolon: ";" # 15..16

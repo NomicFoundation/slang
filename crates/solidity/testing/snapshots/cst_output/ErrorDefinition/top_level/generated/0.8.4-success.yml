@@ -7,9 +7,9 @@ Errors: []
 
 Tree:
   - ErrorDefinition: # 0..16 "error MyError();"
-      - ErrorKeyword: "error" # 0..5
-      - Identifier: "MyError" # 6..13
-      - ErrorParametersDeclaration: # 13..15 "()"
+      - (error_keyword:) ErrorKeyword: "error" # 0..5
+      - (name:) Identifier: "MyError" # 6..13
+      - (members:) ErrorParametersDeclaration: # 13..15 "()"
           - OpenParen: "(" # 13..14
           - CloseParen: ")" # 14..15
       - Semicolon: ";" # 15..16

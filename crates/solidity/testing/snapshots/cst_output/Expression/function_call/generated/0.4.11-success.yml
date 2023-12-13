@@ -16,9 +16,9 @@ Tree:
                   - PositionalArguments: # 2..6 "1, 2"
                       - Expression: # 2..3 "1"
                           - DecimalNumberExpression: # 2..3 "1"
-                              - DecimalLiteral: "1" # 2..3
+                              - (literal:) DecimalLiteral: "1" # 2..3
                       - Comma: "," # 3..4
                       - Expression: # 4..6 " 2"
                           - DecimalNumberExpression: # 4..6 " 2"
-                              - DecimalLiteral: "2" # 5..6
+                              - (literal:) DecimalLiteral: "2" # 5..6
                   - CloseParen: ")" # 6..7

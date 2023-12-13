@@ -7,8 +7,8 @@ Errors: []
 
 Tree:
   - DeleteStatement: # 0..16 "delete foo[bar];"
-      - DeleteKeyword: "delete" # 0..6
-      - Expression: # 6..15 " foo[bar]"
+      - (delete_keyword:) DeleteKeyword: "delete" # 0..6
+      - (expression:) Expression: # 6..15 " foo[bar]"
           - (operand:) IndexAccessExpression: # 6..15 " foo[bar]"
               - (left_operand:) Expression: # 6..10 " foo"
                   - Identifier: "foo" # 7..10

@@ -14,8 +14,8 @@ Tree:
       - TupleDeconstructionElements: # 49..49
           - TupleDeconstructionElement: [] # 49..49
       - CloseParen: ")" # 49..50
-      - Equal: "=" # 51..52
-      - Expression: # 52..55 " ()"
+      - (equal:) Equal: "=" # 51..52
+      - (expression:) Expression: # 52..55 " ()"
           - TupleExpression: # 52..55 " ()"
               - OpenParen: "(" # 53..54
               - TupleValues: # 54..54

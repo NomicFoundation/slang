@@ -7,33 +7,33 @@ Errors: []
 
 Tree:
   - ContractDefinition: # 0..41 "contract Sample is Foo, Bar(1, 2), Baz {}"
-      - ContractKeyword: "contract" # 0..8
-      - Identifier: "Sample" # 9..15
-      - InheritanceSpecifier: # 15..38 " is Foo, Bar(1, 2), Baz"
-          - IsKeyword: "is" # 16..18
-          - InheritanceTypes: # 18..38 " Foo, Bar(1, 2), Baz"
+      - (contract_keyword:) ContractKeyword: "contract" # 0..8
+      - (name:) Identifier: "Sample" # 9..15
+      - (inheritence:) InheritanceSpecifier: # 15..38 " is Foo, Bar(1, 2), Baz"
+          - (is_keyword:) IsKeyword: "is" # 16..18
+          - (types:) InheritanceTypes: # 18..38 " Foo, Bar(1, 2), Baz"
               - InheritanceType: # 18..22 " Foo"
-                  - IdentifierPath: # 18..22 " Foo"
+                  - (type_name:) IdentifierPath: # 18..22 " Foo"
                       - Identifier: "Foo" # 19..22
               - Comma: "," # 22..23
               - InheritanceType: # 23..33 " Bar(1, 2)"
-                  - IdentifierPath: # 23..27 " Bar"
+                  - (type_name:) IdentifierPath: # 23..27 " Bar"
                       - Identifier: "Bar" # 24..27
-                  - ArgumentsDeclaration: # 27..33 "(1, 2)"
+                  - (arguments:) ArgumentsDeclaration: # 27..33 "(1, 2)"
                       - PositionalArgumentsDeclaration: # 27..33 "(1, 2)"
                           - OpenParen: "(" # 27..28
                           - PositionalArguments: # 28..32 "1, 2"
                               - Expression: # 28..29 "1"
                                   - DecimalNumberExpression: # 28..29 "1"
-                                      - DecimalLiteral: "1" # 28..29
+                                      - (literal:) DecimalLiteral: "1" # 28..29
                               - Comma: "," # 29..30
                               - Expression: # 30..32 " 2"
                                   - DecimalNumberExpression: # 30..32 " 2"
-                                      - DecimalLiteral: "2" # 31..32
+                                      - (literal:) DecimalLiteral: "2" # 31..32
                           - CloseParen: ")" # 32..33
               - Comma: "," # 33..34
               - InheritanceType: # 34..38 " Baz"
-                  - IdentifierPath: # 34..38 " Baz"
+                  - (type_name:) IdentifierPath: # 34..38 " Baz"
                       - Identifier: "Baz" # 35..38
       - OpenBrace: "{" # 39..40
       - CloseBrace: "}" # 40..41

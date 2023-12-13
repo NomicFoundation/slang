@@ -10,20 +10,20 @@ Errors: []
 
 Tree:
   - ContractDefinition: # 0..48 "contract Sample {\n  constructor() public {\n  }\n}"
-      - ContractKeyword: "contract" # 0..8
-      - Identifier: "Sample" # 9..15
+      - (contract_keyword:) ContractKeyword: "contract" # 0..8
+      - (name:) Identifier: "Sample" # 9..15
       - OpenBrace: "{" # 16..17
       - ContractMembers: # 18..47 "  constructor() public {\n  }\n"
           - ContractMember: # 18..47 "  constructor() public {\n  }\n"
               - ConstructorDefinition: # 18..47 "  constructor() public {\n  }\n"
-                  - ConstructorKeyword: "constructor" # 20..31
-                  - ParametersDeclaration: # 31..33 "()"
+                  - (constructor_keyword:) ConstructorKeyword: "constructor" # 20..31
+                  - (parameters:) ParametersDeclaration: # 31..33 "()"
                       - OpenParen: "(" # 31..32
                       - CloseParen: ")" # 32..33
-                  - ConstructorAttributes: # 33..40 " public"
+                  - (attributes:) ConstructorAttributes: # 33..40 " public"
                       - ConstructorAttribute: # 33..40 " public"
                           - PublicKeyword: "public" # 34..40
-                  - Block: # 40..47 " {\n  }\n"
+                  - (body:) Block: # 40..47 " {\n  }\n"
                       - OpenBrace: "{" # 41..42
                       - CloseBrace: "}" # 45..46
       - CloseBrace: "}" # 47..48

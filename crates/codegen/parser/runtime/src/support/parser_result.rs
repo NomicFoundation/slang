@@ -79,18 +79,30 @@ impl ParserResult {
 
     #[allow(clippy::single_match)] // TODO: This is still WIP code
     #[must_use]
-    pub fn with_name(mut self, name: String) -> ParserResult {
+    pub fn with_name(mut self, name: impl Into<String>) -> ParserResult {
         match &mut self {
             ParserResult::Match(r#match) => match &mut r#match.nodes[..] {
-                [(prev_name, _)] => {
-                    *prev_name = name;
+                // TODO: Have an "extract non trivia" API?
+                [(prev, _)] => {
+                    *prev = name.into();
+                }
+                [(_, cst::Node::Rule(leading)), (prev, _)] if leading.kind.is_trivia() => {
+                    *prev = name.into();
+                }
+                [(prev, _), (_, cst::Node::Rule(trailing))] if trailing.kind.is_trivia() => {
+                    *prev = name.into();
+                }
+                [(_, cst::Node::Rule(leading)), (prev, _), (_, cst::Node::Rule(trailing))]
+                    if leading.kind.is_trivia() && trailing.kind.is_trivia() =>
+                {
+                    *prev = name.into();
                 }
                 _ => {}
             },
             ParserResult::IncompleteMatch(_) => {}
             ParserResult::NoMatch(_) => {}
             ParserResult::SkippedUntil(_) => {}
-            ParserResult::PrattOperatorMatch(_) => todo!(),
+            ParserResult::PrattOperatorMatch(_) => {}
         }
 
         self

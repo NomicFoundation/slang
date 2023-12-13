@@ -12,7 +12,7 @@ Tree:
               - Identifier: "arr" # 0..3
           - (operator:) OpenBracket: "[" # 3..4
           - (operator:) IndexAccessEnd: # 4..8 ":end"
-              - Colon: ":" # 4..5
-              - Expression: # 5..8 "end"
+              - (colon:) Colon: ":" # 4..5
+              - (end:) Expression: # 5..8 "end"
                   - Identifier: "end" # 5..8
           - (operator:) CloseBracket: "]" # 8..9

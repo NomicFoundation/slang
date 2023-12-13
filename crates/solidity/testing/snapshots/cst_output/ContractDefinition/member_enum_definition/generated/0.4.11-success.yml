@@ -13,14 +13,14 @@ Errors: []
 
 Tree:
   - ContractDefinition: # 0..58 "contract Sample {\n  enum State {\n    A,\n    B,\n   ..."
-      - ContractKeyword: "contract" # 0..8
-      - Identifier: "Sample" # 9..15
+      - (contract_keyword:) ContractKeyword: "contract" # 0..8
+      - (name:) Identifier: "Sample" # 9..15
       - OpenBrace: "{" # 16..17
       - ContractMembers: # 18..57 "  enum State {\n    A,\n    B,\n    C\n  }\n"
           - ContractMember: # 18..57 "  enum State {\n    A,\n    B,\n    C\n  }\n"
               - EnumDefinition: # 18..57 "  enum State {\n    A,\n    B,\n    C\n  }\n"
-                  - EnumKeyword: "enum" # 20..24
-                  - Identifier: "State" # 25..30
+                  - (enum_keyword:) EnumKeyword: "enum" # 20..24
+                  - (name:) Identifier: "State" # 25..30
                   - OpenBrace: "{" # 31..32
                   - EnumMembers: # 33..53 "    A,\n    B,\n    C\n"
                       - Identifier: "A" # 37..38

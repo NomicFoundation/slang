@@ -7,8 +7,8 @@ Errors: []
 
 Tree:
   - TryStatement: # 0..21 "try a.b() {} catch {}"
-      - TryKeyword: "try" # 0..3
-      - Expression: # 3..9 " a.b()"
+      - (try_keyword:) TryKeyword: "try" # 0..3
+      - (expression:) Expression: # 3..9 " a.b()"
           - (operand:) FunctionCallExpression: # 3..9 " a.b()"
               - (left_operand:) Expression: # 3..7 " a.b"
                   - (operand:) MemberAccessExpression: # 3..7 " a.b"
@@ -21,12 +21,12 @@ Tree:
                   - PositionalArgumentsDeclaration: # 7..9 "()"
                       - OpenParen: "(" # 7..8
                       - CloseParen: ")" # 8..9
-      - Block: # 9..12 " {}"
+      - (body:) Block: # 9..12 " {}"
           - OpenBrace: "{" # 10..11
           - CloseBrace: "}" # 11..12
-      - CatchClauses: # 12..21 " catch {}"
+      - (catch_clauses:) CatchClauses: # 12..21 " catch {}"
           - CatchClause: # 12..21 " catch {}"
-              - CatchKeyword: "catch" # 13..18
-              - Block: # 18..21 " {}"
+              - (catch_keyword:) CatchKeyword: "catch" # 13..18
+              - (body:) Block: # 18..21 " {}"
                   - OpenBrace: "{" # 19..20
                   - CloseBrace: "}" # 20..21

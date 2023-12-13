@@ -22,14 +22,14 @@ Tree:
           - TupleDeconstructionElement: # 1..2 "a"
               - TupleMember: # 1..2 "a"
                   - UntypedTupleMember: # 1..2 "a"
-                      - Identifier: "a" # 1..2
+                      - (name:) Identifier: "a" # 1..2
           - Comma: "," # 2..3
           - TupleDeconstructionElement: # 3..5 " b"
               - TupleMember: # 3..5 " b"
                   - UntypedTupleMember: # 3..5 " b"
-                      - Identifier: "b" # 4..5
+                      - (name:) Identifier: "b" # 4..5
       - CloseParen: ")" # 5..6
-      - Equal: "=" # 7..8
+      - (equal:) Equal: "=" # 7..8
       - Expression: # 8..26 " (123, 135)\n/**/\n{"
           - TupleExpression: # 8..20 " (123, 135)\n"
               - OpenParen: "(" # 9..10
@@ -37,12 +37,12 @@ Tree:
                   - TupleValue: # 10..13 "123"
                       - Expression: # 10..13 "123"
                           - DecimalNumberExpression: # 10..13 "123"
-                              - DecimalLiteral: "123" # 10..13
+                              - (literal:) DecimalLiteral: "123" # 10..13
                   - Comma: "," # 13..14
                   - TupleValue: # 14..18 " 135"
                       - Expression: # 14..18 " 135"
                           - DecimalNumberExpression: # 14..18 " 135"
-                              - DecimalLiteral: "135" # 15..18
+                              - (literal:) DecimalLiteral: "135" # 15..18
               - CloseParen: ")" # 18..19
           - FunctionCallOptions: # 20..26 "/**/\n{"
               - NamedArgumentGroups: # 20..26 "/**/\n{"

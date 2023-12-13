@@ -7,7 +7,7 @@ Errors: []
 
 Tree:
   - EnumDefinition: # 0..12 "enum Foo { }"
-      - EnumKeyword: "enum" # 0..4
-      - Identifier: "Foo" # 5..8
+      - (enum_keyword:) EnumKeyword: "enum" # 0..4
+      - (name:) Identifier: "Foo" # 5..8
       - OpenBrace: "{" # 9..10
       - CloseBrace: "}" # 11..12

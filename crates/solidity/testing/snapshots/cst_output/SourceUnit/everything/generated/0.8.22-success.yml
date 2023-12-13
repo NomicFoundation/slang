@@ -31,14 +31,14 @@ Errors: []
 
 Tree:
   - SourceUnit: # 0..243 'pragma solidity 0.0.0;\n\nimport "foo.sol";\n\nusing A...'
-      - SourceUnitMembers: # 0..243 'pragma solidity 0.0.0;\n\nimport "foo.sol";\n\nusing A...'
+      - (members:) SourceUnitMembers: # 0..243 'pragma solidity 0.0.0;\n\nimport "foo.sol";\n\nusing A...'
           - SourceUnitMember: # 0..23 "pragma solidity 0.0.0;\n"
               - PragmaDirective: # 0..23 "pragma solidity 0.0.0;\n"
-                  - PragmaKeyword: "pragma" # 0..6
-                  - Pragma: # 6..21 " solidity 0.0.0"
+                  - (pragma_keyword:) PragmaKeyword: "pragma" # 0..6
+                  - (pragma:) Pragma: # 6..21 " solidity 0.0.0"
                       - VersionPragma: # 6..21 " solidity 0.0.0"
-                          - SolidityKeyword: "solidity" # 7..15
-                          - VersionPragmaExpressions: # 15..21 " 0.0.0"
+                          - (solidity_keyword:) SolidityKeyword: "solidity" # 7..15
+                          - (expressions:) VersionPragmaExpressions: # 15..21 " 0.0.0"
                               - VersionPragmaExpression: # 15..21 " 0.0.0"
                                   - VersionPragmaSpecifier: # 15..21 " 0.0.0"
                                       - VersionPragmaValue: "0" # 16..17
@@ -49,112 +49,112 @@ Tree:
                   - Semicolon: ";" # 21..22
           - SourceUnitMember: # 23..42 '\nimport "foo.sol";\n'
               - ImportDirective: # 23..42 '\nimport "foo.sol";\n'
-                  - ImportKeyword: "import" # 24..30
-                  - ImportClause: # 30..40 ' "foo.sol"'
+                  - (import_keyword:) ImportKeyword: "import" # 24..30
+                  - (clause:) ImportClause: # 30..40 ' "foo.sol"'
                       - PathImport: # 30..40 ' "foo.sol"'
-                          - AsciiStringLiteral: '"foo.sol"' # 31..40
+                          - (path:) AsciiStringLiteral: '"foo.sol"' # 31..40
                   - Semicolon: ";" # 40..41
           - SourceUnitMember: # 42..58 "\nusing A for B;\n"
               - UsingDirective: # 42..58 "\nusing A for B;\n"
-                  - UsingKeyword: "using" # 43..48
-                  - UsingClause: # 48..50 " A"
+                  - (using_keyword:) UsingKeyword: "using" # 43..48
+                  - (clause:) UsingClause: # 48..50 " A"
                       - IdentifierPath: # 48..50 " A"
                           - Identifier: "A" # 49..50
-                  - ForKeyword: "for" # 51..54
-                  - UsingTarget: # 54..56 " B"
+                  - (for_keyword:) ForKeyword: "for" # 51..54
+                  - (target:) UsingTarget: # 54..56 " B"
                       - TypeName: # 54..56 " B"
                           - IdentifierPath: # 54..56 " B"
                               - Identifier: "B" # 55..56
                   - Semicolon: ";" # 56..57
           - SourceUnitMember: # 58..74 "\ncontract C { }\n"
               - ContractDefinition: # 58..74 "\ncontract C { }\n"
-                  - ContractKeyword: "contract" # 59..67
-                  - Identifier: "C" # 68..69
+                  - (contract_keyword:) ContractKeyword: "contract" # 59..67
+                  - (name:) Identifier: "C" # 68..69
                   - OpenBrace: "{" # 70..71
                   - CloseBrace: "}" # 72..73
           - SourceUnitMember: # 74..91 "\ninterface I { }\n"
               - InterfaceDefinition: # 74..91 "\ninterface I { }\n"
-                  - InterfaceKeyword: "interface" # 75..84
-                  - Identifier: "I" # 85..86
+                  - (interface_keyword:) InterfaceKeyword: "interface" # 75..84
+                  - (name:) Identifier: "I" # 85..86
                   - OpenBrace: "{" # 87..88
                   - CloseBrace: "}" # 89..90
           - SourceUnitMember: # 91..106 "\nlibrary L { }\n"
               - LibraryDefinition: # 91..106 "\nlibrary L { }\n"
-                  - LibraryKeyword: "library" # 92..99
-                  - Identifier: "L" # 100..101
+                  - (library_keyword:) LibraryKeyword: "library" # 92..99
+                  - (name:) Identifier: "L" # 100..101
                   - OpenBrace: "{" # 102..103
                   - CloseBrace: "}" # 104..105
           - SourceUnitMember: # 106..120 "\nstruct S { }\n"
               - StructDefinition: # 106..120 "\nstruct S { }\n"
-                  - StructKeyword: "struct" # 107..113
-                  - Identifier: "S" # 114..115
+                  - (struct_keyword:) StructKeyword: "struct" # 107..113
+                  - (name:) Identifier: "S" # 114..115
                   - OpenBrace: "{" # 116..117
                   - CloseBrace: "}" # 118..119
           - SourceUnitMember: # 120..132 "\nenum E { }\n"
               - EnumDefinition: # 120..132 "\nenum E { }\n"
-                  - EnumKeyword: "enum" # 121..125
-                  - Identifier: "E" # 126..127
+                  - (enum_keyword:) EnumKeyword: "enum" # 121..125
+                  - (name:) Identifier: "E" # 126..127
                   - OpenBrace: "{" # 128..129
                   - CloseBrace: "}" # 130..131
           - SourceUnitMember: # 132..156 "\nuint32 constant x = 0;\n"
               - ConstantDefinition: # 132..156 "\nuint32 constant x = 0;\n"
-                  - TypeName: # 132..139 "\nuint32"
+                  - (type_name:) TypeName: # 132..139 "\nuint32"
                       - ElementaryType: # 132..139 "\nuint32"
                           - UintKeyword: "uint32" # 133..139
-                  - ConstantKeyword: "constant" # 140..148
-                  - Identifier: "x" # 149..150
-                  - Equal: "=" # 151..152
-                  - Expression: # 152..154 " 0"
+                  - (constant_keyword:) ConstantKeyword: "constant" # 140..148
+                  - (name:) Identifier: "x" # 149..150
+                  - (equal:) Equal: "=" # 151..152
+                  - (value:) Expression: # 152..154 " 0"
                       - DecimalNumberExpression: # 152..154 " 0"
-                          - DecimalLiteral: "0" # 153..154
+                          - (literal:) DecimalLiteral: "0" # 153..154
                   - Semicolon: ";" # 154..155
           - SourceUnitMember: # 156..181 "\nfunction f() public { }\n"
               - FunctionDefinition: # 156..181 "\nfunction f() public { }\n"
-                  - FunctionKeyword: "function" # 157..165
-                  - FunctionName: # 165..167 " f"
+                  - (function_keyword:) FunctionKeyword: "function" # 157..165
+                  - (name:) FunctionName: # 165..167 " f"
                       - Identifier: "f" # 166..167
-                  - ParametersDeclaration: # 167..169 "()"
+                  - (parameters:) ParametersDeclaration: # 167..169 "()"
                       - OpenParen: "(" # 167..168
                       - CloseParen: ")" # 168..169
-                  - FunctionAttributes: # 169..176 " public"
+                  - (attributes:) FunctionAttributes: # 169..176 " public"
                       - FunctionAttribute: # 169..176 " public"
                           - PublicKeyword: "public" # 170..176
-                  - FunctionBody: # 176..181 " { }\n"
+                  - (body:) FunctionBody: # 176..181 " { }\n"
                       - Block: # 176..181 " { }\n"
                           - OpenBrace: "{" # 177..178
                           - CloseBrace: "}" # 179..180
           - SourceUnitMember: # 181..200 "\nerror E1(string);\n"
               - ErrorDefinition: # 181..200 "\nerror E1(string);\n"
-                  - ErrorKeyword: "error" # 182..187
-                  - Identifier: "E1" # 188..190
-                  - ErrorParametersDeclaration: # 190..198 "(string)"
+                  - (error_keyword:) ErrorKeyword: "error" # 182..187
+                  - (name:) Identifier: "E1" # 188..190
+                  - (members:) ErrorParametersDeclaration: # 190..198 "(string)"
                       - OpenParen: "(" # 190..191
                       - ErrorParameters: # 191..197 "string"
                           - ErrorParameter: # 191..197 "string"
-                              - TypeName: # 191..197 "string"
+                              - (type_name:) TypeName: # 191..197 "string"
                                   - ElementaryType: # 191..197 "string"
                                       - StringKeyword: "string" # 191..197
                       - CloseParen: ")" # 197..198
                   - Semicolon: ";" # 198..199
           - SourceUnitMember: # 200..217 "\ntype T is bool;\n"
               - UserDefinedValueTypeDefinition: # 200..217 "\ntype T is bool;\n"
-                  - TypeKeyword: "type" # 201..205
-                  - Identifier: "T" # 206..207
-                  - IsKeyword: "is" # 208..210
-                  - ElementaryType: # 210..215 " bool"
+                  - (type_keyword:) TypeKeyword: "type" # 201..205
+                  - (name:) Identifier: "T" # 206..207
+                  - (is_keyword:) IsKeyword: "is" # 208..210
+                  - (value_type:) ElementaryType: # 210..215 " bool"
                       - BoolKeyword: "bool" # 211..215
                   - Semicolon: ";" # 215..216
           - SourceUnitMember: # 217..243 "\nevent E1(uint256 value);\n"
               - EventDefinition: # 217..243 "\nevent E1(uint256 value);\n"
-                  - EventKeyword: "event" # 218..223
-                  - Identifier: "E1" # 224..226
-                  - EventParametersDeclaration: # 226..241 "(uint256 value)"
+                  - (event_keyword:) EventKeyword: "event" # 218..223
+                  - (name:) Identifier: "E1" # 224..226
+                  - (parameters:) EventParametersDeclaration: # 226..241 "(uint256 value)"
                       - OpenParen: "(" # 226..227
                       - EventParameters: # 227..240 "uint256 value"
                           - EventParameter: # 227..240 "uint256 value"
-                              - TypeName: # 227..234 "uint256"
+                              - (type_name:) TypeName: # 227..234 "uint256"
                                   - ElementaryType: # 227..234 "uint256"
                                       - UintKeyword: "uint256" # 227..234
-                              - Identifier: "value" # 235..240
+                              - (name:) Identifier: "value" # 235..240
                       - CloseParen: ")" # 240..241
                   - Semicolon: ";" # 241..242

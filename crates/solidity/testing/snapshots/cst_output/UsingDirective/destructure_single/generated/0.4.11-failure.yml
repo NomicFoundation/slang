@@ -15,6 +15,6 @@ Errors: # 1 total
 
 Tree:
   - UsingDirective: # 0..27 "using {add} for Int global;"
-      - UsingKeyword: "using" # 0..5
+      - (using_keyword:) UsingKeyword: "using" # 0..5
       - SKIPPED: "{add} for Int global" # 6..26
       - Semicolon: ";" # 26..27

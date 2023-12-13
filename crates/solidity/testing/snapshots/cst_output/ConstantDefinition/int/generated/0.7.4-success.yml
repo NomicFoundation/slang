@@ -7,13 +7,13 @@ Errors: []
 
 Tree:
   - ConstantDefinition: # 0..21 "int constant foo = 0;"
-      - TypeName: # 0..3 "int"
+      - (type_name:) TypeName: # 0..3 "int"
           - ElementaryType: # 0..3 "int"
               - IntKeyword: "int" # 0..3
-      - ConstantKeyword: "constant" # 4..12
-      - Identifier: "foo" # 13..16
-      - Equal: "=" # 17..18
-      - Expression: # 18..20 " 0"
+      - (constant_keyword:) ConstantKeyword: "constant" # 4..12
+      - (name:) Identifier: "foo" # 13..16
+      - (equal:) Equal: "=" # 17..18
+      - (value:) Expression: # 18..20 " 0"
           - DecimalNumberExpression: # 18..20 " 0"
-              - DecimalLiteral: "0" # 19..20
+              - (literal:) DecimalLiteral: "0" # 19..20
       - Semicolon: ";" # 20..21

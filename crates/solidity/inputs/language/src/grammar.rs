@@ -558,7 +558,7 @@ fn resolve_trivia(parser: model::TriviaParser, ctx: &mut ResolveCtx<'_>) -> Pars
         model::TriviaParser::Sequence { parsers } => ParserDefinitionNode::Sequence(
             parsers
                 .into_iter()
-                .map(|scanner| resolve_trivia(scanner, ctx))
+                .map(|scanner| (String::new(), resolve_trivia(scanner, ctx)))
                 .collect(),
         ),
         model::TriviaParser::Choice { parsers } => ParserDefinitionNode::Choice(
@@ -620,11 +620,11 @@ fn resolve_sequence_like(
 
         let delimited_body: Vec<_> = fields
             .drain((open_idx + 1)..close_idx)
-            .map(|(_, field)| field)
+            .map(|(name, field)| (name.to_string(), field))
             .collect();
 
         let delimited_body = match delimited_body.len() {
-            1 => delimited_body.into_iter().next().unwrap(),
+            1 => delimited_body.into_iter().next().unwrap().1,
             0 => ParserDefinitionNode::Sequence(vec![]),
             _ => ParserDefinitionNode::Sequence(delimited_body),
         };
@@ -661,7 +661,12 @@ fn resolve_sequence_like(
         None => None,
     };
 
-    let body = ParserDefinitionNode::Sequence(fields.into_iter().map(|(_, def)| def).collect());
+    let body = ParserDefinitionNode::Sequence(
+        fields
+            .into_iter()
+            .map(|(name, def)| (name.to_string(), def))
+            .collect(),
+    );
 
     if let Some(terminator) = terminator {
         ParserDefinitionNode::TerminatedBy(Box::new(body), Box::new(terminator))

@@ -11,7 +11,7 @@ Tree:
           - (left_operand:) Expression: # 0..7 "address"
               - ElementaryType: # 0..7 "address"
                   - AddressType: # 0..7 "address"
-                      - AddressKeyword: "address" # 0..7
+                      - (address_keyword:) AddressKeyword: "address" # 0..7
           - (operator:) ArgumentsDeclaration: # 7..14 "(value)"
               - PositionalArgumentsDeclaration: # 7..14 "(value)"
                   - OpenParen: "(" # 7..8

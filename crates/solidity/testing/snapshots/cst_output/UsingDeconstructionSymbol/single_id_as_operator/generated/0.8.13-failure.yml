@@ -15,6 +15,6 @@ Errors: # 1 total
 
 Tree:
   - UsingDeconstructionSymbol: # 0..8 "foo as /"
-      - IdentifierPath: # 0..3 "foo"
+      - (name:) IdentifierPath: # 0..3 "foo"
           - Identifier: "foo" # 0..3
       - SKIPPED: " as /" # 3..8

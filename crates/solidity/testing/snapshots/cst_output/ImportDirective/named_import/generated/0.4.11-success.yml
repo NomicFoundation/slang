@@ -7,13 +7,13 @@ Errors: []
 
 Tree:
   - ImportDirective: # 0..27 'import * as foo from "bar";'
-      - ImportKeyword: "import" # 0..6
-      - ImportClause: # 6..26 ' * as foo from "bar"'
+      - (import_keyword:) ImportKeyword: "import" # 0..6
+      - (clause:) ImportClause: # 6..26 ' * as foo from "bar"'
           - NamedImport: # 6..26 ' * as foo from "bar"'
-              - Asterisk: "*" # 7..8
-              - ImportAlias: # 8..15 " as foo"
-                  - AsKeyword: "as" # 9..11
-                  - Identifier: "foo" # 12..15
-              - FromKeyword: "from" # 16..20
-              - AsciiStringLiteral: '"bar"' # 21..26
+              - (asterisk:) Asterisk: "*" # 7..8
+              - (alias:) ImportAlias: # 8..15 " as foo"
+                  - (as_keyword:) AsKeyword: "as" # 9..11
+                  - (identifier:) Identifier: "foo" # 12..15
+              - (from_keyword:) FromKeyword: "from" # 16..20
+              - (path:) AsciiStringLiteral: '"bar"' # 21..26
       - Semicolon: ";" # 26..27

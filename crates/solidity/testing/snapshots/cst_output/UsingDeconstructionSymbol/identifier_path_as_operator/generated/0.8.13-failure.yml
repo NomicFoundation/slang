@@ -15,7 +15,7 @@ Errors: # 1 total
 
 Tree:
   - UsingDeconstructionSymbol: # 0..12 "foo.bar as /"
-      - IdentifierPath: # 0..7 "foo.bar"
+      - (name:) IdentifierPath: # 0..7 "foo.bar"
           - Identifier: "foo" # 0..3
           - Period: "." # 3..4
           - Identifier: "bar" # 4..7

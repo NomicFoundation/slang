@@ -19,11 +19,11 @@ Tree:
       - SourceUnitMembers: # 0..28 "contract Sample {\n  function"
           - SourceUnitMember: # 0..28 "contract Sample {\n  function"
               - ContractDefinition: # 0..28 "contract Sample {\n  function"
-                  - ContractKeyword: "contract" # 0..8
-                  - Identifier: "Sample" # 9..15
+                  - (contract_keyword:) ContractKeyword: "contract" # 0..8
+                  - (name:) Identifier: "Sample" # 9..15
                   - OpenBrace: "{" # 16..17
                   - ContractMembers: # 18..28 "  function"
                       - ContractMember: # 18..28 "  function"
                           - FunctionDefinition: # 18..28 "  function"
-                              - FunctionKeyword: "function" # 20..28
+                              - (function_keyword:) FunctionKeyword: "function" # 20..28
       - SKIPPED: "" # 28..28

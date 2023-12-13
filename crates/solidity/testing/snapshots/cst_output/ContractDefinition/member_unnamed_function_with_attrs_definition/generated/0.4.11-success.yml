@@ -9,22 +9,22 @@ Errors: []
 
 Tree:
   - ContractDefinition: # 0..53 "contract Sample {\n  function() external payable {}..."
-      - ContractKeyword: "contract" # 0..8
-      - Identifier: "Sample" # 9..15
+      - (contract_keyword:) ContractKeyword: "contract" # 0..8
+      - (name:) Identifier: "Sample" # 9..15
       - OpenBrace: "{" # 16..17
       - ContractMembers: # 18..51 "  function() external payable {}\n"
           - ContractMember: # 18..51 "  function() external payable {}\n"
               - UnnamedFunctionDefinition: # 18..51 "  function() external payable {}\n"
-                  - FunctionKeyword: "function" # 20..28
-                  - ParametersDeclaration: # 28..30 "()"
+                  - (function_keyword:) FunctionKeyword: "function" # 20..28
+                  - (parameters:) ParametersDeclaration: # 28..30 "()"
                       - OpenParen: "(" # 28..29
                       - CloseParen: ")" # 29..30
-                  - UnnamedFunctionAttributes: # 30..47 " external payable"
+                  - (attributes:) UnnamedFunctionAttributes: # 30..47 " external payable"
                       - UnnamedFunctionAttribute: # 30..39 " external"
                           - ExternalKeyword: "external" # 31..39
                       - UnnamedFunctionAttribute: # 39..47 " payable"
                           - PayableKeyword: "payable" # 40..47
-                  - FunctionBody: # 47..51 " {}\n"
+                  - (body:) FunctionBody: # 47..51 " {}\n"
                       - Block: # 47..51 " {}\n"
                           - OpenBrace: "{" # 48..49
                           - CloseBrace: "}" # 49..50

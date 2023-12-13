@@ -19,16 +19,16 @@ Errors: # 1 total
 
 Tree:
   - ContractDefinition: # 0..39 "contract Sample {\n  function () {\n  }\n}"
-      - ContractKeyword: "contract" # 0..8
-      - Identifier: "Sample" # 9..15
+      - (contract_keyword:) ContractKeyword: "contract" # 0..8
+      - (name:) Identifier: "Sample" # 9..15
       - OpenBrace: "{" # 16..17
       - ContractMembers: # 18..32 "  function () "
           - ContractMember: # 18..32 "  function () "
               - StateVariableDefinition: # 18..32 "  function () "
-                  - TypeName: # 18..31 "  function ()"
+                  - (type_name:) TypeName: # 18..31 "  function ()"
                       - FunctionType: # 18..31 "  function ()"
-                          - FunctionKeyword: "function" # 20..28
-                          - ParametersDeclaration: # 28..31 " ()"
+                          - (function_keyword:) FunctionKeyword: "function" # 20..28
+                          - (parameters:) ParametersDeclaration: # 28..31 " ()"
                               - OpenParen: "(" # 29..30
                               - CloseParen: ")" # 30..31
       - SKIPPED: "{\n  }\n" # 32..38

@@ -9,42 +9,42 @@ Errors: []
 
 Tree:
   - FunctionDefinition: # 0..73 "function some() public virtual override returns (u..."
-      - FunctionKeyword: "function" # 0..8
-      - FunctionName: # 8..13 " some"
+      - (function_keyword:) FunctionKeyword: "function" # 0..8
+      - (name:) FunctionName: # 8..13 " some"
           - Identifier: "some" # 9..13
-      - ParametersDeclaration: # 13..15 "()"
+      - (parameters:) ParametersDeclaration: # 13..15 "()"
           - OpenParen: "(" # 13..14
           - CloseParen: ")" # 14..15
-      - FunctionAttributes: # 15..39 " public virtual override"
+      - (attributes:) FunctionAttributes: # 15..39 " public virtual override"
           - FunctionAttribute: # 15..22 " public"
               - PublicKeyword: "public" # 16..22
           - FunctionAttribute: # 22..30 " virtual"
               - ModifierInvocation: # 22..30 " virtual"
-                  - IdentifierPath: # 22..30 " virtual"
+                  - (name:) IdentifierPath: # 22..30 " virtual"
                       - Identifier: "virtual" # 23..30
           - FunctionAttribute: # 30..39 " override"
               - ModifierInvocation: # 30..39 " override"
-                  - IdentifierPath: # 30..39 " override"
+                  - (name:) IdentifierPath: # 30..39 " override"
                       - Identifier: "override" # 31..39
-      - ReturnsDeclaration: # 39..57 " returns (uint256)"
-          - ReturnsKeyword: "returns" # 40..47
-          - ParametersDeclaration: # 47..57 " (uint256)"
+      - (returns:) ReturnsDeclaration: # 39..57 " returns (uint256)"
+          - (returns_keyword:) ReturnsKeyword: "returns" # 40..47
+          - (variables:) ParametersDeclaration: # 47..57 " (uint256)"
               - OpenParen: "(" # 48..49
               - Parameters: # 49..56 "uint256"
                   - Parameter: # 49..56 "uint256"
-                      - TypeName: # 49..56 "uint256"
+                      - (type_name:) TypeName: # 49..56 "uint256"
                           - ElementaryType: # 49..56 "uint256"
                               - UintKeyword: "uint256" # 49..56
               - CloseParen: ")" # 56..57
-      - FunctionBody: # 57..73 " {\n\treturn 1;\n}\n"
+      - (body:) FunctionBody: # 57..73 " {\n\treturn 1;\n}\n"
           - Block: # 57..73 " {\n\treturn 1;\n}\n"
               - OpenBrace: "{" # 58..59
               - Statements: # 60..71 "\treturn 1;\n"
                   - Statement: # 60..71 "\treturn 1;\n"
                       - ReturnStatement: # 60..71 "\treturn 1;\n"
-                          - ReturnKeyword: "return" # 61..67
-                          - Expression: # 67..69 " 1"
+                          - (return_keyword:) ReturnKeyword: "return" # 61..67
+                          - (expression:) Expression: # 67..69 " 1"
                               - DecimalNumberExpression: # 67..69 " 1"
-                                  - DecimalLiteral: "1" # 68..69
+                                  - (literal:) DecimalLiteral: "1" # 68..69
                           - Semicolon: ";" # 69..70
               - CloseBrace: "}" # 71..72

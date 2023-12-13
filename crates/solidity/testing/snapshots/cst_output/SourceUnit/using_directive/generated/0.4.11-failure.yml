@@ -39,16 +39,16 @@ Errors: # 1 total
 
 Tree:
   - SourceUnit: # 0..793 "// SPDX-License-Identifier: MIT\npragma solidity ^0..."
-      - SourceUnitMembers: # 0..56 "// SPDX-License-Identifier: MIT\npragma solidity ^0..."
+      - (members:) SourceUnitMembers: # 0..56 "// SPDX-License-Identifier: MIT\npragma solidity ^0..."
           - SourceUnitMember: # 0..56 "// SPDX-License-Identifier: MIT\npragma solidity ^0..."
               - PragmaDirective: # 0..56 "// SPDX-License-Identifier: MIT\npragma solidity ^0..."
                   - LeadingTrivia: # 0..32 "// SPDX-License-Identifier: MIT\n"
                       - SingleLineComment: "// SPDX-License-Identifier: MIT" # 0..31
-                  - PragmaKeyword: "pragma" # 32..38
-                  - Pragma: # 38..54 " solidity ^0.8.0"
+                  - (pragma_keyword:) PragmaKeyword: "pragma" # 32..38
+                  - (pragma:) Pragma: # 38..54 " solidity ^0.8.0"
                       - VersionPragma: # 38..54 " solidity ^0.8.0"
-                          - SolidityKeyword: "solidity" # 39..47
-                          - VersionPragmaExpressions: # 47..54 " ^0.8.0"
+                          - (solidity_keyword:) SolidityKeyword: "solidity" # 39..47
+                          - (expressions:) VersionPragmaExpressions: # 47..54 " ^0.8.0"
                               - VersionPragmaExpression: # 47..54 " ^0.8.0"
                                   - (operand:) VersionPragmaPrefixExpression: # 47..54 " ^0.8.0"
                                       - (operator:) Caret: "^" # 48..49

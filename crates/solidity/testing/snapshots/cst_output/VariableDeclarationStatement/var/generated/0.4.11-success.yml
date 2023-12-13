@@ -7,12 +7,12 @@ Errors: []
 
 Tree:
   - VariableDeclarationStatement: # 0..10 "var z = 0;"
-      - VariableDeclarationType: # 0..3 "var"
+      - (variable_type:) VariableDeclarationType: # 0..3 "var"
           - VarKeyword: "var" # 0..3
-      - Identifier: "z" # 4..5
-      - VariableDeclarationValue: # 5..9 " = 0"
-          - Equal: "=" # 6..7
-          - Expression: # 7..9 " 0"
+      - (name:) Identifier: "z" # 4..5
+      - (value:) VariableDeclarationValue: # 5..9 " = 0"
+          - (equal:) Equal: "=" # 6..7
+          - (expression:) Expression: # 7..9 " 0"
               - DecimalNumberExpression: # 7..9 " 0"
-                  - DecimalLiteral: "0" # 8..9
+                  - (literal:) DecimalLiteral: "0" # 8..9
       - Semicolon: ";" # 9..10

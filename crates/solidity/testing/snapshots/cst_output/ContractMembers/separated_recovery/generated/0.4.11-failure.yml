@@ -100,18 +100,18 @@ Tree:
   - ContractMembers: # 0..560 "function all() override(some.ident unexpected toke..."
       - ContractMember: # 0..309 "function all() override(some.ident unexpected toke..."
           - FunctionDefinition: # 0..309 "function all() override(some.ident unexpected toke..."
-              - FunctionKeyword: "function" # 0..8
-              - FunctionName: # 8..12 " all"
+              - (function_keyword:) FunctionKeyword: "function" # 0..8
+              - (name:) FunctionName: # 8..12 " all"
                   - Identifier: "all" # 9..12
-              - ParametersDeclaration: # 12..14 "()"
+              - (parameters:) ParametersDeclaration: # 12..14 "()"
                   - OpenParen: "(" # 12..13
                   - CloseParen: ")" # 13..14
-              - FunctionAttributes: # 14..83 " override(some.ident unexpected tokens, ISomeInter..."
+              - (attributes:) FunctionAttributes: # 14..83 " override(some.ident unexpected tokens, ISomeInter..."
                   - FunctionAttribute: # 14..76 " override(some.ident unexpected tokens, ISomeInter..."
                       - ModifierInvocation: # 14..76 " override(some.ident unexpected tokens, ISomeInter..."
-                          - IdentifierPath: # 14..23 " override"
+                          - (name:) IdentifierPath: # 14..23 " override"
                               - Identifier: "override" # 15..23
-                          - ArgumentsDeclaration: # 23..76 "(some.ident unexpected tokens, ISomeInterface, Oth..."
+                          - (arguments:) ArgumentsDeclaration: # 23..76 "(some.ident unexpected tokens, ISomeInterface, Oth..."
                               - PositionalArgumentsDeclaration: # 23..76 "(some.ident unexpected tokens, ISomeInterface, Oth..."
                                   - OpenParen: "(" # 23..24
                                   - PositionalArguments: # 24..34 "some.ident"
@@ -126,7 +126,7 @@ Tree:
                                   - CloseParen: ")" # 75..76
                   - FunctionAttribute: # 76..83 " public"
                       - PublicKeyword: "public" # 77..83
-              - FunctionBody: # 83..309 " {\n  msg.sender.call{do: 1, arg: 1 }();\n  msg.send..."
+              - (body:) FunctionBody: # 83..309 " {\n  msg.sender.call{do: 1, arg: 1 }();\n  msg.send..."
                   - Block: # 83..309 " {\n  msg.sender.call{do: 1, arg: 1 }();\n  msg.send..."
                       - OpenBrace: "{" # 84..85
                       - Statements: # 86..306 "  msg.sender.call{do: 1, arg: 1 }();\n  msg.sender...."
@@ -197,18 +197,18 @@ Tree:
                       - CloseBrace: "}" # 307..308
       - ContractMember: # 309..388 "\nfunction empty() override(some.ident, /* empty */..."
           - FunctionDefinition: # 309..388 "\nfunction empty() override(some.ident, /* empty */..."
-              - FunctionKeyword: "function" # 310..318
-              - FunctionName: # 318..324 " empty"
+              - (function_keyword:) FunctionKeyword: "function" # 310..318
+              - (name:) FunctionName: # 318..324 " empty"
                   - Identifier: "empty" # 319..324
-              - ParametersDeclaration: # 324..326 "()"
+              - (parameters:) ParametersDeclaration: # 324..326 "()"
                   - OpenParen: "(" # 324..325
                   - CloseParen: ")" # 325..326
-              - FunctionAttributes: # 326..386 " override(some.ident, /* empty */, other.arg.here,..."
+              - (attributes:) FunctionAttributes: # 326..386 " override(some.ident, /* empty */, other.arg.here,..."
                   - FunctionAttribute: # 326..386 " override(some.ident, /* empty */, other.arg.here,..."
                       - ModifierInvocation: # 326..386 " override(some.ident, /* empty */, other.arg.here,..."
-                          - IdentifierPath: # 326..335 " override"
+                          - (name:) IdentifierPath: # 326..335 " override"
                               - Identifier: "override" # 327..335
-                          - ArgumentsDeclaration: # 335..386 "(some.ident, /* empty */, other.arg.here, and.here..."
+                          - (arguments:) ArgumentsDeclaration: # 335..386 "(some.ident, /* empty */, other.arg.here, and.here..."
                               - PositionalArgumentsDeclaration: # 335..386 "(some.ident, /* empty */, other.arg.here, and.here..."
                                   - OpenParen: "(" # 335..336
                                   - PositionalArguments: # 336..347 "some.ident,"
@@ -224,22 +224,22 @@ Tree:
                                       - MultilineComment: "/* empty */" # 348..359
                                   - SKIPPED: ", other.arg.here, and.here" # 359..385
                                   - CloseParen: ")" # 385..386
-              - FunctionBody: # 386..388 ";\n"
+              - (body:) FunctionBody: # 386..388 ";\n"
                   - Semicolon: ";" # 386..387
       - ContractMember: # 388..489 "\nfunction nested_lists() override(some.ident, next..."
           - FunctionDefinition: # 388..489 "\nfunction nested_lists() override(some.ident, next..."
-              - FunctionKeyword: "function" # 389..397
-              - FunctionName: # 397..410 " nested_lists"
+              - (function_keyword:) FunctionKeyword: "function" # 389..397
+              - (name:) FunctionName: # 397..410 " nested_lists"
                   - Identifier: "nested_lists" # 398..410
-              - ParametersDeclaration: # 410..412 "()"
+              - (parameters:) ParametersDeclaration: # 410..412 "()"
                   - OpenParen: "(" # 410..411
                   - CloseParen: ")" # 411..412
-              - FunctionAttributes: # 412..487 " override(some.ident, next.do.that, other.while, n..."
+              - (attributes:) FunctionAttributes: # 412..487 " override(some.ident, next.do.that, other.while, n..."
                   - FunctionAttribute: # 412..487 " override(some.ident, next.do.that, other.while, n..."
                       - ModifierInvocation: # 412..487 " override(some.ident, next.do.that, other.while, n..."
-                          - IdentifierPath: # 412..421 " override"
+                          - (name:) IdentifierPath: # 412..421 " override"
                               - Identifier: "override" # 413..421
-                          - ArgumentsDeclaration: # 421..487 "(some.ident, next.do.that, other.while, next.one, ..."
+                          - (arguments:) ArgumentsDeclaration: # 421..487 "(some.ident, next.do.that, other.while, next.one, ..."
                               - PositionalArgumentsDeclaration: # 421..487 "(some.ident, next.do.that, other.while, next.one, ..."
                                   - OpenParen: "(" # 421..422
                                   - PositionalArguments: # 422..470 "some.ident, next.do.that, other.while, next.one,"
@@ -253,12 +253,12 @@ Tree:
                                       - Comma: "," # 432..433
                                       - Expression: # 433..439 " next."
                                           - Identifier: "next" # 434..438
-                                          - Period: "." # 438..439
+                                          - (period:) Period: "." # 438..439
                                       - SKIPPED: "do.that" # 439..446
                                       - Comma: "," # 446..447
                                       - Expression: # 447..454 " other."
                                           - Identifier: "other" # 448..453
-                                          - Period: "." # 453..454
+                                          - (period:) Period: "." # 453..454
                                       - SKIPPED: "while" # 454..459
                                       - Comma: "," # 459..460
                                       - Expression: # 460..469 " next.one"
@@ -271,28 +271,28 @@ Tree:
                                       - Comma: "," # 469..470
                                   - SKIPPED: "final, ultimate" # 471..486
                                   - CloseParen: ")" # 486..487
-              - FunctionBody: # 487..489 ";\n"
+              - (body:) FunctionBody: # 487..489 ";\n"
                   - Semicolon: ";" # 487..488
       - ContractMember: # 489..560 "function nested_lists() override(some., next.arg, ..."
           - FunctionDefinition: # 489..560 "function nested_lists() override(some., next.arg, ..."
-              - FunctionKeyword: "function" # 489..497
-              - FunctionName: # 497..510 " nested_lists"
+              - (function_keyword:) FunctionKeyword: "function" # 489..497
+              - (name:) FunctionName: # 497..510 " nested_lists"
                   - Identifier: "nested_lists" # 498..510
-              - ParametersDeclaration: # 510..512 "()"
+              - (parameters:) ParametersDeclaration: # 510..512 "()"
                   - OpenParen: "(" # 510..511
                   - CloseParen: ")" # 511..512
-              - FunctionAttributes: # 512..558 " override(some., next.arg, next.one, ultimate)"
+              - (attributes:) FunctionAttributes: # 512..558 " override(some., next.arg, next.one, ultimate)"
                   - FunctionAttribute: # 512..558 " override(some., next.arg, next.one, ultimate)"
                       - ModifierInvocation: # 512..558 " override(some., next.arg, next.one, ultimate)"
-                          - IdentifierPath: # 512..521 " override"
+                          - (name:) IdentifierPath: # 512..521 " override"
                               - Identifier: "override" # 513..521
-                          - ArgumentsDeclaration: # 521..558 "(some., next.arg, next.one, ultimate)"
+                          - (arguments:) ArgumentsDeclaration: # 521..558 "(some., next.arg, next.one, ultimate)"
                               - PositionalArgumentsDeclaration: # 521..558 "(some., next.arg, next.one, ultimate)"
                                   - OpenParen: "(" # 521..522
                                   - PositionalArguments: # 522..557 "some., next.arg, next.one, ultimate"
                                       - Expression: # 522..527 "some."
                                           - Identifier: "some" # 522..526
-                                          - Period: "." # 526..527
+                                          - (period:) Period: "." # 526..527
                                       - SKIPPED: "" # 527..527
                                       - Comma: "," # 527..528
                                       - Expression: # 528..537 " next.arg"
@@ -314,5 +314,5 @@ Tree:
                                       - Expression: # 548..557 " ultimate"
                                           - Identifier: "ultimate" # 549..557
                                   - CloseParen: ")" # 557..558
-              - FunctionBody: # 558..560 ";\n"
+              - (body:) FunctionBody: # 558..560 ";\n"
                   - Semicolon: ";" # 558..559

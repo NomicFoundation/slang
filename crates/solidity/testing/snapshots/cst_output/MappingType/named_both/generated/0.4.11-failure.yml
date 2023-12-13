@@ -15,10 +15,10 @@ Errors: # 1 total
 
 Tree:
   - MappingType: # 0..34 "mapping(string Foo => bytes32 Bar)"
-      - MappingKeyword: "mapping" # 0..7
+      - (mapping_keyword:) MappingKeyword: "mapping" # 0..7
       - OpenParen: "(" # 7..8
-      - MappingKey: # 8..14 "string"
-          - MappingKeyType: # 8..14 "string"
+      - (key_type:) MappingKey: # 8..14 "string"
+          - (key_type:) MappingKeyType: # 8..14 "string"
               - ElementaryType: # 8..14 "string"
                   - StringKeyword: "string" # 8..14
       - SKIPPED: "Foo => bytes32 Bar" # 15..33

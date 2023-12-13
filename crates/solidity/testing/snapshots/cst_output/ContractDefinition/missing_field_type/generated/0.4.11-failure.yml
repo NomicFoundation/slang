@@ -17,13 +17,13 @@ Errors: # 1 total
 
 Tree:
   - ContractDefinition: # 0..27 "contract Test {\n  field;\n}\n"
-      - ContractKeyword: "contract" # 0..8
-      - Identifier: "Test" # 9..13
+      - (contract_keyword:) ContractKeyword: "contract" # 0..8
+      - (name:) Identifier: "Test" # 9..13
       - OpenBrace: "{" # 14..15
       - ContractMembers: # 16..25 "  field;\n"
           - ContractMember: # 16..25 "  field;\n"
               - StateVariableDefinition: # 16..25 "  field;\n"
-                  - TypeName: # 16..23 "  field"
+                  - (type_name:) TypeName: # 16..23 "  field"
                       - IdentifierPath: # 16..23 "  field"
                           - Identifier: "field" # 18..23
                   - SKIPPED: "" # 23..23

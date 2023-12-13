@@ -10,17 +10,17 @@ Errors: []
 
 Tree:
   - ContractDefinition: # 0..37 "contract Sample {\n  receive() {\n  }\n}"
-      - ContractKeyword: "contract" # 0..8
-      - Identifier: "Sample" # 9..15
+      - (contract_keyword:) ContractKeyword: "contract" # 0..8
+      - (name:) Identifier: "Sample" # 9..15
       - OpenBrace: "{" # 16..17
       - ContractMembers: # 18..36 "  receive() {\n  }\n"
           - ContractMember: # 18..36 "  receive() {\n  }\n"
               - ReceiveFunctionDefinition: # 18..36 "  receive() {\n  }\n"
-                  - ReceiveKeyword: "receive" # 20..27
-                  - ParametersDeclaration: # 27..29 "()"
+                  - (receive_keyword:) ReceiveKeyword: "receive" # 20..27
+                  - (parameters:) ParametersDeclaration: # 27..29 "()"
                       - OpenParen: "(" # 27..28
                       - CloseParen: ")" # 28..29
-                  - FunctionBody: # 29..36 " {\n  }\n"
+                  - (body:) FunctionBody: # 29..36 " {\n  }\n"
                       - Block: # 29..36 " {\n  }\n"
                           - OpenBrace: "{" # 30..31
                           - CloseBrace: "}" # 34..35

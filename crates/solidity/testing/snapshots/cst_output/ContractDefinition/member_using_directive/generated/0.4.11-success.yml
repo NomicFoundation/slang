@@ -9,18 +9,18 @@ Errors: []
 
 Tree:
   - ContractDefinition: # 0..36 "contract Sample {\n  using x for *;\n}"
-      - ContractKeyword: "contract" # 0..8
-      - Identifier: "Sample" # 9..15
+      - (contract_keyword:) ContractKeyword: "contract" # 0..8
+      - (name:) Identifier: "Sample" # 9..15
       - OpenBrace: "{" # 16..17
       - ContractMembers: # 18..35 "  using x for *;\n"
           - ContractMember: # 18..35 "  using x for *;\n"
               - UsingDirective: # 18..35 "  using x for *;\n"
-                  - UsingKeyword: "using" # 20..25
-                  - UsingClause: # 25..27 " x"
+                  - (using_keyword:) UsingKeyword: "using" # 20..25
+                  - (clause:) UsingClause: # 25..27 " x"
                       - IdentifierPath: # 25..27 " x"
                           - Identifier: "x" # 26..27
-                  - ForKeyword: "for" # 28..31
-                  - UsingTarget: # 31..33 " *"
+                  - (for_keyword:) ForKeyword: "for" # 28..31
+                  - (target:) UsingTarget: # 31..33 " *"
                       - Asterisk: "*" # 32..33
                   - Semicolon: ";" # 33..34
       - CloseBrace: "}" # 35..36

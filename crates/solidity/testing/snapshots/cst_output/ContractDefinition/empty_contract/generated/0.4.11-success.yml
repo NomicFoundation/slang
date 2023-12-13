@@ -7,7 +7,7 @@ Errors: []
 
 Tree:
   - ContractDefinition: # 0..19 "contract Sample {}\n"
-      - ContractKeyword: "contract" # 0..8
-      - Identifier: "Sample" # 9..15
+      - (contract_keyword:) ContractKeyword: "contract" # 0..8
+      - (name:) Identifier: "Sample" # 9..15
       - OpenBrace: "{" # 16..17
       - CloseBrace: "}" # 17..18

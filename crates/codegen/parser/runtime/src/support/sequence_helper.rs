@@ -191,7 +191,7 @@ impl SequenceHelper {
     /// Aggregates a parse result into the sequence. If we cannot make progress, returns the accumulated match.
     pub fn elem_named(
         &mut self,
-        name: String,
+        name: impl Into<String>,
         value: ParserResult,
     ) -> ControlFlow<ParserResult, &mut Self> {
         self.elem(value.with_name(name))

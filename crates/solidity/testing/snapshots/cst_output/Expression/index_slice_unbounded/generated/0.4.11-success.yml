@@ -12,5 +12,5 @@ Tree:
               - Identifier: "arr" # 0..3
           - (operator:) OpenBracket: "[" # 3..4
           - (operator:) IndexAccessEnd: # 4..5 ":"
-              - Colon: ":" # 4..5
+              - (colon:) Colon: ":" # 4..5
           - (operator:) CloseBracket: "]" # 5..6

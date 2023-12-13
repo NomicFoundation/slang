@@ -9,18 +9,18 @@ Errors: []
 
 Tree:
   - ContractDefinition: # 0..36 "contract Sample {\n  uint public a;\n}"
-      - ContractKeyword: "contract" # 0..8
-      - Identifier: "Sample" # 9..15
+      - (contract_keyword:) ContractKeyword: "contract" # 0..8
+      - (name:) Identifier: "Sample" # 9..15
       - OpenBrace: "{" # 16..17
       - ContractMembers: # 18..35 "  uint public a;\n"
           - ContractMember: # 18..35 "  uint public a;\n"
               - StateVariableDefinition: # 18..35 "  uint public a;\n"
-                  - TypeName: # 18..24 "  uint"
+                  - (type_name:) TypeName: # 18..24 "  uint"
                       - ElementaryType: # 18..24 "  uint"
                           - UintKeyword: "uint" # 20..24
-                  - StateVariableAttributes: # 24..31 " public"
+                  - (attributes:) StateVariableAttributes: # 24..31 " public"
                       - StateVariableAttribute: # 24..31 " public"
                           - PublicKeyword: "public" # 25..31
-                  - Identifier: "a" # 32..33
+                  - (name:) Identifier: "a" # 32..33
                   - Semicolon: ";" # 33..34
       - CloseBrace: "}" # 35..36

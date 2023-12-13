@@ -11,8 +11,8 @@ Errors: []
 
 Tree:
   - EnumDefinition: # 0..41 "enum Foo {\n    Bar1,\n    Bar2,\n    Bar3\n}"
-      - EnumKeyword: "enum" # 0..4
-      - Identifier: "Foo" # 5..8
+      - (enum_keyword:) EnumKeyword: "enum" # 0..4
+      - (name:) Identifier: "Foo" # 5..8
       - OpenBrace: "{" # 9..10
       - EnumMembers: # 11..40 "    Bar1,\n    Bar2,\n    Bar3\n"
           - Identifier: "Bar1" # 15..19

@@ -20,18 +20,18 @@ Tree:
                   - OpenBrace: "{" # 3..4
                   - NamedArguments: # 4..20 "value: 0, gas: 1"
                       - NamedArgument: # 4..12 "value: 0"
-                          - Identifier: "value" # 4..9
-                          - Colon: ":" # 9..10
-                          - Expression: # 10..12 " 0"
+                          - (name:) Identifier: "value" # 4..9
+                          - (colon:) Colon: ":" # 9..10
+                          - (value:) Expression: # 10..12 " 0"
                               - DecimalNumberExpression: # 10..12 " 0"
-                                  - DecimalLiteral: "0" # 11..12
+                                  - (literal:) DecimalLiteral: "0" # 11..12
                       - Comma: "," # 12..13
                       - NamedArgument: # 13..20 " gas: 1"
-                          - Identifier: "gas" # 14..17
-                          - Colon: ":" # 17..18
-                          - Expression: # 18..20 " 1"
+                          - (name:) Identifier: "gas" # 14..17
+                          - (colon:) Colon: ":" # 17..18
+                          - (value:) Expression: # 18..20 " 1"
                               - DecimalNumberExpression: # 18..20 " 1"
-                                  - DecimalLiteral: "1" # 19..20
+                                  - (literal:) DecimalLiteral: "1" # 19..20
                   - CloseBrace: "}" # 20..21
           - (operator:) ArgumentsDeclaration: # 21..25 '("")'
               - PositionalArgumentsDeclaration: # 21..25 '("")'

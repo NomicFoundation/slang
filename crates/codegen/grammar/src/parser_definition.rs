@@ -41,7 +41,7 @@ pub enum ParserDefinitionNode {
     Optional(Box<Self>),
     ZeroOrMore(Box<Self>),
     OneOrMore(Box<Self>),
-    Sequence(Vec<Self>),
+    Sequence(Vec<(String, Self)>),
     Choice(Vec<Self>),
     ScannerDefinition(ScannerDefinitionRef),
     TriviaParserDefinition(TriviaParserDefinitionRef),
@@ -85,7 +85,12 @@ impl Visitable for ParserDefinitionNode {
             | Self::ZeroOrMore(node)
             | Self::OneOrMore(node) => node.accept_visitor(visitor),
 
-            Self::Sequence(nodes) | Self::Choice(nodes) => {
+            Self::Sequence(nodes) => {
+                for (_, node) in nodes {
+                    node.accept_visitor(visitor);
+                }
+            }
+            Self::Choice(nodes) => {
                 for node in nodes {
                     node.accept_visitor(visitor);
                 }

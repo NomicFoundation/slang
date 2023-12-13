@@ -12,17 +12,17 @@ Tree:
           - TupleDeconstructionElement: # 1..15 "bool with_type"
               - TupleMember: # 1..15 "bool with_type"
                   - TypedTupleMember: # 1..15 "bool with_type"
-                      - TypeName: # 1..5 "bool"
+                      - (type_name:) TypeName: # 1..5 "bool"
                           - ElementaryType: # 1..5 "bool"
                               - BoolKeyword: "bool" # 1..5
-                      - Identifier: "with_type" # 6..15
+                      - (name:) Identifier: "with_type" # 6..15
           - Comma: "," # 15..16
           - TupleDeconstructionElement: # 16..29 " without_type"
               - TupleMember: # 16..29 " without_type"
                   - UntypedTupleMember: # 16..29 " without_type"
-                      - Identifier: "without_type" # 17..29
+                      - (name:) Identifier: "without_type" # 17..29
       - CloseParen: ")" # 29..30
-      - Equal: "=" # 31..32
-      - Expression: # 32..36 " rhs"
+      - (equal:) Equal: "=" # 31..32
+      - (expression:) Expression: # 32..36 " rhs"
           - Identifier: "rhs" # 33..36
       - Semicolon: ";" # 36..37

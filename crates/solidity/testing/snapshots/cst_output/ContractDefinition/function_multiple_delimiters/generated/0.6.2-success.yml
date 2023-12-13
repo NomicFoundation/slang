@@ -17,36 +17,36 @@ Tree:
   - ContractDefinition: # 0..352 "// SPDX-License-Identifier: MIT\ncontract ABC {\n  f..."
       - LeadingTrivia: # 0..32 "// SPDX-License-Identifier: MIT\n"
           - SingleLineComment: "// SPDX-License-Identifier: MIT" # 0..31
-      - ContractKeyword: "contract" # 32..40
-      - Identifier: "ABC" # 41..44
+      - (contract_keyword:) ContractKeyword: "contract" # 32..40
+      - (name:) Identifier: "ABC" # 41..44
       - OpenBrace: "{" # 45..46
       - ContractMembers: # 47..350 "  function sendValue(address payable recipient, ui..."
           - ContractMember: # 47..350 "  function sendValue(address payable recipient, ui..."
               - FunctionDefinition: # 47..350 "  function sendValue(address payable recipient, ui..."
-                  - FunctionKeyword: "function" # 49..57
-                  - FunctionName: # 57..67 " sendValue"
+                  - (function_keyword:) FunctionKeyword: "function" # 49..57
+                  - (name:) FunctionName: # 57..67 " sendValue"
                       - Identifier: "sendValue" # 58..67
-                  - ParametersDeclaration: # 67..110 "(address payable recipient, uint256 amount)"
+                  - (parameters:) ParametersDeclaration: # 67..110 "(address payable recipient, uint256 amount)"
                       - OpenParen: "(" # 67..68
                       - Parameters: # 68..109 "address payable recipient, uint256 amount"
                           - Parameter: # 68..93 "address payable recipient"
-                              - TypeName: # 68..83 "address payable"
+                              - (type_name:) TypeName: # 68..83 "address payable"
                                   - ElementaryType: # 68..83 "address payable"
                                       - AddressType: # 68..83 "address payable"
-                                          - AddressKeyword: "address" # 68..75
-                                          - PayableKeyword: "payable" # 76..83
-                              - Identifier: "recipient" # 84..93
+                                          - (address_keyword:) AddressKeyword: "address" # 68..75
+                                          - (payable_keyword:) PayableKeyword: "payable" # 76..83
+                              - (name:) Identifier: "recipient" # 84..93
                           - Comma: "," # 93..94
                           - Parameter: # 94..109 " uint256 amount"
-                              - TypeName: # 94..102 " uint256"
+                              - (type_name:) TypeName: # 94..102 " uint256"
                                   - ElementaryType: # 94..102 " uint256"
                                       - UintKeyword: "uint256" # 95..102
-                              - Identifier: "amount" # 103..109
+                              - (name:) Identifier: "amount" # 103..109
                       - CloseParen: ")" # 109..110
-                  - FunctionAttributes: # 110..119 " internal"
+                  - (attributes:) FunctionAttributes: # 110..119 " internal"
                       - FunctionAttribute: # 110..119 " internal"
                           - InternalKeyword: "internal" # 111..119
-                  - FunctionBody: # 119..350 ' {\n    require(address(this).balance >= amount, "A...'
+                  - (body:) FunctionBody: # 119..350 ' {\n    require(address(this).balance >= amount, "A...'
                       - Block: # 119..350 ' {\n    require(address(this).balance >= amount, "A...'
                           - OpenBrace: "{" # 120..121
                           - Statements: # 122..346 '    require(address(this).balance >= amount, "Addr...'
@@ -69,7 +69,7 @@ Tree:
                                                                                   - (left_operand:) Expression: # 134..141 "address"
                                                                                       - ElementaryType: # 134..141 "address"
                                                                                           - AddressType: # 134..141 "address"
-                                                                                              - AddressKeyword: "address" # 134..141
+                                                                                              - (address_keyword:) AddressKeyword: "address" # 134..141
                                                                                   - (operator:) ArgumentsDeclaration: # 141..147 "(this)"
                                                                                       - PositionalArgumentsDeclaration: # 141..147 "(this)"
                                                                                           - OpenParen: "(" # 141..142
@@ -97,15 +97,15 @@ Tree:
                                           - TupleDeconstructionElement: # 207..219 "bool success"
                                               - TupleMember: # 207..219 "bool success"
                                                   - TypedTupleMember: # 207..219 "bool success"
-                                                      - TypeName: # 207..211 "bool"
+                                                      - (type_name:) TypeName: # 207..211 "bool"
                                                           - ElementaryType: # 207..211 "bool"
                                                               - BoolKeyword: "bool" # 207..211
-                                                      - Identifier: "success" # 212..219
+                                                      - (name:) Identifier: "success" # 212..219
                                           - Comma: "," # 219..220
                                           - TupleDeconstructionElement: [] # 220..220
                                       - CloseParen: ")" # 221..222
-                                      - Equal: "=" # 223..224
-                                      - Expression: # 224..260 ' recipient.call{ value: amount }("")'
+                                      - (equal:) Equal: "=" # 223..224
+                                      - (expression:) Expression: # 224..260 ' recipient.call{ value: amount }("")'
                                           - (operand:) FunctionCallExpression: # 224..260 ' recipient.call{ value: amount }("")'
                                               - (left_operand:) Expression: # 224..239 " recipient.call"
                                                   - (operand:) MemberAccessExpression: # 224..239 " recipient.call"
@@ -120,9 +120,9 @@ Tree:
                                                           - OpenBrace: "{" # 239..240
                                                           - NamedArguments: # 240..254 " value: amount"
                                                               - NamedArgument: # 240..254 " value: amount"
-                                                                  - Identifier: "value" # 241..246
-                                                                  - Colon: ":" # 246..247
-                                                                  - Expression: # 247..254 " amount"
+                                                                  - (name:) Identifier: "value" # 241..246
+                                                                  - (colon:) Colon: ":" # 246..247
+                                                                  - (value:) Expression: # 247..254 " amount"
                                                                       - Identifier: "amount" # 248..254
                                                           - CloseBrace: "}" # 255..256
                                               - (operator:) ArgumentsDeclaration: # 256..260 '("")'

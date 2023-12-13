@@ -7,16 +7,16 @@ Errors: []
 
 Tree:
   - MappingType: # 0..30 "mapping(string => bytes32 Bar)"
-      - MappingKeyword: "mapping" # 0..7
+      - (mapping_keyword:) MappingKeyword: "mapping" # 0..7
       - OpenParen: "(" # 7..8
-      - MappingKey: # 8..14 "string"
-          - MappingKeyType: # 8..14 "string"
+      - (key_type:) MappingKey: # 8..14 "string"
+          - (key_type:) MappingKeyType: # 8..14 "string"
               - ElementaryType: # 8..14 "string"
                   - StringKeyword: "string" # 8..14
-      - EqualGreaterThan: "=>" # 15..17
-      - MappingValue: # 17..29 " bytes32 Bar"
-          - TypeName: # 17..25 " bytes32"
+      - (equal_greater_than:) EqualGreaterThan: "=>" # 15..17
+      - (value_type:) MappingValue: # 17..29 " bytes32 Bar"
+          - (type_name:) TypeName: # 17..25 " bytes32"
               - ElementaryType: # 17..25 " bytes32"
                   - BytesKeyword: "bytes32" # 18..25
-          - Identifier: "Bar" # 26..29
+          - (name:) Identifier: "Bar" # 26..29
       - CloseParen: ")" # 29..30

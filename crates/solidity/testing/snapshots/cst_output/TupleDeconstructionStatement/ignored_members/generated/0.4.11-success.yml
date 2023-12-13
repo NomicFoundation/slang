@@ -14,16 +14,16 @@ Tree:
           - TupleDeconstructionElement: # 2..9 " second"
               - TupleMember: # 2..9 " second"
                   - UntypedTupleMember: # 2..9 " second"
-                      - Identifier: "second" # 3..9
+                      - (name:) Identifier: "second" # 3..9
           - Comma: "," # 9..10
           - TupleDeconstructionElement: [] # 10..10
           - Comma: "," # 11..12
           - TupleDeconstructionElement: # 12..19 " fourth"
               - TupleMember: # 12..19 " fourth"
                   - UntypedTupleMember: # 12..19 " fourth"
-                      - Identifier: "fourth" # 13..19
+                      - (name:) Identifier: "fourth" # 13..19
       - CloseParen: ")" # 19..20
-      - Equal: "=" # 21..22
-      - Expression: # 22..26 " rhs"
+      - (equal:) Equal: "=" # 21..22
+      - (expression:) Expression: # 22..26 " rhs"
           - Identifier: "rhs" # 23..26
       - Semicolon: ";" # 26..27

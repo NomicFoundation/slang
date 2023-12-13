@@ -62,11 +62,12 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
 
             Self::Sequence(nodes) => {
                 if nodes.len() == 1 {
-                    nodes[0].to_parser_code(context_name, is_trivia)
+                    nodes[0].1.to_parser_code(context_name, is_trivia)
                 } else {
-                    make_sequence_versioned(nodes.iter().map(|node| {
+                    make_sequence_versioned(nodes.iter().map(|(name, node)| {
                         (
                             node.to_parser_code(context_name, is_trivia),
+                            name.clone(),
                             node.applicable_version_quality_ranges(),
                         )
                     }))
@@ -261,15 +262,21 @@ impl VersionQualityRangeVecExtensions for Vec<VersionQualityRange> {
 }
 
 pub fn make_sequence(parsers: impl IntoIterator<Item = TokenStream>) -> TokenStream {
-    make_sequence_versioned(parsers.into_iter().map(|parser| (parser, vec![])))
+    make_sequence_versioned(
+        parsers
+            .into_iter()
+            .map(|parser| (parser, String::new(), vec![])),
+    )
 }
 
 pub fn make_sequence_versioned(
-    parsers: impl IntoIterator<Item = (TokenStream, Vec<VersionQualityRange>)>,
+    parsers: impl IntoIterator<Item = (TokenStream, String, Vec<VersionQualityRange>)>,
 ) -> TokenStream {
     let parsers = parsers
         .into_iter()
-        .map(|(parser, versions)| versions.wrap_code(quote! { seq.elem(#parser)?; }, None))
+        .map(|(parser, name, versions)| {
+            versions.wrap_code(quote! { seq.elem_named(#name, #parser)?; }, None)
+        })
         .collect::<Vec<_>>();
     quote! {
         SequenceHelper::run(|mut seq| {

@@ -7,8 +7,8 @@ Errors: []
 
 Tree:
   - VersionPragma: # 0..30 "solidity ^1.0.0 || 2.0.0-3.0.0"
-      - SolidityKeyword: "solidity" # 0..8
-      - VersionPragmaExpressions: # 8..30 " ^1.0.0 || 2.0.0-3.0.0"
+      - (solidity_keyword:) SolidityKeyword: "solidity" # 0..8
+      - (expressions:) VersionPragmaExpressions: # 8..30 " ^1.0.0 || 2.0.0-3.0.0"
           - VersionPragmaExpression: # 8..30 " ^1.0.0 || 2.0.0-3.0.0"
               - (operand:) VersionPragmaOrExpression: # 8..30 " ^1.0.0 || 2.0.0-3.0.0"
                   - (left_operand:) VersionPragmaExpression: # 8..15 " ^1.0.0"

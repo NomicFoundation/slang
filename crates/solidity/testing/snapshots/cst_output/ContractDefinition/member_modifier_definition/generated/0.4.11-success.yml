@@ -11,18 +11,18 @@ Errors: []
 
 Tree:
   - ContractDefinition: # 0..49 "contract Sample {\n  modifier foo() {\n    _;\n  }\n}"
-      - ContractKeyword: "contract" # 0..8
-      - Identifier: "Sample" # 9..15
+      - (contract_keyword:) ContractKeyword: "contract" # 0..8
+      - (name:) Identifier: "Sample" # 9..15
       - OpenBrace: "{" # 16..17
       - ContractMembers: # 18..48 "  modifier foo() {\n    _;\n  }\n"
           - ContractMember: # 18..48 "  modifier foo() {\n    _;\n  }\n"
               - ModifierDefinition: # 18..48 "  modifier foo() {\n    _;\n  }\n"
-                  - ModifierKeyword: "modifier" # 20..28
-                  - Identifier: "foo" # 29..32
-                  - ParametersDeclaration: # 32..34 "()"
+                  - (modifier_keyword:) ModifierKeyword: "modifier" # 20..28
+                  - (name:) Identifier: "foo" # 29..32
+                  - (parameters:) ParametersDeclaration: # 32..34 "()"
                       - OpenParen: "(" # 32..33
                       - CloseParen: ")" # 33..34
-                  - FunctionBody: # 34..48 " {\n    _;\n  }\n"
+                  - (body:) FunctionBody: # 34..48 " {\n    _;\n  }\n"
                       - Block: # 34..48 " {\n    _;\n  }\n"
                           - OpenBrace: "{" # 35..36
                           - Statements: # 37..44 "    _;\n"

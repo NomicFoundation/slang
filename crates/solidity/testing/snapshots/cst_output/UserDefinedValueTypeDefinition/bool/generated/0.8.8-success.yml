@@ -7,9 +7,9 @@ Errors: []
 
 Tree:
   - UserDefinedValueTypeDefinition: # 0..17 "type Foo is bool;"
-      - TypeKeyword: "type" # 0..4
-      - Identifier: "Foo" # 5..8
-      - IsKeyword: "is" # 9..11
-      - ElementaryType: # 11..16 " bool"
+      - (type_keyword:) TypeKeyword: "type" # 0..4
+      - (name:) Identifier: "Foo" # 5..8
+      - (is_keyword:) IsKeyword: "is" # 9..11
+      - (value_type:) ElementaryType: # 11..16 " bool"
           - BoolKeyword: "bool" # 12..16
       - Semicolon: ";" # 16..17

@@ -14,5 +14,5 @@ Tree:
           - (operator:) Expression: # 4..9 "start"
               - Identifier: "start" # 4..9
           - (operator:) IndexAccessEnd: # 9..10 ":"
-              - Colon: ":" # 9..10
+              - (colon:) Colon: ":" # 9..10
           - (operator:) CloseBracket: "]" # 10..11

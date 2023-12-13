@@ -7,23 +7,23 @@ Errors: []
 
 Tree:
   - UsingDirective: # 0..32 "using {div as /} for Int global;"
-      - UsingKeyword: "using" # 0..5
-      - UsingClause: # 5..16 " {div as /}"
+      - (using_keyword:) UsingKeyword: "using" # 0..5
+      - (clause:) UsingClause: # 5..16 " {div as /}"
           - UsingDeconstruction: # 5..16 " {div as /}"
               - OpenBrace: "{" # 6..7
               - UsingDeconstructionSymbols: # 7..15 "div as /"
                   - UsingDeconstructionSymbol: # 7..15 "div as /"
-                      - IdentifierPath: # 7..10 "div"
+                      - (name:) IdentifierPath: # 7..10 "div"
                           - Identifier: "div" # 7..10
-                      - UsingAlias: # 10..15 " as /"
-                          - AsKeyword: "as" # 11..13
-                          - UsingOperator: # 13..15 " /"
+                      - (alias:) UsingAlias: # 10..15 " as /"
+                          - (as_keyword:) AsKeyword: "as" # 11..13
+                          - (operator:) UsingOperator: # 13..15 " /"
                               - Slash: "/" # 14..15
               - CloseBrace: "}" # 15..16
-      - ForKeyword: "for" # 17..20
-      - UsingTarget: # 20..24 " Int"
+      - (for_keyword:) ForKeyword: "for" # 17..20
+      - (target:) UsingTarget: # 20..24 " Int"
           - TypeName: # 20..24 " Int"
               - IdentifierPath: # 20..24 " Int"
                   - Identifier: "Int" # 21..24
-      - GlobalKeyword: "global" # 25..31
+      - (global_keyword:) GlobalKeyword: "global" # 25..31
       - Semicolon: ";" # 31..32

@@ -17,19 +17,19 @@ Errors: # 1 total
 
 Tree:
   - ContractDefinition: # 0..53 "contract Sample {\n  function() external payable {}..."
-      - ContractKeyword: "contract" # 0..8
-      - Identifier: "Sample" # 9..15
+      - (contract_keyword:) ContractKeyword: "contract" # 0..8
+      - (name:) Identifier: "Sample" # 9..15
       - OpenBrace: "{" # 16..17
       - ContractMembers: # 18..48 "  function() external payable "
           - ContractMember: # 18..48 "  function() external payable "
               - StateVariableDefinition: # 18..48 "  function() external payable "
-                  - TypeName: # 18..47 "  function() external payable"
+                  - (type_name:) TypeName: # 18..47 "  function() external payable"
                       - FunctionType: # 18..47 "  function() external payable"
-                          - FunctionKeyword: "function" # 20..28
-                          - ParametersDeclaration: # 28..30 "()"
+                          - (function_keyword:) FunctionKeyword: "function" # 20..28
+                          - (parameters:) ParametersDeclaration: # 28..30 "()"
                               - OpenParen: "(" # 28..29
                               - CloseParen: ")" # 29..30
-                          - FunctionTypeAttributes: # 30..47 " external payable"
+                          - (attributes:) FunctionTypeAttributes: # 30..47 " external payable"
                               - FunctionTypeAttribute: # 30..39 " external"
                                   - ExternalKeyword: "external" # 31..39
                               - FunctionTypeAttribute: # 39..47 " payable"

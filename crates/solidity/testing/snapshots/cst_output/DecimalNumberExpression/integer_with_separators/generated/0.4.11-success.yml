@@ -7,4 +7,4 @@ Errors: []
 
 Tree:
   - DecimalNumberExpression: # 0..5 "1_2_3"
-      - DecimalLiteral: "1_2_3" # 0..5
+      - (literal:) DecimalLiteral: "1_2_3" # 0..5
