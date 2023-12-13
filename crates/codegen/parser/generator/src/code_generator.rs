@@ -110,6 +110,7 @@ impl CodeGenerator {
             "lexer.rs",
             "parse_error.rs",
             "parse_output.rs",
+            "query_engine.rs",
             "query_model.rs",
             "query_parser.rs",
             "text_index.rs",

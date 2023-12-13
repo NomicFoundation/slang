@@ -11,6 +11,7 @@ use slang_solidity::{kinds::RuleKind, language::Language};
 // https://github.com/rust-lang/cargo/issues/1982
 mod supress_api_dependencies {
     use ariadne as _;
+    use nom as _;
     use serde as _;
     use strum as _;
     use strum_macros as _;
