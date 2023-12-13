@@ -25,8 +25,8 @@ Tree:
                               - (operand:) TypeName: # 10..17 " uint32"
                                   - ElementaryType: # 10..17 " uint32"
                                       - (variant:) UintKeyword: "uint32" # 11..17
-                              - (postfix_operator:) OpenBracket: "[" # 17..18
-                              - (postfix_operator:) CloseBracket: "]" # 18..19
+                              - (open_bracket:) OpenBracket: "[" # 17..18
+                              - (close_bracket:) CloseBracket: "]" # 18..19
                       - (storage_location:) StorageLocation: # 19..26 " memory"
                           - (variant:) MemoryKeyword: "memory" # 20..26
                       - (name:) Identifier: "b" # 27..28
@@ -35,13 +35,13 @@ Tree:
       - (expression:) Expression: # 31..68 " abi.decode(data, (uint32, uint32[]))"
           - (variant:) FunctionCallExpression: # 31..68 " abi.decode(data, (uint32, uint32[]))"
               - (operand:) Expression: # 31..42 " abi.decode"
-                  - (exprrrrr:) MemberAccessExpression: # 31..42 " abi.decode"
+                  - (variant:) MemberAccessExpression: # 31..42 " abi.decode"
                       - (operand:) Expression: # 31..35 " abi"
                           - Identifier: "abi" # 32..35
-                      - (postfix_operator:) Period: "." # 35..36
-                      - (postfix_operator:) MemberAccess: # 36..42 "decode"
+                      - (period:) Period: "." # 35..36
+                      - (member:) MemberAccess: # 36..42 "decode"
                           - (variant:) Identifier: "decode" # 36..42
-              - (postfix_operator:) ArgumentsDeclaration: # 42..68 "(data, (uint32, uint32[]))"
+              - (arguments:) ArgumentsDeclaration: # 42..68 "(data, (uint32, uint32[]))"
                   - (variant:) PositionalArgumentsDeclaration: # 42..68 "(data, (uint32, uint32[]))"
                       - (open_paren:) OpenParen: "(" # 42..43
                       - (arguments:) PositionalArguments: # 43..67 "data, (uint32, uint32[])"
@@ -63,8 +63,8 @@ Tree:
                                                   - (operand:) Expression: # 57..64 " uint32"
                                                       - ElementaryType: # 57..64 " uint32"
                                                           - (variant:) UintKeyword: "uint32" # 58..64
-                                                  - (postfix_operator:) OpenBracket: "[" # 64..65
-                                                  - (postfix_operator:) CloseBracket: "]" # 65..66
+                                                  - (open_bracket:) OpenBracket: "[" # 64..65
+                                                  - (close_bracket:) CloseBracket: "]" # 65..66
                                   - (close_paren:) CloseParen: ")" # 66..67
                       - (close_paren:) CloseParen: ")" # 67..68
       - (semicolon:) Semicolon: ";" # 68..69

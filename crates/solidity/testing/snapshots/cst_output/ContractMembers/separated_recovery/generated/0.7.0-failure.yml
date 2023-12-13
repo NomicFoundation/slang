@@ -146,24 +146,24 @@ Tree:
                                   - (expression:) Expression: # 86..121 "  msg.sender.call{do: 1, arg: 1 }()"
                                       - (variant:) FunctionCallExpression: # 86..121 "  msg.sender.call{do: 1, arg: 1 }()"
                                           - (operand:) Expression: # 86..103 "  msg.sender.call"
-                                              - (exprrrrr:) MemberAccessExpression: # 86..103 "  msg.sender.call"
+                                              - (variant:) MemberAccessExpression: # 86..103 "  msg.sender.call"
                                                   - (operand:) Expression: # 86..98 "  msg.sender"
-                                                      - (exprrrrr:) MemberAccessExpression: # 86..98 "  msg.sender"
+                                                      - (variant:) MemberAccessExpression: # 86..98 "  msg.sender"
                                                           - (operand:) Expression: # 86..91 "  msg"
                                                               - Identifier: "msg" # 88..91
-                                                          - (postfix_operator:) Period: "." # 91..92
-                                                          - (postfix_operator:) MemberAccess: # 92..98 "sender"
+                                                          - (period:) Period: "." # 91..92
+                                                          - (member:) MemberAccess: # 92..98 "sender"
                                                               - (variant:) Identifier: "sender" # 92..98
-                                                  - (postfix_operator:) Period: "." # 98..99
-                                                  - (postfix_operator:) MemberAccess: # 99..103 "call"
+                                                  - (period:) Period: "." # 98..99
+                                                  - (member:) MemberAccess: # 99..103 "call"
                                                       - (variant:) Identifier: "call" # 99..103
-                                          - (postfix_operator:) FunctionCallOptions: # 103..119 "{do: 1, arg: 1 }"
+                                          - (options:) FunctionCallOptions: # 103..119 "{do: 1, arg: 1 }"
                                               - (variant:) NamedArgumentGroups: # 103..119 "{do: 1, arg: 1 }"
                                                   - NamedArgumentGroup: # 103..119 "{do: 1, arg: 1 }"
                                                       - (open_brace:) OpenBrace: "{" # 103..104
                                                       - SKIPPED: "do: 1, arg: 1 " # 104..118
                                                       - (close_brace:) CloseBrace: "}" # 118..119
-                                          - (postfix_operator:) ArgumentsDeclaration: # 119..121 "()"
+                                          - (arguments:) ArgumentsDeclaration: # 119..121 "()"
                                               - (variant:) PositionalArgumentsDeclaration: # 119..121 "()"
                                                   - (open_paren:) OpenParen: "(" # 119..120
                                                   - (close_paren:) CloseParen: ")" # 120..121
@@ -173,24 +173,24 @@ Tree:
                                   - (expression:) Expression: # 123..165 "  msg.sender.call{, empty: 1, parse: 2 }()"
                                       - (variant:) FunctionCallExpression: # 123..165 "  msg.sender.call{, empty: 1, parse: 2 }()"
                                           - (operand:) Expression: # 123..140 "  msg.sender.call"
-                                              - (exprrrrr:) MemberAccessExpression: # 123..140 "  msg.sender.call"
+                                              - (variant:) MemberAccessExpression: # 123..140 "  msg.sender.call"
                                                   - (operand:) Expression: # 123..135 "  msg.sender"
-                                                      - (exprrrrr:) MemberAccessExpression: # 123..135 "  msg.sender"
+                                                      - (variant:) MemberAccessExpression: # 123..135 "  msg.sender"
                                                           - (operand:) Expression: # 123..128 "  msg"
                                                               - Identifier: "msg" # 125..128
-                                                          - (postfix_operator:) Period: "." # 128..129
-                                                          - (postfix_operator:) MemberAccess: # 129..135 "sender"
+                                                          - (period:) Period: "." # 128..129
+                                                          - (member:) MemberAccess: # 129..135 "sender"
                                                               - (variant:) Identifier: "sender" # 129..135
-                                                  - (postfix_operator:) Period: "." # 135..136
-                                                  - (postfix_operator:) MemberAccess: # 136..140 "call"
+                                                  - (period:) Period: "." # 135..136
+                                                  - (member:) MemberAccess: # 136..140 "call"
                                                       - (variant:) Identifier: "call" # 136..140
-                                          - (postfix_operator:) FunctionCallOptions: # 140..163 "{, empty: 1, parse: 2 }"
+                                          - (options:) FunctionCallOptions: # 140..163 "{, empty: 1, parse: 2 }"
                                               - (variant:) NamedArgumentGroups: # 140..163 "{, empty: 1, parse: 2 }"
                                                   - NamedArgumentGroup: # 140..163 "{, empty: 1, parse: 2 }"
                                                       - (open_brace:) OpenBrace: "{" # 140..141
                                                       - SKIPPED: ", empty: 1, parse: 2 " # 141..162
                                                       - (close_brace:) CloseBrace: "}" # 162..163
-                                          - (postfix_operator:) ArgumentsDeclaration: # 163..165 "()"
+                                          - (arguments:) ArgumentsDeclaration: # 163..165 "()"
                                               - (variant:) PositionalArgumentsDeclaration: # 163..165 "()"
                                                   - (open_paren:) OpenParen: "(" # 163..164
                                                   - (close_paren:) CloseParen: ")" # 164..165
@@ -200,18 +200,18 @@ Tree:
                                   - (expression:) Expression: # 167..228 "  msg.sender.call{arg: 1, missing_expr: , no_semic..."
                                       - (variant:) FunctionCallExpression: # 167..228 "  msg.sender.call{arg: 1, missing_expr: , no_semic..."
                                           - (operand:) Expression: # 167..184 "  msg.sender.call"
-                                              - (exprrrrr:) MemberAccessExpression: # 167..184 "  msg.sender.call"
+                                              - (variant:) MemberAccessExpression: # 167..184 "  msg.sender.call"
                                                   - (operand:) Expression: # 167..179 "  msg.sender"
-                                                      - (exprrrrr:) MemberAccessExpression: # 167..179 "  msg.sender"
+                                                      - (variant:) MemberAccessExpression: # 167..179 "  msg.sender"
                                                           - (operand:) Expression: # 167..172 "  msg"
                                                               - Identifier: "msg" # 169..172
-                                                          - (postfix_operator:) Period: "." # 172..173
-                                                          - (postfix_operator:) MemberAccess: # 173..179 "sender"
+                                                          - (period:) Period: "." # 172..173
+                                                          - (member:) MemberAccess: # 173..179 "sender"
                                                               - (variant:) Identifier: "sender" # 173..179
-                                                  - (postfix_operator:) Period: "." # 179..180
-                                                  - (postfix_operator:) MemberAccess: # 180..184 "call"
+                                                  - (period:) Period: "." # 179..180
+                                                  - (member:) MemberAccess: # 180..184 "call"
                                                       - (variant:) Identifier: "call" # 180..184
-                                          - (postfix_operator:) FunctionCallOptions: # 184..226 "{arg: 1, missing_expr: , no_semicolon, , }"
+                                          - (options:) FunctionCallOptions: # 184..226 "{arg: 1, missing_expr: , no_semicolon, , }"
                                               - (variant:) NamedArgumentGroups: # 184..226 "{arg: 1, missing_expr: , no_semicolon, , }"
                                                   - NamedArgumentGroup: # 184..226 "{arg: 1, missing_expr: , no_semicolon, , }"
                                                       - (open_brace:) OpenBrace: "{" # 184..185
@@ -234,7 +234,7 @@ Tree:
                                                           - Comma: "," # 221..222
                                                       - SKIPPED: ", " # 223..225
                                                       - (close_brace:) CloseBrace: "}" # 225..226
-                                          - (postfix_operator:) ArgumentsDeclaration: # 226..228 "()"
+                                          - (arguments:) ArgumentsDeclaration: # 226..228 "()"
                                               - (variant:) PositionalArgumentsDeclaration: # 226..228 "()"
                                                   - (open_paren:) OpenParen: "(" # 226..227
                                                   - (close_paren:) CloseParen: ")" # 227..228
@@ -244,18 +244,18 @@ Tree:
                                   - (expression:) Expression: # 230..304 "  msg.sender.call{arg: 1 unexpected tokens, not: 2..."
                                       - (variant:) FunctionCallExpression: # 230..304 "  msg.sender.call{arg: 1 unexpected tokens, not: 2..."
                                           - (operand:) Expression: # 230..247 "  msg.sender.call"
-                                              - (exprrrrr:) MemberAccessExpression: # 230..247 "  msg.sender.call"
+                                              - (variant:) MemberAccessExpression: # 230..247 "  msg.sender.call"
                                                   - (operand:) Expression: # 230..242 "  msg.sender"
-                                                      - (exprrrrr:) MemberAccessExpression: # 230..242 "  msg.sender"
+                                                      - (variant:) MemberAccessExpression: # 230..242 "  msg.sender"
                                                           - (operand:) Expression: # 230..235 "  msg"
                                                               - Identifier: "msg" # 232..235
-                                                          - (postfix_operator:) Period: "." # 235..236
-                                                          - (postfix_operator:) MemberAccess: # 236..242 "sender"
+                                                          - (period:) Period: "." # 235..236
+                                                          - (member:) MemberAccess: # 236..242 "sender"
                                                               - (variant:) Identifier: "sender" # 236..242
-                                                  - (postfix_operator:) Period: "." # 242..243
-                                                  - (postfix_operator:) MemberAccess: # 243..247 "call"
+                                                  - (period:) Period: "." # 242..243
+                                                  - (member:) MemberAccess: # 243..247 "call"
                                                       - (variant:) Identifier: "call" # 243..247
-                                          - (postfix_operator:) FunctionCallOptions: # 247..302 "{arg: 1 unexpected tokens, not: 2, recovered, yet:..."
+                                          - (options:) FunctionCallOptions: # 247..302 "{arg: 1 unexpected tokens, not: 2, recovered, yet:..."
                                               - (variant:) NamedArgumentGroups: # 247..302 "{arg: 1 unexpected tokens, not: 2, recovered, yet:..."
                                                   - NamedArgumentGroup: # 247..302 "{arg: 1 unexpected tokens, not: 2, recovered, yet:..."
                                                       - (open_brace:) OpenBrace: "{" # 247..248
@@ -268,7 +268,7 @@ Tree:
                                                                       - (literal:) DecimalLiteral: "1" # 253..254
                                                       - SKIPPED: "unexpected tokens, not: 2, recovered, yet: 3, " # 255..301
                                                       - (close_brace:) CloseBrace: "}" # 301..302
-                                          - (postfix_operator:) ArgumentsDeclaration: # 302..304 "()"
+                                          - (arguments:) ArgumentsDeclaration: # 302..304 "()"
                                               - (variant:) PositionalArgumentsDeclaration: # 302..304 "()"
                                                   - (open_paren:) OpenParen: "(" # 302..303
                                                   - (close_paren:) CloseParen: ")" # 303..304

@@ -141,18 +141,18 @@ pub enum PrattElement {
     },
     Prefix {
         kind: RuleKind,
-        nodes: Vec<cst::Node>,
+        nodes: Vec<cst::NamedNode>,
         right: u8,
     },
     Binary {
         kind: RuleKind,
-        nodes: Vec<cst::Node>,
+        nodes: Vec<cst::NamedNode>,
         left: u8,
         right: u8,
     },
     Postfix {
         kind: RuleKind,
-        nodes: Vec<cst::Node>,
+        nodes: Vec<cst::NamedNode>,
         left: u8,
     },
 }
@@ -164,16 +164,7 @@ impl PrattElement {
             Self::Binary { kind, nodes, .. }
             | Self::Prefix { kind, nodes, .. }
             | Self::Postfix { kind, nodes, .. } => {
-                vec![(
-                    String::from("TODO-pratt"),
-                    cst::Node::rule(
-                        kind,
-                        nodes
-                            .into_iter()
-                            .map(|n| (String::from("TODO-pratt"), n))
-                            .collect(),
-                    ),
-                )]
+                vec![(String::new(), cst::Node::rule(kind, nodes))]
             }
         }
     }

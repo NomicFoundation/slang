@@ -9,7 +9,7 @@ impl PrecedenceHelper {
     pub fn to_prefix_operator(kind: RuleKind, right: u8, result: ParserResult) -> ParserResult {
         match result {
             ParserResult::Match(r#match) => ParserResult::pratt_operator_match(vec![Prefix {
-                nodes: r#match.nodes.into_iter().map(|(_, node)| node).collect(),
+                nodes: r#match.nodes,
                 kind,
                 right,
             }]),
@@ -23,7 +23,7 @@ impl PrecedenceHelper {
     pub fn to_postfix_operator(kind: RuleKind, left: u8, result: ParserResult) -> ParserResult {
         match result {
             ParserResult::Match(r#match) => ParserResult::pratt_operator_match(vec![Postfix {
-                nodes: r#match.nodes.into_iter().map(|(_, node)| node).collect(),
+                nodes: r#match.nodes,
                 kind,
                 left,
             }]),
@@ -42,7 +42,7 @@ impl PrecedenceHelper {
     ) -> ParserResult {
         match result {
             ParserResult::Match(r#match) => ParserResult::pratt_operator_match(vec![Binary {
-                nodes: r#match.nodes.into_iter().map(|(_, node)| node).collect(),
+                nodes: r#match.nodes,
                 kind,
                 left,
                 right,
@@ -148,16 +148,15 @@ impl PrecedenceHelper {
 
             let make_expression = |left: Option<PrattElement>,
                                    kind: RuleKind,
-                                   nodes: Vec<cst::Node>,
+                                   nodes: Vec<cst::NamedNode>,
                                    right: Option<PrattElement>| {
-                // TODO: Use proper names from the definition
-                let &[left_name, middle, right_name] = match (&left, &right) {
+                let &[left_name, right_name] = match (&left, &right) {
                     // Binary
-                    (Some(_), Some(_)) => &["left_operand", "operator", "right_operand"],
+                    (Some(_), Some(_)) => &["left_operand", "right_operand"],
                     // Postfix
-                    (Some(_), None) => &["operand", "postfix_operator", "<unreachable>"],
+                    (Some(_), None) => &["operand", /* unreachable */ "!"],
                     // Prefix
-                    (None, Some(_)) => &["<unreachable>", "prefix_operator", "operand"],
+                    (None, Some(_)) => &[/* unreachable */ "!", "operand"],
                     (None, None) => unreachable!("Expected at least one operand"),
                 };
 
@@ -177,11 +176,7 @@ impl PrecedenceHelper {
                     _ => unreachable!("Operator not followed by expression"),
                 };
 
-                let mut children =
-                    Vec::with_capacity(left_nodes.len() + nodes.len() + right_nodes.len());
-                children.extend(left_nodes);
-                children.extend(nodes.into_iter().map(|node| (middle.to_owned(), node)));
-                children.extend(right_nodes);
+                let children = [left_nodes, nodes, right_nodes].concat();
 
                 Expression {
                     nodes: vec![("variant".into(), cst::Node::rule(kind, children))],

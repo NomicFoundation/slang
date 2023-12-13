@@ -11,11 +11,11 @@ Tree:
       - (type_name:) TypeName: # 3..11 " Foo[][]"
           - (variant:) ArrayTypeName: # 3..11 " Foo[][]"
               - (operand:) TypeName: # 3..9 " Foo[]"
-                  - (exprrrrr:) ArrayTypeName: # 3..9 " Foo[]"
+                  - (variant:) ArrayTypeName: # 3..9 " Foo[]"
                       - (operand:) TypeName: # 3..7 " Foo"
                           - IdentifierPath: # 3..7 " Foo"
                               - Identifier: "Foo" # 4..7
-                      - (postfix_operator:) OpenBracket: "[" # 7..8
-                      - (postfix_operator:) CloseBracket: "]" # 8..9
-              - (postfix_operator:) OpenBracket: "[" # 9..10
-              - (postfix_operator:) CloseBracket: "]" # 10..11
+                      - (open_bracket:) OpenBracket: "[" # 7..8
+                      - (close_bracket:) CloseBracket: "]" # 8..9
+              - (open_bracket:) OpenBracket: "[" # 9..10
+              - (close_bracket:) CloseBracket: "]" # 10..11

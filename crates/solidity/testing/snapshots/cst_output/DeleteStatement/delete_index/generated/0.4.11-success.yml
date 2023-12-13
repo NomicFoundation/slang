@@ -12,8 +12,8 @@ Tree:
           - (variant:) IndexAccessExpression: # 6..15 " foo[bar]"
               - (operand:) Expression: # 6..10 " foo"
                   - Identifier: "foo" # 7..10
-              - (postfix_operator:) OpenBracket: "[" # 10..11
-              - (postfix_operator:) Expression: # 11..14 "bar"
+              - (open_bracket:) OpenBracket: "[" # 10..11
+              - (body:) Expression: # 11..14 "bar"
                   - Identifier: "bar" # 11..14
-              - (postfix_operator:) CloseBracket: "]" # 14..15
+              - (close_bracket:) CloseBracket: "]" # 14..15
       - (semicolon:) Semicolon: ";" # 15..16

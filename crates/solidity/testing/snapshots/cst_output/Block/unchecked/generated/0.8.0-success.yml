@@ -21,7 +21,7 @@ Tree:
                                       - (variant:) AssignmentExpression: # 13..19 " x = 1"
                                           - (left_operand:) Expression: # 13..15 " x"
                                               - Identifier: "x" # 14..15
-                                          - (operator:) Equal: "=" # 16..17
+                                          - (variant:) Equal: "=" # 16..17
                                           - (right_operand:) Expression: # 17..19 " 1"
                                               - DecimalNumberExpression: # 17..19 " 1"
                                                   - (literal:) DecimalLiteral: "1" # 18..19

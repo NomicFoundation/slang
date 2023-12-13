@@ -10,7 +10,7 @@ Tree:
       - (variant:) FunctionCallExpression: # 0..7 "x(1, 2)"
           - (operand:) Expression: # 0..1 "x"
               - Identifier: "x" # 0..1
-          - (postfix_operator:) ArgumentsDeclaration: # 1..7 "(1, 2)"
+          - (arguments:) ArgumentsDeclaration: # 1..7 "(1, 2)"
               - (variant:) PositionalArgumentsDeclaration: # 1..7 "(1, 2)"
                   - (open_paren:) OpenParen: "(" # 1..2
                   - (arguments:) PositionalArguments: # 2..6 "1, 2"

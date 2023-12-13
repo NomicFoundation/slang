@@ -12,8 +12,8 @@ Tree:
           - VersionPragmaExpression: # 8..30 " ^1.0.0 || 2.0.0-3.0.0"
               - (variant:) VersionPragmaOrExpression: # 8..30 " ^1.0.0 || 2.0.0-3.0.0"
                   - (left_operand:) VersionPragmaExpression: # 8..15 " ^1.0.0"
-                      - (exprrrrr:) VersionPragmaPrefixExpression: # 8..15 " ^1.0.0"
-                          - (prefix_operator:) Caret: "^" # 9..10
+                      - (variant:) VersionPragmaPrefixExpression: # 8..15 " ^1.0.0"
+                          - (variant:) Caret: "^" # 9..10
                           - (operand:) VersionPragmaExpression: # 10..15 "1.0.0"
                               - VersionPragmaSpecifier: # 10..15 "1.0.0"
                                   - VersionPragmaValue: "1" # 10..11
@@ -21,9 +21,9 @@ Tree:
                                   - VersionPragmaValue: "0" # 12..13
                                   - Period: "." # 13..14
                                   - VersionPragmaValue: "0" # 14..15
-                  - (operator:) BarBar: "||" # 16..18
+                  - BarBar: "||" # 16..18
                   - (right_operand:) VersionPragmaExpression: # 18..30 " 2.0.0-3.0.0"
-                      - (exprrrrr:) VersionPragmaRangeExpression: # 18..30 " 2.0.0-3.0.0"
+                      - (variant:) VersionPragmaRangeExpression: # 18..30 " 2.0.0-3.0.0"
                           - (left_operand:) VersionPragmaExpression: # 18..24 " 2.0.0"
                               - VersionPragmaSpecifier: # 18..24 " 2.0.0"
                                   - VersionPragmaValue: "2" # 19..20
@@ -31,7 +31,7 @@ Tree:
                                   - VersionPragmaValue: "0" # 21..22
                                   - Period: "." # 22..23
                                   - VersionPragmaValue: "0" # 23..24
-                          - (operator:) Minus: "-" # 24..25
+                          - Minus: "-" # 24..25
                           - (right_operand:) VersionPragmaExpression: # 25..30 "3.0.0"
                               - VersionPragmaSpecifier: # 25..30 "3.0.0"
                                   - VersionPragmaValue: "3" # 25..26

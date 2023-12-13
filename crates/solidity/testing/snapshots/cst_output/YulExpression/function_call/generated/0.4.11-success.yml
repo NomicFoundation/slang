@@ -11,9 +11,9 @@ Tree:
           - (operand:) YulExpression: # 0..3 "foo"
               - YulIdentifierPath: # 0..3 "foo"
                   - YulIdentifier: "foo" # 0..3
-          - (postfix_operator:) OpenParen: "(" # 3..4
-          - (postfix_operator:) YulArguments: # 4..5 "1"
+          - (open_paren:) OpenParen: "(" # 3..4
+          - (arguments:) YulArguments: # 4..5 "1"
               - YulExpression: # 4..5 "1"
                   - YulLiteral: # 4..5 "1"
                       - (variant:) YulDecimalLiteral: "1" # 4..5
-          - (postfix_operator:) CloseParen: ")" # 5..6
+          - (close_paren:) CloseParen: ")" # 5..6

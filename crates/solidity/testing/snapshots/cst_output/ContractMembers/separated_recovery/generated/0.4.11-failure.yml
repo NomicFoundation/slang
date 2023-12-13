@@ -119,8 +119,8 @@ Tree:
                                           - (variant:) MemberAccessExpression: # 24..34 "some.ident"
                                               - (operand:) Expression: # 24..28 "some"
                                                   - Identifier: "some" # 24..28
-                                              - (postfix_operator:) Period: "." # 28..29
-                                              - (postfix_operator:) MemberAccess: # 29..34 "ident"
+                                              - (period:) Period: "." # 28..29
+                                              - (member:) MemberAccess: # 29..34 "ident"
                                                   - (variant:) Identifier: "ident" # 29..34
                                   - SKIPPED: "unexpected tokens, ISomeInterface, Other" # 35..75
                                   - (close_paren:) CloseParen: ")" # 75..76
@@ -135,14 +135,14 @@ Tree:
                                   - Expression: # 86..103 "  msg.sender.call"
                                       - (variant:) MemberAccessExpression: # 86..103 "  msg.sender.call"
                                           - (operand:) Expression: # 86..98 "  msg.sender"
-                                              - (exprrrrr:) MemberAccessExpression: # 86..98 "  msg.sender"
+                                              - (variant:) MemberAccessExpression: # 86..98 "  msg.sender"
                                                   - (operand:) Expression: # 86..91 "  msg"
                                                       - Identifier: "msg" # 88..91
-                                                  - (postfix_operator:) Period: "." # 91..92
-                                                  - (postfix_operator:) MemberAccess: # 92..98 "sender"
+                                                  - (period:) Period: "." # 91..92
+                                                  - (member:) MemberAccess: # 92..98 "sender"
                                                       - (variant:) Identifier: "sender" # 92..98
-                                          - (postfix_operator:) Period: "." # 98..99
-                                          - (postfix_operator:) MemberAccess: # 99..103 "call"
+                                          - (period:) Period: "." # 98..99
+                                          - (member:) MemberAccess: # 99..103 "call"
                                               - (variant:) Identifier: "call" # 99..103
                                   - SKIPPED: "{do: 1, arg: 1 }()" # 103..121
                                   - (semicolon:) Semicolon: ";" # 121..122
@@ -151,14 +151,14 @@ Tree:
                                   - Expression: # 123..140 "  msg.sender.call"
                                       - (variant:) MemberAccessExpression: # 123..140 "  msg.sender.call"
                                           - (operand:) Expression: # 123..135 "  msg.sender"
-                                              - (exprrrrr:) MemberAccessExpression: # 123..135 "  msg.sender"
+                                              - (variant:) MemberAccessExpression: # 123..135 "  msg.sender"
                                                   - (operand:) Expression: # 123..128 "  msg"
                                                       - Identifier: "msg" # 125..128
-                                                  - (postfix_operator:) Period: "." # 128..129
-                                                  - (postfix_operator:) MemberAccess: # 129..135 "sender"
+                                                  - (period:) Period: "." # 128..129
+                                                  - (member:) MemberAccess: # 129..135 "sender"
                                                       - (variant:) Identifier: "sender" # 129..135
-                                          - (postfix_operator:) Period: "." # 135..136
-                                          - (postfix_operator:) MemberAccess: # 136..140 "call"
+                                          - (period:) Period: "." # 135..136
+                                          - (member:) MemberAccess: # 136..140 "call"
                                               - (variant:) Identifier: "call" # 136..140
                                   - SKIPPED: "{, empty: 1, parse: 2 }()" # 140..165
                                   - (semicolon:) Semicolon: ";" # 165..166
@@ -167,14 +167,14 @@ Tree:
                                   - Expression: # 167..184 "  msg.sender.call"
                                       - (variant:) MemberAccessExpression: # 167..184 "  msg.sender.call"
                                           - (operand:) Expression: # 167..179 "  msg.sender"
-                                              - (exprrrrr:) MemberAccessExpression: # 167..179 "  msg.sender"
+                                              - (variant:) MemberAccessExpression: # 167..179 "  msg.sender"
                                                   - (operand:) Expression: # 167..172 "  msg"
                                                       - Identifier: "msg" # 169..172
-                                                  - (postfix_operator:) Period: "." # 172..173
-                                                  - (postfix_operator:) MemberAccess: # 173..179 "sender"
+                                                  - (period:) Period: "." # 172..173
+                                                  - (member:) MemberAccess: # 173..179 "sender"
                                                       - (variant:) Identifier: "sender" # 173..179
-                                          - (postfix_operator:) Period: "." # 179..180
-                                          - (postfix_operator:) MemberAccess: # 180..184 "call"
+                                          - (period:) Period: "." # 179..180
+                                          - (member:) MemberAccess: # 180..184 "call"
                                               - (variant:) Identifier: "call" # 180..184
                                   - SKIPPED: "{arg: 1, missing_expr: , no_semicolon, , }()" # 184..228
                                   - (semicolon:) Semicolon: ";" # 228..229
@@ -183,14 +183,14 @@ Tree:
                                   - Expression: # 230..247 "  msg.sender.call"
                                       - (variant:) MemberAccessExpression: # 230..247 "  msg.sender.call"
                                           - (operand:) Expression: # 230..242 "  msg.sender"
-                                              - (exprrrrr:) MemberAccessExpression: # 230..242 "  msg.sender"
+                                              - (variant:) MemberAccessExpression: # 230..242 "  msg.sender"
                                                   - (operand:) Expression: # 230..235 "  msg"
                                                       - Identifier: "msg" # 232..235
-                                                  - (postfix_operator:) Period: "." # 235..236
-                                                  - (postfix_operator:) MemberAccess: # 236..242 "sender"
+                                                  - (period:) Period: "." # 235..236
+                                                  - (member:) MemberAccess: # 236..242 "sender"
                                                       - (variant:) Identifier: "sender" # 236..242
-                                          - (postfix_operator:) Period: "." # 242..243
-                                          - (postfix_operator:) MemberAccess: # 243..247 "call"
+                                          - (period:) Period: "." # 242..243
+                                          - (member:) MemberAccess: # 243..247 "call"
                                               - (variant:) Identifier: "call" # 243..247
                                   - SKIPPED: "{arg: 1 unexpected tokens, not: 2, recovered, yet:..." # 247..304
                                   - (semicolon:) Semicolon: ";" # 304..305
@@ -216,8 +216,8 @@ Tree:
                                           - (variant:) MemberAccessExpression: # 336..346 "some.ident"
                                               - (operand:) Expression: # 336..340 "some"
                                                   - Identifier: "some" # 336..340
-                                              - (postfix_operator:) Period: "." # 340..341
-                                              - (postfix_operator:) MemberAccess: # 341..346 "ident"
+                                              - (period:) Period: "." # 340..341
+                                              - (member:) MemberAccess: # 341..346 "ident"
                                                   - (variant:) Identifier: "ident" # 341..346
                                       - Comma: "," # 346..347
                                   - LeadingTrivia: # 347..359 " /* empty */"
@@ -247,8 +247,8 @@ Tree:
                                           - (variant:) MemberAccessExpression: # 422..432 "some.ident"
                                               - (operand:) Expression: # 422..426 "some"
                                                   - Identifier: "some" # 422..426
-                                              - (postfix_operator:) Period: "." # 426..427
-                                              - (postfix_operator:) MemberAccess: # 427..432 "ident"
+                                              - (period:) Period: "." # 426..427
+                                              - (member:) MemberAccess: # 427..432 "ident"
                                                   - (variant:) Identifier: "ident" # 427..432
                                       - Comma: "," # 432..433
                                       - Expression: # 433..439 " next."
@@ -265,8 +265,8 @@ Tree:
                                           - (variant:) MemberAccessExpression: # 460..469 " next.one"
                                               - (operand:) Expression: # 460..465 " next"
                                                   - Identifier: "next" # 461..465
-                                              - (postfix_operator:) Period: "." # 465..466
-                                              - (postfix_operator:) MemberAccess: # 466..469 "one"
+                                              - (period:) Period: "." # 465..466
+                                              - (member:) MemberAccess: # 466..469 "one"
                                                   - (variant:) Identifier: "one" # 466..469
                                       - Comma: "," # 469..470
                                   - SKIPPED: "final, ultimate" # 471..486
@@ -299,16 +299,16 @@ Tree:
                                           - (variant:) MemberAccessExpression: # 528..537 " next.arg"
                                               - (operand:) Expression: # 528..533 " next"
                                                   - Identifier: "next" # 529..533
-                                              - (postfix_operator:) Period: "." # 533..534
-                                              - (postfix_operator:) MemberAccess: # 534..537 "arg"
+                                              - (period:) Period: "." # 533..534
+                                              - (member:) MemberAccess: # 534..537 "arg"
                                                   - (variant:) Identifier: "arg" # 534..537
                                       - Comma: "," # 537..538
                                       - Expression: # 538..547 " next.one"
                                           - (variant:) MemberAccessExpression: # 538..547 " next.one"
                                               - (operand:) Expression: # 538..543 " next"
                                                   - Identifier: "next" # 539..543
-                                              - (postfix_operator:) Period: "." # 543..544
-                                              - (postfix_operator:) MemberAccess: # 544..547 "one"
+                                              - (period:) Period: "." # 543..544
+                                              - (member:) MemberAccess: # 544..547 "one"
                                                   - (variant:) Identifier: "one" # 544..547
                                       - Comma: "," # 547..548
                                       - Expression: # 548..557 " ultimate"

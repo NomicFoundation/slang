@@ -12,7 +12,7 @@ Tree:
               - ElementaryType: # 0..7 "address"
                   - (variant:) AddressType: # 0..7 "address"
                       - (address_keyword:) AddressKeyword: "address" # 0..7
-          - (postfix_operator:) ArgumentsDeclaration: # 7..14 "(value)"
+          - (arguments:) ArgumentsDeclaration: # 7..14 "(value)"
               - (variant:) PositionalArgumentsDeclaration: # 7..14 "(value)"
                   - (open_paren:) OpenParen: "(" # 7..8
                   - (arguments:) PositionalArguments: # 8..13 "value"

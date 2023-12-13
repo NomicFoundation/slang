@@ -29,13 +29,13 @@ Tree:
       - (expression:) Expression: # 22..57 " abi.decode(data, (uint32, uint32))"
           - (variant:) FunctionCallExpression: # 22..57 " abi.decode(data, (uint32, uint32))"
               - (operand:) Expression: # 22..33 " abi.decode"
-                  - (exprrrrr:) MemberAccessExpression: # 22..33 " abi.decode"
+                  - (variant:) MemberAccessExpression: # 22..33 " abi.decode"
                       - (operand:) Expression: # 22..26 " abi"
                           - Identifier: "abi" # 23..26
-                      - (postfix_operator:) Period: "." # 26..27
-                      - (postfix_operator:) MemberAccess: # 27..33 "decode"
+                      - (period:) Period: "." # 26..27
+                      - (member:) MemberAccess: # 27..33 "decode"
                           - (variant:) Identifier: "decode" # 27..33
-              - (postfix_operator:) ArgumentsDeclaration: # 33..57 "(data, (uint32, uint32))"
+              - (arguments:) ArgumentsDeclaration: # 33..57 "(data, (uint32, uint32))"
                   - (variant:) PositionalArgumentsDeclaration: # 33..57 "(data, (uint32, uint32))"
                       - (open_paren:) OpenParen: "(" # 33..34
                       - (arguments:) PositionalArguments: # 34..56 "data, (uint32, uint32)"

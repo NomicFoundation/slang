@@ -13,8 +13,8 @@ Tree:
               - (operand:) TypeName: # 3..7 " Foo"
                   - IdentifierPath: # 3..7 " Foo"
                       - Identifier: "Foo" # 4..7
-              - (postfix_operator:) OpenBracket: "[" # 7..8
-              - (postfix_operator:) Expression: # 8..10 "10"
+              - (open_bracket:) OpenBracket: "[" # 7..8
+              - (index:) Expression: # 8..10 "10"
                   - DecimalNumberExpression: # 8..10 "10"
                       - (literal:) DecimalLiteral: "10" # 8..10
-              - (postfix_operator:) CloseBracket: "]" # 10..11
+              - (close_bracket:) CloseBracket: "]" # 10..11

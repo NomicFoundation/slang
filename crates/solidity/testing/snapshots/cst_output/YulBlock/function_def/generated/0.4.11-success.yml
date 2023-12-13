@@ -42,8 +42,8 @@ Tree:
                                           - (operand:) YulExpression: # 46..50 " mul"
                                               - YulIdentifierPath: # 46..50 " mul"
                                                   - YulIdentifier: "mul" # 47..50
-                                          - (postfix_operator:) OpenParen: "(" # 50..51
-                                          - (postfix_operator:) YulArguments: # 51..55 "a, b"
+                                          - (open_paren:) OpenParen: "(" # 50..51
+                                          - (arguments:) YulArguments: # 51..55 "a, b"
                                               - YulExpression: # 51..52 "a"
                                                   - YulIdentifierPath: # 51..52 "a"
                                                       - YulIdentifier: "a" # 51..52
@@ -51,6 +51,6 @@ Tree:
                                               - YulExpression: # 53..55 " b"
                                                   - YulIdentifierPath: # 53..55 " b"
                                                       - YulIdentifier: "b" # 54..55
-                                          - (postfix_operator:) CloseParen: ")" # 55..56
+                                          - (close_paren:) CloseParen: ")" # 55..56
                       - (close_brace:) CloseBrace: "}" # 58..59
       - (close_brace:) CloseBrace: "}" # 60..61

@@ -9,13 +9,13 @@ Tree:
   - Expression: # 0..25 'a.b{value: 0}{gas: 1}("")'
       - (variant:) FunctionCallExpression: # 0..25 'a.b{value: 0}{gas: 1}("")'
           - (operand:) Expression: # 0..3 "a.b"
-              - (exprrrrr:) MemberAccessExpression: # 0..3 "a.b"
+              - (variant:) MemberAccessExpression: # 0..3 "a.b"
                   - (operand:) Expression: # 0..1 "a"
                       - Identifier: "a" # 0..1
-                  - (postfix_operator:) Period: "." # 1..2
-                  - (postfix_operator:) MemberAccess: # 2..3 "b"
+                  - (period:) Period: "." # 1..2
+                  - (member:) MemberAccess: # 2..3 "b"
                       - (variant:) Identifier: "b" # 2..3
-          - (postfix_operator:) FunctionCallOptions: # 3..21 "{value: 0}{gas: 1}"
+          - (options:) FunctionCallOptions: # 3..21 "{value: 0}{gas: 1}"
               - (variant:) NamedArgumentGroups: # 3..21 "{value: 0}{gas: 1}"
                   - NamedArgumentGroup: # 3..13 "{value: 0}"
                       - (open_brace:) OpenBrace: "{" # 3..4
@@ -37,7 +37,7 @@ Tree:
                                   - DecimalNumberExpression: # 18..20 " 1"
                                       - (literal:) DecimalLiteral: "1" # 19..20
                       - (close_brace:) CloseBrace: "}" # 20..21
-          - (postfix_operator:) ArgumentsDeclaration: # 21..25 '("")'
+          - (arguments:) ArgumentsDeclaration: # 21..25 '("")'
               - (variant:) PositionalArgumentsDeclaration: # 21..25 '("")'
                   - (open_paren:) OpenParen: "(" # 21..22
                   - (arguments:) PositionalArguments: # 22..24 '""'

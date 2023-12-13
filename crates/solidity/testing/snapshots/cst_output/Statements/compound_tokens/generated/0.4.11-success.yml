@@ -25,7 +25,7 @@ Tree:
                   - (variant:) AndExpression: # 0..6 "a && b"
                       - (left_operand:) Expression: # 0..1 "a"
                           - Identifier: "a" # 0..1
-                      - (operator:) AmpersandAmpersand: "&&" # 2..4
+                      - AmpersandAmpersand: "&&" # 2..4
                       - (right_operand:) Expression: # 4..6 " b"
                           - Identifier: "b" # 5..6
               - (semicolon:) Semicolon: ";" # 6..7
@@ -35,7 +35,7 @@ Tree:
                   - (variant:) AssignmentExpression: # 8..14 "a &= b"
                       - (left_operand:) Expression: # 8..9 "a"
                           - Identifier: "a" # 8..9
-                      - (operator:) AmpersandEqual: "&=" # 10..12
+                      - (variant:) AmpersandEqual: "&=" # 10..12
                       - (right_operand:) Expression: # 12..14 " b"
                           - Identifier: "b" # 13..14
               - (semicolon:) Semicolon: ";" # 14..15
@@ -45,7 +45,7 @@ Tree:
                   - (variant:) OrExpression: # 16..22 "a || b"
                       - (left_operand:) Expression: # 16..17 "a"
                           - Identifier: "a" # 16..17
-                      - (operator:) BarBar: "||" # 18..20
+                      - BarBar: "||" # 18..20
                       - (right_operand:) Expression: # 20..22 " b"
                           - Identifier: "b" # 21..22
               - (semicolon:) Semicolon: ";" # 22..23
@@ -55,7 +55,7 @@ Tree:
                   - (variant:) AssignmentExpression: # 24..30 "a |= b"
                       - (left_operand:) Expression: # 24..25 "a"
                           - Identifier: "a" # 24..25
-                      - (operator:) BarEqual: "|=" # 26..28
+                      - (variant:) BarEqual: "|=" # 26..28
                       - (right_operand:) Expression: # 28..30 " b"
                           - Identifier: "b" # 29..30
               - (semicolon:) Semicolon: ";" # 30..31
@@ -65,7 +65,7 @@ Tree:
                   - (variant:) MultiplicativeExpression: # 32..37 "a / b"
                       - (left_operand:) Expression: # 32..33 "a"
                           - Identifier: "a" # 32..33
-                      - (operator:) Slash: "/" # 34..35
+                      - (variant:) Slash: "/" # 34..35
                       - (right_operand:) Expression: # 35..37 " b"
                           - Identifier: "b" # 36..37
               - (semicolon:) Semicolon: ";" # 37..38
@@ -75,7 +75,7 @@ Tree:
                   - (variant:) AssignmentExpression: # 39..45 "a /= b"
                       - (left_operand:) Expression: # 39..40 "a"
                           - Identifier: "a" # 39..40
-                      - (operator:) SlashEqual: "/=" # 41..43
+                      - (variant:) SlashEqual: "/=" # 41..43
                       - (right_operand:) Expression: # 43..45 " b"
                           - Identifier: "b" # 44..45
               - (semicolon:) Semicolon: ";" # 45..46
@@ -85,7 +85,7 @@ Tree:
                   - (variant:) ComparisonExpression: # 47..52 "a > b"
                       - (left_operand:) Expression: # 47..48 "a"
                           - Identifier: "a" # 47..48
-                      - (operator:) GreaterThan: ">" # 49..50
+                      - (variant:) GreaterThan: ">" # 49..50
                       - (right_operand:) Expression: # 50..52 " b"
                           - Identifier: "b" # 51..52
               - (semicolon:) Semicolon: ";" # 52..53
@@ -95,7 +95,7 @@ Tree:
                   - (variant:) ComparisonExpression: # 54..60 "a >= b"
                       - (left_operand:) Expression: # 54..55 "a"
                           - Identifier: "a" # 54..55
-                      - (operator:) GreaterThanEqual: ">=" # 56..58
+                      - (variant:) GreaterThanEqual: ">=" # 56..58
                       - (right_operand:) Expression: # 58..60 " b"
                           - Identifier: "b" # 59..60
               - (semicolon:) Semicolon: ";" # 60..61
@@ -105,7 +105,7 @@ Tree:
                   - (variant:) ShiftExpression: # 62..68 "a >> b"
                       - (left_operand:) Expression: # 62..63 "a"
                           - Identifier: "a" # 62..63
-                      - (operator:) GreaterThanGreaterThan: ">>" # 64..66
+                      - (variant:) GreaterThanGreaterThan: ">>" # 64..66
                       - (right_operand:) Expression: # 66..68 " b"
                           - Identifier: "b" # 67..68
               - (semicolon:) Semicolon: ";" # 68..69
@@ -115,7 +115,7 @@ Tree:
                   - (variant:) AssignmentExpression: # 70..77 "a >>= b"
                       - (left_operand:) Expression: # 70..71 "a"
                           - Identifier: "a" # 70..71
-                      - (operator:) GreaterThanGreaterThanEqual: ">>=" # 72..75
+                      - (variant:) GreaterThanGreaterThanEqual: ">>=" # 72..75
                       - (right_operand:) Expression: # 75..77 " b"
                           - Identifier: "b" # 76..77
               - (semicolon:) Semicolon: ";" # 77..78
@@ -125,7 +125,7 @@ Tree:
                   - (variant:) AssignmentExpression: # 79..87 "a >>>= b"
                       - (left_operand:) Expression: # 79..80 "a"
                           - Identifier: "a" # 79..80
-                      - (operator:) GreaterThanGreaterThanGreaterThanEqual: ">>>=" # 81..85
+                      - (variant:) GreaterThanGreaterThanGreaterThanEqual: ">>>=" # 81..85
                       - (right_operand:) Expression: # 85..87 " b"
                           - Identifier: "b" # 86..87
               - (semicolon:) Semicolon: ";" # 87..88
@@ -135,7 +135,7 @@ Tree:
                   - (variant:) ShiftExpression: # 89..95 "a << b"
                       - (left_operand:) Expression: # 89..90 "a"
                           - Identifier: "a" # 89..90
-                      - (operator:) LessThanLessThan: "<<" # 91..93
+                      - (variant:) LessThanLessThan: "<<" # 91..93
                       - (right_operand:) Expression: # 93..95 " b"
                           - Identifier: "b" # 94..95
               - (semicolon:) Semicolon: ";" # 95..96
@@ -145,7 +145,7 @@ Tree:
                   - (variant:) AssignmentExpression: # 97..104 "a <<= b"
                       - (left_operand:) Expression: # 97..98 "a"
                           - Identifier: "a" # 97..98
-                      - (operator:) LessThanLessThanEqual: "<<=" # 99..102
+                      - (variant:) LessThanLessThanEqual: "<<=" # 99..102
                       - (right_operand:) Expression: # 102..104 " b"
                           - Identifier: "b" # 103..104
               - (semicolon:) Semicolon: ";" # 104..105

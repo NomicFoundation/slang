@@ -41,7 +41,7 @@ Tree:
                                   - (left_operand:) Expression: # 18..20 " 1"
                                       - DecimalNumberExpression: # 18..20 " 1"
                                           - (literal:) DecimalLiteral: "1" # 19..20
-                                  - (operator:) Asterisk: "*" # 21..22
+                                  - (variant:) Asterisk: "*" # 21..22
                                   - (right_operand:) Expression: # 22..24 " 2"
                                       - DecimalNumberExpression: # 22..24 " 2"
                                           - (literal:) DecimalLiteral: "2" # 23..24
@@ -53,7 +53,7 @@ Tree:
                                   - (left_operand:) Expression: # 25..27 " 3"
                                       - DecimalNumberExpression: # 25..27 " 3"
                                           - (literal:) DecimalLiteral: "3" # 26..27
-                                  - (operator:) Asterisk: "*" # 28..29
+                                  - (variant:) Asterisk: "*" # 28..29
                                   - (right_operand:) Expression: # 29..31 " b"
                                       - Identifier: "b" # 30..31
                           - SKIPPED: "invalid" # 32..39

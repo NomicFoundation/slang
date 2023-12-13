@@ -13,5 +13,5 @@ Tree:
               - (operand:) TypeName: # 3..7 " Foo"
                   - IdentifierPath: # 3..7 " Foo"
                       - Identifier: "Foo" # 4..7
-              - (postfix_operator:) OpenBracket: "[" # 7..8
-              - (postfix_operator:) CloseBracket: "]" # 8..9
+              - (open_bracket:) OpenBracket: "[" # 7..8
+              - (close_bracket:) CloseBracket: "]" # 8..9

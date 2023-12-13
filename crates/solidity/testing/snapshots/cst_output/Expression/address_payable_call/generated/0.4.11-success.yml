@@ -13,7 +13,7 @@ Tree:
                   - (variant:) AddressType: # 0..15 "address payable"
                       - (address_keyword:) AddressKeyword: "address" # 0..7
                       - (payable_keyword:) PayableKeyword: "payable" # 8..15
-          - (postfix_operator:) ArgumentsDeclaration: # 15..22 "(value)"
+          - (arguments:) ArgumentsDeclaration: # 15..22 "(value)"
               - (variant:) PositionalArgumentsDeclaration: # 15..22 "(value)"
                   - (open_paren:) OpenParen: "(" # 15..16
                   - (arguments:) PositionalArguments: # 16..21 "value"

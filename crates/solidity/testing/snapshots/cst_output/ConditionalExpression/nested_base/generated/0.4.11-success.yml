@@ -16,13 +16,13 @@ Tree:
                           - (variant:) EqualityExpression: # 1..11 "foo == bar"
                               - (left_operand:) Expression: # 1..4 "foo"
                                   - Identifier: "foo" # 1..4
-                              - (operator:) EqualEqual: "==" # 5..7
+                              - (variant:) EqualEqual: "==" # 5..7
                               - (right_operand:) Expression: # 7..11 " bar"
                                   - Identifier: "bar" # 8..11
               - (close_paren:) CloseParen: ")" # 11..12
-      - (postfix_operator:) QuestionMark: "?" # 13..14
-      - (postfix_operator:) Expression: # 14..19 " true"
+      - (question_mark:) QuestionMark: "?" # 13..14
+      - (true_expression:) Expression: # 14..19 " true"
           - TrueKeyword: "true" # 15..19
-      - (postfix_operator:) Colon: ":" # 20..21
-      - (postfix_operator:) Expression: # 21..27 " false"
+      - (colon:) Colon: ":" # 20..21
+      - (false_expression:) Expression: # 21..27 " false"
           - FalseKeyword: "false" # 22..27

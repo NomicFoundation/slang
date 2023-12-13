@@ -41,7 +41,7 @@ Tree:
                           - (expressions:) VersionPragmaExpressions: # 47..54 " ^0.8.0"
                               - VersionPragmaExpression: # 47..54 " ^0.8.0"
                                   - (variant:) VersionPragmaPrefixExpression: # 47..54 " ^0.8.0"
-                                      - (prefix_operator:) Caret: "^" # 48..49
+                                      - (variant:) Caret: "^" # 48..49
                                       - (operand:) VersionPragmaExpression: # 49..54 "0.8.0"
                                           - VersionPragmaSpecifier: # 49..54 "0.8.0"
                                               - VersionPragmaValue: "0" # 49..50

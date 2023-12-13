@@ -9,13 +9,13 @@ Tree:
   - Expression: # 0..5 "x().y"
       - (variant:) MemberAccessExpression: # 0..5 "x().y"
           - (operand:) Expression: # 0..3 "x()"
-              - (exprrrrr:) FunctionCallExpression: # 0..3 "x()"
+              - (variant:) FunctionCallExpression: # 0..3 "x()"
                   - (operand:) Expression: # 0..1 "x"
                       - Identifier: "x" # 0..1
-                  - (postfix_operator:) ArgumentsDeclaration: # 1..3 "()"
+                  - (arguments:) ArgumentsDeclaration: # 1..3 "()"
                       - (variant:) PositionalArgumentsDeclaration: # 1..3 "()"
                           - (open_paren:) OpenParen: "(" # 1..2
                           - (close_paren:) CloseParen: ")" # 2..3
-          - (postfix_operator:) Period: "." # 3..4
-          - (postfix_operator:) MemberAccess: # 4..5 "y"
+          - (period:) Period: "." # 3..4
+          - (member:) MemberAccess: # 4..5 "y"
               - (variant:) Identifier: "y" # 4..5

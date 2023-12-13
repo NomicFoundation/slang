@@ -17,8 +17,8 @@ Tree:
   - Expression: # 0..8 "2 * new\n"
       - DecimalNumberExpression: # 0..1 "2"
           - (literal:) DecimalLiteral: "2" # 0..1
-      - (TODO-pratt:) MultiplicativeExpression: # 1..3 " *"
-          - (TODO-pratt:) Asterisk: "*" # 2..3
+      - MultiplicativeExpression: # 1..3 " *"
+          - (variant:) Asterisk: "*" # 2..3
       - NewExpression: # 3..8 " new\n"
           - (new_keyword:) NewKeyword: "new" # 4..7
       - SKIPPED: "" # 8..8

@@ -11,7 +11,7 @@ Tree:
       - (expressions:) VersionPragmaExpressions: # 8..15 " =0.8.0"
           - VersionPragmaExpression: # 8..15 " =0.8.0"
               - (variant:) VersionPragmaPrefixExpression: # 8..15 " =0.8.0"
-                  - (prefix_operator:) Equal: "=" # 9..10
+                  - (variant:) Equal: "=" # 9..10
                   - (operand:) VersionPragmaExpression: # 10..15 "0.8.0"
                       - VersionPragmaSpecifier: # 10..15 "0.8.0"
                           - VersionPragmaValue: "0" # 10..11

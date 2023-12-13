@@ -9,9 +9,9 @@ Tree:
   - ConditionalExpression: # 0..18 "foo ? true : false"
       - (operand:) Expression: # 0..3 "foo"
           - Identifier: "foo" # 0..3
-      - (postfix_operator:) QuestionMark: "?" # 4..5
-      - (postfix_operator:) Expression: # 5..10 " true"
+      - (question_mark:) QuestionMark: "?" # 4..5
+      - (true_expression:) Expression: # 5..10 " true"
           - TrueKeyword: "true" # 6..10
-      - (postfix_operator:) Colon: ":" # 11..12
-      - (postfix_operator:) Expression: # 12..18 " false"
+      - (colon:) Colon: ":" # 11..12
+      - (false_expression:) Expression: # 12..18 " false"
           - FalseKeyword: "false" # 13..18

@@ -85,7 +85,7 @@ Tree:
                                                                           - (variant:) AdditiveExpression: # 132..138 " a + b"
                                                                               - (left_operand:) Expression: # 132..134 " a"
                                                                                   - Identifier: "a" # 133..134
-                                                                              - (operator:) Plus: "+" # 135..136
+                                                                              - (variant:) Plus: "+" # 135..136
                                                                               - (right_operand:) Expression: # 136..138 " b"
                                                                                   - Identifier: "b" # 137..138
                                                                   - (semicolon:) Semicolon: ";" # 138..139
@@ -97,7 +97,7 @@ Tree:
                                                                       - (variant:) ComparisonExpression: # 150..155 "c < a"
                                                                           - (left_operand:) Expression: # 150..151 "c"
                                                                               - Identifier: "c" # 150..151
-                                                                          - (operator:) LessThan: "<" # 152..153
+                                                                          - (variant:) LessThan: "<" # 152..153
                                                                           - (right_operand:) Expression: # 153..155 " a"
                                                                               - Identifier: "a" # 154..155
                                                                   - (close_paren:) CloseParen: ")" # 155..156

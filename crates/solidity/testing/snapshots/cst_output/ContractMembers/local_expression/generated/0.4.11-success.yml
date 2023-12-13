@@ -35,13 +35,13 @@ Tree:
                                               - (left_operand:) Expression: # 28..30 " 1"
                                                   - DecimalNumberExpression: # 28..30 " 1"
                                                       - (literal:) DecimalLiteral: "1" # 29..30
-                                              - (operator:) Plus: "+" # 31..32
+                                              - (variant:) Plus: "+" # 31..32
                                               - (right_operand:) Expression: # 32..38 " 2 * 3"
-                                                  - (exprrrrr:) MultiplicativeExpression: # 32..38 " 2 * 3"
+                                                  - (variant:) MultiplicativeExpression: # 32..38 " 2 * 3"
                                                       - (left_operand:) Expression: # 32..34 " 2"
                                                           - DecimalNumberExpression: # 32..34 " 2"
                                                               - (literal:) DecimalLiteral: "2" # 33..34
-                                                      - (operator:) Asterisk: "*" # 35..36
+                                                      - (variant:) Asterisk: "*" # 35..36
                                                       - (right_operand:) Expression: # 36..38 " 3"
                                                           - DecimalNumberExpression: # 36..38 " 3"
                                                               - (literal:) DecimalLiteral: "3" # 37..38
