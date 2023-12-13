@@ -11,11 +11,11 @@ Tree:
   - AssemblyStatement: # 0..39 'assembly "evmasm" ("memory-safe") {\n\n}\n'
       - AssemblyKeyword: "assembly" # 0..8
       - AsciiStringLiteral: '"evmasm"' # 9..17
-      - (inner:) AssemblyFlagsDeclaration: # 17..33 ' ("memory-safe")'
+      - AssemblyFlagsDeclaration: # 17..33 ' ("memory-safe")'
           - OpenParen: "(" # 18..19
-          - (inner:) AssemblyFlags: # 19..32 '"memory-safe"'
+          - AssemblyFlags: # 19..32 '"memory-safe"'
               - AsciiStringLiteral: '"memory-safe"' # 19..32
           - CloseParen: ")" # 32..33
-      - (inner:) YulBlock: # 33..39 " {\n\n}\n"
+      - YulBlock: # 33..39 " {\n\n}\n"
           - OpenBrace: "{" # 34..35
           - CloseBrace: "}" # 37..38

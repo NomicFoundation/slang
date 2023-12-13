@@ -8,22 +8,22 @@ Errors: []
 Tree:
   - ImportDirective: # 0..45 'import { A1 as A2, B1, C1 as C2 } from "foo";'
       - ImportKeyword: "import" # 0..6
-      - (inner:) ImportClause: # 6..44 ' { A1 as A2, B1, C1 as C2 } from "foo"'
-          - (inner:) ImportDeconstruction: # 6..44 ' { A1 as A2, B1, C1 as C2 } from "foo"'
+      - ImportClause: # 6..44 ' { A1 as A2, B1, C1 as C2 } from "foo"'
+          - ImportDeconstruction: # 6..44 ' { A1 as A2, B1, C1 as C2 } from "foo"'
               - OpenBrace: "{" # 7..8
-              - (inner:) ImportDeconstructionSymbols: # 8..31 " A1 as A2, B1, C1 as C2"
-                  - (inner:) ImportDeconstructionSymbol: # 8..17 " A1 as A2"
+              - ImportDeconstructionSymbols: # 8..31 " A1 as A2, B1, C1 as C2"
+                  - ImportDeconstructionSymbol: # 8..17 " A1 as A2"
                       - Identifier: "A1" # 9..11
-                      - (inner:) ImportAlias: # 11..17 " as A2"
+                      - ImportAlias: # 11..17 " as A2"
                           - AsKeyword: "as" # 12..14
                           - Identifier: "A2" # 15..17
                   - Comma: "," # 17..18
-                  - (inner:) ImportDeconstructionSymbol: # 18..21 " B1"
+                  - ImportDeconstructionSymbol: # 18..21 " B1"
                       - Identifier: "B1" # 19..21
                   - Comma: "," # 21..22
-                  - (inner:) ImportDeconstructionSymbol: # 22..31 " C1 as C2"
+                  - ImportDeconstructionSymbol: # 22..31 " C1 as C2"
                       - Identifier: "C1" # 23..25
-                      - (inner:) ImportAlias: # 25..31 " as C2"
+                      - ImportAlias: # 25..31 " as C2"
                           - AsKeyword: "as" # 26..28
                           - Identifier: "C2" # 29..31
               - CloseBrace: "}" # 32..33

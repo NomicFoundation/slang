@@ -14,34 +14,34 @@ Tree:
       - ContractKeyword: "contract" # 0..8
       - Identifier: "Sample" # 9..15
       - OpenBrace: "{" # 16..17
-      - (inner:) ContractMembers: # 18..70 "  function foo() returns (uint) {\n    return 1;\n  ..."
-          - (inner:) ContractMember: # 18..70 "  function foo() returns (uint) {\n    return 1;\n  ..."
-              - (inner:) FunctionDefinition: # 18..70 "  function foo() returns (uint) {\n    return 1;\n  ..."
+      - ContractMembers: # 18..70 "  function foo() returns (uint) {\n    return 1;\n  ..."
+          - ContractMember: # 18..70 "  function foo() returns (uint) {\n    return 1;\n  ..."
+              - FunctionDefinition: # 18..70 "  function foo() returns (uint) {\n    return 1;\n  ..."
                   - FunctionKeyword: "function" # 20..28
-                  - (inner:) FunctionName: # 28..32 " foo"
+                  - FunctionName: # 28..32 " foo"
                       - Identifier: "foo" # 29..32
-                  - (inner:) ParametersDeclaration: # 32..34 "()"
+                  - ParametersDeclaration: # 32..34 "()"
                       - OpenParen: "(" # 32..33
                       - CloseParen: ")" # 33..34
-                  - (inner:) ReturnsDeclaration: # 34..49 " returns (uint)"
+                  - ReturnsDeclaration: # 34..49 " returns (uint)"
                       - ReturnsKeyword: "returns" # 35..42
-                      - (inner:) ParametersDeclaration: # 42..49 " (uint)"
+                      - ParametersDeclaration: # 42..49 " (uint)"
                           - OpenParen: "(" # 43..44
-                          - (inner:) Parameters: # 44..48 "uint"
-                              - (inner:) Parameter: # 44..48 "uint"
-                                  - (inner:) TypeName: # 44..48 "uint"
-                                      - (inner:) ElementaryType: # 44..48 "uint"
+                          - Parameters: # 44..48 "uint"
+                              - Parameter: # 44..48 "uint"
+                                  - TypeName: # 44..48 "uint"
+                                      - ElementaryType: # 44..48 "uint"
                                           - UintKeyword: "uint" # 44..48
                           - CloseParen: ")" # 48..49
-                  - (inner:) FunctionBody: # 49..70 " {\n    return 1;\n  }\n"
-                      - (inner:) Block: # 49..70 " {\n    return 1;\n  }\n"
+                  - FunctionBody: # 49..70 " {\n    return 1;\n  }\n"
+                      - Block: # 49..70 " {\n    return 1;\n  }\n"
                           - OpenBrace: "{" # 50..51
-                          - (inner:) Statements: # 52..66 "    return 1;\n"
-                              - (inner:) Statement: # 52..66 "    return 1;\n"
-                                  - (inner:) ReturnStatement: # 52..66 "    return 1;\n"
+                          - Statements: # 52..66 "    return 1;\n"
+                              - Statement: # 52..66 "    return 1;\n"
+                                  - ReturnStatement: # 52..66 "    return 1;\n"
                                       - ReturnKeyword: "return" # 56..62
-                                      - (inner:) Expression: # 62..64 " 1"
-                                          - (inner:) DecimalNumberExpression: # 62..64 " 1"
+                                      - Expression: # 62..64 " 1"
+                                          - DecimalNumberExpression: # 62..64 " 1"
                                               - DecimalLiteral: "1" # 63..64
                                       - Semicolon: ";" # 64..65
                           - CloseBrace: "}" # 68..69

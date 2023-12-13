@@ -8,21 +8,21 @@ Errors: []
 Tree:
   - TupleDeconstructionStatement: # 0..37 "(bool with_type, without_type) = rhs;"
       - OpenParen: "(" # 0..1
-      - (inner:) TupleDeconstructionElements: # 1..29 "bool with_type, without_type"
-          - (inner:) TupleDeconstructionElement: # 1..15 "bool with_type"
-              - (inner:) TupleMember: # 1..15 "bool with_type"
-                  - (inner:) TypedTupleMember: # 1..15 "bool with_type"
-                      - (inner:) TypeName: # 1..5 "bool"
-                          - (inner:) ElementaryType: # 1..5 "bool"
+      - TupleDeconstructionElements: # 1..29 "bool with_type, without_type"
+          - TupleDeconstructionElement: # 1..15 "bool with_type"
+              - TupleMember: # 1..15 "bool with_type"
+                  - TypedTupleMember: # 1..15 "bool with_type"
+                      - TypeName: # 1..5 "bool"
+                          - ElementaryType: # 1..5 "bool"
                               - BoolKeyword: "bool" # 1..5
                       - Identifier: "with_type" # 6..15
           - Comma: "," # 15..16
-          - (inner:) TupleDeconstructionElement: # 16..29 " without_type"
-              - (inner:) TupleMember: # 16..29 " without_type"
-                  - (inner:) UntypedTupleMember: # 16..29 " without_type"
+          - TupleDeconstructionElement: # 16..29 " without_type"
+              - TupleMember: # 16..29 " without_type"
+                  - UntypedTupleMember: # 16..29 " without_type"
                       - Identifier: "without_type" # 17..29
       - CloseParen: ")" # 29..30
       - Equal: "=" # 31..32
-      - (inner:) Expression: # 32..36 " rhs"
+      - Expression: # 32..36 " rhs"
           - Identifier: "rhs" # 33..36
       - Semicolon: ";" # 36..37

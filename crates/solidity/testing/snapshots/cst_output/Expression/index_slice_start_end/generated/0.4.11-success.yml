@@ -15,6 +15,6 @@ Tree:
               - Identifier: "start" # 4..9
           - (operator:) IndexAccessEnd: # 9..13 ":end"
               - Colon: ":" # 9..10
-              - (inner:) Expression: # 10..13 "end"
+              - Expression: # 10..13 "end"
                   - Identifier: "end" # 10..13
           - (operator:) CloseBracket: "]" # 13..14

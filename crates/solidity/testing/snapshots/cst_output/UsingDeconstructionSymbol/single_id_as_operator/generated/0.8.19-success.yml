@@ -7,9 +7,9 @@ Errors: []
 
 Tree:
   - UsingDeconstructionSymbol: # 0..8 "foo as /"
-      - (inner:) IdentifierPath: # 0..3 "foo"
+      - IdentifierPath: # 0..3 "foo"
           - Identifier: "foo" # 0..3
-      - (inner:) UsingAlias: # 3..8 " as /"
+      - UsingAlias: # 3..8 " as /"
           - AsKeyword: "as" # 4..6
-          - (inner:) UsingOperator: # 6..8 " /"
+          - UsingOperator: # 6..8 " /"
               - Slash: "/" # 7..8

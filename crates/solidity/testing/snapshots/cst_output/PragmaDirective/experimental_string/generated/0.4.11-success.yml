@@ -8,9 +8,9 @@ Errors: []
 Tree:
   - PragmaDirective: # 0..36 'pragma experimental "ABIEncoderV2";\n'
       - PragmaKeyword: "pragma" # 0..6
-      - (inner:) Pragma: # 6..34 ' experimental "ABIEncoderV2"'
-          - (inner:) ExperimentalPragma: # 6..34 ' experimental "ABIEncoderV2"'
+      - Pragma: # 6..34 ' experimental "ABIEncoderV2"'
+          - ExperimentalPragma: # 6..34 ' experimental "ABIEncoderV2"'
               - ExperimentalKeyword: "experimental" # 7..19
-              - (inner:) ExperimentalFeature: # 19..34 ' "ABIEncoderV2"'
+              - ExperimentalFeature: # 19..34 ' "ABIEncoderV2"'
                   - AsciiStringLiteral: '"ABIEncoderV2"' # 20..34
       - Semicolon: ";" # 34..35

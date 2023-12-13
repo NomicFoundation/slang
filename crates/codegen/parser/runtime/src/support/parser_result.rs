@@ -56,18 +56,18 @@ impl ParserResult {
     pub fn with_kind(self, new_kind: RuleKind) -> ParserResult {
         match self {
             ParserResult::Match(r#match) => ParserResult::r#match(
-                vec![("inner".into(), cst::Node::rule(new_kind, r#match.nodes))],
+                vec![(String::new(), cst::Node::rule(new_kind, r#match.nodes))],
                 r#match.expected_tokens,
             ),
             ParserResult::IncompleteMatch(incomplete_match) => ParserResult::incomplete_match(
                 vec![(
-                    "inner".into(),
+                    String::new(),
                     cst::Node::rule(new_kind, incomplete_match.nodes),
                 )],
                 incomplete_match.expected_tokens,
             ),
             ParserResult::SkippedUntil(skipped) => ParserResult::SkippedUntil(SkippedUntil {
-                nodes: vec![("inner".into(), cst::Node::rule(new_kind, skipped.nodes))],
+                nodes: vec![(String::new(), cst::Node::rule(new_kind, skipped.nodes))],
                 ..skipped
             }),
             ParserResult::NoMatch(_) => self,

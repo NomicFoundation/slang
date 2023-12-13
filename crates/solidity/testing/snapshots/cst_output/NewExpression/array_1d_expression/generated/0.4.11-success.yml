@@ -8,13 +8,13 @@ Errors: []
 Tree:
   - NewExpression: # 0..11 "new Foo[10]"
       - NewKeyword: "new" # 0..3
-      - (inner:) TypeName: # 3..11 " Foo[10]"
+      - TypeName: # 3..11 " Foo[10]"
           - (operand:) ArrayTypeName: # 3..11 " Foo[10]"
               - (left_operand:) TypeName: # 3..7 " Foo"
-                  - (inner:) IdentifierPath: # 3..7 " Foo"
+                  - IdentifierPath: # 3..7 " Foo"
                       - Identifier: "Foo" # 4..7
               - (operator:) OpenBracket: "[" # 7..8
               - (operator:) Expression: # 8..10 "10"
-                  - (inner:) DecimalNumberExpression: # 8..10 "10"
+                  - DecimalNumberExpression: # 8..10 "10"
                       - DecimalLiteral: "10" # 8..10
               - (operator:) CloseBracket: "]" # 10..11

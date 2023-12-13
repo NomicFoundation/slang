@@ -16,6 +16,6 @@ Tree:
                   - (operator:) MemberAccess: # 2..3 "y"
                       - Identifier: "y" # 2..3
           - (operator:) ArgumentsDeclaration: # 3..5 "()"
-              - (inner:) PositionalArgumentsDeclaration: # 3..5 "()"
+              - PositionalArgumentsDeclaration: # 3..5 "()"
                   - OpenParen: "(" # 3..4
                   - CloseParen: ")" # 4..5

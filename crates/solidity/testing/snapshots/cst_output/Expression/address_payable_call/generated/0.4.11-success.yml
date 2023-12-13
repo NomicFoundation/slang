@@ -9,14 +9,14 @@ Tree:
   - Expression: # 0..22 "address payable(value)"
       - (operand:) FunctionCallExpression: # 0..22 "address payable(value)"
           - (left_operand:) Expression: # 0..15 "address payable"
-              - (inner:) ElementaryType: # 0..15 "address payable"
-                  - (inner:) AddressType: # 0..15 "address payable"
+              - ElementaryType: # 0..15 "address payable"
+                  - AddressType: # 0..15 "address payable"
                       - AddressKeyword: "address" # 0..7
                       - PayableKeyword: "payable" # 8..15
           - (operator:) ArgumentsDeclaration: # 15..22 "(value)"
-              - (inner:) PositionalArgumentsDeclaration: # 15..22 "(value)"
+              - PositionalArgumentsDeclaration: # 15..22 "(value)"
                   - OpenParen: "(" # 15..16
-                  - (inner:) PositionalArguments: # 16..21 "value"
-                      - (inner:) Expression: # 16..21 "value"
+                  - PositionalArguments: # 16..21 "value"
+                      - Expression: # 16..21 "value"
                           - Identifier: "value" # 16..21
                   - CloseParen: ")" # 21..22

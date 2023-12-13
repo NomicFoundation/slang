@@ -16,29 +16,29 @@ Tree:
                   - (operator:) MemberAccess: # 2..3 "b"
                       - Identifier: "b" # 2..3
           - (operator:) FunctionCallOptions: # 3..21 "{value: 0, gas: 1}"
-              - (inner:) NamedArgumentGroup: # 3..21 "{value: 0, gas: 1}"
+              - NamedArgumentGroup: # 3..21 "{value: 0, gas: 1}"
                   - OpenBrace: "{" # 3..4
-                  - (inner:) NamedArguments: # 4..20 "value: 0, gas: 1"
-                      - (inner:) NamedArgument: # 4..12 "value: 0"
+                  - NamedArguments: # 4..20 "value: 0, gas: 1"
+                      - NamedArgument: # 4..12 "value: 0"
                           - Identifier: "value" # 4..9
                           - Colon: ":" # 9..10
-                          - (inner:) Expression: # 10..12 " 0"
-                              - (inner:) DecimalNumberExpression: # 10..12 " 0"
+                          - Expression: # 10..12 " 0"
+                              - DecimalNumberExpression: # 10..12 " 0"
                                   - DecimalLiteral: "0" # 11..12
                       - Comma: "," # 12..13
-                      - (inner:) NamedArgument: # 13..20 " gas: 1"
+                      - NamedArgument: # 13..20 " gas: 1"
                           - Identifier: "gas" # 14..17
                           - Colon: ":" # 17..18
-                          - (inner:) Expression: # 18..20 " 1"
-                              - (inner:) DecimalNumberExpression: # 18..20 " 1"
+                          - Expression: # 18..20 " 1"
+                              - DecimalNumberExpression: # 18..20 " 1"
                                   - DecimalLiteral: "1" # 19..20
                   - CloseBrace: "}" # 20..21
           - (operator:) ArgumentsDeclaration: # 21..25 '("")'
-              - (inner:) PositionalArgumentsDeclaration: # 21..25 '("")'
+              - PositionalArgumentsDeclaration: # 21..25 '("")'
                   - OpenParen: "(" # 21..22
-                  - (inner:) PositionalArguments: # 22..24 '""'
-                      - (inner:) Expression: # 22..24 '""'
-                          - (inner:) StringExpression: # 22..24 '""'
-                              - (inner:) AsciiStringLiterals: # 22..24 '""'
+                  - PositionalArguments: # 22..24 '""'
+                      - Expression: # 22..24 '""'
+                          - StringExpression: # 22..24 '""'
+                              - AsciiStringLiterals: # 22..24 '""'
                                   - AsciiStringLiteral: '""' # 22..24
                   - CloseParen: ")" # 24..25

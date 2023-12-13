@@ -13,15 +13,15 @@ Tree:
       - ContractKeyword: "contract" # 0..8
       - Identifier: "Sample" # 9..15
       - OpenBrace: "{" # 16..17
-      - (inner:) ContractMembers: # 18..38 "  function () {\n  }\n"
-          - (inner:) ContractMember: # 18..38 "  function () {\n  }\n"
-              - (inner:) UnnamedFunctionDefinition: # 18..38 "  function () {\n  }\n"
+      - ContractMembers: # 18..38 "  function () {\n  }\n"
+          - ContractMember: # 18..38 "  function () {\n  }\n"
+              - UnnamedFunctionDefinition: # 18..38 "  function () {\n  }\n"
                   - FunctionKeyword: "function" # 20..28
-                  - (inner:) ParametersDeclaration: # 28..31 " ()"
+                  - ParametersDeclaration: # 28..31 " ()"
                       - OpenParen: "(" # 29..30
                       - CloseParen: ")" # 30..31
-                  - (inner:) FunctionBody: # 31..38 " {\n  }\n"
-                      - (inner:) Block: # 31..38 " {\n  }\n"
+                  - FunctionBody: # 31..38 " {\n  }\n"
+                      - Block: # 31..38 " {\n  }\n"
                           - OpenBrace: "{" # 32..33
                           - CloseBrace: "}" # 36..37
       - CloseBrace: "}" # 38..39

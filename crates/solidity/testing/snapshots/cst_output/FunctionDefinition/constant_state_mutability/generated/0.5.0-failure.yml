@@ -16,9 +16,9 @@ Errors: # 1 total
 Tree:
   - FunctionDefinition: # 0..24 "function a() constant {}"
       - FunctionKeyword: "function" # 0..8
-      - (inner:) FunctionName: # 8..10 " a"
+      - FunctionName: # 8..10 " a"
           - Identifier: "a" # 9..10
-      - (inner:) ParametersDeclaration: # 10..12 "()"
+      - ParametersDeclaration: # 10..12 "()"
           - OpenParen: "(" # 10..11
           - CloseParen: ")" # 11..12
       - SKIPPED: " constant {}" # 12..24

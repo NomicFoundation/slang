@@ -8,9 +8,9 @@ Errors: []
 Tree:
   - ConstructorDefinition: # 0..17 "constructor () {}"
       - ConstructorKeyword: "constructor" # 0..11
-      - (inner:) ParametersDeclaration: # 11..14 " ()"
+      - ParametersDeclaration: # 11..14 " ()"
           - OpenParen: "(" # 12..13
           - CloseParen: ")" # 13..14
-      - (inner:) Block: # 14..17 " {}"
+      - Block: # 14..17 " {}"
           - OpenBrace: "{" # 15..16
           - CloseBrace: "}" # 16..17

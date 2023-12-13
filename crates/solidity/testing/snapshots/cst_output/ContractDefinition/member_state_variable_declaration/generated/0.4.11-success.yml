@@ -12,14 +12,14 @@ Tree:
       - ContractKeyword: "contract" # 0..8
       - Identifier: "Sample" # 9..15
       - OpenBrace: "{" # 16..17
-      - (inner:) ContractMembers: # 18..35 "  uint public a;\n"
-          - (inner:) ContractMember: # 18..35 "  uint public a;\n"
-              - (inner:) StateVariableDefinition: # 18..35 "  uint public a;\n"
-                  - (inner:) TypeName: # 18..24 "  uint"
-                      - (inner:) ElementaryType: # 18..24 "  uint"
+      - ContractMembers: # 18..35 "  uint public a;\n"
+          - ContractMember: # 18..35 "  uint public a;\n"
+              - StateVariableDefinition: # 18..35 "  uint public a;\n"
+                  - TypeName: # 18..24 "  uint"
+                      - ElementaryType: # 18..24 "  uint"
                           - UintKeyword: "uint" # 20..24
-                  - (inner:) StateVariableAttributes: # 24..31 " public"
-                      - (inner:) StateVariableAttribute: # 24..31 " public"
+                  - StateVariableAttributes: # 24..31 " public"
+                      - StateVariableAttribute: # 24..31 " public"
                           - PublicKeyword: "public" # 25..31
                   - Identifier: "a" # 32..33
                   - Semicolon: ";" # 33..34

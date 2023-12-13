@@ -14,16 +14,16 @@ Errors: []
 
 Tree:
   - SourceUnit: # 0..148 "contract First {}\n\n\n// Newlines both before and af..."
-      - (inner:) SourceUnitMembers: # 0..148 "contract First {}\n\n\n// Newlines both before and af..."
-          - (inner:) SourceUnitMember: # 0..18 "contract First {}\n"
-              - (inner:) ContractDefinition: # 0..18 "contract First {}\n"
+      - SourceUnitMembers: # 0..148 "contract First {}\n\n\n// Newlines both before and af..."
+          - SourceUnitMember: # 0..18 "contract First {}\n"
+              - ContractDefinition: # 0..18 "contract First {}\n"
                   - ContractKeyword: "contract" # 0..8
                   - Identifier: "First" # 9..14
                   - OpenBrace: "{" # 15..16
                   - CloseBrace: "}" # 16..17
-          - (inner:) SourceUnitMember: # 18..148 "\n\n// Newlines both before and after this comment s..."
-              - (inner:) ContractDefinition: # 18..148 "\n\n// Newlines both before and after this comment s..."
-                  - (inner:) LeadingTrivia: # 18..129 "\n\n// Newlines both before and after this comment s..."
+          - SourceUnitMember: # 18..148 "\n\n// Newlines both before and after this comment s..."
+              - ContractDefinition: # 18..148 "\n\n// Newlines both before and after this comment s..."
+                  - LeadingTrivia: # 18..129 "\n\n// Newlines both before and after this comment s..."
                       - SingleLineComment: "// Newlines both before and after this comment sho..." # 20..73
                       - SingleLineComment: "// be included in the trivia of the second contrac..." # 74..126
                   - ContractKeyword: "contract" # 129..137

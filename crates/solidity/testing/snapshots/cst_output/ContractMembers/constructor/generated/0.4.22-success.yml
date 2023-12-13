@@ -7,15 +7,15 @@ Errors: []
 
 Tree:
   - ContractMembers: # 0..24 "constructor() public {}\n"
-      - (inner:) ContractMember: # 0..24 "constructor() public {}\n"
-          - (inner:) ConstructorDefinition: # 0..24 "constructor() public {}\n"
+      - ContractMember: # 0..24 "constructor() public {}\n"
+          - ConstructorDefinition: # 0..24 "constructor() public {}\n"
               - ConstructorKeyword: "constructor" # 0..11
-              - (inner:) ParametersDeclaration: # 11..13 "()"
+              - ParametersDeclaration: # 11..13 "()"
                   - OpenParen: "(" # 11..12
                   - CloseParen: ")" # 12..13
-              - (inner:) ConstructorAttributes: # 13..20 " public"
-                  - (inner:) ConstructorAttribute: # 13..20 " public"
+              - ConstructorAttributes: # 13..20 " public"
+                  - ConstructorAttribute: # 13..20 " public"
                       - PublicKeyword: "public" # 14..20
-              - (inner:) Block: # 20..24 " {}\n"
+              - Block: # 20..24 " {}\n"
                   - OpenBrace: "{" # 21..22
                   - CloseBrace: "}" # 22..23

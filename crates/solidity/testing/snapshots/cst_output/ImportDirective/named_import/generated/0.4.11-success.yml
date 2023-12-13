@@ -8,10 +8,10 @@ Errors: []
 Tree:
   - ImportDirective: # 0..27 'import * as foo from "bar";'
       - ImportKeyword: "import" # 0..6
-      - (inner:) ImportClause: # 6..26 ' * as foo from "bar"'
-          - (inner:) NamedImport: # 6..26 ' * as foo from "bar"'
+      - ImportClause: # 6..26 ' * as foo from "bar"'
+          - NamedImport: # 6..26 ' * as foo from "bar"'
               - Asterisk: "*" # 7..8
-              - (inner:) ImportAlias: # 8..15 " as foo"
+              - ImportAlias: # 8..15 " as foo"
                   - AsKeyword: "as" # 9..11
                   - Identifier: "foo" # 12..15
               - FromKeyword: "from" # 16..20

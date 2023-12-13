@@ -8,11 +8,11 @@ Errors: []
 Tree:
   - ConditionalExpression: # 0..27 "(foo == bar) ? true : false"
       - (left_operand:) Expression: # 0..12 "(foo == bar)"
-          - (inner:) TupleExpression: # 0..12 "(foo == bar)"
+          - TupleExpression: # 0..12 "(foo == bar)"
               - OpenParen: "(" # 0..1
-              - (inner:) TupleValues: # 1..11 "foo == bar"
-                  - (inner:) TupleValue: # 1..11 "foo == bar"
-                      - (inner:) Expression: # 1..11 "foo == bar"
+              - TupleValues: # 1..11 "foo == bar"
+                  - TupleValue: # 1..11 "foo == bar"
+                      - Expression: # 1..11 "foo == bar"
                           - (operand:) EqualityExpression: # 1..11 "foo == bar"
                               - (left_operand:) Expression: # 1..4 "foo"
                                   - Identifier: "foo" # 1..4

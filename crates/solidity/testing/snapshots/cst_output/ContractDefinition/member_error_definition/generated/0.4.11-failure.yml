@@ -20,11 +20,11 @@ Tree:
       - ContractKeyword: "contract" # 0..8
       - Identifier: "Sample" # 9..15
       - OpenBrace: "{" # 16..17
-      - (inner:) ContractMembers: # 18..36 "  error Error1();\n"
-          - (inner:) ContractMember: # 18..36 "  error Error1();\n"
-              - (inner:) StateVariableDefinition: # 18..36 "  error Error1();\n"
-                  - (inner:) TypeName: # 18..25 "  error"
-                      - (inner:) IdentifierPath: # 18..25 "  error"
+      - ContractMembers: # 18..36 "  error Error1();\n"
+          - ContractMember: # 18..36 "  error Error1();\n"
+              - StateVariableDefinition: # 18..36 "  error Error1();\n"
+                  - TypeName: # 18..25 "  error"
+                      - IdentifierPath: # 18..25 "  error"
                           - Identifier: "error" # 20..25
                   - Identifier: "Error1" # 26..32
                   - SKIPPED: "()" # 32..34

@@ -9,15 +9,15 @@ Tree:
   - MappingType: # 0..34 "mapping(string Foo => bytes32 Bar)"
       - MappingKeyword: "mapping" # 0..7
       - OpenParen: "(" # 7..8
-      - (inner:) MappingKey: # 8..18 "string Foo"
-          - (inner:) MappingKeyType: # 8..14 "string"
-              - (inner:) ElementaryType: # 8..14 "string"
+      - MappingKey: # 8..18 "string Foo"
+          - MappingKeyType: # 8..14 "string"
+              - ElementaryType: # 8..14 "string"
                   - StringKeyword: "string" # 8..14
           - Identifier: "Foo" # 15..18
       - EqualGreaterThan: "=>" # 19..21
-      - (inner:) MappingValue: # 21..33 " bytes32 Bar"
-          - (inner:) TypeName: # 21..29 " bytes32"
-              - (inner:) ElementaryType: # 21..29 " bytes32"
+      - MappingValue: # 21..33 " bytes32 Bar"
+          - TypeName: # 21..29 " bytes32"
+              - ElementaryType: # 21..29 " bytes32"
                   - BytesKeyword: "bytes32" # 22..29
           - Identifier: "Bar" # 30..33
       - CloseParen: ")" # 33..34

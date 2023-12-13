@@ -7,16 +7,16 @@ Errors: []
 
 Tree:
   - SourceUnit: # 0..18 "function foo() { }"
-      - (inner:) SourceUnitMembers: # 0..18 "function foo() { }"
-          - (inner:) SourceUnitMember: # 0..18 "function foo() { }"
-              - (inner:) FunctionDefinition: # 0..18 "function foo() { }"
+      - SourceUnitMembers: # 0..18 "function foo() { }"
+          - SourceUnitMember: # 0..18 "function foo() { }"
+              - FunctionDefinition: # 0..18 "function foo() { }"
                   - FunctionKeyword: "function" # 0..8
-                  - (inner:) FunctionName: # 8..12 " foo"
+                  - FunctionName: # 8..12 " foo"
                       - Identifier: "foo" # 9..12
-                  - (inner:) ParametersDeclaration: # 12..14 "()"
+                  - ParametersDeclaration: # 12..14 "()"
                       - OpenParen: "(" # 12..13
                       - CloseParen: ")" # 13..14
-                  - (inner:) FunctionBody: # 14..18 " { }"
-                      - (inner:) Block: # 14..18 " { }"
+                  - FunctionBody: # 14..18 " { }"
+                      - Block: # 14..18 " { }"
                           - OpenBrace: "{" # 15..16
                           - CloseBrace: "}" # 17..18

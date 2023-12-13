@@ -8,16 +8,16 @@ Errors: []
 Tree:
   - VersionPragma: # 0..20 "solidity 0.7.0 0.8.0"
       - SolidityKeyword: "solidity" # 0..8
-      - (inner:) VersionPragmaExpressions: # 8..20 " 0.7.0 0.8.0"
-          - (inner:) VersionPragmaExpression: # 8..14 " 0.7.0"
-              - (inner:) VersionPragmaSpecifier: # 8..14 " 0.7.0"
+      - VersionPragmaExpressions: # 8..20 " 0.7.0 0.8.0"
+          - VersionPragmaExpression: # 8..14 " 0.7.0"
+              - VersionPragmaSpecifier: # 8..14 " 0.7.0"
                   - VersionPragmaValue: "0" # 9..10
                   - Period: "." # 10..11
                   - VersionPragmaValue: "7" # 11..12
                   - Period: "." # 12..13
                   - VersionPragmaValue: "0" # 13..14
-          - (inner:) VersionPragmaExpression: # 14..20 " 0.8.0"
-              - (inner:) VersionPragmaSpecifier: # 14..20 " 0.8.0"
+          - VersionPragmaExpression: # 14..20 " 0.8.0"
+              - VersionPragmaSpecifier: # 14..20 " 0.8.0"
                   - VersionPragmaValue: "0" # 15..16
                   - Period: "." # 16..17
                   - VersionPragmaValue: "8" # 17..18

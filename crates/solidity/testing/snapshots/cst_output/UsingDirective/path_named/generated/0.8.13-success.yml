@@ -8,13 +8,13 @@ Errors: []
 Tree:
   - UsingDirective: # 0..25 "using foo for bar global;"
       - UsingKeyword: "using" # 0..5
-      - (inner:) UsingClause: # 5..9 " foo"
-          - (inner:) IdentifierPath: # 5..9 " foo"
+      - UsingClause: # 5..9 " foo"
+          - IdentifierPath: # 5..9 " foo"
               - Identifier: "foo" # 6..9
       - ForKeyword: "for" # 10..13
-      - (inner:) UsingTarget: # 13..17 " bar"
-          - (inner:) TypeName: # 13..17 " bar"
-              - (inner:) IdentifierPath: # 13..17 " bar"
+      - UsingTarget: # 13..17 " bar"
+          - TypeName: # 13..17 " bar"
+              - IdentifierPath: # 13..17 " bar"
                   - Identifier: "bar" # 14..17
       - GlobalKeyword: "global" # 18..24
       - Semicolon: ";" # 24..25

@@ -8,28 +8,28 @@ Errors: []
 Tree:
   - TupleDeconstructionStatement: # 0..38 "(bool memory x, bool storage y) = rhs;"
       - OpenParen: "(" # 0..1
-      - (inner:) TupleDeconstructionElements: # 1..30 "bool memory x, bool storage y"
-          - (inner:) TupleDeconstructionElement: # 1..14 "bool memory x"
-              - (inner:) TupleMember: # 1..14 "bool memory x"
-                  - (inner:) TypedTupleMember: # 1..14 "bool memory x"
-                      - (inner:) TypeName: # 1..5 "bool"
-                          - (inner:) ElementaryType: # 1..5 "bool"
+      - TupleDeconstructionElements: # 1..30 "bool memory x, bool storage y"
+          - TupleDeconstructionElement: # 1..14 "bool memory x"
+              - TupleMember: # 1..14 "bool memory x"
+                  - TypedTupleMember: # 1..14 "bool memory x"
+                      - TypeName: # 1..5 "bool"
+                          - ElementaryType: # 1..5 "bool"
                               - BoolKeyword: "bool" # 1..5
-                      - (inner:) StorageLocation: # 5..12 " memory"
+                      - StorageLocation: # 5..12 " memory"
                           - MemoryKeyword: "memory" # 6..12
                       - Identifier: "x" # 13..14
           - Comma: "," # 14..15
-          - (inner:) TupleDeconstructionElement: # 15..30 " bool storage y"
-              - (inner:) TupleMember: # 15..30 " bool storage y"
-                  - (inner:) TypedTupleMember: # 15..30 " bool storage y"
-                      - (inner:) TypeName: # 15..20 " bool"
-                          - (inner:) ElementaryType: # 15..20 " bool"
+          - TupleDeconstructionElement: # 15..30 " bool storage y"
+              - TupleMember: # 15..30 " bool storage y"
+                  - TypedTupleMember: # 15..30 " bool storage y"
+                      - TypeName: # 15..20 " bool"
+                          - ElementaryType: # 15..20 " bool"
                               - BoolKeyword: "bool" # 16..20
-                      - (inner:) StorageLocation: # 20..28 " storage"
+                      - StorageLocation: # 20..28 " storage"
                           - StorageKeyword: "storage" # 21..28
                       - Identifier: "y" # 29..30
       - CloseParen: ")" # 30..31
       - Equal: "=" # 32..33
-      - (inner:) Expression: # 33..37 " rhs"
+      - Expression: # 33..37 " rhs"
           - Identifier: "rhs" # 34..37
       - Semicolon: ";" # 37..38

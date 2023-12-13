@@ -8,12 +8,12 @@ Errors: []
 Tree:
   - VersionPragma: # 0..15 "solidity <1.0.0"
       - SolidityKeyword: "solidity" # 0..8
-      - (inner:) VersionPragmaExpressions: # 8..15 " <1.0.0"
-          - (inner:) VersionPragmaExpression: # 8..15 " <1.0.0"
+      - VersionPragmaExpressions: # 8..15 " <1.0.0"
+          - VersionPragmaExpression: # 8..15 " <1.0.0"
               - (operand:) VersionPragmaPrefixExpression: # 8..15 " <1.0.0"
                   - (operator:) LessThan: "<" # 9..10
                   - (right_operand:) VersionPragmaExpression: # 10..15 "1.0.0"
-                      - (inner:) VersionPragmaSpecifier: # 10..15 "1.0.0"
+                      - VersionPragmaSpecifier: # 10..15 "1.0.0"
                           - VersionPragmaValue: "1" # 10..11
                           - Period: "." # 11..12
                           - VersionPragmaValue: "0" # 12..13

@@ -17,9 +17,9 @@ Tree:
   - MappingType: # 0..30 "mapping(string Foo => bytes32)"
       - MappingKeyword: "mapping" # 0..7
       - OpenParen: "(" # 7..8
-      - (inner:) MappingKey: # 8..14 "string"
-          - (inner:) MappingKeyType: # 8..14 "string"
-              - (inner:) ElementaryType: # 8..14 "string"
+      - MappingKey: # 8..14 "string"
+          - MappingKeyType: # 8..14 "string"
+              - ElementaryType: # 8..14 "string"
                   - StringKeyword: "string" # 8..14
       - SKIPPED: "Foo => bytes32" # 15..29
       - CloseParen: ")" # 29..30

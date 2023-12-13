@@ -8,5 +8,5 @@ Errors: []
 Tree:
   - HexNumberExpression: # 0..7 "0x1 wei"
       - HexLiteral: "0x1" # 0..3
-      - (inner:) NumberUnit: # 3..7 " wei"
+      - NumberUnit: # 3..7 " wei"
           - WeiKeyword: "wei" # 4..7

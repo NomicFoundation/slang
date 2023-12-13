@@ -12,24 +12,24 @@ Tree:
       - ContractKeyword: "contract" # 0..8
       - Identifier: "Sample" # 9..15
       - OpenBrace: "{" # 16..17
-      - (inner:) ContractMembers: # 18..69 "  event Log(uint256 indexed a, uint256 indexed b);..."
-          - (inner:) ContractMember: # 18..69 "  event Log(uint256 indexed a, uint256 indexed b);..."
-              - (inner:) EventDefinition: # 18..69 "  event Log(uint256 indexed a, uint256 indexed b);..."
+      - ContractMembers: # 18..69 "  event Log(uint256 indexed a, uint256 indexed b);..."
+          - ContractMember: # 18..69 "  event Log(uint256 indexed a, uint256 indexed b);..."
+              - EventDefinition: # 18..69 "  event Log(uint256 indexed a, uint256 indexed b);..."
                   - EventKeyword: "event" # 20..25
                   - Identifier: "Log" # 26..29
-                  - (inner:) EventParametersDeclaration: # 29..67 "(uint256 indexed a, uint256 indexed b)"
+                  - EventParametersDeclaration: # 29..67 "(uint256 indexed a, uint256 indexed b)"
                       - OpenParen: "(" # 29..30
-                      - (inner:) EventParameters: # 30..66 "uint256 indexed a, uint256 indexed b"
-                          - (inner:) EventParameter: # 30..47 "uint256 indexed a"
-                              - (inner:) TypeName: # 30..37 "uint256"
-                                  - (inner:) ElementaryType: # 30..37 "uint256"
+                      - EventParameters: # 30..66 "uint256 indexed a, uint256 indexed b"
+                          - EventParameter: # 30..47 "uint256 indexed a"
+                              - TypeName: # 30..37 "uint256"
+                                  - ElementaryType: # 30..37 "uint256"
                                       - UintKeyword: "uint256" # 30..37
                               - IndexedKeyword: "indexed" # 38..45
                               - Identifier: "a" # 46..47
                           - Comma: "," # 47..48
-                          - (inner:) EventParameter: # 48..66 " uint256 indexed b"
-                              - (inner:) TypeName: # 48..56 " uint256"
-                                  - (inner:) ElementaryType: # 48..56 " uint256"
+                          - EventParameter: # 48..66 " uint256 indexed b"
+                              - TypeName: # 48..56 " uint256"
+                                  - ElementaryType: # 48..56 " uint256"
                                       - UintKeyword: "uint256" # 49..56
                               - IndexedKeyword: "indexed" # 57..64
                               - Identifier: "b" # 65..66

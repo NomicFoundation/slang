@@ -7,11 +7,11 @@ Errors: []
 
 Tree:
   - UsingDeconstructionSymbol: # 0..12 "foo.bar as /"
-      - (inner:) IdentifierPath: # 0..7 "foo.bar"
+      - IdentifierPath: # 0..7 "foo.bar"
           - Identifier: "foo" # 0..3
           - Period: "." # 3..4
           - Identifier: "bar" # 4..7
-      - (inner:) UsingAlias: # 7..12 " as /"
+      - UsingAlias: # 7..12 " as /"
           - AsKeyword: "as" # 8..10
-          - (inner:) UsingOperator: # 10..12 " /"
+          - UsingOperator: # 10..12 " /"
               - Slash: "/" # 11..12

@@ -22,11 +22,11 @@ Tree:
       - ContractKeyword: "contract" # 0..8
       - Identifier: "Sample" # 9..15
       - OpenBrace: "{" # 16..17
-      - (inner:) ContractMembers: # 18..28 "  fallback"
-          - (inner:) ContractMember: # 18..28 "  fallback"
-              - (inner:) StateVariableDefinition: # 18..28 "  fallback"
-                  - (inner:) TypeName: # 18..28 "  fallback"
-                      - (inner:) IdentifierPath: # 18..28 "  fallback"
+      - ContractMembers: # 18..28 "  fallback"
+          - ContractMember: # 18..28 "  fallback"
+              - StateVariableDefinition: # 18..28 "  fallback"
+                  - TypeName: # 18..28 "  fallback"
+                      - IdentifierPath: # 18..28 "  fallback"
                           - Identifier: "fallback" # 20..28
       - SKIPPED: "() {\n  }\n" # 28..37
       - CloseBrace: "}" # 37..38

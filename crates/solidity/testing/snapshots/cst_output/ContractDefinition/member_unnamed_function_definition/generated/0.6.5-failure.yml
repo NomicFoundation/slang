@@ -22,13 +22,13 @@ Tree:
       - ContractKeyword: "contract" # 0..8
       - Identifier: "Sample" # 9..15
       - OpenBrace: "{" # 16..17
-      - (inner:) ContractMembers: # 18..32 "  function () "
-          - (inner:) ContractMember: # 18..32 "  function () "
-              - (inner:) StateVariableDefinition: # 18..32 "  function () "
-                  - (inner:) TypeName: # 18..31 "  function ()"
-                      - (inner:) FunctionType: # 18..31 "  function ()"
+      - ContractMembers: # 18..32 "  function () "
+          - ContractMember: # 18..32 "  function () "
+              - StateVariableDefinition: # 18..32 "  function () "
+                  - TypeName: # 18..31 "  function ()"
+                      - FunctionType: # 18..31 "  function ()"
                           - FunctionKeyword: "function" # 20..28
-                          - (inner:) ParametersDeclaration: # 28..31 " ()"
+                          - ParametersDeclaration: # 28..31 " ()"
                               - OpenParen: "(" # 29..30
                               - CloseParen: ")" # 30..31
       - SKIPPED: "{\n  }\n" # 32..38

@@ -20,19 +20,19 @@ Tree:
       - ContractKeyword: "contract" # 0..8
       - Identifier: "Sample" # 9..15
       - OpenBrace: "{" # 16..17
-      - (inner:) ContractMembers: # 18..48 "  function() external payable "
-          - (inner:) ContractMember: # 18..48 "  function() external payable "
-              - (inner:) StateVariableDefinition: # 18..48 "  function() external payable "
-                  - (inner:) TypeName: # 18..47 "  function() external payable"
-                      - (inner:) FunctionType: # 18..47 "  function() external payable"
+      - ContractMembers: # 18..48 "  function() external payable "
+          - ContractMember: # 18..48 "  function() external payable "
+              - StateVariableDefinition: # 18..48 "  function() external payable "
+                  - TypeName: # 18..47 "  function() external payable"
+                      - FunctionType: # 18..47 "  function() external payable"
                           - FunctionKeyword: "function" # 20..28
-                          - (inner:) ParametersDeclaration: # 28..30 "()"
+                          - ParametersDeclaration: # 28..30 "()"
                               - OpenParen: "(" # 28..29
                               - CloseParen: ")" # 29..30
-                          - (inner:) FunctionTypeAttributes: # 30..47 " external payable"
-                              - (inner:) FunctionTypeAttribute: # 30..39 " external"
+                          - FunctionTypeAttributes: # 30..47 " external payable"
+                              - FunctionTypeAttribute: # 30..39 " external"
                                   - ExternalKeyword: "external" # 31..39
-                              - (inner:) FunctionTypeAttribute: # 39..47 " payable"
+                              - FunctionTypeAttribute: # 39..47 " payable"
                                   - PayableKeyword: "payable" # 40..47
       - SKIPPED: "{}\n" # 48..51
       - CloseBrace: "}" # 51..52

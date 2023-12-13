@@ -16,19 +16,19 @@ Errors: # 1 total
 Tree:
   - UsingDirective: # 0..52 "using {add as +, sub, mul, div as /} for Int globa..."
       - UsingKeyword: "using" # 0..5
-      - (inner:) UsingClause: # 5..36 " {add as +, sub, mul, div as /}"
-          - (inner:) UsingDeconstruction: # 5..36 " {add as +, sub, mul, div as /}"
+      - UsingClause: # 5..36 " {add as +, sub, mul, div as /}"
+          - UsingDeconstruction: # 5..36 " {add as +, sub, mul, div as /}"
               - OpenBrace: "{" # 6..7
-              - (inner:) UsingDeconstructionSymbols: # 7..10 "add"
-                  - (inner:) UsingDeconstructionSymbol: # 7..10 "add"
-                      - (inner:) IdentifierPath: # 7..10 "add"
+              - UsingDeconstructionSymbols: # 7..10 "add"
+                  - UsingDeconstructionSymbol: # 7..10 "add"
+                      - IdentifierPath: # 7..10 "add"
                           - Identifier: "add" # 7..10
               - SKIPPED: "as +, sub, mul, div as /" # 11..35
               - CloseBrace: "}" # 35..36
       - ForKeyword: "for" # 37..40
-      - (inner:) UsingTarget: # 40..44 " Int"
-          - (inner:) TypeName: # 40..44 " Int"
-              - (inner:) IdentifierPath: # 40..44 " Int"
+      - UsingTarget: # 40..44 " Int"
+          - TypeName: # 40..44 " Int"
+              - IdentifierPath: # 40..44 " Int"
                   - Identifier: "Int" # 41..44
       - GlobalKeyword: "global" # 45..51
       - Semicolon: ";" # 51..52

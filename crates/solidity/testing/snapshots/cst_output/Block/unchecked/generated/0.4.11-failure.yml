@@ -16,10 +16,10 @@ Errors: # 1 total
 Tree:
   - Block: # 0..24 "{ unchecked { x = 1; } }"
       - OpenBrace: "{" # 0..1
-      - (inner:) Statements: # 1..12 " unchecked "
-          - (inner:) Statement: # 1..12 " unchecked "
-              - (inner:) ExpressionStatement: # 1..12 " unchecked "
-                  - (inner:) Expression: # 1..11 " unchecked"
+      - Statements: # 1..12 " unchecked "
+          - Statement: # 1..12 " unchecked "
+              - ExpressionStatement: # 1..12 " unchecked "
+                  - Expression: # 1..11 " unchecked"
                       - Identifier: "unchecked" # 2..11
       - SKIPPED: "{ x = 1; } " # 12..23
       - CloseBrace: "}" # 23..24

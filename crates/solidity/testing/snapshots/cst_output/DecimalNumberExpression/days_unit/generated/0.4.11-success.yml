@@ -8,5 +8,5 @@ Errors: []
 Tree:
   - DecimalNumberExpression: # 0..7 "10 days"
       - DecimalLiteral: "10" # 0..2
-      - (inner:) NumberUnit: # 2..7 " days"
+      - NumberUnit: # 2..7 " days"
           - DaysKeyword: "days" # 3..7

@@ -16,14 +16,14 @@ Errors: # 1 total
 
 Tree:
   - SourceUnit: # 0..28 "contract Sample {\n  function"
-      - (inner:) SourceUnitMembers: # 0..28 "contract Sample {\n  function"
-          - (inner:) SourceUnitMember: # 0..28 "contract Sample {\n  function"
-              - (inner:) ContractDefinition: # 0..28 "contract Sample {\n  function"
+      - SourceUnitMembers: # 0..28 "contract Sample {\n  function"
+          - SourceUnitMember: # 0..28 "contract Sample {\n  function"
+              - ContractDefinition: # 0..28 "contract Sample {\n  function"
                   - ContractKeyword: "contract" # 0..8
                   - Identifier: "Sample" # 9..15
                   - OpenBrace: "{" # 16..17
-                  - (inner:) ContractMembers: # 18..28 "  function"
-                      - (inner:) ContractMember: # 18..28 "  function"
-                          - (inner:) FunctionDefinition: # 18..28 "  function"
+                  - ContractMembers: # 18..28 "  function"
+                      - ContractMember: # 18..28 "  function"
+                          - FunctionDefinition: # 18..28 "  function"
                               - FunctionKeyword: "function" # 20..28
       - SKIPPED: "" # 28..28

@@ -9,13 +9,13 @@ Tree:
   - Expression: # 0..14 "address(value)"
       - (operand:) FunctionCallExpression: # 0..14 "address(value)"
           - (left_operand:) Expression: # 0..7 "address"
-              - (inner:) ElementaryType: # 0..7 "address"
-                  - (inner:) AddressType: # 0..7 "address"
+              - ElementaryType: # 0..7 "address"
+                  - AddressType: # 0..7 "address"
                       - AddressKeyword: "address" # 0..7
           - (operator:) ArgumentsDeclaration: # 7..14 "(value)"
-              - (inner:) PositionalArgumentsDeclaration: # 7..14 "(value)"
+              - PositionalArgumentsDeclaration: # 7..14 "(value)"
                   - OpenParen: "(" # 7..8
-                  - (inner:) PositionalArguments: # 8..13 "value"
-                      - (inner:) Expression: # 8..13 "value"
+                  - PositionalArguments: # 8..13 "value"
+                      - Expression: # 8..13 "value"
                           - Identifier: "value" # 8..13
                   - CloseParen: ")" # 13..14

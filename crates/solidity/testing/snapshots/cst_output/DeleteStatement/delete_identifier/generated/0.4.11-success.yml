@@ -8,6 +8,6 @@ Errors: []
 Tree:
   - DeleteStatement: # 0..11 "delete foo;"
       - DeleteKeyword: "delete" # 0..6
-      - (inner:) Expression: # 6..10 " foo"
+      - Expression: # 6..10 " foo"
           - Identifier: "foo" # 7..10
       - Semicolon: ";" # 10..11

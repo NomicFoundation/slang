@@ -7,17 +7,17 @@ Errors: []
 
 Tree:
   - SourceUnit: # 0..25 "event E1(uint256 value);\n"
-      - (inner:) SourceUnitMembers: # 0..25 "event E1(uint256 value);\n"
-          - (inner:) SourceUnitMember: # 0..25 "event E1(uint256 value);\n"
-              - (inner:) EventDefinition: # 0..25 "event E1(uint256 value);\n"
+      - SourceUnitMembers: # 0..25 "event E1(uint256 value);\n"
+          - SourceUnitMember: # 0..25 "event E1(uint256 value);\n"
+              - EventDefinition: # 0..25 "event E1(uint256 value);\n"
                   - EventKeyword: "event" # 0..5
                   - Identifier: "E1" # 6..8
-                  - (inner:) EventParametersDeclaration: # 8..23 "(uint256 value)"
+                  - EventParametersDeclaration: # 8..23 "(uint256 value)"
                       - OpenParen: "(" # 8..9
-                      - (inner:) EventParameters: # 9..22 "uint256 value"
-                          - (inner:) EventParameter: # 9..22 "uint256 value"
-                              - (inner:) TypeName: # 9..16 "uint256"
-                                  - (inner:) ElementaryType: # 9..16 "uint256"
+                      - EventParameters: # 9..22 "uint256 value"
+                          - EventParameter: # 9..22 "uint256 value"
+                              - TypeName: # 9..16 "uint256"
+                                  - ElementaryType: # 9..16 "uint256"
                                       - UintKeyword: "uint256" # 9..16
                               - Identifier: "value" # 17..22
                       - CloseParen: ")" # 22..23

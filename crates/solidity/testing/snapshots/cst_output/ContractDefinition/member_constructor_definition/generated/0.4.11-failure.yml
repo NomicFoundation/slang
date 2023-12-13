@@ -22,11 +22,11 @@ Tree:
       - ContractKeyword: "contract" # 0..8
       - Identifier: "Sample" # 9..15
       - OpenBrace: "{" # 16..17
-      - (inner:) ContractMembers: # 18..31 "  constructor"
-          - (inner:) ContractMember: # 18..31 "  constructor"
-              - (inner:) StateVariableDefinition: # 18..31 "  constructor"
-                  - (inner:) TypeName: # 18..31 "  constructor"
-                      - (inner:) IdentifierPath: # 18..31 "  constructor"
+      - ContractMembers: # 18..31 "  constructor"
+          - ContractMember: # 18..31 "  constructor"
+              - StateVariableDefinition: # 18..31 "  constructor"
+                  - TypeName: # 18..31 "  constructor"
+                      - IdentifierPath: # 18..31 "  constructor"
                           - Identifier: "constructor" # 20..31
       - SKIPPED: "() public {\n  }\n" # 31..47
       - CloseBrace: "}" # 47..48

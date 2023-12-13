@@ -8,5 +8,5 @@ Errors: []
 Tree:
   - DecimalNumberExpression: # 0..8 "10 ether"
       - DecimalLiteral: "10" # 0..2
-      - (inner:) NumberUnit: # 2..8 " ether"
+      - NumberUnit: # 2..8 " ether"
           - EtherKeyword: "ether" # 3..8

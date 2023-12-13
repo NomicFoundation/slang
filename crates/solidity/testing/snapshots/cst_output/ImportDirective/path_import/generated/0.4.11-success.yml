@@ -8,7 +8,7 @@ Errors: []
 Tree:
   - ImportDirective: # 0..13 'import "foo";'
       - ImportKeyword: "import" # 0..6
-      - (inner:) ImportClause: # 6..12 ' "foo"'
-          - (inner:) PathImport: # 6..12 ' "foo"'
+      - ImportClause: # 6..12 ' "foo"'
+          - PathImport: # 6..12 ' "foo"'
               - AsciiStringLiteral: '"foo"' # 7..12
       - Semicolon: ";" # 12..13

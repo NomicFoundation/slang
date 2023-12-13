@@ -14,7 +14,7 @@ Tree:
       - EnumKeyword: "enum" # 0..4
       - Identifier: "Foo" # 5..8
       - OpenBrace: "{" # 9..10
-      - (inner:) EnumMembers: # 11..40 "    Bar1,\n    Bar2,\n    Bar3\n"
+      - EnumMembers: # 11..40 "    Bar1,\n    Bar2,\n    Bar3\n"
           - Identifier: "Bar1" # 15..19
           - Comma: "," # 19..20
           - Identifier: "Bar2" # 25..29

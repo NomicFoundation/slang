@@ -7,5 +7,5 @@ Errors: []
 
 Tree:
   - TypeName: # 0..5 "int32"
-      - (inner:) ElementaryType: # 0..5 "int32"
+      - ElementaryType: # 0..5 "int32"
           - IntKeyword: "int32" # 0..5

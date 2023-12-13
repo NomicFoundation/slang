@@ -17,13 +17,13 @@ Tree:
   - EventDefinition: # 0..73 "event Transfer(address indexed from, address index..."
       - EventKeyword: "event" # 0..5
       - Identifier: "Transfer" # 6..14
-      - (inner:) EventParametersDeclaration: # 14..71 "(address indexed from, address indexed to, uint256..."
+      - EventParametersDeclaration: # 14..71 "(address indexed from, address indexed to, uint256..."
           - OpenParen: "(" # 14..15
-          - (inner:) EventParameters: # 15..30 "address indexed"
-              - (inner:) EventParameter: # 15..30 "address indexed"
-                  - (inner:) TypeName: # 15..22 "address"
-                      - (inner:) ElementaryType: # 15..22 "address"
-                          - (inner:) AddressType: # 15..22 "address"
+          - EventParameters: # 15..30 "address indexed"
+              - EventParameter: # 15..30 "address indexed"
+                  - TypeName: # 15..22 "address"
+                      - ElementaryType: # 15..22 "address"
+                          - AddressType: # 15..22 "address"
                               - AddressKeyword: "address" # 15..22
                   - IndexedKeyword: "indexed" # 23..30
           - SKIPPED: "from, address indexed to, uint256 value" # 31..70

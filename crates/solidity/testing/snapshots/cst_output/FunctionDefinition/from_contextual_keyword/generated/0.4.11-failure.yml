@@ -16,30 +16,30 @@ Errors: # 1 total
 Tree:
   - FunctionDefinition: # 0..89 "function transferFrom(address from, address to, ui..."
       - FunctionKeyword: "function" # 0..8
-      - (inner:) FunctionName: # 8..21 " transferFrom"
+      - FunctionName: # 8..21 " transferFrom"
           - Identifier: "transferFrom" # 9..21
-      - (inner:) ParametersDeclaration: # 21..63 "(address from, address to, uint256 amount)"
+      - ParametersDeclaration: # 21..63 "(address from, address to, uint256 amount)"
           - OpenParen: "(" # 21..22
-          - (inner:) Parameters: # 22..29 "address"
-              - (inner:) Parameter: # 22..29 "address"
-                  - (inner:) TypeName: # 22..29 "address"
-                      - (inner:) ElementaryType: # 22..29 "address"
-                          - (inner:) AddressType: # 22..29 "address"
+          - Parameters: # 22..29 "address"
+              - Parameter: # 22..29 "address"
+                  - TypeName: # 22..29 "address"
+                      - ElementaryType: # 22..29 "address"
+                          - AddressType: # 22..29 "address"
                               - AddressKeyword: "address" # 22..29
           - SKIPPED: "from, address to, uint256 amount" # 30..62
           - CloseParen: ")" # 62..63
-      - (inner:) FunctionAttributes: # 63..72 " external"
-          - (inner:) FunctionAttribute: # 63..72 " external"
+      - FunctionAttributes: # 63..72 " external"
+          - FunctionAttribute: # 63..72 " external"
               - ExternalKeyword: "external" # 64..72
-      - (inner:) ReturnsDeclaration: # 72..87 " returns (bool)"
+      - ReturnsDeclaration: # 72..87 " returns (bool)"
           - ReturnsKeyword: "returns" # 73..80
-          - (inner:) ParametersDeclaration: # 80..87 " (bool)"
+          - ParametersDeclaration: # 80..87 " (bool)"
               - OpenParen: "(" # 81..82
-              - (inner:) Parameters: # 82..86 "bool"
-                  - (inner:) Parameter: # 82..86 "bool"
-                      - (inner:) TypeName: # 82..86 "bool"
-                          - (inner:) ElementaryType: # 82..86 "bool"
+              - Parameters: # 82..86 "bool"
+                  - Parameter: # 82..86 "bool"
+                      - TypeName: # 82..86 "bool"
+                          - ElementaryType: # 82..86 "bool"
                               - BoolKeyword: "bool" # 82..86
               - CloseParen: ")" # 86..87
-      - (inner:) FunctionBody: # 87..89 ";\n"
+      - FunctionBody: # 87..89 ";\n"
           - Semicolon: ";" # 87..88

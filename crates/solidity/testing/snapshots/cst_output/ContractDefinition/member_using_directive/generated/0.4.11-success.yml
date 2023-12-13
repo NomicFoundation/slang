@@ -12,15 +12,15 @@ Tree:
       - ContractKeyword: "contract" # 0..8
       - Identifier: "Sample" # 9..15
       - OpenBrace: "{" # 16..17
-      - (inner:) ContractMembers: # 18..35 "  using x for *;\n"
-          - (inner:) ContractMember: # 18..35 "  using x for *;\n"
-              - (inner:) UsingDirective: # 18..35 "  using x for *;\n"
+      - ContractMembers: # 18..35 "  using x for *;\n"
+          - ContractMember: # 18..35 "  using x for *;\n"
+              - UsingDirective: # 18..35 "  using x for *;\n"
                   - UsingKeyword: "using" # 20..25
-                  - (inner:) UsingClause: # 25..27 " x"
-                      - (inner:) IdentifierPath: # 25..27 " x"
+                  - UsingClause: # 25..27 " x"
+                      - IdentifierPath: # 25..27 " x"
                           - Identifier: "x" # 26..27
                   - ForKeyword: "for" # 28..31
-                  - (inner:) UsingTarget: # 31..33 " *"
+                  - UsingTarget: # 31..33 " *"
                       - Asterisk: "*" # 32..33
                   - Semicolon: ";" # 33..34
       - CloseBrace: "}" # 35..36

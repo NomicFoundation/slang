@@ -8,13 +8,13 @@ Errors: []
 Tree:
   - ImportDirective: # 0..29 'import { x as y } from "foo";'
       - ImportKeyword: "import" # 0..6
-      - (inner:) ImportClause: # 6..28 ' { x as y } from "foo"'
-          - (inner:) ImportDeconstruction: # 6..28 ' { x as y } from "foo"'
+      - ImportClause: # 6..28 ' { x as y } from "foo"'
+          - ImportDeconstruction: # 6..28 ' { x as y } from "foo"'
               - OpenBrace: "{" # 7..8
-              - (inner:) ImportDeconstructionSymbols: # 8..15 " x as y"
-                  - (inner:) ImportDeconstructionSymbol: # 8..15 " x as y"
+              - ImportDeconstructionSymbols: # 8..15 " x as y"
+                  - ImportDeconstructionSymbol: # 8..15 " x as y"
                       - Identifier: "x" # 9..10
-                      - (inner:) ImportAlias: # 10..15 " as y"
+                      - ImportAlias: # 10..15 " as y"
                           - AsKeyword: "as" # 11..13
                           - Identifier: "y" # 14..15
               - CloseBrace: "}" # 16..17

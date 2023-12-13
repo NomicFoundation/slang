@@ -28,47 +28,47 @@ Errors: # 2 total
 
 Tree:
   - ContractMembers: # 0..74 "function someFunc() public {\n    {\n        uint256..."
-      - (inner:) ContractMember: # 0..74 "function someFunc() public {\n    {\n        uint256..."
-          - (inner:) FunctionDefinition: # 0..74 "function someFunc() public {\n    {\n        uint256..."
+      - ContractMember: # 0..74 "function someFunc() public {\n    {\n        uint256..."
+          - FunctionDefinition: # 0..74 "function someFunc() public {\n    {\n        uint256..."
               - FunctionKeyword: "function" # 0..8
-              - (inner:) FunctionName: # 8..17 " someFunc"
+              - FunctionName: # 8..17 " someFunc"
                   - Identifier: "someFunc" # 9..17
-              - (inner:) ParametersDeclaration: # 17..19 "()"
+              - ParametersDeclaration: # 17..19 "()"
                   - OpenParen: "(" # 17..18
                   - CloseParen: ")" # 18..19
-              - (inner:) FunctionAttributes: # 19..26 " public"
-                  - (inner:) FunctionAttribute: # 19..26 " public"
+              - FunctionAttributes: # 19..26 " public"
+                  - FunctionAttribute: # 19..26 " public"
                       - PublicKeyword: "public" # 20..26
-              - (inner:) FunctionBody: # 26..74 " {\n    {\n        uint256 arg = (1 + 2;\n    })\n}\n"
-                  - (inner:) Block: # 26..74 " {\n    {\n        uint256 arg = (1 + 2;\n    })\n}\n"
+              - FunctionBody: # 26..74 " {\n    {\n        uint256 arg = (1 + 2;\n    })\n}\n"
+                  - Block: # 26..74 " {\n    {\n        uint256 arg = (1 + 2;\n    })\n}\n"
                       - OpenBrace: "{" # 27..28
-                      - (inner:) Statements: # 29..70 "    {\n        uint256 arg = (1 + 2;\n    }"
-                          - (inner:) Statement: # 29..70 "    {\n        uint256 arg = (1 + 2;\n    }"
-                              - (inner:) Block: # 29..70 "    {\n        uint256 arg = (1 + 2;\n    }"
+                      - Statements: # 29..70 "    {\n        uint256 arg = (1 + 2;\n    }"
+                          - Statement: # 29..70 "    {\n        uint256 arg = (1 + 2;\n    }"
+                              - Block: # 29..70 "    {\n        uint256 arg = (1 + 2;\n    }"
                                   - OpenBrace: "{" # 33..34
-                                  - (inner:) Statements: # 35..63 "        uint256 arg = (1 + 2"
-                                      - (inner:) Statement: # 35..63 "        uint256 arg = (1 + 2"
-                                          - (inner:) VariableDeclarationStatement: # 35..63 "        uint256 arg = (1 + 2"
-                                              - (inner:) VariableDeclarationType: # 35..50 "        uint256"
-                                                  - (inner:) TypeName: # 35..50 "        uint256"
-                                                      - (inner:) ElementaryType: # 35..50 "        uint256"
+                                  - Statements: # 35..63 "        uint256 arg = (1 + 2"
+                                      - Statement: # 35..63 "        uint256 arg = (1 + 2"
+                                          - VariableDeclarationStatement: # 35..63 "        uint256 arg = (1 + 2"
+                                              - VariableDeclarationType: # 35..50 "        uint256"
+                                                  - TypeName: # 35..50 "        uint256"
+                                                      - ElementaryType: # 35..50 "        uint256"
                                                           - UintKeyword: "uint256" # 43..50
                                               - Identifier: "arg" # 51..54
-                                              - (inner:) VariableDeclarationValue: # 54..63 " = (1 + 2"
+                                              - VariableDeclarationValue: # 54..63 " = (1 + 2"
                                                   - Equal: "=" # 55..56
-                                                  - (inner:) Expression: # 56..63 " (1 + 2"
-                                                      - (inner:) TupleExpression: # 56..63 " (1 + 2"
+                                                  - Expression: # 56..63 " (1 + 2"
+                                                      - TupleExpression: # 56..63 " (1 + 2"
                                                           - OpenParen: "(" # 57..58
-                                                          - (inner:) TupleValues: # 58..63 "1 + 2"
-                                                              - (inner:) TupleValue: # 58..63 "1 + 2"
-                                                                  - (inner:) Expression: # 58..63 "1 + 2"
+                                                          - TupleValues: # 58..63 "1 + 2"
+                                                              - TupleValue: # 58..63 "1 + 2"
+                                                                  - Expression: # 58..63 "1 + 2"
                                                                       - (operand:) AdditiveExpression: # 58..63 "1 + 2"
                                                                           - (left_operand:) Expression: # 58..59 "1"
-                                                                              - (inner:) DecimalNumberExpression: # 58..59 "1"
+                                                                              - DecimalNumberExpression: # 58..59 "1"
                                                                                   - DecimalLiteral: "1" # 58..59
                                                                           - (operator:) Plus: "+" # 60..61
                                                                           - (right_operand:) Expression: # 61..63 " 2"
-                                                                              - (inner:) DecimalNumberExpression: # 61..63 " 2"
+                                                                              - DecimalNumberExpression: # 61..63 " 2"
                                                                                   - DecimalLiteral: "2" # 62..63
                                   - SKIPPED: ";\n    " # 63..69
                                   - CloseBrace: "}" # 69..70

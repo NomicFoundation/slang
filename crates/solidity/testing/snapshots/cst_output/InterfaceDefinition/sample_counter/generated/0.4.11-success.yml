@@ -16,47 +16,47 @@ Tree:
       - InterfaceKeyword: "interface" # 0..9
       - Identifier: "ICounter" # 10..18
       - OpenBrace: "{" # 19..20
-      - (inner:) InterfaceMembers: # 21..171 "    // returns the current count\n    function coun..."
-          - (inner:) ContractMember: # 21..105 "    // returns the current count\n    function coun..."
-              - (inner:) FunctionDefinition: # 21..105 "    // returns the current count\n    function coun..."
-                  - (inner:) LeadingTrivia: # 21..58 "    // returns the current count\n    "
+      - InterfaceMembers: # 21..171 "    // returns the current count\n    function coun..."
+          - ContractMember: # 21..105 "    // returns the current count\n    function coun..."
+              - FunctionDefinition: # 21..105 "    // returns the current count\n    function coun..."
+                  - LeadingTrivia: # 21..58 "    // returns the current count\n    "
                       - SingleLineComment: "// returns the current count" # 25..53
                   - FunctionKeyword: "function" # 58..66
-                  - (inner:) FunctionName: # 66..72 " count"
+                  - FunctionName: # 66..72 " count"
                       - Identifier: "count" # 67..72
-                  - (inner:) ParametersDeclaration: # 72..74 "()"
+                  - ParametersDeclaration: # 72..74 "()"
                       - OpenParen: "(" # 72..73
                       - CloseParen: ")" # 73..74
-                  - (inner:) FunctionAttributes: # 74..88 " external view"
-                      - (inner:) FunctionAttribute: # 74..83 " external"
+                  - FunctionAttributes: # 74..88 " external view"
+                      - FunctionAttribute: # 74..83 " external"
                           - ExternalKeyword: "external" # 75..83
-                      - (inner:) FunctionAttribute: # 83..88 " view"
+                      - FunctionAttribute: # 83..88 " view"
                           - ViewKeyword: "view" # 84..88
-                  - (inner:) ReturnsDeclaration: # 88..103 " returns (uint)"
+                  - ReturnsDeclaration: # 88..103 " returns (uint)"
                       - ReturnsKeyword: "returns" # 89..96
-                      - (inner:) ParametersDeclaration: # 96..103 " (uint)"
+                      - ParametersDeclaration: # 96..103 " (uint)"
                           - OpenParen: "(" # 97..98
-                          - (inner:) Parameters: # 98..102 "uint"
-                              - (inner:) Parameter: # 98..102 "uint"
-                                  - (inner:) TypeName: # 98..102 "uint"
-                                      - (inner:) ElementaryType: # 98..102 "uint"
+                          - Parameters: # 98..102 "uint"
+                              - Parameter: # 98..102 "uint"
+                                  - TypeName: # 98..102 "uint"
+                                      - ElementaryType: # 98..102 "uint"
                                           - UintKeyword: "uint" # 98..102
                           - CloseParen: ")" # 102..103
-                  - (inner:) FunctionBody: # 103..105 ";\n"
+                  - FunctionBody: # 103..105 ";\n"
                       - Semicolon: ";" # 103..104
-          - (inner:) ContractMember: # 105..171 "\n    // increments the counter\n    function increm..."
-              - (inner:) FunctionDefinition: # 105..171 "\n    // increments the counter\n    function increm..."
-                  - (inner:) LeadingTrivia: # 105..140 "\n    // increments the counter\n    "
+          - ContractMember: # 105..171 "\n    // increments the counter\n    function increm..."
+              - FunctionDefinition: # 105..171 "\n    // increments the counter\n    function increm..."
+                  - LeadingTrivia: # 105..140 "\n    // increments the counter\n    "
                       - SingleLineComment: "// increments the counter" # 110..135
                   - FunctionKeyword: "function" # 140..148
-                  - (inner:) FunctionName: # 148..158 " increment"
+                  - FunctionName: # 148..158 " increment"
                       - Identifier: "increment" # 149..158
-                  - (inner:) ParametersDeclaration: # 158..160 "()"
+                  - ParametersDeclaration: # 158..160 "()"
                       - OpenParen: "(" # 158..159
                       - CloseParen: ")" # 159..160
-                  - (inner:) FunctionAttributes: # 160..169 " external"
-                      - (inner:) FunctionAttribute: # 160..169 " external"
+                  - FunctionAttributes: # 160..169 " external"
+                      - FunctionAttribute: # 160..169 " external"
                           - ExternalKeyword: "external" # 161..169
-                  - (inner:) FunctionBody: # 169..171 ";\n"
+                  - FunctionBody: # 169..171 ";\n"
                       - Semicolon: ";" # 169..170
       - CloseBrace: "}" # 171..172

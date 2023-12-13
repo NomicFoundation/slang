@@ -13,7 +13,7 @@ Tree:
                   - (left_operand:) Expression: # 0..1 "x"
                       - Identifier: "x" # 0..1
                   - (operator:) ArgumentsDeclaration: # 1..3 "()"
-                      - (inner:) PositionalArgumentsDeclaration: # 1..3 "()"
+                      - PositionalArgumentsDeclaration: # 1..3 "()"
                           - OpenParen: "(" # 1..2
                           - CloseParen: ")" # 2..3
           - (operator:) Period: "." # 3..4
