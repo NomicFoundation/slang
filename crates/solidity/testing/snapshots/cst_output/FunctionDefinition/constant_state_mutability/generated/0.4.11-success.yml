@@ -11,12 +11,12 @@ Tree:
       - (name:) FunctionName: # 8..10 " a"
           - (variant:) Identifier: "a" # 9..10
       - (parameters:) ParametersDeclaration: # 10..12 "()"
-          - OpenParen: "(" # 10..11
-          - CloseParen: ")" # 11..12
+          - (open_paren:) OpenParen: "(" # 10..11
+          - (close_paren:) CloseParen: ")" # 11..12
       - (attributes:) FunctionAttributes: # 12..21 " constant"
           - FunctionAttribute: # 12..21 " constant"
               - (variant:) ConstantKeyword: "constant" # 13..21
       - (body:) FunctionBody: # 21..24 " {}"
           - (variant:) Block: # 21..24 " {}"
-              - OpenBrace: "{" # 22..23
-              - CloseBrace: "}" # 23..24
+              - (open_brace:) OpenBrace: "{" # 22..23
+              - (close_brace:) CloseBrace: "}" # 23..24

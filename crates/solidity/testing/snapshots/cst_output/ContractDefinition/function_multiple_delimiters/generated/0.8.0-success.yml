@@ -19,16 +19,16 @@ Tree:
           - (variant:) SingleLineComment: "// SPDX-License-Identifier: MIT" # 0..31
       - (contract_keyword:) ContractKeyword: "contract" # 32..40
       - (name:) Identifier: "ABC" # 41..44
-      - OpenBrace: "{" # 45..46
-      - ContractMembers: # 47..350 "  function sendValue(address payable recipient, ui..."
+      - (open_brace:) OpenBrace: "{" # 45..46
+      - (members:) ContractMembers: # 47..350 "  function sendValue(address payable recipient, ui..."
           - ContractMember: # 47..350 "  function sendValue(address payable recipient, ui..."
               - (variant:) FunctionDefinition: # 47..350 "  function sendValue(address payable recipient, ui..."
                   - (function_keyword:) FunctionKeyword: "function" # 49..57
                   - (name:) FunctionName: # 57..67 " sendValue"
                       - (variant:) Identifier: "sendValue" # 58..67
                   - (parameters:) ParametersDeclaration: # 67..110 "(address payable recipient, uint256 amount)"
-                      - OpenParen: "(" # 67..68
-                      - Parameters: # 68..109 "address payable recipient, uint256 amount"
+                      - (open_paren:) OpenParen: "(" # 67..68
+                      - (parameters:) Parameters: # 68..109 "address payable recipient, uint256 amount"
                           - Parameter: # 68..93 "address payable recipient"
                               - (type_name:) TypeName: # 68..83 "address payable"
                                   - ElementaryType: # 68..83 "address payable"
@@ -42,14 +42,14 @@ Tree:
                                   - ElementaryType: # 94..102 " uint256"
                                       - (variant:) UintKeyword: "uint256" # 95..102
                               - (name:) Identifier: "amount" # 103..109
-                      - CloseParen: ")" # 109..110
+                      - (close_paren:) CloseParen: ")" # 109..110
                   - (attributes:) FunctionAttributes: # 110..119 " internal"
                       - FunctionAttribute: # 110..119 " internal"
                           - (variant:) InternalKeyword: "internal" # 111..119
                   - (body:) FunctionBody: # 119..350 ' {\n    require(address(this).balance >= amount, "A...'
                       - (variant:) Block: # 119..350 ' {\n    require(address(this).balance >= amount, "A...'
-                          - OpenBrace: "{" # 120..121
-                          - Statements: # 122..346 '    require(address(this).balance >= amount, "Addr...'
+                          - (open_brace:) OpenBrace: "{" # 120..121
+                          - (statements:) Statements: # 122..346 '    require(address(this).balance >= amount, "Addr...'
                               - Statement: # 122..201 '    require(address(this).balance >= amount, "Addr...'
                                   - (variant:) ExpressionStatement: # 122..201 '    require(address(this).balance >= amount, "Addr...'
                                       - (expression:) Expression: # 122..199 '    require(address(this).balance >= amount, "Addr...'
@@ -58,8 +58,8 @@ Tree:
                                                   - Identifier: "require" # 126..133
                                               - (operator:) ArgumentsDeclaration: # 133..199 '(address(this).balance >= amount, "Address: insuff...'
                                                   - (variant:) PositionalArgumentsDeclaration: # 133..199 '(address(this).balance >= amount, "Address: insuff...'
-                                                      - OpenParen: "(" # 133..134
-                                                      - PositionalArguments: # 134..198 'address(this).balance >= amount, "Address: insuffi...'
+                                                      - (open_paren:) OpenParen: "(" # 133..134
+                                                      - (arguments:) PositionalArguments: # 134..198 'address(this).balance >= amount, "Address: insuffi...'
                                                           - Expression: # 134..165 "address(this).balance >= amount"
                                                               - (variant:) ComparisonExpression: # 134..165 "address(this).balance >= amount"
                                                                   - (left_operand:) Expression: # 134..155 "address(this).balance"
@@ -72,11 +72,11 @@ Tree:
                                                                                               - (address_keyword:) AddressKeyword: "address" # 134..141
                                                                                   - (operator:) ArgumentsDeclaration: # 141..147 "(this)"
                                                                                       - (variant:) PositionalArgumentsDeclaration: # 141..147 "(this)"
-                                                                                          - OpenParen: "(" # 141..142
-                                                                                          - PositionalArguments: # 142..146 "this"
+                                                                                          - (open_paren:) OpenParen: "(" # 141..142
+                                                                                          - (arguments:) PositionalArguments: # 142..146 "this"
                                                                                               - Expression: # 142..146 "this"
                                                                                                   - Identifier: "this" # 142..146
-                                                                                          - CloseParen: ")" # 146..147
+                                                                                          - (close_paren:) CloseParen: ")" # 146..147
                                                                           - (operator:) Period: "." # 147..148
                                                                           - (operator:) MemberAccess: # 148..155 "balance"
                                                                               - (variant:) Identifier: "balance" # 148..155
@@ -88,12 +88,12 @@ Tree:
                                                               - StringExpression: # 166..198 ' "Address: insufficient balance"'
                                                                   - (variant:) AsciiStringLiterals: # 166..198 ' "Address: insufficient balance"'
                                                                       - AsciiStringLiteral: '"Address: insufficient balance"' # 167..198
-                                                      - CloseParen: ")" # 198..199
+                                                      - (close_paren:) CloseParen: ")" # 198..199
                                       - (semicolon:) Semicolon: ";" # 199..200
                               - Statement: # 201..262 "\n    (bool success, ) = recipient.call{ value: amo..."
                                   - (variant:) TupleDeconstructionStatement: # 201..262 "\n    (bool success, ) = recipient.call{ value: amo..."
-                                      - OpenParen: "(" # 206..207
-                                      - TupleDeconstructionElements: # 207..220 "bool success,"
+                                      - (open_paren:) OpenParen: "(" # 206..207
+                                      - (elements:) TupleDeconstructionElements: # 207..220 "bool success,"
                                           - TupleDeconstructionElement: # 207..219 "bool success"
                                               - TupleMember: # 207..219 "bool success"
                                                   - (variant:) TypedTupleMember: # 207..219 "bool success"
@@ -103,7 +103,7 @@ Tree:
                                                       - (name:) Identifier: "success" # 212..219
                                           - Comma: "," # 219..220
                                           - TupleDeconstructionElement: [] # 220..220
-                                      - CloseParen: ")" # 221..222
+                                      - (close_paren:) CloseParen: ")" # 221..222
                                       - (equal:) Equal: "=" # 223..224
                                       - (expression:) Expression: # 224..260 ' recipient.call{ value: amount }("")'
                                           - (variant:) FunctionCallExpression: # 224..260 ' recipient.call{ value: amount }("")'
@@ -116,23 +116,23 @@ Tree:
                                                           - (variant:) Identifier: "call" # 235..239
                                               - (operator:) FunctionCallOptions: # 239..256 "{ value: amount }"
                                                   - (variant:) NamedArgumentGroup: # 239..256 "{ value: amount }"
-                                                      - OpenBrace: "{" # 239..240
-                                                      - NamedArguments: # 240..254 " value: amount"
+                                                      - (open_brace:) OpenBrace: "{" # 239..240
+                                                      - (arguments:) NamedArguments: # 240..254 " value: amount"
                                                           - NamedArgument: # 240..254 " value: amount"
                                                               - (name:) Identifier: "value" # 241..246
                                                               - (colon:) Colon: ":" # 246..247
                                                               - (value:) Expression: # 247..254 " amount"
                                                                   - Identifier: "amount" # 248..254
-                                                      - CloseBrace: "}" # 255..256
+                                                      - (close_brace:) CloseBrace: "}" # 255..256
                                               - (operator:) ArgumentsDeclaration: # 256..260 '("")'
                                                   - (variant:) PositionalArgumentsDeclaration: # 256..260 '("")'
-                                                      - OpenParen: "(" # 256..257
-                                                      - PositionalArguments: # 257..259 '""'
+                                                      - (open_paren:) OpenParen: "(" # 256..257
+                                                      - (arguments:) PositionalArguments: # 257..259 '""'
                                                           - Expression: # 257..259 '""'
                                                               - StringExpression: # 257..259 '""'
                                                                   - (variant:) AsciiStringLiterals: # 257..259 '""'
                                                                       - AsciiStringLiteral: '""' # 257..259
-                                                      - CloseParen: ")" # 259..260
+                                                      - (close_paren:) CloseParen: ")" # 259..260
                                       - (semicolon:) Semicolon: ";" # 260..261
                               - Statement: # 262..346 '    require(success, "Address: unable to send valu...'
                                   - (variant:) ExpressionStatement: # 262..346 '    require(success, "Address: unable to send valu...'
@@ -142,8 +142,8 @@ Tree:
                                                   - Identifier: "require" # 266..273
                                               - (operator:) ArgumentsDeclaration: # 273..344 '(success, "Address: unable to send value, recipien...'
                                                   - (variant:) PositionalArgumentsDeclaration: # 273..344 '(success, "Address: unable to send value, recipien...'
-                                                      - OpenParen: "(" # 273..274
-                                                      - PositionalArguments: # 274..343 'success, "Address: unable to send value, recipient...'
+                                                      - (open_paren:) OpenParen: "(" # 273..274
+                                                      - (arguments:) PositionalArguments: # 274..343 'success, "Address: unable to send value, recipient...'
                                                           - Expression: # 274..281 "success"
                                                               - Identifier: "success" # 274..281
                                                           - Comma: "," # 281..282
@@ -151,7 +151,7 @@ Tree:
                                                               - StringExpression: # 282..343 ' "Address: unable to send value, recipient may hav...'
                                                                   - (variant:) AsciiStringLiterals: # 282..343 ' "Address: unable to send value, recipient may hav...'
                                                                       - AsciiStringLiteral: '"Address: unable to send value, recipient may have...' # 283..343
-                                                      - CloseParen: ")" # 343..344
+                                                      - (close_paren:) CloseParen: ")" # 343..344
                                       - (semicolon:) Semicolon: ";" # 344..345
-                          - CloseBrace: "}" # 348..349
-      - CloseBrace: "}" # 350..351
+                          - (close_brace:) CloseBrace: "}" # 348..349
+      - (close_brace:) CloseBrace: "}" # 350..351

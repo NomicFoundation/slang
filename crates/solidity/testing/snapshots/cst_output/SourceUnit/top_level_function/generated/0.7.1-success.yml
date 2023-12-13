@@ -14,9 +14,9 @@ Tree:
                   - (name:) FunctionName: # 8..12 " foo"
                       - (variant:) Identifier: "foo" # 9..12
                   - (parameters:) ParametersDeclaration: # 12..14 "()"
-                      - OpenParen: "(" # 12..13
-                      - CloseParen: ")" # 13..14
+                      - (open_paren:) OpenParen: "(" # 12..13
+                      - (close_paren:) CloseParen: ")" # 13..14
                   - (body:) FunctionBody: # 14..18 " { }"
                       - (variant:) Block: # 14..18 " { }"
-                          - OpenBrace: "{" # 15..16
-                          - CloseBrace: "}" # 17..18
+                          - (open_brace:) OpenBrace: "{" # 15..16
+                          - (close_brace:) CloseBrace: "}" # 17..18

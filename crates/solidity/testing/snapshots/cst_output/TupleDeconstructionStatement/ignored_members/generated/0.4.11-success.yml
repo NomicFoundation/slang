@@ -7,8 +7,8 @@ Errors: []
 
 Tree:
   - TupleDeconstructionStatement: # 0..27 "(, second, , fourth) = rhs;"
-      - OpenParen: "(" # 0..1
-      - TupleDeconstructionElements: # 1..19 ", second, , fourth"
+      - (open_paren:) OpenParen: "(" # 0..1
+      - (elements:) TupleDeconstructionElements: # 1..19 ", second, , fourth"
           - TupleDeconstructionElement: [] # 1..1
           - Comma: "," # 1..2
           - TupleDeconstructionElement: # 2..9 " second"
@@ -22,7 +22,7 @@ Tree:
               - TupleMember: # 12..19 " fourth"
                   - (variant:) UntypedTupleMember: # 12..19 " fourth"
                       - (name:) Identifier: "fourth" # 13..19
-      - CloseParen: ")" # 19..20
+      - (close_paren:) CloseParen: ")" # 19..20
       - (equal:) Equal: "=" # 21..22
       - (expression:) Expression: # 22..26 " rhs"
           - Identifier: "rhs" # 23..26

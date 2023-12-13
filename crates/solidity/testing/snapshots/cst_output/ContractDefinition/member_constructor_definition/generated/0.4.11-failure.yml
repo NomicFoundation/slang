@@ -21,7 +21,7 @@ Tree:
   - ContractDefinition: # 0..48 "contract Sample {\n  constructor() public {\n  }\n}"
       - (contract_keyword:) ContractKeyword: "contract" # 0..8
       - (name:) Identifier: "Sample" # 9..15
-      - OpenBrace: "{" # 16..17
+      - (open_brace:) OpenBrace: "{" # 16..17
       - ContractMembers: # 18..31 "  constructor"
           - ContractMember: # 18..31 "  constructor"
               - StateVariableDefinition: # 18..31 "  constructor"
@@ -29,4 +29,4 @@ Tree:
                       - IdentifierPath: # 18..31 "  constructor"
                           - Identifier: "constructor" # 20..31
       - SKIPPED: "() public {\n  }\n" # 31..47
-      - CloseBrace: "}" # 47..48
+      - (close_brace:) CloseBrace: "}" # 47..48

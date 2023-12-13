@@ -13,8 +13,8 @@ Tree:
       - (name:) FunctionName: # 8..13 " some"
           - (variant:) Identifier: "some" # 9..13
       - (parameters:) ParametersDeclaration: # 13..15 "()"
-          - OpenParen: "(" # 13..14
-          - CloseParen: ")" # 14..15
+          - (open_paren:) OpenParen: "(" # 13..14
+          - (close_paren:) CloseParen: ")" # 14..15
       - (attributes:) FunctionAttributes: # 15..39 " public virtual override"
           - FunctionAttribute: # 15..22 " public"
               - (variant:) PublicKeyword: "public" # 16..22
@@ -26,17 +26,17 @@ Tree:
       - (returns:) ReturnsDeclaration: # 39..57 " returns (uint256)"
           - (returns_keyword:) ReturnsKeyword: "returns" # 40..47
           - (variables:) ParametersDeclaration: # 47..57 " (uint256)"
-              - OpenParen: "(" # 48..49
-              - Parameters: # 49..56 "uint256"
+              - (open_paren:) OpenParen: "(" # 48..49
+              - (parameters:) Parameters: # 49..56 "uint256"
                   - Parameter: # 49..56 "uint256"
                       - (type_name:) TypeName: # 49..56 "uint256"
                           - ElementaryType: # 49..56 "uint256"
                               - (variant:) UintKeyword: "uint256" # 49..56
-              - CloseParen: ")" # 56..57
+              - (close_paren:) CloseParen: ")" # 56..57
       - (body:) FunctionBody: # 57..73 " {\n\treturn 1;\n}\n"
           - (variant:) Block: # 57..73 " {\n\treturn 1;\n}\n"
-              - OpenBrace: "{" # 58..59
-              - Statements: # 60..71 "\treturn 1;\n"
+              - (open_brace:) OpenBrace: "{" # 58..59
+              - (statements:) Statements: # 60..71 "\treturn 1;\n"
                   - Statement: # 60..71 "\treturn 1;\n"
                       - (variant:) ReturnStatement: # 60..71 "\treturn 1;\n"
                           - (return_keyword:) ReturnKeyword: "return" # 61..67
@@ -44,4 +44,4 @@ Tree:
                               - DecimalNumberExpression: # 67..69 " 1"
                                   - (literal:) DecimalLiteral: "1" # 68..69
                           - (semicolon:) Semicolon: ";" # 69..70
-              - CloseBrace: "}" # 71..72
+              - (close_brace:) CloseBrace: "}" # 71..72

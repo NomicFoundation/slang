@@ -10,15 +10,15 @@ Tree:
   - TupleDeconstructionStatement: # 0..57 "// TODO(#671): Tuple expressions can't be empty\n()..."
       - LeadingTrivia: # 0..48 "// TODO(#671): Tuple expressions can't be empty\n"
           - (variant:) SingleLineComment: "// TODO(#671): Tuple expressions can't be empty" # 0..47
-      - OpenParen: "(" # 48..49
-      - TupleDeconstructionElements: # 49..49
+      - (open_paren:) OpenParen: "(" # 48..49
+      - (elements:) TupleDeconstructionElements: # 49..49
           - TupleDeconstructionElement: [] # 49..49
-      - CloseParen: ")" # 49..50
+      - (close_paren:) CloseParen: ")" # 49..50
       - (equal:) Equal: "=" # 51..52
       - (expression:) Expression: # 52..55 " ()"
           - TupleExpression: # 52..55 " ()"
-              - OpenParen: "(" # 53..54
-              - TupleValues: # 54..54
+              - (open_paren:) OpenParen: "(" # 53..54
+              - (items:) TupleValues: # 54..54
                   - TupleValue: [] # 54..54
-              - CloseParen: ")" # 54..55
+              - (close_paren:) CloseParen: ")" # 54..55
       - (semicolon:) Semicolon: ";" # 55..56

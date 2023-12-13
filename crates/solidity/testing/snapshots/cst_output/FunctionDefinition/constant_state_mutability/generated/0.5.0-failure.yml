@@ -19,6 +19,6 @@ Tree:
       - (name:) FunctionName: # 8..10 " a"
           - (variant:) Identifier: "a" # 9..10
       - (parameters:) ParametersDeclaration: # 10..12 "()"
-          - OpenParen: "(" # 10..11
-          - CloseParen: ")" # 11..12
+          - (open_paren:) OpenParen: "(" # 10..11
+          - (close_paren:) CloseParen: ")" # 11..12
       - SKIPPED: " constant {}" # 12..24

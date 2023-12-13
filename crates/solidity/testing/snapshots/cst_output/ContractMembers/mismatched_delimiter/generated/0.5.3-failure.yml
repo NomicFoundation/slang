@@ -34,18 +34,18 @@ Tree:
               - (name:) FunctionName: # 8..17 " someFunc"
                   - (variant:) Identifier: "someFunc" # 9..17
               - (parameters:) ParametersDeclaration: # 17..19 "()"
-                  - OpenParen: "(" # 17..18
-                  - CloseParen: ")" # 18..19
+                  - (open_paren:) OpenParen: "(" # 17..18
+                  - (close_paren:) CloseParen: ")" # 18..19
               - (attributes:) FunctionAttributes: # 19..26 " public"
                   - FunctionAttribute: # 19..26 " public"
                       - (variant:) PublicKeyword: "public" # 20..26
               - (body:) FunctionBody: # 26..74 " {\n    {\n        uint256 arg = (1 + 2;\n    })\n}\n"
                   - (variant:) Block: # 26..74 " {\n    {\n        uint256 arg = (1 + 2;\n    })\n}\n"
-                      - OpenBrace: "{" # 27..28
+                      - (open_brace:) OpenBrace: "{" # 27..28
                       - Statements: # 29..70 "    {\n        uint256 arg = (1 + 2;\n    }"
                           - Statement: # 29..70 "    {\n        uint256 arg = (1 + 2;\n    }"
                               - (variant:) Block: # 29..70 "    {\n        uint256 arg = (1 + 2;\n    }"
-                                  - OpenBrace: "{" # 33..34
+                                  - (open_brace:) OpenBrace: "{" # 33..34
                                   - Statements: # 35..63 "        uint256 arg = (1 + 2"
                                       - Statement: # 35..63 "        uint256 arg = (1 + 2"
                                           - VariableDeclarationStatement: # 35..63 "        uint256 arg = (1 + 2"
@@ -58,7 +58,7 @@ Tree:
                                                   - (equal:) Equal: "=" # 55..56
                                                   - Expression: # 56..63 " (1 + 2"
                                                       - TupleExpression: # 56..63 " (1 + 2"
-                                                          - OpenParen: "(" # 57..58
+                                                          - (open_paren:) OpenParen: "(" # 57..58
                                                           - TupleValues: # 58..63 "1 + 2"
                                                               - TupleValue: # 58..63 "1 + 2"
                                                                   - Expression: # 58..63 "1 + 2"
@@ -71,6 +71,6 @@ Tree:
                                                                               - DecimalNumberExpression: # 61..63 " 2"
                                                                                   - (literal:) DecimalLiteral: "2" # 62..63
                                   - SKIPPED: ";\n    " # 63..69
-                                  - CloseBrace: "}" # 69..70
+                                  - (close_brace:) CloseBrace: "}" # 69..70
                       - SKIPPED: ")\n" # 70..72
-                      - CloseBrace: "}" # 72..73
+                      - (close_brace:) CloseBrace: "}" # 72..73

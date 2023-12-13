@@ -11,8 +11,8 @@ Tree:
   - ContractDefinition: # 0..39 "contract Sample {\n  type Foo is bool;\n}"
       - (contract_keyword:) ContractKeyword: "contract" # 0..8
       - (name:) Identifier: "Sample" # 9..15
-      - OpenBrace: "{" # 16..17
-      - ContractMembers: # 18..38 "  type Foo is bool;\n"
+      - (open_brace:) OpenBrace: "{" # 16..17
+      - (members:) ContractMembers: # 18..38 "  type Foo is bool;\n"
           - ContractMember: # 18..38 "  type Foo is bool;\n"
               - (variant:) UserDefinedValueTypeDefinition: # 18..38 "  type Foo is bool;\n"
                   - (type_keyword:) TypeKeyword: "type" # 20..24
@@ -21,4 +21,4 @@ Tree:
                   - (value_type:) ElementaryType: # 31..36 " bool"
                       - (variant:) BoolKeyword: "bool" # 32..36
                   - (semicolon:) Semicolon: ";" # 36..37
-      - CloseBrace: "}" # 38..39
+      - (close_brace:) CloseBrace: "}" # 38..39

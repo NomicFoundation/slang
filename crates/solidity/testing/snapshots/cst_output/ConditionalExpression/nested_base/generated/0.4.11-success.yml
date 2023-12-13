@@ -9,8 +9,8 @@ Tree:
   - ConditionalExpression: # 0..27 "(foo == bar) ? true : false"
       - (left_operand:) Expression: # 0..12 "(foo == bar)"
           - TupleExpression: # 0..12 "(foo == bar)"
-              - OpenParen: "(" # 0..1
-              - TupleValues: # 1..11 "foo == bar"
+              - (open_paren:) OpenParen: "(" # 0..1
+              - (items:) TupleValues: # 1..11 "foo == bar"
                   - TupleValue: # 1..11 "foo == bar"
                       - Expression: # 1..11 "foo == bar"
                           - (variant:) EqualityExpression: # 1..11 "foo == bar"
@@ -19,7 +19,7 @@ Tree:
                               - (operator:) EqualEqual: "==" # 5..7
                               - (right_operand:) Expression: # 7..11 " bar"
                                   - Identifier: "bar" # 8..11
-              - CloseParen: ")" # 11..12
+              - (close_paren:) CloseParen: ")" # 11..12
       - (operator:) QuestionMark: "?" # 13..14
       - (operator:) Expression: # 14..19 " true"
           - TrueKeyword: "true" # 15..19

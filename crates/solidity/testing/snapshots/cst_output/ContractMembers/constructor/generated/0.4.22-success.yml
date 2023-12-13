@@ -11,11 +11,11 @@ Tree:
           - (variant:) ConstructorDefinition: # 0..24 "constructor() public {}\n"
               - (constructor_keyword:) ConstructorKeyword: "constructor" # 0..11
               - (parameters:) ParametersDeclaration: # 11..13 "()"
-                  - OpenParen: "(" # 11..12
-                  - CloseParen: ")" # 12..13
+                  - (open_paren:) OpenParen: "(" # 11..12
+                  - (close_paren:) CloseParen: ")" # 12..13
               - (attributes:) ConstructorAttributes: # 13..20 " public"
                   - ConstructorAttribute: # 13..20 " public"
                       - (variant:) PublicKeyword: "public" # 14..20
               - (body:) Block: # 20..24 " {}\n"
-                  - OpenBrace: "{" # 21..22
-                  - CloseBrace: "}" # 22..23
+                  - (open_brace:) OpenBrace: "{" # 21..22
+                  - (close_brace:) CloseBrace: "}" # 22..23

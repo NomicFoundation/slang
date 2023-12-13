@@ -19,14 +19,14 @@ Tree:
                           - (variant:) Identifier: "b" # 6..7
               - (operator:) ArgumentsDeclaration: # 7..9 "()"
                   - (variant:) PositionalArgumentsDeclaration: # 7..9 "()"
-                      - OpenParen: "(" # 7..8
-                      - CloseParen: ")" # 8..9
+                      - (open_paren:) OpenParen: "(" # 7..8
+                      - (close_paren:) CloseParen: ")" # 8..9
       - (body:) Block: # 9..12 " {}"
-          - OpenBrace: "{" # 10..11
-          - CloseBrace: "}" # 11..12
+          - (open_brace:) OpenBrace: "{" # 10..11
+          - (close_brace:) CloseBrace: "}" # 11..12
       - (catch_clauses:) CatchClauses: # 12..21 " catch {}"
           - CatchClause: # 12..21 " catch {}"
               - (catch_keyword:) CatchKeyword: "catch" # 13..18
               - (body:) Block: # 18..21 " {}"
-                  - OpenBrace: "{" # 19..20
-                  - CloseBrace: "}" # 20..21
+                  - (open_brace:) OpenBrace: "{" # 19..20
+                  - (close_brace:) CloseBrace: "}" # 20..21

@@ -7,8 +7,8 @@ Errors: []
 
 Tree:
   - TupleDeconstructionStatement: # 0..58 "(uint32 a, uint32 b) = abi.decode(data, (uint32, u..."
-      - OpenParen: "(" # 0..1
-      - TupleDeconstructionElements: # 1..19 "uint32 a, uint32 b"
+      - (open_paren:) OpenParen: "(" # 0..1
+      - (elements:) TupleDeconstructionElements: # 1..19 "uint32 a, uint32 b"
           - TupleDeconstructionElement: # 1..9 "uint32 a"
               - TupleMember: # 1..9 "uint32 a"
                   - (variant:) TypedTupleMember: # 1..9 "uint32 a"
@@ -24,7 +24,7 @@ Tree:
                           - ElementaryType: # 10..17 " uint32"
                               - (variant:) UintKeyword: "uint32" # 11..17
                       - (name:) Identifier: "b" # 18..19
-      - CloseParen: ")" # 19..20
+      - (close_paren:) CloseParen: ")" # 19..20
       - (equal:) Equal: "=" # 21..22
       - (expression:) Expression: # 22..57 " abi.decode(data, (uint32, uint32))"
           - (variant:) FunctionCallExpression: # 22..57 " abi.decode(data, (uint32, uint32))"
@@ -37,15 +37,15 @@ Tree:
                           - (variant:) Identifier: "decode" # 27..33
               - (operator:) ArgumentsDeclaration: # 33..57 "(data, (uint32, uint32))"
                   - (variant:) PositionalArgumentsDeclaration: # 33..57 "(data, (uint32, uint32))"
-                      - OpenParen: "(" # 33..34
-                      - PositionalArguments: # 34..56 "data, (uint32, uint32)"
+                      - (open_paren:) OpenParen: "(" # 33..34
+                      - (arguments:) PositionalArguments: # 34..56 "data, (uint32, uint32)"
                           - Expression: # 34..38 "data"
                               - Identifier: "data" # 34..38
                           - Comma: "," # 38..39
                           - Expression: # 39..56 " (uint32, uint32)"
                               - TupleExpression: # 39..56 " (uint32, uint32)"
-                                  - OpenParen: "(" # 40..41
-                                  - TupleValues: # 41..55 "uint32, uint32"
+                                  - (open_paren:) OpenParen: "(" # 40..41
+                                  - (items:) TupleValues: # 41..55 "uint32, uint32"
                                       - TupleValue: # 41..47 "uint32"
                                           - Expression: # 41..47 "uint32"
                                               - ElementaryType: # 41..47 "uint32"
@@ -55,6 +55,6 @@ Tree:
                                           - Expression: # 48..55 " uint32"
                                               - ElementaryType: # 48..55 " uint32"
                                                   - (variant:) UintKeyword: "uint32" # 49..55
-                                  - CloseParen: ")" # 55..56
-                      - CloseParen: ")" # 56..57
+                                  - (close_paren:) CloseParen: ")" # 55..56
+                      - (close_paren:) CloseParen: ")" # 56..57
       - (semicolon:) Semicolon: ";" # 57..58

@@ -12,8 +12,8 @@ Tree:
       - (operator:) QuestionMark: "?" # 4..5
       - (operator:) Expression: # 5..13 " (a + b)"
           - TupleExpression: # 5..13 " (a + b)"
-              - OpenParen: "(" # 6..7
-              - TupleValues: # 7..12 "a + b"
+              - (open_paren:) OpenParen: "(" # 6..7
+              - (items:) TupleValues: # 7..12 "a + b"
                   - TupleValue: # 7..12 "a + b"
                       - Expression: # 7..12 "a + b"
                           - (variant:) AdditiveExpression: # 7..12 "a + b"
@@ -22,12 +22,12 @@ Tree:
                               - (operator:) Plus: "+" # 9..10
                               - (right_operand:) Expression: # 10..12 " b"
                                   - Identifier: "b" # 11..12
-              - CloseParen: ")" # 12..13
+              - (close_paren:) CloseParen: ")" # 12..13
       - (operator:) Colon: ":" # 14..15
       - (operator:) Expression: # 15..23 " (c + d)"
           - TupleExpression: # 15..23 " (c + d)"
-              - OpenParen: "(" # 16..17
-              - TupleValues: # 17..22 "c + d"
+              - (open_paren:) OpenParen: "(" # 16..17
+              - (items:) TupleValues: # 17..22 "c + d"
                   - TupleValue: # 17..22 "c + d"
                       - Expression: # 17..22 "c + d"
                           - (variant:) AdditiveExpression: # 17..22 "c + d"
@@ -36,4 +36,4 @@ Tree:
                               - (operator:) Plus: "+" # 19..20
                               - (right_operand:) Expression: # 20..22 " d"
                                   - Identifier: "d" # 21..22
-              - CloseParen: ")" # 22..23
+              - (close_paren:) CloseParen: ")" # 22..23

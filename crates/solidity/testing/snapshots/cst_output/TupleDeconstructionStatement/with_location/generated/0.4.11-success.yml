@@ -7,8 +7,8 @@ Errors: []
 
 Tree:
   - TupleDeconstructionStatement: # 0..47 "(memory with_location, without_location) = rhs;"
-      - OpenParen: "(" # 0..1
-      - TupleDeconstructionElements: # 1..39 "memory with_location, without_location"
+      - (open_paren:) OpenParen: "(" # 0..1
+      - (elements:) TupleDeconstructionElements: # 1..39 "memory with_location, without_location"
           - TupleDeconstructionElement: # 1..21 "memory with_location"
               - TupleMember: # 1..21 "memory with_location"
                   - (variant:) UntypedTupleMember: # 1..21 "memory with_location"
@@ -20,7 +20,7 @@ Tree:
               - TupleMember: # 22..39 " without_location"
                   - (variant:) UntypedTupleMember: # 22..39 " without_location"
                       - (name:) Identifier: "without_location" # 23..39
-      - CloseParen: ")" # 39..40
+      - (close_paren:) CloseParen: ")" # 39..40
       - (equal:) Equal: "=" # 41..42
       - (expression:) Expression: # 42..46 " rhs"
           - Identifier: "rhs" # 43..46

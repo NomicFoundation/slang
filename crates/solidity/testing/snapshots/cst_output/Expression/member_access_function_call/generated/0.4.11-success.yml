@@ -17,5 +17,5 @@ Tree:
                       - (variant:) Identifier: "y" # 2..3
           - (operator:) ArgumentsDeclaration: # 3..5 "()"
               - (variant:) PositionalArgumentsDeclaration: # 3..5 "()"
-                  - OpenParen: "(" # 3..4
-                  - CloseParen: ")" # 4..5
+                  - (open_paren:) OpenParen: "(" # 3..4
+                  - (close_paren:) CloseParen: ")" # 4..5

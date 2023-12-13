@@ -31,5 +31,5 @@ Tree:
           - (variant:) MultilineComment: "/*\n * Lorem ipsum dolor sit amet, consectetur adip..." # 0..1985
       - (contract_keyword:) ContractKeyword: "contract" # 1986..1994
       - (name:) Identifier: "Foo" # 1995..1998
-      - OpenBrace: "{" # 1999..2000
-      - CloseBrace: "}" # 2000..2001
+      - (open_brace:) OpenBrace: "{" # 1999..2000
+      - (close_brace:) CloseBrace: "}" # 2000..2001

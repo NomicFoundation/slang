@@ -11,26 +11,26 @@ Errors: []
 
 Tree:
   - YulBlock: # 0..62 "{\n\tfunction mult(a, b) -> result {\n\t\tresult := mul..."
-      - OpenBrace: "{" # 0..1
-      - YulStatements: # 2..60 "\tfunction mult(a, b) -> result {\n\t\tresult := mul(a..."
+      - (open_brace:) OpenBrace: "{" # 0..1
+      - (statements:) YulStatements: # 2..60 "\tfunction mult(a, b) -> result {\n\t\tresult := mul(a..."
           - YulStatement: # 2..60 "\tfunction mult(a, b) -> result {\n\t\tresult := mul(a..."
               - (variant:) YulFunctionDefinition: # 2..60 "\tfunction mult(a, b) -> result {\n\t\tresult := mul(a..."
                   - (function_keyword:) YulFunctionKeyword: "function" # 3..11
                   - (name:) YulIdentifier: "mult" # 12..16
                   - (parameters:) YulParametersDeclaration: # 16..22 "(a, b)"
-                      - OpenParen: "(" # 16..17
-                      - YulParameters: # 17..21 "a, b"
+                      - (open_paren:) OpenParen: "(" # 16..17
+                      - (parameters:) YulParameters: # 17..21 "a, b"
                           - YulIdentifier: "a" # 17..18
                           - Comma: "," # 18..19
                           - YulIdentifier: "b" # 20..21
-                      - CloseParen: ")" # 21..22
+                      - (close_paren:) CloseParen: ")" # 21..22
                   - (returns:) YulReturnsDeclaration: # 22..32 " -> result"
                       - (minus_greater_than:) MinusGreaterThan: "->" # 23..25
                       - (variables:) YulReturnVariables: # 25..32 " result"
                           - YulIdentifier: "result" # 26..32
                   - (body:) YulBlock: # 32..60 " {\n\t\tresult := mul(a, b)\n\t}\n"
-                      - OpenBrace: "{" # 33..34
-                      - YulStatements: # 35..57 "\t\tresult := mul(a, b)\n"
+                      - (open_brace:) OpenBrace: "{" # 33..34
+                      - (statements:) YulStatements: # 35..57 "\t\tresult := mul(a, b)\n"
                           - YulStatement: # 35..57 "\t\tresult := mul(a, b)\n"
                               - (variant:) YulAssignmentStatement: # 35..57 "\t\tresult := mul(a, b)\n"
                                   - (names:) YulIdentifierPaths: # 35..43 "\t\tresult"
@@ -52,5 +52,5 @@ Tree:
                                                   - YulIdentifierPath: # 53..55 " b"
                                                       - YulIdentifier: "b" # 54..55
                                           - (operator:) CloseParen: ")" # 55..56
-                      - CloseBrace: "}" # 58..59
-      - CloseBrace: "}" # 60..61
+                      - (close_brace:) CloseBrace: "}" # 58..59
+      - (close_brace:) CloseBrace: "}" # 60..61

@@ -14,8 +14,8 @@ Tree:
                       - Identifier: "x" # 0..1
                   - (operator:) ArgumentsDeclaration: # 1..3 "()"
                       - (variant:) PositionalArgumentsDeclaration: # 1..3 "()"
-                          - OpenParen: "(" # 1..2
-                          - CloseParen: ")" # 2..3
+                          - (open_paren:) OpenParen: "(" # 1..2
+                          - (close_paren:) CloseParen: ")" # 2..3
           - (operator:) Period: "." # 3..4
           - (operator:) MemberAccess: # 4..5 "y"
               - (variant:) Identifier: "y" # 4..5

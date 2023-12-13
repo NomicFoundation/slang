@@ -7,8 +7,8 @@ Errors: []
 
 Tree:
   - TupleDeconstructionStatement: # 0..38 "(bool memory x, bool storage y) = rhs;"
-      - OpenParen: "(" # 0..1
-      - TupleDeconstructionElements: # 1..30 "bool memory x, bool storage y"
+      - (open_paren:) OpenParen: "(" # 0..1
+      - (elements:) TupleDeconstructionElements: # 1..30 "bool memory x, bool storage y"
           - TupleDeconstructionElement: # 1..14 "bool memory x"
               - TupleMember: # 1..14 "bool memory x"
                   - (variant:) TypedTupleMember: # 1..14 "bool memory x"
@@ -28,7 +28,7 @@ Tree:
                       - (storage_location:) StorageLocation: # 20..28 " storage"
                           - (variant:) StorageKeyword: "storage" # 21..28
                       - (name:) Identifier: "y" # 29..30
-      - CloseParen: ")" # 30..31
+      - (close_paren:) CloseParen: ")" # 30..31
       - (equal:) Equal: "=" # 32..33
       - (expression:) Expression: # 33..37 " rhs"
           - Identifier: "rhs" # 34..37

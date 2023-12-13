@@ -82,8 +82,8 @@ Tree:
                       - (variant:) MultilineComment: "/**\n * @notice Object with the necessary informati..." # 146..642
                   - (struct_keyword:) StructKeyword: "struct" # 643..649
                   - (name:) Identifier: "Envelope" # 650..658
-                  - OpenBrace: "{" # 659..660
-                  - StructMembers: # 661..791 "  uint256 nonce;\n  address origin;\n  address desti..."
+                  - (open_brace:) OpenBrace: "{" # 659..660
+                  - (members:) StructMembers: # 661..791 "  uint256 nonce;\n  address origin;\n  address desti..."
                       - StructMember: # 661..678 "  uint256 nonce;\n"
                           - (type_name:) TypeName: # 661..670 "  uint256"
                               - ElementaryType: # 661..670 "  uint256"
@@ -122,4 +122,4 @@ Tree:
                                   - (variant:) BytesKeyword: "bytes" # 776..781
                           - (name:) Identifier: "message" # 782..789
                           - (semicolon:) Semicolon: ";" # 789..790
-                  - CloseBrace: "}" # 791..792
+                  - (close_brace:) CloseBrace: "}" # 791..792

@@ -15,12 +15,12 @@ Tree:
               - (name:) FunctionName: # 8..13 " func"
                   - (variant:) Identifier: "func" # 9..13
               - (parameters:) ParametersDeclaration: # 13..15 "()"
-                  - OpenParen: "(" # 13..14
-                  - CloseParen: ")" # 14..15
+                  - (open_paren:) OpenParen: "(" # 13..14
+                  - (close_paren:) CloseParen: ")" # 14..15
               - (body:) FunctionBody: # 15..42 " {\n  uint a = 1 + 2 * 3;\n}\n"
                   - (variant:) Block: # 15..42 " {\n  uint a = 1 + 2 * 3;\n}\n"
-                      - OpenBrace: "{" # 16..17
-                      - Statements: # 18..40 "  uint a = 1 + 2 * 3;\n"
+                      - (open_brace:) OpenBrace: "{" # 16..17
+                      - (statements:) Statements: # 18..40 "  uint a = 1 + 2 * 3;\n"
                           - Statement: # 18..40 "  uint a = 1 + 2 * 3;\n"
                               - (variant:) VariableDeclarationStatement: # 18..40 "  uint a = 1 + 2 * 3;\n"
                                   - (variable_type:) VariableDeclarationType: # 18..24 "  uint"
@@ -46,4 +46,4 @@ Tree:
                                                           - DecimalNumberExpression: # 36..38 " 3"
                                                               - (literal:) DecimalLiteral: "3" # 37..38
                                   - (semicolon:) Semicolon: ";" # 38..39
-                      - CloseBrace: "}" # 40..41
+                      - (close_brace:) CloseBrace: "}" # 40..41

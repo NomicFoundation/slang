@@ -7,14 +7,14 @@ Errors: []
 
 Tree:
   - Block: # 0..24 "{ unchecked { x = 1; } }"
-      - OpenBrace: "{" # 0..1
-      - Statements: # 1..22 " unchecked { x = 1; }"
+      - (open_brace:) OpenBrace: "{" # 0..1
+      - (statements:) Statements: # 1..22 " unchecked { x = 1; }"
           - Statement: # 1..22 " unchecked { x = 1; }"
               - (variant:) UncheckedBlock: # 1..22 " unchecked { x = 1; }"
                   - (unchecked_keyword:) UncheckedKeyword: "unchecked" # 2..11
                   - (block:) Block: # 11..22 " { x = 1; }"
-                      - OpenBrace: "{" # 12..13
-                      - Statements: # 13..20 " x = 1;"
+                      - (open_brace:) OpenBrace: "{" # 12..13
+                      - (statements:) Statements: # 13..20 " x = 1;"
                           - Statement: # 13..20 " x = 1;"
                               - (variant:) ExpressionStatement: # 13..20 " x = 1;"
                                   - (expression:) Expression: # 13..19 " x = 1"
@@ -26,5 +26,5 @@ Tree:
                                               - DecimalNumberExpression: # 17..19 " 1"
                                                   - (literal:) DecimalLiteral: "1" # 18..19
                                   - (semicolon:) Semicolon: ";" # 19..20
-                      - CloseBrace: "}" # 21..22
-      - CloseBrace: "}" # 23..24
+                      - (close_brace:) CloseBrace: "}" # 21..22
+      - (close_brace:) CloseBrace: "}" # 23..24

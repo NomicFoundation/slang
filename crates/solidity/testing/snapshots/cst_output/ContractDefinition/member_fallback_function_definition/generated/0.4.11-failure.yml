@@ -21,7 +21,7 @@ Tree:
   - ContractDefinition: # 0..38 "contract Sample {\n  fallback() {\n  }\n}"
       - (contract_keyword:) ContractKeyword: "contract" # 0..8
       - (name:) Identifier: "Sample" # 9..15
-      - OpenBrace: "{" # 16..17
+      - (open_brace:) OpenBrace: "{" # 16..17
       - ContractMembers: # 18..28 "  fallback"
           - ContractMember: # 18..28 "  fallback"
               - StateVariableDefinition: # 18..28 "  fallback"
@@ -29,4 +29,4 @@ Tree:
                       - IdentifierPath: # 18..28 "  fallback"
                           - Identifier: "fallback" # 20..28
       - SKIPPED: "() {\n  }\n" # 28..37
-      - CloseBrace: "}" # 37..38
+      - (close_brace:) CloseBrace: "}" # 37..38

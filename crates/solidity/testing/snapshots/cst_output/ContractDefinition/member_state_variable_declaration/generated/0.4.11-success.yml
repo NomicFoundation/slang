@@ -11,8 +11,8 @@ Tree:
   - ContractDefinition: # 0..36 "contract Sample {\n  uint public a;\n}"
       - (contract_keyword:) ContractKeyword: "contract" # 0..8
       - (name:) Identifier: "Sample" # 9..15
-      - OpenBrace: "{" # 16..17
-      - ContractMembers: # 18..35 "  uint public a;\n"
+      - (open_brace:) OpenBrace: "{" # 16..17
+      - (members:) ContractMembers: # 18..35 "  uint public a;\n"
           - ContractMember: # 18..35 "  uint public a;\n"
               - (variant:) StateVariableDefinition: # 18..35 "  uint public a;\n"
                   - (type_name:) TypeName: # 18..24 "  uint"
@@ -23,4 +23,4 @@ Tree:
                           - (variant:) PublicKeyword: "public" # 25..31
                   - (name:) Identifier: "a" # 32..33
                   - (semicolon:) Semicolon: ";" # 33..34
-      - CloseBrace: "}" # 35..36
+      - (close_brace:) CloseBrace: "}" # 35..36

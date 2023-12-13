@@ -7,8 +7,8 @@ Errors: []
 
 Tree:
   - TupleDeconstructionStatement: # 0..37 "(bool with_type, without_type) = rhs;"
-      - OpenParen: "(" # 0..1
-      - TupleDeconstructionElements: # 1..29 "bool with_type, without_type"
+      - (open_paren:) OpenParen: "(" # 0..1
+      - (elements:) TupleDeconstructionElements: # 1..29 "bool with_type, without_type"
           - TupleDeconstructionElement: # 1..15 "bool with_type"
               - TupleMember: # 1..15 "bool with_type"
                   - (variant:) TypedTupleMember: # 1..15 "bool with_type"
@@ -21,7 +21,7 @@ Tree:
               - TupleMember: # 16..29 " without_type"
                   - (variant:) UntypedTupleMember: # 16..29 " without_type"
                       - (name:) Identifier: "without_type" # 17..29
-      - CloseParen: ")" # 29..30
+      - (close_paren:) CloseParen: ")" # 29..30
       - (equal:) Equal: "=" # 31..32
       - (expression:) Expression: # 32..36 " rhs"
           - Identifier: "rhs" # 33..36

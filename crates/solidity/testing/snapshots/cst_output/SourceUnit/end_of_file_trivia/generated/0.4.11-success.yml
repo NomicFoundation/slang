@@ -17,8 +17,8 @@ Tree:
               - (variant:) ContractDefinition: # 0..15 "contract X { }\n"
                   - (contract_keyword:) ContractKeyword: "contract" # 0..8
                   - (name:) Identifier: "X" # 9..10
-                  - OpenBrace: "{" # 11..12
-                  - CloseBrace: "}" # 13..14
+                  - (open_brace:) OpenBrace: "{" # 11..12
+                  - (close_brace:) CloseBrace: "}" # 13..14
       - (eof_trivia:) EndOfFileTrivia: # 15..71 "    \n// spaces before this\n\n/* new lines after thi..."
           - (variant:) SingleLineComment: "// spaces before this" # 20..41
           - (variant:) MultilineComment: "/* new lines after this */" # 43..69

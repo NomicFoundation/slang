@@ -12,8 +12,8 @@ Tree:
               - Identifier: "x" # 0..1
           - (operator:) ArgumentsDeclaration: # 1..13 "(interested)"
               - (variant:) PositionalArgumentsDeclaration: # 1..13 "(interested)"
-                  - OpenParen: "(" # 1..2
-                  - PositionalArguments: # 2..12 "interested"
+                  - (open_paren:) OpenParen: "(" # 1..2
+                  - (arguments:) PositionalArguments: # 2..12 "interested"
                       - Expression: # 2..12 "interested"
                           - Identifier: "interested" # 2..12
-                  - CloseParen: ")" # 12..13
+                  - (close_paren:) CloseParen: ")" # 12..13

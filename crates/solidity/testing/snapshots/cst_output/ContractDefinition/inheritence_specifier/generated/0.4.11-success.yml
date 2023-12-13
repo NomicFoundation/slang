@@ -21,8 +21,8 @@ Tree:
                       - Identifier: "Bar" # 24..27
                   - (arguments:) ArgumentsDeclaration: # 27..33 "(1, 2)"
                       - (variant:) PositionalArgumentsDeclaration: # 27..33 "(1, 2)"
-                          - OpenParen: "(" # 27..28
-                          - PositionalArguments: # 28..32 "1, 2"
+                          - (open_paren:) OpenParen: "(" # 27..28
+                          - (arguments:) PositionalArguments: # 28..32 "1, 2"
                               - Expression: # 28..29 "1"
                                   - DecimalNumberExpression: # 28..29 "1"
                                       - (literal:) DecimalLiteral: "1" # 28..29
@@ -30,10 +30,10 @@ Tree:
                               - Expression: # 30..32 " 2"
                                   - DecimalNumberExpression: # 30..32 " 2"
                                       - (literal:) DecimalLiteral: "2" # 31..32
-                          - CloseParen: ")" # 32..33
+                          - (close_paren:) CloseParen: ")" # 32..33
               - Comma: "," # 33..34
               - InheritanceType: # 34..38 " Baz"
                   - (type_name:) IdentifierPath: # 34..38 " Baz"
                       - Identifier: "Baz" # 35..38
-      - OpenBrace: "{" # 39..40
-      - CloseBrace: "}" # 40..41
+      - (open_brace:) OpenBrace: "{" # 39..40
+      - (close_brace:) CloseBrace: "}" # 40..41

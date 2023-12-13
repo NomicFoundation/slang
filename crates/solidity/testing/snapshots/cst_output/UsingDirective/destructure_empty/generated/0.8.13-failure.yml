@@ -21,9 +21,9 @@ Tree:
       - (using_keyword:) UsingKeyword: "using" # 41..46
       - (clause:) UsingClause: # 46..49 " {}"
           - (variant:) UsingDeconstruction: # 46..49 " {}"
-              - OpenBrace: "{" # 47..48
+              - (open_brace:) OpenBrace: "{" # 47..48
               - SKIPPED: "" # 48..48
-              - CloseBrace: "}" # 48..49
+              - (close_brace:) CloseBrace: "}" # 48..49
       - (for_keyword:) ForKeyword: "for" # 50..53
       - (target:) UsingTarget: # 53..55 " *"
           - (variant:) Asterisk: "*" # 54..55

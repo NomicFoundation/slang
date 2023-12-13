@@ -21,9 +21,9 @@ Tree:
       - (import_keyword:) ImportKeyword: "import" # 31..37
       - (clause:) ImportClause: # 37..51 ' {} from "foo"'
           - (variant:) ImportDeconstruction: # 37..51 ' {} from "foo"'
-              - OpenBrace: "{" # 38..39
+              - (open_brace:) OpenBrace: "{" # 38..39
               - SKIPPED: "" # 39..39
-              - CloseBrace: "}" # 39..40
+              - (close_brace:) CloseBrace: "}" # 39..40
               - (from_keyword:) FromKeyword: "from" # 41..45
               - (path:) AsciiStringLiteral: '"foo"' # 46..51
       - (semicolon:) Semicolon: ";" # 51..52

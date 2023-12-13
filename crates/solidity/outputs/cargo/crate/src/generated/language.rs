@@ -292,11 +292,15 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             let mut delim_guard = input.open_delim(TokenKind::CloseBracket);
             let input = delim_guard.ctx();
-            seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                input,
-                TokenKind::OpenBracket,
-            ))?;
-            seq.elem(
+            seq.elem_named(
+                "open_bracket",
+                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    input,
+                    TokenKind::OpenBracket,
+                ),
+            )?;
+            seq.elem_named(
+                "items",
                 self.array_values(input)
                     .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
@@ -305,10 +309,13 @@ impl Language {
                         RecoverFromNoMatch::Yes,
                     ),
             )?;
-            seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                input,
-                TokenKind::CloseBracket,
-            ))?;
+            seq.elem_named(
+                "close_bracket",
+                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    input,
+                    TokenKind::CloseBracket,
+                ),
+            )?;
             seq.finish()
         })
         .with_kind(RuleKind::ArrayExpression)
@@ -376,11 +383,15 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             let mut delim_guard = input.open_delim(TokenKind::CloseParen);
             let input = delim_guard.ctx();
-            seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                input,
-                TokenKind::OpenParen,
-            ))?;
-            seq.elem(
+            seq.elem_named(
+                "open_paren",
+                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    input,
+                    TokenKind::OpenParen,
+                ),
+            )?;
+            seq.elem_named(
+                "flags",
                 self.assembly_flags(input)
                     .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
@@ -389,10 +400,13 @@ impl Language {
                         RecoverFromNoMatch::Yes,
                     ),
             )?;
-            seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                input,
-                TokenKind::CloseParen,
-            ))?;
+            seq.elem_named(
+                "close_paren",
+                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    input,
+                    TokenKind::CloseParen,
+                ),
+            )?;
             seq.finish()
         })
         .with_kind(RuleKind::AssemblyFlagsDeclaration)
@@ -516,11 +530,15 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             let mut delim_guard = input.open_delim(TokenKind::CloseBrace);
             let input = delim_guard.ctx();
-            seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                input,
-                TokenKind::OpenBrace,
-            ))?;
-            seq.elem(
+            seq.elem_named(
+                "open_brace",
+                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    input,
+                    TokenKind::OpenBrace,
+                ),
+            )?;
+            seq.elem_named(
+                "statements",
                 OptionalHelper::transform(self.statements(input))
                     .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
@@ -529,10 +547,13 @@ impl Language {
                         RecoverFromNoMatch::Yes,
                     ),
             )?;
-            seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                input,
-                TokenKind::CloseBrace,
-            ))?;
+            seq.elem_named(
+                "close_brace",
+                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    input,
+                    TokenKind::CloseBrace,
+                ),
+            )?;
             seq.finish()
         })
         .with_kind(RuleKind::Block)
@@ -847,11 +868,15 @@ impl Language {
                 SequenceHelper::run(|mut seq| {
                     let mut delim_guard = input.open_delim(TokenKind::CloseBrace);
                     let input = delim_guard.ctx();
-                    seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::OpenBrace,
-                    ))?;
-                    seq.elem(
+                    seq.elem_named(
+                        "open_brace",
+                        self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            input,
+                            TokenKind::OpenBrace,
+                        ),
+                    )?;
+                    seq.elem_named(
+                        "members",
                         OptionalHelper::transform(self.contract_members(input))
                             .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                             input,
@@ -860,10 +885,13 @@ impl Language {
                             RecoverFromNoMatch::Yes,
                         ),
                     )?;
-                    seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::CloseBrace,
-                    ))?;
+                    seq.elem_named(
+                        "close_brace",
+                        self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            input,
+                            TokenKind::CloseBrace,
+                        ),
+                    )?;
                     seq.finish()
                 }),
             )?;
@@ -977,7 +1005,7 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn do_while_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        SequenceHelper :: run (| mut seq | { seq . elem_named ("body" , SequenceHelper :: run (| mut seq | { seq . elem_named ("do_keyword" , self . parse_token_with_trivia :: < LexicalContextType :: Default > (input , TokenKind :: DoKeyword)) ? ; seq . elem_named ("body" , self . statement (input)) ? ; seq . elem_named ("while_keyword" , self . parse_token_with_trivia :: < LexicalContextType :: Default > (input , TokenKind :: WhileKeyword)) ? ; seq . elem_named ("open_paren" , SequenceHelper :: run (| mut seq | { let mut delim_guard = input . open_delim (TokenKind :: CloseParen) ; let input = delim_guard . ctx () ; seq . elem (self . parse_token_with_trivia :: < LexicalContextType :: Default > (input , TokenKind :: OpenParen)) ? ; seq . elem (self . expression (input) . recover_until_with_nested_delims :: < _ , LexicalContextType :: Default > (input , self , TokenKind :: CloseParen , RecoverFromNoMatch :: Yes ,)) ? ; seq . elem (self . parse_token_with_trivia :: < LexicalContextType :: Default > (input , TokenKind :: CloseParen)) ? ; seq . finish () })) ? ; seq . finish () }) . recover_until_with_nested_delims :: < _ , LexicalContextType :: Default > (input , self , TokenKind :: Semicolon , RecoverFromNoMatch :: No ,)) ? ; seq . elem_named ("semicolon" , self . parse_token_with_trivia :: < LexicalContextType :: Default > (input , TokenKind :: Semicolon)) ? ; seq . finish () }) . with_kind (RuleKind :: DoWhileStatement)
+        SequenceHelper :: run (| mut seq | { seq . elem_named ("body" , SequenceHelper :: run (| mut seq | { seq . elem_named ("do_keyword" , self . parse_token_with_trivia :: < LexicalContextType :: Default > (input , TokenKind :: DoKeyword)) ? ; seq . elem_named ("body" , self . statement (input)) ? ; seq . elem_named ("while_keyword" , self . parse_token_with_trivia :: < LexicalContextType :: Default > (input , TokenKind :: WhileKeyword)) ? ; seq . elem_named ("open_paren" , SequenceHelper :: run (| mut seq | { let mut delim_guard = input . open_delim (TokenKind :: CloseParen) ; let input = delim_guard . ctx () ; seq . elem_named ("open_paren" , self . parse_token_with_trivia :: < LexicalContextType :: Default > (input , TokenKind :: OpenParen)) ? ; seq . elem_named ("condition" , self . expression (input) . recover_until_with_nested_delims :: < _ , LexicalContextType :: Default > (input , self , TokenKind :: CloseParen , RecoverFromNoMatch :: Yes ,)) ? ; seq . elem_named ("close_paren" , self . parse_token_with_trivia :: < LexicalContextType :: Default > (input , TokenKind :: CloseParen)) ? ; seq . finish () })) ? ; seq . finish () }) . recover_until_with_nested_delims :: < _ , LexicalContextType :: Default > (input , self , TokenKind :: Semicolon , RecoverFromNoMatch :: No ,)) ? ; seq . elem_named ("semicolon" , self . parse_token_with_trivia :: < LexicalContextType :: Default > (input , TokenKind :: Semicolon)) ? ; seq . finish () }) . with_kind (RuleKind :: DoWhileStatement)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -1139,11 +1167,15 @@ impl Language {
                 SequenceHelper::run(|mut seq| {
                     let mut delim_guard = input.open_delim(TokenKind::CloseBrace);
                     let input = delim_guard.ctx();
-                    seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::OpenBrace,
-                    ))?;
-                    seq.elem(
+                    seq.elem_named(
+                        "open_brace",
+                        self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            input,
+                            TokenKind::OpenBrace,
+                        ),
+                    )?;
+                    seq.elem_named(
+                        "members",
                         OptionalHelper::transform(self.enum_members(input))
                             .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                             input,
@@ -1152,10 +1184,13 @@ impl Language {
                             RecoverFromNoMatch::Yes,
                         ),
                     )?;
-                    seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::CloseBrace,
-                    ))?;
+                    seq.elem_named(
+                        "close_brace",
+                        self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            input,
+                            TokenKind::CloseBrace,
+                        ),
+                    )?;
                     seq.finish()
                 }),
             )?;
@@ -1290,11 +1325,15 @@ impl Language {
             SequenceHelper::run(|mut seq| {
                 let mut delim_guard = input.open_delim(TokenKind::CloseParen);
                 let input = delim_guard.ctx();
-                seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                    input,
-                    TokenKind::OpenParen,
-                ))?;
-                seq.elem(
+                seq.elem_named(
+                    "open_paren",
+                    self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        input,
+                        TokenKind::OpenParen,
+                    ),
+                )?;
+                seq.elem_named(
+                    "parameters",
                     OptionalHelper::transform(self.error_parameters(input))
                         .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
@@ -1303,10 +1342,13 @@ impl Language {
                         RecoverFromNoMatch::Yes,
                     ),
                 )?;
-                seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                    input,
-                    TokenKind::CloseParen,
-                ))?;
+                seq.elem_named(
+                    "close_paren",
+                    self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        input,
+                        TokenKind::CloseParen,
+                    ),
+                )?;
                 seq.finish()
             })
         } else {
@@ -1409,11 +1451,15 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             let mut delim_guard = input.open_delim(TokenKind::CloseParen);
             let input = delim_guard.ctx();
-            seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                input,
-                TokenKind::OpenParen,
-            ))?;
-            seq.elem(
+            seq.elem_named(
+                "open_paren",
+                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    input,
+                    TokenKind::OpenParen,
+                ),
+            )?;
+            seq.elem_named(
+                "parameters",
                 OptionalHelper::transform(self.event_parameters(input))
                     .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
@@ -1422,10 +1468,13 @@ impl Language {
                         RecoverFromNoMatch::Yes,
                     ),
             )?;
-            seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                input,
-                TokenKind::CloseParen,
-            ))?;
+            seq.elem_named(
+                "close_paren",
+                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    input,
+                    TokenKind::CloseParen,
+                ),
+            )?;
             seq.finish()
         })
         .with_kind(RuleKind::EventParametersDeclaration)
@@ -1889,11 +1938,15 @@ impl Language {
                 SequenceHelper::run(|mut seq| {
                     let mut delim_guard = input.open_delim(TokenKind::CloseBracket);
                     let input = delim_guard.ctx();
-                    seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::OpenBracket,
-                    ))?;
-                    seq.elem(
+                    seq.elem_named(
+                        "open_bracket",
+                        self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            input,
+                            TokenKind::OpenBracket,
+                        ),
+                    )?;
+                    seq.elem_named(
+                        "body",
                         SequenceHelper::run(|mut seq| {
                             seq.elem_named(
                                 "start",
@@ -1912,10 +1965,13 @@ impl Language {
                             RecoverFromNoMatch::Yes,
                         ),
                     )?;
-                    seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::CloseBracket,
-                    ))?;
+                    seq.elem_named(
+                        "close_bracket",
+                        self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            input,
+                            TokenKind::CloseBracket,
+                        ),
+                    )?;
                     seq.finish()
                 }),
             )
@@ -2162,11 +2218,15 @@ impl Language {
                 SequenceHelper::run(|mut seq| {
                     let mut delim_guard = input.open_delim(TokenKind::CloseParen);
                     let input = delim_guard.ctx();
-                    seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::OpenParen,
-                    ))?;
-                    seq.elem(
+                    seq.elem_named(
+                        "open_paren",
+                        self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            input,
+                            TokenKind::OpenParen,
+                        ),
+                    )?;
+                    seq.elem_named(
+                        "body",
                         SequenceHelper::run(|mut seq| {
                             seq.elem_named(
                                 "initialization",
@@ -2186,10 +2246,13 @@ impl Language {
                             RecoverFromNoMatch::Yes,
                         ),
                     )?;
-                    seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::CloseParen,
-                    ))?;
+                    seq.elem_named(
+                        "close_paren",
+                        self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            input,
+                            TokenKind::CloseParen,
+                        ),
+                    )?;
                     seq.finish()
                 }),
             )?;
@@ -2538,11 +2601,15 @@ impl Language {
                 SequenceHelper::run(|mut seq| {
                     let mut delim_guard = input.open_delim(TokenKind::CloseParen);
                     let input = delim_guard.ctx();
-                    seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::OpenParen,
-                    ))?;
-                    seq.elem(
+                    seq.elem_named(
+                        "open_paren",
+                        self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            input,
+                            TokenKind::OpenParen,
+                        ),
+                    )?;
+                    seq.elem_named(
+                        "condition",
                         self.expression(input)
                             .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                                 input,
@@ -2551,10 +2618,13 @@ impl Language {
                                 RecoverFromNoMatch::Yes,
                             ),
                     )?;
-                    seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::CloseParen,
-                    ))?;
+                    seq.elem_named(
+                        "close_paren",
+                        self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            input,
+                            TokenKind::CloseParen,
+                        ),
+                    )?;
                     seq.finish()
                 }),
             )?;
@@ -2612,11 +2682,15 @@ impl Language {
                 SequenceHelper::run(|mut seq| {
                     let mut delim_guard = input.open_delim(TokenKind::CloseBrace);
                     let input = delim_guard.ctx();
-                    seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::OpenBrace,
-                    ))?;
-                    seq.elem(
+                    seq.elem_named(
+                        "open_brace",
+                        self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            input,
+                            TokenKind::OpenBrace,
+                        ),
+                    )?;
+                    seq.elem_named(
+                        "symbols",
                         self.import_deconstruction_symbols(input)
                             .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                                 input,
@@ -2625,10 +2699,13 @@ impl Language {
                                 RecoverFromNoMatch::Yes,
                             ),
                     )?;
-                    seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::CloseBrace,
-                    ))?;
+                    seq.elem_named(
+                        "close_brace",
+                        self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            input,
+                            TokenKind::CloseBrace,
+                        ),
+                    )?;
                     seq.finish()
                 }),
             )?;
@@ -2816,11 +2893,15 @@ impl Language {
                 SequenceHelper::run(|mut seq| {
                     let mut delim_guard = input.open_delim(TokenKind::CloseBrace);
                     let input = delim_guard.ctx();
-                    seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::OpenBrace,
-                    ))?;
-                    seq.elem(
+                    seq.elem_named(
+                        "open_brace",
+                        self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            input,
+                            TokenKind::OpenBrace,
+                        ),
+                    )?;
+                    seq.elem_named(
+                        "members",
                         OptionalHelper::transform(self.interface_members(input))
                             .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                             input,
@@ -2829,10 +2910,13 @@ impl Language {
                             RecoverFromNoMatch::Yes,
                         ),
                     )?;
-                    seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::CloseBrace,
-                    ))?;
+                    seq.elem_named(
+                        "close_brace",
+                        self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            input,
+                            TokenKind::CloseBrace,
+                        ),
+                    )?;
                     seq.finish()
                 }),
             )?;
@@ -2893,11 +2977,15 @@ impl Language {
                 SequenceHelper::run(|mut seq| {
                     let mut delim_guard = input.open_delim(TokenKind::CloseBrace);
                     let input = delim_guard.ctx();
-                    seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::OpenBrace,
-                    ))?;
-                    seq.elem(
+                    seq.elem_named(
+                        "open_brace",
+                        self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            input,
+                            TokenKind::OpenBrace,
+                        ),
+                    )?;
+                    seq.elem_named(
+                        "members",
                         OptionalHelper::transform(self.library_members(input))
                             .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                             input,
@@ -2906,10 +2994,13 @@ impl Language {
                             RecoverFromNoMatch::Yes,
                         ),
                     )?;
-                    seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::CloseBrace,
-                    ))?;
+                    seq.elem_named(
+                        "close_brace",
+                        self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            input,
+                            TokenKind::CloseBrace,
+                        ),
+                    )?;
                     seq.finish()
                 }),
             )?;
@@ -2971,11 +3062,15 @@ impl Language {
                 SequenceHelper::run(|mut seq| {
                     let mut delim_guard = input.open_delim(TokenKind::CloseParen);
                     let input = delim_guard.ctx();
-                    seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::OpenParen,
-                    ))?;
-                    seq.elem(
+                    seq.elem_named(
+                        "open_paren",
+                        self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            input,
+                            TokenKind::OpenParen,
+                        ),
+                    )?;
+                    seq.elem_named(
+                        "body",
                         SequenceHelper::run(|mut seq| {
                             seq.elem_named("key_type", self.mapping_key(input))?;
                             seq.elem_named(
@@ -2995,10 +3090,13 @@ impl Language {
                             RecoverFromNoMatch::Yes,
                         ),
                     )?;
-                    seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::CloseParen,
-                    ))?;
+                    seq.elem_named(
+                        "close_paren",
+                        self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            input,
+                            TokenKind::CloseParen,
+                        ),
+                    )?;
                     seq.finish()
                 }),
             )?;
@@ -3182,11 +3280,15 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             let mut delim_guard = input.open_delim(TokenKind::CloseBrace);
             let input = delim_guard.ctx();
-            seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                input,
-                TokenKind::OpenBrace,
-            ))?;
-            seq.elem(
+            seq.elem_named(
+                "open_brace",
+                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    input,
+                    TokenKind::OpenBrace,
+                ),
+            )?;
+            seq.elem_named(
+                "arguments",
                 OptionalHelper::transform(self.named_arguments(input))
                     .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
@@ -3195,10 +3297,13 @@ impl Language {
                         RecoverFromNoMatch::Yes,
                     ),
             )?;
-            seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                input,
-                TokenKind::CloseBrace,
-            ))?;
+            seq.elem_named(
+                "close_brace",
+                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    input,
+                    TokenKind::CloseBrace,
+                ),
+            )?;
             seq.finish()
         })
         .with_kind(RuleKind::NamedArgumentGroup)
@@ -3230,11 +3335,15 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             let mut delim_guard = input.open_delim(TokenKind::CloseParen);
             let input = delim_guard.ctx();
-            seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                input,
-                TokenKind::OpenParen,
-            ))?;
-            seq.elem(
+            seq.elem_named(
+                "open_paren",
+                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    input,
+                    TokenKind::OpenParen,
+                ),
+            )?;
+            seq.elem_named(
+                "arguments",
                 OptionalHelper::transform(self.named_argument_group(input))
                     .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                     input,
@@ -3243,10 +3352,13 @@ impl Language {
                     RecoverFromNoMatch::Yes,
                 ),
             )?;
-            seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                input,
-                TokenKind::CloseParen,
-            ))?;
+            seq.elem_named(
+                "close_paren",
+                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    input,
+                    TokenKind::CloseParen,
+                ),
+            )?;
             seq.finish()
         })
         .with_kind(RuleKind::NamedArgumentsDeclaration)
@@ -3404,11 +3516,15 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             let mut delim_guard = input.open_delim(TokenKind::CloseParen);
             let input = delim_guard.ctx();
-            seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                input,
-                TokenKind::OpenParen,
-            ))?;
-            seq.elem(
+            seq.elem_named(
+                "open_paren",
+                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    input,
+                    TokenKind::OpenParen,
+                ),
+            )?;
+            seq.elem_named(
+                "paths",
                 self.override_paths(input)
                     .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
@@ -3417,10 +3533,13 @@ impl Language {
                         RecoverFromNoMatch::Yes,
                     ),
             )?;
-            seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                input,
-                TokenKind::CloseParen,
-            ))?;
+            seq.elem_named(
+                "close_paren",
+                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    input,
+                    TokenKind::CloseParen,
+                ),
+            )?;
             seq.finish()
         })
         .with_kind(RuleKind::OverridePathsDeclaration)
@@ -3483,11 +3602,15 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             let mut delim_guard = input.open_delim(TokenKind::CloseParen);
             let input = delim_guard.ctx();
-            seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                input,
-                TokenKind::OpenParen,
-            ))?;
-            seq.elem(
+            seq.elem_named(
+                "open_paren",
+                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    input,
+                    TokenKind::OpenParen,
+                ),
+            )?;
+            seq.elem_named(
+                "parameters",
                 OptionalHelper::transform(self.parameters(input))
                     .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
@@ -3496,10 +3619,13 @@ impl Language {
                         RecoverFromNoMatch::Yes,
                     ),
             )?;
-            seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                input,
-                TokenKind::CloseParen,
-            ))?;
+            seq.elem_named(
+                "close_paren",
+                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    input,
+                    TokenKind::CloseParen,
+                ),
+            )?;
             seq.finish()
         })
         .with_kind(RuleKind::ParametersDeclaration)
@@ -3537,11 +3663,15 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             let mut delim_guard = input.open_delim(TokenKind::CloseParen);
             let input = delim_guard.ctx();
-            seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                input,
-                TokenKind::OpenParen,
-            ))?;
-            seq.elem(
+            seq.elem_named(
+                "open_paren",
+                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    input,
+                    TokenKind::OpenParen,
+                ),
+            )?;
+            seq.elem_named(
+                "arguments",
                 OptionalHelper::transform(self.positional_arguments(input))
                     .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                     input,
@@ -3550,10 +3680,13 @@ impl Language {
                     RecoverFromNoMatch::Yes,
                 ),
             )?;
-            seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                input,
-                TokenKind::CloseParen,
-            ))?;
+            seq.elem_named(
+                "close_paren",
+                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    input,
+                    TokenKind::CloseParen,
+                ),
+            )?;
             seq.finish()
         })
         .with_kind(RuleKind::PositionalArgumentsDeclaration)
@@ -4126,11 +4259,15 @@ impl Language {
                 SequenceHelper::run(|mut seq| {
                     let mut delim_guard = input.open_delim(TokenKind::CloseBrace);
                     let input = delim_guard.ctx();
-                    seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::OpenBrace,
-                    ))?;
-                    seq.elem(
+                    seq.elem_named(
+                        "open_brace",
+                        self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            input,
+                            TokenKind::OpenBrace,
+                        ),
+                    )?;
+                    seq.elem_named(
+                        "members",
                         OptionalHelper::transform(self.struct_members(input))
                             .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                             input,
@@ -4139,10 +4276,13 @@ impl Language {
                             RecoverFromNoMatch::Yes,
                         ),
                     )?;
-                    seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::CloseBrace,
-                    ))?;
+                    seq.elem_named(
+                        "close_brace",
+                        self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            input,
+                            TokenKind::CloseBrace,
+                        ),
+                    )?;
                     seq.finish()
                 }),
             )?;
@@ -4294,7 +4434,7 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn tuple_deconstruction_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        SequenceHelper :: run (| mut seq | { seq . elem_named ("body" , SequenceHelper :: run (| mut seq | { seq . elem_named ("open_paren" , SequenceHelper :: run (| mut seq | { let mut delim_guard = input . open_delim (TokenKind :: CloseParen) ; let input = delim_guard . ctx () ; seq . elem (self . parse_token_with_trivia :: < LexicalContextType :: Default > (input , TokenKind :: OpenParen)) ? ; seq . elem (self . tuple_deconstruction_elements (input) . recover_until_with_nested_delims :: < _ , LexicalContextType :: Default > (input , self , TokenKind :: CloseParen , RecoverFromNoMatch :: Yes ,)) ? ; seq . elem (self . parse_token_with_trivia :: < LexicalContextType :: Default > (input , TokenKind :: CloseParen)) ? ; seq . finish () })) ? ; seq . elem_named ("equal" , self . parse_token_with_trivia :: < LexicalContextType :: Default > (input , TokenKind :: Equal)) ? ; seq . elem_named ("expression" , self . expression (input)) ? ; seq . finish () }) . recover_until_with_nested_delims :: < _ , LexicalContextType :: Default > (input , self , TokenKind :: Semicolon , RecoverFromNoMatch :: No ,)) ? ; seq . elem_named ("semicolon" , self . parse_token_with_trivia :: < LexicalContextType :: Default > (input , TokenKind :: Semicolon)) ? ; seq . finish () }) . with_kind (RuleKind :: TupleDeconstructionStatement)
+        SequenceHelper :: run (| mut seq | { seq . elem_named ("body" , SequenceHelper :: run (| mut seq | { seq . elem_named ("open_paren" , SequenceHelper :: run (| mut seq | { let mut delim_guard = input . open_delim (TokenKind :: CloseParen) ; let input = delim_guard . ctx () ; seq . elem_named ("open_paren" , self . parse_token_with_trivia :: < LexicalContextType :: Default > (input , TokenKind :: OpenParen)) ? ; seq . elem_named ("elements" , self . tuple_deconstruction_elements (input) . recover_until_with_nested_delims :: < _ , LexicalContextType :: Default > (input , self , TokenKind :: CloseParen , RecoverFromNoMatch :: Yes ,)) ? ; seq . elem_named ("close_paren" , self . parse_token_with_trivia :: < LexicalContextType :: Default > (input , TokenKind :: CloseParen)) ? ; seq . finish () })) ? ; seq . elem_named ("equal" , self . parse_token_with_trivia :: < LexicalContextType :: Default > (input , TokenKind :: Equal)) ? ; seq . elem_named ("expression" , self . expression (input)) ? ; seq . finish () }) . recover_until_with_nested_delims :: < _ , LexicalContextType :: Default > (input , self , TokenKind :: Semicolon , RecoverFromNoMatch :: No ,)) ? ; seq . elem_named ("semicolon" , self . parse_token_with_trivia :: < LexicalContextType :: Default > (input , TokenKind :: Semicolon)) ? ; seq . finish () }) . with_kind (RuleKind :: TupleDeconstructionStatement)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -4302,11 +4442,15 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             let mut delim_guard = input.open_delim(TokenKind::CloseParen);
             let input = delim_guard.ctx();
-            seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                input,
-                TokenKind::OpenParen,
-            ))?;
-            seq.elem(
+            seq.elem_named(
+                "open_paren",
+                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    input,
+                    TokenKind::OpenParen,
+                ),
+            )?;
+            seq.elem_named(
+                "items",
                 self.tuple_values(input)
                     .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
@@ -4315,10 +4459,13 @@ impl Language {
                         RecoverFromNoMatch::Yes,
                     ),
             )?;
-            seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                input,
-                TokenKind::CloseParen,
-            ))?;
+            seq.elem_named(
+                "close_paren",
+                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    input,
+                    TokenKind::CloseParen,
+                ),
+            )?;
             seq.finish()
         })
         .with_kind(RuleKind::TupleExpression)
@@ -4368,11 +4515,15 @@ impl Language {
                     SequenceHelper::run(|mut seq| {
                         let mut delim_guard = input.open_delim(TokenKind::CloseParen);
                         let input = delim_guard.ctx();
-                        seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                            input,
-                            TokenKind::OpenParen,
-                        ))?;
-                        seq.elem(
+                        seq.elem_named(
+                            "open_paren",
+                            self.parse_token_with_trivia::<LexicalContextType::Default>(
+                                input,
+                                TokenKind::OpenParen,
+                            ),
+                        )?;
+                        seq.elem_named(
+                            "type_name",
                             self.type_name(input)
                                 .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                                     input,
@@ -4381,10 +4532,13 @@ impl Language {
                                     RecoverFromNoMatch::Yes,
                                 ),
                         )?;
-                        seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                            input,
-                            TokenKind::CloseParen,
-                        ))?;
+                        seq.elem_named(
+                            "close_paren",
+                            self.parse_token_with_trivia::<LexicalContextType::Default>(
+                                input,
+                                TokenKind::CloseParen,
+                            ),
+                        )?;
                         seq.finish()
                     }),
                 )?;
@@ -4405,11 +4559,15 @@ impl Language {
                 SequenceHelper::run(|mut seq| {
                     let mut delim_guard = input.open_delim(TokenKind::CloseBracket);
                     let input = delim_guard.ctx();
-                    seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::OpenBracket,
-                    ))?;
-                    seq.elem(
+                    seq.elem_named(
+                        "open_bracket",
+                        self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            input,
+                            TokenKind::OpenBracket,
+                        ),
+                    )?;
+                    seq.elem_named(
+                        "index",
                         OptionalHelper::transform(self.expression(input))
                             .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                             input,
@@ -4418,10 +4576,13 @@ impl Language {
                             RecoverFromNoMatch::Yes,
                         ),
                     )?;
-                    seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::CloseBracket,
-                    ))?;
+                    seq.elem_named(
+                        "close_bracket",
+                        self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            input,
+                            TokenKind::CloseBracket,
+                        ),
+                    )?;
                     seq.finish()
                 }),
             )
@@ -4698,11 +4859,15 @@ impl Language {
             SequenceHelper::run(|mut seq| {
                 let mut delim_guard = input.open_delim(TokenKind::CloseBrace);
                 let input = delim_guard.ctx();
-                seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                    input,
-                    TokenKind::OpenBrace,
-                ))?;
-                seq.elem(
+                seq.elem_named(
+                    "open_brace",
+                    self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        input,
+                        TokenKind::OpenBrace,
+                    ),
+                )?;
+                seq.elem_named(
+                    "symbols",
                     self.using_deconstruction_symbols(input)
                         .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                             input,
@@ -4711,10 +4876,13 @@ impl Language {
                             RecoverFromNoMatch::Yes,
                         ),
                 )?;
-                seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                    input,
-                    TokenKind::CloseBrace,
-                ))?;
+                seq.elem_named(
+                    "close_brace",
+                    self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        input,
+                        TokenKind::CloseBrace,
+                    ),
+                )?;
                 seq.finish()
             })
         } else {
@@ -5209,11 +5377,15 @@ impl Language {
                 SequenceHelper::run(|mut seq| {
                     let mut delim_guard = input.open_delim(TokenKind::CloseParen);
                     let input = delim_guard.ctx();
-                    seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::OpenParen,
-                    ))?;
-                    seq.elem(
+                    seq.elem_named(
+                        "open_paren",
+                        self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            input,
+                            TokenKind::OpenParen,
+                        ),
+                    )?;
+                    seq.elem_named(
+                        "condition",
                         self.expression(input)
                             .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                                 input,
@@ -5222,10 +5394,13 @@ impl Language {
                                 RecoverFromNoMatch::Yes,
                             ),
                     )?;
-                    seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TokenKind::CloseParen,
-                    ))?;
+                    seq.elem_named(
+                        "close_paren",
+                        self.parse_token_with_trivia::<LexicalContextType::Default>(
+                            input,
+                            TokenKind::CloseParen,
+                        ),
+                    )?;
                     seq.finish()
                 }),
             )?;
@@ -5268,13 +5443,15 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             let mut delim_guard = input.open_delim(TokenKind::CloseBrace);
             let input = delim_guard.ctx();
-            seq.elem(
+            seq.elem_named(
+                "open_brace",
                 self.parse_token_with_trivia::<LexicalContextType::Yul>(
                     input,
                     TokenKind::OpenBrace,
                 ),
             )?;
-            seq.elem(
+            seq.elem_named(
+                "statements",
                 OptionalHelper::transform(self.yul_statements(input))
                     .recover_until_with_nested_delims::<_, LexicalContextType::Yul>(
                         input,
@@ -5283,7 +5460,8 @@ impl Language {
                         RecoverFromNoMatch::Yes,
                     ),
             )?;
-            seq.elem(
+            seq.elem_named(
+                "close_brace",
                 self.parse_token_with_trivia::<LexicalContextType::Yul>(
                     input,
                     TokenKind::CloseBrace,
@@ -5334,11 +5512,15 @@ impl Language {
                 SequenceHelper::run(|mut seq| {
                     let mut delim_guard = input.open_delim(TokenKind::CloseParen);
                     let input = delim_guard.ctx();
-                    seq.elem(self.parse_token_with_trivia::<LexicalContextType::Yul>(
-                        input,
-                        TokenKind::OpenParen,
-                    ))?;
-                    seq.elem(
+                    seq.elem_named(
+                        "open_paren",
+                        self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                            input,
+                            TokenKind::OpenParen,
+                        ),
+                    )?;
+                    seq.elem_named(
+                        "arguments",
                         OptionalHelper::transform(self.yul_arguments(input))
                             .recover_until_with_nested_delims::<_, LexicalContextType::Yul>(
                                 input,
@@ -5347,10 +5529,13 @@ impl Language {
                                 RecoverFromNoMatch::Yes,
                             ),
                     )?;
-                    seq.elem(self.parse_token_with_trivia::<LexicalContextType::Yul>(
-                        input,
-                        TokenKind::CloseParen,
-                    ))?;
+                    seq.elem_named(
+                        "close_paren",
+                        self.parse_token_with_trivia::<LexicalContextType::Yul>(
+                            input,
+                            TokenKind::CloseParen,
+                        ),
+                    )?;
                     seq.finish()
                 }),
             )
@@ -5569,13 +5754,15 @@ impl Language {
         SequenceHelper::run(|mut seq| {
             let mut delim_guard = input.open_delim(TokenKind::CloseParen);
             let input = delim_guard.ctx();
-            seq.elem(
+            seq.elem_named(
+                "open_paren",
                 self.parse_token_with_trivia::<LexicalContextType::Yul>(
                     input,
                     TokenKind::OpenParen,
                 ),
             )?;
-            seq.elem(
+            seq.elem_named(
+                "parameters",
                 OptionalHelper::transform(self.yul_parameters(input))
                     .recover_until_with_nested_delims::<_, LexicalContextType::Yul>(
                         input,
@@ -5584,7 +5771,8 @@ impl Language {
                         RecoverFromNoMatch::Yes,
                     ),
             )?;
-            seq.elem(
+            seq.elem_named(
+                "close_paren",
                 self.parse_token_with_trivia::<LexicalContextType::Yul>(
                     input,
                     TokenKind::CloseParen,

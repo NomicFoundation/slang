@@ -7,8 +7,8 @@ Errors: []
 
 Tree:
   - TupleExpression: # 0..20 "(, second, , fourth)"
-      - OpenParen: "(" # 0..1
-      - TupleValues: # 1..19 ", second, , fourth"
+      - (open_paren:) OpenParen: "(" # 0..1
+      - (items:) TupleValues: # 1..19 ", second, , fourth"
           - TupleValue: [] # 1..1
           - Comma: "," # 1..2
           - TupleValue: # 2..9 " second"
@@ -20,4 +20,4 @@ Tree:
           - TupleValue: # 12..19 " fourth"
               - Expression: # 12..19 " fourth"
                   - Identifier: "fourth" # 13..19
-      - CloseParen: ")" # 19..20
+      - (close_paren:) CloseParen: ")" # 19..20

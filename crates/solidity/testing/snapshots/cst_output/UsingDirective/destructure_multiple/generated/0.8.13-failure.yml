@@ -18,13 +18,13 @@ Tree:
       - (using_keyword:) UsingKeyword: "using" # 0..5
       - (clause:) UsingClause: # 5..36 " {add as +, sub, mul, div as /}"
           - (variant:) UsingDeconstruction: # 5..36 " {add as +, sub, mul, div as /}"
-              - OpenBrace: "{" # 6..7
+              - (open_brace:) OpenBrace: "{" # 6..7
               - UsingDeconstructionSymbols: # 7..10 "add"
                   - UsingDeconstructionSymbol: # 7..10 "add"
                       - (name:) IdentifierPath: # 7..10 "add"
                           - Identifier: "add" # 7..10
               - SKIPPED: "as +, sub, mul, div as /" # 11..35
-              - CloseBrace: "}" # 35..36
+              - (close_brace:) CloseBrace: "}" # 35..36
       - (for_keyword:) ForKeyword: "for" # 37..40
       - (target:) UsingTarget: # 40..44 " Int"
           - (variant:) TypeName: # 40..44 " Int"

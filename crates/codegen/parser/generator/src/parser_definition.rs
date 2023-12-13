@@ -133,7 +133,9 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
             }
 
             Self::DelimitedBy(open, body, close) => {
-                let [open_delim, close_delim] = match (open.as_ref(), close.as_ref()) {
+                let open_field_name = &open.0;
+                let close_field_name = &close.0;
+                let [open_delim, close_delim] = match (&open.1, &close.1) {
                     (
                         ParserDefinitionNode::ScannerDefinition(open, ..),
                         ParserDefinitionNode::ScannerDefinition(close, ..),
@@ -141,10 +143,13 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                     _ => unreachable!("Only tokens are permitted as delimiters"),
                 };
 
-                let parser = body.to_parser_code(context_name, is_trivia);
-                let body_parser = body.applicable_version_quality_ranges().wrap_code(
+                let body_field_name = &body.0;
+                let parser = body.1.to_parser_code(context_name, is_trivia);
+                let body_parser = body.1.applicable_version_quality_ranges().wrap_code(
                     quote! {
-                        seq.elem(#parser
+                        seq.elem_named(
+                            #body_field_name,
+                            #parser
                             .recover_until_with_nested_delims::<_, #lex_ctx>(input,
                                 self,
                                 TokenKind::#close_delim,
@@ -160,9 +165,9 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                         let mut delim_guard = input.open_delim(TokenKind::#close_delim);
                         let input = delim_guard.ctx();
 
-                        seq.elem(self.parse_token_with_trivia::<#lex_ctx>(input, TokenKind::#open_delim))?;
+                        seq.elem_named(#open_field_name, self.parse_token_with_trivia::<#lex_ctx>(input, TokenKind::#open_delim))?;
                         #body_parser
-                        seq.elem(self.parse_token_with_trivia::<#lex_ctx>(input, TokenKind::#close_delim))?;
+                        seq.elem_named(#close_field_name, self.parse_token_with_trivia::<#lex_ctx>(input, TokenKind::#close_delim))?;
                         seq.finish()
                     })
                 }

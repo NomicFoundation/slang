@@ -11,8 +11,8 @@ Tree:
   - ContractDefinition: # 0..36 "contract Sample {\n  using x for *;\n}"
       - (contract_keyword:) ContractKeyword: "contract" # 0..8
       - (name:) Identifier: "Sample" # 9..15
-      - OpenBrace: "{" # 16..17
-      - ContractMembers: # 18..35 "  using x for *;\n"
+      - (open_brace:) OpenBrace: "{" # 16..17
+      - (members:) ContractMembers: # 18..35 "  using x for *;\n"
           - ContractMember: # 18..35 "  using x for *;\n"
               - (variant:) UsingDirective: # 18..35 "  using x for *;\n"
                   - (using_keyword:) UsingKeyword: "using" # 20..25
@@ -23,4 +23,4 @@ Tree:
                   - (target:) UsingTarget: # 31..33 " *"
                       - (variant:) Asterisk: "*" # 32..33
                   - (semicolon:) Semicolon: ";" # 33..34
-      - CloseBrace: "}" # 35..36
+      - (close_brace:) CloseBrace: "}" # 35..36

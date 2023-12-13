@@ -19,8 +19,8 @@ Tree:
   - ContractDefinition: # 0..27 "contract Test {\n  field;\n}\n"
       - (contract_keyword:) ContractKeyword: "contract" # 0..8
       - (name:) Identifier: "Test" # 9..13
-      - OpenBrace: "{" # 14..15
-      - ContractMembers: # 16..25 "  field;\n"
+      - (open_brace:) OpenBrace: "{" # 14..15
+      - (members:) ContractMembers: # 16..25 "  field;\n"
           - ContractMember: # 16..25 "  field;\n"
               - (variant:) StateVariableDefinition: # 16..25 "  field;\n"
                   - (type_name:) TypeName: # 16..23 "  field"
@@ -28,4 +28,4 @@ Tree:
                           - Identifier: "field" # 18..23
                   - SKIPPED: "" # 23..23
                   - (semicolon:) Semicolon: ";" # 23..24
-      - CloseBrace: "}" # 25..26
+      - (close_brace:) CloseBrace: "}" # 25..26

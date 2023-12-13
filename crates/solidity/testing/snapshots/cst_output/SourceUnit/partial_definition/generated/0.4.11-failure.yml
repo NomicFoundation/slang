@@ -21,7 +21,7 @@ Tree:
               - ContractDefinition: # 0..28 "contract Sample {\n  function"
                   - (contract_keyword:) ContractKeyword: "contract" # 0..8
                   - (name:) Identifier: "Sample" # 9..15
-                  - OpenBrace: "{" # 16..17
+                  - (open_brace:) OpenBrace: "{" # 16..17
                   - ContractMembers: # 18..28 "  function"
                       - ContractMember: # 18..28 "  function"
                           - FunctionDefinition: # 18..28 "  function"

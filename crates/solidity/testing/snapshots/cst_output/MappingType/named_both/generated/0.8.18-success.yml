@@ -8,7 +8,7 @@ Errors: []
 Tree:
   - MappingType: # 0..34 "mapping(string Foo => bytes32 Bar)"
       - (mapping_keyword:) MappingKeyword: "mapping" # 0..7
-      - OpenParen: "(" # 7..8
+      - (open_paren:) OpenParen: "(" # 7..8
       - (key_type:) MappingKey: # 8..18 "string Foo"
           - (key_type:) MappingKeyType: # 8..14 "string"
               - (variant:) ElementaryType: # 8..14 "string"
@@ -20,4 +20,4 @@ Tree:
               - ElementaryType: # 21..29 " bytes32"
                   - (variant:) BytesKeyword: "bytes32" # 22..29
           - (name:) Identifier: "Bar" # 30..33
-      - CloseParen: ")" # 33..34
+      - (close_paren:) CloseParen: ")" # 33..34

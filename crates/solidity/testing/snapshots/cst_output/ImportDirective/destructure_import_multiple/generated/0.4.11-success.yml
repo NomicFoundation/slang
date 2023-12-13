@@ -10,8 +10,8 @@ Tree:
       - (import_keyword:) ImportKeyword: "import" # 0..6
       - (clause:) ImportClause: # 6..44 ' { A1 as A2, B1, C1 as C2 } from "foo"'
           - (variant:) ImportDeconstruction: # 6..44 ' { A1 as A2, B1, C1 as C2 } from "foo"'
-              - OpenBrace: "{" # 7..8
-              - ImportDeconstructionSymbols: # 8..31 " A1 as A2, B1, C1 as C2"
+              - (open_brace:) OpenBrace: "{" # 7..8
+              - (symbols:) ImportDeconstructionSymbols: # 8..31 " A1 as A2, B1, C1 as C2"
                   - ImportDeconstructionSymbol: # 8..17 " A1 as A2"
                       - (name:) Identifier: "A1" # 9..11
                       - (alias:) ImportAlias: # 11..17 " as A2"
@@ -26,7 +26,7 @@ Tree:
                       - (alias:) ImportAlias: # 25..31 " as C2"
                           - (as_keyword:) AsKeyword: "as" # 26..28
                           - (identifier:) Identifier: "C2" # 29..31
-              - CloseBrace: "}" # 32..33
+              - (close_brace:) CloseBrace: "}" # 32..33
               - (from_keyword:) FromKeyword: "from" # 34..38
               - (path:) AsciiStringLiteral: '"foo"' # 39..44
       - (semicolon:) Semicolon: ";" # 44..45

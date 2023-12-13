@@ -17,8 +17,8 @@ Tree:
                       - (variant:) Identifier: "b" # 2..3
           - (operator:) FunctionCallOptions: # 3..21 "{value: 0, gas: 1}"
               - (variant:) NamedArgumentGroup: # 3..21 "{value: 0, gas: 1}"
-                  - OpenBrace: "{" # 3..4
-                  - NamedArguments: # 4..20 "value: 0, gas: 1"
+                  - (open_brace:) OpenBrace: "{" # 3..4
+                  - (arguments:) NamedArguments: # 4..20 "value: 0, gas: 1"
                       - NamedArgument: # 4..12 "value: 0"
                           - (name:) Identifier: "value" # 4..9
                           - (colon:) Colon: ":" # 9..10
@@ -32,13 +32,13 @@ Tree:
                           - (value:) Expression: # 18..20 " 1"
                               - DecimalNumberExpression: # 18..20 " 1"
                                   - (literal:) DecimalLiteral: "1" # 19..20
-                  - CloseBrace: "}" # 20..21
+                  - (close_brace:) CloseBrace: "}" # 20..21
           - (operator:) ArgumentsDeclaration: # 21..25 '("")'
               - (variant:) PositionalArgumentsDeclaration: # 21..25 '("")'
-                  - OpenParen: "(" # 21..22
-                  - PositionalArguments: # 22..24 '""'
+                  - (open_paren:) OpenParen: "(" # 21..22
+                  - (arguments:) PositionalArguments: # 22..24 '""'
                       - Expression: # 22..24 '""'
                           - StringExpression: # 22..24 '""'
                               - (variant:) AsciiStringLiterals: # 22..24 '""'
                                   - AsciiStringLiteral: '""' # 22..24
-                  - CloseParen: ")" # 24..25
+                  - (close_paren:) CloseParen: ")" # 24..25

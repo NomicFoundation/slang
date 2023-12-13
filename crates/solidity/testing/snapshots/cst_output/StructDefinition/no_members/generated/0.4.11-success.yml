@@ -9,5 +9,5 @@ Tree:
   - StructDefinition: # 0..13 "struct S { }\n"
       - (struct_keyword:) StructKeyword: "struct" # 0..6
       - (name:) Identifier: "S" # 7..8
-      - OpenBrace: "{" # 9..10
-      - CloseBrace: "}" # 11..12
+      - (open_brace:) OpenBrace: "{" # 9..10
+      - (close_brace:) CloseBrace: "}" # 11..12

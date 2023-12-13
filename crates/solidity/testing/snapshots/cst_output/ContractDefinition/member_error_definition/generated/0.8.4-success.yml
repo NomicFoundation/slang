@@ -11,14 +11,14 @@ Tree:
   - ContractDefinition: # 0..37 "contract Sample {\n  error Error1();\n}"
       - (contract_keyword:) ContractKeyword: "contract" # 0..8
       - (name:) Identifier: "Sample" # 9..15
-      - OpenBrace: "{" # 16..17
-      - ContractMembers: # 18..36 "  error Error1();\n"
+      - (open_brace:) OpenBrace: "{" # 16..17
+      - (members:) ContractMembers: # 18..36 "  error Error1();\n"
           - ContractMember: # 18..36 "  error Error1();\n"
               - (variant:) ErrorDefinition: # 18..36 "  error Error1();\n"
                   - (error_keyword:) ErrorKeyword: "error" # 20..25
                   - (name:) Identifier: "Error1" # 26..32
                   - (members:) ErrorParametersDeclaration: # 32..34 "()"
-                      - OpenParen: "(" # 32..33
-                      - CloseParen: ")" # 33..34
+                      - (open_paren:) OpenParen: "(" # 32..33
+                      - (close_paren:) CloseParen: ")" # 33..34
                   - (semicolon:) Semicolon: ";" # 34..35
-      - CloseBrace: "}" # 36..37
+      - (close_brace:) CloseBrace: "}" # 36..37

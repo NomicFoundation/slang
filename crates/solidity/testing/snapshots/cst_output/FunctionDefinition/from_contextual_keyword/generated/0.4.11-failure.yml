@@ -19,7 +19,7 @@ Tree:
       - (name:) FunctionName: # 8..21 " transferFrom"
           - (variant:) Identifier: "transferFrom" # 9..21
       - (parameters:) ParametersDeclaration: # 21..63 "(address from, address to, uint256 amount)"
-          - OpenParen: "(" # 21..22
+          - (open_paren:) OpenParen: "(" # 21..22
           - Parameters: # 22..29 "address"
               - Parameter: # 22..29 "address"
                   - (type_name:) TypeName: # 22..29 "address"
@@ -27,19 +27,19 @@ Tree:
                           - (variant:) AddressType: # 22..29 "address"
                               - (address_keyword:) AddressKeyword: "address" # 22..29
           - SKIPPED: "from, address to, uint256 amount" # 30..62
-          - CloseParen: ")" # 62..63
+          - (close_paren:) CloseParen: ")" # 62..63
       - (attributes:) FunctionAttributes: # 63..72 " external"
           - FunctionAttribute: # 63..72 " external"
               - (variant:) ExternalKeyword: "external" # 64..72
       - (returns:) ReturnsDeclaration: # 72..87 " returns (bool)"
           - (returns_keyword:) ReturnsKeyword: "returns" # 73..80
           - (variables:) ParametersDeclaration: # 80..87 " (bool)"
-              - OpenParen: "(" # 81..82
-              - Parameters: # 82..86 "bool"
+              - (open_paren:) OpenParen: "(" # 81..82
+              - (parameters:) Parameters: # 82..86 "bool"
                   - Parameter: # 82..86 "bool"
                       - (type_name:) TypeName: # 82..86 "bool"
                           - ElementaryType: # 82..86 "bool"
                               - (variant:) BoolKeyword: "bool" # 82..86
-              - CloseParen: ")" # 86..87
+              - (close_paren:) CloseParen: ")" # 86..87
       - (body:) FunctionBody: # 87..89 ";\n"
           - (variant:) Semicolon: ";" # 87..88

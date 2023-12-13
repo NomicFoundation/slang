@@ -623,6 +623,14 @@ fn resolve_sequence_like(
             .map(|(name, field)| (name.to_string(), field))
             .collect();
 
+        // If there are multiple fields in the body, they will be wrapped in a sequence but ultimately flattened/not reduced
+        // to a dedicated rule kind
+        let body_name = if let [(name, _)] = &delimited_body[..] {
+            name.to_string()
+        } else {
+            String::from("body")
+        };
+
         let delimited_body = match delimited_body.len() {
             1 => delimited_body.into_iter().next().unwrap().1,
             0 => ParserDefinitionNode::Sequence(vec![]),
@@ -632,13 +640,13 @@ fn resolve_sequence_like(
         let delimited = {
             let mut delims = fields
                 .drain(open_idx..=open_idx + 1)
-                .map(|(_, field)| field);
+                .map(|(name, field)| (name.to_string(), field));
             let open = delims.next().unwrap();
             let close = delims.next().unwrap();
 
             ParserDefinitionNode::DelimitedBy(
                 Box::new(open),
-                Box::new(delimited_body),
+                Box::new((body_name, delimited_body)),
                 Box::new(close),
             )
         };

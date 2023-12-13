@@ -10,8 +10,8 @@ Tree:
       - (using_keyword:) UsingKeyword: "using" # 0..5
       - (clause:) UsingClause: # 5..36 " {add as +, sub, mul, div as /}"
           - (variant:) UsingDeconstruction: # 5..36 " {add as +, sub, mul, div as /}"
-              - OpenBrace: "{" # 6..7
-              - UsingDeconstructionSymbols: # 7..35 "add as +, sub, mul, div as /"
+              - (open_brace:) OpenBrace: "{" # 6..7
+              - (symbols:) UsingDeconstructionSymbols: # 7..35 "add as +, sub, mul, div as /"
                   - UsingDeconstructionSymbol: # 7..15 "add as +"
                       - (name:) IdentifierPath: # 7..10 "add"
                           - Identifier: "add" # 7..10
@@ -35,7 +35,7 @@ Tree:
                           - (as_keyword:) AsKeyword: "as" # 31..33
                           - (operator:) UsingOperator: # 33..35 " /"
                               - (variant:) Slash: "/" # 34..35
-              - CloseBrace: "}" # 35..36
+              - (close_brace:) CloseBrace: "}" # 35..36
       - (for_keyword:) ForKeyword: "for" # 37..40
       - (target:) UsingTarget: # 40..44 " Int"
           - (variant:) TypeName: # 40..44 " Int"

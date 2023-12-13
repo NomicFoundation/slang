@@ -16,7 +16,7 @@ Errors: # 1 total
 Tree:
   - MappingType: # 0..30 "mapping(string => bytes32 Bar)"
       - (mapping_keyword:) MappingKeyword: "mapping" # 0..7
-      - OpenParen: "(" # 7..8
+      - (open_paren:) OpenParen: "(" # 7..8
       - (key_type:) MappingKey: # 8..14 "string"
           - (key_type:) MappingKeyType: # 8..14 "string"
               - (variant:) ElementaryType: # 8..14 "string"
@@ -27,4 +27,4 @@ Tree:
               - ElementaryType: # 17..25 " bytes32"
                   - (variant:) BytesKeyword: "bytes32" # 18..25
       - SKIPPED: "Bar" # 26..29
-      - CloseParen: ")" # 29..30
+      - (close_paren:) CloseParen: ")" # 29..30

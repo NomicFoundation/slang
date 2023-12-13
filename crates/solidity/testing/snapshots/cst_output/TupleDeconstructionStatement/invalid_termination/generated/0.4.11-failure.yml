@@ -18,8 +18,8 @@ Errors: # 1 total
 
 Tree:
   - TupleDeconstructionStatement: # 0..35 "(a, b) = (123, 135)\n/**/\n{ throw; \n"
-      - OpenParen: "(" # 0..1
-      - TupleDeconstructionElements: # 1..5 "a, b"
+      - (open_paren:) OpenParen: "(" # 0..1
+      - (elements:) TupleDeconstructionElements: # 1..5 "a, b"
           - TupleDeconstructionElement: # 1..2 "a"
               - TupleMember: # 1..2 "a"
                   - (variant:) UntypedTupleMember: # 1..2 "a"
@@ -29,12 +29,12 @@ Tree:
               - TupleMember: # 3..5 " b"
                   - (variant:) UntypedTupleMember: # 3..5 " b"
                       - (name:) Identifier: "b" # 4..5
-      - CloseParen: ")" # 5..6
+      - (close_paren:) CloseParen: ")" # 5..6
       - (equal:) Equal: "=" # 7..8
       - (expression:) Expression: # 8..20 " (123, 135)\n"
           - TupleExpression: # 8..20 " (123, 135)\n"
-              - OpenParen: "(" # 9..10
-              - TupleValues: # 10..18 "123, 135"
+              - (open_paren:) OpenParen: "(" # 9..10
+              - (items:) TupleValues: # 10..18 "123, 135"
                   - TupleValue: # 10..13 "123"
                       - Expression: # 10..13 "123"
                           - DecimalNumberExpression: # 10..13 "123"
@@ -44,5 +44,5 @@ Tree:
                       - Expression: # 14..18 " 135"
                           - DecimalNumberExpression: # 14..18 " 135"
                               - (literal:) DecimalLiteral: "135" # 15..18
-              - CloseParen: ")" # 18..19
+              - (close_paren:) CloseParen: ")" # 18..19
       - SKIPPED: "/**/\n{ throw; \n" # 20..35

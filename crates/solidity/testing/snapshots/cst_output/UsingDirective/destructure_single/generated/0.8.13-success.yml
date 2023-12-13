@@ -10,12 +10,12 @@ Tree:
       - (using_keyword:) UsingKeyword: "using" # 0..5
       - (clause:) UsingClause: # 5..11 " {add}"
           - (variant:) UsingDeconstruction: # 5..11 " {add}"
-              - OpenBrace: "{" # 6..7
-              - UsingDeconstructionSymbols: # 7..10 "add"
+              - (open_brace:) OpenBrace: "{" # 6..7
+              - (symbols:) UsingDeconstructionSymbols: # 7..10 "add"
                   - UsingDeconstructionSymbol: # 7..10 "add"
                       - (name:) IdentifierPath: # 7..10 "add"
                           - Identifier: "add" # 7..10
-              - CloseBrace: "}" # 10..11
+              - (close_brace:) CloseBrace: "}" # 10..11
       - (for_keyword:) ForKeyword: "for" # 12..15
       - (target:) UsingTarget: # 15..19 " Int"
           - (variant:) TypeName: # 15..19 " Int"

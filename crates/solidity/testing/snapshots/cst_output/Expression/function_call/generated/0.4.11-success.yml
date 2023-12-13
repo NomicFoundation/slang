@@ -12,8 +12,8 @@ Tree:
               - Identifier: "x" # 0..1
           - (operator:) ArgumentsDeclaration: # 1..7 "(1, 2)"
               - (variant:) PositionalArgumentsDeclaration: # 1..7 "(1, 2)"
-                  - OpenParen: "(" # 1..2
-                  - PositionalArguments: # 2..6 "1, 2"
+                  - (open_paren:) OpenParen: "(" # 1..2
+                  - (arguments:) PositionalArguments: # 2..6 "1, 2"
                       - Expression: # 2..3 "1"
                           - DecimalNumberExpression: # 2..3 "1"
                               - (literal:) DecimalLiteral: "1" # 2..3
@@ -21,4 +21,4 @@ Tree:
                       - Expression: # 4..6 " 2"
                           - DecimalNumberExpression: # 4..6 " 2"
                               - (literal:) DecimalLiteral: "2" # 5..6
-                  - CloseParen: ")" # 6..7
+                  - (close_paren:) CloseParen: ")" # 6..7

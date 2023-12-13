@@ -10,5 +10,5 @@ Tree:
       - (abstract_keyword:) AbstractKeyword: "abstract" # 0..8
       - (contract_keyword:) ContractKeyword: "contract" # 9..17
       - (name:) Identifier: "Sample" # 18..24
-      - OpenBrace: "{" # 25..26
-      - CloseBrace: "}" # 26..27
+      - (open_brace:) OpenBrace: "{" # 25..26
+      - (close_brace:) CloseBrace: "}" # 26..27

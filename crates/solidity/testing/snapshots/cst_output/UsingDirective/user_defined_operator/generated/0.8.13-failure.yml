@@ -18,13 +18,13 @@ Tree:
       - (using_keyword:) UsingKeyword: "using" # 0..5
       - (clause:) UsingClause: # 5..16 " {div as /}"
           - (variant:) UsingDeconstruction: # 5..16 " {div as /}"
-              - OpenBrace: "{" # 6..7
+              - (open_brace:) OpenBrace: "{" # 6..7
               - UsingDeconstructionSymbols: # 7..10 "div"
                   - UsingDeconstructionSymbol: # 7..10 "div"
                       - (name:) IdentifierPath: # 7..10 "div"
                           - Identifier: "div" # 7..10
               - SKIPPED: "as /" # 11..15
-              - CloseBrace: "}" # 15..16
+              - (close_brace:) CloseBrace: "}" # 15..16
       - (for_keyword:) ForKeyword: "for" # 17..20
       - (target:) UsingTarget: # 20..24 " Int"
           - (variant:) TypeName: # 20..24 " Int"
