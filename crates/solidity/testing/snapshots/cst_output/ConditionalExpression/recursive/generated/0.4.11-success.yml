@@ -6,50 +6,50 @@ Source: >
 Errors: []
 
 Tree:
-  - (TODO:) ConditionalExpression: # 0..63 "foo ? a == b ? a + b * c : a + b * c + d : !bar ? ..."
+  - ConditionalExpression: # 0..63 "foo ? a == b ? a + b * c : a + b * c + d : !bar ? ..."
       - (left_operand:) Expression: # 0..3 "foo"
-          - (dummy:) Identifier: "foo" # 0..3
+          - Identifier: "foo" # 0..3
       - (operator:) QuestionMark: "?" # 4..5
       - (operator:) Expression: # 5..40 " a == b ? a + b * c : a + b * c + d"
           - (operand:) ConditionalExpression: # 5..40 " a == b ? a + b * c : a + b * c + d"
               - (left_operand:) Expression: # 5..12 " a == b"
                   - (operand:) EqualityExpression: # 5..12 " a == b"
                       - (left_operand:) Expression: # 5..7 " a"
-                          - (dummy:) Identifier: "a" # 6..7
+                          - Identifier: "a" # 6..7
                       - (operator:) EqualEqual: "==" # 8..10
                       - (right_operand:) Expression: # 10..12 " b"
-                          - (dummy:) Identifier: "b" # 11..12
+                          - Identifier: "b" # 11..12
               - (operator:) QuestionMark: "?" # 13..14
               - (operator:) Expression: # 14..24 " a + b * c"
                   - (operand:) AdditiveExpression: # 14..24 " a + b * c"
                       - (left_operand:) Expression: # 14..16 " a"
-                          - (dummy:) Identifier: "a" # 15..16
+                          - Identifier: "a" # 15..16
                       - (operator:) Plus: "+" # 17..18
                       - (right_operand:) Expression: # 18..24 " b * c"
                           - (operand:) MultiplicativeExpression: # 18..24 " b * c"
                               - (left_operand:) Expression: # 18..20 " b"
-                                  - (dummy:) Identifier: "b" # 19..20
+                                  - Identifier: "b" # 19..20
                               - (operator:) Asterisk: "*" # 21..22
                               - (right_operand:) Expression: # 22..24 " c"
-                                  - (dummy:) Identifier: "c" # 23..24
+                                  - Identifier: "c" # 23..24
               - (operator:) Colon: ":" # 25..26
               - (operator:) Expression: # 26..40 " a + b * c + d"
                   - (operand:) AdditiveExpression: # 26..40 " a + b * c + d"
                       - (left_operand:) Expression: # 26..36 " a + b * c"
                           - (operand:) AdditiveExpression: # 26..36 " a + b * c"
                               - (left_operand:) Expression: # 26..28 " a"
-                                  - (dummy:) Identifier: "a" # 27..28
+                                  - Identifier: "a" # 27..28
                               - (operator:) Plus: "+" # 29..30
                               - (right_operand:) Expression: # 30..36 " b * c"
                                   - (operand:) MultiplicativeExpression: # 30..36 " b * c"
                                       - (left_operand:) Expression: # 30..32 " b"
-                                          - (dummy:) Identifier: "b" # 31..32
+                                          - Identifier: "b" # 31..32
                                       - (operator:) Asterisk: "*" # 33..34
                                       - (right_operand:) Expression: # 34..36 " c"
-                                          - (dummy:) Identifier: "c" # 35..36
+                                          - Identifier: "c" # 35..36
                       - (operator:) Plus: "+" # 37..38
                       - (right_operand:) Expression: # 38..40 " d"
-                          - (dummy:) Identifier: "d" # 39..40
+                          - Identifier: "d" # 39..40
       - (operator:) Colon: ":" # 41..42
       - (operator:) Expression: # 42..63 " !bar ? e + f : g + h"
           - (operand:) ConditionalExpression: # 42..63 " !bar ? e + f : g + h"
@@ -57,20 +57,20 @@ Tree:
                   - (operand:) PrefixExpression: # 42..47 " !bar"
                       - (operator:) Bang: "!" # 43..44
                       - (right_operand:) Expression: # 44..47 "bar"
-                          - (dummy:) Identifier: "bar" # 44..47
+                          - Identifier: "bar" # 44..47
               - (operator:) QuestionMark: "?" # 48..49
               - (operator:) Expression: # 49..55 " e + f"
                   - (operand:) AdditiveExpression: # 49..55 " e + f"
                       - (left_operand:) Expression: # 49..51 " e"
-                          - (dummy:) Identifier: "e" # 50..51
+                          - Identifier: "e" # 50..51
                       - (operator:) Plus: "+" # 52..53
                       - (right_operand:) Expression: # 53..55 " f"
-                          - (dummy:) Identifier: "f" # 54..55
+                          - Identifier: "f" # 54..55
               - (operator:) Colon: ":" # 56..57
               - (operator:) Expression: # 57..63 " g + h"
                   - (operand:) AdditiveExpression: # 57..63 " g + h"
                       - (left_operand:) Expression: # 57..59 " g"
-                          - (dummy:) Identifier: "g" # 58..59
+                          - Identifier: "g" # 58..59
                       - (operator:) Plus: "+" # 60..61
                       - (right_operand:) Expression: # 61..63 " h"
-                          - (dummy:) Identifier: "h" # 62..63
+                          - Identifier: "h" # 62..63

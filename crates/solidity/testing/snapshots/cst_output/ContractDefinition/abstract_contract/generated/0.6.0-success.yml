@@ -6,9 +6,9 @@ Source: >
 Errors: []
 
 Tree:
-  - (TODO:) ContractDefinition: # 0..28 "abstract contract Sample {}\n"
-      - (dummy:) AbstractKeyword: "abstract" # 0..8
-      - (dummy:) ContractKeyword: "contract" # 9..17
-      - (dummy:) Identifier: "Sample" # 18..24
-      - (dummy:) OpenBrace: "{" # 25..26
-      - (dummy:) CloseBrace: "}" # 26..27
+  - ContractDefinition: # 0..28 "abstract contract Sample {}\n"
+      - AbstractKeyword: "abstract" # 0..8
+      - ContractKeyword: "contract" # 9..17
+      - Identifier: "Sample" # 18..24
+      - OpenBrace: "{" # 25..26
+      - CloseBrace: "}" # 26..27

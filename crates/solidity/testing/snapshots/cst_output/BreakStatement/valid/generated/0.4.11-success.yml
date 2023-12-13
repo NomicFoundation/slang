@@ -6,6 +6,6 @@ Source: >
 Errors: []
 
 Tree:
-  - (TODO:) BreakStatement: # 0..8 "break ;\n"
-      - (dummy:) BreakKeyword: "break" # 0..5
-      - (dummy:) Semicolon: ";" # 6..7
+  - BreakStatement: # 0..8 "break ;\n"
+      - BreakKeyword: "break" # 0..5
+      - Semicolon: ";" # 6..7

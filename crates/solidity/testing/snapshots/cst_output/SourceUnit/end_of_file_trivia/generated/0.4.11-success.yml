@@ -11,14 +11,14 @@ Source: >
 Errors: []
 
 Tree:
-  - (TODO:) SourceUnit: # 0..71 "contract X { }\n    \n// spaces before this\n\n/* new ..."
+  - SourceUnit: # 0..71 "contract X { }\n    \n// spaces before this\n\n/* new ..."
       - (inner:) SourceUnitMembers: # 0..15 "contract X { }\n"
           - (inner:) SourceUnitMember: # 0..15 "contract X { }\n"
               - (inner:) ContractDefinition: # 0..15 "contract X { }\n"
-                  - (dummy:) ContractKeyword: "contract" # 0..8
-                  - (dummy:) Identifier: "X" # 9..10
-                  - (dummy:) OpenBrace: "{" # 11..12
-                  - (dummy:) CloseBrace: "}" # 13..14
+                  - ContractKeyword: "contract" # 0..8
+                  - Identifier: "X" # 9..10
+                  - OpenBrace: "{" # 11..12
+                  - CloseBrace: "}" # 13..14
       - (inner:) EndOfFileTrivia: # 15..71 "    \n// spaces before this\n\n/* new lines after thi..."
-          - (dummy:) SingleLineComment: "// spaces before this" # 20..41
-          - (dummy:) MultilineComment: "/* new lines after this */" # 43..69
+          - SingleLineComment: "// spaces before this" # 20..41
+          - MultilineComment: "/* new lines after this */" # 43..69

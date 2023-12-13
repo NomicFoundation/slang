@@ -6,23 +6,23 @@ Source: >
 Errors: []
 
 Tree:
-  - (TODO:) ConditionalExpression: # 0..27 "(foo == bar) ? true : false"
+  - ConditionalExpression: # 0..27 "(foo == bar) ? true : false"
       - (left_operand:) Expression: # 0..12 "(foo == bar)"
           - (inner:) TupleExpression: # 0..12 "(foo == bar)"
-              - (dummy:) OpenParen: "(" # 0..1
+              - OpenParen: "(" # 0..1
               - (inner:) TupleValues: # 1..11 "foo == bar"
                   - (inner:) TupleValue: # 1..11 "foo == bar"
                       - (inner:) Expression: # 1..11 "foo == bar"
                           - (operand:) EqualityExpression: # 1..11 "foo == bar"
                               - (left_operand:) Expression: # 1..4 "foo"
-                                  - (dummy:) Identifier: "foo" # 1..4
+                                  - Identifier: "foo" # 1..4
                               - (operator:) EqualEqual: "==" # 5..7
                               - (right_operand:) Expression: # 7..11 " bar"
-                                  - (dummy:) Identifier: "bar" # 8..11
-              - (dummy:) CloseParen: ")" # 11..12
+                                  - Identifier: "bar" # 8..11
+              - CloseParen: ")" # 11..12
       - (operator:) QuestionMark: "?" # 13..14
       - (operator:) Expression: # 14..19 " true"
-          - (dummy:) TrueKeyword: "true" # 15..19
+          - TrueKeyword: "true" # 15..19
       - (operator:) Colon: ":" # 20..21
       - (operator:) Expression: # 21..27 " false"
-          - (dummy:) FalseKeyword: "false" # 22..27
+          - FalseKeyword: "false" # 22..27

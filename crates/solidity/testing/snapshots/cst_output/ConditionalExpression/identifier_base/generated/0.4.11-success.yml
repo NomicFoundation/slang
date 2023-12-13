@@ -6,12 +6,12 @@ Source: >
 Errors: []
 
 Tree:
-  - (TODO:) ConditionalExpression: # 0..18 "foo ? true : false"
+  - ConditionalExpression: # 0..18 "foo ? true : false"
       - (left_operand:) Expression: # 0..3 "foo"
-          - (dummy:) Identifier: "foo" # 0..3
+          - Identifier: "foo" # 0..3
       - (operator:) QuestionMark: "?" # 4..5
       - (operator:) Expression: # 5..10 " true"
-          - (dummy:) TrueKeyword: "true" # 6..10
+          - TrueKeyword: "true" # 6..10
       - (operator:) Colon: ":" # 11..12
       - (operator:) Expression: # 12..18 " false"
-          - (dummy:) FalseKeyword: "false" # 13..18
+          - FalseKeyword: "false" # 13..18

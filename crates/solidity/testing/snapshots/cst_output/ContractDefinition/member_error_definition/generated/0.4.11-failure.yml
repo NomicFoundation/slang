@@ -16,17 +16,17 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (TODO:) ContractDefinition: # 0..37 "contract Sample {\n  error Error1();\n}"
-      - (dummy:) ContractKeyword: "contract" # 0..8
-      - (dummy:) Identifier: "Sample" # 9..15
-      - (dummy:) OpenBrace: "{" # 16..17
+  - ContractDefinition: # 0..37 "contract Sample {\n  error Error1();\n}"
+      - ContractKeyword: "contract" # 0..8
+      - Identifier: "Sample" # 9..15
+      - OpenBrace: "{" # 16..17
       - (inner:) ContractMembers: # 18..36 "  error Error1();\n"
           - (inner:) ContractMember: # 18..36 "  error Error1();\n"
               - (inner:) StateVariableDefinition: # 18..36 "  error Error1();\n"
                   - (inner:) TypeName: # 18..25 "  error"
                       - (inner:) IdentifierPath: # 18..25 "  error"
-                          - (dummy:) Identifier: "error" # 20..25
-                  - (dummy:) Identifier: "Error1" # 26..32
+                          - Identifier: "error" # 20..25
+                  - Identifier: "Error1" # 26..32
                   - (skipped:) SKIPPED: "()" # 32..34
-                  - (dummy:) Semicolon: ";" # 34..35
-      - (dummy:) CloseBrace: "}" # 36..37
+                  - Semicolon: ";" # 34..35
+      - CloseBrace: "}" # 36..37

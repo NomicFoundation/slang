@@ -15,9 +15,9 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (TODO:) UsingDirective: # 0..57 "// Empty using symbols list is not valid\nusing {} ..."
+  - UsingDirective: # 0..57 "// Empty using symbols list is not valid\nusing {} ..."
       - (inner:) LeadingTrivia: # 0..41 "// Empty using symbols list is not valid\n"
-          - (dummy:) SingleLineComment: "// Empty using symbols list is not valid" # 0..40
-      - (dummy:) UsingKeyword: "using" # 41..46
+          - SingleLineComment: "// Empty using symbols list is not valid" # 0..40
+      - UsingKeyword: "using" # 41..46
       - (skipped:) SKIPPED: "{} for *" # 47..55
-      - (dummy:) Semicolon: ";" # 55..56
+      - Semicolon: ";" # 55..56

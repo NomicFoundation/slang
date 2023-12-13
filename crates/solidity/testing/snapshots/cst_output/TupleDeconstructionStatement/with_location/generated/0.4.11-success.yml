@@ -6,22 +6,22 @@ Source: >
 Errors: []
 
 Tree:
-  - (TODO:) TupleDeconstructionStatement: # 0..47 "(memory with_location, without_location) = rhs;"
-      - (dummy:) OpenParen: "(" # 0..1
+  - TupleDeconstructionStatement: # 0..47 "(memory with_location, without_location) = rhs;"
+      - OpenParen: "(" # 0..1
       - (inner:) TupleDeconstructionElements: # 1..39 "memory with_location, without_location"
           - (inner:) TupleDeconstructionElement: # 1..21 "memory with_location"
               - (inner:) TupleMember: # 1..21 "memory with_location"
                   - (inner:) UntypedTupleMember: # 1..21 "memory with_location"
                       - (inner:) StorageLocation: # 1..7 "memory"
-                          - (dummy:) MemoryKeyword: "memory" # 1..7
-                      - (dummy:) Identifier: "with_location" # 8..21
-          - (dummy:) Comma: "," # 21..22
+                          - MemoryKeyword: "memory" # 1..7
+                      - Identifier: "with_location" # 8..21
+          - Comma: "," # 21..22
           - (inner:) TupleDeconstructionElement: # 22..39 " without_location"
               - (inner:) TupleMember: # 22..39 " without_location"
                   - (inner:) UntypedTupleMember: # 22..39 " without_location"
-                      - (dummy:) Identifier: "without_location" # 23..39
-      - (dummy:) CloseParen: ")" # 39..40
-      - (dummy:) Equal: "=" # 41..42
+                      - Identifier: "without_location" # 23..39
+      - CloseParen: ")" # 39..40
+      - Equal: "=" # 41..42
       - (inner:) Expression: # 42..46 " rhs"
-          - (dummy:) Identifier: "rhs" # 43..46
-      - (dummy:) Semicolon: ";" # 46..47
+          - Identifier: "rhs" # 43..46
+      - Semicolon: ";" # 46..47

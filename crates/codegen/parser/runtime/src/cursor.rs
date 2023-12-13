@@ -89,7 +89,7 @@ impl Cursor {
         Self {
             path: vec![],
             current: PathNode {
-                node: (String::from("TODO"), node),
+                node: (String::new(), node),
                 child_number: 0,
                 text_offset,
             },

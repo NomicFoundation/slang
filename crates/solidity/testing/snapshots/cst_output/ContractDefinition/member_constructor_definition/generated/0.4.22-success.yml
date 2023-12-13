@@ -9,21 +9,21 @@ Source: >
 Errors: []
 
 Tree:
-  - (TODO:) ContractDefinition: # 0..48 "contract Sample {\n  constructor() public {\n  }\n}"
-      - (dummy:) ContractKeyword: "contract" # 0..8
-      - (dummy:) Identifier: "Sample" # 9..15
-      - (dummy:) OpenBrace: "{" # 16..17
+  - ContractDefinition: # 0..48 "contract Sample {\n  constructor() public {\n  }\n}"
+      - ContractKeyword: "contract" # 0..8
+      - Identifier: "Sample" # 9..15
+      - OpenBrace: "{" # 16..17
       - (inner:) ContractMembers: # 18..47 "  constructor() public {\n  }\n"
           - (inner:) ContractMember: # 18..47 "  constructor() public {\n  }\n"
               - (inner:) ConstructorDefinition: # 18..47 "  constructor() public {\n  }\n"
-                  - (dummy:) ConstructorKeyword: "constructor" # 20..31
+                  - ConstructorKeyword: "constructor" # 20..31
                   - (inner:) ParametersDeclaration: # 31..33 "()"
-                      - (dummy:) OpenParen: "(" # 31..32
-                      - (dummy:) CloseParen: ")" # 32..33
+                      - OpenParen: "(" # 31..32
+                      - CloseParen: ")" # 32..33
                   - (inner:) ConstructorAttributes: # 33..40 " public"
                       - (inner:) ConstructorAttribute: # 33..40 " public"
-                          - (dummy:) PublicKeyword: "public" # 34..40
+                          - PublicKeyword: "public" # 34..40
                   - (inner:) Block: # 40..47 " {\n  }\n"
-                      - (dummy:) OpenBrace: "{" # 41..42
-                      - (dummy:) CloseBrace: "}" # 45..46
-      - (dummy:) CloseBrace: "}" # 47..48
+                      - OpenBrace: "{" # 41..42
+                      - CloseBrace: "}" # 45..46
+      - CloseBrace: "}" # 47..48

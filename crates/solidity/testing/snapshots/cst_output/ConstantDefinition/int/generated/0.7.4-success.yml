@@ -6,14 +6,14 @@ Source: >
 Errors: []
 
 Tree:
-  - (TODO:) ConstantDefinition: # 0..21 "int constant foo = 0;"
+  - ConstantDefinition: # 0..21 "int constant foo = 0;"
       - (inner:) TypeName: # 0..3 "int"
           - (inner:) ElementaryType: # 0..3 "int"
-              - (dummy:) IntKeyword: "int" # 0..3
-      - (dummy:) ConstantKeyword: "constant" # 4..12
-      - (dummy:) Identifier: "foo" # 13..16
-      - (dummy:) Equal: "=" # 17..18
+              - IntKeyword: "int" # 0..3
+      - ConstantKeyword: "constant" # 4..12
+      - Identifier: "foo" # 13..16
+      - Equal: "=" # 17..18
       - (inner:) Expression: # 18..20 " 0"
           - (inner:) DecimalNumberExpression: # 18..20 " 0"
-              - (dummy:) DecimalLiteral: "0" # 19..20
-      - (dummy:) Semicolon: ";" # 20..21
+              - DecimalLiteral: "0" # 19..20
+      - Semicolon: ";" # 20..21

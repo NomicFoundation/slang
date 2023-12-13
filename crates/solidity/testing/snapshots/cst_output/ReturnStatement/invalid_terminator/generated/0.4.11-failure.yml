@@ -17,20 +17,20 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (TODO:) ReturnStatement: # 0..38 "return a + 2 * some invalid tokens\n\n;\n"
-      - (dummy:) ReturnKeyword: "return" # 0..6
+  - ReturnStatement: # 0..38 "return a + 2 * some invalid tokens\n\n;\n"
+      - ReturnKeyword: "return" # 0..6
       - (inner:) Expression: # 6..19 " a + 2 * some"
           - (operand:) AdditiveExpression: # 6..19 " a + 2 * some"
               - (left_operand:) Expression: # 6..8 " a"
-                  - (dummy:) Identifier: "a" # 7..8
+                  - Identifier: "a" # 7..8
               - (operator:) Plus: "+" # 9..10
               - (right_operand:) Expression: # 10..19 " 2 * some"
                   - (operand:) MultiplicativeExpression: # 10..19 " 2 * some"
                       - (left_operand:) Expression: # 10..12 " 2"
                           - (inner:) DecimalNumberExpression: # 10..12 " 2"
-                              - (dummy:) DecimalLiteral: "2" # 11..12
+                              - DecimalLiteral: "2" # 11..12
                       - (operator:) Asterisk: "*" # 13..14
                       - (right_operand:) Expression: # 14..19 " some"
-                          - (dummy:) Identifier: "some" # 15..19
+                          - Identifier: "some" # 15..19
       - (skipped:) SKIPPED: "invalid tokens\n\n" # 20..36
-      - (dummy:) Semicolon: ";" # 36..37
+      - Semicolon: ";" # 36..37

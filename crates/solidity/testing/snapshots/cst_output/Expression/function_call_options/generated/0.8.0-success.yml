@@ -6,39 +6,39 @@ Source: >
 Errors: []
 
 Tree:
-  - (TODO:) Expression: # 0..25 'a.b{value: 0, gas: 1}("")'
+  - Expression: # 0..25 'a.b{value: 0, gas: 1}("")'
       - (operand:) FunctionCallExpression: # 0..25 'a.b{value: 0, gas: 1}("")'
           - (left_operand:) Expression: # 0..3 "a.b"
               - (operand:) MemberAccessExpression: # 0..3 "a.b"
                   - (left_operand:) Expression: # 0..1 "a"
-                      - (dummy:) Identifier: "a" # 0..1
+                      - Identifier: "a" # 0..1
                   - (operator:) Period: "." # 1..2
                   - (operator:) MemberAccess: # 2..3 "b"
-                      - (dummy:) Identifier: "b" # 2..3
+                      - Identifier: "b" # 2..3
           - (operator:) FunctionCallOptions: # 3..21 "{value: 0, gas: 1}"
               - (inner:) NamedArgumentGroup: # 3..21 "{value: 0, gas: 1}"
-                  - (dummy:) OpenBrace: "{" # 3..4
+                  - OpenBrace: "{" # 3..4
                   - (inner:) NamedArguments: # 4..20 "value: 0, gas: 1"
                       - (inner:) NamedArgument: # 4..12 "value: 0"
-                          - (dummy:) Identifier: "value" # 4..9
-                          - (dummy:) Colon: ":" # 9..10
+                          - Identifier: "value" # 4..9
+                          - Colon: ":" # 9..10
                           - (inner:) Expression: # 10..12 " 0"
                               - (inner:) DecimalNumberExpression: # 10..12 " 0"
-                                  - (dummy:) DecimalLiteral: "0" # 11..12
-                      - (dummy:) Comma: "," # 12..13
+                                  - DecimalLiteral: "0" # 11..12
+                      - Comma: "," # 12..13
                       - (inner:) NamedArgument: # 13..20 " gas: 1"
-                          - (dummy:) Identifier: "gas" # 14..17
-                          - (dummy:) Colon: ":" # 17..18
+                          - Identifier: "gas" # 14..17
+                          - Colon: ":" # 17..18
                           - (inner:) Expression: # 18..20 " 1"
                               - (inner:) DecimalNumberExpression: # 18..20 " 1"
-                                  - (dummy:) DecimalLiteral: "1" # 19..20
-                  - (dummy:) CloseBrace: "}" # 20..21
+                                  - DecimalLiteral: "1" # 19..20
+                  - CloseBrace: "}" # 20..21
           - (operator:) ArgumentsDeclaration: # 21..25 '("")'
               - (inner:) PositionalArgumentsDeclaration: # 21..25 '("")'
-                  - (dummy:) OpenParen: "(" # 21..22
+                  - OpenParen: "(" # 21..22
                   - (inner:) PositionalArguments: # 22..24 '""'
                       - (inner:) Expression: # 22..24 '""'
                           - (inner:) StringExpression: # 22..24 '""'
                               - (inner:) AsciiStringLiterals: # 22..24 '""'
-                                  - (dummy:) AsciiStringLiteral: '""' # 22..24
-                  - (dummy:) CloseParen: ")" # 24..25
+                                  - AsciiStringLiteral: '""' # 22..24
+                  - CloseParen: ")" # 24..25

@@ -16,23 +16,23 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (TODO:) ContractDefinition: # 0..53 "contract Sample {\n  function() external payable {}..."
-      - (dummy:) ContractKeyword: "contract" # 0..8
-      - (dummy:) Identifier: "Sample" # 9..15
-      - (dummy:) OpenBrace: "{" # 16..17
+  - ContractDefinition: # 0..53 "contract Sample {\n  function() external payable {}..."
+      - ContractKeyword: "contract" # 0..8
+      - Identifier: "Sample" # 9..15
+      - OpenBrace: "{" # 16..17
       - (inner:) ContractMembers: # 18..48 "  function() external payable "
           - (inner:) ContractMember: # 18..48 "  function() external payable "
               - (inner:) StateVariableDefinition: # 18..48 "  function() external payable "
                   - (inner:) TypeName: # 18..47 "  function() external payable"
                       - (inner:) FunctionType: # 18..47 "  function() external payable"
-                          - (dummy:) FunctionKeyword: "function" # 20..28
+                          - FunctionKeyword: "function" # 20..28
                           - (inner:) ParametersDeclaration: # 28..30 "()"
-                              - (dummy:) OpenParen: "(" # 28..29
-                              - (dummy:) CloseParen: ")" # 29..30
+                              - OpenParen: "(" # 28..29
+                              - CloseParen: ")" # 29..30
                           - (inner:) FunctionTypeAttributes: # 30..47 " external payable"
                               - (inner:) FunctionTypeAttribute: # 30..39 " external"
-                                  - (dummy:) ExternalKeyword: "external" # 31..39
+                                  - ExternalKeyword: "external" # 31..39
                               - (inner:) FunctionTypeAttribute: # 39..47 " payable"
-                                  - (dummy:) PayableKeyword: "payable" # 40..47
+                                  - PayableKeyword: "payable" # 40..47
       - (skipped:) SKIPPED: "{}\n" # 48..51
-      - (dummy:) CloseBrace: "}" # 51..52
+      - CloseBrace: "}" # 51..52

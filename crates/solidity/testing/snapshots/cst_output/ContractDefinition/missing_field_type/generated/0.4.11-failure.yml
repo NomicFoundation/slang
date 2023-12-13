@@ -16,16 +16,16 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (TODO:) ContractDefinition: # 0..27 "contract Test {\n  field;\n}\n"
-      - (dummy:) ContractKeyword: "contract" # 0..8
-      - (dummy:) Identifier: "Test" # 9..13
-      - (dummy:) OpenBrace: "{" # 14..15
+  - ContractDefinition: # 0..27 "contract Test {\n  field;\n}\n"
+      - ContractKeyword: "contract" # 0..8
+      - Identifier: "Test" # 9..13
+      - OpenBrace: "{" # 14..15
       - (inner:) ContractMembers: # 16..25 "  field;\n"
           - (inner:) ContractMember: # 16..25 "  field;\n"
               - (inner:) StateVariableDefinition: # 16..25 "  field;\n"
                   - (inner:) TypeName: # 16..23 "  field"
                       - (inner:) IdentifierPath: # 16..23 "  field"
-                          - (dummy:) Identifier: "field" # 18..23
+                          - Identifier: "field" # 18..23
                   - (skipped:) SKIPPED: "" # 23..23
-                  - (dummy:) Semicolon: ";" # 23..24
-      - (dummy:) CloseBrace: "}" # 25..26
+                  - Semicolon: ";" # 23..24
+      - CloseBrace: "}" # 25..26

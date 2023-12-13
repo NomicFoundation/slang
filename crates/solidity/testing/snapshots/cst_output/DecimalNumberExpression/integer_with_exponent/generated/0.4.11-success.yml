@@ -6,5 +6,5 @@ Source: >
 Errors: []
 
 Tree:
-  - (TODO:) DecimalNumberExpression: # 0..3 "1e2"
-      - (dummy:) DecimalLiteral: "1e2" # 0..3
+  - DecimalNumberExpression: # 0..3 "1e2"
+      - DecimalLiteral: "1e2" # 0..3

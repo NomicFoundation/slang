@@ -6,13 +6,13 @@ Source: >
 Errors: []
 
 Tree:
-  - (TODO:) Expression: # 0..11 "arr[start:]"
+  - Expression: # 0..11 "arr[start:]"
       - (operand:) IndexAccessExpression: # 0..11 "arr[start:]"
           - (left_operand:) Expression: # 0..3 "arr"
-              - (dummy:) Identifier: "arr" # 0..3
+              - Identifier: "arr" # 0..3
           - (operator:) OpenBracket: "[" # 3..4
           - (operator:) Expression: # 4..9 "start"
-              - (dummy:) Identifier: "start" # 4..9
+              - Identifier: "start" # 4..9
           - (operator:) IndexAccessEnd: # 9..10 ":"
-              - (dummy:) Colon: ":" # 9..10
+              - Colon: ":" # 9..10
           - (operator:) CloseBracket: "]" # 10..11

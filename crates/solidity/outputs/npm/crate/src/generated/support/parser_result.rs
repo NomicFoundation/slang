@@ -134,12 +134,12 @@ impl PrattElement {
             | Self::Prefix { kind, nodes, .. }
             | Self::Postfix { kind, nodes, .. } => {
                 vec![(
-                    String::from("TODO"),
+                    String::from("TODO-pratt"),
                     cst::Node::rule(
                         kind,
                         nodes
                             .into_iter()
-                            .map(|n| (String::from("TODO"), n))
+                            .map(|n| (String::from("TODO-pratt"), n))
                             .collect(),
                     ),
                 )]

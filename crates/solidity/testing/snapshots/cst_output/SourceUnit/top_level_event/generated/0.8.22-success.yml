@@ -6,19 +6,19 @@ Source: >
 Errors: []
 
 Tree:
-  - (TODO:) SourceUnit: # 0..25 "event E1(uint256 value);\n"
+  - SourceUnit: # 0..25 "event E1(uint256 value);\n"
       - (inner:) SourceUnitMembers: # 0..25 "event E1(uint256 value);\n"
           - (inner:) SourceUnitMember: # 0..25 "event E1(uint256 value);\n"
               - (inner:) EventDefinition: # 0..25 "event E1(uint256 value);\n"
-                  - (dummy:) EventKeyword: "event" # 0..5
-                  - (dummy:) Identifier: "E1" # 6..8
+                  - EventKeyword: "event" # 0..5
+                  - Identifier: "E1" # 6..8
                   - (inner:) EventParametersDeclaration: # 8..23 "(uint256 value)"
-                      - (dummy:) OpenParen: "(" # 8..9
+                      - OpenParen: "(" # 8..9
                       - (inner:) EventParameters: # 9..22 "uint256 value"
                           - (inner:) EventParameter: # 9..22 "uint256 value"
                               - (inner:) TypeName: # 9..16 "uint256"
                                   - (inner:) ElementaryType: # 9..16 "uint256"
-                                      - (dummy:) UintKeyword: "uint256" # 9..16
-                              - (dummy:) Identifier: "value" # 17..22
-                      - (dummy:) CloseParen: ")" # 22..23
-                  - (dummy:) Semicolon: ";" # 23..24
+                                      - UintKeyword: "uint256" # 9..16
+                              - Identifier: "value" # 17..22
+                      - CloseParen: ")" # 22..23
+                  - Semicolon: ";" # 23..24

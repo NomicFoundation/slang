@@ -6,12 +6,12 @@ Source: >
 Errors: []
 
 Tree:
-  - (TODO:) NewExpression: # 0..9 "new Foo[]"
-      - (dummy:) NewKeyword: "new" # 0..3
+  - NewExpression: # 0..9 "new Foo[]"
+      - NewKeyword: "new" # 0..3
       - (inner:) TypeName: # 3..9 " Foo[]"
           - (operand:) ArrayTypeName: # 3..9 " Foo[]"
               - (left_operand:) TypeName: # 3..7 " Foo"
                   - (inner:) IdentifierPath: # 3..7 " Foo"
-                      - (dummy:) Identifier: "Foo" # 4..7
+                      - Identifier: "Foo" # 4..7
               - (operator:) OpenBracket: "[" # 7..8
               - (operator:) CloseBracket: "]" # 8..9

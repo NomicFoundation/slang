@@ -8,19 +8,19 @@ Source: >
 Errors: []
 
 Tree:
-  - (TODO:) ContractDefinition: # 0..36 "contract Sample {\n  using x for *;\n}"
-      - (dummy:) ContractKeyword: "contract" # 0..8
-      - (dummy:) Identifier: "Sample" # 9..15
-      - (dummy:) OpenBrace: "{" # 16..17
+  - ContractDefinition: # 0..36 "contract Sample {\n  using x for *;\n}"
+      - ContractKeyword: "contract" # 0..8
+      - Identifier: "Sample" # 9..15
+      - OpenBrace: "{" # 16..17
       - (inner:) ContractMembers: # 18..35 "  using x for *;\n"
           - (inner:) ContractMember: # 18..35 "  using x for *;\n"
               - (inner:) UsingDirective: # 18..35 "  using x for *;\n"
-                  - (dummy:) UsingKeyword: "using" # 20..25
+                  - UsingKeyword: "using" # 20..25
                   - (inner:) UsingClause: # 25..27 " x"
                       - (inner:) IdentifierPath: # 25..27 " x"
-                          - (dummy:) Identifier: "x" # 26..27
-                  - (dummy:) ForKeyword: "for" # 28..31
+                          - Identifier: "x" # 26..27
+                  - ForKeyword: "for" # 28..31
                   - (inner:) UsingTarget: # 31..33 " *"
-                      - (dummy:) Asterisk: "*" # 32..33
-                  - (dummy:) Semicolon: ";" # 33..34
-      - (dummy:) CloseBrace: "}" # 35..36
+                      - Asterisk: "*" # 32..33
+                  - Semicolon: ";" # 33..34
+      - CloseBrace: "}" # 35..36

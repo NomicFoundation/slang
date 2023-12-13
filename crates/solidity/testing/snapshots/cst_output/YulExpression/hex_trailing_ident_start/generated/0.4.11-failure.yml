@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (TODO:) SKIPPED: "0x1$\n" # 0..5
+  - SKIPPED: "0x1$\n" # 0..5

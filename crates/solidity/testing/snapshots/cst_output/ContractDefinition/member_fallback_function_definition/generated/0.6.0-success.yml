@@ -9,19 +9,19 @@ Source: >
 Errors: []
 
 Tree:
-  - (TODO:) ContractDefinition: # 0..38 "contract Sample {\n  fallback() {\n  }\n}"
-      - (dummy:) ContractKeyword: "contract" # 0..8
-      - (dummy:) Identifier: "Sample" # 9..15
-      - (dummy:) OpenBrace: "{" # 16..17
+  - ContractDefinition: # 0..38 "contract Sample {\n  fallback() {\n  }\n}"
+      - ContractKeyword: "contract" # 0..8
+      - Identifier: "Sample" # 9..15
+      - OpenBrace: "{" # 16..17
       - (inner:) ContractMembers: # 18..37 "  fallback() {\n  }\n"
           - (inner:) ContractMember: # 18..37 "  fallback() {\n  }\n"
               - (inner:) FallbackFunctionDefinition: # 18..37 "  fallback() {\n  }\n"
-                  - (dummy:) FallbackKeyword: "fallback" # 20..28
+                  - FallbackKeyword: "fallback" # 20..28
                   - (inner:) ParametersDeclaration: # 28..30 "()"
-                      - (dummy:) OpenParen: "(" # 28..29
-                      - (dummy:) CloseParen: ")" # 29..30
+                      - OpenParen: "(" # 28..29
+                      - CloseParen: ")" # 29..30
                   - (inner:) FunctionBody: # 30..37 " {\n  }\n"
                       - (inner:) Block: # 30..37 " {\n  }\n"
-                          - (dummy:) OpenBrace: "{" # 31..32
-                          - (dummy:) CloseBrace: "}" # 35..36
-      - (dummy:) CloseBrace: "}" # 37..38
+                          - OpenBrace: "{" # 31..32
+                          - CloseBrace: "}" # 35..36
+      - CloseBrace: "}" # 37..38

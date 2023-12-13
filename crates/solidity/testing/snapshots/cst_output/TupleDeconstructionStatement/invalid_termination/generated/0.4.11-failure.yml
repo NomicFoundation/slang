@@ -17,32 +17,32 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (TODO:) TupleDeconstructionStatement: # 0..35 "(a, b) = (123, 135)\n/**/\n{ throw; \n"
-      - (dummy:) OpenParen: "(" # 0..1
+  - TupleDeconstructionStatement: # 0..35 "(a, b) = (123, 135)\n/**/\n{ throw; \n"
+      - OpenParen: "(" # 0..1
       - (inner:) TupleDeconstructionElements: # 1..5 "a, b"
           - (inner:) TupleDeconstructionElement: # 1..2 "a"
               - (inner:) TupleMember: # 1..2 "a"
                   - (inner:) UntypedTupleMember: # 1..2 "a"
-                      - (dummy:) Identifier: "a" # 1..2
-          - (dummy:) Comma: "," # 2..3
+                      - Identifier: "a" # 1..2
+          - Comma: "," # 2..3
           - (inner:) TupleDeconstructionElement: # 3..5 " b"
               - (inner:) TupleMember: # 3..5 " b"
                   - (inner:) UntypedTupleMember: # 3..5 " b"
-                      - (dummy:) Identifier: "b" # 4..5
-      - (dummy:) CloseParen: ")" # 5..6
-      - (dummy:) Equal: "=" # 7..8
+                      - Identifier: "b" # 4..5
+      - CloseParen: ")" # 5..6
+      - Equal: "=" # 7..8
       - (inner:) Expression: # 8..20 " (123, 135)\n"
           - (inner:) TupleExpression: # 8..20 " (123, 135)\n"
-              - (dummy:) OpenParen: "(" # 9..10
+              - OpenParen: "(" # 9..10
               - (inner:) TupleValues: # 10..18 "123, 135"
                   - (inner:) TupleValue: # 10..13 "123"
                       - (inner:) Expression: # 10..13 "123"
                           - (inner:) DecimalNumberExpression: # 10..13 "123"
-                              - (dummy:) DecimalLiteral: "123" # 10..13
-                  - (dummy:) Comma: "," # 13..14
+                              - DecimalLiteral: "123" # 10..13
+                  - Comma: "," # 13..14
                   - (inner:) TupleValue: # 14..18 " 135"
                       - (inner:) Expression: # 14..18 " 135"
                           - (inner:) DecimalNumberExpression: # 14..18 " 135"
-                              - (dummy:) DecimalLiteral: "135" # 15..18
-              - (dummy:) CloseParen: ")" # 18..19
+                              - DecimalLiteral: "135" # 15..18
+              - CloseParen: ")" # 18..19
       - (skipped:) SKIPPED: "/**/\n{ throw; \n" # 20..35

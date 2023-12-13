@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (TODO:) SKIPPED: "error MyError();" # 0..16
+  - SKIPPED: "error MyError();" # 0..16

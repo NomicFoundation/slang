@@ -6,8 +6,8 @@ Source: >
 Errors: []
 
 Tree:
-  - (TODO:) StructDefinition: # 0..13 "struct S { }\n"
-      - (dummy:) StructKeyword: "struct" # 0..6
-      - (dummy:) Identifier: "S" # 7..8
-      - (dummy:) OpenBrace: "{" # 9..10
-      - (dummy:) CloseBrace: "}" # 11..12
+  - StructDefinition: # 0..13 "struct S { }\n"
+      - StructKeyword: "struct" # 0..6
+      - Identifier: "S" # 7..8
+      - OpenBrace: "{" # 9..10
+      - CloseBrace: "}" # 11..12

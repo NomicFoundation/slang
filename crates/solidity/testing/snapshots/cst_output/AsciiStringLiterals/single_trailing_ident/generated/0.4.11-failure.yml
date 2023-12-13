@@ -14,6 +14,6 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (TODO:) AsciiStringLiterals: # 0..9 '"foo"bar\n'
-      - (dummy:) AsciiStringLiteral: '"foo"' # 0..5
+  - AsciiStringLiterals: # 0..9 '"foo"bar\n'
+      - AsciiStringLiteral: '"foo"' # 0..5
       - (skipped:) SKIPPED: "bar\n" # 5..9

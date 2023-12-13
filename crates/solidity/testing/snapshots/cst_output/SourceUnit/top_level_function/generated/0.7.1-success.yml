@@ -6,17 +6,17 @@ Source: >
 Errors: []
 
 Tree:
-  - (TODO:) SourceUnit: # 0..18 "function foo() { }"
+  - SourceUnit: # 0..18 "function foo() { }"
       - (inner:) SourceUnitMembers: # 0..18 "function foo() { }"
           - (inner:) SourceUnitMember: # 0..18 "function foo() { }"
               - (inner:) FunctionDefinition: # 0..18 "function foo() { }"
-                  - (dummy:) FunctionKeyword: "function" # 0..8
+                  - FunctionKeyword: "function" # 0..8
                   - (inner:) FunctionName: # 8..12 " foo"
-                      - (dummy:) Identifier: "foo" # 9..12
+                      - Identifier: "foo" # 9..12
                   - (inner:) ParametersDeclaration: # 12..14 "()"
-                      - (dummy:) OpenParen: "(" # 12..13
-                      - (dummy:) CloseParen: ")" # 13..14
+                      - OpenParen: "(" # 12..13
+                      - CloseParen: ")" # 13..14
                   - (inner:) FunctionBody: # 14..18 " { }"
                       - (inner:) Block: # 14..18 " { }"
-                          - (dummy:) OpenBrace: "{" # 15..16
-                          - (dummy:) CloseBrace: "}" # 17..18
+                          - OpenBrace: "{" # 15..16
+                          - CloseBrace: "}" # 17..18

@@ -6,8 +6,8 @@ Source: >
 Errors: []
 
 Tree:
-  - (TODO:) TupleExpression: # 0..3 "( )"
-      - (dummy:) OpenParen: "(" # 0..1
+  - TupleExpression: # 0..3 "( )"
+      - OpenParen: "(" # 0..1
       - (inner:) TupleValues: # 1..1
           - (inner:) TupleValue: [] # 1..1
-      - (dummy:) CloseParen: ")" # 2..3
+      - CloseParen: ")" # 2..3

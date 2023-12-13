@@ -6,6 +6,6 @@ Source: >
 Errors: []
 
 Tree:
-  - (TODO:) TypeName: # 0..7 "uint320"
+  - TypeName: # 0..7 "uint320"
       - (inner:) IdentifierPath: # 0..7 "uint320"
-          - (dummy:) Identifier: "uint320" # 0..7
+          - Identifier: "uint320" # 0..7

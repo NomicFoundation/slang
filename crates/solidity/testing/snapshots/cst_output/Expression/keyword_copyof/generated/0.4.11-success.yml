@@ -6,5 +6,5 @@ Source: >
 Errors: []
 
 Tree:
-  - (TODO:) Expression: # 0..6 "copyof"
-      - (dummy:) Identifier: "copyof" # 0..6
+  - Expression: # 0..6 "copyof"
+      - Identifier: "copyof" # 0..6

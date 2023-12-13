@@ -6,6 +6,6 @@ Source: >
 Errors: []
 
 Tree:
-  - (TODO:) UnicodeStringLiterals: # 0..37 'unicode"happy 😃" unicode''sad 😔'''
-      - (dummy:) UnicodeStringLiteral: 'unicode"happy 😃"' # 0..19
-      - (dummy:) UnicodeStringLiteral: "unicode'sad 😔'" # 20..37
+  - UnicodeStringLiterals: # 0..37 'unicode"happy 😃" unicode''sad 😔'''
+      - UnicodeStringLiteral: 'unicode"happy 😃"' # 0..19
+      - UnicodeStringLiteral: "unicode'sad 😔'" # 20..37

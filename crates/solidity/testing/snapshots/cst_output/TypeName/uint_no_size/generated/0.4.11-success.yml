@@ -6,6 +6,6 @@ Source: >
 Errors: []
 
 Tree:
-  - (TODO:) TypeName: # 0..4 "uint"
+  - TypeName: # 0..4 "uint"
       - (inner:) ElementaryType: # 0..4 "uint"
-          - (dummy:) UintKeyword: "uint" # 0..4
+          - UintKeyword: "uint" # 0..4

@@ -6,17 +6,17 @@ Source: >
 Errors: []
 
 Tree:
-  - (TODO:) TupleDeconstructionStatement: # 0..69 "(uint32 a, uint32[] memory b) = abi.decode(data, (..."
-      - (dummy:) OpenParen: "(" # 0..1
+  - TupleDeconstructionStatement: # 0..69 "(uint32 a, uint32[] memory b) = abi.decode(data, (..."
+      - OpenParen: "(" # 0..1
       - (inner:) TupleDeconstructionElements: # 1..28 "uint32 a, uint32[] memory b"
           - (inner:) TupleDeconstructionElement: # 1..9 "uint32 a"
               - (inner:) TupleMember: # 1..9 "uint32 a"
                   - (inner:) TypedTupleMember: # 1..9 "uint32 a"
                       - (inner:) TypeName: # 1..7 "uint32"
                           - (inner:) ElementaryType: # 1..7 "uint32"
-                              - (dummy:) UintKeyword: "uint32" # 1..7
-                      - (dummy:) Identifier: "a" # 8..9
-          - (dummy:) Comma: "," # 9..10
+                              - UintKeyword: "uint32" # 1..7
+                      - Identifier: "a" # 8..9
+          - Comma: "," # 9..10
           - (inner:) TupleDeconstructionElement: # 10..28 " uint32[] memory b"
               - (inner:) TupleMember: # 10..28 " uint32[] memory b"
                   - (inner:) TypedTupleMember: # 10..28 " uint32[] memory b"
@@ -24,47 +24,47 @@ Tree:
                           - (operand:) ArrayTypeName: # 10..19 " uint32[]"
                               - (left_operand:) TypeName: # 10..17 " uint32"
                                   - (inner:) ElementaryType: # 10..17 " uint32"
-                                      - (dummy:) UintKeyword: "uint32" # 11..17
+                                      - UintKeyword: "uint32" # 11..17
                               - (operator:) OpenBracket: "[" # 17..18
                               - (operator:) CloseBracket: "]" # 18..19
                       - (inner:) StorageLocation: # 19..26 " memory"
-                          - (dummy:) MemoryKeyword: "memory" # 20..26
-                      - (dummy:) Identifier: "b" # 27..28
-      - (dummy:) CloseParen: ")" # 28..29
-      - (dummy:) Equal: "=" # 30..31
+                          - MemoryKeyword: "memory" # 20..26
+                      - Identifier: "b" # 27..28
+      - CloseParen: ")" # 28..29
+      - Equal: "=" # 30..31
       - (inner:) Expression: # 31..68 " abi.decode(data, (uint32, uint32[]))"
           - (operand:) FunctionCallExpression: # 31..68 " abi.decode(data, (uint32, uint32[]))"
               - (left_operand:) Expression: # 31..42 " abi.decode"
                   - (operand:) MemberAccessExpression: # 31..42 " abi.decode"
                       - (left_operand:) Expression: # 31..35 " abi"
-                          - (dummy:) Identifier: "abi" # 32..35
+                          - Identifier: "abi" # 32..35
                       - (operator:) Period: "." # 35..36
                       - (operator:) MemberAccess: # 36..42 "decode"
-                          - (dummy:) Identifier: "decode" # 36..42
+                          - Identifier: "decode" # 36..42
               - (operator:) ArgumentsDeclaration: # 42..68 "(data, (uint32, uint32[]))"
                   - (inner:) PositionalArgumentsDeclaration: # 42..68 "(data, (uint32, uint32[]))"
-                      - (dummy:) OpenParen: "(" # 42..43
+                      - OpenParen: "(" # 42..43
                       - (inner:) PositionalArguments: # 43..67 "data, (uint32, uint32[])"
                           - (inner:) Expression: # 43..47 "data"
-                              - (dummy:) Identifier: "data" # 43..47
-                          - (dummy:) Comma: "," # 47..48
+                              - Identifier: "data" # 43..47
+                          - Comma: "," # 47..48
                           - (inner:) Expression: # 48..67 " (uint32, uint32[])"
                               - (inner:) TupleExpression: # 48..67 " (uint32, uint32[])"
-                                  - (dummy:) OpenParen: "(" # 49..50
+                                  - OpenParen: "(" # 49..50
                                   - (inner:) TupleValues: # 50..66 "uint32, uint32[]"
                                       - (inner:) TupleValue: # 50..56 "uint32"
                                           - (inner:) Expression: # 50..56 "uint32"
                                               - (inner:) ElementaryType: # 50..56 "uint32"
-                                                  - (dummy:) UintKeyword: "uint32" # 50..56
-                                      - (dummy:) Comma: "," # 56..57
+                                                  - UintKeyword: "uint32" # 50..56
+                                      - Comma: "," # 56..57
                                       - (inner:) TupleValue: # 57..66 " uint32[]"
                                           - (inner:) Expression: # 57..66 " uint32[]"
                                               - (operand:) IndexAccessExpression: # 57..66 " uint32[]"
                                                   - (left_operand:) Expression: # 57..64 " uint32"
                                                       - (inner:) ElementaryType: # 57..64 " uint32"
-                                                          - (dummy:) UintKeyword: "uint32" # 58..64
+                                                          - UintKeyword: "uint32" # 58..64
                                                   - (operator:) OpenBracket: "[" # 64..65
                                                   - (operator:) CloseBracket: "]" # 65..66
-                                  - (dummy:) CloseParen: ")" # 66..67
-                      - (dummy:) CloseParen: ")" # 67..68
-      - (dummy:) Semicolon: ";" # 68..69
+                                  - CloseParen: ")" # 66..67
+                      - CloseParen: ")" # 67..68
+      - Semicolon: ";" # 68..69

@@ -6,10 +6,10 @@ Source: >
 Errors: []
 
 Tree:
-  - (TODO:) PragmaDirective: # 0..20 "pragma abicoder foo;"
-      - (dummy:) PragmaKeyword: "pragma" # 0..6
+  - PragmaDirective: # 0..20 "pragma abicoder foo;"
+      - PragmaKeyword: "pragma" # 0..6
       - (inner:) Pragma: # 6..19 " abicoder foo"
           - (inner:) ABICoderPragma: # 6..19 " abicoder foo"
-              - (dummy:) AbicoderKeyword: "abicoder" # 7..15
-              - (dummy:) Identifier: "foo" # 16..19
-      - (dummy:) Semicolon: ";" # 19..20
+              - AbicoderKeyword: "abicoder" # 7..15
+              - Identifier: "foo" # 16..19
+      - Semicolon: ";" # 19..20

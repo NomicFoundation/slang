@@ -26,10 +26,10 @@ Source: >
 Errors: []
 
 Tree:
-  - (TODO:) ContractDefinition: # 0..2001 "/*\n * Lorem ipsum dolor sit amet, consectetur adip..."
+  - ContractDefinition: # 0..2001 "/*\n * Lorem ipsum dolor sit amet, consectetur adip..."
       - (inner:) LeadingTrivia: # 0..1986 "/*\n * Lorem ipsum dolor sit amet, consectetur adip..."
-          - (dummy:) MultilineComment: "/*\n * Lorem ipsum dolor sit amet, consectetur adip..." # 0..1985
-      - (dummy:) ContractKeyword: "contract" # 1986..1994
-      - (dummy:) Identifier: "Foo" # 1995..1998
-      - (dummy:) OpenBrace: "{" # 1999..2000
-      - (dummy:) CloseBrace: "}" # 2000..2001
+          - MultilineComment: "/*\n * Lorem ipsum dolor sit amet, consectetur adip..." # 0..1985
+      - ContractKeyword: "contract" # 1986..1994
+      - Identifier: "Foo" # 1995..1998
+      - OpenBrace: "{" # 1999..2000
+      - CloseBrace: "}" # 2000..2001

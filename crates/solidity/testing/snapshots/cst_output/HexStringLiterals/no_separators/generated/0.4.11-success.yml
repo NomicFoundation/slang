@@ -6,5 +6,5 @@ Source: >
 Errors: []
 
 Tree:
-  - (TODO:) HexStringLiterals: # 0..21 'hex"1234567890abcdef"'
-      - (dummy:) HexStringLiteral: 'hex"1234567890abcdef"' # 0..21
+  - HexStringLiterals: # 0..21 'hex"1234567890abcdef"'
+      - HexStringLiteral: 'hex"1234567890abcdef"' # 0..21

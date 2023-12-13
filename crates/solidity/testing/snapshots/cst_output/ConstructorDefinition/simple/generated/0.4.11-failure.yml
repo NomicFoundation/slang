@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (TODO:) SKIPPED: "constructor () {}" # 0..17
+  - SKIPPED: "constructor () {}" # 0..17

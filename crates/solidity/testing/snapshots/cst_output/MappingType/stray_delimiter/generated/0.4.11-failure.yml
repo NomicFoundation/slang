@@ -14,17 +14,17 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (TODO:) MappingType: # 0..32 "mapping(string => bytes32] arg)\n"
-      - (dummy:) MappingKeyword: "mapping" # 0..7
-      - (dummy:) OpenParen: "(" # 7..8
+  - MappingType: # 0..32 "mapping(string => bytes32] arg)\n"
+      - MappingKeyword: "mapping" # 0..7
+      - OpenParen: "(" # 7..8
       - (inner:) MappingKey: # 8..14 "string"
           - (inner:) MappingKeyType: # 8..14 "string"
               - (inner:) ElementaryType: # 8..14 "string"
-                  - (dummy:) StringKeyword: "string" # 8..14
-      - (dummy:) EqualGreaterThan: "=>" # 15..17
+                  - StringKeyword: "string" # 8..14
+      - EqualGreaterThan: "=>" # 15..17
       - (inner:) MappingValue: # 17..25 " bytes32"
           - (inner:) TypeName: # 17..25 " bytes32"
               - (inner:) ElementaryType: # 17..25 " bytes32"
-                  - (dummy:) BytesKeyword: "bytes32" # 18..25
+                  - BytesKeyword: "bytes32" # 18..25
       - (skipped:) SKIPPED: "] arg" # 25..30
-      - (dummy:) CloseParen: ")" # 30..31
+      - CloseParen: ")" # 30..31

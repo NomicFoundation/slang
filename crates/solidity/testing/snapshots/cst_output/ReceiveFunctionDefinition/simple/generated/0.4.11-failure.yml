@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (TODO:) SKIPPED: "receive () {}" # 0..13
+  - SKIPPED: "receive () {}" # 0..13

@@ -6,17 +6,17 @@ Source: >
 Errors: []
 
 Tree:
-  - (TODO:) Expression: # 0..22 "address payable(value)"
+  - Expression: # 0..22 "address payable(value)"
       - (operand:) FunctionCallExpression: # 0..22 "address payable(value)"
           - (left_operand:) Expression: # 0..15 "address payable"
               - (inner:) ElementaryType: # 0..15 "address payable"
                   - (inner:) AddressType: # 0..15 "address payable"
-                      - (dummy:) AddressKeyword: "address" # 0..7
-                      - (dummy:) PayableKeyword: "payable" # 8..15
+                      - AddressKeyword: "address" # 0..7
+                      - PayableKeyword: "payable" # 8..15
           - (operator:) ArgumentsDeclaration: # 15..22 "(value)"
               - (inner:) PositionalArgumentsDeclaration: # 15..22 "(value)"
-                  - (dummy:) OpenParen: "(" # 15..16
+                  - OpenParen: "(" # 15..16
                   - (inner:) PositionalArguments: # 16..21 "value"
                       - (inner:) Expression: # 16..21 "value"
-                          - (dummy:) Identifier: "value" # 16..21
-                  - (dummy:) CloseParen: ")" # 21..22
+                          - Identifier: "value" # 16..21
+                  - CloseParen: ")" # 21..22

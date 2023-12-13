@@ -6,6 +6,6 @@ Source: >
 Errors: []
 
 Tree:
-  - (TODO:) TypeName: # 0..8 "bytes320"
+  - TypeName: # 0..8 "bytes320"
       - (inner:) IdentifierPath: # 0..8 "bytes320"
-          - (dummy:) Identifier: "bytes320" # 0..8
+          - Identifier: "bytes320" # 0..8

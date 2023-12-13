@@ -24,15 +24,15 @@ Errors: # 2 total
     ───╯
 
 Tree:
-  - (TODO:) Statements: # 0..43 "\nthrow invalid ;\n{ 1 * 2; 3 * b invalid; }\n"
+  - Statements: # 0..43 "\nthrow invalid ;\n{ 1 * 2; 3 * b invalid; }\n"
       - (inner:) Statement: # 0..17 "\nthrow invalid ;\n"
           - (inner:) ThrowStatement: # 0..17 "\nthrow invalid ;\n"
-              - (dummy:) ThrowKeyword: "throw" # 1..6
+              - ThrowKeyword: "throw" # 1..6
               - (skipped:) SKIPPED: "invalid " # 7..15
-              - (dummy:) Semicolon: ";" # 15..16
+              - Semicolon: ";" # 15..16
       - (inner:) Statement: # 17..43 "{ 1 * 2; 3 * b invalid; }\n"
           - (inner:) Block: # 17..43 "{ 1 * 2; 3 * b invalid; }\n"
-              - (dummy:) OpenBrace: "{" # 17..18
+              - OpenBrace: "{" # 17..18
               - (inner:) Statements: # 18..40 " 1 * 2; 3 * b invalid;"
                   - (inner:) Statement: # 18..25 " 1 * 2;"
                       - (inner:) ExpressionStatement: # 18..25 " 1 * 2;"
@@ -40,22 +40,22 @@ Tree:
                               - (operand:) MultiplicativeExpression: # 18..24 " 1 * 2"
                                   - (left_operand:) Expression: # 18..20 " 1"
                                       - (inner:) DecimalNumberExpression: # 18..20 " 1"
-                                          - (dummy:) DecimalLiteral: "1" # 19..20
+                                          - DecimalLiteral: "1" # 19..20
                                   - (operator:) Asterisk: "*" # 21..22
                                   - (right_operand:) Expression: # 22..24 " 2"
                                       - (inner:) DecimalNumberExpression: # 22..24 " 2"
-                                          - (dummy:) DecimalLiteral: "2" # 23..24
-                          - (dummy:) Semicolon: ";" # 24..25
+                                          - DecimalLiteral: "2" # 23..24
+                          - Semicolon: ";" # 24..25
                   - (inner:) Statement: # 25..40 " 3 * b invalid;"
                       - (inner:) ExpressionStatement: # 25..40 " 3 * b invalid;"
                           - (inner:) Expression: # 25..31 " 3 * b"
                               - (operand:) MultiplicativeExpression: # 25..31 " 3 * b"
                                   - (left_operand:) Expression: # 25..27 " 3"
                                       - (inner:) DecimalNumberExpression: # 25..27 " 3"
-                                          - (dummy:) DecimalLiteral: "3" # 26..27
+                                          - DecimalLiteral: "3" # 26..27
                                   - (operator:) Asterisk: "*" # 28..29
                                   - (right_operand:) Expression: # 29..31 " b"
-                                      - (dummy:) Identifier: "b" # 30..31
+                                      - Identifier: "b" # 30..31
                           - (skipped:) SKIPPED: "invalid" # 32..39
-                          - (dummy:) Semicolon: ";" # 39..40
-              - (dummy:) CloseBrace: "}" # 41..42
+                          - Semicolon: ";" # 39..40
+              - CloseBrace: "}" # 41..42

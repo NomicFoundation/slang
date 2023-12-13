@@ -6,6 +6,6 @@ Source: >
 Errors: []
 
 Tree:
-  - (TODO:) AsciiStringLiterals: # 0..11 '"foo" ''bar'''
-      - (dummy:) AsciiStringLiteral: '"foo"' # 0..5
-      - (dummy:) AsciiStringLiteral: "'bar'" # 6..11
+  - AsciiStringLiterals: # 0..11 '"foo" ''bar'''
+      - AsciiStringLiteral: '"foo"' # 0..5
+      - AsciiStringLiteral: "'bar'" # 6..11

@@ -6,27 +6,27 @@ Source: >
 Errors: []
 
 Tree:
-  - (TODO:) TryStatement: # 0..21 "try a.b() {} catch {}"
-      - (dummy:) TryKeyword: "try" # 0..3
+  - TryStatement: # 0..21 "try a.b() {} catch {}"
+      - TryKeyword: "try" # 0..3
       - (inner:) Expression: # 3..9 " a.b()"
           - (operand:) FunctionCallExpression: # 3..9 " a.b()"
               - (left_operand:) Expression: # 3..7 " a.b"
                   - (operand:) MemberAccessExpression: # 3..7 " a.b"
                       - (left_operand:) Expression: # 3..5 " a"
-                          - (dummy:) Identifier: "a" # 4..5
+                          - Identifier: "a" # 4..5
                       - (operator:) Period: "." # 5..6
                       - (operator:) MemberAccess: # 6..7 "b"
-                          - (dummy:) Identifier: "b" # 6..7
+                          - Identifier: "b" # 6..7
               - (operator:) ArgumentsDeclaration: # 7..9 "()"
                   - (inner:) PositionalArgumentsDeclaration: # 7..9 "()"
-                      - (dummy:) OpenParen: "(" # 7..8
-                      - (dummy:) CloseParen: ")" # 8..9
+                      - OpenParen: "(" # 7..8
+                      - CloseParen: ")" # 8..9
       - (inner:) Block: # 9..12 " {}"
-          - (dummy:) OpenBrace: "{" # 10..11
-          - (dummy:) CloseBrace: "}" # 11..12
+          - OpenBrace: "{" # 10..11
+          - CloseBrace: "}" # 11..12
       - (inner:) CatchClauses: # 12..21 " catch {}"
           - (inner:) CatchClause: # 12..21 " catch {}"
-              - (dummy:) CatchKeyword: "catch" # 13..18
+              - CatchKeyword: "catch" # 13..18
               - (inner:) Block: # 18..21 " {}"
-                  - (dummy:) OpenBrace: "{" # 19..20
-                  - (dummy:) CloseBrace: "}" # 20..21
+                  - OpenBrace: "{" # 19..20
+                  - CloseBrace: "}" # 20..21

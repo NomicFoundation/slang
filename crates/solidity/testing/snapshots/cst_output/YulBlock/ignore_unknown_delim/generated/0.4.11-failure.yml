@@ -20,52 +20,52 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (TODO:) YulBlock: # 0..85 "{\n\tfunction mult(a, b) -> result {\n\t\tresult := mul..."
-      - (dummy:) OpenBrace: "{" # 0..1
+  - YulBlock: # 0..85 "{\n\tfunction mult(a, b) -> result {\n\t\tresult := mul..."
+      - OpenBrace: "{" # 0..1
       - (inner:) YulStatements: # 2..83 "\tfunction mult(a, b) -> result {\n\t\tresult := mul(a..."
           - (inner:) YulStatement: # 2..83 "\tfunction mult(a, b) -> result {\n\t\tresult := mul(a..."
               - (inner:) YulFunctionDefinition: # 2..83 "\tfunction mult(a, b) -> result {\n\t\tresult := mul(a..."
-                  - (dummy:) YulFunctionKeyword: "function" # 3..11
-                  - (dummy:) YulIdentifier: "mult" # 12..16
+                  - YulFunctionKeyword: "function" # 3..11
+                  - YulIdentifier: "mult" # 12..16
                   - (inner:) YulParametersDeclaration: # 16..22 "(a, b)"
-                      - (dummy:) OpenParen: "(" # 16..17
+                      - OpenParen: "(" # 16..17
                       - (inner:) YulParameters: # 17..21 "a, b"
-                          - (dummy:) YulIdentifier: "a" # 17..18
-                          - (dummy:) Comma: "," # 18..19
-                          - (dummy:) YulIdentifier: "b" # 20..21
-                      - (dummy:) CloseParen: ")" # 21..22
+                          - YulIdentifier: "a" # 17..18
+                          - Comma: "," # 18..19
+                          - YulIdentifier: "b" # 20..21
+                      - CloseParen: ")" # 21..22
                   - (inner:) YulReturnsDeclaration: # 22..32 " -> result"
-                      - (dummy:) MinusGreaterThan: "->" # 23..25
+                      - MinusGreaterThan: "->" # 23..25
                       - (inner:) YulReturnVariables: # 25..32 " result"
-                          - (dummy:) YulIdentifier: "result" # 26..32
+                          - YulIdentifier: "result" # 26..32
                   - (inner:) YulBlock: # 32..83 " {\n\t\tresult := mul(a, b)\n\t\tresult := [mul(a, b)\n\t}..."
-                      - (dummy:) OpenBrace: "{" # 33..34
+                      - OpenBrace: "{" # 33..34
                       - (inner:) YulStatements: # 35..65 "\t\tresult := mul(a, b)\n\t\tresult"
                           - (inner:) YulStatement: # 35..57 "\t\tresult := mul(a, b)\n"
                               - (inner:) YulAssignmentStatement: # 35..57 "\t\tresult := mul(a, b)\n"
                                   - (inner:) YulIdentifierPaths: # 35..43 "\t\tresult"
                                       - (inner:) YulIdentifierPath: # 35..43 "\t\tresult"
-                                          - (dummy:) YulIdentifier: "result" # 37..43
-                                  - (dummy:) ColonEqual: ":=" # 44..46
+                                          - YulIdentifier: "result" # 37..43
+                                  - ColonEqual: ":=" # 44..46
                                   - (inner:) YulExpression: # 46..57 " mul(a, b)\n"
                                       - (operand:) YulFunctionCallExpression: # 46..57 " mul(a, b)\n"
                                           - (left_operand:) YulExpression: # 46..50 " mul"
                                               - (inner:) YulIdentifierPath: # 46..50 " mul"
-                                                  - (dummy:) YulIdentifier: "mul" # 47..50
+                                                  - YulIdentifier: "mul" # 47..50
                                           - (operator:) OpenParen: "(" # 50..51
                                           - (operator:) YulArguments: # 51..55 "a, b"
                                               - (inner:) YulExpression: # 51..52 "a"
                                                   - (inner:) YulIdentifierPath: # 51..52 "a"
-                                                      - (dummy:) YulIdentifier: "a" # 51..52
-                                              - (dummy:) Comma: "," # 52..53
+                                                      - YulIdentifier: "a" # 51..52
+                                              - Comma: "," # 52..53
                                               - (inner:) YulExpression: # 53..55 " b"
                                                   - (inner:) YulIdentifierPath: # 53..55 " b"
-                                                      - (dummy:) YulIdentifier: "b" # 54..55
+                                                      - YulIdentifier: "b" # 54..55
                                           - (operator:) CloseParen: ")" # 55..56
                           - (inner:) YulStatement: # 57..65 "\t\tresult"
                               - (inner:) YulExpression: # 57..65 "\t\tresult"
                                   - (inner:) YulIdentifierPath: # 57..65 "\t\tresult"
-                                      - (dummy:) YulIdentifier: "result" # 59..65
+                                      - YulIdentifier: "result" # 59..65
                       - (skipped:) SKIPPED: ":= [mul(a, b)\n\t" # 66..81
-                      - (dummy:) CloseBrace: "}" # 81..82
-      - (dummy:) CloseBrace: "}" # 83..84
+                      - CloseBrace: "}" # 81..82
+      - CloseBrace: "}" # 83..84

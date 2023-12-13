@@ -6,6 +6,6 @@ Source: >
 Errors: []
 
 Tree:
-  - (TODO:) TypeName: # 0..6 "int320"
+  - TypeName: # 0..6 "int320"
       - (inner:) IdentifierPath: # 0..6 "int320"
-          - (dummy:) Identifier: "int320" # 0..6
+          - Identifier: "int320" # 0..6

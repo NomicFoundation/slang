@@ -6,5 +6,5 @@ Source: >
 Errors: []
 
 Tree:
-  - (TODO:) Expression: # 0..11 "constructor"
-      - (dummy:) Identifier: "constructor" # 0..11
+  - Expression: # 0..11 "constructor"
+      - Identifier: "constructor" # 0..11

@@ -6,8 +6,8 @@ Source: >
 Errors: []
 
 Tree:
-  - (TODO:) DeleteStatement: # 0..11 "delete foo;"
-      - (dummy:) DeleteKeyword: "delete" # 0..6
+  - DeleteStatement: # 0..11 "delete foo;"
+      - DeleteKeyword: "delete" # 0..6
       - (inner:) Expression: # 6..10 " foo"
-          - (dummy:) Identifier: "foo" # 7..10
-      - (dummy:) Semicolon: ";" # 10..11
+          - Identifier: "foo" # 7..10
+      - Semicolon: ";" # 10..11

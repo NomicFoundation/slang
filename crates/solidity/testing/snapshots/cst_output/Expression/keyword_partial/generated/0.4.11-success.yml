@@ -6,5 +6,5 @@ Source: >
 Errors: []
 
 Tree:
-  - (TODO:) Expression: # 0..7 "partial"
-      - (dummy:) Identifier: "partial" # 0..7
+  - Expression: # 0..7 "partial"
+      - Identifier: "partial" # 0..7

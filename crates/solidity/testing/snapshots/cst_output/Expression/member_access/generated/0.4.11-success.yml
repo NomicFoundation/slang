@@ -6,10 +6,10 @@ Source: >
 Errors: []
 
 Tree:
-  - (TODO:) Expression: # 0..3 "x.y"
+  - Expression: # 0..3 "x.y"
       - (operand:) MemberAccessExpression: # 0..3 "x.y"
           - (left_operand:) Expression: # 0..1 "x"
-              - (dummy:) Identifier: "x" # 0..1
+              - Identifier: "x" # 0..1
           - (operator:) Period: "." # 1..2
           - (operator:) MemberAccess: # 2..3 "y"
-              - (dummy:) Identifier: "y" # 2..3
+              - Identifier: "y" # 2..3

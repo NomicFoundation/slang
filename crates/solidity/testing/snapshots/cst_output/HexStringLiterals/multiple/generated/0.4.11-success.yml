@@ -6,6 +6,6 @@ Source: >
 Errors: []
 
 Tree:
-  - (TODO:) HexStringLiterals: # 0..15 'hex"ab" hex''cd'''
-      - (dummy:) HexStringLiteral: 'hex"ab"' # 0..7
-      - (dummy:) HexStringLiteral: "hex'cd'" # 8..15
+  - HexStringLiterals: # 0..15 'hex"ab" hex''cd'''
+      - HexStringLiteral: 'hex"ab"' # 0..7
+      - HexStringLiteral: "hex'cd'" # 8..15

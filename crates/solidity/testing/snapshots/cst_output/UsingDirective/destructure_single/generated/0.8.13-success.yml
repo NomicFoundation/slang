@@ -6,20 +6,20 @@ Source: >
 Errors: []
 
 Tree:
-  - (TODO:) UsingDirective: # 0..27 "using {add} for Int global;"
-      - (dummy:) UsingKeyword: "using" # 0..5
+  - UsingDirective: # 0..27 "using {add} for Int global;"
+      - UsingKeyword: "using" # 0..5
       - (inner:) UsingClause: # 5..11 " {add}"
           - (inner:) UsingDeconstruction: # 5..11 " {add}"
-              - (dummy:) OpenBrace: "{" # 6..7
+              - OpenBrace: "{" # 6..7
               - (inner:) UsingDeconstructionSymbols: # 7..10 "add"
                   - (inner:) UsingDeconstructionSymbol: # 7..10 "add"
                       - (inner:) IdentifierPath: # 7..10 "add"
-                          - (dummy:) Identifier: "add" # 7..10
-              - (dummy:) CloseBrace: "}" # 10..11
-      - (dummy:) ForKeyword: "for" # 12..15
+                          - Identifier: "add" # 7..10
+              - CloseBrace: "}" # 10..11
+      - ForKeyword: "for" # 12..15
       - (inner:) UsingTarget: # 15..19 " Int"
           - (inner:) TypeName: # 15..19 " Int"
               - (inner:) IdentifierPath: # 15..19 " Int"
-                  - (dummy:) Identifier: "Int" # 16..19
-      - (dummy:) GlobalKeyword: "global" # 20..26
-      - (dummy:) Semicolon: ";" # 26..27
+                  - Identifier: "Int" # 16..19
+      - GlobalKeyword: "global" # 20..26
+      - Semicolon: ";" # 26..27

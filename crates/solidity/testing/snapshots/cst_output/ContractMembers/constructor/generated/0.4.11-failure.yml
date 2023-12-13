@@ -14,10 +14,10 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (TODO:) ContractMembers: # 0..24 "constructor() public {}\n"
+  - ContractMembers: # 0..24 "constructor() public {}\n"
       - (inner:) ContractMember: # 0..11 "constructor"
           - (inner:) StateVariableDefinition: # 0..11 "constructor"
               - (inner:) TypeName: # 0..11 "constructor"
                   - (inner:) IdentifierPath: # 0..11 "constructor"
-                      - (dummy:) Identifier: "constructor" # 0..11
+                      - Identifier: "constructor" # 0..11
       - (skipped:) SKIPPED: "() public {}\n" # 11..24

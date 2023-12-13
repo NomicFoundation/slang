@@ -6,40 +6,40 @@ Source: >
 Errors: []
 
 Tree:
-  - (TODO:) UsingDirective: # 0..52 "using {add as +, sub, mul, div as /} for Int globa..."
-      - (dummy:) UsingKeyword: "using" # 0..5
+  - UsingDirective: # 0..52 "using {add as +, sub, mul, div as /} for Int globa..."
+      - UsingKeyword: "using" # 0..5
       - (inner:) UsingClause: # 5..36 " {add as +, sub, mul, div as /}"
           - (inner:) UsingDeconstruction: # 5..36 " {add as +, sub, mul, div as /}"
-              - (dummy:) OpenBrace: "{" # 6..7
+              - OpenBrace: "{" # 6..7
               - (inner:) UsingDeconstructionSymbols: # 7..35 "add as +, sub, mul, div as /"
                   - (inner:) UsingDeconstructionSymbol: # 7..15 "add as +"
                       - (inner:) IdentifierPath: # 7..10 "add"
-                          - (dummy:) Identifier: "add" # 7..10
+                          - Identifier: "add" # 7..10
                       - (inner:) UsingAlias: # 10..15 " as +"
-                          - (dummy:) AsKeyword: "as" # 11..13
+                          - AsKeyword: "as" # 11..13
                           - (inner:) UsingOperator: # 13..15 " +"
-                              - (dummy:) Plus: "+" # 14..15
-                  - (dummy:) Comma: "," # 15..16
+                              - Plus: "+" # 14..15
+                  - Comma: "," # 15..16
                   - (inner:) UsingDeconstructionSymbol: # 16..20 " sub"
                       - (inner:) IdentifierPath: # 16..20 " sub"
-                          - (dummy:) Identifier: "sub" # 17..20
-                  - (dummy:) Comma: "," # 20..21
+                          - Identifier: "sub" # 17..20
+                  - Comma: "," # 20..21
                   - (inner:) UsingDeconstructionSymbol: # 21..25 " mul"
                       - (inner:) IdentifierPath: # 21..25 " mul"
-                          - (dummy:) Identifier: "mul" # 22..25
-                  - (dummy:) Comma: "," # 25..26
+                          - Identifier: "mul" # 22..25
+                  - Comma: "," # 25..26
                   - (inner:) UsingDeconstructionSymbol: # 26..35 " div as /"
                       - (inner:) IdentifierPath: # 26..30 " div"
-                          - (dummy:) Identifier: "div" # 27..30
+                          - Identifier: "div" # 27..30
                       - (inner:) UsingAlias: # 30..35 " as /"
-                          - (dummy:) AsKeyword: "as" # 31..33
+                          - AsKeyword: "as" # 31..33
                           - (inner:) UsingOperator: # 33..35 " /"
-                              - (dummy:) Slash: "/" # 34..35
-              - (dummy:) CloseBrace: "}" # 35..36
-      - (dummy:) ForKeyword: "for" # 37..40
+                              - Slash: "/" # 34..35
+              - CloseBrace: "}" # 35..36
+      - ForKeyword: "for" # 37..40
       - (inner:) UsingTarget: # 40..44 " Int"
           - (inner:) TypeName: # 40..44 " Int"
               - (inner:) IdentifierPath: # 40..44 " Int"
-                  - (dummy:) Identifier: "Int" # 41..44
-      - (dummy:) GlobalKeyword: "global" # 45..51
-      - (dummy:) Semicolon: ";" # 51..52
+                  - Identifier: "Int" # 41..44
+      - GlobalKeyword: "global" # 45..51
+      - Semicolon: ";" # 51..52

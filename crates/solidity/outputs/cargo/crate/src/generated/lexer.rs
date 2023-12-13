@@ -60,7 +60,7 @@ pub trait Lexer {
 
         ParserResult::r#match(
             vec![(
-                String::from("dummy"),
+                String::new(),
                 cst::Node::token(kind, input.content(start.utf8..end.utf8)),
             )],
             vec![],
@@ -90,7 +90,7 @@ pub trait Lexer {
         }
         let end = input.position();
         children.push((
-            String::from("dummy"),
+            String::new(),
             cst::Node::token(kind, input.content(start.utf8..end.utf8)),
         ));
 

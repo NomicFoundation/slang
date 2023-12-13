@@ -6,8 +6,8 @@ Source: >
 Errors: []
 
 Tree:
-  - (TODO:) EnumDefinition: # 0..12 "enum Foo { }"
-      - (dummy:) EnumKeyword: "enum" # 0..4
-      - (dummy:) Identifier: "Foo" # 5..8
-      - (dummy:) OpenBrace: "{" # 9..10
-      - (dummy:) CloseBrace: "}" # 11..12
+  - EnumDefinition: # 0..12 "enum Foo { }"
+      - EnumKeyword: "enum" # 0..4
+      - Identifier: "Foo" # 5..8
+      - OpenBrace: "{" # 9..10
+      - CloseBrace: "}" # 11..12

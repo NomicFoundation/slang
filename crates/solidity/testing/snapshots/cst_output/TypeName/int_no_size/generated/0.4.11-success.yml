@@ -6,6 +6,6 @@ Source: >
 Errors: []
 
 Tree:
-  - (TODO:) TypeName: # 0..3 "int"
+  - TypeName: # 0..3 "int"
       - (inner:) ElementaryType: # 0..3 "int"
-          - (dummy:) IntKeyword: "int" # 0..3
+          - IntKeyword: "int" # 0..3

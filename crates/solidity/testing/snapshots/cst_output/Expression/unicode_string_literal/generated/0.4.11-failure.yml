@@ -12,6 +12,6 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (TODO:) Expression: # 0..25 'unicode"This Emoji: 😃"'
-      - (dummy:) Identifier: "unicode" # 0..7
+  - Expression: # 0..25 'unicode"This Emoji: 😃"'
+      - Identifier: "unicode" # 0..7
       - (skipped:) SKIPPED: '"This Emoji: 😃"' # 7..25

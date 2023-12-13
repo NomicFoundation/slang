@@ -6,11 +6,11 @@ Source: >
 Errors: []
 
 Tree:
-  - (TODO:) PragmaDirective: # 0..36 'pragma experimental "ABIEncoderV2";\n'
-      - (dummy:) PragmaKeyword: "pragma" # 0..6
+  - PragmaDirective: # 0..36 'pragma experimental "ABIEncoderV2";\n'
+      - PragmaKeyword: "pragma" # 0..6
       - (inner:) Pragma: # 6..34 ' experimental "ABIEncoderV2"'
           - (inner:) ExperimentalPragma: # 6..34 ' experimental "ABIEncoderV2"'
-              - (dummy:) ExperimentalKeyword: "experimental" # 7..19
+              - ExperimentalKeyword: "experimental" # 7..19
               - (inner:) ExperimentalFeature: # 19..34 ' "ABIEncoderV2"'
-                  - (dummy:) AsciiStringLiteral: '"ABIEncoderV2"' # 20..34
-      - (dummy:) Semicolon: ";" # 34..35
+                  - AsciiStringLiteral: '"ABIEncoderV2"' # 20..34
+      - Semicolon: ";" # 34..35

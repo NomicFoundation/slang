@@ -6,5 +6,5 @@ Source: >
 Errors: []
 
 Tree:
-  - (TODO:) Expression: # 0..8 "fallback"
-      - (dummy:) Identifier: "fallback" # 0..8
+  - Expression: # 0..8 "fallback"
+      - Identifier: "fallback" # 0..8

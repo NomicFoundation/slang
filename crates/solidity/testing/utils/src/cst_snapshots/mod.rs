@@ -144,8 +144,24 @@ fn write_node<W: Write>(
     };
 
     let name = match node {
-        (name, cst::Node::Rule(rule)) => format!("({}:) {:?}", name, rule.kind),
-        (name, cst::Node::Token(token)) => format!("({}:) {:?}", name, token.kind),
+        (name, cst::Node::Rule(rule)) => format!(
+            "{name}{:?}",
+            rule.kind,
+            name = if name.is_empty() {
+                String::new()
+            } else {
+                format!("({name}:) ")
+            }
+        ),
+        (name, cst::Node::Token(token)) => format!(
+            "{name}{:?}",
+            token.kind,
+            name = if name.is_empty() {
+                String::new()
+            } else {
+                format!("({name}:) ")
+            }
+        ),
     };
 
     writeln!(

@@ -10,14 +10,14 @@ Source: >
 Errors: []
 
 Tree:
-  - (TODO:) EnumDefinition: # 0..41 "enum Foo {\n    Bar1,\n    Bar2,\n    Bar3\n}"
-      - (dummy:) EnumKeyword: "enum" # 0..4
-      - (dummy:) Identifier: "Foo" # 5..8
-      - (dummy:) OpenBrace: "{" # 9..10
+  - EnumDefinition: # 0..41 "enum Foo {\n    Bar1,\n    Bar2,\n    Bar3\n}"
+      - EnumKeyword: "enum" # 0..4
+      - Identifier: "Foo" # 5..8
+      - OpenBrace: "{" # 9..10
       - (inner:) EnumMembers: # 11..40 "    Bar1,\n    Bar2,\n    Bar3\n"
-          - (dummy:) Identifier: "Bar1" # 15..19
-          - (dummy:) Comma: "," # 19..20
-          - (dummy:) Identifier: "Bar2" # 25..29
-          - (dummy:) Comma: "," # 29..30
-          - (dummy:) Identifier: "Bar3" # 35..39
-      - (dummy:) CloseBrace: "}" # 40..41
+          - Identifier: "Bar1" # 15..19
+          - Comma: "," # 19..20
+          - Identifier: "Bar2" # 25..29
+          - Comma: "," # 29..30
+          - Identifier: "Bar3" # 35..39
+      - CloseBrace: "}" # 40..41

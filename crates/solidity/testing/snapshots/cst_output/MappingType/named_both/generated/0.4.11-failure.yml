@@ -14,12 +14,12 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (TODO:) MappingType: # 0..34 "mapping(string Foo => bytes32 Bar)"
-      - (dummy:) MappingKeyword: "mapping" # 0..7
-      - (dummy:) OpenParen: "(" # 7..8
+  - MappingType: # 0..34 "mapping(string Foo => bytes32 Bar)"
+      - MappingKeyword: "mapping" # 0..7
+      - OpenParen: "(" # 7..8
       - (inner:) MappingKey: # 8..14 "string"
           - (inner:) MappingKeyType: # 8..14 "string"
               - (inner:) ElementaryType: # 8..14 "string"
-                  - (dummy:) StringKeyword: "string" # 8..14
+                  - StringKeyword: "string" # 8..14
       - (skipped:) SKIPPED: "Foo => bytes32 Bar" # 15..33
-      - (dummy:) CloseParen: ")" # 33..34
+      - CloseParen: ")" # 33..34

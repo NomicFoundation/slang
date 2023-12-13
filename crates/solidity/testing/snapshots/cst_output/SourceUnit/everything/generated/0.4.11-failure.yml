@@ -40,28 +40,28 @@ Errors: # 1 total
     ────╯
 
 Tree:
-  - (TODO:) SourceUnit: # 0..243 'pragma solidity 0.0.0;\n\nimport "foo.sol";\n\nusing A...'
+  - SourceUnit: # 0..243 'pragma solidity 0.0.0;\n\nimport "foo.sol";\n\nusing A...'
       - (inner:) SourceUnitMembers: # 0..42 'pragma solidity 0.0.0;\n\nimport "foo.sol";\n'
           - (inner:) SourceUnitMember: # 0..23 "pragma solidity 0.0.0;\n"
               - (inner:) PragmaDirective: # 0..23 "pragma solidity 0.0.0;\n"
-                  - (dummy:) PragmaKeyword: "pragma" # 0..6
+                  - PragmaKeyword: "pragma" # 0..6
                   - (inner:) Pragma: # 6..21 " solidity 0.0.0"
                       - (inner:) VersionPragma: # 6..21 " solidity 0.0.0"
-                          - (dummy:) SolidityKeyword: "solidity" # 7..15
+                          - SolidityKeyword: "solidity" # 7..15
                           - (inner:) VersionPragmaExpressions: # 15..21 " 0.0.0"
                               - (inner:) VersionPragmaExpression: # 15..21 " 0.0.0"
                                   - (inner:) VersionPragmaSpecifier: # 15..21 " 0.0.0"
-                                      - (dummy:) VersionPragmaValue: "0" # 16..17
-                                      - (dummy:) Period: "." # 17..18
-                                      - (dummy:) VersionPragmaValue: "0" # 18..19
-                                      - (dummy:) Period: "." # 19..20
-                                      - (dummy:) VersionPragmaValue: "0" # 20..21
-                  - (dummy:) Semicolon: ";" # 21..22
+                                      - VersionPragmaValue: "0" # 16..17
+                                      - Period: "." # 17..18
+                                      - VersionPragmaValue: "0" # 18..19
+                                      - Period: "." # 19..20
+                                      - VersionPragmaValue: "0" # 20..21
+                  - Semicolon: ";" # 21..22
           - (inner:) SourceUnitMember: # 23..42 '\nimport "foo.sol";\n'
               - (inner:) ImportDirective: # 23..42 '\nimport "foo.sol";\n'
-                  - (dummy:) ImportKeyword: "import" # 24..30
+                  - ImportKeyword: "import" # 24..30
                   - (inner:) ImportClause: # 30..40 ' "foo.sol"'
                       - (inner:) PathImport: # 30..40 ' "foo.sol"'
-                          - (dummy:) AsciiStringLiteral: '"foo.sol"' # 31..40
-                  - (dummy:) Semicolon: ";" # 40..41
+                          - AsciiStringLiteral: '"foo.sol"' # 31..40
+                  - Semicolon: ";" # 40..41
       - (skipped:) SKIPPED: "using A for B;\n\ncontract C { }\n\ninterface I { }\n\nl..." # 43..243
