@@ -10,10 +10,10 @@ Tree:
       - (operand:) FunctionCallExpression: # 0..14 "address(value)"
           - (left_operand:) Expression: # 0..7 "address"
               - ElementaryType: # 0..7 "address"
-                  - AddressType: # 0..7 "address"
+                  - (variant:) AddressType: # 0..7 "address"
                       - (address_keyword:) AddressKeyword: "address" # 0..7
           - (operator:) ArgumentsDeclaration: # 7..14 "(value)"
-              - PositionalArgumentsDeclaration: # 7..14 "(value)"
+              - (variant:) PositionalArgumentsDeclaration: # 7..14 "(value)"
                   - OpenParen: "(" # 7..8
                   - PositionalArguments: # 8..13 "value"
                       - Expression: # 8..13 "value"

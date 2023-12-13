@@ -15,14 +15,14 @@ Tree:
       - OpenBrace: "{" # 16..17
       - ContractMembers: # 18..47 "  constructor() public {\n  }\n"
           - ContractMember: # 18..47 "  constructor() public {\n  }\n"
-              - ConstructorDefinition: # 18..47 "  constructor() public {\n  }\n"
+              - (variant:) ConstructorDefinition: # 18..47 "  constructor() public {\n  }\n"
                   - (constructor_keyword:) ConstructorKeyword: "constructor" # 20..31
                   - (parameters:) ParametersDeclaration: # 31..33 "()"
                       - OpenParen: "(" # 31..32
                       - CloseParen: ")" # 32..33
                   - (attributes:) ConstructorAttributes: # 33..40 " public"
                       - ConstructorAttribute: # 33..40 " public"
-                          - PublicKeyword: "public" # 34..40
+                          - (variant:) PublicKeyword: "public" # 34..40
                   - (body:) Block: # 40..47 " {\n  }\n"
                       - OpenBrace: "{" # 41..42
                       - CloseBrace: "}" # 45..46

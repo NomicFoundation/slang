@@ -26,16 +26,16 @@ Errors: # 2 total
 Tree:
   - Statements: # 0..43 "\nthrow invalid ;\n{ 1 * 2; 3 * b invalid; }\n"
       - Statement: # 0..17 "\nthrow invalid ;\n"
-          - ThrowStatement: # 0..17 "\nthrow invalid ;\n"
+          - (variant:) ThrowStatement: # 0..17 "\nthrow invalid ;\n"
               - ThrowKeyword: "throw" # 1..6
               - SKIPPED: "invalid " # 7..15
               - Semicolon: ";" # 15..16
       - Statement: # 17..43 "{ 1 * 2; 3 * b invalid; }\n"
-          - Block: # 17..43 "{ 1 * 2; 3 * b invalid; }\n"
+          - (variant:) Block: # 17..43 "{ 1 * 2; 3 * b invalid; }\n"
               - OpenBrace: "{" # 17..18
               - Statements: # 18..40 " 1 * 2; 3 * b invalid;"
                   - Statement: # 18..25 " 1 * 2;"
-                      - ExpressionStatement: # 18..25 " 1 * 2;"
+                      - (variant:) ExpressionStatement: # 18..25 " 1 * 2;"
                           - Expression: # 18..24 " 1 * 2"
                               - (operand:) MultiplicativeExpression: # 18..24 " 1 * 2"
                                   - (left_operand:) Expression: # 18..20 " 1"
@@ -47,7 +47,7 @@ Tree:
                                           - (literal:) DecimalLiteral: "2" # 23..24
                           - Semicolon: ";" # 24..25
                   - Statement: # 25..40 " 3 * b invalid;"
-                      - ExpressionStatement: # 25..40 " 3 * b invalid;"
+                      - (variant:) ExpressionStatement: # 25..40 " 3 * b invalid;"
                           - Expression: # 25..31 " 3 * b"
                               - (operand:) MultiplicativeExpression: # 25..31 " 3 * b"
                                   - (left_operand:) Expression: # 25..27 " 3"

@@ -10,23 +10,23 @@ Errors: []
 Tree:
   - ContractMembers: # 0..42 "function func() {\n  uint a = 1 + 2 * 3;\n}\n"
       - ContractMember: # 0..42 "function func() {\n  uint a = 1 + 2 * 3;\n}\n"
-          - FunctionDefinition: # 0..42 "function func() {\n  uint a = 1 + 2 * 3;\n}\n"
+          - (variant:) FunctionDefinition: # 0..42 "function func() {\n  uint a = 1 + 2 * 3;\n}\n"
               - (function_keyword:) FunctionKeyword: "function" # 0..8
               - (name:) FunctionName: # 8..13 " func"
-                  - Identifier: "func" # 9..13
+                  - (variant:) Identifier: "func" # 9..13
               - (parameters:) ParametersDeclaration: # 13..15 "()"
                   - OpenParen: "(" # 13..14
                   - CloseParen: ")" # 14..15
               - (body:) FunctionBody: # 15..42 " {\n  uint a = 1 + 2 * 3;\n}\n"
-                  - Block: # 15..42 " {\n  uint a = 1 + 2 * 3;\n}\n"
+                  - (variant:) Block: # 15..42 " {\n  uint a = 1 + 2 * 3;\n}\n"
                       - OpenBrace: "{" # 16..17
                       - Statements: # 18..40 "  uint a = 1 + 2 * 3;\n"
                           - Statement: # 18..40 "  uint a = 1 + 2 * 3;\n"
-                              - VariableDeclarationStatement: # 18..40 "  uint a = 1 + 2 * 3;\n"
+                              - (variant:) VariableDeclarationStatement: # 18..40 "  uint a = 1 + 2 * 3;\n"
                                   - (variable_type:) VariableDeclarationType: # 18..24 "  uint"
-                                      - TypeName: # 18..24 "  uint"
+                                      - (variant:) TypeName: # 18..24 "  uint"
                                           - ElementaryType: # 18..24 "  uint"
-                                              - UintKeyword: "uint" # 20..24
+                                              - (variant:) UintKeyword: "uint" # 20..24
                                   - (name:) Identifier: "a" # 25..26
                                   - (value:) VariableDeclarationValue: # 26..38 " = 1 + 2 * 3"
                                       - (equal:) Equal: "=" # 27..28

@@ -12,6 +12,6 @@ Tree:
           - OpenParen: "(" # 8..9
           - CloseParen: ")" # 9..10
       - (body:) FunctionBody: # 10..13 " {}"
-          - Block: # 10..13 " {}"
+          - (variant:) Block: # 10..13 " {}"
               - OpenBrace: "{" # 11..12
               - CloseBrace: "}" # 12..13

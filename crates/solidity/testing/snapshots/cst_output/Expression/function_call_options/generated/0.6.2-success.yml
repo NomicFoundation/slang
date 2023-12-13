@@ -14,9 +14,9 @@ Tree:
                       - Identifier: "a" # 0..1
                   - (operator:) Period: "." # 1..2
                   - (operator:) MemberAccess: # 2..3 "b"
-                      - Identifier: "b" # 2..3
+                      - (variant:) Identifier: "b" # 2..3
           - (operator:) FunctionCallOptions: # 3..21 "{value: 0, gas: 1}"
-              - NamedArgumentGroups: # 3..21 "{value: 0, gas: 1}"
+              - (variant:) NamedArgumentGroups: # 3..21 "{value: 0, gas: 1}"
                   - NamedArgumentGroup: # 3..21 "{value: 0, gas: 1}"
                       - OpenBrace: "{" # 3..4
                       - NamedArguments: # 4..20 "value: 0, gas: 1"
@@ -35,11 +35,11 @@ Tree:
                                       - (literal:) DecimalLiteral: "1" # 19..20
                       - CloseBrace: "}" # 20..21
           - (operator:) ArgumentsDeclaration: # 21..25 '("")'
-              - PositionalArgumentsDeclaration: # 21..25 '("")'
+              - (variant:) PositionalArgumentsDeclaration: # 21..25 '("")'
                   - OpenParen: "(" # 21..22
                   - PositionalArguments: # 22..24 '""'
                       - Expression: # 22..24 '""'
                           - StringExpression: # 22..24 '""'
-                              - AsciiStringLiterals: # 22..24 '""'
+                              - (variant:) AsciiStringLiterals: # 22..24 '""'
                                   - AsciiStringLiteral: '""' # 22..24
                   - CloseParen: ")" # 24..25

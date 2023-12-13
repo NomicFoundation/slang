@@ -15,13 +15,13 @@ Tree:
       - OpenBrace: "{" # 16..17
       - ContractMembers: # 18..37 "  fallback() {\n  }\n"
           - ContractMember: # 18..37 "  fallback() {\n  }\n"
-              - FallbackFunctionDefinition: # 18..37 "  fallback() {\n  }\n"
+              - (variant:) FallbackFunctionDefinition: # 18..37 "  fallback() {\n  }\n"
                   - (fallback_keyword:) FallbackKeyword: "fallback" # 20..28
                   - (parameters:) ParametersDeclaration: # 28..30 "()"
                       - OpenParen: "(" # 28..29
                       - CloseParen: ")" # 29..30
                   - (body:) FunctionBody: # 30..37 " {\n  }\n"
-                      - Block: # 30..37 " {\n  }\n"
+                      - (variant:) Block: # 30..37 " {\n  }\n"
                           - OpenBrace: "{" # 31..32
                           - CloseBrace: "}" # 35..36
       - CloseBrace: "}" # 37..38

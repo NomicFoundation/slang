@@ -11,7 +11,7 @@ Tree:
           - (left_operand:) Expression: # 0..13 "function_name"
               - Identifier: "function_name" # 0..13
           - (operator:) ArgumentsDeclaration: # 13..20 "(value)"
-              - PositionalArgumentsDeclaration: # 13..20 "(value)"
+              - (variant:) PositionalArgumentsDeclaration: # 13..20 "(value)"
                   - OpenParen: "(" # 13..14
                   - PositionalArguments: # 14..19 "value"
                       - Expression: # 14..19 "value"

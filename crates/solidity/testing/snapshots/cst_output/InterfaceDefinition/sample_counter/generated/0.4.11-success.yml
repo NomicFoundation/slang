@@ -18,20 +18,20 @@ Tree:
       - OpenBrace: "{" # 19..20
       - InterfaceMembers: # 21..171 "    // returns the current count\n    function coun..."
           - ContractMember: # 21..105 "    // returns the current count\n    function coun..."
-              - FunctionDefinition: # 21..105 "    // returns the current count\n    function coun..."
+              - (variant:) FunctionDefinition: # 21..105 "    // returns the current count\n    function coun..."
                   - LeadingTrivia: # 21..58 "    // returns the current count\n    "
-                      - SingleLineComment: "// returns the current count" # 25..53
+                      - (variant:) SingleLineComment: "// returns the current count" # 25..53
                   - (function_keyword:) FunctionKeyword: "function" # 58..66
                   - (name:) FunctionName: # 66..72 " count"
-                      - Identifier: "count" # 67..72
+                      - (variant:) Identifier: "count" # 67..72
                   - (parameters:) ParametersDeclaration: # 72..74 "()"
                       - OpenParen: "(" # 72..73
                       - CloseParen: ")" # 73..74
                   - (attributes:) FunctionAttributes: # 74..88 " external view"
                       - FunctionAttribute: # 74..83 " external"
-                          - ExternalKeyword: "external" # 75..83
+                          - (variant:) ExternalKeyword: "external" # 75..83
                       - FunctionAttribute: # 83..88 " view"
-                          - ViewKeyword: "view" # 84..88
+                          - (variant:) ViewKeyword: "view" # 84..88
                   - (returns:) ReturnsDeclaration: # 88..103 " returns (uint)"
                       - (returns_keyword:) ReturnsKeyword: "returns" # 89..96
                       - (variables:) ParametersDeclaration: # 96..103 " (uint)"
@@ -40,23 +40,23 @@ Tree:
                               - Parameter: # 98..102 "uint"
                                   - (type_name:) TypeName: # 98..102 "uint"
                                       - ElementaryType: # 98..102 "uint"
-                                          - UintKeyword: "uint" # 98..102
+                                          - (variant:) UintKeyword: "uint" # 98..102
                           - CloseParen: ")" # 102..103
                   - (body:) FunctionBody: # 103..105 ";\n"
-                      - Semicolon: ";" # 103..104
+                      - (variant:) Semicolon: ";" # 103..104
           - ContractMember: # 105..171 "\n    // increments the counter\n    function increm..."
-              - FunctionDefinition: # 105..171 "\n    // increments the counter\n    function increm..."
+              - (variant:) FunctionDefinition: # 105..171 "\n    // increments the counter\n    function increm..."
                   - LeadingTrivia: # 105..140 "\n    // increments the counter\n    "
-                      - SingleLineComment: "// increments the counter" # 110..135
+                      - (variant:) SingleLineComment: "// increments the counter" # 110..135
                   - (function_keyword:) FunctionKeyword: "function" # 140..148
                   - (name:) FunctionName: # 148..158 " increment"
-                      - Identifier: "increment" # 149..158
+                      - (variant:) Identifier: "increment" # 149..158
                   - (parameters:) ParametersDeclaration: # 158..160 "()"
                       - OpenParen: "(" # 158..159
                       - CloseParen: ")" # 159..160
                   - (attributes:) FunctionAttributes: # 160..169 " external"
                       - FunctionAttribute: # 160..169 " external"
-                          - ExternalKeyword: "external" # 161..169
+                          - (variant:) ExternalKeyword: "external" # 161..169
                   - (body:) FunctionBody: # 169..171 ";\n"
-                      - Semicolon: ";" # 169..170
+                      - (variant:) Semicolon: ";" # 169..170
       - CloseBrace: "}" # 171..172

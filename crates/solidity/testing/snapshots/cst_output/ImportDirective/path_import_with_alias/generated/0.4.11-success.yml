@@ -9,7 +9,7 @@ Tree:
   - ImportDirective: # 0..20 'import "foo" as bar;'
       - (import_keyword:) ImportKeyword: "import" # 0..6
       - (clause:) ImportClause: # 6..19 ' "foo" as bar'
-          - PathImport: # 6..19 ' "foo" as bar'
+          - (variant:) PathImport: # 6..19 ' "foo" as bar'
               - (path:) AsciiStringLiteral: '"foo"' # 7..12
               - (alias:) ImportAlias: # 12..19 " as bar"
                   - (as_keyword:) AsKeyword: "as" # 13..15

@@ -22,7 +22,7 @@ Tree:
       - OpenBrace: "{" # 14..15
       - ContractMembers: # 16..25 "  field;\n"
           - ContractMember: # 16..25 "  field;\n"
-              - StateVariableDefinition: # 16..25 "  field;\n"
+              - (variant:) StateVariableDefinition: # 16..25 "  field;\n"
                   - (type_name:) TypeName: # 16..23 "  field"
                       - IdentifierPath: # 16..23 "  field"
                           - Identifier: "field" # 18..23

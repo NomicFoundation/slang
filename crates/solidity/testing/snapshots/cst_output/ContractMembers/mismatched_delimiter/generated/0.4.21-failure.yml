@@ -29,30 +29,30 @@ Errors: # 2 total
 Tree:
   - ContractMembers: # 0..74 "function someFunc() public {\n    {\n        uint256..."
       - ContractMember: # 0..74 "function someFunc() public {\n    {\n        uint256..."
-          - FunctionDefinition: # 0..74 "function someFunc() public {\n    {\n        uint256..."
+          - (variant:) FunctionDefinition: # 0..74 "function someFunc() public {\n    {\n        uint256..."
               - (function_keyword:) FunctionKeyword: "function" # 0..8
               - (name:) FunctionName: # 8..17 " someFunc"
-                  - Identifier: "someFunc" # 9..17
+                  - (variant:) Identifier: "someFunc" # 9..17
               - (parameters:) ParametersDeclaration: # 17..19 "()"
                   - OpenParen: "(" # 17..18
                   - CloseParen: ")" # 18..19
               - (attributes:) FunctionAttributes: # 19..26 " public"
                   - FunctionAttribute: # 19..26 " public"
-                      - PublicKeyword: "public" # 20..26
+                      - (variant:) PublicKeyword: "public" # 20..26
               - (body:) FunctionBody: # 26..74 " {\n    {\n        uint256 arg = (1 + 2;\n    })\n}\n"
-                  - Block: # 26..74 " {\n    {\n        uint256 arg = (1 + 2;\n    })\n}\n"
+                  - (variant:) Block: # 26..74 " {\n    {\n        uint256 arg = (1 + 2;\n    })\n}\n"
                       - OpenBrace: "{" # 27..28
                       - Statements: # 29..70 "    {\n        uint256 arg = (1 + 2;\n    }"
                           - Statement: # 29..70 "    {\n        uint256 arg = (1 + 2;\n    }"
-                              - Block: # 29..70 "    {\n        uint256 arg = (1 + 2;\n    }"
+                              - (variant:) Block: # 29..70 "    {\n        uint256 arg = (1 + 2;\n    }"
                                   - OpenBrace: "{" # 33..34
                                   - Statements: # 35..63 "        uint256 arg = (1 + 2"
                                       - Statement: # 35..63 "        uint256 arg = (1 + 2"
                                           - VariableDeclarationStatement: # 35..63 "        uint256 arg = (1 + 2"
                                               - (variable_type:) VariableDeclarationType: # 35..50 "        uint256"
-                                                  - TypeName: # 35..50 "        uint256"
+                                                  - (variant:) TypeName: # 35..50 "        uint256"
                                                       - ElementaryType: # 35..50 "        uint256"
-                                                          - UintKeyword: "uint256" # 43..50
+                                                          - (variant:) UintKeyword: "uint256" # 43..50
                                               - (name:) Identifier: "arg" # 51..54
                                               - VariableDeclarationValue: # 54..63 " = (1 + 2"
                                                   - (equal:) Equal: "=" # 55..56

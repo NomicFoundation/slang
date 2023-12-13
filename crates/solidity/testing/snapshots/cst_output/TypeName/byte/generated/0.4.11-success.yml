@@ -8,4 +8,4 @@ Errors: []
 Tree:
   - TypeName: # 0..4 "byte"
       - ElementaryType: # 0..4 "byte"
-          - ByteKeyword: "byte" # 0..4
+          - (variant:) ByteKeyword: "byte" # 0..4

@@ -99,20 +99,20 @@ Errors: # 10 total
 Tree:
   - ContractMembers: # 0..560 "function all() override(some.ident unexpected toke..."
       - ContractMember: # 0..309 "function all() override(some.ident unexpected toke..."
-          - FunctionDefinition: # 0..309 "function all() override(some.ident unexpected toke..."
+          - (variant:) FunctionDefinition: # 0..309 "function all() override(some.ident unexpected toke..."
               - (function_keyword:) FunctionKeyword: "function" # 0..8
               - (name:) FunctionName: # 8..12 " all"
-                  - Identifier: "all" # 9..12
+                  - (variant:) Identifier: "all" # 9..12
               - (parameters:) ParametersDeclaration: # 12..14 "()"
                   - OpenParen: "(" # 12..13
                   - CloseParen: ")" # 13..14
               - (attributes:) FunctionAttributes: # 14..83 " override(some.ident unexpected tokens, ISomeInter..."
                   - FunctionAttribute: # 14..76 " override(some.ident unexpected tokens, ISomeInter..."
-                      - ModifierInvocation: # 14..76 " override(some.ident unexpected tokens, ISomeInter..."
+                      - (variant:) ModifierInvocation: # 14..76 " override(some.ident unexpected tokens, ISomeInter..."
                           - (name:) IdentifierPath: # 14..23 " override"
                               - Identifier: "override" # 15..23
                           - (arguments:) ArgumentsDeclaration: # 23..76 "(some.ident unexpected tokens, ISomeInterface, Oth..."
-                              - PositionalArgumentsDeclaration: # 23..76 "(some.ident unexpected tokens, ISomeInterface, Oth..."
+                              - (variant:) PositionalArgumentsDeclaration: # 23..76 "(some.ident unexpected tokens, ISomeInterface, Oth..."
                                   - OpenParen: "(" # 23..24
                                   - PositionalArguments: # 24..34 "some.ident"
                                       - Expression: # 24..34 "some.ident"
@@ -121,17 +121,17 @@ Tree:
                                                   - Identifier: "some" # 24..28
                                               - (operator:) Period: "." # 28..29
                                               - (operator:) MemberAccess: # 29..34 "ident"
-                                                  - Identifier: "ident" # 29..34
+                                                  - (variant:) Identifier: "ident" # 29..34
                                   - SKIPPED: "unexpected tokens, ISomeInterface, Other" # 35..75
                                   - CloseParen: ")" # 75..76
                   - FunctionAttribute: # 76..83 " public"
-                      - PublicKeyword: "public" # 77..83
+                      - (variant:) PublicKeyword: "public" # 77..83
               - (body:) FunctionBody: # 83..309 " {\n  msg.sender.call{do: 1, arg: 1 }();\n  msg.send..."
-                  - Block: # 83..309 " {\n  msg.sender.call{do: 1, arg: 1 }();\n  msg.send..."
+                  - (variant:) Block: # 83..309 " {\n  msg.sender.call{do: 1, arg: 1 }();\n  msg.send..."
                       - OpenBrace: "{" # 84..85
                       - Statements: # 86..306 "  msg.sender.call{do: 1, arg: 1 }();\n  msg.sender...."
                           - Statement: # 86..123 "  msg.sender.call{do: 1, arg: 1 }();\n"
-                              - ExpressionStatement: # 86..123 "  msg.sender.call{do: 1, arg: 1 }();\n"
+                              - (variant:) ExpressionStatement: # 86..123 "  msg.sender.call{do: 1, arg: 1 }();\n"
                                   - Expression: # 86..103 "  msg.sender.call"
                                       - (operand:) MemberAccessExpression: # 86..103 "  msg.sender.call"
                                           - (left_operand:) Expression: # 86..98 "  msg.sender"
@@ -140,14 +140,14 @@ Tree:
                                                       - Identifier: "msg" # 88..91
                                                   - (operator:) Period: "." # 91..92
                                                   - (operator:) MemberAccess: # 92..98 "sender"
-                                                      - Identifier: "sender" # 92..98
+                                                      - (variant:) Identifier: "sender" # 92..98
                                           - (operator:) Period: "." # 98..99
                                           - (operator:) MemberAccess: # 99..103 "call"
-                                              - Identifier: "call" # 99..103
+                                              - (variant:) Identifier: "call" # 99..103
                                   - SKIPPED: "{do: 1, arg: 1 }()" # 103..121
                                   - Semicolon: ";" # 121..122
                           - Statement: # 123..167 "  msg.sender.call{, empty: 1, parse: 2 }();\n"
-                              - ExpressionStatement: # 123..167 "  msg.sender.call{, empty: 1, parse: 2 }();\n"
+                              - (variant:) ExpressionStatement: # 123..167 "  msg.sender.call{, empty: 1, parse: 2 }();\n"
                                   - Expression: # 123..140 "  msg.sender.call"
                                       - (operand:) MemberAccessExpression: # 123..140 "  msg.sender.call"
                                           - (left_operand:) Expression: # 123..135 "  msg.sender"
@@ -156,14 +156,14 @@ Tree:
                                                       - Identifier: "msg" # 125..128
                                                   - (operator:) Period: "." # 128..129
                                                   - (operator:) MemberAccess: # 129..135 "sender"
-                                                      - Identifier: "sender" # 129..135
+                                                      - (variant:) Identifier: "sender" # 129..135
                                           - (operator:) Period: "." # 135..136
                                           - (operator:) MemberAccess: # 136..140 "call"
-                                              - Identifier: "call" # 136..140
+                                              - (variant:) Identifier: "call" # 136..140
                                   - SKIPPED: "{, empty: 1, parse: 2 }()" # 140..165
                                   - Semicolon: ";" # 165..166
                           - Statement: # 167..230 "  msg.sender.call{arg: 1, missing_expr: , no_semic..."
-                              - ExpressionStatement: # 167..230 "  msg.sender.call{arg: 1, missing_expr: , no_semic..."
+                              - (variant:) ExpressionStatement: # 167..230 "  msg.sender.call{arg: 1, missing_expr: , no_semic..."
                                   - Expression: # 167..184 "  msg.sender.call"
                                       - (operand:) MemberAccessExpression: # 167..184 "  msg.sender.call"
                                           - (left_operand:) Expression: # 167..179 "  msg.sender"
@@ -172,14 +172,14 @@ Tree:
                                                       - Identifier: "msg" # 169..172
                                                   - (operator:) Period: "." # 172..173
                                                   - (operator:) MemberAccess: # 173..179 "sender"
-                                                      - Identifier: "sender" # 173..179
+                                                      - (variant:) Identifier: "sender" # 173..179
                                           - (operator:) Period: "." # 179..180
                                           - (operator:) MemberAccess: # 180..184 "call"
-                                              - Identifier: "call" # 180..184
+                                              - (variant:) Identifier: "call" # 180..184
                                   - SKIPPED: "{arg: 1, missing_expr: , no_semicolon, , }()" # 184..228
                                   - Semicolon: ";" # 228..229
                           - Statement: # 230..306 "  msg.sender.call{arg: 1 unexpected tokens, not: 2..."
-                              - ExpressionStatement: # 230..306 "  msg.sender.call{arg: 1 unexpected tokens, not: 2..."
+                              - (variant:) ExpressionStatement: # 230..306 "  msg.sender.call{arg: 1 unexpected tokens, not: 2..."
                                   - Expression: # 230..247 "  msg.sender.call"
                                       - (operand:) MemberAccessExpression: # 230..247 "  msg.sender.call"
                                           - (left_operand:) Expression: # 230..242 "  msg.sender"
@@ -188,28 +188,28 @@ Tree:
                                                       - Identifier: "msg" # 232..235
                                                   - (operator:) Period: "." # 235..236
                                                   - (operator:) MemberAccess: # 236..242 "sender"
-                                                      - Identifier: "sender" # 236..242
+                                                      - (variant:) Identifier: "sender" # 236..242
                                           - (operator:) Period: "." # 242..243
                                           - (operator:) MemberAccess: # 243..247 "call"
-                                              - Identifier: "call" # 243..247
+                                              - (variant:) Identifier: "call" # 243..247
                                   - SKIPPED: "{arg: 1 unexpected tokens, not: 2, recovered, yet:..." # 247..304
                                   - Semicolon: ";" # 304..305
                       - CloseBrace: "}" # 307..308
       - ContractMember: # 309..388 "\nfunction empty() override(some.ident, /* empty */..."
-          - FunctionDefinition: # 309..388 "\nfunction empty() override(some.ident, /* empty */..."
+          - (variant:) FunctionDefinition: # 309..388 "\nfunction empty() override(some.ident, /* empty */..."
               - (function_keyword:) FunctionKeyword: "function" # 310..318
               - (name:) FunctionName: # 318..324 " empty"
-                  - Identifier: "empty" # 319..324
+                  - (variant:) Identifier: "empty" # 319..324
               - (parameters:) ParametersDeclaration: # 324..326 "()"
                   - OpenParen: "(" # 324..325
                   - CloseParen: ")" # 325..326
               - (attributes:) FunctionAttributes: # 326..386 " override(some.ident, /* empty */, other.arg.here,..."
                   - FunctionAttribute: # 326..386 " override(some.ident, /* empty */, other.arg.here,..."
-                      - ModifierInvocation: # 326..386 " override(some.ident, /* empty */, other.arg.here,..."
+                      - (variant:) ModifierInvocation: # 326..386 " override(some.ident, /* empty */, other.arg.here,..."
                           - (name:) IdentifierPath: # 326..335 " override"
                               - Identifier: "override" # 327..335
                           - (arguments:) ArgumentsDeclaration: # 335..386 "(some.ident, /* empty */, other.arg.here, and.here..."
-                              - PositionalArgumentsDeclaration: # 335..386 "(some.ident, /* empty */, other.arg.here, and.here..."
+                              - (variant:) PositionalArgumentsDeclaration: # 335..386 "(some.ident, /* empty */, other.arg.here, and.here..."
                                   - OpenParen: "(" # 335..336
                                   - PositionalArguments: # 336..347 "some.ident,"
                                       - Expression: # 336..346 "some.ident"
@@ -218,29 +218,29 @@ Tree:
                                                   - Identifier: "some" # 336..340
                                               - (operator:) Period: "." # 340..341
                                               - (operator:) MemberAccess: # 341..346 "ident"
-                                                  - Identifier: "ident" # 341..346
+                                                  - (variant:) Identifier: "ident" # 341..346
                                       - Comma: "," # 346..347
                                   - LeadingTrivia: # 347..359 " /* empty */"
-                                      - MultilineComment: "/* empty */" # 348..359
+                                      - (variant:) MultilineComment: "/* empty */" # 348..359
                                   - SKIPPED: ", other.arg.here, and.here" # 359..385
                                   - CloseParen: ")" # 385..386
               - (body:) FunctionBody: # 386..388 ";\n"
-                  - Semicolon: ";" # 386..387
+                  - (variant:) Semicolon: ";" # 386..387
       - ContractMember: # 388..489 "\nfunction nested_lists() override(some.ident, next..."
-          - FunctionDefinition: # 388..489 "\nfunction nested_lists() override(some.ident, next..."
+          - (variant:) FunctionDefinition: # 388..489 "\nfunction nested_lists() override(some.ident, next..."
               - (function_keyword:) FunctionKeyword: "function" # 389..397
               - (name:) FunctionName: # 397..410 " nested_lists"
-                  - Identifier: "nested_lists" # 398..410
+                  - (variant:) Identifier: "nested_lists" # 398..410
               - (parameters:) ParametersDeclaration: # 410..412 "()"
                   - OpenParen: "(" # 410..411
                   - CloseParen: ")" # 411..412
               - (attributes:) FunctionAttributes: # 412..487 " override(some.ident, next.do.that, other.while, n..."
                   - FunctionAttribute: # 412..487 " override(some.ident, next.do.that, other.while, n..."
-                      - ModifierInvocation: # 412..487 " override(some.ident, next.do.that, other.while, n..."
+                      - (variant:) ModifierInvocation: # 412..487 " override(some.ident, next.do.that, other.while, n..."
                           - (name:) IdentifierPath: # 412..421 " override"
                               - Identifier: "override" # 413..421
                           - (arguments:) ArgumentsDeclaration: # 421..487 "(some.ident, next.do.that, other.while, next.one, ..."
-                              - PositionalArgumentsDeclaration: # 421..487 "(some.ident, next.do.that, other.while, next.one, ..."
+                              - (variant:) PositionalArgumentsDeclaration: # 421..487 "(some.ident, next.do.that, other.while, next.one, ..."
                                   - OpenParen: "(" # 421..422
                                   - PositionalArguments: # 422..470 "some.ident, next.do.that, other.while, next.one,"
                                       - Expression: # 422..432 "some.ident"
@@ -249,7 +249,7 @@ Tree:
                                                   - Identifier: "some" # 422..426
                                               - (operator:) Period: "." # 426..427
                                               - (operator:) MemberAccess: # 427..432 "ident"
-                                                  - Identifier: "ident" # 427..432
+                                                  - (variant:) Identifier: "ident" # 427..432
                                       - Comma: "," # 432..433
                                       - Expression: # 433..439 " next."
                                           - Identifier: "next" # 434..438
@@ -267,27 +267,27 @@ Tree:
                                                   - Identifier: "next" # 461..465
                                               - (operator:) Period: "." # 465..466
                                               - (operator:) MemberAccess: # 466..469 "one"
-                                                  - Identifier: "one" # 466..469
+                                                  - (variant:) Identifier: "one" # 466..469
                                       - Comma: "," # 469..470
                                   - SKIPPED: "final, ultimate" # 471..486
                                   - CloseParen: ")" # 486..487
               - (body:) FunctionBody: # 487..489 ";\n"
-                  - Semicolon: ";" # 487..488
+                  - (variant:) Semicolon: ";" # 487..488
       - ContractMember: # 489..560 "function nested_lists() override(some., next.arg, ..."
-          - FunctionDefinition: # 489..560 "function nested_lists() override(some., next.arg, ..."
+          - (variant:) FunctionDefinition: # 489..560 "function nested_lists() override(some., next.arg, ..."
               - (function_keyword:) FunctionKeyword: "function" # 489..497
               - (name:) FunctionName: # 497..510 " nested_lists"
-                  - Identifier: "nested_lists" # 498..510
+                  - (variant:) Identifier: "nested_lists" # 498..510
               - (parameters:) ParametersDeclaration: # 510..512 "()"
                   - OpenParen: "(" # 510..511
                   - CloseParen: ")" # 511..512
               - (attributes:) FunctionAttributes: # 512..558 " override(some., next.arg, next.one, ultimate)"
                   - FunctionAttribute: # 512..558 " override(some., next.arg, next.one, ultimate)"
-                      - ModifierInvocation: # 512..558 " override(some., next.arg, next.one, ultimate)"
+                      - (variant:) ModifierInvocation: # 512..558 " override(some., next.arg, next.one, ultimate)"
                           - (name:) IdentifierPath: # 512..521 " override"
                               - Identifier: "override" # 513..521
                           - (arguments:) ArgumentsDeclaration: # 521..558 "(some., next.arg, next.one, ultimate)"
-                              - PositionalArgumentsDeclaration: # 521..558 "(some., next.arg, next.one, ultimate)"
+                              - (variant:) PositionalArgumentsDeclaration: # 521..558 "(some., next.arg, next.one, ultimate)"
                                   - OpenParen: "(" # 521..522
                                   - PositionalArguments: # 522..557 "some., next.arg, next.one, ultimate"
                                       - Expression: # 522..527 "some."
@@ -301,7 +301,7 @@ Tree:
                                                   - Identifier: "next" # 529..533
                                               - (operator:) Period: "." # 533..534
                                               - (operator:) MemberAccess: # 534..537 "arg"
-                                                  - Identifier: "arg" # 534..537
+                                                  - (variant:) Identifier: "arg" # 534..537
                                       - Comma: "," # 537..538
                                       - Expression: # 538..547 " next.one"
                                           - (operand:) MemberAccessExpression: # 538..547 " next.one"
@@ -309,10 +309,10 @@ Tree:
                                                   - Identifier: "next" # 539..543
                                               - (operator:) Period: "." # 543..544
                                               - (operator:) MemberAccess: # 544..547 "one"
-                                                  - Identifier: "one" # 544..547
+                                                  - (variant:) Identifier: "one" # 544..547
                                       - Comma: "," # 547..548
                                       - Expression: # 548..557 " ultimate"
                                           - Identifier: "ultimate" # 549..557
                                   - CloseParen: ")" # 557..558
               - (body:) FunctionBody: # 558..560 ";\n"
-                  - Semicolon: ";" # 558..559
+                  - (variant:) Semicolon: ";" # 558..559

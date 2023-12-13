@@ -8,4 +8,4 @@ Errors: []
 Tree:
   - TypeName: # 0..3 "int"
       - ElementaryType: # 0..3 "int"
-          - IntKeyword: "int" # 0..3
+          - (variant:) IntKeyword: "int" # 0..3

@@ -14,18 +14,18 @@ Tree:
       - OpenBrace: "{" # 16..17
       - ContractMembers: # 18..51 "  function() external payable {}\n"
           - ContractMember: # 18..51 "  function() external payable {}\n"
-              - UnnamedFunctionDefinition: # 18..51 "  function() external payable {}\n"
+              - (variant:) UnnamedFunctionDefinition: # 18..51 "  function() external payable {}\n"
                   - (function_keyword:) FunctionKeyword: "function" # 20..28
                   - (parameters:) ParametersDeclaration: # 28..30 "()"
                       - OpenParen: "(" # 28..29
                       - CloseParen: ")" # 29..30
                   - (attributes:) UnnamedFunctionAttributes: # 30..47 " external payable"
                       - UnnamedFunctionAttribute: # 30..39 " external"
-                          - ExternalKeyword: "external" # 31..39
+                          - (variant:) ExternalKeyword: "external" # 31..39
                       - UnnamedFunctionAttribute: # 39..47 " payable"
-                          - PayableKeyword: "payable" # 40..47
+                          - (variant:) PayableKeyword: "payable" # 40..47
                   - (body:) FunctionBody: # 47..51 " {}\n"
-                      - Block: # 47..51 " {}\n"
+                      - (variant:) Block: # 47..51 " {}\n"
                           - OpenBrace: "{" # 48..49
                           - CloseBrace: "}" # 49..50
       - CloseBrace: "}" # 51..52

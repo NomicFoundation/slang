@@ -14,7 +14,7 @@ Tree:
       - OpenBrace: "{" # 0..1
       - YulStatements: # 2..60 "\tfunction mult(a, b) -> result {\n\t\tresult := mul(a..."
           - YulStatement: # 2..60 "\tfunction mult(a, b) -> result {\n\t\tresult := mul(a..."
-              - YulFunctionDefinition: # 2..60 "\tfunction mult(a, b) -> result {\n\t\tresult := mul(a..."
+              - (variant:) YulFunctionDefinition: # 2..60 "\tfunction mult(a, b) -> result {\n\t\tresult := mul(a..."
                   - (function_keyword:) YulFunctionKeyword: "function" # 3..11
                   - (name:) YulIdentifier: "mult" # 12..16
                   - (parameters:) YulParametersDeclaration: # 16..22 "(a, b)"
@@ -32,7 +32,7 @@ Tree:
                       - OpenBrace: "{" # 33..34
                       - YulStatements: # 35..57 "\t\tresult := mul(a, b)\n"
                           - YulStatement: # 35..57 "\t\tresult := mul(a, b)\n"
-                              - YulAssignmentStatement: # 35..57 "\t\tresult := mul(a, b)\n"
+                              - (variant:) YulAssignmentStatement: # 35..57 "\t\tresult := mul(a, b)\n"
                                   - (names:) YulIdentifierPaths: # 35..43 "\t\tresult"
                                       - YulIdentifierPath: # 35..43 "\t\tresult"
                                           - YulIdentifier: "result" # 37..43

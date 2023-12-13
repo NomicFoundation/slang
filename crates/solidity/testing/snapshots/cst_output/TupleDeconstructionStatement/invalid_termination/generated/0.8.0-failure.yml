@@ -21,12 +21,12 @@ Tree:
       - TupleDeconstructionElements: # 1..5 "a, b"
           - TupleDeconstructionElement: # 1..2 "a"
               - TupleMember: # 1..2 "a"
-                  - UntypedTupleMember: # 1..2 "a"
+                  - (variant:) UntypedTupleMember: # 1..2 "a"
                       - (name:) Identifier: "a" # 1..2
           - Comma: "," # 2..3
           - TupleDeconstructionElement: # 3..5 " b"
               - TupleMember: # 3..5 " b"
-                  - UntypedTupleMember: # 3..5 " b"
+                  - (variant:) UntypedTupleMember: # 3..5 " b"
                       - (name:) Identifier: "b" # 4..5
       - CloseParen: ")" # 5..6
       - (equal:) Equal: "=" # 7..8
@@ -47,7 +47,7 @@ Tree:
           - FunctionCallOptions: # 20..26 "/**/\n{"
               - NamedArgumentGroup: # 20..26 "/**/\n{"
                   - LeadingTrivia: # 20..25 "/**/\n"
-                      - MultilineComment: "/**/" # 20..24
+                      - (variant:) MultilineComment: "/**/" # 20..24
                   - OpenBrace: "{" # 25..26
       - SKIPPED: "throw" # 27..32
       - Semicolon: ";" # 32..33

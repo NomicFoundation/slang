@@ -8,4 +8,4 @@ Errors: []
 Tree:
   - TypeName: # 0..4 "uint"
       - ElementaryType: # 0..4 "uint"
-          - UintKeyword: "uint" # 0..4
+          - (variant:) UintKeyword: "uint" # 0..4

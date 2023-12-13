@@ -8,4 +8,4 @@ Errors: []
 Tree:
   - YulExpression: # 0..3 "123"
       - YulLiteral: # 0..3 "123"
-          - YulDecimalLiteral: "123" # 0..3
+          - (variant:) YulDecimalLiteral: "123" # 0..3

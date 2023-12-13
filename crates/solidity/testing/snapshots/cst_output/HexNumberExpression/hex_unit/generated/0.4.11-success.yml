@@ -9,4 +9,4 @@ Tree:
   - HexNumberExpression: # 0..7 "0x1 wei"
       - (literal:) HexLiteral: "0x1" # 0..3
       - (unit:) NumberUnit: # 3..7 " wei"
-          - WeiKeyword: "wei" # 4..7
+          - (variant:) WeiKeyword: "wei" # 4..7

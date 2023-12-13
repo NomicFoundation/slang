@@ -16,18 +16,18 @@ Tree:
       - OpenBrace: "{" # 16..17
       - ContractMembers: # 18..48 "  modifier foo() {\n    _;\n  }\n"
           - ContractMember: # 18..48 "  modifier foo() {\n    _;\n  }\n"
-              - ModifierDefinition: # 18..48 "  modifier foo() {\n    _;\n  }\n"
+              - (variant:) ModifierDefinition: # 18..48 "  modifier foo() {\n    _;\n  }\n"
                   - (modifier_keyword:) ModifierKeyword: "modifier" # 20..28
                   - (name:) Identifier: "foo" # 29..32
                   - (parameters:) ParametersDeclaration: # 32..34 "()"
                       - OpenParen: "(" # 32..33
                       - CloseParen: ")" # 33..34
                   - (body:) FunctionBody: # 34..48 " {\n    _;\n  }\n"
-                      - Block: # 34..48 " {\n    _;\n  }\n"
+                      - (variant:) Block: # 34..48 " {\n    _;\n  }\n"
                           - OpenBrace: "{" # 35..36
                           - Statements: # 37..44 "    _;\n"
                               - Statement: # 37..44 "    _;\n"
-                                  - ExpressionStatement: # 37..44 "    _;\n"
+                                  - (variant:) ExpressionStatement: # 37..44 "    _;\n"
                                       - Expression: # 37..42 "    _"
                                           - Identifier: "_" # 41..42
                                       - Semicolon: ";" # 42..43

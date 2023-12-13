@@ -16,9 +16,9 @@ Tree:
                           - Identifier: "a" # 4..5
                       - (operator:) Period: "." # 5..6
                       - (operator:) MemberAccess: # 6..7 "b"
-                          - Identifier: "b" # 6..7
+                          - (variant:) Identifier: "b" # 6..7
               - (operator:) ArgumentsDeclaration: # 7..9 "()"
-                  - PositionalArgumentsDeclaration: # 7..9 "()"
+                  - (variant:) PositionalArgumentsDeclaration: # 7..9 "()"
                       - OpenParen: "(" # 7..8
                       - CloseParen: ")" # 8..9
       - (body:) Block: # 9..12 " {}"

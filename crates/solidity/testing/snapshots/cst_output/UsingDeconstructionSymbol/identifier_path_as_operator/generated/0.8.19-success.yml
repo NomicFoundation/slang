@@ -14,4 +14,4 @@ Tree:
       - (alias:) UsingAlias: # 7..12 " as /"
           - (as_keyword:) AsKeyword: "as" # 8..10
           - (operator:) UsingOperator: # 10..12 " /"
-              - Slash: "/" # 11..12
+              - (variant:) Slash: "/" # 11..12

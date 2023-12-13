@@ -14,7 +14,7 @@ Tree:
                       - Identifier: "x" # 0..1
                   - (operator:) Period: "." # 1..2
                   - (operator:) MemberAccess: # 2..3 "y"
-                      - Identifier: "y" # 2..3
+                      - (variant:) Identifier: "y" # 2..3
           - (operator:) Period: "." # 3..4
           - (operator:) MemberAccess: # 4..5 "z"
-              - Identifier: "z" # 4..5
+              - (variant:) Identifier: "z" # 4..5

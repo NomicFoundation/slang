@@ -14,7 +14,7 @@ Tree:
       - OpenBrace: "{" # 16..17
       - ContractMembers: # 18..36 "  error Error1();\n"
           - ContractMember: # 18..36 "  error Error1();\n"
-              - ErrorDefinition: # 18..36 "  error Error1();\n"
+              - (variant:) ErrorDefinition: # 18..36 "  error Error1();\n"
                   - (error_keyword:) ErrorKeyword: "error" # 20..25
                   - (name:) Identifier: "Error1" # 26..32
                   - (members:) ErrorParametersDeclaration: # 32..34 "()"

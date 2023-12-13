@@ -18,7 +18,7 @@ Tree:
       - OpenBrace: "{" # 16..17
       - ContractMembers: # 18..57 "  enum State {\n    A,\n    B,\n    C\n  }\n"
           - ContractMember: # 18..57 "  enum State {\n    A,\n    B,\n    C\n  }\n"
-              - EnumDefinition: # 18..57 "  enum State {\n    A,\n    B,\n    C\n  }\n"
+              - (variant:) EnumDefinition: # 18..57 "  enum State {\n    A,\n    B,\n    C\n  }\n"
                   - (enum_keyword:) EnumKeyword: "enum" # 20..24
                   - (name:) Identifier: "State" # 25..30
                   - OpenBrace: "{" # 31..32

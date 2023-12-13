@@ -13,14 +13,14 @@ Tree:
           - Comma: "," # 1..2
           - TupleDeconstructionElement: # 2..9 " second"
               - TupleMember: # 2..9 " second"
-                  - UntypedTupleMember: # 2..9 " second"
+                  - (variant:) UntypedTupleMember: # 2..9 " second"
                       - (name:) Identifier: "second" # 3..9
           - Comma: "," # 9..10
           - TupleDeconstructionElement: [] # 10..10
           - Comma: "," # 11..12
           - TupleDeconstructionElement: # 12..19 " fourth"
               - TupleMember: # 12..19 " fourth"
-                  - UntypedTupleMember: # 12..19 " fourth"
+                  - (variant:) UntypedTupleMember: # 12..19 " fourth"
                       - (name:) Identifier: "fourth" # 13..19
       - CloseParen: ")" # 19..20
       - (equal:) Equal: "=" # 21..22

@@ -11,11 +11,11 @@ Tree:
       - OpenParen: "(" # 7..8
       - (key_type:) MappingKey: # 8..14 "string"
           - (key_type:) MappingKeyType: # 8..14 "string"
-              - ElementaryType: # 8..14 "string"
-                  - StringKeyword: "string" # 8..14
+              - (variant:) ElementaryType: # 8..14 "string"
+                  - (variant:) StringKeyword: "string" # 8..14
       - (equal_greater_than:) EqualGreaterThan: "=>" # 15..17
       - (value_type:) MappingValue: # 17..25 " bytes32"
           - (type_name:) TypeName: # 17..25 " bytes32"
               - ElementaryType: # 17..25 " bytes32"
-                  - BytesKeyword: "bytes32" # 18..25
+                  - (variant:) BytesKeyword: "bytes32" # 18..25
       - CloseParen: ")" # 25..26

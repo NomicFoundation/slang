@@ -11,14 +11,14 @@ Tree:
       - TupleDeconstructionElements: # 1..39 "memory with_location, without_location"
           - TupleDeconstructionElement: # 1..21 "memory with_location"
               - TupleMember: # 1..21 "memory with_location"
-                  - UntypedTupleMember: # 1..21 "memory with_location"
+                  - (variant:) UntypedTupleMember: # 1..21 "memory with_location"
                       - (storage_location:) StorageLocation: # 1..7 "memory"
-                          - MemoryKeyword: "memory" # 1..7
+                          - (variant:) MemoryKeyword: "memory" # 1..7
                       - (name:) Identifier: "with_location" # 8..21
           - Comma: "," # 21..22
           - TupleDeconstructionElement: # 22..39 " without_location"
               - TupleMember: # 22..39 " without_location"
-                  - UntypedTupleMember: # 22..39 " without_location"
+                  - (variant:) UntypedTupleMember: # 22..39 " without_location"
                       - (name:) Identifier: "without_location" # 23..39
       - CloseParen: ")" # 39..40
       - (equal:) Equal: "=" # 41..42

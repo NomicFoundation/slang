@@ -11,19 +11,19 @@ Tree:
   - FunctionDefinition: # 0..73 "function some() public virtual override returns (u..."
       - (function_keyword:) FunctionKeyword: "function" # 0..8
       - (name:) FunctionName: # 8..13 " some"
-          - Identifier: "some" # 9..13
+          - (variant:) Identifier: "some" # 9..13
       - (parameters:) ParametersDeclaration: # 13..15 "()"
           - OpenParen: "(" # 13..14
           - CloseParen: ")" # 14..15
       - (attributes:) FunctionAttributes: # 15..39 " public virtual override"
           - FunctionAttribute: # 15..22 " public"
-              - PublicKeyword: "public" # 16..22
+              - (variant:) PublicKeyword: "public" # 16..22
           - FunctionAttribute: # 22..30 " virtual"
-              - ModifierInvocation: # 22..30 " virtual"
+              - (variant:) ModifierInvocation: # 22..30 " virtual"
                   - (name:) IdentifierPath: # 22..30 " virtual"
                       - Identifier: "virtual" # 23..30
           - FunctionAttribute: # 30..39 " override"
-              - ModifierInvocation: # 30..39 " override"
+              - (variant:) ModifierInvocation: # 30..39 " override"
                   - (name:) IdentifierPath: # 30..39 " override"
                       - Identifier: "override" # 31..39
       - (returns:) ReturnsDeclaration: # 39..57 " returns (uint256)"
@@ -34,14 +34,14 @@ Tree:
                   - Parameter: # 49..56 "uint256"
                       - (type_name:) TypeName: # 49..56 "uint256"
                           - ElementaryType: # 49..56 "uint256"
-                              - UintKeyword: "uint256" # 49..56
+                              - (variant:) UintKeyword: "uint256" # 49..56
               - CloseParen: ")" # 56..57
       - (body:) FunctionBody: # 57..73 " {\n\treturn 1;\n}\n"
-          - Block: # 57..73 " {\n\treturn 1;\n}\n"
+          - (variant:) Block: # 57..73 " {\n\treturn 1;\n}\n"
               - OpenBrace: "{" # 58..59
               - Statements: # 60..71 "\treturn 1;\n"
                   - Statement: # 60..71 "\treturn 1;\n"
-                      - ReturnStatement: # 60..71 "\treturn 1;\n"
+                      - (variant:) ReturnStatement: # 60..71 "\treturn 1;\n"
                           - (return_keyword:) ReturnKeyword: "return" # 61..67
                           - (expression:) Expression: # 67..69 " 1"
                               - DecimalNumberExpression: # 67..69 " 1"

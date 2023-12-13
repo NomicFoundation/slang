@@ -17,7 +17,7 @@ Tree:
   - FunctionDefinition: # 0..24 "function a() constant {}"
       - (function_keyword:) FunctionKeyword: "function" # 0..8
       - (name:) FunctionName: # 8..10 " a"
-          - Identifier: "a" # 9..10
+          - (variant:) Identifier: "a" # 9..10
       - (parameters:) ParametersDeclaration: # 10..12 "()"
           - OpenParen: "(" # 10..11
           - CloseParen: ")" # 11..12

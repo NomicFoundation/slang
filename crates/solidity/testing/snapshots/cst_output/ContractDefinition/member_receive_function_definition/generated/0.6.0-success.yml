@@ -15,13 +15,13 @@ Tree:
       - OpenBrace: "{" # 16..17
       - ContractMembers: # 18..36 "  receive() {\n  }\n"
           - ContractMember: # 18..36 "  receive() {\n  }\n"
-              - ReceiveFunctionDefinition: # 18..36 "  receive() {\n  }\n"
+              - (variant:) ReceiveFunctionDefinition: # 18..36 "  receive() {\n  }\n"
                   - (receive_keyword:) ReceiveKeyword: "receive" # 20..27
                   - (parameters:) ParametersDeclaration: # 27..29 "()"
                       - OpenParen: "(" # 27..28
                       - CloseParen: ")" # 28..29
                   - (body:) FunctionBody: # 29..36 " {\n  }\n"
-                      - Block: # 29..36 " {\n  }\n"
+                      - (variant:) Block: # 29..36 " {\n  }\n"
                           - OpenBrace: "{" # 30..31
                           - CloseBrace: "}" # 34..35
       - CloseBrace: "}" # 36..37

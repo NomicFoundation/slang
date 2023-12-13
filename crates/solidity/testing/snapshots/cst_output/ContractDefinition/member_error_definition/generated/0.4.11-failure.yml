@@ -22,7 +22,7 @@ Tree:
       - OpenBrace: "{" # 16..17
       - ContractMembers: # 18..36 "  error Error1();\n"
           - ContractMember: # 18..36 "  error Error1();\n"
-              - StateVariableDefinition: # 18..36 "  error Error1();\n"
+              - (variant:) StateVariableDefinition: # 18..36 "  error Error1();\n"
                   - (type_name:) TypeName: # 18..25 "  error"
                       - IdentifierPath: # 18..25 "  error"
                           - Identifier: "error" # 20..25

@@ -11,7 +11,7 @@ Tree:
           - (left_operand:) Expression: # 0..1 "x"
               - Identifier: "x" # 0..1
           - (operator:) ArgumentsDeclaration: # 1..7 "(1, 2)"
-              - PositionalArgumentsDeclaration: # 1..7 "(1, 2)"
+              - (variant:) PositionalArgumentsDeclaration: # 1..7 "(1, 2)"
                   - OpenParen: "(" # 1..2
                   - PositionalArguments: # 2..6 "1, 2"
                       - Expression: # 2..3 "1"

@@ -47,43 +47,43 @@ Tree:
       - OpenBrace: "{" # 18..19
       - ContractMembers: # 20..210 "\tfunction _transfer(address while) private {\n\t\tif(..."
           - ContractMember: # 20..138 "\tfunction _transfer(address while) private {\n\t\tif(..."
-              - FunctionDefinition: # 20..138 "\tfunction _transfer(address while) private {\n\t\tif(..."
+              - (variant:) FunctionDefinition: # 20..138 "\tfunction _transfer(address while) private {\n\t\tif(..."
                   - (function_keyword:) FunctionKeyword: "function" # 21..29
                   - (name:) FunctionName: # 29..39 " _transfer"
-                      - Identifier: "_transfer" # 30..39
+                      - (variant:) Identifier: "_transfer" # 30..39
                   - (parameters:) ParametersDeclaration: # 39..54 "(address while)"
                       - OpenParen: "(" # 39..40
                       - Parameters: # 40..47 "address"
                           - Parameter: # 40..47 "address"
                               - (type_name:) TypeName: # 40..47 "address"
                                   - ElementaryType: # 40..47 "address"
-                                      - AddressType: # 40..47 "address"
+                                      - (variant:) AddressType: # 40..47 "address"
                                           - (address_keyword:) AddressKeyword: "address" # 40..47
                       - SKIPPED: "while" # 48..53
                       - CloseParen: ")" # 53..54
                   - (attributes:) FunctionAttributes: # 54..62 " private"
                       - FunctionAttribute: # 54..62 " private"
-                          - PrivateKeyword: "private" # 55..62
+                          - (variant:) PrivateKeyword: "private" # 55..62
                   - (body:) FunctionBody: # 62..138 " {\n\t\tif(while == pair && !_isExcludedFromFee[to]){..."
-                      - Block: # 62..138 " {\n\t\tif(while == pair && !_isExcludedFromFee[to]){..."
+                      - (variant:) Block: # 62..138 " {\n\t\tif(while == pair && !_isExcludedFromFee[to]){..."
                           - OpenBrace: "{" # 63..64
                           - Statements: # 65..135 "\t\tif(while == pair && !_isExcludedFromFee[to]){\n\t\t..."
                               - Statement: # 65..135 "\t\tif(while == pair && !_isExcludedFromFee[to]){\n\t\t..."
-                                  - IfStatement: # 65..135 "\t\tif(while == pair && !_isExcludedFromFee[to]){\n\t\t..."
+                                  - (variant:) IfStatement: # 65..135 "\t\tif(while == pair && !_isExcludedFromFee[to]){\n\t\t..."
                                       - (if_keyword:) IfKeyword: "if" # 67..69
                                       - OpenParen: "(" # 69..70
                                       - SKIPPED: "while == pair && !_isExcludedFromFee[to]" # 70..110
                                       - CloseParen: ")" # 110..111
                                       - (body:) Statement: # 111..135 "{\n\t\t\tuint256 a = 1;\n\t\t}\n"
-                                          - Block: # 111..135 "{\n\t\t\tuint256 a = 1;\n\t\t}\n"
+                                          - (variant:) Block: # 111..135 "{\n\t\t\tuint256 a = 1;\n\t\t}\n"
                                               - OpenBrace: "{" # 111..112
                                               - Statements: # 113..131 "\t\t\tuint256 a = 1;\n"
                                                   - Statement: # 113..131 "\t\t\tuint256 a = 1;\n"
-                                                      - VariableDeclarationStatement: # 113..131 "\t\t\tuint256 a = 1;\n"
+                                                      - (variant:) VariableDeclarationStatement: # 113..131 "\t\t\tuint256 a = 1;\n"
                                                           - (variable_type:) VariableDeclarationType: # 113..123 "\t\t\tuint256"
-                                                              - TypeName: # 113..123 "\t\t\tuint256"
+                                                              - (variant:) TypeName: # 113..123 "\t\t\tuint256"
                                                                   - ElementaryType: # 113..123 "\t\t\tuint256"
-                                                                      - UintKeyword: "uint256" # 116..123
+                                                                      - (variant:) UintKeyword: "uint256" # 116..123
                                                           - (name:) Identifier: "a" # 124..125
                                                           - (value:) VariableDeclarationValue: # 125..129 " = 1"
                                                               - (equal:) Equal: "=" # 126..127
@@ -94,23 +94,23 @@ Tree:
                                               - CloseBrace: "}" # 133..134
                           - CloseBrace: "}" # 136..137
           - ContractMember: # 138..210 "\n\tfunction abc() {\n\t\tuint256 x = 0;\n\t\tunchecked { ..."
-              - FunctionDefinition: # 138..210 "\n\tfunction abc() {\n\t\tuint256 x = 0;\n\t\tunchecked { ..."
+              - (variant:) FunctionDefinition: # 138..210 "\n\tfunction abc() {\n\t\tuint256 x = 0;\n\t\tunchecked { ..."
                   - (function_keyword:) FunctionKeyword: "function" # 140..148
                   - (name:) FunctionName: # 148..152 " abc"
-                      - Identifier: "abc" # 149..152
+                      - (variant:) Identifier: "abc" # 149..152
                   - (parameters:) ParametersDeclaration: # 152..154 "()"
                       - OpenParen: "(" # 152..153
                       - CloseParen: ")" # 153..154
                   - (body:) FunctionBody: # 154..210 " {\n\t\tuint256 x = 0;\n\t\tunchecked { invalid sequence..."
-                      - Block: # 154..210 " {\n\t\tuint256 x = 0;\n\t\tunchecked { invalid sequence..."
+                      - (variant:) Block: # 154..210 " {\n\t\tuint256 x = 0;\n\t\tunchecked { invalid sequence..."
                           - OpenBrace: "{" # 155..156
                           - Statements: # 157..207 "\t\tuint256 x = 0;\n\t\tunchecked { invalid sequence }\n"
                               - Statement: # 157..174 "\t\tuint256 x = 0;\n"
-                                  - VariableDeclarationStatement: # 157..174 "\t\tuint256 x = 0;\n"
+                                  - (variant:) VariableDeclarationStatement: # 157..174 "\t\tuint256 x = 0;\n"
                                       - (variable_type:) VariableDeclarationType: # 157..166 "\t\tuint256"
-                                          - TypeName: # 157..166 "\t\tuint256"
+                                          - (variant:) TypeName: # 157..166 "\t\tuint256"
                                               - ElementaryType: # 157..166 "\t\tuint256"
-                                                  - UintKeyword: "uint256" # 159..166
+                                                  - (variant:) UintKeyword: "uint256" # 159..166
                                       - (name:) Identifier: "x" # 167..168
                                       - (value:) VariableDeclarationValue: # 168..172 " = 0"
                                           - (equal:) Equal: "=" # 169..170
@@ -119,7 +119,7 @@ Tree:
                                                   - (literal:) DecimalLiteral: "0" # 171..172
                                       - Semicolon: ";" # 172..173
                               - Statement: # 174..207 "\t\tunchecked { invalid sequence }\n"
-                                  - UncheckedBlock: # 174..207 "\t\tunchecked { invalid sequence }\n"
+                                  - (variant:) UncheckedBlock: # 174..207 "\t\tunchecked { invalid sequence }\n"
                                       - (unchecked_keyword:) UncheckedKeyword: "unchecked" # 176..185
                                       - (block:) Block: # 185..207 " { invalid sequence }\n"
                                           - OpenBrace: "{" # 186..187
@@ -127,7 +127,7 @@ Tree:
                                               - Statement: # 187..205 " invalid sequence "
                                                   - VariableDeclarationStatement: # 187..205 " invalid sequence "
                                                       - (variable_type:) VariableDeclarationType: # 187..195 " invalid"
-                                                          - TypeName: # 187..195 " invalid"
+                                                          - (variant:) TypeName: # 187..195 " invalid"
                                                               - IdentifierPath: # 187..195 " invalid"
                                                                   - Identifier: "invalid" # 188..195
                                                       - (name:) Identifier: "sequence" # 196..204

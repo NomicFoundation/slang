@@ -9,7 +9,7 @@ Tree:
   - ImportDirective: # 0..29 'import { x as y } from "foo";'
       - (import_keyword:) ImportKeyword: "import" # 0..6
       - (clause:) ImportClause: # 6..28 ' { x as y } from "foo"'
-          - ImportDeconstruction: # 6..28 ' { x as y } from "foo"'
+          - (variant:) ImportDeconstruction: # 6..28 ' { x as y } from "foo"'
               - OpenBrace: "{" # 7..8
               - ImportDeconstructionSymbols: # 8..15 " x as y"
                   - ImportDeconstructionSymbol: # 8..15 " x as y"

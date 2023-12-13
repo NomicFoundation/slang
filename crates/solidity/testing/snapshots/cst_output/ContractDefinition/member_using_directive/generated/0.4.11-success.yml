@@ -14,13 +14,13 @@ Tree:
       - OpenBrace: "{" # 16..17
       - ContractMembers: # 18..35 "  using x for *;\n"
           - ContractMember: # 18..35 "  using x for *;\n"
-              - UsingDirective: # 18..35 "  using x for *;\n"
+              - (variant:) UsingDirective: # 18..35 "  using x for *;\n"
                   - (using_keyword:) UsingKeyword: "using" # 20..25
                   - (clause:) UsingClause: # 25..27 " x"
-                      - IdentifierPath: # 25..27 " x"
+                      - (variant:) IdentifierPath: # 25..27 " x"
                           - Identifier: "x" # 26..27
                   - (for_keyword:) ForKeyword: "for" # 28..31
                   - (target:) UsingTarget: # 31..33 " *"
-                      - Asterisk: "*" # 32..33
+                      - (variant:) Asterisk: "*" # 32..33
                   - Semicolon: ";" # 33..34
       - CloseBrace: "}" # 35..36

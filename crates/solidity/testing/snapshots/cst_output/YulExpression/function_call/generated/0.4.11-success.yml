@@ -15,5 +15,5 @@ Tree:
           - (operator:) YulArguments: # 4..5 "1"
               - YulExpression: # 4..5 "1"
                   - YulLiteral: # 4..5 "1"
-                      - YulDecimalLiteral: "1" # 4..5
+                      - (variant:) YulDecimalLiteral: "1" # 4..5
           - (operator:) CloseParen: ")" # 5..6

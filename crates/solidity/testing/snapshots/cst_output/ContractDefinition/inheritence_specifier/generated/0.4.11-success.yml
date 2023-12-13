@@ -20,7 +20,7 @@ Tree:
                   - (type_name:) IdentifierPath: # 23..27 " Bar"
                       - Identifier: "Bar" # 24..27
                   - (arguments:) ArgumentsDeclaration: # 27..33 "(1, 2)"
-                      - PositionalArgumentsDeclaration: # 27..33 "(1, 2)"
+                      - (variant:) PositionalArgumentsDeclaration: # 27..33 "(1, 2)"
                           - OpenParen: "(" # 27..28
                           - PositionalArguments: # 28..32 "1, 2"
                               - Expression: # 28..29 "1"

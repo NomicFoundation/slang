@@ -31,8 +31,8 @@ Tree:
                               - CloseParen: ")" # 29..30
                           - (attributes:) FunctionTypeAttributes: # 30..47 " external payable"
                               - FunctionTypeAttribute: # 30..39 " external"
-                                  - ExternalKeyword: "external" # 31..39
+                                  - (variant:) ExternalKeyword: "external" # 31..39
                               - FunctionTypeAttribute: # 39..47 " payable"
-                                  - PayableKeyword: "payable" # 40..47
+                                  - (variant:) PayableKeyword: "payable" # 40..47
       - SKIPPED: "{}\n" # 48..51
       - CloseBrace: "}" # 51..52

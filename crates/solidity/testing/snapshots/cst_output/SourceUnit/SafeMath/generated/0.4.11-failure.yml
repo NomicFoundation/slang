@@ -27,36 +27,36 @@ Tree:
   - SourceUnit: # 0..212 "library SafeMath {\n  function tryAdd(uint256 a, ui..."
       - (members:) SourceUnitMembers: # 0..212 "library SafeMath {\n  function tryAdd(uint256 a, ui..."
           - SourceUnitMember: # 0..212 "library SafeMath {\n  function tryAdd(uint256 a, ui..."
-              - LibraryDefinition: # 0..212 "library SafeMath {\n  function tryAdd(uint256 a, ui..."
+              - (variant:) LibraryDefinition: # 0..212 "library SafeMath {\n  function tryAdd(uint256 a, ui..."
                   - (library_keyword:) LibraryKeyword: "library" # 0..7
                   - (name:) Identifier: "SafeMath" # 8..16
                   - OpenBrace: "{" # 17..18
                   - LibraryMembers: # 19..210 "  function tryAdd(uint256 a, uint256 b) internal p..."
                       - ContractMember: # 19..210 "  function tryAdd(uint256 a, uint256 b) internal p..."
-                          - FunctionDefinition: # 19..210 "  function tryAdd(uint256 a, uint256 b) internal p..."
+                          - (variant:) FunctionDefinition: # 19..210 "  function tryAdd(uint256 a, uint256 b) internal p..."
                               - (function_keyword:) FunctionKeyword: "function" # 21..29
                               - (name:) FunctionName: # 29..36 " tryAdd"
-                                  - Identifier: "tryAdd" # 30..36
+                                  - (variant:) Identifier: "tryAdd" # 30..36
                               - (parameters:) ParametersDeclaration: # 36..58 "(uint256 a, uint256 b)"
                                   - OpenParen: "(" # 36..37
                                   - Parameters: # 37..57 "uint256 a, uint256 b"
                                       - Parameter: # 37..46 "uint256 a"
                                           - (type_name:) TypeName: # 37..44 "uint256"
                                               - ElementaryType: # 37..44 "uint256"
-                                                  - UintKeyword: "uint256" # 37..44
+                                                  - (variant:) UintKeyword: "uint256" # 37..44
                                           - (name:) Identifier: "a" # 45..46
                                       - Comma: "," # 46..47
                                       - Parameter: # 47..57 " uint256 b"
                                           - (type_name:) TypeName: # 47..55 " uint256"
                                               - ElementaryType: # 47..55 " uint256"
-                                                  - UintKeyword: "uint256" # 48..55
+                                                  - (variant:) UintKeyword: "uint256" # 48..55
                                           - (name:) Identifier: "b" # 56..57
                                   - CloseParen: ")" # 57..58
                               - (attributes:) FunctionAttributes: # 58..72 " internal pure"
                                   - FunctionAttribute: # 58..67 " internal"
-                                      - InternalKeyword: "internal" # 59..67
+                                      - (variant:) InternalKeyword: "internal" # 59..67
                                   - FunctionAttribute: # 67..72 " pure"
-                                      - PureKeyword: "pure" # 68..72
+                                      - (variant:) PureKeyword: "pure" # 68..72
                               - (returns:) ReturnsDeclaration: # 72..96 " returns (bool, uint256)"
                                   - (returns_keyword:) ReturnsKeyword: "returns" # 73..80
                                   - (variables:) ParametersDeclaration: # 80..96 " (bool, uint256)"
@@ -65,15 +65,15 @@ Tree:
                                           - Parameter: # 82..86 "bool"
                                               - (type_name:) TypeName: # 82..86 "bool"
                                                   - ElementaryType: # 82..86 "bool"
-                                                      - BoolKeyword: "bool" # 82..86
+                                                      - (variant:) BoolKeyword: "bool" # 82..86
                                           - Comma: "," # 86..87
                                           - Parameter: # 87..95 " uint256"
                                               - (type_name:) TypeName: # 87..95 " uint256"
                                                   - ElementaryType: # 87..95 " uint256"
-                                                      - UintKeyword: "uint256" # 88..95
+                                                      - (variant:) UintKeyword: "uint256" # 88..95
                                       - CloseParen: ")" # 95..96
                               - (body:) FunctionBody: # 96..210 " {\n    unchecked {\n      uint256 c = a + b;\n      ..."
-                                  - Block: # 96..210 " {\n    unchecked {\n      uint256 c = a + b;\n      ..."
+                                  - (variant:) Block: # 96..210 " {\n    unchecked {\n      uint256 c = a + b;\n      ..."
                                       - OpenBrace: "{" # 97..98
                                       - Statements: # 99..113 "    unchecked "
                                           - Statement: # 99..113 "    unchecked "

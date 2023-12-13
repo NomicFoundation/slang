@@ -9,7 +9,7 @@ Tree:
   - ImportDirective: # 0..45 'import { A1 as A2, B1, C1 as C2 } from "foo";'
       - (import_keyword:) ImportKeyword: "import" # 0..6
       - (clause:) ImportClause: # 6..44 ' { A1 as A2, B1, C1 as C2 } from "foo"'
-          - ImportDeconstruction: # 6..44 ' { A1 as A2, B1, C1 as C2 } from "foo"'
+          - (variant:) ImportDeconstruction: # 6..44 ' { A1 as A2, B1, C1 as C2 } from "foo"'
               - OpenBrace: "{" # 7..8
               - ImportDeconstructionSymbols: # 8..31 " A1 as A2, B1, C1 as C2"
                   - ImportDeconstructionSymbol: # 8..17 " A1 as A2"

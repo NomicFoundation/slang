@@ -14,7 +14,7 @@ Tree:
                       - Identifier: "x" # 0..1
                   - (operator:) Period: "." # 1..2
                   - (operator:) MemberAccess: # 2..3 "y"
-                      - Identifier: "y" # 2..3
+                      - (variant:) Identifier: "y" # 2..3
           - (operator:) OpenBracket: "[" # 3..4
           - (operator:) Expression: # 4..9 "index"
               - Identifier: "index" # 4..9

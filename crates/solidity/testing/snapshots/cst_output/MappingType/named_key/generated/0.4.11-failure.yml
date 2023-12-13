@@ -19,7 +19,7 @@ Tree:
       - OpenParen: "(" # 7..8
       - (key_type:) MappingKey: # 8..14 "string"
           - (key_type:) MappingKeyType: # 8..14 "string"
-              - ElementaryType: # 8..14 "string"
-                  - StringKeyword: "string" # 8..14
+              - (variant:) ElementaryType: # 8..14 "string"
+                  - (variant:) StringKeyword: "string" # 8..14
       - SKIPPED: "Foo => bytes32" # 15..29
       - CloseParen: ")" # 29..30

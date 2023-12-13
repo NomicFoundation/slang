@@ -12,15 +12,15 @@ Tree:
           - VersionPragmaExpression: # 8..68 " /* comments */ 0 /* are */ . /* allowed */ 0 . /*..."
               - VersionPragmaSpecifier: # 8..68 " /* comments */ 0 /* are */ . /* allowed */ 0 . /*..."
                   - LeadingTrivia: # 8..24 " /* comments */ "
-                      - MultilineComment: "/* comments */" # 9..23
+                      - (variant:) MultilineComment: "/* comments */" # 9..23
                   - VersionPragmaValue: "0" # 24..25
                   - LeadingTrivia: # 25..36 " /* are */ "
-                      - MultilineComment: "/* are */" # 26..35
+                      - (variant:) MultilineComment: "/* are */" # 26..35
                   - Period: "." # 36..37
                   - LeadingTrivia: # 37..52 " /* allowed */ "
-                      - MultilineComment: "/* allowed */" # 38..51
+                      - (variant:) MultilineComment: "/* allowed */" # 38..51
                   - VersionPragmaValue: "0" # 52..53
                   - Period: "." # 54..55
                   - LeadingTrivia: # 55..67 " /* here */ "
-                      - MultilineComment: "/* here */" # 56..66
+                      - (variant:) MultilineComment: "/* here */" # 56..66
                   - VersionPragmaValue: "0" # 67..68
