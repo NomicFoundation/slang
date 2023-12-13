@@ -57,4 +57,4 @@ Tree:
                                                   - (variant:) UintKeyword: "uint32" # 49..55
                                   - CloseParen: ")" # 55..56
                       - CloseParen: ")" # 56..57
-      - Semicolon: ";" # 57..58
+      - (semicolon:) Semicolon: ";" # 57..58

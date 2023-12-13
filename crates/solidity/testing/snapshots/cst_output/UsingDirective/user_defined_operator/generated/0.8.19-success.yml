@@ -26,4 +26,4 @@ Tree:
               - IdentifierPath: # 20..24 " Int"
                   - Identifier: "Int" # 21..24
       - (global_keyword:) GlobalKeyword: "global" # 25..31
-      - Semicolon: ";" # 31..32
+      - (semicolon:) Semicolon: ";" # 31..32

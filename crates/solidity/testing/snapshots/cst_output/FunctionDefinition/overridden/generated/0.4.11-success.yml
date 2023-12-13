@@ -46,5 +46,5 @@ Tree:
                           - (expression:) Expression: # 67..69 " 1"
                               - DecimalNumberExpression: # 67..69 " 1"
                                   - (literal:) DecimalLiteral: "1" # 68..69
-                          - Semicolon: ";" # 69..70
+                          - (semicolon:) Semicolon: ";" # 69..70
               - CloseBrace: "}" # 71..72

@@ -49,7 +49,7 @@ pub enum ParserDefinitionNode {
     PrecedenceParserDefinition(PrecedenceParserDefinitionRef),
     DelimitedBy(Box<Self>, Box<Self>, Box<Self>),
     SeparatedBy(Box<Self>, Box<Self>),
-    TerminatedBy(Box<Self>, Box<Self>),
+    TerminatedBy(Box<(String, Self)>, Box<(String, Self)>),
 }
 
 impl From<ScannerDefinitionRef> for ParserDefinitionNode {
@@ -108,8 +108,8 @@ impl Visitable for ParserDefinitionNode {
             }
 
             Self::TerminatedBy(body, terminator) => {
-                body.accept_visitor(visitor);
-                terminator.accept_visitor(visitor);
+                body.1.accept_visitor(visitor);
+                terminator.1.accept_visitor(visitor);
             }
 
             Self::ScannerDefinition(_)

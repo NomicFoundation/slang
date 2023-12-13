@@ -52,7 +52,7 @@ Tree:
                           - Statements: # 122..346 '    require(address(this).balance >= amount, "Addr...'
                               - Statement: # 122..201 '    require(address(this).balance >= amount, "Addr...'
                                   - (variant:) ExpressionStatement: # 122..201 '    require(address(this).balance >= amount, "Addr...'
-                                      - Expression: # 122..199 '    require(address(this).balance >= amount, "Addr...'
+                                      - (expression:) Expression: # 122..199 '    require(address(this).balance >= amount, "Addr...'
                                           - (operand:) FunctionCallExpression: # 122..199 '    require(address(this).balance >= amount, "Addr...'
                                               - (left_operand:) Expression: # 122..133 "    require"
                                                   - Identifier: "require" # 126..133
@@ -89,7 +89,7 @@ Tree:
                                                                   - (variant:) AsciiStringLiterals: # 166..198 ' "Address: insufficient balance"'
                                                                       - AsciiStringLiteral: '"Address: insufficient balance"' # 167..198
                                                       - CloseParen: ")" # 198..199
-                                      - Semicolon: ";" # 199..200
+                                      - (semicolon:) Semicolon: ";" # 199..200
                               - Statement: # 201..262 "\n    (bool success, ) = recipient.call{ value: amo..."
                                   - (variant:) TupleDeconstructionStatement: # 201..262 "\n    (bool success, ) = recipient.call{ value: amo..."
                                       - OpenParen: "(" # 206..207
@@ -134,10 +134,10 @@ Tree:
                                                                   - (variant:) AsciiStringLiterals: # 257..259 '""'
                                                                       - AsciiStringLiteral: '""' # 257..259
                                                       - CloseParen: ")" # 259..260
-                                      - Semicolon: ";" # 260..261
+                                      - (semicolon:) Semicolon: ";" # 260..261
                               - Statement: # 262..346 '    require(success, "Address: unable to send valu...'
                                   - (variant:) ExpressionStatement: # 262..346 '    require(success, "Address: unable to send valu...'
-                                      - Expression: # 262..344 '    require(success, "Address: unable to send valu...'
+                                      - (expression:) Expression: # 262..344 '    require(success, "Address: unable to send valu...'
                                           - (operand:) FunctionCallExpression: # 262..344 '    require(success, "Address: unable to send valu...'
                                               - (left_operand:) Expression: # 262..273 "    require"
                                                   - Identifier: "require" # 266..273
@@ -153,6 +153,6 @@ Tree:
                                                                   - (variant:) AsciiStringLiterals: # 282..343 ' "Address: unable to send value, recipient may hav...'
                                                                       - AsciiStringLiteral: '"Address: unable to send value, recipient may have...' # 283..343
                                                       - CloseParen: ")" # 343..344
-                                      - Semicolon: ";" # 344..345
+                                      - (semicolon:) Semicolon: ";" # 344..345
                           - CloseBrace: "}" # 348..349
       - CloseBrace: "}" # 350..351

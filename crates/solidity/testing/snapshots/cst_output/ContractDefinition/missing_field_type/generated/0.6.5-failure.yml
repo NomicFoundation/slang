@@ -27,5 +27,5 @@ Tree:
                       - IdentifierPath: # 16..23 "  field"
                           - Identifier: "field" # 18..23
                   - SKIPPED: "" # 23..23
-                  - Semicolon: ";" # 23..24
+                  - (semicolon:) Semicolon: ";" # 23..24
       - CloseBrace: "}" # 25..26

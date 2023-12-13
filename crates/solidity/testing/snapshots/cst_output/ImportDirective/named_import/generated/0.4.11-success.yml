@@ -16,4 +16,4 @@ Tree:
                   - (identifier:) Identifier: "foo" # 12..15
               - (from_keyword:) FromKeyword: "from" # 16..20
               - (path:) AsciiStringLiteral: '"bar"' # 21..26
-      - Semicolon: ";" # 26..27
+      - (semicolon:) Semicolon: ";" # 26..27

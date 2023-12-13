@@ -54,14 +54,14 @@ Tree:
                                       - VersionPragmaValue: "0" # 18..19
                                       - Period: "." # 19..20
                                       - VersionPragmaValue: "0" # 20..21
-                  - Semicolon: ";" # 21..22
+                  - (semicolon:) Semicolon: ";" # 21..22
           - SourceUnitMember: # 23..42 '\nimport "foo.sol";\n'
               - (variant:) ImportDirective: # 23..42 '\nimport "foo.sol";\n'
                   - (import_keyword:) ImportKeyword: "import" # 24..30
                   - (clause:) ImportClause: # 30..40 ' "foo.sol"'
                       - (variant:) PathImport: # 30..40 ' "foo.sol"'
                           - (path:) AsciiStringLiteral: '"foo.sol"' # 31..40
-                  - Semicolon: ";" # 40..41
+                  - (semicolon:) Semicolon: ";" # 40..41
           - SourceUnitMember: # 42..58 "\nusing A for B;\n"
               - (variant:) UsingDirective: # 42..58 "\nusing A for B;\n"
                   - (using_keyword:) UsingKeyword: "using" # 43..48
@@ -73,7 +73,7 @@ Tree:
                       - (variant:) TypeName: # 54..56 " B"
                           - IdentifierPath: # 54..56 " B"
                               - Identifier: "B" # 55..56
-                  - Semicolon: ";" # 56..57
+                  - (semicolon:) Semicolon: ";" # 56..57
           - SourceUnitMember: # 58..74 "\ncontract C { }\n"
               - (variant:) ContractDefinition: # 58..74 "\ncontract C { }\n"
                   - (contract_keyword:) ContractKeyword: "contract" # 59..67
@@ -115,7 +115,7 @@ Tree:
                   - (value:) Expression: # 152..154 " 0"
                       - DecimalNumberExpression: # 152..154 " 0"
                           - (literal:) DecimalLiteral: "0" # 153..154
-                  - Semicolon: ";" # 154..155
+                  - (semicolon:) Semicolon: ";" # 154..155
           - SourceUnitMember: # 156..181 "\nfunction f() public { }\n"
               - (variant:) FunctionDefinition: # 156..181 "\nfunction f() public { }\n"
                   - (function_keyword:) FunctionKeyword: "function" # 157..165
@@ -143,7 +143,7 @@ Tree:
                                   - ElementaryType: # 191..197 "string"
                                       - (variant:) StringKeyword: "string" # 191..197
                       - CloseParen: ")" # 197..198
-                  - Semicolon: ";" # 198..199
+                  - (semicolon:) Semicolon: ";" # 198..199
           - SourceUnitMember: # 200..217 "\ntype T is bool;\n"
               - (variant:) UserDefinedValueTypeDefinition: # 200..217 "\ntype T is bool;\n"
                   - (type_keyword:) TypeKeyword: "type" # 201..205
@@ -151,5 +151,5 @@ Tree:
                   - (is_keyword:) IsKeyword: "is" # 208..210
                   - (value_type:) ElementaryType: # 210..215 " bool"
                       - (variant:) BoolKeyword: "bool" # 211..215
-                  - Semicolon: ";" # 215..216
+                  - (semicolon:) Semicolon: ";" # 215..216
       - SKIPPED: "event E1(uint256 value);\n" # 218..243

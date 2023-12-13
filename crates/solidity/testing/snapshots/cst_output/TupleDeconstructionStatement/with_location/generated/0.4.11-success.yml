@@ -24,4 +24,4 @@ Tree:
       - (equal:) Equal: "=" # 41..42
       - (expression:) Expression: # 42..46 " rhs"
           - Identifier: "rhs" # 43..46
-      - Semicolon: ";" # 46..47
+      - (semicolon:) Semicolon: ";" # 46..47

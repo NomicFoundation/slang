@@ -67,4 +67,4 @@ Tree:
                                                   - (operator:) CloseBracket: "]" # 65..66
                                   - CloseParen: ")" # 66..67
                       - CloseParen: ")" # 67..68
-      - Semicolon: ";" # 68..69
+      - (semicolon:) Semicolon: ";" # 68..69

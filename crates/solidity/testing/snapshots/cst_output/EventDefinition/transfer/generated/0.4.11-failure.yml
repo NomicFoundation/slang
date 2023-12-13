@@ -28,4 +28,4 @@ Tree:
                   - (indexed_keyword:) IndexedKeyword: "indexed" # 23..30
           - SKIPPED: "from, address indexed to, uint256 value" # 31..70
           - CloseParen: ")" # 70..71
-      - Semicolon: ";" # 71..72
+      - (semicolon:) Semicolon: ";" # 71..72

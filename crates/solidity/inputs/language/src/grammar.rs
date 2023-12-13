@@ -656,20 +656,29 @@ fn resolve_sequence_like(
             let (name, def) = fields.pop().unwrap();
             assert_eq!(name, terminator);
 
-            Some(def)
+            Some((name.to_string(), def))
         }
         None => None,
     };
 
-    let body = ParserDefinitionNode::Sequence(
-        fields
-            .into_iter()
-            .map(|(name, def)| (name.to_string(), def))
-            .collect(),
-    );
+    let body_fields: Vec<_> = fields
+        .into_iter()
+        .map(|(name, def)| (name.to_string(), def))
+        .collect();
+
+    // The parser abstraction defines an extra TerminatedBy(body, terminator) node, whereas the definition
+    // only lists a flat sequence of items.
+    // TODO:
+    let body_name = if let [(name, _)] = &body_fields[..] {
+        name.to_string()
+    } else {
+        String::from("body")
+    };
+
+    let body = ParserDefinitionNode::Sequence(body_fields);
 
     if let Some(terminator) = terminator {
-        ParserDefinitionNode::TerminatedBy(Box::new(body), Box::new(terminator))
+        ParserDefinitionNode::TerminatedBy(Box::new((body_name, body)), Box::new(terminator))
     } else {
         body
     }

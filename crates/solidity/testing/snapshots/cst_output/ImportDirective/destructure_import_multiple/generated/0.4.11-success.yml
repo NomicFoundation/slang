@@ -29,4 +29,4 @@ Tree:
               - CloseBrace: "}" # 32..33
               - (from_keyword:) FromKeyword: "from" # 34..38
               - (path:) AsciiStringLiteral: '"foo"' # 39..44
-      - Semicolon: ";" # 44..45
+      - (semicolon:) Semicolon: ";" # 44..45

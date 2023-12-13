@@ -16,4 +16,4 @@ Tree:
               - (operator:) Expression: # 11..14 "bar"
                   - Identifier: "bar" # 11..14
               - (operator:) CloseBracket: "]" # 14..15
-      - Semicolon: ";" # 15..16
+      - (semicolon:) Semicolon: ";" # 15..16

@@ -188,17 +188,22 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                 }
             }
             Self::TerminatedBy(body, terminator) => {
-                let terminator = match terminator.as_ref() {
+                let body_field_name = &body.0;
+                let terminator_field_name = &terminator.0;
+
+                let terminator = match &terminator.1 {
                     ParserDefinitionNode::ScannerDefinition(scanner, ..) => {
                         format_ident!("{name}", name = scanner.name())
                     }
                     _ => unreachable!("Only tokens are permitted as terminators"),
                 };
 
-                let parser = body.to_parser_code(context_name, is_trivia);
-                let body_parser = body.applicable_version_quality_ranges().wrap_code(
+                let parser = body.1.to_parser_code(context_name, is_trivia);
+                let body_parser = body.1.applicable_version_quality_ranges().wrap_code(
                     quote! {
-                        seq.elem(#parser
+                        seq.elem_named(
+                            #body_field_name,
+                            #parser
                             .recover_until_with_nested_delims::<_, #lex_ctx>(input,
                                 self,
                                 TokenKind::#terminator,
@@ -212,7 +217,10 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                 quote! {
                     SequenceHelper::run(|mut seq| {
                         #body_parser
-                        seq.elem(self.parse_token_with_trivia::<#lex_ctx>(input, TokenKind::#terminator))?;
+                        seq.elem_named(
+                            #terminator_field_name,
+                            self.parse_token_with_trivia::<#lex_ctx>(input, TokenKind::#terminator)
+                        )?;
                         seq.finish()
                     })
                 }

@@ -20,5 +20,5 @@ Tree:
                   - (is_keyword:) IsKeyword: "is" # 29..31
                   - (value_type:) ElementaryType: # 31..36 " bool"
                       - (variant:) BoolKeyword: "bool" # 32..36
-                  - Semicolon: ";" # 36..37
+                  - (semicolon:) Semicolon: ";" # 36..37
       - CloseBrace: "}" # 38..39

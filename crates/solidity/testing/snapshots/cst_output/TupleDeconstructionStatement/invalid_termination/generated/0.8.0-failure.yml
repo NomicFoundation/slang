@@ -50,4 +50,4 @@ Tree:
                       - (variant:) MultilineComment: "/**/" # 20..24
                   - OpenBrace: "{" # 25..26
       - SKIPPED: "throw" # 27..32
-      - Semicolon: ";" # 32..33
+      - (semicolon:) Semicolon: ";" # 32..33

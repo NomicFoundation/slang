@@ -21,4 +21,4 @@ Tree:
                                       - (variant:) UintKeyword: "uint256" # 9..16
                               - (name:) Identifier: "value" # 17..22
                       - CloseParen: ")" # 22..23
-                  - Semicolon: ";" # 23..24
+                  - (semicolon:) Semicolon: ";" # 23..24

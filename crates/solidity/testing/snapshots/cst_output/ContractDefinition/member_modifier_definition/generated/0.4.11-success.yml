@@ -28,8 +28,8 @@ Tree:
                           - Statements: # 37..44 "    _;\n"
                               - Statement: # 37..44 "    _;\n"
                                   - (variant:) ExpressionStatement: # 37..44 "    _;\n"
-                                      - Expression: # 37..42 "    _"
+                                      - (expression:) Expression: # 37..42 "    _"
                                           - Identifier: "_" # 41..42
-                                      - Semicolon: ";" # 42..43
+                                      - (semicolon:) Semicolon: ";" # 42..43
                           - CloseBrace: "}" # 46..47
       - CloseBrace: "}" # 48..49

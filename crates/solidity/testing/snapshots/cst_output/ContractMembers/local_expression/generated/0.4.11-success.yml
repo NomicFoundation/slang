@@ -45,5 +45,5 @@ Tree:
                                                       - (right_operand:) Expression: # 36..38 " 3"
                                                           - DecimalNumberExpression: # 36..38 " 3"
                                                               - (literal:) DecimalLiteral: "3" # 37..38
-                                  - Semicolon: ";" # 38..39
+                                  - (semicolon:) Semicolon: ";" # 38..39
                       - CloseBrace: "}" # 40..41

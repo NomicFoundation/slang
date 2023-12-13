@@ -18,4 +18,4 @@ Tree:
       - (event_keyword:) EventKeyword: "event" # 0..5
       - (name:) Identifier: "MyEvent" # 6..13
       - SKIPPED: "" # 13..13
-      - Semicolon: ";" # 13..14
+      - (semicolon:) Semicolon: ";" # 13..14

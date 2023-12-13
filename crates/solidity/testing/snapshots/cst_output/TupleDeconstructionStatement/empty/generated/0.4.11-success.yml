@@ -21,4 +21,4 @@ Tree:
               - TupleValues: # 54..54
                   - TupleValue: [] # 54..54
               - CloseParen: ")" # 54..55
-      - Semicolon: ";" # 55..56
+      - (semicolon:) Semicolon: ";" # 55..56

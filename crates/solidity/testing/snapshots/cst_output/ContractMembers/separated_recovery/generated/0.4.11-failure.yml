@@ -145,7 +145,7 @@ Tree:
                                           - (operator:) MemberAccess: # 99..103 "call"
                                               - (variant:) Identifier: "call" # 99..103
                                   - SKIPPED: "{do: 1, arg: 1 }()" # 103..121
-                                  - Semicolon: ";" # 121..122
+                                  - (semicolon:) Semicolon: ";" # 121..122
                           - Statement: # 123..167 "  msg.sender.call{, empty: 1, parse: 2 }();\n"
                               - (variant:) ExpressionStatement: # 123..167 "  msg.sender.call{, empty: 1, parse: 2 }();\n"
                                   - Expression: # 123..140 "  msg.sender.call"
@@ -161,7 +161,7 @@ Tree:
                                           - (operator:) MemberAccess: # 136..140 "call"
                                               - (variant:) Identifier: "call" # 136..140
                                   - SKIPPED: "{, empty: 1, parse: 2 }()" # 140..165
-                                  - Semicolon: ";" # 165..166
+                                  - (semicolon:) Semicolon: ";" # 165..166
                           - Statement: # 167..230 "  msg.sender.call{arg: 1, missing_expr: , no_semic..."
                               - (variant:) ExpressionStatement: # 167..230 "  msg.sender.call{arg: 1, missing_expr: , no_semic..."
                                   - Expression: # 167..184 "  msg.sender.call"
@@ -177,7 +177,7 @@ Tree:
                                           - (operator:) MemberAccess: # 180..184 "call"
                                               - (variant:) Identifier: "call" # 180..184
                                   - SKIPPED: "{arg: 1, missing_expr: , no_semicolon, , }()" # 184..228
-                                  - Semicolon: ";" # 228..229
+                                  - (semicolon:) Semicolon: ";" # 228..229
                           - Statement: # 230..306 "  msg.sender.call{arg: 1 unexpected tokens, not: 2..."
                               - (variant:) ExpressionStatement: # 230..306 "  msg.sender.call{arg: 1 unexpected tokens, not: 2..."
                                   - Expression: # 230..247 "  msg.sender.call"
@@ -193,7 +193,7 @@ Tree:
                                           - (operator:) MemberAccess: # 243..247 "call"
                                               - (variant:) Identifier: "call" # 243..247
                                   - SKIPPED: "{arg: 1 unexpected tokens, not: 2, recovered, yet:..." # 247..304
-                                  - Semicolon: ";" # 304..305
+                                  - (semicolon:) Semicolon: ";" # 304..305
                       - CloseBrace: "}" # 307..308
       - ContractMember: # 309..388 "\nfunction empty() override(some.ident, /* empty */..."
           - (variant:) FunctionDefinition: # 309..388 "\nfunction empty() override(some.ident, /* empty */..."

@@ -143,7 +143,7 @@ Tree:
                       - Statements: # 86..306 "  msg.sender.call{do: 1, arg: 1 }();\n  msg.sender...."
                           - Statement: # 86..123 "  msg.sender.call{do: 1, arg: 1 }();\n"
                               - (variant:) ExpressionStatement: # 86..123 "  msg.sender.call{do: 1, arg: 1 }();\n"
-                                  - Expression: # 86..121 "  msg.sender.call{do: 1, arg: 1 }()"
+                                  - (expression:) Expression: # 86..121 "  msg.sender.call{do: 1, arg: 1 }()"
                                       - (operand:) FunctionCallExpression: # 86..121 "  msg.sender.call{do: 1, arg: 1 }()"
                                           - (left_operand:) Expression: # 86..103 "  msg.sender.call"
                                               - (operand:) MemberAccessExpression: # 86..103 "  msg.sender.call"
@@ -167,10 +167,10 @@ Tree:
                                               - (variant:) PositionalArgumentsDeclaration: # 119..121 "()"
                                                   - OpenParen: "(" # 119..120
                                                   - CloseParen: ")" # 120..121
-                                  - Semicolon: ";" # 121..122
+                                  - (semicolon:) Semicolon: ";" # 121..122
                           - Statement: # 123..167 "  msg.sender.call{, empty: 1, parse: 2 }();\n"
                               - (variant:) ExpressionStatement: # 123..167 "  msg.sender.call{, empty: 1, parse: 2 }();\n"
-                                  - Expression: # 123..165 "  msg.sender.call{, empty: 1, parse: 2 }()"
+                                  - (expression:) Expression: # 123..165 "  msg.sender.call{, empty: 1, parse: 2 }()"
                                       - (operand:) FunctionCallExpression: # 123..165 "  msg.sender.call{, empty: 1, parse: 2 }()"
                                           - (left_operand:) Expression: # 123..140 "  msg.sender.call"
                                               - (operand:) MemberAccessExpression: # 123..140 "  msg.sender.call"
@@ -194,10 +194,10 @@ Tree:
                                               - (variant:) PositionalArgumentsDeclaration: # 163..165 "()"
                                                   - OpenParen: "(" # 163..164
                                                   - CloseParen: ")" # 164..165
-                                  - Semicolon: ";" # 165..166
+                                  - (semicolon:) Semicolon: ";" # 165..166
                           - Statement: # 167..230 "  msg.sender.call{arg: 1, missing_expr: , no_semic..."
                               - (variant:) ExpressionStatement: # 167..230 "  msg.sender.call{arg: 1, missing_expr: , no_semic..."
-                                  - Expression: # 167..228 "  msg.sender.call{arg: 1, missing_expr: , no_semic..."
+                                  - (expression:) Expression: # 167..228 "  msg.sender.call{arg: 1, missing_expr: , no_semic..."
                                       - (operand:) FunctionCallExpression: # 167..228 "  msg.sender.call{arg: 1, missing_expr: , no_semic..."
                                           - (left_operand:) Expression: # 167..184 "  msg.sender.call"
                                               - (operand:) MemberAccessExpression: # 167..184 "  msg.sender.call"
@@ -238,10 +238,10 @@ Tree:
                                               - (variant:) PositionalArgumentsDeclaration: # 226..228 "()"
                                                   - OpenParen: "(" # 226..227
                                                   - CloseParen: ")" # 227..228
-                                  - Semicolon: ";" # 228..229
+                                  - (semicolon:) Semicolon: ";" # 228..229
                           - Statement: # 230..306 "  msg.sender.call{arg: 1 unexpected tokens, not: 2..."
                               - (variant:) ExpressionStatement: # 230..306 "  msg.sender.call{arg: 1 unexpected tokens, not: 2..."
-                                  - Expression: # 230..304 "  msg.sender.call{arg: 1 unexpected tokens, not: 2..."
+                                  - (expression:) Expression: # 230..304 "  msg.sender.call{arg: 1 unexpected tokens, not: 2..."
                                       - (operand:) FunctionCallExpression: # 230..304 "  msg.sender.call{arg: 1 unexpected tokens, not: 2..."
                                           - (left_operand:) Expression: # 230..247 "  msg.sender.call"
                                               - (operand:) MemberAccessExpression: # 230..247 "  msg.sender.call"
@@ -272,7 +272,7 @@ Tree:
                                               - (variant:) PositionalArgumentsDeclaration: # 302..304 "()"
                                                   - OpenParen: "(" # 302..303
                                                   - CloseParen: ")" # 303..304
-                                  - Semicolon: ";" # 304..305
+                                  - (semicolon:) Semicolon: ";" # 304..305
                       - CloseBrace: "}" # 307..308
       - ContractMember: # 309..388 "\nfunction empty() override(some.ident, /* empty */..."
           - (variant:) FunctionDefinition: # 309..388 "\nfunction empty() override(some.ident, /* empty */..."

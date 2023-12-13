@@ -25,4 +25,4 @@ Tree:
               - IdentifierPath: # 13..17 " bar"
                   - Identifier: "bar" # 14..17
       - SKIPPED: "global" # 18..24
-      - Semicolon: ";" # 24..25
+      - (semicolon:) Semicolon: ";" # 24..25

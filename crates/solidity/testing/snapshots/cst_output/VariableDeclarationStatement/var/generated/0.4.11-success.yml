@@ -15,4 +15,4 @@ Tree:
           - (expression:) Expression: # 7..9 " 0"
               - DecimalNumberExpression: # 7..9 " 0"
                   - (literal:) DecimalLiteral: "0" # 8..9
-      - Semicolon: ";" # 9..10
+      - (semicolon:) Semicolon: ";" # 9..10

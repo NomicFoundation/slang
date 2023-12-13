@@ -541,7 +541,8 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn break_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem(
+            seq.elem_named(
+                "break_keyword",
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::BreakKeyword,
@@ -553,10 +554,13 @@ impl Language {
                     RecoverFromNoMatch::No,
                 ),
             )?;
-            seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                input,
-                TokenKind::Semicolon,
-            ))?;
+            seq.elem_named(
+                "semicolon",
+                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    input,
+                    TokenKind::Semicolon,
+                ),
+            )?;
             seq.finish()
         })
         .with_kind(RuleKind::BreakStatement)
@@ -664,7 +668,8 @@ impl Language {
     fn constant_definition(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if self.version_is_at_least_0_7_4 {
             SequenceHelper::run(|mut seq| {
-                seq.elem(
+                seq.elem_named(
+                    "body",
                     SequenceHelper::run(|mut seq| {
                         seq.elem_named("type_name", self.type_name(input))?;
                         seq.elem_named(
@@ -698,10 +703,13 @@ impl Language {
                         RecoverFromNoMatch::No,
                     ),
                 )?;
-                seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                    input,
-                    TokenKind::Semicolon,
-                ))?;
+                seq.elem_named(
+                    "semicolon",
+                    self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        input,
+                        TokenKind::Semicolon,
+                    ),
+                )?;
                 seq.finish()
             })
         } else {
@@ -777,7 +785,8 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn continue_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem(
+            seq.elem_named(
+                "continue_keyword",
                 self.parse_token_with_trivia::<LexicalContextType::Default>(
                     input,
                     TokenKind::ContinueKeyword,
@@ -789,10 +798,13 @@ impl Language {
                     RecoverFromNoMatch::No,
                 ),
             )?;
-            seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                input,
-                TokenKind::Semicolon,
-            ))?;
+            seq.elem_named(
+                "semicolon",
+                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    input,
+                    TokenKind::Semicolon,
+                ),
+            )?;
             seq.finish()
         })
         .with_kind(RuleKind::ContinueStatement)
@@ -931,7 +943,8 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn delete_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem(
+            seq.elem_named(
+                "body",
                 SequenceHelper::run(|mut seq| {
                     seq.elem_named(
                         "delete_keyword",
@@ -950,10 +963,13 @@ impl Language {
                     RecoverFromNoMatch::No,
                 ),
             )?;
-            seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                input,
-                TokenKind::Semicolon,
-            ))?;
+            seq.elem_named(
+                "semicolon",
+                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    input,
+                    TokenKind::Semicolon,
+                ),
+            )?;
             seq.finish()
         })
         .with_kind(RuleKind::DeleteStatement)
@@ -961,7 +977,7 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn do_while_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        SequenceHelper :: run (| mut seq | { seq . elem (SequenceHelper :: run (| mut seq | { seq . elem_named ("do_keyword" , self . parse_token_with_trivia :: < LexicalContextType :: Default > (input , TokenKind :: DoKeyword)) ? ; seq . elem_named ("body" , self . statement (input)) ? ; seq . elem_named ("while_keyword" , self . parse_token_with_trivia :: < LexicalContextType :: Default > (input , TokenKind :: WhileKeyword)) ? ; seq . elem_named ("open_paren" , SequenceHelper :: run (| mut seq | { let mut delim_guard = input . open_delim (TokenKind :: CloseParen) ; let input = delim_guard . ctx () ; seq . elem (self . parse_token_with_trivia :: < LexicalContextType :: Default > (input , TokenKind :: OpenParen)) ? ; seq . elem (self . expression (input) . recover_until_with_nested_delims :: < _ , LexicalContextType :: Default > (input , self , TokenKind :: CloseParen , RecoverFromNoMatch :: Yes ,)) ? ; seq . elem (self . parse_token_with_trivia :: < LexicalContextType :: Default > (input , TokenKind :: CloseParen)) ? ; seq . finish () })) ? ; seq . finish () }) . recover_until_with_nested_delims :: < _ , LexicalContextType :: Default > (input , self , TokenKind :: Semicolon , RecoverFromNoMatch :: No ,)) ? ; seq . elem (self . parse_token_with_trivia :: < LexicalContextType :: Default > (input , TokenKind :: Semicolon)) ? ; seq . finish () }) . with_kind (RuleKind :: DoWhileStatement)
+        SequenceHelper :: run (| mut seq | { seq . elem_named ("body" , SequenceHelper :: run (| mut seq | { seq . elem_named ("do_keyword" , self . parse_token_with_trivia :: < LexicalContextType :: Default > (input , TokenKind :: DoKeyword)) ? ; seq . elem_named ("body" , self . statement (input)) ? ; seq . elem_named ("while_keyword" , self . parse_token_with_trivia :: < LexicalContextType :: Default > (input , TokenKind :: WhileKeyword)) ? ; seq . elem_named ("open_paren" , SequenceHelper :: run (| mut seq | { let mut delim_guard = input . open_delim (TokenKind :: CloseParen) ; let input = delim_guard . ctx () ; seq . elem (self . parse_token_with_trivia :: < LexicalContextType :: Default > (input , TokenKind :: OpenParen)) ? ; seq . elem (self . expression (input) . recover_until_with_nested_delims :: < _ , LexicalContextType :: Default > (input , self , TokenKind :: CloseParen , RecoverFromNoMatch :: Yes ,)) ? ; seq . elem (self . parse_token_with_trivia :: < LexicalContextType :: Default > (input , TokenKind :: CloseParen)) ? ; seq . finish () })) ? ; seq . finish () }) . recover_until_with_nested_delims :: < _ , LexicalContextType :: Default > (input , self , TokenKind :: Semicolon , RecoverFromNoMatch :: No ,)) ? ; seq . elem_named ("semicolon" , self . parse_token_with_trivia :: < LexicalContextType :: Default > (input , TokenKind :: Semicolon)) ? ; seq . finish () }) . with_kind (RuleKind :: DoWhileStatement)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -1041,7 +1057,8 @@ impl Language {
     fn emit_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if self.version_is_at_least_0_4_21 {
             SequenceHelper::run(|mut seq| {
-                seq.elem(
+                seq.elem_named(
+                    "body",
                     SequenceHelper::run(|mut seq| {
                         seq.elem_named(
                             "emit_keyword",
@@ -1061,10 +1078,13 @@ impl Language {
                         RecoverFromNoMatch::No,
                     ),
                 )?;
-                seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                    input,
-                    TokenKind::Semicolon,
-                ))?;
+                seq.elem_named(
+                    "semicolon",
+                    self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        input,
+                        TokenKind::Semicolon,
+                    ),
+                )?;
                 seq.finish()
             })
         } else {
@@ -1185,7 +1205,8 @@ impl Language {
     fn error_definition(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if self.version_is_at_least_0_8_4 {
             SequenceHelper::run(|mut seq| {
-                seq.elem(
+                seq.elem_named(
+                    "body",
                     SequenceHelper::run(|mut seq| {
                         seq.elem_named(
                             "error_keyword",
@@ -1211,10 +1232,13 @@ impl Language {
                         RecoverFromNoMatch::No,
                     ),
                 )?;
-                seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                    input,
-                    TokenKind::Semicolon,
-                ))?;
+                seq.elem_named(
+                    "semicolon",
+                    self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        input,
+                        TokenKind::Semicolon,
+                    ),
+                )?;
                 seq.finish()
             })
         } else {
@@ -1294,7 +1318,8 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn event_definition(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem(
+            seq.elem_named(
+                "body",
                 SequenceHelper::run(|mut seq| {
                     seq.elem_named(
                         "event_keyword",
@@ -1329,10 +1354,13 @@ impl Language {
                     RecoverFromNoMatch::No,
                 ),
             )?;
-            seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                input,
-                TokenKind::Semicolon,
-            ))?;
+            seq.elem_named(
+                "semicolon",
+                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    input,
+                    TokenKind::Semicolon,
+                ),
+            )?;
             seq.finish()
         })
         .with_kind(RuleKind::EventDefinition)
@@ -2017,7 +2045,8 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn expression_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem(
+            seq.elem_named(
+                "expression",
                 self.expression(input)
                     .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                         input,
@@ -2026,10 +2055,13 @@ impl Language {
                         RecoverFromNoMatch::No,
                     ),
             )?;
-            seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                input,
-                TokenKind::Semicolon,
-            ))?;
+            seq.elem_named(
+                "semicolon",
+                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    input,
+                    TokenKind::Semicolon,
+                ),
+            )?;
             seq.finish()
         })
         .with_kind(RuleKind::ExpressionStatement)
@@ -2649,7 +2681,8 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn import_directive(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem(
+            seq.elem_named(
+                "body",
                 SequenceHelper::run(|mut seq| {
                     seq.elem_named(
                         "import_keyword",
@@ -2668,10 +2701,13 @@ impl Language {
                     RecoverFromNoMatch::No,
                 ),
             )?;
-            seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                input,
-                TokenKind::Semicolon,
-            ))?;
+            seq.elem_named(
+                "semicolon",
+                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    input,
+                    TokenKind::Semicolon,
+                ),
+            )?;
             seq.finish()
         })
         .with_kind(RuleKind::ImportDirective)
@@ -3561,7 +3597,8 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn pragma_directive(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem(
+            seq.elem_named(
+                "body",
                 SequenceHelper::run(|mut seq| {
                     seq.elem_named(
                         "pragma_keyword",
@@ -3580,10 +3617,13 @@ impl Language {
                     RecoverFromNoMatch::No,
                 ),
             )?;
-            seq.elem(self.parse_token_with_trivia::<LexicalContextType::Pragma>(
-                input,
-                TokenKind::Semicolon,
-            ))?;
+            seq.elem_named(
+                "semicolon",
+                self.parse_token_with_trivia::<LexicalContextType::Pragma>(
+                    input,
+                    TokenKind::Semicolon,
+                ),
+            )?;
             seq.finish()
         })
         .with_kind(RuleKind::PragmaDirective)
@@ -3677,7 +3717,8 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn return_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem(
+            seq.elem_named(
+                "body",
                 SequenceHelper::run(|mut seq| {
                     seq.elem_named(
                         "return_keyword",
@@ -3699,10 +3740,13 @@ impl Language {
                     RecoverFromNoMatch::No,
                 ),
             )?;
-            seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                input,
-                TokenKind::Semicolon,
-            ))?;
+            seq.elem_named(
+                "semicolon",
+                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    input,
+                    TokenKind::Semicolon,
+                ),
+            )?;
             seq.finish()
         })
         .with_kind(RuleKind::ReturnStatement)
@@ -3728,7 +3772,8 @@ impl Language {
     fn revert_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if self.version_is_at_least_0_8_4 {
             SequenceHelper::run(|mut seq| {
-                seq.elem(
+                seq.elem_named(
+                    "body",
                     SequenceHelper::run(|mut seq| {
                         seq.elem_named(
                             "revert_keyword",
@@ -3751,10 +3796,13 @@ impl Language {
                         RecoverFromNoMatch::No,
                     ),
                 )?;
-                seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                    input,
-                    TokenKind::Semicolon,
-                ))?;
+                seq.elem_named(
+                    "semicolon",
+                    self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        input,
+                        TokenKind::Semicolon,
+                    ),
+                )?;
                 seq.finish()
             })
         } else {
@@ -3900,7 +3948,8 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn state_variable_definition(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem(
+            seq.elem_named(
+                "body",
                 SequenceHelper::run(|mut seq| {
                     seq.elem_named("type_name", self.type_name(input))?;
                     seq.elem_named(
@@ -3927,10 +3976,13 @@ impl Language {
                     RecoverFromNoMatch::No,
                 ),
             )?;
-            seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                input,
-                TokenKind::Semicolon,
-            ))?;
+            seq.elem_named(
+                "semicolon",
+                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    input,
+                    TokenKind::Semicolon,
+                ),
+            )?;
             seq.finish()
         })
         .with_kind(RuleKind::StateVariableDefinition)
@@ -4102,7 +4154,8 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn struct_member(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem(
+            seq.elem_named(
+                "body",
                 SequenceHelper::run(|mut seq| {
                     seq.elem_named("type_name", self.type_name(input))?;
                     seq.elem_named(
@@ -4121,10 +4174,13 @@ impl Language {
                     RecoverFromNoMatch::No,
                 ),
             )?;
-            seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                input,
-                TokenKind::Semicolon,
-            ))?;
+            seq.elem_named(
+                "semicolon",
+                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    input,
+                    TokenKind::Semicolon,
+                ),
+            )?;
             seq.finish()
         })
         .with_kind(RuleKind::StructMember)
@@ -4140,7 +4196,8 @@ impl Language {
     fn throw_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if !self.version_is_at_least_0_5_0 {
             SequenceHelper::run(|mut seq| {
-                seq.elem(
+                seq.elem_named(
+                    "throw_keyword",
                     self.parse_token_with_trivia::<LexicalContextType::Default>(
                         input,
                         TokenKind::ThrowKeyword,
@@ -4152,10 +4209,13 @@ impl Language {
                         RecoverFromNoMatch::No,
                     ),
                 )?;
-                seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                    input,
-                    TokenKind::Semicolon,
-                ))?;
+                seq.elem_named(
+                    "semicolon",
+                    self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        input,
+                        TokenKind::Semicolon,
+                    ),
+                )?;
                 seq.finish()
             })
         } else {
@@ -4234,7 +4294,7 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn tuple_deconstruction_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        SequenceHelper :: run (| mut seq | { seq . elem (SequenceHelper :: run (| mut seq | { seq . elem_named ("open_paren" , SequenceHelper :: run (| mut seq | { let mut delim_guard = input . open_delim (TokenKind :: CloseParen) ; let input = delim_guard . ctx () ; seq . elem (self . parse_token_with_trivia :: < LexicalContextType :: Default > (input , TokenKind :: OpenParen)) ? ; seq . elem (self . tuple_deconstruction_elements (input) . recover_until_with_nested_delims :: < _ , LexicalContextType :: Default > (input , self , TokenKind :: CloseParen , RecoverFromNoMatch :: Yes ,)) ? ; seq . elem (self . parse_token_with_trivia :: < LexicalContextType :: Default > (input , TokenKind :: CloseParen)) ? ; seq . finish () })) ? ; seq . elem_named ("equal" , self . parse_token_with_trivia :: < LexicalContextType :: Default > (input , TokenKind :: Equal)) ? ; seq . elem_named ("expression" , self . expression (input)) ? ; seq . finish () }) . recover_until_with_nested_delims :: < _ , LexicalContextType :: Default > (input , self , TokenKind :: Semicolon , RecoverFromNoMatch :: No ,)) ? ; seq . elem (self . parse_token_with_trivia :: < LexicalContextType :: Default > (input , TokenKind :: Semicolon)) ? ; seq . finish () }) . with_kind (RuleKind :: TupleDeconstructionStatement)
+        SequenceHelper :: run (| mut seq | { seq . elem_named ("body" , SequenceHelper :: run (| mut seq | { seq . elem_named ("open_paren" , SequenceHelper :: run (| mut seq | { let mut delim_guard = input . open_delim (TokenKind :: CloseParen) ; let input = delim_guard . ctx () ; seq . elem (self . parse_token_with_trivia :: < LexicalContextType :: Default > (input , TokenKind :: OpenParen)) ? ; seq . elem (self . tuple_deconstruction_elements (input) . recover_until_with_nested_delims :: < _ , LexicalContextType :: Default > (input , self , TokenKind :: CloseParen , RecoverFromNoMatch :: Yes ,)) ? ; seq . elem (self . parse_token_with_trivia :: < LexicalContextType :: Default > (input , TokenKind :: CloseParen)) ? ; seq . finish () })) ? ; seq . elem_named ("equal" , self . parse_token_with_trivia :: < LexicalContextType :: Default > (input , TokenKind :: Equal)) ? ; seq . elem_named ("expression" , self . expression (input)) ? ; seq . finish () }) . recover_until_with_nested_delims :: < _ , LexicalContextType :: Default > (input , self , TokenKind :: Semicolon , RecoverFromNoMatch :: No ,)) ? ; seq . elem_named ("semicolon" , self . parse_token_with_trivia :: < LexicalContextType :: Default > (input , TokenKind :: Semicolon)) ? ; seq . finish () }) . with_kind (RuleKind :: TupleDeconstructionStatement)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -4549,7 +4609,8 @@ impl Language {
     fn user_defined_value_type_definition(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if self.version_is_at_least_0_8_8 {
             SequenceHelper::run(|mut seq| {
-                seq.elem(
+                seq.elem_named(
+                    "body",
                     SequenceHelper::run(|mut seq| {
                         seq.elem_named(
                             "type_keyword",
@@ -4582,10 +4643,13 @@ impl Language {
                         RecoverFromNoMatch::No,
                     ),
                 )?;
-                seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                    input,
-                    TokenKind::Semicolon,
-                ))?;
+                seq.elem_named(
+                    "semicolon",
+                    self.parse_token_with_trivia::<LexicalContextType::Default>(
+                        input,
+                        TokenKind::Semicolon,
+                    ),
+                )?;
                 seq.finish()
             })
         } else {
@@ -4693,7 +4757,8 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn using_directive(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem(
+            seq.elem_named(
+                "body",
                 SequenceHelper::run(|mut seq| {
                     seq.elem_named(
                         "using_keyword",
@@ -4731,10 +4796,13 @@ impl Language {
                     RecoverFromNoMatch::No,
                 ),
             )?;
-            seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                input,
-                TokenKind::Semicolon,
-            ))?;
+            seq.elem_named(
+                "semicolon",
+                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    input,
+                    TokenKind::Semicolon,
+                ),
+            )?;
             seq.finish()
         })
         .with_kind(RuleKind::UsingDirective)
@@ -4839,7 +4907,8 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn variable_declaration_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem(
+            seq.elem_named(
+                "body",
                 SequenceHelper::run(|mut seq| {
                     seq.elem_named("variable_type", self.variable_declaration_type(input))?;
                     seq.elem_named(
@@ -4866,10 +4935,13 @@ impl Language {
                     RecoverFromNoMatch::No,
                 ),
             )?;
-            seq.elem(self.parse_token_with_trivia::<LexicalContextType::Default>(
-                input,
-                TokenKind::Semicolon,
-            ))?;
+            seq.elem_named(
+                "semicolon",
+                self.parse_token_with_trivia::<LexicalContextType::Default>(
+                    input,
+                    TokenKind::Semicolon,
+                ),
+            )?;
             seq.finish()
         })
         .with_kind(RuleKind::VariableDeclarationStatement)

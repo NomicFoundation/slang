@@ -28,5 +28,5 @@ Tree:
                           - Identifier: "error" # 20..25
                   - (name:) Identifier: "Error1" # 26..32
                   - SKIPPED: "()" # 32..34
-                  - Semicolon: ";" # 34..35
+                  - (semicolon:) Semicolon: ";" # 34..35
       - CloseBrace: "}" # 36..37

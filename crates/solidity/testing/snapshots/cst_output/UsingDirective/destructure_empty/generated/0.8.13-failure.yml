@@ -27,4 +27,4 @@ Tree:
       - (for_keyword:) ForKeyword: "for" # 50..53
       - (target:) UsingTarget: # 53..55 " *"
           - (variant:) Asterisk: "*" # 54..55
-      - Semicolon: ";" # 55..56
+      - (semicolon:) Semicolon: ";" # 55..56

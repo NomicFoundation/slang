@@ -33,4 +33,4 @@ Tree:
                       - (right_operand:) Expression: # 14..19 " some"
                           - Identifier: "some" # 15..19
       - SKIPPED: "invalid tokens\n\n" # 20..36
-      - Semicolon: ";" # 36..37
+      - (semicolon:) Semicolon: ";" # 36..37

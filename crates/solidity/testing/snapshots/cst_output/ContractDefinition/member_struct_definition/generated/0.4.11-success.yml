@@ -27,12 +27,12 @@ Tree:
                               - ElementaryType: # 31..39 "    uint"
                                   - (variant:) UintKeyword: "uint" # 35..39
                           - (name:) Identifier: "a" # 40..41
-                          - Semicolon: ";" # 41..42
+                          - (semicolon:) Semicolon: ";" # 41..42
                       - StructMember: # 43..55 "    uint b;\n"
                           - (type_name:) TypeName: # 43..51 "    uint"
                               - ElementaryType: # 43..51 "    uint"
                                   - (variant:) UintKeyword: "uint" # 47..51
                           - (name:) Identifier: "b" # 52..53
-                          - Semicolon: ";" # 53..54
+                          - (semicolon:) Semicolon: ";" # 53..54
                   - CloseBrace: "}" # 57..58
       - CloseBrace: "}" # 59..60

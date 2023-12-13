@@ -56,12 +56,12 @@ Tree:
                                       - VersionPragmaValue: "0" # 18..19
                                       - Period: "." # 19..20
                                       - VersionPragmaValue: "0" # 20..21
-                  - Semicolon: ";" # 21..22
+                  - (semicolon:) Semicolon: ";" # 21..22
           - SourceUnitMember: # 23..42 '\nimport "foo.sol";\n'
               - (variant:) ImportDirective: # 23..42 '\nimport "foo.sol";\n'
                   - (import_keyword:) ImportKeyword: "import" # 24..30
                   - (clause:) ImportClause: # 30..40 ' "foo.sol"'
                       - (variant:) PathImport: # 30..40 ' "foo.sol"'
                           - (path:) AsciiStringLiteral: '"foo.sol"' # 31..40
-                  - Semicolon: ";" # 40..41
+                  - (semicolon:) Semicolon: ";" # 40..41
       - SKIPPED: "using A for B;\n\ncontract C { }\n\ninterface I { }\n\nl..." # 43..243

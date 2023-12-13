@@ -19,4 +19,4 @@ Tree:
                           - VersionPragmaValue: "0" # 18..19
                           - Period: "." # 19..20
                           - VersionPragmaValue: "0" # 20..21
-      - Semicolon: ";" # 21..22
+      - (semicolon:) Semicolon: ";" # 21..22

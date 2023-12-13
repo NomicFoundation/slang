@@ -22,5 +22,5 @@ Tree:
                   - (for_keyword:) ForKeyword: "for" # 28..31
                   - (target:) UsingTarget: # 31..33 " *"
                       - (variant:) Asterisk: "*" # 32..33
-                  - Semicolon: ";" # 33..34
+                  - (semicolon:) Semicolon: ";" # 33..34
       - CloseBrace: "}" # 35..36

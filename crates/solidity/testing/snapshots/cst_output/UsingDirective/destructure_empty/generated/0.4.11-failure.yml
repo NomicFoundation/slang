@@ -20,4 +20,4 @@ Tree:
           - (variant:) SingleLineComment: "// Empty using symbols list is not valid" # 0..40
       - (using_keyword:) UsingKeyword: "using" # 41..46
       - SKIPPED: "{} for *" # 47..55
-      - Semicolon: ";" # 55..56
+      - (semicolon:) Semicolon: ";" # 55..56

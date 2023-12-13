@@ -88,7 +88,7 @@ Tree:
                                                                               - (operator:) Plus: "+" # 135..136
                                                                               - (right_operand:) Expression: # 136..138 " b"
                                                                                   - Identifier: "b" # 137..138
-                                                                  - Semicolon: ";" # 138..139
+                                                                  - (semicolon:) Semicolon: ";" # 138..139
                                                           - Statement: # 140..176 "      if (c < a) return (false, 0);\n"
                                                               - (variant:) IfStatement: # 140..176 "      if (c < a) return (false, 0);\n"
                                                                   - (if_keyword:) IfKeyword: "if" # 146..148
@@ -117,7 +117,7 @@ Tree:
                                                                                               - DecimalNumberExpression: # 171..173 " 0"
                                                                                                   - (literal:) DecimalLiteral: "0" # 172..173
                                                                                   - CloseParen: ")" # 173..174
-                                                                          - Semicolon: ";" # 174..175
+                                                                          - (semicolon:) Semicolon: ";" # 174..175
                                                           - Statement: # 176..200 "      return (true, c);\n"
                                                               - (variant:) ReturnStatement: # 176..200 "      return (true, c);\n"
                                                                   - (return_keyword:) ReturnKeyword: "return" # 182..188
@@ -133,7 +133,7 @@ Tree:
                                                                                   - Expression: # 195..197 " c"
                                                                                       - Identifier: "c" # 196..197
                                                                           - CloseParen: ")" # 197..198
-                                                                  - Semicolon: ";" # 198..199
+                                                                  - (semicolon:) Semicolon: ";" # 198..199
                                                       - CloseBrace: "}" # 204..205
                                       - CloseBrace: "}" # 208..209
                   - CloseBrace: "}" # 210..211

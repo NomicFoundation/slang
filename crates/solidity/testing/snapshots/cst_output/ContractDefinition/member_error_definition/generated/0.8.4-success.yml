@@ -20,5 +20,5 @@ Tree:
                   - (members:) ErrorParametersDeclaration: # 32..34 "()"
                       - OpenParen: "(" # 32..33
                       - CloseParen: ")" # 33..34
-                  - Semicolon: ";" # 34..35
+                  - (semicolon:) Semicolon: ";" # 34..35
       - CloseBrace: "}" # 36..37

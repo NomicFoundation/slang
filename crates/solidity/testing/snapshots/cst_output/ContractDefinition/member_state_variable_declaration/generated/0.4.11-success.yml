@@ -22,5 +22,5 @@ Tree:
                       - StateVariableAttribute: # 24..31 " public"
                           - (variant:) PublicKeyword: "public" # 25..31
                   - (name:) Identifier: "a" # 32..33
-                  - Semicolon: ";" # 33..34
+                  - (semicolon:) Semicolon: ";" # 33..34
       - CloseBrace: "}" # 35..36

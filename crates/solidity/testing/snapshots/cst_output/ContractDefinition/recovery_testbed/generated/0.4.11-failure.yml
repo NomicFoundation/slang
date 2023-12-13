@@ -91,7 +91,7 @@ Tree:
                                                               - (expression:) Expression: # 127..129 " 1"
                                                                   - DecimalNumberExpression: # 127..129 " 1"
                                                                       - (literal:) DecimalLiteral: "1" # 128..129
-                                                          - Semicolon: ";" # 129..130
+                                                          - (semicolon:) Semicolon: ";" # 129..130
                                               - CloseBrace: "}" # 133..134
                           - CloseBrace: "}" # 136..137
           - ContractMember: # 138..210 "\n\tfunction abc() {\n\t\tuint256 x = 0;\n\t\tunchecked { ..."
@@ -118,7 +118,7 @@ Tree:
                                           - (expression:) Expression: # 170..172 " 0"
                                               - DecimalNumberExpression: # 170..172 " 0"
                                                   - (literal:) DecimalLiteral: "0" # 171..172
-                                      - Semicolon: ";" # 172..173
+                                      - (semicolon:) Semicolon: ";" # 172..173
                               - Statement: # 174..186 "\t\tunchecked "
                                   - ExpressionStatement: # 174..186 "\t\tunchecked "
                                       - Expression: # 174..185 "\t\tunchecked"
