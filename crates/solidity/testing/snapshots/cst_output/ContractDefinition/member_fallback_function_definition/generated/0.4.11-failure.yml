@@ -27,6 +27,6 @@ Tree:
               - StateVariableDefinition: # 18..28 "  fallback"
                   - (type_name:) TypeName: # 18..28 "  fallback"
                       - (variant:) IdentifierPath: # 18..28 "  fallback"
-                          - Identifier: "fallback" # 20..28
+                          - (item:) Identifier: "fallback" # 20..28
       - SKIPPED: "() {\n  }\n" # 28..37
       - (close_brace:) CloseBrace: "}" # 37..38

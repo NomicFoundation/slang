@@ -9,15 +9,15 @@ Tree:
   - TupleExpression: # 0..20 "(, second, , fourth)"
       - (open_paren:) OpenParen: "(" # 0..1
       - (items:) TupleValues: # 1..19 ", second, , fourth"
-          - TupleValue: [] # 1..1
-          - Comma: "," # 1..2
-          - TupleValue: # 2..9 " second"
+          - (item:) TupleValue: [] # 1..1
+          - (separator:) Comma: "," # 1..2
+          - (item:) TupleValue: # 2..9 " second"
               - (expression:) Expression: # 2..9 " second"
                   - (variant:) Identifier: "second" # 3..9
-          - Comma: "," # 9..10
-          - TupleValue: [] # 10..10
-          - Comma: "," # 11..12
-          - TupleValue: # 12..19 " fourth"
+          - (separator:) Comma: "," # 9..10
+          - (item:) TupleValue: [] # 10..10
+          - (separator:) Comma: "," # 11..12
+          - (item:) TupleValue: # 12..19 " fourth"
               - (expression:) Expression: # 12..19 " fourth"
                   - (variant:) Identifier: "fourth" # 13..19
       - (close_paren:) CloseParen: ")" # 19..20

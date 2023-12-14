@@ -13,7 +13,7 @@ Errors: []
 Tree:
   - SourceUnit: # 0..71 "contract X { }\n    \n// spaces before this\n\n/* new ..."
       - (members:) SourceUnitMembers: # 0..15 "contract X { }\n"
-          - SourceUnitMember: # 0..15 "contract X { }\n"
+          - (item:) SourceUnitMember: # 0..15 "contract X { }\n"
               - (variant:) ContractDefinition: # 0..15 "contract X { }\n"
                   - (contract_keyword:) ContractKeyword: "contract" # 0..8
                   - (name:) Identifier: "X" # 9..10

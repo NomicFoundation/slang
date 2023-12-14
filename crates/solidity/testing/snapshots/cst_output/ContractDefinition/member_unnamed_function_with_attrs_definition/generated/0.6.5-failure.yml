@@ -30,9 +30,9 @@ Tree:
                               - (open_paren:) OpenParen: "(" # 28..29
                               - (close_paren:) CloseParen: ")" # 29..30
                           - (attributes:) FunctionTypeAttributes: # 30..47 " external payable"
-                              - FunctionTypeAttribute: # 30..39 " external"
+                              - (item:) FunctionTypeAttribute: # 30..39 " external"
                                   - (variant:) ExternalKeyword: "external" # 31..39
-                              - FunctionTypeAttribute: # 39..47 " payable"
+                              - (item:) FunctionTypeAttribute: # 39..47 " payable"
                                   - (variant:) PayableKeyword: "payable" # 40..47
       - SKIPPED: "{}\n" # 48..51
       - (close_brace:) CloseBrace: "}" # 51..52

@@ -12,9 +12,9 @@ Tree:
           - (variant:) UsingDeconstruction: # 5..16 " {div as /}"
               - (open_brace:) OpenBrace: "{" # 6..7
               - (symbols:) UsingDeconstructionSymbols: # 7..15 "div as /"
-                  - UsingDeconstructionSymbol: # 7..15 "div as /"
+                  - (item:) UsingDeconstructionSymbol: # 7..15 "div as /"
                       - (name:) IdentifierPath: # 7..10 "div"
-                          - Identifier: "div" # 7..10
+                          - (item:) Identifier: "div" # 7..10
                       - (alias:) UsingAlias: # 10..15 " as /"
                           - (as_keyword:) AsKeyword: "as" # 11..13
                           - (operator:) UsingOperator: # 13..15 " /"
@@ -24,6 +24,6 @@ Tree:
       - (target:) UsingTarget: # 20..24 " Int"
           - (variant:) TypeName: # 20..24 " Int"
               - (variant:) IdentifierPath: # 20..24 " Int"
-                  - Identifier: "Int" # 21..24
+                  - (item:) Identifier: "Int" # 21..24
       - (global_keyword:) GlobalKeyword: "global" # 25..31
       - (semicolon:) Semicolon: ";" # 31..32

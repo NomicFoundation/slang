@@ -11,7 +11,7 @@ Tree:
           - (variant:) TupleExpression: # 0..12 "(foo == bar)"
               - (open_paren:) OpenParen: "(" # 0..1
               - (items:) TupleValues: # 1..11 "foo == bar"
-                  - TupleValue: # 1..11 "foo == bar"
+                  - (item:) TupleValue: # 1..11 "foo == bar"
                       - (expression:) Expression: # 1..11 "foo == bar"
                           - (variant:) EqualityExpression: # 1..11 "foo == bar"
                               - (left_operand:) Expression: # 1..4 "foo"

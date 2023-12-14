@@ -47,7 +47,7 @@ Tree:
       - (name:) Identifier: "Contract" # 9..17
       - (open_brace:) OpenBrace: "{" # 18..19
       - (members:) ContractMembers: # 20..210 "\tfunction _transfer(address while) private {\n\t\tif(..."
-          - ContractMember: # 20..138 "\tfunction _transfer(address while) private {\n\t\tif(..."
+          - (item:) ContractMember: # 20..138 "\tfunction _transfer(address while) private {\n\t\tif(..."
               - (variant:) FunctionDefinition: # 20..138 "\tfunction _transfer(address while) private {\n\t\tif(..."
                   - (function_keyword:) FunctionKeyword: "function" # 21..29
                   - (name:) FunctionName: # 29..39 " _transfer"
@@ -55,7 +55,7 @@ Tree:
                   - (parameters:) ParametersDeclaration: # 39..54 "(address while)"
                       - (open_paren:) OpenParen: "(" # 39..40
                       - Parameters: # 40..47 "address"
-                          - Parameter: # 40..47 "address"
+                          - (item:) Parameter: # 40..47 "address"
                               - (type_name:) TypeName: # 40..47 "address"
                                   - (variant:) ElementaryType: # 40..47 "address"
                                       - (variant:) AddressType: # 40..47 "address"
@@ -63,13 +63,13 @@ Tree:
                       - SKIPPED: "while" # 48..53
                       - (close_paren:) CloseParen: ")" # 53..54
                   - (attributes:) FunctionAttributes: # 54..62 " private"
-                      - FunctionAttribute: # 54..62 " private"
+                      - (item:) FunctionAttribute: # 54..62 " private"
                           - (variant:) PrivateKeyword: "private" # 55..62
                   - (body:) FunctionBody: # 62..138 " {\n\t\tif(while == pair && !_isExcludedFromFee[to]){..."
                       - (variant:) Block: # 62..138 " {\n\t\tif(while == pair && !_isExcludedFromFee[to]){..."
                           - (open_brace:) OpenBrace: "{" # 63..64
                           - (statements:) Statements: # 65..135 "\t\tif(while == pair && !_isExcludedFromFee[to]){\n\t\t..."
-                              - Statement: # 65..135 "\t\tif(while == pair && !_isExcludedFromFee[to]){\n\t\t..."
+                              - (item:) Statement: # 65..135 "\t\tif(while == pair && !_isExcludedFromFee[to]){\n\t\t..."
                                   - (variant:) IfStatement: # 65..135 "\t\tif(while == pair && !_isExcludedFromFee[to]){\n\t\t..."
                                       - (if_keyword:) IfKeyword: "if" # 67..69
                                       - (open_paren:) OpenParen: "(" # 69..70
@@ -79,7 +79,7 @@ Tree:
                                           - (variant:) Block: # 111..135 "{\n\t\t\tuint256 a = 1;\n\t\t}\n"
                                               - (open_brace:) OpenBrace: "{" # 111..112
                                               - (statements:) Statements: # 113..131 "\t\t\tuint256 a = 1;\n"
-                                                  - Statement: # 113..131 "\t\t\tuint256 a = 1;\n"
+                                                  - (item:) Statement: # 113..131 "\t\t\tuint256 a = 1;\n"
                                                       - (variant:) VariableDeclarationStatement: # 113..131 "\t\t\tuint256 a = 1;\n"
                                                           - (variable_type:) VariableDeclarationType: # 113..123 "\t\t\tuint256"
                                                               - (variant:) TypeName: # 113..123 "\t\t\tuint256"
@@ -94,7 +94,7 @@ Tree:
                                                           - (semicolon:) Semicolon: ";" # 129..130
                                               - (close_brace:) CloseBrace: "}" # 133..134
                           - (close_brace:) CloseBrace: "}" # 136..137
-          - ContractMember: # 138..210 "\n\tfunction abc() {\n\t\tuint256 x = 0;\n\t\tunchecked { ..."
+          - (item:) ContractMember: # 138..210 "\n\tfunction abc() {\n\t\tuint256 x = 0;\n\t\tunchecked { ..."
               - (variant:) FunctionDefinition: # 138..210 "\n\tfunction abc() {\n\t\tuint256 x = 0;\n\t\tunchecked { ..."
                   - (function_keyword:) FunctionKeyword: "function" # 140..148
                   - (name:) FunctionName: # 148..152 " abc"
@@ -106,7 +106,7 @@ Tree:
                       - (variant:) Block: # 154..210 " {\n\t\tuint256 x = 0;\n\t\tunchecked { invalid sequence..."
                           - (open_brace:) OpenBrace: "{" # 155..156
                           - Statements: # 157..174 "\t\tuint256 x = 0;\n"
-                              - Statement: # 157..174 "\t\tuint256 x = 0;\n"
+                              - (item:) Statement: # 157..174 "\t\tuint256 x = 0;\n"
                                   - (variant:) VariableDeclarationStatement: # 157..174 "\t\tuint256 x = 0;\n"
                                       - (variable_type:) VariableDeclarationType: # 157..166 "\t\tuint256"
                                           - (variant:) TypeName: # 157..166 "\t\tuint256"

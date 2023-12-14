@@ -14,7 +14,7 @@ Tree:
       - (name:) Identifier: "Sample" # 9..15
       - (open_brace:) OpenBrace: "{" # 16..17
       - (members:) ContractMembers: # 18..36 "  receive() {\n  }\n"
-          - ContractMember: # 18..36 "  receive() {\n  }\n"
+          - (item:) ContractMember: # 18..36 "  receive() {\n  }\n"
               - (variant:) ReceiveFunctionDefinition: # 18..36 "  receive() {\n  }\n"
                   - (receive_keyword:) ReceiveKeyword: "receive" # 20..27
                   - (parameters:) ParametersDeclaration: # 27..29 "()"

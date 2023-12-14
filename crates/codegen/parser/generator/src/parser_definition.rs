@@ -53,10 +53,10 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                 }
             }
 
-            Self::OneOrMore(node) => {
+            Self::OneOrMore(name, node) => {
                 let parser = node.to_parser_code(context_name, is_trivia);
                 quote! {
-                    OneOrMoreHelper::run(input, |input| #parser)
+                    OneOrMoreHelper::run(input, |input| #parser.with_name(#name))
                 }
             }
 
@@ -191,21 +191,24 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
             }
 
             Self::SeparatedBy(body, separator) => {
-                let separator = match separator.as_ref() {
+                let separator_field_name = &separator.0;
+                let separator = match &separator.1 {
                     ParserDefinitionNode::ScannerDefinition(scanner, ..) => {
                         format_ident!("{name}", name = scanner.name())
                     }
                     _ => unreachable!("Only tokens are permitted as separators"),
                 };
 
-                let parser = body.to_parser_code(context_name, is_trivia);
+                let body_field_name = &body.0;
+                let parser = body.1.to_parser_code(context_name, is_trivia);
 
                 quote! {
                     SeparatedHelper::run::<_, #lex_ctx>(
                         input,
                         self,
-                        |input| #parser,
+                        |input| #parser.with_name(#body_field_name),
                         TokenKind::#separator,
+                        #separator_field_name,
                     )
                 }
             }
@@ -258,7 +261,7 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
 
             ParserDefinitionNode::Optional(node)
             | ParserDefinitionNode::ZeroOrMore(node)
-            | ParserDefinitionNode::OneOrMore(node) => node.applicable_version_quality_ranges(),
+            | ParserDefinitionNode::OneOrMore(_, node) => node.applicable_version_quality_ranges(),
 
             _ => vec![],
         }

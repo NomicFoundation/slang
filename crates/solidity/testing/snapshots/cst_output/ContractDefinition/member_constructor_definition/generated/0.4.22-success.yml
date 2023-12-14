@@ -14,14 +14,14 @@ Tree:
       - (name:) Identifier: "Sample" # 9..15
       - (open_brace:) OpenBrace: "{" # 16..17
       - (members:) ContractMembers: # 18..47 "  constructor() public {\n  }\n"
-          - ContractMember: # 18..47 "  constructor() public {\n  }\n"
+          - (item:) ContractMember: # 18..47 "  constructor() public {\n  }\n"
               - (variant:) ConstructorDefinition: # 18..47 "  constructor() public {\n  }\n"
                   - (constructor_keyword:) ConstructorKeyword: "constructor" # 20..31
                   - (parameters:) ParametersDeclaration: # 31..33 "()"
                       - (open_paren:) OpenParen: "(" # 31..32
                       - (close_paren:) CloseParen: ")" # 32..33
                   - (attributes:) ConstructorAttributes: # 33..40 " public"
-                      - ConstructorAttribute: # 33..40 " public"
+                      - (item:) ConstructorAttribute: # 33..40 " public"
                           - (variant:) PublicKeyword: "public" # 34..40
                   - (body:) Block: # 40..47 " {\n  }\n"
                       - (open_brace:) OpenBrace: "{" # 41..42

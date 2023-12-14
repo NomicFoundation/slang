@@ -9,7 +9,7 @@ Errors: []
 
 Tree:
   - ContractMembers: # 0..42 "function func() {\n  uint a = 1 + 2 * 3;\n}\n"
-      - ContractMember: # 0..42 "function func() {\n  uint a = 1 + 2 * 3;\n}\n"
+      - (item:) ContractMember: # 0..42 "function func() {\n  uint a = 1 + 2 * 3;\n}\n"
           - (variant:) FunctionDefinition: # 0..42 "function func() {\n  uint a = 1 + 2 * 3;\n}\n"
               - (function_keyword:) FunctionKeyword: "function" # 0..8
               - (name:) FunctionName: # 8..13 " func"
@@ -21,7 +21,7 @@ Tree:
                   - (variant:) Block: # 15..42 " {\n  uint a = 1 + 2 * 3;\n}\n"
                       - (open_brace:) OpenBrace: "{" # 16..17
                       - (statements:) Statements: # 18..40 "  uint a = 1 + 2 * 3;\n"
-                          - Statement: # 18..40 "  uint a = 1 + 2 * 3;\n"
+                          - (item:) Statement: # 18..40 "  uint a = 1 + 2 * 3;\n"
                               - (variant:) VariableDeclarationStatement: # 18..40 "  uint a = 1 + 2 * 3;\n"
                                   - (variable_type:) VariableDeclarationType: # 18..24 "  uint"
                                       - (variant:) TypeName: # 18..24 "  uint"

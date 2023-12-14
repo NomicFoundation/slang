@@ -21,7 +21,7 @@ Tree:
       - (parameters:) ParametersDeclaration: # 21..63 "(address from, address to, uint256 amount)"
           - (open_paren:) OpenParen: "(" # 21..22
           - Parameters: # 22..29 "address"
-              - Parameter: # 22..29 "address"
+              - (item:) Parameter: # 22..29 "address"
                   - (type_name:) TypeName: # 22..29 "address"
                       - (variant:) ElementaryType: # 22..29 "address"
                           - (variant:) AddressType: # 22..29 "address"
@@ -29,14 +29,14 @@ Tree:
           - SKIPPED: "from, address to, uint256 amount" # 30..62
           - (close_paren:) CloseParen: ")" # 62..63
       - (attributes:) FunctionAttributes: # 63..72 " external"
-          - FunctionAttribute: # 63..72 " external"
+          - (item:) FunctionAttribute: # 63..72 " external"
               - (variant:) ExternalKeyword: "external" # 64..72
       - (returns:) ReturnsDeclaration: # 72..87 " returns (bool)"
           - (returns_keyword:) ReturnsKeyword: "returns" # 73..80
           - (variables:) ParametersDeclaration: # 80..87 " (bool)"
               - (open_paren:) OpenParen: "(" # 81..82
               - (parameters:) Parameters: # 82..86 "bool"
-                  - Parameter: # 82..86 "bool"
+                  - (item:) Parameter: # 82..86 "bool"
                       - (type_name:) TypeName: # 82..86 "bool"
                           - (variant:) ElementaryType: # 82..86 "bool"
                               - (variant:) BoolKeyword: "bool" # 82..86

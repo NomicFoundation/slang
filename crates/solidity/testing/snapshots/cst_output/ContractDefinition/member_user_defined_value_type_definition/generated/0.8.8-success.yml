@@ -13,7 +13,7 @@ Tree:
       - (name:) Identifier: "Sample" # 9..15
       - (open_brace:) OpenBrace: "{" # 16..17
       - (members:) ContractMembers: # 18..38 "  type Foo is bool;\n"
-          - ContractMember: # 18..38 "  type Foo is bool;\n"
+          - (item:) ContractMember: # 18..38 "  type Foo is bool;\n"
               - (variant:) UserDefinedValueTypeDefinition: # 18..38 "  type Foo is bool;\n"
                   - (type_keyword:) TypeKeyword: "type" # 20..24
                   - (name:) Identifier: "Foo" # 25..28

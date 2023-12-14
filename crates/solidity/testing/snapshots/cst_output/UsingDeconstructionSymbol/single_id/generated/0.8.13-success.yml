@@ -8,4 +8,4 @@ Errors: []
 Tree:
   - UsingDeconstructionSymbol: # 0..3 "foo"
       - (name:) IdentifierPath: # 0..3 "foo"
-          - Identifier: "foo" # 0..3
+          - (item:) Identifier: "foo" # 0..3

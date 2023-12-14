@@ -17,20 +17,20 @@ Tree:
                       - (variant:) Identifier: "b" # 2..3
           - (options:) FunctionCallOptions: # 3..21 "{value: 0}{gas: 1}"
               - (variant:) NamedArgumentGroups: # 3..21 "{value: 0}{gas: 1}"
-                  - NamedArgumentGroup: # 3..13 "{value: 0}"
+                  - (item:) NamedArgumentGroup: # 3..13 "{value: 0}"
                       - (open_brace:) OpenBrace: "{" # 3..4
                       - (arguments:) NamedArguments: # 4..12 "value: 0"
-                          - NamedArgument: # 4..12 "value: 0"
+                          - (item:) NamedArgument: # 4..12 "value: 0"
                               - (name:) Identifier: "value" # 4..9
                               - (colon:) Colon: ":" # 9..10
                               - (value:) Expression: # 10..12 " 0"
                                   - (variant:) DecimalNumberExpression: # 10..12 " 0"
                                       - (literal:) DecimalLiteral: "0" # 11..12
                       - (close_brace:) CloseBrace: "}" # 12..13
-                  - NamedArgumentGroup: # 13..21 "{gas: 1}"
+                  - (item:) NamedArgumentGroup: # 13..21 "{gas: 1}"
                       - (open_brace:) OpenBrace: "{" # 13..14
                       - (arguments:) NamedArguments: # 14..20 "gas: 1"
-                          - NamedArgument: # 14..20 "gas: 1"
+                          - (item:) NamedArgument: # 14..20 "gas: 1"
                               - (name:) Identifier: "gas" # 14..17
                               - (colon:) Colon: ":" # 17..18
                               - (value:) Expression: # 18..20 " 1"
@@ -41,8 +41,8 @@ Tree:
               - (variant:) PositionalArgumentsDeclaration: # 21..25 '("")'
                   - (open_paren:) OpenParen: "(" # 21..22
                   - (arguments:) PositionalArguments: # 22..24 '""'
-                      - Expression: # 22..24 '""'
+                      - (item:) Expression: # 22..24 '""'
                           - (variant:) StringExpression: # 22..24 '""'
                               - (variant:) AsciiStringLiterals: # 22..24 '""'
-                                  - AsciiStringLiteral: '""' # 22..24
+                                  - (item:) AsciiStringLiteral: '""' # 22..24
                   - (close_paren:) CloseParen: ")" # 24..25

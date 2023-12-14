@@ -27,6 +27,6 @@ Tree:
               - StateVariableDefinition: # 18..27 "  receive"
                   - (type_name:) TypeName: # 18..27 "  receive"
                       - (variant:) IdentifierPath: # 18..27 "  receive"
-                          - Identifier: "receive" # 20..27
+                          - (item:) Identifier: "receive" # 20..27
       - SKIPPED: "() {\n  }\n" # 27..36
       - (close_brace:) CloseBrace: "}" # 36..37

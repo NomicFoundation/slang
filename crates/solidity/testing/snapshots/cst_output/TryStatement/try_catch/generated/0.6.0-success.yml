@@ -25,7 +25,7 @@ Tree:
           - (open_brace:) OpenBrace: "{" # 10..11
           - (close_brace:) CloseBrace: "}" # 11..12
       - (catch_clauses:) CatchClauses: # 12..21 " catch {}"
-          - CatchClause: # 12..21 " catch {}"
+          - (item:) CatchClause: # 12..21 " catch {}"
               - (catch_keyword:) CatchKeyword: "catch" # 13..18
               - (body:) Block: # 18..21 " {}"
                   - (open_brace:) OpenBrace: "{" # 19..20

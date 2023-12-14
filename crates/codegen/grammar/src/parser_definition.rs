@@ -40,7 +40,7 @@ pub enum ParserDefinitionNode {
     Versioned(Box<Self>, Vec<VersionQualityRange>),
     Optional(Box<Self>),
     ZeroOrMore(Box<Self>),
-    OneOrMore(Box<Self>),
+    OneOrMore(String, Box<Self>),
     Sequence(Vec<(String, Self)>),
     Choice(String, Vec<Self>),
     ScannerDefinition(ScannerDefinitionRef),
@@ -52,7 +52,7 @@ pub enum ParserDefinitionNode {
         Box<(String, Self)>,
         Box<(String, Self)>,
     ),
-    SeparatedBy(Box<Self>, Box<Self>),
+    SeparatedBy(Box<(String, Self)>, Box<(String, Self)>),
     TerminatedBy(Box<(String, Self)>, Box<(String, Self)>),
 }
 
@@ -87,7 +87,7 @@ impl Visitable for ParserDefinitionNode {
             Self::Versioned(node, _)
             | Self::Optional(node)
             | Self::ZeroOrMore(node)
-            | Self::OneOrMore(node) => node.accept_visitor(visitor),
+            | Self::OneOrMore(_, node) => node.accept_visitor(visitor),
 
             Self::Sequence(nodes) => {
                 for (_, node) in nodes {
@@ -107,8 +107,8 @@ impl Visitable for ParserDefinitionNode {
             }
 
             Self::SeparatedBy(body, separator) => {
-                body.accept_visitor(visitor);
-                separator.accept_visitor(visitor);
+                body.1.accept_visitor(visitor);
+                separator.1.accept_visitor(visitor);
             }
 
             Self::TerminatedBy(body, terminator) => {

@@ -12,7 +12,7 @@ Tree:
           - (variant:) ImportDeconstruction: # 6..28 ' { x as y } from "foo"'
               - (open_brace:) OpenBrace: "{" # 7..8
               - (symbols:) ImportDeconstructionSymbols: # 8..15 " x as y"
-                  - ImportDeconstructionSymbol: # 8..15 " x as y"
+                  - (item:) ImportDeconstructionSymbol: # 8..15 " x as y"
                       - (name:) Identifier: "x" # 9..10
                       - (alias:) ImportAlias: # 10..15 " as y"
                           - (as_keyword:) AsKeyword: "as" # 11..13

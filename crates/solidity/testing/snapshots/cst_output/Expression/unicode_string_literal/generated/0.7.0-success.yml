@@ -9,4 +9,4 @@ Tree:
   - Expression: # 0..25 'unicode"This Emoji: 😃"'
       - (variant:) StringExpression: # 0..25 'unicode"This Emoji: 😃"'
           - (variant:) UnicodeStringLiterals: # 0..25 'unicode"This Emoji: 😃"'
-              - UnicodeStringLiteral: 'unicode"This Emoji: 😃"' # 0..25
+              - (item:) UnicodeStringLiteral: 'unicode"This Emoji: 😃"' # 0..25

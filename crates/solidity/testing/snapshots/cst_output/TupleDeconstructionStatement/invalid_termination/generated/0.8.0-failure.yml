@@ -19,12 +19,12 @@ Tree:
   - TupleDeconstructionStatement: # 0..35 "(a, b) = (123, 135)\n/**/\n{ throw; \n"
       - (open_paren:) OpenParen: "(" # 0..1
       - (elements:) TupleDeconstructionElements: # 1..5 "a, b"
-          - TupleDeconstructionElement: # 1..2 "a"
+          - (item:) TupleDeconstructionElement: # 1..2 "a"
               - (member:) TupleMember: # 1..2 "a"
                   - (variant:) UntypedTupleMember: # 1..2 "a"
                       - (name:) Identifier: "a" # 1..2
-          - Comma: "," # 2..3
-          - TupleDeconstructionElement: # 3..5 " b"
+          - (separator:) Comma: "," # 2..3
+          - (item:) TupleDeconstructionElement: # 3..5 " b"
               - (member:) TupleMember: # 3..5 " b"
                   - (variant:) UntypedTupleMember: # 3..5 " b"
                       - (name:) Identifier: "b" # 4..5
@@ -34,12 +34,12 @@ Tree:
           - (variant:) TupleExpression: # 8..20 " (123, 135)\n"
               - (open_paren:) OpenParen: "(" # 9..10
               - (items:) TupleValues: # 10..18 "123, 135"
-                  - TupleValue: # 10..13 "123"
+                  - (item:) TupleValue: # 10..13 "123"
                       - (expression:) Expression: # 10..13 "123"
                           - (variant:) DecimalNumberExpression: # 10..13 "123"
                               - (literal:) DecimalLiteral: "123" # 10..13
-                  - Comma: "," # 13..14
-                  - TupleValue: # 14..18 " 135"
+                  - (separator:) Comma: "," # 13..14
+                  - (item:) TupleValue: # 14..18 " 135"
                       - (expression:) Expression: # 14..18 " 135"
                           - (variant:) DecimalNumberExpression: # 14..18 " 135"
                               - (literal:) DecimalLiteral: "135" # 15..18

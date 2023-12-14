@@ -14,7 +14,7 @@ Tree:
           - (open_paren:) OpenParen: "(" # 10..11
           - (close_paren:) CloseParen: ")" # 11..12
       - (attributes:) FunctionAttributes: # 12..21 " constant"
-          - FunctionAttribute: # 12..21 " constant"
+          - (item:) FunctionAttribute: # 12..21 " constant"
               - (variant:) ConstantKeyword: "constant" # 13..21
       - (body:) FunctionBody: # 21..24 " {}"
           - (variant:) Block: # 21..24 " {}"

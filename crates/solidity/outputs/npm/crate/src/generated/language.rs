@@ -346,8 +346,9 @@ impl Language {
         SeparatedHelper::run::<_, LexicalContextType::Default>(
             input,
             self,
-            |input| self.expression(input),
+            |input| self.expression(input).with_name("item"),
             TokenKind::Comma,
+            "separator",
         )
         .with_kind(RuleKind::ArrayValues)
     }
@@ -359,6 +360,7 @@ impl Language {
                 input,
                 TokenKind::AsciiStringLiteral,
             )
+            .with_name("item")
         })
         .with_kind(RuleKind::AsciiStringLiterals)
     }
@@ -373,8 +375,10 @@ impl Language {
                     input,
                     TokenKind::AsciiStringLiteral,
                 )
+                .with_name("item")
             },
             TokenKind::Comma,
+            "separator",
         )
         .with_kind(RuleKind::AssemblyFlags)
     }
@@ -638,7 +642,7 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn catch_clauses(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if self.version_is_at_least_0_6_0 {
-            OneOrMoreHelper::run(input, |input| self.catch_clause(input))
+            OneOrMoreHelper::run(input, |input| self.catch_clause(input).with_name("item"))
         } else {
             ParserResult::disabled()
         }
@@ -774,7 +778,9 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn constructor_attributes(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if self.version_is_at_least_0_4_22 {
-            OneOrMoreHelper::run(input, |input| self.constructor_attribute(input))
+            OneOrMoreHelper::run(input, |input| {
+                self.constructor_attribute(input).with_name("item")
+            })
         } else {
             ParserResult::disabled()
         }
@@ -950,7 +956,7 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn contract_members(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        OneOrMoreHelper::run(input, |input| self.contract_member(input))
+        OneOrMoreHelper::run(input, |input| self.contract_member(input).with_name("item"))
             .with_kind(RuleKind::ContractMembers)
     }
 
@@ -1210,6 +1216,7 @@ impl Language {
                 choice.consider(input, result)?;
                 choice.finish(input)
             })
+            .with_name("")
         })
         .with_kind(RuleKind::EndOfFileTrivia)
     }
@@ -1275,8 +1282,10 @@ impl Language {
                     input,
                     TokenKind::Identifier,
                 )
+                .with_name("item")
             },
             TokenKind::Comma,
+            "separator",
         )
         .with_kind(RuleKind::EnumMembers)
     }
@@ -1376,8 +1385,9 @@ impl Language {
             SeparatedHelper::run::<_, LexicalContextType::Default>(
                 input,
                 self,
-                |input| self.error_parameter(input),
+                |input| self.error_parameter(input).with_name("item"),
                 TokenKind::Comma,
+                "separator",
             )
         } else {
             ParserResult::disabled()
@@ -1506,8 +1516,9 @@ impl Language {
         SeparatedHelper::run::<_, LexicalContextType::Default>(
             input,
             self,
-            |input| self.event_parameter(input),
+            |input| self.event_parameter(input).with_name("item"),
             TokenKind::Comma,
+            "separator",
         )
         .with_kind(RuleKind::EventParameters)
     }
@@ -2311,7 +2322,9 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn fallback_function_attributes(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if self.version_is_at_least_0_6_0 {
-            OneOrMoreHelper::run(input, |input| self.fallback_function_attribute(input))
+            OneOrMoreHelper::run(input, |input| {
+                self.fallback_function_attribute(input).with_name("item")
+            })
         } else {
             ParserResult::disabled()
         }
@@ -2500,8 +2513,10 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn function_attributes(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        OneOrMoreHelper::run(input, |input| self.function_attribute(input))
-            .with_kind(RuleKind::FunctionAttributes)
+        OneOrMoreHelper::run(input, |input| {
+            self.function_attribute(input).with_name("item")
+        })
+        .with_kind(RuleKind::FunctionAttributes)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -2682,8 +2697,10 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn function_type_attributes(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        OneOrMoreHelper::run(input, |input| self.function_type_attribute(input))
-            .with_kind(RuleKind::FunctionTypeAttributes)
+        OneOrMoreHelper::run(input, |input| {
+            self.function_type_attribute(input).with_name("item")
+        })
+        .with_kind(RuleKind::FunctionTypeAttributes)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -2711,6 +2728,7 @@ impl Language {
                 input,
                 TokenKind::HexStringLiteral,
             )
+            .with_name("item")
         })
         .with_kind(RuleKind::HexStringLiterals)
     }
@@ -2725,8 +2743,10 @@ impl Language {
                     input,
                     TokenKind::Identifier,
                 )
+                .with_name("item")
             },
             TokenKind::Period,
+            "separator",
         )
         .with_kind(RuleKind::IdentifierPath)
     }
@@ -2889,8 +2909,9 @@ impl Language {
         SeparatedHelper::run::<_, LexicalContextType::Default>(
             input,
             self,
-            |input| self.import_deconstruction_symbol(input),
+            |input| self.import_deconstruction_symbol(input).with_name("item"),
             TokenKind::Comma,
+            "separator",
         )
         .with_kind(RuleKind::ImportDeconstructionSymbols)
     }
@@ -3001,8 +3022,9 @@ impl Language {
         SeparatedHelper::run::<_, LexicalContextType::Default>(
             input,
             self,
-            |input| self.inheritance_type(input),
+            |input| self.inheritance_type(input).with_name("item"),
             TokenKind::Comma,
+            "separator",
         )
         .with_kind(RuleKind::InheritanceTypes)
     }
@@ -3064,7 +3086,7 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn interface_members(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        OneOrMoreHelper::run(input, |input| self.contract_member(input))
+        OneOrMoreHelper::run(input, |input| self.contract_member(input).with_name("item"))
             .with_kind(RuleKind::InterfaceMembers)
     }
 
@@ -3088,6 +3110,7 @@ impl Language {
                 choice.consider(input, result)?;
                 choice.finish(input)
             })
+            .with_name("")
         })
         .with_kind(RuleKind::LeadingTrivia)
     }
@@ -3145,7 +3168,7 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn library_members(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        OneOrMoreHelper::run(input, |input| self.contract_member(input))
+        OneOrMoreHelper::run(input, |input| self.contract_member(input).with_name("item"))
             .with_kind(RuleKind::LibraryMembers)
     }
 
@@ -3317,8 +3340,10 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn modifier_attributes(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        OneOrMoreHelper::run(input, |input| self.modifier_attribute(input))
-            .with_kind(RuleKind::ModifierAttributes)
+        OneOrMoreHelper::run(input, |input| {
+            self.modifier_attribute(input).with_name("item")
+        })
+        .with_kind(RuleKind::ModifierAttributes)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -3446,7 +3471,9 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn named_argument_groups(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if self.version_is_at_least_0_6_2 && !self.version_is_at_least_0_8_0 {
-            OneOrMoreHelper::run(input, |input| self.named_argument_group(input))
+            OneOrMoreHelper::run(input, |input| {
+                self.named_argument_group(input).with_name("item")
+            })
         } else {
             ParserResult::disabled()
         }
@@ -3458,8 +3485,9 @@ impl Language {
         SeparatedHelper::run::<_, LexicalContextType::Default>(
             input,
             self,
-            |input| self.named_argument(input),
+            |input| self.named_argument(input).with_name("item"),
             TokenKind::Comma,
+            "separator",
         )
         .with_kind(RuleKind::NamedArguments)
     }
@@ -3640,8 +3668,9 @@ impl Language {
         SeparatedHelper::run::<_, LexicalContextType::Default>(
             input,
             self,
-            |input| self.identifier_path(input),
+            |input| self.identifier_path(input).with_name("item"),
             TokenKind::Comma,
+            "separator",
         )
         .with_kind(RuleKind::OverridePaths)
     }
@@ -3726,8 +3755,9 @@ impl Language {
         SeparatedHelper::run::<_, LexicalContextType::Default>(
             input,
             self,
-            |input| self.parameter(input),
+            |input| self.parameter(input).with_name("item"),
             TokenKind::Comma,
+            "separator",
         )
         .with_kind(RuleKind::Parameters)
     }
@@ -3787,8 +3817,9 @@ impl Language {
         SeparatedHelper::run::<_, LexicalContextType::Default>(
             input,
             self,
-            |input| self.expression(input),
+            |input| self.expression(input).with_name("item"),
             TokenKind::Comma,
+            "separator",
         )
         .with_kind(RuleKind::PositionalArguments)
     }
@@ -3952,7 +3983,9 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn receive_function_attributes(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if self.version_is_at_least_0_6_0 {
-            OneOrMoreHelper::run(input, |input| self.receive_function_attribute(input))
+            OneOrMoreHelper::run(input, |input| {
+                self.receive_function_attribute(input).with_name("item")
+            })
         } else {
             ParserResult::disabled()
         }
@@ -4169,8 +4202,10 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn source_unit_members(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        OneOrMoreHelper::run(input, |input| self.source_unit_member(input))
-            .with_kind(RuleKind::SourceUnitMembers)
+        OneOrMoreHelper::run(input, |input| {
+            self.source_unit_member(input).with_name("item")
+        })
+        .with_kind(RuleKind::SourceUnitMembers)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -4213,8 +4248,10 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn state_variable_attributes(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        OneOrMoreHelper::run(input, |input| self.state_variable_attribute(input))
-            .with_kind(RuleKind::StateVariableAttributes)
+        OneOrMoreHelper::run(input, |input| {
+            self.state_variable_attribute(input).with_name("item")
+        })
+        .with_kind(RuleKind::StateVariableAttributes)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -4333,7 +4370,8 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn statements(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        OneOrMoreHelper::run(input, |input| self.statement(input)).with_kind(RuleKind::Statements)
+        OneOrMoreHelper::run(input, |input| self.statement(input).with_name("item"))
+            .with_kind(RuleKind::Statements)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -4467,7 +4505,7 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn struct_members(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        OneOrMoreHelper::run(input, |input| self.struct_member(input))
+        OneOrMoreHelper::run(input, |input| self.struct_member(input).with_name("item"))
             .with_kind(RuleKind::StructMembers)
     }
 
@@ -4560,8 +4598,9 @@ impl Language {
         SeparatedHelper::run::<_, LexicalContextType::Default>(
             input,
             self,
-            |input| self.tuple_deconstruction_element(input),
+            |input| self.tuple_deconstruction_element(input).with_name("item"),
             TokenKind::Comma,
+            "separator",
         )
         .with_kind(RuleKind::TupleDeconstructionElements)
     }
@@ -4689,8 +4728,9 @@ impl Language {
         SeparatedHelper::run::<_, LexicalContextType::Default>(
             input,
             self,
-            |input| self.tuple_value(input),
+            |input| self.tuple_value(input).with_name("item"),
             TokenKind::Comma,
+            "separator",
         )
         .with_kind(RuleKind::TupleValues)
     }
@@ -4863,6 +4903,7 @@ impl Language {
                     input,
                     TokenKind::UnicodeStringLiteral,
                 )
+                .with_name("item")
             })
         } else {
             ParserResult::disabled()
@@ -4910,7 +4951,9 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     fn unnamed_function_attributes(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if !self.version_is_at_least_0_6_0 {
-            OneOrMoreHelper::run(input, |input| self.unnamed_function_attribute(input))
+            OneOrMoreHelper::run(input, |input| {
+                self.unnamed_function_attribute(input).with_name("item")
+            })
         } else {
             ParserResult::disabled()
         }
@@ -5109,8 +5152,9 @@ impl Language {
             SeparatedHelper::run::<_, LexicalContextType::Default>(
                 input,
                 self,
-                |input| self.using_deconstruction_symbol(input),
+                |input| self.using_deconstruction_symbol(input).with_name("item"),
                 TokenKind::Comma,
+                "separator",
             )
         } else {
             ParserResult::disabled()
@@ -5491,8 +5535,10 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn version_pragma_expressions(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        OneOrMoreHelper::run(input, |input| self.version_pragma_expression(input))
-            .with_kind(RuleKind::VersionPragmaExpressions)
+        OneOrMoreHelper::run(input, |input| {
+            self.version_pragma_expression(input).with_name("item")
+        })
+        .with_kind(RuleKind::VersionPragmaExpressions)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -5568,8 +5614,10 @@ impl Language {
                     input,
                     TokenKind::VersionPragmaValue,
                 )
+                .with_name("item")
             },
             TokenKind::Period,
+            "separator",
         )
         .with_kind(RuleKind::VersionPragmaSpecifier)
     }
@@ -5624,8 +5672,9 @@ impl Language {
         SeparatedHelper::run::<_, LexicalContextType::Yul>(
             input,
             self,
-            |input| self.yul_expression(input),
+            |input| self.yul_expression(input).with_name("item"),
             TokenKind::Comma,
+            "separator",
         )
         .with_kind(RuleKind::YulArguments)
     }
@@ -5860,8 +5909,10 @@ impl Language {
                     input,
                     TokenKind::YulIdentifier,
                 )
+                .with_name("item")
             },
             TokenKind::Period,
+            "separator",
         )
         .with_kind(RuleKind::YulIdentifierPath)
     }
@@ -5871,8 +5922,9 @@ impl Language {
         SeparatedHelper::run::<_, LexicalContextType::Yul>(
             input,
             self,
-            |input| self.yul_identifier_path(input),
+            |input| self.yul_identifier_path(input).with_name("item"),
             TokenKind::Comma,
+            "separator",
         )
         .with_kind(RuleKind::YulIdentifierPaths)
     }
@@ -5957,8 +6009,10 @@ impl Language {
                     input,
                     TokenKind::YulIdentifier,
                 )
+                .with_name("item")
             },
             TokenKind::Comma,
+            "separator",
         )
         .with_kind(RuleKind::YulParameters)
     }
@@ -6007,8 +6061,10 @@ impl Language {
                     input,
                     TokenKind::YulIdentifier,
                 )
+                .with_name("item")
             },
             TokenKind::Comma,
+            "separator",
         )
         .with_kind(RuleKind::YulReturnVariables)
     }
@@ -6064,7 +6120,7 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn yul_statements(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        OneOrMoreHelper::run(input, |input| self.yul_statement(input))
+        OneOrMoreHelper::run(input, |input| self.yul_statement(input).with_name("item"))
             .with_kind(RuleKind::YulStatements)
     }
 
@@ -6083,7 +6139,7 @@ impl Language {
 
     #[allow(unused_assignments, unused_parens)]
     fn yul_switch_cases(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        OneOrMoreHelper::run(input, |input| self.yul_switch_case(input))
+        OneOrMoreHelper::run(input, |input| self.yul_switch_case(input).with_name("item"))
             .with_kind(RuleKind::YulSwitchCases)
     }
 

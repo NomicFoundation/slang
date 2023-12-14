@@ -21,11 +21,11 @@ Tree:
       - (name:) Identifier: "Test" # 9..13
       - (open_brace:) OpenBrace: "{" # 14..15
       - (members:) ContractMembers: # 16..25 "  field;\n"
-          - ContractMember: # 16..25 "  field;\n"
+          - (item:) ContractMember: # 16..25 "  field;\n"
               - (variant:) StateVariableDefinition: # 16..25 "  field;\n"
                   - (type_name:) TypeName: # 16..23 "  field"
                       - (variant:) IdentifierPath: # 16..23 "  field"
-                          - Identifier: "field" # 18..23
+                          - (item:) Identifier: "field" # 18..23
                   - SKIPPED: "" # 23..23
                   - (semicolon:) Semicolon: ";" # 23..24
       - (close_brace:) CloseBrace: "}" # 25..26

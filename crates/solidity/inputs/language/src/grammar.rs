@@ -553,7 +553,7 @@ fn resolve_trivia(parser: model::TriviaParser, ctx: &mut ResolveCtx<'_>) -> Pars
             ParserDefinitionNode::Optional(Box::new(resolve_trivia(*parser, ctx)))
         }
         model::TriviaParser::OneOrMore { parser } => {
-            ParserDefinitionNode::OneOrMore(Box::new(resolve_trivia(*parser, ctx)))
+            ParserDefinitionNode::OneOrMore(EMPTY_NAME, Box::new(resolve_trivia(*parser, ctx)))
         }
         model::TriviaParser::ZeroOrMore { parser } => {
             ParserDefinitionNode::ZeroOrMore(Box::new(resolve_trivia(*parser, ctx)))
@@ -716,14 +716,18 @@ fn resolve_choice(item: model::EnumItem, ctx: &mut ResolveCtx<'_>) -> ParserDefi
 fn resolve_repeated(item: model::RepeatedItem, ctx: &mut ResolveCtx<'_>) -> ParserDefinitionNode {
     let body = Box::new(resolve_grammar_element(&item.repeated, ctx).into_parser_def_node());
 
-    ParserDefinitionNode::OneOrMore(body).versioned(item.enabled)
+    ParserDefinitionNode::OneOrMore(String::from("item"), body).versioned(item.enabled)
 }
 
 fn resolve_separated(item: model::SeparatedItem, ctx: &mut ResolveCtx<'_>) -> ParserDefinitionNode {
     let body = resolve_grammar_element(&item.separated, ctx).into_parser_def_node();
     let separator = resolve_grammar_element(&item.separator, ctx).into_parser_def_node();
 
-    ParserDefinitionNode::SeparatedBy(Box::new(body), Box::new(separator)).versioned(item.enabled)
+    ParserDefinitionNode::SeparatedBy(
+        Box::new((String::from("item"), body)),
+        Box::new((String::from("separator"), separator)),
+    )
+    .versioned(item.enabled)
 }
 
 fn resolve_precedence(

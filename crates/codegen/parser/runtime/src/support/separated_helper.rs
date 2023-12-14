@@ -15,6 +15,7 @@ impl SeparatedHelper {
         lexer: &L,
         body_parser: impl Fn(&mut ParserContext<'_>) -> ParserResult,
         separator: TokenKind,
+        separator_field_name: &str,
     ) -> ParserResult {
         let mut accum = vec![];
         loop {
@@ -24,7 +25,10 @@ impl SeparatedHelper {
 
                     match lexer.peek_token_with_trivia::<LexCtx>(input) {
                         Some(token) if token == separator => {
-                            match lexer.parse_token_with_trivia::<LexCtx>(input, separator) {
+                            match lexer
+                                .parse_token_with_trivia::<LexCtx>(input, separator)
+                                .with_name(separator_field_name)
+                            {
                                 ParserResult::Match(r#match) => {
                                     accum.extend(r#match.nodes);
                                     continue;

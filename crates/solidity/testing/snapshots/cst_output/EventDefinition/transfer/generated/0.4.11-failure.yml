@@ -20,7 +20,7 @@ Tree:
       - (parameters:) EventParametersDeclaration: # 14..71 "(address indexed from, address indexed to, uint256..."
           - (open_paren:) OpenParen: "(" # 14..15
           - EventParameters: # 15..30 "address indexed"
-              - EventParameter: # 15..30 "address indexed"
+              - (item:) EventParameter: # 15..30 "address indexed"
                   - (type_name:) TypeName: # 15..22 "address"
                       - (variant:) ElementaryType: # 15..22 "address"
                           - (variant:) AddressType: # 15..22 "address"

@@ -16,13 +16,13 @@ Tree:
           - (open_paren:) OpenParen: "(" # 13..14
           - (close_paren:) CloseParen: ")" # 14..15
       - (attributes:) FunctionAttributes: # 15..39 " public virtual override"
-          - FunctionAttribute: # 15..22 " public"
+          - (item:) FunctionAttribute: # 15..22 " public"
               - (variant:) PublicKeyword: "public" # 16..22
-          - FunctionAttribute: # 22..30 " virtual"
+          - (item:) FunctionAttribute: # 22..30 " virtual"
               - (variant:) ModifierInvocation: # 22..30 " virtual"
                   - (name:) IdentifierPath: # 22..30 " virtual"
-                      - Identifier: "virtual" # 23..30
-          - FunctionAttribute: # 30..39 " override"
+                      - (item:) Identifier: "virtual" # 23..30
+          - (item:) FunctionAttribute: # 30..39 " override"
               - (variant:) OverrideSpecifier: # 30..39 " override"
                   - (override_keyword:) OverrideKeyword: "override" # 31..39
       - (returns:) ReturnsDeclaration: # 39..57 " returns (uint256)"
@@ -30,7 +30,7 @@ Tree:
           - (variables:) ParametersDeclaration: # 47..57 " (uint256)"
               - (open_paren:) OpenParen: "(" # 48..49
               - (parameters:) Parameters: # 49..56 "uint256"
-                  - Parameter: # 49..56 "uint256"
+                  - (item:) Parameter: # 49..56 "uint256"
                       - (type_name:) TypeName: # 49..56 "uint256"
                           - (variant:) ElementaryType: # 49..56 "uint256"
                               - (variant:) UintKeyword: "uint256" # 49..56
@@ -39,7 +39,7 @@ Tree:
           - (variant:) Block: # 57..73 " {\n\treturn 1;\n}\n"
               - (open_brace:) OpenBrace: "{" # 58..59
               - (statements:) Statements: # 60..71 "\treturn 1;\n"
-                  - Statement: # 60..71 "\treturn 1;\n"
+                  - (item:) Statement: # 60..71 "\treturn 1;\n"
                       - (variant:) ReturnStatement: # 60..71 "\treturn 1;\n"
                           - (return_keyword:) ReturnKeyword: "return" # 61..67
                           - (expression:) Expression: # 67..69 " 1"

@@ -14,6 +14,6 @@ Tree:
               - (variant:) PositionalArgumentsDeclaration: # 1..13 "(interested)"
                   - (open_paren:) OpenParen: "(" # 1..2
                   - (arguments:) PositionalArguments: # 2..12 "interested"
-                      - Expression: # 2..12 "interested"
+                      - (item:) Expression: # 2..12 "interested"
                           - (variant:) Identifier: "interested" # 2..12
                   - (close_paren:) CloseParen: ")" # 12..13

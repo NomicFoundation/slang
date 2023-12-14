@@ -14,7 +14,7 @@ Tree:
       - (name:) Identifier: "Sample" # 9..15
       - (open_brace:) OpenBrace: "{" # 16..17
       - (members:) ContractMembers: # 18..38 "  function () {\n  }\n"
-          - ContractMember: # 18..38 "  function () {\n  }\n"
+          - (item:) ContractMember: # 18..38 "  function () {\n  }\n"
               - (variant:) UnnamedFunctionDefinition: # 18..38 "  function () {\n  }\n"
                   - (function_keyword:) FunctionKeyword: "function" # 20..28
                   - (parameters:) ParametersDeclaration: # 28..31 " ()"

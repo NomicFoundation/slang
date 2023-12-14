@@ -17,6 +17,6 @@ Tree:
               - (variant:) PositionalArgumentsDeclaration: # 15..22 "(value)"
                   - (open_paren:) OpenParen: "(" # 15..16
                   - (arguments:) PositionalArguments: # 16..21 "value"
-                      - Expression: # 16..21 "value"
+                      - (item:) Expression: # 16..21 "value"
                           - (variant:) Identifier: "value" # 16..21
                   - (close_paren:) CloseParen: ")" # 21..22

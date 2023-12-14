@@ -21,11 +21,11 @@ Tree:
       - (name:) Identifier: "Sample" # 9..15
       - (open_brace:) OpenBrace: "{" # 16..17
       - (members:) ContractMembers: # 18..36 "  error Error1();\n"
-          - ContractMember: # 18..36 "  error Error1();\n"
+          - (item:) ContractMember: # 18..36 "  error Error1();\n"
               - (variant:) StateVariableDefinition: # 18..36 "  error Error1();\n"
                   - (type_name:) TypeName: # 18..25 "  error"
                       - (variant:) IdentifierPath: # 18..25 "  error"
-                          - Identifier: "error" # 20..25
+                          - (item:) Identifier: "error" # 20..25
                   - (name:) Identifier: "Error1" # 26..32
                   - SKIPPED: "()" # 32..34
                   - (semicolon:) Semicolon: ";" # 34..35

@@ -15,13 +15,13 @@ Errors: []
 Tree:
   - SourceUnit: # 0..148 "contract First {}\n\n\n// Newlines both before and af..."
       - (members:) SourceUnitMembers: # 0..148 "contract First {}\n\n\n// Newlines both before and af..."
-          - SourceUnitMember: # 0..18 "contract First {}\n"
+          - (item:) SourceUnitMember: # 0..18 "contract First {}\n"
               - (variant:) ContractDefinition: # 0..18 "contract First {}\n"
                   - (contract_keyword:) ContractKeyword: "contract" # 0..8
                   - (name:) Identifier: "First" # 9..14
                   - (open_brace:) OpenBrace: "{" # 15..16
                   - (close_brace:) CloseBrace: "}" # 16..17
-          - SourceUnitMember: # 18..148 "\n\n// Newlines both before and after this comment s..."
+          - (item:) SourceUnitMember: # 18..148 "\n\n// Newlines both before and after this comment s..."
               - (variant:) ContractDefinition: # 18..148 "\n\n// Newlines both before and after this comment s..."
                   - LeadingTrivia: # 18..129 "\n\n// Newlines both before and after this comment s..."
                       - SingleLineComment: "// Newlines both before and after this comment sho..." # 20..73

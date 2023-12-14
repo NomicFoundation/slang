@@ -42,22 +42,22 @@ Errors: # 1 total
 Tree:
   - SourceUnit: # 0..243 'pragma solidity 0.0.0;\n\nimport "foo.sol";\n\nusing A...'
       - (members:) SourceUnitMembers: # 0..42 'pragma solidity 0.0.0;\n\nimport "foo.sol";\n'
-          - SourceUnitMember: # 0..23 "pragma solidity 0.0.0;\n"
+          - (item:) SourceUnitMember: # 0..23 "pragma solidity 0.0.0;\n"
               - (variant:) PragmaDirective: # 0..23 "pragma solidity 0.0.0;\n"
                   - (pragma_keyword:) PragmaKeyword: "pragma" # 0..6
                   - (pragma:) Pragma: # 6..21 " solidity 0.0.0"
                       - (variant:) VersionPragma: # 6..21 " solidity 0.0.0"
                           - (solidity_keyword:) SolidityKeyword: "solidity" # 7..15
                           - (expressions:) VersionPragmaExpressions: # 15..21 " 0.0.0"
-                              - VersionPragmaExpression: # 15..21 " 0.0.0"
+                              - (item:) VersionPragmaExpression: # 15..21 " 0.0.0"
                                   - VersionPragmaSpecifier: # 15..21 " 0.0.0"
-                                      - VersionPragmaValue: "0" # 16..17
-                                      - Period: "." # 17..18
-                                      - VersionPragmaValue: "0" # 18..19
-                                      - Period: "." # 19..20
-                                      - VersionPragmaValue: "0" # 20..21
+                                      - (item:) VersionPragmaValue: "0" # 16..17
+                                      - (separator:) Period: "." # 17..18
+                                      - (item:) VersionPragmaValue: "0" # 18..19
+                                      - (separator:) Period: "." # 19..20
+                                      - (item:) VersionPragmaValue: "0" # 20..21
                   - (semicolon:) Semicolon: ";" # 21..22
-          - SourceUnitMember: # 23..42 '\nimport "foo.sol";\n'
+          - (item:) SourceUnitMember: # 23..42 '\nimport "foo.sol";\n'
               - (variant:) ImportDirective: # 23..42 '\nimport "foo.sol";\n'
                   - (import_keyword:) ImportKeyword: "import" # 24..30
                   - (clause:) ImportClause: # 30..40 ' "foo.sol"'

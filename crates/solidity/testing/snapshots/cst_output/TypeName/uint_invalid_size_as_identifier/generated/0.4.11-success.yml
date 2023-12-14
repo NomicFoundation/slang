@@ -8,4 +8,4 @@ Errors: []
 Tree:
   - TypeName: # 0..7 "uint320"
       - (variant:) IdentifierPath: # 0..7 "uint320"
-          - Identifier: "uint320" # 0..7
+          - (item:) Identifier: "uint320" # 0..7

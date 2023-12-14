@@ -20,15 +20,15 @@ Tree:
           - (variant:) UsingDeconstruction: # 5..16 " {div as /}"
               - (open_brace:) OpenBrace: "{" # 6..7
               - UsingDeconstructionSymbols: # 7..10 "div"
-                  - UsingDeconstructionSymbol: # 7..10 "div"
+                  - (item:) UsingDeconstructionSymbol: # 7..10 "div"
                       - (name:) IdentifierPath: # 7..10 "div"
-                          - Identifier: "div" # 7..10
+                          - (item:) Identifier: "div" # 7..10
               - SKIPPED: "as /" # 11..15
               - (close_brace:) CloseBrace: "}" # 15..16
       - (for_keyword:) ForKeyword: "for" # 17..20
       - (target:) UsingTarget: # 20..24 " Int"
           - (variant:) TypeName: # 20..24 " Int"
               - (variant:) IdentifierPath: # 20..24 " Int"
-                  - Identifier: "Int" # 21..24
+                  - (item:) Identifier: "Int" # 21..24
       - (global_keyword:) GlobalKeyword: "global" # 25..31
       - (semicolon:) Semicolon: ";" # 31..32
