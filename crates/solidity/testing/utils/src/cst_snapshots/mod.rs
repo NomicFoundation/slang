@@ -3,7 +3,7 @@ use std::fmt::Write;
 
 use anyhow::Result;
 use slang_solidity::cst;
-use slang_solidity::cursor::Cursor;
+use slang_solidity::cursor::CursorWithNames;
 use slang_solidity::kinds::TokenKind;
 use slang_solidity::text_index::{TextRange, TextRangeExtensions};
 
@@ -12,7 +12,7 @@ use crate::node_extensions::NodeExtensions;
 pub struct CstSnapshots;
 
 impl CstSnapshots {
-    pub fn render(source: &str, errors: &Vec<String>, cursor: Cursor) -> Result<String> {
+    pub fn render(source: &str, errors: &Vec<String>, cursor: CursorWithNames) -> Result<String> {
         let mut w = String::new();
 
         write_source(&mut w, source)?;
@@ -85,17 +85,16 @@ fn write_errors<W: Write>(w: &mut W, errors: &Vec<String>) -> Result<()> {
     Ok(())
 }
 
-fn write_tree<W: Write>(w: &mut W, mut cursor: Cursor, source: &str) -> Result<()> {
+fn write_tree<W: Write>(w: &mut W, mut cursor: CursorWithNames, source: &str) -> Result<()> {
     write!(w, "Tree:")?;
     writeln!(w)?;
 
     let significant_nodes_with_range = std::iter::from_fn(|| loop {
         let (depth, range) = (cursor.depth(), cursor.text_range());
-        let node_name = cursor.node_name();
 
         // Skip whitespace and trivia rules containing only those tokens
         match cursor.next() {
-            Some(cst::Node::Rule(rule))
+            Some((_, cst::Node::Rule(rule)))
                 if rule.is_trivia()
                     && rule.children.iter().all(|(_name, node)| {
                         node.as_token().map_or(false, |t| is_whitespace(t.kind))
@@ -103,8 +102,8 @@ fn write_tree<W: Write>(w: &mut W, mut cursor: Cursor, source: &str) -> Result<(
             {
                 continue
             }
-            Some(cst::Node::Token(token)) if is_whitespace(token.kind) => continue,
-            next => break next.map(|item| ((node_name, item), depth, range)),
+            Some((_, cst::Node::Token(token))) if is_whitespace(token.kind) => continue,
+            next => break next.map(|item| (item, depth, range)),
         }
     });
 

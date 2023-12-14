@@ -52,7 +52,7 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
             .map(|error| error.to_error_report(source_id, &source, /* with_color */ false))
             .collect();
 
-        let cursor = output.create_tree_cursor();
+        let cursor = output.create_tree_cursor().with_names();
 
         let status = if output.is_valid() {
             TestStatus::Success

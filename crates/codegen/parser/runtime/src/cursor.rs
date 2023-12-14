@@ -408,3 +408,51 @@ impl Cursor {
         false
     }
 }
+
+/// A [`Cursor`] that also keeps track of the names of the nodes it visits.
+pub struct CursorWithNames {
+    cursor: Cursor,
+}
+
+impl CursorWithNames {
+    pub fn without_names(self) -> Cursor {
+        self.cursor
+    }
+}
+
+impl Iterator for CursorWithNames {
+    type Item = (String, Node);
+
+    fn next(&mut self) -> Option<Self::Item> {
+        let name = self.cursor.node_name();
+
+        self.cursor.next().map(|next| (name, next))
+    }
+}
+
+impl std::ops::Deref for CursorWithNames {
+    type Target = Cursor;
+
+    fn deref(&self) -> &Self::Target {
+        &self.cursor
+    }
+}
+
+impl std::ops::DerefMut for CursorWithNames {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.cursor
+    }
+}
+
+impl Cursor {
+    /// Returns a [`CursorWithNames`] that wraps this cursor.
+    pub fn with_names(self) -> CursorWithNames {
+        CursorWithNames::from(self)
+    }
+}
+
+impl From<Cursor> for CursorWithNames {
+    fn from(cursor: Cursor) -> Self {
+        CursorWithNames { cursor }
+    }
+}
