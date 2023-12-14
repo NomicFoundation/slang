@@ -146,12 +146,12 @@ fn write_node<W: Write>(
     let field_name = if name.is_empty() {
         String::new()
     } else {
-        format!("{name} ")
+        format!("({name}) ")
     };
 
     let name = match node {
-        cst::Node::Rule(rule) => format!("{field_name}[{}]", rule.kind.as_ref()),
-        cst::Node::Token(token) => format!("{field_name}[{}]", token.kind.as_ref()),
+        cst::Node::Rule(rule) => format!("{field_name}{}", rule.kind.as_ref()),
+        cst::Node::Token(token) => format!("{field_name}{}", token.kind.as_ref()),
     };
 
     writeln!(

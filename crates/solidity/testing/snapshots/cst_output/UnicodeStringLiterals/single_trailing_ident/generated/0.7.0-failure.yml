@@ -12,6 +12,6 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - [UnicodeStringLiterals]: # 0..25 'unicode"emoji 😃"happy\n'
-      - item [UnicodeStringLiteral]: 'unicode"emoji 😃"' # 0..19
-      - [SKIPPED]: "happy\n" # 19..25
+  - UnicodeStringLiterals: # 0..25 'unicode"emoji 😃"happy\n'
+      - (item) UnicodeStringLiteral: 'unicode"emoji 😃"' # 0..19
+      - SKIPPED: "happy\n" # 19..25

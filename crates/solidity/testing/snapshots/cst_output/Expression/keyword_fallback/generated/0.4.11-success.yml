@@ -6,5 +6,5 @@ Source: >
 Errors: []
 
 Tree:
-  - [Expression]: # 0..8 "fallback"
-      - variant [Identifier]: "fallback" # 0..8
+  - Expression: # 0..8 "fallback"
+      - (variant) Identifier: "fallback" # 0..8

@@ -6,6 +6,6 @@ Source: >
 Errors: []
 
 Tree:
-  - [TypeName]: # 0..3 "int"
-      - variant [ElementaryType]: # 0..3 "int"
-          - variant [IntKeyword]: "int" # 0..3
+  - TypeName: # 0..3 "int"
+      - (variant) ElementaryType: # 0..3 "int"
+          - (variant) IntKeyword: "int" # 0..3

@@ -6,27 +6,27 @@ Source: >
 Errors: []
 
 Tree:
-  - [TryStatement]: # 0..21 "try a.b() {} catch {}"
-      - try_keyword [TryKeyword]: "try" # 0..3
-      - expression [Expression]: # 3..9 " a.b()"
-          - variant [FunctionCallExpression]: # 3..9 " a.b()"
-              - operand [Expression]: # 3..7 " a.b"
-                  - variant [MemberAccessExpression]: # 3..7 " a.b"
-                      - operand [Expression]: # 3..5 " a"
-                          - variant [Identifier]: "a" # 4..5
-                      - period [Period]: "." # 5..6
-                      - member [MemberAccess]: # 6..7 "b"
-                          - variant [Identifier]: "b" # 6..7
-              - arguments [ArgumentsDeclaration]: # 7..9 "()"
-                  - variant [PositionalArgumentsDeclaration]: # 7..9 "()"
-                      - open_paren [OpenParen]: "(" # 7..8
-                      - close_paren [CloseParen]: ")" # 8..9
-      - body [Block]: # 9..12 " {}"
-          - open_brace [OpenBrace]: "{" # 10..11
-          - close_brace [CloseBrace]: "}" # 11..12
-      - catch_clauses [CatchClauses]: # 12..21 " catch {}"
-          - item [CatchClause]: # 12..21 " catch {}"
-              - catch_keyword [CatchKeyword]: "catch" # 13..18
-              - body [Block]: # 18..21 " {}"
-                  - open_brace [OpenBrace]: "{" # 19..20
-                  - close_brace [CloseBrace]: "}" # 20..21
+  - TryStatement: # 0..21 "try a.b() {} catch {}"
+      - (try_keyword) TryKeyword: "try" # 0..3
+      - (expression) Expression: # 3..9 " a.b()"
+          - (variant) FunctionCallExpression: # 3..9 " a.b()"
+              - (operand) Expression: # 3..7 " a.b"
+                  - (variant) MemberAccessExpression: # 3..7 " a.b"
+                      - (operand) Expression: # 3..5 " a"
+                          - (variant) Identifier: "a" # 4..5
+                      - (period) Period: "." # 5..6
+                      - (member) MemberAccess: # 6..7 "b"
+                          - (variant) Identifier: "b" # 6..7
+              - (arguments) ArgumentsDeclaration: # 7..9 "()"
+                  - (variant) PositionalArgumentsDeclaration: # 7..9 "()"
+                      - (open_paren) OpenParen: "(" # 7..8
+                      - (close_paren) CloseParen: ")" # 8..9
+      - (body) Block: # 9..12 " {}"
+          - (open_brace) OpenBrace: "{" # 10..11
+          - (close_brace) CloseBrace: "}" # 11..12
+      - (catch_clauses) CatchClauses: # 12..21 " catch {}"
+          - (item) CatchClause: # 12..21 " catch {}"
+              - (catch_keyword) CatchKeyword: "catch" # 13..18
+              - (body) Block: # 18..21 " {}"
+                  - (open_brace) OpenBrace: "{" # 19..20
+                  - (close_brace) CloseBrace: "}" # 20..21

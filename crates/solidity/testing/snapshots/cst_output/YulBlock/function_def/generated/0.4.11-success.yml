@@ -10,47 +10,47 @@ Source: >
 Errors: []
 
 Tree:
-  - [YulBlock]: # 0..62 "{\n\tfunction mult(a, b) -> result {\n\t\tresult := mul..."
-      - open_brace [OpenBrace]: "{" # 0..1
-      - statements [YulStatements]: # 2..60 "\tfunction mult(a, b) -> result {\n\t\tresult := mul(a..."
-          - item [YulStatement]: # 2..60 "\tfunction mult(a, b) -> result {\n\t\tresult := mul(a..."
-              - variant [YulFunctionDefinition]: # 2..60 "\tfunction mult(a, b) -> result {\n\t\tresult := mul(a..."
-                  - function_keyword [YulFunctionKeyword]: "function" # 3..11
-                  - name [YulIdentifier]: "mult" # 12..16
-                  - parameters [YulParametersDeclaration]: # 16..22 "(a, b)"
-                      - open_paren [OpenParen]: "(" # 16..17
-                      - parameters [YulParameters]: # 17..21 "a, b"
-                          - item [YulIdentifier]: "a" # 17..18
-                          - separator [Comma]: "," # 18..19
-                          - item [YulIdentifier]: "b" # 20..21
-                      - close_paren [CloseParen]: ")" # 21..22
-                  - returns [YulReturnsDeclaration]: # 22..32 " -> result"
-                      - minus_greater_than [MinusGreaterThan]: "->" # 23..25
-                      - variables [YulReturnVariables]: # 25..32 " result"
-                          - item [YulIdentifier]: "result" # 26..32
-                  - body [YulBlock]: # 32..60 " {\n\t\tresult := mul(a, b)\n\t}\n"
-                      - open_brace [OpenBrace]: "{" # 33..34
-                      - statements [YulStatements]: # 35..57 "\t\tresult := mul(a, b)\n"
-                          - item [YulStatement]: # 35..57 "\t\tresult := mul(a, b)\n"
-                              - variant [YulAssignmentStatement]: # 35..57 "\t\tresult := mul(a, b)\n"
-                                  - names [YulIdentifierPaths]: # 35..43 "\t\tresult"
-                                      - item [YulIdentifierPath]: # 35..43 "\t\tresult"
-                                          - item [YulIdentifier]: "result" # 37..43
-                                  - colon_equal [ColonEqual]: ":=" # 44..46
-                                  - expression [YulExpression]: # 46..57 " mul(a, b)\n"
-                                      - variant [YulFunctionCallExpression]: # 46..57 " mul(a, b)\n"
-                                          - operand [YulExpression]: # 46..50 " mul"
-                                              - variant [YulIdentifierPath]: # 46..50 " mul"
-                                                  - item [YulIdentifier]: "mul" # 47..50
-                                          - open_paren [OpenParen]: "(" # 50..51
-                                          - arguments [YulArguments]: # 51..55 "a, b"
-                                              - item [YulExpression]: # 51..52 "a"
-                                                  - variant [YulIdentifierPath]: # 51..52 "a"
-                                                      - item [YulIdentifier]: "a" # 51..52
-                                              - separator [Comma]: "," # 52..53
-                                              - item [YulExpression]: # 53..55 " b"
-                                                  - variant [YulIdentifierPath]: # 53..55 " b"
-                                                      - item [YulIdentifier]: "b" # 54..55
-                                          - close_paren [CloseParen]: ")" # 55..56
-                      - close_brace [CloseBrace]: "}" # 58..59
-      - close_brace [CloseBrace]: "}" # 60..61
+  - YulBlock: # 0..62 "{\n\tfunction mult(a, b) -> result {\n\t\tresult := mul..."
+      - (open_brace) OpenBrace: "{" # 0..1
+      - (statements) YulStatements: # 2..60 "\tfunction mult(a, b) -> result {\n\t\tresult := mul(a..."
+          - (item) YulStatement: # 2..60 "\tfunction mult(a, b) -> result {\n\t\tresult := mul(a..."
+              - (variant) YulFunctionDefinition: # 2..60 "\tfunction mult(a, b) -> result {\n\t\tresult := mul(a..."
+                  - (function_keyword) YulFunctionKeyword: "function" # 3..11
+                  - (name) YulIdentifier: "mult" # 12..16
+                  - (parameters) YulParametersDeclaration: # 16..22 "(a, b)"
+                      - (open_paren) OpenParen: "(" # 16..17
+                      - (parameters) YulParameters: # 17..21 "a, b"
+                          - (item) YulIdentifier: "a" # 17..18
+                          - (separator) Comma: "," # 18..19
+                          - (item) YulIdentifier: "b" # 20..21
+                      - (close_paren) CloseParen: ")" # 21..22
+                  - (returns) YulReturnsDeclaration: # 22..32 " -> result"
+                      - (minus_greater_than) MinusGreaterThan: "->" # 23..25
+                      - (variables) YulReturnVariables: # 25..32 " result"
+                          - (item) YulIdentifier: "result" # 26..32
+                  - (body) YulBlock: # 32..60 " {\n\t\tresult := mul(a, b)\n\t}\n"
+                      - (open_brace) OpenBrace: "{" # 33..34
+                      - (statements) YulStatements: # 35..57 "\t\tresult := mul(a, b)\n"
+                          - (item) YulStatement: # 35..57 "\t\tresult := mul(a, b)\n"
+                              - (variant) YulAssignmentStatement: # 35..57 "\t\tresult := mul(a, b)\n"
+                                  - (names) YulIdentifierPaths: # 35..43 "\t\tresult"
+                                      - (item) YulIdentifierPath: # 35..43 "\t\tresult"
+                                          - (item) YulIdentifier: "result" # 37..43
+                                  - (colon_equal) ColonEqual: ":=" # 44..46
+                                  - (expression) YulExpression: # 46..57 " mul(a, b)\n"
+                                      - (variant) YulFunctionCallExpression: # 46..57 " mul(a, b)\n"
+                                          - (operand) YulExpression: # 46..50 " mul"
+                                              - (variant) YulIdentifierPath: # 46..50 " mul"
+                                                  - (item) YulIdentifier: "mul" # 47..50
+                                          - (open_paren) OpenParen: "(" # 50..51
+                                          - (arguments) YulArguments: # 51..55 "a, b"
+                                              - (item) YulExpression: # 51..52 "a"
+                                                  - (variant) YulIdentifierPath: # 51..52 "a"
+                                                      - (item) YulIdentifier: "a" # 51..52
+                                              - (separator) Comma: "," # 52..53
+                                              - (item) YulExpression: # 53..55 " b"
+                                                  - (variant) YulIdentifierPath: # 53..55 " b"
+                                                      - (item) YulIdentifier: "b" # 54..55
+                                          - (close_paren) CloseParen: ")" # 55..56
+                      - (close_brace) CloseBrace: "}" # 58..59
+      - (close_brace) CloseBrace: "}" # 60..61

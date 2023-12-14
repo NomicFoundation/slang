@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - [SKIPPED]: "override" # 0..8
+  - SKIPPED: "override" # 0..8

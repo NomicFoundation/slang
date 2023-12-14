@@ -16,38 +16,38 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - [TupleDeconstructionStatement]: # 0..35 "(a, b) = (123, 135)\n/**/\n{ throw; \n"
-      - open_paren [OpenParen]: "(" # 0..1
-      - elements [TupleDeconstructionElements]: # 1..5 "a, b"
-          - item [TupleDeconstructionElement]: # 1..2 "a"
-              - member [TupleMember]: # 1..2 "a"
-                  - variant [UntypedTupleMember]: # 1..2 "a"
-                      - name [Identifier]: "a" # 1..2
-          - separator [Comma]: "," # 2..3
-          - item [TupleDeconstructionElement]: # 3..5 " b"
-              - member [TupleMember]: # 3..5 " b"
-                  - variant [UntypedTupleMember]: # 3..5 " b"
-                      - name [Identifier]: "b" # 4..5
-      - close_paren [CloseParen]: ")" # 5..6
-      - equal [Equal]: "=" # 7..8
-      - [Expression]: # 8..26 " (123, 135)\n/**/\n{"
-          - variant [TupleExpression]: # 8..20 " (123, 135)\n"
-              - open_paren [OpenParen]: "(" # 9..10
-              - items [TupleValues]: # 10..18 "123, 135"
-                  - item [TupleValue]: # 10..13 "123"
-                      - expression [Expression]: # 10..13 "123"
-                          - variant [DecimalNumberExpression]: # 10..13 "123"
-                              - literal [DecimalLiteral]: "123" # 10..13
-                  - separator [Comma]: "," # 13..14
-                  - item [TupleValue]: # 14..18 " 135"
-                      - expression [Expression]: # 14..18 " 135"
-                          - variant [DecimalNumberExpression]: # 14..18 " 135"
-                              - literal [DecimalLiteral]: "135" # 15..18
-              - close_paren [CloseParen]: ")" # 18..19
-          - [FunctionCallOptions]: # 20..26 "/**/\n{"
-              - [NamedArgumentGroup]: # 20..26 "/**/\n{"
-                  - [LeadingTrivia]: # 20..25 "/**/\n"
-                      - [MultilineComment]: "/**/" # 20..24
-                  - open_brace [OpenBrace]: "{" # 25..26
-      - [SKIPPED]: "throw" # 27..32
-      - semicolon [Semicolon]: ";" # 32..33
+  - TupleDeconstructionStatement: # 0..35 "(a, b) = (123, 135)\n/**/\n{ throw; \n"
+      - (open_paren) OpenParen: "(" # 0..1
+      - (elements) TupleDeconstructionElements: # 1..5 "a, b"
+          - (item) TupleDeconstructionElement: # 1..2 "a"
+              - (member) TupleMember: # 1..2 "a"
+                  - (variant) UntypedTupleMember: # 1..2 "a"
+                      - (name) Identifier: "a" # 1..2
+          - (separator) Comma: "," # 2..3
+          - (item) TupleDeconstructionElement: # 3..5 " b"
+              - (member) TupleMember: # 3..5 " b"
+                  - (variant) UntypedTupleMember: # 3..5 " b"
+                      - (name) Identifier: "b" # 4..5
+      - (close_paren) CloseParen: ")" # 5..6
+      - (equal) Equal: "=" # 7..8
+      - Expression: # 8..26 " (123, 135)\n/**/\n{"
+          - (variant) TupleExpression: # 8..20 " (123, 135)\n"
+              - (open_paren) OpenParen: "(" # 9..10
+              - (items) TupleValues: # 10..18 "123, 135"
+                  - (item) TupleValue: # 10..13 "123"
+                      - (expression) Expression: # 10..13 "123"
+                          - (variant) DecimalNumberExpression: # 10..13 "123"
+                              - (literal) DecimalLiteral: "123" # 10..13
+                  - (separator) Comma: "," # 13..14
+                  - (item) TupleValue: # 14..18 " 135"
+                      - (expression) Expression: # 14..18 " 135"
+                          - (variant) DecimalNumberExpression: # 14..18 " 135"
+                              - (literal) DecimalLiteral: "135" # 15..18
+              - (close_paren) CloseParen: ")" # 18..19
+          - FunctionCallOptions: # 20..26 "/**/\n{"
+              - NamedArgumentGroup: # 20..26 "/**/\n{"
+                  - LeadingTrivia: # 20..25 "/**/\n"
+                      - MultilineComment: "/**/" # 20..24
+                  - (open_brace) OpenBrace: "{" # 25..26
+      - SKIPPED: "throw" # 27..32
+      - (semicolon) Semicolon: ";" # 32..33

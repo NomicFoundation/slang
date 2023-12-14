@@ -30,131 +30,131 @@ Source: >
 Errors: []
 
 Tree:
-  - [SourceUnit]: # 0..243 'pragma solidity 0.0.0;\n\nimport "foo.sol";\n\nusing A...'
-      - members [SourceUnitMembers]: # 0..243 'pragma solidity 0.0.0;\n\nimport "foo.sol";\n\nusing A...'
-          - item [SourceUnitMember]: # 0..23 "pragma solidity 0.0.0;\n"
-              - variant [PragmaDirective]: # 0..23 "pragma solidity 0.0.0;\n"
-                  - pragma_keyword [PragmaKeyword]: "pragma" # 0..6
-                  - pragma [Pragma]: # 6..21 " solidity 0.0.0"
-                      - variant [VersionPragma]: # 6..21 " solidity 0.0.0"
-                          - solidity_keyword [SolidityKeyword]: "solidity" # 7..15
-                          - expressions [VersionPragmaExpressions]: # 15..21 " 0.0.0"
-                              - item [VersionPragmaExpression]: # 15..21 " 0.0.0"
-                                  - [VersionPragmaSpecifier]: # 15..21 " 0.0.0"
-                                      - item [VersionPragmaValue]: "0" # 16..17
-                                      - separator [Period]: "." # 17..18
-                                      - item [VersionPragmaValue]: "0" # 18..19
-                                      - separator [Period]: "." # 19..20
-                                      - item [VersionPragmaValue]: "0" # 20..21
-                  - semicolon [Semicolon]: ";" # 21..22
-          - item [SourceUnitMember]: # 23..42 '\nimport "foo.sol";\n'
-              - variant [ImportDirective]: # 23..42 '\nimport "foo.sol";\n'
-                  - import_keyword [ImportKeyword]: "import" # 24..30
-                  - clause [ImportClause]: # 30..40 ' "foo.sol"'
-                      - variant [PathImport]: # 30..40 ' "foo.sol"'
-                          - path [AsciiStringLiteral]: '"foo.sol"' # 31..40
-                  - semicolon [Semicolon]: ";" # 40..41
-          - item [SourceUnitMember]: # 42..58 "\nusing A for B;\n"
-              - variant [UsingDirective]: # 42..58 "\nusing A for B;\n"
-                  - using_keyword [UsingKeyword]: "using" # 43..48
-                  - clause [UsingClause]: # 48..50 " A"
-                      - variant [IdentifierPath]: # 48..50 " A"
-                          - item [Identifier]: "A" # 49..50
-                  - for_keyword [ForKeyword]: "for" # 51..54
-                  - target [UsingTarget]: # 54..56 " B"
-                      - variant [TypeName]: # 54..56 " B"
-                          - variant [IdentifierPath]: # 54..56 " B"
-                              - item [Identifier]: "B" # 55..56
-                  - semicolon [Semicolon]: ";" # 56..57
-          - item [SourceUnitMember]: # 58..74 "\ncontract C { }\n"
-              - variant [ContractDefinition]: # 58..74 "\ncontract C { }\n"
-                  - contract_keyword [ContractKeyword]: "contract" # 59..67
-                  - name [Identifier]: "C" # 68..69
-                  - open_brace [OpenBrace]: "{" # 70..71
-                  - close_brace [CloseBrace]: "}" # 72..73
-          - item [SourceUnitMember]: # 74..91 "\ninterface I { }\n"
-              - variant [InterfaceDefinition]: # 74..91 "\ninterface I { }\n"
-                  - interface_keyword [InterfaceKeyword]: "interface" # 75..84
-                  - name [Identifier]: "I" # 85..86
-                  - open_brace [OpenBrace]: "{" # 87..88
-                  - close_brace [CloseBrace]: "}" # 89..90
-          - item [SourceUnitMember]: # 91..106 "\nlibrary L { }\n"
-              - variant [LibraryDefinition]: # 91..106 "\nlibrary L { }\n"
-                  - library_keyword [LibraryKeyword]: "library" # 92..99
-                  - name [Identifier]: "L" # 100..101
-                  - open_brace [OpenBrace]: "{" # 102..103
-                  - close_brace [CloseBrace]: "}" # 104..105
-          - item [SourceUnitMember]: # 106..120 "\nstruct S { }\n"
-              - variant [StructDefinition]: # 106..120 "\nstruct S { }\n"
-                  - struct_keyword [StructKeyword]: "struct" # 107..113
-                  - name [Identifier]: "S" # 114..115
-                  - open_brace [OpenBrace]: "{" # 116..117
-                  - close_brace [CloseBrace]: "}" # 118..119
-          - item [SourceUnitMember]: # 120..132 "\nenum E { }\n"
-              - variant [EnumDefinition]: # 120..132 "\nenum E { }\n"
-                  - enum_keyword [EnumKeyword]: "enum" # 121..125
-                  - name [Identifier]: "E" # 126..127
-                  - open_brace [OpenBrace]: "{" # 128..129
-                  - close_brace [CloseBrace]: "}" # 130..131
-          - item [SourceUnitMember]: # 132..156 "\nuint32 constant x = 0;\n"
-              - variant [ConstantDefinition]: # 132..156 "\nuint32 constant x = 0;\n"
-                  - type_name [TypeName]: # 132..139 "\nuint32"
-                      - variant [ElementaryType]: # 132..139 "\nuint32"
-                          - variant [UintKeyword]: "uint32" # 133..139
-                  - constant_keyword [ConstantKeyword]: "constant" # 140..148
-                  - name [Identifier]: "x" # 149..150
-                  - equal [Equal]: "=" # 151..152
-                  - value [Expression]: # 152..154 " 0"
-                      - variant [DecimalNumberExpression]: # 152..154 " 0"
-                          - literal [DecimalLiteral]: "0" # 153..154
-                  - semicolon [Semicolon]: ";" # 154..155
-          - item [SourceUnitMember]: # 156..181 "\nfunction f() public { }\n"
-              - variant [FunctionDefinition]: # 156..181 "\nfunction f() public { }\n"
-                  - function_keyword [FunctionKeyword]: "function" # 157..165
-                  - name [FunctionName]: # 165..167 " f"
-                      - variant [Identifier]: "f" # 166..167
-                  - parameters [ParametersDeclaration]: # 167..169 "()"
-                      - open_paren [OpenParen]: "(" # 167..168
-                      - close_paren [CloseParen]: ")" # 168..169
-                  - attributes [FunctionAttributes]: # 169..176 " public"
-                      - item [FunctionAttribute]: # 169..176 " public"
-                          - variant [PublicKeyword]: "public" # 170..176
-                  - body [FunctionBody]: # 176..181 " { }\n"
-                      - variant [Block]: # 176..181 " { }\n"
-                          - open_brace [OpenBrace]: "{" # 177..178
-                          - close_brace [CloseBrace]: "}" # 179..180
-          - item [SourceUnitMember]: # 181..200 "\nerror E1(string);\n"
-              - variant [ErrorDefinition]: # 181..200 "\nerror E1(string);\n"
-                  - error_keyword [ErrorKeyword]: "error" # 182..187
-                  - name [Identifier]: "E1" # 188..190
-                  - members [ErrorParametersDeclaration]: # 190..198 "(string)"
-                      - open_paren [OpenParen]: "(" # 190..191
-                      - parameters [ErrorParameters]: # 191..197 "string"
-                          - item [ErrorParameter]: # 191..197 "string"
-                              - type_name [TypeName]: # 191..197 "string"
-                                  - variant [ElementaryType]: # 191..197 "string"
-                                      - variant [StringKeyword]: "string" # 191..197
-                      - close_paren [CloseParen]: ")" # 197..198
-                  - semicolon [Semicolon]: ";" # 198..199
-          - item [SourceUnitMember]: # 200..217 "\ntype T is bool;\n"
-              - variant [UserDefinedValueTypeDefinition]: # 200..217 "\ntype T is bool;\n"
-                  - type_keyword [TypeKeyword]: "type" # 201..205
-                  - name [Identifier]: "T" # 206..207
-                  - is_keyword [IsKeyword]: "is" # 208..210
-                  - value_type [ElementaryType]: # 210..215 " bool"
-                      - variant [BoolKeyword]: "bool" # 211..215
-                  - semicolon [Semicolon]: ";" # 215..216
-          - item [SourceUnitMember]: # 217..243 "\nevent E1(uint256 value);\n"
-              - variant [EventDefinition]: # 217..243 "\nevent E1(uint256 value);\n"
-                  - event_keyword [EventKeyword]: "event" # 218..223
-                  - name [Identifier]: "E1" # 224..226
-                  - parameters [EventParametersDeclaration]: # 226..241 "(uint256 value)"
-                      - open_paren [OpenParen]: "(" # 226..227
-                      - parameters [EventParameters]: # 227..240 "uint256 value"
-                          - item [EventParameter]: # 227..240 "uint256 value"
-                              - type_name [TypeName]: # 227..234 "uint256"
-                                  - variant [ElementaryType]: # 227..234 "uint256"
-                                      - variant [UintKeyword]: "uint256" # 227..234
-                              - name [Identifier]: "value" # 235..240
-                      - close_paren [CloseParen]: ")" # 240..241
-                  - semicolon [Semicolon]: ";" # 241..242
+  - SourceUnit: # 0..243 'pragma solidity 0.0.0;\n\nimport "foo.sol";\n\nusing A...'
+      - (members) SourceUnitMembers: # 0..243 'pragma solidity 0.0.0;\n\nimport "foo.sol";\n\nusing A...'
+          - (item) SourceUnitMember: # 0..23 "pragma solidity 0.0.0;\n"
+              - (variant) PragmaDirective: # 0..23 "pragma solidity 0.0.0;\n"
+                  - (pragma_keyword) PragmaKeyword: "pragma" # 0..6
+                  - (pragma) Pragma: # 6..21 " solidity 0.0.0"
+                      - (variant) VersionPragma: # 6..21 " solidity 0.0.0"
+                          - (solidity_keyword) SolidityKeyword: "solidity" # 7..15
+                          - (expressions) VersionPragmaExpressions: # 15..21 " 0.0.0"
+                              - (item) VersionPragmaExpression: # 15..21 " 0.0.0"
+                                  - VersionPragmaSpecifier: # 15..21 " 0.0.0"
+                                      - (item) VersionPragmaValue: "0" # 16..17
+                                      - (separator) Period: "." # 17..18
+                                      - (item) VersionPragmaValue: "0" # 18..19
+                                      - (separator) Period: "." # 19..20
+                                      - (item) VersionPragmaValue: "0" # 20..21
+                  - (semicolon) Semicolon: ";" # 21..22
+          - (item) SourceUnitMember: # 23..42 '\nimport "foo.sol";\n'
+              - (variant) ImportDirective: # 23..42 '\nimport "foo.sol";\n'
+                  - (import_keyword) ImportKeyword: "import" # 24..30
+                  - (clause) ImportClause: # 30..40 ' "foo.sol"'
+                      - (variant) PathImport: # 30..40 ' "foo.sol"'
+                          - (path) AsciiStringLiteral: '"foo.sol"' # 31..40
+                  - (semicolon) Semicolon: ";" # 40..41
+          - (item) SourceUnitMember: # 42..58 "\nusing A for B;\n"
+              - (variant) UsingDirective: # 42..58 "\nusing A for B;\n"
+                  - (using_keyword) UsingKeyword: "using" # 43..48
+                  - (clause) UsingClause: # 48..50 " A"
+                      - (variant) IdentifierPath: # 48..50 " A"
+                          - (item) Identifier: "A" # 49..50
+                  - (for_keyword) ForKeyword: "for" # 51..54
+                  - (target) UsingTarget: # 54..56 " B"
+                      - (variant) TypeName: # 54..56 " B"
+                          - (variant) IdentifierPath: # 54..56 " B"
+                              - (item) Identifier: "B" # 55..56
+                  - (semicolon) Semicolon: ";" # 56..57
+          - (item) SourceUnitMember: # 58..74 "\ncontract C { }\n"
+              - (variant) ContractDefinition: # 58..74 "\ncontract C { }\n"
+                  - (contract_keyword) ContractKeyword: "contract" # 59..67
+                  - (name) Identifier: "C" # 68..69
+                  - (open_brace) OpenBrace: "{" # 70..71
+                  - (close_brace) CloseBrace: "}" # 72..73
+          - (item) SourceUnitMember: # 74..91 "\ninterface I { }\n"
+              - (variant) InterfaceDefinition: # 74..91 "\ninterface I { }\n"
+                  - (interface_keyword) InterfaceKeyword: "interface" # 75..84
+                  - (name) Identifier: "I" # 85..86
+                  - (open_brace) OpenBrace: "{" # 87..88
+                  - (close_brace) CloseBrace: "}" # 89..90
+          - (item) SourceUnitMember: # 91..106 "\nlibrary L { }\n"
+              - (variant) LibraryDefinition: # 91..106 "\nlibrary L { }\n"
+                  - (library_keyword) LibraryKeyword: "library" # 92..99
+                  - (name) Identifier: "L" # 100..101
+                  - (open_brace) OpenBrace: "{" # 102..103
+                  - (close_brace) CloseBrace: "}" # 104..105
+          - (item) SourceUnitMember: # 106..120 "\nstruct S { }\n"
+              - (variant) StructDefinition: # 106..120 "\nstruct S { }\n"
+                  - (struct_keyword) StructKeyword: "struct" # 107..113
+                  - (name) Identifier: "S" # 114..115
+                  - (open_brace) OpenBrace: "{" # 116..117
+                  - (close_brace) CloseBrace: "}" # 118..119
+          - (item) SourceUnitMember: # 120..132 "\nenum E { }\n"
+              - (variant) EnumDefinition: # 120..132 "\nenum E { }\n"
+                  - (enum_keyword) EnumKeyword: "enum" # 121..125
+                  - (name) Identifier: "E" # 126..127
+                  - (open_brace) OpenBrace: "{" # 128..129
+                  - (close_brace) CloseBrace: "}" # 130..131
+          - (item) SourceUnitMember: # 132..156 "\nuint32 constant x = 0;\n"
+              - (variant) ConstantDefinition: # 132..156 "\nuint32 constant x = 0;\n"
+                  - (type_name) TypeName: # 132..139 "\nuint32"
+                      - (variant) ElementaryType: # 132..139 "\nuint32"
+                          - (variant) UintKeyword: "uint32" # 133..139
+                  - (constant_keyword) ConstantKeyword: "constant" # 140..148
+                  - (name) Identifier: "x" # 149..150
+                  - (equal) Equal: "=" # 151..152
+                  - (value) Expression: # 152..154 " 0"
+                      - (variant) DecimalNumberExpression: # 152..154 " 0"
+                          - (literal) DecimalLiteral: "0" # 153..154
+                  - (semicolon) Semicolon: ";" # 154..155
+          - (item) SourceUnitMember: # 156..181 "\nfunction f() public { }\n"
+              - (variant) FunctionDefinition: # 156..181 "\nfunction f() public { }\n"
+                  - (function_keyword) FunctionKeyword: "function" # 157..165
+                  - (name) FunctionName: # 165..167 " f"
+                      - (variant) Identifier: "f" # 166..167
+                  - (parameters) ParametersDeclaration: # 167..169 "()"
+                      - (open_paren) OpenParen: "(" # 167..168
+                      - (close_paren) CloseParen: ")" # 168..169
+                  - (attributes) FunctionAttributes: # 169..176 " public"
+                      - (item) FunctionAttribute: # 169..176 " public"
+                          - (variant) PublicKeyword: "public" # 170..176
+                  - (body) FunctionBody: # 176..181 " { }\n"
+                      - (variant) Block: # 176..181 " { }\n"
+                          - (open_brace) OpenBrace: "{" # 177..178
+                          - (close_brace) CloseBrace: "}" # 179..180
+          - (item) SourceUnitMember: # 181..200 "\nerror E1(string);\n"
+              - (variant) ErrorDefinition: # 181..200 "\nerror E1(string);\n"
+                  - (error_keyword) ErrorKeyword: "error" # 182..187
+                  - (name) Identifier: "E1" # 188..190
+                  - (members) ErrorParametersDeclaration: # 190..198 "(string)"
+                      - (open_paren) OpenParen: "(" # 190..191
+                      - (parameters) ErrorParameters: # 191..197 "string"
+                          - (item) ErrorParameter: # 191..197 "string"
+                              - (type_name) TypeName: # 191..197 "string"
+                                  - (variant) ElementaryType: # 191..197 "string"
+                                      - (variant) StringKeyword: "string" # 191..197
+                      - (close_paren) CloseParen: ")" # 197..198
+                  - (semicolon) Semicolon: ";" # 198..199
+          - (item) SourceUnitMember: # 200..217 "\ntype T is bool;\n"
+              - (variant) UserDefinedValueTypeDefinition: # 200..217 "\ntype T is bool;\n"
+                  - (type_keyword) TypeKeyword: "type" # 201..205
+                  - (name) Identifier: "T" # 206..207
+                  - (is_keyword) IsKeyword: "is" # 208..210
+                  - (value_type) ElementaryType: # 210..215 " bool"
+                      - (variant) BoolKeyword: "bool" # 211..215
+                  - (semicolon) Semicolon: ";" # 215..216
+          - (item) SourceUnitMember: # 217..243 "\nevent E1(uint256 value);\n"
+              - (variant) EventDefinition: # 217..243 "\nevent E1(uint256 value);\n"
+                  - (event_keyword) EventKeyword: "event" # 218..223
+                  - (name) Identifier: "E1" # 224..226
+                  - (parameters) EventParametersDeclaration: # 226..241 "(uint256 value)"
+                      - (open_paren) OpenParen: "(" # 226..227
+                      - (parameters) EventParameters: # 227..240 "uint256 value"
+                          - (item) EventParameter: # 227..240 "uint256 value"
+                              - (type_name) TypeName: # 227..234 "uint256"
+                                  - (variant) ElementaryType: # 227..234 "uint256"
+                                      - (variant) UintKeyword: "uint256" # 227..234
+                              - (name) Identifier: "value" # 235..240
+                      - (close_paren) CloseParen: ")" # 240..241
+                  - (semicolon) Semicolon: ";" # 241..242

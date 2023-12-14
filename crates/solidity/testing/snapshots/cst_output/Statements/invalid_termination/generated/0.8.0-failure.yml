@@ -18,4 +18,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - [SKIPPED]: "\nthrow invalid ;\n{ 1 * 2; 3 * b invalid; }\n" # 0..43
+  - SKIPPED: "\nthrow invalid ;\n{ 1 * 2; 3 * b invalid; }\n" # 0..43

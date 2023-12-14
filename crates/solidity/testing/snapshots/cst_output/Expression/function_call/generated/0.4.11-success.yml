@@ -6,19 +6,19 @@ Source: >
 Errors: []
 
 Tree:
-  - [Expression]: # 0..7 "x(1, 2)"
-      - variant [FunctionCallExpression]: # 0..7 "x(1, 2)"
-          - operand [Expression]: # 0..1 "x"
-              - variant [Identifier]: "x" # 0..1
-          - arguments [ArgumentsDeclaration]: # 1..7 "(1, 2)"
-              - variant [PositionalArgumentsDeclaration]: # 1..7 "(1, 2)"
-                  - open_paren [OpenParen]: "(" # 1..2
-                  - arguments [PositionalArguments]: # 2..6 "1, 2"
-                      - item [Expression]: # 2..3 "1"
-                          - variant [DecimalNumberExpression]: # 2..3 "1"
-                              - literal [DecimalLiteral]: "1" # 2..3
-                      - separator [Comma]: "," # 3..4
-                      - item [Expression]: # 4..6 " 2"
-                          - variant [DecimalNumberExpression]: # 4..6 " 2"
-                              - literal [DecimalLiteral]: "2" # 5..6
-                  - close_paren [CloseParen]: ")" # 6..7
+  - Expression: # 0..7 "x(1, 2)"
+      - (variant) FunctionCallExpression: # 0..7 "x(1, 2)"
+          - (operand) Expression: # 0..1 "x"
+              - (variant) Identifier: "x" # 0..1
+          - (arguments) ArgumentsDeclaration: # 1..7 "(1, 2)"
+              - (variant) PositionalArgumentsDeclaration: # 1..7 "(1, 2)"
+                  - (open_paren) OpenParen: "(" # 1..2
+                  - (arguments) PositionalArguments: # 2..6 "1, 2"
+                      - (item) Expression: # 2..3 "1"
+                          - (variant) DecimalNumberExpression: # 2..3 "1"
+                              - (literal) DecimalLiteral: "1" # 2..3
+                      - (separator) Comma: "," # 3..4
+                      - (item) Expression: # 4..6 " 2"
+                          - (variant) DecimalNumberExpression: # 4..6 " 2"
+                              - (literal) DecimalLiteral: "2" # 5..6
+                  - (close_paren) CloseParen: ")" # 6..7

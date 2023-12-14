@@ -14,126 +14,126 @@ Source: >
 Errors: []
 
 Tree:
-  - [SourceUnit]: # 0..212 "library SafeMath {\n  function tryAdd(uint256 a, ui..."
-      - members [SourceUnitMembers]: # 0..212 "library SafeMath {\n  function tryAdd(uint256 a, ui..."
-          - item [SourceUnitMember]: # 0..212 "library SafeMath {\n  function tryAdd(uint256 a, ui..."
-              - variant [LibraryDefinition]: # 0..212 "library SafeMath {\n  function tryAdd(uint256 a, ui..."
-                  - library_keyword [LibraryKeyword]: "library" # 0..7
-                  - name [Identifier]: "SafeMath" # 8..16
-                  - open_brace [OpenBrace]: "{" # 17..18
-                  - members [LibraryMembers]: # 19..210 "  function tryAdd(uint256 a, uint256 b) internal p..."
-                      - item [ContractMember]: # 19..210 "  function tryAdd(uint256 a, uint256 b) internal p..."
-                          - variant [FunctionDefinition]: # 19..210 "  function tryAdd(uint256 a, uint256 b) internal p..."
-                              - function_keyword [FunctionKeyword]: "function" # 21..29
-                              - name [FunctionName]: # 29..36 " tryAdd"
-                                  - variant [Identifier]: "tryAdd" # 30..36
-                              - parameters [ParametersDeclaration]: # 36..58 "(uint256 a, uint256 b)"
-                                  - open_paren [OpenParen]: "(" # 36..37
-                                  - parameters [Parameters]: # 37..57 "uint256 a, uint256 b"
-                                      - item [Parameter]: # 37..46 "uint256 a"
-                                          - type_name [TypeName]: # 37..44 "uint256"
-                                              - variant [ElementaryType]: # 37..44 "uint256"
-                                                  - variant [UintKeyword]: "uint256" # 37..44
-                                          - name [Identifier]: "a" # 45..46
-                                      - separator [Comma]: "," # 46..47
-                                      - item [Parameter]: # 47..57 " uint256 b"
-                                          - type_name [TypeName]: # 47..55 " uint256"
-                                              - variant [ElementaryType]: # 47..55 " uint256"
-                                                  - variant [UintKeyword]: "uint256" # 48..55
-                                          - name [Identifier]: "b" # 56..57
-                                  - close_paren [CloseParen]: ")" # 57..58
-                              - attributes [FunctionAttributes]: # 58..72 " internal pure"
-                                  - item [FunctionAttribute]: # 58..67 " internal"
-                                      - variant [InternalKeyword]: "internal" # 59..67
-                                  - item [FunctionAttribute]: # 67..72 " pure"
-                                      - variant [PureKeyword]: "pure" # 68..72
-                              - returns [ReturnsDeclaration]: # 72..96 " returns (bool, uint256)"
-                                  - returns_keyword [ReturnsKeyword]: "returns" # 73..80
-                                  - variables [ParametersDeclaration]: # 80..96 " (bool, uint256)"
-                                      - open_paren [OpenParen]: "(" # 81..82
-                                      - parameters [Parameters]: # 82..95 "bool, uint256"
-                                          - item [Parameter]: # 82..86 "bool"
-                                              - type_name [TypeName]: # 82..86 "bool"
-                                                  - variant [ElementaryType]: # 82..86 "bool"
-                                                      - variant [BoolKeyword]: "bool" # 82..86
-                                          - separator [Comma]: "," # 86..87
-                                          - item [Parameter]: # 87..95 " uint256"
-                                              - type_name [TypeName]: # 87..95 " uint256"
-                                                  - variant [ElementaryType]: # 87..95 " uint256"
-                                                      - variant [UintKeyword]: "uint256" # 88..95
-                                      - close_paren [CloseParen]: ")" # 95..96
-                              - body [FunctionBody]: # 96..210 " {\n    unchecked {\n      uint256 c = a + b;\n      ..."
-                                  - variant [Block]: # 96..210 " {\n    unchecked {\n      uint256 c = a + b;\n      ..."
-                                      - open_brace [OpenBrace]: "{" # 97..98
-                                      - statements [Statements]: # 99..206 "    unchecked {\n      uint256 c = a + b;\n      if ..."
-                                          - item [Statement]: # 99..206 "    unchecked {\n      uint256 c = a + b;\n      if ..."
-                                              - variant [UncheckedBlock]: # 99..206 "    unchecked {\n      uint256 c = a + b;\n      if ..."
-                                                  - unchecked_keyword [UncheckedKeyword]: "unchecked" # 103..112
-                                                  - block [Block]: # 112..206 " {\n      uint256 c = a + b;\n      if (c < a) retur..."
-                                                      - open_brace [OpenBrace]: "{" # 113..114
-                                                      - statements [Statements]: # 115..200 "      uint256 c = a + b;\n      if (c < a) return (..."
-                                                          - item [Statement]: # 115..140 "      uint256 c = a + b;\n"
-                                                              - variant [VariableDeclarationStatement]: # 115..140 "      uint256 c = a + b;\n"
-                                                                  - variable_type [VariableDeclarationType]: # 115..128 "      uint256"
-                                                                      - variant [TypeName]: # 115..128 "      uint256"
-                                                                          - variant [ElementaryType]: # 115..128 "      uint256"
-                                                                              - variant [UintKeyword]: "uint256" # 121..128
-                                                                  - name [Identifier]: "c" # 129..130
-                                                                  - value [VariableDeclarationValue]: # 130..138 " = a + b"
-                                                                      - equal [Equal]: "=" # 131..132
-                                                                      - expression [Expression]: # 132..138 " a + b"
-                                                                          - variant [AdditiveExpression]: # 132..138 " a + b"
-                                                                              - left_operand [Expression]: # 132..134 " a"
-                                                                                  - variant [Identifier]: "a" # 133..134
-                                                                              - operator [Plus]: "+" # 135..136
-                                                                              - right_operand [Expression]: # 136..138 " b"
-                                                                                  - variant [Identifier]: "b" # 137..138
-                                                                  - semicolon [Semicolon]: ";" # 138..139
-                                                          - item [Statement]: # 140..176 "      if (c < a) return (false, 0);\n"
-                                                              - variant [IfStatement]: # 140..176 "      if (c < a) return (false, 0);\n"
-                                                                  - if_keyword [IfKeyword]: "if" # 146..148
-                                                                  - open_paren [OpenParen]: "(" # 149..150
-                                                                  - condition [Expression]: # 150..155 "c < a"
-                                                                      - variant [ComparisonExpression]: # 150..155 "c < a"
-                                                                          - left_operand [Expression]: # 150..151 "c"
-                                                                              - variant [Identifier]: "c" # 150..151
-                                                                          - operator [LessThan]: "<" # 152..153
-                                                                          - right_operand [Expression]: # 153..155 " a"
-                                                                              - variant [Identifier]: "a" # 154..155
-                                                                  - close_paren [CloseParen]: ")" # 155..156
-                                                                  - body [Statement]: # 156..176 " return (false, 0);\n"
-                                                                      - variant [ReturnStatement]: # 156..176 " return (false, 0);\n"
-                                                                          - return_keyword [ReturnKeyword]: "return" # 157..163
-                                                                          - expression [Expression]: # 163..174 " (false, 0)"
-                                                                              - variant [TupleExpression]: # 163..174 " (false, 0)"
-                                                                                  - open_paren [OpenParen]: "(" # 164..165
-                                                                                  - items [TupleValues]: # 165..173 "false, 0"
-                                                                                      - item [TupleValue]: # 165..170 "false"
-                                                                                          - expression [Expression]: # 165..170 "false"
-                                                                                              - variant [FalseKeyword]: "false" # 165..170
-                                                                                      - separator [Comma]: "," # 170..171
-                                                                                      - item [TupleValue]: # 171..173 " 0"
-                                                                                          - expression [Expression]: # 171..173 " 0"
-                                                                                              - variant [DecimalNumberExpression]: # 171..173 " 0"
-                                                                                                  - literal [DecimalLiteral]: "0" # 172..173
-                                                                                  - close_paren [CloseParen]: ")" # 173..174
-                                                                          - semicolon [Semicolon]: ";" # 174..175
-                                                          - item [Statement]: # 176..200 "      return (true, c);\n"
-                                                              - variant [ReturnStatement]: # 176..200 "      return (true, c);\n"
-                                                                  - return_keyword [ReturnKeyword]: "return" # 182..188
-                                                                  - expression [Expression]: # 188..198 " (true, c)"
-                                                                      - variant [TupleExpression]: # 188..198 " (true, c)"
-                                                                          - open_paren [OpenParen]: "(" # 189..190
-                                                                          - items [TupleValues]: # 190..197 "true, c"
-                                                                              - item [TupleValue]: # 190..194 "true"
-                                                                                  - expression [Expression]: # 190..194 "true"
-                                                                                      - variant [TrueKeyword]: "true" # 190..194
-                                                                              - separator [Comma]: "," # 194..195
-                                                                              - item [TupleValue]: # 195..197 " c"
-                                                                                  - expression [Expression]: # 195..197 " c"
-                                                                                      - variant [Identifier]: "c" # 196..197
-                                                                          - close_paren [CloseParen]: ")" # 197..198
-                                                                  - semicolon [Semicolon]: ";" # 198..199
-                                                      - close_brace [CloseBrace]: "}" # 204..205
-                                      - close_brace [CloseBrace]: "}" # 208..209
-                  - close_brace [CloseBrace]: "}" # 210..211
+  - SourceUnit: # 0..212 "library SafeMath {\n  function tryAdd(uint256 a, ui..."
+      - (members) SourceUnitMembers: # 0..212 "library SafeMath {\n  function tryAdd(uint256 a, ui..."
+          - (item) SourceUnitMember: # 0..212 "library SafeMath {\n  function tryAdd(uint256 a, ui..."
+              - (variant) LibraryDefinition: # 0..212 "library SafeMath {\n  function tryAdd(uint256 a, ui..."
+                  - (library_keyword) LibraryKeyword: "library" # 0..7
+                  - (name) Identifier: "SafeMath" # 8..16
+                  - (open_brace) OpenBrace: "{" # 17..18
+                  - (members) LibraryMembers: # 19..210 "  function tryAdd(uint256 a, uint256 b) internal p..."
+                      - (item) ContractMember: # 19..210 "  function tryAdd(uint256 a, uint256 b) internal p..."
+                          - (variant) FunctionDefinition: # 19..210 "  function tryAdd(uint256 a, uint256 b) internal p..."
+                              - (function_keyword) FunctionKeyword: "function" # 21..29
+                              - (name) FunctionName: # 29..36 " tryAdd"
+                                  - (variant) Identifier: "tryAdd" # 30..36
+                              - (parameters) ParametersDeclaration: # 36..58 "(uint256 a, uint256 b)"
+                                  - (open_paren) OpenParen: "(" # 36..37
+                                  - (parameters) Parameters: # 37..57 "uint256 a, uint256 b"
+                                      - (item) Parameter: # 37..46 "uint256 a"
+                                          - (type_name) TypeName: # 37..44 "uint256"
+                                              - (variant) ElementaryType: # 37..44 "uint256"
+                                                  - (variant) UintKeyword: "uint256" # 37..44
+                                          - (name) Identifier: "a" # 45..46
+                                      - (separator) Comma: "," # 46..47
+                                      - (item) Parameter: # 47..57 " uint256 b"
+                                          - (type_name) TypeName: # 47..55 " uint256"
+                                              - (variant) ElementaryType: # 47..55 " uint256"
+                                                  - (variant) UintKeyword: "uint256" # 48..55
+                                          - (name) Identifier: "b" # 56..57
+                                  - (close_paren) CloseParen: ")" # 57..58
+                              - (attributes) FunctionAttributes: # 58..72 " internal pure"
+                                  - (item) FunctionAttribute: # 58..67 " internal"
+                                      - (variant) InternalKeyword: "internal" # 59..67
+                                  - (item) FunctionAttribute: # 67..72 " pure"
+                                      - (variant) PureKeyword: "pure" # 68..72
+                              - (returns) ReturnsDeclaration: # 72..96 " returns (bool, uint256)"
+                                  - (returns_keyword) ReturnsKeyword: "returns" # 73..80
+                                  - (variables) ParametersDeclaration: # 80..96 " (bool, uint256)"
+                                      - (open_paren) OpenParen: "(" # 81..82
+                                      - (parameters) Parameters: # 82..95 "bool, uint256"
+                                          - (item) Parameter: # 82..86 "bool"
+                                              - (type_name) TypeName: # 82..86 "bool"
+                                                  - (variant) ElementaryType: # 82..86 "bool"
+                                                      - (variant) BoolKeyword: "bool" # 82..86
+                                          - (separator) Comma: "," # 86..87
+                                          - (item) Parameter: # 87..95 " uint256"
+                                              - (type_name) TypeName: # 87..95 " uint256"
+                                                  - (variant) ElementaryType: # 87..95 " uint256"
+                                                      - (variant) UintKeyword: "uint256" # 88..95
+                                      - (close_paren) CloseParen: ")" # 95..96
+                              - (body) FunctionBody: # 96..210 " {\n    unchecked {\n      uint256 c = a + b;\n      ..."
+                                  - (variant) Block: # 96..210 " {\n    unchecked {\n      uint256 c = a + b;\n      ..."
+                                      - (open_brace) OpenBrace: "{" # 97..98
+                                      - (statements) Statements: # 99..206 "    unchecked {\n      uint256 c = a + b;\n      if ..."
+                                          - (item) Statement: # 99..206 "    unchecked {\n      uint256 c = a + b;\n      if ..."
+                                              - (variant) UncheckedBlock: # 99..206 "    unchecked {\n      uint256 c = a + b;\n      if ..."
+                                                  - (unchecked_keyword) UncheckedKeyword: "unchecked" # 103..112
+                                                  - (block) Block: # 112..206 " {\n      uint256 c = a + b;\n      if (c < a) retur..."
+                                                      - (open_brace) OpenBrace: "{" # 113..114
+                                                      - (statements) Statements: # 115..200 "      uint256 c = a + b;\n      if (c < a) return (..."
+                                                          - (item) Statement: # 115..140 "      uint256 c = a + b;\n"
+                                                              - (variant) VariableDeclarationStatement: # 115..140 "      uint256 c = a + b;\n"
+                                                                  - (variable_type) VariableDeclarationType: # 115..128 "      uint256"
+                                                                      - (variant) TypeName: # 115..128 "      uint256"
+                                                                          - (variant) ElementaryType: # 115..128 "      uint256"
+                                                                              - (variant) UintKeyword: "uint256" # 121..128
+                                                                  - (name) Identifier: "c" # 129..130
+                                                                  - (value) VariableDeclarationValue: # 130..138 " = a + b"
+                                                                      - (equal) Equal: "=" # 131..132
+                                                                      - (expression) Expression: # 132..138 " a + b"
+                                                                          - (variant) AdditiveExpression: # 132..138 " a + b"
+                                                                              - (left_operand) Expression: # 132..134 " a"
+                                                                                  - (variant) Identifier: "a" # 133..134
+                                                                              - (operator) Plus: "+" # 135..136
+                                                                              - (right_operand) Expression: # 136..138 " b"
+                                                                                  - (variant) Identifier: "b" # 137..138
+                                                                  - (semicolon) Semicolon: ";" # 138..139
+                                                          - (item) Statement: # 140..176 "      if (c < a) return (false, 0);\n"
+                                                              - (variant) IfStatement: # 140..176 "      if (c < a) return (false, 0);\n"
+                                                                  - (if_keyword) IfKeyword: "if" # 146..148
+                                                                  - (open_paren) OpenParen: "(" # 149..150
+                                                                  - (condition) Expression: # 150..155 "c < a"
+                                                                      - (variant) ComparisonExpression: # 150..155 "c < a"
+                                                                          - (left_operand) Expression: # 150..151 "c"
+                                                                              - (variant) Identifier: "c" # 150..151
+                                                                          - (operator) LessThan: "<" # 152..153
+                                                                          - (right_operand) Expression: # 153..155 " a"
+                                                                              - (variant) Identifier: "a" # 154..155
+                                                                  - (close_paren) CloseParen: ")" # 155..156
+                                                                  - (body) Statement: # 156..176 " return (false, 0);\n"
+                                                                      - (variant) ReturnStatement: # 156..176 " return (false, 0);\n"
+                                                                          - (return_keyword) ReturnKeyword: "return" # 157..163
+                                                                          - (expression) Expression: # 163..174 " (false, 0)"
+                                                                              - (variant) TupleExpression: # 163..174 " (false, 0)"
+                                                                                  - (open_paren) OpenParen: "(" # 164..165
+                                                                                  - (items) TupleValues: # 165..173 "false, 0"
+                                                                                      - (item) TupleValue: # 165..170 "false"
+                                                                                          - (expression) Expression: # 165..170 "false"
+                                                                                              - (variant) FalseKeyword: "false" # 165..170
+                                                                                      - (separator) Comma: "," # 170..171
+                                                                                      - (item) TupleValue: # 171..173 " 0"
+                                                                                          - (expression) Expression: # 171..173 " 0"
+                                                                                              - (variant) DecimalNumberExpression: # 171..173 " 0"
+                                                                                                  - (literal) DecimalLiteral: "0" # 172..173
+                                                                                  - (close_paren) CloseParen: ")" # 173..174
+                                                                          - (semicolon) Semicolon: ";" # 174..175
+                                                          - (item) Statement: # 176..200 "      return (true, c);\n"
+                                                              - (variant) ReturnStatement: # 176..200 "      return (true, c);\n"
+                                                                  - (return_keyword) ReturnKeyword: "return" # 182..188
+                                                                  - (expression) Expression: # 188..198 " (true, c)"
+                                                                      - (variant) TupleExpression: # 188..198 " (true, c)"
+                                                                          - (open_paren) OpenParen: "(" # 189..190
+                                                                          - (items) TupleValues: # 190..197 "true, c"
+                                                                              - (item) TupleValue: # 190..194 "true"
+                                                                                  - (expression) Expression: # 190..194 "true"
+                                                                                      - (variant) TrueKeyword: "true" # 190..194
+                                                                              - (separator) Comma: "," # 194..195
+                                                                              - (item) TupleValue: # 195..197 " c"
+                                                                                  - (expression) Expression: # 195..197 " c"
+                                                                                      - (variant) Identifier: "c" # 196..197
+                                                                          - (close_paren) CloseParen: ")" # 197..198
+                                                                  - (semicolon) Semicolon: ";" # 198..199
+                                                      - (close_brace) CloseBrace: "}" # 204..205
+                                      - (close_brace) CloseBrace: "}" # 208..209
+                  - (close_brace) CloseBrace: "}" # 210..211

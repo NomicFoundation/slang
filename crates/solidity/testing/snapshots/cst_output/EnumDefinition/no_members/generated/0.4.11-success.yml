@@ -6,8 +6,8 @@ Source: >
 Errors: []
 
 Tree:
-  - [EnumDefinition]: # 0..12 "enum Foo { }"
-      - enum_keyword [EnumKeyword]: "enum" # 0..4
-      - name [Identifier]: "Foo" # 5..8
-      - open_brace [OpenBrace]: "{" # 9..10
-      - close_brace [CloseBrace]: "}" # 11..12
+  - EnumDefinition: # 0..12 "enum Foo { }"
+      - (enum_keyword) EnumKeyword: "enum" # 0..4
+      - (name) Identifier: "Foo" # 5..8
+      - (open_brace) OpenBrace: "{" # 9..10
+      - (close_brace) CloseBrace: "}" # 11..12

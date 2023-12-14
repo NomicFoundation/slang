@@ -6,8 +6,8 @@ Source: >
 Errors: []
 
 Tree:
-  - [UsingDeconstructionSymbol]: # 0..7 "foo.bar"
-      - name [IdentifierPath]: # 0..7 "foo.bar"
-          - item [Identifier]: "foo" # 0..3
-          - separator [Period]: "." # 3..4
-          - item [Identifier]: "bar" # 4..7
+  - UsingDeconstructionSymbol: # 0..7 "foo.bar"
+      - (name) IdentifierPath: # 0..7 "foo.bar"
+          - (item) Identifier: "foo" # 0..3
+          - (separator) Period: "." # 3..4
+          - (item) Identifier: "bar" # 4..7

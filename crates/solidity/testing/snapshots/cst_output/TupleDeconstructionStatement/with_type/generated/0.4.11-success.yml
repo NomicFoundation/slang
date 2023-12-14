@@ -6,23 +6,23 @@ Source: >
 Errors: []
 
 Tree:
-  - [TupleDeconstructionStatement]: # 0..37 "(bool with_type, without_type) = rhs;"
-      - open_paren [OpenParen]: "(" # 0..1
-      - elements [TupleDeconstructionElements]: # 1..29 "bool with_type, without_type"
-          - item [TupleDeconstructionElement]: # 1..15 "bool with_type"
-              - member [TupleMember]: # 1..15 "bool with_type"
-                  - variant [TypedTupleMember]: # 1..15 "bool with_type"
-                      - type_name [TypeName]: # 1..5 "bool"
-                          - variant [ElementaryType]: # 1..5 "bool"
-                              - variant [BoolKeyword]: "bool" # 1..5
-                      - name [Identifier]: "with_type" # 6..15
-          - separator [Comma]: "," # 15..16
-          - item [TupleDeconstructionElement]: # 16..29 " without_type"
-              - member [TupleMember]: # 16..29 " without_type"
-                  - variant [UntypedTupleMember]: # 16..29 " without_type"
-                      - name [Identifier]: "without_type" # 17..29
-      - close_paren [CloseParen]: ")" # 29..30
-      - equal [Equal]: "=" # 31..32
-      - expression [Expression]: # 32..36 " rhs"
-          - variant [Identifier]: "rhs" # 33..36
-      - semicolon [Semicolon]: ";" # 36..37
+  - TupleDeconstructionStatement: # 0..37 "(bool with_type, without_type) = rhs;"
+      - (open_paren) OpenParen: "(" # 0..1
+      - (elements) TupleDeconstructionElements: # 1..29 "bool with_type, without_type"
+          - (item) TupleDeconstructionElement: # 1..15 "bool with_type"
+              - (member) TupleMember: # 1..15 "bool with_type"
+                  - (variant) TypedTupleMember: # 1..15 "bool with_type"
+                      - (type_name) TypeName: # 1..5 "bool"
+                          - (variant) ElementaryType: # 1..5 "bool"
+                              - (variant) BoolKeyword: "bool" # 1..5
+                      - (name) Identifier: "with_type" # 6..15
+          - (separator) Comma: "," # 15..16
+          - (item) TupleDeconstructionElement: # 16..29 " without_type"
+              - (member) TupleMember: # 16..29 " without_type"
+                  - (variant) UntypedTupleMember: # 16..29 " without_type"
+                      - (name) Identifier: "without_type" # 17..29
+      - (close_paren) CloseParen: ")" # 29..30
+      - (equal) Equal: "=" # 31..32
+      - (expression) Expression: # 32..36 " rhs"
+          - (variant) Identifier: "rhs" # 33..36
+      - (semicolon) Semicolon: ";" # 36..37

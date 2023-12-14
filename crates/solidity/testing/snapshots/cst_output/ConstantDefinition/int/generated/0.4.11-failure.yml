@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - [SKIPPED]: "int constant foo = 0;" # 0..21
+  - SKIPPED: "int constant foo = 0;" # 0..21

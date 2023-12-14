@@ -6,6 +6,6 @@ Source: >
 Errors: []
 
 Tree:
-  - [ThrowStatement]: # 0..6 "throw;"
-      - throw_keyword [ThrowKeyword]: "throw" # 0..5
-      - semicolon [Semicolon]: ";" # 5..6
+  - ThrowStatement: # 0..6 "throw;"
+      - (throw_keyword) ThrowKeyword: "throw" # 0..5
+      - (semicolon) Semicolon: ";" # 5..6

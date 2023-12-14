@@ -6,12 +6,12 @@ Source: >
 Errors: []
 
 Tree:
-  - [NewExpression]: # 0..9 "new Foo[]"
-      - new_keyword [NewKeyword]: "new" # 0..3
-      - type_name [TypeName]: # 3..9 " Foo[]"
-          - variant [ArrayTypeName]: # 3..9 " Foo[]"
-              - operand [TypeName]: # 3..7 " Foo"
-                  - variant [IdentifierPath]: # 3..7 " Foo"
-                      - item [Identifier]: "Foo" # 4..7
-              - open_bracket [OpenBracket]: "[" # 7..8
-              - close_bracket [CloseBracket]: "]" # 8..9
+  - NewExpression: # 0..9 "new Foo[]"
+      - (new_keyword) NewKeyword: "new" # 0..3
+      - (type_name) TypeName: # 3..9 " Foo[]"
+          - (variant) ArrayTypeName: # 3..9 " Foo[]"
+              - (operand) TypeName: # 3..7 " Foo"
+                  - (variant) IdentifierPath: # 3..7 " Foo"
+                      - (item) Identifier: "Foo" # 4..7
+              - (open_bracket) OpenBracket: "[" # 7..8
+              - (close_bracket) CloseBracket: "]" # 8..9
