@@ -1,5 +1,7 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
+use std::ops::ControlFlow;
+
 use crate::cst;
 use crate::kinds::{RuleKind, TokenKind};
 use crate::text_index::TextIndex;
@@ -79,35 +81,41 @@ impl ParserResult {
         }
     }
 
-    #[allow(clippy::single_match)] // TODO: This is still WIP code
     #[must_use]
     pub fn with_name(mut self, name: impl Into<String>) -> ParserResult {
-        match &mut self {
-            ParserResult::Match(r#match) => match &mut r#match.nodes[..] {
-                // TODO: Have an "extract non trivia" API?
-                [(prev, _)] => {
-                    *prev = name.into();
-                }
-                [(_, cst::Node::Rule(leading)), (prev, _)] if leading.kind.is_trivia() => {
-                    *prev = name.into();
-                }
-                [(prev, _), (_, cst::Node::Rule(trailing))] if trailing.kind.is_trivia() => {
-                    *prev = name.into();
-                }
-                [(_, cst::Node::Rule(leading)), (prev, _), (_, cst::Node::Rule(trailing))]
-                    if leading.kind.is_trivia() && trailing.kind.is_trivia() =>
-                {
-                    *prev = name.into();
-                }
-                _ => {}
-            },
-            ParserResult::IncompleteMatch(_) => {}
-            ParserResult::NoMatch(_) => {}
-            ParserResult::SkippedUntil(_) => {}
-            ParserResult::PrattOperatorMatch(_) => {}
+        if let Some((prev_name, _)) = self.significant_node_mut() {
+            *prev_name = name.into();
         }
 
         self
+    }
+
+    /// Returns a significant (non-trivia) node if there is exactly one.
+    pub(crate) fn significant_node_mut(&mut self) -> Option<&mut cst::NamedNode> {
+        fn is_significant(node: &cst::NamedNode) -> bool {
+            match &node.1 {
+                cst::Node::Rule(rule) => !rule.kind.is_trivia(),
+                // FIXME: Some tokens are in fact trivia
+                cst::Node::Token(_) => true,
+            }
+        }
+
+        let nodes = match self {
+            ParserResult::Match(r#match) => &mut r#match.nodes[..],
+            _ => return None,
+        };
+
+        let result = nodes.iter_mut().try_fold(None, |acc, next| match acc {
+            // Two significant nodes, bail
+            Some(_) if is_significant(next) => ControlFlow::Break(None),
+            Some(_) => ControlFlow::Continue(acc),
+            None => ControlFlow::Continue(is_significant(next).then_some(next)),
+        });
+
+        match result {
+            ControlFlow::Continue(value) => value,
+            ControlFlow::Break(value) => value,
+        }
     }
 }
 
