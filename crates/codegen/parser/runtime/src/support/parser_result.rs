@@ -136,8 +136,8 @@ impl Match {
     pub fn is_full_recursive(&self) -> bool {
         self.nodes
             .iter()
-            .flat_map(|(_name, node)| node.cursor_with_offset(TextIndex::ZERO))
-            .all(|(_name, node)| node.as_token_with_kind(&[TokenKind::SKIPPED]).is_none())
+            .flat_map(|(_, node)| node.cursor_with_offset(TextIndex::ZERO))
+            .all(|node| node.as_token_with_kind(&[TokenKind::SKIPPED]).is_none())
     }
 }
 

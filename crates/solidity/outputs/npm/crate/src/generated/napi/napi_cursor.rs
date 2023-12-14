@@ -56,7 +56,7 @@ impl Cursor {
 
     #[napi(ts_return_type = "cst.Node", catch_unwind)]
     pub fn node(&self, env: Env) -> JsObject {
-        self.0.node().1.to_js(&env)
+        self.0.node().to_js(&env)
     }
 
     #[napi(getter, ts_return_type = "text_index.TextIndex", catch_unwind)]

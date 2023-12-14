@@ -91,10 +91,11 @@ fn write_tree<W: Write>(w: &mut W, mut cursor: Cursor, source: &str) -> Result<(
 
     let significant_nodes_with_range = std::iter::from_fn(|| loop {
         let (depth, range) = (cursor.depth(), cursor.text_range());
+        let node_name = cursor.node_name();
 
         // Skip whitespace and trivia rules containing only those tokens
         match cursor.next() {
-            Some((_, cst::Node::Rule(rule)))
+            Some(cst::Node::Rule(rule))
                 if rule.is_trivia()
                     && rule.children.iter().all(|(_name, node)| {
                         node.as_token().map_or(false, |t| is_whitespace(t.kind))
@@ -102,8 +103,8 @@ fn write_tree<W: Write>(w: &mut W, mut cursor: Cursor, source: &str) -> Result<(
             {
                 continue
             }
-            Some((_, cst::Node::Token(token))) if is_whitespace(token.kind) => continue,
-            next => break next.map(|item| (item, depth, range)),
+            Some(cst::Node::Token(token)) if is_whitespace(token.kind) => continue,
+            next => break next.map(|item| ((node_name, item), depth, range)),
         }
     });
 

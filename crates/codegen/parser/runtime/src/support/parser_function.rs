@@ -98,7 +98,7 @@ where
                         errors.is_empty(),
                         parse_tree
                             .cursor_with_offset(TextIndex::ZERO)
-                            .all(|(_, n)| n.as_token_with_kind(&[TokenKind::SKIPPED]).is_none())
+                            .all(|node| node.as_token_with_kind(&[TokenKind::SKIPPED]).is_none())
                     );
 
                     ParseOutput { parse_tree, errors }
