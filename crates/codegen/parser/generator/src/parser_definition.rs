@@ -160,7 +160,6 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                     _ => unreachable!("Only tokens are permitted as delimiters"),
                 };
 
-                // let body_field_name = &body.0;
                 let parser = body.to_parser_code(context_name, is_trivia);
                 let body_parser = body.applicable_version_quality_ranges().wrap_code(
                     quote! {
