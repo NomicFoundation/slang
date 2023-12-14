@@ -102,3 +102,20 @@ fn using_iter_combinators() -> Result<()> {
     assert_eq!(contract_names, &["Foo", "Bar", "Baz"]);
     Ok(())
 }
+
+#[test]
+fn using_iter_with_node_names() -> Result<()> {
+    let language = Language::new(Version::parse("0.8.0")?)?;
+    let parse_output = language.parse(RuleKind::SourceUnit, SOURCE);
+
+    let names: Vec<_> = parse_output
+        .create_tree_cursor()
+        .with_names()
+        .filter_map(|(name, node)| (name == "name").then_some(node))
+        .filter_map(|node| node.as_token_with_kind(&[TokenKind::Identifier]).cloned())
+        .map(|node| node.text.clone())
+        .collect();
+
+    assert_eq!(names, &["Foo", "Bar", "Baz"]);
+    Ok(())
+}
