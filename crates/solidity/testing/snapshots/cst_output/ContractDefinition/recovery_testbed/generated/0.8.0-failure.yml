@@ -123,9 +123,9 @@ Tree:
                                       - (unchecked_keyword) UncheckedKeyword: "unchecked" # 176..185
                                       - (block) Block: # 185..207 " { invalid sequence }\n"
                                           - (open_brace) OpenBrace: "{" # 186..187
-                                          - Statements: # 187..205 " invalid sequence "
-                                              - Statement: # 187..205 " invalid sequence "
-                                                  - VariableDeclarationStatement: # 187..205 " invalid sequence "
+                                          - (statements) Statements: # 187..205 " invalid sequence "
+                                              - (item) Statement: # 187..205 " invalid sequence "
+                                                  - (variant) VariableDeclarationStatement: # 187..205 " invalid sequence "
                                                       - (variable_type) VariableDeclarationType: # 187..195 " invalid"
                                                           - (variant) TypeName: # 187..195 " invalid"
                                                               - (variant) IdentifierPath: # 187..195 " invalid"

@@ -22,9 +22,9 @@ Tree:
       - (contract_keyword) ContractKeyword: "contract" # 0..8
       - (name) Identifier: "Sample" # 9..15
       - (open_brace) OpenBrace: "{" # 16..17
-      - ContractMembers: # 18..32 "  function () "
-          - ContractMember: # 18..32 "  function () "
-              - StateVariableDefinition: # 18..32 "  function () "
+      - (members) ContractMembers: # 18..32 "  function () "
+          - (item) ContractMember: # 18..32 "  function () "
+              - (variant) StateVariableDefinition: # 18..32 "  function () "
                   - (type_name) TypeName: # 18..31 "  function ()"
                       - (variant) FunctionType: # 18..31 "  function ()"
                           - (function_keyword) FunctionKeyword: "function" # 20..28

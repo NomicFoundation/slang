@@ -46,18 +46,18 @@ Tree:
                           - (item) Statement: # 29..70 "    {\n        uint256 arg = (1 + 2;\n    }"
                               - (variant) Block: # 29..70 "    {\n        uint256 arg = (1 + 2;\n    }"
                                   - (open_brace) OpenBrace: "{" # 33..34
-                                  - Statements: # 35..63 "        uint256 arg = (1 + 2"
-                                      - Statement: # 35..63 "        uint256 arg = (1 + 2"
-                                          - VariableDeclarationStatement: # 35..63 "        uint256 arg = (1 + 2"
+                                  - (statements) Statements: # 35..63 "        uint256 arg = (1 + 2"
+                                      - (item) Statement: # 35..63 "        uint256 arg = (1 + 2"
+                                          - (variant) VariableDeclarationStatement: # 35..63 "        uint256 arg = (1 + 2"
                                               - (variable_type) VariableDeclarationType: # 35..50 "        uint256"
                                                   - (variant) TypeName: # 35..50 "        uint256"
                                                       - (variant) ElementaryType: # 35..50 "        uint256"
                                                           - (variant) UintKeyword: "uint256" # 43..50
                                               - (name) Identifier: "arg" # 51..54
-                                              - VariableDeclarationValue: # 54..63 " = (1 + 2"
+                                              - (value) VariableDeclarationValue: # 54..63 " = (1 + 2"
                                                   - (equal) Equal: "=" # 55..56
-                                                  - Expression: # 56..63 " (1 + 2"
-                                                      - TupleExpression: # 56..63 " (1 + 2"
+                                                  - (expression) Expression: # 56..63 " (1 + 2"
+                                                      - (variant) TupleExpression: # 56..63 " (1 + 2"
                                                           - (open_paren) OpenParen: "(" # 57..58
                                                           - (items) TupleValues: # 58..63 "1 + 2"
                                                               - (item) TupleValue: # 58..63 "1 + 2"

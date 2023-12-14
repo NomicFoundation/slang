@@ -101,6 +101,7 @@ impl ParserResult {
         let nodes = match self {
             ParserResult::Match(r#match) => &mut r#match.nodes[..],
             ParserResult::IncompleteMatch(incomplete_match) => &mut incomplete_match.nodes[..],
+            ParserResult::SkippedUntil(skipped) => &mut skipped.nodes[..],
             _ => return None,
         };
 

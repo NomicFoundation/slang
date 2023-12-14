@@ -22,9 +22,9 @@ Tree:
       - (contract_keyword) ContractKeyword: "contract" # 0..8
       - (name) Identifier: "Sample" # 9..15
       - (open_brace) OpenBrace: "{" # 16..17
-      - ContractMembers: # 18..31 "  constructor"
-          - ContractMember: # 18..31 "  constructor"
-              - StateVariableDefinition: # 18..31 "  constructor"
+      - (members) ContractMembers: # 18..31 "  constructor"
+          - (item) ContractMember: # 18..31 "  constructor"
+              - (variant) StateVariableDefinition: # 18..31 "  constructor"
                   - (type_name) TypeName: # 18..31 "  constructor"
                       - (variant) IdentifierPath: # 18..31 "  constructor"
                           - (item) Identifier: "constructor" # 20..31
