@@ -18,15 +18,15 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - ContractDefinition: # 0..37 "contract Sample {\n  receive() {\n  }\n}"
-      - (contract_keyword:) ContractKeyword: "contract" # 0..8
-      - (name:) Identifier: "Sample" # 9..15
-      - (open_brace:) OpenBrace: "{" # 16..17
-      - ContractMembers: # 18..27 "  receive"
-          - ContractMember: # 18..27 "  receive"
-              - StateVariableDefinition: # 18..27 "  receive"
-                  - (type_name:) TypeName: # 18..27 "  receive"
-                      - (variant:) IdentifierPath: # 18..27 "  receive"
-                          - (item:) Identifier: "receive" # 20..27
-      - SKIPPED: "() {\n  }\n" # 27..36
-      - (close_brace:) CloseBrace: "}" # 36..37
+  - [ContractDefinition]: # 0..37 "contract Sample {\n  receive() {\n  }\n}"
+      - contract_keyword [ContractKeyword]: "contract" # 0..8
+      - name [Identifier]: "Sample" # 9..15
+      - open_brace [OpenBrace]: "{" # 16..17
+      - [ContractMembers]: # 18..27 "  receive"
+          - [ContractMember]: # 18..27 "  receive"
+              - [StateVariableDefinition]: # 18..27 "  receive"
+                  - type_name [TypeName]: # 18..27 "  receive"
+                      - variant [IdentifierPath]: # 18..27 "  receive"
+                          - item [Identifier]: "receive" # 20..27
+      - [SKIPPED]: "() {\n  }\n" # 27..36
+      - close_brace [CloseBrace]: "}" # 36..37

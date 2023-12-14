@@ -6,15 +6,15 @@ Source: >
 Errors: []
 
 Tree:
-  - Expression: # 0..14 "payable(value)"
-      - (variant:) FunctionCallExpression: # 0..14 "payable(value)"
-          - (operand:) Expression: # 0..7 "payable"
-              - (variant:) ElementaryType: # 0..7 "payable"
-                  - (variant:) PayableKeyword: "payable" # 0..7
-          - (arguments:) ArgumentsDeclaration: # 7..14 "(value)"
-              - (variant:) PositionalArgumentsDeclaration: # 7..14 "(value)"
-                  - (open_paren:) OpenParen: "(" # 7..8
-                  - (arguments:) PositionalArguments: # 8..13 "value"
-                      - (item:) Expression: # 8..13 "value"
-                          - (variant:) Identifier: "value" # 8..13
-                  - (close_paren:) CloseParen: ")" # 13..14
+  - [Expression]: # 0..14 "payable(value)"
+      - variant [FunctionCallExpression]: # 0..14 "payable(value)"
+          - operand [Expression]: # 0..7 "payable"
+              - variant [ElementaryType]: # 0..7 "payable"
+                  - variant [PayableKeyword]: "payable" # 0..7
+          - arguments [ArgumentsDeclaration]: # 7..14 "(value)"
+              - variant [PositionalArgumentsDeclaration]: # 7..14 "(value)"
+                  - open_paren [OpenParen]: "(" # 7..8
+                  - arguments [PositionalArguments]: # 8..13 "value"
+                      - item [Expression]: # 8..13 "value"
+                          - variant [Identifier]: "value" # 8..13
+                  - close_paren [CloseParen]: ")" # 13..14

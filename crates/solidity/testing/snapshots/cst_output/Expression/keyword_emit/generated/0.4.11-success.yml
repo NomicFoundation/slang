@@ -6,5 +6,5 @@ Source: >
 Errors: []
 
 Tree:
-  - Expression: # 0..4 "emit"
-      - (variant:) Identifier: "emit" # 0..4
+  - [Expression]: # 0..4 "emit"
+      - variant [Identifier]: "emit" # 0..4

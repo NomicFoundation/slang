@@ -116,7 +116,7 @@ fn write_tree<W: Write>(w: &mut W, mut cursor: Cursor, source: &str) -> Result<(
 
 fn write_node<W: Write>(
     w: &mut W,
-    node: &cst::NamedNode,
+    (name, node): &cst::NamedNode,
     range: &TextRange,
     source: &str,
     indentation: usize,
@@ -124,8 +124,8 @@ fn write_node<W: Write>(
     let range_string = format!("{range:?}", range = range.utf8());
 
     let (node_value, node_comment) = if range.is_empty() {
-        let preview = match node.1 {
-            cst::Node::Rule(_) if !node.1.children().is_empty() => "",
+        let preview = match node {
+            cst::Node::Rule(_) if !node.children().is_empty() => "",
             cst::Node::Rule(_) => " []",
             cst::Node::Token(_) => " \"\"",
         };
@@ -134,7 +134,7 @@ fn write_node<W: Write>(
     } else {
         let preview = render_source_preview(source, range)?;
 
-        if node.1.children().is_empty() {
+        if node.children().is_empty() {
             // "foo" # 1..2
             (format!(" {preview}"), range_string)
         } else {
@@ -143,25 +143,15 @@ fn write_node<W: Write>(
         }
     };
 
+    let field_name = if name.is_empty() {
+        String::new()
+    } else {
+        format!("{name} ")
+    };
+
     let name = match node {
-        (name, cst::Node::Rule(rule)) => format!(
-            "{name}{:?}",
-            rule.kind,
-            name = if name.is_empty() {
-                String::new()
-            } else {
-                format!("({name}:) ")
-            }
-        ),
-        (name, cst::Node::Token(token)) => format!(
-            "{name}{:?}",
-            token.kind,
-            name = if name.is_empty() {
-                String::new()
-            } else {
-                format!("({name}:) ")
-            }
-        ),
+        cst::Node::Rule(rule) => format!("{field_name}[{}]", rule.kind.as_ref()),
+        cst::Node::Token(token) => format!("{field_name}[{}]", token.kind.as_ref()),
     };
 
     writeln!(

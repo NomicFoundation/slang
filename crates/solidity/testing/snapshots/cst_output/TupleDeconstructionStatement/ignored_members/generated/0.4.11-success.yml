@@ -6,24 +6,24 @@ Source: >
 Errors: []
 
 Tree:
-  - TupleDeconstructionStatement: # 0..27 "(, second, , fourth) = rhs;"
-      - (open_paren:) OpenParen: "(" # 0..1
-      - (elements:) TupleDeconstructionElements: # 1..19 ", second, , fourth"
-          - (item:) TupleDeconstructionElement: [] # 1..1
-          - (separator:) Comma: "," # 1..2
-          - (item:) TupleDeconstructionElement: # 2..9 " second"
-              - (member:) TupleMember: # 2..9 " second"
-                  - (variant:) UntypedTupleMember: # 2..9 " second"
-                      - (name:) Identifier: "second" # 3..9
-          - (separator:) Comma: "," # 9..10
-          - (item:) TupleDeconstructionElement: [] # 10..10
-          - (separator:) Comma: "," # 11..12
-          - (item:) TupleDeconstructionElement: # 12..19 " fourth"
-              - (member:) TupleMember: # 12..19 " fourth"
-                  - (variant:) UntypedTupleMember: # 12..19 " fourth"
-                      - (name:) Identifier: "fourth" # 13..19
-      - (close_paren:) CloseParen: ")" # 19..20
-      - (equal:) Equal: "=" # 21..22
-      - (expression:) Expression: # 22..26 " rhs"
-          - (variant:) Identifier: "rhs" # 23..26
-      - (semicolon:) Semicolon: ";" # 26..27
+  - [TupleDeconstructionStatement]: # 0..27 "(, second, , fourth) = rhs;"
+      - open_paren [OpenParen]: "(" # 0..1
+      - elements [TupleDeconstructionElements]: # 1..19 ", second, , fourth"
+          - item [TupleDeconstructionElement]: [] # 1..1
+          - separator [Comma]: "," # 1..2
+          - item [TupleDeconstructionElement]: # 2..9 " second"
+              - member [TupleMember]: # 2..9 " second"
+                  - variant [UntypedTupleMember]: # 2..9 " second"
+                      - name [Identifier]: "second" # 3..9
+          - separator [Comma]: "," # 9..10
+          - item [TupleDeconstructionElement]: [] # 10..10
+          - separator [Comma]: "," # 11..12
+          - item [TupleDeconstructionElement]: # 12..19 " fourth"
+              - member [TupleMember]: # 12..19 " fourth"
+                  - variant [UntypedTupleMember]: # 12..19 " fourth"
+                      - name [Identifier]: "fourth" # 13..19
+      - close_paren [CloseParen]: ")" # 19..20
+      - equal [Equal]: "=" # 21..22
+      - expression [Expression]: # 22..26 " rhs"
+          - variant [Identifier]: "rhs" # 23..26
+      - semicolon [Semicolon]: ";" # 26..27

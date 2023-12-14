@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - SKIPPED: "partial" # 0..7
+  - [SKIPPED]: "partial" # 0..7

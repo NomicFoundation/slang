@@ -6,17 +6,17 @@ Source: >
 Errors: []
 
 Tree:
-  - MappingType: # 0..30 "mapping(string Foo => bytes32)"
-      - (mapping_keyword:) MappingKeyword: "mapping" # 0..7
-      - (open_paren:) OpenParen: "(" # 7..8
-      - (key_type:) MappingKey: # 8..18 "string Foo"
-          - (key_type:) MappingKeyType: # 8..14 "string"
-              - (variant:) ElementaryType: # 8..14 "string"
-                  - (variant:) StringKeyword: "string" # 8..14
-          - (name:) Identifier: "Foo" # 15..18
-      - (equal_greater_than:) EqualGreaterThan: "=>" # 19..21
-      - (value_type:) MappingValue: # 21..29 " bytes32"
-          - (type_name:) TypeName: # 21..29 " bytes32"
-              - (variant:) ElementaryType: # 21..29 " bytes32"
-                  - (variant:) BytesKeyword: "bytes32" # 22..29
-      - (close_paren:) CloseParen: ")" # 29..30
+  - [MappingType]: # 0..30 "mapping(string Foo => bytes32)"
+      - mapping_keyword [MappingKeyword]: "mapping" # 0..7
+      - open_paren [OpenParen]: "(" # 7..8
+      - key_type [MappingKey]: # 8..18 "string Foo"
+          - key_type [MappingKeyType]: # 8..14 "string"
+              - variant [ElementaryType]: # 8..14 "string"
+                  - variant [StringKeyword]: "string" # 8..14
+          - name [Identifier]: "Foo" # 15..18
+      - equal_greater_than [EqualGreaterThan]: "=>" # 19..21
+      - value_type [MappingValue]: # 21..29 " bytes32"
+          - type_name [TypeName]: # 21..29 " bytes32"
+              - variant [ElementaryType]: # 21..29 " bytes32"
+                  - variant [BytesKeyword]: "bytes32" # 22..29
+      - close_paren [CloseParen]: ")" # 29..30

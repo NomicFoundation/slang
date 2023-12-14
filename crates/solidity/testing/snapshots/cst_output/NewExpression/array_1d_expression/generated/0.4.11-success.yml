@@ -6,15 +6,15 @@ Source: >
 Errors: []
 
 Tree:
-  - NewExpression: # 0..11 "new Foo[10]"
-      - (new_keyword:) NewKeyword: "new" # 0..3
-      - (type_name:) TypeName: # 3..11 " Foo[10]"
-          - (variant:) ArrayTypeName: # 3..11 " Foo[10]"
-              - (operand:) TypeName: # 3..7 " Foo"
-                  - (variant:) IdentifierPath: # 3..7 " Foo"
-                      - (item:) Identifier: "Foo" # 4..7
-              - (open_bracket:) OpenBracket: "[" # 7..8
-              - (index:) Expression: # 8..10 "10"
-                  - (variant:) DecimalNumberExpression: # 8..10 "10"
-                      - (literal:) DecimalLiteral: "10" # 8..10
-              - (close_bracket:) CloseBracket: "]" # 10..11
+  - [NewExpression]: # 0..11 "new Foo[10]"
+      - new_keyword [NewKeyword]: "new" # 0..3
+      - type_name [TypeName]: # 3..11 " Foo[10]"
+          - variant [ArrayTypeName]: # 3..11 " Foo[10]"
+              - operand [TypeName]: # 3..7 " Foo"
+                  - variant [IdentifierPath]: # 3..7 " Foo"
+                      - item [Identifier]: "Foo" # 4..7
+              - open_bracket [OpenBracket]: "[" # 7..8
+              - index [Expression]: # 8..10 "10"
+                  - variant [DecimalNumberExpression]: # 8..10 "10"
+                      - literal [DecimalLiteral]: "10" # 8..10
+              - close_bracket [CloseBracket]: "]" # 10..11

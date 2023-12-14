@@ -14,12 +14,12 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - Block: # 0..24 "{ unchecked { x = 1; } }"
-      - (open_brace:) OpenBrace: "{" # 0..1
-      - Statements: # 1..12 " unchecked "
-          - Statement: # 1..12 " unchecked "
-              - ExpressionStatement: # 1..12 " unchecked "
-                  - (expression:) Expression: # 1..11 " unchecked"
-                      - (variant:) Identifier: "unchecked" # 2..11
-      - SKIPPED: "{ x = 1; } " # 12..23
-      - (close_brace:) CloseBrace: "}" # 23..24
+  - [Block]: # 0..24 "{ unchecked { x = 1; } }"
+      - open_brace [OpenBrace]: "{" # 0..1
+      - [Statements]: # 1..12 " unchecked "
+          - [Statement]: # 1..12 " unchecked "
+              - [ExpressionStatement]: # 1..12 " unchecked "
+                  - expression [Expression]: # 1..11 " unchecked"
+                      - variant [Identifier]: "unchecked" # 2..11
+      - [SKIPPED]: "{ x = 1; } " # 12..23
+      - close_brace [CloseBrace]: "}" # 23..24

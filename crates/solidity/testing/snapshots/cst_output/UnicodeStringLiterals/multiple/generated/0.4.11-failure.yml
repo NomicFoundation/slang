@@ -12,4 +12,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - SKIPPED: 'unicode"happy 😃" unicode''sad 😔''' # 0..37
+  - [SKIPPED]: 'unicode"happy 😃" unicode''sad 😔''' # 0..37

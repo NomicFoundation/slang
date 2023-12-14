@@ -6,5 +6,5 @@ Source: >
 Errors: []
 
 Tree:
-  - HexNumberExpression: # 0..11 "0X123456789"
-      - (literal:) HexLiteral: "0X123456789" # 0..11
+  - [HexNumberExpression]: # 0..11 "0X123456789"
+      - literal [HexLiteral]: "0X123456789" # 0..11

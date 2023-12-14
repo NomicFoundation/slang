@@ -9,19 +9,19 @@ Source: >
 Errors: []
 
 Tree:
-  - ContractDefinition: # 0..37 "contract Sample {\n  receive() {\n  }\n}"
-      - (contract_keyword:) ContractKeyword: "contract" # 0..8
-      - (name:) Identifier: "Sample" # 9..15
-      - (open_brace:) OpenBrace: "{" # 16..17
-      - (members:) ContractMembers: # 18..36 "  receive() {\n  }\n"
-          - (item:) ContractMember: # 18..36 "  receive() {\n  }\n"
-              - (variant:) ReceiveFunctionDefinition: # 18..36 "  receive() {\n  }\n"
-                  - (receive_keyword:) ReceiveKeyword: "receive" # 20..27
-                  - (parameters:) ParametersDeclaration: # 27..29 "()"
-                      - (open_paren:) OpenParen: "(" # 27..28
-                      - (close_paren:) CloseParen: ")" # 28..29
-                  - (body:) FunctionBody: # 29..36 " {\n  }\n"
-                      - (variant:) Block: # 29..36 " {\n  }\n"
-                          - (open_brace:) OpenBrace: "{" # 30..31
-                          - (close_brace:) CloseBrace: "}" # 34..35
-      - (close_brace:) CloseBrace: "}" # 36..37
+  - [ContractDefinition]: # 0..37 "contract Sample {\n  receive() {\n  }\n}"
+      - contract_keyword [ContractKeyword]: "contract" # 0..8
+      - name [Identifier]: "Sample" # 9..15
+      - open_brace [OpenBrace]: "{" # 16..17
+      - members [ContractMembers]: # 18..36 "  receive() {\n  }\n"
+          - item [ContractMember]: # 18..36 "  receive() {\n  }\n"
+              - variant [ReceiveFunctionDefinition]: # 18..36 "  receive() {\n  }\n"
+                  - receive_keyword [ReceiveKeyword]: "receive" # 20..27
+                  - parameters [ParametersDeclaration]: # 27..29 "()"
+                      - open_paren [OpenParen]: "(" # 27..28
+                      - close_paren [CloseParen]: ")" # 28..29
+                  - body [FunctionBody]: # 29..36 " {\n  }\n"
+                      - variant [Block]: # 29..36 " {\n  }\n"
+                          - open_brace [OpenBrace]: "{" # 30..31
+                          - close_brace [CloseBrace]: "}" # 34..35
+      - close_brace [CloseBrace]: "}" # 36..37

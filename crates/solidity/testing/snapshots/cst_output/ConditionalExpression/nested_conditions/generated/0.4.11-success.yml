@@ -6,34 +6,34 @@ Source: >
 Errors: []
 
 Tree:
-  - ConditionalExpression: # 0..23 "foo ? (a + b) : (c + d)"
-      - (operand:) Expression: # 0..3 "foo"
-          - (variant:) Identifier: "foo" # 0..3
-      - (question_mark:) QuestionMark: "?" # 4..5
-      - (true_expression:) Expression: # 5..13 " (a + b)"
-          - (variant:) TupleExpression: # 5..13 " (a + b)"
-              - (open_paren:) OpenParen: "(" # 6..7
-              - (items:) TupleValues: # 7..12 "a + b"
-                  - (item:) TupleValue: # 7..12 "a + b"
-                      - (expression:) Expression: # 7..12 "a + b"
-                          - (variant:) AdditiveExpression: # 7..12 "a + b"
-                              - (left_operand:) Expression: # 7..8 "a"
-                                  - (variant:) Identifier: "a" # 7..8
-                              - (operator:) Plus: "+" # 9..10
-                              - (right_operand:) Expression: # 10..12 " b"
-                                  - (variant:) Identifier: "b" # 11..12
-              - (close_paren:) CloseParen: ")" # 12..13
-      - (colon:) Colon: ":" # 14..15
-      - (false_expression:) Expression: # 15..23 " (c + d)"
-          - (variant:) TupleExpression: # 15..23 " (c + d)"
-              - (open_paren:) OpenParen: "(" # 16..17
-              - (items:) TupleValues: # 17..22 "c + d"
-                  - (item:) TupleValue: # 17..22 "c + d"
-                      - (expression:) Expression: # 17..22 "c + d"
-                          - (variant:) AdditiveExpression: # 17..22 "c + d"
-                              - (left_operand:) Expression: # 17..18 "c"
-                                  - (variant:) Identifier: "c" # 17..18
-                              - (operator:) Plus: "+" # 19..20
-                              - (right_operand:) Expression: # 20..22 " d"
-                                  - (variant:) Identifier: "d" # 21..22
-              - (close_paren:) CloseParen: ")" # 22..23
+  - [ConditionalExpression]: # 0..23 "foo ? (a + b) : (c + d)"
+      - operand [Expression]: # 0..3 "foo"
+          - variant [Identifier]: "foo" # 0..3
+      - question_mark [QuestionMark]: "?" # 4..5
+      - true_expression [Expression]: # 5..13 " (a + b)"
+          - variant [TupleExpression]: # 5..13 " (a + b)"
+              - open_paren [OpenParen]: "(" # 6..7
+              - items [TupleValues]: # 7..12 "a + b"
+                  - item [TupleValue]: # 7..12 "a + b"
+                      - expression [Expression]: # 7..12 "a + b"
+                          - variant [AdditiveExpression]: # 7..12 "a + b"
+                              - left_operand [Expression]: # 7..8 "a"
+                                  - variant [Identifier]: "a" # 7..8
+                              - operator [Plus]: "+" # 9..10
+                              - right_operand [Expression]: # 10..12 " b"
+                                  - variant [Identifier]: "b" # 11..12
+              - close_paren [CloseParen]: ")" # 12..13
+      - colon [Colon]: ":" # 14..15
+      - false_expression [Expression]: # 15..23 " (c + d)"
+          - variant [TupleExpression]: # 15..23 " (c + d)"
+              - open_paren [OpenParen]: "(" # 16..17
+              - items [TupleValues]: # 17..22 "c + d"
+                  - item [TupleValue]: # 17..22 "c + d"
+                      - expression [Expression]: # 17..22 "c + d"
+                          - variant [AdditiveExpression]: # 17..22 "c + d"
+                              - left_operand [Expression]: # 17..18 "c"
+                                  - variant [Identifier]: "c" # 17..18
+                              - operator [Plus]: "+" # 19..20
+                              - right_operand [Expression]: # 20..22 " d"
+                                  - variant [Identifier]: "d" # 21..22
+              - close_paren [CloseParen]: ")" # 22..23

@@ -12,51 +12,51 @@ Source: >
 Errors: []
 
 Tree:
-  - InterfaceDefinition: # 0..172 "interface ICounter {\n    // returns the current co..."
-      - (interface_keyword:) InterfaceKeyword: "interface" # 0..9
-      - (name:) Identifier: "ICounter" # 10..18
-      - (open_brace:) OpenBrace: "{" # 19..20
-      - (members:) InterfaceMembers: # 21..171 "    // returns the current count\n    function coun..."
-          - (item:) ContractMember: # 21..105 "    // returns the current count\n    function coun..."
-              - (variant:) FunctionDefinition: # 21..105 "    // returns the current count\n    function coun..."
-                  - LeadingTrivia: # 21..58 "    // returns the current count\n    "
-                      - SingleLineComment: "// returns the current count" # 25..53
-                  - (function_keyword:) FunctionKeyword: "function" # 58..66
-                  - (name:) FunctionName: # 66..72 " count"
-                      - (variant:) Identifier: "count" # 67..72
-                  - (parameters:) ParametersDeclaration: # 72..74 "()"
-                      - (open_paren:) OpenParen: "(" # 72..73
-                      - (close_paren:) CloseParen: ")" # 73..74
-                  - (attributes:) FunctionAttributes: # 74..88 " external view"
-                      - (item:) FunctionAttribute: # 74..83 " external"
-                          - (variant:) ExternalKeyword: "external" # 75..83
-                      - (item:) FunctionAttribute: # 83..88 " view"
-                          - (variant:) ViewKeyword: "view" # 84..88
-                  - (returns:) ReturnsDeclaration: # 88..103 " returns (uint)"
-                      - (returns_keyword:) ReturnsKeyword: "returns" # 89..96
-                      - (variables:) ParametersDeclaration: # 96..103 " (uint)"
-                          - (open_paren:) OpenParen: "(" # 97..98
-                          - (parameters:) Parameters: # 98..102 "uint"
-                              - (item:) Parameter: # 98..102 "uint"
-                                  - (type_name:) TypeName: # 98..102 "uint"
-                                      - (variant:) ElementaryType: # 98..102 "uint"
-                                          - (variant:) UintKeyword: "uint" # 98..102
-                          - (close_paren:) CloseParen: ")" # 102..103
-                  - (body:) FunctionBody: # 103..105 ";\n"
-                      - (variant:) Semicolon: ";" # 103..104
-          - (item:) ContractMember: # 105..171 "\n    // increments the counter\n    function increm..."
-              - (variant:) FunctionDefinition: # 105..171 "\n    // increments the counter\n    function increm..."
-                  - LeadingTrivia: # 105..140 "\n    // increments the counter\n    "
-                      - SingleLineComment: "// increments the counter" # 110..135
-                  - (function_keyword:) FunctionKeyword: "function" # 140..148
-                  - (name:) FunctionName: # 148..158 " increment"
-                      - (variant:) Identifier: "increment" # 149..158
-                  - (parameters:) ParametersDeclaration: # 158..160 "()"
-                      - (open_paren:) OpenParen: "(" # 158..159
-                      - (close_paren:) CloseParen: ")" # 159..160
-                  - (attributes:) FunctionAttributes: # 160..169 " external"
-                      - (item:) FunctionAttribute: # 160..169 " external"
-                          - (variant:) ExternalKeyword: "external" # 161..169
-                  - (body:) FunctionBody: # 169..171 ";\n"
-                      - (variant:) Semicolon: ";" # 169..170
-      - (close_brace:) CloseBrace: "}" # 171..172
+  - [InterfaceDefinition]: # 0..172 "interface ICounter {\n    // returns the current co..."
+      - interface_keyword [InterfaceKeyword]: "interface" # 0..9
+      - name [Identifier]: "ICounter" # 10..18
+      - open_brace [OpenBrace]: "{" # 19..20
+      - members [InterfaceMembers]: # 21..171 "    // returns the current count\n    function coun..."
+          - item [ContractMember]: # 21..105 "    // returns the current count\n    function coun..."
+              - variant [FunctionDefinition]: # 21..105 "    // returns the current count\n    function coun..."
+                  - [LeadingTrivia]: # 21..58 "    // returns the current count\n    "
+                      - [SingleLineComment]: "// returns the current count" # 25..53
+                  - function_keyword [FunctionKeyword]: "function" # 58..66
+                  - name [FunctionName]: # 66..72 " count"
+                      - variant [Identifier]: "count" # 67..72
+                  - parameters [ParametersDeclaration]: # 72..74 "()"
+                      - open_paren [OpenParen]: "(" # 72..73
+                      - close_paren [CloseParen]: ")" # 73..74
+                  - attributes [FunctionAttributes]: # 74..88 " external view"
+                      - item [FunctionAttribute]: # 74..83 " external"
+                          - variant [ExternalKeyword]: "external" # 75..83
+                      - item [FunctionAttribute]: # 83..88 " view"
+                          - variant [ViewKeyword]: "view" # 84..88
+                  - returns [ReturnsDeclaration]: # 88..103 " returns (uint)"
+                      - returns_keyword [ReturnsKeyword]: "returns" # 89..96
+                      - variables [ParametersDeclaration]: # 96..103 " (uint)"
+                          - open_paren [OpenParen]: "(" # 97..98
+                          - parameters [Parameters]: # 98..102 "uint"
+                              - item [Parameter]: # 98..102 "uint"
+                                  - type_name [TypeName]: # 98..102 "uint"
+                                      - variant [ElementaryType]: # 98..102 "uint"
+                                          - variant [UintKeyword]: "uint" # 98..102
+                          - close_paren [CloseParen]: ")" # 102..103
+                  - body [FunctionBody]: # 103..105 ";\n"
+                      - variant [Semicolon]: ";" # 103..104
+          - item [ContractMember]: # 105..171 "\n    // increments the counter\n    function increm..."
+              - variant [FunctionDefinition]: # 105..171 "\n    // increments the counter\n    function increm..."
+                  - [LeadingTrivia]: # 105..140 "\n    // increments the counter\n    "
+                      - [SingleLineComment]: "// increments the counter" # 110..135
+                  - function_keyword [FunctionKeyword]: "function" # 140..148
+                  - name [FunctionName]: # 148..158 " increment"
+                      - variant [Identifier]: "increment" # 149..158
+                  - parameters [ParametersDeclaration]: # 158..160 "()"
+                      - open_paren [OpenParen]: "(" # 158..159
+                      - close_paren [CloseParen]: ")" # 159..160
+                  - attributes [FunctionAttributes]: # 160..169 " external"
+                      - item [FunctionAttribute]: # 160..169 " external"
+                          - variant [ExternalKeyword]: "external" # 161..169
+                  - body [FunctionBody]: # 169..171 ";\n"
+                      - variant [Semicolon]: ";" # 169..170
+      - close_brace [CloseBrace]: "}" # 171..172

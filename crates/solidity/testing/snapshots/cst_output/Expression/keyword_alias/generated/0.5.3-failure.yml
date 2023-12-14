@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - SKIPPED: "alias" # 0..5
+  - [SKIPPED]: "alias" # 0..5

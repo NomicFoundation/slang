@@ -6,5 +6,5 @@ Source: >
 Errors: []
 
 Tree:
-  - HexStringLiterals: # 0..24 'hex"1234_5678_90ab_cdef"'
-      - (item:) HexStringLiteral: 'hex"1234_5678_90ab_cdef"' # 0..24
+  - [HexStringLiterals]: # 0..24 'hex"1234_5678_90ab_cdef"'
+      - item [HexStringLiteral]: 'hex"1234_5678_90ab_cdef"' # 0..24

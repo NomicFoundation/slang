@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - DecimalNumberExpression: # 0..9 "10 years\n"
-      - (literal:) DecimalLiteral: "10" # 0..2
-      - (unit:) NumberUnit: # 2..9 " years\n"
-          - (variant:) YearsKeyword: "years" # 3..8
+  - [DecimalNumberExpression]: # 0..9 "10 years\n"
+      - literal [DecimalLiteral]: "10" # 0..2
+      - unit [NumberUnit]: # 2..9 " years\n"
+          - variant [YearsKeyword]: "years" # 3..8

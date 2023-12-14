@@ -6,15 +6,15 @@ Source: >
 Errors: []
 
 Tree:
-  - UsingDirective: # 0..25 "using foo for bar global;"
-      - (using_keyword:) UsingKeyword: "using" # 0..5
-      - (clause:) UsingClause: # 5..9 " foo"
-          - (variant:) IdentifierPath: # 5..9 " foo"
-              - (item:) Identifier: "foo" # 6..9
-      - (for_keyword:) ForKeyword: "for" # 10..13
-      - (target:) UsingTarget: # 13..17 " bar"
-          - (variant:) TypeName: # 13..17 " bar"
-              - (variant:) IdentifierPath: # 13..17 " bar"
-                  - (item:) Identifier: "bar" # 14..17
-      - (global_keyword:) GlobalKeyword: "global" # 18..24
-      - (semicolon:) Semicolon: ";" # 24..25
+  - [UsingDirective]: # 0..25 "using foo for bar global;"
+      - using_keyword [UsingKeyword]: "using" # 0..5
+      - clause [UsingClause]: # 5..9 " foo"
+          - variant [IdentifierPath]: # 5..9 " foo"
+              - item [Identifier]: "foo" # 6..9
+      - for_keyword [ForKeyword]: "for" # 10..13
+      - target [UsingTarget]: # 13..17 " bar"
+          - variant [TypeName]: # 13..17 " bar"
+              - variant [IdentifierPath]: # 13..17 " bar"
+                  - item [Identifier]: "bar" # 14..17
+      - global_keyword [GlobalKeyword]: "global" # 18..24
+      - semicolon [Semicolon]: ";" # 24..25

@@ -6,15 +6,15 @@ Source: >
 Errors: []
 
 Tree:
-  - Expression: # 0..10 "a & b && c"
-      - (variant:) AndExpression: # 0..10 "a & b && c"
-          - (left_operand:) Expression: # 0..5 "a & b"
-              - (variant:) BitwiseAndExpression: # 0..5 "a & b"
-                  - (left_operand:) Expression: # 0..1 "a"
-                      - (variant:) Identifier: "a" # 0..1
-                  - (operator:) Ampersand: "&" # 2..3
-                  - (right_operand:) Expression: # 3..5 " b"
-                      - (variant:) Identifier: "b" # 4..5
-          - (operator:) AmpersandAmpersand: "&&" # 6..8
-          - (right_operand:) Expression: # 8..10 " c"
-              - (variant:) Identifier: "c" # 9..10
+  - [Expression]: # 0..10 "a & b && c"
+      - variant [AndExpression]: # 0..10 "a & b && c"
+          - left_operand [Expression]: # 0..5 "a & b"
+              - variant [BitwiseAndExpression]: # 0..5 "a & b"
+                  - left_operand [Expression]: # 0..1 "a"
+                      - variant [Identifier]: "a" # 0..1
+                  - operator [Ampersand]: "&" # 2..3
+                  - right_operand [Expression]: # 3..5 " b"
+                      - variant [Identifier]: "b" # 4..5
+          - operator [AmpersandAmpersand]: "&&" # 6..8
+          - right_operand [Expression]: # 8..10 " c"
+              - variant [Identifier]: "c" # 9..10

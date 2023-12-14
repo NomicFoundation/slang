@@ -6,17 +6,17 @@ Source: >
 Errors: []
 
 Tree:
-  - PragmaDirective: # 0..22 "pragma solidity 1.0.0;"
-      - (pragma_keyword:) PragmaKeyword: "pragma" # 0..6
-      - (pragma:) Pragma: # 6..21 " solidity 1.0.0"
-          - (variant:) VersionPragma: # 6..21 " solidity 1.0.0"
-              - (solidity_keyword:) SolidityKeyword: "solidity" # 7..15
-              - (expressions:) VersionPragmaExpressions: # 15..21 " 1.0.0"
-                  - (item:) VersionPragmaExpression: # 15..21 " 1.0.0"
-                      - VersionPragmaSpecifier: # 15..21 " 1.0.0"
-                          - (item:) VersionPragmaValue: "1" # 16..17
-                          - (separator:) Period: "." # 17..18
-                          - (item:) VersionPragmaValue: "0" # 18..19
-                          - (separator:) Period: "." # 19..20
-                          - (item:) VersionPragmaValue: "0" # 20..21
-      - (semicolon:) Semicolon: ";" # 21..22
+  - [PragmaDirective]: # 0..22 "pragma solidity 1.0.0;"
+      - pragma_keyword [PragmaKeyword]: "pragma" # 0..6
+      - pragma [Pragma]: # 6..21 " solidity 1.0.0"
+          - variant [VersionPragma]: # 6..21 " solidity 1.0.0"
+              - solidity_keyword [SolidityKeyword]: "solidity" # 7..15
+              - expressions [VersionPragmaExpressions]: # 15..21 " 1.0.0"
+                  - item [VersionPragmaExpression]: # 15..21 " 1.0.0"
+                      - [VersionPragmaSpecifier]: # 15..21 " 1.0.0"
+                          - item [VersionPragmaValue]: "1" # 16..17
+                          - separator [Period]: "." # 17..18
+                          - item [VersionPragmaValue]: "0" # 18..19
+                          - separator [Period]: "." # 19..20
+                          - item [VersionPragmaValue]: "0" # 20..21
+      - semicolon [Semicolon]: ";" # 21..22
