@@ -90,8 +90,8 @@ impl ParserResult {
 
     /// Returns a significant (non-trivia) node if there is exactly one.
     pub(crate) fn significant_node_mut(&mut self) -> Option<&mut cst::NamedNode> {
-        fn is_significant(node: &cst::NamedNode) -> bool {
-            match &node.1 {
+        fn is_significant((_, node): &cst::NamedNode) -> bool {
+            match node {
                 cst::Node::Rule(rule) => !rule.kind.is_trivia(),
                 // FIXME: Some tokens are in fact trivia
                 cst::Node::Token(_) => true,
@@ -136,7 +136,7 @@ impl Match {
     pub fn is_full_recursive(&self) -> bool {
         self.nodes
             .iter()
-            .flat_map(|node| cst::Node::cursor_with_offset(&node.1, TextIndex::ZERO))
+            .flat_map(|(_name, node)| node.cursor_with_offset(TextIndex::ZERO))
             .all(|(_name, node)| node.as_token_with_kind(&[TokenKind::SKIPPED]).is_none())
     }
 }
