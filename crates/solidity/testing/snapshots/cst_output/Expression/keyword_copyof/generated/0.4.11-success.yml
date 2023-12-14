@@ -7,4 +7,4 @@ Errors: []
 
 Tree:
   - Expression: # 0..6 "copyof"
-      - Identifier: "copyof" # 0..6
+      - (variant:) Identifier: "copyof" # 0..6

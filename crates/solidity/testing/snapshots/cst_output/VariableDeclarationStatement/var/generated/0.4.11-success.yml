@@ -13,6 +13,6 @@ Tree:
       - (value:) VariableDeclarationValue: # 5..9 " = 0"
           - (equal:) Equal: "=" # 6..7
           - (expression:) Expression: # 7..9 " 0"
-              - DecimalNumberExpression: # 7..9 " 0"
+              - (variant:) DecimalNumberExpression: # 7..9 " 0"
                   - (literal:) DecimalLiteral: "0" # 8..9
       - (semicolon:) Semicolon: ";" # 9..10

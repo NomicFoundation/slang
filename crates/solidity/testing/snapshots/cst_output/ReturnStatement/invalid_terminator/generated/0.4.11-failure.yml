@@ -22,15 +22,15 @@ Tree:
       - (expression:) Expression: # 6..19 " a + 2 * some"
           - (variant:) AdditiveExpression: # 6..19 " a + 2 * some"
               - (left_operand:) Expression: # 6..8 " a"
-                  - Identifier: "a" # 7..8
+                  - (variant:) Identifier: "a" # 7..8
               - (operator:) Plus: "+" # 9..10
               - (right_operand:) Expression: # 10..19 " 2 * some"
                   - (variant:) MultiplicativeExpression: # 10..19 " 2 * some"
                       - (left_operand:) Expression: # 10..12 " 2"
-                          - DecimalNumberExpression: # 10..12 " 2"
+                          - (variant:) DecimalNumberExpression: # 10..12 " 2"
                               - (literal:) DecimalLiteral: "2" # 11..12
                       - (operator:) Asterisk: "*" # 13..14
                       - (right_operand:) Expression: # 14..19 " some"
-                          - Identifier: "some" # 15..19
+                          - (variant:) Identifier: "some" # 15..19
       - SKIPPED: "invalid tokens\n\n" # 20..36
       - (semicolon:) Semicolon: ";" # 36..37

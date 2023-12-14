@@ -51,7 +51,7 @@ Tree:
                                           - VariableDeclarationStatement: # 35..63 "        uint256 arg = (1 + 2"
                                               - (variable_type:) VariableDeclarationType: # 35..50 "        uint256"
                                                   - (variant:) TypeName: # 35..50 "        uint256"
-                                                      - ElementaryType: # 35..50 "        uint256"
+                                                      - (variant:) ElementaryType: # 35..50 "        uint256"
                                                           - (variant:) UintKeyword: "uint256" # 43..50
                                               - (name:) Identifier: "arg" # 51..54
                                               - VariableDeclarationValue: # 54..63 " = (1 + 2"
@@ -64,11 +64,11 @@ Tree:
                                                                   - (expression:) Expression: # 58..63 "1 + 2"
                                                                       - (variant:) AdditiveExpression: # 58..63 "1 + 2"
                                                                           - (left_operand:) Expression: # 58..59 "1"
-                                                                              - DecimalNumberExpression: # 58..59 "1"
+                                                                              - (variant:) DecimalNumberExpression: # 58..59 "1"
                                                                                   - (literal:) DecimalLiteral: "1" # 58..59
                                                                           - (operator:) Plus: "+" # 60..61
                                                                           - (right_operand:) Expression: # 61..63 " 2"
-                                                                              - DecimalNumberExpression: # 61..63 " 2"
+                                                                              - (variant:) DecimalNumberExpression: # 61..63 " 2"
                                                                                   - (literal:) DecimalLiteral: "2" # 62..63
                                   - SKIPPED: ";\n    " # 63..69
                                   - (close_brace:) CloseBrace: "}" # 69..70

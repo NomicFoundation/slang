@@ -26,7 +26,7 @@ Tree:
           - ContractMember: # 18..32 "  function () "
               - StateVariableDefinition: # 18..32 "  function () "
                   - (type_name:) TypeName: # 18..31 "  function ()"
-                      - FunctionType: # 18..31 "  function ()"
+                      - (variant:) FunctionType: # 18..31 "  function ()"
                           - (function_keyword:) FunctionKeyword: "function" # 20..28
                           - (parameters:) ParametersDeclaration: # 28..31 " ()"
                               - (open_paren:) OpenParen: "(" # 29..30

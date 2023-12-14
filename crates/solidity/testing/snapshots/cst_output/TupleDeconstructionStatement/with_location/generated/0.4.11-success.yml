@@ -23,5 +23,5 @@ Tree:
       - (close_paren:) CloseParen: ")" # 39..40
       - (equal:) Equal: "=" # 41..42
       - (expression:) Expression: # 42..46 " rhs"
-          - Identifier: "rhs" # 43..46
+          - (variant:) Identifier: "rhs" # 43..46
       - (semicolon:) Semicolon: ";" # 46..47

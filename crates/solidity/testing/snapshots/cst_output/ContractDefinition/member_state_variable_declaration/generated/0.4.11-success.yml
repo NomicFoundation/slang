@@ -16,7 +16,7 @@ Tree:
           - ContractMember: # 18..35 "  uint public a;\n"
               - (variant:) StateVariableDefinition: # 18..35 "  uint public a;\n"
                   - (type_name:) TypeName: # 18..24 "  uint"
-                      - ElementaryType: # 18..24 "  uint"
+                      - (variant:) ElementaryType: # 18..24 "  uint"
                           - (variant:) UintKeyword: "uint" # 20..24
                   - (attributes:) StateVariableAttributes: # 24..31 " public"
                       - StateVariableAttribute: # 24..31 " public"

@@ -22,14 +22,14 @@ Tree:
                       - (parameters:) EventParameters: # 30..66 "uint256 indexed a, uint256 indexed b"
                           - EventParameter: # 30..47 "uint256 indexed a"
                               - (type_name:) TypeName: # 30..37 "uint256"
-                                  - ElementaryType: # 30..37 "uint256"
+                                  - (variant:) ElementaryType: # 30..37 "uint256"
                                       - (variant:) UintKeyword: "uint256" # 30..37
                               - (indexed_keyword:) IndexedKeyword: "indexed" # 38..45
                               - (name:) Identifier: "a" # 46..47
                           - Comma: "," # 47..48
                           - EventParameter: # 48..66 " uint256 indexed b"
                               - (type_name:) TypeName: # 48..56 " uint256"
-                                  - ElementaryType: # 48..56 " uint256"
+                                  - (variant:) ElementaryType: # 48..56 " uint256"
                                       - (variant:) UintKeyword: "uint256" # 49..56
                               - (indexed_keyword:) IndexedKeyword: "indexed" # 57..64
                               - (name:) Identifier: "b" # 65..66

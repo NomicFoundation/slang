@@ -10,4 +10,4 @@ Tree:
       - (variant:) PrefixExpression: # 0..5 "--foo"
           - (operator:) MinusMinus: "--" # 0..2
           - (operand:) Expression: # 2..5 "foo"
-              - Identifier: "foo" # 2..5
+              - (variant:) Identifier: "foo" # 2..5

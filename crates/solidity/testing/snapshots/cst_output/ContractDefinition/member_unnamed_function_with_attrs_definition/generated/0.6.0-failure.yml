@@ -24,7 +24,7 @@ Tree:
           - ContractMember: # 18..48 "  function() external payable "
               - StateVariableDefinition: # 18..48 "  function() external payable "
                   - (type_name:) TypeName: # 18..47 "  function() external payable"
-                      - FunctionType: # 18..47 "  function() external payable"
+                      - (variant:) FunctionType: # 18..47 "  function() external payable"
                           - (function_keyword:) FunctionKeyword: "function" # 20..28
                           - (parameters:) ParametersDeclaration: # 28..30 "()"
                               - (open_paren:) OpenParen: "(" # 28..29

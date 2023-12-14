@@ -32,13 +32,13 @@ Tree:
                                   - (parameters:) Parameters: # 37..57 "uint256 a, uint256 b"
                                       - Parameter: # 37..46 "uint256 a"
                                           - (type_name:) TypeName: # 37..44 "uint256"
-                                              - ElementaryType: # 37..44 "uint256"
+                                              - (variant:) ElementaryType: # 37..44 "uint256"
                                                   - (variant:) UintKeyword: "uint256" # 37..44
                                           - (name:) Identifier: "a" # 45..46
                                       - Comma: "," # 46..47
                                       - Parameter: # 47..57 " uint256 b"
                                           - (type_name:) TypeName: # 47..55 " uint256"
-                                              - ElementaryType: # 47..55 " uint256"
+                                              - (variant:) ElementaryType: # 47..55 " uint256"
                                                   - (variant:) UintKeyword: "uint256" # 48..55
                                           - (name:) Identifier: "b" # 56..57
                                   - (close_paren:) CloseParen: ")" # 57..58
@@ -54,12 +54,12 @@ Tree:
                                       - (parameters:) Parameters: # 82..95 "bool, uint256"
                                           - Parameter: # 82..86 "bool"
                                               - (type_name:) TypeName: # 82..86 "bool"
-                                                  - ElementaryType: # 82..86 "bool"
+                                                  - (variant:) ElementaryType: # 82..86 "bool"
                                                       - (variant:) BoolKeyword: "bool" # 82..86
                                           - Comma: "," # 86..87
                                           - Parameter: # 87..95 " uint256"
                                               - (type_name:) TypeName: # 87..95 " uint256"
-                                                  - ElementaryType: # 87..95 " uint256"
+                                                  - (variant:) ElementaryType: # 87..95 " uint256"
                                                       - (variant:) UintKeyword: "uint256" # 88..95
                                       - (close_paren:) CloseParen: ")" # 95..96
                               - (body:) FunctionBody: # 96..210 " {\n    unchecked {\n      uint256 c = a + b;\n      ..."
@@ -76,7 +76,7 @@ Tree:
                                                               - (variant:) VariableDeclarationStatement: # 115..140 "      uint256 c = a + b;\n"
                                                                   - (variable_type:) VariableDeclarationType: # 115..128 "      uint256"
                                                                       - (variant:) TypeName: # 115..128 "      uint256"
-                                                                          - ElementaryType: # 115..128 "      uint256"
+                                                                          - (variant:) ElementaryType: # 115..128 "      uint256"
                                                                               - (variant:) UintKeyword: "uint256" # 121..128
                                                                   - (name:) Identifier: "c" # 129..130
                                                                   - (value:) VariableDeclarationValue: # 130..138 " = a + b"
@@ -84,10 +84,10 @@ Tree:
                                                                       - (expression:) Expression: # 132..138 " a + b"
                                                                           - (variant:) AdditiveExpression: # 132..138 " a + b"
                                                                               - (left_operand:) Expression: # 132..134 " a"
-                                                                                  - Identifier: "a" # 133..134
+                                                                                  - (variant:) Identifier: "a" # 133..134
                                                                               - (operator:) Plus: "+" # 135..136
                                                                               - (right_operand:) Expression: # 136..138 " b"
-                                                                                  - Identifier: "b" # 137..138
+                                                                                  - (variant:) Identifier: "b" # 137..138
                                                                   - (semicolon:) Semicolon: ";" # 138..139
                                                           - Statement: # 140..176 "      if (c < a) return (false, 0);\n"
                                                               - (variant:) IfStatement: # 140..176 "      if (c < a) return (false, 0);\n"
@@ -96,25 +96,25 @@ Tree:
                                                                   - (condition:) Expression: # 150..155 "c < a"
                                                                       - (variant:) ComparisonExpression: # 150..155 "c < a"
                                                                           - (left_operand:) Expression: # 150..151 "c"
-                                                                              - Identifier: "c" # 150..151
+                                                                              - (variant:) Identifier: "c" # 150..151
                                                                           - (operator:) LessThan: "<" # 152..153
                                                                           - (right_operand:) Expression: # 153..155 " a"
-                                                                              - Identifier: "a" # 154..155
+                                                                              - (variant:) Identifier: "a" # 154..155
                                                                   - (close_paren:) CloseParen: ")" # 155..156
                                                                   - (body:) Statement: # 156..176 " return (false, 0);\n"
                                                                       - (variant:) ReturnStatement: # 156..176 " return (false, 0);\n"
                                                                           - (return_keyword:) ReturnKeyword: "return" # 157..163
                                                                           - (expression:) Expression: # 163..174 " (false, 0)"
-                                                                              - TupleExpression: # 163..174 " (false, 0)"
+                                                                              - (variant:) TupleExpression: # 163..174 " (false, 0)"
                                                                                   - (open_paren:) OpenParen: "(" # 164..165
                                                                                   - (items:) TupleValues: # 165..173 "false, 0"
                                                                                       - TupleValue: # 165..170 "false"
                                                                                           - (expression:) Expression: # 165..170 "false"
-                                                                                              - FalseKeyword: "false" # 165..170
+                                                                                              - (variant:) FalseKeyword: "false" # 165..170
                                                                                       - Comma: "," # 170..171
                                                                                       - TupleValue: # 171..173 " 0"
                                                                                           - (expression:) Expression: # 171..173 " 0"
-                                                                                              - DecimalNumberExpression: # 171..173 " 0"
+                                                                                              - (variant:) DecimalNumberExpression: # 171..173 " 0"
                                                                                                   - (literal:) DecimalLiteral: "0" # 172..173
                                                                                   - (close_paren:) CloseParen: ")" # 173..174
                                                                           - (semicolon:) Semicolon: ";" # 174..175
@@ -122,16 +122,16 @@ Tree:
                                                               - (variant:) ReturnStatement: # 176..200 "      return (true, c);\n"
                                                                   - (return_keyword:) ReturnKeyword: "return" # 182..188
                                                                   - (expression:) Expression: # 188..198 " (true, c)"
-                                                                      - TupleExpression: # 188..198 " (true, c)"
+                                                                      - (variant:) TupleExpression: # 188..198 " (true, c)"
                                                                           - (open_paren:) OpenParen: "(" # 189..190
                                                                           - (items:) TupleValues: # 190..197 "true, c"
                                                                               - TupleValue: # 190..194 "true"
                                                                                   - (expression:) Expression: # 190..194 "true"
-                                                                                      - TrueKeyword: "true" # 190..194
+                                                                                      - (variant:) TrueKeyword: "true" # 190..194
                                                                               - Comma: "," # 194..195
                                                                               - TupleValue: # 195..197 " c"
                                                                                   - (expression:) Expression: # 195..197 " c"
-                                                                                      - Identifier: "c" # 196..197
+                                                                                      - (variant:) Identifier: "c" # 196..197
                                                                           - (close_paren:) CloseParen: ")" # 197..198
                                                                   - (semicolon:) Semicolon: ";" # 198..199
                                                       - (close_brace:) CloseBrace: "}" # 204..205

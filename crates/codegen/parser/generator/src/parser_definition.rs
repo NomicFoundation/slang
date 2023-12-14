@@ -305,7 +305,13 @@ pub fn make_sequence_versioned(
     let parsers = parsers
         .into_iter()
         .map(|(parser, name, versions)| {
-            versions.wrap_code(quote! { seq.elem_named(#name, #parser)?; }, None)
+            let code = if name.is_empty() {
+                quote! { seq.elem(#parser)?; }
+            } else {
+                quote! { seq.elem_named(#name, #parser)?; }
+            };
+
+            versions.wrap_code(code, None)
         })
         .collect::<Vec<_>>();
     quote! {

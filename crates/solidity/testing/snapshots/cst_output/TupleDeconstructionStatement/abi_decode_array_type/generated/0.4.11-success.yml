@@ -13,7 +13,7 @@ Tree:
               - (member:) TupleMember: # 1..9 "uint32 a"
                   - (variant:) TypedTupleMember: # 1..9 "uint32 a"
                       - (type_name:) TypeName: # 1..7 "uint32"
-                          - ElementaryType: # 1..7 "uint32"
+                          - (variant:) ElementaryType: # 1..7 "uint32"
                               - (variant:) UintKeyword: "uint32" # 1..7
                       - (name:) Identifier: "a" # 8..9
           - Comma: "," # 9..10
@@ -23,7 +23,7 @@ Tree:
                       - (type_name:) TypeName: # 10..19 " uint32[]"
                           - (variant:) ArrayTypeName: # 10..19 " uint32[]"
                               - (operand:) TypeName: # 10..17 " uint32"
-                                  - ElementaryType: # 10..17 " uint32"
+                                  - (variant:) ElementaryType: # 10..17 " uint32"
                                       - (variant:) UintKeyword: "uint32" # 11..17
                               - (open_bracket:) OpenBracket: "[" # 17..18
                               - (close_bracket:) CloseBracket: "]" # 18..19
@@ -37,7 +37,7 @@ Tree:
               - (operand:) Expression: # 31..42 " abi.decode"
                   - (variant:) MemberAccessExpression: # 31..42 " abi.decode"
                       - (operand:) Expression: # 31..35 " abi"
-                          - Identifier: "abi" # 32..35
+                          - (variant:) Identifier: "abi" # 32..35
                       - (period:) Period: "." # 35..36
                       - (member:) MemberAccess: # 36..42 "decode"
                           - (variant:) Identifier: "decode" # 36..42
@@ -46,22 +46,22 @@ Tree:
                       - (open_paren:) OpenParen: "(" # 42..43
                       - (arguments:) PositionalArguments: # 43..67 "data, (uint32, uint32[])"
                           - Expression: # 43..47 "data"
-                              - Identifier: "data" # 43..47
+                              - (variant:) Identifier: "data" # 43..47
                           - Comma: "," # 47..48
                           - Expression: # 48..67 " (uint32, uint32[])"
-                              - TupleExpression: # 48..67 " (uint32, uint32[])"
+                              - (variant:) TupleExpression: # 48..67 " (uint32, uint32[])"
                                   - (open_paren:) OpenParen: "(" # 49..50
                                   - (items:) TupleValues: # 50..66 "uint32, uint32[]"
                                       - TupleValue: # 50..56 "uint32"
                                           - (expression:) Expression: # 50..56 "uint32"
-                                              - ElementaryType: # 50..56 "uint32"
+                                              - (variant:) ElementaryType: # 50..56 "uint32"
                                                   - (variant:) UintKeyword: "uint32" # 50..56
                                       - Comma: "," # 56..57
                                       - TupleValue: # 57..66 " uint32[]"
                                           - (expression:) Expression: # 57..66 " uint32[]"
                                               - (variant:) IndexAccessExpression: # 57..66 " uint32[]"
                                                   - (operand:) Expression: # 57..64 " uint32"
-                                                      - ElementaryType: # 57..64 " uint32"
+                                                      - (variant:) ElementaryType: # 57..64 " uint32"
                                                           - (variant:) UintKeyword: "uint32" # 58..64
                                                   - (open_bracket:) OpenBracket: "[" # 64..65
                                                   - (close_bracket:) CloseBracket: "]" # 65..66

@@ -18,6 +18,6 @@ Tree:
       - ContractMember: # 0..11 "constructor"
           - StateVariableDefinition: # 0..11 "constructor"
               - (type_name:) TypeName: # 0..11 "constructor"
-                  - IdentifierPath: # 0..11 "constructor"
+                  - (variant:) IdentifierPath: # 0..11 "constructor"
                       - Identifier: "constructor" # 0..11
       - SKIPPED: "() public {}\n" # 11..24

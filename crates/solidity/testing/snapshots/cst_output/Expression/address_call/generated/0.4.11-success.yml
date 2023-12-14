@@ -9,7 +9,7 @@ Tree:
   - Expression: # 0..14 "address(value)"
       - (variant:) FunctionCallExpression: # 0..14 "address(value)"
           - (operand:) Expression: # 0..7 "address"
-              - ElementaryType: # 0..7 "address"
+              - (variant:) ElementaryType: # 0..7 "address"
                   - (variant:) AddressType: # 0..7 "address"
                       - (address_keyword:) AddressKeyword: "address" # 0..7
           - (arguments:) ArgumentsDeclaration: # 7..14 "(value)"
@@ -17,5 +17,5 @@ Tree:
                   - (open_paren:) OpenParen: "(" # 7..8
                   - (arguments:) PositionalArguments: # 8..13 "value"
                       - Expression: # 8..13 "value"
-                          - Identifier: "value" # 8..13
+                          - (variant:) Identifier: "value" # 8..13
                   - (close_paren:) CloseParen: ")" # 13..14

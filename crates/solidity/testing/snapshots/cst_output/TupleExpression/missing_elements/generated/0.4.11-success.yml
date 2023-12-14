@@ -13,11 +13,11 @@ Tree:
           - Comma: "," # 1..2
           - TupleValue: # 2..9 " second"
               - (expression:) Expression: # 2..9 " second"
-                  - Identifier: "second" # 3..9
+                  - (variant:) Identifier: "second" # 3..9
           - Comma: "," # 9..10
           - TupleValue: [] # 10..10
           - Comma: "," # 11..12
           - TupleValue: # 12..19 " fourth"
               - (expression:) Expression: # 12..19 " fourth"
-                  - Identifier: "fourth" # 13..19
+                  - (variant:) Identifier: "fourth" # 13..19
       - (close_paren:) CloseParen: ")" # 19..20

@@ -7,4 +7,4 @@ Errors: []
 
 Tree:
   - Expression: # 0..7 "receive"
-      - Identifier: "receive" # 0..7
+      - (variant:) Identifier: "receive" # 0..7

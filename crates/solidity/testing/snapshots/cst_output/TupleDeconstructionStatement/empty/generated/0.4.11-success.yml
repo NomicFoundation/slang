@@ -16,7 +16,7 @@ Tree:
       - (close_paren:) CloseParen: ")" # 49..50
       - (equal:) Equal: "=" # 51..52
       - (expression:) Expression: # 52..55 " ()"
-          - TupleExpression: # 52..55 " ()"
+          - (variant:) TupleExpression: # 52..55 " ()"
               - (open_paren:) OpenParen: "(" # 53..54
               - (items:) TupleValues: # 54..54
                   - TupleValue: [] # 54..54

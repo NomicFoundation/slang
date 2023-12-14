@@ -11,7 +11,7 @@ Tree:
           - (operand:) Expression: # 0..3 "a.b"
               - (variant:) MemberAccessExpression: # 0..3 "a.b"
                   - (operand:) Expression: # 0..1 "a"
-                      - Identifier: "a" # 0..1
+                      - (variant:) Identifier: "a" # 0..1
                   - (period:) Period: "." # 1..2
                   - (member:) MemberAccess: # 2..3 "b"
                       - (variant:) Identifier: "b" # 2..3
@@ -24,7 +24,7 @@ Tree:
                               - (name:) Identifier: "value" # 4..9
                               - (colon:) Colon: ":" # 9..10
                               - (value:) Expression: # 10..12 " 0"
-                                  - DecimalNumberExpression: # 10..12 " 0"
+                                  - (variant:) DecimalNumberExpression: # 10..12 " 0"
                                       - (literal:) DecimalLiteral: "0" # 11..12
                       - (close_brace:) CloseBrace: "}" # 12..13
                   - NamedArgumentGroup: # 13..21 "{gas: 1}"
@@ -34,7 +34,7 @@ Tree:
                               - (name:) Identifier: "gas" # 14..17
                               - (colon:) Colon: ":" # 17..18
                               - (value:) Expression: # 18..20 " 1"
-                                  - DecimalNumberExpression: # 18..20 " 1"
+                                  - (variant:) DecimalNumberExpression: # 18..20 " 1"
                                       - (literal:) DecimalLiteral: "1" # 19..20
                       - (close_brace:) CloseBrace: "}" # 20..21
           - (arguments:) ArgumentsDeclaration: # 21..25 '("")'
@@ -42,7 +42,7 @@ Tree:
                   - (open_paren:) OpenParen: "(" # 21..22
                   - (arguments:) PositionalArguments: # 22..24 '""'
                       - Expression: # 22..24 '""'
-                          - StringExpression: # 22..24 '""'
+                          - (variant:) StringExpression: # 22..24 '""'
                               - (variant:) AsciiStringLiterals: # 22..24 '""'
                                   - AsciiStringLiteral: '""' # 22..24
                   - (close_paren:) CloseParen: ")" # 24..25

@@ -29,7 +29,7 @@ Tree:
                               - Statement: # 37..44 "    _;\n"
                                   - (variant:) ExpressionStatement: # 37..44 "    _;\n"
                                       - (expression:) Expression: # 37..42 "    _"
-                                          - Identifier: "_" # 41..42
+                                          - (variant:) Identifier: "_" # 41..42
                                       - (semicolon:) Semicolon: ";" # 42..43
                           - (close_brace:) CloseBrace: "}" # 46..47
       - (close_brace:) CloseBrace: "}" # 48..49

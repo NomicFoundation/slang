@@ -189,6 +189,8 @@ impl SequenceHelper {
     }
 
     /// Aggregates a parse result into the sequence. If we cannot make progress, returns the accumulated match.
+    ///
+    /// Shorthand for `self.elem(value.with_name(name))`.
     pub fn elem_named(
         &mut self,
         name: impl Into<String>,

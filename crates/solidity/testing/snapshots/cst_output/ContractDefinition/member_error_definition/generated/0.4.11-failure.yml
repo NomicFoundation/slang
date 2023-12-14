@@ -24,7 +24,7 @@ Tree:
           - ContractMember: # 18..36 "  error Error1();\n"
               - (variant:) StateVariableDefinition: # 18..36 "  error Error1();\n"
                   - (type_name:) TypeName: # 18..25 "  error"
-                      - IdentifierPath: # 18..25 "  error"
+                      - (variant:) IdentifierPath: # 18..25 "  error"
                           - Identifier: "error" # 20..25
                   - (name:) Identifier: "Error1" # 26..32
                   - SKIPPED: "()" # 32..34

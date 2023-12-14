@@ -19,7 +19,7 @@ Tree:
       - (for_keyword:) ForKeyword: "for" # 12..15
       - (target:) UsingTarget: # 15..19 " Int"
           - (variant:) TypeName: # 15..19 " Int"
-              - IdentifierPath: # 15..19 " Int"
+              - (variant:) IdentifierPath: # 15..19 " Int"
                   - Identifier: "Int" # 16..19
       - (global_keyword:) GlobalKeyword: "global" # 20..26
       - (semicolon:) Semicolon: ";" # 26..27

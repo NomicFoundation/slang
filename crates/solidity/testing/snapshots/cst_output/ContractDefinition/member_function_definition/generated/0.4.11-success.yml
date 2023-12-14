@@ -30,7 +30,7 @@ Tree:
                           - (parameters:) Parameters: # 44..48 "uint"
                               - Parameter: # 44..48 "uint"
                                   - (type_name:) TypeName: # 44..48 "uint"
-                                      - ElementaryType: # 44..48 "uint"
+                                      - (variant:) ElementaryType: # 44..48 "uint"
                                           - (variant:) UintKeyword: "uint" # 44..48
                           - (close_paren:) CloseParen: ")" # 48..49
                   - (body:) FunctionBody: # 49..70 " {\n    return 1;\n  }\n"
@@ -41,7 +41,7 @@ Tree:
                                   - (variant:) ReturnStatement: # 52..66 "    return 1;\n"
                                       - (return_keyword:) ReturnKeyword: "return" # 56..62
                                       - (expression:) Expression: # 62..64 " 1"
-                                          - DecimalNumberExpression: # 62..64 " 1"
+                                          - (variant:) DecimalNumberExpression: # 62..64 " 1"
                                               - (literal:) DecimalLiteral: "1" # 63..64
                                       - (semicolon:) Semicolon: ";" # 64..65
                           - (close_brace:) CloseBrace: "}" # 68..69

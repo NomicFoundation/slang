@@ -9,10 +9,10 @@ Tree:
   - Expression: # 0..9 "arr[:end]"
       - (variant:) IndexAccessExpression: # 0..9 "arr[:end]"
           - (operand:) Expression: # 0..3 "arr"
-              - Identifier: "arr" # 0..3
+              - (variant:) Identifier: "arr" # 0..3
           - (open_bracket:) OpenBracket: "[" # 3..4
           - (body:) IndexAccessEnd: # 4..8 ":end"
               - (colon:) Colon: ":" # 4..5
               - (end:) Expression: # 5..8 "end"
-                  - Identifier: "end" # 5..8
+                  - (variant:) Identifier: "end" # 5..8
           - (close_bracket:) CloseBracket: "]" # 8..9

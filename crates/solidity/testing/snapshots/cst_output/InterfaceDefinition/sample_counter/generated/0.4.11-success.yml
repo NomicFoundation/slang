@@ -39,7 +39,7 @@ Tree:
                           - (parameters:) Parameters: # 98..102 "uint"
                               - Parameter: # 98..102 "uint"
                                   - (type_name:) TypeName: # 98..102 "uint"
-                                      - ElementaryType: # 98..102 "uint"
+                                      - (variant:) ElementaryType: # 98..102 "uint"
                                           - (variant:) UintKeyword: "uint" # 98..102
                           - (close_paren:) CloseParen: ")" # 102..103
                   - (body:) FunctionBody: # 103..105 ";\n"

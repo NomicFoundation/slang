@@ -20,6 +20,6 @@ Tree:
           - Statement: # 1..12 " unchecked "
               - ExpressionStatement: # 1..12 " unchecked "
                   - (expression:) Expression: # 1..11 " unchecked"
-                      - Identifier: "unchecked" # 2..11
+                      - (variant:) Identifier: "unchecked" # 2..11
       - SKIPPED: "{ x = 1; } " # 12..23
       - (close_brace:) CloseBrace: "}" # 23..24

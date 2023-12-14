@@ -13,7 +13,7 @@ Tree:
               - (member:) TupleMember: # 1..15 "bool with_type"
                   - (variant:) TypedTupleMember: # 1..15 "bool with_type"
                       - (type_name:) TypeName: # 1..5 "bool"
-                          - ElementaryType: # 1..5 "bool"
+                          - (variant:) ElementaryType: # 1..5 "bool"
                               - (variant:) BoolKeyword: "bool" # 1..5
                       - (name:) Identifier: "with_type" # 6..15
           - Comma: "," # 15..16
@@ -24,5 +24,5 @@ Tree:
       - (close_paren:) CloseParen: ")" # 29..30
       - (equal:) Equal: "=" # 31..32
       - (expression:) Expression: # 32..36 " rhs"
-          - Identifier: "rhs" # 33..36
+          - (variant:) Identifier: "rhs" # 33..36
       - (semicolon:) Semicolon: ";" # 36..37

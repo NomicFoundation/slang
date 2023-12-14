@@ -11,7 +11,7 @@ Tree:
           - (operand:) Expression: # 0..3 "x.y"
               - (variant:) MemberAccessExpression: # 0..3 "x.y"
                   - (operand:) Expression: # 0..1 "x"
-                      - Identifier: "x" # 0..1
+                      - (variant:) Identifier: "x" # 0..1
                   - (period:) Period: "." # 1..2
                   - (member:) MemberAccess: # 2..3 "y"
                       - (variant:) Identifier: "y" # 2..3

@@ -17,7 +17,7 @@ Tree:
                       - (parameters:) EventParameters: # 9..22 "uint256 value"
                           - EventParameter: # 9..22 "uint256 value"
                               - (type_name:) TypeName: # 9..16 "uint256"
-                                  - ElementaryType: # 9..16 "uint256"
+                                  - (variant:) ElementaryType: # 9..16 "uint256"
                                       - (variant:) UintKeyword: "uint256" # 9..16
                               - (name:) Identifier: "value" # 17..22
                       - (close_paren:) CloseParen: ")" # 22..23

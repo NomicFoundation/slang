@@ -24,7 +24,7 @@ Tree:
           - ContractMember: # 16..25 "  field;\n"
               - (variant:) StateVariableDefinition: # 16..25 "  field;\n"
                   - (type_name:) TypeName: # 16..23 "  field"
-                      - IdentifierPath: # 16..23 "  field"
+                      - (variant:) IdentifierPath: # 16..23 "  field"
                           - Identifier: "field" # 18..23
                   - SKIPPED: "" # 23..23
                   - (semicolon:) Semicolon: ";" # 23..24

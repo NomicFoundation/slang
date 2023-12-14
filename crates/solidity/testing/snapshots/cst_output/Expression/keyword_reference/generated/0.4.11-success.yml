@@ -7,4 +7,4 @@ Errors: []
 
 Tree:
   - Expression: # 0..9 "reference"
-      - Identifier: "reference" # 0..9
+      - (variant:) Identifier: "reference" # 0..9

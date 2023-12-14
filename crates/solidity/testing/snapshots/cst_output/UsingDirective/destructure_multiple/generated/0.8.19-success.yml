@@ -39,7 +39,7 @@ Tree:
       - (for_keyword:) ForKeyword: "for" # 37..40
       - (target:) UsingTarget: # 40..44 " Int"
           - (variant:) TypeName: # 40..44 " Int"
-              - IdentifierPath: # 40..44 " Int"
+              - (variant:) IdentifierPath: # 40..44 " Int"
                   - Identifier: "Int" # 41..44
       - (global_keyword:) GlobalKeyword: "global" # 45..51
       - (semicolon:) Semicolon: ";" # 51..52

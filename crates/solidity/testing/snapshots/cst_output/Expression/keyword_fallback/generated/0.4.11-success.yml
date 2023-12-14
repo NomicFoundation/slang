@@ -7,4 +7,4 @@ Errors: []
 
 Tree:
   - Expression: # 0..8 "fallback"
-      - Identifier: "fallback" # 0..8
+      - (variant:) Identifier: "fallback" # 0..8

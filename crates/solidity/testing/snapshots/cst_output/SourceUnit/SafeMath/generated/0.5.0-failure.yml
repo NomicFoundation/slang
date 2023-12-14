@@ -42,13 +42,13 @@ Tree:
                                   - (parameters:) Parameters: # 37..57 "uint256 a, uint256 b"
                                       - Parameter: # 37..46 "uint256 a"
                                           - (type_name:) TypeName: # 37..44 "uint256"
-                                              - ElementaryType: # 37..44 "uint256"
+                                              - (variant:) ElementaryType: # 37..44 "uint256"
                                                   - (variant:) UintKeyword: "uint256" # 37..44
                                           - (name:) Identifier: "a" # 45..46
                                       - Comma: "," # 46..47
                                       - Parameter: # 47..57 " uint256 b"
                                           - (type_name:) TypeName: # 47..55 " uint256"
-                                              - ElementaryType: # 47..55 " uint256"
+                                              - (variant:) ElementaryType: # 47..55 " uint256"
                                                   - (variant:) UintKeyword: "uint256" # 48..55
                                           - (name:) Identifier: "b" # 56..57
                                   - (close_paren:) CloseParen: ")" # 57..58
@@ -64,12 +64,12 @@ Tree:
                                       - (parameters:) Parameters: # 82..95 "bool, uint256"
                                           - Parameter: # 82..86 "bool"
                                               - (type_name:) TypeName: # 82..86 "bool"
-                                                  - ElementaryType: # 82..86 "bool"
+                                                  - (variant:) ElementaryType: # 82..86 "bool"
                                                       - (variant:) BoolKeyword: "bool" # 82..86
                                           - Comma: "," # 86..87
                                           - Parameter: # 87..95 " uint256"
                                               - (type_name:) TypeName: # 87..95 " uint256"
-                                                  - ElementaryType: # 87..95 " uint256"
+                                                  - (variant:) ElementaryType: # 87..95 " uint256"
                                                       - (variant:) UintKeyword: "uint256" # 88..95
                                       - (close_paren:) CloseParen: ")" # 95..96
                               - (body:) FunctionBody: # 96..210 " {\n    unchecked {\n      uint256 c = a + b;\n      ..."

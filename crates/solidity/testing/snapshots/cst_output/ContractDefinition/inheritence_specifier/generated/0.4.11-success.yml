@@ -24,11 +24,11 @@ Tree:
                           - (open_paren:) OpenParen: "(" # 27..28
                           - (arguments:) PositionalArguments: # 28..32 "1, 2"
                               - Expression: # 28..29 "1"
-                                  - DecimalNumberExpression: # 28..29 "1"
+                                  - (variant:) DecimalNumberExpression: # 28..29 "1"
                                       - (literal:) DecimalLiteral: "1" # 28..29
                               - Comma: "," # 29..30
                               - Expression: # 30..32 " 2"
-                                  - DecimalNumberExpression: # 30..32 " 2"
+                                  - (variant:) DecimalNumberExpression: # 30..32 " 2"
                                       - (literal:) DecimalLiteral: "2" # 31..32
                           - (close_paren:) CloseParen: ")" # 32..33
               - Comma: "," # 33..34

@@ -22,7 +22,7 @@ Tree:
       - (for_keyword:) ForKeyword: "for" # 10..13
       - (target:) UsingTarget: # 13..17 " bar"
           - (variant:) TypeName: # 13..17 " bar"
-              - IdentifierPath: # 13..17 " bar"
+              - (variant:) IdentifierPath: # 13..17 " bar"
                   - Identifier: "bar" # 14..17
       - SKIPPED: "global" # 18..24
       - (semicolon:) Semicolon: ";" # 24..25

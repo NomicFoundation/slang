@@ -7,5 +7,5 @@ Errors: []
 
 Tree:
   - TypeName: # 0..6 "int320"
-      - IdentifierPath: # 0..6 "int320"
+      - (variant:) IdentifierPath: # 0..6 "int320"
           - Identifier: "int320" # 0..6

@@ -71,7 +71,7 @@ Tree:
                   - (for_keyword:) ForKeyword: "for" # 51..54
                   - (target:) UsingTarget: # 54..56 " B"
                       - (variant:) TypeName: # 54..56 " B"
-                          - IdentifierPath: # 54..56 " B"
+                          - (variant:) IdentifierPath: # 54..56 " B"
                               - Identifier: "B" # 55..56
                   - (semicolon:) Semicolon: ";" # 56..57
           - SourceUnitMember: # 58..74 "\ncontract C { }\n"
@@ -107,13 +107,13 @@ Tree:
           - SourceUnitMember: # 132..156 "\nuint32 constant x = 0;\n"
               - (variant:) ConstantDefinition: # 132..156 "\nuint32 constant x = 0;\n"
                   - (type_name:) TypeName: # 132..139 "\nuint32"
-                      - ElementaryType: # 132..139 "\nuint32"
+                      - (variant:) ElementaryType: # 132..139 "\nuint32"
                           - (variant:) UintKeyword: "uint32" # 133..139
                   - (constant_keyword:) ConstantKeyword: "constant" # 140..148
                   - (name:) Identifier: "x" # 149..150
                   - (equal:) Equal: "=" # 151..152
                   - (value:) Expression: # 152..154 " 0"
-                      - DecimalNumberExpression: # 152..154 " 0"
+                      - (variant:) DecimalNumberExpression: # 152..154 " 0"
                           - (literal:) DecimalLiteral: "0" # 153..154
                   - (semicolon:) Semicolon: ";" # 154..155
           - SourceUnitMember: # 156..181 "\nfunction f() public { }\n"
@@ -140,7 +140,7 @@ Tree:
                       - (parameters:) ErrorParameters: # 191..197 "string"
                           - ErrorParameter: # 191..197 "string"
                               - (type_name:) TypeName: # 191..197 "string"
-                                  - ElementaryType: # 191..197 "string"
+                                  - (variant:) ElementaryType: # 191..197 "string"
                                       - (variant:) StringKeyword: "string" # 191..197
                       - (close_paren:) CloseParen: ")" # 197..198
                   - (semicolon:) Semicolon: ";" # 198..199

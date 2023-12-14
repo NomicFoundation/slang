@@ -17,7 +17,7 @@ Tree:
   - Expression: # 0..25 'a.b{value: 0}{gas: 1}("")'
       - (variant:) MemberAccessExpression: # 0..3 "a.b"
           - (operand:) Expression: # 0..1 "a"
-              - Identifier: "a" # 0..1
+              - (variant:) Identifier: "a" # 0..1
           - (period:) Period: "." # 1..2
           - (member:) MemberAccess: # 2..3 "b"
               - (variant:) Identifier: "b" # 2..3

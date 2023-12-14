@@ -59,7 +59,7 @@ Tree:
                   - (for_keyword:) ForKeyword: "for" # 77..80
                   - (target:) UsingTarget: # 80..89 " Envelope"
                       - (variant:) TypeName: # 80..89 " Envelope"
-                          - IdentifierPath: # 80..89 " Envelope"
+                          - (variant:) IdentifierPath: # 80..89 " Envelope"
                               - Identifier: "Envelope" # 81..89
                   - (global_keyword:) GlobalKeyword: "global" # 90..96
                   - (semicolon:) Semicolon: ";" # 96..97
@@ -72,7 +72,7 @@ Tree:
                   - (for_keyword:) ForKeyword: "for" # 121..124
                   - (target:) UsingTarget: # 124..136 " Transaction"
                       - (variant:) TypeName: # 124..136 " Transaction"
-                          - IdentifierPath: # 124..136 " Transaction"
+                          - (variant:) IdentifierPath: # 124..136 " Transaction"
                               - Identifier: "Transaction" # 125..136
                   - (global_keyword:) GlobalKeyword: "global" # 137..143
                   - (semicolon:) Semicolon: ";" # 143..144
@@ -86,39 +86,39 @@ Tree:
                   - (members:) StructMembers: # 661..791 "  uint256 nonce;\n  address origin;\n  address desti..."
                       - StructMember: # 661..678 "  uint256 nonce;\n"
                           - (type_name:) TypeName: # 661..670 "  uint256"
-                              - ElementaryType: # 661..670 "  uint256"
+                              - (variant:) ElementaryType: # 661..670 "  uint256"
                                   - (variant:) UintKeyword: "uint256" # 663..670
                           - (name:) Identifier: "nonce" # 671..676
                           - (semicolon:) Semicolon: ";" # 676..677
                       - StructMember: # 678..696 "  address origin;\n"
                           - (type_name:) TypeName: # 678..687 "  address"
-                              - ElementaryType: # 678..687 "  address"
+                              - (variant:) ElementaryType: # 678..687 "  address"
                                   - (variant:) AddressType: # 678..687 "  address"
                                       - (address_keyword:) AddressKeyword: "address" # 680..687
                           - (name:) Identifier: "origin" # 688..694
                           - (semicolon:) Semicolon: ";" # 694..695
                       - StructMember: # 696..719 "  address destination;\n"
                           - (type_name:) TypeName: # 696..705 "  address"
-                              - ElementaryType: # 696..705 "  address"
+                              - (variant:) ElementaryType: # 696..705 "  address"
                                   - (variant:) AddressType: # 696..705 "  address"
                                       - (address_keyword:) AddressKeyword: "address" # 698..705
                           - (name:) Identifier: "destination" # 706..717
                           - (semicolon:) Semicolon: ";" # 717..718
                       - StructMember: # 719..744 "  uint256 originChainId;\n"
                           - (type_name:) TypeName: # 719..728 "  uint256"
-                              - ElementaryType: # 719..728 "  uint256"
+                              - (variant:) ElementaryType: # 719..728 "  uint256"
                                   - (variant:) UintKeyword: "uint256" # 721..728
                           - (name:) Identifier: "originChainId" # 729..742
                           - (semicolon:) Semicolon: ";" # 742..743
                       - StructMember: # 744..774 "  uint256 destinationChainId;\n"
                           - (type_name:) TypeName: # 744..753 "  uint256"
-                              - ElementaryType: # 744..753 "  uint256"
+                              - (variant:) ElementaryType: # 744..753 "  uint256"
                                   - (variant:) UintKeyword: "uint256" # 746..753
                           - (name:) Identifier: "destinationChainId" # 754..772
                           - (semicolon:) Semicolon: ";" # 772..773
                       - StructMember: # 774..791 "  bytes message;\n"
                           - (type_name:) TypeName: # 774..781 "  bytes"
-                              - ElementaryType: # 774..781 "  bytes"
+                              - (variant:) ElementaryType: # 774..781 "  bytes"
                                   - (variant:) BytesKeyword: "bytes" # 776..781
                           - (name:) Identifier: "message" # 782..789
                           - (semicolon:) Semicolon: ";" # 789..790

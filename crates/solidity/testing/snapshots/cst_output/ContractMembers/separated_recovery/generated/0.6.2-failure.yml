@@ -150,7 +150,7 @@ Tree:
                                                   - (operand:) Expression: # 86..98 "  msg.sender"
                                                       - (variant:) MemberAccessExpression: # 86..98 "  msg.sender"
                                                           - (operand:) Expression: # 86..91 "  msg"
-                                                              - Identifier: "msg" # 88..91
+                                                              - (variant:) Identifier: "msg" # 88..91
                                                           - (period:) Period: "." # 91..92
                                                           - (member:) MemberAccess: # 92..98 "sender"
                                                               - (variant:) Identifier: "sender" # 92..98
@@ -177,7 +177,7 @@ Tree:
                                                   - (operand:) Expression: # 123..135 "  msg.sender"
                                                       - (variant:) MemberAccessExpression: # 123..135 "  msg.sender"
                                                           - (operand:) Expression: # 123..128 "  msg"
-                                                              - Identifier: "msg" # 125..128
+                                                              - (variant:) Identifier: "msg" # 125..128
                                                           - (period:) Period: "." # 128..129
                                                           - (member:) MemberAccess: # 129..135 "sender"
                                                               - (variant:) Identifier: "sender" # 129..135
@@ -204,7 +204,7 @@ Tree:
                                                   - (operand:) Expression: # 167..179 "  msg.sender"
                                                       - (variant:) MemberAccessExpression: # 167..179 "  msg.sender"
                                                           - (operand:) Expression: # 167..172 "  msg"
-                                                              - Identifier: "msg" # 169..172
+                                                              - (variant:) Identifier: "msg" # 169..172
                                                           - (period:) Period: "." # 172..173
                                                           - (member:) MemberAccess: # 173..179 "sender"
                                                               - (variant:) Identifier: "sender" # 173..179
@@ -220,7 +220,7 @@ Tree:
                                                               - (name:) Identifier: "arg" # 185..188
                                                               - (colon:) Colon: ":" # 188..189
                                                               - (value:) Expression: # 189..191 " 1"
-                                                                  - DecimalNumberExpression: # 189..191 " 1"
+                                                                  - (variant:) DecimalNumberExpression: # 189..191 " 1"
                                                                       - (literal:) DecimalLiteral: "1" # 190..191
                                                           - Comma: "," # 191..192
                                                           - NamedArgument: # 192..206 " missing_expr:"
@@ -248,7 +248,7 @@ Tree:
                                                   - (operand:) Expression: # 230..242 "  msg.sender"
                                                       - (variant:) MemberAccessExpression: # 230..242 "  msg.sender"
                                                           - (operand:) Expression: # 230..235 "  msg"
-                                                              - Identifier: "msg" # 232..235
+                                                              - (variant:) Identifier: "msg" # 232..235
                                                           - (period:) Period: "." # 235..236
                                                           - (member:) MemberAccess: # 236..242 "sender"
                                                               - (variant:) Identifier: "sender" # 236..242
@@ -264,7 +264,7 @@ Tree:
                                                               - (name:) Identifier: "arg" # 248..251
                                                               - (colon:) Colon: ":" # 251..252
                                                               - (value:) Expression: # 252..254 " 1"
-                                                                  - DecimalNumberExpression: # 252..254 " 1"
+                                                                  - (variant:) DecimalNumberExpression: # 252..254 " 1"
                                                                       - (literal:) DecimalLiteral: "1" # 253..254
                                                       - SKIPPED: "unexpected tokens, not: 2, recovered, yet: 3, " # 255..301
                                                       - (close_brace:) CloseBrace: "}" # 301..302

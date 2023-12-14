@@ -13,7 +13,7 @@ Tree:
               - (member:) TupleMember: # 1..14 "bool memory x"
                   - (variant:) TypedTupleMember: # 1..14 "bool memory x"
                       - (type_name:) TypeName: # 1..5 "bool"
-                          - ElementaryType: # 1..5 "bool"
+                          - (variant:) ElementaryType: # 1..5 "bool"
                               - (variant:) BoolKeyword: "bool" # 1..5
                       - (storage_location:) StorageLocation: # 5..12 " memory"
                           - (variant:) MemoryKeyword: "memory" # 6..12
@@ -23,7 +23,7 @@ Tree:
               - (member:) TupleMember: # 15..30 " bool storage y"
                   - (variant:) TypedTupleMember: # 15..30 " bool storage y"
                       - (type_name:) TypeName: # 15..20 " bool"
-                          - ElementaryType: # 15..20 " bool"
+                          - (variant:) ElementaryType: # 15..20 " bool"
                               - (variant:) BoolKeyword: "bool" # 16..20
                       - (storage_location:) StorageLocation: # 20..28 " storage"
                           - (variant:) StorageKeyword: "storage" # 21..28
@@ -31,5 +31,5 @@ Tree:
       - (close_paren:) CloseParen: ")" # 30..31
       - (equal:) Equal: "=" # 32..33
       - (expression:) Expression: # 33..37 " rhs"
-          - Identifier: "rhs" # 34..37
+          - (variant:) Identifier: "rhs" # 34..37
       - (semicolon:) Semicolon: ";" # 37..38

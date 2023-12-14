@@ -17,7 +17,7 @@ Tree:
       - (equal_greater_than:) EqualGreaterThan: "=>" # 19..21
       - (value_type:) MappingValue: # 21..33 " bytes32 Bar"
           - (type_name:) TypeName: # 21..29 " bytes32"
-              - ElementaryType: # 21..29 " bytes32"
+              - (variant:) ElementaryType: # 21..29 " bytes32"
                   - (variant:) BytesKeyword: "bytes32" # 22..29
           - (name:) Identifier: "Bar" # 30..33
       - (close_paren:) CloseParen: ")" # 33..34

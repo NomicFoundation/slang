@@ -24,13 +24,13 @@ Tree:
                   - (members:) StructMembers: # 31..55 "    uint a;\n    uint b;\n"
                       - StructMember: # 31..43 "    uint a;\n"
                           - (type_name:) TypeName: # 31..39 "    uint"
-                              - ElementaryType: # 31..39 "    uint"
+                              - (variant:) ElementaryType: # 31..39 "    uint"
                                   - (variant:) UintKeyword: "uint" # 35..39
                           - (name:) Identifier: "a" # 40..41
                           - (semicolon:) Semicolon: ";" # 41..42
                       - StructMember: # 43..55 "    uint b;\n"
                           - (type_name:) TypeName: # 43..51 "    uint"
-                              - ElementaryType: # 43..51 "    uint"
+                              - (variant:) ElementaryType: # 43..51 "    uint"
                                   - (variant:) UintKeyword: "uint" # 47..51
                           - (name:) Identifier: "b" # 52..53
                           - (semicolon:) Semicolon: ";" # 53..54
