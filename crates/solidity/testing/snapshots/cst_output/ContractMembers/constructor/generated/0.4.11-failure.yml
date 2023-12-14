@@ -17,7 +17,7 @@ Tree:
   - ContractMembers: # 0..24 "constructor() public {}\n"
       - (item) ContractMember: # 0..11 "constructor"
           - (variant) StateVariableDefinition: # 0..11 "constructor"
-              - (body) TypeName: # 0..11 "constructor"
+              - (type_name) TypeName: # 0..11 "constructor"
                   - (variant) IdentifierPath: # 0..11 "constructor"
                       - (item) Identifier: "constructor" # 0..11
       - SKIPPED: "() public {}\n" # 11..24

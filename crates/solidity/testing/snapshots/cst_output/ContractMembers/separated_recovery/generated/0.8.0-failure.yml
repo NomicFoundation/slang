@@ -128,7 +128,7 @@ Tree:
                           - (override_keyword) OverrideKeyword: "override" # 15..23
                           - (overridden) OverridePathsDeclaration: # 23..76 "(some.ident unexpected tokens, ISomeInterface, Oth..."
                               - (open_paren) OpenParen: "(" # 23..24
-                              - OverridePaths: # 24..34 "some.ident"
+                              - (paths) OverridePaths: # 24..34 "some.ident"
                                   - (item) IdentifierPath: # 24..34 "some.ident"
                                       - (item) Identifier: "some" # 24..28
                                       - (separator) Period: "." # 28..29
@@ -212,7 +212,7 @@ Tree:
                                           - (options) FunctionCallOptions: # 184..226 "{arg: 1, missing_expr: , no_semicolon, , }"
                                               - (variant) NamedArgumentGroup: # 184..226 "{arg: 1, missing_expr: , no_semicolon, , }"
                                                   - (open_brace) OpenBrace: "{" # 184..185
-                                                  - NamedArguments: # 185..222 "arg: 1, missing_expr: , no_semicolon,"
+                                                  - (arguments) NamedArguments: # 185..222 "arg: 1, missing_expr: , no_semicolon,"
                                                       - (item) NamedArgument: # 185..191 "arg: 1"
                                                           - (name) Identifier: "arg" # 185..188
                                                           - (colon) Colon: ":" # 188..189
@@ -255,7 +255,7 @@ Tree:
                                           - (options) FunctionCallOptions: # 247..302 "{arg: 1 unexpected tokens, not: 2, recovered, yet:..."
                                               - (variant) NamedArgumentGroup: # 247..302 "{arg: 1 unexpected tokens, not: 2, recovered, yet:..."
                                                   - (open_brace) OpenBrace: "{" # 247..248
-                                                  - NamedArguments: # 248..254 "arg: 1"
+                                                  - (arguments) NamedArguments: # 248..254 "arg: 1"
                                                       - (item) NamedArgument: # 248..254 "arg: 1"
                                                           - (name) Identifier: "arg" # 248..251
                                                           - (colon) Colon: ":" # 251..252
@@ -284,7 +284,7 @@ Tree:
                           - (override_keyword) OverrideKeyword: "override" # 327..335
                           - (overridden) OverridePathsDeclaration: # 335..386 "(some.ident, /* empty */, other.arg.here, and.here..."
                               - (open_paren) OpenParen: "(" # 335..336
-                              - OverridePaths: # 336..347 "some.ident,"
+                              - (paths) OverridePaths: # 336..347 "some.ident,"
                                   - (item) IdentifierPath: # 336..346 "some.ident"
                                       - (item) Identifier: "some" # 336..340
                                       - (separator) Period: "." # 340..341
@@ -310,7 +310,7 @@ Tree:
                           - (override_keyword) OverrideKeyword: "override" # 413..421
                           - (overridden) OverridePathsDeclaration: # 421..487 "(some.ident, next.do.that, other.while, next.one, ..."
                               - (open_paren) OpenParen: "(" # 421..422
-                              - OverridePaths: # 422..470 "some.ident, next.do.that, other.while, next.one,"
+                              - (paths) OverridePaths: # 422..470 "some.ident, next.do.that, other.while, next.one,"
                                   - (item) IdentifierPath: # 422..432 "some.ident"
                                       - (item) Identifier: "some" # 422..426
                                       - (separator) Period: "." # 426..427

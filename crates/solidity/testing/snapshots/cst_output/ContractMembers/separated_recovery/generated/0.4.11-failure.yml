@@ -114,7 +114,7 @@ Tree:
                           - (arguments) ArgumentsDeclaration: # 23..76 "(some.ident unexpected tokens, ISomeInterface, Oth..."
                               - (variant) PositionalArgumentsDeclaration: # 23..76 "(some.ident unexpected tokens, ISomeInterface, Oth..."
                                   - (open_paren) OpenParen: "(" # 23..24
-                                  - PositionalArguments: # 24..34 "some.ident"
+                                  - (arguments) PositionalArguments: # 24..34 "some.ident"
                                       - (item) Expression: # 24..34 "some.ident"
                                           - (variant) MemberAccessExpression: # 24..34 "some.ident"
                                               - (operand) Expression: # 24..28 "some"
@@ -211,7 +211,7 @@ Tree:
                           - (arguments) ArgumentsDeclaration: # 335..386 "(some.ident, /* empty */, other.arg.here, and.here..."
                               - (variant) PositionalArgumentsDeclaration: # 335..386 "(some.ident, /* empty */, other.arg.here, and.here..."
                                   - (open_paren) OpenParen: "(" # 335..336
-                                  - PositionalArguments: # 336..347 "some.ident,"
+                                  - (arguments) PositionalArguments: # 336..347 "some.ident,"
                                       - (item) Expression: # 336..346 "some.ident"
                                           - (variant) MemberAccessExpression: # 336..346 "some.ident"
                                               - (operand) Expression: # 336..340 "some"
@@ -242,7 +242,7 @@ Tree:
                           - (arguments) ArgumentsDeclaration: # 421..487 "(some.ident, next.do.that, other.while, next.one, ..."
                               - (variant) PositionalArgumentsDeclaration: # 421..487 "(some.ident, next.do.that, other.while, next.one, ..."
                                   - (open_paren) OpenParen: "(" # 421..422
-                                  - PositionalArguments: # 422..470 "some.ident, next.do.that, other.while, next.one,"
+                                  - (arguments) PositionalArguments: # 422..470 "some.ident, next.do.that, other.while, next.one,"
                                       - (item) Expression: # 422..432 "some.ident"
                                           - (variant) MemberAccessExpression: # 422..432 "some.ident"
                                               - (operand) Expression: # 422..426 "some"

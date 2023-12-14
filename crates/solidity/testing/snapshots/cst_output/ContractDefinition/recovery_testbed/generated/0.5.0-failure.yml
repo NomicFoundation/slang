@@ -54,7 +54,7 @@ Tree:
                       - (variant) Identifier: "_transfer" # 30..39
                   - (parameters) ParametersDeclaration: # 39..54 "(address while)"
                       - (open_paren) OpenParen: "(" # 39..40
-                      - Parameters: # 40..47 "address"
+                      - (parameters) Parameters: # 40..47 "address"
                           - (item) Parameter: # 40..47 "address"
                               - (type_name) TypeName: # 40..47 "address"
                                   - (variant) ElementaryType: # 40..47 "address"
@@ -105,7 +105,7 @@ Tree:
                   - (body) FunctionBody: # 154..210 " {\n\t\tuint256 x = 0;\n\t\tunchecked { invalid sequence..."
                       - (variant) Block: # 154..210 " {\n\t\tuint256 x = 0;\n\t\tunchecked { invalid sequence..."
                           - (open_brace) OpenBrace: "{" # 155..156
-                          - Statements: # 157..174 "\t\tuint256 x = 0;\n"
+                          - (statements) Statements: # 157..174 "\t\tuint256 x = 0;\n"
                               - (item) Statement: # 157..174 "\t\tuint256 x = 0;\n"
                                   - (variant) VariableDeclarationStatement: # 157..174 "\t\tuint256 x = 0;\n"
                                       - (variable_type) VariableDeclarationType: # 157..166 "\t\tuint256"

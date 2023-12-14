@@ -53,7 +53,7 @@ Tree:
                       - (variant) Identifier: "_transfer" # 30..39
                   - (parameters) ParametersDeclaration: # 39..54 "(address while)"
                       - (open_paren) OpenParen: "(" # 39..40
-                      - Parameters: # 40..47 "address"
+                      - (parameters) Parameters: # 40..47 "address"
                           - (item) Parameter: # 40..47 "address"
                               - (type_name) TypeName: # 40..47 "address"
                                   - (variant) ElementaryType: # 40..47 "address"

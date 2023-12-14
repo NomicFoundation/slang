@@ -20,7 +20,7 @@ Tree:
           - (variant) Identifier: "transferFrom" # 9..21
       - (parameters) ParametersDeclaration: # 21..63 "(address from, address to, uint256 amount)"
           - (open_paren) OpenParen: "(" # 21..22
-          - Parameters: # 22..29 "address"
+          - (parameters) Parameters: # 22..29 "address"
               - (item) Parameter: # 22..29 "address"
                   - (type_name) TypeName: # 22..29 "address"
                       - (variant) ElementaryType: # 22..29 "address"

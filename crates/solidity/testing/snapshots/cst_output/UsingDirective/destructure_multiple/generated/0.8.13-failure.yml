@@ -19,7 +19,7 @@ Tree:
       - (clause) UsingClause: # 5..36 " {add as +, sub, mul, div as /}"
           - (variant) UsingDeconstruction: # 5..36 " {add as +, sub, mul, div as /}"
               - (open_brace) OpenBrace: "{" # 6..7
-              - UsingDeconstructionSymbols: # 7..10 "add"
+              - (symbols) UsingDeconstructionSymbols: # 7..10 "add"
                   - (item) UsingDeconstructionSymbol: # 7..10 "add"
                       - (name) IdentifierPath: # 7..10 "add"
                           - (item) Identifier: "add" # 7..10

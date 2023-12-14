@@ -19,7 +19,7 @@ Tree:
       - (clause) UsingClause: # 5..16 " {div as /}"
           - (variant) UsingDeconstruction: # 5..16 " {div as /}"
               - (open_brace) OpenBrace: "{" # 6..7
-              - UsingDeconstructionSymbols: # 7..10 "div"
+              - (symbols) UsingDeconstructionSymbols: # 7..10 "div"
                   - (item) UsingDeconstructionSymbol: # 7..10 "div"
                       - (name) IdentifierPath: # 7..10 "div"
                           - (item) Identifier: "div" # 7..10

@@ -42,7 +42,7 @@ Tree:
               - (body) FunctionBody: # 26..74 " {\n    {\n        uint256 arg = (1 + 2;\n    })\n}\n"
                   - (variant) Block: # 26..74 " {\n    {\n        uint256 arg = (1 + 2;\n    })\n}\n"
                       - (open_brace) OpenBrace: "{" # 27..28
-                      - Statements: # 29..70 "    {\n        uint256 arg = (1 + 2;\n    }"
+                      - (statements) Statements: # 29..70 "    {\n        uint256 arg = (1 + 2;\n    }"
                           - (item) Statement: # 29..70 "    {\n        uint256 arg = (1 + 2;\n    }"
                               - (variant) Block: # 29..70 "    {\n        uint256 arg = (1 + 2;\n    }"
                                   - (open_brace) OpenBrace: "{" # 33..34
@@ -59,7 +59,7 @@ Tree:
                                                   - Expression: # 56..63 " (1 + 2"
                                                       - TupleExpression: # 56..63 " (1 + 2"
                                                           - (open_paren) OpenParen: "(" # 57..58
-                                                          - TupleValues: # 58..63 "1 + 2"
+                                                          - (items) TupleValues: # 58..63 "1 + 2"
                                                               - (item) TupleValue: # 58..63 "1 + 2"
                                                                   - (expression) Expression: # 58..63 "1 + 2"
                                                                       - (variant) AdditiveExpression: # 58..63 "1 + 2"

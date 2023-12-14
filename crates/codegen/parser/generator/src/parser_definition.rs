@@ -160,13 +160,11 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                     _ => unreachable!("Only tokens are permitted as delimiters"),
                 };
 
-                let body_field_name = &body.0;
-                let parser = body.1.to_parser_code(context_name, is_trivia);
-                let body_parser = body.1.applicable_version_quality_ranges().wrap_code(
+                // let body_field_name = &body.0;
+                let parser = body.to_parser_code(context_name, is_trivia);
+                let body_parser = body.applicable_version_quality_ranges().wrap_code(
                     quote! {
-                        seq.elem_named(
-                            #body_field_name,
-                            #parser
+                        seq.elem(#parser
                             .recover_until_with_nested_delims::<_, #lex_ctx>(input,
                                 self,
                                 TokenKind::#close_delim,
@@ -213,7 +211,6 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                 }
             }
             Self::TerminatedBy(body, terminator) => {
-                let body_field_name = &body.0;
                 let terminator_field_name = &terminator.0;
 
                 let terminator = match &terminator.1 {
@@ -223,11 +220,10 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                     _ => unreachable!("Only tokens are permitted as terminators"),
                 };
 
-                let parser = body.1.to_parser_code(context_name, is_trivia);
-                let body_parser = body.1.applicable_version_quality_ranges().wrap_code(
+                let parser = body.to_parser_code(context_name, is_trivia);
+                let body_parser = body.applicable_version_quality_ranges().wrap_code(
                     quote! {
-                        seq.elem_named(
-                            #body_field_name,
+                        seq.elem(
                             #parser
                             .recover_until_with_nested_delims::<_, #lex_ctx>(input,
                                 self,

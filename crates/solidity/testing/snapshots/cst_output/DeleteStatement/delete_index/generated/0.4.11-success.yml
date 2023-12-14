@@ -13,7 +13,7 @@ Tree:
               - (operand) Expression: # 6..10 " foo"
                   - (variant) Identifier: "foo" # 7..10
               - (open_bracket) OpenBracket: "[" # 10..11
-              - (body) Expression: # 11..14 "bar"
+              - (start) Expression: # 11..14 "bar"
                   - (variant) Identifier: "bar" # 11..14
               - (close_bracket) CloseBracket: "]" # 14..15
       - (semicolon) Semicolon: ";" # 15..16

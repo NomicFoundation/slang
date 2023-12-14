@@ -11,7 +11,7 @@ Tree:
           - (operand) Expression: # 0..3 "arr"
               - (variant) Identifier: "arr" # 0..3
           - (open_bracket) OpenBracket: "[" # 3..4
-          - (body) IndexAccessEnd: # 4..8 ":end"
+          - (end) IndexAccessEnd: # 4..8 ":end"
               - (colon) Colon: ":" # 4..5
               - (end) Expression: # 5..8 "end"
                   - (variant) Identifier: "end" # 5..8

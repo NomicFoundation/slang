@@ -112,7 +112,7 @@ Tree:
                           - (override_keyword) OverrideKeyword: "override" # 15..23
                           - (overridden) OverridePathsDeclaration: # 23..76 "(some.ident unexpected tokens, ISomeInterface, Oth..."
                               - (open_paren) OpenParen: "(" # 23..24
-                              - OverridePaths: # 24..34 "some.ident"
+                              - (paths) OverridePaths: # 24..34 "some.ident"
                                   - (item) IdentifierPath: # 24..34 "some.ident"
                                       - (item) Identifier: "some" # 24..28
                                       - (separator) Period: "." # 28..29
@@ -204,7 +204,7 @@ Tree:
                           - (override_keyword) OverrideKeyword: "override" # 327..335
                           - (overridden) OverridePathsDeclaration: # 335..386 "(some.ident, /* empty */, other.arg.here, and.here..."
                               - (open_paren) OpenParen: "(" # 335..336
-                              - OverridePaths: # 336..347 "some.ident,"
+                              - (paths) OverridePaths: # 336..347 "some.ident,"
                                   - (item) IdentifierPath: # 336..346 "some.ident"
                                       - (item) Identifier: "some" # 336..340
                                       - (separator) Period: "." # 340..341
@@ -230,7 +230,7 @@ Tree:
                           - (override_keyword) OverrideKeyword: "override" # 413..421
                           - (overridden) OverridePathsDeclaration: # 421..487 "(some.ident, next.do.that, other.while, next.one, ..."
                               - (open_paren) OpenParen: "(" # 421..422
-                              - OverridePaths: # 422..470 "some.ident, next.do.that, other.while, next.one,"
+                              - (paths) OverridePaths: # 422..470 "some.ident, next.do.that, other.while, next.one,"
                                   - (item) IdentifierPath: # 422..432 "some.ident"
                                       - (item) Identifier: "some" # 422..426
                                       - (separator) Period: "." # 426..427

@@ -622,24 +622,13 @@ fn resolve_sequence_like(
         let close_idx = fields.iter().position(|(nam, _)| nam == &delimiters.close);
         let (open_idx, close_idx) = (open_idx.unwrap(), close_idx.unwrap());
 
-        let delimited_body: Vec<_> = fields
-            .drain((open_idx + 1)..close_idx)
-            .map(|(name, field)| (name.to_string(), field))
-            .collect();
+        let delimited_body = ParserDefinitionNode::Sequence(
+            fields
+                .drain((open_idx + 1)..close_idx)
+                .map(|(name, field)| (name.to_string(), field))
+                .collect(),
+        );
 
-        // If there are multiple fields in the body, they will be wrapped in a sequence but ultimately flattened/not reduced
-        // to a dedicated rule kind
-        let body_name = if let [(name, _)] = &delimited_body[..] {
-            name.to_string()
-        } else {
-            String::from("body")
-        };
-
-        let delimited_body = match delimited_body.len() {
-            1 => delimited_body.into_iter().next().unwrap().1,
-            0 => ParserDefinitionNode::Sequence(vec![]),
-            _ => ParserDefinitionNode::Sequence(delimited_body),
-        };
         // Replace the remaining delimiters with the new delimited body
         let delimited = {
             let mut delims = fields
@@ -650,7 +639,7 @@ fn resolve_sequence_like(
 
             ParserDefinitionNode::DelimitedBy(
                 Box::new(open),
-                Box::new((body_name, delimited_body)),
+                Box::new(delimited_body),
                 Box::new(close),
             )
         };
@@ -675,24 +664,15 @@ fn resolve_sequence_like(
         None => None,
     };
 
-    let body_fields: Vec<_> = fields
-        .into_iter()
-        .map(|(name, def)| (name.to_string(), def))
-        .collect();
-
-    // The parser abstraction defines an extra TerminatedBy(body, terminator) node, whereas the definition
-    // only lists a flat sequence of items.
-    // TODO:
-    let body_name = if let [(name, _)] = &body_fields[..] {
-        name.to_string()
-    } else {
-        String::from("body")
-    };
-
-    let body = ParserDefinitionNode::Sequence(body_fields);
+    let body = ParserDefinitionNode::Sequence(
+        fields
+            .into_iter()
+            .map(|(name, def)| (name.to_string(), def))
+            .collect(),
+    );
 
     if let Some(terminator) = terminator {
-        ParserDefinitionNode::TerminatedBy(Box::new((body_name, body)), Box::new(terminator))
+        ParserDefinitionNode::TerminatedBy(Box::new(body), Box::new(terminator))
     } else {
         body
     }

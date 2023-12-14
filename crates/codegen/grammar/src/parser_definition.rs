@@ -47,13 +47,9 @@ pub enum ParserDefinitionNode {
     TriviaParserDefinition(TriviaParserDefinitionRef),
     ParserDefinition(ParserDefinitionRef),
     PrecedenceParserDefinition(PrecedenceParserDefinitionRef),
-    DelimitedBy(
-        Box<(String, Self)>,
-        Box<(String, Self)>,
-        Box<(String, Self)>,
-    ),
+    DelimitedBy(Box<(String, Self)>, Box<Self>, Box<(String, Self)>),
     SeparatedBy(Box<(String, Self)>, Box<(String, Self)>),
-    TerminatedBy(Box<(String, Self)>, Box<(String, Self)>),
+    TerminatedBy(Box<Self>, Box<(String, Self)>),
 }
 
 impl From<ScannerDefinitionRef> for ParserDefinitionNode {
@@ -102,7 +98,7 @@ impl Visitable for ParserDefinitionNode {
 
             Self::DelimitedBy(open, body, close) => {
                 open.1.accept_visitor(visitor);
-                body.1.accept_visitor(visitor);
+                body.accept_visitor(visitor);
                 close.1.accept_visitor(visitor);
             }
 
@@ -112,7 +108,7 @@ impl Visitable for ParserDefinitionNode {
             }
 
             Self::TerminatedBy(body, terminator) => {
-                body.1.accept_visitor(visitor);
+                body.accept_visitor(visitor);
                 terminator.1.accept_visitor(visitor);
             }
 

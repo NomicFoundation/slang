@@ -13,10 +13,10 @@ Tree:
                   - (operand) Expression: # 0..3 "arr"
                       - (variant) Identifier: "arr" # 0..3
                   - (open_bracket) OpenBracket: "[" # 3..4
-                  - (body) Expression: # 4..10 "index1"
+                  - (start) Expression: # 4..10 "index1"
                       - (variant) Identifier: "index1" # 4..10
                   - (close_bracket) CloseBracket: "]" # 10..11
           - (open_bracket) OpenBracket: "[" # 11..12
-          - (body) Expression: # 12..18 "index2"
+          - (start) Expression: # 12..18 "index2"
               - (variant) Identifier: "index2" # 12..18
           - (close_bracket) CloseBracket: "]" # 18..19

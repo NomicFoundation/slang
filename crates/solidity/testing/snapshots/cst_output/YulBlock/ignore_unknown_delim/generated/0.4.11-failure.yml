@@ -40,7 +40,7 @@ Tree:
                           - (item) YulIdentifier: "result" # 26..32
                   - (body) YulBlock: # 32..83 " {\n\t\tresult := mul(a, b)\n\t\tresult := [mul(a, b)\n\t}..."
                       - (open_brace) OpenBrace: "{" # 33..34
-                      - YulStatements: # 35..65 "\t\tresult := mul(a, b)\n\t\tresult"
+                      - (statements) YulStatements: # 35..65 "\t\tresult := mul(a, b)\n\t\tresult"
                           - (item) YulStatement: # 35..57 "\t\tresult := mul(a, b)\n"
                               - (variant) YulAssignmentStatement: # 35..57 "\t\tresult := mul(a, b)\n"
                                   - (names) YulIdentifierPaths: # 35..43 "\t\tresult"
