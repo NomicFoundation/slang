@@ -19,6 +19,6 @@ Tree:
           - (literal) DecimalLiteral: "2" # 0..1
       - MultiplicativeExpression: # 1..3 " *"
           - (operator) Asterisk: "*" # 2..3
-      - NewExpression: # 3..8 " new\n"
+      - (variant) NewExpression: # 3..8 " new\n"
           - (new_keyword) NewKeyword: "new" # 4..7
       - SKIPPED: "" # 8..8

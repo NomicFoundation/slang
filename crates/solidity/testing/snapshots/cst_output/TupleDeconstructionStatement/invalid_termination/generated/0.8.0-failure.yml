@@ -30,7 +30,7 @@ Tree:
                       - (name) Identifier: "b" # 4..5
       - (close_paren) CloseParen: ")" # 5..6
       - (equal) Equal: "=" # 7..8
-      - Expression: # 8..26 " (123, 135)\n/**/\n{"
+      - (expression) Expression: # 8..26 " (123, 135)\n/**/\n{"
           - (variant) TupleExpression: # 8..20 " (123, 135)\n"
               - (open_paren) OpenParen: "(" # 9..10
               - (items) TupleValues: # 10..18 "123, 135"
@@ -44,8 +44,8 @@ Tree:
                           - (variant) DecimalNumberExpression: # 14..18 " 135"
                               - (literal) DecimalLiteral: "135" # 15..18
               - (close_paren) CloseParen: ")" # 18..19
-          - FunctionCallOptions: # 20..26 "/**/\n{"
-              - NamedArgumentGroup: # 20..26 "/**/\n{"
+          - (options) FunctionCallOptions: # 20..26 "/**/\n{"
+              - (variant) NamedArgumentGroup: # 20..26 "/**/\n{"
                   - LeadingTrivia: # 20..25 "/**/\n"
                       - MultilineComment: "/**/" # 20..24
                   - (open_brace) OpenBrace: "{" # 25..26
