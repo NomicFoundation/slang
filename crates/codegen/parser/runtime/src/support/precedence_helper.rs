@@ -150,15 +150,10 @@ impl PrecedenceHelper {
                                    kind: RuleKind,
                                    nodes: Vec<cst::NamedNode>,
                                    right: Option<PrattElement>| {
-                let &[left_name, right_name] = match (&left, &right) {
-                    // Binary
-                    (Some(_), Some(_)) => &["left_operand", "right_operand"],
-                    // Postfix
-                    (Some(_), None) => &["operand", /* unreachable */ "!"],
-                    // Prefix
-                    (None, Some(_)) => &[/* unreachable */ "!", "operand"],
-                    (None, None) => unreachable!("Expected at least one operand"),
-                };
+                assert!(left.is_some() || right.is_some());
+
+                let left_name = right.as_ref().map_or("operand", |_| "left_operand");
+                let right_name = left.as_ref().map_or("operand", |_| "right_operand");
 
                 let left_nodes = match left {
                     Some(Expression { nodes }) => {
