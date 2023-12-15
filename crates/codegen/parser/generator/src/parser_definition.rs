@@ -55,8 +55,17 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
 
             Self::OneOrMore(name, node) => {
                 let parser = node.to_parser_code(context_name, is_trivia);
+
+                let parser = if name.is_empty() {
+                    parser
+                } else {
+                    quote! {
+                        #parser.with_name(#name)
+                    }
+                };
+
                 quote! {
-                    OneOrMoreHelper::run(input, |input| #parser.with_name(#name))
+                    OneOrMoreHelper::run(input, |input| #parser)
                 }
             }
 

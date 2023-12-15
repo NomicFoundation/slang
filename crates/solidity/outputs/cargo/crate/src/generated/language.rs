@@ -1210,7 +1210,6 @@ impl Language {
                 choice.consider(input, result)?;
                 choice.finish(input)
             })
-            .with_name("")
         })
         .with_kind(RuleKind::EndOfFileTrivia)
     }
@@ -3098,7 +3097,6 @@ impl Language {
                 choice.consider(input, result)?;
                 choice.finish(input)
             })
-            .with_name("")
         })
         .with_kind(RuleKind::LeadingTrivia)
     }
