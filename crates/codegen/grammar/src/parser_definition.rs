@@ -4,6 +4,13 @@ use std::rc::Rc;
 use crate::visitor::{GrammarVisitor, Visitable};
 use crate::{PrecedenceParserDefinitionRef, ScannerDefinitionRef, VersionQualityRange};
 
+/// A named wrapper, used to give a name to a [`ParserDefinitionNode`].
+#[derive(Clone, Debug)]
+pub struct Named<T> {
+    pub name: String,
+    pub node: T,
+}
+
 pub trait ParserDefinition: Debug {
     fn name(&self) -> &'static str;
     fn node(&self) -> &ParserDefinitionNode;
@@ -39,17 +46,17 @@ impl Visitable for TriviaParserDefinitionRef {
 pub enum ParserDefinitionNode {
     Versioned(Box<Self>, Vec<VersionQualityRange>),
     Optional(Box<Self>),
-    ZeroOrMore(Box<Self>),
-    OneOrMore(String, Box<Self>),
-    Sequence(Vec<(String, Self)>),
-    Choice(String, Vec<Self>),
+    ZeroOrMore(Named<Box<Self>>),
+    OneOrMore(Named<Box<Self>>),
+    Sequence(Vec<Named<Self>>),
+    Choice(Named<Vec<Self>>),
     ScannerDefinition(ScannerDefinitionRef),
     TriviaParserDefinition(TriviaParserDefinitionRef),
     ParserDefinition(ParserDefinitionRef),
     PrecedenceParserDefinition(PrecedenceParserDefinitionRef),
-    DelimitedBy(Box<(String, Self)>, Box<Self>, Box<(String, Self)>),
-    SeparatedBy(Box<(String, Self)>, Box<(String, Self)>),
-    TerminatedBy(Box<Self>, Box<(String, Self)>),
+    DelimitedBy(Named<Box<Self>>, Box<Self>, Named<Box<Self>>),
+    SeparatedBy(Named<Box<Self>>, Named<Box<Self>>),
+    TerminatedBy(Box<Self>, Named<Box<Self>>),
 }
 
 impl From<ScannerDefinitionRef> for ParserDefinitionNode {
@@ -82,34 +89,34 @@ impl Visitable for ParserDefinitionNode {
         match self {
             Self::Versioned(node, _)
             | Self::Optional(node)
-            | Self::ZeroOrMore(node)
-            | Self::OneOrMore(_, node) => node.accept_visitor(visitor),
+            | Self::ZeroOrMore(Named { node, .. })
+            | Self::OneOrMore(Named { node, .. }) => node.accept_visitor(visitor),
 
             Self::Sequence(nodes) => {
-                for (_, node) in nodes {
+                for Named { node, .. } in nodes {
                     node.accept_visitor(visitor);
                 }
             }
-            Self::Choice(_, nodes) => {
+            Self::Choice(Named { node: nodes, .. }) => {
                 for node in nodes {
                     node.accept_visitor(visitor);
                 }
             }
 
             Self::DelimitedBy(open, body, close) => {
-                open.1.accept_visitor(visitor);
+                open.node.accept_visitor(visitor);
                 body.accept_visitor(visitor);
-                close.1.accept_visitor(visitor);
+                close.node.accept_visitor(visitor);
             }
 
             Self::SeparatedBy(body, separator) => {
-                body.1.accept_visitor(visitor);
-                separator.1.accept_visitor(visitor);
+                body.node.accept_visitor(visitor);
+                separator.node.accept_visitor(visitor);
             }
 
             Self::TerminatedBy(body, terminator) => {
                 body.accept_visitor(visitor);
-                terminator.1.accept_visitor(visitor);
+                terminator.node.accept_visitor(visitor);
             }
 
             Self::ScannerDefinition(_)

@@ -6,9 +6,10 @@ use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::rc::Rc;
 
 use codegen_grammar::{
-    Grammar, GrammarElement, ParserDefinition, ParserDefinitionNode, PrecedenceOperatorModel,
-    PrecedenceParserDefinition, PrecedenceParserDefinitionNode, ScannerDefinition,
-    ScannerDefinitionNode, TriviaParserDefinition, VersionQuality, VersionQualityRange,
+    Grammar, GrammarElement, Named, ParserDefinition, ParserDefinitionNode,
+    PrecedenceOperatorModel, PrecedenceParserDefinition, PrecedenceParserDefinitionNode,
+    ScannerDefinition, ScannerDefinitionNode, TriviaParserDefinition, VersionQuality,
+    VersionQualityRange,
 };
 use codegen_language_definition::model;
 use codegen_language_definition::model::{FieldsErrorRecovery, Identifier, Item};
@@ -552,25 +553,30 @@ fn resolve_trivia(parser: model::TriviaParser, ctx: &mut ResolveCtx<'_>) -> Pars
         model::TriviaParser::Optional { parser } => {
             ParserDefinitionNode::Optional(Box::new(resolve_trivia(*parser, ctx)))
         }
-        model::TriviaParser::OneOrMore { parser } => {
-            ParserDefinitionNode::OneOrMore(EMPTY_NAME, Box::new(resolve_trivia(*parser, ctx)))
-        }
-        model::TriviaParser::ZeroOrMore { parser } => {
-            ParserDefinitionNode::ZeroOrMore(Box::new(resolve_trivia(*parser, ctx)))
-        }
+        model::TriviaParser::OneOrMore { parser } => ParserDefinitionNode::OneOrMore(Named {
+            name: EMPTY_NAME,
+            node: Box::new(resolve_trivia(*parser, ctx)),
+        }),
+        model::TriviaParser::ZeroOrMore { parser } => ParserDefinitionNode::ZeroOrMore(Named {
+            name: EMPTY_NAME,
+            node: Box::new(resolve_trivia(*parser, ctx)),
+        }),
         model::TriviaParser::Sequence { parsers } => ParserDefinitionNode::Sequence(
             parsers
                 .into_iter()
-                .map(|scanner| (EMPTY_NAME, resolve_trivia(scanner, ctx)))
+                .map(|scanner| Named {
+                    name: EMPTY_NAME,
+                    node: resolve_trivia(scanner, ctx),
+                })
                 .collect(),
         ),
-        model::TriviaParser::Choice { parsers } => ParserDefinitionNode::Choice(
-            EMPTY_NAME,
-            parsers
+        model::TriviaParser::Choice { parsers } => ParserDefinitionNode::Choice(Named {
+            name: EMPTY_NAME,
+            node: parsers
                 .into_iter()
                 .map(|scanner| resolve_trivia(scanner, ctx))
                 .collect(),
-        ),
+        }),
         model::TriviaParser::Trivia { trivia } => match resolve_grammar_element(&trivia, ctx) {
             GrammarElement::ScannerDefinition(parser) => {
                 ParserDefinitionNode::ScannerDefinition(parser)
@@ -625,7 +631,10 @@ fn resolve_sequence_like(
         let delimited_body = ParserDefinitionNode::Sequence(
             fields
                 .drain((open_idx + 1)..close_idx)
-                .map(|(name, field)| (name.to_string(), field))
+                .map(|(name, field)| Named {
+                    name: name.to_string(),
+                    node: field,
+                })
                 .collect(),
         );
 
@@ -633,15 +642,14 @@ fn resolve_sequence_like(
         let delimited = {
             let mut delims = fields
                 .drain(open_idx..=open_idx + 1)
-                .map(|(name, field)| (name.to_string(), field));
+                .map(|(name, field)| Named {
+                    name: name.to_string(),
+                    node: Box::new(field),
+                });
             let open = delims.next().unwrap();
             let close = delims.next().unwrap();
 
-            ParserDefinitionNode::DelimitedBy(
-                Box::new(open),
-                Box::new(delimited_body),
-                Box::new(close),
-            )
+            ParserDefinitionNode::DelimitedBy(open, Box::new(delimited_body), close)
         };
         // Replace with a new delimited node
         fields.insert(
@@ -659,7 +667,10 @@ fn resolve_sequence_like(
             let (name, def) = fields.pop().unwrap();
             assert_eq!(name, terminator);
 
-            Some((name.to_string(), def))
+            Some(Named {
+                name: name.to_string(),
+                node: Box::new(def),
+            })
         }
         None => None,
     };
@@ -667,12 +678,15 @@ fn resolve_sequence_like(
     let body = ParserDefinitionNode::Sequence(
         fields
             .into_iter()
-            .map(|(name, def)| (name.to_string(), def))
+            .map(|(name, def)| Named {
+                name: name.to_string(),
+                node: def,
+            })
             .collect(),
     );
 
     if let Some(terminator) = terminator {
-        ParserDefinitionNode::TerminatedBy(Box::new(body), Box::new(terminator))
+        ParserDefinitionNode::TerminatedBy(Box::new(body), terminator)
     } else {
         body
     }
@@ -690,13 +704,21 @@ fn resolve_choice(item: model::EnumItem, ctx: &mut ResolveCtx<'_>) -> ParserDefi
         })
         .collect();
 
-    ParserDefinitionNode::Choice(String::from("variant"), variants).versioned(item.enabled)
+    ParserDefinitionNode::Choice(Named {
+        name: String::from("variant"),
+        node: variants,
+    })
+    .versioned(item.enabled)
 }
 
 fn resolve_repeated(item: model::RepeatedItem, ctx: &mut ResolveCtx<'_>) -> ParserDefinitionNode {
     let body = Box::new(resolve_grammar_element(&item.repeated, ctx).into_parser_def_node());
 
-    ParserDefinitionNode::OneOrMore(String::from("item"), body).versioned(item.enabled)
+    ParserDefinitionNode::OneOrMore(Named {
+        name: String::from("item"),
+        node: body,
+    })
+    .versioned(item.enabled)
 }
 
 fn resolve_separated(item: model::SeparatedItem, ctx: &mut ResolveCtx<'_>) -> ParserDefinitionNode {
@@ -704,8 +726,14 @@ fn resolve_separated(item: model::SeparatedItem, ctx: &mut ResolveCtx<'_>) -> Pa
     let separator = resolve_grammar_element(&item.separator, ctx).into_parser_def_node();
 
     ParserDefinitionNode::SeparatedBy(
-        Box::new((String::from("item"), body)),
-        Box::new((String::from("separator"), separator)),
+        Named {
+            name: String::from("item"),
+            node: Box::new(body),
+        },
+        Named {
+            name: String::from("separator"),
+            node: Box::new(separator),
+        },
     )
     .versioned(item.enabled)
 }
@@ -727,7 +755,10 @@ fn resolve_precedence(
     let primary_expression = Box::new(match primaries.len() {
         0 => panic!("Precedence operator has no primary expressions"),
         1 => primaries.into_iter().next().unwrap(),
-        _ => ParserDefinitionNode::Choice(String::from("variant"), primaries),
+        _ => ParserDefinitionNode::Choice(Named {
+            name: String::from("variant"),
+            node: primaries,
+        }),
     });
 
     #[allow(clippy::items_after_statements)] // simple and specific to this site
@@ -781,12 +812,16 @@ fn resolve_precedence(
             let def = match &defs[..] {
                 // HACK: Despite it being a single definition, we still need to wrap a versioned
                 // node around the choice for it to emit the version checks for the node.
-                [ParserDefinitionNode::Versioned(..)] => {
-                    ParserDefinitionNode::Choice(String::new(), defs)
-                }
+                [ParserDefinitionNode::Versioned(..)] => ParserDefinitionNode::Choice(Named {
+                    name: String::new(),
+                    node: defs,
+                }),
                 [_] => defs.into_iter().next().unwrap(),
                 // NOTE: We give empty names to not ovewrite the names of the flattened fields of the operators
-                _ => ParserDefinitionNode::Choice(String::new(), defs),
+                _ => ParserDefinitionNode::Choice(Named {
+                    name: String::new(),
+                    node: defs,
+                }),
             };
 
             all_operators.push(def.clone());
@@ -797,7 +832,10 @@ fn resolve_precedence(
         // as reachable and ensure we emit a token kind for each
         thunk
             .def
-            .set(ParserDefinitionNode::Choice(String::new(), all_operators))
+            .set(ParserDefinitionNode::Choice(Named {
+                name: String::new(),
+                node: all_operators,
+            }))
             .unwrap();
         assert!(
             !ctx.resolved.contains_key(&name),

@@ -1,5 +1,5 @@
 use codegen_grammar::{
-    ParserDefinitionNode, ParserDefinitionRef, TriviaParserDefinitionRef, VersionQuality,
+    Named, ParserDefinitionNode, ParserDefinitionRef, TriviaParserDefinitionRef, VersionQuality,
     VersionQualityRange,
 };
 use inflector::Inflector;
@@ -46,14 +46,23 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                 }
             }
 
-            Self::ZeroOrMore(node) => {
+            Self::ZeroOrMore(Named { name, node }) => {
                 let parser = node.to_parser_code(context_name, is_trivia);
+
+                let parser = if name.is_empty() {
+                    parser
+                } else {
+                    quote! {
+                        #parser.with_name(#name)
+                    }
+                };
+
                 quote! {
                     ZeroOrMoreHelper::run(input, |input| #parser)
                 }
             }
 
-            Self::OneOrMore(name, node) => {
+            Self::OneOrMore(Named { name, node }) => {
                 let parser = node.to_parser_code(context_name, is_trivia);
 
                 let parser = if name.is_empty() {
@@ -70,7 +79,7 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
             }
 
             Self::Sequence(nodes) => match &nodes[..] {
-                [(name, node)] => {
+                [Named { name, node }] => {
                     let parser = node.to_parser_code(context_name, is_trivia);
 
                     if name.is_empty() {
@@ -81,7 +90,7 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                         }
                     }
                 }
-                nodes => make_sequence_versioned(nodes.iter().map(|(name, node)| {
+                nodes => make_sequence_versioned(nodes.iter().map(|Named { name, node }| {
                     (
                         node.to_parser_code(context_name, is_trivia),
                         name.clone(),
@@ -90,7 +99,7 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                 })),
             },
 
-            Self::Choice(name, nodes) => {
+            Self::Choice(Named { name, node: nodes }) => {
                 let parser = make_choice_versioned(nodes.iter().map(|node| {
                     (
                         node.to_parser_code(context_name, is_trivia),
@@ -159,9 +168,9 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
             }
 
             Self::DelimitedBy(open, body, close) => {
-                let open_field_name = &open.0;
-                let close_field_name = &close.0;
-                let [open_delim, close_delim] = match (&open.1, &close.1) {
+                let open_field_name = &open.name;
+                let close_field_name = &close.name;
+                let [open_delim, close_delim] = match (open.node.as_ref(), close.node.as_ref()) {
                     (
                         ParserDefinitionNode::ScannerDefinition(open, ..),
                         ParserDefinitionNode::ScannerDefinition(close, ..),
@@ -197,16 +206,16 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
             }
 
             Self::SeparatedBy(body, separator) => {
-                let separator_field_name = &separator.0;
-                let separator = match &separator.1 {
+                let separator_field_name = &separator.name;
+                let separator = match separator.node.as_ref() {
                     ParserDefinitionNode::ScannerDefinition(scanner, ..) => {
                         format_ident!("{name}", name = scanner.name())
                     }
                     _ => unreachable!("Only tokens are permitted as separators"),
                 };
 
-                let body_field_name = &body.0;
-                let parser = body.1.to_parser_code(context_name, is_trivia);
+                let body_field_name = &body.name;
+                let parser = body.node.to_parser_code(context_name, is_trivia);
 
                 quote! {
                     SeparatedHelper::run::<_, #lex_ctx>(
@@ -219,9 +228,9 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                 }
             }
             Self::TerminatedBy(body, terminator) => {
-                let terminator_field_name = &terminator.0;
+                let terminator_field_name = &terminator.name;
 
-                let terminator = match &terminator.1 {
+                let terminator = match terminator.node.as_ref() {
                     ParserDefinitionNode::ScannerDefinition(scanner, ..) => {
                         format_ident!("{name}", name = scanner.name())
                     }
@@ -264,8 +273,10 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
             }
 
             ParserDefinitionNode::Optional(node)
-            | ParserDefinitionNode::ZeroOrMore(node)
-            | ParserDefinitionNode::OneOrMore(_, node) => node.applicable_version_quality_ranges(),
+            | ParserDefinitionNode::ZeroOrMore(Named { node, .. })
+            | ParserDefinitionNode::OneOrMore(Named { node, .. }) => {
+                node.applicable_version_quality_ranges()
+            }
 
             _ => vec![],
         }
