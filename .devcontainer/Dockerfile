@@ -23,7 +23,7 @@
 # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
 FROM mcr.microsoft.com/devcontainers/base:ubuntu-22.04
 
-RUN sudo apt install pkg-config
+RUN sudo apt install pkg-config --yes
 
 # Setup ZSH for local development inside the image:
 COPY ./scripts/ /home/vscode/
