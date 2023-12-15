@@ -19,13 +19,13 @@ fn simple_contract() -> Result<()> {
 
     let children = &rule.children;
     assert!(
-        matches!(&children[0], (_, Node::Token(token)) if token.kind == TokenKind::ContractKeyword)
+        matches!(&children[0].node, Node::Token(token) if token.kind == TokenKind::ContractKeyword)
     );
-    assert!(matches!(&children[1], (_, Node::Rule(rule)) if rule.kind == RuleKind::LeadingTrivia));
-    assert!(matches!(&children[2], (_, Node::Token(token)) if token.kind == TokenKind::Identifier));
-    assert!(matches!(&children[3], (_, Node::Rule(rule)) if rule.kind == RuleKind::LeadingTrivia));
-    assert!(matches!(&children[4], (_, Node::Token(token)) if token.kind == TokenKind::OpenBrace));
-    assert!(matches!(&children[5], (_, Node::Token(token)) if token.kind == TokenKind::CloseBrace));
+    assert!(matches!(&children[1].node, Node::Rule(rule) if rule.kind == RuleKind::LeadingTrivia));
+    assert!(matches!(&children[2].node, Node::Token(token) if token.kind == TokenKind::Identifier));
+    assert!(matches!(&children[3].node, Node::Rule(rule) if rule.kind == RuleKind::LeadingTrivia));
+    assert!(matches!(&children[4].node, Node::Token(token) if token.kind == TokenKind::OpenBrace));
+    assert!(matches!(&children[5].node, Node::Token(token) if token.kind == TokenKind::CloseBrace));
 
     assert_eq!(rule.unparse(), "contract Foo {}");
 

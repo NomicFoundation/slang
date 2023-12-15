@@ -1,6 +1,6 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-use crate::cst;
+use crate::cst::{self, NamedNode};
 use crate::kinds::RuleKind;
 use crate::support::parser_result::PrattElement::{self, Binary, Expression, Postfix, Prefix};
 use crate::support::parser_result::{ParserResult, PrattOperatorMatch};
@@ -159,7 +159,10 @@ impl PrecedenceHelper {
 
                 let left_nodes = match left {
                     Some(Expression { nodes }) => {
-                        vec![(left_name.to_owned(), cst::Node::rule(child_kind, nodes))]
+                        vec![NamedNode {
+                            name: left_name.to_owned(),
+                            node: cst::Node::rule(child_kind, nodes),
+                        }]
                     }
                     None => vec![],
                     _ => unreachable!("Operator not preceeded by expression"),
@@ -167,7 +170,10 @@ impl PrecedenceHelper {
 
                 let right_nodes = match right {
                     Some(Expression { nodes }) => {
-                        vec![(right_name.to_owned(), cst::Node::rule(child_kind, nodes))]
+                        vec![NamedNode {
+                            name: right_name.to_owned(),
+                            node: cst::Node::rule(child_kind, nodes),
+                        }]
                     }
                     None => vec![],
                     _ => unreachable!("Operator not followed by expression"),
@@ -176,7 +182,10 @@ impl PrecedenceHelper {
                 let children = [left_nodes, nodes, right_nodes].concat();
 
                 Expression {
-                    nodes: vec![("variant".into(), cst::Node::rule(kind, children))],
+                    nodes: vec![NamedNode {
+                        name: "variant".into(),
+                        node: cst::Node::rule(kind, children),
+                    }],
                 }
             };
 

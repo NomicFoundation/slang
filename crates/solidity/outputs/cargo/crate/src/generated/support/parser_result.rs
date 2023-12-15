@@ -2,7 +2,7 @@
 
 use std::ops::ControlFlow;
 
-use crate::cst;
+use crate::cst::{self, NamedNode};
 use crate::kinds::{RuleKind, TokenKind};
 use crate::text_index::TextIndex;
 
@@ -60,18 +60,18 @@ impl ParserResult {
     pub fn with_kind(self, new_kind: RuleKind) -> ParserResult {
         match self {
             ParserResult::Match(r#match) => ParserResult::r#match(
-                vec![(String::new(), cst::Node::rule(new_kind, r#match.nodes))],
+                vec![NamedNode::anon(cst::Node::rule(new_kind, r#match.nodes))],
                 r#match.expected_tokens,
             ),
             ParserResult::IncompleteMatch(incomplete_match) => ParserResult::incomplete_match(
-                vec![(
-                    String::new(),
-                    cst::Node::rule(new_kind, incomplete_match.nodes),
-                )],
+                vec![NamedNode::anon(cst::Node::rule(
+                    new_kind,
+                    incomplete_match.nodes,
+                ))],
                 incomplete_match.expected_tokens,
             ),
             ParserResult::SkippedUntil(skipped) => ParserResult::SkippedUntil(SkippedUntil {
-                nodes: vec![(String::new(), cst::Node::rule(new_kind, skipped.nodes))],
+                nodes: vec![NamedNode::anon(cst::Node::rule(new_kind, skipped.nodes))],
                 ..skipped
             }),
             ParserResult::NoMatch(_) => self,
@@ -83,7 +83,10 @@ impl ParserResult {
 
     #[must_use]
     pub fn with_name(mut self, name: impl Into<String>) -> ParserResult {
-        if let Some((prev_name, _)) = self.significant_node_mut() {
+        if let Some(NamedNode {
+            name: prev_name, ..
+        }) = self.significant_node_mut()
+        {
             *prev_name = name.into();
         }
 
@@ -92,8 +95,8 @@ impl ParserResult {
 
     /// Returns a significant (non-trivia) node if there is exactly one.
     pub(crate) fn significant_node_mut(&mut self) -> Option<&mut cst::NamedNode> {
-        fn is_significant((_, node): &cst::NamedNode) -> bool {
-            match node {
+        fn is_significant(named: &cst::NamedNode) -> bool {
+            match &named.node {
                 cst::Node::Rule(rule) => !rule.kind.is_trivia(),
                 // FIXME: Some tokens are in fact trivia
                 cst::Node::Token(_) => true,
@@ -139,7 +142,7 @@ impl Match {
     pub fn is_full_recursive(&self) -> bool {
         self.nodes
             .iter()
-            .flat_map(|(_, node)| node.cursor_with_offset(TextIndex::ZERO))
+            .flat_map(|named| named.node.cursor_with_offset(TextIndex::ZERO))
             .all(|node| node.as_token_with_kind(&[TokenKind::SKIPPED]).is_none())
     }
 }
@@ -174,7 +177,7 @@ impl PrattElement {
             Self::Binary { kind, nodes, .. }
             | Self::Prefix { kind, nodes, .. }
             | Self::Postfix { kind, nodes, .. } => {
-                vec![(String::new(), cst::Node::rule(kind, nodes))]
+                vec![NamedNode::anon(cst::Node::rule(kind, nodes))]
             }
         }
     }

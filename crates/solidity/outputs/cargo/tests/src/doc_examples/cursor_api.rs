@@ -1,5 +1,6 @@
 use anyhow::Result;
 use semver::Version;
+use slang_solidity::cst::NamedNode;
 use slang_solidity::kinds::{RuleKind, TokenKind};
 use slang_solidity::language::Language;
 
@@ -71,7 +72,7 @@ fn using_iter() -> Result<()> {
             .unwrap()
             .children
             .iter()
-            .find_map(|(_name, node)| node.as_token_with_kind(&[TokenKind::Identifier]))
+            .find_map(|named| named.node.as_token_with_kind(&[TokenKind::Identifier]))
         {
             contract_names.push(token_node.text.clone());
         }
@@ -93,7 +94,7 @@ fn using_iter_combinators() -> Result<()> {
             let contract_name = node
                 .children
                 .iter()
-                .find_map(|(_name, node)| node.as_token_with_kind(&[TokenKind::Identifier]))?;
+                .find_map(|named| named.node.as_token_with_kind(&[TokenKind::Identifier]))?;
 
             Some(contract_name.text.clone())
         })
@@ -111,7 +112,7 @@ fn using_iter_with_node_names() -> Result<()> {
     let names: Vec<_> = parse_output
         .create_tree_cursor()
         .with_names()
-        .filter_map(|(name, node)| (name == "name").then_some(node))
+        .filter_map(|NamedNode { name, node }| (name == "name").then_some(node))
         .filter_map(|node| node.as_token_with_kind(&[TokenKind::Identifier]).cloned())
         .map(|node| node.text.clone())
         .collect();

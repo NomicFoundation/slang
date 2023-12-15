@@ -40,8 +40,8 @@ impl PrecedenceParserDefinitionExtensions for PrecedenceParserDefinitionRef {
                 // If the result won't match exactly, we return a dummy `ParserResult::no_match`, since
                 // can't precisely determine the expected tokens or completeness of the match otherwise.
                 match &r#match.nodes[..] {
-                    [(_, cst::Node::Rule(node))] if node.kind == RuleKind::#rule_name => match &node.children[..] {
-                        [inner @ (_, cst::Node::Rule(rule))] if rule.kind == RuleKind::#op_rule_name => {
+                    [cst::NamedNode { name: _, node: cst::Node::Rule(node), }] if node.kind == RuleKind::#rule_name => match &node.children[..] {
+                        [inner @ cst::NamedNode { name: _, node: cst::Node::Rule(rule) }] if rule.kind == RuleKind::#op_rule_name => {
                             ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
                         }
                         _ => ParserResult::no_match(vec![]),

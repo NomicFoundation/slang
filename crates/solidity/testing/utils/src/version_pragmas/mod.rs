@@ -5,7 +5,7 @@ use std::str::FromStr;
 
 use anyhow::{bail, ensure, Context, Result};
 use semver::{Comparator, Op, Version};
-use slang_solidity::cst::Node;
+use slang_solidity::cst::{NamedNode, Node};
 use slang_solidity::kinds::RuleKind;
 use slang_solidity::language::Language;
 
@@ -54,34 +54,48 @@ fn extract_pragma(expression_node: &Node) -> Result<VersionPragma> {
     );
 
     let inner_expression = match &expression_rule.children[..] {
-        [(_, Node::Rule(rule))] => rule,
-        [(_, Node::Token(token))] => bail!("Expected rule: {token:?}"),
+        [NamedNode {
+            node: Node::Rule(rule),
+            ..
+        }] => rule,
+        [NamedNode {
+            node: Node::Token(token),
+            ..
+        }] => bail!("Expected rule: {token:?}"),
         _ => unreachable!("Expected single child: {expression_rule:?}"),
     };
 
     let inner_children: Vec<_> = inner_expression
         .children
         .iter()
-        .filter(|(_name, child)| !child.is_trivia())
+        .filter(|child| !child.node.is_trivia())
         .collect();
 
     match inner_expression.kind {
         RuleKind::VersionPragmaOrExpression => {
-            let [left, (_, Node::Token(_op)), right] = &inner_children[..] else {
+            let [left, NamedNode {
+                name: _,
+                node: Node::Token(_op),
+            }, right] = &inner_children[..]
+            else {
                 bail!("Expected 3 children: {inner_expression:?}");
             };
-            let left = extract_pragma(&left.1)?;
-            let right = extract_pragma(&right.1)?;
+            let left = extract_pragma(&left.node)?;
+            let right = extract_pragma(&right.node)?;
 
             Ok(VersionPragma::or(left, right))
         }
         RuleKind::VersionPragmaRangeExpression => {
-            let [left, (_, Node::Token(_op)), right] = &inner_children[..] else {
+            let [left, NamedNode {
+                name: _,
+                node: Node::Token(_op),
+            }, right] = &inner_children[..]
+            else {
                 bail!("Expected 3 children: {inner_expression:?}");
             };
 
-            let mut left = extract_pragma(&left.1)?.comparator()?;
-            let mut right = extract_pragma(&right.1)?.comparator()?;
+            let mut left = extract_pragma(&left.node)?.comparator()?;
+            let mut right = extract_pragma(&right.node)?.comparator()?;
 
             // Simulate solc bug:
             // https://github.com/ethereum/solidity/issues/13920

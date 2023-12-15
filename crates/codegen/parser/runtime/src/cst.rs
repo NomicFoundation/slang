@@ -6,7 +6,21 @@ use crate::cursor::Cursor;
 use crate::kinds::{RuleKind, TokenKind};
 use crate::text_index::TextIndex;
 
-pub type NamedNode = (String, Node);
+#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+pub struct NamedNode {
+    pub name: String,
+    pub node: Node,
+}
+
+impl NamedNode {
+    /// Creates an anonymous (nameless) node.
+    pub fn anon(node: Node) -> Self {
+        Self {
+            name: String::new(),
+            node,
+        }
+    }
+}
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
 pub struct RuleNode {
@@ -30,7 +44,7 @@ pub enum Node {
 
 impl Node {
     pub fn rule(kind: RuleKind, children: Vec<NamedNode>) -> Self {
-        let text_len = children.iter().map(|(_name, node)| node.text_len()).sum();
+        let text_len = children.iter().map(|named| named.node.text_len()).sum();
 
         Self::Rule(Rc::new(RuleNode {
             kind,

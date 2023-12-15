@@ -218,16 +218,18 @@ impl Language {
             return result;
         };
         match &r#match.nodes[..] {
-            [(_, cst::Node::Rule(node))] if node.kind == RuleKind::Expression => {
-                match &node.children[..] {
-                    [inner @ (_, cst::Node::Rule(rule))]
-                        if rule.kind == RuleKind::AdditiveExpression =>
-                    {
-                        ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
-                    }
-                    _ => ParserResult::no_match(vec![]),
+            [cst::NamedNode {
+                name: _,
+                node: cst::Node::Rule(node),
+            }] if node.kind == RuleKind::Expression => match &node.children[..] {
+                [inner @ cst::NamedNode {
+                    name: _,
+                    node: cst::Node::Rule(rule),
+                }] if rule.kind == RuleKind::AdditiveExpression => {
+                    ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
                 }
-            }
+                _ => ParserResult::no_match(vec![]),
+            },
             _ => ParserResult::no_match(vec![]),
         }
     }
@@ -263,10 +265,14 @@ impl Language {
             return result;
         };
         match &r#match.nodes[..] {
-            [(_, cst::Node::Rule(node))] if node.kind == RuleKind::Expression => match &node
-                .children[..]
-            {
-                [inner @ (_, cst::Node::Rule(rule))] if rule.kind == RuleKind::AndExpression => {
+            [cst::NamedNode {
+                name: _,
+                node: cst::Node::Rule(node),
+            }] if node.kind == RuleKind::Expression => match &node.children[..] {
+                [inner @ cst::NamedNode {
+                    name: _,
+                    node: cst::Node::Rule(rule),
+                }] if rule.kind == RuleKind::AndExpression => {
                     ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
                 }
                 _ => ParserResult::no_match(vec![]),
@@ -329,10 +335,14 @@ impl Language {
             return result;
         };
         match &r#match.nodes[..] {
-            [(_, cst::Node::Rule(node))] if node.kind == RuleKind::TypeName => match &node.children
-                [..]
-            {
-                [inner @ (_, cst::Node::Rule(rule))] if rule.kind == RuleKind::ArrayTypeName => {
+            [cst::NamedNode {
+                name: _,
+                node: cst::Node::Rule(node),
+            }] if node.kind == RuleKind::TypeName => match &node.children[..] {
+                [inner @ cst::NamedNode {
+                    name: _,
+                    node: cst::Node::Rule(rule),
+                }] if rule.kind == RuleKind::ArrayTypeName => {
                     ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
                 }
                 _ => ParserResult::no_match(vec![]),
@@ -453,16 +463,18 @@ impl Language {
             return result;
         };
         match &r#match.nodes[..] {
-            [(_, cst::Node::Rule(node))] if node.kind == RuleKind::Expression => {
-                match &node.children[..] {
-                    [inner @ (_, cst::Node::Rule(rule))]
-                        if rule.kind == RuleKind::AssignmentExpression =>
-                    {
-                        ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
-                    }
-                    _ => ParserResult::no_match(vec![]),
+            [cst::NamedNode {
+                name: _,
+                node: cst::Node::Rule(node),
+            }] if node.kind == RuleKind::Expression => match &node.children[..] {
+                [inner @ cst::NamedNode {
+                    name: _,
+                    node: cst::Node::Rule(rule),
+                }] if rule.kind == RuleKind::AssignmentExpression => {
+                    ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
                 }
-            }
+                _ => ParserResult::no_match(vec![]),
+            },
             _ => ParserResult::no_match(vec![]),
         }
     }
@@ -474,16 +486,18 @@ impl Language {
             return result;
         };
         match &r#match.nodes[..] {
-            [(_, cst::Node::Rule(node))] if node.kind == RuleKind::Expression => {
-                match &node.children[..] {
-                    [inner @ (_, cst::Node::Rule(rule))]
-                        if rule.kind == RuleKind::BitwiseAndExpression =>
-                    {
-                        ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
-                    }
-                    _ => ParserResult::no_match(vec![]),
+            [cst::NamedNode {
+                name: _,
+                node: cst::Node::Rule(node),
+            }] if node.kind == RuleKind::Expression => match &node.children[..] {
+                [inner @ cst::NamedNode {
+                    name: _,
+                    node: cst::Node::Rule(rule),
+                }] if rule.kind == RuleKind::BitwiseAndExpression => {
+                    ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
                 }
-            }
+                _ => ParserResult::no_match(vec![]),
+            },
             _ => ParserResult::no_match(vec![]),
         }
     }
@@ -495,16 +509,18 @@ impl Language {
             return result;
         };
         match &r#match.nodes[..] {
-            [(_, cst::Node::Rule(node))] if node.kind == RuleKind::Expression => {
-                match &node.children[..] {
-                    [inner @ (_, cst::Node::Rule(rule))]
-                        if rule.kind == RuleKind::BitwiseOrExpression =>
-                    {
-                        ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
-                    }
-                    _ => ParserResult::no_match(vec![]),
+            [cst::NamedNode {
+                name: _,
+                node: cst::Node::Rule(node),
+            }] if node.kind == RuleKind::Expression => match &node.children[..] {
+                [inner @ cst::NamedNode {
+                    name: _,
+                    node: cst::Node::Rule(rule),
+                }] if rule.kind == RuleKind::BitwiseOrExpression => {
+                    ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
                 }
-            }
+                _ => ParserResult::no_match(vec![]),
+            },
             _ => ParserResult::no_match(vec![]),
         }
     }
@@ -516,16 +532,18 @@ impl Language {
             return result;
         };
         match &r#match.nodes[..] {
-            [(_, cst::Node::Rule(node))] if node.kind == RuleKind::Expression => {
-                match &node.children[..] {
-                    [inner @ (_, cst::Node::Rule(rule))]
-                        if rule.kind == RuleKind::BitwiseXorExpression =>
-                    {
-                        ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
-                    }
-                    _ => ParserResult::no_match(vec![]),
+            [cst::NamedNode {
+                name: _,
+                node: cst::Node::Rule(node),
+            }] if node.kind == RuleKind::Expression => match &node.children[..] {
+                [inner @ cst::NamedNode {
+                    name: _,
+                    node: cst::Node::Rule(rule),
+                }] if rule.kind == RuleKind::BitwiseXorExpression => {
+                    ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
                 }
-            }
+                _ => ParserResult::no_match(vec![]),
+            },
             _ => ParserResult::no_match(vec![]),
         }
     }
@@ -655,16 +673,18 @@ impl Language {
             return result;
         };
         match &r#match.nodes[..] {
-            [(_, cst::Node::Rule(node))] if node.kind == RuleKind::Expression => {
-                match &node.children[..] {
-                    [inner @ (_, cst::Node::Rule(rule))]
-                        if rule.kind == RuleKind::ComparisonExpression =>
-                    {
-                        ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
-                    }
-                    _ => ParserResult::no_match(vec![]),
+            [cst::NamedNode {
+                name: _,
+                node: cst::Node::Rule(node),
+            }] if node.kind == RuleKind::Expression => match &node.children[..] {
+                [inner @ cst::NamedNode {
+                    name: _,
+                    node: cst::Node::Rule(rule),
+                }] if rule.kind == RuleKind::ComparisonExpression => {
+                    ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
                 }
-            }
+                _ => ParserResult::no_match(vec![]),
+            },
             _ => ParserResult::no_match(vec![]),
         }
     }
@@ -676,16 +696,18 @@ impl Language {
             return result;
         };
         match &r#match.nodes[..] {
-            [(_, cst::Node::Rule(node))] if node.kind == RuleKind::Expression => {
-                match &node.children[..] {
-                    [inner @ (_, cst::Node::Rule(rule))]
-                        if rule.kind == RuleKind::ConditionalExpression =>
-                    {
-                        ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
-                    }
-                    _ => ParserResult::no_match(vec![]),
+            [cst::NamedNode {
+                name: _,
+                node: cst::Node::Rule(node),
+            }] if node.kind == RuleKind::Expression => match &node.children[..] {
+                [inner @ cst::NamedNode {
+                    name: _,
+                    node: cst::Node::Rule(rule),
+                }] if rule.kind == RuleKind::ConditionalExpression => {
+                    ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
                 }
-            }
+                _ => ParserResult::no_match(vec![]),
+            },
             _ => ParserResult::no_match(vec![]),
         }
     }
@@ -1290,16 +1312,18 @@ impl Language {
             return result;
         };
         match &r#match.nodes[..] {
-            [(_, cst::Node::Rule(node))] if node.kind == RuleKind::Expression => {
-                match &node.children[..] {
-                    [inner @ (_, cst::Node::Rule(rule))]
-                        if rule.kind == RuleKind::EqualityExpression =>
-                    {
-                        ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
-                    }
-                    _ => ParserResult::no_match(vec![]),
+            [cst::NamedNode {
+                name: _,
+                node: cst::Node::Rule(node),
+            }] if node.kind == RuleKind::Expression => match &node.children[..] {
+                [inner @ cst::NamedNode {
+                    name: _,
+                    node: cst::Node::Rule(rule),
+                }] if rule.kind == RuleKind::EqualityExpression => {
+                    ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
                 }
-            }
+                _ => ParserResult::no_match(vec![]),
+            },
             _ => ParserResult::no_match(vec![]),
         }
     }
@@ -1590,16 +1614,18 @@ impl Language {
             return result;
         };
         match &r#match.nodes[..] {
-            [(_, cst::Node::Rule(node))] if node.kind == RuleKind::Expression => {
-                match &node.children[..] {
-                    [inner @ (_, cst::Node::Rule(rule))]
-                        if rule.kind == RuleKind::ExponentiationExpression =>
-                    {
-                        ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
-                    }
-                    _ => ParserResult::no_match(vec![]),
+            [cst::NamedNode {
+                name: _,
+                node: cst::Node::Rule(node),
+            }] if node.kind == RuleKind::Expression => match &node.children[..] {
+                [inner @ cst::NamedNode {
+                    name: _,
+                    node: cst::Node::Rule(rule),
+                }] if rule.kind == RuleKind::ExponentiationExpression => {
+                    ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
                 }
-            }
+                _ => ParserResult::no_match(vec![]),
+            },
             _ => ParserResult::no_match(vec![]),
         }
     }
@@ -2530,16 +2556,18 @@ impl Language {
             return result;
         };
         match &r#match.nodes[..] {
-            [(_, cst::Node::Rule(node))] if node.kind == RuleKind::Expression => {
-                match &node.children[..] {
-                    [inner @ (_, cst::Node::Rule(rule))]
-                        if rule.kind == RuleKind::FunctionCallExpression =>
-                    {
-                        ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
-                    }
-                    _ => ParserResult::no_match(vec![]),
+            [cst::NamedNode {
+                name: _,
+                node: cst::Node::Rule(node),
+            }] if node.kind == RuleKind::Expression => match &node.children[..] {
+                [inner @ cst::NamedNode {
+                    name: _,
+                    node: cst::Node::Rule(rule),
+                }] if rule.kind == RuleKind::FunctionCallExpression => {
+                    ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
                 }
-            }
+                _ => ParserResult::no_match(vec![]),
+            },
             _ => ParserResult::no_match(vec![]),
         }
     }
@@ -2961,16 +2989,18 @@ impl Language {
             return result;
         };
         match &r#match.nodes[..] {
-            [(_, cst::Node::Rule(node))] if node.kind == RuleKind::Expression => {
-                match &node.children[..] {
-                    [inner @ (_, cst::Node::Rule(rule))]
-                        if rule.kind == RuleKind::IndexAccessExpression =>
-                    {
-                        ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
-                    }
-                    _ => ParserResult::no_match(vec![]),
+            [cst::NamedNode {
+                name: _,
+                node: cst::Node::Rule(node),
+            }] if node.kind == RuleKind::Expression => match &node.children[..] {
+                [inner @ cst::NamedNode {
+                    name: _,
+                    node: cst::Node::Rule(rule),
+                }] if rule.kind == RuleKind::IndexAccessExpression => {
+                    ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
                 }
-            }
+                _ => ParserResult::no_match(vec![]),
+            },
             _ => ParserResult::no_match(vec![]),
         }
     }
@@ -3291,16 +3321,18 @@ impl Language {
             return result;
         };
         match &r#match.nodes[..] {
-            [(_, cst::Node::Rule(node))] if node.kind == RuleKind::Expression => {
-                match &node.children[..] {
-                    [inner @ (_, cst::Node::Rule(rule))]
-                        if rule.kind == RuleKind::MemberAccessExpression =>
-                    {
-                        ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
-                    }
-                    _ => ParserResult::no_match(vec![]),
+            [cst::NamedNode {
+                name: _,
+                node: cst::Node::Rule(node),
+            }] if node.kind == RuleKind::Expression => match &node.children[..] {
+                [inner @ cst::NamedNode {
+                    name: _,
+                    node: cst::Node::Rule(rule),
+                }] if rule.kind == RuleKind::MemberAccessExpression => {
+                    ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
                 }
-            }
+                _ => ParserResult::no_match(vec![]),
+            },
             _ => ParserResult::no_match(vec![]),
         }
     }
@@ -3382,16 +3414,18 @@ impl Language {
             return result;
         };
         match &r#match.nodes[..] {
-            [(_, cst::Node::Rule(node))] if node.kind == RuleKind::Expression => {
-                match &node.children[..] {
-                    [inner @ (_, cst::Node::Rule(rule))]
-                        if rule.kind == RuleKind::MultiplicativeExpression =>
-                    {
-                        ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
-                    }
-                    _ => ParserResult::no_match(vec![]),
+            [cst::NamedNode {
+                name: _,
+                node: cst::Node::Rule(node),
+            }] if node.kind == RuleKind::Expression => match &node.children[..] {
+                [inner @ cst::NamedNode {
+                    name: _,
+                    node: cst::Node::Rule(rule),
+                }] if rule.kind == RuleKind::MultiplicativeExpression => {
+                    ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
                 }
-            }
+                _ => ParserResult::no_match(vec![]),
+            },
             _ => ParserResult::no_match(vec![]),
         }
     }
@@ -3636,14 +3670,18 @@ impl Language {
             return result;
         };
         match &r#match.nodes[..] {
-            [(_, cst::Node::Rule(node))] if node.kind == RuleKind::Expression => {
-                match &node.children[..] {
-                    [inner @ (_, cst::Node::Rule(rule))] if rule.kind == RuleKind::OrExpression => {
-                        ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
-                    }
-                    _ => ParserResult::no_match(vec![]),
+            [cst::NamedNode {
+                name: _,
+                node: cst::Node::Rule(node),
+            }] if node.kind == RuleKind::Expression => match &node.children[..] {
+                [inner @ cst::NamedNode {
+                    name: _,
+                    node: cst::Node::Rule(rule),
+                }] if rule.kind == RuleKind::OrExpression => {
+                    ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
                 }
-            }
+                _ => ParserResult::no_match(vec![]),
+            },
             _ => ParserResult::no_match(vec![]),
         }
     }
@@ -3850,16 +3888,18 @@ impl Language {
             return result;
         };
         match &r#match.nodes[..] {
-            [(_, cst::Node::Rule(node))] if node.kind == RuleKind::Expression => {
-                match &node.children[..] {
-                    [inner @ (_, cst::Node::Rule(rule))]
-                        if rule.kind == RuleKind::PostfixExpression =>
-                    {
-                        ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
-                    }
-                    _ => ParserResult::no_match(vec![]),
+            [cst::NamedNode {
+                name: _,
+                node: cst::Node::Rule(node),
+            }] if node.kind == RuleKind::Expression => match &node.children[..] {
+                [inner @ cst::NamedNode {
+                    name: _,
+                    node: cst::Node::Rule(rule),
+                }] if rule.kind == RuleKind::PostfixExpression => {
+                    ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
                 }
-            }
+                _ => ParserResult::no_match(vec![]),
+            },
             _ => ParserResult::no_match(vec![]),
         }
     }
@@ -3920,10 +3960,14 @@ impl Language {
             return result;
         };
         match &r#match.nodes[..] {
-            [(_, cst::Node::Rule(node))] if node.kind == RuleKind::Expression => match &node
-                .children[..]
-            {
-                [inner @ (_, cst::Node::Rule(rule))] if rule.kind == RuleKind::PrefixExpression => {
+            [cst::NamedNode {
+                name: _,
+                node: cst::Node::Rule(node),
+            }] if node.kind == RuleKind::Expression => match &node.children[..] {
+                [inner @ cst::NamedNode {
+                    name: _,
+                    node: cst::Node::Rule(rule),
+                }] if rule.kind == RuleKind::PrefixExpression => {
                     ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
                 }
                 _ => ParserResult::no_match(vec![]),
@@ -4103,10 +4147,14 @@ impl Language {
             return result;
         };
         match &r#match.nodes[..] {
-            [(_, cst::Node::Rule(node))] if node.kind == RuleKind::Expression => match &node
-                .children[..]
-            {
-                [inner @ (_, cst::Node::Rule(rule))] if rule.kind == RuleKind::ShiftExpression => {
+            [cst::NamedNode {
+                name: _,
+                node: cst::Node::Rule(node),
+            }] if node.kind == RuleKind::Expression => match &node.children[..] {
+                [inner @ cst::NamedNode {
+                    name: _,
+                    node: cst::Node::Rule(rule),
+                }] if rule.kind == RuleKind::ShiftExpression => {
                     ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
                 }
                 _ => ParserResult::no_match(vec![]),
@@ -5523,16 +5571,18 @@ impl Language {
             return result;
         };
         match &r#match.nodes[..] {
-            [(_, cst::Node::Rule(node))] if node.kind == RuleKind::VersionPragmaExpression => {
-                match &node.children[..] {
-                    [inner @ (_, cst::Node::Rule(rule))]
-                        if rule.kind == RuleKind::VersionPragmaOrExpression =>
-                    {
-                        ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
-                    }
-                    _ => ParserResult::no_match(vec![]),
+            [cst::NamedNode {
+                name: _,
+                node: cst::Node::Rule(node),
+            }] if node.kind == RuleKind::VersionPragmaExpression => match &node.children[..] {
+                [inner @ cst::NamedNode {
+                    name: _,
+                    node: cst::Node::Rule(rule),
+                }] if rule.kind == RuleKind::VersionPragmaOrExpression => {
+                    ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
                 }
-            }
+                _ => ParserResult::no_match(vec![]),
+            },
             _ => ParserResult::no_match(vec![]),
         }
     }
@@ -5544,16 +5594,18 @@ impl Language {
             return result;
         };
         match &r#match.nodes[..] {
-            [(_, cst::Node::Rule(node))] if node.kind == RuleKind::VersionPragmaExpression => {
-                match &node.children[..] {
-                    [inner @ (_, cst::Node::Rule(rule))]
-                        if rule.kind == RuleKind::VersionPragmaPrefixExpression =>
-                    {
-                        ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
-                    }
-                    _ => ParserResult::no_match(vec![]),
+            [cst::NamedNode {
+                name: _,
+                node: cst::Node::Rule(node),
+            }] if node.kind == RuleKind::VersionPragmaExpression => match &node.children[..] {
+                [inner @ cst::NamedNode {
+                    name: _,
+                    node: cst::Node::Rule(rule),
+                }] if rule.kind == RuleKind::VersionPragmaPrefixExpression => {
+                    ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
                 }
-            }
+                _ => ParserResult::no_match(vec![]),
+            },
             _ => ParserResult::no_match(vec![]),
         }
     }
@@ -5565,16 +5617,18 @@ impl Language {
             return result;
         };
         match &r#match.nodes[..] {
-            [(_, cst::Node::Rule(node))] if node.kind == RuleKind::VersionPragmaExpression => {
-                match &node.children[..] {
-                    [inner @ (_, cst::Node::Rule(rule))]
-                        if rule.kind == RuleKind::VersionPragmaRangeExpression =>
-                    {
-                        ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
-                    }
-                    _ => ParserResult::no_match(vec![]),
+            [cst::NamedNode {
+                name: _,
+                node: cst::Node::Rule(node),
+            }] if node.kind == RuleKind::VersionPragmaExpression => match &node.children[..] {
+                [inner @ cst::NamedNode {
+                    name: _,
+                    node: cst::Node::Rule(rule),
+                }] if rule.kind == RuleKind::VersionPragmaRangeExpression => {
+                    ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
                 }
-            }
+                _ => ParserResult::no_match(vec![]),
+            },
             _ => ParserResult::no_match(vec![]),
         }
     }
@@ -5832,16 +5886,18 @@ impl Language {
             return result;
         };
         match &r#match.nodes[..] {
-            [(_, cst::Node::Rule(node))] if node.kind == RuleKind::YulExpression => {
-                match &node.children[..] {
-                    [inner @ (_, cst::Node::Rule(rule))]
-                        if rule.kind == RuleKind::YulFunctionCallExpression =>
-                    {
-                        ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
-                    }
-                    _ => ParserResult::no_match(vec![]),
+            [cst::NamedNode {
+                name: _,
+                node: cst::Node::Rule(node),
+            }] if node.kind == RuleKind::YulExpression => match &node.children[..] {
+                [inner @ cst::NamedNode {
+                    name: _,
+                    node: cst::Node::Rule(rule),
+                }] if rule.kind == RuleKind::YulFunctionCallExpression => {
+                    ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
                 }
-            }
+                _ => ParserResult::no_match(vec![]),
+            },
             _ => ParserResult::no_match(vec![]),
         }
     }

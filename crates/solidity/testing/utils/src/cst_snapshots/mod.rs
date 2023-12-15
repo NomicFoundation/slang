@@ -94,15 +94,23 @@ fn write_tree<W: Write>(w: &mut W, mut cursor: CursorWithNames, source: &str) ->
 
         // Skip whitespace and trivia rules containing only those tokens
         match cursor.next() {
-            Some((_, cst::Node::Rule(rule)))
-                if rule.is_trivia()
-                    && rule.children.iter().all(|(_name, node)| {
-                        node.as_token().map_or(false, |t| is_whitespace(t.kind))
-                    }) =>
+            Some(cst::NamedNode {
+                name: _,
+                node: cst::Node::Rule(rule),
+            }) if rule.is_trivia()
+                && rule.children.iter().all(|named| {
+                    named
+                        .node
+                        .as_token()
+                        .map_or(false, |t| is_whitespace(t.kind))
+                }) =>
             {
                 continue
             }
-            Some((_, cst::Node::Token(token))) if is_whitespace(token.kind) => continue,
+            Some(cst::NamedNode {
+                name: _,
+                node: cst::Node::Token(token),
+            }) if is_whitespace(token.kind) => continue,
             next => break next.map(|item| (item, depth, range)),
         }
     });
@@ -116,7 +124,7 @@ fn write_tree<W: Write>(w: &mut W, mut cursor: CursorWithNames, source: &str) ->
 
 fn write_node<W: Write>(
     w: &mut W,
-    (name, node): &cst::NamedNode,
+    cst::NamedNode { name, node }: &cst::NamedNode,
     range: &TextRange,
     source: &str,
     indentation: usize,

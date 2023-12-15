@@ -37,8 +37,8 @@ impl NodeExtensions for RuleNode {
         return self
             .children
             .iter()
-            .filter(|(_name, child)| !child.is_trivia())
-            .map(|(_name, child)| child.extract_non_trivia())
+            .filter(|child| !child.node.is_trivia())
+            .map(|child| child.node.extract_non_trivia())
             .collect();
     }
 }
