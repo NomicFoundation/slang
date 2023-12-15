@@ -14,6 +14,9 @@
   },
   "customizations": {
     "vscode": {
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "zsh"
+      },
       // Keep extensions list in-sync with "$REPO_ROOT/.vscode/extensions.json"
       "extensions": [
         // Language Support
