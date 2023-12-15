@@ -36,6 +36,12 @@ impl CodegenReadWrite {
                     .ok_or_else(|| tera::Error::msg("Expected a string"))
                     .map(|s| Value::String(s.to_snake_case()))
             });
+            tera.register_filter("pascal_case", |value: &Value, _params: &_| {
+                value
+                    .as_str()
+                    .ok_or_else(|| tera::Error::msg("Expected a string"))
+                    .map(|s| Value::String(s.to_pascal_case()))
+            });
 
             tera.autoescape_on(vec![]); // disable autoescaping
 
