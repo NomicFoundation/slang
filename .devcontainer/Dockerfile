@@ -26,6 +26,6 @@ FROM mcr.microsoft.com/devcontainers/base:ubuntu-22.04
 RUN sudo apt-get update && \
     sudo apt-get install --yes pkg-config && \
     rm -rf /var/lib/apt/lists/*
-    
+
 # Setup ZSH for local development inside the image:
 COPY ./scripts/ /home/vscode/
