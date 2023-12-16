@@ -11,6 +11,7 @@ repository = "https://github.com/NomicFoundation/slang/"
 authors = [
   "Nomic Foundation <packages@nomic.foundation>",
   "Antony Blakey <antony@nomic.foundation>",
+  "Igor Matuszewski <igor@nomic.foundation>",
   "Omar Tawfik <omar@nomic.foundation>",
 ]
 
