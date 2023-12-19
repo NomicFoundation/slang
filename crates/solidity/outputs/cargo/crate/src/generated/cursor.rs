@@ -266,8 +266,7 @@ impl Cursor {
             let child_number = parent.rule_node.children.len() - 1;
             if let Some(child) = parent.rule_node.children.get(child_number).cloned() {
                 // This is cheaper than summing up the length of the children
-                let text_offset =
-                    parent.text_offset + parent.rule_node.text_len - child.node.text_len();
+                let text_offset = parent.text_offset + parent.rule_node.text_len - child.text_len();
 
                 self.path.push(parent);
 

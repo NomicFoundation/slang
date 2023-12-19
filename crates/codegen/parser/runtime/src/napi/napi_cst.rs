@@ -52,7 +52,7 @@ impl RuleNode {
         self.0
             .children
             .iter()
-            .map(|child| child.node.to_js(&env))
+            .map(|child| child.to_js(&env))
             .collect()
     }
 

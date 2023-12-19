@@ -68,7 +68,7 @@ fn extract_pragma(expression_node: &Node) -> Result<VersionPragma> {
     let inner_children: Vec<_> = inner_expression
         .children
         .iter()
-        .filter(|child| !child.node.is_trivia())
+        .filter(|child| !child.is_trivia())
         .collect();
 
     match inner_expression.kind {
@@ -80,8 +80,8 @@ fn extract_pragma(expression_node: &Node) -> Result<VersionPragma> {
             else {
                 bail!("Expected 3 children: {inner_expression:?}");
             };
-            let left = extract_pragma(&left.node)?;
-            let right = extract_pragma(&right.node)?;
+            let left = extract_pragma(left)?;
+            let right = extract_pragma(right)?;
 
             Ok(VersionPragma::or(left, right))
         }
@@ -94,8 +94,8 @@ fn extract_pragma(expression_node: &Node) -> Result<VersionPragma> {
                 bail!("Expected 3 children: {inner_expression:?}");
             };
 
-            let mut left = extract_pragma(&left.node)?.comparator()?;
-            let mut right = extract_pragma(&right.node)?.comparator()?;
+            let mut left = extract_pragma(left)?.comparator()?;
+            let mut right = extract_pragma(right)?.comparator()?;
 
             // Simulate solc bug:
             // https://github.com/ethereum/solidity/issues/13920
