@@ -2,7 +2,7 @@
 
 In this guide, we'll walk you through the process of parsing a Solidity file using Slang. There are two ways to do it: using our CLI app or directly using the API. See [Installation](../#installation) on how to install Slang.
 
-A file has to be parsed according to a specific Solidity [version](../../../solidity-specification/supported-versions/). The version has to be explicitly specified and is not inferred from the source. To selectively parse parts of the source code using different versions, e.g. when the contract across multiple files has been flattened, you need to do that manually.
+A file must be parsed according to a specific Solidity [version](../../../solidity-specification/supported-versions/). The version has to be explicitly specified and is not inferred from the source. To selectively parse parts of the source code using different versions, e.g. when the contract across multiple files has been flattened, you need to do that manually.
 
 ## Using the CLI
 
@@ -14,7 +14,7 @@ Usage:
 slang_solidity parse [--json] --version <VERSION> <FILE_PATH>
 ```
 
-All parse errors are printed in a human-readable format; the command succeeds if there were no parse errors and fails otherwise.
+All parse errors are printed in a human-readable format; the command will succeed if there are no parse errors, and fail otherwise.
 
 If `--json` is specified, a JSON representation of a Concrete Syntax Tree (CST) is printed to the standard output stream; nothing is printed otherwise.
 
@@ -44,7 +44,7 @@ Example:
 }
 ```
 
-Since the resulting structure is well-defined and recursive, we can turn to the popular `jq` tool to quickly analyze the resulting output.
+Because the resulting structure is well-defined and recursive, we can use the popular `jq` tool to quickly analyze the resulting output.
 
 ### Example 1: Reconstruct a Solidity file
 
@@ -144,7 +144,7 @@ And that gives us back the reconstructed source code! 🎉
 
 ### Example 2: List the top-level contracts and their names
 
-Let's do something slightly more practical. We want to get all of contracts defined in a file and print their names.
+Let's try a more practical example. We'll get all the contracts defined in a file and print their names.
 
 To do that, we need to:
 
@@ -178,15 +178,15 @@ $ slang_solidity parse --json --version "$VERSION" file.sol | jq "$JQ_QUERY"
 
 ## Using the Rust library
 
-The Rust package is a regular crate published to crates.io, so we can add it to a project as a dependency with:
+The Rust package, which is a regular crate published to crates.io, can be added to a project as a dependency using the following command:
 
 ```bash
 cargo add slang_solidity
 ```
 
-Using the API directly provides us with a more fine-grained control over the parsing process. We're not limited to parsing the input as a top-level source unit but we can parse individual rules like contracts, various definitions or even expressions.
+Using the API directly provides us with a more fine-grained control over the parsing process. It allows us to parse not just the input as a top-level source unit, but also individual rules like contracts, various definitions, and even expressions.
 
-We start by creating a `Language` struct with a given version. This is an entry point for our parser API.
+We begin by creating a `Language` struct with a specified version. This is an entry point for our parser API.
 
 ```rust
 // We use `anyhow` for a convenient and simplistic error handling/propagation
@@ -205,7 +205,7 @@ fn main() -> Result<()> {
 }
 ```
 
-Now, we need to read the source code. The `parse` function accepts a `&str` slice, so we need to load it from the file directly or slice from an existing `String` buffer.
+Next, we need to read the source code. The `parse` function accepts a `&str` slice, so we need to load an owned `String` directly from the file or slice another existing `String` buffer.
 
 Let's use the convenient [`std::fs::read_to_string`](https://doc.rust-lang.org/stable/std/fs/fn.read_to_string.html) helper to make our lives a bit easier.
 
@@ -216,7 +216,7 @@ let source_code = std::fs::read_to_string("file.sol")?;
 let parse_tree/*: ParseOutput*/ = language.parse(RuleKind::SourceUnit, &source_code);
 ```
 
-The resulting `ParseOutput` type exposes these helpful functions:
+The `ParseOutput` type that results from this process provides the following helpful functions:
 
 -   `fn errors()/is_valid()` that return structured parse errors, if any,
 -   `fn tree()` that gives us back a CST (partial if there were parse errors),
@@ -224,7 +224,7 @@ The resulting `ParseOutput` type exposes these helpful functions:
 
 ### Example 1: Reconstruct the Solidity file
 
-Let's try the same example, only now using the API directly.
+Let's try the same example, but this time we'll use the API directly.
 
 We'll start with this file:
 
@@ -253,7 +253,7 @@ let output/*: String*/ = parse_tree.node().unparse();
 assert_eq!(output, "pragma solidity ^0.8.0\n");
 ```
 
-However, let's do that ourselves to exercise the tree walking.
+However, for the sake of practice, let's do this ourselves by walking the tree ourselves.
 
 The `Cursor` type implements an `Iterator` trait by yielding the tree nodes in a depth-first search (DFS) fashion.
 
@@ -273,7 +273,7 @@ assert_eq!(output, "pragma solidity ^0.8.0\n");
 
 ### Example 2: List the top-level contracts and their names
 
-In addition to the `Iterator` implementation, the `Cursor` type also exposes procedural-style functions that allow you to navigate the source in an imperative fashion:
+In addition to the `Iterator` implementation, the `Cursor` type also provides procedural-style functions that allow you to navigate the source parse tree in a step-by-step manner:
 
 ```rust
 const SOURCE: &'static str = "

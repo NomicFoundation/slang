@@ -2,7 +2,7 @@
 
 In this guide, we'll walk you through the process of parsing a Solidity file using Slang. See [Installation](../#installation) on how to install Slang.
 
-A file has to be parsed according to a specific Solidity [version](../../../solidity-specification/supported-versions/). The version has to be explicitly specified and is not inferred from the source. To selectively parse parts of the source code using different versions, e.g. when the contract across multiple files has been flattened, you need to do that manually.
+A file must be parsed according to a specific Solidity [version](../../../solidity-specification/supported-versions/). The version has to be explicitly specified and is not inferred from the source. To selectively parse parts of the source code using different versions, e.g. when the contract across multiple files has been flattened, you need to do that manually.
 
 ## Using the NPM package
 
@@ -79,7 +79,7 @@ expect(output).toEqual("pragma solidity ^0.8.0\n");
 
 ### Example 2: List the top-level contracts and their names
 
-The `Cursor` type exposes more procedural-style functions that allow you to navigate the source in an imperative fashion. In addition to `goToNext`, we can go to the parent, first child, next sibling, etc., as well as nodes with a given kind.
+The `Cursor` type provides procedural-style functions that allow you to navigate the source in a step-by-step manner. In addition to `goToNext`, we can go to the parent, first child, next sibling, etc., as well as nodes with a given kind.
 
 To list the top-level contracts and their names, we need to visit the `ContractDefinition` rule nodes and then their `Identifier` children.
 
