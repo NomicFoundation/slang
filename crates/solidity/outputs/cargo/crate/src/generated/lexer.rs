@@ -59,7 +59,7 @@ pub trait Lexer {
         let end = input.position();
 
         ParserResult::r#match(
-            vec![NamedNode::anon(cst::Node::token(
+            vec![NamedNode::anonymous(cst::Node::token(
                 kind,
                 input.content(start.utf8..end.utf8),
             ))],
@@ -89,7 +89,7 @@ pub trait Lexer {
             return ParserResult::no_match(vec![kind]);
         }
         let end = input.position();
-        children.push(NamedNode::anon(cst::Node::token(
+        children.push(NamedNode::anonymous(cst::Node::token(
             kind,
             input.content(start.utf8..end.utf8),
         )));

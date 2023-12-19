@@ -16,7 +16,7 @@ pub struct NamedNode {
 
 impl NamedNode {
     /// Creates an anonymous (nameless) node.
-    pub fn anon(node: Node) -> Self {
+    pub fn anonymous(node: Node) -> Self {
         Self {
             name: String::new(),
             node,

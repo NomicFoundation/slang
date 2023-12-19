@@ -60,18 +60,24 @@ impl ParserResult {
     pub fn with_kind(self, new_kind: RuleKind) -> ParserResult {
         match self {
             ParserResult::Match(r#match) => ParserResult::r#match(
-                vec![NamedNode::anon(cst::Node::rule(new_kind, r#match.nodes))],
+                vec![NamedNode::anonymous(cst::Node::rule(
+                    new_kind,
+                    r#match.nodes,
+                ))],
                 r#match.expected_tokens,
             ),
             ParserResult::IncompleteMatch(incomplete_match) => ParserResult::incomplete_match(
-                vec![NamedNode::anon(cst::Node::rule(
+                vec![NamedNode::anonymous(cst::Node::rule(
                     new_kind,
                     incomplete_match.nodes,
                 ))],
                 incomplete_match.expected_tokens,
             ),
             ParserResult::SkippedUntil(skipped) => ParserResult::SkippedUntil(SkippedUntil {
-                nodes: vec![NamedNode::anon(cst::Node::rule(new_kind, skipped.nodes))],
+                nodes: vec![NamedNode::anonymous(cst::Node::rule(
+                    new_kind,
+                    skipped.nodes,
+                ))],
                 ..skipped
             }),
             ParserResult::NoMatch(_) => self,
@@ -177,7 +183,7 @@ impl PrattElement {
             Self::Binary { kind, nodes, .. }
             | Self::Prefix { kind, nodes, .. }
             | Self::Postfix { kind, nodes, .. } => {
-                vec![NamedNode::anon(cst::Node::rule(kind, nodes))]
+                vec![NamedNode::anonymous(cst::Node::rule(kind, nodes))]
             }
         }
     }
