@@ -3,7 +3,7 @@ use std::fmt::Write;
 
 use anyhow::Result;
 use slang_solidity::cst;
-use slang_solidity::cursor::Cursor;
+use slang_solidity::cursor::CursorWithNames;
 use slang_solidity::kinds::TokenKind;
 use slang_solidity::text_index::{TextRange, TextRangeExtensions};
 
@@ -12,7 +12,7 @@ use crate::node_extensions::NodeExtensions;
 pub struct CstSnapshots;
 
 impl CstSnapshots {
-    pub fn render(source: &str, errors: &Vec<String>, cursor: Cursor) -> Result<String> {
+    pub fn render(source: &str, errors: &Vec<String>, cursor: CursorWithNames) -> Result<String> {
         let mut w = String::new();
 
         write_source(&mut w, source)?;
@@ -85,7 +85,7 @@ fn write_errors<W: Write>(w: &mut W, errors: &Vec<String>) -> Result<()> {
     Ok(())
 }
 
-fn write_tree<W: Write>(w: &mut W, mut cursor: Cursor, source: &str) -> Result<()> {
+fn write_tree<W: Write>(w: &mut W, mut cursor: CursorWithNames, source: &str) -> Result<()> {
     write!(w, "Tree:")?;
     writeln!(w)?;
 
@@ -94,16 +94,23 @@ fn write_tree<W: Write>(w: &mut W, mut cursor: Cursor, source: &str) -> Result<(
 
         // Skip whitespace and trivia rules containing only those tokens
         match cursor.next() {
-            Some(cst::Node::Rule(rule))
-                if rule.is_trivia()
-                    && rule
-                        .children
-                        .iter()
-                        .all(|node| node.as_token().map_or(false, |t| is_whitespace(t.kind))) =>
+            Some(cst::NamedNode {
+                name: _,
+                node: cst::Node::Rule(rule),
+            }) if rule.is_trivia()
+                && rule.children.iter().all(|named| {
+                    named
+                        .node
+                        .as_token()
+                        .map_or(false, |t| is_whitespace(t.kind))
+                }) =>
             {
                 continue
             }
-            Some(cst::Node::Token(token)) if is_whitespace(token.kind) => continue,
+            Some(cst::NamedNode {
+                name: _,
+                node: cst::Node::Token(token),
+            }) if is_whitespace(token.kind) => continue,
             next => break next.map(|item| (item, depth, range)),
         }
     });
@@ -117,7 +124,7 @@ fn write_tree<W: Write>(w: &mut W, mut cursor: Cursor, source: &str) -> Result<(
 
 fn write_node<W: Write>(
     w: &mut W,
-    node: &cst::Node,
+    cst::NamedNode { name, node }: &cst::NamedNode,
     range: &TextRange,
     source: &str,
     indentation: usize,
@@ -144,9 +151,15 @@ fn write_node<W: Write>(
         }
     };
 
+    let field_name = if name.is_empty() {
+        String::new()
+    } else {
+        format!("({name}) ")
+    };
+
     let name = match node {
-        cst::Node::Rule(rule) => format!("{:?}", rule.kind),
-        cst::Node::Token(token) => format!("{:?}", token.kind),
+        cst::Node::Rule(rule) => format!("{field_name}{}", rule.kind.as_ref()),
+        cst::Node::Token(token) => format!("{field_name}{}", token.kind.as_ref()),
     };
 
     writeln!(

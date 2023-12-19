@@ -7,4 +7,4 @@ Errors: []
 
 Tree:
   - Expression: # 0..4 "emit"
-      - Identifier: "emit" # 0..4
+      - (variant) Identifier: "emit" # 0..4

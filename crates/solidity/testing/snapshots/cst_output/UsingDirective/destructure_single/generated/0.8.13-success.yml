@@ -7,19 +7,19 @@ Errors: []
 
 Tree:
   - UsingDirective: # 0..27 "using {add} for Int global;"
-      - UsingKeyword: "using" # 0..5
-      - UsingClause: # 5..11 " {add}"
-          - UsingDeconstruction: # 5..11 " {add}"
-              - OpenBrace: "{" # 6..7
-              - UsingDeconstructionSymbols: # 7..10 "add"
-                  - UsingDeconstructionSymbol: # 7..10 "add"
-                      - IdentifierPath: # 7..10 "add"
-                          - Identifier: "add" # 7..10
-              - CloseBrace: "}" # 10..11
-      - ForKeyword: "for" # 12..15
-      - UsingTarget: # 15..19 " Int"
-          - TypeName: # 15..19 " Int"
-              - IdentifierPath: # 15..19 " Int"
-                  - Identifier: "Int" # 16..19
-      - GlobalKeyword: "global" # 20..26
-      - Semicolon: ";" # 26..27
+      - (using_keyword) UsingKeyword: "using" # 0..5
+      - (clause) UsingClause: # 5..11 " {add}"
+          - (variant) UsingDeconstruction: # 5..11 " {add}"
+              - (open_brace) OpenBrace: "{" # 6..7
+              - (symbols) UsingDeconstructionSymbols: # 7..10 "add"
+                  - (item) UsingDeconstructionSymbol: # 7..10 "add"
+                      - (name) IdentifierPath: # 7..10 "add"
+                          - (item) Identifier: "add" # 7..10
+              - (close_brace) CloseBrace: "}" # 10..11
+      - (for_keyword) ForKeyword: "for" # 12..15
+      - (target) UsingTarget: # 15..19 " Int"
+          - (variant) TypeName: # 15..19 " Int"
+              - (variant) IdentifierPath: # 15..19 " Int"
+                  - (item) Identifier: "Int" # 16..19
+      - (global_keyword) GlobalKeyword: "global" # 20..26
+      - (semicolon) Semicolon: ";" # 26..27

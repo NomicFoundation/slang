@@ -7,26 +7,26 @@ Errors: []
 
 Tree:
   - TryStatement: # 0..21 "try a.b() {} catch {}"
-      - TryKeyword: "try" # 0..3
-      - Expression: # 3..9 " a.b()"
-          - FunctionCallExpression: # 3..9 " a.b()"
-              - Expression: # 3..7 " a.b"
-                  - MemberAccessExpression: # 3..7 " a.b"
-                      - Expression: # 3..5 " a"
-                          - Identifier: "a" # 4..5
-                      - Period: "." # 5..6
-                      - MemberAccess: # 6..7 "b"
-                          - Identifier: "b" # 6..7
-              - ArgumentsDeclaration: # 7..9 "()"
-                  - PositionalArgumentsDeclaration: # 7..9 "()"
-                      - OpenParen: "(" # 7..8
-                      - CloseParen: ")" # 8..9
-      - Block: # 9..12 " {}"
-          - OpenBrace: "{" # 10..11
-          - CloseBrace: "}" # 11..12
-      - CatchClauses: # 12..21 " catch {}"
-          - CatchClause: # 12..21 " catch {}"
-              - CatchKeyword: "catch" # 13..18
-              - Block: # 18..21 " {}"
-                  - OpenBrace: "{" # 19..20
-                  - CloseBrace: "}" # 20..21
+      - (try_keyword) TryKeyword: "try" # 0..3
+      - (expression) Expression: # 3..9 " a.b()"
+          - (variant) FunctionCallExpression: # 3..9 " a.b()"
+              - (operand) Expression: # 3..7 " a.b"
+                  - (variant) MemberAccessExpression: # 3..7 " a.b"
+                      - (operand) Expression: # 3..5 " a"
+                          - (variant) Identifier: "a" # 4..5
+                      - (period) Period: "." # 5..6
+                      - (member) MemberAccess: # 6..7 "b"
+                          - (variant) Identifier: "b" # 6..7
+              - (arguments) ArgumentsDeclaration: # 7..9 "()"
+                  - (variant) PositionalArgumentsDeclaration: # 7..9 "()"
+                      - (open_paren) OpenParen: "(" # 7..8
+                      - (close_paren) CloseParen: ")" # 8..9
+      - (body) Block: # 9..12 " {}"
+          - (open_brace) OpenBrace: "{" # 10..11
+          - (close_brace) CloseBrace: "}" # 11..12
+      - (catch_clauses) CatchClauses: # 12..21 " catch {}"
+          - (item) CatchClause: # 12..21 " catch {}"
+              - (catch_keyword) CatchKeyword: "catch" # 13..18
+              - (body) Block: # 18..21 " {}"
+                  - (open_brace) OpenBrace: "{" # 19..20
+                  - (close_brace) CloseBrace: "}" # 20..21

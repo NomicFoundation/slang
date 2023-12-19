@@ -18,13 +18,13 @@ Tree:
   - UsingDirective: # 0..57 "// Empty using symbols list is not valid\nusing {} ..."
       - LeadingTrivia: # 0..41 "// Empty using symbols list is not valid\n"
           - SingleLineComment: "// Empty using symbols list is not valid" # 0..40
-      - UsingKeyword: "using" # 41..46
-      - UsingClause: # 46..49 " {}"
-          - UsingDeconstruction: # 46..49 " {}"
-              - OpenBrace: "{" # 47..48
+      - (using_keyword) UsingKeyword: "using" # 41..46
+      - (clause) UsingClause: # 46..49 " {}"
+          - (variant) UsingDeconstruction: # 46..49 " {}"
+              - (open_brace) OpenBrace: "{" # 47..48
               - SKIPPED: "" # 48..48
-              - CloseBrace: "}" # 48..49
-      - ForKeyword: "for" # 50..53
-      - UsingTarget: # 53..55 " *"
-          - Asterisk: "*" # 54..55
-      - Semicolon: ";" # 55..56
+              - (close_brace) CloseBrace: "}" # 48..49
+      - (for_keyword) ForKeyword: "for" # 50..53
+      - (target) UsingTarget: # 53..55 " *"
+          - (variant) Asterisk: "*" # 54..55
+      - (semicolon) Semicolon: ";" # 55..56

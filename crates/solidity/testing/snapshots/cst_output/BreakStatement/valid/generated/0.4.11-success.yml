@@ -7,5 +7,5 @@ Errors: []
 
 Tree:
   - BreakStatement: # 0..8 "break ;\n"
-      - BreakKeyword: "break" # 0..5
-      - Semicolon: ";" # 6..7
+      - (break_keyword) BreakKeyword: "break" # 0..5
+      - (semicolon) Semicolon: ";" # 6..7

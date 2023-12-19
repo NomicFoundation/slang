@@ -10,18 +10,18 @@ Errors: []
 
 Tree:
   - ContractDefinition: # 0..39 "contract Sample {\n  function () {\n  }\n}"
-      - ContractKeyword: "contract" # 0..8
-      - Identifier: "Sample" # 9..15
-      - OpenBrace: "{" # 16..17
-      - ContractMembers: # 18..38 "  function () {\n  }\n"
-          - ContractMember: # 18..38 "  function () {\n  }\n"
-              - UnnamedFunctionDefinition: # 18..38 "  function () {\n  }\n"
-                  - FunctionKeyword: "function" # 20..28
-                  - ParametersDeclaration: # 28..31 " ()"
-                      - OpenParen: "(" # 29..30
-                      - CloseParen: ")" # 30..31
-                  - FunctionBody: # 31..38 " {\n  }\n"
-                      - Block: # 31..38 " {\n  }\n"
-                          - OpenBrace: "{" # 32..33
-                          - CloseBrace: "}" # 36..37
-      - CloseBrace: "}" # 38..39
+      - (contract_keyword) ContractKeyword: "contract" # 0..8
+      - (name) Identifier: "Sample" # 9..15
+      - (open_brace) OpenBrace: "{" # 16..17
+      - (members) ContractMembers: # 18..38 "  function () {\n  }\n"
+          - (item) ContractMember: # 18..38 "  function () {\n  }\n"
+              - (variant) UnnamedFunctionDefinition: # 18..38 "  function () {\n  }\n"
+                  - (function_keyword) FunctionKeyword: "function" # 20..28
+                  - (parameters) ParametersDeclaration: # 28..31 " ()"
+                      - (open_paren) OpenParen: "(" # 29..30
+                      - (close_paren) CloseParen: ")" # 30..31
+                  - (body) FunctionBody: # 31..38 " {\n  }\n"
+                      - (variant) Block: # 31..38 " {\n  }\n"
+                          - (open_brace) OpenBrace: "{" # 32..33
+                          - (close_brace) CloseBrace: "}" # 36..37
+      - (close_brace) CloseBrace: "}" # 38..39

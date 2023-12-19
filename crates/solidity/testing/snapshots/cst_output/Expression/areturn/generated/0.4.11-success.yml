@@ -7,4 +7,4 @@ Errors: []
 
 Tree:
   - Expression: # 0..7 "areturn"
-      - Identifier: "areturn" # 0..7
+      - (variant) Identifier: "areturn" # 0..7

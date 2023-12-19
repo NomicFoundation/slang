@@ -15,31 +15,31 @@ Errors: # 1 total
 
 Tree:
   - FunctionDefinition: # 0..89 "function transferFrom(address from, address to, ui..."
-      - FunctionKeyword: "function" # 0..8
-      - FunctionName: # 8..21 " transferFrom"
-          - Identifier: "transferFrom" # 9..21
-      - ParametersDeclaration: # 21..63 "(address from, address to, uint256 amount)"
-          - OpenParen: "(" # 21..22
-          - Parameters: # 22..29 "address"
-              - Parameter: # 22..29 "address"
-                  - TypeName: # 22..29 "address"
-                      - ElementaryType: # 22..29 "address"
-                          - AddressType: # 22..29 "address"
-                              - AddressKeyword: "address" # 22..29
+      - (function_keyword) FunctionKeyword: "function" # 0..8
+      - (name) FunctionName: # 8..21 " transferFrom"
+          - (variant) Identifier: "transferFrom" # 9..21
+      - (parameters) ParametersDeclaration: # 21..63 "(address from, address to, uint256 amount)"
+          - (open_paren) OpenParen: "(" # 21..22
+          - (parameters) Parameters: # 22..29 "address"
+              - (item) Parameter: # 22..29 "address"
+                  - (type_name) TypeName: # 22..29 "address"
+                      - (variant) ElementaryType: # 22..29 "address"
+                          - (variant) AddressType: # 22..29 "address"
+                              - (address_keyword) AddressKeyword: "address" # 22..29
           - SKIPPED: "from, address to, uint256 amount" # 30..62
-          - CloseParen: ")" # 62..63
-      - FunctionAttributes: # 63..72 " external"
-          - FunctionAttribute: # 63..72 " external"
-              - ExternalKeyword: "external" # 64..72
-      - ReturnsDeclaration: # 72..87 " returns (bool)"
-          - ReturnsKeyword: "returns" # 73..80
-          - ParametersDeclaration: # 80..87 " (bool)"
-              - OpenParen: "(" # 81..82
-              - Parameters: # 82..86 "bool"
-                  - Parameter: # 82..86 "bool"
-                      - TypeName: # 82..86 "bool"
-                          - ElementaryType: # 82..86 "bool"
-                              - BoolKeyword: "bool" # 82..86
-              - CloseParen: ")" # 86..87
-      - FunctionBody: # 87..89 ";\n"
-          - Semicolon: ";" # 87..88
+          - (close_paren) CloseParen: ")" # 62..63
+      - (attributes) FunctionAttributes: # 63..72 " external"
+          - (item) FunctionAttribute: # 63..72 " external"
+              - (variant) ExternalKeyword: "external" # 64..72
+      - (returns) ReturnsDeclaration: # 72..87 " returns (bool)"
+          - (returns_keyword) ReturnsKeyword: "returns" # 73..80
+          - (variables) ParametersDeclaration: # 80..87 " (bool)"
+              - (open_paren) OpenParen: "(" # 81..82
+              - (parameters) Parameters: # 82..86 "bool"
+                  - (item) Parameter: # 82..86 "bool"
+                      - (type_name) TypeName: # 82..86 "bool"
+                          - (variant) ElementaryType: # 82..86 "bool"
+                              - (variant) BoolKeyword: "bool" # 82..86
+              - (close_paren) CloseParen: ")" # 86..87
+      - (body) FunctionBody: # 87..89 ";\n"
+          - (variant) Semicolon: ";" # 87..88

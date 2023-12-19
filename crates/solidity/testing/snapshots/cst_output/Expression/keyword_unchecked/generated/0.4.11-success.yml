@@ -7,4 +7,4 @@ Errors: []
 
 Tree:
   - Expression: # 0..9 "unchecked"
-      - Identifier: "unchecked" # 0..9
+      - (variant) Identifier: "unchecked" # 0..9

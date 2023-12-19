@@ -7,10 +7,10 @@ Errors: []
 
 Tree:
   - Expression: # 0..10 "arr[index]"
-      - IndexAccessExpression: # 0..10 "arr[index]"
-          - Expression: # 0..3 "arr"
-              - Identifier: "arr" # 0..3
-          - OpenBracket: "[" # 3..4
-          - Expression: # 4..9 "index"
-              - Identifier: "index" # 4..9
-          - CloseBracket: "]" # 9..10
+      - (variant) IndexAccessExpression: # 0..10 "arr[index]"
+          - (operand) Expression: # 0..3 "arr"
+              - (variant) Identifier: "arr" # 0..3
+          - (open_bracket) OpenBracket: "[" # 3..4
+          - (start) Expression: # 4..9 "index"
+              - (variant) Identifier: "index" # 4..9
+          - (close_bracket) CloseBracket: "]" # 9..10

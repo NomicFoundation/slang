@@ -7,7 +7,7 @@ Errors: []
 
 Tree:
   - Expression: # 0..5 "--foo"
-      - PrefixExpression: # 0..5 "--foo"
-          - MinusMinus: "--" # 0..2
-          - Expression: # 2..5 "foo"
-              - Identifier: "foo" # 2..5
+      - (variant) PrefixExpression: # 0..5 "--foo"
+          - (operator) MinusMinus: "--" # 0..2
+          - (operand) Expression: # 2..5 "foo"
+              - (variant) Identifier: "foo" # 2..5

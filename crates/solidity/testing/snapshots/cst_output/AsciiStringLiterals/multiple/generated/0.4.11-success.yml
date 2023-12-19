@@ -7,5 +7,5 @@ Errors: []
 
 Tree:
   - AsciiStringLiterals: # 0..11 '"foo" ''bar'''
-      - AsciiStringLiteral: '"foo"' # 0..5
-      - AsciiStringLiteral: "'bar'" # 6..11
+      - (item) AsciiStringLiteral: '"foo"' # 0..5
+      - (item) AsciiStringLiteral: "'bar'" # 6..11

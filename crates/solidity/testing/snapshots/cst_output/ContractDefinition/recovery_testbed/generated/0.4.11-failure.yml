@@ -43,86 +43,86 @@ Errors: # 3 total
 
 Tree:
   - ContractDefinition: # 0..212 "contract Contract {\n\tfunction _transfer(address wh..."
-      - ContractKeyword: "contract" # 0..8
-      - Identifier: "Contract" # 9..17
-      - OpenBrace: "{" # 18..19
-      - ContractMembers: # 20..210 "\tfunction _transfer(address while) private {\n\t\tif(..."
-          - ContractMember: # 20..138 "\tfunction _transfer(address while) private {\n\t\tif(..."
-              - FunctionDefinition: # 20..138 "\tfunction _transfer(address while) private {\n\t\tif(..."
-                  - FunctionKeyword: "function" # 21..29
-                  - FunctionName: # 29..39 " _transfer"
-                      - Identifier: "_transfer" # 30..39
-                  - ParametersDeclaration: # 39..54 "(address while)"
-                      - OpenParen: "(" # 39..40
-                      - Parameters: # 40..47 "address"
-                          - Parameter: # 40..47 "address"
-                              - TypeName: # 40..47 "address"
-                                  - ElementaryType: # 40..47 "address"
-                                      - AddressType: # 40..47 "address"
-                                          - AddressKeyword: "address" # 40..47
+      - (contract_keyword) ContractKeyword: "contract" # 0..8
+      - (name) Identifier: "Contract" # 9..17
+      - (open_brace) OpenBrace: "{" # 18..19
+      - (members) ContractMembers: # 20..210 "\tfunction _transfer(address while) private {\n\t\tif(..."
+          - (item) ContractMember: # 20..138 "\tfunction _transfer(address while) private {\n\t\tif(..."
+              - (variant) FunctionDefinition: # 20..138 "\tfunction _transfer(address while) private {\n\t\tif(..."
+                  - (function_keyword) FunctionKeyword: "function" # 21..29
+                  - (name) FunctionName: # 29..39 " _transfer"
+                      - (variant) Identifier: "_transfer" # 30..39
+                  - (parameters) ParametersDeclaration: # 39..54 "(address while)"
+                      - (open_paren) OpenParen: "(" # 39..40
+                      - (parameters) Parameters: # 40..47 "address"
+                          - (item) Parameter: # 40..47 "address"
+                              - (type_name) TypeName: # 40..47 "address"
+                                  - (variant) ElementaryType: # 40..47 "address"
+                                      - (variant) AddressType: # 40..47 "address"
+                                          - (address_keyword) AddressKeyword: "address" # 40..47
                       - SKIPPED: "while" # 48..53
-                      - CloseParen: ")" # 53..54
-                  - FunctionAttributes: # 54..62 " private"
-                      - FunctionAttribute: # 54..62 " private"
-                          - PrivateKeyword: "private" # 55..62
-                  - FunctionBody: # 62..138 " {\n\t\tif(while == pair && !_isExcludedFromFee[to]){..."
-                      - Block: # 62..138 " {\n\t\tif(while == pair && !_isExcludedFromFee[to]){..."
-                          - OpenBrace: "{" # 63..64
-                          - Statements: # 65..135 "\t\tif(while == pair && !_isExcludedFromFee[to]){\n\t\t..."
-                              - Statement: # 65..135 "\t\tif(while == pair && !_isExcludedFromFee[to]){\n\t\t..."
-                                  - IfStatement: # 65..135 "\t\tif(while == pair && !_isExcludedFromFee[to]){\n\t\t..."
-                                      - IfKeyword: "if" # 67..69
-                                      - OpenParen: "(" # 69..70
+                      - (close_paren) CloseParen: ")" # 53..54
+                  - (attributes) FunctionAttributes: # 54..62 " private"
+                      - (item) FunctionAttribute: # 54..62 " private"
+                          - (variant) PrivateKeyword: "private" # 55..62
+                  - (body) FunctionBody: # 62..138 " {\n\t\tif(while == pair && !_isExcludedFromFee[to]){..."
+                      - (variant) Block: # 62..138 " {\n\t\tif(while == pair && !_isExcludedFromFee[to]){..."
+                          - (open_brace) OpenBrace: "{" # 63..64
+                          - (statements) Statements: # 65..135 "\t\tif(while == pair && !_isExcludedFromFee[to]){\n\t\t..."
+                              - (item) Statement: # 65..135 "\t\tif(while == pair && !_isExcludedFromFee[to]){\n\t\t..."
+                                  - (variant) IfStatement: # 65..135 "\t\tif(while == pair && !_isExcludedFromFee[to]){\n\t\t..."
+                                      - (if_keyword) IfKeyword: "if" # 67..69
+                                      - (open_paren) OpenParen: "(" # 69..70
                                       - SKIPPED: "while == pair && !_isExcludedFromFee[to]" # 70..110
-                                      - CloseParen: ")" # 110..111
-                                      - Statement: # 111..135 "{\n\t\t\tuint256 a = 1;\n\t\t}\n"
-                                          - Block: # 111..135 "{\n\t\t\tuint256 a = 1;\n\t\t}\n"
-                                              - OpenBrace: "{" # 111..112
-                                              - Statements: # 113..131 "\t\t\tuint256 a = 1;\n"
-                                                  - Statement: # 113..131 "\t\t\tuint256 a = 1;\n"
-                                                      - VariableDeclarationStatement: # 113..131 "\t\t\tuint256 a = 1;\n"
-                                                          - VariableDeclarationType: # 113..123 "\t\t\tuint256"
-                                                              - TypeName: # 113..123 "\t\t\tuint256"
-                                                                  - ElementaryType: # 113..123 "\t\t\tuint256"
-                                                                      - UintKeyword: "uint256" # 116..123
-                                                          - Identifier: "a" # 124..125
-                                                          - VariableDeclarationValue: # 125..129 " = 1"
-                                                              - Equal: "=" # 126..127
-                                                              - Expression: # 127..129 " 1"
-                                                                  - DecimalNumberExpression: # 127..129 " 1"
-                                                                      - DecimalLiteral: "1" # 128..129
-                                                          - Semicolon: ";" # 129..130
-                                              - CloseBrace: "}" # 133..134
-                          - CloseBrace: "}" # 136..137
-          - ContractMember: # 138..210 "\n\tfunction abc() {\n\t\tuint256 x = 0;\n\t\tunchecked { ..."
-              - FunctionDefinition: # 138..210 "\n\tfunction abc() {\n\t\tuint256 x = 0;\n\t\tunchecked { ..."
-                  - FunctionKeyword: "function" # 140..148
-                  - FunctionName: # 148..152 " abc"
-                      - Identifier: "abc" # 149..152
-                  - ParametersDeclaration: # 152..154 "()"
-                      - OpenParen: "(" # 152..153
-                      - CloseParen: ")" # 153..154
-                  - FunctionBody: # 154..210 " {\n\t\tuint256 x = 0;\n\t\tunchecked { invalid sequence..."
-                      - Block: # 154..210 " {\n\t\tuint256 x = 0;\n\t\tunchecked { invalid sequence..."
-                          - OpenBrace: "{" # 155..156
-                          - Statements: # 157..186 "\t\tuint256 x = 0;\n\t\tunchecked "
-                              - Statement: # 157..174 "\t\tuint256 x = 0;\n"
-                                  - VariableDeclarationStatement: # 157..174 "\t\tuint256 x = 0;\n"
-                                      - VariableDeclarationType: # 157..166 "\t\tuint256"
-                                          - TypeName: # 157..166 "\t\tuint256"
-                                              - ElementaryType: # 157..166 "\t\tuint256"
-                                                  - UintKeyword: "uint256" # 159..166
-                                      - Identifier: "x" # 167..168
-                                      - VariableDeclarationValue: # 168..172 " = 0"
-                                          - Equal: "=" # 169..170
-                                          - Expression: # 170..172 " 0"
-                                              - DecimalNumberExpression: # 170..172 " 0"
-                                                  - DecimalLiteral: "0" # 171..172
-                                      - Semicolon: ";" # 172..173
-                              - Statement: # 174..186 "\t\tunchecked "
-                                  - ExpressionStatement: # 174..186 "\t\tunchecked "
-                                      - Expression: # 174..185 "\t\tunchecked"
-                                          - Identifier: "unchecked" # 176..185
+                                      - (close_paren) CloseParen: ")" # 110..111
+                                      - (body) Statement: # 111..135 "{\n\t\t\tuint256 a = 1;\n\t\t}\n"
+                                          - (variant) Block: # 111..135 "{\n\t\t\tuint256 a = 1;\n\t\t}\n"
+                                              - (open_brace) OpenBrace: "{" # 111..112
+                                              - (statements) Statements: # 113..131 "\t\t\tuint256 a = 1;\n"
+                                                  - (item) Statement: # 113..131 "\t\t\tuint256 a = 1;\n"
+                                                      - (variant) VariableDeclarationStatement: # 113..131 "\t\t\tuint256 a = 1;\n"
+                                                          - (variable_type) VariableDeclarationType: # 113..123 "\t\t\tuint256"
+                                                              - (variant) TypeName: # 113..123 "\t\t\tuint256"
+                                                                  - (variant) ElementaryType: # 113..123 "\t\t\tuint256"
+                                                                      - (variant) UintKeyword: "uint256" # 116..123
+                                                          - (name) Identifier: "a" # 124..125
+                                                          - (value) VariableDeclarationValue: # 125..129 " = 1"
+                                                              - (equal) Equal: "=" # 126..127
+                                                              - (expression) Expression: # 127..129 " 1"
+                                                                  - (variant) DecimalNumberExpression: # 127..129 " 1"
+                                                                      - (literal) DecimalLiteral: "1" # 128..129
+                                                          - (semicolon) Semicolon: ";" # 129..130
+                                              - (close_brace) CloseBrace: "}" # 133..134
+                          - (close_brace) CloseBrace: "}" # 136..137
+          - (item) ContractMember: # 138..210 "\n\tfunction abc() {\n\t\tuint256 x = 0;\n\t\tunchecked { ..."
+              - (variant) FunctionDefinition: # 138..210 "\n\tfunction abc() {\n\t\tuint256 x = 0;\n\t\tunchecked { ..."
+                  - (function_keyword) FunctionKeyword: "function" # 140..148
+                  - (name) FunctionName: # 148..152 " abc"
+                      - (variant) Identifier: "abc" # 149..152
+                  - (parameters) ParametersDeclaration: # 152..154 "()"
+                      - (open_paren) OpenParen: "(" # 152..153
+                      - (close_paren) CloseParen: ")" # 153..154
+                  - (body) FunctionBody: # 154..210 " {\n\t\tuint256 x = 0;\n\t\tunchecked { invalid sequence..."
+                      - (variant) Block: # 154..210 " {\n\t\tuint256 x = 0;\n\t\tunchecked { invalid sequence..."
+                          - (open_brace) OpenBrace: "{" # 155..156
+                          - (statements) Statements: # 157..186 "\t\tuint256 x = 0;\n\t\tunchecked "
+                              - (item) Statement: # 157..174 "\t\tuint256 x = 0;\n"
+                                  - (variant) VariableDeclarationStatement: # 157..174 "\t\tuint256 x = 0;\n"
+                                      - (variable_type) VariableDeclarationType: # 157..166 "\t\tuint256"
+                                          - (variant) TypeName: # 157..166 "\t\tuint256"
+                                              - (variant) ElementaryType: # 157..166 "\t\tuint256"
+                                                  - (variant) UintKeyword: "uint256" # 159..166
+                                      - (name) Identifier: "x" # 167..168
+                                      - (value) VariableDeclarationValue: # 168..172 " = 0"
+                                          - (equal) Equal: "=" # 169..170
+                                          - (expression) Expression: # 170..172 " 0"
+                                              - (variant) DecimalNumberExpression: # 170..172 " 0"
+                                                  - (literal) DecimalLiteral: "0" # 171..172
+                                      - (semicolon) Semicolon: ";" # 172..173
+                              - (item) Statement: # 174..186 "\t\tunchecked "
+                                  - (variant) ExpressionStatement: # 174..186 "\t\tunchecked "
+                                      - (expression) Expression: # 174..185 "\t\tunchecked"
+                                          - (variant) Identifier: "unchecked" # 176..185
                           - SKIPPED: "{ invalid sequence }\n\t" # 186..208
-                          - CloseBrace: "}" # 208..209
-      - CloseBrace: "}" # 210..211
+                          - (close_brace) CloseBrace: "}" # 208..209
+      - (close_brace) CloseBrace: "}" # 210..211

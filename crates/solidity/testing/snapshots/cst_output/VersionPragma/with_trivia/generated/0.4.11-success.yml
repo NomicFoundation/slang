@@ -7,20 +7,20 @@ Errors: []
 
 Tree:
   - VersionPragma: # 0..68 "solidity /* comments */ 0 /* are */ . /* allowed *..."
-      - SolidityKeyword: "solidity" # 0..8
-      - VersionPragmaExpressions: # 8..68 " /* comments */ 0 /* are */ . /* allowed */ 0 . /*..."
-          - VersionPragmaExpression: # 8..68 " /* comments */ 0 /* are */ . /* allowed */ 0 . /*..."
+      - (solidity_keyword) SolidityKeyword: "solidity" # 0..8
+      - (expressions) VersionPragmaExpressions: # 8..68 " /* comments */ 0 /* are */ . /* allowed */ 0 . /*..."
+          - (item) VersionPragmaExpression: # 8..68 " /* comments */ 0 /* are */ . /* allowed */ 0 . /*..."
               - VersionPragmaSpecifier: # 8..68 " /* comments */ 0 /* are */ . /* allowed */ 0 . /*..."
                   - LeadingTrivia: # 8..24 " /* comments */ "
                       - MultilineComment: "/* comments */" # 9..23
-                  - VersionPragmaValue: "0" # 24..25
+                  - (item) VersionPragmaValue: "0" # 24..25
                   - LeadingTrivia: # 25..36 " /* are */ "
                       - MultilineComment: "/* are */" # 26..35
-                  - Period: "." # 36..37
+                  - (separator) Period: "." # 36..37
                   - LeadingTrivia: # 37..52 " /* allowed */ "
                       - MultilineComment: "/* allowed */" # 38..51
-                  - VersionPragmaValue: "0" # 52..53
-                  - Period: "." # 54..55
+                  - (item) VersionPragmaValue: "0" # 52..53
+                  - (separator) Period: "." # 54..55
                   - LeadingTrivia: # 55..67 " /* here */ "
                       - MultilineComment: "/* here */" # 56..66
-                  - VersionPragmaValue: "0" # 67..68
+                  - (item) VersionPragmaValue: "0" # 67..68
