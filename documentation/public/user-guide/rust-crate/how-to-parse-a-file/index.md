@@ -273,32 +273,16 @@ assert_eq!(output, "pragma solidity ^0.8.0\n");
 
 ### Example 2: List the top-level contracts and their names
 
-In addition to the `Iterator` implementation, the `Cursor` type also provides procedural-style functions that allow you to navigate the source parse tree in a step-by-step manner:
+In addition to the `Iterator` implementation, the `Cursor` type also provides procedural-style functions that allow you to navigate the source parse tree in a step-by-step manner.
 
-```rust
-const SOURCE: &'static str = "
-contract Foo {}
-contract Bar {}
-contract Baz {}
-";
+Given the following simple file:
 
-let language = Language::new(Version::parse("0.8.0")?)?;
-let parse_output = language.parse(RuleKind::SourceUnit, SOURCE);
+```{ .solidity}
+--8<-- "crates/solidity/outputs/cargo/tests/src/doc_examples/cursor_api.sol"
+```
 
-let mut contract_names = Vec::new();
-let mut cursor = parse_output.create_tree_cursor();
+We will list the top-level contracts and their names. To do that, we need to visit `ContractDefinition` rule nodes and then their `Identifier` children:
 
-while cursor.go_to_next_rule_with_kinds(&[RuleKind::ContractDefinition]) {
-    // You have to make sure you return the cursor to original position
-    assert!(cursor.go_to_first_child());
-    assert!(cursor.go_to_next_token_with_kinds(&[TokenKind::Identifier]));
-
-    // The currently pointed-to node is the name of the contract
-    let token_node = cursor.node();
-    contract_names.push(token_node.as_token().unwrap().text.clone());
-
-    assert!(cursor.go_to_parent());
-}
-
-assert_eq!(contract_names, &["Foo", "Bar", "Baz"]);
+```{ .rust }
+--8<-- "crates/solidity/outputs/cargo/tests/src/doc_examples/cursor_api.rs:example-list-contract-names"
 ```

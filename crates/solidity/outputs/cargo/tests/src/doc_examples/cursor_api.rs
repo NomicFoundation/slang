@@ -3,14 +3,11 @@ use semver::Version;
 use slang_solidity::kinds::{RuleKind, TokenKind};
 use slang_solidity::language::Language;
 
-const SOURCE: &str = "
-    contract Foo {}
-    contract Bar {}
-    contract Baz {}
-";
+const SOURCE: &str = include_str!("cursor_api.sol");
 
 #[test]
 fn using_cursor_api() -> Result<()> {
+    // --8<-- [start:example-list-contract-names]
     let language = Language::new(Version::parse("0.8.0")?)?;
     let parse_output = language.parse(RuleKind::SourceUnit, SOURCE);
 
@@ -29,6 +26,7 @@ fn using_cursor_api() -> Result<()> {
     }
 
     assert_eq!(contract_names, &["Foo", "Bar", "Baz"]);
+    // --8<-- [end:example-list-contract-names]
     Ok(())
 }
 
