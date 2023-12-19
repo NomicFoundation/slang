@@ -7,13 +7,13 @@ Errors: []
 
 Tree:
   - ExponentiationExpression: # 0..12 "x ** y ** z\n"
-      - Expression: # 0..6 "x ** y"
-          - ExponentiationExpression: # 0..6 "x ** y"
-              - Expression: # 0..1 "x"
-                  - Identifier: "x" # 0..1
-              - AsteriskAsterisk: "**" # 2..4
-              - Expression: # 4..6 " y"
-                  - Identifier: "y" # 5..6
-      - AsteriskAsterisk: "**" # 7..9
-      - Expression: # 9..12 " z\n"
-          - Identifier: "z" # 10..11
+      - (left_operand) Expression: # 0..6 "x ** y"
+          - (variant) ExponentiationExpression: # 0..6 "x ** y"
+              - (left_operand) Expression: # 0..1 "x"
+                  - (variant) Identifier: "x" # 0..1
+              - (operator) AsteriskAsterisk: "**" # 2..4
+              - (right_operand) Expression: # 4..6 " y"
+                  - (variant) Identifier: "y" # 5..6
+      - (operator) AsteriskAsterisk: "**" # 7..9
+      - (right_operand) Expression: # 9..12 " z\n"
+          - (variant) Identifier: "z" # 10..11

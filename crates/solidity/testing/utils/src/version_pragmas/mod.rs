@@ -5,7 +5,7 @@ use std::str::FromStr;
 
 use anyhow::{bail, ensure, Context, Result};
 use semver::{Comparator, Op, Version};
-use slang_solidity::cst::Node;
+use slang_solidity::cst::{NamedNode, Node};
 use slang_solidity::kinds::RuleKind;
 use slang_solidity::language::Language;
 
@@ -54,8 +54,14 @@ fn extract_pragma(expression_node: &Node) -> Result<VersionPragma> {
     );
 
     let inner_expression = match &expression_rule.children[..] {
-        [Node::Rule(rule)] => rule,
-        [Node::Token(token)] => bail!("Expected rule: {token:?}"),
+        [NamedNode {
+            node: Node::Rule(rule),
+            ..
+        }] => rule,
+        [NamedNode {
+            node: Node::Token(token),
+            ..
+        }] => bail!("Expected rule: {token:?}"),
         _ => unreachable!("Expected single child: {expression_rule:?}"),
     };
 
@@ -67,7 +73,11 @@ fn extract_pragma(expression_node: &Node) -> Result<VersionPragma> {
 
     match inner_expression.kind {
         RuleKind::VersionPragmaOrExpression => {
-            let [left, Node::Token(_op), right] = &inner_children[..] else {
+            let [left, NamedNode {
+                name: _,
+                node: Node::Token(_op),
+            }, right] = &inner_children[..]
+            else {
                 bail!("Expected 3 children: {inner_expression:?}");
             };
             let left = extract_pragma(left)?;
@@ -76,7 +86,11 @@ fn extract_pragma(expression_node: &Node) -> Result<VersionPragma> {
             Ok(VersionPragma::or(left, right))
         }
         RuleKind::VersionPragmaRangeExpression => {
-            let [left, Node::Token(_op), right] = &inner_children[..] else {
+            let [left, NamedNode {
+                name: _,
+                node: Node::Token(_op),
+            }, right] = &inner_children[..]
+            else {
                 bail!("Expected 3 children: {inner_expression:?}");
             };
 

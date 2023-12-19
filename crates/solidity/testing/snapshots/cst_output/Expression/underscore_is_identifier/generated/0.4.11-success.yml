@@ -7,4 +7,4 @@ Errors: []
 
 Tree:
   - Expression: # 0..1 "_"
-      - Identifier: "_" # 0..1
+      - (variant) Identifier: "_" # 0..1

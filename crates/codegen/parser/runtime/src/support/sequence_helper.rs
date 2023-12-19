@@ -1,6 +1,6 @@
 use std::ops::ControlFlow;
 
-use crate::cst;
+use crate::cst::{self, NamedNode};
 use crate::kinds::TokenKind;
 use crate::support::parser_result::{Match, ParserResult, PrattElement, SkippedUntil};
 
@@ -130,8 +130,8 @@ impl SequenceHelper {
                     }
 
                     let tokens: Vec<_> =
-                        next.nodes.iter().filter_map(cst::Node::as_token).collect();
-                    let mut rules = next.nodes.iter().filter_map(cst::Node::as_rule);
+                        next.nodes.iter().filter_map(|node| node.as_token()).collect();
+                    let mut rules = next.nodes.iter().filter_map(|node| node.as_rule());
 
                     let is_single_token_with_trivia =
                         tokens.len() == 1 && rules.all(|rule| rule.kind.is_trivia());
@@ -141,10 +141,10 @@ impl SequenceHelper {
                     debug_assert!(is_single_token_with_trivia);
                     debug_assert_eq!(next_token, Some(running.found));
 
-                    running.nodes.push(cst::Node::token(
+                    running.nodes.push(NamedNode::anonymous(cst::Node::token(
                         TokenKind::SKIPPED,
                         std::mem::take(&mut running.skipped),
-                    ));
+                    )));
                     running.nodes.extend(next.nodes);
 
                     self.result = State::Running(ParserResult::Match(Match {
@@ -186,6 +186,17 @@ impl SequenceHelper {
         } else {
             ControlFlow::Continue(self)
         }
+    }
+
+    /// Aggregates a parse result into the sequence. If we cannot make progress, returns the accumulated match.
+    ///
+    /// Shorthand for `self.elem(value.with_name(name))`.
+    pub fn elem_named(
+        &mut self,
+        name: impl Into<String>,
+        value: ParserResult,
+    ) -> ControlFlow<ParserResult, &mut Self> {
+        self.elem(value.with_name(name))
     }
 
     /// Finishes the sequence parse, returning the accumulated match.

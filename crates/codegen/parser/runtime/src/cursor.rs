@@ -2,7 +2,7 @@
 
 use std::rc::Rc;
 
-use crate::cst::{Node, RuleNode};
+use crate::cst::{NamedNode, Node, RuleNode};
 use crate::kinds::{RuleKind, TokenKind};
 use crate::text_index::{TextIndex, TextRange};
 
@@ -79,6 +79,7 @@ impl Iterator for Cursor {
         } else {
             let cur = self.node();
             self.go_to_next();
+
             Some(cur)
         }
     }
@@ -131,6 +132,16 @@ impl Cursor {
     /// Returns the currently pointed to [`Node`].
     pub fn node(&self) -> Node {
         self.current.node.clone()
+    }
+
+    pub fn node_name(&self) -> String {
+        if let Some(parent) = self.path.last() {
+            parent.rule_node.children[self.current.child_number]
+                .name
+                .clone()
+        } else {
+            String::new()
+        }
     }
 
     /// Returns the text offset that corresponds to the beginning of the currently pointed to node.
@@ -225,9 +236,9 @@ impl Cursor {
 
         // If the current cursor is a node and it has children, go to first children
         if let Some(parent) = self.current.to_path_rule_node() {
-            if let Some(child_node) = parent.rule_node.children.first().cloned() {
+            if let Some(child) = parent.rule_node.children.first().cloned() {
                 self.current = PathNode {
-                    node: child_node,
+                    node: child.node,
                     text_offset: parent.text_offset,
                     child_number: 0,
                 };
@@ -251,15 +262,14 @@ impl Cursor {
 
         if let Some(parent) = self.current.to_path_rule_node() {
             let child_number = parent.rule_node.children.len() - 1;
-            if let Some(child_node) = parent.rule_node.children.get(child_number).cloned() {
+            if let Some(child) = parent.rule_node.children.get(child_number).cloned() {
                 // This is cheaper than summing up the length of the children
-                let text_offset =
-                    parent.text_offset + parent.rule_node.text_len - child_node.text_len();
+                let text_offset = parent.text_offset + parent.rule_node.text_len - child.text_len();
 
                 self.path.push(parent);
 
                 self.current = PathNode {
-                    node: child_node,
+                    node: child.node,
                     text_offset,
                     child_number,
                 };
@@ -280,18 +290,18 @@ impl Cursor {
         }
 
         if let Some(parent) = self.current.to_path_rule_node() {
-            if let Some(child_node) = parent.rule_node.children.get(child_number).cloned() {
+            if let Some(child) = parent.rule_node.children.get(child_number).cloned() {
                 // Sum up the length of the children before this child
                 // TODO: it might sometimes be quicker to start from the end (like `go_to_last_child`)
                 let text_offset = parent.text_offset
                     + parent.rule_node.children[..child_number]
                         .iter()
-                        .map(Node::text_len)
+                        .map(|node| node.text_len())
                         .sum();
 
                 self.path.push(parent);
                 self.current = PathNode {
-                    node: child_node,
+                    node: child.node,
                     text_offset,
                     child_number,
                 };
@@ -315,7 +325,7 @@ impl Cursor {
             let new_child_number = self.current.child_number + 1;
             if let Some(new_child) = parent_path_element.rule_node.children.get(new_child_number) {
                 self.current = PathNode {
-                    node: new_child.clone(),
+                    node: new_child.node.clone(),
                     text_offset: self.current.text_offset + self.current.node.text_len(),
                     child_number: new_child_number,
                 };
@@ -341,7 +351,7 @@ impl Cursor {
                 let new_child = parent_path_element.rule_node.children[new_child_number].clone();
 
                 self.current = PathNode {
-                    node: new_child,
+                    node: new_child.node,
                     text_offset: self.current.text_offset - self.current.node.text_len(),
                     child_number: new_child_number,
                 };
@@ -392,5 +402,53 @@ impl Cursor {
         }
 
         false
+    }
+}
+
+/// A [`Cursor`] that also keeps track of the names of the nodes it visits.
+pub struct CursorWithNames {
+    cursor: Cursor,
+}
+
+impl CursorWithNames {
+    pub fn without_names(self) -> Cursor {
+        self.cursor
+    }
+}
+
+impl Iterator for CursorWithNames {
+    type Item = NamedNode;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        let name = self.cursor.node_name();
+
+        self.cursor.next().map(|node| NamedNode { name, node })
+    }
+}
+
+impl std::ops::Deref for CursorWithNames {
+    type Target = Cursor;
+
+    fn deref(&self) -> &Self::Target {
+        &self.cursor
+    }
+}
+
+impl std::ops::DerefMut for CursorWithNames {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.cursor
+    }
+}
+
+impl Cursor {
+    /// Returns a [`CursorWithNames`] that wraps this cursor.
+    pub fn with_names(self) -> CursorWithNames {
+        CursorWithNames::from(self)
+    }
+}
+
+impl From<Cursor> for CursorWithNames {
+    fn from(cursor: Cursor) -> Self {
+        CursorWithNames { cursor }
     }
 }

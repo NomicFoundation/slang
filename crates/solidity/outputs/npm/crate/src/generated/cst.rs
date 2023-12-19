@@ -9,11 +9,35 @@ use crate::kinds::{RuleKind, TokenKind};
 use crate::text_index::TextIndex;
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+pub struct NamedNode {
+    pub name: String,
+    pub node: Node,
+}
+
+impl NamedNode {
+    /// Creates an anonymous (nameless) node.
+    pub fn anonymous(node: Node) -> Self {
+        Self {
+            name: String::new(),
+            node,
+        }
+    }
+}
+
+impl std::ops::Deref for NamedNode {
+    type Target = Node;
+
+    fn deref(&self) -> &Self::Target {
+        &self.node
+    }
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
 pub struct RuleNode {
     pub kind: RuleKind,
     pub text_len: TextIndex,
     #[serde(skip_serializing_if = "Vec::is_empty")]
-    pub children: Vec<Node>,
+    pub children: Vec<NamedNode>,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
@@ -29,8 +53,8 @@ pub enum Node {
 }
 
 impl Node {
-    pub fn rule(kind: RuleKind, children: Vec<Self>) -> Self {
-        let text_len = children.iter().map(Node::text_len).sum();
+    pub fn rule(kind: RuleKind, children: Vec<NamedNode>) -> Self {
+        let text_len = children.iter().map(|node| node.text_len()).sum();
 
         Self::Rule(Rc::new(RuleNode {
             kind,
@@ -51,7 +75,7 @@ impl Node {
     }
 
     /// Returns a slice of the children (not all descendants) of this node.
-    pub fn children(&self) -> &[Node] {
+    pub fn children(&self) -> &[NamedNode] {
         match self {
             Self::Rule(node) => &node.children,
             Self::Token(_) => &[],
@@ -131,7 +155,7 @@ impl RuleNode {
         let acc = String::with_capacity(self.text_len.utf8);
 
         self.cursor_with_offset(TextIndex::ZERO)
-            .filter_map(Node::into_token)
+            .filter_map(|node| node.into_token())
             .fold(acc, |mut acc, token| {
                 acc.push_str(&token.text);
                 acc

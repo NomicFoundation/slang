@@ -15,5 +15,5 @@ Errors: # 1 total
 
 Tree:
   - HexStringLiterals: # 0..9 'hex"12"b\n'
-      - HexStringLiteral: 'hex"12"' # 0..7
+      - (item) HexStringLiteral: 'hex"12"' # 0..7
       - SKIPPED: "b\n" # 7..9

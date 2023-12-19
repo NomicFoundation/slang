@@ -137,7 +137,7 @@ pub fn total_not_skipped_span(result: &ParserResult) -> usize {
 
     nodes
         .iter()
-        .flat_map(|node| cst::Node::cursor_with_offset(node, TextIndex::ZERO))
+        .flat_map(|child| child.cursor_with_offset(TextIndex::ZERO))
         .filter_map(|node| match node {
             cst::Node::Token(token) if token.kind != TokenKind::SKIPPED => Some(token.text.len()),
             _ => None,

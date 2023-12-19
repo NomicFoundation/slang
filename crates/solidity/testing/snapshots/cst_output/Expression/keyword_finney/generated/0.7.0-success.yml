@@ -7,4 +7,4 @@ Errors: []
 
 Tree:
   - Expression: # 0..6 "finney"
-      - Identifier: "finney" # 0..6
+      - (variant) Identifier: "finney" # 0..6

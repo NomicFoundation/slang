@@ -1,5 +1,5 @@
 use codegen_grammar::{
-    ParserDefinitionNode, ParserDefinitionRef, TriviaParserDefinitionRef, VersionQuality,
+    Named, ParserDefinitionNode, ParserDefinitionRef, TriviaParserDefinitionRef, VersionQuality,
     VersionQualityRange,
 };
 use inflector::Inflector;
@@ -46,60 +46,73 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                 }
             }
 
-            Self::ZeroOrMore(node) => {
+            Self::ZeroOrMore(Named { name, node }) => {
                 let parser = node.to_parser_code(context_name, is_trivia);
+
+                let parser = if name.is_empty() {
+                    parser
+                } else {
+                    quote! {
+                        #parser.with_name(#name)
+                    }
+                };
+
                 quote! {
                     ZeroOrMoreHelper::run(input, |input| #parser)
                 }
             }
 
-            Self::OneOrMore(node) => {
+            Self::OneOrMore(Named { name, node }) => {
                 let parser = node.to_parser_code(context_name, is_trivia);
+
+                let parser = if name.is_empty() {
+                    parser
+                } else {
+                    quote! {
+                        #parser.with_name(#name)
+                    }
+                };
+
                 quote! {
                     OneOrMoreHelper::run(input, |input| #parser)
                 }
             }
 
-            Self::Sequence(nodes) => {
-                if nodes.len() == 1 {
-                    nodes[0].to_parser_code(context_name, is_trivia)
-                } else {
-                    let parsers = nodes
-                        .iter()
-                        .map(|node| {
-                            let parser = node.to_parser_code(context_name, is_trivia);
-                            node.applicable_version_quality_ranges()
-                                .wrap_code(quote! { seq.elem(#parser)?; }, None)
-                        })
-                        .collect::<Vec<_>>();
-                    quote! {
-                        SequenceHelper::run(|mut seq| {
-                            #(#parsers)*
-                            seq.finish()
-                        })
+            Self::Sequence(nodes) => match &nodes[..] {
+                [Named { name, node }] => {
+                    let parser = node.to_parser_code(context_name, is_trivia);
+
+                    if name.is_empty() {
+                        parser
+                    } else {
+                        quote! {
+                            #parser.with_name(#name)
+                        }
                     }
                 }
-            }
+                nodes => make_sequence_versioned(nodes.iter().map(|Named { name, node }| {
+                    (
+                        node.to_parser_code(context_name, is_trivia),
+                        name.clone(),
+                        node.applicable_version_quality_ranges(),
+                    )
+                })),
+            },
 
-            Self::Choice(nodes) => {
-                let parsers = nodes
-                    .iter()
-                    .map(|node| {
-                        let parser = node.to_parser_code(context_name, is_trivia);
-                        node.applicable_version_quality_ranges().wrap_code(
-                            quote! {
-                                let result = #parser;
-                                choice.consider(input, result)?;
-                            },
-                            None,
-                        )
-                    })
-                    .collect::<Vec<_>>();
-                quote! {
-                    ChoiceHelper::run(input, |mut choice, input| {
-                        #(#parsers)*
-                        choice.finish(input)
-                    })
+            Self::Choice(Named { name, node: nodes }) => {
+                let parser = make_choice_versioned(nodes.iter().map(|node| {
+                    (
+                        node.to_parser_code(context_name, is_trivia),
+                        node.applicable_version_quality_ranges(),
+                    )
+                }));
+
+                if name.is_empty() {
+                    parser
+                } else {
+                    quote! {
+                        #parser.with_name(#name)
+                    }
                 }
             }
 
@@ -155,6 +168,8 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
             }
 
             Self::DelimitedBy(open, body, close) => {
+                let open_field_name = &open.name;
+                let close_field_name = &close.name;
                 let [open_delim, close_delim] = match (open.as_ref(), close.as_ref()) {
                     (
                         ParserDefinitionNode::ScannerDefinition(open, ..),
@@ -182,15 +197,16 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                         let mut delim_guard = input.open_delim(TokenKind::#close_delim);
                         let input = delim_guard.ctx();
 
-                        seq.elem(self.parse_token_with_trivia::<#lex_ctx>(input, TokenKind::#open_delim))?;
+                        seq.elem_named(#open_field_name, self.parse_token_with_trivia::<#lex_ctx>(input, TokenKind::#open_delim))?;
                         #body_parser
-                        seq.elem(self.parse_token_with_trivia::<#lex_ctx>(input, TokenKind::#close_delim))?;
+                        seq.elem_named(#close_field_name, self.parse_token_with_trivia::<#lex_ctx>(input, TokenKind::#close_delim))?;
                         seq.finish()
                     })
                 }
             }
 
             Self::SeparatedBy(body, separator) => {
+                let separator_field_name = &separator.name;
                 let separator = match separator.as_ref() {
                     ParserDefinitionNode::ScannerDefinition(scanner, ..) => {
                         format_ident!("{name}", name = scanner.name())
@@ -198,18 +214,22 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                     _ => unreachable!("Only tokens are permitted as separators"),
                 };
 
+                let body_field_name = &body.name;
                 let parser = body.to_parser_code(context_name, is_trivia);
 
                 quote! {
                     SeparatedHelper::run::<_, #lex_ctx>(
                         input,
                         self,
-                        |input| #parser,
+                        |input| #parser.with_name(#body_field_name),
                         TokenKind::#separator,
+                        #separator_field_name,
                     )
                 }
             }
             Self::TerminatedBy(body, terminator) => {
+                let terminator_field_name = &terminator.name;
+
                 let terminator = match terminator.as_ref() {
                     ParserDefinitionNode::ScannerDefinition(scanner, ..) => {
                         format_ident!("{name}", name = scanner.name())
@@ -220,7 +240,8 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                 let parser = body.to_parser_code(context_name, is_trivia);
                 let body_parser = body.applicable_version_quality_ranges().wrap_code(
                     quote! {
-                        seq.elem(#parser
+                        seq.elem(
+                            #parser
                             .recover_until_with_nested_delims::<_, #lex_ctx>(input,
                                 self,
                                 TokenKind::#terminator,
@@ -234,7 +255,10 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                 quote! {
                     SequenceHelper::run(|mut seq| {
                         #body_parser
-                        seq.elem(self.parse_token_with_trivia::<#lex_ctx>(input, TokenKind::#terminator))?;
+                        seq.elem_named(
+                            #terminator_field_name,
+                            self.parse_token_with_trivia::<#lex_ctx>(input, TokenKind::#terminator)
+                        )?;
                         seq.finish()
                     })
                 }
@@ -249,8 +273,10 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
             }
 
             ParserDefinitionNode::Optional(node)
-            | ParserDefinitionNode::ZeroOrMore(node)
-            | ParserDefinitionNode::OneOrMore(node) => node.applicable_version_quality_ranges(),
+            | ParserDefinitionNode::ZeroOrMore(Named { node, .. })
+            | ParserDefinitionNode::OneOrMore(Named { node, .. }) => {
+                node.applicable_version_quality_ranges()
+            }
 
             _ => vec![],
         }
@@ -280,5 +306,63 @@ impl VersionQualityRangeVecExtensions for Vec<VersionQualityRange> {
             let else_part = if_false.map(|if_false| quote! { else { #if_false } });
             quote! { if #(#flags)&&* { #if_true } #else_part }
         }
+    }
+}
+
+pub fn make_sequence(parsers: impl IntoIterator<Item = TokenStream>) -> TokenStream {
+    make_sequence_versioned(
+        parsers
+            .into_iter()
+            .map(|parser| (parser, String::new(), vec![])),
+    )
+}
+
+pub fn make_sequence_versioned(
+    parsers: impl IntoIterator<Item = (TokenStream, String, Vec<VersionQualityRange>)>,
+) -> TokenStream {
+    let parsers = parsers
+        .into_iter()
+        .map(|(parser, name, versions)| {
+            let code = if name.is_empty() {
+                quote! { seq.elem(#parser)?; }
+            } else {
+                quote! { seq.elem_named(#name, #parser)?; }
+            };
+
+            versions.wrap_code(code, None)
+        })
+        .collect::<Vec<_>>();
+    quote! {
+        SequenceHelper::run(|mut seq| {
+            #(#parsers)*
+            seq.finish()
+        })
+    }
+}
+
+pub fn make_choice(parsers: impl IntoIterator<Item = TokenStream>) -> TokenStream {
+    make_choice_versioned(parsers.into_iter().map(|parser| (parser, vec![])))
+}
+
+fn make_choice_versioned(
+    parsers: impl IntoIterator<Item = (TokenStream, Vec<VersionQualityRange>)>,
+) -> TokenStream {
+    let parsers = parsers
+        .into_iter()
+        .map(|(parser, versions)| {
+            versions.wrap_code(
+                quote! {
+                    let result = #parser;
+                    choice.consider(input, result)?;
+                },
+                None,
+            )
+        })
+        .collect::<Vec<_>>();
+    quote! {
+        ChoiceHelper::run(input, |mut choice, input| {
+            #(#parsers)*
+            choice.finish(input)
+        })
     }
 }

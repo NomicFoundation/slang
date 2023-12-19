@@ -17,37 +17,37 @@ Errors: # 1 total
 
 Tree:
   - TupleDeconstructionStatement: # 0..35 "(a, b) = (123, 135)\n/**/\n{ throw; \n"
-      - OpenParen: "(" # 0..1
-      - TupleDeconstructionElements: # 1..5 "a, b"
-          - TupleDeconstructionElement: # 1..2 "a"
-              - TupleMember: # 1..2 "a"
-                  - UntypedTupleMember: # 1..2 "a"
-                      - Identifier: "a" # 1..2
-          - Comma: "," # 2..3
-          - TupleDeconstructionElement: # 3..5 " b"
-              - TupleMember: # 3..5 " b"
-                  - UntypedTupleMember: # 3..5 " b"
-                      - Identifier: "b" # 4..5
-      - CloseParen: ")" # 5..6
-      - Equal: "=" # 7..8
-      - Expression: # 8..26 " (123, 135)\n/**/\n{"
-          - TupleExpression: # 8..20 " (123, 135)\n"
-              - OpenParen: "(" # 9..10
-              - TupleValues: # 10..18 "123, 135"
-                  - TupleValue: # 10..13 "123"
-                      - Expression: # 10..13 "123"
-                          - DecimalNumberExpression: # 10..13 "123"
-                              - DecimalLiteral: "123" # 10..13
-                  - Comma: "," # 13..14
-                  - TupleValue: # 14..18 " 135"
-                      - Expression: # 14..18 " 135"
-                          - DecimalNumberExpression: # 14..18 " 135"
-                              - DecimalLiteral: "135" # 15..18
-              - CloseParen: ")" # 18..19
-          - FunctionCallOptions: # 20..26 "/**/\n{"
-              - NamedArgumentGroup: # 20..26 "/**/\n{"
+      - (open_paren) OpenParen: "(" # 0..1
+      - (elements) TupleDeconstructionElements: # 1..5 "a, b"
+          - (item) TupleDeconstructionElement: # 1..2 "a"
+              - (member) TupleMember: # 1..2 "a"
+                  - (variant) UntypedTupleMember: # 1..2 "a"
+                      - (name) Identifier: "a" # 1..2
+          - (separator) Comma: "," # 2..3
+          - (item) TupleDeconstructionElement: # 3..5 " b"
+              - (member) TupleMember: # 3..5 " b"
+                  - (variant) UntypedTupleMember: # 3..5 " b"
+                      - (name) Identifier: "b" # 4..5
+      - (close_paren) CloseParen: ")" # 5..6
+      - (equal) Equal: "=" # 7..8
+      - (expression) Expression: # 8..26 " (123, 135)\n/**/\n{"
+          - (variant) TupleExpression: # 8..20 " (123, 135)\n"
+              - (open_paren) OpenParen: "(" # 9..10
+              - (items) TupleValues: # 10..18 "123, 135"
+                  - (item) TupleValue: # 10..13 "123"
+                      - (expression) Expression: # 10..13 "123"
+                          - (variant) DecimalNumberExpression: # 10..13 "123"
+                              - (literal) DecimalLiteral: "123" # 10..13
+                  - (separator) Comma: "," # 13..14
+                  - (item) TupleValue: # 14..18 " 135"
+                      - (expression) Expression: # 14..18 " 135"
+                          - (variant) DecimalNumberExpression: # 14..18 " 135"
+                              - (literal) DecimalLiteral: "135" # 15..18
+              - (close_paren) CloseParen: ")" # 18..19
+          - (options) FunctionCallOptions: # 20..26 "/**/\n{"
+              - (variant) NamedArgumentGroup: # 20..26 "/**/\n{"
                   - LeadingTrivia: # 20..25 "/**/\n"
                       - MultilineComment: "/**/" # 20..24
-                  - OpenBrace: "{" # 25..26
+                  - (open_brace) OpenBrace: "{" # 25..26
       - SKIPPED: "throw" # 27..32
-      - Semicolon: ";" # 32..33
+      - (semicolon) Semicolon: ";" # 32..33

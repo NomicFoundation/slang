@@ -7,4 +7,4 @@ Errors: []
 
 Tree:
   - DecimalNumberExpression: # 0..2 ".2"
-      - DecimalLiteral: ".2" # 0..2
+      - (literal) DecimalLiteral: ".2" # 0..2

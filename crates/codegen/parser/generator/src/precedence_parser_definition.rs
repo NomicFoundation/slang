@@ -5,7 +5,7 @@ use inflector::Inflector;
 use proc_macro2::{Ident, TokenStream};
 use quote::{format_ident, quote};
 
-use crate::parser_definition::ParserDefinitionNodeExtensions;
+use crate::parser_definition::{make_choice, make_sequence, ParserDefinitionNodeExtensions};
 
 pub trait PrecedenceParserDefinitionExtensions {
     fn to_parser_code(&self) -> TokenStream;
@@ -40,8 +40,8 @@ impl PrecedenceParserDefinitionExtensions for PrecedenceParserDefinitionRef {
                 // If the result won't match exactly, we return a dummy `ParserResult::no_match`, since
                 // can't precisely determine the expected tokens or completeness of the match otherwise.
                 match &r#match.nodes[..] {
-                    [cst::Node::Rule(node)] if node.kind == RuleKind::#rule_name => match &node.children[..] {
-                        [inner @ cst::Node::Rule(rule)] if rule.kind == RuleKind::#op_rule_name => {
+                    [cst::NamedNode { name: _, node: cst::Node::Rule(node), }] if node.kind == RuleKind::#rule_name => match &node.children[..] {
+                        [inner @ cst::NamedNode { name: _, node: cst::Node::Rule(rule) }] if rule.kind == RuleKind::#op_rule_name => {
                             ParserResult::r#match(vec![inner.clone()], r#match.expected_tokens.clone())
                         }
                         _ => ParserResult::no_match(vec![]),
@@ -102,9 +102,9 @@ impl PrecedenceParserDefinitionNodeExtensions for PrecedenceParserDefinitionNode
 
     #[allow(clippy::too_many_lines)] // Repetition-heavy with 4 kinds of precedence operators
     fn to_parser_code(&self, context_name: &'static str, expression_kind: Ident) -> TokenStream {
-        let mut prefix_operator_parsers: Vec<OperatorParser> = Vec::new();
-        let mut postfix_operator_parsers: Vec<OperatorParser> = Vec::new();
-        let mut binary_operator_parsers: Vec<OperatorParser> = Vec::new();
+        let mut prefix_operator_parsers: Vec<TokenStream> = Vec::new();
+        let mut postfix_operator_parsers: Vec<TokenStream> = Vec::new();
+        let mut binary_operator_parsers: Vec<TokenStream> = Vec::new();
 
         // Closures rather than local functions because they
         // need to access the `Language` instance as `self`.
@@ -230,40 +230,5 @@ impl PrecedenceParserDefinitionNodeExtensions for PrecedenceParserDefinitionNode
 
             PrecedenceHelper::reduce_precedence_result(RuleKind::#expression_kind, linear_expression_parser(input))
         }
-    }
-}
-
-// TODO: merge these three functions into parse_definition by changing
-// `to_parser_code` to use `TokenStream`
-type OperatorParser = TokenStream;
-
-fn make_sequence(parsers: Vec<TokenStream>) -> TokenStream {
-    let parsers = parsers
-        .into_iter()
-        .map(|parser| quote! { seq.elem(#parser)?; })
-        .collect::<Vec<_>>();
-    quote! {
-        SequenceHelper::run(|mut seq| {
-            #(#parsers)*
-            seq.finish()
-        })
-    }
-}
-
-fn make_choice(parsers: Vec<OperatorParser>) -> TokenStream {
-    let parsers = parsers
-        .into_iter()
-        .map(|parser| {
-            quote! {
-                let result = #parser;
-                choice.consider(input, result)?;
-            }
-        })
-        .collect::<Vec<_>>();
-    quote! {
-        ChoiceHelper::run(input, |mut choice, input| {
-            #(#parsers)*
-            choice.finish(input)
-        })
     }
 }

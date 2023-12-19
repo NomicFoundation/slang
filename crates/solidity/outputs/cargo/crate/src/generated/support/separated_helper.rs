@@ -1,6 +1,6 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-use crate::cst;
+use crate::cst::{self, NamedNode};
 use crate::kinds::{IsLexicalContext, TokenKind};
 use crate::lexer::Lexer;
 use crate::parse_error::ParseError;
@@ -17,6 +17,7 @@ impl SeparatedHelper {
         lexer: &L,
         body_parser: impl Fn(&mut ParserContext<'_>) -> ParserResult,
         separator: TokenKind,
+        separator_field_name: &str,
     ) -> ParserResult {
         let mut accum = vec![];
         loop {
@@ -26,7 +27,10 @@ impl SeparatedHelper {
 
                     match lexer.peek_token_with_trivia::<LexCtx>(input) {
                         Some(token) if token == separator => {
-                            match lexer.parse_token_with_trivia::<LexCtx>(input, separator) {
+                            match lexer
+                                .parse_token_with_trivia::<LexCtx>(input, separator)
+                                .with_name(separator_field_name)
+                            {
                                 ParserResult::Match(r#match) => {
                                     accum.extend(r#match.nodes);
                                     continue;
@@ -51,10 +55,10 @@ impl SeparatedHelper {
                     match skip_until_with_nested_delims::<_, LexCtx>(input, lexer, separator) {
                         // A separator was found, so we can recover the incomplete match
                         Some((found, skipped_range)) if found == separator => {
-                            accum.push(cst::Node::token(
+                            accum.push(NamedNode::anonymous(cst::Node::token(
                                 TokenKind::SKIPPED,
                                 input.content(skipped_range.utf8()),
-                            ));
+                            )));
                             input.emit(ParseError {
                                 text_range: skipped_range,
                                 tokens_that_would_have_allowed_more_progress: incomplete

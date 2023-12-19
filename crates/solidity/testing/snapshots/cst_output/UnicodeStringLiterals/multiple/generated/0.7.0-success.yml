@@ -7,5 +7,5 @@ Errors: []
 
 Tree:
   - UnicodeStringLiterals: # 0..37 'unicode"happy 😃" unicode''sad 😔'''
-      - UnicodeStringLiteral: 'unicode"happy 😃"' # 0..19
-      - UnicodeStringLiteral: "unicode'sad 😔'" # 20..37
+      - (item) UnicodeStringLiteral: 'unicode"happy 😃"' # 0..19
+      - (item) UnicodeStringLiteral: "unicode'sad 😔'" # 20..37

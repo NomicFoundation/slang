@@ -1,9 +1,9 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-use crate::cst;
+use crate::cst::{self, NamedNode};
 use crate::kinds::RuleKind;
-use crate::support::parser_result::ParserResult;
 use crate::support::parser_result::PrattElement::{self, Binary, Expression, Postfix, Prefix};
+use crate::support::parser_result::{ParserResult, PrattOperatorMatch};
 
 pub struct PrecedenceHelper;
 
@@ -56,7 +56,7 @@ impl PrecedenceHelper {
         }
     }
 
-    #[allow(clippy::too_many_lines)] // Explicit on purpose, see below.
+    #[allow(clippy::too_many_lines, clippy::redundant_else)] // Explicit on purpose, see below.
     pub fn reduce_precedence_result(child_kind: RuleKind, result: ParserResult) -> ParserResult {
         // This requires some careful thinking. It could be more compact,
         // but I'm favouring obviousness here. That is also why there are
@@ -65,172 +65,166 @@ impl PrecedenceHelper {
 
         // If the input is valid this should be correct by construction.
 
-        #[allow(clippy::redundant_else)]
-        match result {
-            ParserResult::PrattOperatorMatch(pratt_operator_match) => {
-                let mut pratt_elements = pratt_operator_match.elements;
+        let ParserResult::PrattOperatorMatch(PrattOperatorMatch { mut elements }) = result else {
+            return result;
+        };
 
-                let mut i = 0usize;
-                while pratt_elements.len() > 1 {
-                    // 1. Find the next, highest priority reducable operator
-                    // The elements are guaranteed to match the following:
-                    // `prefixop* expr postfixop* ( binaryop prefixop* expr postfixop* )*`
+        let mut i = 0usize;
+        while elements.len() > 1 {
+            // 1. Find the next, highest priority reducable operator
+            // The elements are guaranteed to match the following:
+            // `prefixop* expr postfixop* ( binaryop prefixop* expr postfixop* )*`
 
-                    let slice = &pratt_elements[i..];
-                    match slice {
-                        [Expression { .. }, Postfix { .. }, ..] => {
-                            i += 1;
-                            continue;
-                        }
-
-                        [Expression { .. }, Binary { .. }, ..] => {
-                            i += 1;
-                            continue;
-                        }
-
-                        [Prefix { right, .. }, Expression { .. }, Binary { left, .. }, ..] => {
-                            if right <= left {
-                                i += 2;
-                                continue;
-                            } else {
-                                /* Reduce */
-                            }
-                        }
-
-                        [Prefix { right, .. }, Expression { .. }, Postfix { left, .. }, ..] => {
-                            if right <= left {
-                                i += 2;
-                                continue;
-                            } else {
-                                /* Reduce */
-                            }
-                        }
-
-                        [Prefix { .. }, Expression { .. }] => { /* Reduce */ }
-
-                        [Prefix { .. }, Prefix { .. }, ..] => {
-                            i += 1;
-                            continue;
-                        }
-
-                        [Binary { right, .. }, Expression { .. }, Binary { left, .. }, ..] => {
-                            if right <= left {
-                                i += 2;
-                                continue;
-                            } else {
-                                /* Reduce */
-                            }
-                        }
-
-                        [Binary { right, .. }, Expression { .. }, Postfix { left, .. }, ..] => {
-                            if right <= left {
-                                i += 2;
-                                continue;
-                            } else {
-                                /* Reduce */
-                            }
-                        }
-
-                        [Binary { .. }, Prefix { .. }, ..] => {
-                            i += 1;
-                            continue;
-                        }
-
-                        [Binary { .. }, Expression { .. }] => { /* Reduce */ }
-
-                        [Postfix { .. }, ..] => { /* Reduce */ }
-
-                        _ => {
-                            unreachable!(
-                                "Unmatched precedence pattern at index {} in: {:#?}",
-                                i, pratt_elements
-                            )
-                        }
-                    };
-
-                    // 2. Reduce the operator and it's child expressions to a new expression
-
-                    let make_expression =
-                        |left: Option<PrattElement>,
-                         kind: RuleKind,
-                         nodes: Vec<cst::Node>,
-                         right: Option<PrattElement>| {
-                            let wrap_children = |children: Vec<cst::Node>| {
-                                if children.is_empty() {
-                                    children
-                                } else {
-                                    vec![cst::Node::rule(child_kind, children)]
-                                }
-                            };
-
-                            let left_nodes = match left {
-                                Some(Expression { nodes }) => nodes,
-                                None => vec![],
-                                _ => unreachable!("Operator not preceeded by expression"),
-                            };
-
-                            let right_nodes = match right {
-                                Some(Expression { nodes }) => nodes,
-                                None => vec![],
-                                _ => unreachable!("Operator not followed by expression"),
-                            };
-
-                            let mut children = Vec::with_capacity(
-                                left_nodes.len() + nodes.len() + right_nodes.len(),
-                            );
-                            children.extend(wrap_children(left_nodes));
-                            children.extend(nodes);
-                            children.extend(wrap_children(right_nodes));
-                            Expression {
-                                nodes: vec![cst::Node::rule(kind, children)],
-                            }
-                        };
-
-                    match pratt_elements.remove(i) {
-                        Prefix { kind, nodes, .. } => {
-                            let expr = pratt_elements.remove(i);
-                            pratt_elements
-                                .insert(i, make_expression(None, kind, nodes, Some(expr)));
-                        }
-
-                        Postfix { kind, nodes, .. } => {
-                            let expr = pratt_elements.remove(i - 1);
-                            i -= 1;
-                            pratt_elements
-                                .insert(i, make_expression(Some(expr), kind, nodes, None));
-                        }
-
-                        Binary { kind, nodes, .. } => {
-                            let right_expr = pratt_elements.remove(i);
-                            let left_expr = pratt_elements.remove(i - 1);
-                            i -= 1;
-                            pratt_elements.insert(
-                                i,
-                                make_expression(Some(left_expr), kind, nodes, Some(right_expr)),
-                            );
-                        }
-
-                        Expression { .. } => {
-                            unreachable!(
-                                "Expected an operator at index {}: {:#?}",
-                                i, pratt_elements
-                            )
-                        }
-                    }
-
-                    i = i.saturating_sub(1);
+            match &elements[i..] {
+                [Expression { .. }, Postfix { .. }, ..] => {
+                    i += 1;
+                    continue;
                 }
 
-                // 3. Until we have a single expression.
+                [Expression { .. }, Binary { .. }, ..] => {
+                    i += 1;
+                    continue;
+                }
 
-                match <[_; 1]>::try_from(pratt_elements) {
-                    Ok([Expression { nodes }]) => ParserResult::r#match(nodes, vec![]),
-                    Ok([head]) => unreachable!("Expected an expression: {:#?}", head),
-                    Err(elems) => unreachable!("Expected a single element: {:#?}", elems),
+                [Prefix { right, .. }, Expression { .. }, Binary { left, .. }, ..] => {
+                    if right <= left {
+                        i += 2;
+                        continue;
+                    } else {
+                        /* Reduce */
+                    }
+                }
+
+                [Prefix { right, .. }, Expression { .. }, Postfix { left, .. }, ..] => {
+                    if right <= left {
+                        i += 2;
+                        continue;
+                    } else {
+                        /* Reduce */
+                    }
+                }
+
+                [Prefix { .. }, Expression { .. }] => { /* Reduce */ }
+
+                [Prefix { .. }, Prefix { .. }, ..] => {
+                    i += 1;
+                    continue;
+                }
+
+                [Binary { right, .. }, Expression { .. }, Binary { left, .. }, ..] => {
+                    if right <= left {
+                        i += 2;
+                        continue;
+                    } else {
+                        /* Reduce */
+                    }
+                }
+
+                [Binary { right, .. }, Expression { .. }, Postfix { left, .. }, ..] => {
+                    if right <= left {
+                        i += 2;
+                        continue;
+                    } else {
+                        /* Reduce */
+                    }
+                }
+
+                [Binary { .. }, Prefix { .. }, ..] => {
+                    i += 1;
+                    continue;
+                }
+
+                [Binary { .. }, Expression { .. }] => { /* Reduce */ }
+
+                [Postfix { .. }, ..] => { /* Reduce */ }
+
+                _ => {
+                    unreachable!(
+                        "Unmatched precedence pattern at index {} in: {:#?}",
+                        i, elements
+                    )
+                }
+            };
+
+            // 2. Reduce the operator and it's child expressions to a new expression
+
+            let make_expression = |left: Option<PrattElement>,
+                                   kind: RuleKind,
+                                   nodes: Vec<cst::NamedNode>,
+                                   right: Option<PrattElement>| {
+                assert!(left.is_some() || right.is_some());
+
+                let left_name = right.as_ref().map_or("operand", |_| "left_operand");
+                let right_name = left.as_ref().map_or("operand", |_| "right_operand");
+
+                let left_nodes = match left {
+                    Some(Expression { nodes }) => {
+                        vec![NamedNode {
+                            name: left_name.to_owned(),
+                            node: cst::Node::rule(child_kind, nodes),
+                        }]
+                    }
+                    None => vec![],
+                    _ => unreachable!("Operator not preceeded by expression"),
+                };
+
+                let right_nodes = match right {
+                    Some(Expression { nodes }) => {
+                        vec![NamedNode {
+                            name: right_name.to_owned(),
+                            node: cst::Node::rule(child_kind, nodes),
+                        }]
+                    }
+                    None => vec![],
+                    _ => unreachable!("Operator not followed by expression"),
+                };
+
+                let children = [left_nodes, nodes, right_nodes].concat();
+
+                Expression {
+                    nodes: vec![NamedNode {
+                        name: "variant".into(),
+                        node: cst::Node::rule(kind, children),
+                    }],
+                }
+            };
+
+            match elements.remove(i) {
+                Prefix { kind, nodes, .. } => {
+                    let expr = elements.remove(i);
+                    elements.insert(i, make_expression(None, kind, nodes, Some(expr)));
+                }
+
+                Postfix { kind, nodes, .. } => {
+                    let expr = elements.remove(i - 1);
+                    i -= 1;
+                    elements.insert(i, make_expression(Some(expr), kind, nodes, None));
+                }
+
+                Binary { kind, nodes, .. } => {
+                    let right_expr = elements.remove(i);
+                    let left_expr = elements.remove(i - 1);
+                    i -= 1;
+                    elements.insert(
+                        i,
+                        make_expression(Some(left_expr), kind, nodes, Some(right_expr)),
+                    );
+                }
+
+                Expression { .. } => {
+                    unreachable!("Expected an operator at index {}: {:#?}", i, elements)
                 }
             }
 
-            result => result,
+            i = i.saturating_sub(1);
+        }
+
+        // 3. Until we have a single expression.
+
+        match <[_; 1]>::try_from(elements) {
+            Ok([Expression { nodes }]) => ParserResult::r#match(nodes, vec![]),
+            Ok([head]) => unreachable!("Expected an expression: {:#?}", head),
+            Err(elems) => unreachable!("Expected a single element: {:#?}", elems),
         }
     }
 }

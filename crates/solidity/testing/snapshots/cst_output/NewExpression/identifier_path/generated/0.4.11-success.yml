@@ -7,11 +7,11 @@ Errors: []
 
 Tree:
   - NewExpression: # 0..15 "new Foo.Bar.Baz"
-      - NewKeyword: "new" # 0..3
-      - TypeName: # 3..15 " Foo.Bar.Baz"
-          - IdentifierPath: # 3..15 " Foo.Bar.Baz"
-              - Identifier: "Foo" # 4..7
-              - Period: "." # 7..8
-              - Identifier: "Bar" # 8..11
-              - Period: "." # 11..12
-              - Identifier: "Baz" # 12..15
+      - (new_keyword) NewKeyword: "new" # 0..3
+      - (type_name) TypeName: # 3..15 " Foo.Bar.Baz"
+          - (variant) IdentifierPath: # 3..15 " Foo.Bar.Baz"
+              - (item) Identifier: "Foo" # 4..7
+              - (separator) Period: "." # 7..8
+              - (item) Identifier: "Bar" # 8..11
+              - (separator) Period: "." # 11..12
+              - (item) Identifier: "Baz" # 12..15

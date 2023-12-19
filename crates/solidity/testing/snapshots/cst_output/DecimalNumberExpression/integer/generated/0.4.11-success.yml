@@ -7,4 +7,4 @@ Errors: []
 
 Tree:
   - DecimalNumberExpression: # 0..3 "123"
-      - DecimalLiteral: "123" # 0..3
+      - (literal) DecimalLiteral: "123" # 0..3

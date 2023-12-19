@@ -1,5 +1,6 @@
 use anyhow::Result;
 use semver::Version;
+use slang_solidity::cst::NamedNode;
 use slang_solidity::kinds::{RuleKind, TokenKind};
 use slang_solidity::language::Language;
 
@@ -88,15 +89,32 @@ fn using_iter_combinators() -> Result<()> {
         .create_tree_cursor()
         .filter_map(|node| {
             let node = node.as_rule_with_kind(&[RuleKind::ContractDefinition])?;
-            let name = node
+            let contract_name = node
                 .children
                 .iter()
                 .find_map(|node| node.as_token_with_kind(&[TokenKind::Identifier]))?;
 
-            Some(name.text.clone())
+            Some(contract_name.text.clone())
         })
         .collect();
 
     assert_eq!(contract_names, &["Foo", "Bar", "Baz"]);
+    Ok(())
+}
+
+#[test]
+fn using_iter_with_node_names() -> Result<()> {
+    let language = Language::new(Version::parse("0.8.0")?)?;
+    let parse_output = language.parse(RuleKind::SourceUnit, SOURCE);
+
+    let names: Vec<_> = parse_output
+        .create_tree_cursor()
+        .with_names()
+        .filter_map(|NamedNode { name, node }| (name == "name").then_some(node))
+        .filter_map(|node| node.as_token_with_kind(&[TokenKind::Identifier]).cloned())
+        .map(|node| node.text.clone())
+        .collect();
+
+    assert_eq!(names, &["Foo", "Bar", "Baz"]);
     Ok(())
 }

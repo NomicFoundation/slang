@@ -7,5 +7,5 @@ Errors: []
 
 Tree:
   - YulExpression: # 0..5 "0x123"
-      - YulLiteral: # 0..5 "0x123"
-          - YulHexLiteral: "0x123" # 0..5
+      - (variant) YulLiteral: # 0..5 "0x123"
+          - (variant) YulHexLiteral: "0x123" # 0..5

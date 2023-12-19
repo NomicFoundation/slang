@@ -7,21 +7,21 @@ Errors: []
 
 Tree:
   - TupleExpression: # 0..30 "(first, second, third, fourth)"
-      - OpenParen: "(" # 0..1
-      - TupleValues: # 1..29 "first, second, third, fourth"
-          - TupleValue: # 1..6 "first"
-              - Expression: # 1..6 "first"
-                  - Identifier: "first" # 1..6
-          - Comma: "," # 6..7
-          - TupleValue: # 7..14 " second"
-              - Expression: # 7..14 " second"
-                  - Identifier: "second" # 8..14
-          - Comma: "," # 14..15
-          - TupleValue: # 15..21 " third"
-              - Expression: # 15..21 " third"
-                  - Identifier: "third" # 16..21
-          - Comma: "," # 21..22
-          - TupleValue: # 22..29 " fourth"
-              - Expression: # 22..29 " fourth"
-                  - Identifier: "fourth" # 23..29
-      - CloseParen: ")" # 29..30
+      - (open_paren) OpenParen: "(" # 0..1
+      - (items) TupleValues: # 1..29 "first, second, third, fourth"
+          - (item) TupleValue: # 1..6 "first"
+              - (expression) Expression: # 1..6 "first"
+                  - (variant) Identifier: "first" # 1..6
+          - (separator) Comma: "," # 6..7
+          - (item) TupleValue: # 7..14 " second"
+              - (expression) Expression: # 7..14 " second"
+                  - (variant) Identifier: "second" # 8..14
+          - (separator) Comma: "," # 14..15
+          - (item) TupleValue: # 15..21 " third"
+              - (expression) Expression: # 15..21 " third"
+                  - (variant) Identifier: "third" # 16..21
+          - (separator) Comma: "," # 21..22
+          - (item) TupleValue: # 22..29 " fourth"
+              - (expression) Expression: # 22..29 " fourth"
+                  - (variant) Identifier: "fourth" # 23..29
+      - (close_paren) CloseParen: ")" # 29..30

@@ -9,41 +9,41 @@ Errors: []
 
 Tree:
   - ContractMembers: # 0..42 "function func() {\n  uint a = 1 + 2 * 3;\n}\n"
-      - ContractMember: # 0..42 "function func() {\n  uint a = 1 + 2 * 3;\n}\n"
-          - FunctionDefinition: # 0..42 "function func() {\n  uint a = 1 + 2 * 3;\n}\n"
-              - FunctionKeyword: "function" # 0..8
-              - FunctionName: # 8..13 " func"
-                  - Identifier: "func" # 9..13
-              - ParametersDeclaration: # 13..15 "()"
-                  - OpenParen: "(" # 13..14
-                  - CloseParen: ")" # 14..15
-              - FunctionBody: # 15..42 " {\n  uint a = 1 + 2 * 3;\n}\n"
-                  - Block: # 15..42 " {\n  uint a = 1 + 2 * 3;\n}\n"
-                      - OpenBrace: "{" # 16..17
-                      - Statements: # 18..40 "  uint a = 1 + 2 * 3;\n"
-                          - Statement: # 18..40 "  uint a = 1 + 2 * 3;\n"
-                              - VariableDeclarationStatement: # 18..40 "  uint a = 1 + 2 * 3;\n"
-                                  - VariableDeclarationType: # 18..24 "  uint"
-                                      - TypeName: # 18..24 "  uint"
-                                          - ElementaryType: # 18..24 "  uint"
-                                              - UintKeyword: "uint" # 20..24
-                                  - Identifier: "a" # 25..26
-                                  - VariableDeclarationValue: # 26..38 " = 1 + 2 * 3"
-                                      - Equal: "=" # 27..28
-                                      - Expression: # 28..38 " 1 + 2 * 3"
-                                          - AdditiveExpression: # 28..38 " 1 + 2 * 3"
-                                              - Expression: # 28..30 " 1"
-                                                  - DecimalNumberExpression: # 28..30 " 1"
-                                                      - DecimalLiteral: "1" # 29..30
-                                              - Plus: "+" # 31..32
-                                              - Expression: # 32..38 " 2 * 3"
-                                                  - MultiplicativeExpression: # 32..38 " 2 * 3"
-                                                      - Expression: # 32..34 " 2"
-                                                          - DecimalNumberExpression: # 32..34 " 2"
-                                                              - DecimalLiteral: "2" # 33..34
-                                                      - Asterisk: "*" # 35..36
-                                                      - Expression: # 36..38 " 3"
-                                                          - DecimalNumberExpression: # 36..38 " 3"
-                                                              - DecimalLiteral: "3" # 37..38
-                                  - Semicolon: ";" # 38..39
-                      - CloseBrace: "}" # 40..41
+      - (item) ContractMember: # 0..42 "function func() {\n  uint a = 1 + 2 * 3;\n}\n"
+          - (variant) FunctionDefinition: # 0..42 "function func() {\n  uint a = 1 + 2 * 3;\n}\n"
+              - (function_keyword) FunctionKeyword: "function" # 0..8
+              - (name) FunctionName: # 8..13 " func"
+                  - (variant) Identifier: "func" # 9..13
+              - (parameters) ParametersDeclaration: # 13..15 "()"
+                  - (open_paren) OpenParen: "(" # 13..14
+                  - (close_paren) CloseParen: ")" # 14..15
+              - (body) FunctionBody: # 15..42 " {\n  uint a = 1 + 2 * 3;\n}\n"
+                  - (variant) Block: # 15..42 " {\n  uint a = 1 + 2 * 3;\n}\n"
+                      - (open_brace) OpenBrace: "{" # 16..17
+                      - (statements) Statements: # 18..40 "  uint a = 1 + 2 * 3;\n"
+                          - (item) Statement: # 18..40 "  uint a = 1 + 2 * 3;\n"
+                              - (variant) VariableDeclarationStatement: # 18..40 "  uint a = 1 + 2 * 3;\n"
+                                  - (variable_type) VariableDeclarationType: # 18..24 "  uint"
+                                      - (variant) TypeName: # 18..24 "  uint"
+                                          - (variant) ElementaryType: # 18..24 "  uint"
+                                              - (variant) UintKeyword: "uint" # 20..24
+                                  - (name) Identifier: "a" # 25..26
+                                  - (value) VariableDeclarationValue: # 26..38 " = 1 + 2 * 3"
+                                      - (equal) Equal: "=" # 27..28
+                                      - (expression) Expression: # 28..38 " 1 + 2 * 3"
+                                          - (variant) AdditiveExpression: # 28..38 " 1 + 2 * 3"
+                                              - (left_operand) Expression: # 28..30 " 1"
+                                                  - (variant) DecimalNumberExpression: # 28..30 " 1"
+                                                      - (literal) DecimalLiteral: "1" # 29..30
+                                              - (operator) Plus: "+" # 31..32
+                                              - (right_operand) Expression: # 32..38 " 2 * 3"
+                                                  - (variant) MultiplicativeExpression: # 32..38 " 2 * 3"
+                                                      - (left_operand) Expression: # 32..34 " 2"
+                                                          - (variant) DecimalNumberExpression: # 32..34 " 2"
+                                                              - (literal) DecimalLiteral: "2" # 33..34
+                                                      - (operator) Asterisk: "*" # 35..36
+                                                      - (right_operand) Expression: # 36..38 " 3"
+                                                          - (variant) DecimalNumberExpression: # 36..38 " 3"
+                                                              - (literal) DecimalLiteral: "3" # 37..38
+                                  - (semicolon) Semicolon: ";" # 38..39
+                      - (close_brace) CloseBrace: "}" # 40..41

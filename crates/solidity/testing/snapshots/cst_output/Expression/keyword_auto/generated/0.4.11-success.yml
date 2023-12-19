@@ -7,4 +7,4 @@ Errors: []
 
 Tree:
   - Expression: # 0..4 "auto"
-      - Identifier: "auto" # 0..4
+      - (variant) Identifier: "auto" # 0..4
