@@ -7,4 +7,4 @@ Errors: []
 
 Tree:
   - Expression: # 0..11 "constructor"
-      - (variant) Identifier: "constructor" # 0..11
+      - Identifier: "constructor" # 0..11

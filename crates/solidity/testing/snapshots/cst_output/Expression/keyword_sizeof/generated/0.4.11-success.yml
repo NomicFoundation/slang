@@ -7,4 +7,4 @@ Errors: []
 
 Tree:
   - Expression: # 0..6 "sizeof"
-      - (variant) Identifier: "sizeof" # 0..6
+      - Identifier: "sizeof" # 0..6

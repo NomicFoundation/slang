@@ -7,5 +7,5 @@ Errors: []
 
 Tree:
   - TypeName: # 0..6 "uint32"
-      - (variant) ElementaryType: # 0..6 "uint32"
-          - (variant) UintKeyword: "uint32" # 0..6
+      - ElementaryType: # 0..6 "uint32"
+          - UintKeyword: "uint32" # 0..6

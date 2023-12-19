@@ -7,15 +7,15 @@ Errors: []
 
 Tree:
   - Expression: # 0..5 "x.y()"
-      - (variant) FunctionCallExpression: # 0..5 "x.y()"
-          - (operand) Expression: # 0..3 "x.y"
-              - (variant) MemberAccessExpression: # 0..3 "x.y"
-                  - (operand) Expression: # 0..1 "x"
-                      - (variant) Identifier: "x" # 0..1
-                  - (period) Period: "." # 1..2
-                  - (member) MemberAccess: # 2..3 "y"
-                      - (variant) Identifier: "y" # 2..3
-          - (arguments) ArgumentsDeclaration: # 3..5 "()"
-              - (variant) PositionalArgumentsDeclaration: # 3..5 "()"
-                  - (open_paren) OpenParen: "(" # 3..4
-                  - (close_paren) CloseParen: ")" # 4..5
+      - FunctionCallExpression: # 0..5 "x.y()"
+          - Expression: # 0..3 "x.y"
+              - MemberAccessExpression: # 0..3 "x.y"
+                  - Expression: # 0..1 "x"
+                      - Identifier: "x" # 0..1
+                  - Period: "." # 1..2
+                  - MemberAccess: # 2..3 "y"
+                      - Identifier: "y" # 2..3
+          - ArgumentsDeclaration: # 3..5 "()"
+              - PositionalArgumentsDeclaration: # 3..5 "()"
+                  - OpenParen: "(" # 3..4
+                  - CloseParen: ")" # 4..5

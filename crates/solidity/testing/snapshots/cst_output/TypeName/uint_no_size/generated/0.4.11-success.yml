@@ -7,5 +7,5 @@ Errors: []
 
 Tree:
   - TypeName: # 0..4 "uint"
-      - (variant) ElementaryType: # 0..4 "uint"
-          - (variant) UintKeyword: "uint" # 0..4
+      - ElementaryType: # 0..4 "uint"
+          - UintKeyword: "uint" # 0..4

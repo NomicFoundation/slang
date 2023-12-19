@@ -11,38 +11,38 @@ Errors: []
 
 Tree:
   - ContractDefinition: # 0..71 "contract Sample {\n  function foo() returns (uint) ..."
-      - (contract_keyword) ContractKeyword: "contract" # 0..8
-      - (name) Identifier: "Sample" # 9..15
-      - (open_brace) OpenBrace: "{" # 16..17
-      - (members) ContractMembers: # 18..70 "  function foo() returns (uint) {\n    return 1;\n  ..."
-          - (item) ContractMember: # 18..70 "  function foo() returns (uint) {\n    return 1;\n  ..."
-              - (variant) FunctionDefinition: # 18..70 "  function foo() returns (uint) {\n    return 1;\n  ..."
-                  - (function_keyword) FunctionKeyword: "function" # 20..28
-                  - (name) FunctionName: # 28..32 " foo"
-                      - (variant) Identifier: "foo" # 29..32
-                  - (parameters) ParametersDeclaration: # 32..34 "()"
-                      - (open_paren) OpenParen: "(" # 32..33
-                      - (close_paren) CloseParen: ")" # 33..34
-                  - (returns) ReturnsDeclaration: # 34..49 " returns (uint)"
-                      - (returns_keyword) ReturnsKeyword: "returns" # 35..42
-                      - (variables) ParametersDeclaration: # 42..49 " (uint)"
-                          - (open_paren) OpenParen: "(" # 43..44
-                          - (parameters) Parameters: # 44..48 "uint"
-                              - (item) Parameter: # 44..48 "uint"
-                                  - (type_name) TypeName: # 44..48 "uint"
-                                      - (variant) ElementaryType: # 44..48 "uint"
-                                          - (variant) UintKeyword: "uint" # 44..48
-                          - (close_paren) CloseParen: ")" # 48..49
-                  - (body) FunctionBody: # 49..70 " {\n    return 1;\n  }\n"
-                      - (variant) Block: # 49..70 " {\n    return 1;\n  }\n"
-                          - (open_brace) OpenBrace: "{" # 50..51
-                          - (statements) Statements: # 52..66 "    return 1;\n"
-                              - (item) Statement: # 52..66 "    return 1;\n"
-                                  - (variant) ReturnStatement: # 52..66 "    return 1;\n"
-                                      - (return_keyword) ReturnKeyword: "return" # 56..62
-                                      - (expression) Expression: # 62..64 " 1"
-                                          - (variant) DecimalNumberExpression: # 62..64 " 1"
-                                              - (literal) DecimalLiteral: "1" # 63..64
-                                      - (semicolon) Semicolon: ";" # 64..65
-                          - (close_brace) CloseBrace: "}" # 68..69
-      - (close_brace) CloseBrace: "}" # 70..71
+      - ContractKeyword: "contract" # 0..8
+      - Identifier: "Sample" # 9..15
+      - OpenBrace: "{" # 16..17
+      - ContractMembers: # 18..70 "  function foo() returns (uint) {\n    return 1;\n  ..."
+          - ContractMember: # 18..70 "  function foo() returns (uint) {\n    return 1;\n  ..."
+              - FunctionDefinition: # 18..70 "  function foo() returns (uint) {\n    return 1;\n  ..."
+                  - FunctionKeyword: "function" # 20..28
+                  - FunctionName: # 28..32 " foo"
+                      - Identifier: "foo" # 29..32
+                  - ParametersDeclaration: # 32..34 "()"
+                      - OpenParen: "(" # 32..33
+                      - CloseParen: ")" # 33..34
+                  - ReturnsDeclaration: # 34..49 " returns (uint)"
+                      - ReturnsKeyword: "returns" # 35..42
+                      - ParametersDeclaration: # 42..49 " (uint)"
+                          - OpenParen: "(" # 43..44
+                          - Parameters: # 44..48 "uint"
+                              - Parameter: # 44..48 "uint"
+                                  - TypeName: # 44..48 "uint"
+                                      - ElementaryType: # 44..48 "uint"
+                                          - UintKeyword: "uint" # 44..48
+                          - CloseParen: ")" # 48..49
+                  - FunctionBody: # 49..70 " {\n    return 1;\n  }\n"
+                      - Block: # 49..70 " {\n    return 1;\n  }\n"
+                          - OpenBrace: "{" # 50..51
+                          - Statements: # 52..66 "    return 1;\n"
+                              - Statement: # 52..66 "    return 1;\n"
+                                  - ReturnStatement: # 52..66 "    return 1;\n"
+                                      - ReturnKeyword: "return" # 56..62
+                                      - Expression: # 62..64 " 1"
+                                          - DecimalNumberExpression: # 62..64 " 1"
+                                              - DecimalLiteral: "1" # 63..64
+                                      - Semicolon: ";" # 64..65
+                          - CloseBrace: "}" # 68..69
+      - CloseBrace: "}" # 70..71

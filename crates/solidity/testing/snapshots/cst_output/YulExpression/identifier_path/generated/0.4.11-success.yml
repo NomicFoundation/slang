@@ -7,7 +7,7 @@ Errors: []
 
 Tree:
   - YulExpression: # 0..7 "foo.bar"
-      - (variant) YulIdentifierPath: # 0..7 "foo.bar"
-          - (item) YulIdentifier: "foo" # 0..3
-          - (separator) Period: "." # 3..4
-          - (item) YulIdentifier: "bar" # 4..7
+      - YulIdentifierPath: # 0..7 "foo.bar"
+          - YulIdentifier: "foo" # 0..3
+          - Period: "." # 3..4
+          - YulIdentifier: "bar" # 4..7

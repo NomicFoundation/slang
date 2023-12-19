@@ -7,5 +7,5 @@ Errors: []
 
 Tree:
   - TypeName: # 0..4 "byte"
-      - (variant) ElementaryType: # 0..4 "byte"
-          - (variant) ByteKeyword: "byte" # 0..4
+      - ElementaryType: # 0..4 "byte"
+          - ByteKeyword: "byte" # 0..4

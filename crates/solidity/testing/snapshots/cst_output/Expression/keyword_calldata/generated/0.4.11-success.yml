@@ -7,4 +7,4 @@ Errors: []
 
 Tree:
   - Expression: # 0..8 "calldata"
-      - (variant) Identifier: "calldata" # 0..8
+      - Identifier: "calldata" # 0..8

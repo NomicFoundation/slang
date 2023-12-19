@@ -7,22 +7,22 @@ Errors: []
 
 Tree:
   - ConditionalExpression: # 0..27 "(foo == bar) ? true : false"
-      - (operand) Expression: # 0..12 "(foo == bar)"
-          - (variant) TupleExpression: # 0..12 "(foo == bar)"
-              - (open_paren) OpenParen: "(" # 0..1
-              - (items) TupleValues: # 1..11 "foo == bar"
-                  - (item) TupleValue: # 1..11 "foo == bar"
-                      - (expression) Expression: # 1..11 "foo == bar"
-                          - (variant) EqualityExpression: # 1..11 "foo == bar"
-                              - (left_operand) Expression: # 1..4 "foo"
-                                  - (variant) Identifier: "foo" # 1..4
-                              - (operator) EqualEqual: "==" # 5..7
-                              - (right_operand) Expression: # 7..11 " bar"
-                                  - (variant) Identifier: "bar" # 8..11
-              - (close_paren) CloseParen: ")" # 11..12
-      - (question_mark) QuestionMark: "?" # 13..14
-      - (true_expression) Expression: # 14..19 " true"
-          - (variant) TrueKeyword: "true" # 15..19
-      - (colon) Colon: ":" # 20..21
-      - (false_expression) Expression: # 21..27 " false"
-          - (variant) FalseKeyword: "false" # 22..27
+      - Expression: # 0..12 "(foo == bar)"
+          - TupleExpression: # 0..12 "(foo == bar)"
+              - OpenParen: "(" # 0..1
+              - TupleValues: # 1..11 "foo == bar"
+                  - TupleValue: # 1..11 "foo == bar"
+                      - Expression: # 1..11 "foo == bar"
+                          - EqualityExpression: # 1..11 "foo == bar"
+                              - Expression: # 1..4 "foo"
+                                  - Identifier: "foo" # 1..4
+                              - EqualEqual: "==" # 5..7
+                              - Expression: # 7..11 " bar"
+                                  - Identifier: "bar" # 8..11
+              - CloseParen: ")" # 11..12
+      - QuestionMark: "?" # 13..14
+      - Expression: # 14..19 " true"
+          - TrueKeyword: "true" # 15..19
+      - Colon: ":" # 20..21
+      - Expression: # 21..27 " false"
+          - FalseKeyword: "false" # 22..27

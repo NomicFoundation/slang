@@ -10,18 +10,18 @@ Errors: []
 
 Tree:
   - ContractDefinition: # 0..38 "contract Sample {\n  fallback() {\n  }\n}"
-      - (contract_keyword) ContractKeyword: "contract" # 0..8
-      - (name) Identifier: "Sample" # 9..15
-      - (open_brace) OpenBrace: "{" # 16..17
-      - (members) ContractMembers: # 18..37 "  fallback() {\n  }\n"
-          - (item) ContractMember: # 18..37 "  fallback() {\n  }\n"
-              - (variant) FallbackFunctionDefinition: # 18..37 "  fallback() {\n  }\n"
-                  - (fallback_keyword) FallbackKeyword: "fallback" # 20..28
-                  - (parameters) ParametersDeclaration: # 28..30 "()"
-                      - (open_paren) OpenParen: "(" # 28..29
-                      - (close_paren) CloseParen: ")" # 29..30
-                  - (body) FunctionBody: # 30..37 " {\n  }\n"
-                      - (variant) Block: # 30..37 " {\n  }\n"
-                          - (open_brace) OpenBrace: "{" # 31..32
-                          - (close_brace) CloseBrace: "}" # 35..36
-      - (close_brace) CloseBrace: "}" # 37..38
+      - ContractKeyword: "contract" # 0..8
+      - Identifier: "Sample" # 9..15
+      - OpenBrace: "{" # 16..17
+      - ContractMembers: # 18..37 "  fallback() {\n  }\n"
+          - ContractMember: # 18..37 "  fallback() {\n  }\n"
+              - FallbackFunctionDefinition: # 18..37 "  fallback() {\n  }\n"
+                  - FallbackKeyword: "fallback" # 20..28
+                  - ParametersDeclaration: # 28..30 "()"
+                      - OpenParen: "(" # 28..29
+                      - CloseParen: ")" # 29..30
+                  - FunctionBody: # 30..37 " {\n  }\n"
+                      - Block: # 30..37 " {\n  }\n"
+                          - OpenBrace: "{" # 31..32
+                          - CloseBrace: "}" # 35..36
+      - CloseBrace: "}" # 37..38

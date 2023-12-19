@@ -7,4 +7,4 @@ Errors: []
 
 Tree:
   - Expression: # 0..8 "supports"
-      - (variant) Identifier: "supports" # 0..8
+      - Identifier: "supports" # 0..8

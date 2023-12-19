@@ -7,4 +7,4 @@ Errors: []
 
 Tree:
   - Expression: # 0..7 "partial"
-      - (variant) Identifier: "partial" # 0..7
+      - Identifier: "partial" # 0..7

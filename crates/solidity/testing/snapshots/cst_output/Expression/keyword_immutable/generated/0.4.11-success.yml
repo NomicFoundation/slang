@@ -7,4 +7,4 @@ Errors: []
 
 Tree:
   - Expression: # 0..9 "immutable"
-      - (variant) Identifier: "immutable" # 0..9
+      - Identifier: "immutable" # 0..9

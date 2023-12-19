@@ -7,4 +7,4 @@ Errors: []
 
 Tree:
   - Expression: # 0..5 "szabo"
-      - (variant) Identifier: "szabo" # 0..5
+      - Identifier: "szabo" # 0..5

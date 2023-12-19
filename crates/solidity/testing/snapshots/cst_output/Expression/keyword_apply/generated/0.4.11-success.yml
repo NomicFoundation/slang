@@ -7,4 +7,4 @@ Errors: []
 
 Tree:
   - Expression: # 0..5 "apply"
-      - (variant) Identifier: "apply" # 0..5
+      - Identifier: "apply" # 0..5

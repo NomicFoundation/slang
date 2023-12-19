@@ -7,4 +7,4 @@ Errors: []
 
 Tree:
   - HexNumberExpression: # 0..7 "0x12345"
-      - (literal) HexLiteral: "0x12345" # 0..7
+      - HexLiteral: "0x12345" # 0..7

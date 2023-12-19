@@ -7,10 +7,10 @@ Errors: []
 
 Tree:
   - PragmaDirective: # 0..36 'pragma experimental "ABIEncoderV2";\n'
-      - (pragma_keyword) PragmaKeyword: "pragma" # 0..6
-      - (pragma) Pragma: # 6..34 ' experimental "ABIEncoderV2"'
-          - (variant) ExperimentalPragma: # 6..34 ' experimental "ABIEncoderV2"'
-              - (experimental_keyword) ExperimentalKeyword: "experimental" # 7..19
-              - (feature) ExperimentalFeature: # 19..34 ' "ABIEncoderV2"'
-                  - (variant) AsciiStringLiteral: '"ABIEncoderV2"' # 20..34
-      - (semicolon) Semicolon: ";" # 34..35
+      - PragmaKeyword: "pragma" # 0..6
+      - Pragma: # 6..34 ' experimental "ABIEncoderV2"'
+          - ExperimentalPragma: # 6..34 ' experimental "ABIEncoderV2"'
+              - ExperimentalKeyword: "experimental" # 7..19
+              - ExperimentalFeature: # 19..34 ' "ABIEncoderV2"'
+                  - AsciiStringLiteral: '"ABIEncoderV2"' # 20..34
+      - Semicolon: ";" # 34..35

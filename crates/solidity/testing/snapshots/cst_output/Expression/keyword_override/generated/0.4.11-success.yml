@@ -7,4 +7,4 @@ Errors: []
 
 Tree:
   - Expression: # 0..8 "override"
-      - (variant) Identifier: "override" # 0..8
+      - Identifier: "override" # 0..8

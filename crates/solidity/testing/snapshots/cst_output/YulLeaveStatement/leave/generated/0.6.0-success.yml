@@ -7,4 +7,4 @@ Errors: []
 
 Tree:
   - YulLeaveStatement: # 0..5 "leave"
-      - (leave_keyword) YulLeaveKeyword: "leave" # 0..5
+      - YulLeaveKeyword: "leave" # 0..5

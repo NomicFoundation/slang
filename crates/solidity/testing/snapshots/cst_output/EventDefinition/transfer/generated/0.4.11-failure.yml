@@ -15,17 +15,17 @@ Errors: # 1 total
 
 Tree:
   - EventDefinition: # 0..73 "event Transfer(address indexed from, address index..."
-      - (event_keyword) EventKeyword: "event" # 0..5
-      - (name) Identifier: "Transfer" # 6..14
-      - (parameters) EventParametersDeclaration: # 14..71 "(address indexed from, address indexed to, uint256..."
-          - (open_paren) OpenParen: "(" # 14..15
-          - (parameters) EventParameters: # 15..30 "address indexed"
-              - (item) EventParameter: # 15..30 "address indexed"
-                  - (type_name) TypeName: # 15..22 "address"
-                      - (variant) ElementaryType: # 15..22 "address"
-                          - (variant) AddressType: # 15..22 "address"
-                              - (address_keyword) AddressKeyword: "address" # 15..22
-                  - (indexed_keyword) IndexedKeyword: "indexed" # 23..30
+      - EventKeyword: "event" # 0..5
+      - Identifier: "Transfer" # 6..14
+      - EventParametersDeclaration: # 14..71 "(address indexed from, address indexed to, uint256..."
+          - OpenParen: "(" # 14..15
+          - EventParameters: # 15..30 "address indexed"
+              - EventParameter: # 15..30 "address indexed"
+                  - TypeName: # 15..22 "address"
+                      - ElementaryType: # 15..22 "address"
+                          - AddressType: # 15..22 "address"
+                              - AddressKeyword: "address" # 15..22
+                  - IndexedKeyword: "indexed" # 23..30
           - SKIPPED: "from, address indexed to, uint256 value" # 31..70
-          - (close_paren) CloseParen: ")" # 70..71
-      - (semicolon) Semicolon: ";" # 71..72
+          - CloseParen: ")" # 70..71
+      - Semicolon: ";" # 71..72

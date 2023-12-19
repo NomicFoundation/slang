@@ -7,5 +7,5 @@ Errors: []
 
 Tree:
   - TypeName: # 0..3 "int"
-      - (variant) ElementaryType: # 0..3 "int"
-          - (variant) IntKeyword: "int" # 0..3
+      - ElementaryType: # 0..3 "int"
+          - IntKeyword: "int" # 0..3

@@ -7,4 +7,4 @@ Errors: []
 
 Tree:
   - Expression: # 0..7 "typedef"
-      - (variant) Identifier: "typedef" # 0..7
+      - Identifier: "typedef" # 0..7

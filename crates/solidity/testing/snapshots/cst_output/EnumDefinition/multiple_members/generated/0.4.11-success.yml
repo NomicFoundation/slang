@@ -11,13 +11,13 @@ Errors: []
 
 Tree:
   - EnumDefinition: # 0..41 "enum Foo {\n    Bar1,\n    Bar2,\n    Bar3\n}"
-      - (enum_keyword) EnumKeyword: "enum" # 0..4
-      - (name) Identifier: "Foo" # 5..8
-      - (open_brace) OpenBrace: "{" # 9..10
-      - (members) EnumMembers: # 11..40 "    Bar1,\n    Bar2,\n    Bar3\n"
-          - (item) Identifier: "Bar1" # 15..19
-          - (separator) Comma: "," # 19..20
-          - (item) Identifier: "Bar2" # 25..29
-          - (separator) Comma: "," # 29..30
-          - (item) Identifier: "Bar3" # 35..39
-      - (close_brace) CloseBrace: "}" # 40..41
+      - EnumKeyword: "enum" # 0..4
+      - Identifier: "Foo" # 5..8
+      - OpenBrace: "{" # 9..10
+      - EnumMembers: # 11..40 "    Bar1,\n    Bar2,\n    Bar3\n"
+          - Identifier: "Bar1" # 15..19
+          - Comma: "," # 19..20
+          - Identifier: "Bar2" # 25..29
+          - Comma: "," # 29..30
+          - Identifier: "Bar3" # 35..39
+      - CloseBrace: "}" # 40..41

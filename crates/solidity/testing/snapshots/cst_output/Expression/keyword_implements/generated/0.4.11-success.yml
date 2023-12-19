@@ -7,4 +7,4 @@ Errors: []
 
 Tree:
   - Expression: # 0..10 "implements"
-      - (variant) Identifier: "implements" # 0..10
+      - Identifier: "implements" # 0..10

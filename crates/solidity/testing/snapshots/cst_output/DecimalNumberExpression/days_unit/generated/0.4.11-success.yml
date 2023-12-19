@@ -7,6 +7,6 @@ Errors: []
 
 Tree:
   - DecimalNumberExpression: # 0..7 "10 days"
-      - (literal) DecimalLiteral: "10" # 0..2
-      - (unit) NumberUnit: # 2..7 " days"
-          - (variant) DaysKeyword: "days" # 3..7
+      - DecimalLiteral: "10" # 0..2
+      - NumberUnit: # 2..7 " days"
+          - DaysKeyword: "days" # 3..7

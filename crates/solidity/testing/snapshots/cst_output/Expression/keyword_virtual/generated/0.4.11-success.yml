@@ -7,4 +7,4 @@ Errors: []
 
 Tree:
   - Expression: # 0..7 "virtual"
-      - (variant) Identifier: "virtual" # 0..7
+      - Identifier: "virtual" # 0..7

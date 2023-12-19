@@ -7,7 +7,7 @@ Errors: []
 
 Tree:
   - Expression: # 0..4 "-foo"
-      - (variant) PrefixExpression: # 0..4 "-foo"
-          - (operator) Minus: "-" # 0..1
-          - (operand) Expression: # 1..4 "foo"
-              - (variant) Identifier: "foo" # 1..4
+      - PrefixExpression: # 0..4 "-foo"
+          - Minus: "-" # 0..1
+          - Expression: # 1..4 "foo"
+              - Identifier: "foo" # 1..4

@@ -7,14 +7,14 @@ Errors: []
 
 Tree:
   - Expression: # 0..14 "arr[start:end]"
-      - (variant) IndexAccessExpression: # 0..14 "arr[start:end]"
-          - (operand) Expression: # 0..3 "arr"
-              - (variant) Identifier: "arr" # 0..3
-          - (open_bracket) OpenBracket: "[" # 3..4
-          - (start) Expression: # 4..9 "start"
-              - (variant) Identifier: "start" # 4..9
-          - (end) IndexAccessEnd: # 9..13 ":end"
-              - (colon) Colon: ":" # 9..10
-              - (end) Expression: # 10..13 "end"
-                  - (variant) Identifier: "end" # 10..13
-          - (close_bracket) CloseBracket: "]" # 13..14
+      - IndexAccessExpression: # 0..14 "arr[start:end]"
+          - Expression: # 0..3 "arr"
+              - Identifier: "arr" # 0..3
+          - OpenBracket: "[" # 3..4
+          - Expression: # 4..9 "start"
+              - Identifier: "start" # 4..9
+          - IndexAccessEnd: # 9..13 ":end"
+              - Colon: ":" # 9..10
+              - Expression: # 10..13 "end"
+                  - Identifier: "end" # 10..13
+          - CloseBracket: "]" # 13..14

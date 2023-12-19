@@ -7,4 +7,4 @@ Errors: []
 
 Tree:
   - Expression: # 0..7 "returna"
-      - (variant) Identifier: "returna" # 0..7
+      - Identifier: "returna" # 0..7

@@ -7,4 +7,4 @@ Errors: []
 
 Tree:
   - Expression: # 0..5 "alias"
-      - (variant) Identifier: "alias" # 0..5
+      - Identifier: "alias" # 0..5

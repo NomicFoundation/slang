@@ -7,4 +7,4 @@ Errors: []
 
 Tree:
   - Expression: # 0..7 "mutable"
-      - (variant) Identifier: "mutable" # 0..7
+      - Identifier: "mutable" # 0..7

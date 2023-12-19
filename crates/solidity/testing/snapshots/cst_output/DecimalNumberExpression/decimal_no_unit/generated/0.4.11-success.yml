@@ -7,4 +7,4 @@ Errors: []
 
 Tree:
   - DecimalNumberExpression: # 0..9 "123456789"
-      - (literal) DecimalLiteral: "123456789" # 0..9
+      - DecimalLiteral: "123456789" # 0..9

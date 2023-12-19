@@ -7,5 +7,5 @@ Errors: []
 
 Tree:
   - UsingDeconstructionSymbol: # 0..3 "foo"
-      - (name) IdentifierPath: # 0..3 "foo"
-          - (item) Identifier: "foo" # 0..3
+      - IdentifierPath: # 0..3 "foo"
+          - Identifier: "foo" # 0..3

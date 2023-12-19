@@ -15,20 +15,20 @@ Errors: # 1 total
 
 Tree:
   - UsingDirective: # 0..52 "using {add as +, sub, mul, div as /} for Int globa..."
-      - (using_keyword) UsingKeyword: "using" # 0..5
-      - (clause) UsingClause: # 5..36 " {add as +, sub, mul, div as /}"
-          - (variant) UsingDeconstruction: # 5..36 " {add as +, sub, mul, div as /}"
-              - (open_brace) OpenBrace: "{" # 6..7
-              - (symbols) UsingDeconstructionSymbols: # 7..10 "add"
-                  - (item) UsingDeconstructionSymbol: # 7..10 "add"
-                      - (name) IdentifierPath: # 7..10 "add"
-                          - (item) Identifier: "add" # 7..10
+      - UsingKeyword: "using" # 0..5
+      - UsingClause: # 5..36 " {add as +, sub, mul, div as /}"
+          - UsingDeconstruction: # 5..36 " {add as +, sub, mul, div as /}"
+              - OpenBrace: "{" # 6..7
+              - UsingDeconstructionSymbols: # 7..10 "add"
+                  - UsingDeconstructionSymbol: # 7..10 "add"
+                      - IdentifierPath: # 7..10 "add"
+                          - Identifier: "add" # 7..10
               - SKIPPED: "as +, sub, mul, div as /" # 11..35
-              - (close_brace) CloseBrace: "}" # 35..36
-      - (for_keyword) ForKeyword: "for" # 37..40
-      - (target) UsingTarget: # 40..44 " Int"
-          - (variant) TypeName: # 40..44 " Int"
-              - (variant) IdentifierPath: # 40..44 " Int"
-                  - (item) Identifier: "Int" # 41..44
-      - (global_keyword) GlobalKeyword: "global" # 45..51
-      - (semicolon) Semicolon: ";" # 51..52
+              - CloseBrace: "}" # 35..36
+      - ForKeyword: "for" # 37..40
+      - UsingTarget: # 40..44 " Int"
+          - TypeName: # 40..44 " Int"
+              - IdentifierPath: # 40..44 " Int"
+                  - Identifier: "Int" # 41..44
+      - GlobalKeyword: "global" # 45..51
+      - Semicolon: ";" # 51..52

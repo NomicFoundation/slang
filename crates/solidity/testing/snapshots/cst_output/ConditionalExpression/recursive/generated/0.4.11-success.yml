@@ -7,70 +7,70 @@ Errors: []
 
 Tree:
   - ConditionalExpression: # 0..63 "foo ? a == b ? a + b * c : a + b * c + d : !bar ? ..."
-      - (operand) Expression: # 0..3 "foo"
-          - (variant) Identifier: "foo" # 0..3
-      - (question_mark) QuestionMark: "?" # 4..5
-      - (true_expression) Expression: # 5..40 " a == b ? a + b * c : a + b * c + d"
-          - (variant) ConditionalExpression: # 5..40 " a == b ? a + b * c : a + b * c + d"
-              - (operand) Expression: # 5..12 " a == b"
-                  - (variant) EqualityExpression: # 5..12 " a == b"
-                      - (left_operand) Expression: # 5..7 " a"
-                          - (variant) Identifier: "a" # 6..7
-                      - (operator) EqualEqual: "==" # 8..10
-                      - (right_operand) Expression: # 10..12 " b"
-                          - (variant) Identifier: "b" # 11..12
-              - (question_mark) QuestionMark: "?" # 13..14
-              - (true_expression) Expression: # 14..24 " a + b * c"
-                  - (variant) AdditiveExpression: # 14..24 " a + b * c"
-                      - (left_operand) Expression: # 14..16 " a"
-                          - (variant) Identifier: "a" # 15..16
-                      - (operator) Plus: "+" # 17..18
-                      - (right_operand) Expression: # 18..24 " b * c"
-                          - (variant) MultiplicativeExpression: # 18..24 " b * c"
-                              - (left_operand) Expression: # 18..20 " b"
-                                  - (variant) Identifier: "b" # 19..20
-                              - (operator) Asterisk: "*" # 21..22
-                              - (right_operand) Expression: # 22..24 " c"
-                                  - (variant) Identifier: "c" # 23..24
-              - (colon) Colon: ":" # 25..26
-              - (false_expression) Expression: # 26..40 " a + b * c + d"
-                  - (variant) AdditiveExpression: # 26..40 " a + b * c + d"
-                      - (left_operand) Expression: # 26..36 " a + b * c"
-                          - (variant) AdditiveExpression: # 26..36 " a + b * c"
-                              - (left_operand) Expression: # 26..28 " a"
-                                  - (variant) Identifier: "a" # 27..28
-                              - (operator) Plus: "+" # 29..30
-                              - (right_operand) Expression: # 30..36 " b * c"
-                                  - (variant) MultiplicativeExpression: # 30..36 " b * c"
-                                      - (left_operand) Expression: # 30..32 " b"
-                                          - (variant) Identifier: "b" # 31..32
-                                      - (operator) Asterisk: "*" # 33..34
-                                      - (right_operand) Expression: # 34..36 " c"
-                                          - (variant) Identifier: "c" # 35..36
-                      - (operator) Plus: "+" # 37..38
-                      - (right_operand) Expression: # 38..40 " d"
-                          - (variant) Identifier: "d" # 39..40
-      - (colon) Colon: ":" # 41..42
-      - (false_expression) Expression: # 42..63 " !bar ? e + f : g + h"
-          - (variant) ConditionalExpression: # 42..63 " !bar ? e + f : g + h"
-              - (operand) Expression: # 42..47 " !bar"
-                  - (variant) PrefixExpression: # 42..47 " !bar"
-                      - (operator) Bang: "!" # 43..44
-                      - (operand) Expression: # 44..47 "bar"
-                          - (variant) Identifier: "bar" # 44..47
-              - (question_mark) QuestionMark: "?" # 48..49
-              - (true_expression) Expression: # 49..55 " e + f"
-                  - (variant) AdditiveExpression: # 49..55 " e + f"
-                      - (left_operand) Expression: # 49..51 " e"
-                          - (variant) Identifier: "e" # 50..51
-                      - (operator) Plus: "+" # 52..53
-                      - (right_operand) Expression: # 53..55 " f"
-                          - (variant) Identifier: "f" # 54..55
-              - (colon) Colon: ":" # 56..57
-              - (false_expression) Expression: # 57..63 " g + h"
-                  - (variant) AdditiveExpression: # 57..63 " g + h"
-                      - (left_operand) Expression: # 57..59 " g"
-                          - (variant) Identifier: "g" # 58..59
-                      - (operator) Plus: "+" # 60..61
-                      - (right_operand) Expression: # 61..63 " h"
-                          - (variant) Identifier: "h" # 62..63
+      - Expression: # 0..3 "foo"
+          - Identifier: "foo" # 0..3
+      - QuestionMark: "?" # 4..5
+      - Expression: # 5..40 " a == b ? a + b * c : a + b * c + d"
+          - ConditionalExpression: # 5..40 " a == b ? a + b * c : a + b * c + d"
+              - Expression: # 5..12 " a == b"
+                  - EqualityExpression: # 5..12 " a == b"
+                      - Expression: # 5..7 " a"
+                          - Identifier: "a" # 6..7
+                      - EqualEqual: "==" # 8..10
+                      - Expression: # 10..12 " b"
+                          - Identifier: "b" # 11..12
+              - QuestionMark: "?" # 13..14
+              - Expression: # 14..24 " a + b * c"
+                  - AdditiveExpression: # 14..24 " a + b * c"
+                      - Expression: # 14..16 " a"
+                          - Identifier: "a" # 15..16
+                      - Plus: "+" # 17..18
+                      - Expression: # 18..24 " b * c"
+                          - MultiplicativeExpression: # 18..24 " b * c"
+                              - Expression: # 18..20 " b"
+                                  - Identifier: "b" # 19..20
+                              - Asterisk: "*" # 21..22
+                              - Expression: # 22..24 " c"
+                                  - Identifier: "c" # 23..24
+              - Colon: ":" # 25..26
+              - Expression: # 26..40 " a + b * c + d"
+                  - AdditiveExpression: # 26..40 " a + b * c + d"
+                      - Expression: # 26..36 " a + b * c"
+                          - AdditiveExpression: # 26..36 " a + b * c"
+                              - Expression: # 26..28 " a"
+                                  - Identifier: "a" # 27..28
+                              - Plus: "+" # 29..30
+                              - Expression: # 30..36 " b * c"
+                                  - MultiplicativeExpression: # 30..36 " b * c"
+                                      - Expression: # 30..32 " b"
+                                          - Identifier: "b" # 31..32
+                                      - Asterisk: "*" # 33..34
+                                      - Expression: # 34..36 " c"
+                                          - Identifier: "c" # 35..36
+                      - Plus: "+" # 37..38
+                      - Expression: # 38..40 " d"
+                          - Identifier: "d" # 39..40
+      - Colon: ":" # 41..42
+      - Expression: # 42..63 " !bar ? e + f : g + h"
+          - ConditionalExpression: # 42..63 " !bar ? e + f : g + h"
+              - Expression: # 42..47 " !bar"
+                  - PrefixExpression: # 42..47 " !bar"
+                      - Bang: "!" # 43..44
+                      - Expression: # 44..47 "bar"
+                          - Identifier: "bar" # 44..47
+              - QuestionMark: "?" # 48..49
+              - Expression: # 49..55 " e + f"
+                  - AdditiveExpression: # 49..55 " e + f"
+                      - Expression: # 49..51 " e"
+                          - Identifier: "e" # 50..51
+                      - Plus: "+" # 52..53
+                      - Expression: # 53..55 " f"
+                          - Identifier: "f" # 54..55
+              - Colon: ":" # 56..57
+              - Expression: # 57..63 " g + h"
+                  - AdditiveExpression: # 57..63 " g + h"
+                      - Expression: # 57..59 " g"
+                          - Identifier: "g" # 58..59
+                      - Plus: "+" # 60..61
+                      - Expression: # 61..63 " h"
+                          - Identifier: "h" # 62..63

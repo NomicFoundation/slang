@@ -7,10 +7,10 @@ Errors: []
 
 Tree:
   - ConstructorDefinition: # 0..17 "constructor () {}"
-      - (constructor_keyword) ConstructorKeyword: "constructor" # 0..11
-      - (parameters) ParametersDeclaration: # 11..14 " ()"
-          - (open_paren) OpenParen: "(" # 12..13
-          - (close_paren) CloseParen: ")" # 13..14
-      - (body) Block: # 14..17 " {}"
-          - (open_brace) OpenBrace: "{" # 15..16
-          - (close_brace) CloseBrace: "}" # 16..17
+      - ConstructorKeyword: "constructor" # 0..11
+      - ParametersDeclaration: # 11..14 " ()"
+          - OpenParen: "(" # 12..13
+          - CloseParen: ")" # 13..14
+      - Block: # 14..17 " {}"
+          - OpenBrace: "{" # 15..16
+          - CloseBrace: "}" # 16..17

@@ -7,4 +7,4 @@ Errors: []
 
 Tree:
   - Expression: # 0..6 "sealed"
-      - (variant) Identifier: "sealed" # 0..6
+      - Identifier: "sealed" # 0..6
