@@ -9,7 +9,7 @@ A file has to be parsed according to a specific Solidity [version](../../../soli
 Start by adding the Slang package as a dependency to your project:
 
 ```bash
-$ npm install "@nomicfoundation/slang"
+npm install "@nomicfoundation/slang"
 ```
 
 Using the API directly provides us with a more fine-grained control over the parsing process; we can parse individual rules like contracts, various definitions or even expressions.

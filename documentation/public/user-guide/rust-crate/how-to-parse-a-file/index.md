@@ -10,7 +10,7 @@ After installing our CLI, you should now have `slang_solidity` in your $PATH. By
 
 Usage:
 
-```
+```bash
 slang_solidity parse [--json] --version <VERSION> <FILE_PATH>
 ```
 
@@ -75,8 +75,8 @@ This command parses the Solidity file and outputs the resulting CST in JSON form
 Next, let's inspect the tokens in the JSON output:
 
 ```bash
-$ JQ_QUERY='recurse | select(.Token?) | .Token'
-$ cat output.json | jq "$JQ_QUERY"
+JQ_QUERY='recurse | select(.Token?) | .Token'
+cat output.json | jq "$JQ_QUERY"
 ```
 
 This gives us a flat list of the Token nodes:
@@ -181,7 +181,7 @@ $ slang_solidity parse --json --version "$VERSION" file.sol | jq "$JQ_QUERY"
 The Rust package is a regular crate published to crates.io, so we can add it to a project as a dependency with:
 
 ```bash
-$ cargo add slang_solidity
+cargo add slang_solidity
 ```
 
 Using the API directly provides us with a more fine-grained control over the parsing process. We're not limited to parsing the input as a top-level source unit but we can parse individual rules like contracts, various definitions or even expressions.
