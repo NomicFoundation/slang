@@ -54,8 +54,7 @@ Since the the parse tree is simply a structured view of the underlying source co
 
 We'll start with a bare-bones file:
 
-```solidity
-// file: file.sol
+```solidity title="file.sol"
 pragma solidity ^0.8.0;
 ```
 
@@ -156,7 +155,7 @@ To do that, we need to:
 Given this file:
 
 ```solidity
-// file: file.sol
+// file: title="file.sol"
 contract Foo {}
 contract Bar {}
 contract Baz {}
@@ -228,8 +227,7 @@ Let's try the same example, but this time we'll use the API directly.
 
 We'll start with this file:
 
-```solidity
-// file: file.sol
+```solidity title="file.sol"
 pragma solidity ^0.8.0;
 ```
 

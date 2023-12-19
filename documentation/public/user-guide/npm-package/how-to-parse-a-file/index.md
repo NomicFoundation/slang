@@ -40,20 +40,16 @@ Let's try the same example, only now using the API directly.
 
 We'll start with this file:
 
-```solidity
-// file: file.sol
-pragma solidity ^0.8.0;
+```solidity title="reconstruct-source.sol"
+--8<-- "crates/solidity/outputs/npm/tests/src/doc-examples/reconstruct-source.sol"
 ```
 
 #### Step 1: Parse the Solidity file
 
 Let's naively (ignore the errors) read the file and parse it:
 
-```ts
-import { fs } from "node:fs";
-const data = fs.readFileSync("file.sol", "utf8");
-
-let parseTree = language.parse(RuleKind.SourceUnit, data);
+```{ .ts }
+--8<-- "crates/solidity/outputs/npm/tests/src/doc-examples/reconstruct-source.ts:step-1"
 ```
 
 #### Step 2: Reconstruct the source code
@@ -62,19 +58,9 @@ The `Cursor` visits the tree nodes in a depth-first search (DFS) fashion. Since 
 
 Let's do that:
 
-```ts
-import { TokenNode } from "@nomicfoundation/slang/cst";
-
-let output = "";
-while (cursor.goToNext()) {
-    let node = cursor.node();
-    if (node instanceof TokenNode) {
-        output += node.text;
-    }
-}
-
-// Jest-style assertion for clarity
-expect(output).toEqual("pragma solidity ^0.8.0\n");
+```{ .ts }
+--8<-- "crates/solidity/outputs/npm/tests/src/doc-examples/reconstruct-source.ts:step-2"
+--8<-- "crates/solidity/outputs/npm/tests/src/doc-examples/reconstruct-source.ts:step-2-assertion"
 ```
 
 ### Example 2: List the top-level contracts and their names
