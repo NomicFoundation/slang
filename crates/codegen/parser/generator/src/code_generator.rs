@@ -173,11 +173,15 @@ impl CodeGenerator {
 
 impl GrammarVisitor for CodeGenerator {
     fn grammar_leave(&mut self, _grammar: &Grammar) {
+        // Expose the scanner functions that...
         self.scanner_functions = self
             .all_scanners
             .iter()
             .filter(|(name, scanner)| {
-                !self.top_level_scanner_names.contains(*name) || scanner.literals().is_empty()
+                // are compound (does not consist of only literals)
+                scanner.literals().is_empty() ||
+                // but make sure to also include a scanner that is referenced by other scanners, even if not compound
+                !self.top_level_scanner_names.contains(*name)
             })
             .map(|(name, scanner)| (*name, scanner.to_scanner_code().to_string()))
             .collect();
@@ -208,6 +212,7 @@ impl GrammarVisitor for CodeGenerator {
                     }
                 }
             }
+
             context.alpha_literal_scanner = alpha_literal_trie.to_scanner_code().to_string();
             context.non_alpha_literal_scanner =
                 non_alpha_literal_trie.to_scanner_code().to_string();
