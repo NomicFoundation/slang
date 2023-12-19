@@ -24,6 +24,14 @@ impl NamedNode {
     }
 }
 
+impl std::ops::Deref for NamedNode {
+    type Target = Node;
+
+    fn deref(&self) -> &Self::Target {
+        &self.node
+    }
+}
+
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
 pub struct RuleNode {
     pub kind: RuleKind,
@@ -46,7 +54,7 @@ pub enum Node {
 
 impl Node {
     pub fn rule(kind: RuleKind, children: Vec<NamedNode>) -> Self {
-        let text_len = children.iter().map(|named| named.node.text_len()).sum();
+        let text_len = children.iter().map(|node| node.text_len()).sum();
 
         Self::Rule(Rc::new(RuleNode {
             kind,

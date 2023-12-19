@@ -132,8 +132,8 @@ impl SequenceHelper {
                     }
 
                     let tokens: Vec<_> =
-                        next.nodes.iter().filter_map(|named| named.node.as_token()).collect();
-                    let mut rules = next.nodes.iter().filter_map(|named| named.node.as_rule());
+                        next.nodes.iter().filter_map(|node| node.as_token()).collect();
+                    let mut rules = next.nodes.iter().filter_map(|node| node.as_rule());
 
                     let is_single_token_with_trivia =
                         tokens.len() == 1 && rules.all(|rule| rule.kind.is_trivia());

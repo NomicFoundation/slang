@@ -293,7 +293,7 @@ impl GrammarVisitor for CodeGenerator {
             }
             // Collect delimiters for each context
             ParserDefinitionNode::DelimitedBy(open, _, close) => {
-                let (open, close) = match (open.node.as_ref(), close.node.as_ref()) {
+                let (open, close) = match (open.as_ref(), close.as_ref()) {
                     (
                         ParserDefinitionNode::ScannerDefinition(open, ..),
                         ParserDefinitionNode::ScannerDefinition(close, ..),

@@ -11,6 +11,14 @@ pub struct Named<T> {
     pub node: T,
 }
 
+impl<T> std::ops::Deref for Named<T> {
+    type Target = T;
+
+    fn deref(&self) -> &Self::Target {
+        &self.node
+    }
+}
+
 pub trait ParserDefinition: Debug {
     fn name(&self) -> &'static str;
     fn node(&self) -> &ParserDefinitionNode;
@@ -93,7 +101,7 @@ impl Visitable for ParserDefinitionNode {
             | Self::OneOrMore(Named { node, .. }) => node.accept_visitor(visitor),
 
             Self::Sequence(nodes) => {
-                for Named { node, .. } in nodes {
+                for node in nodes {
                     node.accept_visitor(visitor);
                 }
             }
@@ -104,19 +112,19 @@ impl Visitable for ParserDefinitionNode {
             }
 
             Self::DelimitedBy(open, body, close) => {
-                open.node.accept_visitor(visitor);
+                open.accept_visitor(visitor);
                 body.accept_visitor(visitor);
-                close.node.accept_visitor(visitor);
+                close.accept_visitor(visitor);
             }
 
             Self::SeparatedBy(body, separator) => {
-                body.node.accept_visitor(visitor);
-                separator.node.accept_visitor(visitor);
+                body.accept_visitor(visitor);
+                separator.accept_visitor(visitor);
             }
 
             Self::TerminatedBy(body, terminator) => {
                 body.accept_visitor(visitor);
-                terminator.node.accept_visitor(visitor);
+                terminator.accept_visitor(visitor);
             }
 
             Self::ScannerDefinition(_)

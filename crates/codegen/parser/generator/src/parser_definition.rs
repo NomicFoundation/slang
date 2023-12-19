@@ -170,7 +170,7 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
             Self::DelimitedBy(open, body, close) => {
                 let open_field_name = &open.name;
                 let close_field_name = &close.name;
-                let [open_delim, close_delim] = match (open.node.as_ref(), close.node.as_ref()) {
+                let [open_delim, close_delim] = match (open.as_ref(), close.as_ref()) {
                     (
                         ParserDefinitionNode::ScannerDefinition(open, ..),
                         ParserDefinitionNode::ScannerDefinition(close, ..),
@@ -207,7 +207,7 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
 
             Self::SeparatedBy(body, separator) => {
                 let separator_field_name = &separator.name;
-                let separator = match separator.node.as_ref() {
+                let separator = match separator.as_ref() {
                     ParserDefinitionNode::ScannerDefinition(scanner, ..) => {
                         format_ident!("{name}", name = scanner.name())
                     }
@@ -215,7 +215,7 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
                 };
 
                 let body_field_name = &body.name;
-                let parser = body.node.to_parser_code(context_name, is_trivia);
+                let parser = body.to_parser_code(context_name, is_trivia);
 
                 quote! {
                     SeparatedHelper::run::<_, #lex_ctx>(
@@ -230,7 +230,7 @@ impl ParserDefinitionNodeExtensions for ParserDefinitionNode {
             Self::TerminatedBy(body, terminator) => {
                 let terminator_field_name = &terminator.name;
 
-                let terminator = match terminator.node.as_ref() {
+                let terminator = match terminator.as_ref() {
                     ParserDefinitionNode::ScannerDefinition(scanner, ..) => {
                         format_ident!("{name}", name = scanner.name())
                     }
