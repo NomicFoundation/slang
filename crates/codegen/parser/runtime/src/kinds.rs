@@ -57,6 +57,7 @@ impl RuleKind {
 #[cfg_attr(not(feature = "slang_napi_interfaces"), derive(Clone, Copy))]
 pub enum FieldName {
     // Built-in fields
+    // _SLANG_INTERNAL_RESERVED_NODE_FIELD_NAMES_ (keep in sync)
     Item,
     Variant,
     Separator,

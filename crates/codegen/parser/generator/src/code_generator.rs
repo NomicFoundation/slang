@@ -206,6 +206,7 @@ impl GrammarVisitor for CodeGenerator {
         // Make sure empty strings are not there
         self.field_names.remove("");
         // These are built-in and already pre-defined
+        // _SLANG_INTERNAL_RESERVED_NODE_FIELD_NAMES_ (keep in sync)
         self.field_names.remove("item");
         self.field_names.remove("variant");
         self.field_names.remove("separator");
