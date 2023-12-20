@@ -1,7 +1,7 @@
 use std::collections::BTreeMap;
 use std::fmt::Debug;
 
-use codegen_grammar::{ScannerDefinitionNode, ScannerDefinitionRef};
+use codegen_grammar::{ScannerDefinitionNode, ScannerDefinitionRef, VersionQualityRange};
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
 
@@ -63,23 +63,17 @@ impl Trie {
             if branches.is_empty() && !path.is_empty() {
                 // This is an optimisation for a common case
                 let leaf = quote! { scan_chars!(input, #(#path),*).then_some(TokenKind::#kind) };
-                return if let ScannerDefinitionNode::Versioned(_, version_quality_ranges) =
-                    scanner_definition_ref.node()
-                {
-                    version_quality_ranges.wrap_code(leaf, Some(quote! { None }))
-                } else {
-                    leaf
-                };
+
+                return scanner_definition_ref
+                    .node()
+                    .applicable_version_quality_ranges()
+                    .wrap_code(leaf, Some(quote! { None }));
             }
 
-            if let ScannerDefinitionNode::Versioned(_, version_quality_ranges) =
-                scanner_definition_ref.node()
-            {
-                version_quality_ranges
-                    .wrap_code(quote! { Some(TokenKind::#kind) }, Some(quote! { None }))
-            } else {
-                quote! { Some(TokenKind::#kind) }
-            }
+            scanner_definition_ref
+                .node()
+                .applicable_version_quality_ranges()
+                .wrap_code(quote! { Some(TokenKind::#kind) }, Some(quote! { None }))
         } else {
             quote! { None }
         };
@@ -106,6 +100,26 @@ impl Trie {
                     None
                 }
             }
+        }
+    }
+}
+
+trait VersionWrapped {
+    fn applicable_version_quality_ranges(&self) -> Vec<VersionQualityRange>;
+}
+
+impl VersionWrapped for ScannerDefinitionNode {
+    fn applicable_version_quality_ranges(&self) -> Vec<VersionQualityRange> {
+        match self {
+            ScannerDefinitionNode::Versioned(_, version_quality_ranges) => {
+                version_quality_ranges.clone()
+            }
+
+            ScannerDefinitionNode::Optional(node)
+            | ScannerDefinitionNode::ZeroOrMore(node)
+            | ScannerDefinitionNode::OneOrMore(node) => node.applicable_version_quality_ranges(),
+
+            _ => vec![],
         }
     }
 }
