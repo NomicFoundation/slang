@@ -1,7 +1,7 @@
 use anyhow::Result;
 use cargo_emit::rerun_if_changed;
 use codegen_grammar::Grammar;
-use codegen_parser_generator::code_generator::CodeGenerator;
+use codegen_parser_generator::{AstTypes, CodeGenerator};
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::paths::PathExtensions;
 use solidity_language::{GrammarConstructorDslV2, SolidityDefinition};
@@ -17,12 +17,15 @@ use solidity_language::{GrammarConstructorDslV2, SolidityDefinition};
 fn main() -> Result<()> {
     // Generate files in the source crate:
     {
-        let lang_def = SolidityDefinition::create();
-        let grammar = Grammar::from_dsl_v2(&lang_def);
+        let language = SolidityDefinition::create();
+        let grammar = Grammar::from_dsl_v2(&language);
+        let ast_types = AstTypes::create(&language);
 
-        let crate_dir = CargoWorkspace::locate_source_crate("slang_solidity")?;
-
-        CodeGenerator::write_source(&crate_dir.join("src/generated"), &grammar)?;
+        CodeGenerator::write_backend(
+            &grammar,
+            &ast_types,
+            &CargoWorkspace::locate_source_crate("slang_solidity")?.join("src/generated"),
+        )?;
     }
 
     // This build script is not directly depended on by the caller source crate, so we need to manually

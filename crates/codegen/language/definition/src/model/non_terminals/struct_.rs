@@ -5,7 +5,7 @@ use serde::{Deserialize, Serialize};
 use crate::model::{Field, FieldsErrorRecovery, Identifier, VersionSpecifier};
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
-#[derive_spanned_type(ParseInputTokens, WriteOutputTokens)]
+#[derive_spanned_type(Clone, Debug, ParseInputTokens, WriteOutputTokens)]
 pub struct StructItem {
     pub name: Identifier,
 

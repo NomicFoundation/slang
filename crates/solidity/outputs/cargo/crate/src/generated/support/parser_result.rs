@@ -149,7 +149,7 @@ impl Match {
         self.nodes
             .iter()
             .flat_map(|node| node.cursor_with_offset(TextIndex::ZERO))
-            .all(|node| node.as_token_with_kind(&[TokenKind::SKIPPED]).is_none())
+            .all(|node| node.as_token_with_kind(TokenKind::SKIPPED).is_none())
     }
 }
 

@@ -15,10 +15,10 @@ pub enum NodeType {
 }
 
 #[napi(namespace = "cst")]
-pub struct RuleNode(Rc<RustRuleNode>);
+pub struct RuleNode(pub(crate) Rc<RustRuleNode>);
 
 #[napi(namespace = "cst")]
-pub struct TokenNode(Rc<RustTokenNode>);
+pub struct TokenNode(pub(crate) Rc<RustTokenNode>);
 
 #[napi(namespace = "cst")]
 impl RuleNode {

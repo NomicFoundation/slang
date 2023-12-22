@@ -1,19 +1,19 @@
-import { NodeType, RuleNode, TokenNode, Node } from "@nomicfoundation/slang/cst";
+import { NodeType, RuleNode, TokenNode } from "@nomicfoundation/slang/cst";
 import { RuleKind, TokenKind } from "@nomicfoundation/slang/kinds";
 
-export function expectRule(node: Node, kind: RuleKind): asserts node is RuleNode {
+export function expectRule(node: unknown, kind: RuleKind): asserts node is RuleNode {
   expect(node).toBeInstanceOf(RuleNode);
-  expect(node.type).toEqual(NodeType.Rule);
 
-  const rule = node as TokenNode;
+  const rule = node as RuleNode;
+  expect(rule.type).toEqual(NodeType.Rule);
   expect(rule.kind).toEqual(kind);
 }
 
-export function expectToken(node: Node, kind: TokenKind, text: string): asserts node is TokenNode {
+export function expectToken(node: unknown, kind: TokenKind, text: string): asserts node is TokenNode {
   expect(node).toBeInstanceOf(TokenNode);
-  expect(node.type).toEqual(NodeType.Token);
 
   const token = node as TokenNode;
+  expect(token.type).toEqual(NodeType.Token);
   expect(token.kind).toEqual(kind);
   expect(token.text).toEqual(text);
 }

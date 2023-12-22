@@ -1,0 +1,137 @@
+import { ast_internal } from "../../generated";
+import { RuleNode, TokenNode } from "../../cst";
+import { RuleKind, TokenKind } from "../../kinds";
+
+function once<T>(factory: () => T): () => T {
+  let value: T | null = null;
+  return () => {
+    if (value === null) {
+      value = factory();
+    }
+    return value;
+  };
+}
+
+{% for sequence in ast_types.sequences %}
+  export class {{ sequence.name }} {
+    private readonly fields = once(() => ast_internal.pickSequence(this.cst, RuleKind.{{ sequence.name }}));
+
+    public constructor(public readonly cst: RuleNode) {}
+
+    {% for field in sequence.fields %}
+      public readonly {{ field.name | camel_case }}
+        : () =>
+          {%- if field.is_terminal -%}
+            TokenNode
+          {%- else -%}
+            {{ field.reference }}
+          {%- endif -%}
+          {%- if field.is_optional -%}
+            | null
+          {%- endif -%}
+        = once(() => {
+          const field = this.fields()[{{ loop.index0 }}];
+
+          {%- if field.is_optional -%}
+            {%- if field.is_terminal -%}
+              return field as TokenNode | null;
+            {%- else -%}
+              return field ? new {{ field.reference }}(field as RuleNode) : null;
+            {%- endif -%}
+          {%- else -%}
+            {%- if field.is_terminal -%}
+              return field as TokenNode;
+            {%- else -%}
+              return new {{ field.reference }}(field as RuleNode);
+            {%- endif -%}
+          {%- endif -%}
+        });
+    {% endfor %}
+  }
+{% endfor %}
+
+{% for choice in ast_types.choices %}
+  export class {{ choice.name }} {
+    public constructor(public readonly cst: RuleNode) {}
+
+    public readonly variant
+      : () =>
+        {%- set types = choice.non_terminals -%}
+        {%- if choice.terminals | length > 0 -%}
+          {%- set types = types | concat(with = "TokenNode") -%}
+        {%- endif -%}
+        {{ types | join(sep = " | ") }}
+      = once(() => {
+        const child = ast_internal.pickChoice(this.cst, RuleKind.{{ choice.name }});
+
+        switch (child.kind) {
+          {%- for non_terminal in choice.non_terminals %}
+            case RuleKind.{{ non_terminal }}:
+              return new {{ non_terminal }}(child as RuleNode);
+          {%- endfor %}
+
+          {% if choice.terminals | length > 0 %}
+            {%- for terminal in choice.terminals %}
+              case TokenKind.{{ terminal }}:
+            {%- endfor %}
+              return child as TokenNode;
+          {%- endif %}
+
+          default:
+            throw new Error(`Impossible: unrecognized child kind: ${child.kind}`);
+        }
+      });
+  }
+{% endfor %}
+
+{% for repeated in ast_types.repeated %}
+  export class {{ repeated.name }} {
+    public constructor(public readonly cst: RuleNode) {}
+
+    public readonly items
+      : () =>
+        {%- if repeated.is_terminal -%}
+          TokenNode[]
+        {%- else -%}
+          {{ repeated.reference }}[]
+        {%- endif -%}
+      = once(() => {
+        const items = ast_internal.pickRepeated(this.cst, RuleKind.{{ repeated.name }});
+
+        {%- if repeated.is_terminal -%}
+          return items as TokenNode[];
+        {%- else -%}
+          return items.map((item) => new {{ repeated.reference }}(item as RuleNode));
+        {%- endif -%}
+      });
+  }
+{% endfor %}
+
+{% for separated in ast_types.separated %}
+  export class {{ separated.name }} {
+    private readonly items_with_separators = once(() => ast_internal.pickSeparated(this.cst, RuleKind.{{ separated.name }}));
+
+    public constructor(public readonly cst: RuleNode) {}
+
+    public readonly items
+      : () =>
+        {%- if separated.is_terminal -%}
+          TokenNode[]
+        {%- else -%}
+          {{ separated.reference }}[]
+        {%- endif -%}
+      = once(() => {
+        {%- if separated.is_terminal -%}
+          return this.items_with_separators()[0] as TokenNode[];
+        {%- else -%}
+          return this.items_with_separators()[0].map((item) => new {{ separated.reference }}(item as RuleNode));
+        {%- endif -%}
+      });
+
+    public readonly separators
+      : () => TokenNode[]
+      = once(() => {
+        return this.items_with_separators()[1] as TokenNode[];
+      });
+  }
+{% endfor %}

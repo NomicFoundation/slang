@@ -1,0 +1,233 @@
+#![allow(clippy::too_many_lines)]
+
+use napi::bindgen_prelude::Env;
+use napi::JsObject;
+use napi_derive::napi;
+
+use crate::napi::napi_ast_helpers::Helper;
+use crate::napi::napi_cst::RuleNode;
+use crate::napi::{RuleKind, TokenKind};
+
+{#
+ #
+ # Sequences:
+ #
+ #}
+
+#[napi(
+    namespace = "ast_internal",
+    ts_return_type = "Array<cst.Node | null>",
+    catch_unwind,
+)]
+pub fn pick_sequence(
+    #[napi(ts_arg_type = "cst.RuleNode")] node: &RuleNode,
+    #[napi(ts_arg_type = "kinds.RuleKind")] kind: RuleKind,
+    env: Env,
+) -> Vec<Option<JsObject>> {
+    let mut helper = Helper::new(node, kind, env);
+
+    match kind {
+        {%- for sequence in ast_types.sequences -%}
+            RuleKind::{{ sequence.name }} => {
+                pick_{{ sequence.name | snake_case }}(&mut helper)
+            },
+        {%- endfor -%}
+        _ => {
+            unreachable!("Unknown sequence: '{kind:?}'.");
+        }
+    }
+}
+
+{% for sequence in ast_types.sequences %}
+    fn pick_{{ sequence.name | snake_case }}(helper: &mut Helper) -> Vec<Option<JsObject>> {
+        vec![
+            {%- for field in sequence.fields -%}
+                {%- if field.is_optional -%}
+
+                    helper.try_pick(|node| {
+                        {%- if field.is_terminal -%}
+                            node.is_token_with_kind(TokenKind::{{ field.reference }})
+                        {%- else -%}
+                            node.is_rule_with_kind(RuleKind::{{ field.reference }})
+                        {%- endif -%}
+                    }),
+
+                {%- else -%}
+
+                    Some(helper.pick(|node| {
+                        {%- if field.is_terminal -%}
+                            node.is_token_with_kind(TokenKind::{{ field.reference }})
+                        {%- else -%}
+                            node.is_rule_with_kind(RuleKind::{{ field.reference }})
+                        {%- endif -%}
+                    })),
+
+                {%- endif -%}
+            {%- endfor -%}
+        ]
+    }
+{% endfor %}
+
+{#
+ #
+ # Choices:
+ #
+ #}
+
+#[napi(
+    namespace = "ast_internal",
+    ts_return_type = "cst.Node",
+    catch_unwind,
+)]
+pub fn pick_choice(
+    #[napi(ts_arg_type = "cst.RuleNode")] node: &RuleNode,
+    #[napi(ts_arg_type = "kinds.RuleKind")] kind: RuleKind,
+    env: Env,
+) -> JsObject {
+    let mut helper = Helper::new(node, kind, env);
+
+    match kind {
+        {%- for choice in ast_types.choices -%}
+            RuleKind::{{ choice.name }} => {
+                pick_{{ choice.name | snake_case }}(&mut helper)
+            },
+        {%- endfor -%}
+        _ => {
+            unreachable!("Unknown choice: '{kind:?}'.");
+        }
+    }
+}
+
+{% for choice in ast_types.choices %}
+    fn pick_{{ choice.name | snake_case }}(helper: &mut Helper) -> JsObject {
+        helper.pick(|node| {
+            {%- set non_terminals_len = choice.non_terminals | length -%}
+            {%- set terminals_len = choice.terminals | length -%}
+
+            {%- if non_terminals_len == 1 -%}
+                node.is_rule_with_kind(RuleKind::{{ choice.non_terminals[0] }})
+            {%- elif non_terminals_len > 1 -%}
+                node.is_rule_with_kinds(&[
+                    {%- for non_terminal in choice.non_terminals -%}
+                        RuleKind::{{ non_terminal }},
+                    {%- endfor -%}
+                ])
+            {%- endif -%}
+
+            {%- if non_terminals_len > 0 and terminals_len > 0 -%}
+                ||
+            {%- endif -%}
+
+            {%- if terminals_len == 1 -%}
+                node.is_token_with_kind(TokenKind::{{ choice.terminals[0] }})
+            {%- elif terminals_len > 1 -%}
+                node.is_token_with_kinds(&[
+                    {%- for terminal in choice.terminals -%}
+                        TokenKind::{{ terminal }},
+                    {%- endfor -%}
+                ])
+            {%- endif -%}
+        })
+    }
+{% endfor %}
+
+{#
+ #
+ # Repeated:
+ #
+ #}
+
+#[napi(
+    namespace = "ast_internal",
+    ts_return_type = "Array<cst.Node>",
+    catch_unwind,
+)]
+pub fn pick_repeated(
+    #[napi(ts_arg_type = "cst.RuleNode")] node: &RuleNode,
+    #[napi(ts_arg_type = "kinds.RuleKind")] kind: RuleKind,
+    env: Env,
+) -> Vec<JsObject> {
+    let mut helper = Helper::new(node, kind, env);
+
+    match kind {
+        {%- for repeated in ast_types.repeated -%}
+            RuleKind::{{ repeated.name }} => {
+                pick_{{ repeated.name | snake_case }}(&mut helper)
+            },
+        {%- endfor -%}
+        _ => {
+            unreachable!("Unknown repeated: '{kind:?}'.");
+        }
+    }
+}
+
+{% for repeated in ast_types.repeated %}
+    fn pick_{{ repeated.name | snake_case }}(helper: &mut Helper) -> Vec<JsObject> {
+        std::iter::from_fn(|| helper.try_pick(|node| {
+            {%- if repeated.is_terminal -%}
+                node.is_token_with_kind(TokenKind::{{ repeated.reference }})
+            {%- else -%}
+                node.is_rule_with_kind(RuleKind::{{ repeated.reference }})
+            {%- endif -%}
+        })).collect()
+    }
+{% endfor %}
+
+{#
+ #
+ # Separated:
+ #
+ #}
+
+#[napi(
+    namespace = "ast_internal",
+    ts_return_type = "[Array<cst.Node>, Array<cst.Node>]",
+    catch_unwind,
+)]
+pub fn pick_separated(
+    #[napi(ts_arg_type = "cst.RuleNode")] node: &RuleNode,
+    #[napi(ts_arg_type = "kinds.RuleKind")] kind: RuleKind,
+    env: Env,
+) -> Vec<Vec<JsObject>> {
+    let mut helper = Helper::new(node, kind, env);
+
+    match kind {
+        {%- for separated in ast_types.separated -%}
+            RuleKind::{{ separated.name }} => {
+                pick_{{ separated.name | snake_case }}(&mut helper)
+            },
+        {%- endfor -%}
+        _ => {
+            unreachable!("Unknown separated: '{kind:?}'.");
+        }
+    }
+}
+
+{% for separated in ast_types.separated %}
+    fn pick_{{ separated.name | snake_case }}(helper: &mut Helper) -> Vec<Vec<JsObject>> {
+        let mut separated = vec![];
+        let mut separators = vec![];
+
+        separated.push(helper.pick(|node| {
+            {%- if separated.is_terminal -%}
+                node.is_token_with_kind(TokenKind::{{ separated.reference }})
+            {%- else -%}
+                node.is_rule_with_kind(RuleKind::{{ separated.reference }})
+            {%- endif -%}
+        }));
+
+        while let Some(separator) = helper.try_pick(|node| node.is_token_with_kind(TokenKind::{{ separated.separator }})) {
+            separators.push(separator);
+
+            separated.push(helper.pick(|node| {
+                {%- if separated.is_terminal -%}
+                    node.is_token_with_kind(TokenKind::{{ separated.reference }})
+                {%- else -%}
+                    node.is_rule_with_kind(RuleKind::{{ separated.reference }})
+                {%- endif -%}
+            }));
+        }
+
+        vec![separated, separators]
+    }
+{% endfor %}

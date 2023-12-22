@@ -5,7 +5,7 @@ use serde::{Deserialize, Serialize};
 use crate::model::{Identifier, VersionSpecifier};
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
-#[derive_spanned_type(ParseInputTokens, WriteOutputTokens)]
+#[derive_spanned_type(Clone, Debug, ParseInputTokens, WriteOutputTokens)]
 pub struct KeywordItem {
     pub name: Identifier,
     pub identifier: Identifier,
@@ -14,7 +14,7 @@ pub struct KeywordItem {
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
-#[derive_spanned_type(ParseInputTokens, WriteOutputTokens)]
+#[derive_spanned_type(Clone, Debug, ParseInputTokens, WriteOutputTokens)]
 pub struct KeywordDefinition {
     pub enabled: Option<VersionSpecifier>,
     pub reserved: Option<VersionSpecifier>,
@@ -23,7 +23,7 @@ pub struct KeywordDefinition {
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
-#[derive_spanned_type(ParseInputTokens, WriteOutputTokens)]
+#[derive_spanned_type(Clone, Debug, ParseInputTokens, WriteOutputTokens)]
 pub enum KeywordValue {
     Sequence { values: Vec<KeywordValue> },
     Optional { value: Box<KeywordValue> },

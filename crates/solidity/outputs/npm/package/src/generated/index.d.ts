@@ -523,6 +523,12 @@ export namespace language {
     parse(kind: kinds.RuleKind, input: string): parse_output.ParseOutput;
   }
 }
+export namespace ast_internal {
+  export function pickSequence(node: cst.RuleNode, kind: kinds.RuleKind): Array<cst.Node | null>;
+  export function pickChoice(node: cst.RuleNode, kind: kinds.RuleKind): cst.Node;
+  export function pickRepeated(node: cst.RuleNode, kind: kinds.RuleKind): Array<cst.Node>;
+  export function pickSeparated(node: cst.RuleNode, kind: kinds.RuleKind): [Array<cst.Node>, Array<cst.Node>];
+}
 export namespace cst {
   export enum NodeType {
     Rule = 0,
@@ -565,8 +571,10 @@ export namespace cursor {
     goToNextSibling(): boolean;
     goToPreviousSibling(): boolean;
     goToNextToken(): boolean;
+    goToNextTokenWithKind(kind: kinds.TokenKind): boolean;
     goToNextTokenWithKinds(kinds: Array<kinds.TokenKind>): boolean;
     goToNextRule(): boolean;
+    goToNextRuleWithKind(kind: kinds.RuleKind): boolean;
     goToNextRuleWithKinds(kinds: Array<kinds.RuleKind>): boolean;
   }
 }
