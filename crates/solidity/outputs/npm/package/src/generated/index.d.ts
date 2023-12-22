@@ -524,10 +524,10 @@ export namespace language {
   }
 }
 export namespace ast_internal {
-  export function pickSequence(node: cst.RuleNode, kind: kinds.RuleKind): Array<cst.Node | null>;
-  export function pickChoice(node: cst.RuleNode, kind: kinds.RuleKind): cst.Node;
-  export function pickRepeated(node: cst.RuleNode, kind: kinds.RuleKind): Array<cst.Node>;
-  export function pickSeparated(node: cst.RuleNode, kind: kinds.RuleKind): [Array<cst.Node>, Array<cst.Node>];
+  export function selectSequence(node: cst.RuleNode): Array<cst.Node | null>;
+  export function selectChoice(node: cst.RuleNode): cst.Node;
+  export function selectRepeated(node: cst.RuleNode): Array<cst.Node>;
+  export function selectSeparated(node: cst.RuleNode): [Array<cst.Node>, Array<cst.Node>];
 }
 export namespace cst {
   export enum NodeType {

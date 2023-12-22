@@ -1,1 +1,1 @@
-export * from "./generated/frontend";
+export * from "./generated/ast_types";

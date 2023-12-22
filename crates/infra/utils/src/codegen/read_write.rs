@@ -26,7 +26,7 @@ impl CodegenReadWrite {
 
         let writer = CodegenWriteOnly::new()?;
 
-        let tera = create_tera_instance(&input_dir);
+        let tera = create_tera_instance(&input_dir.join("**/*.jinja2"))?;
 
         Ok(Self {
             writer,

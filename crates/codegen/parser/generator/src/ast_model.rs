@@ -4,7 +4,7 @@ use itertools::Itertools;
 use serde::Serialize;
 
 #[derive(Default, Serialize)]
-pub struct AstTypes {
+pub struct AstModel {
     terminals: IndexSet<model::Identifier>,
 
     pub sequences: Vec<Sequence>,
@@ -55,7 +55,7 @@ pub struct Separated {
     pub separator: model::Identifier,
 }
 
-impl AstTypes {
+impl AstModel {
     pub fn create(language: &model::Language) -> Self {
         let mut model = Self::default();
 

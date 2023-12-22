@@ -1,7 +1,6 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-pub mod napi_ast_backend;
-pub mod napi_ast_helpers;
+pub mod napi_ast_selectors;
 pub mod napi_cst;
 pub mod napi_cursor;
 pub mod napi_parse_error;

@@ -14,7 +14,7 @@ use quote::{format_ident, quote};
 use semver::Version;
 use serde::Serialize;
 
-use crate::ast::AstTypes;
+use crate::ast_model::AstModel;
 use crate::parser_definition::ParserDefinitionExtensions;
 use crate::precedence_parser_definition::PrecedenceParserDefinitionExtensions;
 use crate::scanner_definition::ScannerDefinitionExtensions;
@@ -54,7 +54,7 @@ struct ScannerContext {
 }
 
 impl CodeGenerator {
-    pub fn write_backend(grammar: &Grammar, ast_types: &AstTypes, output_dir: &Path) -> Result<()> {
+    pub fn write_backend(grammar: &Grammar, ast_model: &AstModel, output_dir: &Path) -> Result<()> {
         let mut code = Self::default();
         grammar.accept_visitor(&mut code);
         let code = &code;
@@ -66,12 +66,12 @@ impl CodeGenerator {
         {
             #[derive(Serialize)]
             pub struct Template<'a> {
-                pub ast_types: &'a AstTypes,
+                pub ast_model: &'a AstModel,
             }
             codegen.render(
-                Template { ast_types },
-                runtime_dir.join("napi/templates/ast_backend.rs.jinja2"),
-                output_dir.join("napi/napi_ast_backend.rs"),
+                Template { ast_model },
+                runtime_dir.join("napi/templates/ast_selectors.rs.jinja2"),
+                output_dir.join("napi/napi_ast_selectors.rs"),
             )?;
         }
 
@@ -122,7 +122,6 @@ impl CodeGenerator {
             "parse_error.rs",
             "parse_output.rs",
             "text_index.rs",
-            "napi/napi_ast_helpers.rs",
             "napi/napi_cst.rs",
             "napi/napi_cursor.rs",
             "napi/napi_parse_error.rs",
@@ -148,7 +147,7 @@ impl CodeGenerator {
         Ok(())
     }
 
-    pub fn write_frontend(ast_types: &AstTypes, output_dir: &Path) -> Result<()> {
+    pub fn write_frontend(ast_model: &AstModel, output_dir: &Path) -> Result<()> {
         let runtime_dir =
             CargoWorkspace::locate_source_crate("codegen_parser_runtime")?.join("src");
 
@@ -157,12 +156,12 @@ impl CodeGenerator {
         {
             #[derive(Serialize)]
             pub struct Template<'a> {
-                pub ast_types: &'a AstTypes,
+                pub ast_model: &'a AstModel,
             }
             codegen.render(
-                Template { ast_types },
-                runtime_dir.join("napi/templates/ast_frontend.ts.jinja2"),
-                output_dir.join("src/ast/generated/frontend.ts"),
+                Template { ast_model },
+                runtime_dir.join("napi/templates/ast_types.ts.jinja2"),
+                output_dir.join("src/ast/generated/ast_types.ts"),
             )?;
         }
 

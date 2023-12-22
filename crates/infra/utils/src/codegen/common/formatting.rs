@@ -5,23 +5,11 @@ use anyhow::{Context, Result};
 use crate::commands::Command;
 use crate::paths::PathExtensions;
 
-pub fn add_header(file_path: &Path, contents: &str) -> String {
-    let warning_line =
-        "This file is generated automatically by infrastructure scripts. Please don't edit by hand.";
+pub fn format_source_file(file_path: &Path, contents: &str) -> Result<String> {
+    let header = generate_header(file_path);
+    let unformatted = format!("{header}\n\n{contents}");
 
-    let header = match get_extension(file_path) {
-        "json" => String::new(),
-        "html" | "md" => format!("<!-- {warning_line} -->"),
-        "js" | "rs" | "ts" => format!("// {warning_line}"),
-        "yml" | "zsh-completions" => format!("# {warning_line}"),
-        other => panic!("Unrecognized extension '{other}'."),
-    };
-
-    format!("{header}\n\n{contents}")
-}
-
-pub fn format_source_file(file_path: &Path, unformatted: &str) -> Result<String> {
-    match run_formatter(file_path, unformatted) {
+    match run_formatter(file_path, &unformatted) {
         Ok(formatted) => Ok(formatted),
         Err(formatter_error) => {
             // Still write the unformatted version to disk, to be able to debug what went wrong:
@@ -30,6 +18,19 @@ pub fn format_source_file(file_path: &Path, unformatted: &str) -> Result<String>
             Err(formatter_error).context(format!("Failed to format {file_path:?}"))
         }
     }
+}
+
+fn generate_header(file_path: &Path) -> String {
+    let warning_line =
+        "This file is generated automatically by infrastructure scripts. Please don't edit by hand.";
+
+    return match get_extension(file_path) {
+        "json" => String::new(),
+        "html" | "md" => format!("<!-- {warning_line} -->"),
+        "js" | "rs" | "ts" => format!("// {warning_line}"),
+        "yml" | "zsh-completions" => format!("# {warning_line}"),
+        ext => panic!("Unsupported extension to generate a header for: {ext}"),
+    };
 }
 
 fn get_extension(file_path: &Path) -> &str {

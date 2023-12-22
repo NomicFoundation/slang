@@ -4,7 +4,7 @@ use anyhow::{bail, Context, Result};
 use cargo_emit::warning;
 
 use crate::cargo::CargoWorkspace;
-use crate::codegen::common::formatting::{add_header, format_source_file};
+use crate::codegen::common::formatting::format_source_file;
 use crate::paths::PathExtensions;
 
 pub fn delete_file(file_path: &Path) -> Result<()> {
@@ -16,8 +16,7 @@ pub fn write_file(file_path: &Path, contents: &str) -> Result<()> {
     std::fs::create_dir_all(file_path.unwrap_parent())
         .with_context(|| format!("Cannot create parent directory of: {file_path:?}"))?;
 
-    let unformatted = add_header(file_path, contents);
-    let formatted = format_source_file(file_path, &unformatted)?;
+    let formatted = format_source_file(file_path, contents)?;
 
     // To respect Cargo incrementability, don't touch the file if it is already up to date.
     if file_path.exists() && formatted == file_path.read_to_string()? {
@@ -32,8 +31,7 @@ pub fn write_file(file_path: &Path, contents: &str) -> Result<()> {
 }
 
 pub fn verify_file(file_path: &Path, contents: &str) -> Result<()> {
-    let unformatted = add_header(file_path, contents);
-    let formatted = format_source_file(file_path, &unformatted)?;
+    let formatted = format_source_file(file_path, contents)?;
 
     if !file_path.exists() {
         bail!("Generated file does not exist: {file_path:?}");

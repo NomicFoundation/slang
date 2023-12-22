@@ -3,18 +3,19 @@
 use std::collections::HashMap;
 use std::path::Path;
 
+use anyhow::{anyhow, Result};
 use inflector::Inflector;
 use serde_json::Value;
 use tera::Tera;
 
 use crate::paths::PathExtensions;
 
-pub fn create_tera_instance(input_dir: &Path) -> Tera {
-    let templates_glob = input_dir.join("**/*.jinja2");
-
-    let mut instance = Tera::new(templates_glob.unwrap_str()).unwrap_or_else(|error| {
-        panic!("\n{error}\n"); // render error report on a separate line
-    });
+pub fn create_tera_instance(templates_glob: &Path) -> Result<Tera> {
+    let mut instance = Tera::new(templates_glob.unwrap_str()).map_err(|error| {
+        // Stringify and wrap with newlines, as the default error serialization
+        // does not render the error report correctly:
+        anyhow!("\n{error}\n")
+    })?;
 
     instance.register_filter("camel_case", camel_case);
     instance.register_filter("snake_case", snake_case);
@@ -23,7 +24,7 @@ pub fn create_tera_instance(input_dir: &Path) -> Tera {
 
     instance.autoescape_on(vec![]); // disable autoescaping
 
-    instance
+    Ok(instance)
 }
 
 fn camel_case(value: &Value, args: &HashMap<String, Value>) -> tera::Result<Value> {
