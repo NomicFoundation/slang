@@ -26,6 +26,6 @@ fn test_next_token() {
         ("0ZZ", SKIPPED),
         ("0xabZZ", SKIPPED),
     ] {
-        assert_eq!(language.scan(LexicalContext::Default, s), Some(*k));
+        assert_eq!(language.scan(LexicalContext::Default, s), vec![*k]);
     }
 }

@@ -3,15 +3,7 @@
 Source: >
   1  │ using foo for bar global;                                                        │ 0..25
 
-Errors: # 1 total
-  - >
-    Error: Expected GlobalKeyword or Semicolon.
-       ╭─[crates/solidity/testing/snapshots/cst_output/UsingDirective/path_named/input.sol:1:19]
-       │
-     1 │ using foo for bar global;
-       │                   ───┬──  
-       │                      ╰──── Error occurred here.
-    ───╯
+Errors: []
 
 Tree:
   - UsingDirective: # 0..25 "using foo for bar global;"
@@ -24,5 +16,5 @@ Tree:
           - (variant) TypeName: # 13..17 " bar"
               - (variant) IdentifierPath: # 13..17 " bar"
                   - (item) Identifier: "bar" # 14..17
-      - SKIPPED: "global" # 18..24
+      - (global_keyword) GlobalKeyword: "global" # 18..24
       - (semicolon) Semicolon: ";" # 24..25

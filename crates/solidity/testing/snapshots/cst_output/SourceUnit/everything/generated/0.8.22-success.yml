@@ -27,15 +27,7 @@ Source: >
   24 │                                                                                  │ 217..217
   25 │ event E1(uint256 value);                                                         │ 218..242
 
-Errors: # 1 total
-  - >
-    Error: Expected ConstantKeyword or OpenBracket.
-        ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/everything/input.sol:21:7]
-        │
-     21 │ error E1(string);
-        │       ─────┬────  
-        │            ╰────── Error occurred here.
-    ────╯
+Errors: []
 
 Tree:
   - SourceUnit: # 0..243 'pragma solidity 0.0.0;\n\nimport "foo.sol";\n\nusing A...'
@@ -132,11 +124,17 @@ Tree:
                           - (open_brace) OpenBrace: "{" # 177..178
                           - (close_brace) CloseBrace: "}" # 179..180
           - (item) SourceUnitMember: # 181..200 "\nerror E1(string);\n"
-              - (variant) ConstantDefinition: # 181..200 "\nerror E1(string);\n"
-                  - (type_name) TypeName: # 181..187 "\nerror"
-                      - (variant) IdentifierPath: # 181..187 "\nerror"
-                          - (item) Identifier: "error" # 182..187
-                  - SKIPPED: "E1(string)" # 188..198
+              - (variant) ErrorDefinition: # 181..200 "\nerror E1(string);\n"
+                  - (error_keyword) ErrorKeyword: "error" # 182..187
+                  - (name) Identifier: "E1" # 188..190
+                  - (members) ErrorParametersDeclaration: # 190..198 "(string)"
+                      - (open_paren) OpenParen: "(" # 190..191
+                      - (parameters) ErrorParameters: # 191..197 "string"
+                          - (item) ErrorParameter: # 191..197 "string"
+                              - (type_name) TypeName: # 191..197 "string"
+                                  - (variant) ElementaryType: # 191..197 "string"
+                                      - (variant) StringKeyword: "string" # 191..197
+                      - (close_paren) CloseParen: ")" # 197..198
                   - (semicolon) Semicolon: ";" # 198..199
           - (item) SourceUnitMember: # 200..217 "\ntype T is bool;\n"
               - (variant) UserDefinedValueTypeDefinition: # 200..217 "\ntype T is bool;\n"

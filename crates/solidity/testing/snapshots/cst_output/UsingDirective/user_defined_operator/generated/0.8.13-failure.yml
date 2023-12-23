@@ -3,7 +3,7 @@
 Source: >
   1  │ using {div as /} for Int global;                                                 │ 0..32
 
-Errors: # 2 total
+Errors: # 1 total
   - >
     Error: Expected CloseBrace or Comma.
        ╭─[crates/solidity/testing/snapshots/cst_output/UsingDirective/user_defined_operator/input.sol:1:12]
@@ -11,14 +11,6 @@ Errors: # 2 total
      1 │ using {div as /} for Int global;
        │            ──┬─  
        │              ╰─── Error occurred here.
-    ───╯
-  - >
-    Error: Expected GlobalKeyword or Semicolon.
-       ╭─[crates/solidity/testing/snapshots/cst_output/UsingDirective/user_defined_operator/input.sol:1:26]
-       │
-     1 │ using {div as /} for Int global;
-       │                          ───┬──  
-       │                             ╰──── Error occurred here.
     ───╯
 
 Tree:
@@ -38,5 +30,5 @@ Tree:
           - (variant) TypeName: # 20..24 " Int"
               - (variant) IdentifierPath: # 20..24 " Int"
                   - (item) Identifier: "Int" # 21..24
-      - SKIPPED: "global" # 25..31
+      - (global_keyword) GlobalKeyword: "global" # 25..31
       - (semicolon) Semicolon: ";" # 31..32

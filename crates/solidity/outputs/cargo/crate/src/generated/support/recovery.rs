@@ -131,7 +131,7 @@ pub fn skip_until_with_nested_delims<L: Lexer, LexCtx: IsLexicalContext>(
     let mut local_delims = vec![];
     loop {
         let save = input.position();
-        match lexer.next_token::<LexCtx>(input) {
+        match lexer.next_token::<LexCtx>(input).first().copied() {
             // If we're not skipping past a local delimited group (delimiter stack is empty),
             // we can unwind on a token that's expected by us or by our ancestor.
             Some(token)

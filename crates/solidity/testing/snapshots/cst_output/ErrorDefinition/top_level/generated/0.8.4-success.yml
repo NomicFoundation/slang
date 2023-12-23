@@ -1,0 +1,15 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ error MyError();                                                                 │ 0..16
+
+Errors: []
+
+Tree:
+  - ErrorDefinition: # 0..16 "error MyError();"
+      - (error_keyword) ErrorKeyword: "error" # 0..5
+      - (name) Identifier: "MyError" # 6..13
+      - (members) ErrorParametersDeclaration: # 13..15 "()"
+          - (open_paren) OpenParen: "(" # 13..14
+          - (close_paren) CloseParen: ")" # 14..15
+      - (semicolon) Semicolon: ";" # 15..16

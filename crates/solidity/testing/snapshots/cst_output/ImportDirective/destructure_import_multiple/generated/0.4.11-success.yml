@@ -3,21 +3,13 @@
 Source: >
   1  │ import { A1 as A2, B1, C1 as C2 } from "foo";                                    │ 0..45
 
-Errors: # 1 total
-  - >
-    Error: Expected FromKeyword.
-       ╭─[crates/solidity/testing/snapshots/cst_output/ImportDirective/destructure_import_multiple/input.sol:1:35]
-       │
-     1 │ import { A1 as A2, B1, C1 as C2 } from "foo";
-       │                                   ─────┬────  
-       │                                        ╰────── Error occurred here.
-    ───╯
+Errors: []
 
 Tree:
   - ImportDirective: # 0..45 'import { A1 as A2, B1, C1 as C2 } from "foo";'
       - (import_keyword) ImportKeyword: "import" # 0..6
-      - (clause) ImportClause: # 6..33 " { A1 as A2, B1, C1 as C2 }"
-          - (variant) ImportDeconstruction: # 6..33 " { A1 as A2, B1, C1 as C2 }"
+      - (clause) ImportClause: # 6..44 ' { A1 as A2, B1, C1 as C2 } from "foo"'
+          - (variant) ImportDeconstruction: # 6..44 ' { A1 as A2, B1, C1 as C2 } from "foo"'
               - (open_brace) OpenBrace: "{" # 7..8
               - (symbols) ImportDeconstructionSymbols: # 8..31 " A1 as A2, B1, C1 as C2"
                   - (item) ImportDeconstructionSymbol: # 8..17 " A1 as A2"
@@ -35,5 +27,6 @@ Tree:
                           - (as_keyword) AsKeyword: "as" # 26..28
                           - (identifier) Identifier: "C2" # 29..31
               - (close_brace) CloseBrace: "}" # 32..33
-      - SKIPPED: 'from "foo"' # 34..44
+              - (from_keyword) FromKeyword: "from" # 34..38
+              - (path) AsciiStringLiteral: '"foo"' # 39..44
       - (semicolon) Semicolon: ";" # 44..45

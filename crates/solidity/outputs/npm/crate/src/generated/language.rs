@@ -12730,7 +12730,7 @@ impl Language {
         )
     }
 
-    pub fn scan(&self, lexical_context: LexicalContext, input: &str) -> Option<TokenKind> {
+    pub fn scan(&self, lexical_context: LexicalContext, input: &str) -> Vec<TokenKind> {
         let mut input = ParserContext::new(input);
         match lexical_context {
             LexicalContext::Default => {
@@ -13060,18 +13060,22 @@ impl Lexer for Language {
     fn next_token<LexCtx: IsLexicalContext>(
         &self,
         input: &mut ParserContext<'_>,
-    ) -> Option<TokenKind> {
+    ) -> Vec<TokenKind> {
         let save = input.position();
         let mut furthest_position = input.position();
-        let mut longest_token = None;
+
         // Whether we've seen a keyword
+
+        let mut longest_tokens = vec![];
 
         macro_rules! longest_match {
             ($( { $kind:ident = $function:ident } )*) => {
                 $(
                     if self.$function(input) && input.position() > furthest_position {
                         furthest_position = input.position();
-                        longest_token = Some(TokenKind::$kind);
+
+                        longest_tokens = vec![TokenKind::$kind];
+
                     }
                     input.set_position(save);
                 )*
@@ -13081,18 +13085,24 @@ impl Lexer for Language {
             ($( { $kind:ident = $function:ident } )*) => {
                 $(
                     match self.$function(input) {
-                        KeywordScan::Absent => {/* To do - rollback */},
+                        KeywordScan::Absent => {},
                         KeywordScan::Present => {
-                            // Only bump if we're strictly longer?
+                            if input.position() > furthest_position {
+                                furthest_position = input.position();
+                                longest_tokens = vec![TokenKind::$kind];
+                            } else if input.position() == furthest_position {
+                                longest_tokens.push(TokenKind::$kind);
+                            }
                         }
-                        KeywordScan::Reserved if input.position() >= furthest_position => {
-                            furthest_position = input.position();
-                            longest_token = Some(TokenKind::$kind);
-                            // We're running after the identifier and we're checking if it's a reserved keyword
-                            input.set_position(furthest_position);
-                            return longest_token;
+                        KeywordScan::Reserved => {
+                            // If we're reserved, we can't be ambiguous, so always overwrite, even if len is equal
+                            if input.position() >= furthest_position {
+                                furthest_position = input.position();
+                                longest_tokens = vec![TokenKind::$kind];
+                                // We're running after the identifier and we're checking if it's a reserved keyword
+                                input.set_position(furthest_position);
+                            }
                         }
-                        _ => {}
                     }
                     input.set_position(save);
                 )*
@@ -13250,7 +13260,7 @@ impl Lexer for Language {
                     None => None,
                 } {
                     furthest_position = input.position();
-                    longest_token = Some(kind);
+                    longest_tokens = vec![kind];
                 }
                 input.set_position(save);
 
@@ -13412,7 +13422,7 @@ impl Lexer for Language {
                     None => None,
                 } {
                     furthest_position = input.position();
-                    longest_token = Some(kind);
+                    longest_tokens = vec![kind];
                 }
                 input.set_position(save);
 
@@ -13447,7 +13457,7 @@ impl Lexer for Language {
                     None => None,
                 } {
                     furthest_position = input.position();
-                    longest_token = Some(kind);
+                    longest_tokens = vec![kind];
                 }
                 input.set_position(save);
 
@@ -13571,18 +13581,18 @@ impl Lexer for Language {
             }
         }
 
-        match longest_token {
-            Some(..) => {
+        match longest_tokens.as_slice() {
+            // TODO: Handle returning ambiguous tokens
+            &[_, ..] => {
                 input.set_position(furthest_position);
-                longest_token
+                longest_tokens
             }
             // Skip a character if possible and if we didn't recognize a token
-            None if input.peek().is_some() => {
+            &[] if input.peek().is_some() => {
                 let _ = input.next();
-                Some(TokenKind::SKIPPED)
+                vec![TokenKind::SKIPPED]
             }
-            // EOF
-            None => None,
+            &[] => vec![],
         }
     }
 }
@@ -13622,7 +13632,7 @@ impl Language {
         ts_return_type = "kinds.TokenKind | null",
         catch_unwind
     )]
-    pub fn scan_napi(&self, lexical_context: LexicalContext, input: String) -> Option<TokenKind> {
+    pub fn scan_napi(&self, lexical_context: LexicalContext, input: String) -> Vec<TokenKind> {
         self.scan(lexical_context, input.as_str())
     }
 

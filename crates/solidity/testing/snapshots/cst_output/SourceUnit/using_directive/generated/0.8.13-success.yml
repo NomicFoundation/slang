@@ -25,23 +25,7 @@ Source: >
   22 │   bytes message;                                                                   │ 774..790
   23 │ }                                                                                  │ 791..792
 
-Errors: # 2 total
-  - >
-    Error: Expected GlobalKeyword or Semicolon.
-       ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/using_directive/input.sol:4:34]
-       │
-     4 │ using EnvelopeUtils for Envelope global;
-       │                                  ───┬──  
-       │                                     ╰──── Error occurred here.
-    ───╯
-  - >
-    Error: Expected GlobalKeyword or Semicolon.
-       ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/using_directive/input.sol:5:40]
-       │
-     5 │ using TransactionUtils for Transaction global;
-       │                                        ───┬──  
-       │                                           ╰──── Error occurred here.
-    ───╯
+Errors: []
 
 Tree:
   - SourceUnit: # 0..793 "// SPDX-License-Identifier: MIT\npragma solidity ^0..."
@@ -77,7 +61,7 @@ Tree:
                       - (variant) TypeName: # 80..89 " Envelope"
                           - (variant) IdentifierPath: # 80..89 " Envelope"
                               - (item) Identifier: "Envelope" # 81..89
-                  - SKIPPED: "global" # 90..96
+                  - (global_keyword) GlobalKeyword: "global" # 90..96
                   - (semicolon) Semicolon: ";" # 96..97
           - (item) SourceUnitMember: # 98..145 "using TransactionUtils for Transaction global;\n"
               - (variant) UsingDirective: # 98..145 "using TransactionUtils for Transaction global;\n"
@@ -90,7 +74,7 @@ Tree:
                       - (variant) TypeName: # 124..136 " Transaction"
                           - (variant) IdentifierPath: # 124..136 " Transaction"
                               - (item) Identifier: "Transaction" # 125..136
-                  - SKIPPED: "global" # 137..143
+                  - (global_keyword) GlobalKeyword: "global" # 137..143
                   - (semicolon) Semicolon: ";" # 143..144
           - (item) SourceUnitMember: # 145..793 "\n/**\n * @notice Object with the necessary informat..."
               - (variant) StructDefinition: # 145..793 "\n/**\n * @notice Object with the necessary informat..."

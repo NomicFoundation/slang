@@ -3,21 +3,13 @@
 Source: >
   1  │ import { x as y } from "foo";                                                    │ 0..29
 
-Errors: # 1 total
-  - >
-    Error: Expected FromKeyword.
-       ╭─[crates/solidity/testing/snapshots/cst_output/ImportDirective/destructure_import_single/input.sol:1:19]
-       │
-     1 │ import { x as y } from "foo";
-       │                   ─────┬────  
-       │                        ╰────── Error occurred here.
-    ───╯
+Errors: []
 
 Tree:
   - ImportDirective: # 0..29 'import { x as y } from "foo";'
       - (import_keyword) ImportKeyword: "import" # 0..6
-      - (clause) ImportClause: # 6..17 " { x as y }"
-          - (variant) ImportDeconstruction: # 6..17 " { x as y }"
+      - (clause) ImportClause: # 6..28 ' { x as y } from "foo"'
+          - (variant) ImportDeconstruction: # 6..28 ' { x as y } from "foo"'
               - (open_brace) OpenBrace: "{" # 7..8
               - (symbols) ImportDeconstructionSymbols: # 8..15 " x as y"
                   - (item) ImportDeconstructionSymbol: # 8..15 " x as y"
@@ -26,5 +18,6 @@ Tree:
                           - (as_keyword) AsKeyword: "as" # 11..13
                           - (identifier) Identifier: "y" # 14..15
               - (close_brace) CloseBrace: "}" # 16..17
-      - SKIPPED: 'from "foo"' # 18..28
+              - (from_keyword) FromKeyword: "from" # 18..22
+              - (path) AsciiStringLiteral: '"foo"' # 23..28
       - (semicolon) Semicolon: ";" # 28..29
